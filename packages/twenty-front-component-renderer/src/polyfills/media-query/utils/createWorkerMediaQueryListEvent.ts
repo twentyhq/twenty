@@ -1,4 +1,5 @@
 import { type WorkerMediaQueryListEvent } from '@/polyfills/media-query/types/WorkerMediaQueryListEvent';
+import { createEventWithReadonlyProperties } from '@/polyfills/utils/createEventWithReadonlyProperties';
 
 type CreateWorkerMediaQueryListEventInput = {
   media: string;
@@ -8,11 +9,5 @@ type CreateWorkerMediaQueryListEventInput = {
 export const createWorkerMediaQueryListEvent = ({
   media,
   matches,
-}: CreateWorkerMediaQueryListEventInput): WorkerMediaQueryListEvent => {
-  const changeEvent = new Event('change') as WorkerMediaQueryListEvent;
-
-  Object.defineProperty(changeEvent, 'media', { value: media });
-  Object.defineProperty(changeEvent, 'matches', { value: matches });
-
-  return changeEvent;
-};
+}: CreateWorkerMediaQueryListEventInput): WorkerMediaQueryListEvent =>
+  createEventWithReadonlyProperties('change', { media, matches });

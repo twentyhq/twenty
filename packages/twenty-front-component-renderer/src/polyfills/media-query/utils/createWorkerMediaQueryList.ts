@@ -31,7 +31,9 @@ class WorkerMediaQueryListImplementation extends EventTarget {
 
   #changeListenerRegistrations: ChangeListenerRegistration[] = [];
   #onchangeHandler: WorkerMediaQueryListener | null = null;
-  #onchangeInvoker: EventListener | null = null;
+  #invokeOnchangeHandler: EventListener = (event) => {
+    this.#onchangeHandler?.call(this, event as WorkerMediaQueryListEvent);
+  };
   #lastNotifiedMatches: boolean | null = null;
   #unsubscribeFromEnvironmentUpdates: (() => void) | null = null;
 
@@ -65,11 +67,11 @@ class WorkerMediaQueryListImplementation extends EventTarget {
     this.#onchangeHandler = isFunction(handler) ? handler : null;
 
     if (isDefined(this.#onchangeHandler)) {
-      this.#ensureOnchangeInvoker();
+      this.addEventListener(CHANGE_EVENT_TYPE, this.#invokeOnchangeHandler);
       return;
     }
 
-    this.#removeOnchangeInvoker();
+    this.removeEventListener(CHANGE_EVENT_TYPE, this.#invokeOnchangeHandler);
   }
 
   override addEventListener(
@@ -192,28 +194,6 @@ class WorkerMediaQueryListImplementation extends EventTarget {
     } catch (error) {
       this.#reportListenerError(error);
     }
-  }
-
-  #ensureOnchangeInvoker(): void {
-    if (isDefined(this.#onchangeInvoker)) {
-      return;
-    }
-
-    const onchangeInvoker: EventListener = (event) => {
-      this.#onchangeHandler?.call(this, event as WorkerMediaQueryListEvent);
-    };
-
-    this.#onchangeInvoker = onchangeInvoker;
-    this.addEventListener(CHANGE_EVENT_TYPE, onchangeInvoker);
-  }
-
-  #removeOnchangeInvoker(): void {
-    if (!isDefined(this.#onchangeInvoker)) {
-      return;
-    }
-
-    this.removeEventListener(CHANGE_EVENT_TYPE, this.#onchangeInvoker);
-    this.#onchangeInvoker = null;
   }
 
   #ensureEnvironmentSubscription(): void {

@@ -1,6 +1,7 @@
 import { Window } from '@remote-dom/polyfill';
 
 import { type createWorkerMediaQueryList as CreateWorkerMediaQueryList } from '@/polyfills/media-query/utils/createWorkerMediaQueryList';
+import { createSubscriptionStub } from '@/testing/createSubscriptionStub';
 
 const polyfillWindow = new Window();
 
@@ -24,39 +25,26 @@ beforeAll(async () => {
 
 const setupMediaQueryList = () => {
   let matches = false;
-  const environmentListeners = new Set<() => void>();
-  const unsubscribe = jest.fn();
   const reportListenerError = jest.fn();
-
-  const subscribeToEnvironmentUpdates = jest.fn((listener: () => void) => {
-    environmentListeners.add(listener);
-
-    return () => {
-      environmentListeners.delete(listener);
-      unsubscribe();
-    };
-  });
+  const environmentSubscription = createSubscriptionStub();
 
   const mediaQueryList = createWorkerMediaQueryList({
     media: '(min-width: 600px)',
     evaluateMatches: () => matches,
-    subscribeToEnvironmentUpdates,
+    subscribeToEnvironmentUpdates: environmentSubscription.subscribe,
     reportListenerError,
   });
 
   const setMatches = (nextMatches: boolean) => {
     matches = nextMatches;
-
-    for (const environmentListener of [...environmentListeners]) {
-      environmentListener();
-    }
+    environmentSubscription.notify();
   };
 
   return {
     mediaQueryList,
     setMatches,
-    subscribeToEnvironmentUpdates,
-    unsubscribe,
+    subscribeToEnvironmentUpdates: environmentSubscription.subscribe,
+    unsubscribe: environmentSubscription.unsubscribe,
     reportListenerError,
   };
 };
