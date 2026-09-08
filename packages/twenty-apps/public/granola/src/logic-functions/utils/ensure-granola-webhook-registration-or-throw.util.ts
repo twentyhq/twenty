@@ -93,8 +93,6 @@ export const ensureGranolaWebhookRegistrationOrThrow =
       scopes: createdEndpoint.scopes,
       folderIds: createdEndpoint.folder_ids,
       isActive: createdEndpoint.enabled,
-      isInitialBackfillEnqueued:
-        isExistingKeyCurrent && existing.isInitialBackfillEnqueued,
     };
     try {
       await kv.set(GRANOLA_WEBHOOK_REGISTRATION_KEY, registration);
