@@ -13,6 +13,7 @@ import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThr
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import {
   jotaiStore,
@@ -97,7 +98,7 @@ describe('AiChatPageHeader', () => {
     'hides conversation actions on the new-chat page (%s)',
     (threadId) => {
       jotaiStore.set(currentAiChatThreadState.atom, threadId);
-      render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+      render(<AiChatPageHeader />, { wrapper: Wrapper });
 
       expect(screen.getByText('New chat')).toBeVisible();
       expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
@@ -107,7 +108,7 @@ describe('AiChatPageHeader', () => {
 
   it('starts a new chat from the current conversation', async () => {
     const user = userEvent.setup();
-    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     expect(screen.getByText('Best leads')).toBeVisible();
     await user.click(screen.getByRole('button', { name: /^New chat/ }));
@@ -119,7 +120,7 @@ describe('AiChatPageHeader', () => {
 
   it('does not label an existing chat as new while its metadata loads', () => {
     setThreads([]);
-    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     expect(screen.queryByText('New chat')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Chat actions' })).toBeNull();
@@ -134,7 +135,7 @@ describe('AiChatPageHeader', () => {
     'keeps New chat hidden without messages regardless of token usage (%s)',
     (conversationSize) => {
       setThreads([{ ...THREAD, lastMessageAt: null, conversationSize }]);
-      render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+      render(<AiChatPageHeader />, { wrapper: Wrapper });
 
       expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
     },
@@ -143,7 +144,7 @@ describe('AiChatPageHeader', () => {
   it('shows New chat as soon as messages load without a last-message timestamp', () => {
     setThreads([{ ...THREAD, lastMessageAt: null }]);
     jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD.id);
-    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
 
@@ -170,7 +171,7 @@ describe('AiChatPageHeader', () => {
       }),
       [{ id: 'previous-message', role: 'user', parts: [] }],
     );
-    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
 
@@ -187,19 +188,25 @@ describe('AiChatPageHeader', () => {
     expect(screen.getByRole('button', { name: /^New chat/ })).toBeVisible();
   });
 
-  it('keeps onboarding single-threaded', () => {
-    render(<AiChatPageHeader isOnboarding />, { wrapper: Wrapper });
+  it('offers the same conversation actions during onboarding', async () => {
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    const user = userEvent.setup();
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
 
-    expect(screen.getByText('Onboarding')).toBeVisible();
-    expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Chat actions' })).toBeNull();
-    expect(screen.getByRole('button', { name: 'Close chat' })).toBeVisible();
+    expect(screen.getByText('Best leads')).toBeVisible();
+    await user.click(screen.getByRole('button', { name: /^New chat/ }));
+    expect(switchToNewChat).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole('button', { name: 'Chat actions' }));
+    expect(screen.getByText('Rename')).toBeVisible();
+    expect(screen.getByText('Archive')).toBeVisible();
+    expect(screen.getByText('Delete')).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Close chat' })).toBeNull();
   });
 
   it('uses the generated title before metadata refreshes and prefers later renames', async () => {
     setThreads([{ ...THREAD, title: null }]);
     const user = userEvent.setup();
-    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     act(() => {
       jotaiStore.set(
@@ -232,7 +239,7 @@ describe('AiChatPageHeader', () => {
 
   it('offers archive and unarchive even when the current chat is filtered out of the sidebar', async () => {
     const user = userEvent.setup();
-    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     await user.click(screen.getByRole('button', { name: 'Chat actions' }));
     await user.click(screen.getByText('Archive'));
@@ -248,7 +255,7 @@ describe('AiChatPageHeader', () => {
 
   it('renames the current chat and discards the rename editor when switching threads', async () => {
     const user = userEvent.setup();
-    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     await user.click(screen.getByRole('button', { name: 'Chat actions' }));
     await user.click(screen.getByText('Rename'));
@@ -271,7 +278,7 @@ describe('AiChatPageHeader', () => {
     'saves once and leaves the rename editor on %s',
     async (key) => {
       const user = userEvent.setup();
-      render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+      render(<AiChatPageHeader />, { wrapper: Wrapper });
 
       await user.click(screen.getByRole('button', { name: 'Chat actions' }));
       await user.click(screen.getByText('Rename'));
@@ -290,7 +297,7 @@ describe('AiChatPageHeader', () => {
 
   it('saves when clicking outside without swallowing the next action', async () => {
     const user = userEvent.setup();
-    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     await user.click(screen.getByRole('button', { name: 'Chat actions' }));
     await user.click(screen.getByText('Rename'));
@@ -306,7 +313,7 @@ describe('AiChatPageHeader', () => {
 
   it('discards the draft on Escape without saving', async () => {
     const user = userEvent.setup();
-    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     await user.click(screen.getByRole('button', { name: 'Chat actions' }));
     await user.click(screen.getByText('Rename'));
@@ -321,7 +328,7 @@ describe('AiChatPageHeader', () => {
   it('preserves the draft for retry when saving fails', async () => {
     renameChatThread.mockResolvedValueOnce(false);
     const user = userEvent.setup();
-    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     await user.click(screen.getByRole('button', { name: 'Chat actions' }));
     await user.click(screen.getByText('Rename'));
@@ -343,7 +350,7 @@ describe('AiChatPageHeader', () => {
 
   it('requires confirmation before deleting the current chat', async () => {
     const user = userEvent.setup();
-    render(<AiChatPageHeader isOnboarding={false} />, { wrapper: Wrapper });
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     await user.click(screen.getByRole('button', { name: 'Chat actions' }));
     await user.click(screen.getByText('Delete'));

@@ -49,7 +49,7 @@ export const AiChatPage = () => {
       <AiChatPageCloseAskAiPanelEffect />
       <AiChatPageContinueInSidePanelEffect />
       {shouldOpenAiChatAfterOnboarding && <WorkspaceSetupChatKickoffEffect />}
-      <AiChatPageHeader isOnboarding={shouldOpenAiChatAfterOnboarding} />
+      <AiChatPageHeader />
       <StyledChatContainer>
         <AiChatMessageListPreambleContext.Provider
           value={
