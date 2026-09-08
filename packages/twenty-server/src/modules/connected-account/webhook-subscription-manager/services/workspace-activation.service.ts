@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { Repository } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DEACTIVATED_WORKSPACE_ACTIVATION_STATUSES } from 'src/modules/connected-account/webhook-subscription-manager/constants/deactivated-workspace-activation-statuses.constant';
 
 @Injectable()
 export class WorkspaceActivationService {
@@ -14,11 +14,11 @@ export class WorkspaceActivationService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
-  async isWorkspaceDeactivated(workspaceId: string): Promise<boolean> {
+  async isWorkspaceSuspended(workspaceId: string): Promise<boolean> {
     const workspace = await this.workspaceRepository.findOne({
       where: {
         id: workspaceId,
-        activationStatus: In(DEACTIVATED_WORKSPACE_ACTIVATION_STATUSES),
+        activationStatus: WorkspaceActivationStatus.SUSPENDED,
       },
       select: { id: true },
     });

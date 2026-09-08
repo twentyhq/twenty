@@ -34,15 +34,10 @@ import { WEBHOOK_SUBSCRIPTION_RENEWAL_BUFFER_MS } from 'src/modules/connected-ac
 import { WEBHOOK_SUBSCRIPTION_RENEWAL_CRON_PATTERN } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-cron-pattern.constant';
 import { WEBHOOK_SUBSCRIPTION_RENEWAL_MAX_TOTAL_DELAY_MS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-max-total-delay-ms.constant';
 import { WEBHOOK_SUBSCRIPTION_RENEWAL_SPACING_MS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-spacing-ms.constant';
-import { DEACTIVATED_WORKSPACE_ACTIVATION_STATUSES } from 'src/modules/connected-account/webhook-subscription-manager/constants/deactivated-workspace-activation-statuses.constant';
 import {
   RenewWebhookSubscriptionJob,
   type RenewWebhookSubscriptionJobData,
 } from 'src/modules/connected-account/webhook-subscription-manager/jobs/renew-webhook-subscription.job';
-import {
-  RevokeWebhookSubscriptionJob,
-  type RevokeWebhookSubscriptionJobData,
-} from 'src/modules/connected-account/webhook-subscription-manager/jobs/revoke-webhook-subscription.job';
 
 type WebhookSubscribableChannel = MessageChannelEntity | CalendarChannelEntity;
 
@@ -83,8 +78,6 @@ export class WebhookSubscriptionRenewalCronJob {
     const activeWorkspaceIds = activeWorkspaces.map(
       (workspace) => workspace.id,
     );
-
-    await this.revokeSubscriptionsOfDeactivatedWorkspaces();
 
     if (activeWorkspaceIds.length === 0) {
       return;
@@ -151,85 +144,6 @@ export class WebhookSubscriptionRenewalCronJob {
     channels: StaleChannel[],
   ): StaleChannelToEnqueue[] {
     return channels.map((channel) => ({ channelType, channel }));
-  }
-
-  private async revokeSubscriptionsOfDeactivatedWorkspaces(): Promise<void> {
-    const deactivatedWorkspaces = await this.workspaceRepository.find({
-      where: {
-        activationStatus: In(DEACTIVATED_WORKSPACE_ACTIVATION_STATUSES),
-      },
-      select: { id: true },
-    });
-
-    if (deactivatedWorkspaces.length === 0) {
-      return;
-    }
-
-    const deactivatedWorkspaceIds = deactivatedWorkspaces.map(
-      (workspace) => workspace.id,
-    );
-
-    const [messageChannels, calendarChannels] = await Promise.all([
-      this.findLiveSubscriptions(
-        this.messageChannelRepository,
-        deactivatedWorkspaceIds,
-      ),
-      this.findLiveSubscriptions(
-        this.calendarChannelRepository,
-        deactivatedWorkspaceIds,
-      ),
-    ]);
-
-    const revocations: StaleChannelToEnqueue[] = [
-      ...this.toEnqueueEntries(
-        WebhookSubscriptionChannelType.MESSAGING,
-        messageChannels,
-      ),
-      ...this.toEnqueueEntries(
-        WebhookSubscriptionChannelType.CALENDAR,
-        calendarChannels,
-      ),
-    ];
-
-    if (revocations.length === 0) {
-      return;
-    }
-
-    await this.webhookQueueService.bulkAdd<RevokeWebhookSubscriptionJobData>(
-      RevokeWebhookSubscriptionJob.name,
-      revocations.map(({ channelType, channel }) => ({
-        data: {
-          channelType,
-          channelId: channel.id,
-          workspaceId: channel.workspaceId,
-        },
-      })),
-      { retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT },
-    );
-
-    this.logger.log(
-      `Enqueued ${revocations.length} webhook subscription revocations for workspaces that are no longer active`,
-    );
-  }
-
-  private findLiveSubscriptions<TChannel extends WebhookSubscribableChannel>(
-    repository: Repository<TChannel>,
-    deactivatedWorkspaceIds: string[],
-  ): Promise<StaleChannel[]> {
-    const options: FindManyOptions<WebhookSubscribableChannel> = {
-      where: {
-        workspaceId: In(deactivatedWorkspaceIds),
-        webhookSubscriptionStatus: In([
-          WebhookSubscriptionStatus.ACTIVE,
-          WebhookSubscriptionStatus.FAILED,
-        ]),
-      },
-      order: { updatedAt: 'ASC' },
-      take: WEBHOOK_SUBSCRIPTION_RENEWAL_BATCH_SIZE,
-      select: { id: true, workspaceId: true, updatedAt: true },
-    };
-
-    return repository.find(options as FindManyOptions<TChannel>);
   }
 
   private buildStaleChannelScope(activeWorkspaceIds: string[]) {

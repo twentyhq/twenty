@@ -44,7 +44,7 @@ export class MessagingWebhookSubscriptionService {
     workspaceId: string,
   ): Promise<void> {
     if (
-      await this.workspaceActivationService.isWorkspaceDeactivated(workspaceId)
+      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId)
     ) {
       return;
     }
@@ -169,7 +169,7 @@ export class MessagingWebhookSubscriptionService {
     workspaceId: string;
   }): Promise<void> {
     if (
-      await this.workspaceActivationService.isWorkspaceDeactivated(workspaceId)
+      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId)
     ) {
       return;
     }
@@ -304,9 +304,7 @@ export class MessagingWebhookSubscriptionService {
     workspaceId: string,
   ): Promise<void> {
     if (
-      !(await this.workspaceActivationService.isWorkspaceDeactivated(
-        workspaceId,
-      ))
+      !(await this.workspaceActivationService.isWorkspaceSuspended(workspaceId))
     ) {
       return;
     }
