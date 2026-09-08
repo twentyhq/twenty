@@ -6,7 +6,7 @@ import {
   castAsNumberOrNull,
 } from '~/utils/cast-as-number-or-null';
 
-export type NumberValueToPersistResult =
+type NumberValueToPersistResult =
   | { success: false }
   | { success: true; value: number | null };
 
