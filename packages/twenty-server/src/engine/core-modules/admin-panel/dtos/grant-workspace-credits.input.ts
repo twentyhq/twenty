@@ -15,7 +15,11 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 
-const MAX_CREDIT_GRANT_VALIDITY_IN_DAYS = 3650;
+// Kept at a year, which is the longest the picker offers and comfortably
+// inside the number of periods alignGrantExpiryToPeriodEnd will walk on the
+// shortest interval. Raising it means raising MAX_PERIODS_AHEAD with it, or a
+// long validity silently comes back short.
+const MAX_CREDIT_GRANT_VALIDITY_IN_DAYS = 365;
 
 @ArgsType()
 export class GrantWorkspaceCreditsInput {

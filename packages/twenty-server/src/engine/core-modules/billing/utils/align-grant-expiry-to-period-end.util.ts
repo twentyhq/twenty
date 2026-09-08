@@ -4,8 +4,11 @@ import { addMonths, addYears } from 'date-fns';
 
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 
-// A subscription that outlives this many periods is not a real one, and the
-// loop must not run on a period end that never advances.
+// Bounds the walk so a period end that never advances cannot hang it. Must stay
+// above what the longest accepted validity needs on the shortest interval: a
+// year of monthly periods is thirteen, so this leaves room to spare. Walking
+// out of it returns a date short of the one asked for, so the accepted validity
+// and this bound have to move together.
 const MAX_PERIODS_AHEAD = 24;
 
 // A grant's expiry is always a period end. Both mechanisms that spend credits
