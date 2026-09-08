@@ -36,6 +36,7 @@ import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-ob
 import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
 import { type CampaignDeliverySettlement } from 'src/modules/emailing/types/campaign-delivery-settlement.type';
 import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
+import { ClickTrackingContentService } from 'src/modules/emailing/services/click-tracking-content.service';
 import { buildCampaignBatchReplacements } from 'src/modules/emailing/utils/build-campaign-batch-replacements.util';
 import { buildCampaignDeliverySettleQuery } from 'src/modules/emailing/utils/build-campaign-delivery-settle-query.util';
 import { compileCampaignBatchTemplate } from 'src/modules/emailing/utils/compile-campaign-batch-template.util';
@@ -66,6 +67,7 @@ export class MessageCampaignBatchDeliveryService {
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly emailBillingService: EmailBillingService,
     private readonly campaignVariableService: CampaignVariableService,
+    private readonly clickTrackingContentService: ClickTrackingContentService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly campaignSendSlotService: CampaignSendSlotService,
@@ -333,6 +335,14 @@ export class MessageCampaignBatchDeliveryService {
     });
     const personById = new Map(people.map((person) => [person.id, person]));
 
+    const trackedBatchTemplate =
+      await this.clickTrackingContentService.prepareBatchTemplate({
+        workspaceId,
+        emailingDomainId,
+        messageCampaignId: campaignId,
+        html: template.html ?? '',
+      });
+
     const replacementsByDeliveryId = new Map<string, Record<string, string>>();
 
     for (const recipient of claimedRecipients) {
@@ -342,10 +352,15 @@ export class MessageCampaignBatchDeliveryService {
           personById.get(recipient.personId) ?? null,
         );
 
-      replacementsByDeliveryId.set(
-        recipient.messageId,
-        buildCampaignBatchReplacements({ variableNames, variables }),
-      );
+      replacementsByDeliveryId.set(recipient.messageId, {
+        ...buildCampaignBatchReplacements({ variableNames, variables }),
+        ...(isDefined(trackedBatchTemplate)
+          ? this.clickTrackingContentService.buildBatchReplacements({
+              trackedBatchTemplate,
+              messageId: recipient.messageId,
+            })
+          : {}),
+      });
     }
 
     const providerOutcome = await this.emailingDomainSenderService
@@ -354,7 +369,9 @@ export class MessageCampaignBatchDeliveryService {
         emailingDomainId,
         sendKind: 'MARKETING',
         from: campaign.fromAddress?.primaryEmail ?? '',
-        template,
+        template: isDefined(trackedBatchTemplate)
+          ? { ...template, html: trackedBatchTemplate.html }
+          : template,
         recipients: claimedRecipients.map((recipient) => ({
           email: recipient.email,
           replacements: replacementsByDeliveryId.get(recipient.messageId) ?? {},

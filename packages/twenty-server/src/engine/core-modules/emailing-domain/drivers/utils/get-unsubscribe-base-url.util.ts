@@ -4,15 +4,14 @@ import {
   EmailingDomainDriverException,
   EmailingDomainDriverExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
-import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
+import { ManagedHostnameStatus } from 'src/engine/core-modules/dns-manager/types/managed-hostname-status.type';
 import { type EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 
 export const getUnsubscribeBaseUrl = (
   emailingDomain: EmailingDomainEntity,
 ): string => {
   if (
-    emailingDomain.unsubscribeHostnameStatus !==
-      UnsubscribeHostnameStatus.ACTIVE ||
+    emailingDomain.unsubscribeHostnameStatus !== ManagedHostnameStatus.ACTIVE ||
     !isNonEmptyString(emailingDomain.unsubscribeHostname)
   ) {
     throw new EmailingDomainDriverException(

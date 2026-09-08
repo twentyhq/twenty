@@ -1,0 +1,1 @@
+export const CLICK_TRACKING_HOSTNAME_PREFIX = 'lnk';

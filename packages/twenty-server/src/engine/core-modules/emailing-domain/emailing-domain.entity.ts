@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
@@ -11,13 +12,14 @@ import {
 
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
-import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
+import { ManagedHostnameStatus } from 'src/engine/core-modules/dns-manager/types/managed-hostname-status.type';
 import { VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity({ name: 'emailingDomain', schema: 'core' })
 @ObjectType('EmailingDomain')
 @Unique('IDX_EMAILING_DOMAIN_DOMAIN_UNIQUE', ['domain'])
+@Index('IDX_EMAILING_DOMAIN_CLICK_TRACKING_HOSTNAME', ['clickTrackingHostname'])
 export class EmailingDomainEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -61,8 +63,24 @@ export class EmailingDomainEntity extends WorkspaceRelatedEntity {
 
   @Column({
     type: 'enum',
-    enum: Object.values(UnsubscribeHostnameStatus),
+    enum: Object.values(ManagedHostnameStatus),
     nullable: true,
   })
-  unsubscribeHostnameStatus: UnsubscribeHostnameStatus | null;
+  unsubscribeHostnameStatus: ManagedHostnameStatus | null;
+
+  @Column({ type: 'boolean', nullable: false, default: false })
+  clickTrackingEnabled: boolean;
+
+  @Column({ type: 'varchar', nullable: true })
+  clickTrackingHostname: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  clickTrackingHostnameId: string | null;
+
+  @Column({
+    type: 'enum',
+    enum: Object.values(ManagedHostnameStatus),
+    nullable: true,
+  })
+  clickTrackingHostnameStatus: ManagedHostnameStatus | null;
 }

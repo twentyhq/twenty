@@ -33,6 +33,7 @@ import { EmailBillingService } from 'src/modules/emailing/services/email-billing
 import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
+import { ClickTrackingContentService } from 'src/modules/emailing/services/click-tracking-content.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { resolveCampaignSendFailure } from 'src/modules/emailing/utils/resolve-campaign-send-failure.util';
@@ -60,6 +61,7 @@ export class MessageCampaignDeliveryService {
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly emailBillingService: EmailBillingService,
     private readonly campaignVariableService: CampaignVariableService,
+    private readonly clickTrackingContentService: ClickTrackingContentService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly campaignSendSlotService: CampaignSendSlotService,
@@ -309,6 +311,14 @@ export class MessageCampaignDeliveryService {
       variables,
     });
 
+    const trackedHtml = await this.clickTrackingContentService.applyTo({
+      workspaceId,
+      emailingDomainId,
+      messageCampaignId: campaignId,
+      messageId,
+      html,
+    });
+
     const result = await this.sendOrRecordFailure({
       messageId,
       claimToken,
@@ -320,7 +330,7 @@ export class MessageCampaignDeliveryService {
         to: [recipientEmail],
         subject,
         text: plainText,
-        html,
+        html: trackedHtml,
         sendKind: 'MARKETING',
         unsubscribeTopicId: campaign.unsubscribeTopicId ?? undefined,
       },

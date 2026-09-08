@@ -8,10 +8,10 @@ import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-moni
 import { NON_TERMINAL_EMAILING_DOMAIN_STATUSES } from 'src/engine/core-modules/emailing-domain/constants/non-terminal-emailing-domain-statuses.constant';
 import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
-import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
+import { ManagedHostnameStatus } from 'src/engine/core-modules/dns-manager/types/managed-hostname-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
-import { UnsubscribeHostnameService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service';
+import { EmailingHostnamesService } from 'src/engine/core-modules/emailing-domain/services/emailing-hostnames.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -26,7 +26,7 @@ export class CheckEmailingDomainVerificationCronJob {
     @InjectRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: Repository<EmailingDomainEntity>,
     private readonly emailingDomainService: EmailingDomainService,
-    private readonly unsubscribeHostnameService: UnsubscribeHostnameService,
+    private readonly emailingHostnamesService: EmailingHostnamesService,
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
   ) {}
 
@@ -37,7 +37,7 @@ export class CheckEmailingDomainVerificationCronJob {
   )
   async handle(): Promise<void> {
     await this.refreshUnverifiedDomains();
-    await this.refreshPendingUnsubscribeHostnames();
+    await this.refreshPendingHostnames();
     await this.reprovisionVerifiedWorkspaces();
   }
 
@@ -83,18 +83,24 @@ export class CheckEmailingDomainVerificationCronJob {
     }
   }
 
-  private async refreshPendingUnsubscribeHostnames(): Promise<void> {
+  private async refreshPendingHostnames(): Promise<void> {
     const verifiedDomainsWithPendingHostname =
       await this.emailingDomainRepository.find({
-        where: {
-          status: EmailingDomainStatus.VERIFIED,
-          unsubscribeHostnameStatus: UnsubscribeHostnameStatus.PENDING,
-        },
+        where: [
+          {
+            status: EmailingDomainStatus.VERIFIED,
+            unsubscribeHostnameStatus: ManagedHostnameStatus.PENDING,
+          },
+          {
+            status: EmailingDomainStatus.VERIFIED,
+            clickTrackingHostnameStatus: ManagedHostnameStatus.PENDING,
+          },
+        ],
         select: ['id', 'workspaceId'],
       });
 
     for (const emailingDomain of verifiedDomainsWithPendingHostname) {
-      await this.unsubscribeHostnameService.sync(
+      await this.emailingHostnamesService.sync(
         emailingDomain.workspaceId,
         emailingDomain.id,
         { provision: false },

@@ -17,7 +17,7 @@ import {
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { DmarcRecordService } from 'src/engine/core-modules/emailing-domain/services/dmarc-record.service';
-import { UnsubscribeHostnameService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service';
+import { EmailingHostnamesService } from 'src/engine/core-modules/emailing-domain/services/emailing-hostnames.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -34,7 +34,7 @@ export class EmailingDomainService {
     @InjectRepository(EmailingDomainEntity)
     private readonly globalEmailingDomainRepository: Repository<EmailingDomainEntity>,
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
-    private readonly unsubscribeHostnameService: UnsubscribeHostnameService,
+    private readonly emailingHostnamesService: EmailingHostnamesService,
     private readonly dmarcRecordService: DmarcRecordService,
   ) {}
 
@@ -42,7 +42,7 @@ export class EmailingDomainService {
     emailingDomain: EmailingDomainEntity,
   ): Promise<EmailingDomainEntity> {
     return this.dmarcRecordService.withDnsRecord(
-      await this.unsubscribeHostnameService.withDnsRecords(emailingDomain),
+      await this.emailingHostnamesService.withDnsRecords(emailingDomain),
     );
   }
 
@@ -88,7 +88,7 @@ export class EmailingDomainService {
         verifiedAt: isVerifiedOnCreation ? new Date() : null,
       });
 
-    await this.unsubscribeHostnameService.sync(workspaceId, emailingDomain.id, {
+    await this.emailingHostnamesService.sync(workspaceId, emailingDomain.id, {
       provision: true,
     });
 
@@ -128,7 +128,7 @@ export class EmailingDomainService {
       return;
     }
 
-    await this.unsubscribeHostnameService.deprovision(emailingDomain);
+    await this.emailingHostnamesService.deprovision(emailingDomain);
     await this.deleteRemoteEmailingDomain(emailingDomain);
     await this.emailingDomainRepository.delete(workspaceId, {
       id: emailingDomain.id,
@@ -144,7 +144,7 @@ export class EmailingDomainService {
       emailingDomainId,
     );
 
-    await this.unsubscribeHostnameService.deprovision(emailingDomain);
+    await this.emailingHostnamesService.deprovision(emailingDomain);
     await this.deleteRemoteEmailingDomain(emailingDomain);
     await this.emailingDomainRepository.delete(workspace.id, {
       id: emailingDomain.id,
@@ -228,7 +228,7 @@ export class EmailingDomainService {
       },
     );
 
-    await this.unsubscribeHostnameService.sync(workspaceId, emailingDomain.id, {
+    await this.emailingHostnamesService.sync(workspaceId, emailingDomain.id, {
       provision: true,
     });
 
