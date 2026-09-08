@@ -5,7 +5,8 @@ import { type CompanionState } from '../shared/types';
 import { Field } from '@ui/input/Field/Field';
 import { MainButton } from '@ui/input/MainButton/MainButton';
 import { IconArrowUpRight, IconArrowRight, IconRefresh } from 'twenty-ui/icon';
-import { type ActionProps, SetupHeading, Button, Empty } from './components';
+import { Button } from '@ui/input/Button/Button';
+import { type ActionProps, SetupHeading, Empty } from './components';
 import { IS_PREVIEW } from './useCompanion';
 import { Permissions } from './Permissions';
 
@@ -26,7 +27,6 @@ const Welcome = ({ state, isPending, command }: ActionProps) => {
         }}
       >
         <Field.Root className="workspace-url-field">
-          <Field.Label>{i18n._('Workspace URL')}</Field.Label>
           <Field.Control
             id="workspace-url"
             aria-label={i18n._('Workspace URL')}
@@ -43,28 +43,18 @@ const Welcome = ({ state, isPending, command }: ActionProps) => {
           />
           <Field.Error />
         </Field.Root>
-        <div className="setup-actions">
-          <MainButton
-            fullWidth
-            type="submit"
-            disabled={
-              isPending('connect') || (!window.companion && !IS_PREVIEW)
-            }
-            title={
-              state.connection === 'connecting'
-                ? i18n._('Waiting for your browser…')
-                : i18n._('Connect to Twenty')
-            }
-            Icon={IconArrowUpRight}
-          />
-        </div>
+        <MainButton
+          fullWidth
+          type="submit"
+          disabled={isPending('connect') || (!window.companion && !IS_PREVIEW)}
+          title={
+            state.connection === 'connecting'
+              ? i18n._('Waiting for your browser…')
+              : i18n._('Connect to Twenty')
+          }
+          Icon={IconArrowUpRight}
+        />
       </form>
-      <Button
-        variant="tertiary"
-        title={i18n._('Set up Desktop Recorder in Twenty')}
-        disabled={!serverUrl || isPending('open-desktop-setup')}
-        onClick={() => void command({ type: 'open-desktop-setup', serverUrl })}
-      />
     </section>
   );
 };
@@ -75,15 +65,13 @@ const Ready = ({ isPending, command }: ActionProps) => (
       title={i18n._('You are ready')}
       continuation={i18n._('for your next conversation')}
     />
-    <div className="setup-actions">
-      <MainButton
-        fullWidth
-        disabled={isPending('complete-setup')}
-        onClick={() => void command({ type: 'complete-setup' })}
-        title={i18n._('Open my workspace')}
-        Icon={IconArrowRight}
-      />
-    </div>
+    <MainButton
+      fullWidth
+      disabled={isPending('complete-setup')}
+      onClick={() => void command({ type: 'complete-setup' })}
+      title={i18n._('Open my workspace')}
+      Icon={IconArrowRight}
+    />
   </section>
 );
 
