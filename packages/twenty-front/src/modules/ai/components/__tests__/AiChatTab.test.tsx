@@ -30,9 +30,23 @@ jest.mock('@/ai/components/AgentChatStreamingPartsDiffSyncEffect', () => ({
 jest.mock('@/ai/components/AiChatQueuedMessages', () => ({
   AiChatQueuedMessages: () => null,
 }));
-jest.mock('@/ai/components/AiChatEditorSection', () => ({
-  AiChatEditorSection: () => <textarea aria-label="Message" />,
-}));
+jest.mock('@/ai/components/AiChatEditorSection', () => {
+  const { useContext } = jest.requireActual<typeof React>('react');
+  const { AiChatMessageListPreambleContext } = jest.requireActual(
+    '@/ai/contexts/AiChatMessageListPreambleContext',
+  );
+  return {
+    AiChatEditorSection: () => (
+      <textarea
+        aria-label={
+          useContext(AiChatMessageListPreambleContext)
+            ? 'Setup message'
+            : 'Message'
+        }
+      />
+    ),
+  };
+});
 jest.mock('@/onboarding/components/WelcomeOverlay/WelcomePersonChip', () => ({
   WelcomePersonChip: () => null,
 }));
@@ -80,6 +94,9 @@ describe.each([AI_CHAT_SURFACE.PAGE, AI_CHAT_SURFACE.SIDE_PANEL])(
       renderChat();
 
       expect(screen.getByText('Welcome to your workspace')).toBeInTheDocument();
+      expect(
+        screen.getByRole('textbox', { name: 'Setup message' }),
+      ).toBeInTheDocument();
       expect(screen.getByRole('status')).toHaveTextContent(
         'Starting workspace setup',
       );

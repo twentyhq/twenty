@@ -2,7 +2,9 @@ import { useLayoutEffect } from 'react';
 import { useStore } from 'jotai';
 
 import { hasOpenedWorkspaceSetupChatSidePanelState } from '@/onboarding/states/hasOpenedWorkspaceSetupChatSidePanelState';
-import { useLocation } from 'react-router-dom';
+import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
+import { Navigate, useLocation } from 'react-router-dom';
 
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
@@ -16,6 +18,7 @@ export const WorkspaceSetupChatSidePanelEffect = () => {
   );
   const store = useStore();
   const { pathname } = useLocation();
+  const { defaultHomePagePath } = useDefaultHomePagePath();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   useLayoutEffect(() => {
@@ -27,7 +30,8 @@ export const WorkspaceSetupChatSidePanelEffect = () => {
     if (
       store.get(hasOpenedWorkspaceSetupChatSidePanelState.atom) ||
       isAiChatPath(pathname) ||
-      isSettingsPath(pathname)
+      isSettingsPath(pathname) ||
+      store.get(shouldContinueAiChatInSidePanelState.atom)
     ) {
       return;
     }
@@ -35,6 +39,15 @@ export const WorkspaceSetupChatSidePanelEffect = () => {
     store.set(hasOpenedWorkspaceSetupChatSidePanelState.atom, true);
     openAskAiPage({ resetNavigationStack: true });
   }, [shouldOpenAiChatAfterOnboarding, store, pathname, openAskAiPage]);
+
+  if (
+    shouldOpenAiChatAfterOnboarding &&
+    !store.get(hasOpenedWorkspaceSetupChatSidePanelState.atom) &&
+    !store.get(shouldContinueAiChatInSidePanelState.atom) &&
+    isSettingsPath(pathname)
+  ) {
+    return <Navigate to={defaultHomePagePath} replace />;
+  }
 
   return null;
 };

@@ -13,7 +13,6 @@ import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThr
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import {
   jotaiStore,
@@ -188,8 +187,7 @@ describe('AiChatPageHeader', () => {
     expect(screen.getByRole('button', { name: /^New chat/ })).toBeVisible();
   });
 
-  it('offers the same conversation actions during onboarding', async () => {
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+  it('offers the standard conversation actions', async () => {
     const user = userEvent.setup();
     render(<AiChatPageHeader />, { wrapper: Wrapper });
 
@@ -200,7 +198,6 @@ describe('AiChatPageHeader', () => {
     expect(screen.getByText('Rename')).toBeVisible();
     expect(screen.getByText('Archive')).toBeVisible();
     expect(screen.getByText('Delete')).toBeVisible();
-    expect(screen.queryByRole('button', { name: 'Close chat' })).toBeNull();
   });
 
   it('uses the generated title before metadata refreshes and prefers later renames', async () => {

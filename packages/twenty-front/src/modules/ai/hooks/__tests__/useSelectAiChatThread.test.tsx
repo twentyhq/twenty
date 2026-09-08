@@ -41,4 +41,20 @@ describe('useSelectAiChatThread', () => {
       );
     },
   );
+  it('preserves onboarding when reselecting the current setup conversation', () => {
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    jotaiStore.set(currentAiChatThreadState.atom, 'onboarding-thread');
+    const { result } = renderHook(() => useSelectAiChatThread(), {
+      wrapper: Wrapper,
+    });
+
+    act(() => result.current.selectAiChatThread('onboarding-thread'));
+
+    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
+      'onboarding-thread',
+    );
+    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
+      true,
+    );
+  });
 });

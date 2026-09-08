@@ -5,11 +5,16 @@ import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { AiChatPageContinueInSidePanelEffect } from '@/ai/components/AiChatPageContinueInSidePanelEffect';
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { WorkspaceSetupChatSidePanelEffect } from '@/onboarding/effect-components/WorkspaceSetupChatSidePanelEffect';
 import { SidePanelAskAiHandoffEffect } from '@/side-panel/components/SidePanelAskAiHandoffEffect';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+
+jest.mock('@/navigation/hooks/useDefaultHomePagePath', () => ({
+  useDefaultHomePagePath: () => ({ defaultHomePagePath: '/objects/companies' }),
+}));
 
 const openAskAiPageMock = jest.fn();
 
@@ -34,6 +39,7 @@ const RouterUnderTest = ({ initialPath }: { initialPath: string }) => (
   <JotaiProvider store={jotaiStore}>
     <MemoryRouter initialEntries={[initialPath]}>
       {/* The handoff lives in the persistent layout, outside the routes. */}
+      <WorkspaceSetupChatSidePanelEffect />
       <SidePanelAskAiHandoffEffect
         onContinueChatFromFullWidth={onContinueChatFromFullWidthMock}
       />
@@ -68,6 +74,7 @@ describe('SidePanelAskAiHandoffEffect', () => {
       navigateAwayFromChatPage?.();
     });
 
+    expect(openAskAiPageMock).toHaveBeenCalledTimes(1);
     expect(openAskAiPageMock).toHaveBeenCalledWith({
       resetNavigationStack: true,
     });

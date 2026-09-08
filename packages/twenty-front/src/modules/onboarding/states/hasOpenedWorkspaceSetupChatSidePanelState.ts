@@ -4,5 +4,4 @@ export const hasOpenedWorkspaceSetupChatSidePanelState =
   createAtomState<boolean>({
     key: 'hasOpenedWorkspaceSetupChatSidePanelState',
     defaultValue: false,
-    useSessionStorage: true,
   });

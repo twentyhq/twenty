@@ -2,12 +2,17 @@ import { act, render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 
+import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import { WorkspaceSetupChatSidePanelEffect } from '@/onboarding/effect-components/WorkspaceSetupChatSidePanelEffect';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+
+jest.mock('@/navigation/hooks/useDefaultHomePagePath', () => ({
+  useDefaultHomePagePath: () => ({ defaultHomePagePath: '/objects/companies' }),
+}));
 
 const openAskAiPage = jest.fn();
 jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({
@@ -55,7 +60,7 @@ describe('WorkspaceSetupChatSidePanelEffect', () => {
     const { unmount } = renderEffect();
     expect(
       sessionStorage.getItem('hasOpenedWorkspaceSetupChatSidePanelState'),
-    ).toBe('true');
+    ).toBeNull();
     unmount();
     renderEffect();
 
@@ -79,7 +84,7 @@ describe('WorkspaceSetupChatSidePanelEffect', () => {
     expect(openAskAiPage).toHaveBeenCalledTimes(1);
   });
 
-  it.each(['/chat', '/chat/thread', '/settings/profile'])(
+  it.each(['/chat', '/chat/thread'])(
     'does not open a second chat surface on %s',
     (pathname) => {
       jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
@@ -87,4 +92,26 @@ describe('WorkspaceSetupChatSidePanelEffect', () => {
       expect(openAskAiPage).not.toHaveBeenCalled();
     },
   );
+  it('returns to the homepage to open setup when the saved destination is settings', () => {
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    renderEffect('/settings/profile');
+    expect(openAskAiPage).toHaveBeenCalledTimes(1);
+  });
+
+  it('lets the expanded chat handoff own opening the panel', () => {
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    jotaiStore.set(shouldContinueAiChatInSidePanelState.atom, true);
+    renderEffect();
+    expect(openAskAiPage).not.toHaveBeenCalled();
+  });
+
+  it('reopens an unfinished setup after reloading the application', () => {
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    const { unmount } = renderEffect();
+    unmount();
+    resetJotaiStore();
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    renderEffect();
+    expect(openAskAiPage).toHaveBeenCalledTimes(2);
+  });
 });

@@ -79,15 +79,13 @@ export const AiChatTab = () => {
         />
       )}
       {!isDraggingFile && (
-        <>
-          <AiChatMessageListPreambleContext.Provider
-            value={isWorkspaceSetupChat ? <WorkspaceSetupChatPreamble /> : null}
-          >
-            <AiChatTabMessageList />
-          </AiChatMessageListPreambleContext.Provider>
+        <AiChatMessageListPreambleContext.Provider
+          value={isWorkspaceSetupChat ? <WorkspaceSetupChatPreamble /> : null}
+        >
+          <AiChatTabMessageList />
           <AiChatQueuedMessages />
           <AiChatEditorSection key={editorSectionKey} />
-        </>
+        </AiChatMessageListPreambleContext.Provider>
       )}
     </StyledContainer>
   );

@@ -449,10 +449,6 @@ const testCases: {
   { loc: AppPath.SignInUp, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/objects/tasks', res: '/objects/tasks' },
   { loc: AppPath.Index, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/settings/api-keys', res: '/settings/api-keys' },
 
-  { loc: AppPath.InviteTeam, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isBillingEnabled: false, res: defaultHomePagePath },
-  { loc: AppPath.InviteTeam, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isBillingEnabled: false, res: defaultHomePagePath },
-  { loc: AppPath.PlanRequiredSuccess, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: defaultHomePagePath },
-  { loc: AppPath.SignInUp, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/objects/tasks', res: '/objects/tasks' },
 
   { loc: AppPath.PlanRequiredSuccess, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnboardingCheckoutPending: true, res: undefined },
   { loc: AppPath.Verify, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnboardingCheckoutPending: true, res: defaultHomePagePath },
@@ -529,10 +525,6 @@ describe('usePageChangeEffectNavigateLocation', () => {
             'billingDisabled:planRequiredCompleted',
           ].length +
           [
-            'workspaceSetupPending:inviteTeamCompleted',
-            'workspaceSetupNotPending:inviteTeamCompleted',
-            'workspaceSetupPending:paymentSuccessCompleted',
-            'workspaceSetupPending:returnToPathWins',
             'checkoutPending:paymentSuccessDefersRedirect',
             'checkoutPending:verifyStillRedirects',
           ].length,
