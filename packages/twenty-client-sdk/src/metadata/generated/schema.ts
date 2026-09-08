@@ -1087,6 +1087,7 @@ export interface BillingProductMetadata {
     planKey: BillingPlanKey
     priceUsageBased: BillingUsageType
     productKey: BillingProductKey
+    isLegacy?: Scalars['String']
     __typename: 'BillingProductMetadata'
 }
 
@@ -1106,6 +1107,7 @@ export interface BillingPriceLicensed {
     stripePriceId: Scalars['String']
     priceUsageType: BillingUsageType
     creditAmount?: Scalars['Float']
+    isSellable: Scalars['Boolean']
     __typename: 'BillingPriceLicensed'
 }
 
@@ -1157,6 +1159,8 @@ export interface BillingSubscriptionItem {
     hasReachedCurrentPeriodCap: Scalars['Boolean']
     quantity?: Scalars['Float']
     stripePriceId: Scalars['String']
+    unitAmount?: Scalars['Float']
+    creditAmount?: Scalars['Float']
     billingProduct: BillingProductDTO
     __typename: 'BillingSubscriptionItem'
 }
@@ -4628,6 +4632,7 @@ export interface BillingProductMetadataGenqlSelection{
     planKey?: boolean | number
     priceUsageBased?: boolean | number
     productKey?: boolean | number
+    isLegacy?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4638,6 +4643,7 @@ export interface BillingPriceLicensedGenqlSelection{
     stripePriceId?: boolean | number
     priceUsageType?: boolean | number
     creditAmount?: boolean | number
+    isSellable?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4693,6 +4699,8 @@ export interface BillingSubscriptionItemGenqlSelection{
     hasReachedCurrentPeriodCap?: boolean | number
     quantity?: boolean | number
     stripePriceId?: boolean | number
+    unitAmount?: boolean | number
+    creditAmount?: boolean | number
     billingProduct?: BillingProductDTOGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
