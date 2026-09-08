@@ -439,6 +439,48 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       );
     });
 
+    it('should not trigger workflow for records of a system object even when no role can be resolved', async () => {
+      const systemPayload: WorkspaceEventBatch<ObjectRecordUpdateEvent> = {
+        ...mockPayload,
+        objectMetadata: createMockFlatObjectMetadata({
+          readability: MetadataReadability.SYSTEM,
+        }),
+      };
+
+      workspaceCacheService.getOrRecompute.mockImplementation(((
+        _workspaceId: string,
+        keys: string[],
+      ) =>
+        Promise.resolve(
+          keys.includes('featureFlagsMap')
+            ? {
+                featureFlagsMap: {
+                  [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: true,
+                },
+                flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
+                flatRoleMaps: { byUniversalIdentifier: {} },
+              }
+            : {
+                workflowAutomatedTriggerMaps: {
+                  byWorkflowId: {
+                    [workflowId]: {
+                      type: AutomatedTriggerType.DATABASE_EVENT,
+                      coreWorkflowVersionId: `core-version-${workflowId}`,
+                      workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
+                      workflowId,
+                      settings: { eventName: databaseEventName },
+                    },
+                  },
+                },
+              },
+        )) as never);
+
+      await listener.handleObjectRecordUpdateEvent(systemPayload);
+
+      expect(recordShareService.findByRecordIds).not.toHaveBeenCalled();
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
+
     it('should handle multiple events in a batch', async () => {
       const batchPayload: WorkspaceEventBatch<any> = {
         ...mockPayload,
