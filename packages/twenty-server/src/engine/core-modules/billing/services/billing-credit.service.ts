@@ -80,18 +80,13 @@ export class BillingCreditService {
 
     const effectiveAt = params.effectiveAt ?? new Date();
 
-    const replayedGrant = isDefined(params.idempotencyKey)
-      ? await this.billingCreditGrantService.findGrantByIdempotencyKey(
-          workspaceId,
-          params.idempotencyKey,
-        )
-      : null;
-
     // A replay answers with what the first attempt wrote, so the operator's
     // intent is never re-derived: the subscription that anchored the original
     // expiry may have been canceled since, and the insert would discard the
     // answer anyway.
-    const grant = isDefined(replayedGrant)
+    const knownGrant = await this.findGrantByIdempotencyKey(params);
+
+    const grant = isDefined(knownGrant)
       ? null
       : await this.billingCreditGrantService.createGrant({
           ...params,
@@ -104,9 +99,15 @@ export class BillingCreditService {
           }),
         });
 
-    // Answers with the row the first attempt wrote rather than null, so a caller
-    // recovering from a lost response does not have to look it up again.
+    // Answers with the row that already exists rather than null, so a caller
+    // recovering from a lost response does not have to look it up again. Read
+    // again when the check above came back empty: the insert still reported a
+    // duplicate, so another attempt won the key between the two, and only the
+    // second read can see it.
     if (!isDefined(grant)) {
+      const alreadyWrittenGrant =
+        knownGrant ?? (await this.findGrantByIdempotencyKey(params));
+
       this.logger.log(
         `Replayed credit grant for workspace ${workspaceId} (idempotency key ${params.idempotencyKey}), repairing derived state`,
       );
@@ -118,7 +119,7 @@ export class BillingCreditService {
         subscription,
       });
 
-      return replayedGrant;
+      return alreadyWrittenGrant;
     }
 
     await this.refreshWorkspaceCreditState({
@@ -128,6 +129,20 @@ export class BillingCreditService {
     });
 
     return grant;
+  }
+
+  private async findGrantByIdempotencyKey({
+    workspaceId,
+    idempotencyKey,
+  }: GrantCreditsParams): Promise<BillingCreditGrantEntity | null> {
+    if (!isDefined(idempotencyKey)) {
+      return null;
+    }
+
+    return this.billingCreditGrantService.findGrantByIdempotencyKey(
+      workspaceId,
+      idempotencyKey,
+    );
   }
 
   async revokeGrant({
