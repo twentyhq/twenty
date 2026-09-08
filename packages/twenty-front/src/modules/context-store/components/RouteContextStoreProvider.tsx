@@ -6,9 +6,9 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { useLocation, useParams, useSearchParams } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { useLocation, useMatch, useSearchParams } from 'react-router-dom';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { ViewKey, ViewType } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
@@ -39,17 +39,22 @@ const getViewId = (
 
 export const RouteContextStoreProvider = () => {
   const location = useLocation();
-  const isRecordIndexPage = isMatchingLocation(
-    location,
-    AppPath.RecordIndexPage,
-  );
-  const isRecordShowPage = isMatchingLocation(location, AppPath.RecordShowPage);
+  const recordIndexPageMatch = useMatch(AppPath.RecordIndexPage);
+  const recordShowPageMatch = useMatch(AppPath.RecordShowPage);
+  const settingsObjectPageMatch = useMatch({
+    path: getSettingsPath(SettingsPath.ObjectDetail),
+    end: false,
+  });
+  const isRecordIndexPage = isDefined(recordIndexPageMatch);
+  const isRecordShowPage = isDefined(recordShowPageMatch);
   const isStandalonePage = isMatchingLocation(location, AppPath.PageLayoutPage);
   const isAiChatPage = isMatchingLocation(location, AppPath.AiChat);
   const isSettingsPage = useIsSettingsPage();
 
-  const objectNamePlural = useParams().objectNamePlural ?? '';
-  const objectNameSingular = useParams().objectNameSingular ?? '';
+  const objectNamePlural =
+    recordIndexPageMatch?.params.objectNamePlural ??
+    settingsObjectPageMatch?.params.objectNamePlural;
+  const objectNameSingular = recordShowPageMatch?.params.objectNameSingular;
 
   const [searchParams] = useSearchParams();
   const viewIdQueryParamRaw = searchParams.get('viewId');
