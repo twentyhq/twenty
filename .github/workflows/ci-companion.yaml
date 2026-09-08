@@ -1,0 +1,39 @@
+name: CI Desktop
+
+on:
+  pull_request:
+    paths:
+      - 'packages/twenty-companion/**'
+      - 'packages/twenty-ui/**'
+      - 'package.json'
+      - 'yarn.lock'
+      - '.github/workflows/ci-companion.yaml'
+  push:
+    branches: [main]
+    paths:
+      - 'packages/twenty-companion/**'
+      - 'packages/twenty-ui/**'
+      - 'package.json'
+      - 'yarn.lock'
+      - '.github/workflows/ci-companion.yaml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  desktop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: ./.github/actions/yarn-install
+      - name: Typecheck
+        run: yarn workspace @twentyhq/companion typecheck
+      - name: Test
+        run: yarn workspace @twentyhq/companion test
+      - name: Build
+        run: yarn workspace @twentyhq/companion build

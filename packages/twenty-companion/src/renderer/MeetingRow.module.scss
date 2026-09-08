@@ -1,0 +1,9 @@
+.popup {
+  backdrop-filter: var(--t-blur-medium);
+  background: var(--t-background-transparent-primary);
+  border: 1px solid var(--t-border-color-medium);
+  border-radius: var(--t-border-radius-md);
+  box-shadow: var(--t-box-shadow-strong);
+  overflow: hidden;
+  padding: var(--t-spacing-1);
+}
