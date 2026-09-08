@@ -1,7 +1,8 @@
 import { Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
-import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey, type MetadataReadability } from 'twenty-shared/types';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
@@ -10,12 +11,16 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
+import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
 import { computeWebhookOperationsToMatch } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-operations-to-match.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
+import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
+import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
+import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;
 
@@ -26,11 +31,12 @@ export class CallWebhookJobsJob {
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly recordShareService: RecordShareService,
   ) {}
 
   @Process(CallWebhookJobsJob.name)
   async handle(
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
+    workspaceEventBatch: WorkspaceEventBatchForWebhook<ObjectRecordEvent>,
   ): Promise<void> {
     // If you change that function, double check it does not break Zapier
     // trigger in packages/twenty-zapier/src/triggers/trigger_record.ts
@@ -44,10 +50,11 @@ export class CallWebhookJobsJob {
       operation,
     });
 
-    const { flatWebhookMaps } = await this.workspaceCacheService.getOrRecompute(
-      workspaceEventBatch.workspaceId,
-      ['flatWebhookMaps'],
-    );
+    const { flatWebhookMaps, flatObjectMetadataMaps, featureFlagsMap } =
+      await this.workspaceCacheService.getOrRecompute(
+        workspaceEventBatch.workspaceId,
+        ['flatWebhookMaps', 'flatObjectMetadataMaps', 'featureFlagsMap'],
+      );
 
     const webhooks = Object.values(flatWebhookMaps.byUniversalIdentifier)
       .filter(isDefined)
@@ -57,9 +64,39 @@ export class CallWebhookJobsJob {
         ),
       );
 
+    if (webhooks.length === 0) {
+      return;
+    }
+
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: workspaceEventBatch.objectMetadata.id,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
+
+    const isRecordSharingEnabled =
+      featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] ?? false;
+
+    // Without the readability the batch cannot be gated, so nothing may leave
+    if (isRecordSharingEnabled && !isDefined(flatObjectMetadata)) {
+      this.logger.warn(
+        `Object metadata ${workspaceEventBatch.objectMetadata.id} not found for workspace ${workspaceEventBatch.workspaceId}, dropping the webhook batch`,
+      );
+
+      return;
+    }
+
+    const recordShares =
+      isRecordSharingEnabled && isDefined(flatObjectMetadata)
+        ? await this.fetchRecordShares({
+            workspaceEventBatch,
+            readability: flatObjectMetadata.readability,
+          })
+        : undefined;
+
     const webhookEvents = transformEventBatchToWebhookEvents({
       workspaceEventBatch,
       webhooks,
+      recordShares,
     });
 
     const webhookEventsChunks = chunk(webhookEvents, WEBHOOK_JOBS_CHUNK_SIZE);
@@ -70,6 +107,34 @@ export class CallWebhookJobsJob {
         webhookEventsChunk,
         { retryLimit: 3 },
       );
+    }
+  }
+
+  private async fetchRecordShares({
+    workspaceEventBatch,
+    readability,
+  }: {
+    workspaceEventBatch: WorkspaceEventBatchForWebhook<ObjectRecordEvent>;
+    readability: MetadataReadability;
+  }): Promise<RecordShare[] | undefined> {
+    const gateKind = resolveRecordShareGateKind({
+      readability,
+      isOwningApplication: false,
+    });
+
+    switch (gateKind) {
+      case 'open':
+        return undefined;
+      case 'deny':
+        return [];
+      case 'private':
+        return this.recordShareService.findByRecordIds({
+          workspaceId: workspaceEventBatch.workspaceId,
+          objectMetadataId: workspaceEventBatch.objectMetadata.id,
+          recordIds: workspaceEventBatch.events.map((event) => event.recordId),
+        });
+      default:
+        assertUnreachable(gateKind);
     }
   }
 }
