@@ -24,9 +24,12 @@ export const validateShareWithPrincipalsOrThrow = ({
     const { principalId, principalType } =
       resolveShareWithPrincipal(shareWithEntry);
 
+    const flatWorkspaceMember = flatWorkspaceMemberMaps.byId[principalId];
+
     if (
       principalType === RecordSharePrincipalType.WORKSPACE_MEMBER &&
-      !isDefined(flatWorkspaceMemberMaps.byId[principalId])
+      (!isDefined(flatWorkspaceMember) ||
+        isDefined(flatWorkspaceMember.deletedAt))
     ) {
       throw new CommonQueryRunnerException(
         `shareWith names a workspace member that does not belong to this workspace: ${principalId}`,
