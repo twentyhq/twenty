@@ -12,11 +12,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
 import { CALENDAR_EVENT_WEBHOOK_SYNC_INLINE_IMPORT_MAX_EVENTS } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-inline-import-max-events.constant';
-
-export type CalendarEventWebhookSyncOutcome =
-  | 'SYNC_COMPLETED'
-  | 'CHANNEL_BUSY'
-  | 'CHANNEL_NOT_SYNCABLE';
+import { type CalendarEventWebhookSyncOutcome } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/types/calendar-event-webhook-sync-outcome.type';
 
 @Injectable()
 export class CalendarEventWebhookSyncService {
