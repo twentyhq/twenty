@@ -280,15 +280,6 @@ export class WorkspaceMigrationRunnerService {
         flatMapsKeys: allFlatEntityMapsKeys,
       });
 
-    const cloneStart = performance.now();
-
-    let allFlatEntityMaps = structuredClone(cachedAllFlatEntityMaps);
-
-    this.logger.perf(
-      `[install-perf] Runner flat-maps clone took ${(performance.now() - cloneStart).toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
-      'Runner',
-    );
-
     this.logger.perfTimeEnd('Runner', 'Initial cache retrieval');
 
     const initialCacheRetrievalMs =
@@ -302,6 +293,15 @@ export class WorkspaceMigrationRunnerService {
 
     this.logger.perf(
       `[install-perf] Runner initial cache retrieval (getOrRecomputeManyOrAllFlatEntityMaps) took ${initialCacheRetrievalMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
+      'Runner',
+    );
+
+    const cloneStart = performance.now();
+
+    let allFlatEntityMaps = structuredClone(cachedAllFlatEntityMaps);
+
+    this.logger.perf(
+      `[install-perf] Runner flat-maps clone took ${(performance.now() - cloneStart).toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
       'Runner',
     );
 
