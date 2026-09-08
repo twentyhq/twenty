@@ -1,0 +1,54 @@
+import { DataSource, QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
+
+// Converts the grants already on the ledger to the model the paired fast
+// command opened the column for. Under the old one a live grant carried the end
+// of its own period; the new settlement reads a deadline at or before the
+// boundary it is closing as already spent, drops the grant and carries nothing
+// forward. Every still-live grant therefore has to give up its deadline, or the
+// first period transition after this upgrade destroys the balances the change
+// exists to protect.
+//
+// Until this runs, a workspace whose transition lands first loses the unspent
+// part of its granted credits, so an upgrade that skips --include-slow should
+// run this before the next billing cycle. Rows already expired are left alone:
+// those are tombstones under both models, and clearing them would hand back
+// credits that had genuinely lapsed.
+@RegisteredInstanceCommand('2.40.0', 1788877128693, { type: 'slow' })
+export class ConvertLiveCreditGrantsToNoExpirySlowInstanceCommand implements SlowInstanceCommand {
+  async runDataMigration(dataSource: DataSource): Promise<void> {
+    if (!(await isBillingCreditGrantPresent(dataSource))) {
+      return;
+    }
+
+    await dataSource.query(
+      `UPDATE "core"."billingCreditGrant"
+       SET "expiresAt" = NULL
+       WHERE "revokedAt" IS NULL AND "expiresAt" > now()`,
+    );
+  }
+
+  public async up(_queryRunner: QueryRunner): Promise<void> {
+    return;
+  }
+
+  // The column is left nullable by the paired fast command, so there is no
+  // schema state to undo here and no date to invent for the rows cleared above.
+  public async down(_queryRunner: QueryRunner): Promise<void> {
+    return;
+  }
+}
+
+// The table only exists where billing is enabled, and the upgrade has to run
+// on the instances where it does not.
+const isBillingCreditGrantPresent = async (
+  dataSource: DataSource,
+): Promise<boolean> => {
+  const rows = await dataSource.query(
+    `SELECT 1 FROM pg_tables WHERE schemaname = 'core' AND tablename = 'billingCreditGrant'`,
+  );
+
+  return rows.length > 0;
+};

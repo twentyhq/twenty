@@ -180,6 +180,7 @@ import { AddLogoToConnectionProviderFastInstanceCommand } from 'src/database/com
 import { AddReadabilityToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788548844925-add-readability-to-object-metadata';
 import { AddAuthFailedReasonToConnectedAccountFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788781233982-add-auth-failed-reason-to-connected-account';
 import { MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788871259040-make-billing-credit-grant-expires-at-nullable';
+import { ConvertLiveCreditGrantsToNoExpirySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1788877128693-convert-live-credit-grants-to-no-expiry';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -362,4 +363,5 @@ export const INSTANCE_COMMANDS = [
   AddCampaignDeliveryClaimTokenIndexFastInstanceCommand,
   AddAuthFailedReasonToConnectedAccountFastInstanceCommand,
   MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand,
+  ConvertLiveCreditGrantsToNoExpirySlowInstanceCommand,
 ];
