@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { type WebhookSubscriptionChannelType } from 'twenty-shared/types';
 
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
@@ -27,7 +26,6 @@ type WebhookSubscribableChannelReference = Pick<
 export class WebhookSubscriptionExceptionHandlerService {
   constructor(
     private readonly webhookSubscriptionStatusService: WebhookSubscriptionStatusService,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   public async handleDriverException(
@@ -49,11 +47,8 @@ export class WebhookSubscriptionExceptionHandlerService {
           );
         case WebhookSubscriptionDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
           return await this.handleInsufficientPermissionsException(
-            exception,
-            operation,
             channelType,
             channel,
-            workspaceId,
           );
         case WebhookSubscriptionDriverExceptionCode.TEMPORARY_ERROR:
           return await this.handleTemporaryException(
@@ -80,11 +75,8 @@ export class WebhookSubscriptionExceptionHandlerService {
         case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
         case ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN:
           return await this.handleInsufficientPermissionsException(
-            exception,
-            operation,
             channelType,
             channel,
-            workspaceId,
           );
         case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
           return await this.handleTemporaryException(
@@ -121,11 +113,8 @@ export class WebhookSubscriptionExceptionHandlerService {
   ): Promise<WebhookSubscriptionRecoveryAction> {
     if (operation === 'CREATE') {
       return await this.handleInsufficientPermissionsException(
-        exception,
-        operation,
         channelType,
         channel,
-        workspaceId,
       );
     }
 
@@ -141,22 +130,9 @@ export class WebhookSubscriptionExceptionHandlerService {
   }
 
   private async handleInsufficientPermissionsException(
-    exception: unknown,
-    operation: WebhookSubscriptionOperation,
     channelType: WebhookSubscriptionChannelType,
     channel: WebhookSubscribableChannelReference,
-    workspaceId: string,
   ): Promise<WebhookSubscriptionRecoveryAction> {
-    this.exceptionHandlerService.captureExceptions([exception], {
-      additionalData: {
-        channelId: channel.id,
-        channelType,
-        connectedAccountId: channel.connectedAccountId,
-        operation,
-      },
-      workspace: { id: workspaceId },
-    });
-
     await this.webhookSubscriptionStatusService.markAsExpired(
       channelType,
       channel.id,
@@ -190,10 +166,6 @@ export class WebhookSubscriptionExceptionHandlerService {
       channelType,
       channel.id,
     );
-
-    this.exceptionHandlerService.captureExceptions([exception], {
-      workspace: { id: workspaceId },
-    });
 
     throw exception;
   }

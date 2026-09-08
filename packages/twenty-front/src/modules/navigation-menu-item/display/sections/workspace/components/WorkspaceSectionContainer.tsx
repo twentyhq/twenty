@@ -118,10 +118,6 @@ export const WorkspaceSectionContainer = ({
     };
   };
 
-  if (flatItems.length === 0 && !isAddToNavigationDropTargetVisible) {
-    return null;
-  }
-
   return (
     <NavigationMenuItemSection
       title={sectionTitle}
