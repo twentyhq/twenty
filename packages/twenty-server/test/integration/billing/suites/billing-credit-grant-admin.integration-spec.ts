@@ -11,10 +11,12 @@ import {
   resetBillingCreditState,
   setupResourceCreditSubscription,
   warmAllowanceCounter,
+  setSubscriptionStatus,
 } from 'test/integration/billing/utils/billing-credit-fixtures.util';
 
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { alignGrantExpiryToPeriodEnd } from 'src/engine/core-modules/billing/utils/align-grant-expiry-to-period-end.util';
 import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
@@ -374,6 +376,35 @@ describe('Admin credit grant and revoke (integration)', () => {
     const first = await callAdminGraphql(GRANT_MUTATION, variables);
     const second = await callAdminGraphql(GRANT_MUTATION, variables);
 
+    expect(second.body.data.grantWorkspaceCredits.id).toBe(
+      first.body.data.grantWorkspaceCredits.id,
+    );
+    expect(await listCreditGrants(workspaceId)).toHaveLength(1);
+  });
+
+  // The refusal to time-box a grant with no billing period must not reach a
+  // replay: the subscription that anchored the original deadline can be gone by
+  // the time the client retries, and the operation already succeeded.
+  it('answers a retried time-boxed grant after the subscription is canceled', async () => {
+    const clientOperationId = randomUUID();
+    const variables = {
+      workspaceId,
+      amount: 25,
+      type: BillingCreditGrantType.SALES,
+      reason: 'Retried after cancellation',
+      clientOperationId,
+      expiresInDays: 30,
+    };
+
+    const first = await callAdminGraphql(GRANT_MUTATION, variables);
+
+    expect(first.body.errors).toBeUndefined();
+
+    await setSubscriptionStatus(workspaceId, SubscriptionStatus.Canceled);
+
+    const second = await callAdminGraphql(GRANT_MUTATION, variables);
+
+    expect(second.body.errors).toBeUndefined();
     expect(second.body.data.grantWorkspaceCredits.id).toBe(
       first.body.data.grantWorkspaceCredits.id,
     );

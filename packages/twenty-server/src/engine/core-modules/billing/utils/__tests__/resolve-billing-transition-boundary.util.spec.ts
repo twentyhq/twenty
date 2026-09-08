@@ -41,9 +41,13 @@ describe('resolveBillingTransitionBoundary', () => {
     expect(boundary).toEqual(FEBRUARY);
   });
 
-  it('stays on the handover the webhook is about when redelivered days later', () => {
+  // invoice.created is stamped when Stripe raised the invoice, not when we got
+  // to it, so a redelivery days later resolves exactly as the first attempt did.
+  // Reading our own clock here used to drag the observation point with the
+  // delay and pick the period end still in the future.
+  it('resolves a redelivery days later to the same handover', () => {
     const boundary = resolveBillingTransitionBoundary({
-      invoiceCreatedAt: new Date('2026-02-03T00:00:00.000Z'),
+      invoiceCreatedAt: FEBRUARY,
       subscriptionCurrentPeriodStart: FEBRUARY,
       subscriptionCurrentPeriodEnd: MARCH,
     });
@@ -51,12 +55,13 @@ describe('resolveBillingTransitionBoundary', () => {
     expect(boundary).toEqual(FEBRUARY);
   });
 
-  // Taking the nearest boundary instead would pick March here, settling a
-  // period that has not closed on partial usage and reserving the idempotency
-  // key the real March transition then needs.
+  // Settling March here would run on partial usage and reserve the idempotency
+  // key the real March transition then needs. The invoice was raised at the
+  // February handover, so that is the boundary it announces however far into
+  // the period we happen to process it.
   it('never settles a period that has not ended yet', () => {
     const boundary = resolveBillingTransitionBoundary({
-      invoiceCreatedAt: new Date('2026-02-20T00:00:00.000Z'),
+      invoiceCreatedAt: FEBRUARY,
       subscriptionCurrentPeriodStart: FEBRUARY,
       subscriptionCurrentPeriodEnd: MARCH,
     });
@@ -74,17 +79,27 @@ describe('resolveBillingTransitionBoundary', () => {
     expect(boundary).toEqual(FEBRUARY);
   });
 
-  // This used to allow an hour for skew against our own clock, which also let a
-  // period end an hour in the future through — the one thing the rule exists to
-  // prevent. Both instants come from Stripe now, so the comparison is exact.
-  //
-  // It also fails in the safe direction: taking the period start re-runs a
-  // settlement that already happened, whose idempotency keys are spent, so it
-  // writes nothing. Taking a period end that has not arrived would settle an
-  // open period on partial usage and burn the key the real transition needs.
-  it('does not accept a period end that has not arrived yet', () => {
+  // Stripe can raise the invoice a moment before it rolls the subscription's
+  // period end. Rejecting the boundary outright here would hand back the period
+  // start, and on a first cycle there is no spent idempotency key to make that
+  // a no-op: the transition would reconstruct a pre-subscription window and
+  // write carry-forward rows into the period still open.
+  it('still reads a boundary the invoice was raised a moment before', () => {
     const boundary = resolveBillingTransitionBoundary({
-      invoiceCreatedAt: new Date('2026-01-31T23:30:00.000Z'),
+      invoiceCreatedAt: new Date('2026-01-31T23:59:59.000Z'),
+      subscriptionCurrentPeriodStart: JANUARY,
+      subscriptionCurrentPeriodEnd: FEBRUARY,
+    });
+
+    expect(boundary).toEqual(FEBRUARY);
+  });
+
+  // The handover is a whole period away from the other candidate, so nothing
+  // realistic reaches the midpoint. An invoice raised nearer the period start
+  // than its end is announcing that start, not a period end still to come.
+  it('does not reach forward to a period end the invoice predates by most of a period', () => {
+    const boundary = resolveBillingTransitionBoundary({
+      invoiceCreatedAt: new Date('2026-01-05T00:00:00.000Z'),
       subscriptionCurrentPeriodStart: JANUARY,
       subscriptionCurrentPeriodEnd: FEBRUARY,
     });

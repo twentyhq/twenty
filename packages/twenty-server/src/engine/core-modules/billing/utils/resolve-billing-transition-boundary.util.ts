@@ -8,16 +8,19 @@
 // about where its own periods hand over, so the boundary is read off it: the
 // invoice only tells us that a handover happened.
 //
-// Of the subscription's two boundaries, the one being announced is the later
-// one if it has already arrived, and the period start otherwise. Taking the
-// nearest instead would let a redelivery hours or days late pick a period end
-// still in the future and settle a period that has not closed, on partial
-// usage, reserving the idempotency key the real transition then needs.
+// Which of the subscription's two boundaries is the handover depends on whether
+// our copy of it has advanced yet, and Stripe raises the invoice at the
+// handover itself. So the answer is whichever boundary the invoice was created
+// nearest to: it is the period end while the subscription still holds the
+// closing window, and the period start once it has moved on.
 //
-// Both instants compared here are issued by Stripe, so there is no skew between
-// them and no tolerance to allow for. Comparing against our own wall clock
-// would need one, and any tolerance wide enough to cover skew is also wide
-// enough to accept a period end that has not arrived.
+// The two candidates are a whole period apart and the invoice sits on the
+// handover, so this resolves with half a period of room on either side. That is
+// what makes it safe where comparing against our own wall clock was not: a
+// redelivery processed days late used to drag the observation point with it,
+// where invoice.created stays pinned to the handover however late we get to it.
+// It also cannot drift toward a period end that has not arrived, because the
+// nearer boundary to the handover is the handover.
 export const resolveBillingTransitionBoundary = ({
   invoiceCreatedAt,
   subscriptionCurrentPeriodStart,
@@ -27,9 +30,16 @@ export const resolveBillingTransitionBoundary = ({
   subscriptionCurrentPeriodStart: Date;
   subscriptionCurrentPeriodEnd: Date;
 }): Date => {
-  if (subscriptionCurrentPeriodEnd.getTime() <= invoiceCreatedAt.getTime()) {
-    return subscriptionCurrentPeriodEnd;
-  }
+  const createdAt = invoiceCreatedAt.getTime();
 
-  return subscriptionCurrentPeriodStart;
+  const distanceToPeriodStart = Math.abs(
+    subscriptionCurrentPeriodStart.getTime() - createdAt,
+  );
+  const distanceToPeriodEnd = Math.abs(
+    subscriptionCurrentPeriodEnd.getTime() - createdAt,
+  );
+
+  return distanceToPeriodEnd < distanceToPeriodStart
+    ? subscriptionCurrentPeriodEnd
+    : subscriptionCurrentPeriodStart;
 };

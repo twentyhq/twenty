@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client/react';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
@@ -75,10 +75,7 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
   const [grantPendingRevocation, setGrantPendingRevocation] =
     useState<CreditGrant | null>(null);
 
-  const creditGrantRows = useMemo(
-    () => collapseCreditGrantChains(creditGrants),
-    [creditGrants],
-  );
+  const creditGrantRows = collapseCreditGrantChains(creditGrants);
   const [isRevoking, setIsRevoking] = useState(false);
 
   const [revokeWorkspaceCreditGrant] = useMutation(
