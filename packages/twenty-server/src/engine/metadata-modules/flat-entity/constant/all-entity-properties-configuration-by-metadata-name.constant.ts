@@ -92,6 +92,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    isSearchable: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     label: {
       toCompare: true,
       toStringify: false,
@@ -1243,6 +1248,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       isOverridable: true,
     },
     conditionalAvailabilityExpression: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    conditionalPinnedExpression: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,

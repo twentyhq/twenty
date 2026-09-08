@@ -267,7 +267,7 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                     </StyledTextContainerWithEllipsis>
                     <AppTooltip
                       anchorSelect={`#hover-text-${workspaceMember.id}`}
-                      content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
+                      title={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
                       noArrow
                       place="top"
                       positionStrategy="fixed"

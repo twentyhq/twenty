@@ -23,6 +23,7 @@ export const buildNameFlatFieldMetadataForCustomObject = ({
     type: FieldMetadataType.TEXT,
     isLabelSyncedWithName: false,
     isUnique: false,
+    isSearchable: true,
     universalIdentifier: getFieldUniversalIdentifier({
       applicationUniversalIdentifier,
       objectUniversalIdentifier: objectMetadataUniversalIdentifier,

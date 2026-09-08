@@ -32,6 +32,7 @@ export default defineCommandMenuItem({
 | `availabilityType` | No | Controls where the command appears: `'GLOBAL'` (always available), `'GLOBAL_OBJECT_CONTEXT'` (only on pages with an object context — index and record pages), `'RECORD_SELECTION'` (only when records are selected), or `'FALLBACK'` (shown when no other commands match) |
 | `availabilityObjectUniversalIdentifier` | No | Restrict the command to pages of a specific object type (e.g. only on Company records) |
 | `conditionalAvailabilityExpression` | No | A boolean expression that dynamically controls visibility (see below) |
+| `conditionalPinnedExpression` | No | A boolean expression that narrows `isPinned`: the command shows as a quick-action button only while it holds, and stays in the command menu otherwise. Same syntax and variables as `conditionalAvailabilityExpression` |
 
 ## Headless commands
 
