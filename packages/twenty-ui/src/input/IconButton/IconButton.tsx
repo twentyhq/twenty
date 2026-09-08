@@ -40,6 +40,7 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       focus = false,
       dataTestId,
       ariaLabel,
+      'aria-label': nativeAriaLabel,
       onClick,
       to,
       children,
@@ -48,6 +49,7 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
     ref,
   ) => {
     const theme = useTheme();
+    const resolvedAriaLabel = ariaLabel ?? nativeAriaLabel;
 
     return (
       <button
@@ -62,12 +64,14 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         data-focus={focus || undefined}
         disabled={disabled}
         onClick={onClick}
-        aria-label={ariaLabel}
+        aria-label={resolvedAriaLabel}
         // The legacy Linaria button never navigated: `to` was simply forwarded
         // to the DOM as an inert attribute. Keep forwarding it for DOM parity.
         {...{ to }}
       >
-        {Icon && <Icon size={theme.icon.size.md} aria-hidden={!!ariaLabel} />}
+        {Icon && (
+          <Icon size={theme.icon.size.md} aria-hidden={!!resolvedAriaLabel} />
+        )}
         {children}
       </button>
     );
