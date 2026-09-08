@@ -37,7 +37,7 @@ import {
 } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
 import { computeSubscriptionUpdateOptions } from 'src/engine/core-modules/billing/utils/compute-subscription-update-options.util';
 import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
-import { findSellablePriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-price-for-interval-or-throw.util';
+import { findProductPriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-product-price-for-interval-or-throw.util';
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
 import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-base-product-subscription-item-or-throw.util';
 import { getCurrentLicensedBillingSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-licensed-billing-subscription-item-or-throw.util';
@@ -797,15 +797,13 @@ export class BillingSubscriptionUpdateService {
 
     assertIsDefinedOrThrow(currentBillingProduct);
 
-    const currentPlanKey = currentBillingProduct.metadata.planKey;
-
     if (currentInterval === newInterval) {
       return currentPrices;
     }
 
     // Switching interval is not a repackaging, so the subscription stays on the
-    // product it already sits on rather than being resolved from the catalog.
-    const targetLicensedPrice = findSellablePriceForIntervalOrThrow(
+    // products it already sits on rather than being resolved from the catalog.
+    const targetLicensedPrice = findProductPriceForIntervalOrThrow(
       currentBillingProduct,
       newInterval,
     );
@@ -813,21 +811,22 @@ export class BillingSubscriptionUpdateService {
     const currentResourceCreditPrice =
       await this.billingPriceRepository.findOneOrFail({
         where: { stripePriceId: currentPrices.resourceCreditPriceId },
-        relations: ['billingProduct'],
+        relations: ['billingProduct', 'billingProduct.billingPrices'],
       });
 
     billingValidator.assertIsLicensedResourceCreditPrice(
       currentResourceCreditPrice,
     );
 
-    const targetResourceCreditPrice =
-      await this.billingPriceService.findEquivalentResourceCreditPrice({
-        referencePrice: currentResourceCreditPrice,
-        targetInterval: newInterval,
-        targetPlanKey: currentPlanKey,
-        hasSameInterval: false,
-        hasSamePlanKey: true,
-      });
+    const currentResourceCreditProduct =
+      currentResourceCreditPrice.billingProduct;
+
+    assertIsDefinedOrThrow(currentResourceCreditProduct);
+
+    const targetResourceCreditPrice = findProductPriceForIntervalOrThrow(
+      currentResourceCreditProduct,
+      newInterval,
+    );
 
     return {
       ...currentPrices,

@@ -49,23 +49,11 @@ export class BillingEntitlementSyncService {
       billingEntitlements.find((entitlement) => entitlement.key === key)
         ?.value === true;
 
-    await this.billingEntitlementRepository.upsert(
-      workspaceId,
-      billingEntitlements,
-      {
-        conflictPaths: ['workspaceId', 'key'],
-        skipUpdateIfNoValuesChanged: true,
-      },
-    );
-
-    if (!isGranted(BillingEntitlementKey.RLS)) {
-      await this.rowLevelPermissionPredicateGroupService.deleteAllRowLevelPermissionPredicateGroups(
-        workspaceId,
-      );
-    }
-
     // Counters accumulated while the limit was unenforced would otherwise be
-    // charged against the workspace the moment the entitlement turns on.
+    // charged against the workspace the moment the entitlement turns on. Done
+    // before the rows are committed: a failure here then leaves the transition
+    // unapplied and the next sync retries it, where committing first would make
+    // every retry skip the reset and charge that usage.
     if (
       !wasGranted(BillingEntitlementKey.USAGE_LIMIT) &&
       isGranted(BillingEntitlementKey.USAGE_LIMIT)
@@ -74,6 +62,26 @@ export class BillingEntitlementSyncService {
         workspaceId,
       );
     }
+
+    // Only on revoke, so reconciling a fleet is not a predicate-table write for
+    // every workspace that never had the feature.
+    if (
+      wasGranted(BillingEntitlementKey.RLS) &&
+      !isGranted(BillingEntitlementKey.RLS)
+    ) {
+      await this.rowLevelPermissionPredicateGroupService.deleteAllRowLevelPermissionPredicateGroups(
+        workspaceId,
+      );
+    }
+
+    await this.billingEntitlementRepository.upsert(
+      workspaceId,
+      billingEntitlements,
+      {
+        conflictPaths: ['workspaceId', 'key'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
 
     return billingEntitlements.map(({ key, value }) => ({ key, value }));
   }

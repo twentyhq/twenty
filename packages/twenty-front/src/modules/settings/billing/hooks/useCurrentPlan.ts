@@ -1,10 +1,8 @@
-import {
-  BillingPlanKey,
-  BillingProductKey,
-} from '~/generated-metadata/graphql';
+import { BillingPlanKey } from '~/generated-metadata/graphql';
 import { assertIsDefinedOrThrow, findOrThrow } from 'twenty-shared/utils';
 import { usePlans } from './usePlans';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useCurrentPlan = () => {
@@ -14,14 +12,9 @@ export const useCurrentPlan = () => {
 
   assertIsDefinedOrThrow(currentWorkspace);
 
-  // Read off the product the subscription sits on rather than the subscription's
-  // own plan metadata, which is a copy that scheduled plan changes never update.
-  const currentPlanKey =
-    currentWorkspace.currentBillingSubscription?.billingSubscriptionItems?.find(
-      (item) =>
-        item.billingProduct.metadata.productKey ===
-        BillingProductKey.BASE_PRODUCT,
-    )?.billingProduct.metadata.planKey;
+  const currentPlanKey = getSubscriptionPlanKey(
+    currentWorkspace.currentBillingSubscription,
+  );
 
   const currentPlan = findOrThrow(
     listPlans(),
