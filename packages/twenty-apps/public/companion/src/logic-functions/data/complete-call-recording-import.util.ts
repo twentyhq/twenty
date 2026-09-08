@@ -4,7 +4,7 @@ import { CallRecordingStatus } from 'src/logic-functions/constants/call-recordin
 import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 
 export const completeCallRecordingImport = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'mutation'>,
   { id }: { id: string },
 ): Promise<boolean> => {
   const result = await client.mutation({

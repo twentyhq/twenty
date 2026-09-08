@@ -32,9 +32,7 @@ export const persistCallRecordingProgress = async (
     return;
   }
 
-  const nonStatusUpdate: CallRecordingUpdateFields = { ...updateData };
-
-  delete nonStatusUpdate.status;
+  const { status: _status, ...nonStatusUpdate } = updateData;
 
   if (Object.keys(nonStatusUpdate).length > 0) {
     const updated = await updateCallRecording(client, {

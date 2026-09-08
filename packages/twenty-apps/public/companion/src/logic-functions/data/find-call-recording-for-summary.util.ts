@@ -14,7 +14,7 @@ type CallRecordingForSummary = {
 };
 
 export const findCallRecordingForSummary = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   { id }: { id: string },
 ): Promise<CallRecordingForSummary | undefined> => {
   const queryResult = await client.query({

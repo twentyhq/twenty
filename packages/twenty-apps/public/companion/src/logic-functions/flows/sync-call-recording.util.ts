@@ -113,9 +113,8 @@ const resolveMediaImportUpdate = ({
     return mediaImportUpdate;
   }
 
-  const scrubbedUpdate = { ...mediaImportUpdate };
-
-  delete scrubbedUpdate.companionFailureReason;
+  const { companionFailureReason: _failureReason, ...scrubbedUpdate } =
+    mediaImportUpdate;
 
   return scrubbedUpdate;
 };
