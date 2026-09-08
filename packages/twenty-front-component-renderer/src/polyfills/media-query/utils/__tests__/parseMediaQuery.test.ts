@@ -304,6 +304,17 @@ describe('parseMediaQuery', () => {
     expect(parseMediaQuery('(orientation >= portrait)')).toBeNull();
     expect(parseMediaQuery('(width >= 600)')).toBeNull();
     expect(parseMediaQuery('(-webkit-min-device-pixel-ratio >= 2)')).toBeNull();
+    expect(parseMediaQuery('(400px <= width = 800px)')).toBeNull();
+    expect(parseMediaQuery('(400px <= width <= 800px <= 900px)')).toBeNull();
+  });
+
+  it('should reject a long unparseable condition without catastrophic backtracking', () => {
+    const LINE_SEPARATOR = '\u2028';
+    const OPERATOR_RUN_LENGTH = 6400;
+
+    expect(
+      parseMediaQuery(`(${'<'.repeat(OPERATOR_RUN_LENGTH)}${LINE_SEPARATOR})`),
+    ).toBeNull();
   });
 
   it('should parse features in boolean context', () => {
