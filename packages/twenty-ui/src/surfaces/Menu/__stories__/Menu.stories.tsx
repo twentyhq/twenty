@@ -216,9 +216,7 @@ const MenuCatalogCell = ({ content = 'basic' }: MenuStoryProps) => {
   const [cellElement, setCellElement] = useState<HTMLDivElement | null>(null);
   const triggerId = useId();
   const contentByType: Record<MenuCatalogContent, ReactNode> = {
-    basic: BASIC_ITEMS,
-    selection: <MenuSelectionContent />,
-    groups: GROUPED_ITEMS,
+    ...MENU_STORY_CONTENT,
     submenu: <MenuSubmenuContent container={cellElement} open />,
   };
 
