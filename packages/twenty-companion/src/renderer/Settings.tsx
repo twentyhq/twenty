@@ -19,7 +19,8 @@ import {
   IconClock,
   IconSettings,
 } from 'twenty-ui/icon';
-import { type ActionProps, Button } from './components';
+import { Button } from '@ui/input/Button/Button';
+import { type ActionProps } from './components';
 import { ShortcutSetting } from './ShortcutSetting';
 import { WorkspaceIcon } from './WorkspaceIcon';
 
@@ -168,16 +169,13 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
         ) : (
           <Button
             disabled={
-              isPending('permission', 'permission-settings') ||
+              isPending('permission') ||
               !!state.activeRecording ||
               !state.updatedAt
             }
             onClick={() =>
               void command({
-                type:
-                  state.permissions.accessibility === 'denied'
-                    ? 'permission-settings'
-                    : 'permission',
+                type: 'permission',
                 permission: 'accessibility',
               })
             }

@@ -70,23 +70,32 @@ No Recall API key or Twenty OAuth token is exposed to the renderer. OAuth tokens
 
 ## Development
 
-Use native ARM Node 24 and Yarn. Install the repository's root dependencies first for Twenty UI source components, Sass, Inter fonts, and shared helpers, then install this standalone package. It has its own lockfile and is intentionally outside the main Nx workspace build.
+Use Node 24 and the repository's Yarn version. Desktop is the `@twentyhq/companion` Yarn workspace and `twenty-companion` Nx project. Install from the repository root; the root lockfile owns desktop, Twenty UI, and their dependencies. Do not install a separate desktop dependency tree.
 
 ```sh
-cd packages/twenty-companion
-yarn install
-yarn dev
+yarn install --immutable
+yarn workspace @twentyhq/companion dev
 ```
 
-`yarn preview` serves the renderer at `http://127.0.0.1:4317`. Use `?preview` for an interactive sample Home, `?preview=welcome` for the full setup, `?preview=permissions` for permission setup, `?preview=denied` for denial, or `?preview=recording` for active capture controls. The native menu is available only in the desktop app. Preview actions simulate state transitions; no audio is captured, no workspace writes or external calls are made. This mode is excluded from production. Stop the preview before running `yarn dev`, which uses the same port.
+`dev` shares the production Electron build configuration and watches main/preload dependencies. A successful rebuild requests a graceful Electron restart; capture startup, active or paused recording, and stopping defer it until idle. Repeated rebuilds use the latest successful output. Failed compilations leave the running app untouched. Renderer edits continue to use Vite. Quitting Electron closes the watcher and Vite server.
+
+`yarn workspace @twentyhq/companion preview` serves the renderer at `http://127.0.0.1:4317`. Use `?preview` for an interactive sample Home, `?preview=welcome` for the full setup, `?preview=permissions` for permission setup, `?preview=denied` for denial, or `?preview=recording` for active capture controls. The native menu is available only in the desktop app. Preview actions simulate state transitions; no audio is captured, no workspace writes or external calls are made. This mode is excluded from production. Stop the preview before running the desktop `dev` command, which uses the same port.
+
+From the repository root:
 
 ```sh
-yarn typecheck
-yarn test
-yarn build
-yarn package
-"release/Twenty-darwin-arm64/Twenty.app/Contents/MacOS/Twenty" --smoke
+yarn workspace @twentyhq/companion typecheck
+yarn workspace @twentyhq/companion test
+yarn workspace @twentyhq/companion build
+yarn workspace @twentyhq/companion package
+"packages/twenty-companion/release/Twenty-darwin-arm64/Twenty.app/Contents/MacOS/Twenty" --smoke
 ```
+
+The equivalent Nx project targets are `twenty-companion:build`, `:typecheck`, and `:test`. Native packaging targets are uncached and run only when requested. Desktop imports the current Twenty UI workspace source through Vite aliases; its explicit workspace dependency provides the shared dependency graph.
+
+Root installs keep native install scripts disabled. `dev`, `start`, `package`, and `package:archive` run `native:setup`, which downloads missing Electron and Recall binaries on Apple Silicon macOS. Typecheck, unit tests, renderer preview, and JavaScript builds do not require these downloads.
+
+Packaging stages only `dist`, native image assets, a runtime manifest, and Recall's resolved runtime dependencies in a temporary directory. It never packages the workspace `node_modules` tree. Recall's binaries and frameworks remain outside ASAR; the staging directory is removed after packaging.
 
 The smoke command uses a temporary user-data directory, checks secure IPC in the single main window and construction of the native tray menu, initializes the native Recall SDK without requesting recording permissions, and exits. It does not record audio or launch a meeting bot. Quit a running normal copy before using it.
 

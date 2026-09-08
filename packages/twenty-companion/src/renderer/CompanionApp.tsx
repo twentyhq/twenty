@@ -8,7 +8,8 @@ import {
 } from 'twenty-ui/icon';
 import { NavigationModeSwitcher } from '@ui/navigation/NavigationModeSwitcher/NavigationModeSwitcher';
 import { useCompanion, IS_PREVIEW } from './useCompanion';
-import { Button, Empty, Notice, RecordingControls } from './components';
+import { Button } from '@ui/input/Button/Button';
+import { Empty, Notice, RecordingControls } from './components';
 import { Onboarding } from './Onboarding';
 import { Home } from './Home';
 import { Settings } from './Settings';

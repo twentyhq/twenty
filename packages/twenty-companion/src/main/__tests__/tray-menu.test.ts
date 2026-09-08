@@ -31,7 +31,6 @@ const state = (overrides: Partial<CompanionState> = {}): CompanionState => ({
   updatedAt: new Date(NOW).toISOString(),
   error: null,
   notice: null,
-  sdkReady: true,
   permissionSetup: null,
   ...overrides,
 });

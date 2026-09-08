@@ -6,7 +6,8 @@ import { ICON } from '@ui/theme/constants/Icon';
 import { IconButton } from '@ui/input/IconButton/IconButton';
 import { useState } from 'react';
 import { IconCommand, IconRestore } from 'twenty-ui/icon';
-import { type ActionProps, Button } from './components';
+import { Button } from '@ui/input/Button/Button';
+import { type ActionProps } from './components';
 
 export const ShortcutSetting = ({ state, isPending, command }: ActionProps) => {
   const [capturing, setCapturing] = useState(false);

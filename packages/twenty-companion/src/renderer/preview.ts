@@ -10,7 +10,6 @@ export const previewState = (initial: CompanionState): CompanionState => {
     connection: 'connected',
     workspace: { id: 'preview', name: 'Acme' },
     calendarConnected: true,
-    sdkReady: true,
     settings: {
       ...initial.settings,
       setupCompleted: !['welcome', 'permissions', 'denied'].includes(
@@ -159,7 +158,6 @@ export const previewCommand = (
       next.settings.setupCompleted = false;
       break;
     case 'permission':
-    case 'permission-settings':
       next.permissions[command.permission] = 'granted';
       break;
     case 'begin-permission-setup':
@@ -232,7 +230,9 @@ export const previewCommand = (
       next.skippedMeetingIds.push(command.meetingId);
       break;
     case 'unskip':
-      next.skippedMeetingIds = next.skippedMeetingIds.filter((id) => id !== command.meetingId);
+      next.skippedMeetingIds = next.skippedMeetingIds.filter(
+        (id) => id !== command.meetingId,
+      );
       break;
     case 'join':
       next.notice = {
@@ -252,13 +252,6 @@ export const previewCommand = (
       next.notice = {
         type: 'preview',
         message: 'Preview only. This opens calendar settings in Twenty.',
-      };
-      break;
-    case 'open-workspace':
-      next.notice = {
-        type: 'preview',
-        message:
-          'Preview only. This opens your Twenty workspace in the browser.',
       };
       break;
     case 'refresh':

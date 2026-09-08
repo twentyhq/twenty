@@ -9,7 +9,8 @@ import {
   IconArrowUpRight,
   IconCircleDot,
 } from 'twenty-ui/icon';
-import { type ActionProps, Button, SetupHeading } from './components';
+import { Button } from '@ui/input/Button/Button';
+import { type ActionProps, SetupHeading } from './components';
 import { Status } from '@ui/data-display/Status/Status';
 
 const PermissionChecklist = ({ state, isPending, command }: ActionProps) => (
@@ -47,11 +48,7 @@ const PermissionChecklist = ({ state, isPending, command }: ActionProps) => (
           <span className="permission-icon">
             <Icon size={ICON.size.lg} stroke={ICON.stroke.sm} />
           </span>
-          <div className="grow">
-            <div className="permission-label">
-              <strong>{label}</strong>
-            </div>
-          </div>
+          <strong className="grow">{label}</strong>
           {granted ? (
             <span role="status">
               <Status color="blue" text={i18n._('Enabled')} />
@@ -59,10 +56,7 @@ const PermissionChecklist = ({ state, isPending, command }: ActionProps) => (
           ) : (
             <Button
               variant="secondary"
-              disabled={
-                isPending('permission', 'permission-settings') ||
-                !state.updatedAt
-              }
+              disabled={isPending('permission') || !state.updatedAt}
               onClick={() =>
                 void command({
                   type: 'permission',
@@ -103,22 +97,20 @@ export const Permissions = ({
         isPending={isPending}
         command={command}
       />
-      <div className="permission-footer">
-        <MainButton
-          fullWidth
-          disabled={isPending('record', 'complete-setup') || !granted}
-          onClick={() =>
-            intentToRecord
-              ? void command({
-                  type: 'record',
-                  windowId: state.permissionSetup?.windowId,
-                })
-              : onContinue()
-          }
-          Icon={intentToRecord ? IconCircleDot : undefined}
-          title={intentToRecord ? i18n._('Start recording') : i18n._('Finish')}
-        />
-      </div>
+      <MainButton
+        fullWidth
+        disabled={isPending('record', 'complete-setup') || !granted}
+        onClick={() =>
+          intentToRecord
+            ? void command({
+                type: 'record',
+                windowId: state.permissionSetup?.windowId,
+              })
+            : onContinue()
+        }
+        Icon={intentToRecord ? IconCircleDot : undefined}
+        title={intentToRecord ? i18n._('Start recording') : i18n._('Finish')}
+      />
     </section>
   );
 };

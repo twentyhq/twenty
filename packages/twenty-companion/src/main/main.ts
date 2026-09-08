@@ -16,6 +16,7 @@ import {
 } from 'electron';
 import { getUpcomingMeetings } from '../shared/meetings';
 import { Companion } from './companion';
+import { createDevelopmentRestart } from './development-restart';
 import { createTrayMenuTemplate, getTrayTitle } from './tray-menu';
 import { commandSchema, type CompanionPage } from '../shared/types';
 
@@ -27,6 +28,7 @@ let trayMenuOpen = false;
 let companion: Companion;
 let quitting = false;
 let shutdownPending = false;
+let initialized = false;
 const SMOKE = process.argv.includes('--smoke');
 const OPEN_IN_BACKGROUND = process.argv.includes('--background');
 const DEVELOPMENT_URL = process.env.TWENTY_COMPANION_DEV_URL;
@@ -302,6 +304,7 @@ else {
         () => void companion.command({ type: 'refresh' }),
       );
       await companion.initialize();
+      initialized = true;
       if (SMOKE) {
         await RecallAiSdk.init({
           apiUrl: 'https://eu-central-1.recall.ai',
@@ -341,6 +344,25 @@ else {
       quitting = true;
       app.quit();
     });
+  if (DEVELOPMENT_URL && process.send) {
+    const developmentRestart = createDevelopmentRestart(
+      () => !initialized || shutdownPending || companion.isRecording,
+      () => {
+        process.send?.({ type: 'development-restarting' });
+        app.quit();
+      },
+    );
+    process.on('message', (message) => {
+      if (
+        typeof message === 'object' &&
+        message !== null &&
+        'type' in message &&
+        message.type === 'development-restart'
+      )
+        developmentRestart.request();
+    });
+    app.on('quit', developmentRestart.dispose);
+  }
   app.on('before-quit', (event) => {
     if (quitting) return;
     event.preventDefault();

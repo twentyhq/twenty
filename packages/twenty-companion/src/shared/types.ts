@@ -126,7 +126,6 @@ export type CompanionState = {
   updatedAt: string | null;
   error: CompanionError | null;
   notice: CompanionNotice | null;
-  sdkReady: boolean;
   permissionSetup: { windowId?: string; intent?: 'record' } | null;
 };
 
@@ -143,11 +142,6 @@ export const commandSchema = z.discriminatedUnion('type', [
     type: z.literal('permission'),
     permission: z.enum(['microphone', 'accessibility', 'system-audio']),
   }),
-  z.object({
-    type: z.literal('permission-settings'),
-    permission: z.enum(['microphone', 'accessibility', 'system-audio']),
-  }),
-  z.object({ type: z.literal('check-permissions') }),
   z.object({ type: z.literal('complete-setup') }),
   z.object({ type: z.literal('begin-permission-setup') }),
   z.object({ type: z.literal('cancel-permission-setup') }),
@@ -170,7 +164,6 @@ export const commandSchema = z.discriminatedUnion('type', [
     recordingId: z.string().uuid(),
   }),
   z.object({ type: z.literal('open-calendar-settings') }),
-  z.object({ type: z.literal('open-workspace') }),
   z.object({
     type: z.literal('open-desktop-installation'),
     serverUrl: z.string(),

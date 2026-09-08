@@ -78,7 +78,8 @@
       "packages/create-twenty-app",
       "packages/twenty-codex-plugin",
       "packages/twenty-oxlint-rules",
-      "packages/twenty-claude-skills"
+      "packages/twenty-claude-skills",
+      "packages/twenty-companion"
     ]
   },
   "prettier": {

@@ -330,7 +330,6 @@ describe('desktop capture lifecycle', () => {
       apiUrl: 'https://eu-central-1.recall.ai',
       acquirePermissionsOnStartup: [],
     });
-    expect(companion.state.sdkReady).toBe(true);
   });
   it('does not obtain an upload until all capture permissions are granted', async () => {
     await companion.command({ type: 'record' });
@@ -426,22 +425,28 @@ describe('desktop capture lifecycle', () => {
       'x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility',
     );
   });
-  it('opens each requested privacy pane directly', async () => {
-    await companion.command({
-      type: 'permission-settings',
-      permission: 'system-audio',
-    });
-    expect(mocks.open).toHaveBeenLastCalledWith(
-      'x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture',
-    );
-    await companion.command({
-      type: 'permission-settings',
-      permission: 'accessibility',
-    });
-    expect(mocks.open).toHaveBeenLastCalledWith(
-      'x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility',
-    );
-  });
+  it.each([
+    ['microphone', 'Privacy_Microphone'],
+    ['system-audio', 'Privacy_ScreenCapture'],
+    ['accessibility', 'Privacy_Accessibility'],
+  ] as const)(
+    'opens Settings for denied %s even when SDK initialization fails',
+    async (permission, pane) => {
+      await companion.shutdown();
+      mocks.init.mockRejectedValueOnce(new Error('SDK unavailable'));
+      await companion.initialize();
+      expect(companion.state.error).not.toBeNull();
+      companion.state.permissions[permission] = 'denied';
+      mocks.init.mockClear();
+      await companion.command({ type: 'permission', permission });
+      expect(mocks.init).not.toHaveBeenCalled();
+      expect(mocks.permission).not.toHaveBeenCalled();
+      expect(mocks.open).toHaveBeenLastCalledWith(
+        `x-apple.systempreferences:com.apple.preference.security?${pane}`,
+      );
+      expect(companion.state.error).toBeNull();
+    },
+  );
   it.each(['microphone', 'system-audio', 'accessibility'] as const)(
     'requests the native %s prompt before offering Settings after a denial',
     async (permission) => {
@@ -468,15 +473,6 @@ describe('desktop capture lifecycle', () => {
       );
     },
   );
-  it('refreshes permission events by restarting the idle SDK, but never interrupts a recording', async () => {
-    await companion.command({ type: 'check-permissions' });
-    expect(mocks.shutdown).toHaveBeenCalledOnce();
-    expect(mocks.init).toHaveBeenCalledTimes(2);
-    allowPermissions();
-    await companion.command({ type: 'record' });
-    await companion.command({ type: 'check-permissions' });
-    expect(mocks.shutdown).toHaveBeenCalledOnce();
-  });
   it('records system audio with a server upload token and keeps that token out of renderer state', async () => {
     allowPermissions();
     await companion.command({ type: 'record' });
@@ -630,6 +626,7 @@ describe('desktop capture lifecycle', () => {
       windowId: 'system-audio-window',
     });
     expect(companion.state.activeRecording?.status).toBe('paused');
+    expect(companion.isRecording).toBe(true);
     await vi.advanceTimersByTimeAsync(10_000);
     await companion.command({ type: 'resume' });
     expect(mocks.resume).toHaveBeenCalledWith({
@@ -663,8 +660,10 @@ describe('desktop capture lifecycle', () => {
     mocks.stop.mockRejectedValueOnce(new Error('Stop failed'));
     await companion.command({ type: 'stop' });
     expect(companion.state.activeRecording?.status).toBe('paused');
+    expect(companion.isRecording).toBe(true);
     await companion.command({ type: 'stop' });
     expect(companion.state.activeRecording).toBeNull();
+    expect(companion.isRecording).toBe(false);
   });
 
   it('does not restore a recording that ended while its pause request was in flight', async () => {
@@ -785,7 +784,6 @@ it('clears workspace data and stops detecting calls after disconnect', async () 
     detectedCalls: [],
     calendarConnected: false,
     updatedAt: null,
-    sdkReady: false,
   });
 });
 
@@ -795,6 +793,7 @@ it('waits for a pending setup before shutting down and never starts capture afte
   mocks.prepare.mockReturnValueOnce(promise);
   const recording = companion.command({ type: 'record' });
   await vi.advanceTimersByTimeAsync(0);
+  expect(companion.isRecording).toBe(true);
   const shutdown = companion.shutdown();
   resolve('system-audio-window');
   await Promise.all([recording, shutdown]);

@@ -194,16 +194,6 @@ export class Companion {
         case 'permission':
           await this.recording.requestPermission(command.permission);
           break;
-        case 'permission-settings':
-          await this.recording.openPermissionSettings(command.permission);
-          break;
-        case 'check-permissions':
-          if (!this.recording.isRecording) {
-            await this.recording.resetSdk();
-            await this.recording.initializeSdk();
-          }
-          this.recording.refreshPermissions();
-          break;
         case 'cancel-permission-setup':
           this.state.permissionSetup = null;
           break;
@@ -214,10 +204,14 @@ export class Companion {
           await this.markHandled(command.meetingId);
           break;
         case 'unskip': {
-          const meeting = this.state.meetings.find((item) => item.id === command.meetingId);
+          const meeting = this.state.meetings.find(
+            (item) => item.id === command.meetingId,
+          );
           if (!meeting) throw new Error('This meeting is no longer available.');
           this.handledIds.delete(getMeetingOccurrenceKey(meeting));
-          this.state.skippedMeetingIds = this.state.skippedMeetingIds.filter((id) => id !== meeting.id);
+          this.state.skippedMeetingIds = this.state.skippedMeetingIds.filter(
+            (id) => id !== meeting.id,
+          );
           await this.store.writeHandledMeetings([...this.handledIds]);
           break;
         }
@@ -256,13 +250,6 @@ export class Companion {
         case 'open-desktop-installation':
           await shell.openExternal(
             await getDesktopInstallationUrl(command.serverUrl),
-          );
-          break;
-        case 'open-workspace':
-          if (this.state.connection !== 'connected')
-            throw new Error('Connect your workspace first.');
-          await shell.openExternal(
-            this.client.workspaceUrl ?? this.state.serverUrl,
           );
           break;
         case 'dismiss-error':
@@ -476,6 +463,10 @@ export class Companion {
 
   private emit(): void {
     this.publish(structuredClone(this.state));
+  }
+
+  get isRecording(): boolean {
+    return this.recording.isRecording;
   }
 
   refreshPermissions(): void {

@@ -17,7 +17,6 @@ import { IconButton } from '@ui/input/IconButton/IconButton';
 import { i18n } from '@lingui/core';
 import { type ReactNode } from 'react';
 import { Button } from '@ui/input/Button/Button';
-export { Button };
 import {
   IconPlayerPause,
   IconPlayerPlay,

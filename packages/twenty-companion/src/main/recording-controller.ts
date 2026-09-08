@@ -184,17 +184,15 @@ export class RecordingController {
     await this.stopSdk();
     await RecallAiSdk.init({ apiUrl, acquirePermissionsOnStartup: [] });
     this.sdkRegion = apiUrl;
-    this.state.sdkReady = true;
     this.refreshPermissions();
   }
 
   private async stopSdk(): Promise<void> {
     if (this.sdkRegion) await RecallAiSdk.shutdown();
     this.sdkRegion = null;
-    this.state.sdkReady = false;
   }
 
-  async openPermissionSettings(
+  private async openPermissionSettings(
     permission: 'microphone' | 'system-audio' | 'accessibility',
   ): Promise<void> {
     const pane = {
@@ -226,7 +224,10 @@ export class RecordingController {
   async requestPermission(
     permission: 'microphone' | 'system-audio' | 'accessibility',
   ): Promise<void> {
-    await this.initializeSdk();
+    this.refreshPermissions();
+    // A known denial must still open Settings when SDK initialization is unavailable.
+    if (this.state.permissions[permission] !== 'denied')
+      await this.initializeSdk();
     this.refreshPermissions();
     if (this.state.permissions[permission] === 'granted') return;
     if (this.state.permissions[permission] === 'denied') {

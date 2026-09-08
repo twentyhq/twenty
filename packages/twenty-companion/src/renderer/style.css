@@ -267,12 +267,6 @@ p {
 .permission-list {
   overflow: hidden;
 }
-.permission-footer {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--t-spacing-4);
-}
 .permission-item {
   display: flex;
   align-items: center;
@@ -285,12 +279,6 @@ p {
 .permission-icon {
   color: var(--t-font-color-secondary);
   display: flex;
-}
-.setup-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--t-spacing-4);
 }
 .welcome form {
   display: grid;
@@ -569,12 +557,6 @@ p {
   margin-top: var(--t-spacing-2);
 }
 
-.permission-label {
-  display: flex;
-  align-items: center;
-  gap: var(--t-spacing-1);
-}
-
 .home-recordings-search {
   width: 200px;
   max-width: 50%;
@@ -642,8 +624,5 @@ p {
   }
   .permission-item > .grow {
     min-width: 170px;
-  }
-  .setup-actions {
-    flex-wrap: wrap;
   }
 }

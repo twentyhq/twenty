@@ -19,6 +19,5 @@ export const createInitialState = (): CompanionState => ({
   updatedAt: null,
   error: null,
   notice: null,
-  sdkReady: false,
   permissionSetup: null,
 });

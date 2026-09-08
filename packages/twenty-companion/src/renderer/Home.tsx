@@ -14,7 +14,8 @@ import {
   IconChevronRight,
 } from 'twenty-ui/icon';
 import { getUpcomingMeetings } from '../shared/meetings';
-import { type ActionProps, Button } from './components';
+import { Button } from '@ui/input/Button/Button';
+import { type ActionProps } from './components';
 import { RecordingList } from './Recordings';
 
 const UpcomingMeetings = ({ state, isPending, command }: ActionProps) => {

@@ -28,9 +28,6 @@ export const useCompanion = () => {
     Partial<Record<CompanionCommand['type'], number>>
   >({});
   const [loaded, setLoaded] = useState(!window.companion);
-  const navigate = (next: CompanionPage) => {
-    setPage(next);
-  };
   useEffect(() => {
     const bridge = window.companion;
     if (!bridge) return;
@@ -45,7 +42,7 @@ export const useCompanion = () => {
       receivedUpdate = true;
       acceptState(value);
     });
-    const unsubscribeNavigation = bridge.onNavigate(navigate);
+    const unsubscribeNavigation = bridge.onNavigate(setPage);
     void bridge
       .getState()
       .then((value) => {
@@ -70,7 +67,7 @@ export const useCompanion = () => {
   }, []);
   const command = async (value: CompanionCommand) => {
     if (value.type === 'open-app' && !window.companion) {
-      navigate(value.page ?? 'agenda');
+      setPage(value.page ?? 'agenda');
       return;
     }
     setPending((previous) => ({
@@ -101,7 +98,7 @@ export const useCompanion = () => {
   return {
     state,
     page,
-    navigate,
+    navigate: setPage,
     isPending: (...types: CompanionCommand['type'][]) =>
       types.some((type) => (pending[type] ?? 0) > 0),
     loaded,
