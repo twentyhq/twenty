@@ -141,16 +141,13 @@ export const MarkdownLoadingSkeleton = () => {
 
 // Protecting per block behind the memo means only the streaming tail blocks
 // pay the reference-parsing cost on each flush; settled blocks never re-run it.
-const MemoizedMarkdownBlock = memo(
-  ({ blockText }: { blockText: string }) => (
-    <MarkdownRenderer>
-      {protectChatReferencesForMarkdown(blockText)}
-    </MarkdownRenderer>
-  ),
-  (previousProps, nextProps) => previousProps.blockText === nextProps.blockText,
-);
+const MemoizedMarkdownBlock = memo(({ blockText }: { blockText: string }) => (
+  <MarkdownRenderer>
+    {protectChatReferencesForMarkdown(blockText)}
+  </MarkdownRenderer>
+));
 
-export const MarkdownContent = ({ text }: { text: string }) => {
+export const LazyMarkdownContent = ({ text }: { text: string }) => {
   // Not state: the blocks are a pure function of `text`, the ref only caches
   // the previous split so streaming appends skip re-tokenizing settled blocks.
   // oxlint-disable-next-line twenty/no-state-useref
@@ -177,6 +174,6 @@ export const MarkdownContent = ({ text }: { text: string }) => {
 
 export const LazyMarkdownRenderer = ({ text }: { text: string }) => (
   <Suspense fallback={<MarkdownLoadingSkeleton />}>
-    <MarkdownContent text={text} />
+    <LazyMarkdownContent text={text} />
   </Suspense>
 );
