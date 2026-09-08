@@ -104,6 +104,8 @@ const REFERENCE_OBJECTS = ['project', 'company'];
 // Operations and marketing surfaces. Nothing here is part of selling, and most
 // of it exposes the whole pipeline sideways.
 const HIDDEN_OBJECTS = [
+  // The raw intake log: unredacted webhook payloads, an ops concern only.
+  'inboundRawEvent',
   'workflow',
   'dashboard',
   'pbxNumber',

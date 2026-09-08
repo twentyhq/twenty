@@ -20,6 +20,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { IngestCallEventJob } from 'src/modules/enso/telephony/jobs/ingest-call-event.job';
+import { EnsoInboundRawEventService } from 'src/modules/enso/inbound-raw-event/services/enso-inbound-raw-event.service';
 import { TelephonyContactService } from 'src/modules/enso/telephony/services/telephony-contact.service';
 import {
   type IngestCallEventJobData,
@@ -66,7 +67,46 @@ export class TelephonyController {
     @InjectMessageQueue(MessageQueue.ensoTelephonyQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly contactService: TelephonyContactService,
+    private readonly rawEventService: EnsoInboundRawEventService,
   ) {}
+
+  // Writes the body down before anything interprets it, and hands back the id
+  // so the handler can stamp what became of it. Best-effort by contract: a
+  // failure here returns undefined and the call proceeds untouched.
+  private async recordRaw(
+    channel: 'PBX' | 'ROISTAT',
+    source: string,
+    body: unknown,
+  ): Promise<string | undefined> {
+    if (!isNonEmptyString(TELEPHONY_WORKSPACE_ID)) {
+      return undefined;
+    }
+
+    return this.rawEventService.record({
+      workspaceId: TELEPHONY_WORKSPACE_ID,
+      channel,
+      source,
+      externalId: (body as { callid?: string } | undefined)?.callid,
+      payload: body,
+    });
+  }
+
+  private async stampRaw(
+    rawEventId: string | undefined,
+    status: 'ENQUEUED' | 'IGNORED' | 'FAILED',
+    note?: string,
+  ): Promise<void> {
+    if (!isNonEmptyString(TELEPHONY_WORKSPACE_ID)) {
+      return;
+    }
+
+    await this.rawEventService.markOutcome({
+      workspaceId: TELEPHONY_WORKSPACE_ID,
+      id: rawEventId,
+      status,
+      ...(note ? { note } : {}),
+    });
+  }
 
   // The PBX posts `event`, `history` and `contact` to this single address and
   // distinguishes them by `cmd`. Everything returns 200 quickly; the ingest work
@@ -86,6 +126,14 @@ export class TelephonyController {
       // for a call, and its real payload shape is undocumented — but never let
       // that affect the response: a slow or failed answer here delays a live
       // call. So recording is best-effort and the reply is always the same.
+      // Logged WITHOUT awaiting, deliberately. This branch answers the PBX
+      // with the routing decision while the phone is ringing, under a hard
+      // budget — two extra round trips in front of that would delay a live
+      // call. The contact push is also the least interesting one to
+      // reconcile: every call it precedes arrives again as `event`/`history`,
+      // which are logged synchronously below.
+      void this.recordRaw('PBX', 'moldcell:contact', body);
+
       try {
         await this.enqueue(
           normalizeMoldcellContact(body as MoldcellContactPush),
@@ -102,24 +150,52 @@ export class TelephonyController {
       return this.resolveContactWithinBudget(body as MoldcellContactPush);
     }
 
+    // `event` and `history` are fire-and-forget acks from the PBX's side —
+    // nothing is waiting on the response — so these are recorded and stamped
+    // synchronously, which is what makes them reconcilable.
     if (cmd === 'event') {
+      const rawEventId = await this.recordRaw('PBX', 'moldcell:event', body);
       const event = normalizeMoldcellEvent(body as MoldcellEventPush);
 
       await this.enqueue(event);
+      await this.stampRaw(
+        rawEventId,
+        isDefined(event) ? 'ENQUEUED' : 'IGNORED',
+        isDefined(event) ? undefined : 'event push did not normalize',
+      );
 
       return { ok: true };
     }
 
     if (cmd === 'history') {
+      const rawEventId = await this.recordRaw('PBX', 'moldcell:history', body);
       const event = normalizeMoldcellHistory(body as MoldcellHistoryPush);
 
       await this.enqueue(event);
+      await this.stampRaw(
+        rawEventId,
+        isDefined(event) ? 'ENQUEUED' : 'IGNORED',
+        isDefined(event) ? undefined : 'history push did not normalize',
+      );
 
       return { ok: true };
     }
 
     // Unknown cmd: ack rather than error, so an unrecognised push never makes
-    // the PBX retry against us in a loop.
+    // the PBX retry against us in a loop. It is no longer forgotten though —
+    // the raw row records that something arrived that we did not understand.
+    const unknownRawEventId = await this.recordRaw(
+      'PBX',
+      `moldcell:${cmd || 'unknown'}`,
+      body,
+    );
+
+    await this.stampRaw(
+      unknownRawEventId,
+      'IGNORED',
+      `unrecognised cmd "${cmd}"`,
+    );
+
     return { ok: true };
   }
 
@@ -135,9 +211,16 @@ export class TelephonyController {
   ): Promise<{ ok: true }> {
     this.assertRoistatSecret(secret);
 
+    const rawEventId = await this.recordRaw('ROISTAT', 'roistat:webhook', body);
+
     const event = normalizeRoistatCall(body ?? {});
 
     await this.enqueue(event);
+    await this.stampRaw(
+      rawEventId,
+      isDefined(event) ? 'ENQUEUED' : 'IGNORED',
+      isDefined(event) ? undefined : 'roistat payload did not normalize',
+    );
 
     return { ok: true };
   }

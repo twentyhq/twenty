@@ -15,6 +15,7 @@ export const ENSO_HIDDEN_NAVIGATION_OBJECT_NAME_SINGULARS = [
   'marketingEnrollment',
   'workspaceMember',
   'projectRoutingMember',
+  'inboundRawEvent',
   // The Consent, Projects and Activities folders. Assignments, consents and
   // touches are things a manager reads and writes ON a contact or a deal, in
   // the relation panels of a record they own — not tables they browse. Hiding

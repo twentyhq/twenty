@@ -1,14 +1,20 @@
 import { Module } from '@nestjs/common';
 
+import { EnsoInboundRawEventService } from 'src/modules/enso/inbound-raw-event/services/enso-inbound-raw-event.service';
 import { TelephonyController } from 'src/modules/enso/telephony/controllers/telephony.controller';
 import { CallIdentityService } from 'src/modules/enso/telephony/services/call-identity.service';
 import { PbxNumberService } from 'src/modules/enso/telephony/services/pbx-number.service';
 import { TelephonyContactService } from 'src/modules/enso/telephony/services/telephony-contact.service';
 
 // SERVER side of telephony intake: the public webhook receivers for the Moldcell
-// PBX and Roistat. Imported by modules.module.ts only. The controller does no
-// database work — it validates the shared secret, normalizes and enqueues — so
-// the PBX always gets a fast ack even while a call is ringing. The worker side
+// PBX and Roistat. Imported by modules.module.ts only. The controller
+// validates the shared secret, writes the raw payload down, normalizes and
+// enqueues.
+//
+// The `contact` branch is the exception and must stay that way: it answers the
+// PBX with a routing decision while the phone is ringing, so its raw-log write
+// is deliberately NOT awaited. Everything else is a fire-and-forget ack from
+// the PBX's side, so those are logged synchronously. The worker side
 // (the ingest job) lives in TelephonyJobsModule, loaded by JobsModule; the
 // worker boots QueueWorkerModule and does not import this graph.
 @Module({
@@ -19,6 +25,11 @@ import { TelephonyContactService } from 'src/modules/enso/telephony/services/tel
   //
   // Click-to-call is NOT here — a GraphQL resolver in this graph never reaches
   // the metadata schema. See TelephonyOutboundModule.
-  providers: [TelephonyContactService, CallIdentityService, PbxNumberService],
+  providers: [
+    TelephonyContactService,
+    CallIdentityService,
+    PbxNumberService,
+    EnsoInboundRawEventService,
+  ],
 })
 export class TelephonyModule {}
