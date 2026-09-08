@@ -159,6 +159,7 @@ export class AdminPanelBillingService {
 
     return alignGrantExpiryToPeriodEnd({
       requestedExpiresAt: addDays(new Date(), expiresInDays),
+      currentPeriodStart: subscription.currentPeriodStart,
       currentPeriodEnd: subscription.currentPeriodEnd,
       interval: subscription.interval,
     });

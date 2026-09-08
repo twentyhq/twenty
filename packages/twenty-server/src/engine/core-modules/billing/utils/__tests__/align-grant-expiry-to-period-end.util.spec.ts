@@ -3,6 +3,7 @@
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { alignGrantExpiryToPeriodEnd } from 'src/engine/core-modules/billing/utils/align-grant-expiry-to-period-end.util';
 
+const CURRENT_PERIOD_START = new Date('2026-01-01T00:00:00.000Z');
 const CURRENT_PERIOD_END = new Date('2026-02-01T00:00:00.000Z');
 
 const alignFrom = (
@@ -11,6 +12,7 @@ const alignFrom = (
 ) =>
   alignGrantExpiryToPeriodEnd({
     requestedExpiresAt,
+    currentPeriodStart: CURRENT_PERIOD_START,
     currentPeriodEnd: CURRENT_PERIOD_END,
     interval,
   });
@@ -40,20 +42,31 @@ describe('alignGrantExpiryToPeriodEnd', () => {
         new Date('2027-06-01T00:00:00.000Z'),
         SubscriptionInterval.Year,
       ),
-    ).toEqual(new Date('2028-02-01T00:00:00.000Z'));
+    ).toEqual(new Date('2028-01-01T00:00:00.000Z'));
   });
 
-  // Anchored on the 31st, the walk must not clamp its way backwards into a
-  // period end that never reaches the requested day.
-  it('keeps walking forward across a month-end anchor', () => {
-    const result = alignGrantExpiryToPeriodEnd({
-      requestedExpiresAt: new Date('2026-04-15T00:00:00.000Z'),
-      currentPeriodEnd: new Date('2026-01-31T00:00:00.000Z'),
-      interval: SubscriptionInterval.Month,
-    });
+  // Stripe re-expands a month-end anchor rather than walking it down: a
+  // subscription anchored on the 31st renews Feb 28, Mar 31, Apr 30. Stepping
+  // off each clamped result instead would stamp the grant with Mar 28 and
+  // Apr 28, dates the subscription never renews on, putting the deadline back
+  // inside a period.
+  it('keeps a month-end anchor on the days the subscription actually renews', () => {
+    const alignOnMonthEndAnchor = (requestedExpiresAt: Date) =>
+      alignGrantExpiryToPeriodEnd({
+        requestedExpiresAt,
+        currentPeriodStart: new Date('2026-01-31T00:00:00.000Z'),
+        currentPeriodEnd: new Date('2026-02-28T00:00:00.000Z'),
+        interval: SubscriptionInterval.Month,
+      });
 
-    expect(result.getTime()).toBeGreaterThanOrEqual(
-      new Date('2026-04-15T00:00:00.000Z').getTime(),
+    expect(alignOnMonthEndAnchor(new Date('2026-02-20T00:00:00.000Z'))).toEqual(
+      new Date('2026-02-28T00:00:00.000Z'),
+    );
+    expect(alignOnMonthEndAnchor(new Date('2026-03-15T00:00:00.000Z'))).toEqual(
+      new Date('2026-03-31T00:00:00.000Z'),
+    );
+    expect(alignOnMonthEndAnchor(new Date('2026-04-15T00:00:00.000Z'))).toEqual(
+      new Date('2026-04-30T00:00:00.000Z'),
     );
   });
 

@@ -14,6 +14,8 @@ import {
 } from 'test/integration/billing/utils/billing-credit-fixtures.util';
 
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { alignGrantExpiryToPeriodEnd } from 'src/engine/core-modules/billing/utils/align-grant-expiry-to-period-end.util';
 import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -154,11 +156,19 @@ describe('Admin credit grant and revoke (integration)', () => {
     const [storedGrant] = await listCreditGrants(workspaceId);
     const expiresAt = new Date(storedGrant.expiresAt as Date);
 
+    // Which period the thirtieth day lands in depends on when the suite runs,
+    // so the boundary is derived the same way the server derives it rather
+    // than listed.
+    expect(expiresAt).toEqual(
+      alignGrantExpiryToPeriodEnd({
+        requestedExpiresAt: addDays(new Date(), 30),
+        currentPeriodStart: PERIOD_START,
+        currentPeriodEnd: PERIOD_END,
+        interval: SubscriptionInterval.Month,
+      }),
+    );
     expect(expiresAt.getTime()).toBeGreaterThanOrEqual(
       addDays(new Date(), 30).getTime(),
-    );
-    expect([PERIOD_END, addMonths(PERIOD_END, 1)].map(Number)).toContain(
-      expiresAt.getTime(),
     );
   });
 
