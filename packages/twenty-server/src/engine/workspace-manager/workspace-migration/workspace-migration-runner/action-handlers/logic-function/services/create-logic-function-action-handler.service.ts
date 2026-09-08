@@ -55,7 +55,8 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateLogicFunctionAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, flatApplication } = context;
+    const { flatAction, queryRunner, flatApplication, allFlatEntityMaps } =
+      context;
     const { flatEntity: logicFunction } = flatAction;
 
     await this.insertFlatEntitiesInRepository({
@@ -69,10 +70,19 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
       const installStart = Date.now();
 
       try {
+        // The SDK schema is generated while this migration is still
+        // uncommitted, so it must be built from the migration's own maps:
+        // the shared cache holds neither the committed nor the migrated state
+        // at that point.
         await driver.installPrebuiltBundle({
           flatLogicFunction: logicFunction,
           flatApplication,
           applicationUniversalIdentifier: flatApplication.universalIdentifier,
+          flatEntityMapsOverride: {
+            flatObjectMetadataMaps: allFlatEntityMaps.flatObjectMetadataMaps,
+            flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+            flatIndexMaps: allFlatEntityMaps.flatIndexMaps,
+          },
         });
 
         this.logger.log(

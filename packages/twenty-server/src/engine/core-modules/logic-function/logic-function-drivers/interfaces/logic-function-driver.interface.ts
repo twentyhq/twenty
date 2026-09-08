@@ -1,5 +1,6 @@
 import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
 
+import { type SchemaFlatEntityMapsOverride } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/types/schema-flat-entity-maps-override.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { type LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -35,6 +36,7 @@ export type LogicFunctionInstallPrebuiltBundleParams = {
   flatLogicFunction: FlatLogicFunction;
   flatApplication: FlatApplication;
   applicationUniversalIdentifier: string;
+  flatEntityMapsOverride?: SchemaFlatEntityMapsOverride;
 };
 
 export type LogicFunctionTranspileParams = {

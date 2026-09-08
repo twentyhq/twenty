@@ -10,6 +10,7 @@ import { replaceCoreClient } from 'twenty-client-sdk/generate';
 import { FileFolder } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
+import { type SchemaFlatEntityMapsOverride } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/types/schema-flat-entity-maps-override.type';
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
@@ -108,11 +109,13 @@ export class SdkClientGenerationService {
     applicationId,
     applicationUniversalIdentifier,
     trigger = 'unknown',
+    flatEntityMapsOverride,
   }: {
     workspaceId: string;
     applicationId: string;
     applicationUniversalIdentifier: string;
     trigger?: SdkClientGenerationTrigger;
+    flatEntityMapsOverride?: SchemaFlatEntityMapsOverride;
   }): Promise<Buffer> {
     const generationStart = performance.now();
 
@@ -125,6 +128,7 @@ export class SdkClientGenerationService {
         await this.workspaceSchemaFactory.createGraphQLSchema(
           fromWorkspaceEntityToFlat(workspaceEntity),
           applicationId,
+          flatEntityMapsOverride,
         );
 
       const archiveBuffer = await this.generateAndStore({

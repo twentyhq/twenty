@@ -6,6 +6,7 @@ import * as fs from 'fs/promises';
 import { FileFolder } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
+import { type SchemaFlatEntityMapsOverride } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/types/schema-flat-entity-maps-override.type';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import {
@@ -65,15 +66,18 @@ export class SdkClientArchiveService {
     workspaceId,
     applicationId,
     applicationUniversalIdentifier,
+    flatEntityMapsOverride,
   }: {
     workspaceId: string;
     applicationId: string;
     applicationUniversalIdentifier: string;
+    flatEntityMapsOverride?: SchemaFlatEntityMapsOverride;
   }): Promise<Buffer> {
     return this.downloadArchiveBufferOrGenerate({
       workspaceId,
       applicationId,
       applicationUniversalIdentifier,
+      flatEntityMapsOverride,
     });
   }
 
@@ -134,10 +138,12 @@ export class SdkClientArchiveService {
     workspaceId,
     applicationId,
     applicationUniversalIdentifier,
+    flatEntityMapsOverride,
   }: {
     workspaceId: string;
     applicationId: string;
     applicationUniversalIdentifier: string;
+    flatEntityMapsOverride?: SchemaFlatEntityMapsOverride;
   }): Promise<Buffer> {
     try {
       const stream = await this.fileStorageService.readFile({
@@ -166,6 +172,7 @@ export class SdkClientArchiveService {
       applicationId,
       applicationUniversalIdentifier,
       trigger: 'missing-archive',
+      flatEntityMapsOverride,
     });
   }
 }
