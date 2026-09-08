@@ -114,6 +114,13 @@ export const Controlled: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 360 } },
   render: (args) => <ControlledTabsExample tabProps={args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('tab', { name: 'Activity' }));
+    await expect(
+      canvas.getByRole('tabpanel', { name: 'Activity' }),
+    ).toBeVisible();
+  },
 };
 
 export const AutomaticActivation: Story = {
