@@ -104,7 +104,7 @@ describe('buildNonAuditLoggedFieldNamesByObjectMetadataId', () => {
     ).toEqual(new Set(['position']));
   });
 
-  it('excludes the declared join column of an owning relation', () => {
+  it('excludes the join column an update event carries, not the declared one', () => {
     expect(
       buildNonAuditLoggedFieldNamesByObjectMetadataId(
         buildMaps([
@@ -122,7 +122,7 @@ describe('buildNonAuditLoggedFieldNamesByObjectMetadataId', () => {
           },
         ]),
       ).get(COMPANY_OBJECT_METADATA_ID),
-    ).toEqual(new Set(['lastContactItem', 'lastContactItemCustomId']));
+    ).toEqual(new Set(['lastContactItem', 'lastContactItemId']));
   });
 
   it('does not invent a join column for the non owning side of a relation', () => {
