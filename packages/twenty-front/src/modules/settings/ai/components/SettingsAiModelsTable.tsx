@@ -41,8 +41,9 @@ const StyledDeprecatedSuffix = styled.span`
 `;
 
 const hoverCardTooltipClass = css`
-  background: transparent !important;
-  box-shadow: none !important;
+  border-radius: ${themeCssVariables.border.radius.rounded} !important;
+  corner-shape: round;
+
   padding: 0 !important;
 `;
 
@@ -217,13 +218,10 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
           offset={8}
           delay={TooltipDelay.noDelay}
           className={hoverCardTooltipClass}
-          width="300px"
+          width="320px"
           isOpen={true}
         >
-          <SettingsAiModelHoverCard
-            model={hoveredModel}
-            comparisonModels={models}
-          />
+          <SettingsAiModelHoverCard model={hoveredModel} />
         </AppTooltip>
       )}
     </>

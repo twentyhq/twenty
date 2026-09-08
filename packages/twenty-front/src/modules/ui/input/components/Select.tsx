@@ -1,6 +1,5 @@
-import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { type MouseEvent, useId, useMemo, useRef, useState } from 'react';
+import { type MouseEvent, useMemo, useRef, useState } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -24,7 +23,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
-import { AppTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -79,53 +77,6 @@ const StyledDescription = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-const StyledOptionHoverCardAnchor = styled.div`
-  width: 100%;
-`;
-
-const optionHoverCardTooltipClass = css`
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-`;
-
-type SelectOptionMenuItemProps<Value extends SelectValue> = {
-  option: SelectOption<Value>;
-  selected: boolean;
-  focused?: boolean;
-  needIconCheck?: boolean;
-  hoverCardAnchorId: string;
-  onHoverCardAnchorChange: (anchorId: string | null) => void;
-  onClick: () => void;
-};
-
-const SelectOptionMenuItem = <Value extends SelectValue>({
-  option,
-  selected,
-  focused,
-  needIconCheck,
-  hoverCardAnchorId,
-  onHoverCardAnchorChange,
-  onClick,
-}: SelectOptionMenuItemProps<Value>) => (
-  <StyledOptionHoverCardAnchor
-    id={hoverCardAnchorId}
-    onMouseEnter={() => onHoverCardAnchorChange(hoverCardAnchorId)}
-    onMouseLeave={() => onHoverCardAnchorChange(null)}
-  >
-    <MenuItemSelect
-      LeftIcon={option.Icon}
-      leftIconColor={option.iconThemeColor}
-      text={option.label}
-      contextualText={option.contextualText}
-      selected={selected}
-      focused={focused}
-      needIconCheck={needIconCheck}
-      onClick={onClick}
-    />
-  </StyledOptionHoverCardAnchor>
-);
-
 export const Select = <Value extends SelectValue>({
   className,
   disabled: disabledFromProps,
@@ -152,15 +103,8 @@ export const Select = <Value extends SelectValue>({
   variant = 'default',
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
-  const selectInstanceId = useId().replace(/[^a-zA-Z0-9-_]/g, '');
 
   const [searchInputValue, setSearchInputValue] = useState('');
-  const [hoveredHoverCardAnchorId, setHoveredHoverCardAnchorId] = useState<
-    string | null
-  >(null);
-
-  const getHoverCardAnchorId = (section: 'pinned' | 'option', index: number) =>
-    `${dropdownId}-${selectInstanceId}-${section}-${index}`;
 
   const selectedOption = useMemo(() => {
     if (isDefined(pinnedOption) && pinnedOption.value === value) {
@@ -224,33 +168,6 @@ export const Select = <Value extends SelectValue>({
 
   const { setSelectedItemId } = useSelectableList(dropdownId);
 
-  const pinnedOptionEntry = isDefined(pinnedOption)
-    ? {
-        option: pinnedOption,
-        hoverCardAnchorId: getHoverCardAnchorId('pinned', 0),
-      }
-    : undefined;
-
-  const optionEntries = filteredOptions.map((option, index) => ({
-    option,
-    hoverCardAnchorId: getHoverCardAnchorId('option', index),
-  }));
-
-  const focusedHoverCardEntry =
-    pinnedOptionEntry?.option.label === selectedItemId
-      ? pinnedOptionEntry
-      : optionEntries.find(({ option }) => option.label === selectedItemId);
-
-  const activeHoverCardEntry = isDefined(hoveredHoverCardAnchorId)
-    ? [
-        ...(isDefined(pinnedOptionEntry) ? [pinnedOptionEntry] : []),
-        ...optionEntries,
-      ].find(
-        ({ hoverCardAnchorId }) =>
-          hoverCardAnchorId === hoveredHoverCardAnchorId,
-      )
-    : focusedHoverCardEntry;
-
   const controlSelectedOption = useMemo(() => {
     if (!isDefined(selectedOption) || showContextualTextInControl) {
       return selectedOption;
@@ -278,7 +195,7 @@ export const Select = <Value extends SelectValue>({
     <StyledContainer
       className={className}
       fullWidth={fullWidth}
-      tabIndex={isDisabled ? 0 : undefined}
+      tabIndex={0}
       onBlur={onBlur}
       ref={selectContainerRef}
     >
@@ -297,9 +214,7 @@ export const Select = <Value extends SelectValue>({
           dropdownPlacement="bottom-start"
           dropdownOffset={dropdownOffset}
           isDropdownInModal={isDropdownInModal}
-          enableKeyboardActivation
           onOpen={handleDropdownOpen}
-          onClose={() => setHoveredHoverCardAnchorId(null)}
           clickableComponent={
             <SelectControl
               selectedOption={controlSelectedOption}
@@ -323,14 +238,15 @@ export const Select = <Value extends SelectValue>({
               )}
               {isDefined(pinnedOption) && (
                 <DropdownMenuItemsContainer scrollable={false}>
-                  <SelectOptionMenuItem
-                    option={pinnedOption}
+                  <MenuItemSelect
+                    LeftIcon={pinnedOption.Icon}
+                    leftIconColor={pinnedOption.iconThemeColor}
+                    text={pinnedOption.label}
+                    contextualText={pinnedOption.contextualText}
                     selected={
                       controlSelectedOption.value === pinnedOption.value
                     }
                     needIconCheck={needIconCheck}
-                    hoverCardAnchorId={getHoverCardAnchorId('pinned', 0)}
-                    onHoverCardAnchorChange={setHoveredHoverCardAnchorId}
                     onClick={() => {
                       onChange?.(pinnedOption.value);
                       onBlur?.();
@@ -349,7 +265,7 @@ export const Select = <Value extends SelectValue>({
                     focusId={dropdownId}
                     selectableItemIdArray={selectableItemIdArray}
                   >
-                    {optionEntries.map(({ option, hoverCardAnchorId }) => (
+                    {filteredOptions.map((option) => (
                       <SelectableListItem
                         key={`${option.value}-${option.label}`}
                         itemId={option.label}
@@ -359,15 +275,16 @@ export const Select = <Value extends SelectValue>({
                           closeDropdown(dropdownId);
                         }}
                       >
-                        <SelectOptionMenuItem
-                          option={option}
+                        <MenuItemSelect
+                          LeftIcon={option.Icon}
+                          leftIconColor={option.iconThemeColor}
+                          text={option.label}
+                          contextualText={option.contextualText}
                           selected={
                             controlSelectedOption.value === option.value
                           }
                           focused={selectedItemId === option.label}
                           needIconCheck={needIconCheck}
-                          hoverCardAnchorId={hoverCardAnchorId}
-                          onHoverCardAnchorChange={setHoveredHoverCardAnchorId}
                           onClick={() => {
                             onChange?.(option.value);
                             onBlur?.();
@@ -389,19 +306,6 @@ export const Select = <Value extends SelectValue>({
                     text={callToActionButton.text}
                   />
                 </DropdownMenuItemsContainer>
-              )}
-              {isDefined(activeHoverCardEntry?.option.hoverCardContent) && (
-                <AppTooltip
-                  anchorSelect={`#${activeHoverCardEntry.hoverCardAnchorId}`}
-                  place="right-start"
-                  noArrow
-                  offset={8}
-                  className={optionHoverCardTooltipClass}
-                  width="300px"
-                  isOpen={true}
-                >
-                  {activeHoverCardEntry.option.hoverCardContent}
-                </AppTooltip>
               )}
             </DropdownContent>
           }

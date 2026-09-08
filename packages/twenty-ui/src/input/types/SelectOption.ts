@@ -1,6 +1,5 @@
 import { type IconComponent } from '@ui/icon';
 import { type ThemeColor } from '@ui/theme';
-import { type ReactNode } from 'react';
 
 export type SelectOption<
   Value extends string | number | boolean | null = string,
@@ -13,6 +12,5 @@ export type SelectOption<
   disabled?: boolean;
   color?: ThemeColor | 'transparent';
   contextualText?: string;
-  hoverCardContent?: ReactNode;
   searchKeywords?: string;
 };

@@ -25,12 +25,7 @@ import {
   useFloating,
 } from '@floating-ui/react';
 import { styled } from '@linaria/react';
-import {
-  type KeyboardEvent,
-  type MouseEvent,
-  type ReactNode,
-  useCallback,
-} from 'react';
+import { type MouseEvent, type ReactNode, useCallback } from 'react';
 import { flushSync } from 'react-dom';
 import { type Keys } from 'react-hotkeys-hook';
 import { isDefined } from 'twenty-shared/utils';
@@ -68,7 +63,6 @@ export type DropdownProps = {
   excludedClickOutsideIds?: string[];
   isDropdownInModal?: boolean;
   disableClickForClickableComponent?: boolean;
-  enableKeyboardActivation?: boolean;
   middlewareBoundaryPadding?: {
     right?: number;
     left?: number;
@@ -93,7 +87,6 @@ export const Dropdown = ({
   excludedClickOutsideIds,
   isDropdownInModal = false,
   disableClickForClickableComponent = false,
-  enableKeyboardActivation = false,
   middlewareBoundaryPadding = {},
 }: DropdownProps) => {
   const scopedDropdownId =
@@ -202,35 +195,6 @@ export const Dropdown = ({
     ],
   );
 
-  const handleClickableComponentKeyDown = useCallback(
-    (event: KeyboardEvent<HTMLDivElement>) => {
-      if (
-        !enableKeyboardActivation ||
-        disableClickForClickableComponent ||
-        isDropdownOpen ||
-        (event.key !== 'Enter' && event.key !== ' ')
-      ) {
-        return;
-      }
-
-      event.stopPropagation();
-      event.preventDefault();
-
-      toggleDropdown({
-        dropdownComponentInstanceIdFromProps: scopedDropdownId,
-        globalHotkeysConfig,
-      });
-    },
-    [
-      disableClickForClickableComponent,
-      enableKeyboardActivation,
-      globalHotkeysConfig,
-      isDropdownOpen,
-      scopedDropdownId,
-      toggleDropdown,
-    ],
-  );
-
   return (
     <DropdownComponentInstanceContext.Provider
       value={{ instanceId: scopedDropdownId }}
@@ -239,12 +203,10 @@ export const Dropdown = ({
         <StyledClickableComponent
           ref={refs.setReference}
           onClick={handleClickableComponentClick}
-          onKeyDown={handleClickableComponentKeyDown}
           aria-controls={`${scopedDropdownId}-options`}
           aria-expanded={isDropdownOpen}
           aria-haspopup={true}
           role="button"
-          tabIndex={enableKeyboardActivation ? 0 : undefined}
           width={clickableComponentWidth}
         >
           {clickableComponent}

@@ -48,25 +48,11 @@ const renderHooks = (pathname: string) => {
         modelId: 'default-smart-model',
         label: 'GPT-5.2',
         providerName: 'openai',
-        isRecommended: true,
       },
       {
         modelId: 'default-fast-model',
         label: 'GPT-5.6 Luna',
         providerName: 'openai',
-        isRecommended: true,
-      },
-      {
-        modelId: 'openai/gpt-5.2',
-        label: 'GPT-5.2',
-        providerName: 'openai',
-        isRecommended: true,
-      },
-      {
-        modelId: 'openai/gpt-5.6-luna',
-        label: 'GPT-5.6 Luna',
-        providerName: 'openai',
-        isRecommended: true,
       },
     ] as never);
   });
@@ -98,13 +84,5 @@ describe('useAiModelOptions', () => {
     const result = renderHooks('/objects/companies');
 
     expect(result.current.pinnedOption?.label).toBe('GPT-5.2');
-  });
-
-  it('should include model information content in regular and pinned options', () => {
-    const result = renderHooks('/objects/companies');
-
-    expect(result.current.options).toHaveLength(1);
-    expect(result.current.options[0].hoverCardContent).toBeDefined();
-    expect(result.current.pinnedOption?.hoverCardContent).toBeDefined();
   });
 });

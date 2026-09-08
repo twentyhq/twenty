@@ -16,7 +16,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
-import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminAiProviderListCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard';
 import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
@@ -171,12 +170,6 @@ export const SettingsAdminAI = () => {
     value: model.modelId,
     label: model.label,
     Icon: getModelIcon(model.modelFamily, model.providerName),
-    hoverCardContent: (
-      <SettingsAiModelHoverCard
-        model={model}
-        comparisonModels={enabledModels}
-      />
-    ),
   }));
 
   const handleDefaultModelChange = async (

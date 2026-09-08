@@ -7,7 +7,6 @@ import {
 } from '@/ai/hooks/useAiModelOptions';
 import { SettingsAgentModelCapabilities } from '@/ai/components/SettingsAgentModelCapabilities';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -75,26 +74,12 @@ export const SettingsAgentSettingsTab = ({
 
   const currentModel = aiModels.find((m) => m.modelId === formValues.modelId);
   const isCurrentModelDeprecated = currentModel?.isDeprecated === true;
-  const activeModelIds = new Set(
-    activeModelOptions.map((option) => option.value),
-  );
-  const comparisonModels = aiModels.filter(
-    (model) =>
-      activeModelIds.has(model.modelId) ||
-      model.modelId === currentModel?.modelId,
-  );
 
   const modelOptions = isCurrentModelDeprecated
     ? [
         {
           value: formValues.modelId,
           label: `${currentModelLabel} (deprecated)`,
-          hoverCardContent: isDefined(currentModel) ? (
-            <SettingsAiModelHoverCard
-              model={currentModel}
-              comparisonModels={comparisonModels}
-            />
-          ) : undefined,
         },
         ...activeModelOptions,
       ]
