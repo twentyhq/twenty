@@ -37,7 +37,11 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 export class SsoResolver {
   constructor(private readonly ssoService: SsoService) {}
 
-  @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    EnterpriseFeaturesEnabledGuard,
+    SettingsPermissionGuard(PermissionFlagType.IMPERSONATE),
+  )
   @Mutation(() => SetupSsoDTO)
   async createOIDCIdentityProvider(
     @Args('input') setupSsoInput: SetupOidcSsoInput,
@@ -57,7 +61,11 @@ export class SsoResolver {
     return this.ssoService.getSsoIdentityProviders(workspaceId);
   }
 
-  @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    EnterpriseFeaturesEnabledGuard,
+    SettingsPermissionGuard(PermissionFlagType.IMPERSONATE),
+  )
   @Mutation(() => SetupSsoDTO)
   async createSAMLIdentityProvider(
     @Args('input') setupSsoInput: SetupSamlSsoInput,
@@ -81,7 +89,11 @@ export class SsoResolver {
     );
   }
 
-  @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    EnterpriseFeaturesEnabledGuard,
+    SettingsPermissionGuard(PermissionFlagType.IMPERSONATE),
+  )
   @Mutation(() => EditSsoDTO)
   async editSSOIdentityProvider(
     @Args('input') input: EditSsoInput,
