@@ -61,7 +61,10 @@ export const getTrayTitle = (
     0,
     Math.ceil((Date.parse(next.startsAt) - now) / 60_000),
   );
-  return minutes <= 60 ? `${minutes}m` : '';
+  if (minutes <= 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return remainingMinutes ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
 };
 
 export const createTrayMenuTemplate = (

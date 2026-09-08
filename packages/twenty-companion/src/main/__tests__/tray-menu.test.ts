@@ -75,6 +75,19 @@ describe('native tray menu actions', () => {
     expect(getTrayTitle(current, NOW)).toBe('Paused');
   });
 
+  it('shows the next meeting countdown when it is more than one hour away', () => {
+    expect(
+      getTrayTitle(
+        state({
+          meetings: [
+            meeting({ startsAt: '2026-09-07T14:30:00Z' }),
+          ],
+        }),
+        NOW,
+      ),
+    ).toBe('2h 30m');
+  });
+
   it('opens setup without starting capture when permissions have not been set up', () => {
     const handlers = actions();
     const menu = createTrayMenuTemplate(
