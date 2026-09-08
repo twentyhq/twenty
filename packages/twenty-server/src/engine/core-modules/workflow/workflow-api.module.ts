@@ -9,7 +9,11 @@ import { WorkflowTriggerResolver } from 'src/engine/core-modules/workflow/resolv
 import { WorkflowVersionEdgeResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version-edge.resolver';
 import { WorkflowVersionStepResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver';
 import { WorkflowVersionResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version.resolver';
+import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
+import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
+import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
+import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
@@ -29,7 +33,13 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([WorkspaceEntity, WorkflowVersionEntity]),
+    TypeOrmModule.forFeature([
+      WorkspaceEntity,
+      WorkflowVersionEntity,
+      WorkflowEntity,
+    ]),
+    RecordPositionModule,
+    WorkflowCoreModule,
     WorkflowTriggerModule,
     WorkflowBuilderModule,
     WorkflowCommonModule,
@@ -53,8 +63,10 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkflowVersionResolver,
     CoreWorkflowResolver,
     CoreWorkflowListService,
+    CoreWorkflowMutationWorkspaceService,
     CoreWorkflowVersionListService,
     provideWorkspaceScopedRepository(WorkflowVersionEntity),
+    provideWorkspaceScopedRepository(WorkflowEntity),
   ],
 })
 export class WorkflowApiModule {}
