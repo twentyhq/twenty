@@ -166,7 +166,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
           alignment={SectionAlignment.Center}
           fontColor={SectionFontColor.Primary}
         >
-          {t`Credits are added on top of the plan allowance and are spent only once it runs out. They carry over in full from one billing period to the next and stay available until they are used up. An expiry takes effect at the end of the billing period it falls in.`}
+          {t`Credits are added on top of the plan allowance and are spent only once it runs out. They carry over in full from one billing period to the next, and stay available until they are used up or, where an expiry is set, until the end of the billing period that expiry falls in.`}
         </Section>
       </StyledSectionContainer>
 
