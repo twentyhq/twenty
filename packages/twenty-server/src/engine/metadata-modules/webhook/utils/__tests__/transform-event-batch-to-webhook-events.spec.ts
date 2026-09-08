@@ -313,7 +313,7 @@ describe('transformEventBatchToWebhookEvents', () => {
     const result = transformEventBatchToWebhookEvents({
       workspaceEventBatch,
       webhooks,
-      recordShares,
+      recordShareGate: { recordShares, principalIds: [EVERYONE_PRINCIPAL_ID] },
     });
 
     expect(result).toHaveLength(1);
