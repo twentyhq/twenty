@@ -56,7 +56,7 @@ export default defineApplication({
       label: 'Additional summary instructions',
       description:
         'Optional instructions for the language, tone, or focus of meeting summaries.',
-      type: FieldType.RICH_TEXT,
+      type: FieldType.TEXT,
       isSecret: false,
     },
   },

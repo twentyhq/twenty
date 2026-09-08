@@ -42,7 +42,12 @@ const normalizeConferenceLink = (
     .replace(/^www\./, '');
 
   const withoutQueryAndFragment = withoutProtocol.split(/[?#]/)[0];
+  const meetingToken = new URLSearchParams(
+    withoutProtocol.split('?')[1]?.split('#')[0],
+  ).get('mtid');
   const withoutTrailingSlash = withoutQueryAndFragment.replace(/\/+$/, '');
 
-  return withoutTrailingSlash === '' ? undefined : withoutTrailingSlash;
+  return withoutTrailingSlash === ''
+    ? undefined
+    : `${withoutTrailingSlash}${meetingToken ? `?mtid=${meetingToken}` : ''}`;
 };

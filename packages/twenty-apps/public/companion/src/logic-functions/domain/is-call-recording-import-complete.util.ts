@@ -1,8 +1,7 @@
-import { isNonEmptyArray, isNull, isUndefined } from '@sniptt/guards';
+import { isNonEmptyArray } from '@sniptt/guards';
 
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { parseMediaFileTooLargeMarkers } from 'src/logic-functions/domain/parse-media-file-too-large-markers.util';
-import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 
 export const isCallRecordingImportComplete = ({
   transcript,
@@ -21,10 +20,7 @@ export const isCallRecordingImportComplete = ({
     parseMediaFileTooLargeMarkers(companionFailureReason);
 
   return (
-    !isNull(transcript) &&
-    !isUndefined(transcript) &&
-    (isUndefined(parseTranscriptMarker(transcript)) ||
-      parseTranscriptMarker(transcript)?.status === 'FAILED') &&
+    Array.isArray(transcript) &&
     (isNonEmptyArray(audio) || audioFileTooLarge) &&
     (!requiresVideo || isNonEmptyArray(video) || videoFileTooLarge)
   );

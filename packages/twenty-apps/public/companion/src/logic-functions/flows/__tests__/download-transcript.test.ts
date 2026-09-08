@@ -93,4 +93,33 @@ describe('downloadTranscript', () => {
       expect.stringContaining('socket leaked detail'),
     );
   });
+  it.each([{}, 'not a transcript', [null], [{ words: ['invalid'] }]])(
+    'rejects malformed transcript content (%j)',
+    async (content) => {
+      fetchMock
+        .mockResolvedValueOnce(buildRecallTranscriptResponse())
+        .mockResolvedValueOnce(
+          new Response(JSON.stringify(content), { status: 200 }),
+        );
+      expect(
+        await downloadTranscript({ transcriptId: 'recall-transcript-1' }),
+      ).toMatchObject({ outcome: 'error' });
+    },
+  );
+
+  it('recognizes deletion even if the provider still returns an old download URL', async () => {
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: { download_url: TRANSCRIPT_DOWNLOAD_URL },
+          status: { code: 'deleted' },
+        }),
+        { status: 200 },
+      ),
+    );
+    expect(
+      await downloadTranscript({ transcriptId: 'recall-transcript-1' }),
+    ).toEqual({ outcome: 'deleted' });
+    expect(fetchMock).toHaveBeenCalledOnce();
+  });
 });

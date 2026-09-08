@@ -1,7 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
-
 // Crash safety net: a lease older than this is reclaimable so a worker that died
 // mid-import never blocks the recording forever. Normal runs release explicitly.
 const ARTIFACTS_IMPORT_CLAIM_TTL_MS = 10 * 60 * 1000;
@@ -44,10 +42,18 @@ export const claimCallRecordingArtifactsImport = async (
 
 export const releaseCallRecordingArtifactsImportClaim = async (
   client: CoreApiClient,
-  { callRecordingId }: { callRecordingId: string },
+  { callRecordingId, claimedAt }: { callRecordingId: string; claimedAt: Date },
 ): Promise<void> => {
-  await updateCallRecording(client, {
-    id: callRecordingId,
-    data: { companionImportClaimedAt: null },
+  await client.mutation({
+    updateCallRecordings: {
+      __args: {
+        filter: {
+          id: { eq: callRecordingId },
+          companionImportClaimedAt: { eq: claimedAt.toISOString() },
+        },
+        data: { companionImportClaimedAt: null },
+      },
+      id: true,
+    },
   });
 };

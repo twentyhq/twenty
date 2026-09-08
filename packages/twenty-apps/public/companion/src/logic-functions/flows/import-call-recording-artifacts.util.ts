@@ -75,9 +75,10 @@ export const importCallRecordingArtifacts = async ({
   // one performs the provider transcript request and media upload. The lease clock
   // is wall-clock, not request.requestedAt, so a retry of the same delivery still
   // measures real elapsed time and can reclaim a lease left behind by a crash.
+  const claimedAt = new Date();
   const claimedImport = await claimCallRecordingArtifactsImport(client, {
     callRecordingId: callRecording.id,
-    now: new Date(),
+    now: claimedAt,
   });
 
   if (!claimedImport) {
@@ -136,6 +137,7 @@ export const importCallRecordingArtifacts = async ({
   } finally {
     await releaseCallRecordingArtifactsImportClaim(client, {
       callRecordingId: request.callRecordingId,
+      claimedAt,
     });
   }
 };

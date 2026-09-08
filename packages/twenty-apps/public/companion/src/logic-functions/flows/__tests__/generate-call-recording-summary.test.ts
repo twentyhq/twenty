@@ -17,7 +17,13 @@ vi.mock('src/logic-functions/data/claim-summary-generation.util', () => ({
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<object>()),
   runAgent: runAgentMock,
-  kv: { get: async (key: string) => stored.get(key) ?? null, set: saveCache },
+  kv: {
+    get: async (key: string) => stored.get(key) ?? null,
+    set: saveCache,
+    delete: async (key: string) => {
+      stored.delete(key);
+    },
+  },
 }));
 
 const TRANSCRIPT = [
@@ -381,18 +387,17 @@ describe('generateCallRecordingSummary', () => {
     });
   });
 
-  it('stores nothing when the agent run fails', async () => {
+  it('reports an unsuccessful agent run without caching empty success', async () => {
     runAgentMock.mockResolvedValue({
       success: false,
       error: 'no more available credits',
       result: null,
     });
-
-    const result = await generateCallRecordingSummary(CLIENT, {
-      callRecordingId: 'call-recording-1',
-    });
-
-    expect(result).toEqual({ outcome: 'empty-summary' });
+    await expect(
+      generateCallRecordingSummary(CLIENT, {
+        callRecordingId: 'call-recording-1',
+      }),
+    ).rejects.toThrow('no usable result');
     expect(mutationMock).not.toHaveBeenCalled();
   });
 

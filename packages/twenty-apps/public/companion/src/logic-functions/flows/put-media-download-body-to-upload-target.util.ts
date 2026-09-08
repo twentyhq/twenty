@@ -13,7 +13,7 @@ type MediaUploadTarget = {
   contentType: string;
 };
 
-const MEDIA_UPLOAD_TIMEOUT_MS = 14 * 60 * 1000;
+const MEDIA_UPLOAD_TIMEOUT_MS = 60 * 1000;
 const HTTP_STATUS_OK_LOWER_BOUND = 200;
 const HTTP_STATUS_OK_UPPER_BOUND = 300;
 

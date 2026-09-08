@@ -91,7 +91,12 @@ export const getDesktopCompanionAgenda = async (
                 {
                   or: [
                     { externalBotId: { is: 'NOT_NULL' } },
-                    { status: { eq: 'SCHEDULED' } },
+                    {
+                      and: [
+                        { status: { eq: 'SCHEDULED' } },
+                        { recordingRequestStatus: { eq: 'REQUESTED' } },
+                      ],
+                    },
                   ],
                 },
               ],

@@ -60,3 +60,22 @@ describe('fetchAllNodes', () => {
     expect(fetchPage).toHaveBeenCalledTimes(1);
   });
 });
+
+it('rejects repeated cursors before issuing an unbounded sequence', async () => {
+  const fetchPage = vi.fn().mockResolvedValue({
+    edges: [],
+    pageInfo: { hasNextPage: true, endCursor: 'same' },
+  });
+  await expect(fetchAllNodes(fetchPage)).rejects.toThrow('did not advance');
+  expect(fetchPage).toHaveBeenCalledTimes(2);
+});
+
+it('bounds even a consistently advancing cursor', async () => {
+  let page = 0;
+  const fetchPage = vi.fn(async () => ({
+    edges: [],
+    pageInfo: { hasNextPage: true, endCursor: String(++page) },
+  }));
+  await expect(fetchAllNodes(fetchPage)).rejects.toThrow('20 pages');
+  expect(fetchPage).toHaveBeenCalledTimes(20);
+});

@@ -10,6 +10,7 @@ type Person = {
   id: string;
   name?: { firstName?: string | null; lastName?: string | null } | null;
   avatarUrl?: string | null;
+  avatarFile?: { url?: string | null }[] | null;
   emails?: {
     primaryEmail?: string | null;
     additionalEmails?: string[] | null;
@@ -55,6 +56,7 @@ export type RecordingViewer = {
   workspaceMemberId?: string;
 };
 
+const escapeLike = (value: string) => value.replace(/[\\%_]/g, '\\$&');
 const normalize = (value: string) => value.trim().toLowerCase();
 const fullName = (name: Person['name']) =>
   [name?.firstName, name?.lastName].filter(Boolean).join(' ').trim();
@@ -126,6 +128,7 @@ export const getRecordingParticipants = async (
                   id: true,
                   name: { firstName: true, lastName: true },
                   avatarUrl: true,
+                  avatarFile: { url: true },
                   emails: { primaryEmail: true, additionalEmails: true },
                 },
                 workspaceMember: {
@@ -196,8 +199,12 @@ export const getRecordingParticipants = async (
               ...(after ? { after } : {}),
               filter: {
                 or: emails.flatMap((email) => [
-                  { emails: { primaryEmail: { ilike: email } } },
-                  { emails: { additionalEmails: { like: `%${email}%` } } },
+                  { emails: { primaryEmail: { ilike: escapeLike(email) } } },
+                  {
+                    emails: {
+                      additionalEmails: { like: `%${escapeLike(email)}%` },
+                    },
+                  },
                 ]),
               },
             },
@@ -206,6 +213,7 @@ export const getRecordingParticipants = async (
                 id: true,
                 name: { firstName: true, lastName: true },
                 avatarUrl: true,
+                avatarFile: { url: true },
                 emails: { primaryEmail: true, additionalEmails: true },
               },
             },
@@ -244,7 +252,10 @@ export const getRecordingParticipants = async (
         id,
         name,
         avatarUrl:
-          person?.avatarUrl || candidate.workspaceMember?.avatarUrl || null,
+          person?.avatarFile?.[0]?.url ||
+          person?.avatarUrl ||
+          candidate.workspaceMember?.avatarUrl ||
+          null,
       });
     }
     participantsByRecording.set(

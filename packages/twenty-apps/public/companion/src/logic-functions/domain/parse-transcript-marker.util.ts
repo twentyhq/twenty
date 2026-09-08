@@ -17,9 +17,11 @@ export const parseTranscriptMarker = (
   }
 
   return {
-    recallTranscriptId: isString(candidate.recallTranscriptId)
-      ? candidate.recallTranscriptId
-      : null,
+    recallTranscriptId:
+      isString(candidate.recallTranscriptId) &&
+      candidate.recallTranscriptId.trim() !== ''
+        ? candidate.recallTranscriptId
+        : null,
     status: candidate.status,
     ...(isString(candidate.requestedAt)
       ? { requestedAt: candidate.requestedAt }

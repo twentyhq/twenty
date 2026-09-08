@@ -95,7 +95,7 @@ describe('import-call-recording-artifacts', () => {
     });
   });
 
-  it('rethrows an import failure as retryable so the queue redelivers it', async () => {
+  it('preserves the import failure cause for reconciliation', async () => {
     importCallRecordingArtifactsMock.mockRejectedValue(
       new Error('Service unavailable'),
     );
@@ -106,7 +106,8 @@ describe('import-call-recording-artifacts', () => {
         requestedAt: '2026-01-01T14:06:00.000Z',
       }),
     ).rejects.toMatchObject({
-      name: 'RetryableLogicFunctionError',
+      name: 'Error',
+      cause: expect.objectContaining({ message: 'Service unavailable' }),
       message: expect.stringContaining('Service unavailable'),
     });
   });

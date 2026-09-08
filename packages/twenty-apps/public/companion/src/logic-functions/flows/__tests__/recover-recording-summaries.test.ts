@@ -5,7 +5,7 @@ import { kv } from 'twenty-sdk/logic-function';
 import { recoverRecordingSummaries } from 'src/logic-functions/flows/recover-recording-summaries.util';
 
 vi.mock('twenty-sdk/logic-function', () => ({
-  kv: { get: vi.fn(), set: vi.fn() },
+  kv: { get: vi.fn(), set: vi.fn(), delete: vi.fn() },
 }));
 const query = vi.fn();
 const mutation = vi.fn();
@@ -102,8 +102,5 @@ it('returns to the first page after reaching the end, allowing failed saves to r
     },
   });
   await recoverRecordingSummaries(client, now);
-  expect(kv.set).toHaveBeenCalledWith(
-    'companion-summary-recovery-cursor',
-    null,
-  );
+  expect(kv.delete).toHaveBeenCalledWith('companion-summary-recovery-cursor');
 });

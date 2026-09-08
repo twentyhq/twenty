@@ -37,6 +37,13 @@ export const getRecallApiConfig = ():
       getApplicationVariableValue(RECALL_REGION_ENV_VAR_NAME)?.trim(),
     ) ?? DEFAULT_RECALL_REGION;
 
+  if (!/^[a-z]+-[a-z]+-\d+$/.test(region)) {
+    return {
+      success: false,
+      error: 'RECALL_REGION must be a Recall region slug.',
+    };
+  }
+
   return {
     success: true,
     config: {

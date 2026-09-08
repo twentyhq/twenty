@@ -26,6 +26,12 @@ export const isCallRecordingStatusDowngrade = ({
   fromStatus: string | undefined;
   toStatus: string;
 }): boolean => {
+  if (
+    toStatus === CallRecordingStatus.COMPLETED &&
+    (fromStatus === CallRecordingStatus.FAILED ||
+      fromStatus === CallRecordingStatus.NOT_RECORDED)
+  )
+    return true;
   const fromRank = isUndefined(fromStatus)
     ? undefined
     : getCallRecordingStatusRank(fromStatus);

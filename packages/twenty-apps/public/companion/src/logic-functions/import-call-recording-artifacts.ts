@@ -8,7 +8,7 @@ import {
   type ImportCallRecordingArtifactsResult,
 } from 'src/logic-functions/flows/import-call-recording-artifacts.util';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
-import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
+import { buildStepError } from 'src/logic-functions/utils/build-step-failure.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
 export const importCallRecordingArtifactsHandler = async (
@@ -32,7 +32,7 @@ export const importCallRecordingArtifactsHandler = async (
       request: { callRecordingId, requestedAt },
     });
   } catch (error) {
-    throw buildRetryableStepFailure(
+    throw buildStepError(
       `artifact import for call recording ${callRecordingId}`,
       error,
     );

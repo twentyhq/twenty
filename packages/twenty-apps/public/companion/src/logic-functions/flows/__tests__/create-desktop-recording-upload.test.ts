@@ -42,7 +42,7 @@ const client = { query, mutation } as unknown as CoreApiClient;
 beforeEach(() => {
   vi.resetAllMocks();
   query.mockResolvedValue({});
-  mutation.mockResolvedValue({});
+  mutation.mockResolvedValue({ updateCallRecordings: [{ id: SESSION_ID }] });
   agenda.mockResolvedValue({ meetings: [] });
   request.mockResolvedValue({
     ok: true,
@@ -216,4 +216,11 @@ describe('desktop upload provisioning', () => {
       mutation.mock.calls[1][0].updateCallRecording.__args.data.status,
     ).toBe('FAILED');
   });
+});
+
+it('does not return an upload token after a concurrent capture failure', async () => {
+  mutation.mockResolvedValue({ updateCallRecordings: [] });
+  await expect(
+    createDesktopRecordingUpload(client, 'user-1', BODY),
+  ).rejects.toThrow('no longer active');
 });

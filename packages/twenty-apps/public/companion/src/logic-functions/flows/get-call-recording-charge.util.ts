@@ -1,16 +1,15 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { chargeCredits } from 'twenty-sdk/billing';
 import { computeCallRecordingCharge } from 'src/logic-functions/domain/compute-call-recording-charge.util';
 import { getOwnedDesktopUpload } from 'src/logic-functions/recall-api/get-owned-desktop-upload.util';
 import { getRecallRecording } from 'src/logic-functions/recall-api/get-recall-recording.util';
 import { normalizeRecallTimestamp } from 'src/logic-functions/recall-api/normalize-recall-timestamp.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
-export const chargeCompletedCallRecording = async (
+export const getCallRecordingCharge = async (
   client: CoreApiClient,
   { callRecordingId }: { callRecordingId: string },
-): Promise<void> => {
+) => {
   const result = await client.query({
     callRecordings: {
       __args: { first: 1, filter: { id: { eq: callRecordingId } } },
@@ -25,7 +24,11 @@ export const chargeCompletedCallRecording = async (
     },
   });
   const recording = result.callRecordings?.edges?.[0]?.node;
-  if (!recording || recording.status !== 'COMPLETED') return;
+  if (
+    !recording ||
+    ['COMPLETED', 'FAILED', 'NOT_RECORDED'].includes(recording.status)
+  )
+    return null;
 
   const upload = await getOwnedDesktopUpload(recording);
   if (
@@ -53,10 +56,10 @@ export const chargeCompletedCallRecording = async (
   });
   if (!charge) throw new Error('Recording has no usable provider duration.');
 
-  await chargeCredits({
+  return {
     creditsUsedMicro: charge.creditsUsedMicro,
     quantity: charge.quantityMinutes,
-    operationType: 'CALL_RECORDING',
+    operationType: 'CALL_RECORDING' as const,
     resourceContext: 'recall',
-  });
+  };
 };

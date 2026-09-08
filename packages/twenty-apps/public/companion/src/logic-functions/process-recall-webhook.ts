@@ -3,7 +3,7 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { PROCESS_RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { handleRecallWebhook } from 'src/logic-functions/flows/handle-recall-webhook.util';
-import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
+import { buildStepError } from 'src/logic-functions/utils/build-step-failure.util';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
 import { verifyRecallWebhookSignature } from 'src/logic-functions/recall-api/verify-recall-webhook-signature.util';
@@ -29,8 +29,8 @@ export const processRecallWebhookHandler = async (payload: unknown) => {
     rawBody: envelope.rawBody,
     headers: headers as Record<string, string | undefined>,
     secret,
-    // The ingress checks freshness; durable queue retries may arrive much later.
-    checkTimestamp: false,
+    // Expired deliveries are recovered by the recording reconciler.
+    checkTimestamp: true,
   });
   if (!signature.valid)
     return { status: 'skipped', reason: 'invalid webhook signature' };
@@ -49,7 +49,7 @@ export const processRecallWebhookHandler = async (payload: unknown) => {
       body,
     });
   } catch (error) {
-    throw buildRetryableStepFailure('Recall webhook processing', error);
+    throw buildStepError('Recall webhook processing', error);
   }
 };
 

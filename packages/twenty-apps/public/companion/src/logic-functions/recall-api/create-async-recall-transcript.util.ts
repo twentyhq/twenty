@@ -35,7 +35,7 @@ export const createAsyncRecallTranscript = async ({
     return result;
   }
 
-  if (!isString(result.data?.id)) {
+  if (!isString(result.data?.id) || !result.data.id.trim()) {
     return {
       ok: false,
       status: null,
