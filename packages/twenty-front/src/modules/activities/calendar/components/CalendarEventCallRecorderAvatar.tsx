@@ -72,7 +72,7 @@ export const CalendarEventCallRecorderAvatar = ({
       {createPortal(
         <AppTooltip
           anchorSelect={`#${tooltipAnchorId}`}
-          content={getCallRecordingStatusLabel(status)}
+          title={getCallRecordingStatusLabel(status)}
           delay={TooltipDelay.shortDelay}
           place={TooltipPosition.Top}
           positionStrategy="fixed"

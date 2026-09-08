@@ -99,6 +99,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             fieldManifest: enrichedFieldManifest,
             applicationUniversalIdentifier,
             now,
+            objectLabelIdentifierFieldMetadataUniversalIdentifier:
+              objectManifest.labelIdentifierFieldMetadataUniversalIdentifier,
+            objectIsSearchable: flatObjectMetadata.isSearchable,
           },
         );
 
@@ -115,6 +118,14 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         fieldManifest: fieldManifest,
         applicationUniversalIdentifier,
         now,
+        objectLabelIdentifierFieldMetadataUniversalIdentifier:
+          allUniversalFlatEntityMaps.flatObjectMetadataMaps
+            .byUniversalIdentifier[fieldManifest.objectUniversalIdentifier]
+            ?.labelIdentifierFieldMetadataUniversalIdentifier,
+        objectIsSearchable:
+          allUniversalFlatEntityMaps.flatObjectMetadataMaps
+            .byUniversalIdentifier[fieldManifest.objectUniversalIdentifier]
+            ?.isSearchable,
       });
 
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({

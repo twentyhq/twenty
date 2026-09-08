@@ -8,6 +8,8 @@ import {
   CacheLockExceptionCode,
 } from 'src/engine/core-modules/cache-lock/exceptions/cache-lock.exception';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import {
   UsageLimitException,
   UsageLimitExceptionCode,
@@ -17,6 +19,8 @@ import { UsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-lim
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
+import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
+import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
 import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
 import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
@@ -107,8 +111,15 @@ describe('UsageLimitQuotaService', () => {
   };
 
   const usagePeriodService = {
-    getCurrentPeriod: jest.fn(),
+    findCurrentPeriod: jest.fn(),
+    findCurrentPeriodsByUnit: jest.fn(),
   };
+
+  const metricsService = {
+    incrementCounterBy: jest.fn(),
+  };
+
+  let periodByUnit: Partial<Record<PeriodUnit, UsagePeriod>>;
 
   const setLimits = (limits: FlatUsageLimit[]) => {
     workspaceCacheService.getOrRecompute.mockResolvedValue({
@@ -119,6 +130,7 @@ describe('UsageLimitQuotaService', () => {
   };
 
   const setAllowance = (allowanceMicro: number | null) => {
+    periodByUnit.allowancePeriod = ALLOWANCE_PERIOD;
     creditAllowanceProvider.getCreditAllowancePeriod.mockResolvedValue(
       ALLOWANCE_PERIOD,
     );
@@ -154,9 +166,13 @@ describe('UsageLimitQuotaService', () => {
     cacheStorage.mget.mockResolvedValue([]);
     cacheStorage.runScript.mockResolvedValue([]);
     clickHouseService.selectOrThrow.mockResolvedValue([]);
-    usagePeriodService.getCurrentPeriod.mockImplementation(
-      (periodUnit: string) =>
-        periodUnit === 'week' ? WEEK_PERIOD : MONTH_PERIOD,
+    periodByUnit = { month: MONTH_PERIOD, week: WEEK_PERIOD };
+    usagePeriodService.findCurrentPeriod.mockImplementation(
+      async ({ periodUnit }: { periodUnit: PeriodUnit }) =>
+        periodByUnit[periodUnit] ?? null,
+    );
+    usagePeriodService.findCurrentPeriodsByUnit.mockImplementation(
+      async () => periodByUnit,
     );
     workspaceCacheService.getOrRecompute.mockResolvedValue({
       usageLimits: { byResourceType: {} },
@@ -174,6 +190,7 @@ describe('UsageLimitQuotaService', () => {
         { provide: CacheLockService, useValue: cacheLockService },
         { provide: ClickHouseService, useValue: clickHouseService },
         { provide: UsagePeriodService, useValue: usagePeriodService },
+        { provide: MetricsService, useValue: metricsService },
         {
           provide: DiscoveryService,
           useValue: {
@@ -295,9 +312,7 @@ describe('UsageLimitQuotaService', () => {
   });
 
   it('skips warming an allowance whose period rolled over since the read', async () => {
-    creditAllowanceProvider.getCreditAllowancePeriod.mockResolvedValue(
-      ALLOWANCE_PERIOD,
-    );
+    periodByUnit.allowancePeriod = ALLOWANCE_PERIOD;
     creditAllowanceProvider.getCreditAllowance.mockResolvedValue({
       allowanceMicro: 100,
       periodStart: new Date('2026-09-15T09:00:00.000Z'),
@@ -309,11 +324,90 @@ describe('UsageLimitQuotaService', () => {
     expect(cacheStorage.mset).toHaveBeenCalledWith([]);
   });
 
+  describe('allowance-period limits', () => {
+    const allowancePeriodLimit = buildLimit({
+      id: 'allowance-period',
+      periodUnit: 'allowancePeriod',
+      limitValue: 800,
+    });
+
+    it('warms the counter from the consumption of the allowance period', async () => {
+      setLimits([allowancePeriodLimit]);
+      setAllowance(2_000);
+      creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
+      cacheStorage.mget.mockResolvedValue([undefined]);
+      clickHouseService.selectOrThrow.mockResolvedValue([
+        {
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          userWorkspaceId: 'user-1',
+          apiKeyId: '',
+          applicationId: '',
+          agentId: '',
+          workflowId: '',
+          logicFunctionId: '',
+          creditsUsedMicro: '150',
+          quantity: '0',
+        },
+      ]);
+
+      await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+
+      expect(clickHouseService.selectOrThrow).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'AND periodStart = {periodStart:DateTime64(3)}',
+        ),
+        expect.objectContaining({
+          periodStart: expect.stringContaining('2026-08-15'),
+        }),
+      );
+      expect(clickHouseService.selectOrThrow).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'AND timestamp >= {periodStart:DateTime64(3)} - INTERVAL 1 DAY',
+        ),
+        expect.anything(),
+      );
+      expect(cacheStorage.mset).toHaveBeenCalledWith([
+        expect.objectContaining({ value: 650 }),
+      ]);
+    });
+  });
+
   it('admits when the counters cannot be read', async () => {
     setLimits([buildLimit({})]);
     cacheStorage.mget.mockRejectedValue(new Error('Socket closed'));
 
     await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+    expect(metricsService.incrementCounterBy).toHaveBeenCalledTimes(1);
+    expect(metricsService.incrementCounterBy).toHaveBeenCalledWith({
+      key: MetricsKeys.UsageLimitQuotaAdmittedOnFailure,
+      amount: 1,
+      attributes: { operation: 'assert', resourceType: UsageResourceType.AI },
+    });
+  });
+
+  it('counts the credits admitted when a consume fails', async () => {
+    setLimits([buildLimit({})]);
+    cacheStorage.mget.mockRejectedValue(new Error('Socket closed'));
+
+    await expect(consumeQuota(50, 7)).resolves.toEqual({ exhausted: [] });
+    expect(metricsService.incrementCounterBy).toHaveBeenCalledWith({
+      key: MetricsKeys.UsageLimitQuotaAdmittedOnFailure,
+      amount: 1,
+      attributes: { operation: 'consume', resourceType: UsageResourceType.AI },
+    });
+    expect(metricsService.incrementCounterBy).toHaveBeenCalledWith({
+      key: MetricsKeys.UsageLimitQuotaAdmittedOnFailureCreditsMicro,
+      amount: 50,
+      attributes: { operation: 'consume', resourceType: UsageResourceType.AI },
+    });
+  });
+
+  it('does not count an admit on a successful consume', async () => {
+    setLimits([buildLimit({})]);
+    cacheStorage.runScript.mockResolvedValue([1, 500]);
+
+    await expect(consumeQuota(50)).resolves.toEqual({ exhausted: [] });
+    expect(metricsService.incrementCounterBy).not.toHaveBeenCalled();
   });
 
   it('admits when the warm query fails instead of granting a fresh budget', async () => {
@@ -542,6 +636,14 @@ describe('UsageLimitQuotaService', () => {
       ]);
     });
 
+    it('skips the drop when the period cannot be resolved', async () => {
+      await service.dropLimitCounter(
+        buildLimitCounterScope({ periodUnit: 'allowancePeriod' }),
+      );
+
+      expect(cacheStorage.mdel).not.toHaveBeenCalled();
+    });
+
     it('ignores a speed limit', async () => {
       await service.dropLimitCounter(
         buildLimitCounterScope({ limitKind: 'speed', periodUnit: 'second' }),
@@ -579,6 +681,16 @@ describe('UsageLimitQuotaService', () => {
         service.getAllowanceRemainingMicro('workspace-1'),
       ).resolves.toBeNull();
       expect(cacheStorage.mget).not.toHaveBeenCalled();
+    });
+
+    it('does not count a failed read as an admit', async () => {
+      setAllowance(2_000_000);
+      cacheStorage.mget.mockRejectedValue(new Error('Socket closed'));
+
+      await expect(
+        service.getAllowanceRemainingMicro('workspace-1'),
+      ).resolves.toBeNull();
+      expect(metricsService.incrementCounterBy).not.toHaveBeenCalled();
     });
   });
 });

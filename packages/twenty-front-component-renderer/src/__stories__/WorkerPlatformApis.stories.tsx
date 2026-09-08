@@ -9,7 +9,11 @@ import {
   hostApiMocks,
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
-import { MOUNT_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
+import { expectJsonDataAttribute } from '@/__stories__/shared/test-utils/matchers/expectJsonDataAttribute';
+import {
+  INTERACTION_TIMEOUT,
+  MOUNT_TIMEOUT,
+} from '@/__stories__/shared/test-utils/timeouts';
 import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 
@@ -55,17 +59,46 @@ const mutationObserverTest: Story['play'] = async ({ canvasElement }) => {
   await userEvent.click(addItemButton);
   await userEvent.click(addItemButton);
 
+  await expectJsonDataAttribute({
+    canvas,
+    testId: 'mutation-observer-status',
+    attributeName: 'data-observed-records',
+    expectedValue: EXPECTED_OBSERVED_MUTATIONS,
+  });
+
+  expect(errorHandler).not.toHaveBeenCalled();
+};
+
+const EXPECTED_CLASS_LIST_REPORT = {
+  tokens: ['initial-class', 'mapboxgl-map', 'replaced', 'toggled-on'],
+  value: 'initial-class mapboxgl-map replaced toggled-on',
+};
+
+const classListTest: Story['play'] = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  const runButton = await canvas.findByTestId(
+    'class-list-run',
+    {},
+    { timeout: MOUNT_TIMEOUT },
+  );
+
+  await userEvent.click(runButton);
+
+  await expectJsonDataAttribute({
+    canvas,
+    testId: 'class-list-status',
+    attributeName: 'data-class-list-report',
+    expectedValue: EXPECTED_CLASS_LIST_REPORT,
+  });
+
   await waitFor(
     () => {
-      expect(
-        JSON.parse(
-          canvas
-            .getByTestId('mutation-observer-status')
-            .getAttribute('data-observed-records') ?? '[]',
-        ),
-      ).toEqual(EXPECTED_OBSERVED_MUTATIONS);
+      expect(canvas.getByTestId('class-list-container').className).toBe(
+        EXPECTED_CLASS_LIST_REPORT.value,
+      );
     },
-    { timeout: MOUNT_TIMEOUT },
+    { timeout: INTERACTION_TIMEOUT },
   );
 
   expect(errorHandler).not.toHaveBeenCalled();
@@ -140,6 +173,15 @@ export const MutationObserverReact: Story = createStory({
 export const MutationObserverPreact: Story = createStory({
   name: 'mutation-observer-example',
   play: mutationObserverTest,
+  runtime: 'preact',
+});
+export const ClassListReact: Story = createStory({
+  name: 'class-list-example',
+  play: classListTest,
+});
+export const ClassListPreact: Story = createStory({
+  name: 'class-list-example',
+  play: classListTest,
   runtime: 'preact',
 });
 export const MatchMediaReact: Story = createStory({

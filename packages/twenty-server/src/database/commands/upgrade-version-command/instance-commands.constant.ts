@@ -162,6 +162,7 @@ import { AddUsageLimitFastInstanceCommand } from 'src/database/commands/upgrade-
 import { MakeUserEmailCaseInsensitiveFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-fast-1787836741000-make-user-email-case-insensitive';
 import { BackfillMissingPageLayoutWidgetPositionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-slow-1787838153752-backfill-missing-page-layout-widget-positions';
 import { AddCommandMenuItemConditionalPinnedExpressionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788701640813-add-command-menu-item-conditional-pinned-expression';
+import { AddCampaignDeliveryClaimTokenIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788767400000-add-campaign-delivery-claim-token-index';
 import { AddBillingToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788340843000-add-billing-to-application';
 import { AddPricingDescriptionToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788340844000-add-pricing-description-to-application-registration';
 import { AddRecordFormPageLayoutAndFormFieldWidgetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787920209300-add-record-form-page-layout-and-form-field-widget';
@@ -177,6 +178,7 @@ import { EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand } from 
 import { ReshapeUsageLimitPeriodFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788367160891-reshape-usage-limit-period';
 import { AddLogoToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788542613404-add-logo-to-connection-provider';
 import { AddReadabilityToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788548844925-add-readability-to-object-metadata';
+import { AddAuthFailedReasonToConnectedAccountFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788781233982-add-auth-failed-reason-to-connected-account';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -356,4 +358,6 @@ export const INSTANCE_COMMANDS = [
   AddLogoToConnectionProviderFastInstanceCommand,
   AddReadabilityToObjectMetadataFastInstanceCommand,
   AddCommandMenuItemConditionalPinnedExpressionFastInstanceCommand,
+  AddCampaignDeliveryClaimTokenIndexFastInstanceCommand,
+  AddAuthFailedReasonToConnectedAccountFastInstanceCommand,
 ];

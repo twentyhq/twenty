@@ -87,7 +87,7 @@ export const CurrencyDisplay = ({
         createPortal(
           <AppTooltip
             anchorSelect={`#${tooltipAnchorId}`}
-            content={currencyTooltipContent}
+            title={currencyTooltipContent}
             delay={TooltipDelay.shortDelay}
             place={TooltipPosition.Top}
             positionStrategy="fixed"

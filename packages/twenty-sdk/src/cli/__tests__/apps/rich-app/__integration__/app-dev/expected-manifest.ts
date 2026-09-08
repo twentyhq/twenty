@@ -83,7 +83,6 @@ export const EXPECTED_MANIFEST: Manifest = {
     },
   ],
   skills: [],
-  translations: {},
   agents: [],
   application: {
     applicationVariables: {
@@ -257,7 +256,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     galleryImages: [],
     defaultRoleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
-    yarnLockChecksum: 'd41d8cd98f00b204e9800998ecf8427e',
+    yarnLockChecksum: '375f53c8fcdc373d081ba4523f7bb3b4',
     packageJsonChecksum: '2851d0e2c3621a57e1fd103a245b6fde',
     requiredServerVersionRange: null,
   },

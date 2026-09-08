@@ -1,20 +1,19 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import {
   CoreObjectNameSingular,
   MessageChannelType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconAlertTriangle } from 'twenty-ui/icon';
+import { InlineBanner } from 'twenty-ui/feedback';
 import { type SelectOption } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
-  CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH,
   CampaignEnvelopeBox,
+  CampaignEnvelopeRow,
 } from '@/activities/emails/components/CampaignEnvelopeBox';
-import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { useCampaignDetailsState } from '@/activities/emails/hooks/useCampaignDetailsState';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
@@ -35,18 +34,8 @@ const StyledSubjectInput = styled.input`
   width: 100%;
 `;
 
-const StyledWarning = styled.div`
-  align-items: flex-start;
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.xs};
-  gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
-`;
-
-const StyledWarningIcon = styled(IconAlertTriangle)`
-  color: ${themeCssVariables.color.yellow};
-  flex-shrink: 0;
+const StyledWarningContainer = styled.div`
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 type CampaignDetailsFieldsProps = {
@@ -58,7 +47,6 @@ export const CampaignDetailsFields = ({
   campaign,
   width,
 }: CampaignDetailsFieldsProps) => {
-  const { theme } = useContext(ThemeContext);
   const detailsState = useCampaignDetailsState({ campaign });
 
   const { channels } = useMyMessageChannels();
@@ -100,17 +88,18 @@ export const CampaignDetailsFields = ({
       onBlur={() => detailsState.flush()}
       below={
         !hasSenderOptions && (
-          <StyledWarning>
-            <StyledWarningIcon size={theme.icon.size.sm} />
-            {t`No sending address is available. Connect a verified sending domain in Settings before this campaign can go out.`}
-          </StyledWarning>
+          <StyledWarningContainer>
+            <InlineBanner
+              embedded
+              color="danger"
+              LeftIcon={IconAlertTriangle}
+              message={t`No sending address. Connect a verified domain in Settings.`}
+            />
+          </StyledWarningContainer>
         )
       }
     >
-      <ComposerFieldRow
-        label={t`From`}
-        labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
-      >
+      <CampaignEnvelopeRow label={t`From`}>
         <Select
           dropdownId="campaign-composer-from-account"
           fullWidth
@@ -119,11 +108,8 @@ export const CampaignDetailsFields = ({
           emptyOption={{ label: t`Select a sender`, value: '' }}
           onChange={detailsState.setFromAddress}
         />
-      </ComposerFieldRow>
-      <ComposerFieldRow
-        label={t`To`}
-        labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
-      >
+      </CampaignEnvelopeRow>
+      <CampaignEnvelopeRow label={t`To`}>
         <FormSingleRecordPicker
           key={`list-${detailsState.draftResyncKey}`}
           objectNameSingulars={[CoreObjectNameSingular.MessageList]}
@@ -131,12 +117,9 @@ export const CampaignDetailsFields = ({
           onChange={detailsState.setListId}
           onCreate={handleCreateList}
         />
-      </ComposerFieldRow>
+      </CampaignEnvelopeRow>
       {hasTopicOptions && (
-        <ComposerFieldRow
-          label={t`Unsubscribe topic`}
-          labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
-        >
+        <CampaignEnvelopeRow label={t`Unsubscribe topic`}>
           <Select
             dropdownId="campaign-composer-unsubscribe-topic"
             fullWidth
@@ -147,12 +130,9 @@ export const CampaignDetailsFields = ({
               detailsState.setUnsubscribeTopicId(value === '' ? null : value)
             }
           />
-        </ComposerFieldRow>
+        </CampaignEnvelopeRow>
       )}
-      <ComposerFieldRow
-        label={t`Subject`}
-        labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
-      >
+      <CampaignEnvelopeRow label={t`Subject`}>
         <StyledSubjectInput
           key={`subject-${detailsState.draftResyncKey}`}
           type="text"
@@ -160,7 +140,7 @@ export const CampaignDetailsFields = ({
           defaultValue={detailsState.subject}
           onChange={(event) => detailsState.setSubject(event.target.value)}
         />
-      </ComposerFieldRow>
+      </CampaignEnvelopeRow>
     </CampaignEnvelopeBox>
   );
 };
