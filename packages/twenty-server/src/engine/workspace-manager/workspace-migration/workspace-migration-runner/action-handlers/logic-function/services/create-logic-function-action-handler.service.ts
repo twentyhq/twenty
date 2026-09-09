@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
+import { findObjectFieldIndexFlatEntityMapsInAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-object-field-index-flat-entity-maps-in-all-flat-entity-maps.util';
 import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
 
 import type { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
@@ -55,7 +56,8 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateLogicFunctionAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, flatApplication } = context;
+    const { flatAction, queryRunner, flatApplication, allFlatEntityMaps } =
+      context;
     const { flatEntity: logicFunction } = flatAction;
 
     await this.insertFlatEntitiesInRepository({
@@ -73,6 +75,10 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
           flatLogicFunction: logicFunction,
           flatApplication,
           applicationUniversalIdentifier: flatApplication.universalIdentifier,
+          flatEntityMapsOverride:
+            findObjectFieldIndexFlatEntityMapsInAllFlatEntityMaps(
+              allFlatEntityMaps,
+            ),
         });
 
         this.logger.log(
