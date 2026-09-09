@@ -1,8 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
-import { ArtificialAnalysisSyncCronJob } from 'src/engine/metadata-modules/ai/ai-models/crons/artificial-analysis-sync.cron.job';
-import { ArtificialAnalysisSyncCronCommand } from 'src/engine/metadata-modules/ai/ai-models/crons/commands/artificial-analysis-sync.cron.command';
 import { ArtificialAnalysisCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/artificial-analysis-catalog.service';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
@@ -17,8 +15,6 @@ import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-mod
 @Module({
   imports: [EnterpriseModule],
   providers: [
-    ArtificialAnalysisSyncCronJob,
-    ArtificialAnalysisSyncCronCommand,
     ArtificialAnalysisCatalogService,
     DefaultAiCatalogService,
     ProviderConfigService,
@@ -30,7 +26,6 @@ import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-mod
     NativeToolBinderService,
   ],
   exports: [
-    ArtificialAnalysisSyncCronCommand,
     ArtificialAnalysisCatalogService,
     DefaultAiCatalogService,
     AiModelRegistryService,

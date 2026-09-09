@@ -1844,21 +1844,20 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
-    isSensitive: true,
-    description: 'API key for Artificial Analysis model benchmarks',
+    description:
+      'URL of a versioned AI benchmark JSON snapshot. Leave unset to skip benchmark downloads.',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  ARTIFICIAL_ANALYSIS_API_KEY?: string;
+  AI_BENCHMARKS_SNAPSHOT_URL?: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
-    description:
-      'Refresh Artificial Analysis benchmarks in the background. Defaults to enabled in production and disabled in development and tests.',
+    description: 'Read AI benchmarks from the configured snapshot URL.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  ARTIFICIAL_ANALYSIS_SYNC_ENABLED?: boolean;
+  AI_BENCHMARKS_ENABLED: boolean = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
