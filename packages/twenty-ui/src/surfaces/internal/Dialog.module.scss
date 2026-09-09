@@ -65,7 +65,10 @@
   }
 
   &[data-size='lg'] {
-    inline-size: max(var(--t-modal-size-md-width), var(--t-modal-size-lg-width));
+    inline-size: max(
+      var(--t-modal-size-md-width),
+      var(--t-modal-size-lg-width)
+    );
   }
 
   &[data-size='xl'] {
