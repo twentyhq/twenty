@@ -10,8 +10,6 @@ import { normalizeSlackRequestText } from 'src/logic-functions/utils/normalize-s
 
 const LEADING_MENTION_PATTERN = /^<@([A-Z0-9]+)(\|[^>]*)?>/;
 
-// Slack still tags user uploads with the deprecated file_share subtype, and
-// dropping it would silence every message that carries an attachment
 const SUPPORTED_MESSAGE_SUBTYPE = 'file_share';
 
 type SlackInboundEvent = NonNullable<SlackEventsRequestBody['event']>;

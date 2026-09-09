@@ -83,7 +83,6 @@ export const fetchSlackAssistantContext = async ({
       assistantBotUserId,
       excludeMessageTimestamps: [slackMessageTimestamp],
     }),
-    // the agent may only be told about files it can also see a message for
     sharedFileNames: collectSlackSharedFileNames([
       requestMessage,
       ...selectSlackConversationMessages({
