@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
@@ -69,7 +70,7 @@ const meta: Meta<typeof ThemeProvider> = {
     document.documentElement.style.removeProperty('--t-scale-user');
 
     return () => {
-      if (previousScale) {
+      if (isNonEmptyString(previousScale)) {
         document.documentElement.style.setProperty(
           '--t-scale-user',
           previousScale,
