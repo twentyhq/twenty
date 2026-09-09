@@ -1,7 +1,8 @@
-// Applications never override: they write their own columns, so only the
-// workspace custom application can author an override. It does so on any
+// Today only the workspace custom application authors overrides: on any
 // entity it does not own, and on the engine-minted rows that carry its
-// identifier but whose lifecycle the engine manages.
+// identifier but whose lifecycle the engine manages. An owning application
+// overriding its own engine-managed rows is the same second branch with the
+// caller as author.
 export const isCallerOverridingEntity = ({
   callerApplicationUniversalIdentifier,
   entityApplicationUniversalIdentifier,
