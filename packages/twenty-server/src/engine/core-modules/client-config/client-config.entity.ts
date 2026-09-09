@@ -1,6 +1,7 @@
 import {
   Field,
   GraphQLISODateTime,
+  Int,
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
@@ -398,6 +399,9 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   isOnboardingAiChatEnabled: boolean;
+
+  @Field(() => Int)
+  recordGroupPageSize: number;
 
   @Field(() => String)
   enterpriseInstanceType: string;

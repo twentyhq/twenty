@@ -1,0 +1,1 @@
+export const DEFAULT_RECORD_GROUP_PAGE_SIZE = 8;

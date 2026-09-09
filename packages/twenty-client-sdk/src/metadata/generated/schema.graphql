@@ -2175,6 +2175,7 @@ type ClientConfig {
   isClickHouseConfigured: Boolean!
   isWorkspaceSchemaDDLLocked: Boolean!
   isOnboardingAiChatEnabled: Boolean!
+  recordGroupPageSize: Int!
   enterpriseInstanceType: String!
   maintenance: ClientConfigMaintenanceMode
 }
