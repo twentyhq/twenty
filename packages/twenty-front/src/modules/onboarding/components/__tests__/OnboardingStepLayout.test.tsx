@@ -10,7 +10,7 @@ import { onboardingConfigState } from '@/client-config/states/onboardingConfigSt
 import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 import { OnboardingStepLayout } from '@/onboarding/components/OnboardingStepLayout';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
-import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
+import { ToastProvider } from 'twenty-ui/feedback';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -42,11 +42,9 @@ const onboardingConfig: OnboardingConfig = {
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider mocks={[]}>
     <JotaiProvider store={jotaiStore}>
-      <SnackBarComponentInstanceContext.Provider
-        value={{ instanceId: 'snack-bar-manager' }}
-      >
+      <ToastProvider>
         <I18nProvider i18n={i18n}>{children}</I18nProvider>
-      </SnackBarComponentInstanceContext.Provider>
+      </ToastProvider>
     </JotaiProvider>
   </MockedProvider>
 );

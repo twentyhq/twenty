@@ -7,7 +7,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
+import { ToastProvider } from 'twenty-ui/feedback';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -42,9 +42,7 @@ export const getJestMetadataAndApolloMocksWrapper = ({
 
     return (
       <JotaiProvider store={store}>
-        <SnackBarComponentInstanceContext.Provider
-          value={{ instanceId: 'snack-bar-manager' }}
-        >
+        <ToastProvider>
           <MockedProvider mocks={apolloMocks} cache={cache}>
             <RecordComponentInstanceContextsWrapper componentInstanceId="instanceId">
               <ViewComponentInstanceContext.Provider
@@ -62,7 +60,7 @@ export const getJestMetadataAndApolloMocksWrapper = ({
               </ViewComponentInstanceContext.Provider>
             </RecordComponentInstanceContextsWrapper>
           </MockedProvider>
-        </SnackBarComponentInstanceContext.Provider>
+        </ToastProvider>
       </JotaiProvider>
     );
   };

@@ -20,7 +20,7 @@ import { CommandMenuComponentInstanceContext } from '@/command-menu/states/conte
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
-import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
+import { SnackBarToaster } from '@/ui/feedback/snack-bar-manager/components/SnackBarToaster';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
@@ -180,9 +180,8 @@ const createDecorator =
               >
                 <BaseThemeProvider>
                   <StyledStoryContainer>
-                    <SnackBarProvider>
-                      <Story />
-                    </SnackBarProvider>
+                    <SnackBarToaster />
+                    <Story />
                   </StyledStoryContainer>
                 </BaseThemeProvider>
               </CommandMenuContext.Provider>

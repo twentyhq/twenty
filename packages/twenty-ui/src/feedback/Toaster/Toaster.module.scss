@@ -1,0 +1,19 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  inset-block-end: var(--t-spacing-3);
+  inset-inline-end: var(--t-spacing-3);
+  pointer-events: none;
+  position: fixed;
+  z-index: var(--t-last-layer-z-index);
+
+  @include respond-to(mobile) {
+    inset-block-end: auto;
+    inset-block-start: 0;
+    inset-inline: 0;
+  }
+}
+
+.item {
+  pointer-events: auto;
+}

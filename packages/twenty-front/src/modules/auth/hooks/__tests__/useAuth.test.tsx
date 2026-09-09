@@ -20,7 +20,7 @@ import {
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
-import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
+import { ToastProvider } from 'twenty-ui/feedback';
 import { renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -72,11 +72,7 @@ jest.mock('@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain', () => ({
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider mocks={Object.values(mocks)}>
     <MemoryRouter>
-      <SnackBarComponentInstanceContext.Provider
-        value={{ instanceId: 'test-instance-id' }}
-      >
-        {children}
-      </SnackBarComponentInstanceContext.Provider>
+      <ToastProvider>{children}</ToastProvider>
     </MemoryRouter>
   </MockedProvider>
 );

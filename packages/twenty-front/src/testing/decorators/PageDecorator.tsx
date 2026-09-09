@@ -24,7 +24,7 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
+import { ToastProvider } from 'twenty-ui/feedback';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -83,9 +83,7 @@ const Providers = () => {
 
   return (
     <JotaiProvider store={store}>
-      <SnackBarComponentInstanceContext.Provider
-        value={{ instanceId: 'snack-bar-manager' }}
-      >
+      <ToastProvider>
         <ApolloProvider client={mockedApolloClient}>
           <I18nProvider i18n={i18n}>
             <ApolloStorybookDevLogEffect />
@@ -117,7 +115,7 @@ const Providers = () => {
             </ClientConfigProvider>
           </I18nProvider>
         </ApolloProvider>
-      </SnackBarComponentInstanceContext.Provider>
+      </ToastProvider>
     </JotaiProvider>
   );
 };

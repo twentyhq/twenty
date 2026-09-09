@@ -1,10 +1,8 @@
-import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
+import { ToastProvider } from 'twenty-ui/feedback';
 import { type Decorator } from '@storybook/react-vite';
 
 export const SnackBarDecorator: Decorator = (Story) => (
-  <SnackBarComponentInstanceContext.Provider
-    value={{ instanceId: 'snack-bar-manager' }}
-  >
+  <ToastProvider>
     <Story />
-  </SnackBarComponentInstanceContext.Provider>
+  </ToastProvider>
 );

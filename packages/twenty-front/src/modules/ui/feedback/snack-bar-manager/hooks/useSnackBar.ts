@@ -2,71 +2,22 @@ import { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
-import {
-  snackBarInternalComponentState,
-  type SnackBarOptions,
-} from '@/ui/feedback/snack-bar-manager/states/snackBarInternalComponentState';
+import { type SnackBarOptions } from '@/ui/feedback/snack-bar-manager/types/SnackBarOptions';
+import { getToastPropsFromSnackBarProps } from '@/ui/feedback/snack-bar-manager/utils/getToastPropsFromSnackBarProps';
 import { buildErrorAction } from '@/ui/feedback/snack-bar-manager/utils/buildErrorAction';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { type ErrorLike } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { useStore } from 'jotai';
-import { isDefined } from 'twenty-shared/utils';
+import { i18n } from '@lingui/core';
+import { useToast } from 'twenty-ui/feedback';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 export const useSnackBar = () => {
-  const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
-    SnackBarComponentInstanceContext,
-  );
-
-  const store = useStore();
-
-  const handleSnackBarClose = useCallback(
-    (id: string) => {
-      store.set(
-        snackBarInternalComponentState.atomFamily({
-          instanceId: componentInstanceId,
-        }),
-        (prevState) => ({
-          ...prevState,
-          queue: prevState.queue.filter((snackBar) => snackBar.id !== id),
-        }),
-      );
-    },
-    [componentInstanceId, store],
-  );
+  const { add, close: handleSnackBarClose } = useToast();
 
   const setSnackBarQueue = useCallback(
-    (newValue: SnackBarOptions) =>
-      store.set(
-        snackBarInternalComponentState.atomFamily({
-          instanceId: componentInstanceId,
-        }),
-        (prev) => {
-          if (
-            isDefined(newValue.dedupeKey) &&
-            prev.queue.some(
-              (snackBar) => snackBar.dedupeKey === newValue.dedupeKey,
-            )
-          ) {
-            return prev;
-          }
-
-          if (prev.queue.length >= prev.maxQueue) {
-            return {
-              ...prev,
-              queue: [...prev.queue.slice(1), newValue] as SnackBarOptions[],
-            };
-          }
-
-          return {
-            ...prev,
-            queue: [...prev.queue, newValue] as SnackBarOptions[],
-          };
-        },
-      ),
-    [componentInstanceId, store],
+    (options: SnackBarOptions) =>
+      add(getToastPropsFromSnackBarProps(options, i18n)),
+    [add],
   );
 
   const enqueueSuccessSnackBar = useCallback(

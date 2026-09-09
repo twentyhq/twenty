@@ -60,6 +60,37 @@ import { Button } from 'twenty-ui/input';
 | `twenty-ui/typography` | Text and typography components |
 | `twenty-ui/utilities` | Hooks and shared utilities |
 
+# Toasts
+
+Wrap notification producers in `ToastProvider` and mount one `Toaster` inside it:
+
+```tsx
+import { ToastProvider, Toaster, useToast } from 'twenty-ui/feedback';
+
+export const SaveButton = () => {
+  const { add } = useToast();
+
+  return (
+    <button onClick={() => add({ children: 'Saved', variant: 'success' })}>
+      Save
+    </button>
+  );
+};
+
+export const App = () => (
+  <ToastProvider>
+    <SaveButton />
+    <Toaster />
+  </ToastProvider>
+);
+```
+
+`add` accepts the card's `ToastProps` plus an optional `dedupeKey` and returns the toast ID. A matching ID or deduplication key returns the existing ID without adding another toast. Use `close(id)` to dismiss one notification or `close()` to dismiss all. `onClose` runs once when a toast is dismissed, expires, or is evicted.
+
+The provider keeps the newest three notifications by default; pass a positive integer `limit` to change the capacity used when adding notifications. Keep it above route-specific renderers to preserve the queue when a `Toaster` remounts. The card's countdown starts when rendered and restarts on remount. Each provider owns an independent queue.
+
+`Toaster` uses the nearest scoped theme container or the document body. Pass `container` for a custom portal target, or `null` to defer rendering until a container is available. Native props, refs, and `render` composition are supported. Override `aria-label` to localize the viewport name.
+
 # Theming
 
 - `twenty-ui/style.css` ships the base reset and component styles. Import it once.

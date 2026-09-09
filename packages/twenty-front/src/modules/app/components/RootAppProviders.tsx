@@ -13,7 +13,7 @@ import { PromiseRejectionEffect } from '@/error-handler/components/PromiseReject
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
-import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
+import { SnackBarToaster } from '@/ui/feedback/snack-bar-manager/components/SnackBarToaster';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
@@ -29,25 +29,24 @@ export const RootAppProviders = () => {
         <UserMetadataProviderInitialEffect />
         <WorkspaceProviderEffect />
         <AuthProvider>
-          <SnackBarProvider>
-            <ErrorMessageEffect />
-            <DialogComponentInstanceContext.Provider
-              value={{ instanceId: 'dialog-manager' }}
-            >
-              <DialogManager>
-                <StrictMode>
-                  <PromiseRejectionEffect />
-                  <PageTitle title={pageTitle} />
-                  <PageFavicon />
-                  <Outlet />
-                  <InitializeQueryParamStateEffect />
-                  <TrackPageViewEffect />
-                  <RequestFreshCaptchaTokenEffect />
-                  <SignOutOnOtherTabSignOutEffect />
-                </StrictMode>
-              </DialogManager>
-            </DialogComponentInstanceContext.Provider>
-          </SnackBarProvider>
+          <SnackBarToaster />
+          <ErrorMessageEffect />
+          <DialogComponentInstanceContext.Provider
+            value={{ instanceId: 'dialog-manager' }}
+          >
+            <DialogManager>
+              <StrictMode>
+                <PromiseRejectionEffect />
+                <PageTitle title={pageTitle} />
+                <PageFavicon />
+                <Outlet />
+                <InitializeQueryParamStateEffect />
+                <TrackPageViewEffect />
+                <RequestFreshCaptchaTokenEffect />
+                <SignOutOnOtherTabSignOutEffect />
+              </StrictMode>
+            </DialogManager>
+          </DialogComponentInstanceContext.Provider>
         </AuthProvider>
       </CaptchaProvider>
     </SharedAppProviders>

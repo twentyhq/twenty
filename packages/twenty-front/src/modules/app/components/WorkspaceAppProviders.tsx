@@ -31,7 +31,7 @@ import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
 import { SupportChatEffect } from '@/support/components/SupportChatEffect';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
-import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
+import { SnackBarToaster } from '@/ui/feedback/snack-bar-manager/components/SnackBarToaster';
 import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFilePreviewModal';
 import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
 import { UserUiScaleProviderEffect } from '@/ui/theme/components/UserUiScaleProviderEffect';
@@ -63,30 +63,29 @@ export const WorkspaceAppProviders = () => {
                   <ContextStoreComponentInstanceContext.Provider
                     value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
                   >
-                    <SnackBarProvider>
-                      <ErrorMessageEffect />
-                      <AgentChatProvider>
-                        <DialogComponentInstanceContext.Provider
-                          value={{ instanceId: 'dialog-manager' }}
-                        >
-                          <DialogManager>
-                            <StrictMode>
-                              <PromiseRejectionEffect />
-                              <EndTrialAfterPaymentMethodGater />
-                              <GotoHotkeysEffectsProvider />
-                              <PageTitle title={pageTitle} />
-                              <PageFavicon />
-                              <RecordCreationFormProvider>
-                                <Outlet />
-                                <GlobalFilePreviewModal />
-                                <CommandMenuConfirmationModalManager />
-                                <CommandRunner />
-                              </RecordCreationFormProvider>
-                            </StrictMode>
-                          </DialogManager>
-                        </DialogComponentInstanceContext.Provider>
-                      </AgentChatProvider>
-                    </SnackBarProvider>
+                    <SnackBarToaster />
+                    <ErrorMessageEffect />
+                    <AgentChatProvider>
+                      <DialogComponentInstanceContext.Provider
+                        value={{ instanceId: 'dialog-manager' }}
+                      >
+                        <DialogManager>
+                          <StrictMode>
+                            <PromiseRejectionEffect />
+                            <EndTrialAfterPaymentMethodGater />
+                            <GotoHotkeysEffectsProvider />
+                            <PageTitle title={pageTitle} />
+                            <PageFavicon />
+                            <RecordCreationFormProvider>
+                              <Outlet />
+                              <GlobalFilePreviewModal />
+                              <CommandMenuConfirmationModalManager />
+                              <CommandRunner />
+                            </RecordCreationFormProvider>
+                          </StrictMode>
+                        </DialogManager>
+                      </DialogComponentInstanceContext.Provider>
+                    </AgentChatProvider>
                   </ContextStoreComponentInstanceContext.Provider>
                   <SupportChatEffect />
                   <InitializeQueryParamStateEffect />

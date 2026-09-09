@@ -1,0 +1,299 @@
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { MotionGlobalConfig } from 'framer-motion';
+import { StrictMode, useState } from 'react';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+
+import { ToastProvider } from '@ui/feedback/Toast/ToastProvider';
+import { ComponentDecorator } from '@ui/testing';
+import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
+
+import { Toaster } from '../Toaster';
+import { ToastControls, ToasterExample } from './ToasterExample';
+
+const meta: Meta<typeof ToasterExample> = {
+  title: 'UI/Feedback/Toaster',
+  component: ToasterExample,
+  args: { onClose: fn() },
+};
+
+export default meta;
+type Story = StoryObj<typeof ToasterExample>;
+
+export const Default: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 400, height: 200 } },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', {
+        name: 'Add notification',
+      }),
+    );
+    const body = within(canvasElement.ownerDocument.body);
+    await waitFor(() => expect(body.getByRole('status')).toBeVisible());
+    expect(body.getByRole('status')).toHaveTextContent('Notification 1');
+  },
+};
+
+export const QueueOverflow: Story = {
+  ...Default,
+  play: async ({ canvasElement, args }) => {
+    const add = within(canvasElement).getByRole('button', {
+      name: 'Add notification',
+    });
+    const limit = args.limit ?? 3;
+    for (let count = 0; count <= limit; count++) {
+      await userEvent.click(add);
+    }
+    const body = within(canvasElement.ownerDocument.body);
+    await waitFor(() =>
+      expect(body.queryByText('Notification 1')).not.toBeInTheDocument(),
+    );
+    expect(body.getAllByRole('status')).toHaveLength(limit);
+    expect(body.getByText(`Notification ${limit + 1}`)).toBeVisible();
+    expect(args.onClose).toHaveBeenCalledOnce();
+  },
+};
+
+export const CustomLimit: Story = {
+  ...QueueOverflow,
+  args: { limit: 1 },
+};
+
+export const Deduplication: Story = {
+  ...Default,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const add = canvas.getByRole('button', { name: 'Add duplicate' });
+    await userEvent.click(add);
+    const id = canvas.getByLabelText('Last notification ID').textContent;
+    await userEvent.click(add);
+    expect(canvas.getByLabelText('Last notification ID')).toHaveTextContent(
+      id!,
+    );
+    const body = within(canvasElement.ownerDocument.body);
+    expect(body.getAllByRole('status')).toHaveLength(1);
+    expect(body.getByText('Already saved')).toBeVisible();
+  },
+};
+
+export const Dismissal: Story = {
+  ...Default,
+  beforeEach: () => {
+    const skipAnimations = MotionGlobalConfig.skipAnimations;
+    MotionGlobalConfig.skipAnimations = false;
+    return () => {
+      MotionGlobalConfig.skipAnimations = skipAnimations;
+    };
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Add notification' }),
+    );
+    const toast = body.getByRole('status');
+    await waitFor(() =>
+      expect(getComputedStyle(toast.parentElement!).opacity).toBe('1'),
+    );
+    await userEvent.click(body.getByRole('button', { name: 'Close' }));
+    await waitFor(() =>
+      expect(body.queryByRole('status')).not.toBeInTheDocument(),
+    );
+    expect(args.onClose).toHaveBeenCalledOnce();
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Close last notification' }),
+    );
+    expect(args.onClose).toHaveBeenCalledOnce();
+  },
+};
+
+export const CloseAll: Story = {
+  ...Default,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const add = canvas.getByRole('button', {
+      name: 'Add notification',
+    });
+    await userEvent.click(add);
+    await userEvent.click(add);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Close all notifications' }),
+    );
+    await waitFor(() =>
+      expect(
+        within(canvasElement.ownerDocument.body).queryAllByRole('status'),
+      ).toHaveLength(0),
+    );
+    expect(args.onClose).toHaveBeenCalledTimes(2);
+  },
+};
+
+export const Countdown: Story = {
+  ...Default,
+  play: async ({ canvasElement, args }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', {
+        name: 'Add timed notification',
+      }),
+    );
+    await waitFor(() => expect(args.onClose).toHaveBeenCalledOnce(), {
+      timeout: 3000,
+    });
+    await waitFor(() =>
+      expect(
+        within(canvasElement.ownerDocument.body).queryByRole('status'),
+      ).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const StrictModeAddition: Story = {
+  ...Default,
+  render: (args) => (
+    <StrictMode>
+      <ToasterExample {...args} />
+    </StrictMode>
+  ),
+};
+
+const RemountingToaster = () => {
+  const [screen, setScreen] = useState('authentication');
+  return (
+    <ToastProvider>
+      <ToastControls />
+      <button type="button" onClick={() => setScreen('workspace')}>
+        Enter workspace
+      </button>
+      <Toaster key={screen} aria-label={`${screen} notifications`} />
+    </ToastProvider>
+  );
+};
+
+export const RendererRemount: Story = {
+  ...Default,
+  render: () => <RemountingToaster />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Add notification' }),
+    );
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Enter workspace' }),
+    );
+    const body = within(canvasElement.ownerDocument.body);
+    const region = body.getByRole('region', {
+      name: 'workspace notifications',
+    });
+    expect(within(region).getByText('Notification 1')).toBeVisible();
+    expect(
+      body.queryByRole('region', { name: 'authentication notifications' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+const DeferredToaster = () => {
+  const [container, setContainer] = useState<HTMLDivElement | null>(null);
+  const [isAttached, setIsAttached] = useState(false);
+  return (
+    <ToastProvider>
+      <ToastControls />
+      <button type="button" onClick={() => setIsAttached(true)}>
+        Attach viewport
+      </button>
+      {isAttached && <div ref={setContainer} data-testid="toast-container" />}
+      <Toaster container={container} />
+    </ToastProvider>
+  );
+};
+
+export const DeferredContainer: Story = {
+  ...Default,
+  render: () => <DeferredToaster />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Add notification' }),
+    );
+    expect(
+      within(canvasElement.ownerDocument.body).queryByRole('region'),
+    ).not.toBeInTheDocument();
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Attach viewport' }),
+    );
+    expect(
+      within(canvas.getByTestId('toast-container')).getByText('Notification 1'),
+    ).toBeVisible();
+  },
+};
+
+export const ScopedTheme: Story = {
+  ...Default,
+  render: (args) => (
+    <ThemeProvider colorScheme="dark" applyToRoot={false}>
+      <ToasterExample {...args} />
+    </ThemeProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', {
+        name: 'Add notification',
+      }),
+    );
+    const toast = within(canvasElement.ownerDocument.body).getByRole('status');
+    expect(toast.closest('.dark')).not.toBeNull();
+  },
+};
+
+export const Dark: Story = {
+  ...Default,
+  globals: { colorScheme: 'dark' },
+};
+
+export const ProviderIsolation: Story = {
+  ...Default,
+  render: () => (
+    <>
+      <section aria-label="First source">
+        <ToastProvider>
+          <ToastControls />
+          <Toaster aria-label="First notifications" style={{ bottom: 200 }} />
+        </ToastProvider>
+      </section>
+      <section aria-label="Second source">
+        <ToastProvider>
+          <ToastControls />
+          <Toaster aria-label="Second notifications" />
+        </ToastProvider>
+      </section>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const first = within(canvas.getByRole('region', { name: 'First source' }));
+    const second = within(
+      canvas.getByRole('region', { name: 'Second source' }),
+    );
+    await userEvent.click(
+      first.getByRole('button', { name: 'Add notification' }),
+    );
+    await userEvent.click(
+      second.getByRole('button', { name: 'Add notification' }),
+    );
+    const body = within(canvasElement.ownerDocument.body);
+    const firstToaster = within(
+      body.getByRole('region', { name: 'First notifications' }),
+    );
+    const secondToaster = within(
+      body.getByRole('region', { name: 'Second notifications' }),
+    );
+    expect(firstToaster.getByRole('status')).toBeVisible();
+    expect(secondToaster.getByRole('status')).toBeVisible();
+    await userEvent.click(
+      first.getByRole('button', { name: 'Close all notifications' }),
+    );
+    await waitFor(() =>
+      expect(firstToaster.queryByRole('status')).not.toBeInTheDocument(),
+    );
+    expect(secondToaster.getByRole('status')).toBeVisible();
+  },
+};
