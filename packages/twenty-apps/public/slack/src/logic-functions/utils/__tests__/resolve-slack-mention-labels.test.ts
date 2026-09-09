@@ -66,6 +66,7 @@ describe('resolveSlackMentionLabels', () => {
             slackUserId: 'U04ABC',
             name: 'alice.m',
             workspaceMemberId: 'member-1',
+            consentState: 'ACTIVE',
           },
         ],
       ]),
@@ -124,6 +125,7 @@ describe('resolveSlackMentionLabels', () => {
             slackUserId: 'U04ABC',
             name: 'alice.m',
             workspaceMemberId: 'deleted-member',
+            consentState: 'ACTIVE',
           },
         ],
       ]),
@@ -141,6 +143,73 @@ describe('resolveSlackMentionLabels', () => {
     expect(usersInfoMock).not.toHaveBeenCalled();
   });
 
+  it.each(['PENDING', 'DECLINED'])(
+    'should not hand out the member id of a link whose consent is %s',
+    async (consentState) => {
+      findSlackUserLinksBySlackUserIdsMock.mockResolvedValue(
+        new Map([
+          [
+            'U04ABC',
+            {
+              slackUserId: 'U04ABC',
+              name: 'alice.m',
+              workspaceMemberId: 'member-1',
+              consentState,
+            },
+          ],
+        ]),
+      );
+      findWorkspaceMemberNamesByIdsMock.mockResolvedValue(
+        new Map([['member-1', 'Alice Martin']]),
+      );
+
+      const labels = await resolveSlackMentionLabels({
+        slackUserIds: ['U04ABC'],
+        client,
+        slackClient,
+        assistantBotUserId: 'UBOT',
+      });
+
+      expect(labels.get('U04ABC')).toBe(
+        '@alice.m (no Twenty workspace member)',
+      );
+      expect(findWorkspaceMemberNamesByIdsMock).toHaveBeenCalledWith(client, {
+        workspaceMemberIds: [],
+      });
+      expect(usersInfoMock).not.toHaveBeenCalled();
+    },
+  );
+
+  it('should trust a link written before consent existed', async () => {
+    findSlackUserLinksBySlackUserIdsMock.mockResolvedValue(
+      new Map([
+        [
+          'U04ABC',
+          {
+            slackUserId: 'U04ABC',
+            name: 'alice.m',
+            workspaceMemberId: 'member-1',
+            consentState: undefined,
+          },
+        ],
+      ]),
+    );
+    findWorkspaceMemberNamesByIdsMock.mockResolvedValue(
+      new Map([['member-1', 'Alice Martin']]),
+    );
+
+    const labels = await resolveSlackMentionLabels({
+      slackUserIds: ['U04ABC'],
+      client,
+      slackClient,
+      assistantBotUserId: 'UBOT',
+    });
+
+    expect(labels.get('U04ABC')).toBe(
+      '@Alice Martin (workspace member member-1)',
+    );
+  });
+
   it('should resolve several mentions in one batch of lookups', async () => {
     findSlackUserLinksBySlackUserIdsMock.mockResolvedValue(
       new Map([
@@ -150,6 +219,7 @@ describe('resolveSlackMentionLabels', () => {
             slackUserId: 'U04ABC',
             name: 'alice.m',
             workspaceMemberId: 'member-1',
+            consentState: 'ACTIVE',
           },
         ],
       ]),
@@ -261,10 +331,8 @@ describe('resolveSlackMentionLabels', () => {
     expect(labels.get('U04ABC')).toBe('@unknown Slack user U04ABC');
   });
 
-  it('should fall back to unknown when the link query fails', async () => {
-    findSlackUserLinksBySlackUserIdsMock.mockRejectedValue(
-      new Error('permission denied'),
-    );
+  it('should fall back to unknown without asking Slack when the installed team cannot be resolved', async () => {
+    authTestMock.mockResolvedValue({});
 
     const labels = await resolveSlackMentionLabels({
       slackUserIds: ['U04ABC'],
@@ -274,5 +342,48 @@ describe('resolveSlackMentionLabels', () => {
     });
 
     expect(labels.get('U04ABC')).toBe('@unknown Slack user U04ABC');
+    expect(findSlackUserLinksBySlackUserIdsMock).not.toHaveBeenCalled();
+    expect(usersInfoMock).not.toHaveBeenCalled();
+  });
+
+  it('should not label anyone when the link query fails, so no label can misstate a membership', async () => {
+    findSlackUserLinksBySlackUserIdsMock.mockRejectedValue(
+      new Error('permission denied'),
+    );
+
+    await expect(
+      resolveSlackMentionLabels({
+        slackUserIds: ['U04ABC'],
+        client,
+        slackClient,
+        assistantBotUserId: 'UBOT',
+      }),
+    ).rejects.toThrow('permission denied');
+  });
+
+  it('should not label anyone when the workspace member query fails', async () => {
+    findSlackUserLinksBySlackUserIdsMock.mockResolvedValue(
+      new Map([
+        [
+          'U04ABC',
+          {
+            slackUserId: 'U04ABC',
+            name: 'alice.m',
+            workspaceMemberId: 'member-1',
+            consentState: 'ACTIVE',
+          },
+        ],
+      ]),
+    );
+    findWorkspaceMemberNamesByIdsMock.mockRejectedValue(new Error('timeout'));
+
+    await expect(
+      resolveSlackMentionLabels({
+        slackUserIds: ['U04ABC'],
+        client,
+        slackClient,
+        assistantBotUserId: 'UBOT',
+      }),
+    ).rejects.toThrow('timeout');
   });
 });

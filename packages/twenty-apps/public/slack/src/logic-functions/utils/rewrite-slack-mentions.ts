@@ -1,20 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-const SLACK_USER_MENTION_PATTERN = /<@([A-Z0-9]+)(?:\|[^>]*)?>/g;
+import { SLACK_USER_MENTION_PATTERN } from 'src/logic-functions/constants/slack-user-mention-pattern';
+
 const SLACK_CHANNEL_MENTION_PATTERN = /<#([A-Z0-9]+)(?:\|([^>]*))?>/g;
 const SLACK_USER_GROUP_MENTION_PATTERN =
   /<!subteam\^([A-Z0-9]+)(?:\|([^>]*))?>/g;
-const SLACK_BROADCAST_MENTION_PATTERN = /<!(here|channel|everyone)(?:\|[^>]*)?>/g;
-
-export const collectSlackMentionedUserIds = (
-  texts: readonly string[],
-): string[] => [
-  ...new Set(
-    texts.flatMap((text) =>
-      [...text.matchAll(SLACK_USER_MENTION_PATTERN)].map((match) => match[1]),
-    ),
-  ),
-];
+const SLACK_BROADCAST_MENTION_PATTERN =
+  /<!(here|channel|everyone)(?:\|[^>]*)?>/g;
 
 export const rewriteSlackMentions = ({
   text,

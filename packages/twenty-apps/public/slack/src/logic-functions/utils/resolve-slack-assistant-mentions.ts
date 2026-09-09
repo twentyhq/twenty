@@ -1,36 +1,14 @@
 import { type WebClient } from '@slack/web-api';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { SLACK_ASSISTANT_MENTION_LABEL } from 'src/logic-functions/constants/slack-assistant-mention-label';
 import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
-import {
-  ASSISTANT_MENTION_LABEL,
-  resolveSlackMentionLabels,
-} from 'src/logic-functions/utils/resolve-slack-mention-labels';
-import {
-  collectSlackMentionedUserIds,
-  rewriteSlackMentions,
-} from 'src/logic-functions/utils/rewrite-slack-mentions';
+import { collectSlackMentionedUserIds } from 'src/logic-functions/utils/collect-slack-mentioned-user-ids';
+import { racePromiseAgainstTimeout } from 'src/logic-functions/utils/race-promise-against-timeout';
+import { resolveSlackMentionLabels } from 'src/logic-functions/utils/resolve-slack-mention-labels';
+import { rewriteSlackMentions } from 'src/logic-functions/utils/rewrite-slack-mentions';
 
 const MENTION_RESOLUTION_TIMEOUT_MS = 5_000;
-
-const raceMentionResolutionTimeout = async (
-  labels: Promise<Map<string, string>>,
-): Promise<Map<string, string>> => {
-  let timeoutTimer: ReturnType<typeof setTimeout> | undefined;
-
-  const timedOutLabels = new Promise<Map<string, string>>((resolve) => {
-    timeoutTimer = setTimeout(
-      () => resolve(new Map()),
-      MENTION_RESOLUTION_TIMEOUT_MS,
-    );
-  });
-
-  try {
-    return await Promise.race([labels, timedOutLabels]);
-  } finally {
-    clearTimeout(timeoutTimer);
-  }
-};
 
 type ResolvedSlackAssistantMentions = {
   requestText: string;
@@ -58,8 +36,8 @@ export const resolveSlackAssistantMentions = async ({
 
   const slackUserIds = collectSlackMentionedUserIds(texts);
 
-  const userLabelBySlackUserId = await raceMentionResolutionTimeout(
-    resolveSlackMentionLabels({
+  const userLabelBySlackUserId = await racePromiseAgainstTimeout({
+    promise: resolveSlackMentionLabels({
       slackUserIds,
       client,
       slackClient,
@@ -71,7 +49,9 @@ export const resolveSlackAssistantMentions = async ({
 
       return new Map<string, string>();
     }),
-  );
+    timeoutMs: MENTION_RESOLUTION_TIMEOUT_MS,
+    timedOutResult: new Map<string, string>(),
+  });
 
   const rewrite = (text: string) =>
     rewriteSlackMentions({ text, userLabelBySlackUserId });
@@ -83,7 +63,7 @@ export const resolveSlackAssistantMentions = async ({
       content: rewrite(message.content),
     })),
     hasMentionedUsers: [...userLabelBySlackUserId.values()].some(
-      (label) => label !== ASSISTANT_MENTION_LABEL,
+      (label) => label !== SLACK_ASSISTANT_MENTION_LABEL,
     ),
   };
 };

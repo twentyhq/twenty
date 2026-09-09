@@ -1,6 +1,7 @@
 import { type RunAgentResult } from 'twenty-sdk/logic-function';
 
 import { SLACK_ASSISTANT_DEADLINE_ERROR } from 'src/logic-functions/constants/slack-assistant-deadline-error';
+import { racePromiseAgainstTimeout } from 'src/logic-functions/utils/race-promise-against-timeout';
 
 export const raceSlackAssistantAgentDeadline = async ({
   agentRun,
@@ -8,24 +9,13 @@ export const raceSlackAssistantAgentDeadline = async ({
 }: {
   agentRun: Promise<RunAgentResult>;
   deadlineAtMs: number;
-}): Promise<RunAgentResult> => {
-  let deadlineTimer: ReturnType<typeof setTimeout> | undefined;
-
-  const deadlineResult = new Promise<RunAgentResult>((resolve) => {
-    deadlineTimer = setTimeout(
-      () =>
-        resolve({
-          result: null,
-          error: SLACK_ASSISTANT_DEADLINE_ERROR,
-          success: false,
-        }),
-      Math.max(deadlineAtMs - Date.now(), 0),
-    );
+}): Promise<RunAgentResult> =>
+  racePromiseAgainstTimeout({
+    promise: agentRun,
+    timeoutMs: deadlineAtMs - Date.now(),
+    timedOutResult: {
+      result: null,
+      error: SLACK_ASSISTANT_DEADLINE_ERROR,
+      success: false,
+    },
   });
-
-  try {
-    return await Promise.race([agentRun, deadlineResult]);
-  } finally {
-    clearTimeout(deadlineTimer);
-  }
-};

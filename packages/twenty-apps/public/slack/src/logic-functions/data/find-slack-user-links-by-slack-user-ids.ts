@@ -1,17 +1,17 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-export type SlackUserLinkSummary = {
-  slackUserId: string;
-  name: string | undefined;
-  workspaceMemberId: string | undefined;
-};
+import { type SlackUserLinkSummary } from 'src/logic-functions/types/slack-user-link-summary.type';
+import { isSlackUserLinkConsentState } from 'src/logic-functions/utils/is-slack-user-link-consent-state';
 
 const LINKS_PER_PAGE = 200;
 
 export const findSlackUserLinksBySlackUserIds = async (
   client: CoreApiClient,
-  { slackTeamId, slackUserIds }: { slackTeamId: string; slackUserIds: string[] },
+  {
+    slackTeamId,
+    slackUserIds,
+  }: { slackTeamId: string; slackUserIds: string[] },
 ): Promise<Map<string, SlackUserLinkSummary>> => {
   const linkBySlackUserId = new Map<string, SlackUserLinkSummary>();
 
@@ -29,7 +29,13 @@ export const findSlackUserLinksBySlackUserIds = async (
         first: LINKS_PER_PAGE,
       },
       edges: {
-        node: { slackUserId: true, name: true, workspaceMemberId: true },
+        node: {
+          id: true,
+          slackUserId: true,
+          name: true,
+          workspaceMemberId: true,
+          consentState: true,
+        },
       },
     },
   });
@@ -41,11 +47,23 @@ export const findSlackUserLinksBySlackUserIds = async (
       continue;
     }
 
+    if (
+      isNonEmptyString(node.consentState) &&
+      !isSlackUserLinkConsentState(node.consentState)
+    ) {
+      throw new Error(
+        `Slack user link ${node.id} has an unsupported consentState "${node.consentState}"`,
+      );
+    }
+
     linkBySlackUserId.set(node.slackUserId, {
       slackUserId: node.slackUserId,
       name: isNonEmptyString(node.name) ? node.name : undefined,
       workspaceMemberId: isNonEmptyString(node.workspaceMemberId)
         ? node.workspaceMemberId
+        : undefined,
+      consentState: isSlackUserLinkConsentState(node.consentState)
+        ? node.consentState
         : undefined,
     });
   }

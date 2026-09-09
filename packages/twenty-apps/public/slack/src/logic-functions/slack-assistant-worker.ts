@@ -124,8 +124,6 @@ export const slackAssistantWorkerHandler = async (
       }).catch(() => undefined);
     }
 
-    // Run-as matches the stored request text against the live Slack message, so
-    // mentions can only be rewritten once that comparison has happened.
     const resolvedMentions = await resolveSlackAssistantMentions({
       requestText,
       conversationMessages,

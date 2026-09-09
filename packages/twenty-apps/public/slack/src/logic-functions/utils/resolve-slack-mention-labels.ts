@@ -3,27 +3,22 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
-import {
-  findSlackUserLinksBySlackUserIds,
-  type SlackUserLinkSummary,
-} from 'src/logic-functions/data/find-slack-user-links-by-slack-user-ids';
+import { SLACK_ASSISTANT_MENTION_LABEL } from 'src/logic-functions/constants/slack-assistant-mention-label';
+import { findSlackUserLinksBySlackUserIds } from 'src/logic-functions/data/find-slack-user-links-by-slack-user-ids';
 import { findWorkspaceMemberNamesByIds } from 'src/logic-functions/data/find-workspace-member-names-by-ids';
+import { type SlackUserLinkSummary } from 'src/logic-functions/types/slack-user-link-summary.type';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
+import { isConsentedSlackUserLink } from 'src/logic-functions/utils/is-consented-slack-user-link';
 
 const MAX_MENTIONED_USERS = 20;
 const MAX_SLACK_USER_LOOKUPS = 8;
-
-export const ASSISTANT_MENTION_LABEL = 'you';
-
 const MAX_MENTION_NAME_LENGTH = 80;
+const LABEL_SUFFIX_FORGING_CHARACTERS_PATTERN = /[()]/g;
 
-// Slack profile names are attacker-controlled: newlines let a name pose as its
-// own prompt section and parentheses let it forge the "(workspace member …)"
-// suffix the agent trusts for ids.
 const sanitizeMentionName = (name: string): string | undefined => {
   const flattened = name
-    .replace(/[()]/g, '')
+    .replace(LABEL_SUFFIX_FORGING_CHARACTERS_PATTERN, '')
     .replace(/\s+/g, ' ')
     .trim()
     .slice(0, MAX_MENTION_NAME_LENGTH)
@@ -46,6 +41,14 @@ const formatSlackOnlyLabel = (name: string): string =>
 const formatUnknownLabel = (slackUserId: string): string =>
   `@unknown Slack user ${slackUserId}`;
 
+const resolveConsentedWorkspaceMemberId = (
+  link: SlackUserLinkSummary,
+): string | undefined =>
+  isConsentedSlackUserLink(link.consentState) &&
+  isNonEmptyString(link.workspaceMemberId)
+    ? link.workspaceMemberId
+    : undefined;
+
 const resolveWorkspaceMemberLabels = async ({
   client,
   linkBySlackUserId,
@@ -53,22 +56,22 @@ const resolveWorkspaceMemberLabels = async ({
   client: CoreApiClient;
   linkBySlackUserId: ReadonlyMap<string, SlackUserLinkSummary>;
 }): Promise<Map<string, string>> => {
-  const linkedWorkspaceMemberIds = [
+  const consentedWorkspaceMemberIds = [
     ...new Set(
       [...linkBySlackUserId.values()]
-        .map((link) => link.workspaceMemberId)
+        .map(resolveConsentedWorkspaceMemberId)
         .filter(isNonEmptyString),
     ),
   ];
 
   const nameByWorkspaceMemberId = await findWorkspaceMemberNamesByIds(client, {
-    workspaceMemberIds: linkedWorkspaceMemberIds,
-  }).catch(() => new Map<string, string | undefined>());
+    workspaceMemberIds: consentedWorkspaceMemberIds,
+  });
 
   const labelBySlackUserId = new Map<string, string>();
 
   for (const link of linkBySlackUserId.values()) {
-    const { workspaceMemberId } = link;
+    const workspaceMemberId = resolveConsentedWorkspaceMemberId(link);
 
     if (
       !isNonEmptyString(workspaceMemberId) ||
@@ -103,20 +106,20 @@ const fetchSlackDisplayNames = async ({
     slackUserIds
       .slice(0, MAX_SLACK_USER_LOOKUPS)
       .map((slackUserId) =>
-        fetchSlackUserIdentity({ client: slackClient, slackUserId }).catch(
-          () => undefined,
-        ),
+        fetchSlackUserIdentity({ client: slackClient, slackUserId }),
       ),
   );
 
   const displayNameBySlackUserId = new Map<string, string>();
 
   for (const identity of identities) {
-    const displayName = isDefined(identity)
-      ? sanitizeMentionName(identity.displayName ?? '')
-      : undefined;
+    if (!isDefined(identity) || !isNonEmptyString(identity.displayName)) {
+      continue;
+    }
 
-    if (isDefined(identity) && isNonEmptyString(displayName)) {
+    const displayName = sanitizeMentionName(identity.displayName);
+
+    if (isNonEmptyString(displayName)) {
       displayNameBySlackUserId.set(identity.slackUserId, displayName);
     }
   }
@@ -140,7 +143,7 @@ export const resolveSlackMentionLabels = async ({
 
   for (const slackUserId of slackUserIds) {
     if (slackUserId === assistantBotUserId) {
-      labelBySlackUserId.set(slackUserId, ASSISTANT_MENTION_LABEL);
+      labelBySlackUserId.set(slackUserId, SLACK_ASSISTANT_MENTION_LABEL);
       continue;
     }
 
@@ -157,12 +160,14 @@ export const resolveSlackMentionLabels = async ({
 
   const installedSlackTeamId = await getInstalledSlackTeamId(slackClient);
 
-  const linkBySlackUserId = isNonEmptyString(installedSlackTeamId)
-    ? await findSlackUserLinksBySlackUserIds(client, {
-        slackTeamId: installedSlackTeamId,
-        slackUserIds: mentionedUserIds,
-      }).catch(() => new Map<string, SlackUserLinkSummary>())
-    : new Map<string, SlackUserLinkSummary>();
+  if (!isNonEmptyString(installedSlackTeamId)) {
+    return labelBySlackUserId;
+  }
+
+  const linkBySlackUserId = await findSlackUserLinksBySlackUserIds(client, {
+    slackTeamId: installedSlackTeamId,
+    slackUserIds: mentionedUserIds,
+  });
 
   const workspaceMemberLabelBySlackUserId = await resolveWorkspaceMemberLabels({
     client,

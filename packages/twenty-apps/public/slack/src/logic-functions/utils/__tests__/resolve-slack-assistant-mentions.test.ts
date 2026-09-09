@@ -9,7 +9,6 @@ const { resolveSlackMentionLabelsMock } = vi.hoisted(() => ({
 }));
 
 vi.mock('src/logic-functions/utils/resolve-slack-mention-labels', () => ({
-  ASSISTANT_MENTION_LABEL: 'you',
   resolveSlackMentionLabels: resolveSlackMentionLabelsMock,
 }));
 
@@ -86,9 +85,7 @@ describe('resolveSlackAssistantMentions', () => {
   });
 
   it('should not report mentioned users when only the assistant is mentioned', async () => {
-    resolveSlackMentionLabelsMock.mockResolvedValue(
-      new Map([['UBOT', 'you']]),
-    );
+    resolveSlackMentionLabelsMock.mockResolvedValue(new Map([['UBOT', 'you']]));
 
     const resolved = await resolve('<@UBOT> what is up?');
 
