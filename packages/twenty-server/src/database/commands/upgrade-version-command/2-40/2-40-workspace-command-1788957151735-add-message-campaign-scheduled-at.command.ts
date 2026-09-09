@@ -34,7 +34,7 @@ const CAMPAIGN_VIEW_UNIVERSAL_IDENTIFIERS = [
   CAMPAIGN.views.messageCampaignRecordPageFields.universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.40.0', 1788802705247)
+@RegisteredWorkspaceCommand('2.40.0', 1788957151735)
 @Command({
   name: 'upgrade:2-40:add-message-campaign-scheduled-at',
   description:

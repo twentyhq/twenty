@@ -5,7 +5,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { SEND_SCHEDULED_CAMPAIGN_JOB } from 'src/modules/emailing/constants/send-scheduled-campaign-job.constant';
 import { MessageCampaignScheduleService } from 'src/modules/emailing/services/message-campaign-schedule.service';
 
-@Processor(MessageQueue.delayedJobsQueue)
+@Processor(MessageQueue.campaignQueue)
 export class SendScheduledCampaignJob {
   constructor(
     private readonly messageCampaignScheduleService: MessageCampaignScheduleService,

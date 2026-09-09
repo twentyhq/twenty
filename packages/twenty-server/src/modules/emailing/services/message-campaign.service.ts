@@ -217,8 +217,8 @@ export class MessageCampaignService {
           campaignId,
           roleId,
           from: MessageCampaignStatus.SENDING,
-          to: MessageCampaignStatus.DRAFT,
-          scheduledAt: null,
+          to: from,
+          scheduledAt: fromScheduledAt ?? null,
         });
 
         throw error;

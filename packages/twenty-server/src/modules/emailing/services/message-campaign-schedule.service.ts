@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { MessageCampaignStatus } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
@@ -21,9 +22,11 @@ import { type SendCampaignResult } from 'src/modules/emailing/types/send-campaig
 
 @Injectable()
 export class MessageCampaignScheduleService {
+  private readonly logger = new Logger(MessageCampaignScheduleService.name);
+
   constructor(
-    @InjectMessageQueue(MessageQueue.delayedJobsQueue)
-    private readonly delayedMessageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.campaignQueue)
+    private readonly campaignMessageQueueService: MessageQueueService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly messageCampaignService: MessageCampaignService,
   ) {}
@@ -76,7 +79,7 @@ export class MessageCampaignScheduleService {
       );
     }
 
-    await this.delayedMessageQueueService
+    await this.campaignMessageQueueService
       .add<SendScheduledCampaignJobData>(
         SEND_SCHEDULED_CAMPAIGN_JOB,
         {
@@ -134,12 +137,41 @@ export class MessageCampaignScheduleService {
           return;
         }
 
-        const prepared =
-          await this.messageCampaignService.prepareCampaignSendOrThrow({
+        const prepared = await this.messageCampaignService
+          .prepareCampaignSendOrThrow({
             workspaceId,
             userWorkspaceId,
             campaignId,
+          })
+          .catch(async (error) => {
+            if (!(error instanceof EmailingDomainException)) {
+              throw error;
+            }
+
+            await this.releaseUnsendableScheduledCampaign({
+              workspaceId,
+              campaignId,
+              scheduledAt: scheduledAtDate,
+              reason: error.message,
+            });
+
+            return null;
           });
+
+        if (!isDefined(prepared)) {
+          return;
+        }
+
+        if (prepared.sendableRecipients.length === 0) {
+          await this.releaseUnsendableScheduledCampaign({
+            workspaceId,
+            campaignId,
+            scheduledAt: scheduledAtDate,
+            reason: 'no recipient remains sendable',
+          });
+
+          return;
+        }
 
         await this.messageCampaignService.claimAndMaterializeOrThrow({
           workspaceId,
@@ -150,6 +182,31 @@ export class MessageCampaignScheduleService {
           fromScheduledAt: scheduledAtDate,
         });
       },
+    );
+  }
+
+  private async releaseUnsendableScheduledCampaign({
+    workspaceId,
+    campaignId,
+    scheduledAt,
+    reason,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+    scheduledAt: Date;
+    reason: string;
+  }): Promise<void> {
+    await this.messageCampaignLifecycleService.transitionCampaignStatus({
+      workspaceId,
+      campaignId,
+      from: MessageCampaignStatus.SCHEDULED,
+      to: MessageCampaignStatus.DRAFT,
+      scheduledAt: null,
+      fromScheduledAt: scheduledAt,
+    });
+
+    this.logger.warn(
+      `Campaign ${campaignId} of workspace ${workspaceId} was released back to draft instead of being sent at ${scheduledAt.toISOString()}: ${reason}`,
     );
   }
 }

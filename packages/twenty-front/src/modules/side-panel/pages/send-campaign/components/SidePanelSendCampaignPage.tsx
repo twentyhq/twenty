@@ -21,5 +21,10 @@ export const SidePanelSendCampaignPage = () => {
     return null;
   }
 
-  return <SendCampaignForm key={campaign.id} campaign={campaign} />;
+  return (
+    <SendCampaignForm
+      key={`${campaign.id}:${campaign.scheduledAt}`}
+      campaign={campaign}
+    />
+  );
 };
