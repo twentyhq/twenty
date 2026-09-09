@@ -17,6 +17,7 @@ const MANIFEST_KEY_BY_METADATA_NAME = {
   view: 'views',
   pageLayout: 'pageLayouts',
   pageLayoutTab: 'pageLayoutTabs',
+  pageLayoutWidget: 'pageLayoutWidgets',
   commandMenuItem: 'commandMenuItems',
   navigationMenuItem: 'navigationMenuItems',
   timelineActivityType: 'timelineActivityTypes',
