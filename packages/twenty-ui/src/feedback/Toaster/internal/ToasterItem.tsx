@@ -4,20 +4,24 @@ import { Toast } from '@ui/feedback/Toast/Toast';
 import { type ToastNotification } from '@ui/feedback/Toast/types/ToastNotification';
 
 import styles from '../Toaster.module.scss';
+import { type ToasterProps } from '../types/ToasterProps';
 
 type ToasterItemProps = {
   toast: ToastNotification;
+  getToastProps?: ToasterProps['getToastProps'];
   isPresent: boolean;
   onClose: (id: string) => void;
   onExitComplete: (id: string) => void;
 };
 
 export const ToasterItem = ({
-  toast: { id, dedupeKey: _dedupeKey, ...toast },
+  toast,
+  getToastProps,
   isPresent,
   onClose,
   onExitComplete,
 }: ToasterItemProps) => {
+  const { id, dedupeKey: _dedupeKey, ...toastProps } = toast;
   const ref = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -49,7 +53,12 @@ export const ToasterItem = ({
       inert={!isPresent}
     >
       <div className={styles.itemContent}>
-        <Toast {...toast} id={id} onClose={() => onClose(id)} />
+        <Toast
+          {...toastProps}
+          {...getToastProps?.(toast)}
+          id={id}
+          onClose={() => onClose(id)}
+        />
       </div>
     </div>
   );

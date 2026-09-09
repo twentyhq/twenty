@@ -7,7 +7,6 @@ import { getToastPropsFromSnackBarProps } from '@/ui/feedback/snack-bar-manager/
 import { buildErrorAction } from '@/ui/feedback/snack-bar-manager/utils/buildErrorAction';
 import { type ErrorLike } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { i18n } from '@lingui/core';
 import { useToast } from 'twenty-ui/feedback';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
@@ -15,8 +14,7 @@ export const useSnackBar = () => {
   const { add, close: handleSnackBarClose } = useToast();
 
   const setSnackBarQueue = useCallback(
-    (options: SnackBarOptions) =>
-      add(getToastPropsFromSnackBarProps(options, i18n)),
+    (options: SnackBarOptions) => add(getToastPropsFromSnackBarProps(options)),
     [add],
   );
 

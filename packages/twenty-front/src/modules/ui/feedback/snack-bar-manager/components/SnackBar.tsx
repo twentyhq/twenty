@@ -1,3 +1,4 @@
+import { getLocalizedToastProps } from '@/ui/feedback/snack-bar-manager/utils/getLocalizedToastProps';
 import { getToastPropsFromSnackBarProps } from '@/ui/feedback/snack-bar-manager/utils/getToastPropsFromSnackBarProps';
 import { useLingui } from '@lingui/react/macro';
 import { type ComponentPropsWithoutRef, type ReactNode } from 'react';
@@ -30,6 +31,7 @@ export type SnackBarProps = Pick<ComponentPropsWithoutRef<'div'>, 'id'> & {
 
 export const SnackBar = (props: SnackBarProps) => {
   const { i18n } = useLingui();
+  const toastProps = getToastPropsFromSnackBarProps(props);
   const {
     className,
     progress,
@@ -47,7 +49,10 @@ export const SnackBar = (props: SnackBarProps) => {
     closeLabel,
     action,
     children,
-  } = getToastPropsFromSnackBarProps(props, i18n);
+  } = {
+    ...toastProps,
+    ...getLocalizedToastProps(toastProps, i18n),
+  };
 
   return (
     <Toast

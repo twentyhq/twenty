@@ -14,6 +14,7 @@ import { type ToasterProps } from './types/ToasterProps';
 
 export const Toaster = ({
   container,
+  getToastProps,
   className,
   render,
   ref,
@@ -42,7 +43,13 @@ export const Toaster = ({
       'aria-label': 'Notifications',
       ...props,
       className: clsx(styles.root, className),
-      children: <ToasterItems toasts={toasts} onClose={store.close} />,
+      children: (
+        <ToasterItems
+          toasts={toasts}
+          getToastProps={getToastProps}
+          onClose={store.close}
+        />
+      ),
     },
   });
 

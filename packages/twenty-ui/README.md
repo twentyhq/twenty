@@ -89,7 +89,7 @@ export const App = () => (
 
 The provider keeps the newest three notifications by default; pass a positive integer `limit` to change the capacity used when adding notifications. Keep it above route-specific renderers to preserve the queue when a `Toaster` remounts. The card's countdown starts when rendered and restarts on remount. Each provider owns an independent queue.
 
-`Toaster` uses the nearest scoped theme container or the document body. Pass `container` for a custom portal target, or `null` to defer rendering until a container is available. Native props, refs, and `render` composition are supported. Override `aria-label` to localize the viewport name. Entrance, exit, and stack movement use CSS transitions and respect `prefers-reduced-motion`.
+`Toaster` uses the nearest scoped theme container or the document body. Pass `container` for a custom portal target, or `null` to defer rendering until a container is available. Native props, refs, and `render` composition are supported. Override `aria-label` to localize the viewport name. Use `getToastProps(toast)` for labels or presentation props that must follow render-time context, such as the active locale, without replacing queued notifications. Entrance, exit, and stack movement use CSS transitions and respect `prefers-reduced-motion`.
 
 # Theming
 
