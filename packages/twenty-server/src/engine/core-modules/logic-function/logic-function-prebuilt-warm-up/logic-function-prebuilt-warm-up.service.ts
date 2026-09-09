@@ -103,39 +103,28 @@ export class LogicFunctionPrebuiltWarmUpService {
           isLogicFunctionReadyForPrebuiltInstall(flatLogicFunction),
       );
 
-    const [firstFlatLogicFunction, ...remainingFlatLogicFunctions] =
-      flatLogicFunctions;
-
-    if (!isDefined(firstFlatLogicFunction)) {
-      return;
-    }
-
     const failedLogicFunctionIds: string[] = [];
 
-    if (
-      !(await this.warmUpLogicFunction({
-        flatLogicFunction: firstFlatLogicFunction,
-        flatApplication,
-      }))
-    ) {
-      failedLogicFunctionIds.push(firstFlatLogicFunction.id);
-    } else {
-      for (const flatLogicFunctionsChunk of chunk(
-        remainingFlatLogicFunctions,
-        WARM_UP_CHUNK_SIZE,
-      )) {
-        const results = await Promise.all(
-          flatLogicFunctionsChunk.map((flatLogicFunction) =>
-            this.warmUpLogicFunction({ flatLogicFunction, flatApplication }),
-          ),
-        );
+    for (const flatLogicFunctionsChunk of chunk(
+      flatLogicFunctions,
+      WARM_UP_CHUNK_SIZE,
+    )) {
+      const results = await Promise.allSettled(
+        flatLogicFunctionsChunk.map((flatLogicFunction) =>
+          this.ensurePrebuiltBundleInstalled({
+            flatLogicFunction,
+            flatApplication,
+          }),
+        ),
+      );
 
-        failedLogicFunctionIds.push(
-          ...flatLogicFunctionsChunk
-            .filter((_flatLogicFunction, index) => !results[index])
-            .map((flatLogicFunction) => flatLogicFunction.id),
-        );
-      }
+      failedLogicFunctionIds.push(
+        ...flatLogicFunctionsChunk
+          .filter(
+            (_flatLogicFunction, index) => results[index].status === 'rejected',
+          )
+          .map((flatLogicFunction) => flatLogicFunction.id),
+      );
     }
 
     if (failedLogicFunctionIds.length > 0) {
@@ -144,32 +133,6 @@ export class LogicFunctionPrebuiltWarmUpService {
           `for application ${applicationId} in workspace ${workspaceId}: ${failedLogicFunctionIds.join(', ')}`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
       );
-    }
-  }
-
-  private async warmUpLogicFunction({
-    flatLogicFunction,
-    flatApplication,
-  }: {
-    flatLogicFunction: FlatLogicFunction;
-    flatApplication: FlatApplication;
-  }): Promise<boolean> {
-    const installStart = Date.now();
-
-    try {
-      await this.ensurePrebuiltBundleInstalled({
-        flatLogicFunction,
-        flatApplication,
-      });
-
-      this.logger.log(
-        `[lambda-timing] event=warm_up_prebuilt fnId=${flatLogicFunction.id} ` +
-          `install_duration_ms=${Date.now() - installStart}`,
-      );
-
-      return true;
-    } catch {
-      return false;
     }
   }
 }
