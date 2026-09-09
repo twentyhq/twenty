@@ -31,8 +31,13 @@ const resolveRollingAlias = (
         !ROLLING_SUFFIX.test(siblingName) &&
         fingerprint(sibling) === target,
     )
-    .sort(([, a], [, b]) =>
-      (b.release_date ?? '').localeCompare(a.release_date ?? ''),
+    // Falling back to the name keeps this deterministic when a provider dates
+    // neither twin, and for the date-stamped ids providers actually use it
+    // still lands on the newer one.
+    .sort(
+      ([nameA, a], [nameB, b]) =>
+        (b.release_date ?? '').localeCompare(a.release_date ?? '') ||
+        nameB.localeCompare(nameA),
     );
 
   return twins[0]?.[0];

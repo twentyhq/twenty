@@ -65,7 +65,7 @@ const isLanguageModel = (modelId: string): boolean => {
 
 const meetsInclusionCriteria = (modelData: ModelsDevModel): boolean =>
   modelData.status !== 'beta' &&
-  modelData.tool_call === true &&
+  (modelData.tool_call ?? false) &&
   isDefined(modelData.cost?.input) &&
   isDefined(modelData.limit?.context);
 

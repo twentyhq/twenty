@@ -64,6 +64,35 @@ describe('buildLookupCandidates', () => {
     expect(candidates).not.toContain('mistral-large-2506');
   });
 
+  it('resolves the same way whatever order an undated provider lists twins in', () => {
+    // Nothing in models.dev hits this today, but the resolution must not depend
+    // on the order a third party happens to serialize its models in.
+    const undated = {
+      'mistral-large-latest': modelsDevModel({ id: 'mistral-large-latest' }),
+      'mistral-large-2506': modelsDevModel({ id: 'mistral-large-2506' }),
+      'mistral-large-2512': modelsDevModel({ id: 'mistral-large-2512' }),
+    };
+
+    const resolve = (siblingModels: Record<string, ModelsDevModel>) =>
+      buildLookupCandidates({
+        modelName: 'mistral-large-latest',
+        siblingModels,
+      });
+
+    const reordered = {
+      'mistral-large-latest': undated['mistral-large-latest'],
+      'mistral-large-2512': undated['mistral-large-2512'],
+      'mistral-large-2506': undated['mistral-large-2506'],
+    };
+
+    [undated, reordered].forEach((siblingModels) => {
+      const candidates = resolve(siblingModels);
+
+      expect(candidates).toContain('mistral-large-2512');
+      expect(candidates).not.toContain('mistral-large-2506');
+    });
+  });
+
   it('offers the undated name for a dated snapshot', () => {
     expect(
       buildLookupCandidates({
