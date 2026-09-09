@@ -13,7 +13,7 @@ export const useAgentChatModelId = () => {
   );
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   // The shared sender mounts above the chat surface providers.
-  const isWorkspaceSetupChat = useAtomStateValue(
+  const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
     shouldOpenAiChatAfterOnboardingState,
   );
 
@@ -26,7 +26,7 @@ export const useAgentChatModelId = () => {
     ? agentChatUserSelectedModel
     : null;
 
-  const workspaceSetupModelId = isWorkspaceSetupChat
+  const workspaceSetupModelId = shouldOpenAiChatAfterOnboarding
     ? currentWorkspace?.fastModel
     : null;
 
