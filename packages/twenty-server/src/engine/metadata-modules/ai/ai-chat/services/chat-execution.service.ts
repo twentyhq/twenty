@@ -5,7 +5,7 @@ import {
   hasToolCall,
   type LanguageModelUsage,
   NoOutputGeneratedError,
-  stepCountIs,
+  isStepCount,
   type StepResult,
   streamText,
   type SystemModelMessage,
@@ -479,17 +479,18 @@ export class ChatExecutionService {
 
     const stream = streamText({
       model: registeredModel.model,
-      messages: [systemMessage, ...modelMessages],
+      instructions: systemMessage,
+      messages: modelMessages,
       tools: activeTools,
       // Every step of the kickoff turn is forced so it cannot end in prose; stopWhen ends it at the first ask_questions.
       toolChoice: isWorkspaceSetupKickoffTurn ? 'required' : 'auto',
       abortSignal,
       stopWhen: (step) =>
-        stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
+        isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
         hasToolCall(ASK_QUESTIONS_TOOL_NAME)(step) ||
         hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step) ||
         hasNoMoreAvailableCredits,
-      experimental_telemetry: buildAiTelemetry({
+      ...buildAiTelemetry({
         functionId: isWorkspaceSetupThread
           ? AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID
           : AI_CHAT_STREAM_FUNCTION_ID,
@@ -535,10 +536,10 @@ export class ChatExecutionService {
           `Stream ${streamId} emitted an error: ${error instanceof Error ? error.message : String(error)}`,
         );
       },
-      experimental_onToolCallFinish: (event) => {
+      onToolExecutionEnd: (event) => {
         this.metricsService.recordHistogram({
           key: MetricsKeys.AiChatToolExecutionDurationMs,
-          value: event.durationMs,
+          value: event.toolExecutionMs,
           unit: 'ms',
           attributes: {
             model: registeredModel.modelId,
@@ -547,7 +548,7 @@ export class ChatExecutionService {
           bucketBoundaries: TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES,
         });
       },
-      onStepFinish: async (step) => {
+      onStepEnd: async (step) => {
         this.metricsService.recordHistogram({
           key: MetricsKeys.AiChatStepLatencyMs,
           value: performance.now() - stepStartedAt,
@@ -623,7 +624,7 @@ export class ChatExecutionService {
       onAbort: async ({ steps }) => {
         await emitTurnUsageEvent(steps);
       },
-      experimental_repairToolCall: async ({
+      repairToolCall: async ({
         toolCall,
         tools: toolsForRepair,
         inputSchema,

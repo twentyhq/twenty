@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ToolSet } from 'ai';
+import { type ToolExecuteFunction, type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
@@ -83,9 +83,15 @@ export class McpToolExecutorService {
     const executionStartedAt = performance.now();
 
     try {
-      const result = await tool.execute(params.arguments, {
+      const execute = tool.execute as ToolExecuteFunction<
+        unknown,
+        unknown,
+        undefined
+      >;
+      const result = await execute(params.arguments, {
         toolCallId: '1',
         messages: [],
+        context: undefined,
       });
 
       this.metricsService.recordHistogram({
