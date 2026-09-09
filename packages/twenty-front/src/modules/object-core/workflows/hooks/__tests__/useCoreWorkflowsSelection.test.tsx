@@ -3,6 +3,10 @@ import { Provider as JotaiProvider } from 'jotai';
 
 import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
+import {
+  EMPTY_CORE_WORKFLOWS_SELECTION,
+  coreWorkflowsSelectionState,
+} from '@/object-core/workflows/states/coreWorkflowsSelectionState';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
@@ -26,27 +30,39 @@ const renderSelection = () =>
   );
 
 describe('useCoreWorkflowsSelection', () => {
-  it('should map selected rows to the workspace workflows the command menu targets', () => {
+  beforeEach(() => {
+    jotaiStore.set(
+      coreWorkflowsSelectionState.atom,
+      EMPTY_CORE_WORKFLOWS_SELECTION,
+    );
+    jotaiStore.set(coreWorkflowsFilterSettingsState.atom, {});
+  });
+
+  it('should expose the selected rows through the shared selection state', () => {
     const { result } = renderSelection();
 
     act(() => {
       result.current.toggleRow('core-1');
     });
 
-    expect(result.current.selectedWorkspaceWorkflowIds).toEqual([
-      'workspace-1',
+    expect(result.current.selectedRowIds).toEqual(['core-1']);
+    expect(jotaiStore.get(coreWorkflowsSelectionState.atom).rowIds).toEqual([
+      'core-1',
     ]);
   });
 
-  it('should not target a workflow that has no workspace record', () => {
-    const { result } = renderSelection();
+  it('should reset the selection when the page unmounts', () => {
+    const { result, unmount } = renderSelection();
 
     act(() => {
-      result.current.toggleRow('core-3');
+      result.current.toggleRow('core-1');
     });
 
-    expect(result.current.selectedRowIds).toEqual(['core-3']);
-    expect(result.current.selectedWorkspaceWorkflowIds).toEqual([]);
+    unmount();
+
+    expect(jotaiStore.get(coreWorkflowsSelectionState.atom)).toEqual(
+      EMPTY_CORE_WORKFLOWS_SELECTION,
+    );
   });
 
   it('should drop the deleted rows and clear the selection when a deletion is reported', () => {
@@ -120,7 +136,6 @@ describe('useCoreWorkflowsSelection', () => {
     });
 
     expect(result.current.selectedRowIds).toEqual([]);
-    expect(result.current.selectedWorkspaceWorkflowIds).toEqual([]);
   });
 
   it('should deselect a row that is toggled twice', () => {
