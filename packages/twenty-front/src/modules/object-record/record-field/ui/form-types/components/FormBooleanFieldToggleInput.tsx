@@ -69,7 +69,7 @@ export const FormBooleanFieldToggleInput = ({
           <Switch
             aria-labelledby={descriptionId}
             checked={value}
-            onCheckedChange={onChange}
+            onCheckedChange={(checked) => onChange(checked)}
             disabled={disabled}
             size="sm"
           />
