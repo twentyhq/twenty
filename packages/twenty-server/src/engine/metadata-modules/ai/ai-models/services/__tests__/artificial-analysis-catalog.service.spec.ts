@@ -126,7 +126,7 @@ describe('ArtificialAnalysisCatalogService', () => {
 
   it('does not overwrite a newer worker after its lease expires', async () => {
     fetchMock.mockImplementationOnce(async () => {
-      jest.advanceTimersByTime(61_000);
+      jest.setSystemTime(Date.now() + 61_000);
       await cacheStorage.setIfAbsent('refresh-lock', 'new-owner', 60_000);
       await cacheStorage.set('refresh-state', { nextRefreshAt: 123 }, 0);
       return response(createPage());
