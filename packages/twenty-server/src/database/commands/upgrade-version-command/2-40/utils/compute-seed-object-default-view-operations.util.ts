@@ -6,6 +6,7 @@ import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { buildSeededViewFieldFlatEntity } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/build-seeded-view-field-flat-entity.util';
 import { computeSeededObjectViewToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-seeded-object-view-to-create.util';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
@@ -115,25 +116,21 @@ export const computeSeedObjectDefaultViewOperations = ({
         continue;
       }
 
-      seedOperations.viewFieldsToCreate.push({
-        fieldMetadataUniversalIdentifier:
-          flatViewField.fieldMetadataUniversalIdentifier,
-        viewUniversalIdentifier: seededViewUniversalIdentifier,
-        viewFieldGroupUniversalIdentifier: null,
-        createdAt,
-        updatedAt: createdAt,
-        deletedAt: null,
-        universalIdentifier: seededViewFieldUniversalIdentifier,
-        isVisible: flatViewField.isVisible,
-        size: flatViewField.size,
-        position: flatViewField.position,
-        aggregateOperation: flatViewField.aggregateOperation,
-        isActive: flatViewField.isActive,
-        isSystemSideEffect: false,
-        universalOverrides: null,
-        applicationUniversalIdentifier:
-          seededViewApplicationUniversalIdentifier,
-      });
+      seedOperations.viewFieldsToCreate.push(
+        buildSeededViewFieldFlatEntity({
+          applicationUniversalIdentifier:
+            seededViewApplicationUniversalIdentifier,
+          seededViewUniversalIdentifier,
+          fieldMetadataUniversalIdentifier:
+            flatViewField.fieldMetadataUniversalIdentifier,
+          isVisible: flatViewField.isVisible,
+          size: flatViewField.size,
+          position: flatViewField.position,
+          aggregateOperation: flatViewField.aggregateOperation,
+          isActive: flatViewField.isActive,
+          createdAt,
+        }),
+      );
     }
   }
 
