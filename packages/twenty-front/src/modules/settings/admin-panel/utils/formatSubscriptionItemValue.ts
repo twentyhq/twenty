@@ -22,16 +22,23 @@ type FormatSubscriptionItemValueArgs = {
   ) => string;
 };
 
-const formatCurrency = (amountMinor: number, currency: string): string => {
+// Only the symbol comes from Intl. The digits go through formatNumber like
+// every other number on the page, so an amount does not ignore the workspace
+// member's number format while the counts beside it honour it.
+const getCurrencySymbol = (currency: string): string => {
   const normalizedCurrency = currency.toUpperCase();
 
   try {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: normalizedCurrency,
-    }).format(amountMinor / 100);
+    return (
+      new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: normalizedCurrency,
+      })
+        .formatToParts(0)
+        .find((part) => part.type === 'currency')?.value ?? normalizedCurrency
+    );
   } catch {
-    return `${(amountMinor / 100).toFixed(2)} ${normalizedCurrency}`;
+    return normalizedCurrency;
   }
 };
 
@@ -69,7 +76,11 @@ export const formatSubscriptionItemValue = ({
   }
 
   if (isDefined(item.unitAmount)) {
-    parts.push(formatCurrency(item.unitAmount, currency));
+    parts.push(
+      `${getCurrencySymbol(currency)}${formatNumber(item.unitAmount / 100, {
+        decimals: 2,
+      })}`,
+    );
   }
 
   return parts.length > 0 ? parts.join(' · ') : EM_DASH;

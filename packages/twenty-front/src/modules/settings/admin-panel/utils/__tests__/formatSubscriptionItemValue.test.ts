@@ -1,7 +1,8 @@
 import { formatSubscriptionItemValue } from '@/settings/admin-panel/utils/formatSubscriptionItemValue';
 import { BillingProductKey } from '~/generated-metadata/graphql';
 
-const formatNumber = (value: number) => String(value);
+const formatNumber = (value: number, options?: { decimals?: number }) =>
+  value.toFixed(options?.decimals ?? 0);
 
 const format = (
   item: Parameters<typeof formatSubscriptionItemValue>[0]['item'],
@@ -36,7 +37,7 @@ describe('formatSubscriptionItemValue', () => {
         productKey: BillingProductKey.RESOURCE_CREDIT,
         includedCredits: 1,
       }),
-    ).toBe('1 credit/period');
+    ).toBe('1.00 credit/period');
   });
 
   it('joins quantity, included credits and unit amount', () => {
@@ -47,7 +48,7 @@ describe('formatSubscriptionItemValue', () => {
         includedCredits: 5,
         unitAmount: 2500,
       }),
-    ).toBe('3 seats · 5 credits/period · $25.00');
+    ).toBe('3 seats · 5.00 credits/period · $25.00');
   });
 
   it('renders an em dash when the item carries nothing to show', () => {
@@ -60,15 +61,28 @@ describe('formatSubscriptionItemValue', () => {
     ).toBe('0 seats');
   });
 
-  it('falls back to a plain amount when the currency code is malformed', () => {
-    // Intl accepts any well-formed three-letter code, so only a malformed one
-    // reaches the fallback.
+  it('formats the amount through the caller formatter, not its own', () => {
+    // The digits have to honour the workspace member's number format, so the
+    // injected formatter is what decides how an amount reads.
+    expect(
+      formatSubscriptionItemValue({
+        item: {
+          productKey: BillingProductKey.BASE_PRODUCT,
+          unitAmount: 123456,
+        },
+        currency: 'EUR',
+        formatNumber: (value) => `<${value}>`,
+      }),
+    ).toBe('\u20ac<1234.56>');
+  });
+
+  it('falls back to the code when the currency has no resolvable symbol', () => {
     expect(
       formatSubscriptionItemValue({
         item: { productKey: BillingProductKey.BASE_PRODUCT, unitAmount: 1500 },
         currency: 'US',
         formatNumber,
       }),
-    ).toBe('15.00 US');
+    ).toBe('US15.00');
   });
 });
