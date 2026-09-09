@@ -307,9 +307,12 @@ export class AgentAsyncExecutorService {
 
       let tools: ToolSet = {};
       let toolCatalogSection = '';
-      let providerOptions = getCallLevelProviderOptions({
+      const providerOptions = getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,
-        providerOptions: undefined,
+        providerOptions:
+          this.aiModelConfigService.getReasoningProviderOptions(
+            registeredModel,
+          ),
         promptCacheKey: agent?.id,
       });
 
@@ -361,15 +364,6 @@ export class AgentAsyncExecutorService {
           ...registryTools,
           ...nativeTools,
         };
-
-        providerOptions = getCallLevelProviderOptions({
-          sdkPackage: registeredModel.sdkPackage,
-          providerOptions:
-            this.aiModelConfigService.getReasoningProviderOptions(
-              registeredModel,
-            ),
-          promptCacheKey: agent?.id,
-        });
       }
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);

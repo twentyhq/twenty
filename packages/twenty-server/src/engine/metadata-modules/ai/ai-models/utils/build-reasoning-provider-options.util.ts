@@ -1,8 +1,14 @@
 import { type ProviderOptions } from '@ai-sdk/provider-utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   AI_SDK_ANTHROPIC,
+  AI_SDK_AZURE,
   AI_SDK_BEDROCK,
+  AI_SDK_GOOGLE,
+  AI_SDK_MISTRAL,
+  AI_SDK_OPENAI,
+  AI_SDK_XAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { type RegisteredAiModel } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { isAdaptiveThinkingClaudeModel } from 'src/engine/metadata-modules/ai/ai-models/utils/is-adaptive-thinking-claude-model.util';
@@ -10,21 +16,51 @@ import { isAdaptiveThinkingClaudeModel } from 'src/engine/metadata-modules/ai/ai
 export const buildReasoningProviderOptions = (
   model: Pick<
     RegisteredAiModel,
-    'modelId' | 'sdkPackage' | 'supportsReasoning'
+    'modelId' | 'sdkPackage' | 'supportsReasoning' | 'effort'
   >,
 ): ProviderOptions => {
-  if (
-    !model.supportsReasoning ||
-    !isAdaptiveThinkingClaudeModel(model.modelId)
-  ) {
-    return {};
-  }
+  const { effort } = model;
+  const thinksAdaptively =
+    model.supportsReasoning === true &&
+    isAdaptiveThinkingClaudeModel(model.modelId);
 
   switch (model.sdkPackage) {
     case AI_SDK_ANTHROPIC:
-      return { anthropic: { thinking: { type: 'adaptive' } } };
+      if (!thinksAdaptively && !isDefined(effort)) {
+        return {};
+      }
+
+      return {
+        anthropic: {
+          ...(thinksAdaptively ? { thinking: { type: 'adaptive' } } : {}),
+          ...(isDefined(effort) ? { effort } : {}),
+        },
+      };
     case AI_SDK_BEDROCK:
-      return { bedrock: { reasoningConfig: { type: 'adaptive' } } };
+      if (!thinksAdaptively) {
+        return {};
+      }
+
+      return {
+        bedrock: {
+          reasoningConfig: {
+            type: 'adaptive',
+            ...(isDefined(effort) ? { maxReasoningEffort: effort } : {}),
+          },
+        },
+      };
+    case AI_SDK_OPENAI:
+      return isDefined(effort) ? { openai: { reasoningEffort: effort } } : {};
+    case AI_SDK_AZURE:
+      return isDefined(effort) ? { azure: { reasoningEffort: effort } } : {};
+    case AI_SDK_GOOGLE:
+      return isDefined(effort)
+        ? { google: { thinkingConfig: { thinkingLevel: effort } } }
+        : {};
+    case AI_SDK_MISTRAL:
+      return isDefined(effort) ? { mistral: { reasoningEffort: effort } } : {};
+    case AI_SDK_XAI:
+      return isDefined(effort) ? { xai: { reasoningEffort: effort } } : {};
     default:
       return {};
   }

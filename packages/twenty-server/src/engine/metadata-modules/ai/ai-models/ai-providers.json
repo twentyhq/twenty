@@ -81,6 +81,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["none", "low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 47.1,
           "outputTokensPerSecond": 73.005,
@@ -121,6 +122,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["minimal", "low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 52.8,
           "outputTokensPerSecond": 60.822,
@@ -182,6 +184,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["none", "low", "medium", "high", "xhigh"],
         "benchmark": {
           "intelligenceIndex": 39,
           "measuredAt": "2026-09-09"
@@ -269,6 +272,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["none", "low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 37.5,
           "outputTokensPerSecond": 123.243,
@@ -457,6 +461,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["none", "low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 42.3,
           "outputTokensPerSecond": 124.121,
@@ -628,6 +633,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["none", "low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 38.6,
           "measuredAt": "2026-09-09"
@@ -667,6 +673,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "max"],
         "benchmark": {
           "intelligenceIndex": 30.5,
           "measuredAt": "2026-09-09"
@@ -684,6 +691,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 50.7,
           "outputTokensPerSecond": 55.074,
@@ -702,6 +710,7 @@
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 29.1,
           "measuredAt": "2026-09-09"
@@ -719,6 +728,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 53.4,
           "outputTokensPerSecond": 69.904,
@@ -737,6 +747,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "max"],
         "benchmark": {
           "intelligenceIndex": 31.9,
           "measuredAt": "2026-09-09"
@@ -767,6 +778,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 40.7,
           "measuredAt": "2026-09-09"
@@ -797,6 +809,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 49.7,
           "outputTokensPerSecond": 68.133,
@@ -841,6 +854,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 42,
           "measuredAt": "2026-09-09"
@@ -858,6 +872,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 38.4,
           "outputTokensPerSecond": 83.464,
@@ -876,6 +891,7 @@
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 29.1,
           "measuredAt": "2026-09-09"
@@ -952,6 +968,7 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 30.4,
           "outputTokensPerSecond": 127.691,
@@ -1019,6 +1036,7 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["minimal", "low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 34.3,
           "outputTokensPerSecond": 184.677,
@@ -1063,6 +1081,7 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["minimal", "low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 33.6,
           "outputTokensPerSecond": 239.733,
@@ -1097,6 +1116,7 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["minimal", "low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 22.7,
           "outputTokensPerSecond": 365.348,
@@ -1131,6 +1151,7 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["minimal", "low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 26.3,
           "measuredAt": "2026-09-09"
@@ -1147,6 +1168,7 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 41.2,
           "outputTokensPerSecond": 342.779,
@@ -1164,6 +1186,7 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 39.6,
           "outputTokensPerSecond": 329.345,
@@ -1441,7 +1464,8 @@
         "contextWindowTokens": 256000,
         "maxOutputTokens": 256000,
         "modalities": ["image"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "efforts": ["none", "high"]
       },
       {
         "name": "open-mistral-nemo",
@@ -1609,6 +1633,7 @@
         "maxOutputTokens": 500000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 39.1,
           "outputTokensPerSecond": 52.947,
@@ -1650,6 +1675,7 @@
         "maxOutputTokens": 500000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh"],
         "benchmark": {
           "intelligenceIndex": 44.4,
           "outputTokensPerSecond": 62.454,

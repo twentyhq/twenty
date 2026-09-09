@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type LanguageModel, type TranscriptionModel } from 'ai';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type AiSdkPackage } from 'twenty-shared/ai';
+import { type AiModelEffort, type AiSdkPackage } from 'twenty-shared/ai';
 
 import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-enterprise-key.constant';
 import { CustomAiProviderAccessService } from 'src/engine/core-modules/enterprise/services/custom-ai-provider-access.service';
@@ -34,9 +34,11 @@ import { isAutoSelectModelId, isDefined } from 'twenty-shared/utils';
 
 import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-max-output-tokens.const';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
+import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/utils/get-available-efforts.util';
 import { getPositiveTokenLimitOrDefault } from 'src/engine/metadata-modules/ai/ai-models/utils/get-positive-token-limit-or-default.util';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
 import { isProviderConfigured } from 'src/engine/metadata-modules/ai/ai-models/utils/is-provider-configured.util';
+import { parseModelVariantId } from 'src/engine/metadata-modules/ai/ai-models/utils/model-variant-id.util';
 import {
   isModelAllowedByWorkspace,
   type WorkspaceModelAvailabilitySettings,
@@ -48,6 +50,7 @@ export interface RegisteredAiModel {
   sdkPackage: AiSdkPackage;
   model: LanguageModel;
   supportsReasoning?: boolean;
+  effort?: AiModelEffort;
   providerName?: string;
   modelsDevName?: string;
 }
@@ -123,6 +126,7 @@ export class AiModelRegistryService {
     });
 
     this.registerModelsFromProviders(providers);
+    this.registerConfiguredVariants();
   }
 
   private registerModelsFromProviders(providers: AiProvidersConfig): void {
@@ -181,6 +185,82 @@ export class AiModelRegistryService {
         }
       }
     }
+  }
+
+  // A variant exists only where an operator listed one, so no caller reaches an
+  // effort the catalog never declared by typing an id.
+  private registerConfiguredVariants(): void {
+    const preferences = this.preferencesService.getPreferences();
+    const listedModelIds = new Set([
+      ...(preferences.recommendedModels ?? []),
+      ...(preferences.defaultFastModels ?? []),
+      ...(preferences.defaultSmartModels ?? []),
+    ]);
+
+    for (const variantId of listedModelIds) {
+      const variant = this.resolveConfiguredVariant(variantId);
+
+      if (!isDefined(variant)) {
+        continue;
+      }
+
+      const { baseConfig, effort } = variant;
+
+      this.modelConfigCache.set(variantId, {
+        ...baseConfig,
+        modelId: variantId,
+        label: `${baseConfig.label} (${effort})`,
+        effort,
+        // A benchmark describes the effort it was measured at, not this one.
+        benchmark: undefined,
+      });
+
+      const baseModelDef = this.providerModelDefCache.get(baseConfig.modelId);
+
+      if (isDefined(baseModelDef)) {
+        this.providerModelDefCache.set(variantId, baseModelDef);
+      }
+
+      const baseModel = this.modelRegistry.get(baseConfig.modelId);
+
+      if (isDefined(baseModel)) {
+        this.modelRegistry.set(variantId, {
+          ...baseModel,
+          modelId: variantId,
+          effort,
+        });
+      }
+    }
+  }
+
+  private resolveConfiguredVariant(
+    variantId: string,
+  ): { baseConfig: AiModelConfig; effort: AiModelEffort } | undefined {
+    if (this.modelConfigCache.has(variantId)) {
+      return undefined;
+    }
+
+    const { modelId, effort } = parseModelVariantId(variantId);
+
+    if (!isDefined(effort)) {
+      return undefined;
+    }
+
+    const baseConfig = this.modelConfigCache.get(modelId);
+
+    if (!isDefined(baseConfig)) {
+      return undefined;
+    }
+
+    if (!getAvailableEfforts(baseConfig).includes(effort)) {
+      this.logger.warn(
+        `Skipping "${variantId}": effort "${effort}" is not available for ${modelId}`,
+      );
+
+      return undefined;
+    }
+
+    return { baseConfig, effort };
   }
 
   private registerTranscriptionModel({
@@ -310,6 +390,7 @@ export class AiModelRegistryService {
       ),
       modalities: modelDef.modalities,
       supportsReasoning: modelDef.supportsReasoning,
+      efforts: modelDef.efforts,
       benchmark: modelDef.benchmark,
       isDeprecated: modelDef.isDeprecated,
     };
@@ -563,7 +644,10 @@ export class AiModelRegistryService {
   private validateModelInRegistry(modelId: string): void {
     this.ensureFresh();
 
-    if (!this.providerModelDefCache.has(modelId)) {
+    if (
+      !this.providerModelDefCache.has(modelId) &&
+      !isDefined(this.resolveConfiguredVariant(modelId))
+    ) {
       throw new AiException(
         `Cannot update model "${modelId}": not found in registry`,
         AiExceptionCode.AGENT_EXECUTION_FAILED,
