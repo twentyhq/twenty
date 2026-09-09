@@ -86,10 +86,6 @@ export const reconstructNavigationMenuItemsManifest = ({
       ({ universalIdentifier }) => universalIdentifier,
     ),
   );
-  // A folder is a navigation menu item too, so it follows the rule its
-  // siblings follow as references: a folder of the application that is not
-  // exported leaves the item unresolvable, while a folder of another
-  // application resolves once that application is installed alongside.
   const isFolderResolvable = ({
     folderUniversalIdentifier,
   }: FlatNavigationMenuItem) => {
@@ -113,8 +109,6 @@ export const reconstructNavigationMenuItemsManifest = ({
     );
   };
 
-  // Dropping a folder can orphan the items nested under it, hence the fixed
-  // point.
   let orphanedFlatNavigationMenuItems =
     exportableFlatNavigationMenuItems.filter(
       (flatNavigationMenuItem) => !isFolderResolvable(flatNavigationMenuItem),

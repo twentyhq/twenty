@@ -8,11 +8,6 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 const withArticle = (label: string) =>
   `${/^[aeiou]/.test(label) ? 'an' : 'a'} ${label}`;
 
-// A reference the application owns but the install will not recreate resolves
-// to nothing, and resolveUniversalRelationIdentifiersToIds throws rather than
-// degrading. Engine-derived rows are recreated under a deterministic
-// identifier, and a row of another application resolves once that application
-// is installed alongside, so both are left to resolve at install time.
 export const getUnresolvableReferenceReason = ({
   metadataName,
   referenceMetadataName,
