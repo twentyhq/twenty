@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { type SnackBarOptions } from '@/ui/feedback/snack-bar-manager/types/SnackBarOptions';
 import { getToastPropsFromSnackBarProps } from '@/ui/feedback/snack-bar-manager/utils/getToastPropsFromSnackBarProps';
 import { buildErrorAction } from '@/ui/feedback/snack-bar-manager/utils/buildErrorAction';
@@ -30,7 +29,7 @@ export const useSnackBar = () => {
         id: uuidv4(),
         message,
         ...options,
-        variant: SnackBarVariant.Success,
+        variant: 'success',
       });
     },
     [setSnackBarQueue],
@@ -48,7 +47,7 @@ export const useSnackBar = () => {
         id: uuidv4(),
         message,
         ...options,
-        variant: SnackBarVariant.Info,
+        variant: 'info',
       });
     },
     [setSnackBarQueue],
@@ -66,7 +65,7 @@ export const useSnackBar = () => {
         id: uuidv4(),
         message,
         ...options,
-        variant: SnackBarVariant.Warning,
+        variant: 'warning',
       });
     },
     [setSnackBarQueue],
@@ -100,7 +99,7 @@ export const useSnackBar = () => {
         message: errorMessage,
         ...errorAction,
         ...options,
-        variant: SnackBarVariant.Error,
+        variant: 'error',
       });
     },
     [setSnackBarQueue],

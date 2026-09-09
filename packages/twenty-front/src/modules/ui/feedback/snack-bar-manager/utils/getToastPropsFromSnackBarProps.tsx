@@ -1,4 +1,4 @@
-import { type SnackBarProps } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { type SnackBarOptions } from '@/ui/feedback/snack-bar-manager/types/SnackBarOptions';
 import { sanitizeMessageToRenderInSnackbar } from '@/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar';
 import { isDefined } from 'twenty-shared/utils';
 import { type ToastVariant } from 'twenty-ui/feedback';
@@ -12,7 +12,7 @@ export const getToastPropsFromSnackBarProps = ({
   buttonTo,
   variant,
   ...props
-}: SnackBarProps) => {
+}: SnackBarOptions) => {
   const toastVariant: ToastVariant = variant ?? 'default';
   const sanitizedMessage = sanitizeMessageToRenderInSnackbar(message);
   const hasAction =

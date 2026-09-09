@@ -1,3 +1,21 @@
-import { type SnackBarProps } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { type ToastOptions } from 'twenty-ui/feedback';
 
-export type SnackBarOptions = SnackBarProps & { id: string };
+export type SnackBarOptions = Pick<
+  ToastOptions,
+  | 'className'
+  | 'progress'
+  | 'duration'
+  | 'icon'
+  | 'onCancel'
+  | 'onClose'
+  | 'variant'
+  | 'dedupeKey'
+> & {
+  id: string;
+  message: string;
+  buttonLabel?: string;
+  buttonOnClick?: () => void;
+  buttonTo?: string;
+  detailedMessage?: string;
+  role?: 'alert' | 'status';
+};
