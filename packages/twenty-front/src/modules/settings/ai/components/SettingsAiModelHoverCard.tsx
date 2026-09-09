@@ -111,11 +111,11 @@ export const SettingsAiModelHoverCard = ({
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const { model, benchmark, benchmarkItems, pricingItems } =
-    getAiModelComparisonItems(
+    getAiModelComparisonItems({
       requestedModel,
       comparisonModels,
       isBillingEnabled,
-    );
+    });
   const renderItem = (
     item: ReturnType<
       typeof getAiModelComparisonItems

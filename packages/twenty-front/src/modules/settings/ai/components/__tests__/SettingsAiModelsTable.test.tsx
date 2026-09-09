@@ -61,3 +61,29 @@ it('keeps the attribution interactive and compares against models hidden by sear
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument(),
   );
 });
+
+it('opens model information on keyboard focus and closes it on blur', async () => {
+  const user = userEvent.setup();
+  const onToggle = jest.fn();
+  render(
+    <Provider store={createStore()}>
+      <I18nProvider i18n={i18n}>
+        <SettingsAiModelsTable
+          models={[model]}
+          isChecked={() => true}
+          onToggle={onToggle}
+          anchorPrefix="keyboard-model"
+        />
+        <button>Outside</button>
+      </I18nProvider>
+    </Provider>,
+  );
+  await user.tab();
+  await screen.findByRole('tooltip');
+  await user.keyboard('{Enter}');
+  expect(onToggle).toHaveBeenCalledWith('model', true);
+  await user.click(screen.getByRole('button', { name: 'Outside' }));
+  await waitFor(() =>
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument(),
+  );
+});

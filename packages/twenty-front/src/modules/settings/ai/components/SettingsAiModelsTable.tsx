@@ -147,7 +147,20 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
                         : themeCssVariables.font.color.primary
                     }
                   >
-                    <StyledModelNameCell>
+                    <StyledModelNameCell
+                      id={
+                        anchorPrefix
+                          ? `${anchorPrefix}-${safeId}-name`
+                          : undefined
+                      }
+                      tabIndex={anchorPrefix ? 0 : undefined}
+                      onKeyDown={(event) => {
+                        if (!disabled && ['Enter', ' '].includes(event.key)) {
+                          event.preventDefault();
+                          onToggle(model.modelId, checked);
+                        }
+                      }}
+                    >
                       <ModelIcon
                         size={theme.icon.size.md}
                         stroke={theme.icon.stroke.sm}
@@ -200,7 +213,7 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
                 </TableRow>
                 {anchorPrefix && (
                   <AppTooltip
-                    anchorSelect={`#${anchorPrefix}-${safeId}`}
+                    anchorSelect={`#${anchorPrefix}-${safeId}, #${anchorPrefix}-${safeId}-name`}
                     place="top-end"
                     interactive
                     noArrow

@@ -28,11 +28,15 @@ type ModelInformationItem = {
   description?: string;
 };
 
-export const getAiModelComparisonItems = (
-  requestedModel: AiModelSummary,
-  comparisonModels: AiModelSummary[],
-  isBillingEnabled: boolean,
-) => {
+export const getAiModelComparisonItems = ({
+  requestedModel,
+  comparisonModels,
+  isBillingEnabled,
+}: {
+  requestedModel: AiModelSummary;
+  comparisonModels: AiModelSummary[];
+  isBillingEnabled: boolean;
+}) => {
   const availableModels = comparisonModels.filter(
     (entry) => !isAutoSelectModelId(entry.modelId) && !entry.isDeprecated,
   );

@@ -33,7 +33,7 @@ const renderSelect = (onChange = jest.fn()) => {
 };
 
 describe('Select option hover cards', () => {
-  it('hides information when the pointer leaves the option and popup', async () => {
+  it('hides information when the pointer leaves the option', async () => {
     const user = userEvent.setup();
     renderSelect();
     await user.click(screen.getByRole('button'));
