@@ -2,6 +2,7 @@ import {
   type PageLayoutManifest,
   type PageLayoutTabManifest,
   type PageLayoutWidgetManifest,
+  type StandalonePageLayoutWidgetManifest,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -9,6 +10,7 @@ import { fromFlatPageLayoutTabToPageLayoutTabManifest } from 'src/engine/core-mo
 import { fromFlatPageLayoutTabToStandalonePageLayoutTabManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-tab-to-standalone-page-layout-tab-manifest.util';
 import { fromFlatPageLayoutToPageLayoutManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-to-page-layout-manifest.util';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-widget-to-page-layout-widget-manifest.util';
+import { fromFlatPageLayoutWidgetToStandalonePageLayoutWidgetManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-widget-to-standalone-page-layout-widget-manifest.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import { type ParentStatus } from 'src/engine/core-modules/application/application-manifest/types/export-classification.type';
 import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/application-manifest/utils/build-exported-coverage-entry.util';
@@ -42,6 +44,7 @@ export const reconstructPageLayoutsManifest = ({
 }): {
   pageLayouts: PageLayoutManifest[];
   pageLayoutTabs: PageLayoutTabManifest[];
+  pageLayoutWidgets: StandalonePageLayoutWidgetManifest[];
   coverage: ApplicationExportCoverageEntry[];
 } => {
   const coverage: ApplicationExportCoverageEntry[] = [];
@@ -113,6 +116,13 @@ export const reconstructPageLayoutsManifest = ({
       metadataName: 'pageLayoutTab',
       flatEntity: flatPageLayoutTab,
       isEngineDerived: flatPageLayoutTab.isSystemSideEffect,
+      unsupportedReason: isDefined(
+        allFlatEntityMaps.flatPageLayoutMaps.byUniversalIdentifier[
+          flatPageLayoutTab.pageLayoutUniversalIdentifier
+        ],
+      )
+        ? undefined
+        : 'page layout tab on a page layout that does not exist',
       canStandAlone: true,
     });
 
@@ -143,28 +153,32 @@ export const reconstructPageLayoutsManifest = ({
     string,
     PageLayoutWidgetManifest[]
   >();
+  const pageLayoutWidgets: StandalonePageLayoutWidgetManifest[] = [];
 
   for (const flatPageLayoutWidget of sortFlatEntitiesByUniversalIdentifier(
     applicationAllFlatEntityMaps.flatPageLayoutWidgetMaps,
   )) {
-    if (
-      decidePageLayoutWidget({
-        metadataName: 'pageLayoutWidget',
-        flatEntity: flatPageLayoutWidget,
-        isEngineDerived: flatPageLayoutWidget.isSystemSideEffect,
-        unsupportedReason: getUnsupportedPageLayoutWidgetReason({
-          flatPageLayoutWidget,
-          flatPageLayoutTab:
-            applicationAllFlatEntityMaps.flatPageLayoutTabMaps
-              .byUniversalIdentifier[
-              flatPageLayoutWidget.pageLayoutTabUniversalIdentifier
-            ],
-          applicationAllFlatEntityMaps,
-          allFlatEntityMaps,
-          exportedObjectUniversalIdentifiers,
-        }),
-      }) === 'nested'
-    ) {
+    const flatPageLayoutTab =
+      allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
+        flatPageLayoutWidget.pageLayoutTabUniversalIdentifier
+      ];
+    const decision = decidePageLayoutWidget({
+      metadataName: 'pageLayoutWidget',
+      flatEntity: flatPageLayoutWidget,
+      isEngineDerived: flatPageLayoutWidget.isSystemSideEffect,
+      unsupportedReason: isDefined(flatPageLayoutTab)
+        ? getUnsupportedPageLayoutWidgetReason({
+            flatPageLayoutWidget,
+            flatPageLayoutTab,
+            applicationAllFlatEntityMaps,
+            allFlatEntityMaps,
+            exportedObjectUniversalIdentifiers,
+          })
+        : 'page layout widget on a page layout tab that does not exist',
+      canStandAlone: true,
+    });
+
+    if (decision === 'nested') {
       const widgets =
         widgetsByPageLayoutTabUniversalIdentifier.get(
           flatPageLayoutWidget.pageLayoutTabUniversalIdentifier,
@@ -178,6 +192,16 @@ export const reconstructPageLayoutsManifest = ({
       widgetsByPageLayoutTabUniversalIdentifier.set(
         flatPageLayoutWidget.pageLayoutTabUniversalIdentifier,
         widgets,
+      );
+    } else if (
+      decision === 'standalone' &&
+      isDefined(flatPageLayoutWidget.position)
+    ) {
+      pageLayoutWidgets.push(
+        fromFlatPageLayoutWidgetToStandalonePageLayoutWidgetManifest({
+          flatPageLayoutWidget,
+          position: flatPageLayoutWidget.position,
+        }),
       );
     }
   }
@@ -231,5 +255,5 @@ export const reconstructPageLayoutsManifest = ({
     }),
   );
 
-  return { pageLayouts, pageLayoutTabs, coverage };
+  return { pageLayouts, pageLayoutTabs, pageLayoutWidgets, coverage };
 };

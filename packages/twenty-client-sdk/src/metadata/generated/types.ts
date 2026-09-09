@@ -4704,6 +4704,9 @@ export default {
             "isSearchable": [
                 8
             ],
+            "isAuditLogged": [
+                8
+            ],
             "defaultValue": [
                 9
             ],
@@ -12527,6 +12530,9 @@ export default {
             "isSearchable": [
                 8
             ],
+            "isAuditLogged": [
+                8
+            ],
             "defaultValue": [
                 9
             ],
@@ -12601,6 +12607,9 @@ export default {
                 8
             ],
             "isSearchable": [
+                8
+            ],
+            "isAuditLogged": [
                 8
             ],
             "defaultValue": [
