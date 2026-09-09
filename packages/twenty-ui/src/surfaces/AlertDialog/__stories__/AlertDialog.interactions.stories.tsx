@@ -45,11 +45,17 @@ export const KeyboardAndDismissal: Story = {
 
     await step('Keep forward and backward tab navigation inside', async () => {
       await userEvent.tab();
-      expect(body.getByRole('button', { name: 'Delete' })).toHaveFocus();
+      await waitFor(() =>
+        expect(body.getByRole('button', { name: 'Delete' })).toHaveFocus(),
+      );
       await userEvent.tab();
-      expect(body.getByRole('button', { name: 'Cancel' })).toHaveFocus();
+      await waitFor(() =>
+        expect(body.getByRole('button', { name: 'Cancel' })).toHaveFocus(),
+      );
       await userEvent.tab({ shift: true });
-      expect(body.getByRole('button', { name: 'Delete' })).toHaveFocus();
+      await waitFor(() =>
+        expect(body.getByRole('button', { name: 'Delete' })).toHaveFocus(),
+      );
     });
 
     await step(
