@@ -10,6 +10,9 @@ import {
   MetadataWritability,
   NumberDataType,
   ObjectOpenRecordIn,
+  ObjectRecordGroupByDateGranularity,
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
   RelationOnDeleteAction,
   RelationType,
   ViewCalendarLayout,
@@ -19,6 +22,7 @@ import {
   ViewSortDirection,
   ViewType,
   ViewVisibility,
+  WidgetType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -123,6 +127,46 @@ export const VIEW_ENUM_BINDINGS: EnumBinding[] = [
     symbol: 'ViewSortDirection',
     members: ViewSortDirection,
   },
+];
+
+const buildPageLayoutWidgetEnumBindings = (prefix: string[]): EnumBinding[] => [
+  { path: [...prefix, 'type'], symbol: 'WidgetType', members: WidgetType },
+  {
+    path: [...prefix, 'position', 'layoutMode'],
+    symbol: 'PageLayoutTabLayoutMode',
+    members: PageLayoutTabLayoutMode,
+  },
+  buildAggregateOperationBinding([
+    ...prefix,
+    'configuration',
+    'aggregateOperation',
+  ]),
+  ...[
+    'dateGranularity',
+    'primaryAxisDateGranularity',
+    'secondaryAxisGroupByDateGranularity',
+  ].map((key) => ({
+    path: [...prefix, 'configuration', key],
+    symbol: 'ObjectRecordGroupByDateGranularity',
+    members: ObjectRecordGroupByDateGranularity,
+  })),
+];
+
+const buildPageLayoutTabEnumBindings = (prefix: string[]): EnumBinding[] => [
+  {
+    path: [...prefix, 'layoutMode'],
+    symbol: 'PageLayoutTabLayoutMode',
+    members: PageLayoutTabLayoutMode,
+  },
+  ...buildPageLayoutWidgetEnumBindings([...prefix, 'widgets', '[]']),
+];
+
+export const PAGE_LAYOUT_TAB_ENUM_BINDINGS: EnumBinding[] =
+  buildPageLayoutTabEnumBindings([]);
+
+export const PAGE_LAYOUT_ENUM_BINDINGS: EnumBinding[] = [
+  { path: ['type'], symbol: 'PageLayoutType', members: PageLayoutType },
+  ...buildPageLayoutTabEnumBindings(['tabs', '[]']),
 ];
 
 const isSamePath = (left: string[], right: string[]): boolean =>
