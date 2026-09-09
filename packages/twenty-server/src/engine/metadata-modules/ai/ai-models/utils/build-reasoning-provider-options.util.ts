@@ -1,17 +1,18 @@
 import { type ProviderOptions } from '@ai-sdk/provider-utils';
-import { type AiSdkPackage } from 'twenty-shared/ai';
 
 import {
   AI_SDK_ANTHROPIC,
   AI_SDK_BEDROCK,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+import { type RegisteredAiModel } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { isAdaptiveThinkingClaudeModel } from 'src/engine/metadata-modules/ai/ai-models/utils/is-adaptive-thinking-claude-model.util';
 
-export const buildReasoningProviderOptions = (model: {
-  modelId: string;
-  sdkPackage: AiSdkPackage;
-  supportsReasoning?: boolean;
-}): ProviderOptions => {
+export const buildReasoningProviderOptions = (
+  model: Pick<
+    RegisteredAiModel,
+    'modelId' | 'sdkPackage' | 'supportsReasoning'
+  >,
+): ProviderOptions => {
   if (
     !model.supportsReasoning ||
     !isAdaptiveThinkingClaudeModel(model.modelId)
