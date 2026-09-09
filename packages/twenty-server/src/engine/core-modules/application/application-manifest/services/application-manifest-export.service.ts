@@ -10,6 +10,7 @@ import { assertFlatApplicationIsExportable } from 'src/engine/core-modules/appli
 import { classifyApplicationFlatEntities } from 'src/engine/core-modules/application/application-manifest/utils/classify-application-flat-entities.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { reconstructDataModelManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-data-model-manifest.util';
+import { getResolvableReferenceUniversalIdentifiers } from 'src/engine/core-modules/application/application-manifest/utils/get-resolvable-reference-universal-identifiers.util';
 import { reconstructNavigationMenuItemsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-navigation-menu-items-manifest.util';
 import { reconstructPageLayoutsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-page-layouts-manifest.util';
 import { reconstructViewsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-views-manifest.util';
@@ -107,12 +108,16 @@ export class ApplicationManifestExportService {
         applicationAllFlatEntityMaps,
         allFlatEntityMaps,
         exportedObjectUniversalIdentifiers,
-        exportedViewUniversalIdentifiers: new Set(
-          views.map(({ universalIdentifier }) => universalIdentifier),
-        ),
-        exportedPageLayoutUniversalIdentifiers: new Set(
-          pageLayouts.map(({ universalIdentifier }) => universalIdentifier),
-        ),
+        resolvableViewUniversalIdentifiers:
+          getResolvableReferenceUniversalIdentifiers({
+            coverage: viewsCoverage,
+            metadataName: 'view',
+          }),
+        resolvablePageLayoutUniversalIdentifiers:
+          getResolvableReferenceUniversalIdentifiers({
+            coverage: pageLayoutsCoverage,
+            metadataName: 'pageLayout',
+          }),
       });
     const translations = isDefined(flatApplication.applicationRegistrationId)
       ? await this.applicationTranslationCacheService.getCatalogsByLocale(

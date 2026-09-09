@@ -26,6 +26,7 @@ const UNSUPPORTED_PAGE_LAYOUT_UID = '88888888-8888-4888-8888-888888888888';
 const ENGINE_VIEW_UID = '99999999-9999-4999-8999-999999999999';
 const FOLDER_UID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const NESTED_FOLDER_UID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+const FOREIGN_FOLDER_UID = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
 const EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS = new Set([PET_UID]);
 
 const petObject = getFlatObjectMetadataMock({
@@ -114,12 +115,29 @@ const allFlatEntityMaps = buildMaps({
     { universalIdentifier: PAGE_LAYOUT_UID } as FlatPageLayout,
     { universalIdentifier: UNSUPPORTED_PAGE_LAYOUT_UID } as FlatPageLayout,
   ],
+  navigationMenuItems: [
+    buildFlatNavigationMenuItem({
+      universalIdentifier: FOREIGN_FOLDER_UID,
+      type: NavigationMenuItemType.FOLDER,
+      name: 'Shared',
+      applicationId: 'other-application-id',
+    }),
+  ],
 });
 
 const reconstruct = (
   navigationMenuItems: FlatNavigationMenuItem[],
-  applicationViews: FlatView[] = [],
-  applicationPageLayouts: FlatPageLayout[] = [],
+  {
+    applicationViews = [],
+    applicationPageLayouts = [],
+    resolvableViewUniversalIdentifiers = new Set([VIEW_UID]),
+    resolvablePageLayoutUniversalIdentifiers = new Set([PAGE_LAYOUT_UID]),
+  }: {
+    applicationViews?: FlatView[];
+    applicationPageLayouts?: FlatPageLayout[];
+    resolvableViewUniversalIdentifiers?: ReadonlySet<string>;
+    resolvablePageLayoutUniversalIdentifiers?: ReadonlySet<string>;
+  } = {},
 ) =>
   reconstructNavigationMenuItemsManifest({
     applicationAllFlatEntityMaps: buildMaps({
@@ -130,8 +148,8 @@ const reconstruct = (
     }),
     allFlatEntityMaps,
     exportedObjectUniversalIdentifiers: EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS,
-    exportedViewUniversalIdentifiers: new Set([VIEW_UID]),
-    exportedPageLayoutUniversalIdentifiers: new Set([PAGE_LAYOUT_UID]),
+    resolvableViewUniversalIdentifiers,
+    resolvablePageLayoutUniversalIdentifiers,
   });
 
 const statusOf = (
@@ -250,7 +268,7 @@ describe('reconstructNavigationMenuItemsManifest', () => {
     );
   });
 
-  it('should refuse an item pointing at a view or a page layout the application did not export, and keep one pointing at a target it does not own', () => {
+  it('should refuse an item pointing at a view or a page layout the application did not export, and keep one pointing at an engine-derived view or at a target it does not own', () => {
     const { navigationMenuItems, coverage } = reconstruct(
       [
         buildFlatNavigationMenuItem({
@@ -268,9 +286,25 @@ describe('reconstructNavigationMenuItemsManifest', () => {
           type: NavigationMenuItemType.VIEW,
           viewUniversalIdentifier: ENGINE_VIEW_UID,
         }),
+        buildFlatNavigationMenuItem({
+          universalIdentifier: 'foreign-view-item',
+          type: NavigationMenuItemType.VIEW,
+          viewUniversalIdentifier: VIEW_UID,
+        }),
       ],
-      [{ universalIdentifier: UNSUPPORTED_VIEW_UID } as FlatView],
-      [{ universalIdentifier: UNSUPPORTED_PAGE_LAYOUT_UID } as FlatPageLayout],
+      {
+        applicationViews: [
+          { universalIdentifier: UNSUPPORTED_VIEW_UID } as FlatView,
+          { universalIdentifier: ENGINE_VIEW_UID } as FlatView,
+        ],
+        applicationPageLayouts: [
+          {
+            universalIdentifier: UNSUPPORTED_PAGE_LAYOUT_UID,
+          } as FlatPageLayout,
+        ],
+        resolvableViewUniversalIdentifiers: new Set([ENGINE_VIEW_UID]),
+        resolvablePageLayoutUniversalIdentifiers: new Set([]),
+      },
     );
 
     expect(statusOf(coverage, 'unsupported-view-item')?.reason).toBe(
@@ -281,7 +315,7 @@ describe('reconstructNavigationMenuItemsManifest', () => {
     );
     expect(
       navigationMenuItems.map(({ universalIdentifier }) => universalIdentifier),
-    ).toEqual(['engine-derived-view-item']);
+    ).toEqual(['engine-derived-view-item', 'foreign-view-item']);
   });
 
   it('should export a folder with the items it holds', () => {
@@ -301,6 +335,28 @@ describe('reconstructNavigationMenuItemsManifest', () => {
     expect(
       navigationMenuItems.map(({ universalIdentifier }) => universalIdentifier),
     ).toEqual([FOLDER_UID, 'folded-item']);
+  });
+
+  it('should keep an item held by a folder of another application and drop one held by a folder that does not exist', () => {
+    const { navigationMenuItems, coverage } = reconstruct([
+      buildFlatNavigationMenuItem({
+        universalIdentifier: 'foreign-folder-item',
+        targetObjectMetadataUniversalIdentifier: PET_UID,
+        folderUniversalIdentifier: FOREIGN_FOLDER_UID,
+      }),
+      buildFlatNavigationMenuItem({
+        universalIdentifier: 'missing-folder-item',
+        targetObjectMetadataUniversalIdentifier: PET_UID,
+        folderUniversalIdentifier: MISSING_UID,
+      }),
+    ]);
+
+    expect(
+      navigationMenuItems.map(({ universalIdentifier }) => universalIdentifier),
+    ).toEqual(['foreign-folder-item']);
+    expect(statusOf(coverage, 'missing-folder-item')?.reason).toBe(
+      'navigation menu item in a folder that is not exported',
+    );
   });
 
   it('should drop the items of a folder that is not exported, down the nesting', () => {

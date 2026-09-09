@@ -242,6 +242,12 @@ exports[`Application export - data model exports the whole application as a stab
       "metadataName": "navigationMenuItem",
       "reason": null,
       "status": "EXPORTED",
+      "universalIdentifier": "<TICKETS_INDEX_VIEW_NAVIGATION_ITEM>",
+    },
+    {
+      "metadataName": "navigationMenuItem",
+      "reason": null,
+      "status": "EXPORTED",
       "universalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
     },
     {
@@ -804,6 +810,15 @@ exports[`Application export - data model exports the whole application as a stab
       "targetObjectUniversalIdentifier": "<TICKET_OBJECT>",
       "type": "OBJECT",
       "universalIdentifier": "<TICKETS_NAVIGATION_ITEM>",
+    },
+    {
+      "folderUniversalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
+      "icon": "IconList",
+      "name": "All tickets",
+      "position": 42,
+      "type": "VIEW",
+      "universalIdentifier": "<TICKETS_INDEX_VIEW_NAVIGATION_ITEM>",
+      "viewUniversalIdentifier": "<TICKET_INDEX_ENGINE_VIEW>",
     },
   ],
   "objects": [

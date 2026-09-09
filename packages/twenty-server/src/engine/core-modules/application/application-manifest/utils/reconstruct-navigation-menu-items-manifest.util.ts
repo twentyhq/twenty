@@ -18,14 +18,14 @@ export const reconstructNavigationMenuItemsManifest = ({
   applicationAllFlatEntityMaps,
   allFlatEntityMaps,
   exportedObjectUniversalIdentifiers,
-  exportedViewUniversalIdentifiers,
-  exportedPageLayoutUniversalIdentifiers,
+  resolvableViewUniversalIdentifiers,
+  resolvablePageLayoutUniversalIdentifiers,
 }: {
   applicationAllFlatEntityMaps: AllFlatEntityMaps;
   allFlatEntityMaps: AllFlatEntityMaps;
   exportedObjectUniversalIdentifiers: ReadonlySet<string>;
-  exportedViewUniversalIdentifiers: ReadonlySet<string>;
-  exportedPageLayoutUniversalIdentifiers: ReadonlySet<string>;
+  resolvableViewUniversalIdentifiers: ReadonlySet<string>;
+  resolvablePageLayoutUniversalIdentifiers: ReadonlySet<string>;
 }): {
   navigationMenuItems: NavigationMenuItemManifest[];
   coverage: ApplicationExportCoverageEntry[];
@@ -64,8 +64,8 @@ export const reconstructNavigationMenuItemsManifest = ({
       applicationAllFlatEntityMaps,
       allFlatEntityMaps,
       exportedObjectUniversalIdentifiers,
-      exportedViewUniversalIdentifiers,
-      exportedPageLayoutUniversalIdentifiers,
+      resolvableViewUniversalIdentifiers,
+      resolvablePageLayoutUniversalIdentifiers,
     });
 
     if (isDefined(unsupportedReason)) {
@@ -86,18 +86,38 @@ export const reconstructNavigationMenuItemsManifest = ({
       ({ universalIdentifier }) => universalIdentifier,
     ),
   );
-  const isFolderExported = ({
+  // A folder is a navigation menu item too, so it follows the rule its
+  // siblings follow as references: a folder of the application that is not
+  // exported leaves the item unresolvable, while a folder of another
+  // application resolves once that application is installed alongside.
+  const isFolderResolvable = ({
     folderUniversalIdentifier,
-  }: FlatNavigationMenuItem) =>
-    !isDefined(folderUniversalIdentifier) ||
-    exportedUniversalIdentifiers.has(folderUniversalIdentifier);
+  }: FlatNavigationMenuItem) => {
+    if (!isDefined(folderUniversalIdentifier)) {
+      return true;
+    }
 
-  // A folder is a navigation menu item too, so an item whose folder is not
-  // exported would carry a reference the install cannot resolve. Dropping one
-  // can orphan the items nested under it, hence the fixed point.
+    if (
+      isDefined(
+        applicationAllFlatEntityMaps.flatNavigationMenuItemMaps
+          .byUniversalIdentifier[folderUniversalIdentifier],
+      )
+    ) {
+      return exportedUniversalIdentifiers.has(folderUniversalIdentifier);
+    }
+
+    return isDefined(
+      allFlatEntityMaps.flatNavigationMenuItemMaps.byUniversalIdentifier[
+        folderUniversalIdentifier
+      ],
+    );
+  };
+
+  // Dropping a folder can orphan the items nested under it, hence the fixed
+  // point.
   let orphanedFlatNavigationMenuItems =
     exportableFlatNavigationMenuItems.filter(
-      (flatNavigationMenuItem) => !isFolderExported(flatNavigationMenuItem),
+      (flatNavigationMenuItem) => !isFolderResolvable(flatNavigationMenuItem),
     );
 
   while (orphanedFlatNavigationMenuItems.length > 0) {
@@ -115,7 +135,7 @@ export const reconstructNavigationMenuItemsManifest = ({
       (flatNavigationMenuItem) =>
         exportedUniversalIdentifiers.has(
           flatNavigationMenuItem.universalIdentifier,
-        ) && !isFolderExported(flatNavigationMenuItem),
+        ) && !isFolderResolvable(flatNavigationMenuItem),
     );
   }
 

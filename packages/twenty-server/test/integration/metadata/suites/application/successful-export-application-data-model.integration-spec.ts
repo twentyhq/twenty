@@ -86,6 +86,8 @@ const TICKET_RECORD_PAGE_EXTRA_NOTES_WIDGET_ID =
   '7e3d1c2b-0026-4a7b-8c9d-0e1f2a3b4c5d';
 const TICKETS_NAVIGATION_FOLDER_ID = '7e3d1c2b-0029-4a7b-8c9d-0e1f2a3b4c5d';
 const TICKETS_NAVIGATION_ITEM_ID = '7e3d1c2b-0030-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKETS_INDEX_VIEW_NAVIGATION_ITEM_ID =
+  '7e3d1c2b-0031-4a7b-8c9d-0e1f2a3b4c5d';
 const COMPANY_RECORD_PAGE_TAGLINE_TAB_ID =
   '7e3d1c2b-0027-4a7b-8c9d-0e1f2a3b4c5d';
 const TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID =
@@ -163,6 +165,10 @@ const buildIdentifierNames = (): Map<string, string> => {
     ],
     [TICKETS_NAVIGATION_FOLDER_ID, 'TICKETS_NAVIGATION_FOLDER'],
     [TICKETS_NAVIGATION_ITEM_ID, 'TICKETS_NAVIGATION_ITEM'],
+    [
+      TICKETS_INDEX_VIEW_NAVIGATION_ITEM_ID,
+      'TICKETS_INDEX_VIEW_NAVIGATION_ITEM',
+    ],
     [
       TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID,
       'TICKET_RECORD_PAGE_HOME_DOCS_WIDGET',
@@ -558,6 +564,12 @@ const PROJECT_INDEX_VIEW_ID = getSystemViewUniversalIdentifier({
   viewKey: SYSTEM_VIEW_KEYS.INDEX,
 });
 
+const TICKET_INDEX_VIEW_ID = getSystemViewUniversalIdentifier({
+  objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+  objectUniversalIdentifier: TICKET_OBJECT_ID,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
+});
+
 const projectIndexViewField: StandaloneViewFieldManifest = {
   universalIdentifier: PROJECT_INDEX_VIEW_FIELD_ID,
   viewUniversalIdentifier: PROJECT_INDEX_VIEW_ID,
@@ -706,6 +718,16 @@ const ticketsNavigationItem: NavigationMenuItemManifest = {
   targetObjectUniversalIdentifier: TICKET_OBJECT_ID,
 };
 
+const ticketsIndexViewNavigationItem: NavigationMenuItemManifest = {
+  universalIdentifier: TICKETS_INDEX_VIEW_NAVIGATION_ITEM_ID,
+  type: NavigationMenuItemType.VIEW,
+  position: 42,
+  name: 'All tickets',
+  icon: 'IconList',
+  folderUniversalIdentifier: TICKETS_NAVIGATION_FOLDER_ID,
+  viewUniversalIdentifier: TICKET_INDEX_VIEW_ID,
+};
+
 const manifest = buildBaseManifest({
   appId: TEST_APP_ID,
   roleId: TEST_ROLE_ID,
@@ -730,7 +752,11 @@ const manifest = buildBaseManifest({
     pageLayouts: [ticketPageLayout, ticketBoardLayout],
     pageLayoutTabs: [ticketRecordPageExtraTab, companyRecordPageTaglineTab],
     pageLayoutWidgets: [ticketRecordPageHomeDocsWidget],
-    navigationMenuItems: [ticketsNavigationFolder, ticketsNavigationItem],
+    navigationMenuItems: [
+      ticketsNavigationFolder,
+      ticketsNavigationItem,
+      ticketsIndexViewNavigationItem,
+    ],
   },
 });
 
@@ -861,15 +887,9 @@ describe('Application export - data model', () => {
     expect(statusOf(TEST_ROLE_ID)).toBe(
       ApplicationExportCoverageStatus.UNSUPPORTED,
     );
-    expect(
-      statusOf(
-        getSystemViewUniversalIdentifier({
-          objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
-          objectUniversalIdentifier: TICKET_OBJECT_ID,
-          viewKey: SYSTEM_VIEW_KEYS.INDEX,
-        }),
-      ),
-    ).toBe(ApplicationExportCoverageStatus.ENGINE_DERIVED);
+    expect(statusOf(TICKET_INDEX_VIEW_ID)).toBe(
+      ApplicationExportCoverageStatus.ENGINE_DERIVED,
+    );
     expect(statusOf(PROJECT_INDEX_VIEW_ID)).toBe(
       ApplicationExportCoverageStatus.ENGINE_DERIVED,
     );
@@ -889,6 +909,9 @@ describe('Application export - data model', () => {
       ApplicationExportCoverageStatus.EXPORTED,
     );
     expect(statusOf(TICKETS_NAVIGATION_ITEM_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TICKETS_INDEX_VIEW_NAVIGATION_ITEM_ID)).toBe(
       ApplicationExportCoverageStatus.EXPORTED,
     );
   }, 60000);
