@@ -83,6 +83,9 @@ export class McpToolExecutorService {
     const executionStartedAt = performance.now();
 
     try {
+      // ToolSet widens execute to a union no argument satisfies. The client's
+      // arguments arrive as raw JSON-RPC input and the output shape is checked by
+      // isToolOutputSuccessful, so both sides stay unknown here.
       const execute = tool.execute as ToolExecuteFunction<
         unknown,
         unknown,
