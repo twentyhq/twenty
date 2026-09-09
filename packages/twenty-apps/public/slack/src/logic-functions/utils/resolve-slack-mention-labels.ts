@@ -70,8 +70,6 @@ const resolveWorkspaceMemberLabels = async ({
   for (const link of linkBySlackUserId.values()) {
     const { workspaceMemberId } = link;
 
-    // A link can outlive the member it points at, and a member id the agent
-    // cannot act on is worse to hand it than no id at all.
     if (
       !isNonEmptyString(workspaceMemberId) ||
       !nameByWorkspaceMemberId.has(workspaceMemberId)

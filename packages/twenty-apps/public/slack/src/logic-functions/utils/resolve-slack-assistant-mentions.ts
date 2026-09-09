@@ -11,8 +11,6 @@ import {
   rewriteSlackMentions,
 } from 'src/logic-functions/utils/rewrite-slack-mentions';
 
-// The worker awaits this before the agent starts, so a hung Slack or Core API
-// call would otherwise eat into the agent's own budget.
 const MENTION_RESOLUTION_TIMEOUT_MS = 5_000;
 
 const raceMentionResolutionTimeout = async (
@@ -84,9 +82,6 @@ export const resolveSlackAssistantMentions = async ({
       ...message,
       content: rewrite(message.content),
     })),
-    // Reading the labels rather than the ids keeps the glossary tied to what
-    // the prompt actually says, so a resolution that timed out never explains
-    // labels the agent cannot see.
     hasMentionedUsers: [...userLabelBySlackUserId.values()].some(
       (label) => label !== ASSISTANT_MENTION_LABEL,
     ),
