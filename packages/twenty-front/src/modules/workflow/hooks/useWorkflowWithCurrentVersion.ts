@@ -60,11 +60,17 @@ export const useWorkflowWithCurrentVersion = (
     ? coreVersions
     : (workspaceWorkflow?.versions ?? []);
 
+  const coreDraftVersion = isDefined(draftVersionIdFromServer)
+    ? { id: draftVersionIdFromServer }
+    : undefined;
+
+  const workspaceDraftVersion = workspaceWorkflow?.versions.find(
+    (version) => version.status === 'DRAFT',
+  );
+
   const draftVersionFromServer = isWorkflowCoreIndexPageEnabled
-    ? isDefined(draftVersionIdFromServer)
-      ? { id: draftVersionIdFromServer }
-      : undefined
-    : workspaceWorkflow?.versions.find((version) => version.status === 'DRAFT');
+    ? coreDraftVersion
+    : workspaceDraftVersion;
 
   const { effectiveDraftId, lastDiscardedDraftId } = useEffectiveDraftVersionId(
     draftVersionFromServer,
