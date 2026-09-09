@@ -1,5 +1,6 @@
 import request from 'supertest';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -21,20 +22,24 @@ describe('workflow version core workflow id dual write (e2e)', () => {
   let workflowId: string;
   let workflowVersionId: string;
 
-  const fetchWorkspaceCoreWorkflowId = async (): Promise<string | null> => {
+  const fetchWorkspaceCoreWorkflowId = async (): Promise<
+    string | null | undefined
+  > => {
     const rows = await global.testDataSource.query(
       `SELECT "coreWorkflowId" FROM "${WORKSPACE_SCHEMA}"."workflow" WHERE "id" = $1`,
       [workflowId],
     );
 
-    return rows[0]?.coreWorkflowId ?? null;
+    return rows[0]?.coreWorkflowId;
   };
 
-  const waitForWorkspaceCoreWorkflowId = async (): Promise<string | null> => {
+  const waitForWorkspaceCoreWorkflowId = async (): Promise<
+    string | null | undefined
+  > => {
     for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
       const coreWorkflowId = await fetchWorkspaceCoreWorkflowId();
 
-      if (coreWorkflowId !== null) {
+      if (isDefined(coreWorkflowId)) {
         return coreWorkflowId;
       }
 
@@ -126,7 +131,7 @@ describe('workflow version core workflow id dual write (e2e)', () => {
   it('stamps the core version row with the core workflow id on mirror writes', async () => {
     const coreWorkflowId = await waitForWorkspaceCoreWorkflowId();
 
-    expect(coreWorkflowId).not.toBeNull();
+    assertIsDefinedOrThrow(coreWorkflowId);
 
     await updateWorkflowVersionTrigger({
       workflowVersionId,
@@ -140,7 +145,7 @@ describe('workflow version core workflow id dual write (e2e)', () => {
     });
 
     expect(
-      await waitForCoreVersionRowsPointingAt(coreWorkflowId as string),
+      await waitForCoreVersionRowsPointingAt(coreWorkflowId),
     ).toBeGreaterThan(0);
   });
 });

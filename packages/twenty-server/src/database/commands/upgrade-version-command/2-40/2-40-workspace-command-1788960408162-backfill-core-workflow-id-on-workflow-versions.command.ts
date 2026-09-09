@@ -55,7 +55,7 @@ export class BackfillCoreWorkflowIdOnWorkflowVersionsCommand extends Provisioned
     const schema = getWorkspaceSchemaName(workspaceId);
 
     const backfillClause = `
-      FROM "${schema}"."workflow" w
+      "${schema}"."workflow" w
       WHERE cv."workspaceId" = $1
         AND cv."coreWorkflowId" IS NULL
         AND cv."workflowId" = w.id
@@ -68,11 +68,8 @@ export class BackfillCoreWorkflowIdOnWorkflowVersionsCommand extends Provisioned
     try {
       const [counts] = await queryRunner.query(
         `SELECT count(*)::int AS total
-         FROM core."workflowVersion" cv
-         JOIN "${schema}"."workflow" w ON cv."workflowId" = w.id
-         WHERE cv."workspaceId" = $1
-           AND cv."coreWorkflowId" IS NULL
-           AND w."coreWorkflowId" IS NOT NULL`,
+         FROM core."workflowVersion" cv,
+         ${backfillClause}`,
         [workspaceId],
       );
 
@@ -91,7 +88,7 @@ export class BackfillCoreWorkflowIdOnWorkflowVersionsCommand extends Provisioned
       await queryRunner.query(
         `UPDATE core."workflowVersion" cv
          SET "coreWorkflowId" = w."coreWorkflowId"
-         ${backfillClause}`,
+         FROM ${backfillClause}`,
         [workspaceId],
       );
 
