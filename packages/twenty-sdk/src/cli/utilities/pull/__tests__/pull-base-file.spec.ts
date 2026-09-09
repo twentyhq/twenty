@@ -14,6 +14,8 @@ const PET_UID = '22222222-2222-4222-8222-222222222222';
 const NAME_FIELD_UID = '33333333-3333-4333-8333-333333333333';
 const VIEW_UID = '44444444-4444-4444-8444-444444444444';
 const VIEW_FIELD_UID = '55555555-5555-4555-8555-555555555555';
+const PAGE_LAYOUT_UID = '66666666-6666-4666-8666-666666666666';
+const PAGE_LAYOUT_TAB_UID = '77777777-7777-4777-8777-777777777777';
 
 const MANIFEST = {
   application: {
@@ -55,6 +57,22 @@ const MANIFEST = {
       viewUniversalIdentifier: VIEW_UID,
       fieldMetadataUniversalIdentifier: NAME_FIELD_UID,
       position: 0,
+    },
+  ],
+  pageLayouts: [
+    {
+      universalIdentifier: PAGE_LAYOUT_UID,
+      name: 'Overview',
+      type: 'RECORD_PAGE',
+      objectUniversalIdentifier: PET_UID,
+    },
+  ],
+  pageLayoutTabs: [
+    {
+      universalIdentifier: PAGE_LAYOUT_TAB_UID,
+      pageLayoutUniversalIdentifier: 'a-page-layout-of-another-application',
+      title: 'Extra',
+      position: 60,
     },
   ],
 } as unknown as Manifest;
@@ -145,6 +163,54 @@ describe('pull base file', () => {
         manifest: {
           ...MANIFEST,
           viewFields: { universalIdentifier: VIEW_FIELD_UID },
+        },
+      }),
+    );
+
+    expect(await readBase()).toBeNull();
+  });
+
+  it('should read back a base whose manifest has no page layouts and no page layout tabs', async () => {
+    const {
+      pageLayouts: _pageLayouts,
+      pageLayoutTabs: _pageLayoutTabs,
+      ...manifestWithoutPageLayouts
+    } = MANIFEST;
+
+    await writeRawBaseFile(
+      JSON.stringify({
+        version: 1,
+        applicationUniversalIdentifier: APP_UID,
+        manifest: manifestWithoutPageLayouts,
+      }),
+    );
+
+    expect(await readBase()).toEqual(manifestWithoutPageLayouts);
+  });
+
+  it('should ignore a base whose page layouts contain an entry without a universal identifier', async () => {
+    await writeRawBaseFile(
+      JSON.stringify({
+        version: 1,
+        applicationUniversalIdentifier: APP_UID,
+        manifest: {
+          ...MANIFEST,
+          pageLayouts: [{ name: 'Overview', type: 'RECORD_PAGE' }],
+        },
+      }),
+    );
+
+    expect(await readBase()).toBeNull();
+  });
+
+  it('should ignore a base whose page layout tabs are not a list', async () => {
+    await writeRawBaseFile(
+      JSON.stringify({
+        version: 1,
+        applicationUniversalIdentifier: APP_UID,
+        manifest: {
+          ...MANIFEST,
+          pageLayoutTabs: { universalIdentifier: PAGE_LAYOUT_TAB_UID },
         },
       }),
     );

@@ -14,6 +14,7 @@ import { buildJunctionTargetShape } from 'src/modules/timeline/utils/build-junct
 import { buildNonAuditLoggedFieldNamesByObjectMetadataId } from 'src/modules/timeline/utils/build-non-audit-logged-field-names-by-object-metadata-id.util';
 import { buildTimelineActivitySelfRule } from 'src/modules/timeline/utils/build-timeline-activity-self-rule.util';
 import { resolveTimelineActivityTypeRouting } from 'src/modules/timeline/utils/resolve-timeline-activity-type-routing.util';
+import { readLruEntry, writeLruEntry } from 'src/utils/lru-map.util';
 import {
   buildTimelineActivityTypeResolution,
   toResolvedTimelineActivityType,
@@ -40,6 +41,10 @@ type TimelineActivityRoutingPlan = {
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
 
+// A routing plan holds that workspace's whole flat field metadata maps, so an
+// unbounded map grows with the number of workspaces a worker ever routes for.
+const MAX_CACHED_WORKSPACES = 128;
+
 @Injectable()
 export class TimelineActivityRoutingPlanService {
   private readonly routingPlanByWorkspaceId = new Map<
@@ -55,7 +60,7 @@ export class TimelineActivityRoutingPlanService {
     flatObjectMetadata,
     workspaceId,
   }: {
-    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'isAuditLogged'>;
     workspaceId: string;
   }): Promise<boolean> {
     if (flatObjectMetadata.isAuditLogged) {
@@ -122,7 +127,10 @@ export class TimelineActivityRoutingPlanService {
       hashes.flatFieldMetadataMapsOrm,
       hashes.flatTimelineActivityTypeMaps,
     ].join('|');
-    const cachedRoutingPlan = this.routingPlanByWorkspaceId.get(workspaceId);
+    const cachedRoutingPlan = readLruEntry({
+      map: this.routingPlanByWorkspaceId,
+      key: workspaceId,
+    });
 
     if (cachedRoutingPlan?.cacheKey === cacheKey) {
       return cachedRoutingPlan.routingPlan;
@@ -130,9 +138,11 @@ export class TimelineActivityRoutingPlanService {
 
     const routingPlan = this.buildRoutingPlan(data);
 
-    this.routingPlanByWorkspaceId.set(workspaceId, {
-      cacheKey,
-      routingPlan,
+    writeLruEntry({
+      map: this.routingPlanByWorkspaceId,
+      key: workspaceId,
+      value: { cacheKey, routingPlan },
+      maxEntries: MAX_CACHED_WORKSPACES,
     });
 
     return routingPlan;
