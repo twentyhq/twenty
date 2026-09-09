@@ -2,6 +2,7 @@ import {
   type PageLayoutManifest,
   type PageLayoutTabManifest,
   type PageLayoutWidgetManifest,
+  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 } from 'twenty-shared/application';
 import {
   AggregateOperations,
@@ -50,6 +51,7 @@ const OVERVIEW_TAB_UID = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
 const ENGINE_TAB_UID = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
 const EXTRA_TAB_UID = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
 const COMPANY_TAB_UID = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
+const COMPANY_HOME_TAB_UID = '12121212-1212-4121-8121-121212121212';
 const EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS = new Set([PET_UID]);
 const UNKNOWN_REFERENCE: Record<string, string> = {
   workflowUniversalIdentifier: MISSING_UID,
@@ -171,13 +173,6 @@ const frontComponent: FlatFrontComponent = {
   applicationId: APP_ID,
 };
 
-const allFlatEntityMaps = buildMaps({
-  objects: [petObject],
-  fields: [nameField],
-  views: [allPetsView],
-  frontComponents: [frontComponent],
-});
-
 const buildFlatPageLayout = ({
   pageLayoutManifest,
   ...flatPageLayoutProperties
@@ -248,6 +243,72 @@ const buildFlatPageLayoutWidget = ({
   ...flatPageLayoutWidgetProperties,
 });
 
+const companyPage = buildFlatPageLayout({
+  pageLayoutManifest: {
+    universalIdentifier: COMPANY_PAGE_UID,
+    name: 'Default Company Layout',
+    type: 'RECORD_PAGE',
+  },
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  isSystemSideEffect: true,
+});
+
+const companyHomeTab = buildFlatPageLayoutTab({
+  pageLayoutTabManifest: {
+    universalIdentifier: COMPANY_HOME_TAB_UID,
+    title: 'Home',
+    position: 10,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+  },
+  pageLayoutUniversalIdentifier: COMPANY_PAGE_UID,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  isSystemSideEffect: true,
+});
+
+const allFlatEntityMaps = buildMaps({
+  objects: [petObject],
+  fields: [nameField],
+  views: [allPetsView],
+  frontComponents: [frontComponent],
+  pageLayouts: [companyPage],
+  pageLayoutTabs: [companyHomeTab],
+});
+
+const includingApplicationLayouts = (
+  applicationAllFlatEntityMaps: AllFlatEntityMaps,
+): AllFlatEntityMaps => ({
+  ...allFlatEntityMaps,
+  flatPageLayoutMaps: addAllFlatEntitiesToFlatEntityMaps({
+    flatEntities: Object.values(
+      applicationAllFlatEntityMaps.flatPageLayoutMaps.byUniversalIdentifier,
+    ).filter(isDefined),
+    flatEntityMaps: allFlatEntityMaps.flatPageLayoutMaps,
+  }),
+  flatPageLayoutTabMaps: addAllFlatEntitiesToFlatEntityMaps({
+    flatEntities: Object.values(
+      applicationAllFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier,
+    ).filter(isDefined),
+    flatEntityMaps: allFlatEntityMaps.flatPageLayoutTabMaps,
+  }),
+});
+
+const reconstruct = ({
+  applicationAllFlatEntityMaps,
+  exportedObjectUniversalIdentifiers = EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS,
+}: {
+  applicationAllFlatEntityMaps: AllFlatEntityMaps;
+  exportedObjectUniversalIdentifiers?: Set<string>;
+}) =>
+  reconstructPageLayoutsManifest({
+    applicationAllFlatEntityMaps,
+    allFlatEntityMaps: includingApplicationLayouts(
+      applicationAllFlatEntityMaps,
+    ),
+    exportedObjectUniversalIdentifiers,
+  });
+
 const PET_PAGE_MANIFEST: PageLayoutManifest = {
   universalIdentifier: PET_PAGE_UID,
   name: 'Pet page',
@@ -314,8 +375,8 @@ const reasonOf = (
 
 describe('reconstructPageLayoutsManifest', () => {
   it('should nest tabs and widgets under an exported page layout and order every collection by universal identifier', () => {
-    const { pageLayouts, pageLayoutTabs, coverage } =
-      reconstructPageLayoutsManifest({
+    const { pageLayouts, pageLayoutTabs, pageLayoutWidgets, coverage } =
+      reconstruct({
         applicationAllFlatEntityMaps: buildMaps({
           objects: [petObject],
           pageLayouts: [
@@ -343,9 +404,6 @@ describe('reconstructPageLayoutsManifest', () => {
             }),
           ],
         }),
-        allFlatEntityMaps,
-        exportedObjectUniversalIdentifiers:
-          EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS,
       });
 
     expect(pageLayouts).toEqual([
@@ -364,6 +422,7 @@ describe('reconstructPageLayoutsManifest', () => {
       },
     ]);
     expect(pageLayoutTabs).toEqual([]);
+    expect(pageLayoutWidgets).toEqual([]);
     expect(coverage).toHaveLength(5);
     expect(
       coverage.every(
@@ -372,9 +431,9 @@ describe('reconstructPageLayoutsManifest', () => {
     ).toBe(true);
   });
 
-  it('should hide an engine-derived page layout, export a tab added to it standalone with its widgets, and refuse a widget added to an engine-derived tab', () => {
-    const { pageLayouts, pageLayoutTabs, coverage } =
-      reconstructPageLayoutsManifest({
+  it('should hide an engine-derived page layout, export a tab added to it standalone with its widgets, and export a widget added to an engine-derived tab standalone', () => {
+    const { pageLayouts, pageLayoutTabs, pageLayoutWidgets, coverage } =
+      reconstruct({
         applicationAllFlatEntityMaps: buildMaps({
           objects: [petObject],
           pageLayouts: [
@@ -416,9 +475,6 @@ describe('reconstructPageLayoutsManifest', () => {
             }),
           ],
         }),
-        allFlatEntityMaps,
-        exportedObjectUniversalIdentifiers:
-          EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS,
       });
 
     expect(pageLayouts).toEqual([]);
@@ -444,16 +500,19 @@ describe('reconstructPageLayoutsManifest', () => {
     expect(statusOf(coverage, 'extra-widget')?.status).toBe(
       ApplicationExportCoverageStatus.EXPORTED,
     );
-    expect(statusOf(coverage, 'home-widget')).toEqual({
-      metadataName: 'pageLayoutWidget',
-      universalIdentifier: 'home-widget',
-      status: ApplicationExportCoverageStatus.UNSUPPORTED,
-      reason: 'page layout widget on an engine-derived page layout tab',
-    });
+    expect(pageLayoutWidgets).toEqual([
+      {
+        ...buildNotesWidgetManifest('home-widget'),
+        pageLayoutTabUniversalIdentifier: ENGINE_TAB_UID,
+      },
+    ]);
+    expect(statusOf(coverage, 'home-widget')?.status).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
   });
 
-  it('should export a tab on a page layout outside the application standalone and refuse a widget on a tab outside the application', () => {
-    const { pageLayoutTabs, coverage } = reconstructPageLayoutsManifest({
+  it('should export a tab on a page layout outside the application and a widget on a tab outside the application standalone, and refuse children whose parent does not exist', () => {
+    const { pageLayoutTabs, pageLayoutWidgets, coverage } = reconstruct({
       applicationAllFlatEntityMaps: buildMaps({
         objects: [petObject],
         pageLayoutTabs: [
@@ -465,6 +524,14 @@ describe('reconstructPageLayoutsManifest', () => {
               layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
             },
             pageLayoutUniversalIdentifier: COMPANY_PAGE_UID,
+          }),
+          buildFlatPageLayoutTab({
+            pageLayoutTabManifest: {
+              universalIdentifier: 'orphan-tab',
+              title: 'Orphan',
+              position: 70,
+            },
+            pageLayoutUniversalIdentifier: 'missing-page',
           }),
         ],
         pageLayoutWidgets: [
@@ -478,10 +545,12 @@ describe('reconstructPageLayoutsManifest', () => {
               buildNotesWidgetManifest('foreign-widget'),
             pageLayoutTabUniversalIdentifier: 'foreign-tab',
           }),
+          buildFlatPageLayoutWidget({
+            pageLayoutWidgetManifest: buildNotesWidgetManifest('home-widget'),
+            pageLayoutTabUniversalIdentifier: COMPANY_HOME_TAB_UID,
+          }),
         ],
       }),
-      allFlatEntityMaps,
-      exportedObjectUniversalIdentifiers: EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS,
     });
 
     expect(
@@ -496,43 +565,48 @@ describe('reconstructPageLayoutsManifest', () => {
     expect(statusOf(coverage, 'company-widget')?.status).toBe(
       ApplicationExportCoverageStatus.EXPORTED,
     );
+    expect(pageLayoutWidgets).toEqual([
+      {
+        ...buildNotesWidgetManifest('home-widget'),
+        pageLayoutTabUniversalIdentifier: COMPANY_HOME_TAB_UID,
+      },
+    ]);
     expect(reasonOf(coverage, 'foreign-widget')).toBe(
-      'page layout widget on a page layout tab outside the application',
+      'page layout widget on a page layout tab that does not exist',
+    );
+    expect(reasonOf(coverage, 'orphan-tab')).toBe(
+      'page layout tab on a page layout that does not exist',
     );
   });
 
   it('should refuse an unsupported page layout together with its tab and widget', () => {
-    const { pageLayouts, pageLayoutTabs, coverage } =
-      reconstructPageLayoutsManifest({
-        applicationAllFlatEntityMaps: buildMaps({
-          objects: [petObject],
-          pageLayouts: [
-            buildFlatPageLayout({
-              pageLayoutManifest: {
-                ...PET_PAGE_MANIFEST,
-                universalIdentifier: NAMELESS_PAGE_UID,
-                name: '',
-              },
-            }),
-          ],
-          pageLayoutTabs: [
-            buildFlatPageLayoutTab({
-              pageLayoutTabManifest: OVERVIEW_TAB_MANIFEST,
-              pageLayoutUniversalIdentifier: NAMELESS_PAGE_UID,
-            }),
-          ],
-          pageLayoutWidgets: [
-            buildFlatPageLayoutWidget({
-              pageLayoutWidgetManifest:
-                buildNotesWidgetManifest('nameless-widget'),
-              pageLayoutTabUniversalIdentifier: OVERVIEW_TAB_UID,
-            }),
-          ],
-        }),
-        allFlatEntityMaps,
-        exportedObjectUniversalIdentifiers:
-          EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS,
-      });
+    const { pageLayouts, pageLayoutTabs, coverage } = reconstruct({
+      applicationAllFlatEntityMaps: buildMaps({
+        objects: [petObject],
+        pageLayouts: [
+          buildFlatPageLayout({
+            pageLayoutManifest: {
+              ...PET_PAGE_MANIFEST,
+              universalIdentifier: NAMELESS_PAGE_UID,
+              name: '',
+            },
+          }),
+        ],
+        pageLayoutTabs: [
+          buildFlatPageLayoutTab({
+            pageLayoutTabManifest: OVERVIEW_TAB_MANIFEST,
+            pageLayoutUniversalIdentifier: NAMELESS_PAGE_UID,
+          }),
+        ],
+        pageLayoutWidgets: [
+          buildFlatPageLayoutWidget({
+            pageLayoutWidgetManifest:
+              buildNotesWidgetManifest('nameless-widget'),
+            pageLayoutTabUniversalIdentifier: OVERVIEW_TAB_UID,
+          }),
+        ],
+      }),
+    });
 
     expect(pageLayouts).toEqual([]);
     expect(pageLayoutTabs).toEqual([]);
@@ -548,7 +622,7 @@ describe('reconstructPageLayoutsManifest', () => {
   });
 
   it('should tell the page layout reasons apart', () => {
-    const { coverage } = reconstructPageLayoutsManifest({
+    const { coverage } = reconstruct({
       applicationAllFlatEntityMaps: buildMaps({
         objects: [petObject],
         pageLayouts: [
@@ -609,7 +683,6 @@ describe('reconstructPageLayoutsManifest', () => {
           }),
         ],
       }),
-      allFlatEntityMaps,
       exportedObjectUniversalIdentifiers: new Set<string>(),
     });
 
@@ -630,8 +703,8 @@ describe('reconstructPageLayoutsManifest', () => {
     );
   });
 
-  it('should order exported page layouts and standalone tabs by universal identifier', () => {
-    const { pageLayouts, pageLayoutTabs } = reconstructPageLayoutsManifest({
+  it('should order exported page layouts, standalone tabs and standalone widgets by universal identifier', () => {
+    const { pageLayouts, pageLayoutTabs, pageLayoutWidgets } = reconstruct({
       applicationAllFlatEntityMaps: buildMaps({
         objects: [petObject],
         pageLayouts: [
@@ -669,10 +742,28 @@ describe('reconstructPageLayoutsManifest', () => {
             },
             pageLayoutUniversalIdentifier: COMPANY_PAGE_UID,
           }),
+          buildFlatPageLayoutTab({
+            pageLayoutTabManifest: {
+              universalIdentifier: ENGINE_TAB_UID,
+              title: 'Home',
+              position: 10,
+              layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            },
+            pageLayoutUniversalIdentifier: ENGINE_PAGE_UID,
+            isSystemSideEffect: true,
+          }),
+        ],
+        pageLayoutWidgets: [
+          buildFlatPageLayoutWidget({
+            pageLayoutWidgetManifest: buildNotesWidgetManifest('z-widget'),
+            pageLayoutTabUniversalIdentifier: ENGINE_TAB_UID,
+          }),
+          buildFlatPageLayoutWidget({
+            pageLayoutWidgetManifest: buildNotesWidgetManifest('a-widget'),
+            pageLayoutTabUniversalIdentifier: ENGINE_TAB_UID,
+          }),
         ],
       }),
-      allFlatEntityMaps,
-      exportedObjectUniversalIdentifiers: EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS,
     });
 
     expect(
@@ -681,10 +772,13 @@ describe('reconstructPageLayoutsManifest', () => {
     expect(
       pageLayoutTabs.map(({ universalIdentifier }) => universalIdentifier),
     ).toEqual(['a-tab', 'z-tab']);
+    expect(
+      pageLayoutWidgets.map(({ universalIdentifier }) => universalIdentifier),
+    ).toEqual(['a-widget', 'z-widget']);
   });
 
   it('should refuse the widgets the manifest cannot carry', () => {
-    const { coverage } = reconstructPageLayoutsManifest({
+    const { coverage } = reconstruct({
       applicationAllFlatEntityMaps: buildMaps({
         objects: [
           petObject,
@@ -836,8 +930,6 @@ describe('reconstructPageLayoutsManifest', () => {
           }),
         ],
       }),
-      allFlatEntityMaps,
-      exportedObjectUniversalIdentifiers: EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS,
     });
 
     expect(reasonOf(coverage, 'view-widget')).toBe(
@@ -932,15 +1024,13 @@ describe('reconstructPageLayoutsManifest', () => {
     ];
     const rows = [...pageLayouts, ...pageLayoutTabs, ...pageLayoutWidgets];
 
-    const { coverage } = reconstructPageLayoutsManifest({
+    const { coverage } = reconstruct({
       applicationAllFlatEntityMaps: buildMaps({
         objects: [petObject],
         pageLayouts,
         pageLayoutTabs,
         pageLayoutWidgets,
       }),
-      allFlatEntityMaps,
-      exportedObjectUniversalIdentifiers: EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS,
     });
 
     expect(coverage).toHaveLength(rows.length);

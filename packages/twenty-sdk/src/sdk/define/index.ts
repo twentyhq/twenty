@@ -142,6 +142,7 @@ export type { TwentyRecord } from '@/sdk/define/objects/twenty-record.type';
 
 export { definePageLayout } from '@/sdk/define/page-layouts/define-page-layout';
 export { definePageLayoutTab } from '@/sdk/define/page-layouts/define-page-layout-tab';
+export { definePageLayoutWidget } from '@/sdk/define/page-layouts/define-page-layout-widget';
 export type { PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 export type { PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 export {
@@ -152,6 +153,7 @@ export type {
   PageLayoutManifest,
   PageLayoutTabManifest,
   PageLayoutWidgetManifest,
+  StandalonePageLayoutWidgetManifest,
 } from 'twenty-shared/application';
 
 export { definePermissionFlag } from '@/sdk/define/permission-flags/define-permission-flag';
@@ -178,6 +180,8 @@ export { defineSkill } from '@/sdk/define/skills/define-skill';
 export { defineView } from '@/sdk/define/views/define-view';
 export { defineViewField } from '@/sdk/define/view-fields/define-view-field';
 export {
+  getSystemPageLayoutTabUniversalIdentifier,
+  getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
   SYSTEM_VIEW_KEYS,

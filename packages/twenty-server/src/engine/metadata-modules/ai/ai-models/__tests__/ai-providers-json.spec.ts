@@ -74,6 +74,19 @@ describe('ai-providers.json integrity', () => {
     });
   });
 
+  // Where a self-hosted instance processes and retains data depends on its own
+  // provider accounts, so the shipped catalog states neither on its behalf.
+  it('should not assert data residency or zero data retention', () => {
+    Object.values(PROVIDERS).forEach((config) => {
+      expect(config.dataResidency).toBeUndefined();
+
+      (config.models ?? []).forEach((model) => {
+        expect(model.dataResidency).toBeUndefined();
+        expect(model.zeroDataRetention).toBeUndefined();
+      });
+    });
+  });
+
   it('should have npm field set for all providers', () => {
     Object.values(PROVIDERS).forEach((config) => {
       expect(config.npm).toBeDefined();

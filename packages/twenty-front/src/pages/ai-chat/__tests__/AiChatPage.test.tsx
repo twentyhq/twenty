@@ -19,25 +19,18 @@ i18n.activate(SOURCE_LOCALE);
 
 jest.mock('@/ai/components/AiChatTab', () => {
   const { useContext } = jest.requireActual('react');
-  const { AiChatMessageListPreambleContext } = jest.requireActual(
-    '@/ai/contexts/AiChatMessageListPreambleContext',
+  const { AiChatSurfaceContext } = jest.requireActual(
+    '@/ai/contexts/AiChatSurfaceContext',
   );
   return {
     AiChatTab: () => (
-      <div data-testid="ai-chat-tab">
-        {useContext(AiChatMessageListPreambleContext)}
-      </div>
+      <div data-testid="ai-chat-tab">{useContext(AiChatSurfaceContext)}</div>
     ),
   };
 });
 
-const headerMock = jest.fn();
-
 jest.mock('@/ai/components/AiChatPageHeader', () => ({
-  AiChatPageHeader: ({ isOnboarding }: { isOnboarding: boolean }) => {
-    headerMock(isOnboarding);
-    return null;
-  },
+  AiChatPageHeader: () => <div>Chat header</div>,
 }));
 
 jest.mock('@/ai/components/AiChatPageThreadUrlSyncEffect', () => ({
@@ -47,19 +40,6 @@ jest.mock('@/ai/components/AiChatPageThreadUrlSyncEffect', () => ({
 jest.mock('@/ai/components/AiChatPageCloseAskAiPanelEffect', () => ({
   AiChatPageCloseAskAiPanelEffect: () => null,
 }));
-
-jest.mock('@/onboarding/components/WorkspaceSetupChatPreamble', () => ({
-  WorkspaceSetupChatPreamble: () => <div data-testid="preamble" />,
-}));
-
-jest.mock(
-  '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect',
-  () => ({
-    WorkspaceSetupChatKickoffEffect: () => (
-      <div data-testid="chat-kickoff-effect" />
-    ),
-  }),
-);
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
@@ -74,27 +54,18 @@ describe('AiChatPage', () => {
     resetJotaiStore();
   });
 
-  it('should dress the chat for onboarding when the post-onboarding hint is set', () => {
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+  it.each([true, false])(
+    'renders the shared header and page chat with onboarding set to %s',
+    (isOnboarding) => {
+      jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, isOnboarding);
+      const { getByText, getByTestId } = render(<AiChatPage />, {
+        wrapper: Wrapper,
+      });
 
-    const { getByTestId } = render(<AiChatPage />, { wrapper: Wrapper });
-
-    expect(getByTestId('ai-chat-tab')).toBeInTheDocument();
-    expect(getByTestId('preamble')).toBeInTheDocument();
-    expect(getByTestId('chat-kickoff-effect')).toBeInTheDocument();
-    expect(headerMock).toHaveBeenCalledWith(true);
-  });
-
-  it('should render a plain chat when the post-onboarding hint is not set', () => {
-    const { getByTestId, queryByTestId } = render(<AiChatPage />, {
-      wrapper: Wrapper,
-    });
-
-    expect(getByTestId('ai-chat-tab')).toBeInTheDocument();
-    expect(queryByTestId('preamble')).not.toBeInTheDocument();
-    expect(queryByTestId('chat-kickoff-effect')).not.toBeInTheDocument();
-    expect(headerMock).toHaveBeenCalledWith(false);
-  });
+      expect(getByText('Chat header')).toBeInTheDocument();
+      expect(getByTestId('ai-chat-tab')).toHaveTextContent('page');
+    },
+  );
 
   it('should mark the chat for side panel continuation while mounted', () => {
     const { unmount } = render(<AiChatPage />, { wrapper: Wrapper });

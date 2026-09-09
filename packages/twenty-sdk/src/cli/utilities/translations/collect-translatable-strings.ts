@@ -17,6 +17,7 @@ const MANIFEST_KEY_BY_METADATA_NAME = {
   view: 'views',
   pageLayout: 'pageLayouts',
   pageLayoutTab: 'pageLayoutTabs',
+  pageLayoutWidget: 'pageLayoutWidgets',
   commandMenuItem: 'commandMenuItems',
   navigationMenuItem: 'navigationMenuItems',
   timelineActivityType: 'timelineActivityTypes',
@@ -86,6 +87,12 @@ export const collectTranslatableStrings = (
       for (const widget of tab.widgets ?? []) {
         addEntityStrings(widget, 'pageLayoutWidget');
       }
+    }
+  }
+
+  for (const pageLayoutTab of manifest.pageLayoutTabs ?? []) {
+    for (const widget of pageLayoutTab.widgets ?? []) {
+      addEntityStrings(widget, 'pageLayoutWidget');
     }
   }
 
