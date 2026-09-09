@@ -1,6 +1,7 @@
 import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
 import { buildPullEntities } from '@/cli/utilities/pull/build-pull-entities';
 import { planTranslationWrites } from '@/cli/utilities/pull/plan-translation-writes';
+import { stripGraphqlTypename } from '@/cli/utilities/pull/strip-graphql-typename';
 import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
 import { writeDefineFile } from '@/cli/utilities/pull/write-define-file';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
@@ -389,6 +390,7 @@ const EXPORTED_MANIFEST = {
                 columnSpan: 6,
               },
               configuration: {
+                __typename: 'IframeConfiguration',
                 configurationType: 'IFRAME',
                 url: 'https://example.com/pets',
               },
@@ -626,11 +628,18 @@ describe('pull round trip', () => {
     );
   });
 
-  it('should rebuild the exported page layouts with their tabs and widgets in order', () => {
+  it('should rebuild the exported page layouts with their tabs and widgets in order, without the GraphQL typename a UI-saved widget carries', () => {
     expect(
       canonicalize(sortByUniversalIdentifier(builtManifest?.pageLayouts ?? [])),
     ).toEqual(
-      canonicalize(sortByUniversalIdentifier(EXPORTED_MANIFEST.pageLayouts)),
+      canonicalize(
+        sortByUniversalIdentifier(
+          stripGraphqlTypename(EXPORTED_MANIFEST.pageLayouts),
+        ),
+      ),
+    );
+    expect(JSON.stringify(builtManifest?.pageLayouts)).not.toContain(
+      '__typename',
     );
   });
 

@@ -417,6 +417,54 @@ describe('buildPullEntities', () => {
     ).toBe('src/page-layouts/pet-page.page-layout.ts');
   });
 
+  it('should drop the GraphQL typename keys a widget configuration saved from the UI carries', () => {
+    const pageLayoutManifest = buildPageLayoutManifest();
+    const widgetWithTypename = {
+      ...pageLayoutManifest.tabs![0].widgets![0],
+      configuration: {
+        __typename: 'RecordTableConfiguration',
+        configurationType: 'RECORD_TABLE',
+        recordLimit: null,
+        viewUniversalIdentifier: VIEW_UID,
+      },
+    };
+    const { entities } = buildPullEntities(
+      buildManifest({
+        pageLayouts: [
+          {
+            ...pageLayoutManifest,
+            tabs: [
+              { ...pageLayoutManifest.tabs![0], widgets: [widgetWithTypename] },
+            ],
+          },
+        ] as unknown as PageLayoutManifest[],
+        pageLayoutTabs: [
+          buildPageLayoutTabManifest({
+            widgets: [widgetWithTypename],
+          } as unknown as Partial<PageLayoutTabManifest>),
+        ],
+      }),
+    );
+    const pageLayout = entities.find((entity) => entity.kind === 'pageLayout');
+    const pageLayoutTab = entities.find(
+      (entity) => entity.kind === 'pageLayoutTab',
+    );
+    const expectedConfiguration = {
+      configurationType: 'RECORD_TABLE',
+      recordLimit: null,
+      viewUniversalIdentifier: VIEW_UID,
+    };
+
+    expect(
+      (pageLayout?.config as PageLayoutManifest).tabs?.[0].widgets?.[0]
+        .configuration,
+    ).toEqual(expectedConfiguration);
+    expect(
+      (pageLayoutTab?.config as PageLayoutTabManifest).widgets?.[0]
+        .configuration,
+    ).toEqual(expectedConfiguration);
+  });
+
   it('should give a page layout on a standard object that object as parent', () => {
     const { entities } = buildPullEntities(
       buildManifest({

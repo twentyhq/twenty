@@ -59,7 +59,7 @@ export default definePageLayout({
 - Each `widget` inside a tab can render a [front component](/developers/extend/apps/layout/front-components), a relation list, or other built-in widget types.
 - A `FRONT_COMPONENT` widget can set `headerCommandMenuItemUniversalIdentifiers` to an ordered array of command menu item universal identifiers from the same app. These actions appear as icon buttons in the widget card header and keep their command-level availability and permission checks. Identifiers must be unique and must resolve when the app is installed.
 - `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
-- `yarn twenty pull` writes page layouts back exactly as the workspace stored them, with their tabs and widgets inline.
+- `yarn twenty pull` writes page layouts back with their tabs and widgets inline. A widget the export cannot carry yet, such as one showing your app's own front component or one of the deprecated `VIEW` type, is reported by pull instead of written; see [what pull does not write](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 
 ### Field widgets
 
@@ -183,4 +183,4 @@ export default definePageLayoutTab({
 - `widgets` are scoped to this tab only — they reference [front components](/developers/extend/apps/layout/front-components), views, etc. exactly like widgets defined inline in `definePageLayout`.
 - `position` controls ordering against existing tabs on the targeted layout. Pick a value that places your tab where you want it relative to built-in tabs.
 - Use this instead of `definePageLayout` when you only want to add to an existing layout. Use `definePageLayout` when you own the entire layout.
-- `yarn twenty pull` writes a tab you added to a page layout you do not own back as a `definePageLayoutTab()` file, with its widgets inline, exactly as the workspace stored it.
+- `yarn twenty pull` writes a tab you added to a page layout you do not own back as a `definePageLayoutTab()` file, with its widgets inline, under the same limits as widgets of a `definePageLayout()`.

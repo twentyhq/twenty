@@ -14,6 +14,7 @@ import {
   type FieldLocation,
   toFileBaseName,
 } from '@/cli/utilities/pull/pull-file-base-name';
+import { stripGraphqlTypename } from '@/cli/utilities/pull/strip-graphql-typename';
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
 import {
   type ApplicationManifest,
@@ -338,7 +339,7 @@ export const buildPullEntities = (
       kind: 'pageLayout',
       universalIdentifier: pageLayoutManifest.universalIdentifier,
       definer: 'definePageLayout',
-      config: pageLayoutManifest,
+      config: stripGraphqlTypename(pageLayoutManifest),
       enumBindings: PAGE_LAYOUT_ENUM_BINDINGS,
       defaultFolder: 'src/page-layouts',
       fileSuffix: '.page-layout.ts',
@@ -372,7 +373,7 @@ export const buildPullEntities = (
       kind: 'pageLayoutTab',
       universalIdentifier: pageLayoutTabManifest.universalIdentifier,
       definer: 'definePageLayoutTab',
-      config: pageLayoutTabManifest,
+      config: stripGraphqlTypename(pageLayoutTabManifest),
       enumBindings: PAGE_LAYOUT_TAB_ENUM_BINDINGS,
       defaultFolder: 'src/page-layout-tabs',
       fileSuffix: '.page-layout-tab.ts',
