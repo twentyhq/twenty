@@ -49,6 +49,7 @@ A Twenty app's **config layer** is what describes the app *to the platform* — 
 
 - **Application** is the entry point. Every app has exactly one `defineApplication()` call, and it points at one **Role** as its default.
 - The **Role** controls what the app's logic functions and front components can read and write. Follow least-privilege: only grant the permissions your code actually needs.
+- **Sharing Rules** decide which records of a `PRIVATE` object a role, or everyone, may read. Declare them with `defineSharingRule()` at the top level of the manifest.
 - **Install Hooks** run during install or upgrade — pre-install before the metadata migration (so it can refuse a risky upgrade), post-install after the migration (so it can seed default data against the new schema). The uninstall hook runs right before the app is removed, so it can clean up external resources while the app's data is still readable.
 
 <Note>
