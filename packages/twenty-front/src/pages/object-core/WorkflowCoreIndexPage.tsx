@@ -15,10 +15,8 @@ import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
 import { getDeletedRecordIdsFromOperation } from '@/object-core/utils/getDeletedRecordIdsFromOperation';
-import { CoreWorkflowsSelectionToContextStoreEffect } from '@/object-core/workflows/components/CoreWorkflowsSelectionToContextStoreEffect';
 import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
 import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
-import { useHydrateSelectedWorkflowRecords } from '@/object-core/workflows/hooks/useHydrateSelectedWorkflowRecords';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
 import { RecordIndexEmptyStateDisplay } from '@/object-record/record-index/components/RecordIndexEmptyStateDisplay';
@@ -77,13 +75,10 @@ export const WorkflowCoreIndexPage = () => {
   const {
     displayedCoreWorkflows,
     selectedRowIds,
-    selectedWorkspaceWorkflowIds,
     toggleRow,
     selectRows,
     forgetDeletedWorkspaceWorkflows,
   } = useCoreWorkflowsSelection({ coreWorkflows });
-
-  useHydrateSelectedWorkflowRecords(selectedWorkspaceWorkflowIds);
 
   useListenToObjectRecordOperationBrowserEvent({
     objectMetadataItemId: objectMetadataItem.id,
@@ -204,9 +199,6 @@ export const WorkflowCoreIndexPage = () => {
               {hasNextPage && <StyledFetchMoreSentinel ref={fetchMoreRef} />}
             </>
           )}
-          <CoreWorkflowsSelectionToContextStoreEffect
-            selectedWorkspaceWorkflowIds={selectedWorkspaceWorkflowIds}
-          />
         </StyledTableContainer>
       </PageCardLayout>
     </>
