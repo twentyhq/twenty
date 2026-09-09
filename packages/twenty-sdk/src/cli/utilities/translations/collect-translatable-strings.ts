@@ -89,8 +89,8 @@ export const collectTranslatableStrings = (
     }
   }
 
-  for (const tab of manifest.pageLayoutTabs ?? []) {
-    for (const widget of tab.widgets ?? []) {
+  for (const pageLayoutTab of manifest.pageLayoutTabs ?? []) {
+    for (const widget of pageLayoutTab.widgets ?? []) {
       addEntityStrings(widget, 'pageLayoutWidget');
     }
   }
