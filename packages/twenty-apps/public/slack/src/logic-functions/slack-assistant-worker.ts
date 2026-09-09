@@ -84,8 +84,6 @@ export const slackAssistantWorkerHandler = async (
     parentMessageTimestamp,
   };
 
-  // Shown before the thread, requester and run-as lookups so the thinking
-  // status is not delayed by the Slack and API round trips they take
   const stopStatusUpdates = startSlackAssistantStatusUpdates({
     slackChannelId,
     threadTimestamp: parentMessageTimestamp,
@@ -155,8 +153,6 @@ export const slackAssistantWorkerHandler = async (
         deadlineAtMs: agentDeadlineAtMs,
       });
     } finally {
-      // Stopped before any reply is posted so a late status refresh cannot
-      // land after the answer and stay pinned on the thread
       await stopStatusUpdates();
     }
 
