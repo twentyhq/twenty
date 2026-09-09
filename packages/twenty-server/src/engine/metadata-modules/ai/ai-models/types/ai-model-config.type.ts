@@ -11,6 +11,7 @@ export type AiModelConfig = {
   description: string;
   modelFamily?: ModelFamily;
   dataResidency?: DataResidency;
+  zeroDataRetention?: boolean;
   inputCostPerMillionTokens: number;
   outputCostPerMillionTokens: number;
   contextWindowTokens: number;

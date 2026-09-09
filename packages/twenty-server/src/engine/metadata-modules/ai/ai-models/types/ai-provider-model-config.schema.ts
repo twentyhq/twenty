@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { DATA_RESIDENCY_KEYS } from 'twenty-shared/ai';
+
 import { AI_MODEL_KINDS } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-model-kinds.const';
 import { aiModelBenchmarksSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmarks.schema';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
@@ -22,6 +24,11 @@ export const aiProviderModelConfigSchema = z
     maxOutputTokens: z.number().int().positive().optional(),
     modalities: z.array(z.string()).optional(),
     supportsReasoning: z.boolean().optional(),
+    // Contractual per route rather than published anywhere, so an operator
+    // declares them and undefined means unasserted, not false. One Bedrock
+    // provider serves both eu.* and global.* models, hence per model.
+    dataResidency: z.enum(DATA_RESIDENCY_KEYS).optional(),
+    zeroDataRetention: z.boolean().optional(),
     benchmarks: aiModelBenchmarksSchema.optional(),
     isDeprecated: z.boolean().optional(),
   })

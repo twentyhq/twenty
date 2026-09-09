@@ -211,7 +211,8 @@ export class AiModelRegistryService {
       sdkPackage: config.npm,
       label: modelDef.label,
       description: modelDef.description ?? compositeId,
-      dataResidency: config.dataResidency,
+      dataResidency: modelDef.dataResidency ?? config.dataResidency,
+      zeroDataRetention: modelDef.zeroDataRetention,
       costPerMinute: modelDef.costPerMinute,
       isDeprecated: modelDef.isDeprecated,
     });
@@ -289,7 +290,10 @@ export class AiModelRegistryService {
       modelFamily:
         modelDef.modelFamily ??
         inferModelFamily(providerConfig.name ?? '', modelDef.name),
-      dataResidency: providerConfig.dataResidency,
+      // The provider value is only a fallback: one Bedrock provider serves both
+      // eu.* and global.* models, which do not route to the same place.
+      dataResidency: modelDef.dataResidency ?? providerConfig.dataResidency,
+      zeroDataRetention: modelDef.zeroDataRetention,
       inputCostPerMillionTokens: modelDef.inputCostPerMillionTokens ?? 0,
       outputCostPerMillionTokens: modelDef.outputCostPerMillionTokens ?? 0,
       cachedInputCostPerMillionTokens: modelDef.cachedInputCostPerMillionTokens,
