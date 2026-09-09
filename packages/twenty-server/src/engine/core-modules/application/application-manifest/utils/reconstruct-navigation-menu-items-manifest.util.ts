@@ -18,10 +18,14 @@ export const reconstructNavigationMenuItemsManifest = ({
   applicationAllFlatEntityMaps,
   allFlatEntityMaps,
   exportedObjectUniversalIdentifiers,
+  exportedViewUniversalIdentifiers,
+  exportedPageLayoutUniversalIdentifiers,
 }: {
   applicationAllFlatEntityMaps: AllFlatEntityMaps;
   allFlatEntityMaps: AllFlatEntityMaps;
   exportedObjectUniversalIdentifiers: ReadonlySet<string>;
+  exportedViewUniversalIdentifiers: ReadonlySet<string>;
+  exportedPageLayoutUniversalIdentifiers: ReadonlySet<string>;
 }): {
   navigationMenuItems: NavigationMenuItemManifest[];
   coverage: ApplicationExportCoverageEntry[];
@@ -60,6 +64,8 @@ export const reconstructNavigationMenuItemsManifest = ({
       applicationAllFlatEntityMaps,
       allFlatEntityMaps,
       exportedObjectUniversalIdentifiers,
+      exportedViewUniversalIdentifiers,
+      exportedPageLayoutUniversalIdentifiers,
     });
 
     if (isDefined(unsupportedReason)) {

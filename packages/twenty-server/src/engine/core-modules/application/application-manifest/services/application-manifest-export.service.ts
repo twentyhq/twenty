@@ -107,6 +107,12 @@ export class ApplicationManifestExportService {
         applicationAllFlatEntityMaps,
         allFlatEntityMaps,
         exportedObjectUniversalIdentifiers,
+        exportedViewUniversalIdentifiers: new Set(
+          views.map(({ universalIdentifier }) => universalIdentifier),
+        ),
+        exportedPageLayoutUniversalIdentifiers: new Set(
+          pageLayouts.map(({ universalIdentifier }) => universalIdentifier),
+        ),
       });
     const translations = isDefined(flatApplication.applicationRegistrationId)
       ? await this.applicationTranslationCacheService.getCatalogsByLocale(
