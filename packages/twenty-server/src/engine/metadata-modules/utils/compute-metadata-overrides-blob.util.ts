@@ -59,7 +59,7 @@ export const computeMetadataOverridesBlob = <
   const readBeneathValue = (property: string): unknown => {
     const beneathValue = readAuthoredOverrideProperty({
       overrides: beneathOverrides,
-      property,
+      path: [property],
       authorContext,
     });
 

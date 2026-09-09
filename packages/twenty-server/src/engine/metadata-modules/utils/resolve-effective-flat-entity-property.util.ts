@@ -21,7 +21,7 @@ export const resolveEffectiveFlatEntityProperty = <
 ): TEntity[K] => {
   const overrideValue = readAuthoredOverrideProperty({
     overrides: flatEntity.overrides,
-    property,
+    path: [property],
     authorContext: {
       ...authorContext,
       ownerApplicationUniversalIdentifier:

@@ -13,7 +13,7 @@ export const getEffectiveImageIdentifierFieldMetadataId = (
 ): string | null => {
   const overrideValue = readAuthoredOverrideProperty({
     overrides: objectMetadata.overrides,
-    property: 'imageIdentifierFieldMetadataId',
+    path: ['imageIdentifierFieldMetadataId'],
     authorContext: authorContext ?? {
       ownerApplicationUniversalIdentifier:
         objectMetadata.applicationUniversalIdentifier,

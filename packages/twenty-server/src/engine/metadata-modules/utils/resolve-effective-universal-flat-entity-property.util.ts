@@ -19,7 +19,7 @@ export const resolveEffectiveUniversalFlatEntityProperty = <
 ): TEntity[K] => {
   const overrideValue = readAuthoredOverrideProperty({
     overrides: universalFlatEntity.universalOverrides,
-    property,
+    path: [property],
     authorContext: {
       ...authorContext,
       ownerApplicationUniversalIdentifier:
