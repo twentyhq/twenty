@@ -483,7 +483,7 @@ export const AiChatQuestionCard = ({
                     </span>
                     <AppTooltip
                       anchorSelect={`#${tooltipId}`}
-                      content={option.description}
+                      title={option.description}
                       delay={TooltipDelay.shortDelay}
                       place="left"
                     />

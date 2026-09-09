@@ -933,11 +933,12 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     fathom-typescript: "npm:0.0.43"
     oxlint: "npm:^0.16.0"
-    twenty-client-sdk: "npm:2.35.0"
-    twenty-sdk: "npm:2.35.0"
+    twenty-client-sdk: "npm:2.38.0"
+    twenty-sdk: "npm:2.38.0"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.0.0"
+    zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
 
@@ -2808,22 +2809,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.35.0":
-  version: 2.35.0
-  resolution: "twenty-client-sdk@npm:2.35.0"
+"twenty-client-sdk@npm:2.38.0":
+  version: 2.38.0
+  resolution: "twenty-client-sdk@npm:2.38.0"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
-  checksum: 10c0/2ce66e4647c6c6f4b4897896858f8abab3dd8aa6112b8c5c6387082ce484b6a2fb9b90060526601b13329c207ae530d25a6ba80197868a8653156505e0736f5d
+  checksum: 10c0/2ab1c0371a5b48187211477740d833c8454e624d45b4ea1b964864077745d85e6921f5e8452eacb1eceab44e698507a4854686e225e467dd4f5fc481553b047b
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:2.35.0":
-  version: 2.35.0
-  resolution: "twenty-sdk@npm:2.35.0"
+"twenty-sdk@npm:2.38.0":
+  version: 2.38.0
+  resolution: "twenty-sdk@npm:2.38.0"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     axios: "npm:^1.16.0"
@@ -2842,12 +2843,12 @@ __metadata:
     semver: "npm:7.6.3"
     sharp: "npm:^0.35.3"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:2.35.0"
+    twenty-client-sdk: "npm:2.38.0"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.2"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/4cb27d3b449b2fbe692516cc29b2689232e4f40de1181132ea3d9743a1fc1c9284204ddf50632fc737d06748ff9c6903630124c02382b4f61eec120beaa9f9d5
+  checksum: 10c0/9946e0018f6233bbd8bd3ab0ca9dcc96276b25126b9c14328b90b15b8f2948d550ebb9395354ec87066bd8ab74372d242d94c4e5629b4cd16421bf21beb8a62e
   languageName: node
   linkType: hard
 
@@ -3199,5 +3200,12 @@ __metadata:
   version: 4.4.3
   resolution: "zod@npm:4.4.3"
   checksum: 10c0/7ea31b558e88f9faf44f31dd185e2e1cbf51fed3081787fb96cc2534749b50c0acfc6da7f0922a7353ed092dd358c7d50c28ea96c94d04af64191bd33152eca3
+  languageName: node
+  linkType: hard
+
+"zod@npm:^4.1.11":
+  version: 4.5.4
+  resolution: "zod@npm:4.5.4"
+  checksum: 10c0/511a2a4d1a6f875dfdd70a1586989a8b14ef126776cd6218a2c760b9f65f14ef389ec20d92ee1aa4fcb4566d4ff3fa012956044f9dc503510d82e4c756a8ba92
   languageName: node
   linkType: hard

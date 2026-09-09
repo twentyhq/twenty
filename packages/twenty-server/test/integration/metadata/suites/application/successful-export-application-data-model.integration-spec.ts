@@ -5,32 +5,420 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { exportApplication } from 'test/integration/metadata/suites/application/utils/export-application.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { createOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-view-filter.util';
+import { destroyOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/destroy-one-view-filter.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   type FieldManifest,
+  getFieldUniversalIdentifier,
+  getIndexFieldUniversalIdentifier,
+  getSystemFormFieldPageLayoutWidgetUniversalIdentifier,
+  getSystemPageLayoutTabUniversalIdentifier,
+  getSystemPageLayoutWidgetUniversalIdentifier,
+  getSystemRecordFormPageLayoutUniversalIdentifier,
+  getSystemRecordPageLayoutUniversalIdentifier,
+  getSystemRelationFieldUniversalIdentifier,
+  getSystemViewFieldUniversalIdentifier,
+  getSystemViewUniversalIdentifier,
+  type NavigationMenuItemManifest,
   type ObjectManifest,
+  type PageLayoutManifest,
+  type PageLayoutTabManifest,
+  type StandalonePageLayoutWidgetManifest,
+  type StandaloneViewFieldManifest,
+  SYSTEM_VIEW_KEYS,
+  type TranslationsManifest,
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  type ViewManifest,
 } from 'twenty-shared/application';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import {
+  AggregateOperations,
   FieldMetadataType,
+  NavigationMenuItemType,
+  PageLayoutTabLayoutMode,
   RelationOnDeleteAction,
   RelationType,
+  ViewFilterGroupLogicalOperator,
+  ViewFilterOperand,
+  ViewSortDirection,
+  ViewType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 as uuidv4 } from 'uuid';
+import { version as getUuidVersion } from 'uuid';
 
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
+import { fromObjectManifestToUniversalFlatObjectMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-object-manifest-to-universal-flat-object-metadata.util';
+import { buildSearchVectorFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-search-vector-flat-field-metadata-for-custom-object.util';
+import { buildSearchVectorGinIndexForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-search-vector-gin-index-for-custom-object.util';
 
-const TEST_APP_ID = uuidv4();
-const TEST_ROLE_ID = uuidv4();
-const TICKET_TITLE_FIELD_ID = uuidv4();
-const TICKET_PROJECT_FIELD_ID = uuidv4();
-const PROJECT_TICKETS_FIELD_ID = uuidv4();
-const COMPANY_TAGLINE_FIELD_ID = uuidv4();
-const INDEX_ID = uuidv4();
+const TEST_APP_ID = '7e3d1c2b-0000-4a7b-8c9d-0e1f2a3b4c5d';
+const TEST_ROLE_ID = '7e3d1c2b-0001-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_OBJECT_ID = '7e3d1c2b-0002-4a7b-8c9d-0e1f2a3b4c5d';
+const PROJECT_OBJECT_ID = '7e3d1c2b-0003-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_TITLE_FIELD_ID = '7e3d1c2b-0004-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_PROJECT_FIELD_ID = '7e3d1c2b-0005-4a7b-8c9d-0e1f2a3b4c5d';
+const PROJECT_TICKETS_FIELD_ID = '7e3d1c2b-0006-4a7b-8c9d-0e1f2a3b4c5d';
+const COMPANY_TAGLINE_FIELD_ID = '7e3d1c2b-0007-4a7b-8c9d-0e1f2a3b4c5d';
+const INDEX_ID = '7e3d1c2b-0008-4a7b-8c9d-0e1f2a3b4c5d';
+const INDEX_FIELD_ID = '7e3d1c2b-0009-4a7b-8c9d-0e1f2a3b4c5d';
+const OPEN_TICKETS_VIEW_ID = '7e3d1c2b-0010-4a7b-8c9d-0e1f2a3b4c5d';
+const TITLE_VIEW_FIELD_ID = '7e3d1c2b-0011-4a7b-8c9d-0e1f2a3b4c5d';
+const PROJECT_VIEW_FIELD_ID = '7e3d1c2b-0012-4a7b-8c9d-0e1f2a3b4c5d';
+const VIEW_FIELD_GROUP_ID = '7e3d1c2b-0013-4a7b-8c9d-0e1f2a3b4c5d';
+const VIEW_FILTER_GROUP_ID = '7e3d1c2b-0014-4a7b-8c9d-0e1f2a3b4c5d';
+const VIEW_FILTER_ID = '7e3d1c2b-0015-4a7b-8c9d-0e1f2a3b4c5d';
+const VIEW_SORT_ID = '7e3d1c2b-0016-4a7b-8c9d-0e1f2a3b4c5d';
+const VIEW_GROUP_ID = '7e3d1c2b-0017-4a7b-8c9d-0e1f2a3b4c5d';
+const PROJECT_INDEX_VIEW_FIELD_ID = '7e3d1c2b-0018-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_PAGE_LAYOUT_ID = '7e3d1c2b-0019-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_PAGE_OVERVIEW_TAB_ID = '7e3d1c2b-0020-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_PAGE_FIELDS_WIDGET_ID = '7e3d1c2b-0021-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_BOARD_LAYOUT_ID = '7e3d1c2b-0022-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_BOARD_TAB_ID = '7e3d1c2b-0023-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_BOARD_DOCS_WIDGET_ID = '7e3d1c2b-0024-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_RECORD_PAGE_EXTRA_TAB_ID = '7e3d1c2b-0025-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_RECORD_PAGE_EXTRA_NOTES_WIDGET_ID =
+  '7e3d1c2b-0026-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKETS_NAVIGATION_FOLDER_ID = '7e3d1c2b-0029-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKETS_NAVIGATION_ITEM_ID = '7e3d1c2b-0030-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKETS_INDEX_VIEW_NAVIGATION_ITEM_ID =
+  '7e3d1c2b-0031-4a7b-8c9d-0e1f2a3b4c5d';
+const COMPANY_RECORD_PAGE_TAGLINE_TAB_ID =
+  '7e3d1c2b-0027-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID =
+  '7e3d1c2b-0028-4a7b-8c9d-0e1f2a3b4c5d';
+
+const ENGINE_DERIVED_FIELD_NAMES = [
+  'id',
+  'createdAt',
+  'updatedAt',
+  'deletedAt',
+  'createdBy',
+  'updatedBy',
+  'position',
+  'searchVector',
+];
+
+const SYSTEM_RELATION_TARGET_OBJECT_NAMES = [
+  'timelineActivity',
+  'attachment',
+  'noteTarget',
+  'taskTarget',
+] as const;
+
+const RECORD_PAGE_TABS = [
+  { tabTitle: 'Home', widgetTitle: 'Fields' },
+  { tabTitle: 'Timeline', widgetTitle: 'Timeline' },
+  { tabTitle: 'Tasks', widgetTitle: 'Tasks' },
+  { tabTitle: 'Notes', widgetTitle: 'Notes' },
+  { tabTitle: 'Files', widgetTitle: 'Files' },
+];
+
+const RECORD_FORM_TAB_TITLE = 'Fields';
+
+type SystemRowsOwner = {
+  objectName: string;
+  objectUniversalIdentifier: string;
+  objectMetadataApplicationUniversalIdentifier: string;
+  applicationFieldUniversalIdentifierByName: Record<string, string>;
+};
+
+const buildIdentifierNames = (): Map<string, string> => {
+  const names = new Map<string, string>([
+    [TEST_APP_ID, 'TEST_APP'],
+    [TEST_ROLE_ID, 'TEST_ROLE'],
+    [TICKET_OBJECT_ID, 'TICKET_OBJECT'],
+    [PROJECT_OBJECT_ID, 'PROJECT_OBJECT'],
+    [TICKET_TITLE_FIELD_ID, 'TICKET_TITLE_FIELD'],
+    [TICKET_PROJECT_FIELD_ID, 'TICKET_PROJECT_FIELD'],
+    [PROJECT_TICKETS_FIELD_ID, 'PROJECT_TICKETS_FIELD'],
+    [COMPANY_TAGLINE_FIELD_ID, 'COMPANY_TAGLINE_FIELD'],
+    [INDEX_ID, 'TICKET_TITLE_INDEX'],
+    [OPEN_TICKETS_VIEW_ID, 'OPEN_TICKETS_VIEW'],
+    [TITLE_VIEW_FIELD_ID, 'OPEN_TICKETS_TITLE_VIEW_FIELD'],
+    [PROJECT_VIEW_FIELD_ID, 'OPEN_TICKETS_PROJECT_VIEW_FIELD'],
+    [VIEW_FIELD_GROUP_ID, 'OPEN_TICKETS_TRIAGE_FIELD_GROUP'],
+    [VIEW_FILTER_GROUP_ID, 'OPEN_TICKETS_NOT_FILTER_GROUP'],
+    [VIEW_FILTER_ID, 'OPEN_TICKETS_TITLE_FILTER'],
+    [VIEW_SORT_ID, 'OPEN_TICKETS_TITLE_SORT'],
+    [VIEW_GROUP_ID, 'OPEN_TICKETS_OPEN_GROUP'],
+    [PROJECT_INDEX_VIEW_FIELD_ID, 'PROJECT_INDEX_DELETED_AT_VIEW_FIELD'],
+    [TICKET_PAGE_LAYOUT_ID, 'TICKET_PAGE_LAYOUT'],
+    [TICKET_PAGE_OVERVIEW_TAB_ID, 'TICKET_PAGE_OVERVIEW_TAB'],
+    [TICKET_PAGE_FIELDS_WIDGET_ID, 'TICKET_PAGE_FIELDS_WIDGET'],
+    [TICKET_BOARD_LAYOUT_ID, 'TICKET_BOARD_LAYOUT'],
+    [TICKET_BOARD_TAB_ID, 'TICKET_BOARD_TAB'],
+    [TICKET_BOARD_DOCS_WIDGET_ID, 'TICKET_BOARD_DOCS_WIDGET'],
+    [TICKET_RECORD_PAGE_EXTRA_TAB_ID, 'TICKET_RECORD_PAGE_EXTRA_TAB'],
+    [
+      TICKET_RECORD_PAGE_EXTRA_NOTES_WIDGET_ID,
+      'TICKET_RECORD_PAGE_EXTRA_NOTES_WIDGET',
+    ],
+    [
+      COMPANY_RECORD_PAGE_TAGLINE_TAB_ID,
+      'STANDARD_COMPANY_RECORD_PAGE_TAGLINE_TAB',
+    ],
+    [TICKETS_NAVIGATION_FOLDER_ID, 'TICKETS_NAVIGATION_FOLDER'],
+    [TICKETS_NAVIGATION_ITEM_ID, 'TICKETS_NAVIGATION_ITEM'],
+    [
+      TICKETS_INDEX_VIEW_NAVIGATION_ITEM_ID,
+      'TICKETS_INDEX_VIEW_NAVIGATION_ITEM',
+    ],
+    [
+      TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID,
+      'TICKET_RECORD_PAGE_HOME_DOCS_WIDGET',
+    ],
+    [
+      getIndexFieldUniversalIdentifier({
+        applicationUniversalIdentifier: TEST_APP_ID,
+        indexUniversalIdentifier: INDEX_ID,
+        fieldUniversalIdentifier: TICKET_TITLE_FIELD_ID,
+      }),
+      'TICKET_TITLE_INDEX_FIELD_ENGINE_DERIVED',
+    ],
+    [STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company, 'STANDARD_COMPANY_OBJECT'],
+  ]);
+
+  const nameSystemRowsOfObject = ({
+    objectName,
+    objectUniversalIdentifier,
+    objectMetadataApplicationUniversalIdentifier,
+    applicationFieldUniversalIdentifierByName,
+  }: SystemRowsOwner) => {
+    const applicationFields = Object.entries(
+      applicationFieldUniversalIdentifierByName,
+    );
+
+    for (const viewKey of Object.values(SYSTEM_VIEW_KEYS)) {
+      const viewUniversalIdentifier = getSystemViewUniversalIdentifier({
+        objectMetadataApplicationUniversalIdentifier,
+        objectUniversalIdentifier,
+        viewKey,
+      });
+
+      names.set(
+        viewUniversalIdentifier,
+        `${objectName}_${viewKey}_ENGINE_VIEW`,
+      );
+
+      for (const [
+        fieldName,
+        fieldMetadataUniversalIdentifier,
+      ] of applicationFields) {
+        names.set(
+          getSystemViewFieldUniversalIdentifier({
+            fieldMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+            viewUniversalIdentifier,
+            fieldMetadataUniversalIdentifier,
+          }),
+          `${objectName}_${viewKey}_ENGINE_VIEW_FIELD_${fieldName}`,
+        );
+      }
+    }
+
+    const recordPageLayoutUniversalIdentifier =
+      getSystemRecordPageLayoutUniversalIdentifier({
+        objectMetadataApplicationUniversalIdentifier,
+        objectUniversalIdentifier,
+      });
+
+    names.set(
+      recordPageLayoutUniversalIdentifier,
+      `${objectName}_RECORD_PAGE_LAYOUT`,
+    );
+
+    for (const { tabTitle, widgetTitle } of RECORD_PAGE_TABS) {
+      const pageLayoutTabUniversalIdentifier =
+        getSystemPageLayoutTabUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier,
+          pageLayoutUniversalIdentifier: recordPageLayoutUniversalIdentifier,
+          title: tabTitle,
+        });
+
+      names.set(
+        pageLayoutTabUniversalIdentifier,
+        `${objectName}_RECORD_PAGE_TAB_${tabTitle}`,
+      );
+      names.set(
+        getSystemPageLayoutWidgetUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier,
+          pageLayoutTabUniversalIdentifier,
+          title: widgetTitle,
+        }),
+        `${objectName}_RECORD_PAGE_WIDGET_${widgetTitle}`,
+      );
+    }
+
+    const recordFormLayoutUniversalIdentifier =
+      getSystemRecordFormPageLayoutUniversalIdentifier({
+        objectMetadataApplicationUniversalIdentifier,
+        objectUniversalIdentifier,
+      });
+    const recordFormTabUniversalIdentifier =
+      getSystemPageLayoutTabUniversalIdentifier({
+        objectMetadataApplicationUniversalIdentifier,
+        pageLayoutUniversalIdentifier: recordFormLayoutUniversalIdentifier,
+        title: RECORD_FORM_TAB_TITLE,
+      });
+
+    names.set(
+      recordFormLayoutUniversalIdentifier,
+      `${objectName}_RECORD_FORM_LAYOUT`,
+    );
+    names.set(
+      recordFormTabUniversalIdentifier,
+      `${objectName}_RECORD_FORM_TAB`,
+    );
+
+    for (const [
+      fieldName,
+      fieldMetadataUniversalIdentifier,
+    ] of applicationFields) {
+      names.set(
+        getSystemFormFieldPageLayoutWidgetUniversalIdentifier({
+          fieldMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+          pageLayoutTabUniversalIdentifier: recordFormTabUniversalIdentifier,
+          fieldMetadataUniversalIdentifier,
+        }),
+        `${objectName}_RECORD_FORM_WIDGET_${fieldName}`,
+      );
+    }
+  };
+
+  for (const {
+    objectName,
+    objectUniversalIdentifier,
+    objectManifest,
+    authoredFieldUniversalIdentifierByName,
+  } of [
+    {
+      objectName: 'TICKET',
+      objectUniversalIdentifier: TICKET_OBJECT_ID,
+      objectManifest: ticketObject,
+      authoredFieldUniversalIdentifierByName: {
+        title: TICKET_TITLE_FIELD_ID,
+        project: TICKET_PROJECT_FIELD_ID,
+      },
+    },
+    {
+      objectName: 'PROJECT',
+      objectUniversalIdentifier: PROJECT_OBJECT_ID,
+      objectManifest: projectObject,
+      authoredFieldUniversalIdentifierByName: {
+        tickets: PROJECT_TICKETS_FIELD_ID,
+      },
+    },
+  ]) {
+    const engineFieldUniversalIdentifierByName = Object.fromEntries(
+      ENGINE_DERIVED_FIELD_NAMES.map((fieldName) => [
+        fieldName,
+        getFieldUniversalIdentifier({
+          applicationUniversalIdentifier: TEST_APP_ID,
+          objectUniversalIdentifier,
+          name: fieldName,
+        }),
+      ]),
+    );
+
+    for (const [fieldName, fieldUniversalIdentifier] of Object.entries(
+      engineFieldUniversalIdentifierByName,
+    )) {
+      names.set(
+        fieldUniversalIdentifier,
+        `${objectName}_${fieldName}_ENGINE_FIELD`,
+      );
+    }
+
+    const flatObjectMetadata = fromObjectManifestToUniversalFlatObjectMetadata({
+      objectManifest,
+      applicationUniversalIdentifier: TEST_APP_ID,
+      now: new Date().toISOString(),
+    });
+
+    names.set(
+      buildSearchVectorGinIndexForCustomObject({
+        flatObjectMetadata,
+        searchVectorFlatFieldMetadata:
+          buildSearchVectorFlatFieldMetadataForCustomObject({
+            flatObjectMetadata,
+          }),
+      }).universalIdentifier,
+      `${objectName}_SEARCH_VECTOR_ENGINE_INDEX`,
+    );
+
+    const systemRelationFieldUniversalIdentifierByName: Record<string, string> =
+      {};
+
+    for (const targetObjectName of SYSTEM_RELATION_TARGET_OBJECT_NAMES) {
+      const targetObjectUniversalIdentifier =
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS[targetObjectName];
+      const forwardFieldUniversalIdentifier =
+        getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier: TEST_APP_ID,
+          objectUniversalIdentifier,
+          relationTargetObjectUniversalIdentifier:
+            targetObjectUniversalIdentifier,
+        });
+      const reverseFieldUniversalIdentifier =
+        getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier: TEST_APP_ID,
+          objectUniversalIdentifier: targetObjectUniversalIdentifier,
+          relationTargetObjectUniversalIdentifier: objectUniversalIdentifier,
+        });
+
+      systemRelationFieldUniversalIdentifierByName[targetObjectName] =
+        forwardFieldUniversalIdentifier;
+      names.set(
+        forwardFieldUniversalIdentifier,
+        `${objectName}_${targetObjectName}_SYSTEM_RELATION_FIELD`,
+      );
+      names.set(
+        reverseFieldUniversalIdentifier,
+        `STANDARD_${targetObjectName}_target${objectName}_SYSTEM_RELATION_FIELD`,
+      );
+      nameSystemRowsOfObject({
+        objectName: `STANDARD_${targetObjectName}`,
+        objectUniversalIdentifier: targetObjectUniversalIdentifier,
+        objectMetadataApplicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        applicationFieldUniversalIdentifierByName: {
+          [`target${objectName}`]: reverseFieldUniversalIdentifier,
+        },
+      });
+    }
+
+    nameSystemRowsOfObject({
+      objectName,
+      objectUniversalIdentifier,
+      objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+      applicationFieldUniversalIdentifierByName: {
+        ...authoredFieldUniversalIdentifierByName,
+        ...engineFieldUniversalIdentifierByName,
+        ...systemRelationFieldUniversalIdentifierByName,
+      },
+    });
+  }
+
+  nameSystemRowsOfObject({
+    objectName: 'STANDARD_COMPANY',
+    objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+    objectMetadataApplicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    applicationFieldUniversalIdentifierByName: {
+      tagline: COMPANY_TAGLINE_FIELD_ID,
+    },
+  });
+
+  return names;
+};
 
 const projectObject = buildDefaultObjectManifest({
+  universalIdentifier: PROJECT_OBJECT_ID,
   applicationUniversalIdentifier: TEST_APP_ID,
   nameSingular: 'exportProject',
   namePlural: 'exportProjects',
@@ -41,6 +429,7 @@ const projectObject = buildDefaultObjectManifest({
 
 const ticketObject: ObjectManifest = {
   ...buildDefaultObjectManifest({
+    universalIdentifier: TICKET_OBJECT_ID,
     applicationUniversalIdentifier: TEST_APP_ID,
     nameSingular: 'exportTicket',
     namePlural: 'exportTickets',
@@ -99,10 +488,251 @@ const companyTaglineField: FieldManifest = {
   objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
 };
 
+const FIXTURE_TRANSLATIONS: TranslationsManifest = {
+  'fr-FR': {
+    'export.ticket.title': 'Titre du ticket',
+    'export.ticket.project': 'Projet',
+  },
+};
+
+const openTicketsView: ViewManifest = {
+  universalIdentifier: OPEN_TICKETS_VIEW_ID,
+  name: 'Open tickets',
+  objectUniversalIdentifier: ticketObject.universalIdentifier,
+  type: ViewType.TABLE,
+  icon: 'IconTicket',
+  position: 1,
+  isCompact: true,
+  anyFieldFilterValue: 'urgent',
+  fields: [
+    {
+      universalIdentifier: TITLE_VIEW_FIELD_ID,
+      fieldMetadataUniversalIdentifier: TICKET_TITLE_FIELD_ID,
+      position: 0,
+      size: 240,
+      aggregateOperation: AggregateOperations.COUNT,
+    },
+    {
+      universalIdentifier: PROJECT_VIEW_FIELD_ID,
+      fieldMetadataUniversalIdentifier: TICKET_PROJECT_FIELD_ID,
+      position: 1,
+      isVisible: false,
+    },
+  ],
+  fieldGroups: [
+    {
+      universalIdentifier: VIEW_FIELD_GROUP_ID,
+      name: 'Triage',
+      position: 0,
+    },
+  ],
+  filterGroups: [
+    {
+      universalIdentifier: VIEW_FILTER_GROUP_ID,
+      logicalOperator: ViewFilterGroupLogicalOperator.NOT,
+    },
+  ],
+  filters: [
+    {
+      universalIdentifier: VIEW_FILTER_ID,
+      fieldMetadataUniversalIdentifier: TICKET_TITLE_FIELD_ID,
+      operand: ViewFilterOperand.CONTAINS,
+      value: 'bug',
+      viewFilterGroupUniversalIdentifier: VIEW_FILTER_GROUP_ID,
+      positionInViewFilterGroup: 0,
+    },
+  ],
+  sorts: [
+    {
+      universalIdentifier: VIEW_SORT_ID,
+      fieldMetadataUniversalIdentifier: TICKET_TITLE_FIELD_ID,
+      direction: ViewSortDirection.DESC,
+    },
+  ],
+  groups: [
+    {
+      universalIdentifier: VIEW_GROUP_ID,
+      fieldValue: 'open',
+      position: 0,
+    },
+  ],
+};
+
+const PROJECT_INDEX_VIEW_ID = getSystemViewUniversalIdentifier({
+  objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+  objectUniversalIdentifier: PROJECT_OBJECT_ID,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
+});
+
+const TICKET_INDEX_VIEW_ID = getSystemViewUniversalIdentifier({
+  objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+  objectUniversalIdentifier: TICKET_OBJECT_ID,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
+});
+
+const projectIndexViewField: StandaloneViewFieldManifest = {
+  universalIdentifier: PROJECT_INDEX_VIEW_FIELD_ID,
+  viewUniversalIdentifier: PROJECT_INDEX_VIEW_ID,
+  fieldMetadataUniversalIdentifier: getFieldUniversalIdentifier({
+    applicationUniversalIdentifier: TEST_APP_ID,
+    objectUniversalIdentifier: PROJECT_OBJECT_ID,
+    name: 'deletedAt',
+  }),
+  position: 10,
+  isVisible: true,
+  size: 180,
+};
+
+const ticketPageLayout: PageLayoutManifest = {
+  universalIdentifier: TICKET_PAGE_LAYOUT_ID,
+  name: 'Ticket page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: TICKET_OBJECT_ID,
+  defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier:
+    TICKET_PAGE_OVERVIEW_TAB_ID,
+  tabs: [
+    {
+      universalIdentifier: TICKET_PAGE_OVERVIEW_TAB_ID,
+      title: 'Overview',
+      position: 0,
+      icon: 'IconHome',
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgets: [
+        {
+          universalIdentifier: TICKET_PAGE_FIELDS_WIDGET_ID,
+          title: 'Fields',
+          type: 'FIELDS',
+          objectUniversalIdentifier: TICKET_OBJECT_ID,
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 0,
+          },
+          configuration: {
+            configurationType: 'FIELDS',
+            viewUniversalIdentifier: OPEN_TICKETS_VIEW_ID,
+            newFieldDefaultVisibility: true,
+          },
+        },
+      ],
+    },
+  ],
+};
+
+const ticketBoardLayout: PageLayoutManifest = {
+  universalIdentifier: TICKET_BOARD_LAYOUT_ID,
+  name: 'Ticket board',
+  type: 'STANDALONE_PAGE',
+  tabs: [
+    {
+      universalIdentifier: TICKET_BOARD_TAB_ID,
+      title: 'Board',
+      position: 0,
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      widgets: [
+        {
+          universalIdentifier: TICKET_BOARD_DOCS_WIDGET_ID,
+          title: 'Docs',
+          type: 'IFRAME',
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 0,
+            rowSpan: 4,
+            columnSpan: 6,
+          },
+          configuration: {
+            configurationType: 'IFRAME',
+            url: 'https://example.com/tickets',
+          },
+        },
+      ],
+    },
+  ],
+};
+
+const TICKET_RECORD_PAGE_LAYOUT_ID =
+  getSystemRecordPageLayoutUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+    objectUniversalIdentifier: TICKET_OBJECT_ID,
+  });
+
+const ticketRecordPageExtraTab: PageLayoutTabManifest = {
+  universalIdentifier: TICKET_RECORD_PAGE_EXTRA_TAB_ID,
+  pageLayoutUniversalIdentifier: TICKET_RECORD_PAGE_LAYOUT_ID,
+  title: 'Extra',
+  position: 60,
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+  widgets: [
+    {
+      universalIdentifier: TICKET_RECORD_PAGE_EXTRA_NOTES_WIDGET_ID,
+      title: 'Notes',
+      type: 'NOTES',
+      objectUniversalIdentifier: TICKET_OBJECT_ID,
+      position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
+      configuration: { configurationType: 'NOTES' },
+    },
+  ],
+};
+
+const companyRecordPageTaglineTab: PageLayoutTabManifest = {
+  universalIdentifier: COMPANY_RECORD_PAGE_TAGLINE_TAB_ID,
+  pageLayoutUniversalIdentifier: getSystemRecordPageLayoutUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+  }),
+  title: 'Tagline',
+  position: 60,
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+};
+
+const ticketRecordPageHomeDocsWidget: StandalonePageLayoutWidgetManifest = {
+  universalIdentifier: TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID,
+  pageLayoutTabUniversalIdentifier: getSystemPageLayoutTabUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+    pageLayoutUniversalIdentifier: TICKET_RECORD_PAGE_LAYOUT_ID,
+    title: 'Home',
+  }),
+  title: 'Docs',
+  type: 'IFRAME',
+  position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 1 },
+  configuration: {
+    configurationType: 'IFRAME',
+    url: 'https://example.com/tickets/docs',
+  },
+};
+
+const ticketsNavigationFolder: NavigationMenuItemManifest = {
+  universalIdentifier: TICKETS_NAVIGATION_FOLDER_ID,
+  type: NavigationMenuItemType.FOLDER,
+  name: 'Support',
+  position: 40,
+};
+
+const ticketsNavigationItem: NavigationMenuItemManifest = {
+  universalIdentifier: TICKETS_NAVIGATION_ITEM_ID,
+  type: NavigationMenuItemType.OBJECT,
+  position: 41,
+  icon: 'IconTicket',
+  folderUniversalIdentifier: TICKETS_NAVIGATION_FOLDER_ID,
+  targetObjectUniversalIdentifier: TICKET_OBJECT_ID,
+};
+
+const ticketsIndexViewNavigationItem: NavigationMenuItemManifest = {
+  universalIdentifier: TICKETS_INDEX_VIEW_NAVIGATION_ITEM_ID,
+  type: NavigationMenuItemType.VIEW,
+  position: 42,
+  name: 'All tickets',
+  icon: 'IconList',
+  folderUniversalIdentifier: TICKETS_NAVIGATION_FOLDER_ID,
+  viewUniversalIdentifier: TICKET_INDEX_VIEW_ID,
+};
+
 const manifest = buildBaseManifest({
   appId: TEST_APP_ID,
   roleId: TEST_ROLE_ID,
   overrides: {
+    translations: FIXTURE_TRANSLATIONS,
     objects: [ticketObject, projectObject],
     fields: [companyTaglineField],
     indexes: [
@@ -111,17 +741,42 @@ const manifest = buildBaseManifest({
         objectUniversalIdentifier: ticketObject.universalIdentifier,
         fields: [
           {
-            universalIdentifier: uuidv4(),
+            universalIdentifier: INDEX_FIELD_ID,
             fieldUniversalIdentifier: TICKET_TITLE_FIELD_ID,
           },
         ],
       },
     ],
+    views: [openTicketsView],
+    viewFields: [projectIndexViewField],
+    pageLayouts: [ticketPageLayout, ticketBoardLayout],
+    pageLayoutTabs: [ticketRecordPageExtraTab, companyRecordPageTaglineTab],
+    pageLayoutWidgets: [ticketRecordPageHomeDocsWidget],
+    navigationMenuItems: [
+      ticketsNavigationFolder,
+      ticketsNavigationItem,
+      ticketsIndexViewNavigationItem,
+    ],
   },
 });
 
+const IDENTIFIER_NAMES = buildIdentifierNames();
+
+const nameIdentifiers = <TValue>(value: TValue): TValue => {
+  const named: TValue = JSON.parse(JSON.stringify(value), (_key, nodeValue) =>
+    typeof nodeValue === 'string' && IDENTIFIER_NAMES.has(nodeValue)
+      ? `<${IDENTIFIER_NAMES.get(nodeValue)}>`
+      : nodeValue,
+  );
+
+  return named;
+};
+
 describe('Application export - data model', () => {
   beforeAll(async () => {
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: TEST_APP_ID,
+    });
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
       name: 'Export Data Model Test Application',
@@ -138,7 +793,7 @@ describe('Application export - data model', () => {
     });
   });
 
-  it('exports the data model with its fidelity fields and classifies every row', async () => {
+  it('exports the whole application as a stable manifest and classifies every row', async () => {
     const { data, errors } = await exportApplication({
       universalIdentifier: TEST_APP_ID,
       expectToFail: false,
@@ -153,76 +808,112 @@ describe('Application export - data model', () => {
       displayName: 'Test Application',
       sourceType: 'LOCAL',
     });
-    expect(exported.manifest.application.defaultRoleUniversalIdentifier).toBe(
-      TEST_ROLE_ID,
+    expect(exported.files).toEqual([]);
+    expect(nameIdentifiers(exported.manifest)).toMatchSnapshot('manifest');
+
+    const isNamedRow = ({
+      universalIdentifier,
+    }: {
+      universalIdentifier: string;
+    }) => IDENTIFIER_NAMES.has(universalIdentifier);
+    const hasRandomUniversalIdentifier = ({
+      universalIdentifier,
+    }: {
+      universalIdentifier: string;
+    }) => getUuidVersion(universalIdentifier) === 4;
+    const compareCoverageRows = (
+      left: { metadataName: string; universalIdentifier: string },
+      right: { metadataName: string; universalIdentifier: string },
+    ) =>
+      left.metadataName.localeCompare(right.metadataName) ||
+      left.universalIdentifier.localeCompare(right.universalIdentifier);
+
+    const unnamedCoverage = exported.coverage.filter((row) => !isNamedRow(row));
+    const randomlyIdentifiedCoverageCounts = Object.fromEntries(
+      Object.entries(
+        unnamedCoverage
+          .filter(hasRandomUniversalIdentifier)
+          .reduce<Record<string, number>>((counts, entry) => {
+            const key = `${entry.metadataName} ${entry.status}${isDefined(entry.reason) ? ` (${entry.reason})` : ''}`;
+
+            counts[key] = (counts[key] ?? 0) + 1;
+
+            return counts;
+          }, {}),
+      ).sort(([left], [right]) => left.localeCompare(right)),
     );
 
-    expect(
-      exported.manifest.objects.map(({ nameSingular }) => nameSingular),
-    ).toEqual(['exportProject', 'exportTicket']);
+    expect({
+      named: nameIdentifiers(exported.coverage.filter(isNamedRow)).sort(
+        compareCoverageRows,
+      ),
+      deterministicUnnamed: unnamedCoverage
+        .filter((row) => !hasRandomUniversalIdentifier(row))
+        .sort(compareCoverageRows),
+      randomlyIdentifiedByKindAndStatus: randomlyIdentifiedCoverageCounts,
+    }).toMatchSnapshot('coverage');
+  }, 60000);
 
-    const exportedTicket = exported.manifest.objects[1];
-
-    expect(exportedTicket).toMatchObject({
-      color: 'blue',
-      isLabelSyncedWithName: true,
-      imageIdentifierFieldMetadataUniversalIdentifier: null,
-      labelIdentifierFieldMetadataUniversalIdentifier:
-        ticketObject.labelIdentifierFieldMetadataUniversalIdentifier,
+  it('keeps the engine-derived label identifier pointer and classifies the rows it cannot export', async () => {
+    const { data } = await exportApplication({
+      universalIdentifier: TEST_APP_ID,
+      expectToFail: false,
     });
-    expect(exportedTicket.fields.map(({ name }) => name)).toEqual([
-      'project',
-      'title',
-    ]);
-    expect(
-      exportedTicket.fields.find(({ name }) => name === 'project'),
-    ).toMatchObject({
-      type: FieldMetadataType.RELATION,
-      relationTargetFieldMetadataUniversalIdentifier: PROJECT_TICKETS_FIELD_ID,
-      universalSettings: {
-        relationType: RelationType.MANY_TO_ONE,
-        joinColumnName: 'projectId',
-        onDelete: RelationOnDeleteAction.SET_NULL,
-      },
-    });
-
-    expect(exported.manifest.fields).toMatchObject([
-      {
-        universalIdentifier: COMPANY_TAGLINE_FIELD_ID,
-        name: 'exportTagline',
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
-      },
-    ]);
-    expect(exported.manifest.indexes).toMatchObject([
-      {
-        universalIdentifier: INDEX_ID,
-        fields: [{ fieldUniversalIdentifier: TICKET_TITLE_FIELD_ID }],
-      },
-    ]);
-
+    const exported = data.exportApplication;
+    const exportedTicket = exported.manifest.objects.find(
+      ({ universalIdentifier }) => universalIdentifier === TICKET_OBJECT_ID,
+    );
     const statusOf = (universalIdentifier: string) =>
       exported.coverage.find(
         (entry) => entry.universalIdentifier === universalIdentifier,
       )?.status;
 
-    expect(statusOf(ticketObject.universalIdentifier)).toBe(
+    expect(
+      exportedTicket?.labelIdentifierFieldMetadataUniversalIdentifier,
+    ).toBe(
+      getFieldUniversalIdentifier({
+        applicationUniversalIdentifier: TEST_APP_ID,
+        objectUniversalIdentifier: TICKET_OBJECT_ID,
+        name: 'id',
+      }),
+    );
+    expect(exported.manifest.translations).toEqual(FIXTURE_TRANSLATIONS);
+    expect(statusOf(TICKET_OBJECT_ID)).toBe(
       ApplicationExportCoverageStatus.EXPORTED,
     );
-    expect(statusOf(TICKET_TITLE_FIELD_ID)).toBe(
+    expect(statusOf(COMPANY_TAGLINE_FIELD_ID)).toBe(
       ApplicationExportCoverageStatus.EXPORTED,
     );
-    expect(statusOf(INDEX_ID)).toBe(ApplicationExportCoverageStatus.EXPORTED);
     expect(statusOf(TEST_ROLE_ID)).toBe(
       ApplicationExportCoverageStatus.UNSUPPORTED,
     );
-    expect(
-      exported.coverage.filter(
-        ({ metadataName, status }) =>
-          metadataName === 'fieldMetadata' &&
-          status === ApplicationExportCoverageStatus.ENGINE_DERIVED,
-      ).length,
-    ).toBeGreaterThan(0);
+    expect(statusOf(TICKET_INDEX_VIEW_ID)).toBe(
+      ApplicationExportCoverageStatus.ENGINE_DERIVED,
+    );
+    expect(statusOf(PROJECT_INDEX_VIEW_ID)).toBe(
+      ApplicationExportCoverageStatus.ENGINE_DERIVED,
+    );
+    expect(statusOf(PROJECT_INDEX_VIEW_FIELD_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TICKET_RECORD_PAGE_LAYOUT_ID)).toBe(
+      ApplicationExportCoverageStatus.ENGINE_DERIVED,
+    );
+    expect(statusOf(TICKET_RECORD_PAGE_EXTRA_TAB_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TICKETS_NAVIGATION_FOLDER_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TICKETS_NAVIGATION_ITEM_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TICKETS_INDEX_VIEW_NAVIGATION_ITEM_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
   }, 60000);
 
   it('round-trips the raw export through an additive dry-run sync without any action', async () => {
@@ -279,5 +970,102 @@ describe('Application export - data model', () => {
 
     expect(dryRun.errors).toBeUndefined();
     expect(dryRun.data.syncApplication.actions).toEqual([]);
+  }, 60000);
+
+  it('should round-trip a view with a filter created through the metadata API in the workspace Custom application without any action', async () => {
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: { filter: {}, paging: { first: 1000 } },
+      gqlFields: `
+        id
+        nameSingular
+        fieldsList {
+          id
+          name
+        }
+      `,
+    });
+    const personObject = objects.find(
+      ({ nameSingular }) => nameSingular === 'person',
+    );
+
+    jestExpectToBeDefined(personObject);
+
+    const personJobTitleField = personObject.fieldsList?.find(
+      ({ name }) => name === 'jobTitle',
+    );
+
+    jestExpectToBeDefined(personJobTitleField);
+
+    const { data: applicationsData } = await findManyApplications({
+      expectToFail: false,
+    });
+    const customApplication = applicationsData.findManyApplications.find(
+      ({ name }) => name === WORKSPACE_CUSTOM_APPLICATION_NAME,
+    );
+
+    jestExpectToBeDefined(customApplication);
+
+    const { data: createdViewData } = await createOneView({
+      expectToFail: false,
+      input: {
+        name: 'Export Custom Application People',
+        objectMetadataId: personObject.id,
+        type: ViewType.TABLE,
+        icon: 'IconUser',
+      },
+    });
+    const createdViewId = createdViewData.createView.id;
+
+    try {
+      const { data: createdViewFilterData } = await createOneViewFilter({
+        expectToFail: false,
+        input: {
+          viewId: createdViewId,
+          fieldMetadataId: personJobTitleField.id,
+          operand: ViewFilterOperand.CONTAINS,
+          value: 'Engineer',
+        },
+      });
+      const createdViewFilterId = createdViewFilterData.createViewFilter.id;
+
+      try {
+        const { data } = await exportApplication({
+          universalIdentifier: customApplication.universalIdentifier,
+          expectToFail: false,
+        });
+
+        expect(data.exportApplication.manifest.views).toContainEqual(
+          expect.objectContaining({
+            name: 'Export Custom Application People',
+            objectUniversalIdentifier:
+              STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+            filters: [
+              expect.objectContaining({
+                operand: ViewFilterOperand.CONTAINS,
+                value: 'Engineer',
+              }),
+            ],
+          }),
+        );
+
+        const dryRun = await syncApplication({
+          manifest: data.exportApplication.manifest,
+          dryRun: true,
+          inferDeletionFromMissingEntities: false,
+          expectToFail: false,
+        });
+
+        expect(dryRun.errors).toBeUndefined();
+        expect(dryRun.data.syncApplication.actions).toEqual([]);
+      } finally {
+        await destroyOneViewFilter({
+          expectToFail: false,
+          input: { id: createdViewFilterId },
+        });
+      }
+    } finally {
+      await destroyOneView({ expectToFail: false, viewId: createdViewId });
+    }
   }, 60000);
 });

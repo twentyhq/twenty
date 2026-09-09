@@ -50,7 +50,11 @@ describe('UsageRecorderService', () => {
         },
         {
           provide: TwentyConfigService,
-          useValue: { get: jest.fn().mockReturnValue(false) },
+          useValue: {
+            get: jest.fn((key: string) =>
+              key === 'USAGE_ROLLUP_FLUSH_INTERVAL_MS' ? 60_000 : false,
+            ),
+          },
         },
         {
           provide: DiscoveryService,
@@ -60,9 +64,11 @@ describe('UsageRecorderService', () => {
     }).compile();
 
     recorder = module.get<UsageRecorderService>(UsageRecorderService);
+    recorder.onModuleInit();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await recorder.flushAndStop();
     jest.restoreAllMocks();
   });
 

@@ -9,6 +9,7 @@ import { type AssertUnreachable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -31,6 +32,7 @@ export class MicrosoftCalendarNotificationHandler implements WebhookNotification
     private readonly calendarWebhookSubscriptionService: CalendarWebhookSubscriptionService,
     private readonly webhookSyncTriggerService: WebhookSyncTriggerService,
     private readonly metricsService: MetricsService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async handle(notifications: MicrosoftGraphNotification[]): Promise<void> {
@@ -99,12 +101,15 @@ export class MicrosoftCalendarNotificationHandler implements WebhookNotification
           lifecycleEvent: notification.lifecycleEvent,
           removedSubscriptionId: notification.subscriptionId,
           calendarChannel,
-        }).catch((error) =>
+        }).catch((error) => {
           this.logger.error(
             `Failed to handle ${notification.lifecycleEvent} lifecycle event for calendar channel ${calendarChannel.id}`,
             error,
-          ),
-        );
+          );
+          this.exceptionHandlerService.captureExceptions([error], {
+            workspace: { id: calendarChannel.workspaceId },
+          });
+        });
         continue;
       }
 

@@ -33,7 +33,11 @@ export class WorkflowCoreSyncService {
     workspaceId: string,
     workflows: WorkflowWorkspaceEntity[],
   ): Promise<void> {
-    if (workflows.length === 0) {
+    const liveWorkflows = workflows.filter(
+      (workflow) => !isDefined(workflow.deletedAt),
+    );
+
+    if (liveWorkflows.length === 0) {
       return;
     }
 
@@ -41,12 +45,12 @@ export class WorkflowCoreSyncService {
 
     const linkedCoreWorkflowIds = await this.resolveOwnedCoreWorkflowIds(
       workspaceId,
-      workflows,
+      liveWorkflows,
     );
 
     const coreWorkflowIdByWorkspaceRecordId = new Map<string, string>();
 
-    const coreRows = workflows.map((workflow) => {
+    const coreRows = liveWorkflows.map((workflow) => {
       const candidateCoreWorkflowId = workflow.coreWorkflowId;
 
       const linkedCoreWorkflowId =
@@ -166,9 +170,7 @@ export class WorkflowCoreSyncService {
     );
   }
 
-  private async getCustomApplicationIdOrThrow(
-    workspaceId: string,
-  ): Promise<string> {
+  async getCustomApplicationIdOrThrow(workspaceId: string): Promise<string> {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
       select: ['id', 'workspaceCustomApplicationId'],
