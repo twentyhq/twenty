@@ -57,6 +57,23 @@ describe('fetchArtificialAnalysisBenchmarks', () => {
     expect(record?.intelligenceIndex).toBe(38.4);
   });
 
+  it('reads observed prices from their container, not the top level', async () => {
+    respondWith([
+      {
+        slug: 'claude-sonnet-5',
+        pricing: { price_1m_input_tokens: 2, price_1m_output_tokens: 10 },
+        price_1m_input_tokens: 999,
+      },
+    ]);
+
+    const record = (await fetchArtificialAnalysisBenchmarks('key')).get(
+      'claudesonnet5',
+    );
+
+    expect(record?.observedPrices?.inputPerMillionTokens).toBe(2);
+    expect(record?.observedPrices?.outputPerMillionTokens).toBe(10);
+  });
+
   it('fails loudly when every row came back unmeasured', async () => {
     respondWith([
       { slug: 'claude-sonnet-5', median_output_tokens_per_second: 0 },

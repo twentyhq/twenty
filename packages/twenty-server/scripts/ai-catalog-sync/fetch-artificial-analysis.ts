@@ -52,6 +52,8 @@ const informationScore = (record: BenchmarkRecord): number =>
     record.outputTokensPerSecond,
     record.costPerTask,
     record.timeToFirstTokenSeconds,
+    record.observedPrices?.inputPerMillionTokens,
+    record.observedPrices?.outputPerMillionTokens,
   ].filter(isDefined).length;
 
 export const fetchArtificialAnalysisBenchmarks = async (
@@ -97,6 +99,18 @@ export const fetchArtificialAnalysisBenchmarks = async (
         model.median_time_to_first_token_seconds,
       ),
       costPerTask: readNested(model, 'cost_per_task', 'total_cost'),
+      observedPrices: {
+        inputPerMillionTokens: readNested(
+          model,
+          'pricing',
+          'price_1m_input_tokens',
+        ),
+        outputPerMillionTokens: readNested(
+          model,
+          'pricing',
+          'price_1m_output_tokens',
+        ),
+      },
       aliases,
     };
 

@@ -38,11 +38,20 @@ export type GeneratedProvider = {
 
 export type GeneratedCatalog = Record<string, GeneratedProvider>;
 
+export type ObservedPrices = {
+  inputPerMillionTokens?: number;
+  outputPerMillionTokens?: number;
+};
+
 export type BenchmarkRecord = {
   intelligenceIndex?: number;
   outputTokensPerSecond?: number;
   timeToFirstTokenSeconds?: number;
   costPerTask?: number;
+  // A benchmark publisher's own reading of the provider's list price. Never
+  // merged into the catalog, which prices from models.dev: a second
+  // independent observation is only useful while it stays independent.
+  observedPrices?: ObservedPrices;
   aliases: string[];
 };
 

@@ -143,6 +143,27 @@ describe('matchBenchmarks', () => {
   });
 });
 
+describe('matchBenchmarks price observations', () => {
+  it('reports observed prices separately from the catalog benchmarks', () => {
+    const result = matchBenchmarks({
+      modelName: 'mistral-large-2512',
+      siblingModels: MISTRAL_MODELS,
+      epochIndex: new Map(),
+      artificialAnalysisIndex: indexOf({
+        mistrallarge2512: {
+          observedPrices: { inputPerMillionTokens: 2 },
+          aliases: [],
+        },
+      }),
+      measuredAt: MEASURED_AT,
+    });
+
+    expect(result?.observedPrices?.inputPerMillionTokens).toBe(2);
+    expect(result?.benchmarks).not.toHaveProperty('observedPrices');
+    expect(result?.benchmarks.sources).toEqual(['artificial-analysis']);
+  });
+});
+
 describe('matchBenchmarks with an empty source record', () => {
   it('returns nothing when a source matches but published no measurement', () => {
     const result = matchBenchmarks({

@@ -4,7 +4,11 @@ import { type AiModelBenchmarks } from 'src/engine/metadata-modules/ai/ai-models
 import { type ModelsDevModel } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-model.type';
 
 import { normalizeModelName } from './normalize-model-name.util';
-import { type BenchmarkIndex, type BenchmarkRecord } from './types';
+import {
+  type BenchmarkIndex,
+  type BenchmarkRecord,
+  type ObservedPrices,
+} from './types';
 
 const DATE_SUFFIX = /-\d{4}-?\d{2}-?\d{2}$/;
 const ROLLING_SUFFIX = /-(latest|preview|exp)$/;
@@ -87,6 +91,7 @@ export type MatchBenchmarksArgs = {
 export type BenchmarkMatch = {
   benchmarks: AiModelBenchmarks;
   aliases: string[];
+  observedPrices?: ObservedPrices;
 };
 
 export const matchBenchmarks = ({
@@ -107,11 +112,17 @@ export const matchBenchmarks = ({
   const { outputTokensPerSecond, timeToFirstTokenSeconds, costPerTask } =
     artificialAnalysis ?? {};
 
+  const hasObservedPrice = [
+    artificialAnalysis?.observedPrices?.inputPerMillionTokens,
+    artificialAnalysis?.observedPrices?.outputPerMillionTokens,
+  ].some(isDefined);
+
   const contributedArtificialAnalysis = [
     outputTokensPerSecond,
     timeToFirstTokenSeconds,
     costPerTask,
     artificialAnalysis?.intelligenceIndex,
+    hasObservedPrice ? true : undefined,
   ].some(isDefined);
 
   const sources: AiModelBenchmarks['sources'] = [
@@ -143,5 +154,8 @@ export const matchBenchmarks = ({
         ...(artificialAnalysis?.aliases ?? []),
       ]),
     ],
+    observedPrices: hasObservedPrice
+      ? artificialAnalysis?.observedPrices
+      : undefined,
   };
 };

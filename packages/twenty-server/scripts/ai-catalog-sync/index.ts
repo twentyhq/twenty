@@ -13,7 +13,11 @@ import { fetchArtificialAnalysisBenchmarks } from './fetch-artificial-analysis';
 import { fetchEpochBenchmarks } from './fetch-epoch-benchmarks';
 import { matchBenchmarks } from './match-benchmarks';
 import { buildCoverageReport, renderCoverageReport } from './report-coverage';
-import { type BenchmarkIndex, type GeneratedCatalog } from './types';
+import {
+  type BenchmarkIndex,
+  type GeneratedCatalog,
+  type ObservedPrices,
+} from './types';
 
 const AI_MODELS_DIR = path.resolve(
   __dirname,
@@ -81,7 +85,12 @@ type EnrichCatalogArgs = {
   measuredAt: string;
 };
 
-type BenchmarkOverlayEntry = AiModelBenchmarks & { aliases: string[] };
+// The overlay is the cross-repo artifact: it carries what the catalog embeds
+// plus the alias set and price observations that only a joining consumer needs.
+type BenchmarkOverlayEntry = AiModelBenchmarks & {
+  aliases: string[];
+  artificialAnalysisPrices?: ObservedPrices;
+};
 
 const enrichCatalog = ({
   catalog,
@@ -108,7 +117,11 @@ const enrichCatalog = ({
         return model;
       }
 
-      overlay[model.name] = { ...match.benchmarks, aliases: match.aliases };
+      overlay[model.name] = {
+        ...match.benchmarks,
+        aliases: match.aliases,
+        artificialAnalysisPrices: match.observedPrices,
+      };
 
       const { isDeprecated, ...rest } = model;
 
