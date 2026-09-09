@@ -1,6 +1,6 @@
 import { isAutoSelectModelId, isDefined } from 'twenty-shared/utils';
 
-import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -12,7 +12,10 @@ export const useAgentChatModelId = () => {
     agentChatUserSelectedModelState,
   );
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
+  // The shared sender mounts above the chat surface providers.
+  const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
+    shouldOpenAiChatAfterOnboardingState,
+  );
 
   const isUserModelAvailable =
     !isDefined(agentChatUserSelectedModel) ||
@@ -23,7 +26,7 @@ export const useAgentChatModelId = () => {
     ? agentChatUserSelectedModel
     : null;
 
-  const workspaceSetupModelId = isWorkspaceSetupChat
+  const workspaceSetupModelId = shouldOpenAiChatAfterOnboarding
     ? currentWorkspace?.fastModel
     : null;
 
