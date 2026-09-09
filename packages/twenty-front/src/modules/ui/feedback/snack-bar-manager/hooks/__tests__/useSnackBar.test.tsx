@@ -1,5 +1,5 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { i18n } from '@lingui/core';
+import { type I18n, i18n, setupI18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook, screen, waitFor } from '@testing-library/react';
@@ -12,10 +12,10 @@ import { ThemeProvider } from 'twenty-ui/theme-constants';
 import { SnackBarToaster } from '@/ui/feedback/snack-bar-manager/components/SnackBarToaster';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
-type WrapperProps = { children: ReactNode };
+type WrapperProps = { children: ReactNode; i18nInstance?: I18n };
 
-const Wrapper = ({ children }: WrapperProps) => (
-  <I18nProvider i18n={i18n}>
+const Wrapper = ({ children, i18nInstance = i18n }: WrapperProps) => (
+  <I18nProvider i18n={i18nInstance}>
     <ThemeProvider colorScheme="light">
       <MemoryRouter>
         <ToastProvider>
@@ -103,50 +103,47 @@ describe('useSnackBar', () => {
   });
 
   it('should update visible labels when the active locale changes', async () => {
-    const originalLocale = i18n.locale;
+    const testI18n = setupI18n({
+      locale: 'en',
+      messages: {
+        en: { ...i18n.messages },
+        fr: {
+          [msg`Success`.id]: 'Succès',
+          [msg`Cancel`.id]: 'Annuler',
+          [msg`Close`.id]: 'Fermer',
+          [msg`Notifications`.id]: 'Notifications',
+        },
+      },
+    });
     const onClose = jest.fn();
     const onCancel = jest.fn();
-    const { result, unmount } = renderHook(() => useSnackBar(), {
-      wrapper: Wrapper,
+    const { result } = renderHook(() => useSnackBar(), {
+      wrapper: ({ children }) => (
+        <Wrapper i18nInstance={testI18n}>{children}</Wrapper>
+      ),
     });
 
     act(() => {
-      i18n.load('fr', {
-        [msg`Success`.id]: 'Succès',
-        [msg`Cancel`.id]: 'Annuler',
-        [msg`Close`.id]: 'Fermer',
-        [msg`Notifications`.id]: 'Notifications',
+      result.current.enqueueSuccessSnackBar({
+        message: 'Record saved',
+        options: { onClose, onCancel, progress: 100 },
       });
     });
+    const toast = screen.getByRole('status');
+    expect(screen.getByLabelText('Success')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument();
 
-    try {
-      act(() => {
-        result.current.enqueueSuccessSnackBar({
-          message: 'Record saved',
-          options: { onClose, onCancel, progress: 100 },
-        });
-      });
-      const toast = screen.getByRole('status');
-      expect(screen.getByLabelText('Success')).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: 'Cancel' }),
-      ).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument();
+    act(() => testI18n.activate('fr'));
 
-      act(() => i18n.activate('fr'));
-
-      expect(screen.getByRole('status')).toBe(toast);
-      expect(screen.getByLabelText('Succès')).toBeInTheDocument();
-      await userEvent.click(screen.getByRole('button', { name: 'Annuler' }));
-      expect(onCancel).toHaveBeenCalledTimes(1);
-      expect(onClose).not.toHaveBeenCalled();
-      await userEvent.click(screen.getByRole('button', { name: 'Fermer' }));
-      await waitFor(() => expect(toast).not.toBeInTheDocument());
-      expect(onClose).toHaveBeenCalledTimes(1);
-    } finally {
-      unmount();
-      act(() => i18n.activate(originalLocale));
-    }
+    expect(screen.getByRole('status')).toBe(toast);
+    expect(screen.getByLabelText('Succès')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Annuler' }));
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    expect(onClose).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByRole('button', { name: 'Fermer' }));
+    await waitFor(() => expect(toast).not.toBeInTheDocument());
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it('should ignore aborted requests', () => {
