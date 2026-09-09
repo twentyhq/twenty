@@ -46,6 +46,24 @@ const CORE_WORKFLOW_VERSION_QUERY = `
   }
 `;
 
+type CoreWorkflowResult = {
+  id: string;
+  name: string | null;
+  statuses: string[];
+  lastPublishedVersionId: string | null;
+  workspaceWorkflowId: string | null;
+  updatedAt: string;
+};
+
+type CoreWorkflowVersionResult = {
+  id: string;
+  label: string;
+  status: string;
+  workspaceWorkflowVersionId: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
 describe('coreWorkflow (e2e)', () => {
   let workspaceWorkflowId: string;
 
@@ -81,7 +99,10 @@ describe('coreWorkflow (e2e)', () => {
   });
 
   it('should read one workflow by its workspace id', async () => {
-    const coreWorkflow = await pollWorkflowGraphqlRequest({
+    const coreWorkflow = await pollWorkflowGraphqlRequest<
+      { coreWorkflow: CoreWorkflowResult | null },
+      CoreWorkflowResult | null | undefined
+    >({
       query: CORE_WORKFLOW_QUERY,
       variables: { workspaceWorkflowId },
       extract: (data) => data?.coreWorkflow,
@@ -108,7 +129,10 @@ describe('coreWorkflow (e2e)', () => {
   });
 
   it('should expose the version content the show page renders', async () => {
-    const versions = await pollWorkflowGraphqlRequest({
+    const versions = await pollWorkflowGraphqlRequest<
+      { coreWorkflowVersions: CoreWorkflowVersionResult[] },
+      CoreWorkflowVersionResult[]
+    >({
       query: CORE_WORKFLOW_VERSIONS_QUERY,
       variables: { workspaceWorkflowId },
       extract: (data) => data?.coreWorkflowVersions ?? [],

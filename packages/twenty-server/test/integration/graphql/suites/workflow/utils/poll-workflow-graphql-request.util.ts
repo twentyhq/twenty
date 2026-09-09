@@ -3,7 +3,7 @@ import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow
 const POLL_ATTEMPTS = 20;
 const POLL_INTERVAL_MS = 250;
 
-export const pollWorkflowGraphqlRequest = async <TResult>({
+export const pollWorkflowGraphqlRequest = async <TData, TResult>({
   query,
   variables,
   extract,
@@ -11,7 +11,7 @@ export const pollWorkflowGraphqlRequest = async <TResult>({
 }: {
   query: string;
   variables?: object;
-  extract: (data: any) => TResult;
+  extract: (data: TData | undefined) => TResult;
   until: (result: TResult) => boolean;
 }): Promise<TResult> => {
   let result: TResult = extract(undefined);
@@ -21,7 +21,7 @@ export const pollWorkflowGraphqlRequest = async <TResult>({
 
     expect(response.body.errors).toBeUndefined();
 
-    result = extract(response.body.data);
+    result = extract(response.body.data as TData | undefined);
 
     if (until(result)) {
       return result;
