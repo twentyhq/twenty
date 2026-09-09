@@ -19,11 +19,15 @@ const readPositiveNumber = (value: unknown): number | undefined =>
     ? value
     : undefined;
 
-const readNested = (
-  model: ArtificialAnalysisModel,
-  containerKey: string,
-  leafKey: string,
-): number | undefined => {
+const readNested = ({
+  model,
+  containerKey,
+  leafKey,
+}: {
+  model: ArtificialAnalysisModel;
+  containerKey: string;
+  leafKey: string;
+}): number | undefined => {
   const container = model[containerKey];
 
   if (typeof container !== 'object' || container === null) {
@@ -92,29 +96,33 @@ export const fetchArtificialAnalysisBenchmarks = async (
     // `cost_per_task`; only the speed figures are top level. Reading them all
     // from the top level yields matched models carrying no usable number.
     const record: BenchmarkRecord = {
-      intelligenceIndex: readNested(
+      intelligenceIndex: readNested({
         model,
-        'evaluations',
-        'artificial_analysis_intelligence_index',
-      ),
+        containerKey: 'evaluations',
+        leafKey: 'artificial_analysis_intelligence_index',
+      }),
       outputTokensPerSecond: readPositiveNumber(
         model.median_output_tokens_per_second,
       ),
       timeToFirstTokenSeconds: readPositiveNumber(
         model.median_time_to_first_token_seconds,
       ),
-      costPerTask: readNested(model, 'cost_per_task', 'total_cost'),
+      costPerTask: readNested({
+        model,
+        containerKey: 'cost_per_task',
+        leafKey: 'total_cost',
+      }),
       observedPrices: {
-        inputPerMillionTokens: readNested(
+        inputPerMillionTokens: readNested({
           model,
-          'pricing',
-          'price_1m_input_tokens',
-        ),
-        outputPerMillionTokens: readNested(
+          containerKey: 'pricing',
+          leafKey: 'price_1m_input_tokens',
+        }),
+        outputPerMillionTokens: readNested({
           model,
-          'pricing',
-          'price_1m_output_tokens',
-        ),
+          containerKey: 'pricing',
+          leafKey: 'price_1m_output_tokens',
+        }),
       },
       aliases,
     };

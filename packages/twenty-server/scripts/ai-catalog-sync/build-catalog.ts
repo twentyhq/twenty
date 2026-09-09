@@ -99,11 +99,15 @@ const extractCost = (
   };
 };
 
-const buildModel = (
-  providerName: string,
-  modelId: string,
-  modelData: ModelsDevModel,
-): GeneratedModel => {
+const buildModel = ({
+  providerName,
+  modelId,
+  modelData,
+}: {
+  providerName: string;
+  modelId: string;
+  modelData: ModelsDevModel;
+}): GeneratedModel => {
   const model: GeneratedModel = {
     name: modelId,
     label: modelData.name ?? modelId,
@@ -167,7 +171,7 @@ export const buildCatalog = (data: ModelsDevData): GeneratedCatalog => {
           isLanguageModel(modelId) && meetsInclusionCriteria(modelData),
       )
       .map(([modelId, modelData]) =>
-        buildModel(providerName, modelId, modelData),
+        buildModel({ providerName, modelId, modelData }),
       );
 
     if (models.length === 0) {
