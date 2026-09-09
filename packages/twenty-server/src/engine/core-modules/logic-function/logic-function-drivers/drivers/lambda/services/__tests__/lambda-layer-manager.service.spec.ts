@@ -34,11 +34,7 @@ describe('LambdaLayerManagerService.ensureSdkLayer', () => {
   const send = jest.fn();
   const awsClient = {
     getLambdaClient: async () => ({ send }),
-    getExistingLayerArn: jest.fn(async (layerName: string) =>
-      liveVersions.length > 0
-        ? `arn:${layerName}:${liveVersions[liveVersions.length - 1]}`
-        : undefined,
-    ),
+    getExistingLayerArn: jest.fn(),
   };
   const sdkClientArchiveService = {
     downloadArchiveBuffer: jest.fn(async () => Buffer.from('zip')),
@@ -80,6 +76,12 @@ describe('LambdaLayerManagerService.ensureSdkLayer', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     lockChains.clear();
+    awsClient.getExistingLayerArn.mockImplementation(
+      async (layerName: string) =>
+        liveVersions.length > 0
+          ? `arn:${layerName}:${liveVersions[liveVersions.length - 1]}`
+          : undefined,
+    );
     flatApplication = {
       id: APPLICATION_ID,
       workspaceId: WORKSPACE_ID,
@@ -132,6 +134,44 @@ describe('LambdaLayerManagerService.ensureSdkLayer', () => {
     expect(arn).toMatch(/:1$/);
     expect(send).not.toHaveBeenCalled();
     expect(cacheLockService.withLock).not.toHaveBeenCalled();
+  });
+
+  it('creates the dependencies layer once when two functions of the application build concurrently', async () => {
+    const service = buildService();
+    let depsLayerExists = false;
+    let finishCreation: () => void = () => undefined;
+    const creationInFlight = new Promise<void>((resolve) => {
+      finishCreation = resolve;
+    });
+    const createDepsLayer = jest
+      .spyOn(
+        service as unknown as { createDepsLayer: () => Promise<void> },
+        'createDepsLayer',
+      )
+      .mockImplementation(async () => {
+        await creationInFlight;
+        depsLayerExists = true;
+      });
+
+    awsClient.getExistingLayerArn.mockImplementation(
+      async (layerName: string) =>
+        depsLayerExists ? `arn:${layerName}:1` : undefined,
+    );
+
+    const context = {
+      flatApplication,
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    };
+
+    const firstBuild = service.ensureDepsLayer(context);
+    const secondBuild = service.ensureDepsLayer(context);
+
+    finishCreation();
+
+    const [firstArn, secondArn] = await Promise.all([firstBuild, secondBuild]);
+
+    expect(firstArn).toBe(secondArn);
+    expect(createDepsLayer).toHaveBeenCalledTimes(1);
   });
 
   it('publishes the stale layer once when two functions of the application build concurrently', async () => {

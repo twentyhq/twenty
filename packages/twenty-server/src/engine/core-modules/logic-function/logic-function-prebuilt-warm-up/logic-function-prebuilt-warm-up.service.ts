@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
+import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -12,6 +13,8 @@ import {
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+const WARM_UP_CHUNK_SIZE = 10;
 
 @Injectable()
 export class LogicFunctionPrebuiltWarmUpService {
@@ -100,23 +103,38 @@ export class LogicFunctionPrebuiltWarmUpService {
           isLogicFunctionReadyForPrebuiltInstall(flatLogicFunction),
       );
 
+    const [firstFlatLogicFunction, ...remainingFlatLogicFunctions] =
+      flatLogicFunctions;
+
+    if (!isDefined(firstFlatLogicFunction)) {
+      return;
+    }
+
     const failedLogicFunctionIds: string[] = [];
 
-    for (const flatLogicFunction of flatLogicFunctions) {
-      const installStart = Date.now();
-
-      try {
-        await this.ensurePrebuiltBundleInstalled({
-          flatLogicFunction,
-          flatApplication,
-        });
-
-        this.logger.log(
-          `[lambda-timing] event=warm_up_prebuilt fnId=${flatLogicFunction.id} ` +
-            `install_duration_ms=${Date.now() - installStart}`,
+    if (
+      !(await this.warmUpLogicFunction({
+        flatLogicFunction: firstFlatLogicFunction,
+        flatApplication,
+      }))
+    ) {
+      failedLogicFunctionIds.push(firstFlatLogicFunction.id);
+    } else {
+      for (const flatLogicFunctionsChunk of chunk(
+        remainingFlatLogicFunctions,
+        WARM_UP_CHUNK_SIZE,
+      )) {
+        const results = await Promise.all(
+          flatLogicFunctionsChunk.map((flatLogicFunction) =>
+            this.warmUpLogicFunction({ flatLogicFunction, flatApplication }),
+          ),
         );
-      } catch {
-        failedLogicFunctionIds.push(flatLogicFunction.id);
+
+        failedLogicFunctionIds.push(
+          ...flatLogicFunctionsChunk
+            .filter((_flatLogicFunction, index) => !results[index])
+            .map((flatLogicFunction) => flatLogicFunction.id),
+        );
       }
     }
 
@@ -126,6 +144,32 @@ export class LogicFunctionPrebuiltWarmUpService {
           `for application ${applicationId} in workspace ${workspaceId}: ${failedLogicFunctionIds.join(', ')}`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
       );
+    }
+  }
+
+  private async warmUpLogicFunction({
+    flatLogicFunction,
+    flatApplication,
+  }: {
+    flatLogicFunction: FlatLogicFunction;
+    flatApplication: FlatApplication;
+  }): Promise<boolean> {
+    const installStart = Date.now();
+
+    try {
+      await this.ensurePrebuiltBundleInstalled({
+        flatLogicFunction,
+        flatApplication,
+      });
+
+      this.logger.log(
+        `[lambda-timing] event=warm_up_prebuilt fnId=${flatLogicFunction.id} ` +
+          `install_duration_ms=${Date.now() - installStart}`,
+      );
+
+      return true;
+    } catch {
+      return false;
     }
   }
 }

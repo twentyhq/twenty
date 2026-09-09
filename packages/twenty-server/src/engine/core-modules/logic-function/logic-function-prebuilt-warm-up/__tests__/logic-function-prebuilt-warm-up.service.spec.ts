@@ -179,6 +179,67 @@ describe('LogicFunctionPrebuiltWarmUpService', () => {
     );
   });
 
+  it('builds the first function alone, then the rest in chunks of ten', async () => {
+    const flatLogicFunctions = Array.from({ length: 15 }, (_, index) =>
+      buildFlatLogicFunction({ id: `function-${index}` }),
+    );
+
+    setFlatLogicFunctions(flatLogicFunctions);
+
+    const startedIds: string[] = [];
+    let inFlight = 0;
+    let maxInFlight = 0;
+    let idsInFlightWhenFirstCompleted: string[] = [];
+
+    driver.installPrebuiltBundle.mockImplementation(
+      async ({ flatLogicFunction }: { flatLogicFunction: { id: string } }) => {
+        startedIds.push(flatLogicFunction.id);
+        inFlight += 1;
+        maxInFlight = Math.max(maxInFlight, inFlight);
+        await Promise.resolve();
+        if (flatLogicFunction.id === 'function-0') {
+          idsInFlightWhenFirstCompleted = [...startedIds];
+        }
+        inFlight -= 1;
+      },
+    );
+
+    await service.warmUpApplicationLogicFunctions({
+      workspaceId: WORKSPACE_ID,
+      applicationId: APPLICATION_ID,
+      logicFunctionUniversalIdentifiers: flatLogicFunctions.map(
+        (flatLogicFunction) => flatLogicFunction.universalIdentifier,
+      ),
+    });
+
+    expect(driver.installPrebuiltBundle).toHaveBeenCalledTimes(15);
+    expect(idsInFlightWhenFirstCompleted).toEqual(['function-0']);
+    expect(maxInFlight).toBe(10);
+  });
+
+  it('stops after the first function when its build fails', async () => {
+    setFlatLogicFunctions([
+      buildFlatLogicFunction({ id: 'failing' }),
+      buildFlatLogicFunction({ id: 'ready-2' }),
+    ]);
+    driver.installPrebuiltBundle.mockRejectedValue(
+      new Error('lambda unavailable'),
+    );
+
+    await expect(
+      service.warmUpApplicationLogicFunctions({
+        workspaceId: WORKSPACE_ID,
+        applicationId: APPLICATION_ID,
+        logicFunctionUniversalIdentifiers: [
+          'universal-failing',
+          'universal-ready-2',
+        ],
+      }),
+    ).rejects.toThrow('Failed to warm up 1 of 2 prebuilt logic functions');
+
+    expect(driver.installPrebuiltBundle).toHaveBeenCalledTimes(1);
+  });
+
   it('does nothing when the application is no longer installed', async () => {
     setFlatLogicFunctions([buildFlatLogicFunction({ id: 'ready-1' })], {
       withApplication: false,
@@ -195,6 +256,7 @@ describe('LogicFunctionPrebuiltWarmUpService', () => {
 
   it('keeps installing the other functions and throws when one install fails', async () => {
     setFlatLogicFunctions([
+      buildFlatLogicFunction({ id: 'ready-1' }),
       buildFlatLogicFunction({ id: 'failing' }),
       buildFlatLogicFunction({ id: 'ready-2' }),
     ]);
@@ -212,8 +274,8 @@ describe('LogicFunctionPrebuiltWarmUpService', () => {
         applicationId: APPLICATION_ID,
         logicFunctionUniversalIdentifiers: ALL_UNIVERSAL_IDENTIFIERS,
       }),
-    ).rejects.toThrow('Failed to warm up 1 of 2 prebuilt logic functions');
+    ).rejects.toThrow('Failed to warm up 1 of 3 prebuilt logic functions');
 
-    expect(driver.installPrebuiltBundle).toHaveBeenCalledTimes(2);
+    expect(driver.installPrebuiltBundle).toHaveBeenCalledTimes(3);
   });
 });

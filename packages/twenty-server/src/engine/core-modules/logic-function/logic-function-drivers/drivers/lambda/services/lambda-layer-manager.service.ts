@@ -35,9 +35,11 @@ type LayerAppContext = {
   applicationUniversalIdentifier: string;
 };
 
-const SDK_LAYER_LOCK_TTL_MS = 120_000;
-const SDK_LAYER_LOCK_RETRY_MS = 500;
-const SDK_LAYER_LOCK_MAX_RETRIES = 240;
+const LAYER_LOCK_OPTIONS = {
+  ttl: 120_000,
+  ms: 500,
+  maxRetries: 240,
+};
 
 export class LambdaLayerManagerService {
   private readonly logger = new Logger(LambdaLayerManagerService.name);
@@ -67,17 +69,30 @@ export class LambdaLayerManagerService {
       return existingArn;
     }
 
-    await this.createDepsLayer({ ...context, layerName });
+    return this.cacheLockService.withLock(
+      async () => {
+        const arnCreatedWhileWaiting =
+          await this.awsClient.getExistingLayerArn(layerName);
 
-    const newArn = await this.awsClient.getExistingLayerArn(layerName);
+        if (isDefined(arnCreatedWhileWaiting)) {
+          return arnCreatedWhileWaiting;
+        }
 
-    if (!isDefined(newArn)) {
-      throw new Error(
-        `Layer '${layerName}' was not created by the yarn install Lambda`,
-      );
-    }
+        await this.createDepsLayer({ ...context, layerName });
 
-    return newArn;
+        const newArn = await this.awsClient.getExistingLayerArn(layerName);
+
+        if (!isDefined(newArn)) {
+          throw new Error(
+            `Layer '${layerName}' was not created by the yarn install Lambda`,
+          );
+        }
+
+        return newArn;
+      },
+      `lambda-deps-layer:${layerName}`,
+      LAYER_LOCK_OPTIONS,
+    );
   }
 
   async ensureSdkLayer(context: LayerAppContext): Promise<string> {
@@ -117,11 +132,7 @@ export class LambdaLayerManagerService {
         });
       },
       `lambda-sdk-layer:${layerName}`,
-      {
-        ttl: SDK_LAYER_LOCK_TTL_MS,
-        ms: SDK_LAYER_LOCK_RETRY_MS,
-        maxRetries: SDK_LAYER_LOCK_MAX_RETRIES,
-      },
+      LAYER_LOCK_OPTIONS,
     );
   }
 
