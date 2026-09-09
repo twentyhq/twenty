@@ -3,13 +3,12 @@
   "measuredAt": "2026-09-09",
   "models": {
     "gpt-5-nano": {
-      "intelligenceIndex": 7.1,
+      "intelligenceIndex": 13,
       "measuredAt": "2026-09-09",
       "aliases": [
         "gpt-5-nano",
-        "gpt-5-nano-minimal",
-        "05e45a36-b5c6-47a1-8adb-9ddc19add5b3",
-        "GPT-5 nano (minimal)"
+        "e18e5e6a-5a31-4c0b-b80b-ac401392f446",
+        "GPT-5 nano (high)"
       ]
     },
     "gpt-4.1-nano": {
@@ -32,14 +31,14 @@
       ]
     },
     "gpt-5.6-sol": {
-      "intelligenceIndex": 33.8,
-      "outputTokensPerSecond": 68.784,
+      "intelligenceIndex": 47.1,
+      "outputTokensPerSecond": 73.005,
       "measuredAt": "2026-09-09",
       "aliases": [
         "gpt-5.6-sol",
-        "gpt-5-6-sol-low",
-        "0904b596-8932-43bd-9b21-324f128e1723",
-        "GPT-5.6 Sol (low)"
+        "gpt-5-6-sol",
+        "d93edfe8-bf35-49ad-b56e-b18116142a1c",
+        "GPT-5.6 Sol (max)"
       ]
     },
     "gpt-4o-2024-08-06": {
@@ -52,14 +51,13 @@
       ]
     },
     "gpt-6-astra": {
-      "intelligenceIndex": 51,
-      "outputTokensPerSecond": 55.102,
+      "intelligenceIndex": 52.8,
+      "outputTokensPerSecond": 60.822,
       "measuredAt": "2026-09-09",
       "aliases": [
         "gpt-6-astra",
-        "gpt-6-astra-high",
-        "e05a4828-0536-4876-870d-a235023f992b",
-        "GPT-6 Astra (high)"
+        "2f339a97-9a0d-499a-9cb5-e0db665bfa25",
+        "GPT-6 Astra (max)"
       ]
     },
     "gpt-4.1-mini": {
@@ -107,24 +105,24 @@
       "aliases": ["o1", "5ad2f60f-ee05-49fd-85a0-cef69aa7cb7b"]
     },
     "gpt-4o": {
-      "intelligenceIndex": 7.7,
+      "intelligenceIndex": 9,
       "measuredAt": "2026-09-09",
       "aliases": [
         "gpt-4o",
-        "gpt-4o-2024-08-06",
-        "8c1be908-67b6-4cf4-ba08-83ddbe44fde3",
-        "GPT-4o (Aug '24)"
+        "gpt-4o-chatgpt-03-25",
+        "575498d6-60ec-466b-9372-fea19911fd07",
+        "GPT-4o (March 2025, chatgpt-4o-latest)"
       ]
     },
     "gpt-5.6-luna": {
-      "intelligenceIndex": 21.8,
-      "outputTokensPerSecond": 100.131,
+      "intelligenceIndex": 37.5,
+      "outputTokensPerSecond": 123.243,
       "measuredAt": "2026-09-09",
       "aliases": [
         "gpt-5.6-luna",
-        "gpt-5-6-luna-low",
-        "050c61cd-cddc-463a-a30a-a82aaa37be59",
-        "GPT-5.6 Luna (low)"
+        "gpt-5-6-luna",
+        "426d24c8-49ae-482a-b4a8-20f1c53f21c1",
+        "GPT-5.6 Luna (max)"
       ]
     },
     "gpt-5.3-codex": {
@@ -173,33 +171,34 @@
       ]
     },
     "gpt-5.4-mini": {
-      "intelligenceIndex": 19.7,
+      "intelligenceIndex": 24.6,
       "measuredAt": "2026-09-09",
       "aliases": [
         "gpt-5.4-mini",
-        "gpt-5-4-mini-medium",
-        "392063ba-c3b5-47e8-ba67-a7b0b34f6824",
-        "GPT-5.4 mini (medium)"
+        "gpt-5-4-mini",
+        "ba242e40-83b7-4cd3-a0e0-b56237984914",
+        "GPT-5.4 mini (xhigh)"
       ]
     },
     "gpt-5-mini": {
-      "intelligenceIndex": 17.4,
+      "intelligenceIndex": 20.6,
       "measuredAt": "2026-09-09",
       "aliases": [
         "gpt-5-mini",
-        "29855680-7469-43eb-8b88-cd3fb1d99da3",
-        "GPT-5 mini (high)"
+        "gpt-5-mini-medium",
+        "c3274a19-6d3c-4d01-ab9b-5055a0a40429",
+        "GPT-5 mini (medium)"
       ]
     },
     "gpt-5.6-terra": {
-      "intelligenceIndex": 32.8,
-      "outputTokensPerSecond": 103.012,
+      "intelligenceIndex": 42.3,
+      "outputTokensPerSecond": 124.121,
       "measuredAt": "2026-09-09",
       "aliases": [
         "gpt-5.6-terra",
-        "gpt-5-6-terra-medium",
-        "26e0f83a-ca98-4f34-94ac-7c5e251ee410",
-        "GPT-5.6 Terra (medium)"
+        "gpt-5-6-terra",
+        "bcf8db0a-3bb6-4d82-9516-0f57370c85a6",
+        "GPT-5.6 Terra (max)"
       ]
     },
     "gpt-4": {
@@ -208,23 +207,22 @@
       "aliases": ["gpt-4", "6a7c0e25-1dcb-4b15-8495-a8536a9da051", "GPT-4"]
     },
     "gpt-5.2": {
-      "intelligenceIndex": 17,
+      "intelligenceIndex": 30.4,
       "measuredAt": "2026-09-09",
       "aliases": [
         "gpt-5.2",
-        "gpt-5-2-non-reasoning",
-        "6dd8ba55-5680-44a9-b309-82928165d5f0",
-        "GPT-5.2 (Non-reasoning)"
+        "gpt-5-2",
+        "498862c3-f9ac-49d2-852f-16a02bb0c38f",
+        "GPT-5.2 (xhigh)"
       ]
     },
     "gpt-5": {
-      "intelligenceIndex": 22.9,
+      "intelligenceIndex": 23,
       "measuredAt": "2026-09-09",
       "aliases": [
         "gpt-5",
-        "gpt-5-medium",
-        "5e965af0-ca5c-4f47-9ba9-06000508b84a",
-        "GPT-5 (medium)"
+        "48e50f00-1fd1-4acc-b337-61078aa341e6",
+        "GPT-5 (high)"
       ]
     },
     "o4-mini": {
@@ -253,34 +251,33 @@
       "aliases": ["o3-pro", "ca04852c-eaae-4881-a208-f9b2ca3b7cd6"]
     },
     "gpt-5.5": {
-      "intelligenceIndex": 23.2,
+      "intelligenceIndex": 38.6,
       "measuredAt": "2026-09-09",
       "aliases": [
         "gpt-5.5",
-        "gpt-5-5-non-reasoning",
-        "6f1a7562-6e96-46ac-af4f-6ba5a7a3da96",
-        "GPT-5.5 (Non-reasoning)"
+        "gpt-5-5",
+        "1f054429-397e-4fdb-9e71-67bc92c1735e",
+        "GPT-5.5 (xhigh)"
       ]
     },
     "gpt-4o-2024-11-20": {
-      "intelligenceIndex": 7.7,
+      "intelligenceIndex": 9,
       "measuredAt": "2026-09-09",
       "aliases": [
         "gpt-4o-2024-11-20",
-        "gpt-4o-2024-08-06",
-        "8c1be908-67b6-4cf4-ba08-83ddbe44fde3",
-        "GPT-4o (Aug '24)"
+        "gpt-4o-chatgpt-03-25",
+        "575498d6-60ec-466b-9372-fea19911fd07",
+        "GPT-4o (March 2025, chatgpt-4o-latest)"
       ]
     },
     "claude-sonnet-4-6": {
-      "intelligenceIndex": 23.3,
-      "outputTokensPerSecond": 52.86,
+      "intelligenceIndex": 30.5,
       "measuredAt": "2026-09-09",
       "aliases": [
         "claude-sonnet-4-6",
-        "claude-sonnet-4-6-non-reasoning-low-effort",
-        "f2e21112-192e-4aed-ae82-68ca3b38e667",
-        "Claude Sonnet 4.6 (Non-reasoning, Low Effort)"
+        "claude-sonnet-4-6-adaptive",
+        "df8d14e0-3997-4e4d-b4ad-9c047acc9c69",
+        "Claude Sonnet 4.6 (Adaptive Reasoning, Max Effort)"
       ]
     },
     "claude-opus-5": {
@@ -304,14 +301,13 @@
       ]
     },
     "claude-fable-5-1": {
-      "intelligenceIndex": 51.2,
-      "outputTokensPerSecond": 53.374,
+      "intelligenceIndex": 53.4,
+      "outputTokensPerSecond": 69.904,
       "measuredAt": "2026-09-09",
       "aliases": [
         "claude-fable-5-1",
-        "claude-fable-5-1-high",
-        "9d7d72cd-d95d-45a0-b109-4ad292c9aabd",
-        "Claude Fable 5.1 (Adaptive Reasoning, High Effort, Default Fallback)"
+        "3e87c73e-a257-495e-9730-367a66229811",
+        "Claude Fable 5.1 (Adaptive Reasoning, Max Effort, Default Fallback)"
       ]
     },
     "claude-opus-4-6": {
@@ -479,14 +475,14 @@
       ]
     },
     "gemini-3.7-flash": {
-      "intelligenceIndex": 39.4,
-      "outputTokensPerSecond": 343.357,
+      "intelligenceIndex": 39.6,
+      "outputTokensPerSecond": 329.345,
       "measuredAt": "2026-09-09",
       "aliases": [
         "gemini-3.7-flash",
-        "gemini-3-7-flash",
-        "b2331108-72ed-415a-82d1-188633875bbc",
-        "Gemini 3.7 Flash (high)"
+        "gemini-3-7-flash-medium",
+        "eb0d4272-7204-42b9-b875-8866fed58548",
+        "Gemini 3.7 Flash (medium)"
       ]
     },
     "gemini-2.5-pro": {
@@ -511,13 +507,13 @@
       ]
     },
     "gemini-2.5-flash": {
-      "intelligenceIndex": 9.9,
+      "intelligenceIndex": 13.1,
       "measuredAt": "2026-09-09",
       "aliases": [
         "gemini-2.5-flash",
-        "gemini-2-5-flash",
-        "6afbfb62-27e4-435e-9c85-d9fe1b92519e",
-        "Gemini 2.5 Flash (Non-reasoning)"
+        "gemini-2-5-flash-reasoning",
+        "219ed587-60c5-4a48-9517-8480e08d0ca1",
+        "Gemini 2.5 Flash (Reasoning)"
       ]
     },
     "magistral-small": {
@@ -548,46 +544,6 @@
         "Magistral Medium 1"
       ]
     },
-    "mistral-medium-latest": {
-      "intelligenceIndex": 5.5,
-      "measuredAt": "2026-09-09",
-      "aliases": [
-        "mistral-medium-latest",
-        "mistral-medium",
-        "1f05af98-1ec6-4506-a0b8-57a8c9b63878",
-        "Mistral Medium"
-      ]
-    },
-    "devstral-medium-latest": {
-      "intelligenceIndex": 9,
-      "measuredAt": "2026-09-09",
-      "aliases": [
-        "devstral-medium-latest",
-        "devstral-medium",
-        "aba82268-2bb7-4a0f-80be-9b7722e2145b",
-        "Devstral Medium"
-      ]
-    },
-    "mistral-small-latest": {
-      "intelligenceIndex": 5.8,
-      "measuredAt": "2026-09-09",
-      "aliases": [
-        "mistral-small-latest",
-        "mistral-small",
-        "7c045ca0-b331-488d-af31-df0fd331dfd1",
-        "Mistral Small (Sep '24)"
-      ]
-    },
-    "mistral-large-latest": {
-      "intelligenceIndex": 5.8,
-      "measuredAt": "2026-09-09",
-      "aliases": [
-        "mistral-large-latest",
-        "mistral-large",
-        "5e4e4590-a77e-4b66-95f8-f3960a1a7c68",
-        "Mistral Large (Feb '24)"
-      ]
-    },
     "pixtral-large-latest": {
       "intelligenceIndex": 7.1,
       "measuredAt": "2026-09-09",
@@ -599,14 +555,13 @@
       ]
     },
     "grok-4.3": {
-      "intelligenceIndex": 24.8,
-      "outputTokensPerSecond": 136.915,
+      "intelligenceIndex": 25.4,
       "measuredAt": "2026-09-09",
       "aliases": [
         "grok-4.3",
-        "grok-4-3-medium",
-        "5e8b0d98-a3b4-42b5-93d8-ecb748788754",
-        "Grok 4.3 (medium)"
+        "grok-4-3",
+        "948892b5-db03-4118-a4a8-ccd51ed871ea",
+        "Grok 4.3 (high)"
       ]
     },
     "grok-4.5": {
@@ -621,14 +576,14 @@
       ]
     },
     "grok-4.6": {
-      "intelligenceIndex": 44.3,
-      "outputTokensPerSecond": 63.212,
+      "intelligenceIndex": 44.4,
+      "outputTokensPerSecond": 62.454,
       "measuredAt": "2026-09-09",
       "aliases": [
         "grok-4.6",
-        "grok-4-6-xhigh",
-        "d6f43d0a-e8c4-447c-9ff7-5cf0a9d59aa3",
-        "Grok 4.6 (xhigh)"
+        "grok-4-6",
+        "c8adc5cf-fd5a-407b-af51-dc3bede3e49c",
+        "Grok 4.6 (high)"
       ]
     },
     "grok-4.20-0309-non-reasoning": {
