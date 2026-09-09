@@ -6,7 +6,7 @@ export const formatDollarPrice = (dollars: number): string => {
   }
 
   if (Math.abs(dollars) < 0.01) {
-    return `$${dollars.toFixed(4)}`;
+    return `$${formatNumber(dollars, { decimals: 4 })}`;
   }
 
   return `$${formatNumber(dollars, { decimals: 2 })}`;

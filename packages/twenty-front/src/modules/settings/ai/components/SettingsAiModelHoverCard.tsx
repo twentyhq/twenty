@@ -1,9 +1,9 @@
-import { useId } from 'react';
+import { useContext, useId } from 'react';
 import { AppTooltip } from 'twenty-ui/surfaces';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsAiModelComparisonBar } from '@/settings/ai/components/SettingsAiModelComparisonBar';
 import { SettingsAiModelInformation } from '@/settings/ai/components/SettingsAiModelInformation';
@@ -107,6 +107,7 @@ export const SettingsAiModelHoverCard = ({
   comparisonModels = [],
   model: requestedModel,
 }: SettingsAiModelHoverCardProps) => {
+  const { theme } = useContext(ThemeContext);
   const tooltipId = useId().replace(/:/g, '');
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
@@ -135,7 +136,7 @@ export const SettingsAiModelHoverCard = ({
         tabIndex={isDefined(item.description) ? 0 : undefined}
       >
         <StyledItemHeader>
-          <Icon size={14} />
+          <Icon size={theme.icon.size.sm} />
           <StyledLabel>{item.label}</StyledLabel>
         </StyledItemHeader>
         <StyledItemValue>

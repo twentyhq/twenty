@@ -1,14 +1,14 @@
-import { useId } from 'react';
+import { useContext, useId } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBox, IconServer } from 'twenty-ui/icon';
 import { AppTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatCompactNumber } from '@/settings/ai/utils/formatCompactNumber';
 
 const StyledSection = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
@@ -50,6 +50,7 @@ type SettingsAiModelInformationProps = { model: AiModelSummary };
 export const SettingsAiModelInformation = ({
   model,
 }: SettingsAiModelInformationProps) => {
+  const { theme } = useContext(ThemeContext);
   const tooltipId = useId().replace(/:/g, '');
   const serverLocation = model.dataResidency;
   const hasServerLocation = isNonEmptyString(serverLocation);
@@ -59,7 +60,7 @@ export const SettingsAiModelInformation = ({
       {hasServerLocation && (
         <StyledRow>
           <StyledLabel>
-            <IconServer size={14} />
+            <IconServer size={theme.icon.size.sm} />
             {t`Server location`}
           </StyledLabel>
           <StyledValue
@@ -81,7 +82,7 @@ export const SettingsAiModelInformation = ({
       )}
       <StyledRow>
         <StyledLabel>
-          <IconBox size={14} />
+          <IconBox size={theme.icon.size.sm} />
           {t`Context window`}
         </StyledLabel>
         <StyledValue
@@ -90,9 +91,7 @@ export const SettingsAiModelInformation = ({
           tabIndex={0}
         >
           {isDefined(model.contextWindowTokens) && model.contextWindowTokens > 0
-            ? formatNumber(model.contextWindowTokens, {
-                abbreviate: true,
-              }).replace(/k$/, 'K')
+            ? formatCompactNumber(model.contextWindowTokens)
             : t`Unknown`}
         </StyledValue>
         <span

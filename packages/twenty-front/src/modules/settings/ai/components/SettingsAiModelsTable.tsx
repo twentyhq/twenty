@@ -86,7 +86,7 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
     handleHoverCardKeyDown,
     keepOpen,
     scheduleClose,
-  } = useSettingsAiModelHoverCard();
+  } = useSettingsAiModelHoverCard(models.map((model) => model.modelId));
   const activeModel = models.find(
     (model) => model.modelId === activeHoverCard?.modelId,
   );
@@ -133,12 +133,12 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
           {hasRemove && <TableHeader />}
         </TableRow>
         <TableBody>
-          {models.map((model, index) => {
+          {models.map((model) => {
             const ModelIcon = getModelIcon(
               model.modelFamily,
               model.providerName,
             );
-            const safeId = `${tableId}-${index}`;
+            const safeId = `${tableId}-${Array.from(model.modelId, (character) => character.codePointAt(0)?.toString(16)).join('-')}`;
             const checked = isChecked(model);
             const disabled = isDisabled?.(model) ?? false;
             const { benchmarkItems, pricingItems } = getAiModelComparisonItems({

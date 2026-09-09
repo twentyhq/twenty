@@ -1,11 +1,14 @@
 import { type KeyboardEvent, useRef, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
-export const useSettingsAiModelHoverCard = () => {
+export const useSettingsAiModelHoverCard = (modelIds: string[]) => {
   const [activeHoverCard, setActiveHoverCard] = useState<{
     modelId: string;
     anchorId: string;
   } | null>(null);
+  if (activeHoverCard && !modelIds.includes(activeHoverCard.modelId)) {
+    setActiveHoverCard(null);
+  }
   const hoverCardRef = useRef<HTMLDivElement>(null);
   const scheduleClose = useDebouncedCallback(() => {
     const focusedElement = document.activeElement;

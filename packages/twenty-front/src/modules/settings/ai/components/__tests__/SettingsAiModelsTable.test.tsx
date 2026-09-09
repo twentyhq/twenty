@@ -140,3 +140,35 @@ it('keeps custom model anchors distinct when identifiers contain punctuation', a
   expect(tooltip).toHaveTextContent('40');
   expect(screen.getAllByRole('tooltip')).toHaveLength(1);
 });
+
+it('keeps model anchors stable after sorting and dismisses filtered models', async () => {
+  const user = userEvent.setup();
+  const otherModel = { ...model, modelId: 'other', label: 'Other' };
+  const store = createStore();
+  const renderTable = (models: (typeof model)[]) => (
+    <Provider store={store}>
+      <I18nProvider i18n={i18n}>
+        <SettingsAiModelsTable
+          models={models}
+          comparisonModels={[model, otherModel]}
+          isChecked={() => true}
+          onToggle={jest.fn()}
+          anchorPrefix="sorted"
+        />
+      </I18nProvider>
+    </Provider>
+  );
+  const { rerender } = render(renderTable([model, otherModel]));
+  const anchorId = screen.getByRole('button', { name: 'Model A' }).id;
+  await user.hover(screen.getByRole('button', { name: 'Model A' }));
+  await screen.findByRole('tooltip');
+  rerender(renderTable([otherModel, model]));
+  expect(screen.getByRole('button', { name: 'Model A' }).id).toBe(anchorId);
+  expect(screen.getByRole('tooltip')).toBeInTheDocument();
+  rerender(renderTable([otherModel]));
+  await waitFor(() =>
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument(),
+  );
+  rerender(renderTable([model, otherModel]));
+  expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+});

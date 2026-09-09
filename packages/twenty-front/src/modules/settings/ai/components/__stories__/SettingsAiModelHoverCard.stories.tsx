@@ -1,3 +1,4 @@
+import { isDisplayableNumber } from '@/settings/ai/utils/isDisplayableNumber';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
@@ -177,7 +178,9 @@ export const InSelector: Story = {
     await expect(
       within(canvasElement).getByRole('button', { name: 'Custom model' }),
     ).toBeVisible();
-    await expect(page.queryByText('Intelligence')).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(page.queryByText('Intelligence')).not.toBeInTheDocument(),
+    );
   },
 };
 
@@ -212,8 +215,10 @@ export const CloudCatalog: Story = {
     await expect(canvas.getAllByText('Context window')).toHaveLength(
       args.comparisonModels?.length ?? 0,
     );
-    await expect(canvas.getAllByText('Input cost')).toHaveLength(
-      args.comparisonModels?.length ?? 0,
+    await expect(canvas.queryAllByText('Input cost')).toHaveLength(
+      args.comparisonModels?.filter((model) =>
+        isDisplayableNumber(model.inputCostPerMillionTokens),
+      ).length ?? 0,
     );
     await expect(
       canvas.getAllByText('Data from Artificial Analysis').length,
