@@ -20,6 +20,7 @@ import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
 import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build-slack-assistant-answer-blocks';
 import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-slack-assistant-messages';
+import { buildSlackAnswerDeliveryFailureMessage } from 'src/logic-functions/utils/build-slack-answer-delivery-failure-message';
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
 import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-slack-message-delivery';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
@@ -189,7 +190,7 @@ export const slackAssistantWorkerHandler = async (
     if (!deliveryResult.success && !isDefined(deferredRetryAfterSeconds)) {
       return await finishSlackAssistantRequestWithFailure({
         ...failureContext,
-        errorMessage: `Could not deliver Slack answer: ${deliveryResult.error ?? deliveryResult.message}`,
+        errorMessage: buildSlackAnswerDeliveryFailureMessage(deliveryResult),
       });
     }
 

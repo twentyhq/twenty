@@ -8,6 +8,7 @@ import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-sla
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { type SlackDeliverMessagePayload } from 'src/logic-functions/types/slack-deliver-message-payload.type';
 import { type SlackDeliverMessageResult } from 'src/logic-functions/types/slack-deliver-message-result.type';
+import { buildSlackAnswerDeliveryFailureMessage } from 'src/logic-functions/utils/build-slack-answer-delivery-failure-message';
 import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-slack-message-delivery';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 
@@ -56,7 +57,7 @@ export const slackDeliverMessageHandler = async (
     return { delivered: false, attempt, rescheduled: true };
   }
 
-  const reason = result.error ?? result.message;
+  const failureMessage = buildSlackAnswerDeliveryFailureMessage(result);
 
   if (
     isNonEmptyString(slackAssistantRequestId) &&
@@ -67,9 +68,14 @@ export const slackDeliverMessageHandler = async (
       requestId: slackAssistantRequestId,
       slackChannelId: message.slackChannelId,
       parentMessageTimestamp: message.parentMessageTimestamp,
-      errorMessage: `Could not deliver Slack answer: ${reason}`,
+      errorMessage: failureMessage,
     });
   }
 
-  return { delivered: false, attempt, rescheduled: false, error: reason };
+  return {
+    delivered: false,
+    attempt,
+    rescheduled: false,
+    error: failureMessage,
+  };
 };
