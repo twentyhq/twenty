@@ -1,21 +1,18 @@
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 
-import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
+import { type RecordShareGate } from 'src/engine/record-share/types/record-share-gate.type';
 
 export const isRecordSharedWithPrincipals = ({
-  recordShares,
+  recordShareGate,
   recordId,
-  principalIds,
   accessLevels,
 }: {
-  recordShares: RecordShare[];
+  recordShareGate: RecordShareGate;
   recordId: string;
-  principalIds: string[];
   accessLevels: RecordShareAccessLevel[];
 }): boolean =>
-  recordShares.some(
+  (recordShareGate.recordSharesByRecordId.get(recordId) ?? []).some(
     (recordShare) =>
-      recordShare.recordId === recordId &&
-      principalIds.includes(recordShare.principalId) &&
+      recordShareGate.principalIds.includes(recordShare.principalId) &&
       accessLevels.includes(recordShare.accessLevel),
   );
