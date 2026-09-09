@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useStore } from 'jotai';
 import { Suspense, useEffect, useState } from 'react';
-import { expect, within } from 'storybook/test';
+import { expect, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatTab } from '@/ai/components/AiChatTab';
@@ -14,6 +14,7 @@ import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/should
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const WorkspaceSetupChatStory = () => {
   const store = useStore();
@@ -65,6 +66,26 @@ export const WorkspaceSetup: Story = {
     await expect(
       await canvas.findByText('Welcome to your workspace'),
     ).toBeVisible();
+    await expect(canvas.getByRole('textbox')).toBeVisible();
+  },
+};
+
+export const WorkspaceSetupCompletion: Story = {
+  render: () => <WorkspaceSetupChatStory />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      await canvas.findByText('Welcome to your workspace'),
+    ).toBeVisible();
+    await expect(canvas.getByRole('textbox')).toBeVisible();
+
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+
+    await waitFor(() =>
+      expect(
+        canvas.queryByText('Welcome to your workspace'),
+      ).not.toBeInTheDocument(),
+    );
     await expect(canvas.getByRole('textbox')).toBeVisible();
   },
 };

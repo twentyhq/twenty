@@ -23,8 +23,9 @@ jest.mock('react-router-dom', () => ({
   useLocation: () => ({ state: null }),
 }));
 
+let defaultHomePagePath = '/objects/people';
 jest.mock('@/navigation/hooks/useDefaultHomePagePath', () => ({
-  useDefaultHomePagePath: () => ({ defaultHomePagePath: '/objects/people' }),
+  useDefaultHomePagePath: () => ({ defaultHomePagePath }),
 }));
 
 const closeSidePanelMenuMock = jest.fn();
@@ -81,6 +82,7 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     sessionStorage.clear();
     resetJotaiStore();
     isWorkspaceSetupChat = true;
+    defaultHomePagePath = '/objects/people';
   });
 
   it('keeps the current page and side panel open when setup finishes there', () => {
@@ -109,7 +111,7 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     expect(getProcessedToolCallIds()).toEqual(['side-panel-call']);
   });
 
-  it('should redirect to the companies view and move the chat to the side panel', () => {
+  it('should redirect to the available homepage and move the chat to the side panel', () => {
     jotaiStore.set(shouldContinueAiChatInSidePanelState.atom, true);
 
     const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
@@ -122,7 +124,7 @@ describe('useProcessWorkspaceSetupCompletion', () => {
       );
     });
 
-    expect(navigateMock).toHaveBeenCalledWith('/objects/companies');
+    expect(navigateMock).toHaveBeenCalledWith('/objects/people');
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
     expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
       true,
@@ -143,6 +145,30 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     });
 
     expect(navigateMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('returns to settings and ends setup when no readable object homepage exists', () => {
+    defaultHomePagePath = '/settings/profile';
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    jotaiStore.set(shouldContinueAiChatInSidePanelState.atom, true);
+    const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
+      wrapper: Wrapper,
+    });
+
+    act(() =>
+      result.current.processWorkspaceSetupCompletion(
+        buildCompletionMessage('fallback-call'),
+      ),
+    );
+
+    expect(navigateMock).toHaveBeenCalledWith('/settings/profile');
+    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
+      false,
+    );
+    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
+      false,
+    );
+    expect(closeSidePanelMenuMock).toHaveBeenCalledTimes(1);
   });
 
   it('should not redirect when the chat already left the setup page', () => {

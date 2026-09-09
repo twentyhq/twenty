@@ -6,23 +6,21 @@ import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
 import { processedToolExecutionPartIdsComponentState } from '@/ai/states/processedToolExecutionPartIdsComponentState';
 import { extractCompletedWorkspaceSetupToolParts } from '@/ai/utils/extractCompletedWorkspaceSetupToolParts';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
+import { isSettingsPath } from '~/utils/isSettingsPath';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { AppPath } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
 
 export const useProcessWorkspaceSetupCompletion = () => {
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const aiChatSurface = useContext(AiChatSurfaceContext);
+  const { defaultHomePagePath } = useDefaultHomePagePath();
 
   const returnFromExpandedAiChat = useReturnFromExpandedAiChat({
-    reopenSidePanel: true,
-    destinationPath: getAppPath(AppPath.RecordIndexPage, {
-      objectNamePlural: CoreObjectNamePlural.Company,
-    }),
+    reopenSidePanel: !isSettingsPath(defaultHomePagePath),
+    destinationPath: defaultHomePagePath,
   });
 
   const processedToolExecutionPartIdsCallbackState =
