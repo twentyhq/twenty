@@ -16,7 +16,7 @@
         "modalities": ["image"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 7.1,
+          "intelligenceIndex": 13,
           "measuredAt": "2026-09-09"
         }
       },
@@ -82,8 +82,8 @@
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 33.8,
-          "outputTokensPerSecond": 68.784,
+          "intelligenceIndex": 47.1,
+          "outputTokensPerSecond": 73.005,
           "measuredAt": "2026-09-09"
         }
       },
@@ -122,8 +122,8 @@
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 51,
-          "outputTokensPerSecond": 55.102,
+          "intelligenceIndex": 52.8,
+          "outputTokensPerSecond": 60.822,
           "measuredAt": "2026-09-09"
         }
       },
@@ -246,7 +246,7 @@
         "maxOutputTokens": 16384,
         "modalities": ["image", "pdf"],
         "benchmark": {
-          "intelligenceIndex": 7.7,
+          "intelligenceIndex": 9,
           "measuredAt": "2026-09-09"
         }
       },
@@ -270,8 +270,8 @@
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 21.8,
-          "outputTokensPerSecond": 100.131,
+          "intelligenceIndex": 37.5,
+          "outputTokensPerSecond": 123.243,
           "measuredAt": "2026-09-09"
         }
       },
@@ -382,7 +382,7 @@
         "modalities": ["image"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 19.7,
+          "intelligenceIndex": 24.6,
           "measuredAt": "2026-09-09"
         }
       },
@@ -418,7 +418,7 @@
         "modalities": ["image"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 17.4,
+          "intelligenceIndex": 20.6,
           "measuredAt": "2026-09-09"
         }
       },
@@ -458,8 +458,8 @@
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 32.8,
-          "outputTokensPerSecond": 103.012,
+          "intelligenceIndex": 42.3,
+          "outputTokensPerSecond": 124.121,
           "measuredAt": "2026-09-09"
         }
       },
@@ -489,7 +489,7 @@
         "modalities": ["image"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 17,
+          "intelligenceIndex": 30.4,
           "measuredAt": "2026-09-09"
         }
       },
@@ -505,7 +505,7 @@
         "modalities": ["image"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 22.9,
+          "intelligenceIndex": 23,
           "measuredAt": "2026-09-09"
         }
       },
@@ -629,7 +629,7 @@
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 23.2,
+          "intelligenceIndex": 38.6,
           "measuredAt": "2026-09-09"
         }
       },
@@ -644,7 +644,7 @@
         "maxOutputTokens": 16384,
         "modalities": ["image"],
         "benchmark": {
-          "intelligenceIndex": 7.7,
+          "intelligenceIndex": 9,
           "measuredAt": "2026-09-09"
         }
       }
@@ -668,8 +668,7 @@
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 23.3,
-          "outputTokensPerSecond": 52.86,
+          "intelligenceIndex": 30.5,
           "measuredAt": "2026-09-09"
         }
       },
@@ -721,8 +720,8 @@
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 51.2,
-          "outputTokensPerSecond": 53.374,
+          "intelligenceIndex": 53.4,
+          "outputTokensPerSecond": 69.904,
           "measuredAt": "2026-09-09"
         }
       },
@@ -1166,8 +1165,8 @@
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 39.4,
-          "outputTokensPerSecond": 343.357,
+          "intelligenceIndex": 39.6,
+          "outputTokensPerSecond": 329.345,
           "measuredAt": "2026-09-09"
         }
       },
@@ -1222,7 +1221,7 @@
         "modalities": ["image", "audio", "video", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 9.9,
+          "intelligenceIndex": 13.1,
           "measuredAt": "2026-09-09"
         }
       }
@@ -1362,11 +1361,7 @@
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
         "modalities": ["image"],
-        "supportsReasoning": true,
-        "benchmark": {
-          "intelligenceIndex": 5.5,
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "devstral-medium-2507",
@@ -1407,10 +1402,6 @@
         "outputCostPerMillionTokens": 2,
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
-        "benchmark": {
-          "intelligenceIndex": 9,
-          "measuredAt": "2026-09-09"
-        },
         "isDeprecated": true
       },
       {
@@ -1450,11 +1441,7 @@
         "contextWindowTokens": 256000,
         "maxOutputTokens": 256000,
         "modalities": ["image"],
-        "supportsReasoning": true,
-        "benchmark": {
-          "intelligenceIndex": 5.8,
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "open-mistral-nemo",
@@ -1474,11 +1461,7 @@
         "outputCostPerMillionTokens": 1.5,
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
-        "modalities": ["image"],
-        "benchmark": {
-          "intelligenceIndex": 5.8,
-          "measuredAt": "2026-09-09"
-        }
+        "modalities": ["image"]
       },
       {
         "name": "mistral-large-2411",
@@ -1587,8 +1570,7 @@
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 24.8,
-          "outputTokensPerSecond": 136.915,
+          "intelligenceIndex": 25.4,
           "measuredAt": "2026-09-09"
         }
       },
@@ -1669,8 +1651,8 @@
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 44.3,
-          "outputTokensPerSecond": 63.212,
+          "intelligenceIndex": 44.4,
+          "outputTokensPerSecond": 62.454,
           "measuredAt": "2026-09-09"
         }
       },
