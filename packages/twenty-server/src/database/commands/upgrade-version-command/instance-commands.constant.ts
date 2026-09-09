@@ -183,6 +183,7 @@ import { MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand } from 'src/
 import { ConvertLiveCreditGrantsToNoExpirySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1788877128693-convert-live-credit-grants-to-no-expiry';
 import { AddIsAuditLoggedToFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788885873410-add-is-audit-logged-to-field-metadata';
 import { BackfillIsAuditLoggedOnPositionFieldMetadataSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1788885873411-backfill-is-audit-logged-on-position-field-metadata';
+import { AddCoreWorkflowIdToWorkflowVersionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788960408161-add-core-workflow-id-to-workflow-version';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -368,4 +369,5 @@ export const INSTANCE_COMMANDS = [
   ConvertLiveCreditGrantsToNoExpirySlowInstanceCommand,
   AddIsAuditLoggedToFieldMetadataFastInstanceCommand,
   BackfillIsAuditLoggedOnPositionFieldMetadataSlowInstanceCommand,
+  AddCoreWorkflowIdToWorkflowVersionFastInstanceCommand,
 ];
