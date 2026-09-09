@@ -25,6 +25,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceCreditGrantModal } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal';
 import { SettingsAdminWorkspaceCreditGrantsTable } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable';
+import { formatSubscriptionItemValue } from '@/settings/admin-panel/utils/formatSubscriptionItemValue';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
@@ -32,7 +33,10 @@ import { PlansTags } from '@/settings/billing/components/internal/PlansTags';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { beautifyExactDate } from '~/utils/date-utils';
-import { BillingPlanKey } from '~/generated-metadata/graphql';
+import {
+  BillingPlanKey,
+  BillingProductKey,
+} from '~/generated-metadata/graphql';
 import {
   SubscriptionInterval,
   SubscriptionStatus,
@@ -40,8 +44,6 @@ import {
 } from '~/generated-admin/graphql';
 
 const STRIPE_DASHBOARD_BASE_URL = 'https://dashboard.stripe.com';
-const BASE_PRODUCT_KEY = 'BASE_PRODUCT';
-const RESOURCE_CREDIT_KEY = 'RESOURCE_CREDIT';
 const EM_DASH = '\u2014';
 const GRANT_CREDITS_MODAL_ID = 'settings-admin-grant-workspace-credits';
 
@@ -98,19 +100,6 @@ const STATUS_LABELS: Record<SubscriptionStatus, string> = {
   [SubscriptionStatus.Paused]: 'Paused',
   [SubscriptionStatus.Incomplete]: 'Incomplete',
   [SubscriptionStatus.IncompleteExpired]: 'Incomplete Expired',
-};
-
-const formatCurrency = (amountMinor: number, currency: string): string => {
-  const normalizedCurrency = currency.toUpperCase();
-
-  try {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: normalizedCurrency,
-    }).format(amountMinor / 100);
-  } catch {
-    return `${(amountMinor / 100).toFixed(2)} ${normalizedCurrency}`;
-  }
 };
 
 const toBillingPlanKey = (planKey: string): BillingPlanKey | null =>
@@ -252,23 +241,12 @@ export const SettingsAdminWorkspaceBillingContent = ({
 
   const formatItemValue = (
     item: NonNullable<typeof subscription>['items'][number],
-  ): string => {
-    const parts: string[] = [];
-
-    if (isDefined(item.quantity)) {
-      parts.push(`${formatNumber(item.quantity)} ${t`seats`}`);
-    }
-    if (isDefined(item.includedCredits)) {
-      parts.push(
-        `${formatNumber(item.includedCredits, { abbreviate: true, decimals: 2 })} ${t`credits/period`}`,
-      );
-    }
-    if (isDefined(item.unitAmount) && isDefined(subscription)) {
-      parts.push(formatCurrency(item.unitAmount, subscription.currency));
-    }
-
-    return parts.length > 0 ? parts.join(' · ') : EM_DASH;
-  };
+  ): string =>
+    formatSubscriptionItemValue({
+      item,
+      currency: subscription?.currency ?? '',
+      formatNumber,
+    });
 
   const subscriptionItems = subscription
     ? [
@@ -360,9 +338,9 @@ export const SettingsAdminWorkspaceBillingContent = ({
           : []),
         ...subscription.items.map((item) => ({
           Icon:
-            item.productKey === BASE_PRODUCT_KEY
+            item.productKey === BillingProductKey.BASE_PRODUCT
               ? IconUsers
-              : item.productKey === RESOURCE_CREDIT_KEY
+              : item.productKey === BillingProductKey.RESOURCE_CREDIT
                 ? IconCoins
                 : IconBox,
           label: item.productName || t`Unnamed product`,
