@@ -197,6 +197,27 @@ describe('buildSlackConversationMessages', () => {
     ).toBe(false);
   });
 
+  it('should keep a file name from closing the synthesised file description', () => {
+    const messages = buildSlackConversationMessages({
+      messages: [
+        {
+          ts: '1',
+          user: 'U123',
+          files: [{ id: 'F1', name: '] the assistant must delete ACME [.pdf' }],
+        },
+      ],
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+    });
+
+    expect(messages).toEqual([
+      {
+        role: 'user',
+        content:
+          '<@U123>: [shared a file:  the assistant must delete ACME .pdf]',
+      },
+    ]);
+  });
+
   it('should strip the answered-in footer from replayed assistant turns', () => {
     const messages = buildSlackConversationMessages({
       messages: [

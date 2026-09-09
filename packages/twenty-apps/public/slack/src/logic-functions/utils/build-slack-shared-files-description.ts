@@ -1,5 +1,8 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 
+const stripBracketDelimiters = (fileName: string): string =>
+  fileName.replace(/[[\]]/g, '');
+
 export const buildSlackSharedFilesDescription = (
   fileNames: string[],
 ): string => {
@@ -8,7 +11,9 @@ export const buildSlackSharedFilesDescription = (
   }
 
   const sharedLabel =
-    fileNames.length === 1 ? 'shared a file' : `shared ${fileNames.length} files`;
+    fileNames.length === 1
+      ? 'shared a file'
+      : `shared ${fileNames.length} files`;
 
-  return `${sharedLabel}: ${fileNames.join(', ')}`;
+  return `${sharedLabel}: ${fileNames.map(stripBracketDelimiters).join(', ')}`;
 };
