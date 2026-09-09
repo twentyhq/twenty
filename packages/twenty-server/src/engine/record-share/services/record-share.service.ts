@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import {
   RecordShareException,
@@ -36,6 +37,26 @@ export class RecordShareService {
 
     await this.withRepository({ workspaceId, transactionScope }, (repository) =>
       repository.insert(recordShares, { onConflictDoNothing: true }),
+    );
+  }
+
+  async deleteByRecordIds({
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    recordIds: string[];
+    transactionScope?: WorkspaceTransactionScope;
+  }): Promise<void> {
+    if (recordIds.length === 0) {
+      return;
+    }
+
+    await this.withRepository({ workspaceId, transactionScope }, (repository) =>
+      repository.delete({ objectMetadataId, recordId: In(recordIds) }),
     );
   }
 

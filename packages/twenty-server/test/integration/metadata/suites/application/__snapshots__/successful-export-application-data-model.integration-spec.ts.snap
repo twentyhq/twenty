@@ -746,6 +746,7 @@ exports[`Application export - data model exports the whole application as a stab
   "fields": [
     {
       "defaultValue": null,
+      "isAuditLogged": true,
       "isLabelSyncedWithName": false,
       "isNullable": true,
       "isSearchable": false,
@@ -785,6 +786,7 @@ exports[`Application export - data model exports the whole application as a stab
       "fields": [
         {
           "defaultValue": null,
+          "isAuditLogged": true,
           "isLabelSyncedWithName": true,
           "isNullable": true,
           "isSearchable": false,
@@ -800,6 +802,7 @@ exports[`Application export - data model exports the whole application as a stab
         },
         {
           "defaultValue": null,
+          "isAuditLogged": true,
           "isLabelSyncedWithName": false,
           "isNullable": true,
           "isSearchable": false,
@@ -842,6 +845,7 @@ exports[`Application export - data model exports the whole application as a stab
       "fields": [
         {
           "defaultValue": null,
+          "isAuditLogged": true,
           "isLabelSyncedWithName": false,
           "isNullable": true,
           "isSearchable": false,
