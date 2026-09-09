@@ -143,12 +143,56 @@ const createMatchMediaTest =
       'orientation matches: true',
     );
 
+    const container = canvas.getByTestId('match-media-container');
+
+    for (const { width, height } of [
+      { width: 700, height: 300 },
+      { width: 700, height: 900 },
+      { width: 400, height: 600 },
+    ]) {
+      container.style.width = `${width}px`;
+      container.style.height = `${height}px`;
+
+      await waitFor(
+        () => {
+          expect(
+            canvas.getByTestId('match-media-own-width-value'),
+          ).toHaveTextContent(`own width: ${width}`);
+          expect(
+            canvas.getByTestId('match-media-own-height-value'),
+          ).toHaveTextContent(`own height: ${height}`);
+          expect(canvas.getByTestId('match-media-own-width')).toHaveTextContent(
+            'own width matches: true',
+          );
+          expect(
+            canvas.getByTestId('match-media-wider-than-own-width'),
+          ).toHaveTextContent('wider than own width matches: false');
+          expect(
+            canvas.getByTestId('match-media-orientation'),
+          ).toHaveTextContent('orientation matches: true');
+        },
+        { timeout: INTERACTION_TIMEOUT },
+      );
+    }
+
     expect(errorHandler).not.toHaveBeenCalled();
   };
+
+const MATCH_MEDIA_DECORATORS: Story['decorators'] = [
+  (Story) => (
+    <div
+      data-testid="match-media-container"
+      style={{ width: 400, height: 600 }}
+    >
+      <Story />
+    </div>
+  ),
+];
 
 type CreateStoryInput = {
   name: string;
   play: Story['play'];
+  decorators?: Story['decorators'];
   runtime?: 'preact';
   args?: Partial<Story['args']>;
 };
@@ -156,6 +200,7 @@ type CreateStoryInput = {
 const createStory = ({
   name,
   play,
+  decorators,
   runtime,
   args,
 }: CreateStoryInput): Story => ({
@@ -167,6 +212,7 @@ const createStory = ({
     ...args,
   },
   play,
+  decorators,
 });
 
 export const MutationObserverReact: Story = createStory({
@@ -190,15 +236,18 @@ export const ClassListPreact: Story = createStory({
 export const MatchMediaReact: Story = createStory({
   name: 'match-media',
   play: createMatchMediaTest('light'),
+  decorators: MATCH_MEDIA_DECORATORS,
 });
 export const MatchMediaPreact: Story = createStory({
   name: 'match-media',
   play: createMatchMediaTest('light'),
+  decorators: MATCH_MEDIA_DECORATORS,
   runtime: 'preact',
 });
 export const MatchMediaDarkColorScheme: Story = createStory({
   name: 'match-media',
   play: createMatchMediaTest('dark'),
+  decorators: MATCH_MEDIA_DECORATORS,
   args: {
     colorScheme: 'dark',
     executionContext: {

@@ -2,7 +2,7 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { useEffect, useState } from 'react';
 
 const DARK_COLOR_SCHEME_QUERY = '(prefers-color-scheme: dark)';
-const NON_ZERO_WIDTH_QUERY = '(min-width: 1px)';
+const MEASUREMENT_INTERVAL_MS = 50;
 
 const readOwnBoxSize = () => ({
   width: document.body.clientWidth,
@@ -14,19 +14,18 @@ const MatchMediaComponent = () => {
   const [ownBoxSize, setOwnBoxSize] = useState(readOwnBoxSize);
 
   useEffect(() => {
-    const nonZeroWidthMediaQueryList = window.matchMedia(NON_ZERO_WIDTH_QUERY);
-    const handleOwnWidthChange = () => {
-      setOwnBoxSize(readOwnBoxSize());
-    };
+    const intervalId = setInterval(() => {
+      const nextBoxSize = readOwnBoxSize();
 
-    nonZeroWidthMediaQueryList.addEventListener('change', handleOwnWidthChange);
-
-    return () => {
-      nonZeroWidthMediaQueryList.removeEventListener(
-        'change',
-        handleOwnWidthChange,
+      setOwnBoxSize((currentBoxSize) =>
+        currentBoxSize.width === nextBoxSize.width &&
+        currentBoxSize.height === nextBoxSize.height
+          ? currentBoxSize
+          : nextBoxSize,
       );
-    };
+    }, MEASUREMENT_INTERVAL_MS);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
@@ -78,6 +77,7 @@ const MatchMediaComponent = () => {
       style={{ fontFamily: 'system-ui, sans-serif', padding: 16 }}
     >
       <p data-testid="match-media-own-width-value">own width: {ownWidth}</p>
+      <p data-testid="match-media-own-height-value">own height: {ownHeight}</p>
       <p data-testid="match-media-own-width">
         own width matches: {ownWidthMatches}
       </p>
