@@ -5,7 +5,6 @@ import {
   defineLogicFunction,
   type ObjectRecordCreateEvent,
 } from 'twenty-sdk/define';
-import { type RunAgentResult } from 'twenty-sdk/logic-function';
 
 import {
   SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
@@ -136,25 +135,19 @@ export const slackAssistantWorkerHandler = async (
       0,
     );
 
-    let agentResult: RunAgentResult;
-
-    try {
-      agentResult = await runSlackAssistantAgentWithDeadline({
-        agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
+    const agentResult = await runSlackAssistantAgentWithDeadline({
+      agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
+      runAsWorkspaceMemberId,
+      messages: buildSlackAssistantMessages({
+        requestText,
+        requesterName,
+        conversationMessages,
         runAsWorkspaceMemberId,
-        messages: buildSlackAssistantMessages({
-          requestText,
-          requesterName,
-          conversationMessages,
-          runAsWorkspaceMemberId,
-          timeoutSeconds: agentBudgetRemainingSeconds,
-          workspaceBaseUrl: workspaceBaseUrls[0],
-        }),
-        deadlineAtMs: agentDeadlineAtMs,
-      });
-    } finally {
-      await stopStatusUpdates();
-    }
+        timeoutSeconds: agentBudgetRemainingSeconds,
+        workspaceBaseUrl: workspaceBaseUrls[0],
+      }),
+      deadlineAtMs: agentDeadlineAtMs,
+    }).finally(() => stopStatusUpdates());
 
     if (!agentResult.success) {
       return await finishSlackAssistantRequestWithFailure({
