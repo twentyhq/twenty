@@ -9,14 +9,12 @@ import {
 } from 'twenty-ui/icon';
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';
 import { getModelComparisonColor } from '@/settings/ai/utils/getModelComparisonColor';
-import {
-  isDisplayableNumber,
-  formatCompactNumber,
-  formatDollarPrice,
-  getCostCategory,
-  getModelComparisonScore,
-  withModelRanking,
-} from '@/settings/ai/utils/modelComparisonMetrics';
+import { isDisplayableNumber } from '@/settings/ai/utils/isDisplayableNumber';
+import { formatCompactNumber } from '@/settings/ai/utils/formatCompactNumber';
+import { formatDollarPrice } from '@/settings/ai/utils/formatDollarPrice';
+import { getCostCategory } from '@/settings/ai/utils/getCostCategory';
+import { getModelComparisonScore } from '@/settings/ai/utils/getModelComparisonScore';
+import { withModelRanking } from '@/settings/ai/utils/withModelRanking';
 type ModelInformationItem = {
   comparisonLabel: string;
   label: string;

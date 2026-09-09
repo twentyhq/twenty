@@ -1,4 +1,4 @@
-import { Fragment, useContext, useId } from 'react';
+import { useContext, useId } from 'react';
 
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -10,6 +10,7 @@ import { Checkbox, IconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';
+import { useSettingsAiModelHoverCard } from '@/settings/ai/hooks/useSettingsAiModelHoverCard';
 import { billingState } from '@/client-config/states/billingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getAiModelComparisonItems } from '@/settings/ai/utils/getAiModelComparisonItems';
@@ -78,6 +79,17 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
   const { theme } = useContext(ThemeContext);
   const tableId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const billing = useAtomStateValue(billingState);
+  const {
+    activeHoverCard,
+    hoverCardRef,
+    openHoverCard,
+    handleHoverCardKeyDown,
+    keepOpen,
+    scheduleClose,
+  } = useSettingsAiModelHoverCard();
+  const activeModel = models.find(
+    (model) => model.modelId === activeHoverCard?.modelId,
+  );
   const hasRemove = isDefined(onRemove);
   const gridColumns = hasRemove
     ? showProviderColumn
@@ -142,126 +154,149 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
               .join(' ');
 
             return (
-              <Fragment key={model.modelId}>
-                <TableRow
-                  key={model.modelId}
-                  id={anchorPrefix ? `${anchorPrefix}-${safeId}` : undefined}
-                  gridTemplateColumns={gridColumns}
-                  onClick={
+              <TableRow
+                key={model.modelId}
+                id={anchorPrefix ? `${anchorPrefix}-${safeId}` : undefined}
+                onMouseEnter={
+                  anchorPrefix
+                    ? () =>
+                        openHoverCard({
+                          modelId: model.modelId,
+                          anchorId: `${anchorPrefix}-${safeId}`,
+                        })
+                    : undefined
+                }
+                onMouseLeave={scheduleClose}
+                gridTemplateColumns={gridColumns}
+                onClick={
+                  disabled ? undefined : () => onToggle(model.modelId, checked)
+                }
+              >
+                <TableCell
+                  color={
                     disabled
-                      ? undefined
-                      : () => onToggle(model.modelId, checked)
+                      ? themeCssVariables.font.color.light
+                      : themeCssVariables.font.color.primary
                   }
                 >
-                  <TableCell
-                    color={
-                      disabled
-                        ? themeCssVariables.font.color.light
-                        : themeCssVariables.font.color.primary
+                  <StyledModelNameCell
+                    id={
+                      anchorPrefix
+                        ? `${anchorPrefix}-${safeId}-name`
+                        : undefined
                     }
+                    tabIndex={anchorPrefix ? 0 : undefined}
+                    onFocus={
+                      anchorPrefix
+                        ? () =>
+                            openHoverCard({
+                              modelId: model.modelId,
+                              anchorId: `${anchorPrefix}-${safeId}`,
+                            })
+                        : undefined
+                    }
+                    onBlur={scheduleClose}
+                    role={anchorPrefix ? 'button' : undefined}
+                    aria-pressed={anchorPrefix ? checked : undefined}
+                    aria-disabled={anchorPrefix ? disabled : undefined}
+                    aria-describedby={
+                      anchorPrefix
+                        ? `${anchorPrefix}-${safeId}-description`
+                        : undefined
+                    }
+                    onKeyDown={(event) => {
+                      if (!disabled && ['Enter', ' '].includes(event.key)) {
+                        event.preventDefault();
+                        onToggle(model.modelId, checked);
+                      }
+                    }}
                   >
-                    <StyledModelNameCell
-                      id={
-                        anchorPrefix
-                          ? `${anchorPrefix}-${safeId}-name`
-                          : undefined
+                    <ModelIcon
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
+                      color={
+                        disabled
+                          ? theme.font.color.light
+                          : theme.font.color.secondary
                       }
-                      tabIndex={anchorPrefix ? 0 : undefined}
-                      role={anchorPrefix ? 'button' : undefined}
-                      aria-pressed={anchorPrefix ? checked : undefined}
-                      aria-disabled={anchorPrefix ? disabled : undefined}
-                      aria-describedby={
-                        anchorPrefix
-                          ? `${anchorPrefix}-${safeId}-description`
-                          : undefined
-                      }
-                      onKeyDown={(event) => {
-                        if (!disabled && ['Enter', ' '].includes(event.key)) {
-                          event.preventDefault();
-                          onToggle(model.modelId, checked);
-                        }
-                      }}
-                    >
-                      <ModelIcon
-                        size={theme.icon.size.md}
-                        stroke={theme.icon.stroke.sm}
-                        color={
-                          disabled
-                            ? theme.font.color.light
-                            : theme.font.color.secondary
-                        }
-                      />
-                      <StyledModelLabel>{model.label}</StyledModelLabel>
-                      {anchorPrefix && (
-                        <span
-                          id={`${anchorPrefix}-${safeId}-description`}
-                          hidden
-                        >
-                          {modelDescription}
-                        </span>
-                      )}
-                      {disabled && model.isDeprecated && (
-                        <StyledDeprecatedSuffix>
-                          · <Trans>Deprecated</Trans>
-                        </StyledDeprecatedSuffix>
-                      )}
-                    </StyledModelNameCell>
-                  </TableCell>
-                  {showProviderColumn && (
-                    <TableCell
-                      align="right"
-                      color={themeCssVariables.font.color.tertiary}
-                    >
-                      {getProviderDisplayLabel(model)}
-                    </TableCell>
-                  )}
+                    />
+                    <StyledModelLabel>{model.label}</StyledModelLabel>
+                    {anchorPrefix && (
+                      <span id={`${anchorPrefix}-${safeId}-description`} hidden>
+                        {modelDescription}
+                      </span>
+                    )}
+                    {disabled && model.isDeprecated && (
+                      <StyledDeprecatedSuffix>
+                        · <Trans>Deprecated</Trans>
+                      </StyledDeprecatedSuffix>
+                    )}
+                  </StyledModelNameCell>
+                </TableCell>
+                {showProviderColumn && (
                   <TableCell
                     align="right"
-                    onClick={(event) => event.stopPropagation()}
+                    color={themeCssVariables.font.color.tertiary}
                   >
-                    <Checkbox
-                      checked={checked}
-                      disabled={disabled}
-                      onChange={() => onToggle(model.modelId, checked)}
+                    {getProviderDisplayLabel(model)}
+                  </TableCell>
+                )}
+                <TableCell
+                  align="right"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  <Checkbox
+                    checked={checked}
+                    disabled={disabled}
+                    onChange={() => onToggle(model.modelId, checked)}
+                  />
+                </TableCell>
+                {hasRemove && (
+                  <TableCell align="right">
+                    <IconButton
+                      Icon={IconTrash}
+                      accent="danger"
+                      variant="tertiary"
+                      size="small"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onRemove(model);
+                      }}
                     />
                   </TableCell>
-                  {hasRemove && (
-                    <TableCell align="right">
-                      <IconButton
-                        Icon={IconTrash}
-                        accent="danger"
-                        variant="tertiary"
-                        size="small"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          onRemove(model);
-                        }}
-                      />
-                    </TableCell>
-                  )}
-                </TableRow>
-                {anchorPrefix && (
-                  <AppTooltip
-                    anchorSelect={`#${anchorPrefix}-${safeId}, #${anchorPrefix}-${safeId}-name`}
-                    place="top-end"
-                    interactive
-                    noArrow
-                    offset={8}
-                    delay={TooltipDelay.noDelay}
-                    className={hoverCardTooltipClass}
-                    maxWidth="300px"
-                  >
-                    <SettingsAiModelHoverCard
-                      model={model}
-                      comparisonModels={comparisonModels}
-                    />
-                  </AppTooltip>
                 )}
-              </Fragment>
+              </TableRow>
             );
           })}
         </TableBody>
       </Table>
+      {activeHoverCard && activeModel && (
+        <AppTooltip
+          anchorSelect={`#${activeHoverCard.anchorId}`}
+          place="top-end"
+          interactive
+          noArrow
+          offset={8}
+          delay={TooltipDelay.noDelay}
+          className={hoverCardTooltipClass}
+          maxWidth="300px"
+          isOpen
+        >
+          <div
+            ref={hoverCardRef}
+            onMouseEnter={keepOpen}
+            onMouseLeave={scheduleClose}
+            onFocus={keepOpen}
+            onBlur={scheduleClose}
+            onKeyDown={handleHoverCardKeyDown}
+          >
+            <SettingsAiModelHoverCard
+              model={activeModel}
+              comparisonModels={comparisonModels}
+            />
+          </div>
+        </AppTooltip>
+      )}
     </>
   );
 };

@@ -1,10 +1,12 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 
 import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
+
+afterEach(() => jest.useRealTimers());
 
 const model = {
   modelId: 'model',
@@ -63,7 +65,8 @@ it('keeps the attribution interactive and compares against models hidden by sear
 });
 
 it('opens model information on keyboard focus and closes it on blur', async () => {
-  const user = userEvent.setup();
+  jest.useFakeTimers();
+  const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
   const onToggle = jest.fn();
   render(
     <Provider store={createStore()}>
@@ -92,6 +95,16 @@ it('opens model information on keyboard focus and closes it on blur', async () =
   await screen.findByRole('tooltip');
   await user.keyboard('{Enter}');
   expect(onToggle).toHaveBeenCalledWith('model', true);
+  await user.tab();
+  await user.tab();
+  await user.tab();
+  expect(document.activeElement).toHaveAccessibleDescription(
+    'Artificial Analysis Intelligence Index',
+  );
+  act(() => jest.advanceTimersByTime(200));
+  expect(
+    screen.getByRole('link', { name: 'Data from Artificial Analysis' }),
+  ).toBeInTheDocument();
   await user.click(screen.getByRole('button', { name: 'Outside' }));
   await waitFor(() =>
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument(),
