@@ -177,12 +177,12 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
         }
       }
 
-      const dashboardId = await createDashboardRecordOrRollBackLayout(
+      const dashboardId = await createDashboardRecordOrRollBackLayout({
         deps,
         context,
-        parameters.title,
-        pageLayout.id,
-      );
+        title: parameters.title,
+        pageLayoutId: pageLayout.id,
+      });
 
       const result = {
         dashboardId,
@@ -230,19 +230,23 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
   },
 });
 
+type CreateDashboardRecordParams = {
+  deps: DashboardToolDependencies;
+  context: DashboardToolContextWithPermissions;
+  title: string;
+  pageLayoutId: string;
+};
+
 const createDashboardRecordOrRollBackLayout = async (
-  deps: DashboardToolDependencies,
-  context: DashboardToolContextWithPermissions,
-  title: string,
-  pageLayoutId: string,
+  params: CreateDashboardRecordParams,
 ): Promise<string> => {
   try {
-    return await createDashboardRecord(deps, context, title, pageLayoutId);
+    return await createDashboardRecord(params);
   } catch (error) {
-    await deps.pageLayoutService
+    await params.deps.pageLayoutService
       .destroy({
-        id: pageLayoutId,
-        workspaceId: context.workspaceId,
+        id: params.pageLayoutId,
+        workspaceId: params.context.workspaceId,
         isLinkedDashboardAlreadyDestroyed: true,
       })
       .catch(() => undefined);
@@ -251,12 +255,12 @@ const createDashboardRecordOrRollBackLayout = async (
   }
 };
 
-const createDashboardRecord = async (
-  deps: DashboardToolDependencies,
-  context: DashboardToolContextWithPermissions,
-  title: string,
-  pageLayoutId: string,
-): Promise<string> => {
+const createDashboardRecord = async ({
+  deps,
+  context,
+  title,
+  pageLayoutId,
+}: CreateDashboardRecordParams): Promise<string> => {
   const authContext = buildSystemAuthContext(context.workspaceId);
 
   return deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
