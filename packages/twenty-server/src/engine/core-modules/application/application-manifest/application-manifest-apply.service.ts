@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -7,15 +7,6 @@ import { ApplicationSyncService } from 'src/engine/core-modules/application/appl
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import {
-  WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME,
-  WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS,
-  type WarmUpApplicationLogicFunctionsJobData,
-} from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-application-logic-functions.job-constants';
-import { findLogicFunctionUniversalIdentifiersToWarmUp } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/utils/find-logic-function-universal-identifiers-to-warm-up.util';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 
@@ -23,14 +14,10 @@ import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-
 // applies a manifest through the same steps with the same guards.
 @Injectable()
 export class ApplicationManifestApplyService {
-  private readonly logger = new Logger(ApplicationManifestApplyService.name);
-
   constructor(
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
-    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async applyManifestToWorkspace({
@@ -82,40 +69,7 @@ export class ApplicationManifestApplyService {
       });
     }
 
-    const logicFunctionUniversalIdentifiersToWarmUp =
-      findLogicFunctionUniversalIdentifiersToWarmUp(workspaceMigration);
-
-    if (
-      forceSdkClientGeneration &&
-      logicFunctionUniversalIdentifiersToWarmUp.length > 0
-    ) {
-      await this.enqueueLogicFunctionWarmUp({
-        workspaceId,
-        applicationId: application.id,
-        logicFunctionUniversalIdentifiers:
-          logicFunctionUniversalIdentifiersToWarmUp,
-      });
-    }
-
     return { workspaceMigration, hasSchemaMetadataChanged };
-  }
-
-  private async enqueueLogicFunctionWarmUp(
-    data: WarmUpApplicationLogicFunctionsJobData,
-  ): Promise<void> {
-    try {
-      await this.messageQueueService.add<WarmUpApplicationLogicFunctionsJobData>(
-        WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME,
-        data,
-        WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS,
-      );
-    } catch (error) {
-      this.logger.error(
-        `Failed to enqueue prebuilt warm-up for application ${data.applicationId} in workspace ${data.workspaceId}: ` +
-          `${error instanceof Error ? error.message : String(error)}`,
-        error instanceof Error ? error.stack : undefined,
-      );
-    }
   }
 
   async refreshRegistrationFromManifest({
