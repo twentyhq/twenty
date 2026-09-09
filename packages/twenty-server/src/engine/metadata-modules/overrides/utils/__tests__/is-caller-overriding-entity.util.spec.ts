@@ -37,4 +37,15 @@ describe('isCallerOverridingEntity', () => {
       }),
     ).toBe(false);
   });
+
+  it('should return true when custom app updates an engine-managed entity it owns', () => {
+    expect(
+      isCallerOverridingEntity({
+        callerApplicationUniversalIdentifier: CUSTOM_APP_ID,
+        entityApplicationUniversalIdentifier: CUSTOM_APP_ID,
+        workspaceCustomApplicationUniversalIdentifier: CUSTOM_APP_ID,
+        isSystemSideEffect: true,
+      }),
+    ).toBe(true);
+  });
 });
