@@ -1,5 +1,4 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { MotionGlobalConfig } from 'framer-motion';
 import { StrictMode, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
@@ -72,19 +71,12 @@ export const Deduplication: Story = {
     );
     const body = within(canvasElement.ownerDocument.body);
     expect(body.getAllByRole('status')).toHaveLength(1);
-    expect(body.getByText('Already saved')).toBeVisible();
+    await waitFor(() => expect(body.getByText('Already saved')).toBeVisible());
   },
 };
 
 export const Dismissal: Story = {
   ...Default,
-  beforeEach: () => {
-    const skipAnimations = MotionGlobalConfig.skipAnimations;
-    MotionGlobalConfig.skipAnimations = false;
-    return () => {
-      MotionGlobalConfig.skipAnimations = skipAnimations;
-    };
-  },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
@@ -93,12 +85,14 @@ export const Dismissal: Story = {
     );
     const toast = body.getByRole('status');
     await waitFor(() =>
-      expect(getComputedStyle(toast.parentElement!).opacity).toBe('1'),
+      expect(
+        getComputedStyle(toast.parentElement!.parentElement!).opacity,
+      ).toBe('1'),
     );
     await userEvent.click(body.getByRole('button', { name: 'Close' }));
-    await waitFor(() =>
-      expect(body.queryByRole('status')).not.toBeInTheDocument(),
-    );
+    expect(toast).toBeInTheDocument();
+    expect(args.onClose).toHaveBeenCalledOnce();
+    await waitFor(() => expect(toast).not.toBeInTheDocument());
     expect(args.onClose).toHaveBeenCalledOnce();
     await userEvent.click(
       canvas.getByRole('button', { name: 'Close last notification' }),
@@ -184,7 +178,9 @@ export const RendererRemount: Story = {
     const region = body.getByRole('region', {
       name: 'workspace notifications',
     });
-    expect(within(region).getByText('Notification 1')).toBeVisible();
+    await waitFor(() =>
+      expect(within(region).getByText('Notification 1')).toBeVisible(),
+    );
     expect(
       body.queryByRole('region', { name: 'authentication notifications' }),
     ).not.toBeInTheDocument();
@@ -220,9 +216,13 @@ export const DeferredContainer: Story = {
     await userEvent.click(
       canvas.getByRole('button', { name: 'Attach viewport' }),
     );
-    expect(
-      within(canvas.getByTestId('toast-container')).getByText('Notification 1'),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        within(canvas.getByTestId('toast-container')).getByText(
+          'Notification 1',
+        ),
+      ).toBeVisible(),
+    );
   },
 };
 
@@ -286,8 +286,10 @@ export const ProviderIsolation: Story = {
     const secondToaster = within(
       body.getByRole('region', { name: 'Second notifications' }),
     );
-    expect(firstToaster.getByRole('status')).toBeVisible();
-    expect(secondToaster.getByRole('status')).toBeVisible();
+    await waitFor(() => {
+      expect(firstToaster.getByRole('status')).toBeVisible();
+      expect(secondToaster.getByRole('status')).toBeVisible();
+    });
     await userEvent.click(
       first.getByRole('button', { name: 'Close all notifications' }),
     );
@@ -295,5 +297,79 @@ export const ProviderIsolation: Story = {
       expect(firstToaster.queryByRole('status')).not.toBeInTheDocument(),
     );
     expect(secondToaster.getByRole('status')).toBeVisible();
+  },
+};
+
+export const StackReflow: Story = {
+  ...Default,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const add = canvas.getByRole('button', { name: 'Add notification' });
+    await userEvent.click(add);
+    await userEvent.click(add);
+    await userEvent.click(add);
+    const region = body.getByRole('region', { name: 'Notifications' });
+    await waitFor(() =>
+      expect(region.getAnimations({ subtree: true })).toHaveLength(0),
+    );
+    const [first, middle, last] = body.getAllByRole('status');
+    const firstTop = first.getBoundingClientRect().top;
+    const gap = middle.getBoundingClientRect().top - firstTop;
+    const isTopAnchored = getComputedStyle(region).top === '0px';
+    const movingToast = isTopAnchored ? last : first;
+    const anchoredToast = isTopAnchored ? first : last;
+    const movingTop = movingToast.getBoundingClientRect().top;
+    const anchoredTop = anchoredToast.getBoundingClientRect().top;
+    const direction = isTopAnchored ? -1 : 1;
+
+    await userEvent.click(
+      within(middle).getByRole('button', { name: 'Close' }),
+    );
+    expect(middle).toBeInTheDocument();
+    await waitFor(() => {
+      const distance =
+        (movingToast.getBoundingClientRect().top - movingTop) * direction;
+      expect(distance).toBeGreaterThan(1);
+      expect(distance).toBeLessThan(gap - 1);
+    });
+    await waitFor(() => expect(middle).not.toBeInTheDocument());
+    expect(movingToast.getBoundingClientRect().top).toBeCloseTo(
+      movingTop + gap * direction,
+      0,
+    );
+    expect(anchoredToast.getBoundingClientRect().top).toBeCloseTo(
+      anchoredTop,
+      0,
+    );
+  },
+};
+
+export const ReopenDuringExit: Story = {
+  ...Default,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Add notification' }),
+    );
+    const region = body.getByRole('region', { name: 'Notifications' });
+    await waitFor(() =>
+      expect(region.getAnimations({ subtree: true })).toHaveLength(0),
+    );
+    const toast = body.getByRole('status');
+    const id = toast.id;
+    await userEvent.click(within(toast).getByRole('button', { name: 'Close' }));
+    expect(toast).toBeInTheDocument();
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Restore last notification' }),
+    );
+    await waitFor(() =>
+      expect(region.getAnimations({ subtree: true })).toHaveLength(0),
+    );
+    expect(body.getByRole('status')).toHaveTextContent('Restored notification');
+    expect(body.getByRole('status')).toHaveAttribute('id', id);
+    expect(body.getByRole('status')).toBeVisible();
+    expect(args.onClose).toHaveBeenCalledOnce();
   },
 };

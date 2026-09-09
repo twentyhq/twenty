@@ -57,6 +57,14 @@ export const ToastControls = ({ onClose }: ToasterExampleProps) => {
       <button type="button" onClick={() => close()}>
         Close all notifications
       </button>
+      <button
+        type="button"
+        onClick={() =>
+          addToast({ id: toastId, children: 'Restored notification' })
+        }
+      >
+        Restore last notification
+      </button>
       <span aria-label="Last notification ID">{toastId}</span>
     </div>
   );

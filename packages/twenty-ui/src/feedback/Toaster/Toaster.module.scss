@@ -1,4 +1,5 @@
 .root {
+  --toaster-offset: 40px;
   display: flex;
   flex-direction: column;
   inset-block-end: var(--t-spacing-3);
@@ -8,6 +9,8 @@
   z-index: var(--t-last-layer-z-index);
 
   @include respond-to(mobile) {
+    --toaster-offset: -40px;
+
     inset-block-end: auto;
     inset-block-start: 0;
     inset-inline: 0;
@@ -15,5 +18,36 @@
 }
 
 .item {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
   pointer-events: auto;
+  transform: translateY(0);
+  transition:
+    grid-template-rows 500ms ease-in-out,
+    opacity 500ms ease-in-out,
+    transform 500ms ease-in-out;
+
+  @starting-style {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transform: translateY(var(--toaster-offset));
+  }
+
+  &[data-exiting] {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(var(--toaster-offset));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.itemContent {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
 }
