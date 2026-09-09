@@ -65,17 +65,15 @@ export const SnackBar = ({
   const sanitizedDetailedMessage =
     sanitizeMessageToRenderInSnackbar(detailedMessage);
 
-  const action =
-    isDefined(buttonLabel) &&
-    (isDefined(buttonOnClick) || isDefined(buttonTo)) ? (
-      isDefined(buttonTo) ? (
-        <UndecoratedLink to={buttonTo}>
-          <LightButton title={buttonLabel} />
-        </UndecoratedLink>
-      ) : (
-        <LightButton title={buttonLabel} onClick={buttonOnClick} />
-      )
-    ) : undefined;
+  const hasAction =
+    isDefined(buttonLabel) && (isDefined(buttonOnClick) || isDefined(buttonTo));
+  const action = isDefined(buttonTo) ? (
+    <UndecoratedLink to={buttonTo}>
+      <LightButton title={buttonLabel} />
+    </UndecoratedLink>
+  ) : (
+    <LightButton title={buttonLabel} onClick={buttonOnClick} />
+  );
 
   return (
     <Toast
@@ -93,7 +91,7 @@ export const SnackBar = ({
       description={sanitizedDetailedMessage}
       cancelLabel={t`Cancel`}
       closeLabel={t`Close`}
-      action={action}
+      action={hasAction ? action : undefined}
       data-globally-prevent-click-outside
     >
       {sanitizedMessage ?? ''}
