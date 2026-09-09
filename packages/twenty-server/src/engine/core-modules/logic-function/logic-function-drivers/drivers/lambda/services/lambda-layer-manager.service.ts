@@ -11,7 +11,6 @@ import {
 import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ObjectFieldIndexFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/object-field-index-flat-entity-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { SDK_LAYER_PREFIX_IN_ZIP } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
@@ -32,7 +31,6 @@ import {
 type LayerAppContext = {
   flatApplication: FlatApplication;
   applicationUniversalIdentifier: string;
-  flatEntityMapsOverride?: ObjectFieldIndexFlatEntityMaps;
 };
 
 export class LambdaLayerManagerService {
@@ -75,11 +73,7 @@ export class LambdaLayerManagerService {
   }
 
   async ensureSdkLayer(context: LayerAppContext): Promise<string> {
-    const {
-      flatApplication,
-      applicationUniversalIdentifier,
-      flatEntityMapsOverride,
-    } = context;
+    const { flatApplication, applicationUniversalIdentifier } = context;
     const layerName = getLambdaSdkLayerName({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
@@ -100,7 +94,6 @@ export class LambdaLayerManagerService {
         workspaceId: flatApplication.workspaceId,
         applicationId: flatApplication.id,
         applicationUniversalIdentifier,
-        flatEntityMapsOverride,
       });
 
     const zipBuffer = await reprefixLambdaZipEntries({

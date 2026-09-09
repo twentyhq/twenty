@@ -5,6 +5,12 @@ import { type Manifest } from 'twenty-shared/application';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import {
+  WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME,
+  WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS,
+} from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-application-logic-functions.job-constants';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
@@ -28,6 +34,7 @@ describe('ApplicationManifestApplyService', () => {
     generateSdkClientForApplication: jest.fn(),
   };
   const applicationRegistrationService = {};
+  const messageQueueService = { add: jest.fn() };
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -47,6 +54,10 @@ describe('ApplicationManifestApplyService', () => {
         {
           provide: ApplicationRegistrationService,
           useValue: applicationRegistrationService,
+        },
+        {
+          provide: getQueueToken(MessageQueue.workspaceQueue),
+          useValue: messageQueueService,
         },
       ],
     }).compile();
@@ -73,6 +84,49 @@ describe('ApplicationManifestApplyService', () => {
       applicationUniversalIdentifier: 'test-app',
       trigger: 'manifest-sync',
     });
+  });
+
+  it('enqueues the prebuilt warm-up job on install/upgrade after the SDK client regeneration', async () => {
+    const callOrder: string[] = [];
+
+    sdkClientGenerationService.generateSdkClientForApplication.mockImplementation(
+      async () => {
+        callOrder.push('generateSdkClient');
+      },
+    );
+    messageQueueService.add.mockImplementation(async () => {
+      callOrder.push('enqueueWarmUp');
+    });
+
+    await service.applyManifestToWorkspace({
+      workspaceId: WORKSPACE_ID,
+      manifest,
+      application,
+      forceSdkClientGeneration: true,
+    });
+
+    expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME,
+      { workspaceId: WORKSPACE_ID, applicationId: APPLICATION_ID },
+      WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS,
+    );
+    expect(callOrder).toEqual(['generateSdkClient', 'enqueueWarmUp']);
+  });
+
+  it('skips the prebuilt warm-up job on dev sync', async () => {
+    applicationSyncService.synchronizeFromManifest.mockResolvedValue({
+      workspaceMigration: { actions: [] },
+      hasSchemaMetadataChanged: true,
+    });
+
+    await service.applyManifestToWorkspace({
+      workspaceId: WORKSPACE_ID,
+      manifest,
+      application,
+    });
+
+    expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
   it('skips SDK client generation on dev sync when the schema is unchanged', async () => {

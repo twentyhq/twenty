@@ -7,6 +7,14 @@ import { ApplicationSyncService } from 'src/engine/core-modules/application/appl
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import {
+  WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME,
+  WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS,
+  type WarmUpApplicationLogicFunctionsJobData,
+} from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-application-logic-functions.job-constants';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 
@@ -18,6 +26,8 @@ export class ApplicationManifestApplyService {
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async applyManifestToWorkspace({
@@ -67,6 +77,14 @@ export class ApplicationManifestApplyService {
         applicationUniversalIdentifier: application.universalIdentifier,
         trigger: 'manifest-sync',
       });
+    }
+
+    if (forceSdkClientGeneration || isFirstApply) {
+      await this.messageQueueService.add<WarmUpApplicationLogicFunctionsJobData>(
+        WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME,
+        { workspaceId, applicationId: application.id },
+        WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS,
+      );
     }
 
     return { workspaceMigration, hasSchemaMetadataChanged };
