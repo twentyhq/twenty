@@ -21,6 +21,7 @@ import { computeWebhookOperationsToMatch } from 'src/engine/metadata-modules/web
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
+import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;
@@ -93,14 +94,16 @@ export class CallWebhookJobsJob {
             readability: getEffectiveReadability(flatObjectMetadata),
             isOwningApplication: false,
             principalIds: [EVERYONE_PRINCIPAL_ID],
-            fetchRecordShares: () =>
-              this.recordShareService.findByRecordIds({
-                workspaceId: workspaceEventBatch.workspaceId,
-                objectMetadataId: workspaceEventBatch.objectMetadata.id,
-                recordIds: workspaceEventBatch.events.map(
-                  (event) => event.recordId,
-                ),
-              }),
+            fetchRecordSharesByRecordId: async () =>
+              indexRecordSharesByRecordId(
+                await this.recordShareService.findByRecordIds({
+                  workspaceId: workspaceEventBatch.workspaceId,
+                  objectMetadataId: workspaceEventBatch.objectMetadata.id,
+                  recordIds: workspaceEventBatch.events.map(
+                    (event) => event.recordId,
+                  ),
+                }),
+              ),
           })
         : null;
 

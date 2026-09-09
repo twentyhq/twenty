@@ -25,6 +25,7 @@ import { getEffectiveReadability } from 'src/engine/metadata-modules/object-meta
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
 import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
+import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
 import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -93,13 +94,17 @@ export class CallDatabaseEventTriggerJobsJob {
     const isRecordShareGated =
       featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED];
 
-    let recordSharesPromise: Promise<RecordShare[]> | undefined;
-    const fetchRecordShares = () =>
-      (recordSharesPromise ??= this.recordShareService.findByRecordIds({
-        workspaceId: workspaceEventBatch.workspaceId,
-        objectMetadataId: workspaceEventBatch.objectMetadata.id,
-        recordIds: workspaceEventBatch.events.map((event) => event.recordId),
-      }));
+    let recordSharesByRecordIdPromise:
+      | Promise<Map<string, RecordShare[]>>
+      | undefined;
+    const fetchRecordSharesByRecordId = () =>
+      (recordSharesByRecordIdPromise ??= this.recordShareService
+        .findByRecordIds({
+          workspaceId: workspaceEventBatch.workspaceId,
+          objectMetadataId: workspaceEventBatch.objectMetadata.id,
+          recordIds: workspaceEventBatch.events.map((event) => event.recordId),
+        })
+        .then(indexRecordSharesByRecordId));
 
     for (const [
       applicationId,
@@ -121,7 +126,7 @@ export class CallDatabaseEventTriggerJobsJob {
           workspaceEventBatch,
           application,
           isRecordShareGated,
-          fetchRecordShares,
+          fetchRecordSharesByRecordId,
         }),
       });
 
@@ -164,12 +169,12 @@ export class CallDatabaseEventTriggerJobsJob {
     workspaceEventBatch,
     application,
     isRecordShareGated,
-    fetchRecordShares,
+    fetchRecordSharesByRecordId,
   }: {
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
     application: FlatApplication;
     isRecordShareGated: boolean;
-    fetchRecordShares: () => Promise<RecordShare[]>;
+    fetchRecordSharesByRecordId: () => Promise<Map<string, RecordShare[]>>;
   }): Promise<WorkspaceEventBatch<ObjectRecordEvent>> {
     const recordShareGate = isRecordShareGated
       ? await buildRecordShareGate({
@@ -179,7 +184,7 @@ export class CallDatabaseEventTriggerJobsJob {
           isOwningApplication:
             workspaceEventBatch.objectMetadata.applicationId === application.id,
           principalIds: [EVERYONE_PRINCIPAL_ID, application.defaultRoleId],
-          fetchRecordShares,
+          fetchRecordSharesByRecordId,
         })
       : null;
 
@@ -191,9 +196,8 @@ export class CallDatabaseEventTriggerJobsJob {
       ...workspaceEventBatch,
       events: workspaceEventBatch.events.filter((event) =>
         isRecordSharedWithPrincipals({
-          recordShares: recordShareGate.recordShares,
+          recordShareGate,
           recordId: event.recordId,
-          principalIds: recordShareGate.principalIds,
           accessLevels: resolveRequiredRecordShareAccessLevels('select'),
         }),
       ),
