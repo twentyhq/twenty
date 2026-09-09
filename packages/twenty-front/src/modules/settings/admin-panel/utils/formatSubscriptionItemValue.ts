@@ -1,8 +1,8 @@
 import { plural } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { BASE_PRODUCT_KEY } from '@/settings/admin-panel/constants/BaseProductKey';
 import { type FormatNumberOptions } from '~/utils/format/formatNumber';
+import { BillingProductKey } from '~/generated-metadata/graphql';
 
 const EM_DASH = '—';
 
@@ -47,7 +47,7 @@ export const formatSubscriptionItemValue = ({
     // Stripe bookkeeping quantity that bills nothing, so naming it seats states
     // something untrue about what the workspace is paying for.
     parts.push(
-      item.productKey === BASE_PRODUCT_KEY
+      item.productKey === BillingProductKey.BASE_PRODUCT
         ? `${formatNumber(item.quantity)} ${plural(item.quantity, {
             one: 'seat',
             other: 'seats',

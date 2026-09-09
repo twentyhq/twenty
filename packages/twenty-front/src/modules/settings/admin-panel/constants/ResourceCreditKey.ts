@@ -1,1 +1,0 @@
-export const RESOURCE_CREDIT_KEY = 'RESOURCE_CREDIT';

@@ -1,4 +1,5 @@
 import { formatSubscriptionItemValue } from '@/settings/admin-panel/utils/formatSubscriptionItemValue';
+import { BillingProductKey } from '~/generated-metadata/graphql';
 
 const formatNumber = (value: number) => String(value);
 
@@ -8,11 +9,15 @@ const format = (
 
 describe('formatSubscriptionItemValue', () => {
   it('calls a base-product quantity seats', () => {
-    expect(format({ productKey: 'BASE_PRODUCT', quantity: 3 })).toBe('3 seats');
+    expect(
+      format({ productKey: BillingProductKey.BASE_PRODUCT, quantity: 3 }),
+    ).toBe('3 seats');
   });
 
   it('does not call a metered quantity seats', () => {
-    expect(format({ productKey: 'RESOURCE_CREDIT', quantity: 1 })).toBe('1');
+    expect(
+      format({ productKey: BillingProductKey.RESOURCE_CREDIT, quantity: 1 }),
+    ).toBe('1');
   });
 
   it('does not call an unknown product quantity seats', () => {
@@ -20,19 +25,24 @@ describe('formatSubscriptionItemValue', () => {
   });
 
   it('agrees in number with a single seat', () => {
-    expect(format({ productKey: 'BASE_PRODUCT', quantity: 1 })).toBe('1 seat');
+    expect(
+      format({ productKey: BillingProductKey.BASE_PRODUCT, quantity: 1 }),
+    ).toBe('1 seat');
   });
 
   it('agrees in number with a single included credit', () => {
-    expect(format({ productKey: 'RESOURCE_CREDIT', includedCredits: 1 })).toBe(
-      '1 credit/period',
-    );
+    expect(
+      format({
+        productKey: BillingProductKey.RESOURCE_CREDIT,
+        includedCredits: 1,
+      }),
+    ).toBe('1 credit/period');
   });
 
   it('joins quantity, included credits and unit amount', () => {
     expect(
       format({
-        productKey: 'BASE_PRODUCT',
+        productKey: BillingProductKey.BASE_PRODUCT,
         quantity: 3,
         includedCredits: 5,
         unitAmount: 2500,
@@ -41,11 +51,13 @@ describe('formatSubscriptionItemValue', () => {
   });
 
   it('renders an em dash when the item carries nothing to show', () => {
-    expect(format({ productKey: 'RESOURCE_CREDIT' })).toBe('—');
+    expect(format({ productKey: BillingProductKey.RESOURCE_CREDIT })).toBe('—');
   });
 
   it('keeps a zero quantity rather than reading it as absent', () => {
-    expect(format({ productKey: 'BASE_PRODUCT', quantity: 0 })).toBe('0 seats');
+    expect(
+      format({ productKey: BillingProductKey.BASE_PRODUCT, quantity: 0 }),
+    ).toBe('0 seats');
   });
 
   it('falls back to a plain amount when the currency code is malformed', () => {
@@ -53,7 +65,7 @@ describe('formatSubscriptionItemValue', () => {
     // reaches the fallback.
     expect(
       formatSubscriptionItemValue({
-        item: { productKey: 'BASE_PRODUCT', unitAmount: 1500 },
+        item: { productKey: BillingProductKey.BASE_PRODUCT, unitAmount: 1500 },
         currency: 'US',
         formatNumber,
       }),

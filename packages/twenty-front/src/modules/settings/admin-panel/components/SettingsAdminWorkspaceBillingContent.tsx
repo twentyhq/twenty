@@ -25,8 +25,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceCreditGrantModal } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal';
 import { SettingsAdminWorkspaceCreditGrantsTable } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable';
-import { BASE_PRODUCT_KEY } from '@/settings/admin-panel/constants/BaseProductKey';
-import { RESOURCE_CREDIT_KEY } from '@/settings/admin-panel/constants/ResourceCreditKey';
 import { formatSubscriptionItemValue } from '@/settings/admin-panel/utils/formatSubscriptionItemValue';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
@@ -35,7 +33,10 @@ import { PlansTags } from '@/settings/billing/components/internal/PlansTags';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { beautifyExactDate } from '~/utils/date-utils';
-import { BillingPlanKey } from '~/generated-metadata/graphql';
+import {
+  BillingPlanKey,
+  BillingProductKey,
+} from '~/generated-metadata/graphql';
 import {
   SubscriptionInterval,
   SubscriptionStatus,
@@ -337,9 +338,9 @@ export const SettingsAdminWorkspaceBillingContent = ({
           : []),
         ...subscription.items.map((item) => ({
           Icon:
-            item.productKey === BASE_PRODUCT_KEY
+            item.productKey === BillingProductKey.BASE_PRODUCT
               ? IconUsers
-              : item.productKey === RESOURCE_CREDIT_KEY
+              : item.productKey === BillingProductKey.RESOURCE_CREDIT
                 ? IconCoins
                 : IconBox,
           label: item.productName || t`Unnamed product`,
