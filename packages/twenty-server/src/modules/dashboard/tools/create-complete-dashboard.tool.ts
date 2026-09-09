@@ -230,10 +230,6 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
   },
 });
 
-// The dashboard insert is the only permission-checked write here, and it runs
-// last because it needs the layout id. A caller holding LAYOUTS but no create
-// permission on the dashboard object would otherwise leave the layout, its tab
-// and its widgets behind on every attempt.
 const createDashboardRecordOrRollBackLayout = async (
   deps: DashboardToolDependencies,
   context: DashboardToolContextWithPermissions,
