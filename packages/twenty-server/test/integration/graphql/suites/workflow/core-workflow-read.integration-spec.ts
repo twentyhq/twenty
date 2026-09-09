@@ -1,6 +1,9 @@
 import request from 'supertest';
 import { isDefined } from 'twenty-shared/utils';
 
+const POLL_ATTEMPTS = 20;
+const POLL_INTERVAL_MS = 250;
+
 const client = request(`http://localhost:${APP_PORT}`);
 
 const graphql = (query: string, variables?: object) =>
@@ -59,7 +62,7 @@ describe('coreWorkflow (e2e)', () => {
   it('should read one workflow by its workspace id', async () => {
     let coreWorkflow;
 
-    for (let attempt = 0; attempt < 20; attempt++) {
+    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
       const response = await graphql(CORE_WORKFLOW_QUERY, {
         workspaceWorkflowId,
       });
@@ -72,9 +75,10 @@ describe('coreWorkflow (e2e)', () => {
         break;
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 250));
+      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
     }
 
+    expect(coreWorkflow).not.toBeNull();
     expect(coreWorkflow).toBeDefined();
     expect(coreWorkflow.name).toBe('Core Workflow Read');
     expect(coreWorkflow.workspaceWorkflowId).toBe(workspaceWorkflowId);

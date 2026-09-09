@@ -60,7 +60,7 @@ const SORT_COLUMN_BY_FIELD: Record<
   },
 };
 
-const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."updatedAt", c."lastPublishedVersionId"`;
+const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."updatedAt"`;
 
 const buildWorkflowVersionsJoinClause = (schemaName: string) =>
   `LEFT JOIN ${schemaName}."workflow" wf
@@ -143,7 +143,7 @@ export class CoreWorkflowListService {
        ${buildWorkflowVersionsJoinClause(schemaName)}
        WHERE c."workspaceId" = $1
        ${keysetCondition}
-       GROUP BY ${GROUPED_WORKFLOW_COLUMNS}, c."applicationId"
+       GROUP BY ${GROUPED_WORKFLOW_COLUMNS}, c."lastPublishedVersionId", c."applicationId"
        ${havingClause}
        ORDER BY ${column} ${direction}${nullsClause}, c.id ${direction}
        LIMIT ${limitParameter}`,
@@ -206,16 +206,20 @@ export class CoreWorkflowListService {
          c.name,
          c."lastPublishedVersionId",
          c."applicationId",
-         min(wf.id::text) AS "workspaceWorkflowId",
+         wf.id::text AS "workspaceWorkflowId",
          c."updatedAt",
          coalesce(bool_or(v.status = 'DRAFT'), false) AS "hasDraftVersion",
          coalesce(bool_or(v.status = 'ACTIVE'), false) AS "hasActiveVersion",
          coalesce(bool_or(v.status = 'DEACTIVATED'), false) AS "hasDeactivatedVersion"
        FROM core."workflow" c
-       ${buildWorkflowVersionsJoinClause(schemaName)}
-       WHERE c."workspaceId" = $1 AND wf.id = $2
-       GROUP BY ${GROUPED_WORKFLOW_COLUMNS}, c."applicationId"
-       LIMIT 1`,
+       JOIN ${schemaName}."workflow" wf
+         ON wf."coreWorkflowId" = c.id
+         AND wf."deletedAt" IS NULL
+         AND wf.id = $2
+       LEFT JOIN core."workflowVersion" v
+         ON v."workflowId" = wf.id AND v."workspaceId" = $1
+       WHERE c."workspaceId" = $1
+       GROUP BY ${GROUPED_WORKFLOW_COLUMNS}, c."lastPublishedVersionId", c."applicationId", wf.id`,
       [workspaceId, workspaceWorkflowId],
     );
 
