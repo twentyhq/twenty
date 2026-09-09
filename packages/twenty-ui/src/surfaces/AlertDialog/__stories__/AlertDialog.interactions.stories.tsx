@@ -261,7 +261,9 @@ export const CanceledClose: Story = {
   args: {
     defaultOpen: true,
     onOpenChange: (open, eventDetails) => {
-      if (!open && eventDetails.reason === 'escape-key') eventDetails.cancel();
+      if (!open && eventDetails.reason === 'escape-key') {
+        eventDetails.cancel();
+      }
     },
   },
   play: async ({ canvasElement }) => {
