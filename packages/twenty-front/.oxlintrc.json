@@ -53,15 +53,6 @@
           {
             "group": ["lodash"],
             "message": "Please use the standalone lodash package (for instance: `import groupBy from 'lodash.groupby'` instead of `import { groupBy } from 'lodash'`)"
-          },
-          {
-            "group": ["twenty-ui", "twenty-ui/input", "@ui/input"],
-            "importNames": ["Toggle", "ToggleProps", "ToggleSize"],
-            "message": "Use Switch and its checked/onCheckedChange API instead of Toggle."
-          },
-          {
-            "group": ["**/Toggle/Toggle"],
-            "message": "Use Switch instead of the removed Toggle component."
           }
         ]
       }
