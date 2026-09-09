@@ -17,8 +17,4 @@ export type MessageCampaign = {
   skippedCount: number;
   bouncedCount: number;
   complainedCount: number;
-  isClickTrackingEnabled: boolean;
-  clickedCount: number | null;
-  clickRate: number | null;
-  engagementCalculatedAt: string | null;
 };
