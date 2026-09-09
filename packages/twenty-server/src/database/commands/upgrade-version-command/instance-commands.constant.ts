@@ -183,6 +183,8 @@ import { AddOwnerFieldToObjectMetadataFastInstanceCommand } from 'src/database/c
 import { AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788894200000-add-readability-parent-fields-to-object-metadata';
 import { MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788871259040-make-billing-credit-grant-expires-at-nullable';
 import { ConvertLiveCreditGrantsToNoExpirySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1788877128693-convert-live-credit-grants-to-no-expiry';
+import { AddIsAuditLoggedToFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788885873410-add-is-audit-logged-to-field-metadata';
+import { BackfillIsAuditLoggedOnPositionFieldMetadataSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1788885873411-backfill-is-audit-logged-on-position-field-metadata';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -368,4 +370,6 @@ export const INSTANCE_COMMANDS = [
   AddOwnerFieldToObjectMetadataFastInstanceCommand,
   MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand,
   ConvertLiveCreditGrantsToNoExpirySlowInstanceCommand,
+  AddIsAuditLoggedToFieldMetadataFastInstanceCommand,
+  BackfillIsAuditLoggedOnPositionFieldMetadataSlowInstanceCommand,
 ];

@@ -615,6 +615,29 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       }
     }
 
+    for (const pageLayoutWidgetManifest of manifest.pageLayoutWidgets ?? []) {
+      if (
+        !isDefined(pageLayoutWidgetManifest.pageLayoutTabUniversalIdentifier)
+      ) {
+        throw new Error(
+          `Top-level pageLayoutWidget "${pageLayoutWidgetManifest.universalIdentifier}" is missing required pageLayoutTabUniversalIdentifier`,
+        );
+      }
+
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity:
+          fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+            pageLayoutWidgetManifest,
+            pageLayoutTabUniversalIdentifier:
+              pageLayoutWidgetManifest.pageLayoutTabUniversalIdentifier,
+            applicationUniversalIdentifier,
+            now,
+          }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatPageLayoutWidgetMaps,
+      });
+    }
+
     for (const [key, applicationVariableManifest] of Object.entries(
       manifest.application.applicationVariables ?? {},
     )) {
