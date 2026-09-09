@@ -62,6 +62,29 @@ const SORT_COLUMN_BY_FIELD: Record<
 
 const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."updatedAt"`;
 
+const CORE_WORKFLOW_AGGREGATE_COLUMNS = `
+         c.name,
+         c."lastPublishedVersionId",
+         c."applicationId",
+         c."updatedAt",
+         coalesce(bool_or(v.status = 'DRAFT'), false) AS "hasDraftVersion",
+         coalesce(bool_or(v.status = 'ACTIVE'), false) AS "hasActiveVersion",
+         coalesce(bool_or(v.status = 'DEACTIVATED'), false) AS "hasDeactivatedVersion"`;
+
+const toCoreWorkflowDTO = (row: CoreWorkflowRow): CoreWorkflowDTO => ({
+  id: row.id,
+  name: row.name,
+  statuses: computeCoreWorkflowStatuses({
+    hasDraftVersion: row.hasDraftVersion,
+    hasActiveVersion: row.hasActiveVersion,
+    hasDeactivatedVersion: row.hasDeactivatedVersion,
+  }),
+  lastPublishedVersionId: row.lastPublishedVersionId,
+  applicationId: row.applicationId,
+  workspaceWorkflowId: row.workspaceWorkflowId,
+  updatedAt: row.updatedAt.toISOString(),
+});
+
 const buildWorkflowVersionsJoinClause = (schemaName: string) =>
   `LEFT JOIN ${schemaName}."workflow" wf
      ON wf."coreWorkflowId" = c.id AND wf."deletedAt" IS NULL
@@ -131,14 +154,8 @@ export class CoreWorkflowListService {
       `SELECT
          c.id,
          ${cursorExpression} AS "cursorSortValue",
-         c.name,
-         c."lastPublishedVersionId",
-         c."applicationId",
          min(wf.id::text) AS "workspaceWorkflowId",
-         c."updatedAt",
-         coalesce(bool_or(v.status = 'DRAFT'), false) AS "hasDraftVersion",
-         coalesce(bool_or(v.status = 'ACTIVE'), false) AS "hasActiveVersion",
-         coalesce(bool_or(v.status = 'DEACTIVATED'), false) AS "hasDeactivatedVersion"
+         ${CORE_WORKFLOW_AGGREGATE_COLUMNS}
        FROM core."workflow" c
        ${buildWorkflowVersionsJoinClause(schemaName)}
        WHERE c."workspaceId" = $1
@@ -161,19 +178,7 @@ export class CoreWorkflowListService {
     const pageRows = hasNextPage ? rows.slice(0, first) : rows;
 
     const edges = pageRows.map((row) => ({
-      node: {
-        id: row.id,
-        name: row.name,
-        statuses: computeCoreWorkflowStatuses({
-          hasDraftVersion: row.hasDraftVersion,
-          hasActiveVersion: row.hasActiveVersion,
-          hasDeactivatedVersion: row.hasDeactivatedVersion,
-        }),
-        lastPublishedVersionId: row.lastPublishedVersionId,
-        applicationId: row.applicationId,
-        workspaceWorkflowId: row.workspaceWorkflowId,
-        updatedAt: row.updatedAt.toISOString(),
-      },
+      node: toCoreWorkflowDTO(row),
       cursor: encodeCursorData({
         sortValue: row.cursorSortValue,
         id: row.id,
@@ -203,14 +208,8 @@ export class CoreWorkflowListService {
       `SELECT
          c.id,
          null AS "cursorSortValue",
-         c.name,
-         c."lastPublishedVersionId",
-         c."applicationId",
          wf.id::text AS "workspaceWorkflowId",
-         c."updatedAt",
-         coalesce(bool_or(v.status = 'DRAFT'), false) AS "hasDraftVersion",
-         coalesce(bool_or(v.status = 'ACTIVE'), false) AS "hasActiveVersion",
-         coalesce(bool_or(v.status = 'DEACTIVATED'), false) AS "hasDeactivatedVersion"
+         ${CORE_WORKFLOW_AGGREGATE_COLUMNS}
        FROM core."workflow" c
        JOIN ${schemaName}."workflow" wf
          ON wf."coreWorkflowId" = c.id
@@ -229,19 +228,7 @@ export class CoreWorkflowListService {
       return null;
     }
 
-    return {
-      id: row.id,
-      name: row.name,
-      statuses: computeCoreWorkflowStatuses({
-        hasDraftVersion: row.hasDraftVersion,
-        hasActiveVersion: row.hasActiveVersion,
-        hasDeactivatedVersion: row.hasDeactivatedVersion,
-      }),
-      lastPublishedVersionId: row.lastPublishedVersionId,
-      applicationId: row.applicationId,
-      workspaceWorkflowId: row.workspaceWorkflowId,
-      updatedAt: row.updatedAt.toISOString(),
-    };
+    return toCoreWorkflowDTO(row);
   }
 
   private async countByWorkspaceId({

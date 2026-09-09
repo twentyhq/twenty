@@ -111,5 +111,5 @@ export const useWorkflowWithCurrentVersion = (
     __typename: 'Workflow',
     versions: workflowVersions,
     currentVersion,
-  } as WorkflowWithCurrentVersion;
+  };
 };

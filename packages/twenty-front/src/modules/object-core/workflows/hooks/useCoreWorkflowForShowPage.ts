@@ -2,7 +2,10 @@ import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { type WorkflowVersion } from '@/workflow/types/Workflow';
+import {
+  type WorkflowStatus,
+  type WorkflowVersion,
+} from '@/workflow/types/Workflow';
 import {
   CoreWorkflowVersionStatus,
   GetCoreWorkflowDocument,
@@ -25,7 +28,7 @@ export const useCoreWorkflowForShowPage = ({
     | {
         id: string;
         name: string;
-        statuses: WorkflowVersion['status'][] | null;
+        statuses: WorkflowStatus[] | null;
         lastPublishedVersionId: string | null;
       }
     | undefined;
@@ -83,8 +86,7 @@ export const useCoreWorkflowForShowPage = ({
       ? {
           id: coreWorkflow.workspaceWorkflowId,
           name: coreWorkflow.name ?? '',
-          statuses:
-            coreWorkflow.statuses as unknown as WorkflowVersion['status'][],
+          statuses: coreWorkflow.statuses,
           lastPublishedVersionId: coreWorkflow.lastPublishedVersionId,
         }
       : undefined,

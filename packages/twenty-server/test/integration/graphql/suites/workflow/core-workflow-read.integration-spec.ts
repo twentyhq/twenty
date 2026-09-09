@@ -96,27 +96,42 @@ describe('coreWorkflow (e2e)', () => {
   });
 
   it('should expose the version content the show page renders', async () => {
-    const versionsResponse = await graphql(
-      `
-        query CoreWorkflowVersions($workspaceWorkflowId: UUID!) {
-          coreWorkflowVersions(workspaceWorkflowId: $workspaceWorkflowId) {
-            id
-            label
-            status
-            workspaceWorkflowVersionId
-            createdAt
-            updatedAt
-          }
+    const versionsQuery = `
+      query CoreWorkflowVersions($workspaceWorkflowId: UUID!) {
+        coreWorkflowVersions(workspaceWorkflowId: $workspaceWorkflowId) {
+          id
+          label
+          status
+          workspaceWorkflowVersionId
+          createdAt
+          updatedAt
         }
-      `,
-      { workspaceWorkflowId },
-    );
+      }
+    `;
 
-    expect(versionsResponse.body.errors).toBeUndefined();
+    let versions = [];
 
-    const versions = versionsResponse.body.data.coreWorkflowVersions;
+    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
+      const versionsResponse = await graphql(versionsQuery, {
+        workspaceWorkflowId,
+      });
+
+      expect(versionsResponse.body.errors).toBeUndefined();
+
+      versions = versionsResponse.body.data.coreWorkflowVersions;
+
+      if (
+        versions.length === 1 &&
+        isDefined(versions[0].workspaceWorkflowVersionId)
+      ) {
+        break;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+    }
 
     expect(versions).toHaveLength(1);
+    expect(versions[0].workspaceWorkflowVersionId).not.toBeNull();
     expect(versions[0].status).toBe('DRAFT');
     expect(versions[0].updatedAt).toBeDefined();
 
