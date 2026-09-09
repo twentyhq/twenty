@@ -25,6 +25,8 @@ const twentyClientTemplateSource = readFileSync(
 type TwentyClassType = new (options?: {
   url?: string;
   fetch?: typeof globalThis.fetch;
+  headers?: HeadersInit;
+  runAs?: 'user' | 'application' | { workspaceMemberId: string };
 }) => {
   query: (request: Record<string, unknown>) => Promise<unknown>;
   uploadFile: (
@@ -140,6 +142,7 @@ describe('Generated client wrapper auth behavior', () => {
   });
 
   beforeEach(() => {
+    delete process.env.TWENTY_API_URL;
     delete process.env.TWENTY_APP_ACCESS_TOKEN;
     delete process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN;
     delete process.env.TWENTY_API_KEY;
@@ -580,5 +583,162 @@ describe('Generated client wrapper auth behavior', () => {
     } finally {
       globalThis.fetch = originalFetch;
     }
+  });
+
+  describe('acting as a workspace member', () => {
+    const WORKSPACE_MEMBER_ID = '20202020-0687-4c41-b707-ed1bfca972a7';
+
+    const buildMemberExchangeFetchMock = ({
+      exchangeBody = {
+        data: {
+          generateApplicationTokenForWorkspaceMember: {
+            applicationAccessToken: { token: 'member-token' },
+          },
+        },
+      },
+    }: { exchangeBody?: unknown } = {}) => {
+      const calls: {
+        url: string;
+        authorization: string | null;
+        body: { query?: string; variables?: Record<string, unknown> };
+      }[] = [];
+
+      const fetchMock = vi.fn(
+        async (url: string | URL | Request, requestInit?: RequestInit) => {
+          const call = {
+            url: String(url),
+            authorization: getAuthorizationHeaderValue(requestInit),
+            body: JSON.parse(String(requestInit?.body)),
+          };
+
+          calls.push(call);
+
+          if (call.url.endsWith('/metadata')) {
+            return createJsonResponse({ body: exchangeBody });
+          }
+
+          return createJsonResponse({
+            body: { data: { record: { id: 'record-id' } } },
+          });
+        },
+      );
+
+      return { fetchMock, calls };
+    };
+
+    beforeEach(() => {
+      process.env.TWENTY_API_URL = 'https://example.com';
+      process.env.TWENTY_APP_ACCESS_TOKEN = 'delegated-token';
+      process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
+    });
+
+    it('should exchange the application token for the member before the first call', async () => {
+      const { fetchMock, calls } = buildMemberExchangeFetchMock();
+
+      const twentyClient = new TwentyClass({
+        url: 'https://example.com/graphql',
+        fetch: fetchMock as unknown as typeof globalThis.fetch,
+        runAs: { workspaceMemberId: WORKSPACE_MEMBER_ID },
+      });
+
+      await twentyClient.query({ record: { id: true } });
+
+      expect(calls).toHaveLength(2);
+      expect(calls[0]).toMatchObject({
+        url: 'https://example.com/metadata',
+        authorization: 'Bearer application-token',
+        body: { variables: { workspaceMemberId: WORKSPACE_MEMBER_ID } },
+      });
+      expect(calls[0].body.query).toContain(
+        'generateApplicationTokenForWorkspaceMember',
+      );
+      expect(calls[1]).toMatchObject({
+        url: 'https://example.com/graphql',
+        authorization: 'Bearer member-token',
+      });
+    });
+
+    it('should exchange once and reuse the member token across calls', async () => {
+      const { fetchMock, calls } = buildMemberExchangeFetchMock();
+
+      const twentyClient = new TwentyClass({
+        url: 'https://example.com/graphql',
+        fetch: fetchMock as unknown as typeof globalThis.fetch,
+        runAs: { workspaceMemberId: WORKSPACE_MEMBER_ID },
+      });
+
+      await Promise.all([
+        twentyClient.query({ record: { id: true } }),
+        twentyClient.query({ record: { id: true } }),
+      ]);
+      await twentyClient.query({ record: { id: true } });
+
+      expect(
+        calls.filter((call) => call.url.endsWith('/metadata')),
+      ).toHaveLength(1);
+      expect(
+        calls
+          .filter((call) => call.url.endsWith('/graphql'))
+          .map((call) => call.authorization),
+      ).toEqual([
+        'Bearer member-token',
+        'Bearer member-token',
+        'Bearer member-token',
+      ]);
+    });
+
+    it('should surface the refusal when the server will not act as the member', async () => {
+      const { fetchMock, calls } = buildMemberExchangeFetchMock({
+        exchangeBody: {
+          errors: [{ message: 'Workspace member not found' }],
+        },
+      });
+
+      const twentyClient = new TwentyClass({
+        url: 'https://example.com/graphql',
+        fetch: fetchMock as unknown as typeof globalThis.fetch,
+        runAs: { workspaceMemberId: WORKSPACE_MEMBER_ID },
+      });
+
+      await expect(
+        twentyClient.query({ record: { id: true } }),
+      ).rejects.toThrow(/Workspace member not found/);
+      expect(
+        calls.filter((call) => call.url.endsWith('/graphql')),
+      ).toHaveLength(0);
+    });
+
+    it('should refuse to act as a member outside a logic function run', async () => {
+      delete process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN;
+      const { fetchMock } = buildMemberExchangeFetchMock();
+
+      const twentyClient = new TwentyClass({
+        url: 'https://example.com/graphql',
+        fetch: fetchMock as unknown as typeof globalThis.fetch,
+        runAs: { workspaceMemberId: WORKSPACE_MEMBER_ID },
+      });
+
+      await expect(
+        twentyClient.query({ record: { id: true } }),
+      ).rejects.toThrow(/TWENTY_APP_APPLICATION_ACCESS_TOKEN/);
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('should let an explicit Authorization header win over the member', async () => {
+      const { fetchMock, calls } = buildMemberExchangeFetchMock();
+
+      const twentyClient = new TwentyClass({
+        url: 'https://example.com/graphql',
+        fetch: fetchMock as unknown as typeof globalThis.fetch,
+        headers: { Authorization: 'Bearer explicit-token' },
+        runAs: { workspaceMemberId: WORKSPACE_MEMBER_ID },
+      });
+
+      await twentyClient.query({ record: { id: true } });
+
+      expect(calls.map((call) => call.authorization)).toEqual([
+        'Bearer explicit-token',
+      ]);
+    });
   });
 });

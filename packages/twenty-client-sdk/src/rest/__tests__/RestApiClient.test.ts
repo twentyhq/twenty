@@ -355,4 +355,107 @@ describe('RestApiClient', () => {
       (fetchMock.mock.calls[1][1].headers as Headers).get('Authorization'),
     ).toBe('Bearer refreshed-token');
   });
+
+  describe('acting as a workspace member', () => {
+    const WORKSPACE_MEMBER_ID = '20202020-0687-4c41-b707-ed1bfca972a7';
+
+    beforeEach(() => {
+      (globalThis as Record<string, unknown>).process = {
+        env: {
+          TWENTY_API_URL: 'https://api.twenty.test',
+          TWENTY_APP_ACCESS_TOKEN: 'delegated-token',
+          TWENTY_APP_APPLICATION_ACCESS_TOKEN: 'application-token',
+        },
+      };
+    });
+
+    const buildExchangeFetchMock = (exchangeBody: unknown) =>
+      vi
+        .fn()
+        .mockImplementation(async (url: string) =>
+          url.endsWith('/metadata')
+            ? buildResponse(JSON.stringify(exchangeBody))
+            : buildResponse('{}'),
+        );
+
+    it('should exchange the application token for the member, then reuse it', async () => {
+      const fetchMock = buildExchangeFetchMock({
+        data: {
+          generateApplicationTokenForWorkspaceMember: {
+            applicationAccessToken: { token: 'member-token' },
+          },
+        },
+      });
+
+      const client = new RestApiClient({
+        fetch: fetchMock,
+        runAs: { workspaceMemberId: WORKSPACE_MEMBER_ID },
+      });
+
+      await client.get('/rest/people');
+      await client.get('/rest/companies');
+
+      expect(fetchMock).toHaveBeenCalledTimes(3);
+
+      const [exchangeUrl, exchangeInit] = fetchMock.mock.calls[0];
+      expect(exchangeUrl).toBe('https://api.twenty.test/metadata');
+      expect(new Headers(exchangeInit.headers).get('Authorization')).toBe(
+        'Bearer application-token',
+      );
+      expect(JSON.parse(exchangeInit.body)).toMatchObject({
+        variables: { workspaceMemberId: WORKSPACE_MEMBER_ID },
+      });
+
+      expect(
+        (fetchMock.mock.calls[1][1].headers as Headers).get('Authorization'),
+      ).toBe('Bearer member-token');
+      expect(
+        (fetchMock.mock.calls[2][1].headers as Headers).get('Authorization'),
+      ).toBe('Bearer member-token');
+    });
+
+    it('should surface the refusal when the server will not act as the member', async () => {
+      const fetchMock = buildExchangeFetchMock({
+        errors: [{ message: 'Workspace member not found' }],
+      });
+
+      await expect(
+        new RestApiClient({
+          fetch: fetchMock,
+          runAs: { workspaceMemberId: WORKSPACE_MEMBER_ID },
+        }).get('/rest/people'),
+      ).rejects.toThrow(/Workspace member not found/);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('should name the application token when acting as a member outside a run', async () => {
+      (globalThis as Record<string, unknown>).process = {
+        env: { TWENTY_API_URL: 'https://api.twenty.test' },
+      };
+      const fetchMock = vi.fn();
+
+      await expect(
+        new RestApiClient({
+          fetch: fetchMock,
+          runAs: { workspaceMemberId: WORKSPACE_MEMBER_ID },
+        }).get('/rest/people'),
+      ).rejects.toThrow(/TWENTY_APP_APPLICATION_ACCESS_TOKEN/);
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('should let an explicit token win over the member', async () => {
+      const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
+
+      await new RestApiClient({
+        fetch: fetchMock,
+        token: 'explicit-token',
+        runAs: { workspaceMemberId: WORKSPACE_MEMBER_ID },
+      }).get('/rest/people');
+
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(
+        (fetchMock.mock.calls[0][1].headers as Headers).get('Authorization'),
+      ).toBe('Bearer explicit-token');
+    });
+  });
 });

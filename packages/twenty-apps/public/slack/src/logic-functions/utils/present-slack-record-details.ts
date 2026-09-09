@@ -7,6 +7,7 @@ import { findSlackUnfurlRecord } from 'src/logic-functions/data/find-slack-unfur
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { type SlackRecordLink } from 'src/logic-functions/types/slack-record-link.type';
 import { buildSlackRecordUnfurlEntity } from 'src/logic-functions/utils/build-slack-record-unfurl-entity';
+import { createWorkspaceMemberCoreApiClient } from 'src/logic-functions/utils/create-workspace-member-core-api-client';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
@@ -103,6 +104,22 @@ export const presentSlackRecordDetails = async (
     return { ok: true, skipped: 'Viewer does not map to a workspace member' };
   }
 
+  // The panel shows fields the card keeps out, so it is read with the viewer's
+  // own permissions: a record they cannot open in Twenty is reported missing.
+  const viewerClient = await createWorkspaceMemberCoreApiClient({
+    workspaceMemberId,
+  });
+
+  if (!isDefined(viewerClient)) {
+    await presentDetailsError({
+      slackClient,
+      triggerId,
+      message: 'Twenty could not check your access to this record.',
+    });
+
+    return { ok: true, skipped: 'Could not act as the viewer' };
+  }
+
   const workspaceBaseUrls = await fetchWorkspaceBaseUrls();
 
   if (workspaceBaseUrls.length === 0) {
@@ -136,7 +153,7 @@ export const presentSlackRecordDetails = async (
   }
 
   const record = await findSlackUnfurlRecord({
-    client,
+    client: viewerClient,
     objectNameSingular: recordLink.objectNameSingular,
     recordId: recordLink.recordId,
   }).catch((error) => {

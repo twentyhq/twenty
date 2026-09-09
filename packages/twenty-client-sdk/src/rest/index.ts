@@ -6,6 +6,7 @@ import {
   DEFAULT_FUNCTIONS_URL_NAME,
 } from 'twenty-shared/application';
 
+import { requestWorkspaceMemberAccessToken } from '../shared/request-workspace-member-access-token';
 import { type TwentyClientRunAs } from '../shared/twenty-client-run-as.type';
 
 export type { TwentyClientRunAs };
@@ -104,6 +105,7 @@ export class RestApiClient {
   private fetchImplementation: typeof globalThis.fetch | null;
   private authorizationToken: string | null;
   private runAs: TwentyClientRunAs | undefined;
+  private workspaceMemberTokenPromise: Promise<string> | null = null;
   private refreshAccessTokenPromise: Promise<string | null> | null = null;
 
   constructor(options?: RestApiClientOptions) {
@@ -200,6 +202,62 @@ export class RestApiClient {
       baseUrl: this.resolveFunctionsBaseUrl() ?? `${this.resolveBaseUrl()}/s`,
       path: stripAppRoutePrefix(path),
     };
+  }
+
+  private async resolveAuthorizationToken(): Promise<string> {
+    if (typeof this.runAs !== 'object' || isDefined(this.authorizationToken)) {
+      return this.resolveToken();
+    }
+
+    if (!isDefined(this.workspaceMemberTokenPromise)) {
+      this.workspaceMemberTokenPromise = this.requestWorkspaceMemberToken(
+        this.runAs.workspaceMemberId,
+      )
+        .then((workspaceMemberAccessToken) => {
+          this.authorizationToken = workspaceMemberAccessToken;
+
+          return workspaceMemberAccessToken;
+        })
+        .catch((exchangeError: unknown) => {
+          this.workspaceMemberTokenPromise = null;
+
+          throw exchangeError;
+        });
+    }
+
+    return this.workspaceMemberTokenPromise;
+  }
+
+  // Only a logic function run holds an application token, so acting as a
+  // member is exchanged there; the server intersects the member's role with
+  // the application's.
+  private async requestWorkspaceMemberToken(
+    workspaceMemberId: string,
+  ): Promise<string> {
+    if (!isDefined(this.fetchImplementation)) {
+      throw new RestApiClientError(
+        'Global `fetch` function is not available, pass a fetch implementation to `RestApiClient`.',
+      );
+    }
+
+    const applicationAccessToken =
+      getProcessEnvironment()[DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME];
+
+    if (
+      !isDefined(applicationAccessToken) ||
+      applicationAccessToken.length === 0
+    ) {
+      throw new RestApiClientError(
+        `Acting as a workspace member needs the \`${DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME}\` environment variable, which only a logic function run provides.`,
+      );
+    }
+
+    return requestWorkspaceMemberAccessToken({
+      fetchImplementation: this.fetchImplementation,
+      apiUrl: this.resolveBaseUrl(),
+      applicationAccessToken,
+      workspaceMemberId,
+    });
   }
 
   private resolveToken(): string {
@@ -365,7 +423,7 @@ export class RestApiClient {
       target.path,
       requestOptions?.query,
     );
-    const token = this.resolveToken();
+    const token = await this.resolveAuthorizationToken();
 
     let response = await this.sendRequest(
       url,

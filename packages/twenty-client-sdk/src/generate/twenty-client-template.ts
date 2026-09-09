@@ -33,10 +33,21 @@ declare class GenqlError extends Error {
 }
 // __STRIPPED_DURING_INJECTION_END__
 
+const API_URL_ENV_KEY = 'TWENTY_API_URL';
 const APP_ACCESS_TOKEN_ENV_KEY = 'TWENTY_APP_ACCESS_TOKEN';
 const APP_APPLICATION_ACCESS_TOKEN_ENV_KEY =
   'TWENTY_APP_APPLICATION_ACCESS_TOKEN';
 const API_KEY_ENV_KEY = 'TWENTY_API_KEY';
+
+// Kept in sync with shared/request-workspace-member-access-token.ts: this
+// template is injected into generated clients that cannot import the package.
+const GENERATE_APPLICATION_TOKEN_FOR_WORKSPACE_MEMBER_MUTATION = `mutation GenerateApplicationTokenForWorkspaceMember($workspaceMemberId: UUID!) {
+  generateApplicationTokenForWorkspaceMember(workspaceMemberId: $workspaceMemberId) {
+    applicationAccessToken {
+      token
+    }
+  }
+}`;
 
 export type TwentyGeneratedClientOptions = ClientOptions & {
   runAs?: TwentyClientRunAs;
@@ -59,6 +70,14 @@ type GraphqlResponse = {
   statusText: string;
   payload: GraphqlResponsePayload | null;
   rawBody: string;
+};
+
+type WorkspaceMemberTokenResponsePayload = {
+  data?: {
+    generateApplicationTokenForWorkspaceMember?: {
+      applicationAccessToken?: { token?: string };
+    };
+  };
 };
 
 const getProcessEnvironment = (): ProcessEnvironment => {
@@ -150,6 +169,8 @@ export class TwentyGeneratedClient {
   private headers: HeadersInit | (() => HeadersInit | Promise<HeadersInit>);
   private fetchImplementation: typeof globalThis.fetch | null;
   private authorizationToken: string | null;
+  private runAsWorkspaceMemberId: string | null;
+  private workspaceMemberTokenPromise: Promise<string> | null = null;
   private refreshAccessTokenPromise: Promise<string | null> | null = null;
 
   constructor(options?: TwentyGeneratedClientOptions) {
@@ -179,17 +200,22 @@ export class TwentyGeneratedClient {
       typeof headers === 'function' ? undefined : headers,
     );
 
+    this.runAsWorkspaceMemberId =
+      typeof runAs === 'object' ? runAs.workspaceMemberId : null;
+
     // Priority: explicit header > the token for the requested access > api key
-    // (legacy).
+    // (legacy). A workspace member token is exchanged on the first request.
     this.authorizationToken =
       tokenFromHeaders ??
-      processEnvironment[
-        runAs === 'application'
-          ? APP_APPLICATION_ACCESS_TOKEN_ENV_KEY
-          : APP_ACCESS_TOKEN_ENV_KEY
-      ] ??
-      processEnvironment[API_KEY_ENV_KEY] ??
-      null;
+      (this.runAsWorkspaceMemberId !== null
+        ? null
+        : (processEnvironment[
+            runAs === 'application'
+              ? APP_APPLICATION_ACCESS_TOKEN_ENV_KEY
+              : APP_ACCESS_TOKEN_ENV_KEY
+          ] ??
+          processEnvironment[API_KEY_ENV_KEY] ??
+          null));
 
     this.client = createClient({
       ...merged,
@@ -280,7 +306,7 @@ export class TwentyGeneratedClient {
       operation,
       headers,
       requestInit,
-      token: this.authorizationToken,
+      token: await this.resolveAuthorizationToken(),
     });
 
     if (this.shouldRefreshToken(firstResponse)) {
@@ -301,16 +327,97 @@ export class TwentyGeneratedClient {
     return this.assertResponseIsSuccessful(firstResponse);
   }
 
+  private async resolveAuthorizationToken(): Promise<string | null> {
+    if (
+      this.runAsWorkspaceMemberId === null ||
+      this.authorizationToken !== null
+    ) {
+      return this.authorizationToken;
+    }
+
+    if (!this.workspaceMemberTokenPromise) {
+      this.workspaceMemberTokenPromise = this.requestWorkspaceMemberAccessToken(
+        this.runAsWorkspaceMemberId,
+      )
+        .then((workspaceMemberAccessToken) => {
+          this.authorizationToken = workspaceMemberAccessToken;
+
+          return workspaceMemberAccessToken;
+        })
+        .catch((exchangeError: unknown) => {
+          this.workspaceMemberTokenPromise = null;
+
+          throw exchangeError;
+        });
+    }
+
+    return this.workspaceMemberTokenPromise;
+  }
+
+  // Only a logic function run holds an application token, so acting as a
+  // member is exchanged there: the server intersects the member's role with
+  // the application's, which is why the exchange needs no extra permission.
+  private async requestWorkspaceMemberAccessToken(
+    workspaceMemberId: string,
+  ): Promise<string> {
+    const processEnvironment = getProcessEnvironment();
+    const applicationAccessToken =
+      processEnvironment[APP_APPLICATION_ACCESS_TOKEN_ENV_KEY];
+    const apiUrl = processEnvironment[API_URL_ENV_KEY];
+
+    if (!applicationAccessToken) {
+      throw new Error(
+        `Acting as a workspace member needs the \`${APP_APPLICATION_ACCESS_TOKEN_ENV_KEY}\` environment variable, which only a logic function run provides.`,
+      );
+    }
+
+    if (!apiUrl) {
+      throw new Error(
+        `Acting as a workspace member needs the \`${API_URL_ENV_KEY}\` environment variable.`,
+      );
+    }
+
+    const response = await this.executeGraphqlRequest({
+      operation: {
+        query: GENERATE_APPLICATION_TOKEN_FOR_WORKSPACE_MEMBER_MUTATION,
+        variables: { workspaceMemberId },
+      },
+      token: applicationAccessToken,
+      url: `${apiUrl.replace(/\/+$/, '')}/metadata`,
+    });
+
+    const token = (
+      response.payload as WorkspaceMemberTokenResponsePayload | null
+    )?.data?.generateApplicationTokenForWorkspaceMember?.applicationAccessToken
+      ?.token;
+
+    if (typeof token === 'string' && token.length > 0) {
+      return token;
+    }
+
+    const reason =
+      response.payload?.errors?.[0]?.message ??
+      (response.status >= 200 && response.status < 300
+        ? response.rawBody
+        : `${response.status} ${response.statusText}`);
+
+    throw new Error(
+      `Could not act as workspace member ${workspaceMemberId}: ${reason}`,
+    );
+  }
+
   private async executeGraphqlRequest({
     operation,
     headers,
     requestInit,
     token,
+    url,
   }: {
     operation: GraphqlOperation | GraphqlOperation[] | FormData;
     headers?: HeadersInit;
     requestInit?: RequestInit;
     token: string | null;
+    url?: string;
   }): Promise<GraphqlResponse> {
     if (!this.fetchImplementation) {
       throw new Error(
@@ -340,14 +447,18 @@ export class TwentyGeneratedClient {
       requestHeaders.delete('Authorization');
     }
 
-    const response = await this.fetchImplementation.call(globalThis, this.url, {
-      ...this.requestOptions,
-      ...requestInit,
-      method: requestInit?.method ?? 'POST',
-      headers: requestHeaders,
-      body:
-        operation instanceof FormData ? operation : JSON.stringify(operation),
-    });
+    const response = await this.fetchImplementation.call(
+      globalThis,
+      url ?? this.url,
+      {
+        ...this.requestOptions,
+        ...requestInit,
+        method: requestInit?.method ?? 'POST',
+        headers: requestHeaders,
+        body:
+          operation instanceof FormData ? operation : JSON.stringify(operation),
+      },
+    );
 
     const rawBody = await response.text();
     let payload: GraphqlResponsePayload | null = null;

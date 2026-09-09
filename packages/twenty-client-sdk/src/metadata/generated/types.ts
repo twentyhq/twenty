@@ -10509,6 +10509,15 @@ export default {
                     ]
                 }
             ],
+            "generateApplicationTokenForWorkspaceMember": [
+                12,
+                {
+                    "workspaceMemberId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "renewApplicationToken": [
                 12,
                 {

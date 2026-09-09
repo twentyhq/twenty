@@ -12,6 +12,7 @@ import { OAuthDiscoveryController } from 'src/engine/core-modules/application/ap
 import { OAuthRegistrationController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-registration.controller';
 import { OAuthTokenController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-token.controller';
 import { OAuthService } from 'src/engine/core-modules/application/application-oauth/oauth.service';
+import { ApplicationWorkspaceMemberTokenService } from 'src/engine/core-modules/application/application-oauth/services/application-workspace-member-token.service';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -20,6 +21,7 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
 
 @Module({
@@ -41,13 +43,18 @@ import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-
     ThrottlerModule,
     TwentyConfigModule,
     WorkspaceCacheStorageModule,
+    WorkspaceCacheModule,
   ],
   controllers: [
     OAuthTokenController,
     OAuthDiscoveryController,
     OAuthRegistrationController,
   ],
-  providers: [OAuthService, ApplicationOAuthResolver],
+  providers: [
+    OAuthService,
+    ApplicationWorkspaceMemberTokenService,
+    ApplicationOAuthResolver,
+  ],
   exports: [OAuthService],
 })
 export class ApplicationOAuthModule {}

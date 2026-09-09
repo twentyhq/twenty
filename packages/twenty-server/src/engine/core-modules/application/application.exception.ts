@@ -33,6 +33,7 @@ export enum ApplicationExceptionCode {
   KEY_VALUE_PERSISTENCE_FAILED = 'KEY_VALUE_PERSISTENCE_FAILED',
   APPLICATION_NOT_EXPORTABLE = 'APPLICATION_NOT_EXPORTABLE',
   STANDARD_APPLICATION_NOT_EXPORTABLE = 'STANDARD_APPLICATION_NOT_EXPORTABLE',
+  WORKSPACE_MEMBER_NOT_FOUND = 'WORKSPACE_MEMBER_NOT_FOUND',
 }
 
 const getApplicationExceptionUserFriendlyMessage = (
@@ -93,6 +94,8 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`Only applications synced from local source can be exported.`;
     case ApplicationExceptionCode.STANDARD_APPLICATION_NOT_EXPORTABLE:
       return msg`The standard application cannot be exported.`;
+    case ApplicationExceptionCode.WORKSPACE_MEMBER_NOT_FOUND:
+      return msg`Workspace member not found.`;
     default:
       assertUnreachable(code);
   }

@@ -2951,6 +2951,7 @@ export type Mutation = {
   executeOneLogicFunction: LogicFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateApplicationToken: ApplicationTokenPair;
+  generateApplicationTokenForWorkspaceMember: ApplicationTokenPair;
   generatePlaygroundToken: AuthToken;
   generateTransientToken: TransientToken;
   getAuthTokensFromLoginToken: AuthTokens;
@@ -3683,6 +3684,11 @@ export type MutationGenerateApiKeyTokenArgs = {
 
 export type MutationGenerateApplicationTokenArgs = {
   applicationId: Scalars['UUID']['input'];
+};
+
+
+export type MutationGenerateApplicationTokenForWorkspaceMemberArgs = {
+  workspaceMemberId: Scalars['UUID']['input'];
 };
 
 

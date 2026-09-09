@@ -9,16 +9,21 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
+import { GenerateApplicationTokenForWorkspaceMemberInput } from 'src/engine/core-modules/application/application-oauth/dtos/generate-application-token-for-workspace-member.input';
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
+import { ApplicationWorkspaceMemberTokenService } from 'src/engine/core-modules/application/application-oauth/services/application-workspace-member-token.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -37,6 +42,7 @@ const APP_TOKEN_RATE_LIMIT_WINDOW_MS = 30_000;
 export class ApplicationOAuthResolver {
   constructor(
     private readonly applicationTokenService: ApplicationTokenService,
+    private readonly applicationWorkspaceMemberTokenService: ApplicationWorkspaceMemberTokenService,
     private readonly throttlerService: ThrottlerService,
   ) {}
 
@@ -61,6 +67,38 @@ export class ApplicationOAuthResolver {
       userId: user?.id,
       userWorkspaceId,
     });
+  }
+
+  // Lets an application read and write as a given member, e.g. a logic
+  // function serving a request the platform cannot attribute to a person.
+  @Mutation(() => ApplicationTokenPairDTO)
+  @UseGuards(NoPermissionGuard)
+  async generateApplicationTokenForWorkspaceMember(
+    @Args()
+    { workspaceMemberId }: GenerateApplicationTokenForWorkspaceMemberInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthApplication() application: FlatApplication,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    requestUserWorkspaceId: string | undefined,
+    @AuthWorkspaceMemberId()
+    requestWorkspaceMemberId: string | undefined,
+  ): Promise<ApplicationTokenPairDTO> {
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `app-run-as:${workspaceId}:${application.id}`,
+      1,
+      APP_TOKEN_RATE_LIMIT_MAX,
+      APP_TOKEN_RATE_LIMIT_WINDOW_MS,
+    );
+
+    return this.applicationWorkspaceMemberTokenService.generateTokenPairForWorkspaceMember(
+      {
+        workspaceId,
+        application,
+        workspaceMemberId,
+        requestUserWorkspaceId: requestUserWorkspaceId ?? null,
+        requestWorkspaceMemberId: requestWorkspaceMemberId ?? null,
+      },
+    );
   }
 
   @Mutation(() => ApplicationTokenPairDTO)
