@@ -70,8 +70,8 @@ describe('matchBenchmarks', () => {
       indexOf({ mistrallarge2512: { intelligenceIndex: 41, aliases: [] } }),
     );
 
-    expect(result?.benchmarks.intelligenceIndex).toBe(41);
-    expect(result?.benchmarks.measuredAt).toBe(MEASURED_AT);
+    expect(result?.benchmarks?.intelligenceIndex).toBe(41);
+    expect(result?.benchmarks?.measuredAt).toBe(MEASURED_AT);
   });
 
   it('carries speed and cost per task through to the catalog', () => {
@@ -86,15 +86,29 @@ describe('matchBenchmarks', () => {
       }),
     );
 
-    expect(result?.benchmarks.outputTokensPerSecond).toBe(92);
-    expect(result?.benchmarks.costPerTask).toBe(0.42);
+    expect(result?.benchmarks?.outputTokensPerSecond).toBe(92);
+    expect(result?.benchmarks?.costPerTask).toBe(0.42);
   });
 
   it('returns nothing for a model the publisher has not rated', () => {
     expect(match('mistral-large-2512', new Map())).toBeUndefined();
   });
 
-  it('reports observed prices separately from the catalog benchmarks', () => {
+  it('prefers the release a rolling alias resolves to over an undated row', () => {
+    const result = match(
+      'mistral-large-latest',
+      indexOf({
+        mistrallarge: { intelligenceIndex: 20, aliases: [] },
+        mistrallarge2512: { intelligenceIndex: 41, aliases: [] },
+      }),
+    );
+
+    expect(result?.benchmarks?.intelligenceIndex).toBe(41);
+  });
+
+  it('emits no benchmarks for a row carrying only a price observation', () => {
+    // A phantom benchmarks block reads as "measured and unremarkable" rather
+    // than "not measured".
     const result = match(
       'mistral-large-2512',
       indexOf({
@@ -105,8 +119,8 @@ describe('matchBenchmarks', () => {
       }),
     );
 
+    expect(result?.benchmarks).toBeUndefined();
     expect(result?.observedPrices?.inputPerMillionTokens).toBe(2);
-    expect(result?.benchmarks).not.toHaveProperty('observedPrices');
   });
 
   it('collects the aliases the publisher gives so consumers can join on them', () => {

@@ -8,5 +8,5 @@ export const aiModelBenchmarksSchema = z.object({
   outputTokensPerSecond: z.number().positive().optional(),
   timeToFirstTokenSeconds: z.number().positive().optional(),
   costPerTask: z.number().positive().optional(),
-  measuredAt: z.string(),
+  measuredAt: z.string().date(),
 });

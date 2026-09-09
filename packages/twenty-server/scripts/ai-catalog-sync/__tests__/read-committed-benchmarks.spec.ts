@@ -65,6 +65,6 @@ describe('readCommittedBenchmarks', () => {
       measuredAt: '2026-09-09',
     });
 
-    expect(result?.benchmarks.measuredAt).toBe('2026-09-01');
+    expect(result?.benchmarks?.measuredAt).toBe('2026-09-01');
   });
 });

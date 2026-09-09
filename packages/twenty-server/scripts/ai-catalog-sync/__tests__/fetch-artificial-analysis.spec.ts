@@ -44,11 +44,33 @@ describe('fetchArtificialAnalysisBenchmarks', () => {
     expect(record?.outputTokensPerSecond).toBeUndefined();
   });
 
-  it('keeps the measured row when an unmeasured duplicate shares its name', async () => {
-    respondWith([
-      measuredModel,
-      { slug: 'claude-sonnet-5', median_output_tokens_per_second: 0 },
-    ]);
+  it.each([
+    ['unmeasured row first', true],
+    ['measured row first', false],
+  ])(
+    'keeps the measured row when an unmeasured duplicate shares its name (%s)',
+    async (_label, unmeasuredFirst) => {
+      const unmeasured = {
+        slug: 'claude-sonnet-5',
+        median_output_tokens_per_second: 0,
+      };
+
+      respondWith(
+        unmeasuredFirst
+          ? [unmeasured, measuredModel]
+          : [measuredModel, unmeasured],
+      );
+
+      const record = (await fetchArtificialAnalysisBenchmarks('key')).get(
+        'claudesonnet5',
+      );
+
+      expect(record?.intelligenceIndex).toBe(38.4);
+    },
+  );
+
+  it('survives a null row rather than discarding the whole response', async () => {
+    respondWith([null, measuredModel]);
 
     const record = (await fetchArtificialAnalysisBenchmarks('key')).get(
       'claudesonnet5',

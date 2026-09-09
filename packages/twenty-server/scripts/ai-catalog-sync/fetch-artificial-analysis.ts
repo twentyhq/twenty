@@ -81,6 +81,11 @@ export const fetchArtificialAnalysisBenchmarks = async (
   const index: BenchmarkIndex = new Map();
 
   for (const model of models) {
+    // One malformed row must not cost us every measurement in the response.
+    if (typeof model !== 'object' || model === null) {
+      continue;
+    }
+
     const aliases = [model.slug, model.id, model.name].filter(isDefined);
 
     // The intelligence index sits under `evaluations` and cost per task under

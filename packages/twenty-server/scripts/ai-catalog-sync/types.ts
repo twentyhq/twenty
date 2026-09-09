@@ -1,15 +1,8 @@
 import { type AiSdkPackage } from 'twenty-shared/ai';
 
 import { type AiModelBenchmarks } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmarks.type';
+import { type LongContextCost } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.type';
 import { type ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
-
-export type LongContextCostEntry = {
-  inputCostPerMillionTokens: number;
-  outputCostPerMillionTokens: number;
-  cachedInputCostPerMillionTokens?: number;
-  cacheCreationCostPerMillionTokens?: number;
-  thresholdTokens: number;
-};
 
 export type GeneratedModel = {
   name: string;
@@ -20,7 +13,7 @@ export type GeneratedModel = {
   outputCostPerMillionTokens?: number;
   cachedInputCostPerMillionTokens?: number;
   cacheCreationCostPerMillionTokens?: number;
-  longContextCost?: LongContextCostEntry;
+  longContextCost?: LongContextCost;
   contextWindowTokens?: number;
   maxOutputTokens?: number;
   modalities?: string[];
@@ -48,9 +41,8 @@ export type BenchmarkRecord = {
   outputTokensPerSecond?: number;
   timeToFirstTokenSeconds?: number;
   costPerTask?: number;
-  // A benchmark publisher's own reading of the provider's list price. Never
-  // merged into the catalog, which prices from models.dev: a second
-  // independent observation is only useful while it stays independent.
+  // Kept out of the catalog on purpose: an observation only corroborates
+  // models.dev while it stays independent of it.
   observedPrices?: ObservedPrices;
   // Set only on a record recovered from the committed overlay, so preserved
   // measurements keep the date they were actually taken.

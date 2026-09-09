@@ -50,17 +50,18 @@ export const buildLookupCandidates = (
   modelName: string,
   siblingModels: Record<string, ModelsDevModel>,
 ): string[] => {
-  const candidates = [
-    modelName,
-    modelName.replace(DATE_SUFFIX, ''),
-    modelName.replace(ROLLING_SUFFIX, ''),
-  ];
+  const candidates = [modelName, modelName.replace(DATE_SUFFIX, '')];
 
   const resolved = resolveRollingAlias(modelName, siblingModels);
 
   if (isDefined(resolved)) {
     candidates.push(resolved, resolved.replace(DATE_SUFFIX, ''));
   }
+
+  // Last: an undated `mistral-large` row in the index is whichever release the
+  // publisher last measured, so it must not win over the release the alias
+  // currently resolves to.
+  candidates.push(modelName.replace(ROLLING_SUFFIX, ''));
 
   return [...new Set(candidates)];
 };
@@ -88,7 +89,9 @@ export type MatchBenchmarksArgs = {
 };
 
 export type BenchmarkMatch = {
-  benchmarks: AiModelBenchmarks;
+  // Absent when the publisher lists the model but has measured nothing about
+  // it, which is not the same as a model it scored badly.
+  benchmarks?: AiModelBenchmarks;
   aliases: string[];
   observedPrices?: ObservedPrices;
 };
@@ -116,14 +119,23 @@ export const matchBenchmarks = ({
     observedPrices,
   } = record;
 
+  const hasMeasurement = [
+    intelligenceIndex,
+    outputTokensPerSecond,
+    timeToFirstTokenSeconds,
+    costPerTask,
+  ].some(isDefined);
+
   return {
-    benchmarks: {
-      intelligenceIndex,
-      outputTokensPerSecond,
-      timeToFirstTokenSeconds,
-      costPerTask,
-      measuredAt: record.measuredAt ?? measuredAt,
-    },
+    benchmarks: hasMeasurement
+      ? {
+          intelligenceIndex,
+          outputTokensPerSecond,
+          timeToFirstTokenSeconds,
+          costPerTask,
+          measuredAt: record.measuredAt ?? measuredAt,
+        }
+      : undefined,
     aliases: [...new Set([modelName, ...record.aliases])],
     observedPrices,
   };

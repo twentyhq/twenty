@@ -7,7 +7,7 @@ import { type GeneratedCatalog } from './types';
 // meaningless, so they are excluded from the coverage denominator rather than
 // counted as gaps.
 const SPECIALIZED_MODEL_PATTERN =
-  /realtime|voxtral|tts|audio|computer-use|deep-research|-image|pixtral|codestral|embed/;
+  /realtime|voxtral|tts|audio|-live|computer-use|deep-research|-image|pixtral|codestral|embed/;
 
 export type CoverageReport = {
   generalPurposeModelCount: number;

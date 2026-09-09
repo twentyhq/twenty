@@ -23,11 +23,15 @@ describe('ai-model-benchmarks.json integrity', () => {
   it('should agree with the benchmarks merged into the catalog', () => {
     // The overlay is empty until the sync runs with an API key configured, so
     // this checks the two artifacts cannot drift rather than pinning a count.
+    // The overlay may hold more entries than the catalog: a model with only a
+    // price observation earns an overlay row but no `benchmarks` block.
     const scored = CATALOG_MODELS.filter(
       (model) => model.benchmarks !== undefined,
     );
 
-    expect(scored.length).toBe(Object.keys(OVERLAY_MODELS).length);
+    expect(scored.length).toBeLessThanOrEqual(
+      Object.keys(OVERLAY_MODELS).length,
+    );
 
     scored.forEach((model) => {
       const {

@@ -91,7 +91,8 @@ const extractCost = (
 
   model.longContextCost = {
     inputCostPerMillionTokens: longContextCost.input,
-    outputCostPerMillionTokens: longContextCost.output ?? 0,
+    outputCostPerMillionTokens:
+      longContextCost.output ?? model.outputCostPerMillionTokens ?? 0,
     thresholdTokens: LONG_CONTEXT_THRESHOLD_TOKENS,
     cachedInputCostPerMillionTokens: longContextCost.cache_read,
     cacheCreationCostPerMillionTokens: longContextCost.cache_write,
@@ -131,6 +132,21 @@ const buildModel = (
   }
 
   return model;
+};
+
+// A 200 carrying an empty or reshaped payload would otherwise generate an
+// empty catalog, and the sync PR automerges over the real one.
+export const assertPayloadIsUsable = (data: ModelsDevData): void => {
+  const missing = NATIVE_AI_SDK_PROVIDER_IDS.filter(
+    (providerName) =>
+      Object.keys(data[providerName]?.models ?? {}).length === 0,
+  );
+
+  if (missing.length > 0) {
+    throw new Error(
+      `models.dev payload is missing models for ${missing.join(', ')}; refusing to overwrite the catalog`,
+    );
+  }
 };
 
 export const buildCatalog = (data: ModelsDevData): GeneratedCatalog => {

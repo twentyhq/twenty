@@ -8,7 +8,7 @@ import { MODELS_DEV_API_URL } from 'src/engine/metadata-modules/ai/ai-models/con
 import { type AiModelBenchmarks } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmarks.type';
 import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-data.type';
 
-import { buildCatalog } from './build-catalog';
+import { assertPayloadIsUsable, buildCatalog } from './build-catalog';
 import { fetchArtificialAnalysisBenchmarks } from './fetch-artificial-analysis';
 import { matchBenchmarks } from './match-benchmarks';
 import { readCommittedBenchmarks } from './read-committed-benchmarks';
@@ -53,7 +53,11 @@ const fetchModelsDev = async (): Promise<ModelsDevData> => {
     throw new Error(`${response.status} ${response.statusText}`);
   }
 
-  return response.json();
+  const data: ModelsDevData = await response.json();
+
+  assertPayloadIsUsable(data);
+
+  return data;
 };
 
 // A leaderboard outage must never break the model catalog, so a failed fetch
@@ -118,10 +122,14 @@ const enrichCatalog = ({
       }
 
       overlay[model.name] = {
-        ...match.benchmarks,
+        ...(match.benchmarks ?? { measuredAt }),
         aliases: match.aliases,
         artificialAnalysisPrices: match.observedPrices,
       };
+
+      if (!isDefined(match.benchmarks)) {
+        return model;
+      }
 
       const { isDeprecated, ...rest } = model;
 
