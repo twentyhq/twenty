@@ -15,7 +15,7 @@ export const getWorkspaceLocalStateReason = ({
 }: Partial<WorkspaceLocalStateProperties>): string | undefined => {
   const overriddenIsActive = readAuthoredOverrideProperty({
     overrides,
-    property: 'isActive',
+    path: ['isActive'],
     authorContext: {
       ownerApplicationUniversalIdentifier: applicationUniversalIdentifier,
     },

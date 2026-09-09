@@ -111,7 +111,7 @@ export class MetadataTranslationService {
         const sourceValue = readStringProperty(entity, property);
         const overrideValue = readAuthoredOverrideProperty({
           overrides,
-          property,
+          path: [property],
           authorContext: getI18nContext(applicationId),
         });
         const canonicalValue = isNonEmptyString(overrideValue)

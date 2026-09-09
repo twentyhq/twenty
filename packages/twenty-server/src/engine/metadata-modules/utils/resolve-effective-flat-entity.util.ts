@@ -1,4 +1,4 @@
-import { listAuthoredOverrideEntries } from 'src/engine/metadata-modules/utils/list-authored-override-entries.util';
+import { ALL_OVERRIDE_ENTRY_PROPERTY_NAMES } from 'src/engine/metadata-modules/flat-entity/constant/all-override-entry-property-names.constant';
 import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/utils/override-author-context.type';
 import {
   type OverridableFlatEntity,
@@ -7,33 +7,26 @@ import {
 
 type FlatEntityWithOverrides = Record<string, unknown> & OverridableFlatEntity;
 
+// Walks the overridable registry rather than the entries' keys so the entry
+// walk stays private to readAuthoredOverrideProperty; a name the entity does
+// not carry, such as a universal twin's, is skipped.
 export const resolveEffectiveFlatEntity = <T extends FlatEntityWithOverrides>(
   flatEntity: T,
   authorContext?: Pick<
     OverrideAuthorReadContext,
     'workspaceCustomApplicationUniversalIdentifier'
   >,
-): T => {
-  const overriddenProperties = new Set(
-    listAuthoredOverrideEntries<Record<string, unknown>>({
-      overrides: flatEntity.overrides,
-      authorContext: {
-        ...authorContext,
-        ownerApplicationUniversalIdentifier:
-          flatEntity.applicationUniversalIdentifier,
-      },
-    }).flatMap(Object.keys),
-  );
-
-  return [...overriddenProperties].reduce<T>(
-    (effectiveEntity, property) => ({
-      ...effectiveEntity,
-      [property]: resolveEffectiveFlatEntityProperty(
-        flatEntity as FlatEntityWithOverrides,
-        property,
-        authorContext,
-      ),
-    }),
-    flatEntity,
-  );
-};
+): T =>
+  [...ALL_OVERRIDE_ENTRY_PROPERTY_NAMES]
+    .filter((property) => property !== 'translations' && property in flatEntity)
+    .reduce<T>(
+      (effectiveEntity, property) => ({
+        ...effectiveEntity,
+        [property]: resolveEffectiveFlatEntityProperty(
+          flatEntity as FlatEntityWithOverrides,
+          property,
+          authorContext,
+        ),
+      }),
+      flatEntity,
+    );

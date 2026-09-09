@@ -12,15 +12,9 @@ import {
 import { ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-translatable-properties-by-metadata-name.constant';
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
-import { listAuthoredOverrideEntries } from 'src/engine/metadata-modules/utils/list-authored-override-entries.util';
 import { type MetadataPresentationOverrides } from 'src/engine/metadata-modules/utils/metadata-presentation-overrides.type';
 import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/utils/override-author-context.type';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/utils/read-authored-override-property.util';
-
-const readEntryProperty = (entry: unknown, property: string): unknown =>
-  isDefined(entry) && typeof entry === 'object'
-    ? (entry as Record<string, unknown>)[property]
-    : undefined;
 
 export const readOverrideTranslation = ({
   overrides,
@@ -32,17 +26,15 @@ export const readOverrideTranslation = ({
   locale: string;
   property: string;
   authorContext: OverrideAuthorReadContext;
-}): string | undefined =>
-  listAuthoredOverrideEntries({ overrides, authorContext })
-    .map((entry) =>
-      readEntryProperty(
-        readEntryProperty(readEntryProperty(entry, 'translations'), locale),
-        property,
-      ),
-    )
-    .find(
-      (translation): translation is string => typeof translation === 'string',
-    );
+}): string | undefined => {
+  const translation = readAuthoredOverrideProperty({
+    overrides,
+    path: ['translations', locale, property],
+    authorContext,
+  });
+
+  return typeof translation === 'string' ? translation : undefined;
+};
 
 const resolveEffectiveProperty = ({
   metadataName,
@@ -64,7 +56,7 @@ const resolveEffectiveProperty = ({
 
   const overrideValue = readAuthoredOverrideProperty({
     overrides,
-    property,
+    path: [property],
     authorContext: i18nContext,
   });
 
