@@ -4,9 +4,9 @@ import {
 } from 'twenty-shared/i18n';
 
 import { type ViewOverrides } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
-import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
+import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 
 export const resolveViewName = ({
   view,

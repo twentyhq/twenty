@@ -22,7 +22,7 @@ import {
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
-import { resolveEffectiveUniversalFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-universal-flat-entity-property.util';
+import { resolveEffectiveUniversalFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity-property.util';
 
 @Injectable()
 export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends MetadataSideEffectHandler(

@@ -4,7 +4,7 @@ import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent
 import {
   type OverridableFlatEntity,
   resolveEffectiveFlatEntityProperty,
-} from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
+} from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 type FlatObjectWithActivityAndIdentifier = OverridableFlatEntity & {
   isActive: boolean;

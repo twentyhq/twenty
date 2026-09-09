@@ -6,8 +6,8 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type ViewFieldOverrides } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
-import { mapAuthoredOverrideEntries } from 'src/engine/metadata-modules/utils/map-authored-override-entries.util';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
+import { mapAuthoredOverrideEntries } from 'src/engine/metadata-modules/overrides/utils/map-authored-override-entries.util';
 
 type UniversalViewFieldOverrides =
   FormatRecordSerializedRelationProperties<ViewFieldOverrides>;

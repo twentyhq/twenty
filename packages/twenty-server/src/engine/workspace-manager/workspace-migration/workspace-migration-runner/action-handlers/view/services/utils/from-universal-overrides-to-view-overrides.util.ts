@@ -4,8 +4,8 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type ViewOverrides } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
-import { mapAuthoredOverrideEntries } from 'src/engine/metadata-modules/utils/map-authored-override-entries.util';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
+import { mapAuthoredOverrideEntries } from 'src/engine/metadata-modules/overrides/utils/map-authored-override-entries.util';
 
 type UniversalViewOverrides =
   FormatRecordSerializedRelationProperties<ViewOverrides>;

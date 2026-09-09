@@ -1,7 +1,7 @@
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { resolveTranslatableProperties } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-translatable-properties.util';
-import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
+import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
 
 const i18nContext: EffectiveEntityI18nContext = {
   locale: 'fr-FR',

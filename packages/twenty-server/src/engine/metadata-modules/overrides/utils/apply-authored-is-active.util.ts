@@ -1,4 +1,4 @@
-import { computeMetadataOverridesBlob } from 'src/engine/metadata-modules/utils/compute-metadata-overrides-blob.util';
+import { computeMetadataOverridesBlob } from 'src/engine/metadata-modules/overrides/utils/compute-metadata-overrides-blob.util';
 
 type FlatEntityWithIsActive = {
   applicationUniversalIdentifier: string;

@@ -1,4 +1,4 @@
-import { resetAuthoredOverrides } from 'src/engine/metadata-modules/utils/reset-authored-overrides.util';
+import { resetAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/reset-authored-overrides.util';
 
 type EntityWithApplicationIdentifierAndOverrides = {
   applicationUniversalIdentifier: string;

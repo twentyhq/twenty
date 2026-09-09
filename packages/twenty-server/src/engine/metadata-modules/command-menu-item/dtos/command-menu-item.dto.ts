@@ -17,7 +17,7 @@ import {
   IsUUID,
 } from 'class-validator';
 
-import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { type CommandMenuItemOverrides } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';

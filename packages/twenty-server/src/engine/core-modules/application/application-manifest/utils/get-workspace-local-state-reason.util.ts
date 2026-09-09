@@ -1,6 +1,6 @@
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
-import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/utils/read-authored-override-property.util';
+import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 
 export type WorkspaceLocalStateProperties = {
   isActive: boolean;

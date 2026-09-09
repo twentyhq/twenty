@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 
 export const mapAuthoredOverrideEntries = <TEntry, TMappedEntry>(
   overrides: AuthoredOverrides<TEntry>,

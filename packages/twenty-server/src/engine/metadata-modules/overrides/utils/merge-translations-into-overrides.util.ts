@@ -1,9 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
-import { normalizeAuthoredOverrides } from 'src/engine/metadata-modules/utils/normalize-authored-overrides.util';
-import { type OverrideAuthorContext } from 'src/engine/metadata-modules/utils/override-author-context.type';
-import { type TranslationOverrideEntry } from 'src/engine/metadata-modules/utils/translation-override-entry.type';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
+import { normalizeAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/normalize-authored-overrides.util';
+import { type OverrideAuthorContext } from 'src/engine/metadata-modules/overrides/types/override-author-context.type';
+import { type TranslationOverrideEntry } from 'src/engine/metadata-modules/overrides/types/translation-override-entry.type';
 
 type EntryWithTranslations = Record<string, unknown> & {
   translations?: Record<string, Record<string, unknown>> | null;

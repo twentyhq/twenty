@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
-import { isLegacyNonAuthoredOverride } from 'src/engine/metadata-modules/utils/is-legacy-non-authored-override.util';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
+import { isLegacyNonAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/is-legacy-non-authored-override.util';
 
 // Rows written before overrides became author-keyed hold a single flat entry.
 // Every such entry was authored by the workspace custom application, the only

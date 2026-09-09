@@ -19,8 +19,8 @@ import { type MetadataTranslationsInput } from 'src/engine/metadata-modules/meta
 import {
   readOverrideTranslation,
   resolveEffectiveEntityPropertyByName,
-} from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
-import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/utils/read-authored-override-property.util';
+} from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
+import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 
 type TranslatableFlatEntity = FlatObjectMetadata | FlatFieldMetadata;
 

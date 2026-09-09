@@ -1,9 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { computeOverrideAuthorOrder } from 'src/engine/metadata-modules/utils/compute-override-author-order.util';
-import { isLegacyNonAuthoredOverride } from 'src/engine/metadata-modules/utils/is-legacy-non-authored-override.util';
-import { normalizeAuthoredOverrides } from 'src/engine/metadata-modules/utils/normalize-authored-overrides.util';
-import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/utils/override-author-context.type';
+import { computeOverrideAuthorOrder } from 'src/engine/metadata-modules/overrides/utils/compute-override-author-order.util';
+import { isLegacyNonAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/is-legacy-non-authored-override.util';
+import { normalizeAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/normalize-authored-overrides.util';
+import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/overrides/types/override-author-context.type';
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   isDefined(value) && typeof value === 'object';
