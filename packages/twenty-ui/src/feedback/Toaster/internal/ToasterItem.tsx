@@ -1,31 +1,30 @@
 import { useLayoutEffect, useRef } from 'react';
 
 import { Toast } from '@ui/feedback/Toast/Toast';
-import { type ToastNotification } from '@ui/feedback/Toast/types/ToastNotification';
+import { type ToastEntry } from '@ui/feedback/Toast/internal/ToastEntry';
 
 import styles from '../Toaster.module.scss';
 import { type ToasterProps } from '../types/ToasterProps';
 
 type ToasterItemProps = {
-  toast: ToastNotification;
+  toastEntry: ToastEntry;
   getToastProps?: ToasterProps['getToastProps'];
-  isPresent: boolean;
   onClose: (id: string) => void;
-  onExitComplete: (id: string) => void;
+  onExitComplete: (toast: ToastEntry) => void;
 };
 
 export const ToasterItem = ({
-  toast,
+  toastEntry,
   getToastProps,
-  isPresent,
   onClose,
   onExitComplete,
 }: ToasterItemProps) => {
-  const { id, dedupeKey: _dedupeKey, ...toastProps } = toast;
+  const { notification, status } = toastEntry;
+  const { id, dedupeKey: _dedupeKey, ...toastProps } = notification;
   const ref = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (isPresent) {
+    if (status === 'visible') {
       return;
     }
 
@@ -35,7 +34,7 @@ export const ToasterItem = ({
     Promise.allSettled(animations.map((animation) => animation.finished)).then(
       () => {
         if (!isCancelled) {
-          onExitComplete(id);
+          onExitComplete(toastEntry);
         }
       },
     );
@@ -43,19 +42,19 @@ export const ToasterItem = ({
     return () => {
       isCancelled = true;
     };
-  }, [id, isPresent, onExitComplete]);
+  }, [toastEntry, status, onExitComplete]);
 
   return (
     <div
       ref={ref}
       className={styles.item}
-      data-exiting={!isPresent || undefined}
-      inert={!isPresent}
+      data-exiting={status === 'closing' || undefined}
+      inert={status === 'closing'}
     >
       <div className={styles.itemContent}>
         <Toast
           {...toastProps}
-          {...getToastProps?.(toast)}
+          {...getToastProps?.(notification)}
           id={id}
           onClose={() => onClose(id)}
         />

@@ -1,30 +1,29 @@
-import { type ToastNotification } from '@ui/feedback/Toast/types/ToastNotification';
+import { useSyncExternalStore } from 'react';
+
+import { useToastContext } from '@ui/feedback/Toast/internal/useToastContext';
 
 import { type ToasterProps } from '../types/ToasterProps';
 import { ToasterItem } from './ToasterItem';
-import { useToastPresence } from './useToastPresence';
 
 type ToasterItemsProps = {
-  toasts: ToastNotification[];
   getToastProps?: ToasterProps['getToastProps'];
-  onClose: (id: string) => void;
 };
 
-export const ToasterItems = ({
-  toasts,
-  getToastProps,
-  onClose,
-}: ToasterItemsProps) => {
-  const { renderedToasts, handleExitComplete } = useToastPresence(toasts);
+export const ToasterItems = ({ getToastProps }: ToasterItemsProps) => {
+  const { store } = useToastContext();
+  const toasts = useSyncExternalStore(
+    store.subscribe,
+    store.getSnapshot,
+    store.getServerSnapshot,
+  );
 
-  return renderedToasts.map((toast) => (
+  return toasts.map((toast) => (
     <ToasterItem
-      key={toast.id}
-      toast={toast}
+      key={toast.notification.id}
+      toastEntry={toast}
       getToastProps={getToastProps}
-      isPresent={toasts.some((currentToast) => currentToast.id === toast.id)}
-      onClose={onClose}
-      onExitComplete={handleExitComplete}
+      onClose={store.close}
+      onExitComplete={store.completeExit}
     />
   ));
 };

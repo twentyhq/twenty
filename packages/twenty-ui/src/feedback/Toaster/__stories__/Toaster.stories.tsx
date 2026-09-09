@@ -7,7 +7,11 @@ import { ComponentDecorator } from '@ui/testing';
 import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
 
 import { Toaster } from '../Toaster';
-import { ToastControls, ToasterExample } from './ToasterExample';
+import {
+  ToastControls,
+  ToasterExample,
+  type ToasterExampleProps,
+} from './ToasterExample';
 
 const meta: Meta<typeof ToasterExample> = {
   title: 'UI/Feedback/Toaster',
@@ -155,11 +159,11 @@ export const StrictModeAddition: Story = {
   ),
 };
 
-const RemountingToaster = () => {
+const RemountingToaster = ({ onClose }: ToasterExampleProps) => {
   const [screen, setScreen] = useState('authentication');
   return (
     <ToastProvider>
-      <ToastControls />
+      <ToastControls onClose={onClose} />
       <button type="button" onClick={() => setScreen('workspace')}>
         Enter workspace
       </button>
@@ -170,7 +174,7 @@ const RemountingToaster = () => {
 
 export const RendererRemount: Story = {
   ...Default,
-  render: () => <RemountingToaster />,
+  render: (args) => <RemountingToaster {...args} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
@@ -189,6 +193,38 @@ export const RendererRemount: Story = {
     expect(
       body.queryByRole('region', { name: 'authentication notifications' }),
     ).not.toBeInTheDocument();
+  },
+};
+
+export const RendererRemountDuringExit: Story = {
+  ...RendererRemount,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const add = canvas.getByRole('button', { name: 'Add notification' });
+    await userEvent.click(add);
+    await userEvent.click(add);
+    const region = body.getByRole('region', {
+      name: 'authentication notifications',
+    });
+    await waitFor(() =>
+      expect(region.getAnimations({ subtree: true })).toHaveLength(0),
+    );
+    await userEvent.click(
+      within(region).getAllByRole('button', { name: 'Close' })[0],
+    );
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Enter workspace' }),
+    );
+
+    const workspaceRegion = body.getByRole('region', {
+      name: 'workspace notifications',
+    });
+    await waitFor(() => {
+      expect(body.queryByText('Notification 1')).not.toBeInTheDocument();
+      expect(within(workspaceRegion).getByText('Notification 2')).toBeVisible();
+    });
+    expect(args.onClose).toHaveBeenCalledOnce();
   },
 };
 
@@ -228,6 +264,27 @@ export const DeferredContainer: Story = {
         ),
       ).toBeVisible(),
     );
+  },
+};
+
+export const DismissBeforeContainer: Story = {
+  ...DeferredContainer,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const add = canvas.getByRole('button', { name: 'Add notification' });
+    await userEvent.click(add);
+    await userEvent.click(add);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Close last notification' }),
+    );
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Attach viewport' }),
+    );
+
+    const container = within(canvas.getByTestId('toast-container'));
+    await waitFor(() => expect(container.getByRole('status')).toBeVisible());
+    expect(container.getByRole('status')).toHaveTextContent('Notification 1');
+    expect(container.queryByText('Notification 2')).not.toBeInTheDocument();
   },
 };
 

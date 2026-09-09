@@ -1,10 +1,8 @@
 import { useRender } from '@base-ui/react/use-render';
 import { useDirection } from '@base-ui/react/direction-provider';
 import { clsx } from 'clsx';
-import { useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 
-import { useToastContext } from '@ui/feedback/Toast/internal/useToastContext';
 import { useThemeContainer } from '@ui/theme-constants';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
@@ -20,12 +18,6 @@ export const Toaster = ({
   ref,
   ...props
 }: ToasterProps) => {
-  const { store } = useToastContext();
-  const toasts = useSyncExternalStore(
-    store.subscribe,
-    store.getSnapshot,
-    store.getServerSnapshot,
-  );
   const themeContainer = useThemeContainer();
   const direction = useDirection();
   const target =
@@ -43,13 +35,7 @@ export const Toaster = ({
       'aria-label': 'Notifications',
       ...props,
       className: clsx(styles.root, className),
-      children: (
-        <ToasterItems
-          toasts={toasts}
-          getToastProps={getToastProps}
-          onClose={store.close}
-        />
-      ),
+      children: <ToasterItems getToastProps={getToastProps} />,
     },
   });
 
