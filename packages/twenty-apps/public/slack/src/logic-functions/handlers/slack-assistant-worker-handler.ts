@@ -1,20 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import {
-  type DatabaseEventPayload,
-  defineLogicFunction,
-  type ObjectRecordCreateEvent,
-} from 'twenty-sdk/define';
 
-import {
-  SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
-  SLACK_ASSISTANT_WORKER_UNIVERSAL_IDENTIFIER,
-} from 'src/constants/universal-identifiers';
+import { SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
-import { SLACK_ASSISTANT_REQUEST_OBJECT_NAME } from 'src/logic-functions/constants/slack-assistant-request-object-name';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
-import { SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-worker-timeout-seconds';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
@@ -32,15 +22,9 @@ import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slac
 import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
 
-type SlackAssistantRequestCreatedEvent = DatabaseEventPayload<
-  ObjectRecordCreateEvent<SlackAssistantRequestRecord>
->;
-
 export const slackAssistantWorkerHandler = async (
-  event: SlackAssistantRequestCreatedEvent,
+  record: SlackAssistantRequestRecord,
 ): Promise<object> => {
-  const record = event.properties.after;
-
   if (record.status !== SLACK_ASSISTANT_REQUEST_STATUS.PENDING) {
     return { skipped: true, reason: 'Request is not pending' };
   }
@@ -217,14 +201,3 @@ export const slackAssistantWorkerHandler = async (
   }
 };
 
-export default defineLogicFunction({
-  universalIdentifier: SLACK_ASSISTANT_WORKER_UNIVERSAL_IDENTIFIER,
-  name: 'slack-assistant-worker',
-  description:
-    'Processes queued Slack Assistant Requests: shows a native thinking status on the conversation thread, runs the Slack Assistant agent against the workspace, and posts the answer as a threaded reply.',
-  timeoutSeconds: SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS,
-  handler: slackAssistantWorkerHandler,
-  databaseEventTriggerSettings: {
-    eventName: `${SLACK_ASSISTANT_REQUEST_OBJECT_NAME}.created`,
-  },
-});

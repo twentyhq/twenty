@@ -10,7 +10,7 @@ import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-
 import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test.util';
 import {
   SLACK_CHANNEL_WELCOME_UNIVERSAL_IDENTIFIER,
-  SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
+  SLACK_ASSISTANT_REQUEST_UNIVERSAL_IDENTIFIER,
   SLACK_HOME_OPENED_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { SLACK_ASSISTANT_EMPTY_REQUEST_TEXT } from 'src/logic-functions/constants/slack-assistant-empty-request-text';
@@ -177,7 +177,7 @@ describe('Slack inbound events', () => {
         expect.objectContaining({
           workspaceId,
           targetLogicFunctionUniversalIdentifier:
-            SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
+            SLACK_ASSISTANT_REQUEST_UNIVERSAL_IDENTIFIER,
         }),
       );
     });
@@ -251,7 +251,10 @@ describe('Slack inbound events', () => {
         }),
       );
 
-      expect(result).toEqual({ ok: true });
+      expect(result).toEqual({
+        ok: true,
+        request: expect.objectContaining({ id: expect.any(String) }),
+      });
 
       const request = await findRequestByMessageTimestamp(
         slackMessageTimestamp,
@@ -325,7 +328,10 @@ describe('Slack inbound events', () => {
         }),
       );
 
-      expect(result).toEqual({ ok: true });
+      expect(result).toEqual({
+        ok: true,
+        request: expect.objectContaining({ id: expect.any(String) }),
+      });
       expect(slack.messagesIn(CHANNEL_ID)).toEqual([
         expect.objectContaining({
           markdownText: SLACK_ASSISTANT_EMPTY_REQUEST_TEXT,
@@ -400,7 +406,10 @@ describe('Slack inbound events', () => {
         }),
       );
 
-      expect(result).toEqual({ ok: true });
+      expect(result).toEqual({
+        ok: true,
+        request: expect.objectContaining({ id: expect.any(String) }),
+      });
 
       const request = await findRequestByMessageTimestamp(
         slackMessageTimestamp,

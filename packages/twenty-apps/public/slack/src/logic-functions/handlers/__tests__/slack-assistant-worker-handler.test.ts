@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
-import { slackAssistantWorkerHandler } from 'src/logic-functions/slack-assistant-worker';
+import { slackAssistantWorkerHandler } from 'src/logic-functions/handlers/slack-assistant-worker-handler';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
 
 const {
@@ -110,20 +110,6 @@ const SLACK_CONTEXT = {
   isDirectMessage: true,
 };
 
-type SlackAssistantRequestCreatedEvent = Parameters<
-  typeof slackAssistantWorkerHandler
->[0];
-
-const buildEvent = (
-  record: SlackAssistantRequestRecord = REQUEST_RECORD,
-): SlackAssistantRequestCreatedEvent =>
-  ({
-    name: 'slackAssistantRequest.created',
-    workspaceId: 'workspace-1',
-    objectMetadata: { nameSingular: 'slackAssistantRequest' },
-    properties: { after: record },
-  }) as SlackAssistantRequestCreatedEvent;
-
 describe('slackAssistantWorkerHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -171,7 +157,7 @@ describe('slackAssistantWorkerHandler', () => {
   });
 
   it('should show the thinking status before fetching the Slack context', async () => {
-    await slackAssistantWorkerHandler(buildEvent());
+    await slackAssistantWorkerHandler(REQUEST_RECORD);
 
     expect(callLog).toEqual([
       'status:start',
@@ -195,7 +181,7 @@ describe('slackAssistantWorkerHandler', () => {
       throw new Error('Slack is unreachable');
     });
 
-    const result = await slackAssistantWorkerHandler(buildEvent());
+    const result = await slackAssistantWorkerHandler(REQUEST_RECORD);
 
     expect(result).toEqual({ failed: true, reason: 'Slack is unreachable' });
     expect(callLog).toEqual([
@@ -214,7 +200,7 @@ describe('slackAssistantWorkerHandler', () => {
       return { success: false, error: 'Agent crashed', result: null };
     });
 
-    const result = await slackAssistantWorkerHandler(buildEvent());
+    const result = await slackAssistantWorkerHandler(REQUEST_RECORD);
 
     expect(result).toEqual({ failed: true, reason: 'Agent crashed' });
     expect(callLog).toEqual([
@@ -228,12 +214,10 @@ describe('slackAssistantWorkerHandler', () => {
   });
 
   it('should not start the status for a request that is no longer pending', async () => {
-    const result = await slackAssistantWorkerHandler(
-      buildEvent({
-        ...REQUEST_RECORD,
-        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
-      }),
-    );
+    const result = await slackAssistantWorkerHandler({
+      ...REQUEST_RECORD,
+      status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+    });
 
     expect(result).toEqual({ skipped: true, reason: 'Request is not pending' });
     expect(startSlackAssistantStatusUpdatesMock).not.toHaveBeenCalled();

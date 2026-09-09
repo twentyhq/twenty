@@ -1,6 +1,7 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { createSlackAssistantRequest } from 'src/logic-functions/data/create-slack-assistant-request';
 import { findSlackAssistantRequestBySlackMessage } from 'src/logic-functions/data/find-slack-assistant-request-by-slack-message';
 import { type SlackAssistantRequestDraft } from 'src/logic-functions/types/slack-assistant-request-draft.type';
@@ -26,8 +27,10 @@ export const enqueueSlackAssistantRequestRecord = async (
     return { ok: true, skipped: ALREADY_QUEUED_SKIP_REASON };
   }
 
+  let requestId: string;
+
   try {
-    await createSlackAssistantRequest(client, request);
+    requestId = await createSlackAssistantRequest(client, request);
   } catch (error) {
     if (isDuplicateRecordError(error)) {
       return { ok: true, skipped: ALREADY_QUEUED_SKIP_REASON };
@@ -36,5 +39,17 @@ export const enqueueSlackAssistantRequestRecord = async (
     throw error;
   }
 
-  return { ok: true };
+  return {
+    ok: true,
+    request: {
+      id: requestId,
+      status: SLACK_ASSISTANT_REQUEST_STATUS.PENDING,
+      slackChannelId: request.slackChannelId,
+      slackChannelType: request.slackChannelType,
+      slackThreadTimestamp: request.slackThreadTimestamp,
+      slackMessageTimestamp: request.slackMessageTimestamp,
+      slackUserId: request.slackUserId,
+      requestText: request.requestText,
+    },
+  };
 };
