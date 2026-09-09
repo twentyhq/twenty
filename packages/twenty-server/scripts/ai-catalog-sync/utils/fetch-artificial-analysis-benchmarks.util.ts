@@ -1,7 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { normalizeModelName } from './normalize-model-name.util';
-import { type BenchmarkIndex, type BenchmarkRecord } from './types';
+import { type BenchmarkIndex } from '../types/benchmark-index.type';
+import { type BenchmarkRecord } from '../types/benchmark-record.type';
 
 const DEFAULT_ARTIFICIAL_ANALYSIS_API_URL =
   'https://artificialanalysis.ai/api/v2/data/llms/models';

@@ -1,7 +1,9 @@
 import { type ModelsDevModel } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-model.type';
 
-import { buildLookupCandidates, matchBenchmarks } from '../match-benchmarks';
-import { type BenchmarkIndex, type BenchmarkRecord } from '../types';
+import { type BenchmarkIndex } from '../types/benchmark-index.type';
+import { type BenchmarkRecord } from '../types/benchmark-record.type';
+import { buildLookupCandidates } from '../utils/build-lookup-candidates.util';
+import { matchBenchmarks } from '../utils/match-benchmarks.util';
 
 const MEASURED_AT = '2026-09-09';
 

@@ -1,4 +1,4 @@
-import { fetchArtificialAnalysisBenchmarks } from '../fetch-artificial-analysis';
+import { fetchArtificialAnalysisBenchmarks } from '../utils/fetch-artificial-analysis-benchmarks.util';
 
 const respondWith = (models: unknown[]): void => {
   global.fetch = jest.fn().mockResolvedValue({

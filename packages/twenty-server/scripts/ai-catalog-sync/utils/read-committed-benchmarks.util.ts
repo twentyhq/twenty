@@ -1,7 +1,8 @@
 import * as fs from 'fs';
 
 import { normalizeModelName } from './normalize-model-name.util';
-import { type BenchmarkIndex, type BenchmarkRecord } from './types';
+import { type BenchmarkIndex } from '../types/benchmark-index.type';
+import { type BenchmarkRecord } from '../types/benchmark-record.type';
 
 type CommittedEntry = Partial<BenchmarkRecord> & {
   measuredAt?: string;

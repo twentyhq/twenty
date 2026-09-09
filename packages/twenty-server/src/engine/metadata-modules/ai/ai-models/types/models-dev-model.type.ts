@@ -1,9 +1,4 @@
-export type ModelsDevCost = {
-  input?: number;
-  output?: number;
-  cache_read?: number;
-  cache_write?: number;
-};
+import { type ModelsDevCost } from './models-dev-cost.type';
 
 export type ModelsDevModel = {
   // Model id as returned by models.dev (may match the record key in `ModelsDevProvider.models`).

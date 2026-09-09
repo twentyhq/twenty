@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type GeneratedCatalog } from './types';
+import { type CoverageReport } from '../types/coverage-report.type';
+import { type GeneratedCatalog } from '../types/generated-catalog.type';
 
 // Models whose job is not general reasoning (speech, image, embeddings,
 // computer use, deep research). A capability index for them would be
@@ -8,13 +9,6 @@ import { type GeneratedCatalog } from './types';
 // counted as gaps.
 const SPECIALIZED_MODEL_PATTERN =
   /realtime|voxtral|tts|audio|-live|computer-use|deep-research|-image|pixtral|codestral|embed/;
-
-export type CoverageReport = {
-  generalPurposeModelCount: number;
-  scoredGeneralPurposeModelCount: number;
-  unscoredGeneralPurposeModelIds: string[];
-  specializedModelCount: number;
-};
 
 export const buildCoverageReport = (
   catalog: GeneratedCatalog,
@@ -50,34 +44,4 @@ export const buildCoverageReport = (
   }
 
   return report;
-};
-
-const asPercentage = (numerator: number, denominator: number): string =>
-  denominator === 0 ? 'n/a' : `${Math.round((numerator / denominator) * 100)}%`;
-
-export const renderCoverageReport = (report: CoverageReport): string => {
-  const {
-    generalPurposeModelCount: total,
-    scoredGeneralPurposeModelCount: scored,
-  } = report;
-
-  const lines = [
-    '### Benchmark coverage',
-    '',
-    `- General-purpose models with an intelligence index: **${scored}/${total}** (${asPercentage(scored, total)})`,
-    `- Specialized models excluded from the denominator: ${report.specializedModelCount}`,
-  ];
-
-  if (report.unscoredGeneralPurposeModelIds.length > 0) {
-    lines.push(
-      '',
-      '<details><summary>General-purpose models with no matched intelligence index</summary>',
-      '',
-      ...report.unscoredGeneralPurposeModelIds.map((modelId) => `- ${modelId}`),
-      '',
-      '</details>',
-    );
-  }
-
-  return lines.join('\n');
 };

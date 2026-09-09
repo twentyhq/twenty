@@ -7,12 +7,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { MODELS_DEV_API_URL } from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.const';
 import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-data.type';
 
-import { assertPayloadIsUsable, buildCatalog } from './build-catalog';
-import { enrichCatalog } from './enrich-catalog';
-import { fetchArtificialAnalysisBenchmarks } from './fetch-artificial-analysis';
-import { readCommittedBenchmarks } from './read-committed-benchmarks';
-import { buildCoverageReport, renderCoverageReport } from './report-coverage';
-import { type BenchmarkIndex } from './types';
+import { assertPayloadIsUsable } from './utils/assert-payload-is-usable.util';
+import { buildCatalog } from './utils/build-catalog.util';
+import { enrichCatalog } from './utils/enrich-catalog.util';
+import { fetchArtificialAnalysisBenchmarks } from './utils/fetch-artificial-analysis-benchmarks.util';
+import { readCommittedBenchmarks } from './utils/read-committed-benchmarks.util';
+import { buildCoverageReport } from './utils/build-coverage-report.util';
+import { renderCoverageReport } from './utils/render-coverage-report.util';
+import { type BenchmarkIndex } from './types/benchmark-index.type';
 
 const AI_MODELS_DIR = path.resolve(
   __dirname,

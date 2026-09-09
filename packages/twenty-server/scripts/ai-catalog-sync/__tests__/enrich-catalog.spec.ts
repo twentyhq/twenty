@@ -1,7 +1,8 @@
 import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-data.type';
 
-import { enrichCatalog } from '../enrich-catalog';
-import { type BenchmarkIndex, type GeneratedCatalog } from '../types';
+import { enrichCatalog } from '../utils/enrich-catalog.util';
+import { type BenchmarkIndex } from '../types/benchmark-index.type';
+import { type GeneratedCatalog } from '../types/generated-catalog.type';
 
 const MEASURED_AT = '2026-09-09';
 

@@ -1,31 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AiModelBenchmarks } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmarks.type';
-import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-data.type';
+import { type BenchmarkOverlayEntry } from '../types/benchmark-overlay-entry.type';
+import { type EnrichCatalogArgs } from '../types/enrich-catalog-args.type';
 
-import { matchBenchmarks } from './match-benchmarks';
-import {
-  type BenchmarkIndex,
-  type GeneratedCatalog,
-  type ObservedPrices,
-} from './types';
-
-// The overlay is the cross-repo artifact: it carries what the catalog embeds
-// plus the alias set and price observations that only a joining consumer needs.
-// The measurement fields are optional because a model the publisher priced but
-// never measured earns an entry for its price alone, and stamping that with a
-// measuredAt would present a price as a measurement.
-export type BenchmarkOverlayEntry = Partial<AiModelBenchmarks> & {
-  aliases: string[];
-  artificialAnalysisPrices?: ObservedPrices;
-};
-
-export type EnrichCatalogArgs = {
-  catalog: GeneratedCatalog;
-  modelsDevData: ModelsDevData;
-  benchmarkIndex: BenchmarkIndex;
-  measuredAt: string;
-};
+import { matchBenchmarks } from './match-benchmarks.util';
 
 export const enrichCatalog = ({
   catalog,

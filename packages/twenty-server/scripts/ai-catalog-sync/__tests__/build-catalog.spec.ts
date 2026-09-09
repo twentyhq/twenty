@@ -1,6 +1,7 @@
 import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-data.type';
 
-import { assertPayloadIsUsable, buildCatalog } from '../build-catalog';
+import { assertPayloadIsUsable } from '../utils/assert-payload-is-usable.util';
+import { buildCatalog } from '../utils/build-catalog.util';
 
 const languageModel = {
   id: 'model',

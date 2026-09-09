@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 
-import { matchBenchmarks } from '../match-benchmarks';
-import { readCommittedBenchmarks } from '../read-committed-benchmarks';
+import { matchBenchmarks } from '../utils/match-benchmarks.util';
+import { readCommittedBenchmarks } from '../utils/read-committed-benchmarks.util';
 
 const writeOverlay = (value: unknown): string => {
   const filePath = path.join(
