@@ -4,6 +4,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import { ManagedHostnameStatus } from 'src/engine/core-modules/dns-manager/types/managed-hostname-status.type';
+import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import { VerificationRecordDTO } from 'src/engine/core-modules/emailing-domain/dtos/verification-record.dto';
 
 registerEnumType(EmailingDomainStatus, {
@@ -12,6 +13,10 @@ registerEnumType(EmailingDomainStatus, {
 
 registerEnumType(EmailingDomainTenantStatus, {
   name: 'EmailingDomainTenantStatus',
+});
+
+registerEnumType(UnsubscribeHostnameStatus, {
+  name: 'UnsubscribeHostnameStatus',
 });
 
 registerEnumType(ManagedHostnameStatus, {
@@ -38,8 +43,8 @@ export class EmailingDomainDTO {
   @Field(() => EmailingDomainTenantStatus)
   tenantStatus: EmailingDomainTenantStatus;
 
-  @Field(() => ManagedHostnameStatus, { nullable: true })
-  unsubscribeHostnameStatus: ManagedHostnameStatus | null;
+  @Field(() => UnsubscribeHostnameStatus, { nullable: true })
+  unsubscribeHostnameStatus: UnsubscribeHostnameStatus | null;
 
   @Field(() => Boolean)
   isClickTrackingEnabled: boolean;

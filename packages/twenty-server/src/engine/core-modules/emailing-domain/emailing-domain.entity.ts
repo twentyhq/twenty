@@ -13,6 +13,7 @@ import {
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import { ManagedHostnameStatus } from 'src/engine/core-modules/dns-manager/types/managed-hostname-status.type';
+import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import { VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
@@ -63,10 +64,10 @@ export class EmailingDomainEntity extends WorkspaceRelatedEntity {
 
   @Column({
     type: 'enum',
-    enum: Object.values(ManagedHostnameStatus),
+    enum: Object.values(UnsubscribeHostnameStatus),
     nullable: true,
   })
-  unsubscribeHostnameStatus: ManagedHostnameStatus | null;
+  unsubscribeHostnameStatus: UnsubscribeHostnameStatus | null;
 
   @Column({ type: 'boolean', nullable: false, default: false })
   isClickTrackingEnabled: boolean;

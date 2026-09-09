@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { UNSUBSCRIBE_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
-import { ManagedHostnameStatus } from 'src/engine/core-modules/dns-manager/types/managed-hostname-status.type';
+import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 
 const tableName = 'emailingDomain';
 
@@ -54,7 +54,7 @@ export const seedEmailingDomains = async ({
         verifiedAt: new Date(),
         tenantStatus: EmailingDomainTenantStatus.ACTIVE,
         unsubscribeHostname: `${UNSUBSCRIBE_HOSTNAME_PREFIX}.${verified}`,
-        unsubscribeHostnameStatus: ManagedHostnameStatus.ACTIVE,
+        unsubscribeHostnameStatus: UnsubscribeHostnameStatus.ACTIVE,
       },
       {
         workspaceId,

@@ -1728,7 +1728,7 @@ export type EmailingDomain = {
   isClickTrackingEnabled: Scalars['Boolean']['output'];
   status: EmailingDomainStatus;
   tenantStatus: EmailingDomainTenantStatus;
-  unsubscribeHostnameStatus?: Maybe<ManagedHostnameStatus>;
+  unsubscribeHostnameStatus?: Maybe<UnsubscribeHostnameStatus>;
   updatedAt: Scalars['DateTime']['output'];
   verificationRecords?: Maybe<Array<VerificationRecord>>;
   verifiedAt?: Maybe<Scalars['DateTime']['output']>;
@@ -5997,6 +5997,12 @@ export type UuidFilterComparison = {
   notIn?: InputMaybe<Array<Scalars['UUID']['input']>>;
   notLike?: InputMaybe<Scalars['UUID']['input']>;
 };
+
+export enum UnsubscribeHostnameStatus {
+  ACTIVE = 'ACTIVE',
+  FAILED = 'FAILED',
+  PENDING = 'PENDING'
+}
 
 export type UnsubscribeTopic = {
   __typename?: 'UnsubscribeTopic';

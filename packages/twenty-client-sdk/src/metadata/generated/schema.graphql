@@ -2813,7 +2813,7 @@ type EmailingDomain {
   domain: String!
   status: EmailingDomainStatus!
   tenantStatus: EmailingDomainTenantStatus!
-  unsubscribeHostnameStatus: ManagedHostnameStatus
+  unsubscribeHostnameStatus: UnsubscribeHostnameStatus
   isClickTrackingEnabled: Boolean!
   clickTrackingHostname: String
   clickTrackingHostnameStatus: ManagedHostnameStatus
@@ -2832,6 +2832,12 @@ enum EmailingDomainTenantStatus {
   ACTIVE
   PAUSED
   SANDBOX
+}
+
+enum UnsubscribeHostnameStatus {
+  PENDING
+  ACTIVE
+  FAILED
 }
 
 enum ManagedHostnameStatus {

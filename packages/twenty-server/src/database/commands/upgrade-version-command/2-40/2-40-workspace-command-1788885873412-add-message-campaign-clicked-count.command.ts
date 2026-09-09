@@ -27,7 +27,7 @@ const CLICKED_COUNT_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
     .universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.40.0', 1788865945541)
+@RegisteredWorkspaceCommand('2.40.0', 1788885873412)
 @Command({
   name: 'upgrade:2-40:add-message-campaign-clicked-count',
   description:

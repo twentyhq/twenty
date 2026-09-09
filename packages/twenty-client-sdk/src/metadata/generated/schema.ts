@@ -2439,7 +2439,7 @@ export interface EmailingDomain {
     domain: Scalars['String']
     status: EmailingDomainStatus
     tenantStatus: EmailingDomainTenantStatus
-    unsubscribeHostnameStatus?: ManagedHostnameStatus
+    unsubscribeHostnameStatus?: UnsubscribeHostnameStatus
     isClickTrackingEnabled: Scalars['Boolean']
     clickTrackingHostname?: Scalars['String']
     clickTrackingHostnameStatus?: ManagedHostnameStatus
@@ -2451,6 +2451,8 @@ export interface EmailingDomain {
 export type EmailingDomainStatus = 'PENDING' | 'VERIFIED' | 'FAILED' | 'TEMPORARY_FAILURE'
 
 export type EmailingDomainTenantStatus = 'ACTIVE' | 'PAUSED' | 'SANDBOX'
+
+export type UnsubscribeHostnameStatus = 'PENDING' | 'ACTIVE' | 'FAILED'
 
 export type ManagedHostnameStatus = 'PENDING' | 'ACTIVE' | 'FAILED'
 
@@ -10551,6 +10553,12 @@ export const enumEmailingDomainTenantStatus = {
    ACTIVE: 'ACTIVE' as const,
    PAUSED: 'PAUSED' as const,
    SANDBOX: 'SANDBOX' as const
+}
+
+export const enumUnsubscribeHostnameStatus = {
+   PENDING: 'PENDING' as const,
+   ACTIVE: 'ACTIVE' as const,
+   FAILED: 'FAILED' as const
 }
 
 export const enumManagedHostnameStatus = {

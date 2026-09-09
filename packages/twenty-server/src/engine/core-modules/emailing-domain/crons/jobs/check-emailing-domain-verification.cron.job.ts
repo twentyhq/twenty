@@ -9,6 +9,7 @@ import { NON_TERMINAL_EMAILING_DOMAIN_STATUSES } from 'src/engine/core-modules/e
 import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { ManagedHostnameStatus } from 'src/engine/core-modules/dns-manager/types/managed-hostname-status.type';
+import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { EmailingHostnamesService } from 'src/engine/core-modules/emailing-domain/services/emailing-hostnames.service';
@@ -19,6 +20,11 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 const RETRYABLE_HOSTNAME_STATUSES = [
   ManagedHostnameStatus.PENDING,
   ManagedHostnameStatus.FAILED,
+];
+
+const RETRYABLE_UNSUBSCRIBE_HOSTNAME_STATUSES = [
+  UnsubscribeHostnameStatus.PENDING,
+  UnsubscribeHostnameStatus.FAILED,
 ];
 
 @Processor(MessageQueue.cronQueue)
@@ -94,7 +100,9 @@ export class CheckEmailingDomainVerificationCronJob {
         where: [
           {
             status: EmailingDomainStatus.VERIFIED,
-            unsubscribeHostnameStatus: In(RETRYABLE_HOSTNAME_STATUSES),
+            unsubscribeHostnameStatus: In(
+              RETRYABLE_UNSUBSCRIBE_HOSTNAME_STATUSES,
+            ),
           },
           {
             status: EmailingDomainStatus.VERIFIED,

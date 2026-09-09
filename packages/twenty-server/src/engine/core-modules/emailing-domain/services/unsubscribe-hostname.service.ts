@@ -2,6 +2,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { ManagedHostnameStatus } from 'src/engine/core-modules/dns-manager/types/managed-hostname-status.type';
+import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import { UNSUBSCRIBE_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { type EmailingHostnameProvisioner } from 'src/engine/core-modules/emailing-domain/types/emailing-hostname-provisioner.type';
@@ -46,7 +47,7 @@ export class UnsubscribeHostnameService implements EmailingHostnameProvisioner {
       {
         unsubscribeHostname: hostname,
         unsubscribeHostnameId: hostnameId,
-        unsubscribeHostnameStatus: ManagedHostnameStatus.PENDING,
+        unsubscribeHostnameStatus: UnsubscribeHostnameStatus.PENDING,
       },
     );
   }
@@ -61,8 +62,21 @@ export class UnsubscribeHostnameService implements EmailingHostnameProvisioner {
     await this.emailingDomainRepository.update(
       emailingDomain.workspaceId,
       { id: emailingDomain.id },
-      { unsubscribeHostnameStatus: status },
+      { unsubscribeHostnameStatus: this.toUnsubscribeStatus(status) },
     );
+  }
+
+  private toUnsubscribeStatus(
+    status: ManagedHostnameStatus,
+  ): UnsubscribeHostnameStatus {
+    switch (status) {
+      case ManagedHostnameStatus.ACTIVE:
+        return UnsubscribeHostnameStatus.ACTIVE;
+      case ManagedHostnameStatus.FAILED:
+        return UnsubscribeHostnameStatus.FAILED;
+      case ManagedHostnameStatus.PENDING:
+        return UnsubscribeHostnameStatus.PENDING;
+    }
   }
 
   async clearHostname(emailingDomain: EmailingDomainEntity): Promise<void> {
