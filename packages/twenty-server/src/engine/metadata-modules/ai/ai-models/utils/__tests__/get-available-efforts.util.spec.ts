@@ -11,7 +11,7 @@ describe('getAvailableEfforts', () => {
         sdkPackage: AI_SDK_XAI,
         efforts: ['low', 'medium', 'high', 'xhigh'],
       }),
-    ).toEqual(['low', 'high']);
+    ).toEqual(['low', 'medium', 'high']);
   });
 
   it('offers nothing for a model without declared efforts', () => {
