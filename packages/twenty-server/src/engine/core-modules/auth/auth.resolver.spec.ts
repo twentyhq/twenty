@@ -25,6 +25,7 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
@@ -130,6 +131,10 @@ describe('AuthResolver', () => {
         },
         {
           provide: FileCorePictureService,
+          useValue: {},
+        },
+        {
+          provide: FileUploadService,
           useValue: {},
         },
         {
