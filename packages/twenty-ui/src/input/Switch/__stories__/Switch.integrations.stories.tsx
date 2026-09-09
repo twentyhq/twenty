@@ -2,7 +2,6 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import { AdvancedSettingsToggle } from '@ui/input/AdvancedSettingsToggle/AdvancedSettingsToggle';
 import { MenuItemToggle } from '@ui/navigation/MenuItemToggle/MenuItemToggle';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
@@ -44,29 +43,5 @@ export const MenuItem: Story = {
     await userEvent.click(canvas.getByText('Notifications'));
     await expect(control).not.toBeChecked();
     await expect(args.onToggleChange).toHaveBeenCalledTimes(2);
-  },
-};
-
-const AdvancedSwitch = () => {
-  const [enabled, setEnabled] = useState(false);
-  return (
-    <AdvancedSettingsToggle
-      label="Advanced"
-      isAdvancedModeEnabled={enabled}
-      setIsAdvancedModeEnabled={setEnabled}
-    />
-  );
-};
-
-export const AdvancedSettings: Story = {
-  decorators: [ComponentDecorator],
-  render: () => <AdvancedSwitch />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const control = canvas.getByRole('switch', { name: 'Advanced' });
-    await userEvent.click(canvas.getByText('Advanced'));
-    await expect(control).toBeChecked();
-    await userEvent.click(control);
-    await expect(control).not.toBeChecked();
   },
 };

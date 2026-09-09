@@ -1,7 +1,6 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
 import {
-  AdvancedSettingsToggle,
   AnimatedButton,
   AnimatedLightIconButton,
   Button,
@@ -43,15 +42,6 @@ import {
 } from '../shared/front-components/component-gallery';
 
 const INPUT_ENTRIES: GalleryEntry[] = [
-  {
-    name: 'AdvancedSettingsToggle',
-    node: (
-      <AdvancedSettingsToggle
-        isAdvancedModeEnabled={false}
-        setIsAdvancedModeEnabled={() => {}}
-      />
-    ),
-  },
   {
     name: 'AnimatedButton',
     node: (

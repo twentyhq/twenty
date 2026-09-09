@@ -7,7 +7,6 @@
  *                              |___/
  */
 
-export { AdvancedSettingsToggle } from './AdvancedSettingsToggle/AdvancedSettingsToggle';
 export type { AnimatedButtonProps } from './AnimatedButton/AnimatedButton';
 export { AnimatedButton } from './AnimatedButton/AnimatedButton';
 export type { AnimatedLightIconButtonProps } from './AnimatedLightIconButton/AnimatedLightIconButton';
