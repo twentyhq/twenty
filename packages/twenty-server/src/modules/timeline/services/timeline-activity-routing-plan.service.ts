@@ -13,6 +13,7 @@ import { buildDirectRelationTargetShape } from 'src/modules/timeline/utils/build
 import { buildJunctionTargetShape } from 'src/modules/timeline/utils/build-junction-target-shape.util';
 import { buildTimelineActivitySelfRule } from 'src/modules/timeline/utils/build-timeline-activity-self-rule.util';
 import { resolveTimelineActivityTypeRouting } from 'src/modules/timeline/utils/resolve-timeline-activity-type-routing.util';
+import { readLruEntry, writeLruEntry } from 'src/utils/lru-map.util';
 import {
   buildTimelineActivityTypeResolution,
   toResolvedTimelineActivityType,
@@ -54,7 +55,7 @@ export class TimelineActivityRoutingPlanService {
     flatObjectMetadata,
     workspaceId,
   }: {
-    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'isAuditLogged'>;
     workspaceId: string;
   }): Promise<boolean> {
     if (flatObjectMetadata.isAuditLogged) {
@@ -117,45 +118,25 @@ export class TimelineActivityRoutingPlanService {
       hashes.flatFieldMetadataMapsOrm,
       hashes.flatTimelineActivityTypeMaps,
     ].join('|');
-    const cachedRoutingPlan = this.routingPlanByWorkspaceId.get(workspaceId);
+    const cachedRoutingPlan = readLruEntry({
+      map: this.routingPlanByWorkspaceId,
+      key: workspaceId,
+    });
 
     if (cachedRoutingPlan?.cacheKey === cacheKey) {
-      this.touchWorkspace(workspaceId, cachedRoutingPlan);
-
       return cachedRoutingPlan.routingPlan;
     }
 
     const routingPlan = this.buildRoutingPlan(data);
 
-    this.routingPlanByWorkspaceId.set(workspaceId, {
-      cacheKey,
-      routingPlan,
+    writeLruEntry({
+      map: this.routingPlanByWorkspaceId,
+      key: workspaceId,
+      value: { cacheKey, routingPlan },
+      maxEntries: MAX_CACHED_WORKSPACES,
     });
-    this.evictLeastRecentlyUsedWorkspaces();
 
     return routingPlan;
-  }
-
-  private touchWorkspace(
-    workspaceId: string,
-    entry: { cacheKey: string; routingPlan: TimelineActivityRoutingPlan },
-  ): void {
-    this.routingPlanByWorkspaceId.delete(workspaceId);
-    this.routingPlanByWorkspaceId.set(workspaceId, entry);
-  }
-
-  private evictLeastRecentlyUsedWorkspaces(): void {
-    while (this.routingPlanByWorkspaceId.size > MAX_CACHED_WORKSPACES) {
-      const leastRecentlyUsedWorkspaceId = this.routingPlanByWorkspaceId
-        .keys()
-        .next().value;
-
-      if (!isDefined(leastRecentlyUsedWorkspaceId)) {
-        return;
-      }
-
-      this.routingPlanByWorkspaceId.delete(leastRecentlyUsedWorkspaceId);
-    }
   }
 
   private buildRoutingPlan({
