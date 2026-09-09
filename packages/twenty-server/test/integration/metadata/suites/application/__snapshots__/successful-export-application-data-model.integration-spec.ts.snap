@@ -239,6 +239,18 @@ exports[`Application export - data model exports the whole application as a stab
       "universalIdentifier": "<TICKET_TITLE_INDEX>",
     },
     {
+      "metadataName": "navigationMenuItem",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
+    },
+    {
+      "metadataName": "navigationMenuItem",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKETS_NAVIGATION_ITEM>",
+    },
+    {
       "metadataName": "objectMetadata",
       "reason": null,
       "status": "EXPORTED",
@@ -778,7 +790,22 @@ exports[`Application export - data model exports the whole application as a stab
     },
   ],
   "logicFunctions": [],
-  "navigationMenuItems": [],
+  "navigationMenuItems": [
+    {
+      "name": "Support",
+      "position": 40,
+      "type": "FOLDER",
+      "universalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
+    },
+    {
+      "folderUniversalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
+      "icon": "IconTicket",
+      "position": 41,
+      "targetObjectUniversalIdentifier": "<TICKET_OBJECT>",
+      "type": "OBJECT",
+      "universalIdentifier": "<TICKETS_NAVIGATION_ITEM>",
+    },
+  ],
   "objects": [
     {
       "color": "blue",

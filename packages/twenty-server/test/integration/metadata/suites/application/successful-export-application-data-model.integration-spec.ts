@@ -23,6 +23,7 @@ import {
   getSystemRelationFieldUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
+  type NavigationMenuItemManifest,
   type ObjectManifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
@@ -37,6 +38,7 @@ import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import {
   AggregateOperations,
   FieldMetadataType,
+  NavigationMenuItemType,
   PageLayoutTabLayoutMode,
   RelationOnDeleteAction,
   RelationType,
@@ -82,6 +84,8 @@ const TICKET_BOARD_DOCS_WIDGET_ID = '7e3d1c2b-0024-4a7b-8c9d-0e1f2a3b4c5d';
 const TICKET_RECORD_PAGE_EXTRA_TAB_ID = '7e3d1c2b-0025-4a7b-8c9d-0e1f2a3b4c5d';
 const TICKET_RECORD_PAGE_EXTRA_NOTES_WIDGET_ID =
   '7e3d1c2b-0026-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKETS_NAVIGATION_FOLDER_ID = '7e3d1c2b-0029-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKETS_NAVIGATION_ITEM_ID = '7e3d1c2b-0030-4a7b-8c9d-0e1f2a3b4c5d';
 const COMPANY_RECORD_PAGE_TAGLINE_TAB_ID =
   '7e3d1c2b-0027-4a7b-8c9d-0e1f2a3b4c5d';
 const TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID =
@@ -157,6 +161,8 @@ const buildIdentifierNames = (): Map<string, string> => {
       COMPANY_RECORD_PAGE_TAGLINE_TAB_ID,
       'STANDARD_COMPANY_RECORD_PAGE_TAGLINE_TAB',
     ],
+    [TICKETS_NAVIGATION_FOLDER_ID, 'TICKETS_NAVIGATION_FOLDER'],
+    [TICKETS_NAVIGATION_ITEM_ID, 'TICKETS_NAVIGATION_ITEM'],
     [
       TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID,
       'TICKET_RECORD_PAGE_HOME_DOCS_WIDGET',
@@ -684,6 +690,22 @@ const ticketRecordPageHomeDocsWidget: StandalonePageLayoutWidgetManifest = {
   },
 };
 
+const ticketsNavigationFolder: NavigationMenuItemManifest = {
+  universalIdentifier: TICKETS_NAVIGATION_FOLDER_ID,
+  type: NavigationMenuItemType.FOLDER,
+  name: 'Support',
+  position: 40,
+};
+
+const ticketsNavigationItem: NavigationMenuItemManifest = {
+  universalIdentifier: TICKETS_NAVIGATION_ITEM_ID,
+  type: NavigationMenuItemType.OBJECT,
+  position: 41,
+  icon: 'IconTicket',
+  folderUniversalIdentifier: TICKETS_NAVIGATION_FOLDER_ID,
+  targetObjectUniversalIdentifier: TICKET_OBJECT_ID,
+};
+
 const manifest = buildBaseManifest({
   appId: TEST_APP_ID,
   roleId: TEST_ROLE_ID,
@@ -708,6 +730,7 @@ const manifest = buildBaseManifest({
     pageLayouts: [ticketPageLayout, ticketBoardLayout],
     pageLayoutTabs: [ticketRecordPageExtraTab, companyRecordPageTaglineTab],
     pageLayoutWidgets: [ticketRecordPageHomeDocsWidget],
+    navigationMenuItems: [ticketsNavigationFolder, ticketsNavigationItem],
   },
 });
 
@@ -860,6 +883,12 @@ describe('Application export - data model', () => {
       ApplicationExportCoverageStatus.EXPORTED,
     );
     expect(statusOf(TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TICKETS_NAVIGATION_FOLDER_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TICKETS_NAVIGATION_ITEM_ID)).toBe(
       ApplicationExportCoverageStatus.EXPORTED,
     );
   }, 60000);
