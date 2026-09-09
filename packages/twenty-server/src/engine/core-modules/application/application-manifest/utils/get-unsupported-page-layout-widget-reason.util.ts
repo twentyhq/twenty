@@ -179,7 +179,7 @@ export const getUnsupportedPageLayoutWidgetReason = ({
   exportedObjectUniversalIdentifiers,
 }: {
   flatPageLayoutWidget: FlatPageLayoutWidget;
-  flatPageLayoutTab: FlatPageLayoutTab | undefined;
+  flatPageLayoutTab: FlatPageLayoutTab;
   applicationAllFlatEntityMaps: AllFlatEntityMaps;
   allFlatEntityMaps: AllFlatEntityMaps;
   exportedObjectUniversalIdentifiers: ReadonlySet<string>;
@@ -193,7 +193,6 @@ export const getUnsupportedPageLayoutWidgetReason = ({
   }
 
   if (
-    isDefined(flatPageLayoutTab) &&
     flatPageLayoutWidget.position.layoutMode !== flatPageLayoutTab.layoutMode
   ) {
     return 'page layout widget positioned for another layout mode than its tab';
