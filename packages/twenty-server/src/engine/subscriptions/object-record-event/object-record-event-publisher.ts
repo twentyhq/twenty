@@ -53,6 +53,8 @@ import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record
 import { indexRecordSharesByObjectMetadataIdAndRecordId } from 'src/engine/record-share/utils/index-record-shares-by-object-metadata-id-and-record-id.util';
 import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
 import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { resolveLinkedRecordShareGateKind } from 'src/engine/record-share/utils/resolve-linked-record-share-gate-kind.util';
 import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
@@ -72,9 +74,11 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 
-type LinkedRecordShares = {
+type LinkedRecordShareContext = {
   linkedFlatObjectMetadatas: FlatObjectMetadata[];
   recordShares: RecordShare[];
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 };
 
 type StreamPermissionsContext = {
@@ -206,7 +210,7 @@ export class ObjectRecordEventPublisher {
   private async fetchLinkedRecordShares(
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
     featureFlagsMap: Record<FeatureFlagKey, boolean>,
-  ): Promise<LinkedRecordShares | undefined> {
+  ): Promise<LinkedRecordShareContext | undefined> {
     if (
       !featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] ||
       workspaceEventBatch.objectMetadata.universalIdentifier !==
@@ -239,15 +243,11 @@ export class ObjectRecordEventPublisher {
       );
     }
 
-    if (linkedRecordIdsByObjectMetadataId.size === 0) {
-      return { linkedFlatObjectMetadatas: [], recordShares: [] };
-    }
-
-    const { flatObjectMetadataMaps } =
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId: workspaceEventBatch.workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
         },
       );
 
@@ -267,9 +267,11 @@ export class ObjectRecordEventPublisher {
         linkedFlatObjectMetadatas
           .filter(
             (linkedFlatObjectMetadata) =>
-              resolveRecordShareGateKind({
-                readability: getEffectiveReadability(linkedFlatObjectMetadata),
+              resolveLinkedRecordShareGateKind({
+                flatObjectMetadata: linkedFlatObjectMetadata,
                 isOwningApplication: false,
+                flatFieldMetadataMaps,
+                flatObjectMetadataMaps,
               }) === 'private',
           )
           .map((linkedFlatObjectMetadata) =>
@@ -286,7 +288,12 @@ export class ObjectRecordEventPublisher {
       )
     ).flat();
 
-    return { linkedFlatObjectMetadatas, recordShares };
+    return {
+      linkedFlatObjectMetadatas,
+      recordShares,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    };
   }
 
   private resolveDeliveredRecord(
@@ -317,7 +324,7 @@ export class ObjectRecordEventPublisher {
     flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
     workspaceMemberIdByUserId: Map<string, string>;
     recordSharesByRecordId: Map<string, RecordShare[]>;
-    linkedRecordShares: LinkedRecordShares | undefined;
+    linkedRecordShares: LinkedRecordShareContext | undefined;
   }): Promise<void> {
     const roleIds = this.resolveStreamRoleIds(
       streamData.authContext,
@@ -733,7 +740,7 @@ export class ObjectRecordEventPublisher {
     subscriberAuthContext: SerializableAuthContext,
     roleIds: string[],
     objectMetadata: FlatObjectMetadata,
-    linkedRecordShares: LinkedRecordShares | undefined,
+    linkedRecordShares: LinkedRecordShareContext | undefined,
   ): LinkedRecordShareGate | null {
     if (
       !isDefined(linkedRecordShares) ||
@@ -747,12 +754,14 @@ export class ObjectRecordEventPublisher {
         linkedRecordShares.linkedFlatObjectMetadatas.map(
           (linkedFlatObjectMetadata) => [
             linkedFlatObjectMetadata.id,
-            resolveRecordShareGateKind({
-              readability: getEffectiveReadability(linkedFlatObjectMetadata),
+            resolveLinkedRecordShareGateKind({
+              flatObjectMetadata: linkedFlatObjectMetadata,
               isOwningApplication: this.isSubscriberOwningApplication(
                 subscriberAuthContext,
                 linkedFlatObjectMetadata,
               ),
+              flatFieldMetadataMaps: linkedRecordShares.flatFieldMetadataMaps,
+              flatObjectMetadataMaps: linkedRecordShares.flatObjectMetadataMaps,
             }),
           ],
         ),
