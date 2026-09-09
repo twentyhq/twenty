@@ -33,4 +33,19 @@ describe('selectSlackConversationMessages', () => {
 
     expect(selected.map((message) => message.ts)).toEqual(['2']);
   });
+
+  it('should keep bot messages so their files stay covered by the file caveat', () => {
+    const selected = selectSlackConversationMessages({
+      messages: [
+        {
+          ts: '1',
+          bot_id: 'B_OTHER',
+          text: 'Nightly export is ready',
+          files: [{ id: 'F1', name: 'export.csv' }],
+        },
+      ],
+    });
+
+    expect(selected.map((message) => message.ts)).toEqual(['1']);
+  });
 });
