@@ -1,10 +1,12 @@
+import { type MockInstance, vi } from 'vitest';
+
 import { getOsShortcutSeparator } from '../getOsShortcutSeparator';
 
 describe('getOsShortcutSeparator', () => {
-  let userAgentSpy: jest.SpyInstance;
+  let userAgentSpy: MockInstance<() => string>;
 
   beforeEach(() => {
-    userAgentSpy = jest.spyOn(window.navigator, 'userAgent', 'get');
+    userAgentSpy = vi.spyOn(window.navigator, 'userAgent', 'get');
   });
 
   afterEach(() => {
