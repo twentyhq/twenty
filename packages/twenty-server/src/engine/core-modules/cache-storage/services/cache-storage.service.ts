@@ -1,6 +1,8 @@
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 
+import { randomUUID } from 'crypto';
+
 import { type Milliseconds } from 'cache-manager';
 import { type RedisCache } from 'cache-manager-redis-yet';
 
@@ -296,27 +298,52 @@ export class CacheStorageService {
     return count as number;
   }
 
-  async acquireLock(key: string, ttl = 1000): Promise<boolean> {
+  // The stored value fences release: acquireLock returns it as a token so
+  // releaseLock can verify it still owns the key before deleting. Without
+  // this, a lock whose TTL expired mid-critical-section gets deleted by its
+  // original holder even after another caller has since acquired it.
+  async acquireLock(key: string, ttl = 1000): Promise<string | null> {
     if (!this.isRedisCache(this.cache)) {
       throw new Error('acquireLock is only supported with Redis cache');
     }
 
     const redisClient = this.cache.store.client;
+    const token = randomUUID();
 
-    const result = await redisClient.set(this.getKey(key), 'lock', {
+    const result = await redisClient.set(this.getKey(key), token, {
       NX: true,
       PX: ttl,
     });
 
-    return result === 'OK';
+    return result === 'OK' ? token : null;
   }
 
-  async releaseLock(key: string): Promise<void> {
+  // Passing the token from acquireLock makes the delete conditional on
+  // still owning the lock. Omitting it keeps the previous unconditional
+  // delete for callers that have not migrated to token-fenced release yet.
+  async releaseLock(key: string, token?: string): Promise<void> {
     if (!this.isRedisCache(this.cache)) {
       throw new Error('releaseLock is only supported with Redis cache');
     }
 
-    await this.del(key);
+    if (token === undefined) {
+      await this.del(key);
+
+      return;
+    }
+
+    const redisClient = this.cache.store.client;
+    const script = `
+if redis.call('GET', KEYS[1]) == ARGV[1] then
+  return redis.call('DEL', KEYS[1])
+else
+  return 0
+end`;
+
+    await redisClient.eval(script, {
+      keys: [this.getKey(key)],
+      arguments: [token],
+    });
   }
 
   async incrBy(key: string, increment: number): Promise<number> {
