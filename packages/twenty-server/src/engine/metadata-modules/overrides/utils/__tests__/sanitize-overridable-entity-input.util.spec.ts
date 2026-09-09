@@ -1,4 +1,4 @@
-import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/utils/sanitize-overridable-entity-input.util';
+import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
 
 const CALLER = '20202020-aaaa-4aaa-8aaa-000000000001';
 const OWNER = '20202020-bbbb-4bbb-8bbb-000000000002';

@@ -1,9 +1,9 @@
-import { ALL_OVERRIDE_ENTRY_PROPERTY_NAMES } from 'src/engine/metadata-modules/flat-entity/constant/all-override-entry-property-names.constant';
-import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/utils/override-author-context.type';
+import { ALL_OVERRIDE_ENTRY_PROPERTY_NAMES } from 'src/engine/metadata-modules/overrides/constants/all-override-entry-property-names.constant';
+import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/overrides/types/override-author-context.type';
 import {
   type OverridableFlatEntity,
   resolveEffectiveFlatEntityProperty,
-} from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
+} from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 type FlatEntityWithOverrides = Record<string, unknown> & OverridableFlatEntity;
 

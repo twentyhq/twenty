@@ -14,7 +14,7 @@ import {
   ViewKey,
 } from 'twenty-shared/types';
 
-import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { type ViewOverrides } from 'src/engine/metadata-modules/view/entities/view.entity';

@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type OverrideAuthorContext } from 'src/engine/metadata-modules/utils/override-author-context.type';
+import { type OverrideAuthorContext } from 'src/engine/metadata-modules/overrides/types/override-author-context.type';
 
 export const computeOverrideAuthorOrder = ({
   workspaceCustomApplicationUniversalIdentifier,

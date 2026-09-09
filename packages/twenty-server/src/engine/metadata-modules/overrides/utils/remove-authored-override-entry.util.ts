@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
-import { normalizeAuthoredOverrides } from 'src/engine/metadata-modules/utils/normalize-authored-overrides.util';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
+import { normalizeAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/normalize-authored-overrides.util';
 
 export const removeAuthoredOverrideEntry = <TEntry>({
   overrides,

@@ -1,4 +1,4 @@
-import { mergeTranslationsIntoOverrides } from 'src/engine/metadata-modules/utils/merge-translations-into-overrides.util';
+import { mergeTranslationsIntoOverrides } from 'src/engine/metadata-modules/overrides/utils/merge-translations-into-overrides.util';
 
 const AUTHOR = '20202020-aaaa-4aaa-8aaa-000000000001';
 const OWNER = '20202020-bbbb-4bbb-8bbb-000000000002';

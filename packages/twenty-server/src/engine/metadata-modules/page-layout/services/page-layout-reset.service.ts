@@ -43,7 +43,7 @@ import { ViewService } from 'src/engine/metadata-modules/view/services/view.serv
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
-import { resetAuthoredOverrides } from 'src/engine/metadata-modules/utils/reset-authored-overrides.util';
+import { resetAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/reset-authored-overrides.util';
 
 @Injectable()
 export class PageLayoutResetService {

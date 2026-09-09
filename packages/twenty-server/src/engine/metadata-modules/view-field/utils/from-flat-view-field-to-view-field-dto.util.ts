@@ -1,6 +1,6 @@
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
-import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity.util';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 
 export const fromFlatViewFieldToViewFieldDto = (
   flatViewField: FlatViewField,

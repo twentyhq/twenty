@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { MOSTLY_EMPTY_FRACTION_THRESHOLD } from 'src/engine/metadata-modules/object-metadata/constants/mostly-empty-fraction-threshold.constant';
 import { getEmptinessColumnNamesForField } from 'src/engine/metadata-modules/object-metadata/utils/get-emptiness-column-names-for-field.util';
-import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-flat-entity-property.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 export type FieldMetadataForEmptinessCheck = Pick<
   FlatFieldMetadata,

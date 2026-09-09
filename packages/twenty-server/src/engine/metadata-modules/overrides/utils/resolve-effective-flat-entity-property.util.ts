@@ -1,5 +1,5 @@
-import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/utils/override-author-context.type';
-import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/utils/read-authored-override-property.util';
+import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/overrides/types/override-author-context.type';
+import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 
 // Entries are typed on the entity column; here they stay opaque so entry
 // types that allow null or carry translations still fit.

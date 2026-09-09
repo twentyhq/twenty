@@ -10,11 +10,11 @@ import {
   type MetadataEntityTranslatablePropertyName,
 } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 import { ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-translatable-properties-by-metadata-name.constant';
-import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
-import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
-import { type MetadataPresentationOverrides } from 'src/engine/metadata-modules/utils/metadata-presentation-overrides.type';
-import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/utils/override-author-context.type';
-import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/utils/read-authored-override-property.util';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
+import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
+import { type MetadataPresentationOverrides } from 'src/engine/metadata-modules/overrides/types/metadata-presentation-overrides.type';
+import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/overrides/types/override-author-context.type';
+import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 
 export const readOverrideTranslation = ({
   overrides,

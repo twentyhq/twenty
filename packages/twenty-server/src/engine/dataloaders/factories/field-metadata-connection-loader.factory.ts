@@ -22,7 +22,7 @@ import { type CursorPagingInput } from 'src/engine/metadata-modules/pagination/d
 import { applyMetadataFilterToItems } from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-items.util';
 import { findManyItemsWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-items-with-cursor-pagination.util';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
-import { resolveEffectiveTranslatedFlatEntity } from 'src/engine/metadata-modules/utils/resolve-effective-translated-flat-entity.util';
+import { resolveEffectiveTranslatedFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-translated-flat-entity.util';
 
 export type FieldMetadataConnectionLoaderPayload = {
   workspaceId: string;

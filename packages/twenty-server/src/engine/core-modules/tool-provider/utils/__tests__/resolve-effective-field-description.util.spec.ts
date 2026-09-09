@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { resolveEffectiveFieldDescription } from 'src/engine/core-modules/tool-provider/utils/resolve-effective-field-description.util';
 import { type FieldMetadataOverrides } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-overrides.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { type MessageIdTranslator } from 'src/engine/metadata-modules/utils/message-id-translator.type';
+import { type MessageIdTranslator } from 'src/engine/metadata-modules/overrides/types/message-id-translator.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =

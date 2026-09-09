@@ -1,10 +1,10 @@
 import { fastDeepEqual } from 'twenty-shared/utils';
 
-import { type AuthoredOverrides } from 'src/engine/metadata-modules/utils/authored-overrides.type';
-import { computeOverrideAuthorOrder } from 'src/engine/metadata-modules/utils/compute-override-author-order.util';
-import { normalizeAuthoredOverrides } from 'src/engine/metadata-modules/utils/normalize-authored-overrides.util';
-import { type OverrideAuthorContext } from 'src/engine/metadata-modules/utils/override-author-context.type';
-import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/utils/read-authored-override-property.util';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
+import { computeOverrideAuthorOrder } from 'src/engine/metadata-modules/overrides/utils/compute-override-author-order.util';
+import { normalizeAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/normalize-authored-overrides.util';
+import { type OverrideAuthorContext } from 'src/engine/metadata-modules/overrides/types/override-author-context.type';
+import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 
 type ComputeMetadataOverridesBlobArgs<TProperties extends object> = {
   overridableProperties: readonly string[];

@@ -1,4 +1,4 @@
-import { applyAuthoredIsActive } from 'src/engine/metadata-modules/utils/apply-authored-is-active.util';
+import { applyAuthoredIsActive } from 'src/engine/metadata-modules/overrides/utils/apply-authored-is-active.util';
 
 type EntityWithApplicationIdentifier = {
   applicationUniversalIdentifier: string;

@@ -1,4 +1,4 @@
-import { removeAuthoredOverrideEntry } from 'src/engine/metadata-modules/utils/remove-authored-override-entry.util';
+import { removeAuthoredOverrideEntry } from 'src/engine/metadata-modules/overrides/utils/remove-authored-override-entry.util';
 
 type FlatEntityWithOverrides = {
   applicationUniversalIdentifier: string;
