@@ -7,11 +7,21 @@ import {
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { styled } from '@linaria/react';
-import { useContext, useId } from 'react';
+import { useId } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { Switch } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledSwitch = styled(Switch)`
+  &[data-centered] {
+    align-self: center;
+  }
+
+  &[data-advanced-mode] {
+    color: ${themeCssVariables.color.yellow};
+  }
+`;
 
 const StyledSettingsCardToggleContent = styled.div<{ disabled?: boolean }>`
   align-items: center;
@@ -64,7 +74,6 @@ export const SettingsOptionCardContentToggle = ({
   checked,
   onChange,
 }: SettingsOptionCardContentToggleProps) => {
-  const { theme } = useContext(ThemeContext);
   const toggleId = useId();
 
   return (
@@ -89,16 +98,14 @@ export const SettingsOptionCardContentToggle = ({
           )}
         </StyledSettingsCardTextContainer>
         <StyledSettingsCardToggleButtonContainer>
-          <Switch
+          <StyledSwitch
             id={toggleId}
             checked={checked}
             onCheckedChange={onChange}
             disabled={disabled}
             size="sm"
-            style={{
-              color: advancedMode ? theme.color.yellow : theme.color.blue,
-              alignSelf: toggleCentered ? 'center' : undefined,
-            }}
+            data-advanced-mode={advancedMode || undefined}
+            data-centered={toggleCentered || undefined}
           />
         </StyledSettingsCardToggleButtonContainer>
       </StyledSettingsCardToggleContent>

@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
-import { useContext, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { H2Title } from 'twenty-ui/typography';
 import { Switch } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -33,8 +33,6 @@ export const SettingsLogicFunctionTriggerSection = ({
   readonly,
   children,
 }: SettingsLogicFunctionTriggerSectionProps) => {
-  const { theme } = useContext(ThemeContext);
-
   if (readonly && !enabled) {
     return null;
   }
@@ -49,7 +47,6 @@ export const SettingsLogicFunctionTriggerSection = ({
             checked={enabled}
             onCheckedChange={onEnabledChange}
             size="sm"
-            style={{ color: theme.color.blue }}
           />
         )}
       </StyledHeader>

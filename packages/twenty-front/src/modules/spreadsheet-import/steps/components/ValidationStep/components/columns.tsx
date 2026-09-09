@@ -47,6 +47,10 @@ const StyledToggleContainer = styled.div`
   height: 100%;
 `;
 
+const StyledSwitch = styled(Switch)`
+  align-self: center;
+`;
+
 const StyledInputContainer = styled.div`
   align-items: center;
   display: flex;
@@ -181,7 +185,7 @@ export const generateColumns = (
                   event.stopPropagation();
                 }}
               >
-                <Switch
+                <StyledSwitch
                   aria-label={column.label}
                   checked={row[columnKey] as boolean}
                   onCheckedChange={() => {
@@ -190,7 +194,6 @@ export const generateColumns = (
                       [columnKey]: !row[columnKey],
                     });
                   }}
-                  style={{ alignSelf: 'center' }}
                 />
               </StyledToggleContainer>
             );

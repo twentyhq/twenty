@@ -69,6 +69,11 @@ for (const file of files) {
         attribute.setName('size');
         attribute.setInitializer(value === '"small"' ? '"sm"' : '"md"');
       } else if (name === 'color' || name === 'centered') {
+        if (file.startsWith('packages/twenty-front/')) {
+          throw new Error(
+            `Migrate ${name} to a Linaria styled component manually: ${file}`,
+          );
+        }
         const value = initializer?.isKind(SyntaxKind.JsxExpression)
           ? initializer.getExpression()?.getText()
           : initializer?.getText();

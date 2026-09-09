@@ -27,6 +27,10 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const COMPOSER_LABEL_MIN_WIDTH = '80px';
 
+const StyledSwitch = styled(Switch)`
+  align-self: center;
+`;
+
 const StyledFieldsContainer = styled.div`
   display: flex;
   flex: 1;
@@ -165,12 +169,11 @@ export const CalendarEventComposerFields = ({
                 composerState.handleIsFullDayChange(!composerState.isFullDay)
               }
               trailing={
-                <Switch
+                <StyledSwitch
                   aria-label={t`All day`}
                   size="sm"
                   checked={composerState.isFullDay}
                   onCheckedChange={composerState.handleIsFullDayChange}
-                  style={{ alignSelf: 'center' }}
                 />
               }
             >
@@ -251,12 +254,11 @@ export const CalendarEventComposerFields = ({
                 composerState.setSendInvitations(!composerState.sendInvitations)
               }
               trailing={
-                <Switch
+                <StyledSwitch
                   aria-label={t`Send invitations`}
                   size="sm"
                   checked={composerState.sendInvitations}
                   onCheckedChange={composerState.setSendInvitations}
-                  style={{ alignSelf: 'center' }}
                 />
               }
             >
@@ -271,12 +273,11 @@ export const CalendarEventComposerFields = ({
                 composerState.setAddConferencing(!composerState.addConferencing)
               }
               trailing={
-                <Switch
+                <StyledSwitch
                   aria-label={t`Video conferencing`}
                   size="sm"
                   checked={composerState.addConferencing}
                   onCheckedChange={composerState.setAddConferencing}
-                  style={{ alignSelf: 'center' }}
                 />
               }
             >
