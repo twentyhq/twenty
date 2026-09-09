@@ -112,10 +112,6 @@ export class EmailComposerService {
         );
       }
 
-      if (!isDefined(userWorkspaceId)) {
-        return allAccounts[0].id;
-      }
-
       const connectedAccountId = selectConnectedAccountIdForCaller({
         connectedAccounts: allAccounts,
         userWorkspaceId,
@@ -123,7 +119,9 @@ export class EmailComposerService {
 
       if (!isDefined(connectedAccountId)) {
         throw new EmailToolException(
-          `No connected account available for user workspace '${userWorkspaceId}'`,
+          isDefined(userWorkspaceId)
+            ? `No connected account available for user workspace '${userWorkspaceId}'`
+            : 'No connected account shared with the workspace is available for this API key',
           EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
         );
       }

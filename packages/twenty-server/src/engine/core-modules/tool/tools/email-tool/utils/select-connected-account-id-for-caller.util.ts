@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
@@ -9,8 +11,14 @@ export const selectConnectedAccountIdForCaller = ({
     ConnectedAccountEntity,
     'id' | 'visibility' | 'userWorkspaceId'
   >[];
-  userWorkspaceId: string;
+  userWorkspaceId?: string;
 }): string | undefined => {
+  if (!isDefined(userWorkspaceId)) {
+    return connectedAccounts.find(
+      (connectedAccount) => connectedAccount.visibility === 'workspace',
+    )?.id;
+  }
+
   const ownAccount = connectedAccounts.find(
     (connectedAccount) => connectedAccount.userWorkspaceId === userWorkspaceId,
   );

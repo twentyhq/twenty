@@ -66,4 +66,28 @@ describe('selectConnectedAccountIdForCaller', () => {
       }),
     ).toBeUndefined();
   });
+
+  describe('without a user workspace, as an API key', () => {
+    it('returns an account shared with the whole workspace', () => {
+      expect(
+        selectConnectedAccountIdForCaller({
+          connectedAccounts: [ownAccount, colleagueAccount, sharedAccount],
+        }),
+      ).toBe('shared-account-id');
+    });
+
+    it('returns undefined rather than a private account owned by a member', () => {
+      expect(
+        selectConnectedAccountIdForCaller({
+          connectedAccounts: [ownAccount, colleagueAccount],
+        }),
+      ).toBeUndefined();
+    });
+
+    it('returns undefined when there is no account at all', () => {
+      expect(
+        selectConnectedAccountIdForCaller({ connectedAccounts: [] }),
+      ).toBeUndefined();
+    });
+  });
 });
