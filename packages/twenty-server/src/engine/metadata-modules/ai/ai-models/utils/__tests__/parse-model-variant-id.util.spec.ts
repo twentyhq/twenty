@@ -1,15 +1,6 @@
-import {
-  buildModelVariantId,
-  parseModelVariantId,
-} from 'src/engine/metadata-modules/ai/ai-models/utils/model-variant-id.util';
+import { parseModelVariantId } from 'src/engine/metadata-modules/ai/ai-models/utils/parse-model-variant-id.util';
 
-describe('model variant id', () => {
-  it('appends the effort to the model id', () => {
-    expect(buildModelVariantId('anthropic/claude-opus-5', 'low')).toBe(
-      'anthropic/claude-opus-5@low',
-    );
-  });
-
+describe('parseModelVariantId', () => {
   it('splits a variant id into its model and effort', () => {
     expect(parseModelVariantId('anthropic/claude-opus-5@xhigh')).toEqual({
       modelId: 'anthropic/claude-opus-5',
