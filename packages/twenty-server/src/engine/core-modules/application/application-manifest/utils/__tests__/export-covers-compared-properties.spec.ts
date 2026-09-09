@@ -30,7 +30,7 @@ import { fromFlatIndexMetadataToIndexManifest } from 'src/engine/core-modules/ap
 import { fromFlatObjectMetadataToObjectManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-metadata-to-object-manifest.util';
 import { fromFlatPageLayoutTabToPageLayoutTabManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-tab-to-page-layout-tab-manifest.util';
 import { fromFlatPageLayoutToPageLayoutManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-to-page-layout-manifest.util';
-import { fromFlatPageLayoutWidgetToPageLayoutWidgetManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-widget-to-page-layout-widget-manifest.util';
+import { fromFlatPageLayoutWidgetToStandalonePageLayoutWidgetManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-widget-to-standalone-page-layout-widget-manifest.util';
 import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-manifest-to-universal-flat-page-layout.util';
 import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-tab-manifest-to-universal-flat-page-layout-tab.util';
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
@@ -431,7 +431,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
   {
     metadataName: 'pageLayoutWidget',
     emittedProperties: Object.keys(
-      fromFlatPageLayoutWidgetToPageLayoutWidgetManifest({
+      fromFlatPageLayoutWidgetToStandalonePageLayoutWidgetManifest({
         flatPageLayoutWidget:
           fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
             pageLayoutWidgetManifest: PAGE_LAYOUT_WIDGET_MANIFEST,
@@ -440,6 +440,10 @@ const EXPORTED_KINDS: ExportedKind[] = [
             applicationUniversalIdentifier: APP_UID,
             now: NOW,
           }),
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          index: 0,
+        },
       }),
     ),
     renamedProperties: {
@@ -449,8 +453,6 @@ const EXPORTED_KINDS: ExportedKind[] = [
     workspaceLocalProperties: ['isActive', 'universalOverrides'],
     knownGaps: {
       ...PAGE_LAYOUT_KIND_GAPS,
-      pageLayoutTabUniversalIdentifier:
-        'a widget is written under its tab; there is no standalone widget slot',
       conditionalAvailabilityExpression:
         'no manifest slot; a widget carrying one is reported as unsupported',
     },

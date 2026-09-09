@@ -113,7 +113,7 @@ const validateRelationFields = (fields: ManifestField[]): string[] => {
 };
 
 const collectPageLayoutWidgets = (
-  manifest: Pick<Manifest, 'pageLayouts' | 'pageLayoutTabs'>,
+  manifest: Pick<Manifest, 'pageLayouts' | 'pageLayoutTabs' | 'pageLayoutWidgets'>,
 ): PageLayoutWidgetManifest[] => {
   const widgetsFromPageLayouts = manifest.pageLayouts.flatMap(
     (pageLayout) => pageLayout.tabs?.flatMap((tab) => tab.widgets ?? []) ?? [],
@@ -123,7 +123,11 @@ const collectPageLayoutWidgets = (
     (tab) => tab.widgets ?? [],
   );
 
-  return [...widgetsFromPageLayouts, ...widgetsFromStandaloneTabs];
+  return [
+    ...widgetsFromPageLayouts,
+    ...widgetsFromStandaloneTabs,
+    ...(manifest.pageLayoutWidgets ?? []),
+  ];
 };
 
 const validateGraphWidgets = (

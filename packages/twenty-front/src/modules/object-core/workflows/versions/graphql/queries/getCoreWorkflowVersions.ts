@@ -9,6 +9,7 @@ export const GET_CORE_WORKFLOW_VERSIONS = gql`
       workspaceWorkflowVersionId
       workspaceWorkflowId
       createdAt
+      updatedAt
     }
   }
 `;
