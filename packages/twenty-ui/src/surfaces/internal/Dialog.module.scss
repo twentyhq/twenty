@@ -1,0 +1,119 @@
+.backdrop {
+  background: var(--t-background-overlay-primary);
+  inset: 0;
+  position: fixed;
+  transition: opacity duration(normal) ease-out;
+  z-index: 39;
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+  }
+}
+
+.viewport {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: var(--t-spacing-4);
+  position: fixed;
+  z-index: 40;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &:has(> [data-size='fullscreen']) {
+    padding: 0;
+  }
+}
+
+.popup {
+  background: var(--t-background-primary);
+  border-radius: var(--t-border-radius-md);
+  box-shadow: var(--t-box-shadow-super-heavy);
+  box-sizing: border-box;
+  color: var(--t-font-color-primary);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  font-family: var(--t-font-family);
+  font-size: var(--t-font-size-md);
+  inline-size: var(--t-modal-size-md-width);
+  max-block-size: calc(100dvh / var(--t-zoom, 1) - var(--t-spacing-8));
+  max-inline-size: 100%;
+  outline: none;
+  overflow: auto;
+  overscroll-behavior: contain;
+  transition: opacity duration(normal) ease-out;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+  }
+
+  &[data-size='sm'] {
+    inline-size: var(--t-modal-size-sm-width);
+  }
+
+  &[data-size='lg'] {
+    inline-size: max(var(--t-modal-size-md-width), var(--t-modal-size-lg-width));
+  }
+
+  &[data-size='xl'] {
+    inline-size: var(--t-modal-size-xl-width);
+  }
+
+  &[data-size='fullscreen'] {
+    block-size: var(--t-modal-size-fullscreen-height);
+    border-radius: 0;
+    box-shadow: none;
+    inline-size: 100%;
+    max-block-size: none;
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: var(--t-spacing-2);
+  padding: var(--t-spacing-6);
+}
+
+.body {
+  padding: 0 var(--t-spacing-6) var(--t-spacing-6);
+}
+
+.footer {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: var(--t-spacing-2);
+  justify-content: flex-end;
+  margin-block-start: auto;
+  padding: 0 var(--t-spacing-6) var(--t-spacing-6);
+}
+
+.title {
+  color: var(--t-font-color-primary);
+  font-size: var(--t-font-size-lg);
+  font-weight: var(--t-font-weight-semi-bold);
+  margin: 0;
+}
+
+.description {
+  color: var(--t-font-color-secondary);
+  font-size: var(--t-font-size-md);
+  line-height: 1.5;
+  margin: 0;
+}
