@@ -48,6 +48,7 @@ const validManifest: Manifest = {
   navigationMenuItems: [],
   pageLayouts: [],
   pageLayoutTabs: [],
+  pageLayoutWidgets: [],
 };
 
 describe('manifestValidate', () => {

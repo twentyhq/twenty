@@ -451,6 +451,12 @@ exports[`Application export - data model exports the whole application as a stab
     {
       "metadataName": "pageLayoutWidget",
       "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKET_RECORD_PAGE_HOME_DOCS_WIDGET>",
+    },
+    {
+      "metadataName": "pageLayoutWidget",
+      "reason": null,
       "status": "ENGINE_DERIVED",
       "universalIdentifier": "<TICKET_RECORD_PAGE_WIDGET_Fields>",
     },
@@ -904,6 +910,22 @@ exports[`Application export - data model exports the whole application as a stab
       "position": 60,
       "title": "Tagline",
       "universalIdentifier": "<STANDARD_COMPANY_RECORD_PAGE_TAGLINE_TAB>",
+    },
+  ],
+  "pageLayoutWidgets": [
+    {
+      "configuration": {
+        "configurationType": "IFRAME",
+        "url": "https://example.com/tickets/docs",
+      },
+      "pageLayoutTabUniversalIdentifier": "<TICKET_RECORD_PAGE_TAB_Home>",
+      "position": {
+        "index": 1,
+        "layoutMode": "VERTICAL_LIST",
+      },
+      "title": "Docs",
+      "type": "IFRAME",
+      "universalIdentifier": "<TICKET_RECORD_PAGE_HOME_DOCS_WIDGET>",
     },
   ],
   "pageLayouts": [

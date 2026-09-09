@@ -154,6 +154,7 @@ export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
 export type {
   PageLayoutWidgetManifest,
+  StandalonePageLayoutWidgetManifest,
   PageLayoutTabManifest,
   PageLayoutManifest,
 } from './pageLayoutManifestType';

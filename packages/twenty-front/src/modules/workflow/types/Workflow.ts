@@ -169,7 +169,7 @@ export type Workflow = {
   versions: Array<
     Pick<WorkflowVersion, 'id' | 'status' | 'name' | 'createdAt'>
   >;
-  lastPublishedVersionId: string;
+  lastPublishedVersionId: string | null;
   statuses: Array<WorkflowStatus> | null;
 };
 
