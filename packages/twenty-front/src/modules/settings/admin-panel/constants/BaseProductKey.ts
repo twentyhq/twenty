@@ -1,0 +1,1 @@
+export const BASE_PRODUCT_KEY = 'BASE_PRODUCT';

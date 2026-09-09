@@ -25,10 +25,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceCreditGrantModal } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal';
 import { SettingsAdminWorkspaceCreditGrantsTable } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable';
-import {
-  BASE_PRODUCT_KEY,
-  RESOURCE_CREDIT_KEY,
-} from '@/settings/admin-panel/constants/BillingProductKeys';
+import { BASE_PRODUCT_KEY } from '@/settings/admin-panel/constants/BaseProductKey';
+import { RESOURCE_CREDIT_KEY } from '@/settings/admin-panel/constants/ResourceCreditKey';
 import { formatSubscriptionItemValue } from '@/settings/admin-panel/utils/formatSubscriptionItemValue';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
