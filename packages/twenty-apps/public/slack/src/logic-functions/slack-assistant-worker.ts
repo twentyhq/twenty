@@ -27,8 +27,9 @@ import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspac
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
-import { runSlackAssistantAgentWithStatus } from 'src/logic-functions/utils/run-slack-assistant-agent-with-status';
+import { runSlackAssistantAgentWithDeadline } from 'src/logic-functions/utils/run-slack-assistant-agent-with-deadline';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
+import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
 
 const SLACK_ASSISTANT_REQUEST_OBJECT_NAME = 'slackAssistantRequest';
@@ -82,6 +83,11 @@ export const slackAssistantWorkerHandler = async (
     parentMessageTimestamp,
   };
 
+  const stopStatusUpdates = startSlackAssistantStatusUpdates({
+    slackChannelId,
+    threadTimestamp: parentMessageTimestamp,
+  });
+
   try {
     const [
       {
@@ -129,7 +135,7 @@ export const slackAssistantWorkerHandler = async (
       0,
     );
 
-    const agentResult = await runSlackAssistantAgentWithStatus({
+    const agentResult = await runSlackAssistantAgentWithDeadline({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
       runAsWorkspaceMemberId,
       messages: buildSlackAssistantMessages({
@@ -140,10 +146,8 @@ export const slackAssistantWorkerHandler = async (
         timeoutSeconds: agentBudgetRemainingSeconds,
         workspaceBaseUrl: workspaceBaseUrls[0],
       }),
-      slackChannelId,
-      threadTimestamp: parentMessageTimestamp,
       deadlineAtMs: agentDeadlineAtMs,
-    });
+    }).finally(() => stopStatusUpdates());
 
     if (!agentResult.success) {
       return await finishSlackAssistantRequestWithFailure({
@@ -207,6 +211,8 @@ export const slackAssistantWorkerHandler = async (
 
     return { done: true };
   } catch (error) {
+    await stopStatusUpdates();
+
     return await finishSlackAssistantRequestWithFailure({
       ...failureContext,
       errorMessage:

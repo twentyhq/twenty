@@ -9,6 +9,7 @@ import {
   encodeCursorData,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { type CoreWorkflowConnectionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-connection.dto';
+import { type CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
 import {
   CoreWorkflowOrderByDirection,
   CoreWorkflowOrderByField,
@@ -24,6 +25,7 @@ type CoreWorkflowRow = {
   id: string;
   cursorSortValue: string | null;
   name: string | null;
+  lastPublishedVersionId: string | null;
   applicationId: string | null;
   workspaceWorkflowId: string | null;
   updatedAt: Date;
@@ -59,6 +61,29 @@ const SORT_COLUMN_BY_FIELD: Record<
 };
 
 const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."updatedAt"`;
+
+const CORE_WORKFLOW_AGGREGATE_COLUMNS = `
+         c.name,
+         c."lastPublishedVersionId",
+         c."applicationId",
+         c."updatedAt",
+         coalesce(bool_or(v.status = 'DRAFT'), false) AS "hasDraftVersion",
+         coalesce(bool_or(v.status = 'ACTIVE'), false) AS "hasActiveVersion",
+         coalesce(bool_or(v.status = 'DEACTIVATED'), false) AS "hasDeactivatedVersion"`;
+
+const toCoreWorkflowDTO = (row: CoreWorkflowRow): CoreWorkflowDTO => ({
+  id: row.id,
+  name: row.name,
+  statuses: computeCoreWorkflowStatuses({
+    hasDraftVersion: row.hasDraftVersion,
+    hasActiveVersion: row.hasActiveVersion,
+    hasDeactivatedVersion: row.hasDeactivatedVersion,
+  }),
+  lastPublishedVersionId: row.lastPublishedVersionId,
+  applicationId: row.applicationId,
+  workspaceWorkflowId: row.workspaceWorkflowId,
+  updatedAt: row.updatedAt.toISOString(),
+});
 
 const buildWorkflowVersionsJoinClause = (schemaName: string) =>
   `LEFT JOIN ${schemaName}."workflow" wf
@@ -129,18 +154,13 @@ export class CoreWorkflowListService {
       `SELECT
          c.id,
          ${cursorExpression} AS "cursorSortValue",
-         c.name,
-         c."applicationId",
          min(wf.id::text) AS "workspaceWorkflowId",
-         c."updatedAt",
-         coalesce(bool_or(v.status = 'DRAFT'), false) AS "hasDraftVersion",
-         coalesce(bool_or(v.status = 'ACTIVE'), false) AS "hasActiveVersion",
-         coalesce(bool_or(v.status = 'DEACTIVATED'), false) AS "hasDeactivatedVersion"
+         ${CORE_WORKFLOW_AGGREGATE_COLUMNS}
        FROM core."workflow" c
        ${buildWorkflowVersionsJoinClause(schemaName)}
        WHERE c."workspaceId" = $1
        ${keysetCondition}
-       GROUP BY ${GROUPED_WORKFLOW_COLUMNS}, c."applicationId"
+       GROUP BY ${GROUPED_WORKFLOW_COLUMNS}, c."lastPublishedVersionId", c."applicationId"
        ${havingClause}
        ORDER BY ${column} ${direction}${nullsClause}, c.id ${direction}
        LIMIT ${limitParameter}`,
@@ -158,18 +178,7 @@ export class CoreWorkflowListService {
     const pageRows = hasNextPage ? rows.slice(0, first) : rows;
 
     const edges = pageRows.map((row) => ({
-      node: {
-        id: row.id,
-        name: row.name,
-        statuses: computeCoreWorkflowStatuses({
-          hasDraftVersion: row.hasDraftVersion,
-          hasActiveVersion: row.hasActiveVersion,
-          hasDeactivatedVersion: row.hasDeactivatedVersion,
-        }),
-        applicationId: row.applicationId,
-        workspaceWorkflowId: row.workspaceWorkflowId,
-        updatedAt: row.updatedAt.toISOString(),
-      },
+      node: toCoreWorkflowDTO(row),
       cursor: encodeCursorData({
         sortValue: row.cursorSortValue,
         id: row.id,
@@ -184,6 +193,42 @@ export class CoreWorkflowListService {
       },
       totalCount,
     };
+  }
+
+  async findOneByWorkspaceWorkflowId({
+    workspaceId,
+    workspaceWorkflowId,
+  }: {
+    workspaceId: string;
+    workspaceWorkflowId: string;
+  }): Promise<CoreWorkflowDTO | null> {
+    const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
+
+    const rows: CoreWorkflowRow[] = await this.coreDataSource.query(
+      `SELECT
+         c.id,
+         null AS "cursorSortValue",
+         wf.id::text AS "workspaceWorkflowId",
+         ${CORE_WORKFLOW_AGGREGATE_COLUMNS}
+       FROM core."workflow" c
+       JOIN ${schemaName}."workflow" wf
+         ON wf."coreWorkflowId" = c.id
+         AND wf."deletedAt" IS NULL
+         AND wf.id = $2
+       LEFT JOIN core."workflowVersion" v
+         ON v."workflowId" = wf.id AND v."workspaceId" = $1
+       WHERE c."workspaceId" = $1
+       GROUP BY ${GROUPED_WORKFLOW_COLUMNS}, c."lastPublishedVersionId", c."applicationId", wf.id`,
+      [workspaceId, workspaceWorkflowId],
+    );
+
+    const [row] = rows;
+
+    if (!isDefined(row)) {
+      return null;
+    }
+
+    return toCoreWorkflowDTO(row);
   }
 
   private async countByWorkspaceId({
