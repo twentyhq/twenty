@@ -12,6 +12,7 @@ export enum SyncableEntity {
   NavigationMenuItem = 'navigationMenuItem',
   PageLayout = 'pageLayout',
   PageLayoutTab = 'pageLayoutTab',
+  PageLayoutWidget = 'pageLayoutWidget',
   CommandMenuItem = 'commandMenuItem',
   TimelineActivityType = 'timelineActivityType',
   SharingRule = 'sharingRule',
