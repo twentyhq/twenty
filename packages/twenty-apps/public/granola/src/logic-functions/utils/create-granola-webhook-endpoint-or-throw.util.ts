@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type GranolaWebhookScope } from 'src/logic-functions/types/granola-api.type';
@@ -44,7 +45,7 @@ export const createGranolaWebhookEndpointOrThrow = async ({
         url,
         scopes,
         events: ['note.generated', 'note.access_granted', 'note.edited'],
-        ...(folderIds.length > 0 ? { folder_ids: folderIds } : {}),
+        ...(isNonEmptyArray(folderIds) ? { folder_ids: folderIds } : {}),
       });
     } catch (error) {
       if (

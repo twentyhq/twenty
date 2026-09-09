@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -38,7 +38,7 @@ export const syncGranolaNoteToCallRecordingOrThrow = async ({
     coreApiClient,
     note,
   });
-  const hasContent = transcript.length > 0 || isNonEmptyString(summary);
+  const hasContent = isNonEmptyArray(transcript) || isNonEmptyString(summary);
   const result = await upsertCallRecordingOrThrow({
     coreApiClient,
     callRecordingId,
@@ -49,7 +49,7 @@ export const syncGranolaNoteToCallRecordingOrThrow = async ({
       externalRecordingId: note.id,
       startedAt,
       endedAt,
-      ...(transcript.length > 0 ? { transcript } : {}),
+      ...(isNonEmptyArray(transcript) ? { transcript } : {}),
       ...(isNonEmptyString(summary)
         ? { summary: { markdown: summary, blocknote: null } }
         : {}),
