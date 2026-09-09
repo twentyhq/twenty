@@ -2,10 +2,11 @@ import {
   SLACK_ASSISTANT_INITIAL_STATUS,
   SLACK_ASSISTANT_STATUS_STEPS,
 } from 'src/logic-functions/constants/slack-assistant-status-steps';
-import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
+import { isDefined } from 'twenty-sdk/utils';
+
+import { resolveBestEffortSlackClient } from 'src/logic-functions/utils/resolve-best-effort-slack-client';
 import { setSlackAssistantStatus } from 'src/logic-functions/utils/set-slack-assistant-status';
 
-const STATUS_REQUEST_TIMEOUT_MS = 5000;
 const STATUS_SHUTDOWN_TIMEOUT_MS = 5000;
 
 export const startSlackAssistantStatusUpdates = ({
@@ -17,28 +18,19 @@ export const startSlackAssistantStatusUpdates = ({
 }): (() => Promise<void>) => {
   let isStopped = false;
 
-  const slackClientResult = getSlackClient({
-    retryConfig: { retries: 0 },
-    timeout: STATUS_REQUEST_TIMEOUT_MS,
-  });
+  const slackClient = resolveBestEffortSlackClient(
+    'assistant.threads.setStatus',
+  );
 
   const sendStatus = async (status: string): Promise<void> => {
-    const clientResult = await slackClientResult;
+    const client = await slackClient;
 
-    if (isStopped) {
-      return;
-    }
-
-    if (!clientResult.success) {
-      console.warn(
-        `[slack] assistant.threads.setStatus skipped: ${clientResult.error}`,
-      );
-
+    if (isStopped || !isDefined(client)) {
       return;
     }
 
     await setSlackAssistantStatus({
-      client: clientResult.client,
+      client,
       slackChannelId,
       threadTimestamp,
       status,

@@ -1,5 +1,7 @@
 import { type WebClient } from '@slack/web-api';
 
+import { runBestEffortSlackCallWithClient } from 'src/logic-functions/utils/run-best-effort-slack-call-with-client';
+
 export const setSlackAssistantStatus = async ({
   client,
   slackChannelId,
@@ -10,16 +12,11 @@ export const setSlackAssistantStatus = async ({
   slackChannelId: string;
   threadTimestamp: string;
   status: string;
-}): Promise<void> => {
-  try {
-    await client.assistant.threads.setStatus({
+}): Promise<void> =>
+  runBestEffortSlackCallWithClient('assistant.threads.setStatus', client, () =>
+    client.assistant.threads.setStatus({
       channel_id: slackChannelId,
       thread_ts: threadTimestamp,
       status,
-    });
-  } catch (error) {
-    console.warn(
-      `[slack] assistant.threads.setStatus failed: ${error instanceof Error ? error.message : String(error)}`,
-    );
-  }
-};
+    }),
+  );

@@ -6,13 +6,14 @@ import {
 } from 'src/logic-functions/constants/slack-assistant-status-steps';
 import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 
-const { getSlackClientMock, setSlackAssistantStatusMock } = vi.hoisted(() => ({
-  getSlackClientMock: vi.fn(),
-  setSlackAssistantStatusMock: vi.fn().mockResolvedValue(undefined),
-}));
+const { resolveBestEffortSlackClientMock, setSlackAssistantStatusMock } =
+  vi.hoisted(() => ({
+    resolveBestEffortSlackClientMock: vi.fn(),
+    setSlackAssistantStatusMock: vi.fn().mockResolvedValue(undefined),
+  }));
 
-vi.mock('src/logic-functions/utils/get-slack-client', () => ({
-  getSlackClient: getSlackClientMock,
+vi.mock('src/logic-functions/utils/resolve-best-effort-slack-client', () => ({
+  resolveBestEffortSlackClient: resolveBestEffortSlackClientMock,
 }));
 
 vi.mock('src/logic-functions/utils/set-slack-assistant-status', () => ({
@@ -29,10 +30,7 @@ const SLACK_CLIENT = { assistant: {} };
 describe('startSlackAssistantStatusUpdates', () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    getSlackClientMock.mockResolvedValue({
-      success: true,
-      client: SLACK_CLIENT,
-    });
+    resolveBestEffortSlackClientMock.mockResolvedValue(SLACK_CLIENT);
   });
 
   afterEach(() => {
@@ -67,7 +65,7 @@ describe('startSlackAssistantStatusUpdates', () => {
       SLACK_ASSISTANT_INITIAL_STATUS,
       ...SLACK_ASSISTANT_STATUS_STEPS.map((step) => step.text),
     ]);
-    expect(getSlackClientMock).toHaveBeenCalledOnce();
+    expect(resolveBestEffortSlackClientMock).toHaveBeenCalledOnce();
 
     await stop();
   });
@@ -85,7 +83,7 @@ describe('startSlackAssistantStatusUpdates', () => {
   it('should drop a refresh whose client lookup was still pending when stopped', async () => {
     let resolveClient: (value: unknown) => void = () => undefined;
 
-    getSlackClientMock.mockReturnValue(
+    resolveBestEffortSlackClientMock.mockReturnValue(
       new Promise((resolve) => {
         resolveClient = resolve;
       }),
@@ -94,7 +92,7 @@ describe('startSlackAssistantStatusUpdates', () => {
     const stop = startSlackAssistantStatusUpdates(THREAD);
     const stopped = stop();
 
-    resolveClient({ success: true, client: SLACK_CLIENT });
+    resolveClient(SLACK_CLIENT);
     await stopped;
     await vi.advanceTimersByTimeAsync(0);
 
@@ -102,10 +100,7 @@ describe('startSlackAssistantStatusUpdates', () => {
   });
 
   it('should skip every refresh when Slack is not connected', async () => {
-    getSlackClientMock.mockResolvedValue({
-      success: false,
-      error: 'Slack is not connected',
-    });
+    resolveBestEffortSlackClientMock.mockResolvedValue(undefined);
 
     const stop = startSlackAssistantStatusUpdates(THREAD);
 
