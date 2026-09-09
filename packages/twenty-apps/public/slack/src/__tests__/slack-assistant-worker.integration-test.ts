@@ -33,6 +33,7 @@ describe('Slack assistant worker', () => {
     setupSlackIntegrationTest();
 
   const createdRequestIds: string[] = [];
+  const createdSlackUserLinkIds: string[] = [];
   const nextMessageTimestamp = createSlackMessageTimestampSequence(1);
 
   // Records are stored as PROCESSING so that the deployed worker on the test
@@ -117,6 +118,61 @@ describe('Slack assistant worker', () => {
       },
     }) as unknown as WorkerEvent;
 
+  const createSlackUserLinkRecord = async (fields: {
+    slackUserId: string;
+    workspaceMemberId: string;
+    name: string;
+  }): Promise<{ id: string }> => {
+    const mutationResult = await coreClient.mutation({
+      createSlackUserLink: {
+        __args: {
+          data: {
+            slackTeamId: slack.teamId,
+            slackUserId: fields.slackUserId,
+            workspaceMemberId: fields.workspaceMemberId,
+            name: fields.name,
+          },
+        },
+        id: true,
+      },
+    });
+
+    const createdLink = requireDefinedOrThrow(
+      mutationResult.createSlackUserLink,
+      'created Slack user link',
+    );
+
+    createdSlackUserLinkIds.push(createdLink.id);
+
+    return { id: createdLink.id };
+  };
+
+  const findAnyWorkspaceMember = async (): Promise<{
+    id: string;
+    fullName: string;
+  }> => {
+    const queryResult = await coreClient.query({
+      workspaceMembers: {
+        __args: { first: 1 },
+        edges: {
+          node: { id: true, name: { firstName: true, lastName: true } },
+        },
+      },
+    });
+
+    const member = requireDefinedOrThrow(
+      queryResult.workspaceMembers?.edges?.[0]?.node,
+      'a seeded workspace member',
+    );
+
+    return {
+      id: member.id,
+      fullName: [member.name?.firstName, member.name?.lastName]
+        .filter((part) => part !== undefined && part !== '')
+        .join(' '),
+    };
+  };
+
   afterEach(async () => {
     for (const requestId of createdRequestIds) {
       await coreClient.mutation({
@@ -124,7 +180,67 @@ describe('Slack assistant worker', () => {
       });
     }
 
+    for (const slackUserLinkId of createdSlackUserLinkIds) {
+      await coreClient.mutation({
+        destroySlackUserLink: { __args: { id: slackUserLinkId }, id: true },
+      });
+    }
+
     createdRequestIds.length = 0;
+    createdSlackUserLinkIds.length = 0;
+  });
+
+  it('should resolve mentioned Slack users into names the agent can act on', async () => {
+    const workspaceMember = await findAnyWorkspaceMember();
+
+    slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
+    slack.addUser({ id: REQUESTER_USER_ID, displayName: 'Ada' });
+    slack.addUser({ id: 'U0LINKED', displayName: 'alice.m' });
+    slack.addUser({ id: 'U0UNLINKED', displayName: 'Bob Lee' });
+    await createSlackUserLinkRecord({
+      slackUserId: 'U0LINKED',
+      workspaceMemberId: workspaceMember.id,
+      name: 'alice.m',
+    });
+
+    const slackMessageTimestamp = nextMessageTimestamp();
+    const requestText =
+      'create a follow-up task for <@U0LINKED>, tell <@U0UNLINKED> and <@U0GHOST> in <#C0GEN|general>';
+
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      timestamp: slackMessageTimestamp,
+      userId: REQUESTER_USER_ID,
+      text: requestText,
+    });
+
+    const request = await createRequestRecord({
+      slackChannelId: CHANNEL_ID,
+      slackMessageTimestamp,
+      requestText,
+    });
+
+    const result = await slackAssistantWorkerHandler(
+      buildRequestCreatedEvent({
+        ...request,
+        slackChannelId: CHANNEL_ID,
+        slackMessageTimestamp,
+        requestText,
+      }),
+    );
+
+    expect(result).toEqual({ done: true });
+
+    const agentMessages = appRuntime.lastAgentMessages;
+    const promptedRequest = agentMessages[agentMessages.length - 1]?.content;
+
+    // A linked Slack user carries the member id the agent needs to assign
+    // records, an unlinked one carries a name only, and a Slack user nobody
+    // can identify is named as such rather than guessed at.
+    expect(promptedRequest).toContain(
+      `create a follow-up task for @${workspaceMember.fullName} (workspace member ${workspaceMember.id}), tell @Bob Lee (no Twenty workspace member) and @unknown Slack user U0GHOST in #general`,
+    );
+    expect(promptedRequest).not.toContain('<@U0');
   });
 
   it('should answer a channel request in its thread, store the answer and subscribe the thread', async () => {
@@ -178,7 +294,10 @@ describe('Slack assistant worker', () => {
     // assistant turn without its footer, and the message that triggered this
     // run is left out of its own context.
     expect(appRuntime.lastAgentMessages).toEqual([
-      { role: 'user', content: '<@U0COLLEAGUE>: good question' },
+      {
+        role: 'user',
+        content: '@unknown Slack user U0COLLEAGUE: good question',
+      },
       { role: 'assistant', content: 'Acme has 2 open deals.' },
       {
         role: 'user',

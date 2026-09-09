@@ -52,6 +52,37 @@ describe('buildSlackAssistantMessages', () => {
     );
   });
 
+  it('should not explain mention labels when nothing was mentioned', () => {
+    const messages = buildSlackAssistantMessages({
+      requestText: 'How many open opportunities does ACME have?',
+      requesterName: 'Jane',
+      conversationMessages: [],
+      runAsWorkspaceMemberId: undefined,
+      timeoutSeconds: 300,
+      workspaceBaseUrl: 'https://acme.twenty.com',
+    });
+
+    expect(messages[0].content).not.toContain('Slack mentions in this request');
+  });
+
+  it('should explain mention labels when someone was mentioned', () => {
+    const messages = buildSlackAssistantMessages({
+      requestText:
+        'Create a task for @Alice Martin (workspace member member-1)',
+      requesterName: 'Jane',
+      conversationMessages: [],
+      runAsWorkspaceMemberId: undefined,
+      timeoutSeconds: 300,
+      workspaceBaseUrl: 'https://acme.twenty.com',
+      hasMentionedUsers: true,
+    });
+
+    expect(messages[0].content).toContain('Slack mentions in this request');
+    expect(messages[0].content).toContain(
+      'Never invent a workspace member id for a mention that does not carry one',
+    );
+  });
+
   it('should name the member it is acting as and how to read me and my', () => {
     const messages = buildSlackAssistantMessages({
       requestText: 'Create a task for me to follow up with ACME',
