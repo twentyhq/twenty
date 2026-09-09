@@ -13,6 +13,9 @@ export class AddDefaultViewKeyFastInstanceCommand implements FastInstanceCommand
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      'UPDATE "core"."view" SET "key" = NULL WHERE "key" = \'DEFAULT\'',
+    );
     await queryRunner.query('CREATE TYPE "core"."view_key_enum_old" AS ENUM(\'INDEX\')');
     await queryRunner.query('ALTER TABLE "core"."view" ALTER COLUMN "key" TYPE "core"."view_key_enum_old" USING "key"::"text"::"core"."view_key_enum_old"');
     await queryRunner.query('DROP TYPE "core"."view_key_enum"');
