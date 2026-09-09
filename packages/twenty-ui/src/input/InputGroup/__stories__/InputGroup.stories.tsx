@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -9,6 +10,7 @@ import {
 
 import { IconSearch } from '@ui/icon';
 import { Input } from '@ui/input/Input/Input';
+import inputStyles from '@ui/input/Input/Input.module.scss';
 import { InputGroup } from '@ui/input/InputGroup/InputGroup';
 import { type InputSize } from '@ui/input/types/InputSize';
 
@@ -41,6 +43,70 @@ export const WithEndElement: Story = {
   args: {
     endElement: 'USD',
     children: <Input placeholder="0.00" />,
+  },
+};
+
+export const WithBothElements: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: {
+    startElement: '$',
+    endElement: 'USD',
+    children: <Input aria-label="Amount" />,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByText('$')).toBeVisible();
+    await expect(canvas.getByText('USD')).toBeVisible();
+    await expect(canvas.getByRole('textbox', { name: 'Amount' })).toBeVisible();
+  },
+};
+
+export const EmptyElements: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <>
+      <InputGroup startElement={false} endElement="">
+        <Input aria-label="Empty adornments" />
+      </InputGroup>
+      <InputGroup>
+        <Input aria-label="No adornments" />
+      </InputGroup>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    for (const input of within(canvasElement).getAllByRole('textbox')) {
+      await expect(input.parentElement?.children).toHaveLength(1);
+    }
+  },
+};
+
+export const SizeInheritance: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <>
+      <InputGroup size="sm">
+        <Input aria-label="Inherited size" />
+      </InputGroup>
+      <InputGroup size="sm">
+        <Input aria-label="Explicit size" size="md" />
+      </InputGroup>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const inheritedInput = canvas.getByRole('textbox', {
+      name: 'Inherited size',
+    });
+    const explicitInput = canvas.getByRole('textbox', {
+      name: 'Explicit size',
+    });
+
+    await expect(inheritedInput).toHaveClass(inputStyles.sm);
+    await expect(inheritedInput).toHaveAttribute('data-grouped');
+    await expect(explicitInput).toHaveClass(inputStyles.md);
+    await expect(explicitInput).not.toHaveClass(inputStyles.sm);
   },
 };
 
