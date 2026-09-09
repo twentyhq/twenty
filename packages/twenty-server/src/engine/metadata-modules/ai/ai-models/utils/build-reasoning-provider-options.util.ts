@@ -21,8 +21,7 @@ export const buildReasoningProviderOptions = (
 ): ProviderOptions => {
   const { effort } = model;
   const thinksAdaptively =
-    model.supportsReasoning === true &&
-    isAdaptiveThinkingClaudeModel(model.modelId);
+    model.supportsReasoning && isAdaptiveThinkingClaudeModel(model.modelId);
 
   switch (model.sdkPackage) {
     case AI_SDK_ANTHROPIC:
