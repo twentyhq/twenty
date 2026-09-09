@@ -2,7 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
-import { IsNull, type Repository } from 'typeorm';
+import {
+  ILike,
+  IsNull,
+  Raw,
+  type FindOptionsWhere,
+  type Repository,
+} from 'typeorm';
 
 import {
   FindConnectedAccountsToolInputZodSchema,
@@ -18,10 +24,46 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 
 const normalizeHandle = (handle: string): string => handle.trim().toLowerCase();
 
+const buildConnectedAccountFindWhere = ({
+  workspaceId,
+  userWorkspaceId,
+  handleFilter,
+}: {
+  workspaceId: string;
+  userWorkspaceId?: string;
+  handleFilter?: string;
+}):
+  | FindOptionsWhere<ConnectedAccountEntity>
+  | FindOptionsWhere<ConnectedAccountEntity>[] => {
+  const base: FindOptionsWhere<ConnectedAccountEntity> = {
+    workspaceId,
+    archivedAt: IsNull(),
+    ...(isDefined(userWorkspaceId) ? {} : { visibility: 'workspace' }),
+  };
+
+  if (!isDefined(handleFilter)) {
+    return base;
+  }
+
+  return [
+    {
+      ...base,
+      handle: ILike(handleFilter),
+    },
+    {
+      ...base,
+      handleAliases: Raw(
+        (alias) => `:handle = ANY (SELECT LOWER(unnest(${alias})))`,
+        { handle: handleFilter },
+      ),
+    },
+  ];
+};
+
 @Injectable()
 export class FindConnectedAccountsTool implements Tool {
   description =
-    'List connected email accounts the caller can use with draft_email and send_email. Returns id, handle, provider, visibility and aliases from the core schema. Pass id as connectedAccountId. Do not guess UUIDs.';
+    'List connected email accounts the caller can use with draft_email and send_email. Returns id, handle, provider, visibility and aliases. Use a returned id as connectedAccountId.';
   inputSchema = FindConnectedAccountsToolInputZodSchema;
 
   constructor(
@@ -35,11 +77,18 @@ export class FindConnectedAccountsTool implements Tool {
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
     const authContext = buildSystemAuthContext(context.workspaceId);
+    const handleFilter = isNonEmptyString(parameters.handle)
+      ? normalizeHandle(parameters.handle)
+      : undefined;
 
     const accounts = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         return this.connectedAccountRepository.find({
-          where: { workspaceId: context.workspaceId, archivedAt: IsNull() },
+          where: buildConnectedAccountFindWhere({
+            workspaceId: context.workspaceId,
+            userWorkspaceId: context.userWorkspaceId,
+            handleFilter,
+          }),
           order: { createdAt: 'ASC', id: 'ASC' },
           select: {
             id: true,
@@ -63,11 +112,9 @@ export class FindConnectedAccountsTool implements Tool {
             userWorkspaceId,
           }),
         )
-      : accounts;
-
-    const handleFilter = isNonEmptyString(parameters.handle)
-      ? normalizeHandle(parameters.handle)
-      : undefined;
+      : accounts.filter(
+          (connectedAccount) => connectedAccount.visibility === 'workspace',
+        );
 
     const matchingAccounts = isDefined(handleFilter)
       ? usableAccounts.filter((account) => {

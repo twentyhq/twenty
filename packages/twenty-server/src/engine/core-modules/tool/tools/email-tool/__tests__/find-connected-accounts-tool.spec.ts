@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { IsNull } from 'typeorm';
+import { ILike, IsNull } from 'typeorm';
 
 import { FindConnectedAccountsTool } from 'src/engine/core-modules/tool/tools/email-tool/find-connected-accounts-tool';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
@@ -101,6 +101,7 @@ describe('FindConnectedAccountsTool', () => {
         }),
       }),
     );
+    expect(mockFind.mock.calls[0][0].where.visibility).toBeUndefined();
     expect(mockFind.mock.calls[0][0].select.accessToken).toBeUndefined();
     expect(mockFind.mock.calls[0][0].select.refreshToken).toBeUndefined();
     expect(
@@ -133,22 +134,29 @@ describe('FindConnectedAccountsTool', () => {
     expect(JSON.stringify(output)).not.toContain('accessToken');
   });
 
-  it('returns every non-archived account when the caller has no user identity', async () => {
+  it('scopes api-key callers to workspace-visibility accounts', async () => {
     mockFind.mockResolvedValue([ownAccount, colleagueAccount, sharedAccount]);
 
     const output = await tool.execute({}, apiKeyContext);
 
+    expect(mockFind).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          workspaceId: WORKSPACE_ID,
+          archivedAt: IsNull(),
+          visibility: 'workspace',
+        }),
+      }),
+    );
     expect(output.result).toEqual({
       records: [
-        expect.objectContaining({ id: 'own-account-id' }),
-        expect.objectContaining({ id: 'colleague-account-id' }),
         expect.objectContaining({ id: 'shared-account-id' }),
       ],
-      count: '3',
+      count: '1',
     });
   });
 
-  it('filters by handle case-insensitively including aliases', async () => {
+  it('filters by handle in the query including aliases', async () => {
     mockFind.mockResolvedValue([ownAccount, sharedAccount]);
 
     const output = await tool.execute(
@@ -156,6 +164,22 @@ describe('FindConnectedAccountsTool', () => {
       callerContext,
     );
 
+    const where = mockFind.mock.calls[0][0].where;
+
+    expect(where).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          workspaceId: WORKSPACE_ID,
+          archivedAt: IsNull(),
+          handle: ILike('me.alias@example.com'),
+        }),
+      ]),
+    );
+    expect(
+      where.some(
+        (clause: { handleAliases?: unknown }) => 'handleAliases' in clause,
+      ),
+    ).toBe(true);
     expect(output.message).toBe('Found 1 connectedAccount record');
     expect(output.result).toEqual({
       records: [
