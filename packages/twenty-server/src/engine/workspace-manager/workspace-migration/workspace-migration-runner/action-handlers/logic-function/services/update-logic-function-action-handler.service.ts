@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findObjectFieldIndexFlatEntityMapsInAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-object-field-index-flat-entity-maps-in-all-flat-entity-maps.util';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -171,6 +172,10 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
         },
         flatApplication: context.flatApplication,
         applicationUniversalIdentifier,
+        flatEntityMapsOverride:
+          findObjectFieldIndexFlatEntityMapsInAllFlatEntityMaps(
+            context.allFlatEntityMaps,
+          ),
       });
 
       this.logger.log(
