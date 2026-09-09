@@ -185,6 +185,37 @@ describe('BillingEntitlementSyncService', () => {
     ).toHaveLength(0);
   });
 
+  it('locks on a key scoped to the workspace', async () => {
+    givenStoredEntitlements([]);
+
+    const otherWorkspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea420';
+    const heldKeysDuringOtherWorkspaceUpsert: string[] = [];
+
+    billingEntitlementRepository.upsert.mockImplementation(async () => {
+      heldKeysDuringOtherWorkspaceUpsert.push(...heldLockKeys);
+    });
+
+    await Promise.all([
+      syncEntitlements([]),
+      service.syncEntitlements({
+        workspaceId: otherWorkspaceId,
+        stripeCustomerId: STRIPE_CUSTOMER_ID,
+        activeLookupKeys: [],
+      }),
+    ]);
+
+    expect(cacheLockService.withLock.mock.calls.map((call) => call[1])).toEqual(
+      [
+        `billing-entitlement-state:${WORKSPACE_ID}`,
+        `billing-entitlement-state:${otherWorkspaceId}`,
+      ],
+    );
+
+    // Two workspaces hold their own keys at once. A constant key would
+    // serialize them and never show both held together.
+    expect(new Set(heldKeysDuringOtherWorkspaceUpsert).size).toBe(2);
+  });
+
   it('holds the lock for the whole transition', async () => {
     givenStoredEntitlements([]);
 

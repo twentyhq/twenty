@@ -13,6 +13,14 @@ import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-mod
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
+type EntitlementTransitionArgs = {
+  workspaceId: string;
+  stripeCustomerId: string;
+  activeLookupKeys: string[];
+};
+
+type SyncedEntitlement = { key: BillingEntitlementKey; value: boolean };
+
 // Shared by the Stripe webhook and the reconciliation command so a repaired
 // entitlement carries the same consequences as one that arrived on time.
 // Transitions are read from the stored rows rather than from Stripe's
@@ -31,11 +39,7 @@ export class BillingEntitlementSyncService {
     workspaceId,
     stripeCustomerId,
     activeLookupKeys,
-  }: {
-    workspaceId: string;
-    stripeCustomerId: string;
-    activeLookupKeys: string[];
-  }): Promise<{ key: BillingEntitlementKey; value: boolean }[]> {
+  }: EntitlementTransitionArgs): Promise<SyncedEntitlement[]> {
     // The whole transition is one unit. Reading the stored rows, acting on the
     // difference and committing it are three steps, and this service is the
     // only writer of those rows, so serializing here is what makes the
@@ -56,11 +60,7 @@ export class BillingEntitlementSyncService {
     workspaceId,
     stripeCustomerId,
     activeLookupKeys,
-  }: {
-    workspaceId: string;
-    stripeCustomerId: string;
-    activeLookupKeys: string[];
-  }): Promise<{ key: BillingEntitlementKey; value: boolean }[]> {
+  }: EntitlementTransitionArgs): Promise<SyncedEntitlement[]> {
     const storedEntitlements =
       await this.billingEntitlementRepository.find(workspaceId);
 

@@ -15,7 +15,6 @@ import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modu
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 @Injectable()
 export class RowLevelPermissionPredicateGroupService {
@@ -142,23 +141,11 @@ export class RowLevelPermissionPredicateGroupService {
       {},
     );
 
-    const predicateCacheKeys: WorkspaceCacheKeyName[] = [
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'rolesPermissions',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
-    ];
-
-    // Dropped before recomputing, because the rows are already gone and the
-    // early return above means no later pass would retry this. An absent cache
-    // recomputes from the empty table on next read, so a failure in the
-    // recompute below costs a cold read rather than leaving Redis serving
-    // predicates that no longer exist.
-    await this.workspaceCacheService.flush(workspaceId, predicateCacheKeys);
-
-    await this.workspaceCacheService.invalidateAndRecompute(
-      workspaceId,
-      predicateCacheKeys,
-    );
+    ]);
   }
 
   private async hasRowLevelPermissionFeature(
