@@ -2,6 +2,8 @@ import {
   FIELD_ENUM_BINDINGS,
   INDEX_ENUM_BINDINGS,
   OBJECT_ENUM_BINDINGS,
+  PAGE_LAYOUT_ENUM_BINDINGS,
+  PAGE_LAYOUT_TAB_ENUM_BINDINGS,
   VIEW_ENUM_BINDINGS,
   VIEW_FIELD_ENUM_BINDINGS,
   writeDefineFile,
@@ -254,6 +256,163 @@ describe('writeDefineFile', () => {
     expect(file).toContain('aggregateOperation: AggregateOperations.MIN,');
     expect(file).toContain(
       "import { defineViewField, AggregateOperations } from 'twenty-sdk/define';",
+    );
+  });
+
+  it('should write every bound page layout property as its enum symbol and import each symbol on its own line', () => {
+    const file = writeDefineFile({
+      definer: 'definePageLayout',
+      config: {
+        universalIdentifier: 'page-layout-uid',
+        name: 'Pet dashboard',
+        type: 'DASHBOARD',
+        tabs: [
+          {
+            universalIdentifier: 'tab-uid',
+            title: 'Charts',
+            position: 0,
+            layoutMode: 'GRID',
+            widgets: [
+              {
+                universalIdentifier: 'chart-widget-uid',
+                title: 'Age by status',
+                type: 'GRAPH',
+                objectUniversalIdentifier: 'object-uid',
+                position: {
+                  layoutMode: 'GRID',
+                  row: 0,
+                  column: 0,
+                  rowSpan: 4,
+                  columnSpan: 6,
+                },
+                configuration: {
+                  configurationType: 'BAR_CHART',
+                  aggregateFieldMetadataUniversalIdentifier: 'age-field-uid',
+                  aggregateOperation: 'AVG',
+                  primaryAxisGroupByFieldMetadataUniversalIdentifier:
+                    'status-field-uid',
+                  primaryAxisDateGranularity: 'MONTH',
+                  secondaryAxisGroupByFieldMetadataUniversalIdentifier: null,
+                  groupMode: 'STACKED',
+                },
+              },
+              {
+                universalIdentifier: 'fields-widget-uid',
+                title: 'Fields',
+                type: 'FIELDS',
+                position: { layoutMode: 'VERTICAL_LIST', index: 1 },
+                configuration: {
+                  configurationType: 'FIELDS',
+                  viewUniversalIdentifier: null,
+                  fieldDisplayMode: 'CARD',
+                },
+              },
+            ],
+          },
+        ],
+      },
+      enumBindings: PAGE_LAYOUT_ENUM_BINDINGS,
+    });
+
+    expect(
+      file.startsWith(
+        'import {\n' +
+          '  definePageLayout,\n' +
+          '  AggregateOperations,\n' +
+          '  ObjectRecordGroupByDateGranularity,\n' +
+          '  PageLayoutTabLayoutMode,\n' +
+          '  PageLayoutType,\n' +
+          '  WidgetType,\n' +
+          "} from 'twenty-sdk/define';\n",
+      ),
+    ).toBe(true);
+    expect(file).toContain('type: PageLayoutType.DASHBOARD,');
+    expect(file).toContain('layoutMode: PageLayoutTabLayoutMode.GRID,');
+    expect(file).toContain('type: WidgetType.GRAPH,');
+    expect(file).toContain('type: WidgetType.FIELDS,');
+    expect(file).toContain(
+      'layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,',
+    );
+    expect(file).toContain('aggregateOperation: AggregateOperations.AVG,');
+    expect(file).toContain(
+      'primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.MONTH,',
+    );
+    expect(file).toContain("configurationType: 'BAR_CHART',");
+    expect(file).toContain("groupMode: 'STACKED',");
+    expect(file).toContain("fieldDisplayMode: 'CARD',");
+    expect(file).toContain(
+      'secondaryAxisGroupByFieldMetadataUniversalIdentifier: null,',
+    );
+    expect(file).toContain('viewUniversalIdentifier: null,');
+  });
+
+  it('should not bind a layout mode that sits on the page layout itself rather than on its tabs', () => {
+    const file = writeDefineFile({
+      definer: 'definePageLayout',
+      config: { universalIdentifier: 'page-layout-uid', layoutMode: 'GRID' },
+      enumBindings: PAGE_LAYOUT_ENUM_BINDINGS,
+    });
+
+    expect(file).toContain("layoutMode: 'GRID',");
+    expect(file).toContain(
+      "import { definePageLayout } from 'twenty-sdk/define';",
+    );
+  });
+
+  it('should write a standalone page layout tab with its widgets under the tab enum bindings', () => {
+    const file = writeDefineFile({
+      definer: 'definePageLayoutTab',
+      config: {
+        universalIdentifier: 'tab-uid',
+        pageLayoutUniversalIdentifier: 'page-layout-uid',
+        title: 'Extra',
+        position: 60,
+        layoutMode: 'VERTICAL_LIST',
+        widgets: [
+          {
+            universalIdentifier: 'widget-uid',
+            title: 'Docs',
+            type: 'IFRAME',
+            position: { layoutMode: 'VERTICAL_LIST', index: 0 },
+            configuration: {
+              configurationType: 'IFRAME',
+              url: 'https://example.com/docs',
+            },
+          },
+        ],
+      },
+      enumBindings: PAGE_LAYOUT_TAB_ENUM_BINDINGS,
+    });
+
+    expect(file).toBe(
+      'import {\n' +
+        '  definePageLayoutTab,\n' +
+        '  PageLayoutTabLayoutMode,\n' +
+        '  WidgetType,\n' +
+        "} from 'twenty-sdk/define';\n" +
+        '\n' +
+        'export default definePageLayoutTab({\n' +
+        "  universalIdentifier: 'tab-uid',\n" +
+        "  pageLayoutUniversalIdentifier: 'page-layout-uid',\n" +
+        "  title: 'Extra',\n" +
+        '  position: 60,\n' +
+        '  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,\n' +
+        '  widgets: [\n' +
+        '    {\n' +
+        "      universalIdentifier: 'widget-uid',\n" +
+        "      title: 'Docs',\n" +
+        '      type: WidgetType.IFRAME,\n' +
+        '      position: {\n' +
+        '        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,\n' +
+        '        index: 0,\n' +
+        '      },\n' +
+        '      configuration: {\n' +
+        "        configurationType: 'IFRAME',\n" +
+        "        url: 'https://example.com/docs',\n" +
+        '      },\n' +
+        '    },\n' +
+        '  ],\n' +
+        '});\n',
     );
   });
 });

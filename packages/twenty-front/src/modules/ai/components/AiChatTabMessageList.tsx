@@ -1,3 +1,4 @@
+import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { AiChatErrorUnderMessageList } from '@/ai/components/AiChatErrorUnderMessageList';
@@ -51,8 +52,9 @@ export const AiChatTabMessageList = () => {
     agentChatHasMessageComponentSelector,
   );
 
-  const scrollWrapperInstanceId =
-    getAiChatScrollWrapperInstanceId(aiChatSurface);
+  const scrollWrapperInstanceId = getAiChatScrollWrapperInstanceId(
+    aiChatSurface ?? AI_CHAT_SURFACE.SIDE_PANEL,
+  );
 
   if (!agentChatHasMessage) {
     if (!isDefined(messageListPreamble)) {

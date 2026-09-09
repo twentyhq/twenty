@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -42,6 +43,14 @@ export const WithField: Story = {
       <Field.Description>We never share it</Field.Description>
     </Field.Root>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole('textbox', { name: 'Email' });
+
+    await userEvent.click(canvas.getByText('Email'));
+
+    await expect(input).toHaveFocus();
+  },
 };
 
 type InputCatalogState = 'default' | 'focus' | 'invalid' | 'disabled';
