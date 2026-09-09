@@ -47,6 +47,8 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-monitor/ai-agent-monitor.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
+import { LogicFunctionPrebuiltWarmUpModule } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.module';
+import { WarmUpApplicationLogicFunctionsJob } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-application-logic-functions.job';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -99,6 +101,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     AiAgentMonitorModule,
     AiChatModule,
     LogicFunctionModule,
+    LogicFunctionPrebuiltWarmUpModule,
     EnterpriseModule,
     EmailingModule,
     ApplicationInstallModule,
@@ -131,6 +134,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     UpgradeApplicationsJob,
     InstallOnboardingAppsJob,
     InstallPreInstalledAppsJob,
+    WarmUpApplicationLogicFunctionsJob,
   ],
 })
 export class JobsModule {
