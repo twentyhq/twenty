@@ -21,6 +21,8 @@ jobs:
       files: |
         package.json
         packages/twenty-emails/**
+        packages/twenty-ui/**
+        .github/workflows/ci-emails.yaml
   emails-test:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'

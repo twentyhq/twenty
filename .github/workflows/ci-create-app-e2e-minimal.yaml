@@ -23,6 +23,8 @@ jobs:
         packages/twenty-sdk/**
         packages/twenty-client-sdk/**
         packages/twenty-shared/**
+        packages/twenty-ui/**
+        .github/workflows/ci-create-app-e2e-minimal.yaml
         !packages/create-twenty-app/package.json
         !packages/twenty-sdk/package.json
         !packages/twenty-client-sdk/package.json

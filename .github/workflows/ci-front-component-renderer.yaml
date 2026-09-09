@@ -20,6 +20,8 @@ jobs:
         packages/twenty-front-component-renderer/**
         packages/twenty-sdk/**
         packages/twenty-shared/**
+        packages/twenty-ui/**
+        .github/workflows/ci-front-component-renderer.yaml
         !packages/twenty-sdk/package.json
   renderer-task:
     needs: changed-files-check

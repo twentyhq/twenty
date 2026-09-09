@@ -20,6 +20,8 @@ jobs:
     with:
       files: |
         packages/create-twenty-app/**
+        packages/twenty-ui/**
+        .github/workflows/ci-create-app.yaml
         !packages/create-twenty-app/package.json
   create-app-test:
     needs: changed-files-check
