@@ -1,5 +1,4 @@
 import { Switch } from '@ui/input';
-import { useTheme } from '@ui/theme-constants';
 import { clsx } from 'clsx';
 import { useId } from 'react';
 
@@ -18,8 +17,6 @@ export const AdvancedSettingsToggle = ({
   label = 'Advanced',
   className,
 }: AdvancedSettingsToggleProps) => {
-  const theme = useTheme();
-
   const onChange = (newValue: boolean) => {
     setIsAdvancedModeEnabled(newValue);
   };
@@ -32,7 +29,7 @@ export const AdvancedSettingsToggle = ({
         id={instanceId}
         onCheckedChange={onChange}
         checked={isAdvancedModeEnabled}
-        style={{ color: theme.color.yellow }}
+        className={styles.switch}
       />
     </label>
   );
