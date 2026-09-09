@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/application';
 import { ViewKey } from 'twenty-shared/types';
 
-import { computeSeedObjectDefaultViewOperations } from 'src/database/commands/upgrade-version-command/2-40/utils/compute-seed-object-default-view-operations.util';
+import { computeSeedObjectDefaultViewOperations } from 'src/engine/metadata-modules/view/utils/compute-seed-object-default-view-operations.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 
 const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
@@ -124,7 +124,10 @@ const buildMaps = ({
     },
     flatViewFieldMaps: {
       byUniversalIdentifier: Object.fromEntries(
-        viewFields.map((viewField) => [viewField.universalIdentifier, viewField]),
+        viewFields.map((viewField) => [
+          viewField.universalIdentifier,
+          viewField,
+        ]),
       ),
     },
   }) as unknown as Pick<

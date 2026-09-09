@@ -9,6 +9,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { TWENTY_STANDARD_ALL_METADATA_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-all-metadata-name.constant';
 import { keepWorkspaceOwnedProperties } from 'src/engine/metadata-modules/flat-entity/utils/keep-workspace-owned-properties.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { SeedObjectDefaultViewService } from 'src/engine/metadata-modules/view/services/seed-object-default-view.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
@@ -21,6 +22,7 @@ export class TwentyStandardApplicationService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly seedObjectDefaultViewService: SeedObjectDefaultViewService,
   ) {}
 
   async synchronizeTwentyStandardApplicationOrThrow({
@@ -100,5 +102,9 @@ export class TwentyStandardApplicationService {
         'Multiple validation errors occurred while synchronizing twenty-standard application',
       );
     }
+
+    await this.seedObjectDefaultViewService.seedMissingObjectDefaultViews({
+      workspaceId,
+    });
   }
 }
