@@ -1,4 +1,5 @@
 import { type WebClient } from '@slack/web-api';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
 import { type SlackThreadMessage } from 'src/logic-functions/types/slack-thread-message.type';
@@ -77,19 +78,19 @@ export const fetchSlackAssistantContext = async ({
       isSlackDirectMessageChannel({ client, slackChannelId }),
     ]);
 
+  const conversationThreadMessages = selectSlackConversationMessages({
+    messages: tailMessages,
+    excludeMessageTimestamps: [slackMessageTimestamp],
+  });
+
   return {
     conversationMessages: buildSlackConversationMessages({
-      messages: tailMessages,
+      messages: conversationThreadMessages,
       assistantBotUserId,
-      excludeMessageTimestamps: [slackMessageTimestamp],
     }),
-    sharedFileNames: collectSlackSharedFileNames([
-      requestMessage,
-      ...selectSlackConversationMessages({
-        messages: tailMessages,
-        excludeMessageTimestamps: [slackMessageTimestamp],
-      }),
-    ]),
+    sharedFileNames: collectSlackSharedFileNames(
+      [requestMessage, ...conversationThreadMessages].filter(isDefined),
+    ),
     requesterName: requesterIdentity?.displayName,
     requesterIdentity,
     requestMessage,

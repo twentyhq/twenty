@@ -21,17 +21,44 @@ describe('selectSlackConversationMessages', () => {
     expect(selected[14].text).toBe('message 40');
   });
 
-  it('should drop contentless and excluded messages before trimming', () => {
+  it('should exclude the triggering message by timestamp', () => {
+    const selected = selectSlackConversationMessages({
+      messages: [
+        { ts: '1', user: 'U123', text: 'Hello' },
+        { ts: '2', user: 'U123', text: 'The request itself' },
+      ],
+      excludeMessageTimestamps: ['2'],
+    });
+
+    expect(selected.map((message) => message.ts)).toEqual(['1']);
+  });
+
+  it('should keep a file-only message and drop one with neither text nor files', () => {
     const selected = selectSlackConversationMessages({
       messages: [
         { ts: '1', user: 'U123', text: '' },
         { ts: '2', user: 'U123', files: [{ id: 'F1', name: 'proposal.pdf' }] },
-        { ts: '3', user: 'U123', text: 'the request itself' },
+        { ts: '3', user: 'U123', text: 'a real question' },
       ],
-      excludeMessageTimestamps: ['3'],
     });
 
-    expect(selected.map((message) => message.ts)).toEqual(['2']);
+    expect(selected.map((message) => message.ts)).toEqual(['2', '3']);
+  });
+
+  it('should trim a file-carrying message that falls outside the window', () => {
+    const selected = selectSlackConversationMessages({
+      messages: [
+        {
+          ts: '0',
+          user: 'U123',
+          files: [{ id: 'F1', name: 'forgotten.pdf' }],
+        },
+        ...buildMessages(20),
+      ],
+    });
+
+    expect(selected).toHaveLength(15);
+    expect(selected.some((message) => message.files !== undefined)).toBe(false);
   });
 
   it('should keep bot messages so their files stay covered by the file caveat', () => {

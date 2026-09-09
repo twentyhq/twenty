@@ -11,6 +11,7 @@ describe('buildSlackAssistantMessages', () => {
       runAsWorkspaceMemberId: undefined,
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
+      sharedFileNames: [],
     });
 
     expect(messages).toHaveLength(1);
@@ -32,6 +33,7 @@ describe('buildSlackAssistantMessages', () => {
       runAsWorkspaceMemberId: undefined,
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
+      sharedFileNames: [],
     });
 
     expect(messages).toHaveLength(3);
@@ -60,6 +62,7 @@ describe('buildSlackAssistantMessages', () => {
       runAsWorkspaceMemberId: 'member-1',
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
+      sharedFileNames: [],
     });
 
     expect(messages[0].content).toContain(
@@ -76,6 +79,7 @@ describe('buildSlackAssistantMessages', () => {
       runAsWorkspaceMemberId: 'member-1',
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
+      sharedFileNames: [],
     });
 
     expect(messages[0].content).not.toContain(
@@ -94,6 +98,7 @@ describe('buildSlackAssistantMessages', () => {
       runAsWorkspaceMemberId: 'member-1',
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
+      sharedFileNames: [],
     });
 
     expect(messages[0].content).toContain('the action is not allowed');
@@ -108,6 +113,7 @@ describe('buildSlackAssistantMessages', () => {
       runAsWorkspaceMemberId: undefined,
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
+      sharedFileNames: [],
     });
 
     expect(messages[0].content).toContain("app's own role");
@@ -158,6 +164,7 @@ describe('buildSlackAssistantMessages', () => {
       runAsWorkspaceMemberId: undefined,
       timeoutSeconds: 300,
       workspaceBaseUrl: 'https://acme.twenty.com',
+      sharedFileNames: [],
     });
 
     expect(messages[0].content).not.toContain('names only');

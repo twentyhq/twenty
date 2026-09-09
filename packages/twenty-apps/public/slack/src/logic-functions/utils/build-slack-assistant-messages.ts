@@ -50,7 +50,7 @@ export const buildSlackAssistantMessages = ({
   runAsWorkspaceMemberId,
   timeoutSeconds,
   workspaceBaseUrl,
-  sharedFileNames = [],
+  sharedFileNames,
 }: {
   requestText: string;
   requesterName: string | undefined;
@@ -58,7 +58,7 @@ export const buildSlackAssistantMessages = ({
   runAsWorkspaceMemberId: string | undefined;
   timeoutSeconds: number;
   workspaceBaseUrl: string | undefined;
-  sharedFileNames?: string[];
+  sharedFileNames: string[];
 }): SlackAssistantAgentMessage[] => {
   const requester = isNonEmptyString(requesterName)
     ? requesterName

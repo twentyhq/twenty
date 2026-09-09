@@ -4,7 +4,6 @@ import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack
 import { type SlackThreadMessage } from 'src/logic-functions/types/slack-thread-message.type';
 import { buildSlackSharedFilesDescription } from 'src/logic-functions/utils/build-slack-shared-files-description';
 import { getSlackMessageFileNames } from 'src/logic-functions/utils/get-slack-message-file-names';
-import { selectSlackConversationMessages } from 'src/logic-functions/utils/select-slack-conversation-messages';
 import { stripSlackAssistantAnswerFooter } from 'src/logic-functions/utils/strip-slack-assistant-answer-footer';
 
 const joinSlackMessageContent = ({
@@ -28,16 +27,11 @@ const joinSlackMessageContent = ({
 export const buildSlackConversationMessages = ({
   messages,
   assistantBotUserId,
-  excludeMessageTimestamps = [],
 }: {
   messages: ReadonlyArray<SlackThreadMessage>;
   assistantBotUserId: string | undefined;
-  excludeMessageTimestamps?: string[];
 }): SlackAssistantAgentMessage[] => {
-  const agentMessages = selectSlackConversationMessages({
-    messages,
-    excludeMessageTimestamps,
-  }).map((message): SlackAssistantAgentMessage => {
+  const agentMessages = messages.map((message): SlackAssistantAgentMessage => {
     const filesDescription = buildSlackSharedFilesDescription(
       getSlackMessageFileNames(message.files),
     );

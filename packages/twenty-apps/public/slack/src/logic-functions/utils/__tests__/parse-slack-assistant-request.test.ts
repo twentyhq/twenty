@@ -227,7 +227,9 @@ describe('parseSlackAssistantRequest', () => {
       },
     });
 
-    expect(result.request?.requestText).toBe('ping <@UBOT> about the ACME deal');
+    expect(result.request?.requestText).toBe(
+      'ping <@UBOT> about the ACME deal',
+    );
   });
 
   it('should skip messages sent by bots so the assistant never answers itself', () => {
@@ -350,7 +352,7 @@ describe('parseSlackAssistantRequest', () => {
       buildMentionBody({
         eventOverrides: {
           text: '<@UBOT> log this against ACME',
-          files: [{ id: 'F1', name: 'proposal.pdf', filetype: 'pdf' }],
+          files: [{ id: 'F1', name: 'proposal.pdf' }],
         },
       }),
     );

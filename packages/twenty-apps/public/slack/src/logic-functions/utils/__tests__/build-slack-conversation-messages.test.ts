@@ -58,19 +58,6 @@ describe('buildSlackConversationMessages', () => {
     ]);
   });
 
-  it('should exclude the triggering message by timestamp', () => {
-    const messages = buildSlackConversationMessages({
-      messages: [
-        { ts: '1', user: 'U123', text: 'Hello' },
-        { ts: '2', user: 'U123', text: 'The request itself' },
-      ],
-      assistantBotUserId: ASSISTANT_BOT_USER_ID,
-      excludeMessageTimestamps: ['2'],
-    });
-
-    expect(messages).toEqual([{ role: 'user', content: '<@U123>: Hello' }]);
-  });
-
   it('should drop leading assistant turns so the history opens on a user turn', () => {
     const messages = buildSlackConversationMessages({
       messages: [
@@ -156,45 +143,6 @@ describe('buildSlackConversationMessages', () => {
           '<@U123>: here is the deck\n[shared 2 files: deck.pdf, notes.txt]',
       },
     ]);
-  });
-
-  it('should still drop messages that have neither text nor files', () => {
-    const messages = buildSlackConversationMessages({
-      messages: [
-        { ts: '1', user: 'U123', text: '' },
-        { ts: '2', user: 'U123', text: 'a real question' },
-      ],
-      assistantBotUserId: ASSISTANT_BOT_USER_ID,
-    });
-
-    expect(messages).toEqual([
-      { role: 'user', content: '<@U123>: a real question' },
-    ]);
-  });
-
-  it('should not replay files from messages trimmed out of the window', () => {
-    const olderMessages = Array.from({ length: 20 }, (_, index) => ({
-      ts: `${index + 1}`,
-      user: 'U123',
-      text: `message ${index + 1}`,
-    }));
-
-    const messages = buildSlackConversationMessages({
-      messages: [
-        {
-          ts: '0',
-          user: 'U123',
-          files: [{ id: 'F1', name: 'forgotten.pdf' }],
-        },
-        ...olderMessages,
-      ],
-      assistantBotUserId: ASSISTANT_BOT_USER_ID,
-    });
-
-    expect(messages).toHaveLength(15);
-    expect(
-      messages.some((message) => message.content.includes('forgotten.pdf')),
-    ).toBe(false);
   });
 
   it('should keep a file name from closing the synthesised file description', () => {
