@@ -149,30 +149,19 @@ export class CoreWorkflowMutationWorkspaceService {
   ): Promise<DeletedCoreWorkflowDTO[]> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const existingCoreRows = await this.coreWorkflowRepository.find(
-      workspaceId,
-      {
-        where: { id: In(coreWorkflowIds) },
-        select: { id: true },
-      },
-    );
-    const existingCoreWorkflowIds = existingCoreRows.map((row) => row.id);
-
     const workflowsToDelete =
-      existingCoreWorkflowIds.length === 0
-        ? []
-        : await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-            const workflowRepository =
-              this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-                'workflow',
-                { shouldBypassPermissionChecks: true },
-              );
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workflowRepository =
+          this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+            'workflow',
+            { shouldBypassPermissionChecks: true },
+          );
 
-            return workflowRepository.find({
-              where: { coreWorkflowId: In(existingCoreWorkflowIds) },
-              withDeleted: true,
-            });
-          }, authContext);
+        return workflowRepository.find({
+          where: { coreWorkflowId: In(coreWorkflowIds) },
+          withDeleted: true,
+        });
+      }, authContext);
 
     if (workflowsToDelete.length > 0) {
       const liveWorkflowIds = workflowsToDelete
@@ -217,37 +206,37 @@ export class CoreWorkflowMutationWorkspaceService {
     coreWorkflowId: string,
     workspaceWorkflowId: string | undefined,
   ): Promise<void> {
+    if (isDefined(workspaceWorkflowId)) {
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workflowVersionRepository =
+          this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            'workflowVersion',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        await workflowVersionRepository.delete({
+          workflowId: workspaceWorkflowId,
+        });
+
+        const workflowRepository =
+          this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+            'workflow',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        await workflowRepository.delete({ id: workspaceWorkflowId });
+      }, buildSystemAuthContext(workspaceId));
+    }
+
     await this.workflowCoreSyncService.deleteFromCore(workspaceId, [
       coreWorkflowId,
     ]);
 
-    if (!isDefined(workspaceWorkflowId)) {
-      return;
+    if (isDefined(workspaceWorkflowId)) {
+      await this.workflowVersionCoreSyncService.deleteCoreVersionsByWorkflowIds(
+        workspaceId,
+        [workspaceWorkflowId],
+      );
     }
-
-    await this.workflowVersionCoreSyncService.deleteCoreVersionsByWorkflowIds(
-      workspaceId,
-      [workspaceWorkflowId],
-    );
-
-    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowVersionRepository =
-        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-          'workflowVersion',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      await workflowVersionRepository.delete({
-        workflowId: workspaceWorkflowId,
-      });
-
-      const workflowRepository =
-        this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-          'workflow',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      await workflowRepository.delete({ id: workspaceWorkflowId });
-    }, buildSystemAuthContext(workspaceId));
   }
 }

@@ -218,6 +218,67 @@ describe('coreWorkflow mutations (e2e)', () => {
     );
   });
 
+  it('should finish the cleanup on a retry after the core row is gone', async () => {
+    const createResponse = await graphql(`
+      mutation {
+        createCoreWorkflow(input: { name: "Core Retry Delete" }) {
+          id
+          workspaceWorkflowId
+        }
+      }
+    `);
+
+    expect(createResponse.body.errors).toBeUndefined();
+
+    const retryCoreWorkflowId = createResponse.body.data.createCoreWorkflow.id;
+    const retryWorkspaceWorkflowId =
+      createResponse.body.data.createCoreWorkflow.workspaceWorkflowId;
+
+    const deleteMutation = `
+      mutation DeleteCoreWorkflows($input: DeleteCoreWorkflowsInput!) {
+        deleteCoreWorkflows(input: $input) {
+          id
+          workspaceWorkflowId
+        }
+      }
+    `;
+
+    const firstDeleteResponse = await graphql(deleteMutation, {
+      input: { coreWorkflowIds: [retryCoreWorkflowId] },
+    });
+
+    expect(firstDeleteResponse.body.errors).toBeUndefined();
+    expect(firstDeleteResponse.body.data.deleteCoreWorkflows).toEqual([
+      {
+        id: retryCoreWorkflowId,
+        workspaceWorkflowId: retryWorkspaceWorkflowId,
+      },
+    ]);
+
+    const retryDeleteResponse = await graphql(deleteMutation, {
+      input: { coreWorkflowIds: [retryCoreWorkflowId] },
+    });
+
+    expect(retryDeleteResponse.body.errors).toBeUndefined();
+    expect(retryDeleteResponse.body.data.deleteCoreWorkflows).toEqual([
+      {
+        id: retryCoreWorkflowId,
+        workspaceWorkflowId: retryWorkspaceWorkflowId,
+      },
+    ]);
+
+    await graphql(
+      `
+        mutation DestroyWorkflow($id: UUID!) {
+          destroyWorkflow(id: $id) {
+            id
+          }
+        }
+      `,
+      { id: retryWorkspaceWorkflowId },
+    );
+  });
+
   it('should delete nothing for unknown core workflow ids', async () => {
     const deleteResponse = await graphql(
       `
