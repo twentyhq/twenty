@@ -119,7 +119,7 @@ export class WorkflowThrottlingWorkspaceService {
   ): Promise<boolean> {
     const key = this.getWorkflowEnqueueRunningCacheKey(workspaceId);
 
-    return (await this.cacheStorage.acquireLock(key, ttlMs)) !== null;
+    return this.cacheStorage.acquireLock(key, ttlMs);
   }
 
   async releaseWorkflowEnqueueLock(workspaceId: string): Promise<void> {

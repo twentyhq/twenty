@@ -35,14 +35,14 @@ export class CacheLockService {
     const { ms = 100, maxRetries = 50, ttl = 5_500 } = options || {};
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
-      const token = await this.cacheStorageService.acquireLock(key, ttl);
+      const acquired = await this.cacheStorageService.acquireLock(key, ttl);
 
-      if (token !== null) {
+      if (acquired) {
         try {
           return await fn();
         } finally {
           try {
-            await this.cacheStorageService.releaseLock(key, token);
+            await this.cacheStorageService.releaseLock(key);
           } catch (releaseError) {
             this.logger.warn(
               `Failed to release lock for key "${key}": ${releaseError}`,
