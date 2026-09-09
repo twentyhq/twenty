@@ -27,20 +27,26 @@ const ENGAGEMENT_FIELD_UNIVERSAL_IDENTIFIERS = [
   CAMPAIGN.fields.engagementCalculatedAt.universalIdentifier,
 ];
 
-const ENGAGEMENT_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
-  CAMPAIGN.views.allMessageCampaigns.viewFields.openedCount.universalIdentifier,
-  CAMPAIGN.views.allMessageCampaigns.viewFields.clickedCount
-    .universalIdentifier,
-  CAMPAIGN.views.allMessageCampaigns.viewFields.openRate.universalIdentifier,
-  CAMPAIGN.views.allMessageCampaigns.viewFields.clickRate.universalIdentifier,
-  CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.openedCount
-    .universalIdentifier,
-  CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.clickedCount
-    .universalIdentifier,
-  CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.openRate
-    .universalIdentifier,
-  CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.clickRate
-    .universalIdentifier,
+const ENGAGEMENT_VIEW_FIELDS_BY_VIEW = [
+  {
+    viewUniversalIdentifier: CAMPAIGN.views.allMessageCampaigns.universalIdentifier,
+    viewFieldUniversalIdentifiers: [
+      CAMPAIGN.views.allMessageCampaigns.viewFields.openedCount.universalIdentifier,
+      CAMPAIGN.views.allMessageCampaigns.viewFields.clickedCount.universalIdentifier,
+      CAMPAIGN.views.allMessageCampaigns.viewFields.openRate.universalIdentifier,
+      CAMPAIGN.views.allMessageCampaigns.viewFields.clickRate.universalIdentifier,
+    ],
+  },
+  {
+    viewUniversalIdentifier:
+      CAMPAIGN.views.messageCampaignRecordPageFields.universalIdentifier,
+    viewFieldUniversalIdentifiers: [
+      CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.openedCount.universalIdentifier,
+      CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.clickedCount.universalIdentifier,
+      CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.openRate.universalIdentifier,
+      CAMPAIGN.views.messageCampaignRecordPageFields.viewFields.clickRate.universalIdentifier,
+    ],
+  },
 ];
 
 @RegisteredWorkspaceCommand('2.40.0', 1788985903001)
@@ -65,12 +71,17 @@ export class AddMessageCampaignEngagementFieldsCommand extends ProvisionedWorksp
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    const { flatFieldMetadataMaps, flatObjectMetadataMaps, flatViewFieldMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-        'flatObjectMetadataMaps',
-        'flatViewFieldMaps',
-      ]);
+    const {
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+      flatViewMaps,
+      flatViewFieldMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatFieldMetadataMaps',
+      'flatObjectMetadataMaps',
+      'flatViewMaps',
+      'flatViewFieldMaps',
+    ]);
 
     const campaignObjectMetadata =
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
@@ -110,10 +121,20 @@ export class AddMessageCampaignEngagementFieldsCommand extends ProvisionedWorksp
       }),
     );
 
-    const viewFieldsToCreate = ENGAGEMENT_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.filter(
-      (universalIdentifier) =>
-        !isDefined(flatViewFieldMaps.byUniversalIdentifier[universalIdentifier]),
-    ).flatMap((universalIdentifier) => {
+    const viewFieldsToCreate = ENGAGEMENT_VIEW_FIELDS_BY_VIEW.filter(
+      ({ viewUniversalIdentifier }) =>
+        isDefined(flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier]),
+    )
+      .flatMap(
+        ({ viewFieldUniversalIdentifiers }) => viewFieldUniversalIdentifiers,
+      )
+      .filter(
+        (universalIdentifier) =>
+          !isDefined(
+            flatViewFieldMaps.byUniversalIdentifier[universalIdentifier],
+          ),
+      )
+      .flatMap((universalIdentifier) => {
       const standardViewField =
         findFlatEntityByUniversalIdentifier<FlatViewField>({
           flatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,

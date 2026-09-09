@@ -520,7 +520,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         ),
         description: i18nLabel(
           msg({
-            message: `Estimated number of recipients who opened the email. Mail clients that prefetch images are excluded when detected`,
+            message: `Estimated number of recipients who opened the email. Mail clients that load images automatically can inflate this number`,
             context: 'fieldMetadata.description',
           }),
         ),
