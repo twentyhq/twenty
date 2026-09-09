@@ -1,8 +1,14 @@
-import { GraphQLBoolean, GraphQLInt, GraphQLString } from 'graphql';
+import {
+  GraphQLBoolean,
+  GraphQLInt,
+  GraphQLNonNull,
+  GraphQLString,
+} from 'graphql';
 
 import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
+import { ShareWithInputType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/share-with.input-type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
 
@@ -35,6 +41,11 @@ describe('getResolverArgs', () => {
         isNullable: true,
         type: GraphQLBoolean,
       },
+      shareWith: {
+        type: new GraphQLNonNull(ShareWithInputType),
+        isNullable: true,
+        isArray: true,
+      },
     },
     createOne: {
       data: { kind: GqlInputTypeDefinitionKind.Create, isNullable: false },
@@ -42,6 +53,11 @@ describe('getResolverArgs', () => {
         isArray: false,
         isNullable: true,
         type: GraphQLBoolean,
+      },
+      shareWith: {
+        type: new GraphQLNonNull(ShareWithInputType),
+        isNullable: true,
+        isArray: true,
       },
     },
     updateOne: {
