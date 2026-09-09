@@ -35,19 +35,24 @@ describe('BillingEntitlementSyncService', () => {
   // that a stub was called. Queued rather than spin-waiting so ordering is
   // deterministic.
   const heldLockKeys = new Set<string>();
-  let lockQueue: Promise<unknown> = Promise.resolve();
+  const lockQueueByKey = new Map<string, Promise<unknown>>();
   const cacheLockService = {
     withLock: jest.fn(<TResult>(fn: () => Promise<TResult>, key: string) => {
-      const runWhenFree = lockQueue.then(async () => {
-        heldLockKeys.add(key);
-        try {
-          return await fn();
-        } finally {
-          heldLockKeys.delete(key);
-        }
-      });
+      const runWhenFree = (lockQueueByKey.get(key) ?? Promise.resolve()).then(
+        async () => {
+          heldLockKeys.add(key);
+          try {
+            return await fn();
+          } finally {
+            heldLockKeys.delete(key);
+          }
+        },
+      );
 
-      lockQueue = runWhenFree.catch(() => undefined);
+      lockQueueByKey.set(
+        key,
+        runWhenFree.catch(() => undefined),
+      );
 
       return runWhenFree;
     }),
@@ -60,7 +65,7 @@ describe('BillingEntitlementSyncService', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     heldLockKeys.clear();
-    lockQueue = Promise.resolve();
+    lockQueueByKey.clear();
     billingEntitlementRepository.upsert.mockResolvedValue(undefined);
     usageLimitQuotaService.dropIntraWorkspaceLimitCounters.mockResolvedValue(
       undefined,

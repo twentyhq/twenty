@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BILLING_ENTITLEMENT_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-entitlement-state-lock-options.constant';
 import { buildBillingEntitlementStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-entitlement-state-lock-key.util';
 import { buildBillingEntitlementsFromLookupKeys } from 'src/engine/core-modules/billing/utils/build-billing-entitlements-from-lookup-keys.util';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
@@ -47,6 +48,7 @@ export class BillingEntitlementSyncService {
           activeLookupKeys,
         }),
       buildBillingEntitlementStateLockKey(workspaceId),
+      BILLING_ENTITLEMENT_STATE_LOCK_OPTIONS,
     );
   }
 
