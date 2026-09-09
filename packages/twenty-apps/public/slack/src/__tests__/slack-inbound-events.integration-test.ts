@@ -273,7 +273,7 @@ describe('Slack inbound events', () => {
       );
     });
 
-    it('should ignore a redelivery of the same Slack message', async () => {
+    it('should hand a redelivery of an unanswered Slack message back to the same request', async () => {
       const slackMessageTimestamp = nextMessageTimestamp();
       const eventBody = buildSlackAppMentionEventBody({
         channelId: CHANNEL_ID,
@@ -282,12 +282,12 @@ describe('Slack inbound events', () => {
         botUserId: slack.botUserId,
       });
 
-      await enqueueSlackAssistantRequest(eventBody);
+      const firstResult = await enqueueSlackAssistantRequest(eventBody);
       const redeliveryResult = await enqueueSlackAssistantRequest(eventBody);
 
       expect(redeliveryResult).toEqual({
         ok: true,
-        skipped: 'Slack message is already queued',
+        request: expect.objectContaining({ id: firstResult.request?.id }),
       });
       await expect(
         findRequestByMessageTimestamp(slackMessageTimestamp),
@@ -328,10 +328,7 @@ describe('Slack inbound events', () => {
         }),
       );
 
-      expect(result).toEqual({
-        ok: true,
-        request: expect.objectContaining({ id: expect.any(String) }),
-      });
+      expect(result).toEqual({ ok: true });
       expect(slack.messagesIn(CHANNEL_ID)).toEqual([
         expect.objectContaining({
           markdownText: SLACK_ASSISTANT_EMPTY_REQUEST_TEXT,

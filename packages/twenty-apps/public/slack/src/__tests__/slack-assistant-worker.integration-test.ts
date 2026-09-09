@@ -38,8 +38,6 @@ describe('Slack assistant worker', () => {
   const createdRequestIds: string[] = [];
   const nextMessageTimestamp = createSlackMessageTimestampSequence(1);
 
-  // Records are stored as PROCESSING; the handler under test gets its PENDING
-  // record as an argument, exactly like the request function hands it over.
   const createRequestRecord = async (fields: {
     slackChannelId: string;
     slackMessageTimestamp: string;
@@ -52,7 +50,7 @@ describe('Slack assistant worker', () => {
         __args: {
           data: {
             name: fields.requestText,
-            status: SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING,
+            status: SLACK_ASSISTANT_REQUEST_STATUS.PENDING,
             slackChannelType: 'channel',
             slackThreadTimestamp: '',
             slackUserId: REQUESTER_USER_ID,

@@ -7,6 +7,7 @@ import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slac
 const {
   callLog,
   coreApiClientMock,
+  claimSlackAssistantRequestMock,
   updateSlackAssistantRequestMock,
   fetchSlackAssistantContextMock,
   fetchWorkspaceBaseUrlsMock,
@@ -21,6 +22,7 @@ const {
 } = vi.hoisted(() => ({
   callLog: [] as string[],
   coreApiClientMock: vi.fn(),
+  claimSlackAssistantRequestMock: vi.fn(),
   updateSlackAssistantRequestMock: vi.fn(),
   fetchSlackAssistantContextMock: vi.fn(),
   fetchWorkspaceBaseUrlsMock: vi.fn(),
@@ -36,6 +38,10 @@ const {
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: coreApiClientMock,
+}));
+
+vi.mock('src/logic-functions/data/claim-slack-assistant-request', () => ({
+  claimSlackAssistantRequest: claimSlackAssistantRequestMock,
 }));
 
 vi.mock('src/logic-functions/data/update-slack-assistant-request', () => ({
@@ -118,6 +124,7 @@ describe('slackAssistantWorkerHandler', () => {
     coreApiClientMock.mockImplementation(function () {
       return {};
     });
+    claimSlackAssistantRequestMock.mockResolvedValue(true);
     updateSlackAssistantRequestMock.mockResolvedValue(undefined);
     fetchWorkspaceBaseUrlsMock.mockResolvedValue(['https://acme.twenty.com']);
     resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
@@ -213,6 +220,29 @@ describe('slackAssistantWorkerHandler', () => {
     expect(stopStatusUpdatesMock).toHaveBeenCalledOnce();
   });
 
+  it('should run the agent against the deadline it was handed', async () => {
+    const agentDeadlineAtMs = Date.now() + 60_000;
+
+    await slackAssistantWorkerHandler(REQUEST_RECORD, { agentDeadlineAtMs });
+
+    expect(runSlackAssistantAgentWithDeadlineMock).toHaveBeenCalledWith(
+      expect.objectContaining({ deadlineAtMs: agentDeadlineAtMs }),
+    );
+  });
+
+  it('should leave a request another execution already claimed alone', async () => {
+    claimSlackAssistantRequestMock.mockResolvedValue(false);
+
+    const result = await slackAssistantWorkerHandler(REQUEST_RECORD);
+
+    expect(result).toEqual({
+      skipped: true,
+      reason: 'Request is already being processed',
+    });
+    expect(callLog).toEqual([]);
+    expect(fetchSlackAssistantContextMock).not.toHaveBeenCalled();
+  });
+
   it('should not start the status for a request that is no longer pending', async () => {
     const result = await slackAssistantWorkerHandler({
       ...REQUEST_RECORD,
@@ -220,6 +250,7 @@ describe('slackAssistantWorkerHandler', () => {
     });
 
     expect(result).toEqual({ skipped: true, reason: 'Request is not pending' });
+    expect(claimSlackAssistantRequestMock).not.toHaveBeenCalled();
     expect(startSlackAssistantStatusUpdatesMock).not.toHaveBeenCalled();
   });
 });

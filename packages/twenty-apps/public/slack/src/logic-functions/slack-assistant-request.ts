@@ -2,6 +2,7 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ASSISTANT_REQUEST_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
 import { SLACK_ASSISTANT_REQUEST_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-request-timeout-seconds';
 import { slackAssistantWorkerHandler } from 'src/logic-functions/handlers/slack-assistant-worker-handler';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
@@ -10,13 +11,18 @@ import { enqueueSlackAssistantRequest } from 'src/logic-functions/utils/enqueue-
 export const slackAssistantRequestHandler = async (
   body: SlackEventsRequestBody,
 ): Promise<object> => {
+  const agentDeadlineAtMs =
+    Date.now() + SLACK_ASSISTANT_AGENT_BUDGET_SECONDS * 1000;
+
   const enqueueResult = await enqueueSlackAssistantRequest(body);
 
   if (!isDefined(enqueueResult.request)) {
     return enqueueResult;
   }
 
-  return await slackAssistantWorkerHandler(enqueueResult.request);
+  return await slackAssistantWorkerHandler(enqueueResult.request, {
+    agentDeadlineAtMs,
+  });
 };
 
 export default defineLogicFunction({

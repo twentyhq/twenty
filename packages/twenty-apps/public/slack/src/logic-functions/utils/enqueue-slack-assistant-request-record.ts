@@ -15,7 +15,7 @@ export const enqueueSlackAssistantRequestRecord = async (
 ): Promise<SlackEventsEnqueueResult> => {
   const client = new CoreApiClient();
 
-  const existingRequestId = await findSlackAssistantRequestBySlackMessage(
+  const existingRequest = await findSlackAssistantRequestBySlackMessage(
     client,
     {
       slackChannelId: request.slackChannelId,
@@ -23,7 +23,11 @@ export const enqueueSlackAssistantRequestRecord = async (
     },
   );
 
-  if (isDefined(existingRequestId)) {
+  if (isDefined(existingRequest)) {
+    if (existingRequest.status === SLACK_ASSISTANT_REQUEST_STATUS.PENDING) {
+      return { ok: true, request: existingRequest };
+    }
+
     return { ok: true, skipped: ALREADY_QUEUED_SKIP_REASON };
   }
 

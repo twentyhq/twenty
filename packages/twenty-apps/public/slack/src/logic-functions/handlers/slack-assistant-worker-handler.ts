@@ -5,6 +5,7 @@ import { SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/univer
 import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
+import { claimSlackAssistantRequest } from 'src/logic-functions/data/claim-slack-assistant-request';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
@@ -24,6 +25,9 @@ import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-
 
 export const slackAssistantWorkerHandler = async (
   record: SlackAssistantRequestRecord,
+  {
+    agentDeadlineAtMs = Date.now() + SLACK_ASSISTANT_AGENT_BUDGET_SECONDS * 1000,
+  }: { agentDeadlineAtMs?: number } = {},
 ): Promise<object> => {
   if (record.status !== SLACK_ASSISTANT_REQUEST_STATUS.PENDING) {
     return { skipped: true, reason: 'Request is not pending' };
@@ -39,15 +43,13 @@ export const slackAssistantWorkerHandler = async (
     return { skipped: true, reason: 'Request record is missing fields' };
   }
 
-  const agentDeadlineAtMs =
-    Date.now() + SLACK_ASSISTANT_AGENT_BUDGET_SECONDS * 1000;
-
   const client = new CoreApiClient();
 
-  await updateSlackAssistantRequest(client, {
-    id: record.id,
-    status: SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING,
-  });
+  const isClaimed = await claimSlackAssistantRequest(client, { id: record.id });
+
+  if (!isClaimed) {
+    return { skipped: true, reason: 'Request is already being processed' };
+  }
 
   const isThreadStartingMessage = !isNonEmptyString(
     record.slackThreadTimestamp,
