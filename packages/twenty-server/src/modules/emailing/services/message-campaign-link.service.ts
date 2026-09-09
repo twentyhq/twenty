@@ -16,15 +16,11 @@ export class MessageCampaignLinkService {
   constructor(
     @InjectWorkspaceScopedRepository(MessageCampaignLinkEntity)
     private readonly messageCampaignLinkRepository: WorkspaceScopedRepository<MessageCampaignLinkEntity>,
-    // The redirect endpoint only holds a signed destination id, so the row is
-    // looked up before any workspace is known.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(MessageCampaignLinkEntity)
     private readonly globalMessageCampaignLinkRepository: Repository<MessageCampaignLinkEntity>,
   ) {}
 
-  // Rows are immutable and never deleted while the workspace exists: a token
-  // in a delivered email must resolve for as long as the email is readable.
   async registerDestinations({
     workspaceId,
     messageCampaignId,

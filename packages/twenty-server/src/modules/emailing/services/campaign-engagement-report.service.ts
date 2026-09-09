@@ -5,6 +5,7 @@ import { In } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { type MessageCampaignEngagementBucketDTO } from 'src/engine/core-modules/emailing-domain/dtos/message-campaign-engagement-bucket.dto';
 import { type MessageCampaignEngagementLinkDTO } from 'src/engine/core-modules/emailing-domain/dtos/message-campaign-engagement-link.dto';
 import { type MessageCampaignEngagementRecipientDTO } from 'src/engine/core-modules/emailing-domain/dtos/message-campaign-engagement-recipient.dto';
@@ -18,12 +19,11 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CampaignEngagementActivityFilter } from 'src/modules/emailing/constants/campaign-engagement-activity-filter.constant';
-import {
-  type CampaignEngagementBucket,
-  CampaignEngagementEventService,
-} from 'src/modules/emailing/services/campaign-engagement-event.service';
+import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
+import { MessageCampaignAccessService } from 'src/modules/emailing/services/message-campaign-access.service';
 import { MessageCampaignLinkService } from 'src/modules/emailing/services/message-campaign-link.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
+import { type CampaignEngagementBucket } from 'src/modules/emailing/types/campaign-engagement-bucket.type';
 
 const HOURLY_SERIES_MAX_AGE_MS = 3 * 24 * 60 * 60 * 1000;
 const HOUR_MS = 60 * 60 * 1000;
@@ -44,6 +44,8 @@ export class CampaignEngagementReportService {
     private readonly userRoleService: UserRoleService,
     private readonly campaignEngagementEventService: CampaignEngagementEventService,
     private readonly messageCampaignLinkService: MessageCampaignLinkService,
+    private readonly messageCampaignAccessService: MessageCampaignAccessService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async getReport({
@@ -57,6 +59,11 @@ export class CampaignEngagementReportService {
     messageCampaignId: string;
     activityFilter: CampaignEngagementActivityFilter;
   }): Promise<MessageCampaignEngagementDTO> {
+    await this.messageCampaignAccessService.assertCanReadCampaigns({
+      workspaceId,
+      userWorkspaceId,
+    });
+
     const campaign = await this.findReadableCampaignOrThrow({
       workspaceId,
       userWorkspaceId,
@@ -83,16 +90,27 @@ export class CampaignEngagementReportService {
     const scope = { workspaceId, messageCampaignId, activityFilter };
     const bucket = this.resolveBucket(campaign.sentAt);
 
-    const [totals, series, clicksByDestination, engagedDeliveries] =
-      await Promise.all([
-        this.campaignEngagementEventService.countEngagement(scope),
-        this.campaignEngagementEventService.findSeries({ ...scope, bucket }),
-        this.campaignEngagementEventService.findClicksByDestination(scope),
-        this.campaignEngagementEventService.findEngagedDeliveries({
-          ...scope,
-          limit: RECIPIENTS_LIMIT,
-        }),
-      ]);
+    const aggregates = await Promise.all([
+      this.campaignEngagementEventService.countEngagement(scope),
+      this.campaignEngagementEventService.findSeries({ ...scope, bucket }),
+      this.campaignEngagementEventService.findClicksByDestination(scope),
+      this.campaignEngagementEventService.findEngagedDeliveries({
+        ...scope,
+        limit: RECIPIENTS_LIMIT,
+      }),
+    ]).catch((error) => {
+      this.exceptionHandlerService.captureExceptions([error], {
+        additionalData: { workspaceId, messageCampaignId },
+      });
+
+      return undefined;
+    });
+
+    if (!isDefined(aggregates)) {
+      return { ...emptyReport, isAvailable: false };
+    }
+
+    const [totals, series, clicksByDestination, engagedDeliveries] = aggregates;
 
     return {
       ...emptyReport,
@@ -162,8 +180,6 @@ export class CampaignEngagementReportService {
     return ageMs <= HOURLY_SERIES_MAX_AGE_MS ? 'hour' : 'day';
   }
 
-  // Empty buckets are filled so the chart shows silence as a flat line rather
-  // than joining two distant points.
   private fillSeries({
     series,
     bucket,
@@ -200,8 +216,6 @@ export class CampaignEngagementReportService {
     return filled;
   }
 
-  // Each recipient resolves one authored link to exactly one destination, so
-  // summing unique clickers across a link's destinations stays exact.
   private async rollUpLinksByAuthoredUrl({
     workspaceId,
     messageCampaignId,

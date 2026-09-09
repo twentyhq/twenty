@@ -1,0 +1,1 @@
+export const HOSTNAME_SUFFIX_LENGTH = 4;

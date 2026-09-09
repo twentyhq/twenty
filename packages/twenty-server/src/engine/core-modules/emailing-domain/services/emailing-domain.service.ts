@@ -243,8 +243,6 @@ export class EmailingDomainService {
     );
   }
 
-  // The tracking hostname is provisioned on first enable and never released
-  // on disable, so links in already-delivered emails keep redirecting.
   async setTracking({
     workspaceId,
     emailingDomainId,

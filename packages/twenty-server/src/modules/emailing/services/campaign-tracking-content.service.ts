@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { toPlainText } from 'twenty-emails';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,11 +15,8 @@ import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/dr
 import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { CampaignTrackingTokenService } from 'src/engine/core-modules/emailing-domain/services/campaign-tracking-token.service';
-import {
-  type CampaignMessagePart,
-  type CampaignTrackingTokenPayload,
-} from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
-import { applyReplacementTags } from 'src/engine/core-modules/emailing-domain/utils/apply-replacement-tags.util';
+import { type CampaignMessagePart } from 'src/engine/core-modules/emailing-domain/types/campaign-message-part.type';
+import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -26,10 +24,9 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN } from 'src/modules/emailing/constants/campaign-batch-variable-tag-pattern.constant';
 import { CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART } from 'src/modules/emailing/constants/campaign-tracking-tag.constant';
 import { MessageCampaignLinkService } from 'src/modules/emailing/services/message-campaign-link.service';
-import { type MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
+import { type CampaignTrackingFlags } from 'src/modules/emailing/types/campaign-tracking-flags.type';
 import { type TrackedCampaignBatch } from 'src/modules/emailing/types/tracked-campaign-batch.type';
 import { collectTrackableLinkUrls } from 'src/modules/emailing/utils/collect-trackable-link-urls.util';
-import { replacePlainTextLinkUrls } from 'src/modules/emailing/utils/replace-plain-text-link-urls.util';
 import { replaceTrackableLinkUrls } from 'src/modules/emailing/utils/replace-trackable-link-urls.util';
 import { resolveTrackedLinkUrl } from 'src/modules/emailing/utils/resolve-tracked-link-url.util';
 
@@ -41,11 +38,9 @@ type TrackingRecipient = {
 type PrepareBatchArgs = {
   workspaceId: string;
   emailingDomainId: string;
-  campaign: Pick<
-    MessageCampaignWorkspaceEntity,
-    'id' | 'isClickTrackingEnabled'
-  >;
+  campaign: { id: string } & CampaignTrackingFlags;
   template: EmailingDomainEmailTemplate;
+  textPartHtml: string;
   variableNames: string[];
   recipients: TrackingRecipient[];
 };
@@ -62,14 +57,23 @@ export class CampaignTrackingContentService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  // Rewrites the shared template once and produces per-recipient replacement
-  // values, so the provider substitutes tracked urls the same way it
-  // substitutes first names. Returns the input untouched when nothing tracks.
+  resolveTrackingFlagsForSend(
+    emailingDomain: EmailingDomainEntity,
+  ): CampaignTrackingFlags {
+    const canServeTrackedUrls = this.canServeTrackedUrls(emailingDomain);
+
+    return {
+      isClickTrackingEnabled:
+        emailingDomain.isClickTrackingEnabled && canServeTrackedUrls,
+    };
+  }
+
   async prepareBatch({
     workspaceId,
     emailingDomainId,
     campaign,
     template,
+    textPartHtml,
     variableNames,
     recipients,
   }: PrepareBatchArgs): Promise<TrackedCampaignBatch> {
@@ -95,7 +99,7 @@ export class CampaignTrackingContentService {
       return untracked;
     }
 
-    const baseUrl = await this.findServableBaseUrl({
+    const baseUrl = await this.findTrackingBaseUrl({
       workspaceId,
       emailingDomainId,
     });
@@ -113,7 +117,11 @@ export class CampaignTrackingContentService {
     });
 
     return {
-      template: this.buildTrackedTemplate({ template, urlTemplates }),
+      template: this.buildTrackedTemplate({
+        template,
+        textPartHtml,
+        urlTemplates,
+      }),
       replacementsByDeliveryId: new Map(
         recipients.map((recipient) => [
           recipient.deliveryId,
@@ -131,39 +139,13 @@ export class CampaignTrackingContentService {
     };
   }
 
-  async applyTo({
-    workspaceId,
-    emailingDomainId,
-    campaign,
-    deliveryId,
-    html,
-    text,
-  }: Omit<PrepareBatchArgs, 'template' | 'variableNames' | 'recipients'> & {
-    deliveryId: string;
-    html: string;
-    text: string;
-  }): Promise<{ html: string; text: string }> {
-    const { template, replacementsByDeliveryId } = await this.prepareBatch({
-      workspaceId,
-      emailingDomainId,
-      campaign,
-      template: { subject: '', html, text },
-      variableNames: [],
-      recipients: [{ deliveryId, replacements: {} }],
-    });
-    const replacements = replacementsByDeliveryId.get(deliveryId) ?? {};
-
-    return {
-      html: applyReplacementTags(template.html ?? '', replacements),
-      text: applyReplacementTags(template.text, replacements),
-    };
-  }
-
   private buildTrackedTemplate({
     template,
+    textPartHtml,
     urlTemplates,
   }: {
     template: EmailingDomainEmailTemplate;
+    textPartHtml: string;
     urlTemplates: string[];
   }): EmailingDomainEmailTemplate {
     const tagByUrl = (messagePart: CampaignMessagePart) =>
@@ -173,10 +155,13 @@ export class CampaignTrackingContentService {
           `{{${this.buildLinkTag({ messagePart, index })}}}`,
         ]),
       );
+
     return {
       ...template,
       html: replaceTrackableLinkUrls(template.html ?? '', tagByUrl('HTML')),
-      text: replacePlainTextLinkUrls(template.text, tagByUrl('TEXT')),
+      text: toPlainText(
+        replaceTrackableLinkUrls(textPartHtml, tagByUrl('TEXT')),
+      ),
     };
   }
 
@@ -221,8 +206,6 @@ export class CampaignTrackingContentService {
     });
   }
 
-  // A link that does not resolve to an absolute http(s) url for this
-  // recipient is sent as written; tracking never fails a delivery.
   private buildTrackingReplacements({
     baseUrl,
     recipient,
@@ -293,17 +276,25 @@ export class CampaignTrackingContentService {
     );
   }
 
-  private async findServableBaseUrl({
+  private canServeTrackedUrls(emailingDomain: EmailingDomainEntity): boolean {
+    if (this.isLogDriver()) {
+      return true;
+    }
+
+    return (
+      emailingDomain.trackingHostnameStatus === ManagedHostnameStatus.ACTIVE &&
+      isNonEmptyString(emailingDomain.trackingHostname)
+    );
+  }
+
+  private async findTrackingBaseUrl({
     workspaceId,
     emailingDomainId,
   }: {
     workspaceId: string;
     emailingDomainId: string;
   }): Promise<string | undefined> {
-    if (
-      this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
-      EmailingDomainDriver.LOG
-    ) {
+    if (this.isLogDriver()) {
       return this.buildLocalBaseUrl(workspaceId);
     }
 
@@ -311,16 +302,13 @@ export class CampaignTrackingContentService {
       workspaceId,
       { where: { id: emailingDomainId } },
     );
+    const trackingHostname = emailingDomain?.trackingHostname;
 
-    if (
-      !isDefined(emailingDomain) ||
-      emailingDomain.trackingHostnameStatus !== ManagedHostnameStatus.ACTIVE ||
-      !isNonEmptyString(emailingDomain.trackingHostname)
-    ) {
+    if (!isNonEmptyString(trackingHostname)) {
       return undefined;
     }
 
-    return `https://${emailingDomain.trackingHostname}`;
+    return `https://${trackingHostname}`;
   }
 
   private async buildLocalBaseUrl(
@@ -341,5 +329,12 @@ export class CampaignTrackingContentService {
       : `${TRACKING_HOSTNAME_PREFIX}.${baseUrl.hostname}`;
 
     return baseUrl.origin;
+  }
+
+  private isLogDriver(): boolean {
+    return (
+      this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
+      EmailingDomainDriver.LOG
+    );
   }
 }

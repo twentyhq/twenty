@@ -1,6 +1,6 @@
-import { type CampaignMessagePart } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
-import { type CampaignEngagementActivityClass } from 'src/modules/emailing/constants/campaign-engagement-activity-class.constant';
-import { type CampaignEngagementEventType } from 'src/modules/emailing/constants/campaign-engagement-event-type.constant';
+import { type CampaignMessagePart } from 'src/engine/core-modules/emailing-domain/types/campaign-message-part.type';
+import { type CampaignEngagementActivityClass } from 'src/modules/emailing/types/campaign-engagement-activity-class.type';
+import { type CampaignEngagementEventType } from 'src/modules/emailing/types/campaign-engagement-event-type.type';
 
 export type CampaignEngagementEvent = {
   workspaceId: string;

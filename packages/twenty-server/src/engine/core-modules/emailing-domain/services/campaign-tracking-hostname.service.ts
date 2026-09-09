@@ -1,6 +1,8 @@
 /* @license Enterprise */
 import { Injectable } from '@nestjs/common';
 
+import { IsNull } from 'typeorm';
+
 import { ManagedHostnameStatus } from 'src/engine/core-modules/dns-manager/types/managed-hostname-status.type';
 import { AvailableHostnameService } from 'src/engine/core-modules/dns-resolver/services/available-hostname.service';
 import { TRACKING_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/tracking-hostname-prefix.constant';
@@ -27,8 +29,6 @@ export class CampaignTrackingHostnameService implements EmailingHostnameProvisio
     return emailingDomain.trackingHostnameId;
   }
 
-  // Only decides whether a hostname should be created. Turning tracking off
-  // later never releases it: links already delivered must keep redirecting.
   async resolveDesiredHostname(
     emailingDomain: EmailingDomainEntity,
   ): Promise<string | null> {
@@ -40,6 +40,26 @@ export class CampaignTrackingHostnameService implements EmailingHostnameProvisio
       preferredPrefix: TRACKING_HOSTNAME_PREFIX,
       domain: emailingDomain.domain,
     });
+  }
+
+  async claimHostname({
+    emailingDomain,
+    hostname,
+  }: {
+    emailingDomain: EmailingDomainEntity;
+    hostname: string;
+  }): Promise<boolean> {
+    const { affected } = await this.emailingDomainRepository.update(
+      emailingDomain.workspaceId,
+      {
+        id: emailingDomain.id,
+        trackingHostname: IsNull(),
+        trackingHostnameId: IsNull(),
+      },
+      { trackingHostname: hostname },
+    );
+
+    return (affected ?? 0) > 0;
   }
 
   async persistProvisionedHostname({

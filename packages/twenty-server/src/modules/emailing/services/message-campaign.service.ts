@@ -25,6 +25,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { CampaignTrackingContentService } from 'src/modules/emailing/services/campaign-tracking-content.service';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
@@ -60,6 +61,7 @@ export class MessageCampaignService {
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
     private readonly userRoleService: UserRoleService,
     private readonly campaignVariableService: CampaignVariableService,
+    private readonly campaignTrackingContentService: CampaignTrackingContentService,
     private readonly messageCampaignAudienceService: MessageCampaignAudienceService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly throttlerService: ThrottlerService,
@@ -133,9 +135,10 @@ export class MessageCampaignService {
         roleId,
         from: MessageCampaignStatus.DRAFT,
         to: MessageCampaignStatus.SENDING,
-        changes: {
-          isClickTrackingEnabled: emailingDomain.isClickTrackingEnabled,
-        },
+        changes:
+          this.campaignTrackingContentService.resolveTrackingFlagsForSend(
+            emailingDomain,
+          ),
       });
 
     if (!claimed) {

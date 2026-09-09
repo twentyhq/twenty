@@ -8,6 +8,10 @@ export type EmailingHostnameProvisioner = {
   resolveDesiredHostname(
     emailingDomain: EmailingDomainEntity,
   ): Promise<string | null>;
+  claimHostname(args: {
+    emailingDomain: EmailingDomainEntity;
+    hostname: string;
+  }): Promise<boolean>;
   persistProvisionedHostname(args: {
     emailingDomain: EmailingDomainEntity;
     hostname: string;

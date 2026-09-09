@@ -4,20 +4,13 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  CAMPAIGN_TRACKING_CLICK_TOKEN_PAYLOAD_BYTE_LENGTH,
-  CAMPAIGN_TRACKING_TOKEN_HMAC_PURPOSE,
-  CAMPAIGN_TRACKING_TOKEN_KEY_ID_BYTE_LENGTH,
-  CAMPAIGN_TRACKING_TOKEN_MESSAGE_PART_BYTE,
-  CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE,
-  CAMPAIGN_TRACKING_TOKEN_SIGNATURE_BYTE_LENGTH,
-  CAMPAIGN_TRACKING_TOKEN_UUID_BYTE_LENGTH,
-  CAMPAIGN_TRACKING_TOKEN_VERSION,
-} from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token.constant';
-import {
-  type CampaignMessagePart,
-  type CampaignTrackingTokenPayload,
-} from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
+import { CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-byte-length.constant';
+import { CAMPAIGN_TRACKING_TOKEN_HMAC_PURPOSE } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-hmac-purpose.constant';
+import { CAMPAIGN_TRACKING_TOKEN_MESSAGE_PART_BYTE } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-message-part-byte.constant';
+import { CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-purpose-byte.constant';
+import { CAMPAIGN_TRACKING_TOKEN_VERSION } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-version.constant';
+import { type CampaignMessagePart } from 'src/engine/core-modules/emailing-domain/types/campaign-message-part.type';
+import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
 import { computeEncryptionKeyId } from 'src/engine/core-modules/secret-encryption/utils/compute-encryption-key-id.util';
 import { deriveInstanceHmacKey } from 'src/engine/core-modules/secret-encryption/utils/derive-instance-hmac-key.util';
 import { resolveEncryptionKeysOrThrow } from 'src/engine/core-modules/secret-encryption/utils/resolve-encryption-keys-or-throw.util';
@@ -25,9 +18,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 type SigningKey = { keyId: Buffer; key: Buffer };
 
-// Tokens are bearer identifiers for one delivery, valid for as long as the
-// email sits in an inbox. They carry no expiry and no recipient data; the key
-// ring lets ENCRYPTION_KEY rotate while old links keep verifying.
 @Injectable()
 export class CampaignTrackingTokenService {
   private signingKeys: SigningKey[] | undefined;
@@ -46,11 +36,16 @@ export class CampaignTrackingTokenService {
 
   verify(token: string): CampaignTrackingTokenPayload | null {
     const decodedToken = Buffer.from(token, 'base64url');
+
+    if (decodedToken.toString('base64url') !== token) {
+      return null;
+    }
+
     const payloadByteLength =
-      decodedToken.length - CAMPAIGN_TRACKING_TOKEN_SIGNATURE_BYTE_LENGTH;
+      decodedToken.length - CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.signature;
 
     if (
-      payloadByteLength !== CAMPAIGN_TRACKING_CLICK_TOKEN_PAYLOAD_BYTE_LENGTH
+      payloadByteLength !== CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.clickPayload
     ) {
       return null;
     }
@@ -64,7 +59,7 @@ export class CampaignTrackingTokenService {
 
     const keyId = encodedPayload.subarray(
       1,
-      1 + CAMPAIGN_TRACKING_TOKEN_KEY_ID_BYTE_LENGTH,
+      1 + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.keyId,
     );
     const signingKey = this.resolveSigningKeys().find((candidate) =>
       candidate.keyId.equals(keyId),
@@ -109,13 +104,13 @@ export class CampaignTrackingTokenService {
   private decodePayload(
     encodedPayload: Buffer,
   ): CampaignTrackingTokenPayload | null {
-    const purposeOffset = 1 + CAMPAIGN_TRACKING_TOKEN_KEY_ID_BYTE_LENGTH;
+    const purposeOffset = 1 + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.keyId;
     const purposeByte = encodedPayload.readUInt8(purposeOffset);
     const deliveryIdOffset = purposeOffset + 1;
     const deliveryId = this.decodeUuid(
       encodedPayload.subarray(
         deliveryIdOffset,
-        deliveryIdOffset + CAMPAIGN_TRACKING_TOKEN_UUID_BYTE_LENGTH,
+        deliveryIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid,
       ),
     );
     const messagePart = this.decodeMessagePart(
@@ -131,7 +126,7 @@ export class CampaignTrackingTokenService {
     }
 
     const destinationIdOffset =
-      deliveryIdOffset + CAMPAIGN_TRACKING_TOKEN_UUID_BYTE_LENGTH;
+      deliveryIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid;
 
     return {
       purpose: 'CLICK',
@@ -139,7 +134,7 @@ export class CampaignTrackingTokenService {
       destinationId: this.decodeUuid(
         encodedPayload.subarray(
           destinationIdOffset,
-          destinationIdOffset + CAMPAIGN_TRACKING_TOKEN_UUID_BYTE_LENGTH,
+          destinationIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid,
         ),
       ),
       messagePart,
@@ -161,7 +156,7 @@ export class CampaignTrackingTokenService {
     return createHmac('sha256', key)
       .update(encodedPayload)
       .digest()
-      .subarray(0, CAMPAIGN_TRACKING_TOKEN_SIGNATURE_BYTE_LENGTH);
+      .subarray(0, CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.signature);
   }
 
   private resolveSigningKeys(): SigningKey[] {

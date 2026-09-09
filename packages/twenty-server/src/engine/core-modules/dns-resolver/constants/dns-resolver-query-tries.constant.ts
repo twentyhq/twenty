@@ -1,0 +1,1 @@
+export const DNS_RESOLVER_QUERY_TRIES = 2;

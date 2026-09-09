@@ -4,10 +4,8 @@ import { Resolver } from 'node:dns/promises';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
-import {
-  DNS_RESOLVER_QUERY_TIMEOUT_MS,
-  DNS_RESOLVER_QUERY_TRIES,
-} from 'src/engine/core-modules/dns-resolver/constants/dns-resolver-query.constant';
+import { DNS_RESOLVER_QUERY_TIMEOUT_MS } from 'src/engine/core-modules/dns-resolver/constants/dns-resolver-query-timeout-ms.constant';
+import { DNS_RESOLVER_QUERY_TRIES } from 'src/engine/core-modules/dns-resolver/constants/dns-resolver-query-tries.constant';
 import { type HostnameAvailability } from 'src/engine/core-modules/dns-resolver/types/hostname-availability.type';
 
 @Injectable()

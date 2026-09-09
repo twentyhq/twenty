@@ -1,5 +1,5 @@
 import { applyReplacementTags } from 'src/engine/core-modules/emailing-domain/utils/apply-replacement-tags.util';
-import { TRACKABLE_URL_PATTERN } from 'src/modules/emailing/constants/trackable-href-pattern.constant';
+import { TRACKABLE_URL_PATTERN } from 'src/modules/emailing/constants/trackable-url-pattern.constant';
 
 export const resolveTrackedLinkUrl = ({
   urlTemplate,

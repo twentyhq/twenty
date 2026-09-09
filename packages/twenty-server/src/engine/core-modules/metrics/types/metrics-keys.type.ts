@@ -83,7 +83,6 @@ export enum MetricsKeys {
   ConnectedAccountSyncWebhookReceivedCalendar = 'connected-account-sync-webhook/received/calendar',
   ConnectedAccountWebhookSubscriptionCreated = 'connected-account-webhook-subscription/created',
   ConnectedAccountWebhookSubscriptionCreationFailed = 'connected-account-webhook-subscription/creation-failed',
-  CampaignEngagementCaptureFailed = 'campaign-engagement/capture-failed',
   ConnectedAccountWebhookSubscriptionRenewed = 'connected-account-webhook-subscription/renewed',
   ConnectedAccountWebhookSubscriptionRenewalFailed = 'connected-account-webhook-subscription/renewal-failed',
   ConnectedAccountWebhookSubscriptionDeleted = 'connected-account-webhook-subscription/deleted',
@@ -97,4 +96,6 @@ export enum MetricsKeys {
   WorkspaceMigrationActionCount = 'workspace-migration/action-count',
   OrmV2ReadPathUsed = 'orm-v2/read-path-used',
   OrmV2WritePathUsed = 'orm-v2/write-path-used',
+  CampaignEngagementCaptureFailed = 'campaign-engagement/capture-failed',
+  CampaignEngagementCaptureThrottled = 'campaign-engagement/capture-throttled',
 }

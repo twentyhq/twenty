@@ -118,7 +118,10 @@ export class EmailingHostnamesService {
       return;
     }
 
-    const hostname = await provisioner.resolveDesiredHostname(emailingDomain);
+    const hostname = await this.reuseOrClaimHostname({
+      provisioner,
+      emailingDomain,
+    });
 
     if (!isNonEmptyString(hostname)) {
       return;
@@ -126,26 +129,38 @@ export class EmailingHostnamesService {
 
     const hostnameId = await this.managedHostnameService.provision(hostname);
 
-    const currentEmailingDomain = await this.findEmailingDomainOrFail({
-      workspaceId: emailingDomain.workspaceId,
-      emailingDomainId: emailingDomain.id,
-    });
-
-    if (
-      !isNonEmptyString(
-        await provisioner.resolveDesiredHostname(currentEmailingDomain),
-      )
-    ) {
-      await this.managedHostnameService.release(hostname);
-
-      return;
-    }
-
     await provisioner.persistProvisionedHostname({
       emailingDomain,
       hostname,
       hostnameId,
     });
+  }
+
+  private async reuseOrClaimHostname({
+    provisioner,
+    emailingDomain,
+  }: {
+    provisioner: EmailingHostnameProvisioner;
+    emailingDomain: EmailingDomainEntity;
+  }): Promise<string | null> {
+    const claimedHostname = provisioner.readHostname(emailingDomain);
+
+    if (isNonEmptyString(claimedHostname)) {
+      return claimedHostname;
+    }
+
+    const hostname = await provisioner.resolveDesiredHostname(emailingDomain);
+
+    if (!isNonEmptyString(hostname)) {
+      return null;
+    }
+
+    const isClaimed = await provisioner.claimHostname({
+      emailingDomain,
+      hostname,
+    });
+
+    return isClaimed ? hostname : null;
   }
 
   private async refreshStatus({
@@ -157,7 +172,10 @@ export class EmailingHostnamesService {
   }): Promise<void> {
     const hostname = provisioner.readHostname(emailingDomain);
 
-    if (!isNonEmptyString(hostname)) {
+    if (
+      !isNonEmptyString(hostname) ||
+      !isNonEmptyString(provisioner.readHostnameId(emailingDomain))
+    ) {
       return;
     }
 
@@ -177,6 +195,12 @@ export class EmailingHostnamesService {
     const hostname = provisioner.readHostname(emailingDomain);
 
     if (!isNonEmptyString(hostname)) {
+      return;
+    }
+
+    if (!isNonEmptyString(provisioner.readHostnameId(emailingDomain))) {
+      await provisioner.clearHostname(emailingDomain);
+
       return;
     }
 
@@ -202,7 +226,10 @@ export class EmailingHostnamesService {
   }): Promise<VerificationRecord[]> {
     const hostname = provisioner.readHostname(emailingDomain);
 
-    if (!isNonEmptyString(hostname)) {
+    if (
+      !isNonEmptyString(hostname) ||
+      !isNonEmptyString(provisioner.readHostnameId(emailingDomain))
+    ) {
       return [];
     }
 

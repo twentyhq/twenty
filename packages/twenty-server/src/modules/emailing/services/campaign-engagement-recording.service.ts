@@ -10,18 +10,14 @@ import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { type CampaignEngagementObservation } from 'src/modules/emailing/types/campaign-engagement-observation.type';
-import {
-  CAMPAIGN_ENGAGEMENT_CLASSIFICATION_VERSION,
-  classifyEngagementUserAgent,
-} from 'src/modules/emailing/utils/classify-engagement-user-agent.util';
+import { CAMPAIGN_ENGAGEMENT_CLASSIFICATION_VERSION } from 'src/modules/emailing/constants/campaign-engagement-classification-version.constant';
+import { classifyEngagementUserAgent } from 'src/modules/emailing/utils/classify-engagement-user-agent.util';
 
 @Injectable()
 export class CampaignEngagementRecordingService {
   private readonly logger = new Logger(CampaignEngagementRecordingService.name);
 
   constructor(
-    // The observation only carries a delivery id; the workspace comes from the
-    // delivery row, which cascades away with its workspace.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(CampaignDeliveryEntity)
     private readonly campaignDeliveryRepository: Repository<CampaignDeliveryEntity>,

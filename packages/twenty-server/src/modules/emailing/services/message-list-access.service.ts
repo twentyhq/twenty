@@ -16,9 +16,6 @@ const LIST_OBJECT_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.messageListMember.universalIdentifier,
 ];
 
-// messageList and messageListMember are system objects, for which the
-// repositories skip role permission checks, so callers that write lists on a
-// user's behalf check the role here first.
 @Injectable()
 export class MessageListAccessService {
   constructor(

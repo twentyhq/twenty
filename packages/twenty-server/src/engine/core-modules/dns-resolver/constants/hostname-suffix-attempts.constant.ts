@@ -1,0 +1,1 @@
+export const HOSTNAME_SUFFIX_ATTEMPTS = 4;

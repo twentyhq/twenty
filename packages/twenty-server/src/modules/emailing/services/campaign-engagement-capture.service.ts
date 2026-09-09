@@ -2,11 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { v4 } from 'uuid';
 
-import {
-  CAMPAIGN_ENGAGEMENT_RECORD_RETRY_BACKOFF,
-  CAMPAIGN_ENGAGEMENT_RECORD_RETRY_LIMIT,
-} from 'src/engine/core-modules/emailing-domain/constants/campaign-engagement-record-retry.constant';
-import { RECORD_CAMPAIGN_ENGAGEMENT_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { CAMPAIGN_ENGAGEMENT_RECORD_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-engagement-record-retry-backoff.constant';
+import { CAMPAIGN_ENGAGEMENT_RECORD_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-engagement-record-retry-limit.constant';
+import { RECORD_CAMPAIGN_ENGAGEMENT_JOB } from 'src/engine/core-modules/emailing-domain/constants/record-campaign-engagement-job.constant';
 import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -18,14 +16,9 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type CampaignEngagementObservation } from 'src/modules/emailing/types/campaign-engagement-observation.type';
 
-// A replayed token captures at most this many events per window; the
-// redirect itself is never limited.
-const CAPTURE_RATE_LIMIT = { maxRequests: 60, windowMs: 60_000 };
+const CAPTURE_RATE_LIMIT_PER_LINK = { maxRequests: 60, windowMs: 60_000 };
 
-// The queue client retries commands until Redis is back, which is right for
-// workers and wrong for a reader waiting on a redirect. The response is
-// released after this budget; a command still pending flushes on reconnect.
-const ENQUEUE_BUDGET_MS = 100;
+const RESPONSE_RELEASE_BUDGET_MS = 100;
 
 @Injectable()
 export class CampaignEngagementCaptureService {
@@ -39,14 +32,10 @@ export class CampaignEngagementCaptureService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  // Never throws: the recipient's redirect or pixel is already decided by the
-  // time this runs, and analytics must not change that outcome.
   async capture({
-    token,
     payload,
     userAgent,
   }: {
-    token: string;
     payload: CampaignTrackingTokenPayload;
     userAgent: string | null;
   }): Promise<void> {
@@ -64,28 +53,41 @@ export class CampaignEngagementCaptureService {
       userAgent,
     };
 
+    await this.releaseResponseAfterBudget(
+      this.throttleAndEnqueue({ payload, observation }),
+    );
+  }
+
+  private async throttleAndEnqueue({
+    payload,
+    observation,
+  }: {
+    payload: CampaignTrackingTokenPayload;
+    observation: CampaignEngagementObservation;
+  }): Promise<void> {
     try {
-      await this.withinBudget(
-        this.throttlerService.tokenBucketThrottleOrThrow(
-          `campaign-engagement:${token}`,
-          1,
-          CAPTURE_RATE_LIMIT.maxRequests,
-          CAPTURE_RATE_LIMIT.windowMs,
-        ),
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        `campaign-engagement:${payload.deliveryId}:${payload.destinationId}`,
+        1,
+        CAPTURE_RATE_LIMIT_PER_LINK.maxRequests,
+        CAPTURE_RATE_LIMIT_PER_LINK.windowMs,
       );
 
-      await this.withinBudget(
-        this.messageQueueService.add<CampaignEngagementObservation>(
-          RECORD_CAMPAIGN_ENGAGEMENT_JOB,
-          observation,
-          {
-            retryLimit: CAMPAIGN_ENGAGEMENT_RECORD_RETRY_LIMIT,
-            backoff: CAMPAIGN_ENGAGEMENT_RECORD_RETRY_BACKOFF,
-          },
-        ),
+      await this.messageQueueService.add<CampaignEngagementObservation>(
+        RECORD_CAMPAIGN_ENGAGEMENT_JOB,
+        observation,
+        {
+          retryLimit: CAMPAIGN_ENGAGEMENT_RECORD_RETRY_LIMIT,
+          backoff: CAMPAIGN_ENGAGEMENT_RECORD_RETRY_BACKOFF,
+        },
       );
     } catch (error) {
       if (error instanceof ThrottlerException) {
+        this.metricsService.incrementCounterBy({
+          key: MetricsKeys.CampaignEngagementCaptureThrottled,
+          amount: 1,
+        });
+
         return;
       }
 
@@ -99,22 +101,19 @@ export class CampaignEngagementCaptureService {
     }
   }
 
-  private async withinBudget<TResult>(
-    operation: Promise<TResult>,
-  ): Promise<TResult> {
-    let timer: NodeJS.Timeout | undefined;
+  private async releaseResponseAfterBudget(
+    recording: Promise<void>,
+  ): Promise<void> {
+    let releaseTimer: NodeJS.Timeout | undefined;
 
-    const budget = new Promise<never>((_resolve, reject) => {
-      timer = setTimeout(
-        () => reject(new Error(`Exceeded ${ENQUEUE_BUDGET_MS}ms budget`)),
-        ENQUEUE_BUDGET_MS,
-      );
+    const release = new Promise<void>((resolve) => {
+      releaseTimer = setTimeout(resolve, RESPONSE_RELEASE_BUDGET_MS);
     });
 
     try {
-      return await Promise.race([operation, budget]);
+      await Promise.race([recording, release]);
     } finally {
-      clearTimeout(timer);
+      clearTimeout(releaseTimer);
     }
   }
 }

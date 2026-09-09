@@ -4,12 +4,10 @@ import { msg } from '@lingui/core/macro';
 
 import { randomInt } from 'node:crypto';
 
-import {
-  HOSTNAME_LABEL_ALPHABET,
-  HOSTNAME_SUFFIX_ATTEMPTS,
-  HOSTNAME_SUFFIX_LENGTH,
-  WILDCARD_PROBE_LABEL_LENGTH,
-} from 'src/engine/core-modules/dns-resolver/constants/available-hostname-search.constant';
+import { HOSTNAME_LABEL_ALPHABET } from 'src/engine/core-modules/dns-resolver/constants/hostname-label-alphabet.constant';
+import { HOSTNAME_SUFFIX_ATTEMPTS } from 'src/engine/core-modules/dns-resolver/constants/hostname-suffix-attempts.constant';
+import { HOSTNAME_SUFFIX_LENGTH } from 'src/engine/core-modules/dns-resolver/constants/hostname-suffix-length.constant';
+import { WILDCARD_PROBE_LABEL_LENGTH } from 'src/engine/core-modules/dns-resolver/constants/wildcard-probe-label-length.constant';
 import {
   DnsResolverException,
   DnsResolverExceptionCode,

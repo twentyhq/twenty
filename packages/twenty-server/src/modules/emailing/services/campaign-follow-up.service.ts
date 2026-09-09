@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import chunk from 'lodash.chunk';
 import { In } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -23,6 +24,7 @@ import { type CampaignEngagementActivityFilter } from 'src/modules/emailing/cons
 import { CAMPAIGN_ENGAGEMENT_EVENT_TYPE } from 'src/modules/emailing/constants/campaign-engagement-event-type.constant';
 import { type MessageCampaignFollowUpDraftDTO } from 'src/modules/emailing/dtos/message-campaign-follow-up-draft.dto';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
+import { MessageCampaignAccessService } from 'src/modules/emailing/services/message-campaign-access.service';
 import { MessageListAccessService } from 'src/modules/emailing/services/message-list-access.service';
 import { type MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
@@ -39,9 +41,8 @@ type SourceCampaign = Pick<
   | 'unsubscribeTopicId'
 >;
 
-// Snapshots the clickers of a sent campaign into a new list and opens a draft
-// on it. Nothing is sent: the draft goes through the ordinary send action,
-// which re-checks suppression and permissions.
+const FIND_BY_ID_CHUNK_SIZE = 5_000;
+
 @Injectable()
 export class CampaignFollowUpService {
   constructor(
@@ -50,6 +51,7 @@ export class CampaignFollowUpService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
     private readonly messageListAccessService: MessageListAccessService,
+    private readonly messageCampaignAccessService: MessageCampaignAccessService,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
     private readonly campaignEngagementEventService: CampaignEngagementEventService,
   ) {}
@@ -67,6 +69,10 @@ export class CampaignFollowUpService {
   }): Promise<MessageCampaignFollowUpDraftDTO> {
     const workspaceId = authContext.workspace.id;
 
+    await this.messageCampaignAccessService.assertCanReadAndUpdateCampaigns({
+      workspaceId,
+      userWorkspaceId,
+    });
     await this.messageListAccessService.assertCanReadAndUpdateLists({
       workspaceId,
       userWorkspaceId,
@@ -119,12 +125,23 @@ export class CampaignFollowUpService {
       return [];
     }
 
-    const deliveries = await this.campaignDeliveryRepository.find(workspaceId, {
-      where: { id: In(deliveryIds), campaignId: messageCampaignId },
-      select: { personId: true },
-    });
+    const personIds = new Set<string>();
 
-    return [...new Set(deliveries.map((delivery) => delivery.personId))];
+    for (const deliveryIdsChunk of chunk(deliveryIds, FIND_BY_ID_CHUNK_SIZE)) {
+      const deliveries = await this.campaignDeliveryRepository.find(
+        workspaceId,
+        {
+          where: { id: In(deliveryIdsChunk), campaignId: messageCampaignId },
+          select: { personId: true },
+        },
+      );
+
+      for (const delivery of deliveries) {
+        personIds.add(delivery.personId);
+      }
+    }
+
+    return [...personIds];
   }
 
   private async createInTransaction({
@@ -160,8 +177,6 @@ export class CampaignFollowUpService {
         { unionOf: [roleId] },
       );
 
-    // No column projection: fromAddress is a composite field the query
-    // builder cannot select by name.
     const sourceCampaign = await campaignRepository.findOne({
       where: { id: messageCampaignId },
     });
@@ -174,19 +189,14 @@ export class CampaignFollowUpService {
       );
     }
 
-    // Deleted or unreadable people are skipped, so the list only ever holds
-    // contacts this role could have picked by hand.
-    const readablePeople =
-      clickerPersonIds.length > 0
-        ? await personRepository.find({
-            where: { id: In(clickerPersonIds) },
-            select: { id: true },
-          })
-        : [];
+    const readablePersonIds = await this.findReadablePersonIds({
+      personIds: clickerPersonIds,
+      personRepository,
+    });
 
     const listId = await this.createList({
       sourceCampaign,
-      personIds: readablePeople.map((person) => person.id),
+      personIds: readablePersonIds,
       authContext,
       messageListRepository,
       messageListMemberRepository,
@@ -202,9 +212,30 @@ export class CampaignFollowUpService {
     return {
       messageCampaignId: draftCampaignId,
       listId,
-      memberCount: readablePeople.length,
-      skippedCount: clickerPersonIds.length - readablePeople.length,
+      memberCount: readablePersonIds.length,
+      skippedCount: clickerPersonIds.length - readablePersonIds.length,
     };
+  }
+
+  private async findReadablePersonIds({
+    personIds,
+    personRepository,
+  }: {
+    personIds: string[];
+    personRepository: WorkspaceRepository<PersonWorkspaceEntity>;
+  }): Promise<string[]> {
+    const readablePersonIds: string[] = [];
+
+    for (const personIdsChunk of chunk(personIds, FIND_BY_ID_CHUNK_SIZE)) {
+      const people = await personRepository.find({
+        where: { id: In(personIdsChunk) },
+        select: { id: true },
+      });
+
+      readablePersonIds.push(...people.map((person) => person.id));
+    }
+
+    return readablePersonIds;
   }
 
   private async createList({

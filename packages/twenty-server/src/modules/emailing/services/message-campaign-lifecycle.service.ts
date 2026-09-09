@@ -19,6 +19,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
+import { type CampaignTrackingFlags } from 'src/modules/emailing/types/campaign-tracking-flags.type';
 import { computeCampaignTerminalStatus } from 'src/modules/emailing/utils/compute-campaign-terminal-status.util';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,9 +30,7 @@ type CampaignStatusTransition = {
   from: MessageCampaignStatus;
   to: MessageCampaignStatus;
   roleId?: string;
-  changes?: Partial<
-    Pick<MessageCampaignWorkspaceEntity, 'isClickTrackingEnabled'>
-  >;
+  changes?: Partial<CampaignTrackingFlags>;
 };
 
 @Injectable()

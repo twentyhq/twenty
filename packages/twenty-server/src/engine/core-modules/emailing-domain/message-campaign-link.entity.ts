@@ -28,8 +28,6 @@ export class MessageCampaignLinkEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'uuid', nullable: false })
   messageCampaignId: string;
 
-  // The link as the marketer wrote it, variables unresolved. A personalized
-  // link yields one row per distinct resolved url; reports group them by this.
   @Column({ type: 'varchar', nullable: false })
   authoredUrl: string;
 

@@ -170,10 +170,11 @@ export class MessageCampaignStatisticsService {
     }
 
     const engagementCounts =
-      await this.campaignEngagementStatisticsService.countEngagedDeliveries({
+      await this.campaignEngagementStatisticsService.computeEngagementCounts({
         workspaceId,
         campaignId,
-        deliveredCount: counts.deliveredCount,
+        sentCount: counts.sentCount,
+        bouncedCount: counts.bouncedCount,
         isClickTrackingEnabled: campaign.isClickTrackingEnabled,
       });
 
@@ -199,7 +200,10 @@ export class MessageCampaignStatisticsService {
       ...(engagementCounts ?? {}),
     };
 
-    if (fastDeepEqual(storedCounts, nextCounts)) {
+    if (
+      !isDefined(engagementCounts) &&
+      fastDeepEqual(storedCounts, nextCounts)
+    ) {
       return;
     }
 
@@ -282,8 +286,6 @@ export class MessageCampaignStatisticsService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  // A late click on an old campaign is itself recent, so the campaigns worth
-  // recomputing are exactly those with events since the last sweep.
   private async findRecentlyEngagedCampaignIds({
     workspaceId,
   }: {

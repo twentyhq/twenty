@@ -26,9 +26,6 @@ import { MessageCampaignFollowUpDraftDTO } from 'src/modules/emailing/dtos/messa
 import { CampaignEngagementReportService } from 'src/modules/emailing/services/campaign-engagement-report.service';
 import { CampaignFollowUpService } from 'src/modules/emailing/services/campaign-follow-up.service';
 
-// Reading a report needs the campaign to be readable under the caller's
-// role, not a settings permission: marketers read reports, admins change
-// settings. The services perform the role-scoped reads and writes.
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard, NoPermissionGuard)
 @UseFilters(
   EmailGroupAccessGraphqlApiExceptionFilter,

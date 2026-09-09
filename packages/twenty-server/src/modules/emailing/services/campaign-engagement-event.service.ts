@@ -7,14 +7,11 @@ import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/forma
 import { parseClickHouseDateTime } from 'src/database/clickhouse/utils/parse-clickhouse-date-time.util';
 import { CampaignEngagementActivityFilter } from 'src/modules/emailing/constants/campaign-engagement-activity-filter.constant';
 import { CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS } from 'src/modules/emailing/constants/campaign-engagement-activity-class.constant';
-import {
-  CAMPAIGN_ENGAGEMENT_EVENT_TABLE,
-  CAMPAIGN_ENGAGEMENT_INSERT_BUSY_TIMEOUT_MS,
-} from 'src/modules/emailing/constants/campaign-engagement-event-table.constant';
-import { type CampaignEngagementEventType } from 'src/modules/emailing/constants/campaign-engagement-event-type.constant';
+import { CAMPAIGN_ENGAGEMENT_EVENT_TABLE } from 'src/modules/emailing/constants/campaign-engagement-event-table.constant';
+import { CAMPAIGN_ENGAGEMENT_INSERT_BUSY_TIMEOUT_MS } from 'src/modules/emailing/constants/campaign-engagement-insert-busy-timeout-ms.constant';
+import { type CampaignEngagementBucket } from 'src/modules/emailing/types/campaign-engagement-bucket.type';
 import { type CampaignEngagementEvent } from 'src/modules/emailing/types/campaign-engagement-event.type';
-
-export type CampaignEngagementBucket = 'hour' | 'day';
+import { type CampaignEngagementEventType } from 'src/modules/emailing/types/campaign-engagement-event-type.type';
 
 type CampaignScope = {
   workspaceId: string;
@@ -22,22 +19,29 @@ type CampaignScope = {
   activityFilter: CampaignEngagementActivityFilter;
 };
 
-// A scanner opens every link of a message within seconds; a person does not.
-const SCANNER_MIN_DISTINCT_DESTINATIONS = 3;
-const SCANNER_MAX_SPREAD_SECONDS = 10;
+const SCANNER_BURST_MIN_DISTINCT_DESTINATIONS = 3;
+const SCANNER_BURST_WINDOW_MS = 10_000;
 
 const CAMPAIGN_SCOPE_CONDITION = `workspaceId = {workspaceId:UUID}
   AND messageCampaignId = {messageCampaignId:UUID}`;
 
-const SCANNER_DELIVERY_SUBQUERY = `SELECT deliveryId
-  FROM ${CAMPAIGN_ENGAGEMENT_EVENT_TABLE}
-  WHERE ${CAMPAIGN_SCOPE_CONDITION} AND eventType = 'CLICK'
-  GROUP BY deliveryId
-  HAVING uniqExact(destinationId) >= ${SCANNER_MIN_DISTINCT_DESTINATIONS}
-    AND dateDiff('second', min(occurredAt), max(occurredAt)) <= ${SCANNER_MAX_SPREAD_SECONDS}`;
+const SCANNER_BURST_EVENT_SUBQUERY = `SELECT eventId
+  FROM (
+    SELECT
+      eventId,
+      uniqExact(destinationId) OVER (
+        PARTITION BY deliveryId
+        ORDER BY toUnixTimestamp64Milli(occurredAt)
+        RANGE BETWEEN ${SCANNER_BURST_WINDOW_MS} PRECEDING
+          AND ${SCANNER_BURST_WINDOW_MS} FOLLOWING
+      ) AS distinctDestinationsInWindow
+    FROM ${CAMPAIGN_ENGAGEMENT_EVENT_TABLE}
+    WHERE ${CAMPAIGN_SCOPE_CONDITION} AND eventType = 'CLICK'
+  )
+  WHERE distinctDestinationsInWindow >= ${SCANNER_BURST_MIN_DISTINCT_DESTINATIONS}`;
 
-const FILTERED_CONDITION = `AND activityClass = '${CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.UNCLASSIFIED}'
-  AND deliveryId NOT IN (${SCANNER_DELIVERY_SUBQUERY})`;
+const FILTERED_CONDITION = `AND activityClass != '${CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.SUSPECTED_AUTOMATION}'
+  AND eventId NOT IN (${SCANNER_BURST_EVENT_SUBQUERY})`;
 
 @Injectable()
 export class CampaignEngagementEventService {
@@ -61,7 +65,6 @@ export class CampaignEngagementEventService {
     }
   }
 
-  // Retries write duplicate rows on purpose; every count here is distinct.
   async findEngagedDeliveryIds({
     eventType,
     ...scope

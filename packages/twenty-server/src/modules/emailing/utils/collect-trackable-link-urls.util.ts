@@ -1,7 +1,5 @@
-import {
-  TRACKABLE_HREF_PATTERN,
-  TRACKABLE_URL_PATTERN,
-} from 'src/modules/emailing/constants/trackable-href-pattern.constant';
+import { TRACKABLE_HREF_PATTERN } from 'src/modules/emailing/constants/trackable-href-pattern.constant';
+import { TRACKABLE_URL_PATTERN } from 'src/modules/emailing/constants/trackable-url-pattern.constant';
 import { decodeHtmlAttributeUrl } from 'src/modules/emailing/utils/decode-html-attribute-url.util';
 
 export const collectTrackableLinkUrls = (html: string): string[] => {

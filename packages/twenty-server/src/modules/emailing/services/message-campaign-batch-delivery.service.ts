@@ -318,10 +318,11 @@ export class MessageCampaignBatchDeliveryService {
   }): Promise<void> {
     const { workspaceId, campaignId, emailingDomainId } = data;
 
-    const { template, variableNames } = await compileCampaignBatchTemplate({
-      subjectTemplate: campaign.subject ?? '',
-      bodyTemplate: campaign.bodyTemplate ?? '',
-    });
+    const { template, textPartHtml, variableNames } =
+      await compileCampaignBatchTemplate({
+        subjectTemplate: campaign.subject ?? '',
+        bodyTemplate: campaign.bodyTemplate ?? '',
+      });
 
     const personRepository = this.workspaceOrmManager.getRepository(
       PersonWorkspaceEntity,
@@ -356,6 +357,7 @@ export class MessageCampaignBatchDeliveryService {
         emailingDomainId,
         campaign,
         template,
+        textPartHtml,
         variableNames,
         recipients: claimedRecipients.map((recipient) => ({
           deliveryId: recipient.messageId,

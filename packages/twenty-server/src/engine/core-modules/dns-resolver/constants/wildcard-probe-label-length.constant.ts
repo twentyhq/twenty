@@ -1,0 +1,1 @@
+export const WILDCARD_PROBE_LABEL_LENGTH = 12;

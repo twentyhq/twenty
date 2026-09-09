@@ -1,6 +1,8 @@
 /* @license Enterprise */
 import { Injectable } from '@nestjs/common';
 
+import { IsNull } from 'typeorm';
+
 import { ManagedHostnameStatus } from 'src/engine/core-modules/dns-manager/types/managed-hostname-status.type';
 import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import { UNSUBSCRIBE_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant';
@@ -30,6 +32,26 @@ export class UnsubscribeHostnameService implements EmailingHostnameProvisioner {
     emailingDomain: EmailingDomainEntity,
   ): Promise<string | null> {
     return `${UNSUBSCRIBE_HOSTNAME_PREFIX}.${emailingDomain.domain}`;
+  }
+
+  async claimHostname({
+    emailingDomain,
+    hostname,
+  }: {
+    emailingDomain: EmailingDomainEntity;
+    hostname: string;
+  }): Promise<boolean> {
+    const { affected } = await this.emailingDomainRepository.update(
+      emailingDomain.workspaceId,
+      {
+        id: emailingDomain.id,
+        unsubscribeHostname: IsNull(),
+        unsubscribeHostnameId: IsNull(),
+      },
+      { unsubscribeHostname: hostname },
+    );
+
+    return (affected ?? 0) > 0;
   }
 
   async persistProvisionedHostname({

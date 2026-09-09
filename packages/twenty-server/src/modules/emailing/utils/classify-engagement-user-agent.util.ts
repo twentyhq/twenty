@@ -1,18 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import {
-  CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS,
-  type CampaignEngagementActivityClass,
-} from 'src/modules/emailing/constants/campaign-engagement-activity-class.constant';
-
-export const CAMPAIGN_ENGAGEMENT_CLASSIFICATION_VERSION = 1;
+import { CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS } from 'src/modules/emailing/constants/campaign-engagement-activity-class.constant';
+import { type CampaignEngagementActivityClass } from 'src/modules/emailing/types/campaign-engagement-activity-class.type';
 
 type UserAgentSignature = { pattern: RegExp; reason: string };
 
 const PRIVACY_PROXY_SIGNATURES: UserAgentSignature[] = [
   { pattern: /GoogleImageProxy/i, reason: 'proxy:google' },
   { pattern: /YahooMailProxy/i, reason: 'proxy:yahoo' },
-  // Apple Mail Privacy Protection fetches with this exact user agent.
   { pattern: /^Mozilla\/5\.0$/, reason: 'proxy:apple' },
 ];
 
