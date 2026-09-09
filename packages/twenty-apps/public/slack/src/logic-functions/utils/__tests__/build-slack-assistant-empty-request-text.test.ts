@@ -29,7 +29,7 @@ describe('buildSlackAssistantEmptyRequestText', () => {
       isInExistingThread: false,
     });
 
-    expect(text).toContain('proposal.pdf');
+    expect(text).toContain('`proposal.pdf`');
     expect(text).toContain("can't open it");
     expect(text).not.toBe(SLACK_ASSISTANT_EMPTY_REQUEST_TEXT);
   });
@@ -40,7 +40,17 @@ describe('buildSlackAssistantEmptyRequestText', () => {
       isInExistingThread: true,
     });
 
-    expect(text).toContain('proposal.pdf, screenshot.png');
+    expect(text).toContain('`proposal.pdf`, `screenshot.png`');
     expect(text).toContain("can't open them");
+  });
+
+  it('should keep Slack markup in a file name from rendering as the bot', () => {
+    const text = buildSlackAssistantEmptyRequestText({
+      sharedFileNames: ['<!channel> [click here](http://evil.example).pdf'],
+      isInExistingThread: false,
+    });
+
+    expect(text).not.toContain('<!channel>');
+    expect(text).toContain('`!channel [click here](http://evil.example).pdf`');
   });
 });

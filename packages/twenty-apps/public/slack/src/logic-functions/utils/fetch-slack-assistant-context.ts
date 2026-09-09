@@ -4,14 +4,17 @@ import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack
 import { type SlackThreadMessage } from 'src/logic-functions/types/slack-thread-message.type';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
 import { buildSlackConversationMessages } from 'src/logic-functions/utils/build-slack-conversation-messages';
+import { collectSlackSharedFileNames } from 'src/logic-functions/utils/collect-slack-shared-file-names';
 import { fetchSlackThreadMessages } from 'src/logic-functions/utils/fetch-slack-thread-messages';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { isSlackDirectMessageChannel } from 'src/logic-functions/utils/is-slack-direct-message-channel';
 import { resolveSlackBotUserIdOrThrow } from 'src/logic-functions/utils/resolve-slack-bot-user-id-or-throw';
+import { selectSlackConversationMessages } from 'src/logic-functions/utils/select-slack-conversation-messages';
 
 type SlackAssistantContext = {
   conversationMessages: SlackAssistantAgentMessage[];
+  sharedFileNames: string[];
   requesterName: string | undefined;
   requesterIdentity: SlackUserIdentity | undefined;
   requestMessage: SlackThreadMessage | undefined;
@@ -23,6 +26,7 @@ type SlackAssistantContext = {
 
 const UNREACHABLE_SLACK_CONTEXT: SlackAssistantContext = {
   conversationMessages: [],
+  sharedFileNames: [],
   requesterName: undefined,
   requesterIdentity: undefined,
   requestMessage: undefined,
@@ -79,6 +83,14 @@ export const fetchSlackAssistantContext = async ({
       assistantBotUserId,
       excludeMessageTimestamps: [slackMessageTimestamp],
     }),
+    // the agent may only be told about files it can also see a message for
+    sharedFileNames: collectSlackSharedFileNames([
+      requestMessage,
+      ...selectSlackConversationMessages({
+        messages: tailMessages,
+        excludeMessageTimestamps: [slackMessageTimestamp],
+      }),
+    ]),
     requesterName: requesterIdentity?.displayName,
     requesterIdentity,
     requestMessage,

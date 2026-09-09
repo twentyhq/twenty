@@ -172,6 +172,31 @@ describe('buildSlackConversationMessages', () => {
     ]);
   });
 
+  it('should not replay files from messages trimmed out of the window', () => {
+    const olderMessages = Array.from({ length: 20 }, (_, index) => ({
+      ts: `${index + 1}`,
+      user: 'U123',
+      text: `message ${index + 1}`,
+    }));
+
+    const messages = buildSlackConversationMessages({
+      messages: [
+        {
+          ts: '0',
+          user: 'U123',
+          files: [{ id: 'F1', name: 'forgotten.pdf' }],
+        },
+        ...olderMessages,
+      ],
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+    });
+
+    expect(messages).toHaveLength(15);
+    expect(
+      messages.some((message) => message.content.includes('forgotten.pdf')),
+    ).toBe(false);
+  });
+
   it('should strip the answered-in footer from replayed assistant turns', () => {
     const messages = buildSlackConversationMessages({
       messages: [

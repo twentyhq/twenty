@@ -20,7 +20,6 @@ import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slac
 import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build-slack-assistant-answer-blocks';
 import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-slack-assistant-messages';
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
-import { collectSlackSharedFileNames } from 'src/logic-functions/utils/collect-slack-shared-file-names';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
@@ -86,6 +85,7 @@ export const slackAssistantWorkerHandler = async (
     const [
       {
         conversationMessages,
+        sharedFileNames,
         requesterName,
         requesterIdentity,
         requestMessage,
@@ -139,10 +139,7 @@ export const slackAssistantWorkerHandler = async (
         runAsWorkspaceMemberId,
         timeoutSeconds: agentBudgetRemainingSeconds,
         workspaceBaseUrl: workspaceBaseUrls[0],
-        sharedFileNames: collectSlackSharedFileNames([
-          requestMessage,
-          ...threadMessages,
-        ]),
+        sharedFileNames,
       }),
       slackChannelId,
       threadTimestamp: parentMessageTimestamp,
