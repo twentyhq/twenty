@@ -5,19 +5,14 @@ import * as prettier from 'prettier';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MODELS_DEV_API_URL } from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.const';
-import { type AiModelBenchmarks } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmarks.type';
 import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-data.type';
 
 import { assertPayloadIsUsable, buildCatalog } from './build-catalog';
+import { enrichCatalog } from './enrich-catalog';
 import { fetchArtificialAnalysisBenchmarks } from './fetch-artificial-analysis';
-import { matchBenchmarks } from './match-benchmarks';
 import { readCommittedBenchmarks } from './read-committed-benchmarks';
 import { buildCoverageReport, renderCoverageReport } from './report-coverage';
-import {
-  type BenchmarkIndex,
-  type GeneratedCatalog,
-  type ObservedPrices,
-} from './types';
+import { type BenchmarkIndex } from './types';
 
 const AI_MODELS_DIR = path.resolve(
   __dirname,
@@ -84,64 +79,6 @@ const fetchBenchmarks = async (): Promise<BenchmarkIndex> => {
 
     return new Map();
   }
-};
-
-// The overlay is the cross-repo artifact: it carries what the catalog embeds
-// plus the alias set and price observations that only a joining consumer needs.
-type BenchmarkOverlayEntry = AiModelBenchmarks & {
-  aliases: string[];
-  artificialAnalysisPrices?: ObservedPrices;
-};
-
-const enrichCatalog = ({
-  catalog,
-  modelsDevData,
-  benchmarkIndex,
-  measuredAt,
-}: {
-  catalog: GeneratedCatalog;
-  modelsDevData: ModelsDevData;
-  benchmarkIndex: BenchmarkIndex;
-  measuredAt: string;
-}): Record<string, BenchmarkOverlayEntry> => {
-  const overlay: Record<string, BenchmarkOverlayEntry> = {};
-
-  for (const [providerName, provider] of Object.entries(catalog)) {
-    const siblingModels = modelsDevData[providerName]?.models ?? {};
-
-    provider.models = provider.models.map((model) => {
-      const match = matchBenchmarks({
-        modelName: model.name,
-        siblingModels,
-        benchmarkIndex,
-        measuredAt,
-      });
-
-      if (!isDefined(match)) {
-        return model;
-      }
-
-      overlay[model.name] = {
-        ...(match.benchmarks ?? { measuredAt }),
-        aliases: match.aliases,
-        artificialAnalysisPrices: match.observedPrices,
-      };
-
-      if (!isDefined(match.benchmarks)) {
-        return model;
-      }
-
-      const { isDeprecated, ...rest } = model;
-
-      return {
-        ...rest,
-        benchmarks: match.benchmarks,
-        ...(isDefined(isDeprecated) ? { isDeprecated } : {}),
-      };
-    });
-  }
-
-  return overlay;
 };
 
 const writeJson = async (filePath: string, value: unknown): Promise<void> => {

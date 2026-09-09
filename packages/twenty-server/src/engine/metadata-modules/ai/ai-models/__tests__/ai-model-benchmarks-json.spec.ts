@@ -14,10 +14,25 @@ describe('ai-model-benchmarks.json integrity', () => {
     expect(benchmarkOverlay.source).toBe('artificialanalysis.ai');
   });
 
-  it('should pass Zod schema validation for every entry', () => {
-    Object.values(OVERLAY_MODELS).forEach((entry) => {
-      expect(() => aiModelBenchmarksSchema.parse(entry)).not.toThrow();
-    });
+  it('should pass Zod schema validation for every measured entry', () => {
+    Object.values(OVERLAY_MODELS)
+      .filter((entry) => 'measuredAt' in (entry as object))
+      .forEach((entry) => {
+        expect(() => aiModelBenchmarksSchema.parse(entry)).not.toThrow();
+      });
+  });
+
+  it('should never hold an entry that says nothing at all', () => {
+    // An undated entry is a price observation, which is the only other reason
+    // a model earns a row here.
+    Object.values(OVERLAY_MODELS)
+      .filter((entry) => !('measuredAt' in (entry as object)))
+      .forEach((entry) => {
+        expect(
+          (entry as { artificialAnalysisPrices?: unknown })
+            .artificialAnalysisPrices,
+        ).toBeDefined();
+      });
   });
 
   it('should agree with the benchmarks merged into the catalog', () => {
