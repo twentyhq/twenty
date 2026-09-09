@@ -468,6 +468,150 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         defaultValue: 0,
       },
     }),
+    isClickTrackingEnabled: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'isClickTrackingEnabled',
+        type: FieldMetadataType.BOOLEAN,
+        label: i18nLabel(
+          msg({ message: `Click tracking`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Whether links were rewritten to count clicks when this campaign was sent`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconClick',
+        isNullable: false,
+        isUIEditable: false,
+        isSystem: true,
+        defaultValue: false,
+      },
+    }),
+    isOpenTrackingEnabled: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'isOpenTrackingEnabled',
+        type: FieldMetadataType.BOOLEAN,
+        label: i18nLabel(
+          msg({ message: `Open tracking`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Whether an open pixel was added when this campaign was sent`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconEye',
+        isNullable: false,
+        isUIEditable: false,
+        isSystem: true,
+        defaultValue: false,
+      },
+    }),
+    openedCount: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'openedCount',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(
+          msg({ message: `Opened count`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Estimated number of recipients who opened the email. Mail clients that prefetch images are excluded when detected`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconEye',
+        isNullable: true,
+        isUIEditable: false,
+      },
+    }),
+    clickedCount: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'clickedCount',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(
+          msg({ message: `Clicked count`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Number of recipients who clicked a link`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconClick',
+        isNullable: true,
+        isUIEditable: false,
+      },
+    }),
+    openRate: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'openRate',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(
+          msg({ message: `Open rate`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Estimated share of delivered emails that were opened`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconEye',
+        isNullable: true,
+        isUIEditable: false,
+        settings: { type: 'percentage', decimals: 1 },
+      },
+    }),
+    clickRate: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'clickRate',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(
+          msg({ message: `Click rate`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Share of delivered emails with at least one click`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconClick',
+        isNullable: true,
+        isUIEditable: false,
+        settings: { type: 'percentage', decimals: 1 },
+      },
+    }),
+    engagementCalculatedAt: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'engagementCalculatedAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({
+            message: `Engagement calculated at`,
+            context: 'fieldMetadata.label',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `When opened and clicked counts were last recomputed`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconClock',
+        isNullable: true,
+        isUIEditable: false,
+        isSystem: true,
+        settings: { displayFormat: DateDisplayFormat.RELATIVE },
+      },
+    }),
     complainedCount: createStandardFieldFlatMetadata({
       ...base,
       context: {

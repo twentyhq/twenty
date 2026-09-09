@@ -176,6 +176,54 @@ export const computeStandardMessageCampaignViewFields = (
         size: 150,
       },
     }),
+    allMessageCampaignsOpenedCount: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'messageCampaign',
+      context: {
+        viewName: 'allMessageCampaigns',
+        viewFieldName: 'openedCount',
+        fieldName: 'openedCount',
+        position: 14,
+        isVisible: true,
+        size: 100,
+      },
+    }),
+    allMessageCampaignsClickedCount: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'messageCampaign',
+      context: {
+        viewName: 'allMessageCampaigns',
+        viewFieldName: 'clickedCount',
+        fieldName: 'clickedCount',
+        position: 15,
+        isVisible: true,
+        size: 100,
+      },
+    }),
+    allMessageCampaignsOpenRate: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'messageCampaign',
+      context: {
+        viewName: 'allMessageCampaigns',
+        viewFieldName: 'openRate',
+        fieldName: 'openRate',
+        position: 16,
+        isVisible: true,
+        size: 100,
+      },
+    }),
+    allMessageCampaignsClickRate: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'messageCampaign',
+      context: {
+        viewName: 'allMessageCampaigns',
+        viewFieldName: 'clickRate',
+        fieldName: 'clickRate',
+        position: 17,
+        isVisible: true,
+        size: 100,
+      },
+    }),
 
     messageCampaignRecordPageFieldsStatus: createStandardViewFieldFlatMetadata({
       ...args,
@@ -284,6 +332,62 @@ export const computeStandardMessageCampaignViewFields = (
           position: 7,
           isVisible: true,
           size: 120,
+          viewFieldGroupName: 'stats',
+        },
+      }),
+    messageCampaignRecordPageFieldsOpenedCount:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'messageCampaign',
+        context: {
+          viewName: 'messageCampaignRecordPageFields',
+          viewFieldName: 'openedCount',
+          fieldName: 'openedCount',
+          position: 8,
+          isVisible: true,
+          size: 100,
+          viewFieldGroupName: 'stats',
+        },
+      }),
+    messageCampaignRecordPageFieldsClickedCount:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'messageCampaign',
+        context: {
+          viewName: 'messageCampaignRecordPageFields',
+          viewFieldName: 'clickedCount',
+          fieldName: 'clickedCount',
+          position: 9,
+          isVisible: true,
+          size: 100,
+          viewFieldGroupName: 'stats',
+        },
+      }),
+    messageCampaignRecordPageFieldsOpenRate:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'messageCampaign',
+        context: {
+          viewName: 'messageCampaignRecordPageFields',
+          viewFieldName: 'openRate',
+          fieldName: 'openRate',
+          position: 10,
+          isVisible: true,
+          size: 100,
+          viewFieldGroupName: 'stats',
+        },
+      }),
+    messageCampaignRecordPageFieldsClickRate:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'messageCampaign',
+        context: {
+          viewName: 'messageCampaignRecordPageFields',
+          viewFieldName: 'clickRate',
+          fieldName: 'clickRate',
+          position: 11,
+          isVisible: true,
+          size: 100,
           viewFieldGroupName: 'stats',
         },
       }),

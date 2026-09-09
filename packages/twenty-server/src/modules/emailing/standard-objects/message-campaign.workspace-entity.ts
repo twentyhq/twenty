@@ -19,6 +19,13 @@ export class MessageCampaignWorkspaceEntity extends BaseWorkspaceEntity {
   bouncedCount: number;
   complainedCount: number;
   skippedCount: number;
+  isClickTrackingEnabled: boolean;
+  isOpenTrackingEnabled: boolean;
+  openedCount: number | null;
+  clickedCount: number | null;
+  openRate: number | null;
+  clickRate: number | null;
+  engagementCalculatedAt: Date | null;
   unsubscribeTopicId: string | null;
   list: EntityRelation<MessageListWorkspaceEntity> | null;
   listId: string | null;

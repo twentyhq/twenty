@@ -1149,6 +1149,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "bouncedCount": {
         "universalIdentifier": "20d884a9-34dd-4667-8ecb-ceec224258e2",
       },
+      "clickRate": {
+        "universalIdentifier": "d2a4f584-ba62-46f1-b6ea-816a7dd8dafe",
+      },
+      "clickedCount": {
+        "universalIdentifier": "9c8a97b3-bcbd-45a5-8387-e4aeb462ec32",
+      },
       "complainedCount": {
         "universalIdentifier": "82842cfa-f12a-4bab-bbde-b2cf587d0406",
       },
@@ -1164,6 +1170,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "deliveredCount": {
         "universalIdentifier": "f4ee1d33-7379-42fe-ad63-e023449baea6",
       },
+      "engagementCalculatedAt": {
+        "universalIdentifier": "95fbdaff-6083-490d-96ed-0ee8898673aa",
+      },
       "failedCount": {
         "universalIdentifier": "d373fcd7-b1ce-4c77-8031-a5785c475028",
       },
@@ -1173,6 +1182,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "id": {
         "universalIdentifier": "255754f9-e5ff-587b-9ee7-58fd8b7f7212",
       },
+      "isClickTrackingEnabled": {
+        "universalIdentifier": "41a696f4-e811-45a5-b51a-5cdd2eb6a77c",
+      },
+      "isOpenTrackingEnabled": {
+        "universalIdentifier": "4cf0e822-428d-4295-8ba2-616f61eb76df",
+      },
       "list": {
         "universalIdentifier": "cb24dcdf-f0e8-4c71-8cff-70b714e86530",
       },
@@ -1181,6 +1196,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "name": {
         "universalIdentifier": "dc8bca0e-37c4-4b78-814d-2e91124274e3",
+      },
+      "openRate": {
+        "universalIdentifier": "8706eb94-7f1b-4073-8c78-633e7dace5f3",
+      },
+      "openedCount": {
+        "universalIdentifier": "165f336a-b626-48a5-9dcb-0a416ffceca1",
       },
       "position": {
         "universalIdentifier": "e43f6c94-602c-54af-a398-559510beb43b",
@@ -1238,6 +1259,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "bouncedCount": {
             "universalIdentifier": "3c273c7f-b577-5213-8597-198dac6fdae1",
           },
+          "clickRate": {
+            "universalIdentifier": "5caebe9f-5809-57c9-9ccc-a9ffb68a2ad6",
+          },
+          "clickedCount": {
+            "universalIdentifier": "9d3cc669-eaa5-5612-80f6-41a35bc15aa4",
+          },
           "complainedCount": {
             "universalIdentifier": "30317d2b-5212-56be-a5fe-0ab15722dde3",
           },
@@ -1258,6 +1285,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "name": {
             "universalIdentifier": "5a224d5d-9ae7-53c8-ad6d-720bb62a087b",
+          },
+          "openRate": {
+            "universalIdentifier": "864b2182-c621-53b8-a484-18e0263328a1",
+          },
+          "openedCount": {
+            "universalIdentifier": "b290b4ee-5093-572c-9b4a-16e679471316",
           },
           "recipients": {
             "universalIdentifier": "40f278c1-2716-5324-8035-c14ea62a4eb7",
@@ -1290,6 +1323,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "bouncedCount": {
             "universalIdentifier": "4c4caad8-5d4c-5584-b7ae-22766c382843",
           },
+          "clickRate": {
+            "universalIdentifier": "37eea500-4839-5549-8ee8-000676e4e587",
+          },
+          "clickedCount": {
+            "universalIdentifier": "1e442c18-4b68-57a4-9611-f8094cd683be",
+          },
           "complainedCount": {
             "universalIdentifier": "7188a9aa-4821-5ae6-adec-642a7aca271b",
           },
@@ -1298,6 +1337,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "failedCount": {
             "universalIdentifier": "a46efdb6-a451-5dfe-bd85-a5b9a6a0306a",
+          },
+          "openRate": {
+            "universalIdentifier": "55653cd3-0157-5e66-b83e-a94501efff87",
+          },
+          "openedCount": {
+            "universalIdentifier": "7120e503-dc98-555c-b077-effa5502baad",
           },
           "sentAt": {
             "universalIdentifier": "4de342aa-3734-5dfd-9612-88d3e7f4b808",
