@@ -9092,16 +9092,7 @@ export default {
                     ]
                 }
             ],
-            "createAppTarballUpload": [
-                150,
-                {
-                    "size": [
-                        15,
-                        "Float!"
-                    ]
-                }
-            ],
-            "completeAppTarballUpload": [
+            "publishAppTarball": [
                 75,
                 {
                     "fileId": [
@@ -10064,36 +10055,6 @@ export default {
                     ]
                 }
             ],
-            "createNewWorkspaceLogoUpload": [
-                150,
-                {
-                    "workspaceId": [
-                        1,
-                        "String!"
-                    ],
-                    "filename": [
-                        1,
-                        "String!"
-                    ],
-                    "size": [
-                        15,
-                        "Float!"
-                    ]
-                }
-            ],
-            "completeNewWorkspaceLogoUpload": [
-                149,
-                {
-                    "workspaceId": [
-                        1,
-                        "String!"
-                    ],
-                    "fileId": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
             "generateTransientToken": [
                 276
             ],
@@ -10520,8 +10481,7 @@ export default {
                 300,
                 {
                     "applicationUniversalIdentifier": [
-                        1,
-                        "String!"
+                        1
                     ],
                     "files": [
                         563,
@@ -10533,8 +10493,7 @@ export default {
                 296,
                 {
                     "applicationUniversalIdentifier": [
-                        1,
-                        "String!"
+                        1
                     ],
                     "fileIds": [
                         3,
@@ -12118,9 +12077,6 @@ export default {
             ],
             "logo": [
                 1
-            ],
-            "logoFileId": [
-                3
             ],
             "inviteHash": [
                 1

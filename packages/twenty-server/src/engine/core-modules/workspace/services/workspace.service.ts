@@ -111,7 +111,6 @@ export class WorkspaceService {
     customDomain: PermissionFlagType.WORKSPACE,
     displayName: PermissionFlagType.WORKSPACE,
     logo: PermissionFlagType.WORKSPACE,
-    logoFileId: PermissionFlagType.WORKSPACE,
     trashRetentionDays: PermissionFlagType.WORKSPACE,
     eventLogRetentionDays: PermissionFlagType.SECURITY,
     inviteHash: PermissionFlagType.WORKSPACE_MEMBERS,
@@ -316,19 +315,12 @@ export class WorkspaceService {
       }
     }
 
-    const previousLogoFileId = workspace.logoFileId;
-    const isLogoRemoved = payload.logo === null;
-    const isLogoReplaced =
-      isDefined(payload.logoFileId) &&
-      payload.logoFileId !== previousLogoFileId;
-
     let updatedWorkspace: WorkspaceEntity;
 
     try {
       updatedWorkspace = await this.workspaceRepository.save({
         ...workspace,
         ...payload,
-        ...(isLogoRemoved ? { logoFileId: null } : {}),
       });
     } catch (error) {
       if (payload.customDomain && customDomainRegistered) {
@@ -346,9 +338,9 @@ export class WorkspaceService {
       workspace.id,
     );
 
-    if ((isLogoRemoved || isLogoReplaced) && isDefined(previousLogoFileId)) {
+    if (payload.logo === null && isDefined(workspace.logoFileId)) {
       await this.fileCorePictureService.deleteCorePicture({
-        fileId: previousLogoFileId,
+        fileId: workspace.logoFileId,
         workspaceId: workspace.id,
       });
     }

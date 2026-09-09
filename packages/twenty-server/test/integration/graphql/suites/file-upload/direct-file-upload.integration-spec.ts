@@ -48,13 +48,6 @@ const deleteFileMutation = gql`
   }
 `;
 
-// Completion sniffs magic bytes and rejects content that contradicts the
-// extension, so a core picture test needs real image bytes.
-const ONE_PIXEL_PNG = Buffer.from(
-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
-  'base64',
-);
-
 describe('direct file upload (createFileUpload / completeFileUpload)', () => {
   let createdObjectMetadataId: string;
   let createdFieldMetadataId: string;
@@ -316,44 +309,11 @@ describe('direct file upload (createFileUpload / completeFileUpload)', () => {
     expect(putResponse.status).toBe(403);
   });
 
-  it('should upload a core picture end to end', async () => {
-    const createResponse = await createFileUpload({
-      filename: 'picture.png',
-      size: ONE_PIXEL_PNG.length,
-      fileFolder: 'CorePicture',
-    });
-
-    expect(createResponse.status).toBe(200);
-    expect(createResponse.body.errors).toBeUndefined();
-
-    const uploadTarget = createResponse.body.data.createFileUpload;
-
-    uploadedFileIds.push(uploadTarget.fileId);
-
-    const putResponse = await putFileToUploadUrl(
-      uploadTarget.uploadUrl,
-      uploadTarget.contentType,
-      ONE_PIXEL_PNG,
-    );
-
-    expect(putResponse.status).toBe(204);
-
-    const completeResponse = await completeFileUpload(uploadTarget.fileId);
-
-    expect(completeResponse.status).toBe(200);
-    expect(completeResponse.body.errors).toBeUndefined();
-
-    const completedFile = completeResponse.body.data.completeFileUpload;
-
-    expect(completedFile.path).toContain(FileFolder.CorePicture);
-    expect(completedFile.size).toBe(ONE_PIXEL_PNG.length);
-  });
-
   it('should reject file folders without direct upload support', async () => {
     const createResponse = await createFileUpload({
-      filename: 'source.ts',
+      filename: 'picture.png',
       size: 10,
-      fileFolder: 'Source',
+      fileFolder: 'CorePicture',
     });
 
     expect(createResponse.body.errors).toBeDefined();

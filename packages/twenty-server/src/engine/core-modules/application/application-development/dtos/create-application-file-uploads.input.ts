@@ -7,6 +7,7 @@ import {
   IsArray,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -30,9 +31,10 @@ export class ApplicationFileUploadRequestInput {
 
 @ArgsType()
 export class CreateApplicationFileUploadsInput {
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsNotEmpty()
-  applicationUniversalIdentifier: string;
+  applicationUniversalIdentifier?: string;
 
   @Field(() => [ApplicationFileUploadRequestInput])
   @IsArray()

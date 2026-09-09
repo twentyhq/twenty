@@ -143,25 +143,6 @@ export class FileCorePictureService {
     };
   }
 
-  async attachWorkspaceLogo({
-    workspace,
-    fileId,
-  }: {
-    workspace: WorkspaceEntity;
-    fileId: string;
-  }): Promise<void> {
-    await this.workspaceRepository.update(workspace.id, {
-      logoFileId: fileId,
-    });
-
-    if (isDefined(workspace.logoFileId) && workspace.logoFileId !== fileId) {
-      await this.deleteCorePicture({
-        fileId: workspace.logoFileId,
-        workspaceId: workspace.id,
-      });
-    }
-  }
-
   async getPendingWorkspaceForLogoUploadOrThrow({
     userId,
     workspaceId,

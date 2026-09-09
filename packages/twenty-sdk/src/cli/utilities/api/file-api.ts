@@ -3,11 +3,12 @@ import { isMissingMutationError } from '@/cli/utilities/api/is-missing-mutation-
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { putFileToUploadUrl } from '@/cli/utilities/file/put-file-to-upload-url';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
+import { randomUUID } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
 import { type FileFolder } from 'twenty-shared/types';
-import { pascalCase } from 'twenty-shared/utils';
+import { isDefined, pascalCase } from 'twenty-shared/utils';
 
 const MIME_TYPES: Record<string, string> = {
   '.jpg': 'image/jpeg',
@@ -50,13 +51,6 @@ const getMimeType = (filename: string): string => {
   const ext = path.extname(filename).toLowerCase();
 
   return MIME_TYPES[ext] || 'application/octet-stream';
-};
-
-export type AppTarballUploadTarget = {
-  fileId: string;
-  uploadUrl: string;
-  contentType: string;
-  expiresAt: string;
 };
 
 export type AppRegistrationSummary = {
@@ -110,15 +104,24 @@ export class FileApi {
     tarballPath: string;
     universalIdentifier?: string;
   }): Promise<ApiResponse<AppRegistrationSummary>> {
-    const size = fs.statSync(tarballPath).size;
+    const filePath = `${randomUUID()}/app.tar.gz`;
 
-    const createResult = await this.createAppTarballUpload({ size });
+    const createResult = await this.createApplicationFileUploads({
+      files: [
+        {
+          fileFolder: 'app-tarball' as FileFolder,
+          filePath,
+          size: fs.statSync(tarballPath).size,
+        },
+      ],
+    });
 
     if (!createResult.success) {
       if (
         isMissingMutationError(createResult.error ?? createResult.message, [
-          'createAppTarballUpload',
-          'CreateAppTarballUpload',
+          'createApplicationFileUploads',
+          'ApplicationFileUploadRequestInput',
+          'CreateApplicationFileUploads',
         ])
       ) {
         return this.uploadAppTarball({
@@ -130,7 +133,15 @@ export class FileApi {
       return createResult;
     }
 
-    const target = createResult.data;
+    const [target] = createResult.data.targets;
+    const [createError] = createResult.data.errors;
+
+    if (target === undefined) {
+      return {
+        success: false,
+        error: createError?.message ?? 'Failed to create tarball upload',
+      };
+    }
 
     try {
       await putFileToUploadUrl({
@@ -142,37 +153,27 @@ export class FileApi {
       return { success: false, error: serializeError(error) };
     }
 
-    return this.completeAppTarballUpload({
+    const completeResult = await this.completeApplicationFileUploads({
+      fileIds: [target.fileId],
+    });
+
+    if (!completeResult.success) {
+      return completeResult;
+    }
+
+    const [completeError] = completeResult.data.errors;
+
+    if (isDefined(completeError)) {
+      return { success: false, error: completeError.message };
+    }
+
+    return this.publishAppTarball({
       fileId: target.fileId,
       universalIdentifier,
     });
   }
 
-  async createAppTarballUpload({
-    size,
-  }: {
-    size: number;
-  }): Promise<ApiResponse<AppTarballUploadTarget>> {
-    const mutation = `
-      mutation CreateAppTarballUpload($size: Float!) {
-        createAppTarballUpload(size: $size) {
-          fileId
-          uploadUrl
-          contentType
-          expiresAt
-        }
-      }
-    `;
-
-    return this.runMetadataMutation<AppTarballUploadTarget>({
-      mutation,
-      variables: { size },
-      resultKey: 'createAppTarballUpload',
-      defaultErrorMessage: 'Failed to create tarball upload',
-    });
-  }
-
-  async completeAppTarballUpload({
+  async publishAppTarball({
     fileId,
     universalIdentifier,
   }: {
@@ -180,8 +181,8 @@ export class FileApi {
     universalIdentifier?: string;
   }): Promise<ApiResponse<AppRegistrationSummary>> {
     const mutation = `
-      mutation CompleteAppTarballUpload($fileId: String!, $universalIdentifier: String) {
-        completeAppTarballUpload(fileId: $fileId, universalIdentifier: $universalIdentifier) {
+      mutation PublishAppTarball($fileId: String!, $universalIdentifier: String) {
+        publishAppTarball(fileId: $fileId, universalIdentifier: $universalIdentifier) {
           id
           universalIdentifier
           name
@@ -192,8 +193,8 @@ export class FileApi {
     return this.runMetadataMutation<AppRegistrationSummary>({
       mutation,
       variables: { fileId, universalIdentifier: universalIdentifier ?? null },
-      resultKey: 'completeAppTarballUpload',
-      defaultErrorMessage: 'Failed to finalize tarball upload',
+      resultKey: 'publishAppTarball',
+      defaultErrorMessage: 'Failed to publish tarball',
     });
   }
 
@@ -429,11 +430,11 @@ export class FileApi {
     applicationUniversalIdentifier,
     files,
   }: {
-    applicationUniversalIdentifier: string;
+    applicationUniversalIdentifier?: string;
     files: ApplicationFileUploadRequest[];
   }): Promise<ApiResponse<CreateApplicationFileUploadsResult>> {
     const mutation = `
-      mutation CreateApplicationFileUploads($applicationUniversalIdentifier: String!, $files: [ApplicationFileUploadRequestInput!]!) {
+      mutation CreateApplicationFileUploads($applicationUniversalIdentifier: String, $files: [ApplicationFileUploadRequestInput!]!) {
         createApplicationFileUploads(applicationUniversalIdentifier: $applicationUniversalIdentifier, files: $files) {
           targets {
             fileId
@@ -454,7 +455,7 @@ export class FileApi {
     return this.runMetadataMutation<CreateApplicationFileUploadsResult>({
       mutation,
       variables: {
-        applicationUniversalIdentifier,
+        applicationUniversalIdentifier: applicationUniversalIdentifier ?? null,
         files: files.map(({ fileFolder, filePath, size }) => ({
           fileFolder: pascalCase(fileFolder),
           filePath,
@@ -470,11 +471,11 @@ export class FileApi {
     applicationUniversalIdentifier,
     fileIds,
   }: {
-    applicationUniversalIdentifier: string;
+    applicationUniversalIdentifier?: string;
     fileIds: string[];
   }): Promise<ApiResponse<CompleteApplicationFileUploadsResult>> {
     const mutation = `
-      mutation CompleteApplicationFileUploads($applicationUniversalIdentifier: String!, $fileIds: [UUID!]!) {
+      mutation CompleteApplicationFileUploads($applicationUniversalIdentifier: String, $fileIds: [UUID!]!) {
         completeApplicationFileUploads(applicationUniversalIdentifier: $applicationUniversalIdentifier, fileIds: $fileIds) {
           files {
             id
@@ -490,7 +491,10 @@ export class FileApi {
 
     return this.runMetadataMutation<CompleteApplicationFileUploadsResult>({
       mutation,
-      variables: { applicationUniversalIdentifier, fileIds },
+      variables: {
+        applicationUniversalIdentifier: applicationUniversalIdentifier ?? null,
+        fileIds,
+      },
       resultKey: 'completeApplicationFileUploads',
       defaultErrorMessage: 'Failed to complete application file uploads',
     });

@@ -22,7 +22,6 @@ import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
@@ -52,7 +51,6 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     JwtModule,
     PermissionsModule,
     FileStorageModule,
-    FileUploadModule,
     FileUrlModule,
     MetricsModule,
     WorkspaceCacheStorageModule,
