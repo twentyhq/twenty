@@ -1,24 +1,19 @@
-import { type AiSdkPackage, type DataResidency } from 'twenty-shared/ai';
 import { type AiModelBenchmark } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmark.type';
 import { type LongContextCost } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.type';
 import { type ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 
-export type AiModelConfig = {
-  // Composite model id (`provider/modelName`) used in the registry and GraphQL; same shape as SDK routing when applicable.
-  modelId: string;
-  sdkPackage: AiSdkPackage;
+export type GeneratedModel = {
+  name: string;
   label: string;
-  description: string;
+  description?: string;
   modelFamily?: ModelFamily;
-  dataResidency?: DataResidency;
-  zeroDataRetention?: boolean;
-  inputCostPerMillionTokens: number;
-  outputCostPerMillionTokens: number;
-  contextWindowTokens: number;
-  maxOutputTokens: number;
+  inputCostPerMillionTokens?: number;
+  outputCostPerMillionTokens?: number;
   cachedInputCostPerMillionTokens?: number;
   cacheCreationCostPerMillionTokens?: number;
   longContextCost?: LongContextCost;
+  contextWindowTokens?: number;
+  maxOutputTokens?: number;
   modalities?: string[];
   supportsReasoning?: boolean;
   benchmark?: AiModelBenchmark;
