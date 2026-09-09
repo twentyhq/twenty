@@ -157,6 +157,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
           <FieldWidgetRelationTable
             fieldDefinition={fieldDefinition}
             recordId={targetRecord.id}
+            junctionConfig={junctionConfig}
           />
         );
       }

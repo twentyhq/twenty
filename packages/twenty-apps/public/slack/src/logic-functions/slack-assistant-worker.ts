@@ -11,9 +11,10 @@ import {
   SLACK_ASSISTANT_WORKER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
+import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
+import { SLACK_ASSISTANT_REQUEST_OBJECT_NAME } from 'src/logic-functions/constants/slack-assistant-request-object-name';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-worker-timeout-seconds';
-import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
@@ -26,11 +27,10 @@ import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspac
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
-import { runSlackAssistantAgentWithStatus } from 'src/logic-functions/utils/run-slack-assistant-agent-with-status';
+import { runSlackAssistantAgentWithDeadline } from 'src/logic-functions/utils/run-slack-assistant-agent-with-deadline';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
+import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
-
-const SLACK_ASSISTANT_REQUEST_OBJECT_NAME = 'slackAssistantRequest';
 
 type SlackAssistantRequestCreatedEvent = DatabaseEventPayload<
   ObjectRecordCreateEvent<SlackAssistantRequestRecord>
@@ -81,6 +81,11 @@ export const slackAssistantWorkerHandler = async (
     parentMessageTimestamp,
   };
 
+  const stopStatusUpdates = startSlackAssistantStatusUpdates({
+    slackChannelId,
+    threadTimestamp: parentMessageTimestamp,
+  });
+
   try {
     const [
       {
@@ -128,7 +133,7 @@ export const slackAssistantWorkerHandler = async (
       0,
     );
 
-    const agentResult = await runSlackAssistantAgentWithStatus({
+    const agentResult = await runSlackAssistantAgentWithDeadline({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
       runAsWorkspaceMemberId,
       messages: buildSlackAssistantMessages({
@@ -139,10 +144,8 @@ export const slackAssistantWorkerHandler = async (
         timeoutSeconds: agentBudgetRemainingSeconds,
         workspaceBaseUrl: workspaceBaseUrls[0],
       }),
-      slackChannelId,
-      threadTimestamp: parentMessageTimestamp,
       deadlineAtMs: agentDeadlineAtMs,
-    });
+    }).finally(() => stopStatusUpdates());
 
     if (!agentResult.success) {
       return await finishSlackAssistantRequestWithFailure({
@@ -156,7 +159,7 @@ export const slackAssistantWorkerHandler = async (
     if (responseText === undefined) {
       return await finishSlackAssistantRequestWithFailure({
         ...failureContext,
-        errorMessage: 'Agent returned an empty response',
+        errorMessage: SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR,
       });
     }
 
@@ -167,13 +170,11 @@ export const slackAssistantWorkerHandler = async (
       messageFormat: 'markdown',
       unfurlLinks: false,
       unfurlMedia: false,
-      messageBlocks:
-        responseText.length > SLACK_MARKDOWN_BLOCK_MAX_LENGTH
-          ? undefined
-          : buildSlackAssistantAnswerBlocks({
-              responseText,
-              requestId: record.id,
-            }),
+      messageBlocks: buildSlackAssistantAnswerBlocks({
+        responseText,
+        requestId: record.id,
+        workspaceBaseUrl: workspaceBaseUrls[0],
+      }),
     });
 
     if (!deliveryResult.success) {
@@ -206,6 +207,8 @@ export const slackAssistantWorkerHandler = async (
 
     return { done: true };
   } catch (error) {
+    await stopStatusUpdates();
+
     return await finishSlackAssistantRequestWithFailure({
       ...failureContext,
       errorMessage:

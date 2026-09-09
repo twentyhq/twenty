@@ -1,39 +1,139 @@
 /* @license Enterprise */
 
-import { subMonths, subYears } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
+
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { shiftUtcMonths } from 'src/engine/core-modules/billing/utils/shift-utc-months.util';
 
 export type BillingPeriodTransition = {
   closingPeriodStart: Date;
   closingPeriodEnd: Date;
   nextPeriodStart: Date;
-  nextPeriodEnd: Date;
+  // Whether the period being closed is the trial. Its allowance comes from
+  // config rather than the price, which only applies once paid.
+  isFirstPeriodAfterTrial: boolean;
 };
 
-// A subscription_cycle invoice is raised at the instant one period hands over
-// to the next, and Stripe stamps it with the period it bills in advance. So its
-// period_start is the transition instant: the closing period ends there and the
-// new one starts there.
-export const deriveBillingPeriodTransition = ({
-  invoicePeriodStart,
-  invoicePeriodEnd,
+// Stripe stamps the trial end and the boundary from the same schedule, so they
+// agree to the second; the slack only absorbs rounding.
+const TRIAL_END_TOLERANCE_IN_MS = 60 * 1000;
+
+const subtractOneInterval = ({
+  date,
+  interval,
+}: {
+  date: Date;
+  interval: SubscriptionInterval;
+}): Date =>
+  shiftUtcMonths({
+    date,
+    months: interval === SubscriptionInterval.Year ? -12 : -1,
+  });
+
+const resolveClosingPeriodStart = ({
+  boundary,
   subscriptionCurrentPeriodStart,
-  subscriptionCurrentPeriodEnd,
   subscriptionInterval,
   trialStart,
   isFirstPeriodAfterTrial,
   subscriptionPreviousPeriodStart,
   ledgerPeriodStart,
 }: {
-  invoicePeriodStart: Date;
-  invoicePeriodEnd: Date;
+  boundary: Date;
   subscriptionCurrentPeriodStart: Date;
-  subscriptionCurrentPeriodEnd: Date;
-  subscriptionInterval: SubscriptionInterval;
+  // Nullable on the subscription despite its type. Only the calendar fallback
+  // below needs it, and that branch refuses rather than assuming a length.
+  subscriptionInterval: SubscriptionInterval | null | undefined;
   trialStart: Date | null | undefined;
   isFirstPeriodAfterTrial: boolean;
+  subscriptionPreviousPeriodStart: Date | null;
+  ledgerPeriodStart: Date | null;
+}): Date => {
+  if (isFirstPeriodAfterTrial && isDefined(trialStart)) {
+    return trialStart;
+  }
+
+  // Stripe reports one window at a time, so at the instant a cycle invoice is
+  // raised the subscription either still holds the period that is closing or
+  // has already been moved on to the next one. In the first case it still
+  // carries the closing period's exact start and nothing has to be
+  // reconstructed.
+  if (boundary.getTime() !== subscriptionCurrentPeriodStart.getTime()) {
+    return subscriptionCurrentPeriodStart;
+  }
+
+  // Recorded when the subscription advanced, so it is exact whatever the
+  // anchor. Calendar arithmetic cannot reproduce it for month-end anchors: a
+  // period running January 31 to February 28 comes back as starting January
+  // 28, which widens the usage window into the period before and drags
+  // already expired grants back into the carry-forward.
+  if (
+    isDefined(subscriptionPreviousPeriodStart) &&
+    subscriptionPreviousPeriodStart.getTime() < boundary.getTime()
+  ) {
+    return subscriptionPreviousPeriodStart;
+  }
+
+  // Only until each subscription has transitioned once with the column in
+  // place. The ledger records the boundary whenever the previous transition
+  // closed a grant there, which is most workspaces but not all.
+  if (
+    isDefined(ledgerPeriodStart) &&
+    ledgerPeriodStart.getTime() < boundary.getTime()
+  ) {
+    return ledgerPeriodStart;
+  }
+
+  // Nothing on record says where the closing period began, so the only way
+  // left is to step back one interval — and without one there is no honest
+  // guess. Treating a missing interval as monthly would settle a yearly
+  // subscription against a month of usage and roll eleven months of allowance
+  // forward as unspent. Throwing fails the webhook so Stripe redelivers it,
+  // and a settlement that is late beats one that is wrong.
+  if (!isDefined(subscriptionInterval)) {
+    throw new BillingException(
+      `Cannot settle the period closing at ${boundary.toISOString()}: the subscription records no interval and neither it nor the ledger says where the period began`,
+      BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
+    );
+  }
+
+  // Calendar arithmetic, not the invoiced duration: consecutive periods
+  // differ in length, so a February renewal bills 28 days and subtracting
+  // those from February 1 would place the closing period at January 4 and
+  // drop three days of usage, which then reads as unspent allowance.
+  return subtractOneInterval({
+    date: boundary,
+    interval: subscriptionInterval,
+  });
+};
+
+export const deriveBillingPeriodTransition = ({
+  boundary,
+  subscriptionCurrentPeriodStart,
+  subscriptionInterval,
+  trialStart,
+  trialEnd,
+  subscriptionPreviousPeriodStart,
+  ledgerPeriodStart,
+}: {
+  // Resolved through resolveBillingTransitionBoundary before the ledger is
+  // read, since which period start the ledger is asked for depends on it.
+  boundary: Date;
+  subscriptionCurrentPeriodStart: Date;
+  // Nullable on the subscription despite its type. Only the calendar fallback
+  // needs it, and that branch refuses rather than assuming a length.
+  subscriptionInterval: SubscriptionInterval | null | undefined;
+  trialStart: Date | null | undefined;
+  // A trial ends at a period handover, so this transition closes the trial
+  // exactly when the boundary it settles is the trial end. Compared against
+  // that resolved boundary and never against the invoice's stamped period,
+  // which on an arrears-stamped invoice reports the window that just closed.
+  trialEnd: Date | null | undefined;
   // Where the subscription recorded the previous period starting, captured when
   // it advanced. Null for a subscription that has not transitioned since the
   // column was added.
@@ -42,57 +142,25 @@ export const deriveBillingPeriodTransition = ({
   // subscription has no record of it.
   ledgerPeriodStart: Date | null;
 }): BillingPeriodTransition => {
-  const boundary = invoicePeriodStart;
+  const isFirstPeriodAfterTrial =
+    isDefined(trialEnd) &&
+    Math.abs(boundary.getTime() - trialEnd.getTime()) <=
+      TRIAL_END_TOLERANCE_IN_MS;
 
-  const nextPeriodEnd =
-    invoicePeriodEnd.getTime() > boundary.getTime()
-      ? invoicePeriodEnd
-      : subscriptionCurrentPeriodEnd;
-
-  const closingPeriodStart = (() => {
-    if (isFirstPeriodAfterTrial && isDefined(trialStart)) {
-      return trialStart;
-    }
-
-    if (subscriptionCurrentPeriodStart.getTime() < boundary.getTime()) {
-      return subscriptionCurrentPeriodStart;
-    }
-
-    // Recorded when the subscription advanced, so it is exact whatever the
-    // anchor. Calendar arithmetic cannot reproduce it for month-end anchors: a
-    // period running January 31 to February 28 comes back as starting January
-    // 28, which widens the usage window into the period before and drags
-    // already expired grants back into the carry-forward.
-    if (
-      isDefined(subscriptionPreviousPeriodStart) &&
-      subscriptionPreviousPeriodStart.getTime() < boundary.getTime()
-    ) {
-      return subscriptionPreviousPeriodStart;
-    }
-
-    // Only until each subscription has transitioned once with the column in
-    // place. The ledger records the boundary whenever the previous transition
-    // closed a grant there, which is most workspaces but not all.
-    if (
-      isDefined(ledgerPeriodStart) &&
-      ledgerPeriodStart.getTime() < boundary.getTime()
-    ) {
-      return ledgerPeriodStart;
-    }
-
-    // Calendar arithmetic, not the invoiced duration: consecutive periods
-    // differ in length, so a February renewal bills 28 days and subtracting
-    // those from February 1 would place the closing period at January 4 and
-    // drop three days of usage, which then reads as unspent allowance.
-    return subscriptionInterval === SubscriptionInterval.Year
-      ? subYears(boundary, 1)
-      : subMonths(boundary, 1);
-  })();
+  const closingPeriodStart = resolveClosingPeriodStart({
+    boundary,
+    subscriptionCurrentPeriodStart,
+    subscriptionInterval,
+    trialStart,
+    isFirstPeriodAfterTrial,
+    subscriptionPreviousPeriodStart,
+    ledgerPeriodStart,
+  });
 
   return {
     closingPeriodStart,
     closingPeriodEnd: boundary,
     nextPeriodStart: boundary,
-    nextPeriodEnd,
+    isFirstPeriodAfterTrial,
   };
 };

@@ -1,19 +1,25 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  MessageCampaignStatus,
+} from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
-  CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH,
   CampaignEnvelopeBox,
+  CampaignEnvelopeRow,
 } from '@/activities/emails/components/CampaignEnvelopeBox';
-import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
+import { formatCampaignSendTime } from '@/activities/emails/utils/formatCampaignSendTime';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 const StyledValue = styled.span`
   color: ${themeCssVariables.font.color.primary};
@@ -42,6 +48,8 @@ export const CampaignSentEnvelope = ({
 }: CampaignSentEnvelopeProps) => {
   const { unsubscribeTopics, loading: areTopicsLoading } =
     useUnsubscribeTopics();
+  const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   // withSoftDeleted so a list deleted after the send still names what the
   // campaign went to.
@@ -80,22 +88,27 @@ export const CampaignSentEnvelope = ({
   const isTopicUnresolved =
     hasUnsubscribeTopic && !isDefined(unsubscribeTopic) && !areTopicsLoading;
 
+  const scheduledSendTime =
+    campaign.status === MessageCampaignStatus.SCHEDULED
+      ? formatCampaignSendTime({
+          value: campaign.scheduledAt,
+          timeZone,
+          dateFormat,
+          timeFormat,
+          localeCatalog,
+        })
+      : '';
+
   return (
     <CampaignEnvelopeBox width={width}>
-      <ComposerFieldRow
-        label={t`From`}
-        labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
-      >
+      <CampaignEnvelopeRow label={t`From`}>
         {isNonEmptyString(fromAddress) ? (
           <StyledValue>{fromAddress}</StyledValue>
         ) : (
           <StyledEmptyValue>{t`No sender`}</StyledEmptyValue>
         )}
-      </ComposerFieldRow>
-      <ComposerFieldRow
-        label={t`To`}
-        labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
-      >
+      </CampaignEnvelopeRow>
+      <CampaignEnvelopeRow label={t`To`}>
         {isDefined(list) ? (
           <RecordChip
             record={list}
@@ -108,12 +121,9 @@ export const CampaignSentEnvelope = ({
             <StyledEmptyValue>{t`Unavailable`}</StyledEmptyValue>
           )
         )}
-      </ComposerFieldRow>
+      </CampaignEnvelopeRow>
       {hasUnsubscribeTopic && (
-        <ComposerFieldRow
-          label={t`Unsubscribe topic`}
-          labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
-        >
+        <CampaignEnvelopeRow label={t`Unsubscribe topic`}>
           {isDefined(unsubscribeTopic) ? (
             <StyledValue>
               {unsubscribeTopic.name ?? t`Untitled topic`}
@@ -123,18 +133,20 @@ export const CampaignSentEnvelope = ({
               <StyledEmptyValue>{t`Unavailable`}</StyledEmptyValue>
             )
           )}
-        </ComposerFieldRow>
+        </CampaignEnvelopeRow>
       )}
-      <ComposerFieldRow
-        label={t`Subject`}
-        labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
-      >
+      <CampaignEnvelopeRow label={t`Subject`}>
         {isNonEmptyString(subject) ? (
           <StyledValue>{subject}</StyledValue>
         ) : (
           <StyledEmptyValue>{t`No subject`}</StyledEmptyValue>
         )}
-      </ComposerFieldRow>
+      </CampaignEnvelopeRow>
+      {isNonEmptyString(scheduledSendTime) && (
+        <CampaignEnvelopeRow label={t`Scheduled at`}>
+          <StyledValue>{scheduledSendTime}</StyledValue>
+        </CampaignEnvelopeRow>
+      )}
     </CampaignEnvelopeBox>
   );
 };

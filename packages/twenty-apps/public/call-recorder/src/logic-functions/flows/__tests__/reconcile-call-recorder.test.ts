@@ -168,6 +168,29 @@ class FakeCoreApiClient {
       };
     }
 
+    if (mutation.updateCalendarEvents !== undefined) {
+      const { filter, data } = mutation.updateCalendarEvents.__args;
+      const updatedCalendarEvents = this.calendarEvents.filter(
+        (calendarEvent) =>
+          filter.id.in.includes(calendarEvent.id) &&
+          filter.callRecorderPreference.is === 'NULL' &&
+          (calendarEvent.callRecorderPreference ?? null) === null,
+      );
+
+      for (const calendarEvent of updatedCalendarEvents) {
+        Object.assign(calendarEvent, data);
+      }
+
+      this.mutations.push({
+        name: 'updateCalendarEvents',
+        args: { filter, data },
+      });
+
+      return {
+        updateCalendarEvents: updatedCalendarEvents.map(({ id }) => ({ id })),
+      };
+    }
+
     throw new Error(`Unhandled mutation: ${JSON.stringify(mutation)}`);
   }
 

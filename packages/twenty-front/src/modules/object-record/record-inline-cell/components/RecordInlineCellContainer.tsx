@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
+import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -110,7 +111,7 @@ export const RecordInlineCellContainer = () => {
       onMouseLeave={handleContainerMouseLeave}
     >
       {(IconLabel || label) && (
-        <StyledLabelAndIconContainer id={labelId}>
+        <StyledLabelAndIconContainer id={!showLabel ? labelId : undefined}>
           {IconLabel && (
             <StyledIconContainer>
               <IconLabel stroke={theme.icon.stroke.sm} />
@@ -118,15 +119,24 @@ export const RecordInlineCellContainer = () => {
           )}
           {showLabel && (
             <StyledLabelContainer width={labelWidth}>
-              <OverflowingTextWithTooltip text={label} displayedMaxRows={1} />
+              <FieldDescriptionTooltip
+                label={label}
+                description={fieldDefinition?.metadata?.description}
+                fallback={
+                  <OverflowingTextWithTooltip
+                    text={label}
+                    displayedMaxRows={1}
+                  />
+                }
+              />
             </StyledLabelContainer>
           )}
           {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}
           {!showLabel && (
             <AppTooltip
               anchorSelect={`#${labelId}`}
-              content={label}
-              clickable
+              title={label}
+              interactive
               noArrow
               place="bottom"
               positionStrategy="fixed"

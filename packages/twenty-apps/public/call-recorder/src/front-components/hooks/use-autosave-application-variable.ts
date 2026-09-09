@@ -9,22 +9,26 @@ import { createApplicationVariableSaveQueue } from 'src/front-components/utils/c
 type UseAutosaveApplicationVariableParams = {
   frontComponentId: string;
   variableKey: string;
-  onSaveSuccess?: (value: string) => void;
+  onSaveSuccess?: (value: string) => void | Promise<void>;
+  onSaveError?: (value: string) => void;
 };
 
 export const useAutosaveApplicationVariable = ({
   frontComponentId,
   variableKey,
   onSaveSuccess,
+  onSaveError,
 }: UseAutosaveApplicationVariableParams) => {
   const { saveApplicationVariable } =
     useSaveApplicationVariable(frontComponentId);
   const saveApplicationVariableRef = useRef(saveApplicationVariable);
   const onSaveSuccessRef = useRef(onSaveSuccess);
+  const onSaveErrorRef = useRef(onSaveError);
   const variableKeyRef = useRef(variableKey);
 
   saveApplicationVariableRef.current = saveApplicationVariable;
   onSaveSuccessRef.current = onSaveSuccess;
+  onSaveErrorRef.current = onSaveError;
   variableKeyRef.current = variableKey;
 
   const saveQueueRef = useRef<
@@ -33,15 +37,23 @@ export const useAutosaveApplicationVariable = ({
 
   if (isUndefined(saveQueueRef.current)) {
     saveQueueRef.current = createApplicationVariableSaveQueue({
-      saveValue: async (value) => {
+      saveValue: async (value, isSupersededValue) => {
         const isSaved = await saveApplicationVariableRef.current({
           variableKey: variableKeyRef.current,
           value,
         });
 
         if (isSaved) {
-          onSaveSuccessRef.current?.(value);
+          await onSaveSuccessRef.current?.(value);
+
+          return;
         }
+
+        if (isSupersededValue()) {
+          return;
+        }
+
+        onSaveErrorRef.current?.(value);
       },
     });
   }

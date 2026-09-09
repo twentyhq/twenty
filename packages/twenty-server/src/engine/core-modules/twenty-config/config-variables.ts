@@ -1680,6 +1680,24 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description:
+      'Time-to-live for the per-workspace outbound email send rate limiting window, in milliseconds',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  EMAIL_SEND_WORKSPACE_RATE_LIMITING_TTL_IN_MS = 10_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum number of emails a single workspace may send in the rate limiting window. Applies on top of the server-wide limit, so set it below that one to stop a single workspace consuming the whole instance budget with one campaign. Left equal to the server-wide limit it never binds first',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  EMAIL_SEND_WORKSPACE_RATE_LIMITING_LIMIT = 100;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
       'Time-to-live for application job enqueue rate limiting in milliseconds',
     type: ConfigVariableType.NUMBER,
   })
