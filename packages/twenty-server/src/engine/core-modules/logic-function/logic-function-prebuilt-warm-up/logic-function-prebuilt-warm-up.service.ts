@@ -31,15 +31,16 @@ export class LogicFunctionPrebuiltWarmUpService {
     flatApplication: FlatApplication;
   }): Promise<void> {
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
-
-    const installedChecksum =
-      await driver.getInstalledBundleChecksum(flatLogicFunction);
-
-    if (installedChecksum === flatLogicFunction.checksum) {
-      return;
-    }
+    let installedChecksum: string | null = null;
 
     try {
+      installedChecksum =
+        await driver.getInstalledBundleChecksum(flatLogicFunction);
+
+      if (installedChecksum === flatLogicFunction.checksum) {
+        return;
+      }
+
       await driver.installPrebuiltBundle({
         flatLogicFunction,
         flatApplication,
@@ -54,11 +55,14 @@ export class LogicFunctionPrebuiltWarmUpService {
           `${cause}`,
         error instanceof Error ? error.stack : undefined,
       );
-      throw new LogicFunctionException(
-        `Failed to install the prebuilt bundle for function '${flatLogicFunction.id}' ` +
-          `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}): ` +
-          `${cause}`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
+      throw Object.assign(
+        new LogicFunctionException(
+          `Failed to install the prebuilt bundle for function '${flatLogicFunction.id}' ` +
+            `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}): ` +
+            `${cause}`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
+        ),
+        { cause: error },
       );
     }
   }

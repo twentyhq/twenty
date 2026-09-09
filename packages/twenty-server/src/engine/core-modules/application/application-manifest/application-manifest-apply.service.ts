@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,6 +23,8 @@ import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-
 // applies a manifest through the same steps with the same guards.
 @Injectable()
 export class ApplicationManifestApplyService {
+  private readonly logger = new Logger(ApplicationManifestApplyService.name);
+
   constructor(
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
@@ -87,19 +89,35 @@ export class ApplicationManifestApplyService {
       forceSdkClientGeneration &&
       logicFunctionUniversalIdentifiersToWarmUp.length > 0
     ) {
-      await this.messageQueueService.add<WarmUpApplicationLogicFunctionsJobData>(
-        WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME,
-        {
-          workspaceId,
-          applicationId: application.id,
-          logicFunctionUniversalIdentifiers:
-            logicFunctionUniversalIdentifiersToWarmUp,
-        },
-        WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS,
-      );
+      await this.enqueueLogicFunctionWarmUp({
+        workspaceId,
+        applicationId: application.id,
+        logicFunctionUniversalIdentifiers:
+          logicFunctionUniversalIdentifiersToWarmUp,
+      });
     }
 
     return { workspaceMigration, hasSchemaMetadataChanged };
+  }
+
+  // The migration is committed by now and functions self-heal on execution,
+  // so a lost warm-up must not fail an install or upgrade that already applied.
+  private async enqueueLogicFunctionWarmUp(
+    data: WarmUpApplicationLogicFunctionsJobData,
+  ): Promise<void> {
+    try {
+      await this.messageQueueService.add<WarmUpApplicationLogicFunctionsJobData>(
+        WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME,
+        data,
+        WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to enqueue prebuilt warm-up for application ${data.applicationId} in workspace ${data.workspaceId}: ` +
+          `${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+    }
   }
 
   async refreshRegistrationFromManifest({

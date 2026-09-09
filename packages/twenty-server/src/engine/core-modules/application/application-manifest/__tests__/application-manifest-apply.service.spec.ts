@@ -134,6 +134,25 @@ describe('ApplicationManifestApplyService', () => {
     expect(callOrder).toEqual(['generateSdkClient', 'enqueueWarmUp']);
   });
 
+  it('does not fail the apply when the warm-up job cannot be enqueued', async () => {
+    applicationSyncService.synchronizeFromManifest.mockResolvedValue({
+      workspaceMigration: workspaceMigrationWithCreatedLogicFunction,
+      hasSchemaMetadataChanged: false,
+    });
+    messageQueueService.add.mockRejectedValue(new Error('queue unavailable'));
+
+    await expect(
+      service.applyManifestToWorkspace({
+        workspaceId: WORKSPACE_ID,
+        manifest,
+        application,
+        forceSdkClientGeneration: true,
+      }),
+    ).resolves.toEqual(
+      expect.objectContaining({ hasSchemaMetadataChanged: false }),
+    );
+  });
+
   it('skips the prebuilt warm-up job when the migration touches no logic function bundle', async () => {
     await service.applyManifestToWorkspace({
       workspaceId: WORKSPACE_ID,
