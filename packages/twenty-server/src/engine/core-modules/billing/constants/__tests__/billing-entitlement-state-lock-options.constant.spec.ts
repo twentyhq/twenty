@@ -9,8 +9,8 @@ describe('BILLING_ENTITLEMENT_STATE_LOCK_OPTIONS', () => {
     // withLock attempts at 0, ms, 2*ms ... (maxRetries - 1) * ms, so a budget
     // that only equals the expiry makes its last attempt just before the key
     // frees. Tuning either number without the other reintroduces that.
-    const lastAttemptAt = ((maxRetries as number) - 1) * (ms as number);
+    const lastAttemptAt = (maxRetries - 1) * ms;
 
-    expect(lastAttemptAt).toBeGreaterThan(ttl as number);
+    expect(lastAttemptAt).toBeGreaterThan(ttl);
   });
 });

@@ -12,8 +12,8 @@ import { type CacheLockOptions } from 'src/engine/core-modules/cache-lock/cache-
 // just before the key frees and throws instead of taking it, which is exactly
 // the case that matters: a holder that died leaves the key held for the full
 // expiry. The extra retries buy a waiter attempts on the far side of it.
-export const BILLING_ENTITLEMENT_STATE_LOCK_OPTIONS: CacheLockOptions = {
+export const BILLING_ENTITLEMENT_STATE_LOCK_OPTIONS = {
   ttl: 60_000,
   ms: 500,
   maxRetries: 130,
-};
+} satisfies CacheLockOptions;
