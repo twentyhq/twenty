@@ -14,7 +14,23 @@ import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed
 const MAX_MENTIONED_USERS = 20;
 const MAX_SLACK_USER_LOOKUPS = 8;
 
-const ASSISTANT_MENTION_LABEL = 'you';
+export const ASSISTANT_MENTION_LABEL = 'you';
+
+const MAX_MENTION_NAME_LENGTH = 80;
+
+// Slack profile names are attacker-controlled: newlines let a name pose as its
+// own prompt section and parentheses let it forge the "(workspace member …)"
+// suffix the agent trusts for ids.
+const sanitizeMentionName = (name: string): string | undefined => {
+  const flattened = name
+    .replace(/[()]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, MAX_MENTION_NAME_LENGTH)
+    .trim();
+
+  return isNonEmptyString(flattened) ? flattened : undefined;
+};
 
 const formatWorkspaceMemberLabel = ({
   name,
@@ -64,9 +80,10 @@ const resolveWorkspaceMemberLabels = async ({
     }
 
     const name =
-      nameByWorkspaceMemberId.get(workspaceMemberId) ??
-      link.name ??
-      `Slack user ${link.slackUserId}`;
+      [nameByWorkspaceMemberId.get(workspaceMemberId), link.name]
+        .filter(isNonEmptyString)
+        .map(sanitizeMentionName)
+        .find(isNonEmptyString) ?? `Slack user ${link.slackUserId}`;
 
     labelBySlackUserId.set(
       link.slackUserId,
@@ -97,8 +114,12 @@ const fetchSlackDisplayNames = async ({
   const displayNameBySlackUserId = new Map<string, string>();
 
   for (const identity of identities) {
-    if (isDefined(identity) && isNonEmptyString(identity.displayName)) {
-      displayNameBySlackUserId.set(identity.slackUserId, identity.displayName);
+    const displayName = isDefined(identity)
+      ? sanitizeMentionName(identity.displayName ?? '')
+      : undefined;
+
+    if (isDefined(identity) && isNonEmptyString(displayName)) {
+      displayNameBySlackUserId.set(identity.slackUserId, displayName);
     }
   }
 
@@ -161,7 +182,9 @@ export const resolveSlackMentionLabels = async ({
       continue;
     }
 
-    const linkName = linkBySlackUserId.get(slackUserId)?.name;
+    const linkName = sanitizeMentionName(
+      linkBySlackUserId.get(slackUserId)?.name ?? '',
+    );
 
     if (isNonEmptyString(linkName)) {
       labelBySlackUserId.set(slackUserId, formatSlackOnlyLabel(linkName));

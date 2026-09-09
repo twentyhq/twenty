@@ -163,9 +163,6 @@ describe('Slack assistant worker', () => {
     const agentMessages = appRuntime.lastAgentMessages;
     const promptedRequest = agentMessages[agentMessages.length - 1]?.content;
 
-    // A Slack account with no workspace member behind it carries a name only,
-    // one nobody can identify is named as such rather than guessed at, and no
-    // opaque token survives into the prompt.
     expect(promptedRequest).toContain(
       'create a follow-up task for @Bob Lee (no Twenty workspace member) and tell @unknown Slack user U0GHOST in #general',
     );

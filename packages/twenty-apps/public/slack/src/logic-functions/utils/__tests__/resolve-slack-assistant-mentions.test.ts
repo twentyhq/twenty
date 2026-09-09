@@ -1,6 +1,6 @@
 import { type WebClient } from '@slack/web-api';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { resolveSlackAssistantMentions } from 'src/logic-functions/utils/resolve-slack-assistant-mentions';
 
@@ -9,6 +9,7 @@ const { resolveSlackMentionLabelsMock } = vi.hoisted(() => ({
 }));
 
 vi.mock('src/logic-functions/utils/resolve-slack-mention-labels', () => ({
+  ASSISTANT_MENTION_LABEL: 'you',
   resolveSlackMentionLabels: resolveSlackMentionLabelsMock,
 }));
 
@@ -31,6 +32,10 @@ const resolve = (
   });
 
 describe('resolveSlackAssistantMentions', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     resolveSlackMentionLabelsMock.mockResolvedValue(
@@ -81,12 +86,19 @@ describe('resolveSlackAssistantMentions', () => {
   });
 
   it('should not report mentioned users when only the assistant is mentioned', async () => {
+    resolveSlackMentionLabelsMock.mockResolvedValue(
+      new Map([['UBOT', 'you']]),
+    );
+
     const resolved = await resolve('<@UBOT> what is up?');
 
+    expect(resolved.requestText).toBe('you what is up?');
     expect(resolved.hasMentionedUsers).toBe(false);
   });
 
   it('should not look anything up when there is no mention', async () => {
+    resolveSlackMentionLabelsMock.mockResolvedValue(new Map());
+
     const resolved = await resolve('how many open opportunities do we have?');
 
     expect(resolveSlackMentionLabelsMock).toHaveBeenCalledWith(
@@ -95,6 +107,20 @@ describe('resolveSlackAssistantMentions', () => {
     expect(resolved.requestText).toBe(
       'how many open opportunities do we have?',
     );
+    expect(resolved.hasMentionedUsers).toBe(false);
+  });
+
+  it('should keep the raw text when resolution outlives its timeout', async () => {
+    vi.useFakeTimers();
+    resolveSlackMentionLabelsMock.mockReturnValue(new Promise(() => undefined));
+
+    const resolving = resolve('ask <@U04ABC> about Acme');
+
+    await vi.advanceTimersByTimeAsync(5_000);
+
+    const resolved = await resolving;
+
+    expect(resolved.requestText).toBe('ask <@U04ABC> about Acme');
     expect(resolved.hasMentionedUsers).toBe(false);
   });
 

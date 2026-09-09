@@ -2,11 +2,37 @@ import { type WebClient } from '@slack/web-api';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
-import { resolveSlackMentionLabels } from 'src/logic-functions/utils/resolve-slack-mention-labels';
+import {
+  ASSISTANT_MENTION_LABEL,
+  resolveSlackMentionLabels,
+} from 'src/logic-functions/utils/resolve-slack-mention-labels';
 import {
   collectSlackMentionedUserIds,
   rewriteSlackMentions,
 } from 'src/logic-functions/utils/rewrite-slack-mentions';
+
+// The worker awaits this before the agent starts, so a hung Slack or Core API
+// call would otherwise eat into the agent's own budget.
+const MENTION_RESOLUTION_TIMEOUT_MS = 5_000;
+
+const raceMentionResolutionTimeout = async (
+  labels: Promise<Map<string, string>>,
+): Promise<Map<string, string>> => {
+  let timeoutTimer: ReturnType<typeof setTimeout> | undefined;
+
+  const timedOutLabels = new Promise<Map<string, string>>((resolve) => {
+    timeoutTimer = setTimeout(
+      () => resolve(new Map()),
+      MENTION_RESOLUTION_TIMEOUT_MS,
+    );
+  });
+
+  try {
+    return await Promise.race([labels, timedOutLabels]);
+  } finally {
+    clearTimeout(timeoutTimer);
+  }
+};
 
 type ResolvedSlackAssistantMentions = {
   requestText: string;
@@ -34,18 +60,20 @@ export const resolveSlackAssistantMentions = async ({
 
   const slackUserIds = collectSlackMentionedUserIds(texts);
 
-  const userLabelBySlackUserId = await resolveSlackMentionLabels({
-    slackUserIds,
-    client,
-    slackClient,
-    assistantBotUserId,
-  }).catch((error) => {
-    console.warn(
-      `[slack] failed to resolve mentioned Slack users, the agent sees raw mention tokens: ${error instanceof Error ? error.message : String(error)}`,
-    );
+  const userLabelBySlackUserId = await raceMentionResolutionTimeout(
+    resolveSlackMentionLabels({
+      slackUserIds,
+      client,
+      slackClient,
+      assistantBotUserId,
+    }).catch((error) => {
+      console.warn(
+        `[slack] failed to resolve mentioned Slack users, the agent sees raw mention tokens: ${error instanceof Error ? error.message : String(error)}`,
+      );
 
-    return new Map<string, string>();
-  });
+      return new Map<string, string>();
+    }),
+  );
 
   const rewrite = (text: string) =>
     rewriteSlackMentions({ text, userLabelBySlackUserId });
@@ -56,8 +84,11 @@ export const resolveSlackAssistantMentions = async ({
       ...message,
       content: rewrite(message.content),
     })),
-    hasMentionedUsers: slackUserIds.some(
-      (slackUserId) => slackUserId !== assistantBotUserId,
+    // Reading the labels rather than the ids keeps the glossary tied to what
+    // the prompt actually says, so a resolution that timed out never explains
+    // labels the agent cannot see.
+    hasMentionedUsers: [...userLabelBySlackUserId.values()].some(
+      (label) => label !== ASSISTANT_MENTION_LABEL,
     ),
   };
 };
