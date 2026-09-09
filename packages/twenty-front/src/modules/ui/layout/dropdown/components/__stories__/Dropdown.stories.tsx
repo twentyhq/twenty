@@ -109,6 +109,58 @@ export const Empty: Story = {
   },
 };
 
+export const InterfaceScale: Story = {
+  args: {
+    clickableComponent: <span>Open Dropdown</span>,
+    dropdownPlacement: 'bottom-start',
+    dropdownOffset: { x: 0, y: 0 },
+    dropdownComponents: <DropdownContent>Scaled dropdown</DropdownContent>,
+  },
+  render: (args) => (
+    <div style={{ paddingLeft: 200, paddingTop: 100 }}>
+      <Dropdown {...args} />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const document = canvasElement.ownerDocument;
+    const canvas = within(document.body);
+    const rootStyle = document.documentElement.style;
+    const previousZoom = rootStyle.getPropertyValue('zoom');
+    const previousScale = rootStyle.getPropertyValue('--t-zoom');
+
+    try {
+      for (const scale of [0.9, 1, 1.1, 1.25, 14 / 13]) {
+        rootStyle.setProperty('--t-zoom', String(scale));
+        rootStyle.setProperty('zoom', 'var(--t-zoom)');
+
+        const button = canvas.getByRole('button', { name: 'Open Dropdown' });
+        await userEvent.click(button);
+
+        const menu = await canvas.findByRole('listbox');
+        await waitFor(() => {
+          const anchorBounds = button.getBoundingClientRect();
+          const menuBounds = menu.getBoundingClientRect();
+
+          expect(Math.abs(menuBounds.left - anchorBounds.left)).toBeLessThan(1);
+          expect(Math.abs(menuBounds.top - anchorBounds.bottom)).toBeLessThan(
+            1,
+          );
+        });
+
+        await userEvent.click(button);
+      }
+    } finally {
+      rootStyle.setProperty('zoom', previousZoom);
+      rootStyle.setProperty('--t-zoom', previousScale);
+    }
+  },
+};
+
+export const InterfaceScaleFixed: Story = {
+  ...InterfaceScale,
+  args: { ...InterfaceScale.args, dropdownStrategy: 'fixed' },
+};
+
 const avatarUrl =
   'https://s3-alpha-sig.figma.com/img/bbb5/4905/f0a52cc2b9aaeb0a82a360d478dae8bf?Expires=1687132800&Signature=iVBr0BADa3LHoFVGbwqO-wxC51n1o~ZyFD-w7nyTyFP4yB-Y6zFawL-igewaFf6PrlumCyMJThDLAAc-s-Cu35SBL8BjzLQ6HymzCXbrblUADMB208PnMAvc1EEUDq8TyryFjRO~GggLBk5yR0EXzZ3zenqnDEGEoQZR~TRqS~uDF-GwQB3eX~VdnuiU2iittWJkajIDmZtpN3yWtl4H630A3opQvBnVHZjXAL5YPkdh87-a-H~6FusWvvfJxfNC2ZzbrARzXofo8dUFtH7zUXGCC~eUk~hIuLbLuz024lFQOjiWq2VKyB7dQQuGFpM-OZQEV8tSfkViP8uzDLTaCg__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4';
 
