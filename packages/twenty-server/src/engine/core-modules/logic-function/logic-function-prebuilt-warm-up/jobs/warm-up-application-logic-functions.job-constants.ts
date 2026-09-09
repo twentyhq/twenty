@@ -5,8 +5,8 @@ export const WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME =
 
 export const WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS: QueueJobOptions =
   {
-    retryLimit: 3,
-    backoff: { strategy: 'exponential', initialDelayMilliseconds: 10_000 },
+    retryLimit: 1,
+    backoff: { strategy: 'exponential', initialDelayMilliseconds: 1_000 },
   };
 
 export type WarmUpApplicationLogicFunctionsJobData = {
