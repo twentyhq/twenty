@@ -7,7 +7,7 @@ import { SelectSeparator } from './internal/SelectSeparator';
 import { SelectTrigger } from './internal/SelectTrigger';
 import { SelectValue } from './internal/SelectValue';
 
-export const Select = {
+const createSelect = () => ({
   Root: SelectPrimitive.Root,
   Trigger: SelectTrigger,
   Value: SelectValue,
@@ -16,4 +16,7 @@ export const Select = {
   Group: SelectPrimitive.Group,
   GroupLabel: SelectGroupLabel,
   Separator: SelectSeparator,
-};
+});
+
+// Base UI namespace reads would otherwise retain Select in unrelated imports.
+export const Select = /* @__PURE__ */ createSelect();
