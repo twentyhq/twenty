@@ -97,3 +97,33 @@ it('opens model information on keyboard focus and closes it on blur', async () =
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument(),
   );
 });
+
+it('keeps custom model anchors distinct when identifiers contain punctuation', async () => {
+  const user = userEvent.setup();
+  const models = [
+    { ...model, modelId: 'custom/a.b' },
+    {
+      ...model,
+      modelId: 'custom/a_b',
+      label: 'Model B',
+      benchmark: { ...model.benchmark, intelligenceIndex: 40 },
+    },
+  ];
+  render(
+    <Provider store={createStore()}>
+      <I18nProvider i18n={i18n}>
+        <SettingsAiModelsTable
+          models={models}
+          comparisonModels={models}
+          isChecked={() => true}
+          onToggle={jest.fn()}
+          anchorPrefix="custom"
+        />
+      </I18nProvider>
+    </Provider>,
+  );
+  await user.hover(screen.getByRole('button', { name: 'Model B' }));
+  const tooltip = await screen.findByRole('tooltip');
+  expect(tooltip).toHaveTextContent('40');
+  expect(screen.getAllByRole('tooltip')).toHaveLength(1);
+});

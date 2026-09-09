@@ -1,4 +1,4 @@
-import { Fragment, useContext } from 'react';
+import { Fragment, useContext, useId } from 'react';
 
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -49,9 +49,6 @@ const hoverCardTooltipClass = css`
   padding: 0 !important;
 `;
 
-const sanitizeIdForSelector = (id: string): string =>
-  id.replace(/[^a-zA-Z0-9-_]/g, '_');
-
 const getProviderDisplayLabel = (model: AiModelSummary): string =>
   model.providerLabel ?? model.providerName ?? '';
 
@@ -79,6 +76,7 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
   anchorPrefix,
 }: SettingsAiModelsTableProps<TModel>) => {
   const { theme } = useContext(ThemeContext);
+  const tableId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const billing = useAtomStateValue(billingState);
   const hasRemove = isDefined(onRemove);
   const gridColumns = hasRemove
@@ -123,12 +121,12 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
           {hasRemove && <TableHeader />}
         </TableRow>
         <TableBody>
-          {models.map((model) => {
+          {models.map((model, index) => {
             const ModelIcon = getModelIcon(
               model.modelFamily,
               model.providerName,
             );
-            const safeId = sanitizeIdForSelector(model.modelId);
+            const safeId = `${tableId}-${index}`;
             const checked = isChecked(model);
             const disabled = isDisabled?.(model) ?? false;
             const { benchmarkItems, pricingItems } = getAiModelComparisonItems({

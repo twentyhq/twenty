@@ -2,7 +2,7 @@ export const getModelComparisonPercentile = (
   value: number,
   comparisonValues: number[],
 ): number => {
-  if (comparisonValues.length < 2) {
+  if (comparisonValues.length < 2 || !comparisonValues.includes(value)) {
     return 0.5;
   }
 
