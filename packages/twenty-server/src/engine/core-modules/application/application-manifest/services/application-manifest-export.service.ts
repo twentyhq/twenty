@@ -10,6 +10,9 @@ import { assertFlatApplicationIsExportable } from 'src/engine/core-modules/appli
 import { classifyApplicationFlatEntities } from 'src/engine/core-modules/application/application-manifest/utils/classify-application-flat-entities.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { reconstructDataModelManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-data-model-manifest.util';
+import { reconstructPageLayoutsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-page-layouts-manifest.util';
+import { reconstructViewsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-views-manifest.util';
+import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -33,7 +36,10 @@ const findUniversalIdentifierById = ({
 
 @Injectable()
 export class ApplicationManifestExportService {
-  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
+  constructor(
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
+  ) {}
 
   async exportApplication({
     workspaceId,
@@ -67,9 +73,38 @@ export class ApplicationManifestExportService {
       fromAllFlatEntityMaps: allFlatEntityMaps,
     });
 
-    const { objects, fields, indexes, coverage } = reconstructDataModelManifest(
-      { applicationAllFlatEntityMaps },
+    const {
+      objects,
+      fields,
+      indexes,
+      coverage: dataModelCoverage,
+    } = reconstructDataModelManifest({ applicationAllFlatEntityMaps });
+    const exportedObjectUniversalIdentifiers = new Set(
+      objects.map(({ universalIdentifier }) => universalIdentifier),
     );
+    const {
+      views,
+      viewFields,
+      coverage: viewsCoverage,
+    } = reconstructViewsManifest({
+      applicationAllFlatEntityMaps,
+      allFlatEntityMaps,
+      exportedObjectUniversalIdentifiers,
+    });
+    const {
+      pageLayouts,
+      pageLayoutTabs,
+      coverage: pageLayoutsCoverage,
+    } = reconstructPageLayoutsManifest({
+      applicationAllFlatEntityMaps,
+      allFlatEntityMaps,
+      exportedObjectUniversalIdentifiers,
+    });
+    const translations = isDefined(flatApplication.applicationRegistrationId)
+      ? await this.applicationTranslationCacheService.getCatalogsByLocale(
+          flatApplication.applicationRegistrationId,
+        )
+      : undefined;
 
     const manifest: Manifest = {
       application: fromFlatApplicationToApplicationManifest({
@@ -90,13 +125,14 @@ export class ApplicationManifestExportService {
       skills: [],
       agents: [],
       publicAssets: [],
-      views: [],
-      viewFields: [],
+      views,
+      viewFields,
       navigationMenuItems: [],
-      pageLayouts: [],
-      pageLayoutTabs: [],
+      pageLayouts,
+      pageLayoutTabs,
       commandMenuItems: [],
       timelineActivityTypes: [],
+      ...(isDefined(translations) ? { translations } : {}),
     };
 
     return {
@@ -110,7 +146,11 @@ export class ApplicationManifestExportService {
         flatApplication,
         applicationAllFlatEntityMaps,
         allFlatEntityMaps,
-        reconstructedCoverage: coverage,
+        reconstructedCoverage: [
+          ...dataModelCoverage,
+          ...viewsCoverage,
+          ...pageLayoutsCoverage,
+        ],
       }),
       files: [],
     };

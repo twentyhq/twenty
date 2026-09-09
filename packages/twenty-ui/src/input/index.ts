@@ -74,6 +74,10 @@ export { IconButtonGroup } from './IconButtonGroup/IconButtonGroup';
 export type { IconButtonWithTooltipProps } from './IconButtonWithTooltip/IconButtonWithTooltip';
 export { IconButtonWithTooltip } from './IconButtonWithTooltip/IconButtonWithTooltip';
 export { IconListViewGrip } from './IconListViewGrip/IconListViewGrip';
+export { Input } from './Input/Input';
+export type { InputProps } from './Input/types/InputProps';
+export { InputGroup } from './InputGroup/InputGroup';
+export type { InputGroupProps } from './InputGroup/types/InputGroupProps';
 export { InputHint } from './InputHint/InputHint';
 export { InputLabel } from './InputLabel/InputLabel';
 export type { InsideButtonProps } from './InsideButton/InsideButton';
@@ -113,7 +117,10 @@ export {
   TabContent,
   TabButton,
 } from './TabButton/TabButton';
+export { Textarea } from './Textarea/Textarea';
+export type { TextareaProps } from './Textarea/types/TextareaProps';
 export type { ToggleSize, ToggleProps } from './Toggle/Toggle';
 export { Toggle } from './Toggle/Toggle';
 export type { ColorScheme } from './types/ColorScheme';
+export type { InputSize } from './types/InputSize';
 export type { SelectOption } from './types/SelectOption';

@@ -71,7 +71,7 @@ export const CommandMenuButton = ({
           <StyledWrapper>
             <AppTooltip
               anchorSelect={`#command-menu-item-entry-${command.key}`}
-              content={command.label}
+              title={command.label}
               delay={TooltipDelay.longDelay}
               place={TooltipPosition.Bottom}
               offset={5}

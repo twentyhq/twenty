@@ -2,6 +2,8 @@ import {
   FIELD_ENUM_BINDINGS,
   INDEX_ENUM_BINDINGS,
   OBJECT_ENUM_BINDINGS,
+  VIEW_ENUM_BINDINGS,
+  VIEW_FIELD_ENUM_BINDINGS,
   writeDefineFile,
 } from '@/cli/utilities/pull/write-define-file';
 import { describe, expect, it } from 'vitest';
@@ -120,6 +122,138 @@ describe('writeDefineFile', () => {
         'export default defineObject({\n' +
         "  nameSingular: 'pet',\n" +
         '});\n',
+    );
+  });
+
+  it('should write every bound view property as its enum symbol and import each symbol on its own line', () => {
+    const file = writeDefineFile({
+      definer: 'defineView',
+      config: {
+        universalIdentifier: 'view-uid',
+        name: 'Companies by owner',
+        objectUniversalIdentifier: 'object-uid',
+        type: 'TABLE_WIDGET',
+        visibility: 'WORKSPACE',
+        openRecordIn: 'SIDE_PANEL',
+        calendarLayout: 'MONTH',
+        kanbanAggregateOperation: 'COUNT',
+        fields: [
+          {
+            universalIdentifier: 'view-field-uid',
+            fieldMetadataUniversalIdentifier: 'field-uid',
+            position: 0,
+            aggregateOperation: 'COUNT_UNIQUE_VALUES',
+          },
+        ],
+        filters: [
+          {
+            universalIdentifier: 'view-filter-uid',
+            fieldMetadataUniversalIdentifier: 'field-uid',
+            operand: 'CONTAINS',
+            value: 'acme',
+          },
+        ],
+        filterGroups: [
+          {
+            universalIdentifier: 'view-filter-group-uid',
+            logicalOperator: 'NOT',
+          },
+        ],
+        sorts: [
+          {
+            universalIdentifier: 'view-sort-uid',
+            fieldMetadataUniversalIdentifier: 'field-uid',
+            direction: 'DESC',
+          },
+        ],
+      },
+      enumBindings: VIEW_ENUM_BINDINGS,
+    });
+
+    expect(
+      file.startsWith(
+        'import {\n' +
+          '  defineView,\n' +
+          '  AggregateOperations,\n' +
+          '  ViewCalendarLayout,\n' +
+          '  ViewFilterGroupLogicalOperator,\n' +
+          '  ViewFilterOperand,\n' +
+          '  ViewOpenRecordIn,\n' +
+          '  ViewSortDirection,\n' +
+          '  ViewType,\n' +
+          '  ViewVisibility,\n' +
+          "} from 'twenty-sdk/define';\n",
+      ),
+    ).toBe(true);
+    expect(file).toContain('type: ViewType.TABLE_WIDGET,');
+    expect(file).toContain('visibility: ViewVisibility.WORKSPACE,');
+    expect(file).toContain('openRecordIn: ViewOpenRecordIn.SIDE_PANEL,');
+    expect(file).toContain('calendarLayout: ViewCalendarLayout.MONTH,');
+    expect(file).toContain(
+      'kanbanAggregateOperation: AggregateOperations.COUNT,',
+    );
+    expect(file).toContain(
+      'aggregateOperation: AggregateOperations.COUNT_UNIQUE_VALUES,',
+    );
+    expect(file).toContain('operand: ViewFilterOperand.CONTAINS,');
+    expect(file).toContain(
+      'logicalOperator: ViewFilterGroupLogicalOperator.NOT,',
+    );
+    expect(file).toContain('direction: ViewSortDirection.DESC,');
+  });
+
+  it('should leave a filter operand that is not a member of ViewFilterOperand as a literal', () => {
+    const file = writeDefineFile({
+      definer: 'defineView',
+      config: {
+        universalIdentifier: 'view-uid',
+        filters: [
+          {
+            universalIdentifier: 'view-filter-uid',
+            fieldMetadataUniversalIdentifier: 'field-uid',
+            operand: 'contains',
+            value: 'acme',
+          },
+        ],
+      },
+      enumBindings: VIEW_ENUM_BINDINGS,
+    });
+
+    expect(file).toContain("operand: 'contains',");
+    expect(file).toContain("import { defineView } from 'twenty-sdk/define';");
+  });
+
+  it('should not bind an operand that sits on the view itself rather than inside its filters', () => {
+    const file = writeDefineFile({
+      definer: 'defineView',
+      config: {
+        universalIdentifier: 'view-uid',
+        operand: 'CONTAINS',
+      },
+      enumBindings: VIEW_ENUM_BINDINGS,
+    });
+
+    expect(file).toContain("operand: 'CONTAINS',");
+    expect(file).toContain("import { defineView } from 'twenty-sdk/define';");
+  });
+
+  it('should write a standalone view field aggregate operation as an AggregateOperations member', () => {
+    const file = writeDefineFile({
+      definer: 'defineViewField',
+      config: {
+        universalIdentifier: 'view-field-uid',
+        viewUniversalIdentifier: 'view-uid',
+        fieldMetadataUniversalIdentifier: 'field-uid',
+        position: 0,
+        isVisible: true,
+        aggregateOperation: 'MIN',
+      },
+      enumBindings: VIEW_FIELD_ENUM_BINDINGS,
+    });
+
+    expect(file).toContain('aggregateOperation: AggregateOperations.MIN,');
+    expect(file).toContain(
+      "import { defineViewField, AggregateOperations } from 'twenty-sdk/define';",
     );
   });
 });
