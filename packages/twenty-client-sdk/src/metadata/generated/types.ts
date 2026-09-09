@@ -9092,6 +9092,27 @@ export default {
                     ]
                 }
             ],
+            "createAppTarballUpload": [
+                150,
+                {
+                    "size": [
+                        15,
+                        "Float!"
+                    ]
+                }
+            ],
+            "completeAppTarballUpload": [
+                75,
+                {
+                    "fileId": [
+                        1,
+                        "String!"
+                    ],
+                    "universalIdentifier": [
+                        1
+                    ]
+                }
+            ],
             "uploadAppTarball": [
                 75,
                 {
@@ -10040,6 +10061,36 @@ export default {
                     "file": [
                         413,
                         "Upload!"
+                    ]
+                }
+            ],
+            "createNewWorkspaceLogoUpload": [
+                150,
+                {
+                    "workspaceId": [
+                        1,
+                        "String!"
+                    ],
+                    "filename": [
+                        1,
+                        "String!"
+                    ],
+                    "size": [
+                        15,
+                        "Float!"
+                    ]
+                }
+            ],
+            "completeNewWorkspaceLogoUpload": [
+                149,
+                {
+                    "workspaceId": [
+                        1,
+                        "String!"
+                    ],
+                    "fileId": [
+                        1,
+                        "String!"
                     ]
                 }
             ],
@@ -12067,6 +12118,9 @@ export default {
             ],
             "logo": [
                 1
+            ],
+            "logoFileId": [
+                3
             ],
             "inviteHash": [
                 1
