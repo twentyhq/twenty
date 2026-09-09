@@ -31,7 +31,9 @@ export const createToastStore = () => {
         return existingToast.id;
       }
 
-      const id = options.id ?? crypto.randomUUID();
+      const id =
+        options.id ??
+        `toast-${crypto.getRandomValues(new Uint32Array(4)).join('-')}`;
       const removedCount = Math.max(0, toasts.length - limit + 1);
       const removedToasts = toasts.slice(0, removedCount);
       toasts = [...toasts.slice(removedCount), { ...options, id }];
