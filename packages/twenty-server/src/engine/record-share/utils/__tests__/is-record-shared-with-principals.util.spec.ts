@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/types';
 
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
+import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
 import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 
@@ -86,9 +87,11 @@ const sharedRecordIds = ({
 }) =>
   Object.values(RECORD_IDS).filter((recordId) =>
     isRecordSharedWithPrincipals({
-      recordShares,
+      recordShareGate: {
+        recordSharesByRecordId: indexRecordSharesByRecordId(recordShares),
+        principalIds,
+      },
       recordId,
-      principalIds,
       accessLevels,
     }),
   );
@@ -156,9 +159,11 @@ describe('isRecordSharedWithPrincipals', () => {
   it('should ignore rows of another record with the same principal', () => {
     expect(
       isRecordSharedWithPrincipals({
-        recordShares,
+        recordShareGate: {
+          recordSharesByRecordId: indexRecordSharesByRecordId(recordShares),
+          principalIds: [WORKSPACE_MEMBER_ID],
+        },
         recordId: RECORD_IDS.UNSHARED,
-        principalIds: [WORKSPACE_MEMBER_ID],
         accessLevels: [RecordShareAccessLevel.READ],
       }),
     ).toBe(false);

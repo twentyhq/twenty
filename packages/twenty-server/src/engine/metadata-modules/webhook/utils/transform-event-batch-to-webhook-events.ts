@@ -24,9 +24,8 @@ export const transformEventBatchToWebhookEvents = ({
   const events = isDefined(recordShareGate)
     ? workspaceEventBatch.events.filter((event) =>
         isRecordSharedWithPrincipals({
-          recordShares: recordShareGate.recordShares,
+          recordShareGate,
           recordId: event.recordId,
-          principalIds: recordShareGate.principalIds,
           accessLevels: resolveRequiredRecordShareAccessLevels('select'),
         }),
       )

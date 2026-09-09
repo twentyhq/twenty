@@ -6,18 +6,18 @@ import { type RecordShare } from 'src/engine/record-share/types/record-share.typ
 import { type RecordShareGate } from 'src/engine/record-share/types/record-share-gate.type';
 import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
 
-// The share rows are only worth fetching for a PRIVATE object, so the caller
-// hands over how to get them and the gate kind decides whether to ask
+// The share rows are only worth fetching and indexing for a PRIVATE object, so
+// the caller hands over how to get them and the gate kind decides whether to ask
 export const buildRecordShareGate = async ({
   readability,
   isOwningApplication,
   principalIds,
-  fetchRecordShares,
+  fetchRecordSharesByRecordId,
 }: {
   readability: MetadataReadability;
   isOwningApplication: boolean;
   principalIds: (string | null | undefined)[];
-  fetchRecordShares: () => Promise<RecordShare[]>;
+  fetchRecordSharesByRecordId: () => Promise<Map<string, RecordShare[]>>;
 }): Promise<RecordShareGate | null> => {
   const gateKind = resolveRecordShareGateKind({
     readability,
@@ -31,7 +31,7 @@ export const buildRecordShareGate = async ({
       return DENY_ALL_RECORD_SHARE_GATE;
     case 'private':
       return {
-        recordShares: await fetchRecordShares(),
+        recordSharesByRecordId: await fetchRecordSharesByRecordId(),
         principalIds: [
           ...new Set(
             principalIds.filter(
