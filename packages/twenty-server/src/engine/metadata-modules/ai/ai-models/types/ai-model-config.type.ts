@@ -1,4 +1,5 @@
 import { type AiSdkPackage, type DataResidency } from 'twenty-shared/ai';
+import { type AiModelBenchmarks } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmarks.type';
 import { type LongContextCost } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.type';
 import { type ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 
@@ -19,5 +20,6 @@ export type AiModelConfig = {
   longContextCost?: LongContextCost;
   modalities?: string[];
   supportsReasoning?: boolean;
+  benchmarks?: AiModelBenchmarks;
   isDeprecated?: boolean;
 };

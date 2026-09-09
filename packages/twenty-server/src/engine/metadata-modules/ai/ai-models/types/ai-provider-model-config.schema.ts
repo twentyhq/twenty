@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { AI_MODEL_KINDS } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-model-kinds.const';
+import { aiModelBenchmarksSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmarks.schema';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { longContextCostSchema } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.schema';
 
@@ -21,6 +22,7 @@ export const aiProviderModelConfigSchema = z
     maxOutputTokens: z.number().int().positive().optional(),
     modalities: z.array(z.string()).optional(),
     supportsReasoning: z.boolean().optional(),
+    benchmarks: aiModelBenchmarksSchema.optional(),
     isDeprecated: z.boolean().optional(),
   })
   .refine(

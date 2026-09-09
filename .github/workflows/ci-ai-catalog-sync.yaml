@@ -28,32 +28,50 @@ jobs:
         run: npx nx build twenty-shared
 
       - name: Run catalog sync
-        run: npx nx run twenty-server:ts-node-no-deps-transpile-only -- ./scripts/ai-sync-models-dev.ts
+        env:
+          ARTIFICIAL_ANALYSIS_API_KEY: ${{ secrets.ARTIFICIAL_ANALYSIS_API_KEY }}
+        run: |
+          npx nx run twenty-server:ts-node-no-deps-transpile-only -- \
+            ./scripts/ai-catalog-sync/index.ts --report "${RUNNER_TEMP}/coverage.md"
 
       - name: Check for changes
         id: changes
         run: |
-          if git diff --quiet packages/twenty-server/src/engine/metadata-modules/ai/ai-models/ai-providers.json; then
+          catalog_dir=packages/twenty-server/src/engine/metadata-modules/ai/ai-models
+          if git diff --quiet "$catalog_dir/ai-providers.json" "$catalog_dir/ai-model-benchmarks.json"; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Compose pull request body
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          cat > "${RUNNER_TEMP}/pr-body.md" <<'PREAMBLE'
+          Automated daily sync of the AI model catalog.
+
+          - Model identity, pricing, context windows and availability come from [models.dev](https://models.dev).
+          - Capability scores come from the [Epoch AI Benchmarking Hub](https://epoch.ai/benchmarks) (CC BY 4.0).
+          - Speed and cost-per-task come from [Artificial Analysis](https://artificialanalysis.ai/) when an API key is configured.
+
+          New models meeting inclusion criteria (tool calling, pricing data, context limits) are added
+          automatically. Benchmark data is best-effort: a model with no published score keeps every other
+          field and simply carries no `benchmarks` entry.
+
+          **Please review before merging** and check the coverage summary below for models that silently
+          stopped matching.
+
+          PREAMBLE
+          cat "${RUNNER_TEMP}/coverage.md" >> "${RUNNER_TEMP}/pr-body.md"
 
       - name: Create pull request
         if: steps.changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7.0.6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: 'chore: sync AI model catalog from models.dev'
-          title: 'chore: sync AI model catalog from models.dev'
-          body: |
-            Automated daily sync of `ai-providers.json` from [models.dev](https://models.dev).
-
-            This PR updates pricing, context windows, and model availability based on the latest data.
-            New models meeting inclusion criteria (tool calling, pricing data, context limits) are added automatically.
-            Deprecated models are detected based on cost-efficiency within the same model family.
-
-            **Please review before merging** — verify no critical models were incorrectly deprecated.
+          commit-message: 'chore: sync AI model catalog'
+          title: 'chore: sync AI model catalog'
+          body-path: ${{ runner.temp }}/pr-body.md
           branch: chore/ai-catalog-sync
           base: main
           labels: ai, automated

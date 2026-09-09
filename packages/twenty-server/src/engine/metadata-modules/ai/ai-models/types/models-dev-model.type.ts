@@ -15,6 +15,6 @@ export type ModelsDevModel = {
   limit?: { context?: number; output?: number };
   modalities?: { input?: string[]; output?: string[] };
   knowledge?: string;
-  release?: string;
-  updated?: string;
+  release_date?: string;
+  last_updated?: string;
 };

@@ -306,6 +306,7 @@ export class AiModelRegistryService {
       ),
       modalities: modelDef.modalities,
       supportsReasoning: modelDef.supportsReasoning,
+      benchmarks: modelDef.benchmarks,
       isDeprecated: modelDef.isDeprecated,
     };
   }
