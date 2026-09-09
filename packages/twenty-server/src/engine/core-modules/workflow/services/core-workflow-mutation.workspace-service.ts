@@ -163,12 +163,12 @@ export class CoreWorkflowMutationWorkspaceService {
         });
       }, authContext);
 
-    if (workflowsToDelete.length > 0) {
-      const liveWorkflowIds = workflowsToDelete
-        .filter((workflow) => !isDefined(workflow.deletedAt))
-        .map((workflow) => workflow.id);
+    const liveWorkflowsToDelete = workflowsToDelete.filter(
+      (workflow) => !isDefined(workflow.deletedAt),
+    );
 
-      if (liveWorkflowIds.length > 0) {
+    if (workflowsToDelete.length > 0) {
+      if (liveWorkflowsToDelete.length > 0) {
         await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
           const workflowRepository =
             this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
@@ -176,7 +176,9 @@ export class CoreWorkflowMutationWorkspaceService {
               { shouldBypassPermissionChecks: true },
             );
 
-          await workflowRepository.softDelete({ id: In(liveWorkflowIds) });
+          await workflowRepository.softDelete({
+            id: In(liveWorkflowsToDelete.map((workflow) => workflow.id)),
+          });
         }, authContext);
       }
 
@@ -192,7 +194,7 @@ export class CoreWorkflowMutationWorkspaceService {
       coreWorkflowIds,
     );
 
-    return workflowsToDelete
+    return liveWorkflowsToDelete
       .map((workflow) =>
         isDefined(workflow.coreWorkflowId)
           ? { id: workflow.coreWorkflowId, workspaceWorkflowId: workflow.id }

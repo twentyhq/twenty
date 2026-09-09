@@ -1,6 +1,8 @@
 import request from 'supertest';
 import { isDefined } from 'twenty-shared/utils';
 
+const TEST_SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
+
 const client = request(`http://localhost:${APP_PORT}`);
 
 const graphql = (query: string, variables?: object) =>
@@ -255,17 +257,26 @@ describe('coreWorkflow mutations (e2e)', () => {
       },
     ]);
 
+    await global.testDataSource.query(
+      `UPDATE "${TEST_SCHEMA_NAME}"."workflowVersion" SET "deletedAt" = NULL WHERE "workflowId" = $1`,
+      [retryWorkspaceWorkflowId],
+    );
+
     const retryDeleteResponse = await graphql(deleteMutation, {
       input: { coreWorkflowIds: [retryCoreWorkflowId] },
     });
 
     expect(retryDeleteResponse.body.errors).toBeUndefined();
-    expect(retryDeleteResponse.body.data.deleteCoreWorkflows).toEqual([
-      {
-        id: retryCoreWorkflowId,
-        workspaceWorkflowId: retryWorkspaceWorkflowId,
-      },
-    ]);
+    expect(retryDeleteResponse.body.data.deleteCoreWorkflows).toEqual([]);
+
+    const workflowVersionRows: { deletedAt: Date | null }[] =
+      await global.testDataSource.query(
+        `SELECT "deletedAt" FROM "${TEST_SCHEMA_NAME}"."workflowVersion" WHERE "workflowId" = $1`,
+        [retryWorkspaceWorkflowId],
+      );
+
+    expect(workflowVersionRows).toHaveLength(1);
+    expect(workflowVersionRows[0].deletedAt).not.toBeNull();
 
     await graphql(
       `
