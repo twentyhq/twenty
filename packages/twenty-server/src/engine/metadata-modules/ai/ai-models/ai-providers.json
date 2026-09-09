@@ -14,12 +14,7 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 139.4,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-4.1-nano",
@@ -31,11 +26,6 @@
         "contextWindowTokens": 1047576,
         "maxOutputTokens": 32768,
         "modalities": ["image"],
-        "benchmarks": {
-          "intelligenceIndex": 129.62,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        },
         "isDeprecated": true
       },
       {
@@ -47,11 +37,6 @@
         "contextWindowTokens": 128000,
         "maxOutputTokens": 4096,
         "modalities": ["image"],
-        "benchmarks": {
-          "intelligenceIndex": 128.97,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        },
         "isDeprecated": true
       },
       {
@@ -63,12 +48,7 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 272000,
         "modalities": ["image"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 150.28,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-5.6-sol",
@@ -88,12 +68,7 @@
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 161.76,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-4o-2024-08-06",
@@ -104,12 +79,7 @@
         "cachedInputCostPerMillionTokens": 1.25,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": ["image"],
-        "benchmarks": {
-          "intelligenceIndex": 128.77,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "modalities": ["image"]
       },
       {
         "name": "gpt-6-astra",
@@ -129,12 +99,7 @@
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 166.57,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-5.2-pro",
@@ -145,12 +110,7 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 155.34,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-5.3-codex-spark",
@@ -173,12 +133,7 @@
         "cachedInputCostPerMillionTokens": 0.1,
         "contextWindowTokens": 1047576,
         "maxOutputTokens": 32768,
-        "modalities": ["image", "pdf"],
-        "benchmarks": {
-          "intelligenceIndex": 135.02,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "modalities": ["image", "pdf"]
       },
       {
         "name": "gpt-5.4",
@@ -196,12 +151,7 @@
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 156.86,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-4-turbo",
@@ -212,11 +162,6 @@
         "contextWindowTokens": 128000,
         "maxOutputTokens": 4096,
         "modalities": ["image"],
-        "benchmarks": {
-          "intelligenceIndex": 126.45,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        },
         "isDeprecated": true
       },
       {
@@ -229,12 +174,7 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 149.65,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "o1",
@@ -247,11 +187,6 @@
         "maxOutputTokens": 100000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 141.87,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        },
         "isDeprecated": true
       },
       {
@@ -263,12 +198,7 @@
         "cachedInputCostPerMillionTokens": 1.25,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": ["image", "pdf"],
-        "benchmarks": {
-          "intelligenceIndex": 128.81,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "modalities": ["image", "pdf"]
       },
       {
         "name": "gpt-5.6-luna",
@@ -288,12 +218,7 @@
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 156.31,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-5.3-codex",
@@ -305,12 +230,7 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 156.59,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-4o-mini",
@@ -321,12 +241,7 @@
         "cachedInputCostPerMillionTokens": 0.075,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": ["image", "pdf"],
-        "benchmarks": {
-          "intelligenceIndex": 126.56,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "modalities": ["image", "pdf"]
       },
       {
         "name": "o1-pro",
@@ -349,12 +264,7 @@
         "cachedInputCostPerMillionTokens": 0.5,
         "contextWindowTokens": 1047576,
         "maxOutputTokens": 32768,
-        "modalities": ["image", "pdf"],
-        "benchmarks": {
-          "intelligenceIndex": 136.8,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "modalities": ["image", "pdf"]
       },
       {
         "name": "gpt-5.4-nano",
@@ -366,12 +276,7 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 145.87,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-5.5-pro",
@@ -387,12 +292,7 @@
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 162.26,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-5.4-mini",
@@ -404,12 +304,7 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 148.98,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-5.6",
@@ -441,12 +336,7 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 145.54,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-5.4-pro",
@@ -462,12 +352,7 @@
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 158.93,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-5.6-terra",
@@ -487,12 +372,7 @@
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 159.15,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-4",
@@ -502,11 +382,6 @@
         "outputCostPerMillionTokens": 60,
         "contextWindowTokens": 8192,
         "maxOutputTokens": 8192,
-        "benchmarks": {
-          "intelligenceIndex": 123.1,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        },
         "isDeprecated": true
       },
       {
@@ -519,12 +394,7 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 153.49,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-5",
@@ -536,12 +406,7 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 150,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-5.2-chat-latest",
@@ -567,11 +432,6 @@
         "maxOutputTokens": 100000,
         "modalities": ["image"],
         "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 145.66,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        },
         "isDeprecated": true
       },
       {
@@ -596,11 +456,6 @@
         "contextWindowTokens": 200000,
         "maxOutputTokens": 100000,
         "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 140.36,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        },
         "isDeprecated": true
       },
       {
@@ -613,12 +468,7 @@
         "contextWindowTokens": 200000,
         "maxOutputTokens": 100000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 146.91,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "o3-pro",
@@ -629,12 +479,7 @@
         "contextWindowTokens": 200000,
         "maxOutputTokens": 100000,
         "modalities": ["image"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 147.45,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-5.3-chat-latest",
@@ -664,12 +509,7 @@
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 159.14,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gpt-4o-2024-11-20",
@@ -680,12 +520,7 @@
         "cachedInputCostPerMillionTokens": 1.25,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": ["image"],
-        "benchmarks": {
-          "intelligenceIndex": 128.81,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "modalities": ["image"]
       }
     ]
   },
@@ -705,12 +540,7 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 152.29,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "claude-opus-5",
@@ -723,12 +553,7 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 162.59,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "claude-opus-4-5",
@@ -741,12 +566,7 @@
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 150.11,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "claude-fable-5-1",
@@ -759,12 +579,7 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 164.24,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "claude-opus-4-6",
@@ -777,12 +592,7 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 155.34,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "claude-sonnet-4-5-20250929",
@@ -795,12 +605,7 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 146.85,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "claude-opus-4-7",
@@ -813,12 +618,7 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 156.34,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "claude-haiku-4-5-20251001",
@@ -831,12 +631,7 @@
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 142.39,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "claude-fable-5",
@@ -849,12 +644,7 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 163.41,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "claude-haiku-4-5",
@@ -867,12 +657,7 @@
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 142.39,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "claude-sonnet-4-5",
@@ -885,12 +670,7 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 146.85,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "claude-opus-4-8",
@@ -903,12 +683,7 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 158.32,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "claude-sonnet-5",
@@ -921,12 +696,7 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 156.23,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "claude-opus-4-5-20251101",
@@ -939,12 +709,7 @@
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 150.11,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       }
     ]
   },
@@ -969,12 +734,7 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 155,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gemini-3.1-flash-lite-image",
@@ -1021,12 +781,7 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 155,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "deep-research-preview-04-2026",
@@ -1056,12 +811,7 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "audio", "video", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 133.93,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gemini-2.5-computer-use-preview-10-2025",
@@ -1089,12 +839,7 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 154.32,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gemini-3.1-flash-lite",
@@ -1106,12 +851,7 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 144.5,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gemini-3.1-flash-live-preview",
@@ -1134,12 +874,7 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 154.69,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gemini-3.1-flash-lite-preview",
@@ -1152,11 +887,6 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 144.5,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        },
         "isDeprecated": true
       },
       {
@@ -1169,12 +899,7 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 145.14,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gemini-flash-lite-latest",
@@ -1186,12 +911,7 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 145.14,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gemini-3-flash-preview",
@@ -1203,12 +923,7 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 151.84,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gemini-3.8-flash",
@@ -1232,12 +947,7 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 157.44,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gemini-2.5-pro",
@@ -1255,12 +965,7 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "audio", "video", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 145.27,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "gemini-flash-latest",
@@ -1284,12 +989,7 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "audio", "video", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 140.53,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       }
     ]
   },
@@ -1326,12 +1026,7 @@
         "outputCostPerMillionTokens": 0.3,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": ["image"],
-        "benchmarks": {
-          "intelligenceIndex": 131.74,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "modalities": ["image"]
       },
       {
         "name": "magistral-small",
@@ -1391,12 +1086,7 @@
         "inputCostPerMillionTokens": 2,
         "outputCostPerMillionTokens": 6,
         "contextWindowTokens": 64000,
-        "maxOutputTokens": 64000,
-        "benchmarks": {
-          "intelligenceIndex": 122,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "maxOutputTokens": 64000
       },
       {
         "name": "open-mixtral-8x7b",
@@ -1405,12 +1095,7 @@
         "inputCostPerMillionTokens": 0.7,
         "outputCostPerMillionTokens": 0.7,
         "contextWindowTokens": 32000,
-        "maxOutputTokens": 32000,
-        "benchmarks": {
-          "intelligenceIndex": 118.4,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "maxOutputTokens": 32000
       },
       {
         "name": "open-mistral-7b",
@@ -1419,12 +1104,7 @@
         "inputCostPerMillionTokens": 0.25,
         "outputCostPerMillionTokens": 0.25,
         "contextWindowTokens": 8000,
-        "maxOutputTokens": 8000,
-        "benchmarks": {
-          "intelligenceIndex": 108.81,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "maxOutputTokens": 8000
       },
       {
         "name": "mistral-medium-latest",
@@ -1435,12 +1115,7 @@
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
         "modalities": ["image"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 141.29,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "devstral-medium-2507",
@@ -1461,12 +1136,7 @@
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
         "modalities": ["image"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 141.29,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "mistral-large-2512",
@@ -1514,12 +1184,7 @@
         "inputCostPerMillionTokens": 0.15,
         "outputCostPerMillionTokens": 0.15,
         "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000,
-        "benchmarks": {
-          "intelligenceIndex": 118.65,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "maxOutputTokens": 128000
       },
       {
         "name": "mistral-small-latest",
@@ -1550,12 +1215,7 @@
         "outputCostPerMillionTokens": 1.5,
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
-        "modalities": ["image"],
-        "benchmarks": {
-          "intelligenceIndex": 121.99,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "modalities": ["image"]
       },
       {
         "name": "mistral-large-2411",
@@ -1564,12 +1224,7 @@
         "inputCostPerMillionTokens": 2,
         "outputCostPerMillionTokens": 6,
         "contextWindowTokens": 131072,
-        "maxOutputTokens": 16384,
-        "benchmarks": {
-          "intelligenceIndex": 128.52,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "maxOutputTokens": 16384
       },
       {
         "name": "devstral-latest",
@@ -1600,12 +1255,7 @@
         "outputCostPerMillionTokens": 2,
         "contextWindowTokens": 131072,
         "maxOutputTokens": 131072,
-        "modalities": ["image"],
-        "benchmarks": {
-          "intelligenceIndex": 134.08,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "modalities": ["image"]
       },
       {
         "name": "codestral-latest",
@@ -1623,12 +1273,7 @@
         "inputCostPerMillionTokens": 0.04,
         "outputCostPerMillionTokens": 0.04,
         "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000,
-        "benchmarks": {
-          "intelligenceIndex": 118.06,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "maxOutputTokens": 128000
       },
       {
         "name": "mistral-medium-2508",
@@ -1673,12 +1318,7 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 30000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 149.18,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "grok-4.20-0309-reasoning",
@@ -1696,12 +1336,7 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 30000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 152.03,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "grok-4.5",
@@ -1719,12 +1354,7 @@
         "contextWindowTokens": 500000,
         "maxOutputTokens": 500000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 153.92,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "grok-build-0.1",
@@ -1760,12 +1390,7 @@
         "contextWindowTokens": 500000,
         "maxOutputTokens": 500000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "benchmarks": {
-          "intelligenceIndex": 156.34,
-          "sources": ["epoch-ai"],
-          "measuredAt": "2026-09-09"
-        }
+        "supportsReasoning": true
       },
       {
         "name": "grok-4.20-0309-non-reasoning",

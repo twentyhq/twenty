@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type GeneratedCatalog } from './types';
 
 // Models whose job is not general reasoning (speech, image, embeddings,
@@ -8,24 +10,20 @@ const SPECIALIZED_MODEL_PATTERN =
   /realtime|voxtral|tts|audio|computer-use|deep-research|-image|pixtral|codestral|embed/;
 
 export type CoverageReport = {
-  activeModelCount: number;
   generalPurposeModelCount: number;
   scoredGeneralPurposeModelCount: number;
   unscoredGeneralPurposeModelIds: string[];
-  specializedModelIds: string[];
-  sourceCounts: Record<string, number>;
+  specializedModelCount: number;
 };
 
 export const buildCoverageReport = (
   catalog: GeneratedCatalog,
 ): CoverageReport => {
   const report: CoverageReport = {
-    activeModelCount: 0,
     generalPurposeModelCount: 0,
     scoredGeneralPurposeModelCount: 0,
     unscoredGeneralPurposeModelIds: [],
-    specializedModelIds: [],
-    sourceCounts: {},
+    specializedModelCount: 0,
   };
 
   for (const [providerName, provider] of Object.entries(catalog)) {
@@ -34,25 +32,19 @@ export const buildCoverageReport = (
         continue;
       }
 
-      const modelId = `${providerName}/${model.name}`;
-
-      report.activeModelCount += 1;
-
-      for (const source of model.benchmarks?.sources ?? []) {
-        report.sourceCounts[source] = (report.sourceCounts[source] ?? 0) + 1;
-      }
-
       if (SPECIALIZED_MODEL_PATTERN.test(model.name)) {
-        report.specializedModelIds.push(modelId);
+        report.specializedModelCount += 1;
         continue;
       }
 
       report.generalPurposeModelCount += 1;
 
-      if (model.benchmarks?.intelligenceIndex !== undefined) {
+      if (isDefined(model.benchmarks?.intelligenceIndex)) {
         report.scoredGeneralPurposeModelCount += 1;
       } else {
-        report.unscoredGeneralPurposeModelIds.push(modelId);
+        report.unscoredGeneralPurposeModelIds.push(
+          `${providerName}/${model.name}`,
+        );
       }
     }
   }
@@ -73,16 +65,13 @@ export const renderCoverageReport = (report: CoverageReport): string => {
     '### Benchmark coverage',
     '',
     `- General-purpose models with an intelligence index: **${scored}/${total}** (${asPercentage(scored, total)})`,
-    `- Specialized models excluded from the denominator: ${report.specializedModelIds.length}`,
-    ...Object.entries(report.sourceCounts).map(
-      ([source, count]) => `- Models enriched from \`${source}\`: ${count}`,
-    ),
+    `- Specialized models excluded from the denominator: ${report.specializedModelCount}`,
   ];
 
   if (report.unscoredGeneralPurposeModelIds.length > 0) {
     lines.push(
       '',
-      '<details><summary>General-purpose models with no published score</summary>',
+      '<details><summary>General-purpose models Artificial Analysis has not rated</summary>',
       '',
       ...report.unscoredGeneralPurposeModelIds.map((modelId) => `- ${modelId}`),
       '',

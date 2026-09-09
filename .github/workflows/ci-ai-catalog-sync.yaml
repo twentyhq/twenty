@@ -51,12 +51,12 @@ jobs:
           Automated daily sync of the AI model catalog.
 
           - Model identity, pricing, context windows and availability come from [models.dev](https://models.dev).
-          - Capability scores come from the [Epoch AI Benchmarking Hub](https://epoch.ai/benchmarks) (CC BY 4.0).
-          - Speed and cost-per-task come from [Artificial Analysis](https://artificialanalysis.ai/) when an API key is configured.
+          - Intelligence, speed and cost per task come from [Artificial Analysis](https://artificialanalysis.ai/),
+            which requires `ARTIFICIAL_ANALYSIS_API_KEY`.
 
           New models meeting inclusion criteria (tool calling, pricing data, context limits) are added
-          automatically. Benchmark data is best-effort: a model with no published score keeps every other
-          field and simply carries no `benchmarks` entry.
+          automatically. Benchmark data is best-effort: a model Artificial Analysis has not rated keeps
+          every other field and simply carries no `benchmarks` entry.
 
           **Please review before merging** and check the coverage summary below for models that silently
           stopped matching.

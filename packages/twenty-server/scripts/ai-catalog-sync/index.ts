@@ -10,7 +10,6 @@ import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/typ
 
 import { buildCatalog } from './build-catalog';
 import { fetchArtificialAnalysisBenchmarks } from './fetch-artificial-analysis';
-import { fetchEpochBenchmarks } from './fetch-epoch-benchmarks';
 import { matchBenchmarks } from './match-benchmarks';
 import { buildCoverageReport, renderCoverageReport } from './report-coverage';
 import {
@@ -56,33 +55,30 @@ const fetchModelsDev = async (): Promise<ModelsDevData> => {
   return response.json();
 };
 
-// A leaderboard outage must never break the model catalog, so every benchmark
-// source degrades to an empty index instead of failing the sync.
-const fetchOptionalIndex = async (
-  sourceName: string,
-  fetcher: () => Promise<BenchmarkIndex>,
-): Promise<BenchmarkIndex> => {
-  try {
-    const index = await fetcher();
+// A leaderboard outage must never break the model catalog, so a failed fetch
+// degrades to an empty index and the catalog is written without benchmarks.
+const fetchBenchmarks = async (): Promise<BenchmarkIndex> => {
+  const apiKey = process.env.ARTIFICIAL_ANALYSIS_API_KEY;
 
-    log(`Fetched ${index.size} model aliases from ${sourceName}`);
+  if (!isDefined(apiKey) || apiKey.length === 0) {
+    warn('Skipping benchmarks: ARTIFICIAL_ANALYSIS_API_KEY is not set');
+
+    return new Map();
+  }
+
+  try {
+    const index = await fetchArtificialAnalysisBenchmarks(apiKey);
+
+    log(`Fetched ${index.size} model aliases from Artificial Analysis`);
 
     return index;
   } catch (error) {
     warn(
-      `Skipping ${sourceName}: ${error instanceof Error ? error.message : String(error)}`,
+      `Skipping benchmarks: ${error instanceof Error ? error.message : String(error)}`,
     );
 
     return new Map();
   }
-};
-
-type EnrichCatalogArgs = {
-  catalog: GeneratedCatalog;
-  modelsDevData: ModelsDevData;
-  epochIndex: BenchmarkIndex;
-  artificialAnalysisIndex: BenchmarkIndex;
-  measuredAt: string;
 };
 
 // The overlay is the cross-repo artifact: it carries what the catalog embeds
@@ -95,10 +91,14 @@ type BenchmarkOverlayEntry = AiModelBenchmarks & {
 const enrichCatalog = ({
   catalog,
   modelsDevData,
-  epochIndex,
-  artificialAnalysisIndex,
+  benchmarkIndex,
   measuredAt,
-}: EnrichCatalogArgs): Record<string, BenchmarkOverlayEntry> => {
+}: {
+  catalog: GeneratedCatalog;
+  modelsDevData: ModelsDevData;
+  benchmarkIndex: BenchmarkIndex;
+  measuredAt: string;
+}): Record<string, BenchmarkOverlayEntry> => {
   const overlay: Record<string, BenchmarkOverlayEntry> = {};
 
   for (const [providerName, provider] of Object.entries(catalog)) {
@@ -108,8 +108,7 @@ const enrichCatalog = ({
       const match = matchBenchmarks({
         modelName: model.name,
         siblingModels,
-        epochIndex,
-        artificialAnalysisIndex,
+        benchmarkIndex,
         measuredAt,
       });
 
@@ -159,37 +158,17 @@ const main = async (): Promise<void> => {
 
   log(`Fetched ${Object.keys(modelsDevData).length} providers from models.dev`);
 
-  const [epochIndex, artificialAnalysisIndex] = await Promise.all([
-    fetchOptionalIndex('Epoch AI', fetchEpochBenchmarks),
-    (() => {
-      const apiKey = process.env.ARTIFICIAL_ANALYSIS_API_KEY;
-
-      if (!isDefined(apiKey) || apiKey.length === 0) {
-        warn(
-          'Skipping Artificial Analysis: ARTIFICIAL_ANALYSIS_API_KEY is not set',
-        );
-
-        return Promise.resolve<BenchmarkIndex>(new Map());
-      }
-
-      return fetchOptionalIndex('Artificial Analysis', () =>
-        fetchArtificialAnalysisBenchmarks(apiKey),
-      );
-    })(),
-  ]);
-
+  const benchmarkIndex = await fetchBenchmarks();
   const catalog = buildCatalog(modelsDevData);
 
   const overlay = enrichCatalog({
     catalog,
     modelsDevData,
-    epochIndex,
-    artificialAnalysisIndex,
+    benchmarkIndex,
     measuredAt,
   });
 
-  const report = buildCoverageReport(catalog);
-  const renderedReport = renderCoverageReport(report);
+  const renderedReport = renderCoverageReport(buildCoverageReport(catalog));
 
   log(`\n${renderedReport}\n`);
 
@@ -204,7 +183,11 @@ const main = async (): Promise<void> => {
   }
 
   await writeJson(CATALOG_PATH, catalog);
-  await writeJson(BENCHMARKS_PATH, { measuredAt, models: overlay });
+  await writeJson(BENCHMARKS_PATH, {
+    source: 'artificialanalysis.ai',
+    measuredAt,
+    models: overlay,
+  });
 };
 
 main().catch((error) => {

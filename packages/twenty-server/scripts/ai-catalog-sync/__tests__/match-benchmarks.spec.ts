@@ -1,7 +1,7 @@
 import { type ModelsDevModel } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-model.type';
 
 import { buildLookupCandidates, matchBenchmarks } from '../match-benchmarks';
-import { type BenchmarkIndex } from '../types';
+import { type BenchmarkIndex, type BenchmarkRecord } from '../types';
 
 const MEASURED_AT = '2026-09-09';
 
@@ -28,9 +28,16 @@ const MISTRAL_MODELS: Record<string, ModelsDevModel> = {
   }),
 };
 
-const indexOf = (
-  entries: Record<string, Parameters<typeof Object>[0]>,
-): BenchmarkIndex => new Map(Object.entries(entries)) as BenchmarkIndex;
+const indexOf = (entries: Record<string, BenchmarkRecord>): BenchmarkIndex =>
+  new Map(Object.entries(entries));
+
+const match = (modelName: string, benchmarkIndex: BenchmarkIndex) =>
+  matchBenchmarks({
+    modelName,
+    siblingModels: MISTRAL_MODELS,
+    benchmarkIndex,
+    measuredAt: MEASURED_AT,
+  });
 
 describe('buildLookupCandidates', () => {
   it('resolves a rolling alias to the priced-identical release it points at', () => {
@@ -57,55 +64,19 @@ describe('buildLookupCandidates', () => {
 });
 
 describe('matchBenchmarks', () => {
-  const match = (
-    modelName: string,
-    epoch: BenchmarkIndex,
-    artificialAnalysis: BenchmarkIndex,
-  ) =>
-    matchBenchmarks({
-      modelName,
-      siblingModels: MISTRAL_MODELS,
-      epochIndex: epoch,
-      artificialAnalysisIndex: artificialAnalysis,
-      measuredAt: MEASURED_AT,
-    });
-
   it('scores a rolling alias from the release it resolves to', () => {
     const result = match(
       'mistral-large-latest',
-      indexOf({ mistrallarge2512: { intelligenceIndex: 148.2, aliases: [] } }),
-      new Map(),
+      indexOf({ mistrallarge2512: { intelligenceIndex: 41, aliases: [] } }),
     );
 
-    expect(result?.benchmarks.intelligenceIndex).toBe(148.2);
-    expect(result?.benchmarks.sources).toEqual(['epoch-ai']);
+    expect(result?.benchmarks.intelligenceIndex).toBe(41);
+    expect(result?.benchmarks.measuredAt).toBe(MEASURED_AT);
   });
 
-  it('keeps the aggregated index when both sources score the same model', () => {
+  it('carries speed and cost per task through to the catalog', () => {
     const result = match(
       'mistral-large-2512',
-      indexOf({ mistrallarge2512: { intelligenceIndex: 148.2, aliases: [] } }),
-      indexOf({
-        mistrallarge2512: {
-          intelligenceIndex: 41,
-          outputTokensPerSecond: 92,
-          aliases: [],
-        },
-      }),
-    );
-
-    expect(result?.benchmarks.intelligenceIndex).toBe(148.2);
-    expect(result?.benchmarks.outputTokensPerSecond).toBe(92);
-    expect(result?.benchmarks.sources).toEqual([
-      'epoch-ai',
-      'artificial-analysis',
-    ]);
-  });
-
-  it('reports speed and cost even when no source publishes an index', () => {
-    const result = match(
-      'mistral-large-2512',
-      new Map(),
       indexOf({
         mistrallarge2512: {
           outputTokensPerSecond: 92,
@@ -115,67 +86,43 @@ describe('matchBenchmarks', () => {
       }),
     );
 
-    expect(result?.benchmarks.intelligenceIndex).toBeUndefined();
+    expect(result?.benchmarks.outputTokensPerSecond).toBe(92);
     expect(result?.benchmarks.costPerTask).toBe(0.42);
-    expect(result?.benchmarks.sources).toEqual(['artificial-analysis']);
   });
 
-  it('returns nothing for a model no source has measured', () => {
-    expect(match('mistral-large-2512', new Map(), new Map())).toBeUndefined();
+  it('returns nothing for a model the publisher has not rated', () => {
+    expect(match('mistral-large-2512', new Map())).toBeUndefined();
   });
 
-  it('collects the aliases both sources publish so consumers can join on them', () => {
+  it('reports observed prices separately from the catalog benchmarks', () => {
     const result = match(
       'mistral-large-2512',
       indexOf({
         mistrallarge2512: {
-          intelligenceIndex: 148.2,
+          observedPrices: { inputPerMillionTokens: 2 },
+          aliases: [],
+        },
+      }),
+    );
+
+    expect(result?.observedPrices?.inputPerMillionTokens).toBe(2);
+    expect(result?.benchmarks).not.toHaveProperty('observedPrices');
+  });
+
+  it('collects the aliases the publisher gives so consumers can join on them', () => {
+    const result = match(
+      'mistral-large-2512',
+      indexOf({
+        mistrallarge2512: {
+          intelligenceIndex: 41,
           aliases: ['mistral-large-2512', 'mistralai/mistral-large-2512'],
         },
       }),
-      new Map(),
     );
 
     expect(result?.aliases).toEqual([
       'mistral-large-2512',
       'mistralai/mistral-large-2512',
     ]);
-  });
-});
-
-describe('matchBenchmarks price observations', () => {
-  it('reports observed prices separately from the catalog benchmarks', () => {
-    const result = matchBenchmarks({
-      modelName: 'mistral-large-2512',
-      siblingModels: MISTRAL_MODELS,
-      epochIndex: new Map(),
-      artificialAnalysisIndex: indexOf({
-        mistrallarge2512: {
-          observedPrices: { inputPerMillionTokens: 2 },
-          aliases: [],
-        },
-      }),
-      measuredAt: MEASURED_AT,
-    });
-
-    expect(result?.observedPrices?.inputPerMillionTokens).toBe(2);
-    expect(result?.benchmarks).not.toHaveProperty('observedPrices');
-    expect(result?.benchmarks.sources).toEqual(['artificial-analysis']);
-  });
-});
-
-describe('matchBenchmarks with an empty source record', () => {
-  it('returns nothing when a source matches but published no measurement', () => {
-    const result = matchBenchmarks({
-      modelName: 'mistral-large-2512',
-      siblingModels: MISTRAL_MODELS,
-      epochIndex: new Map(),
-      artificialAnalysisIndex: indexOf({
-        mistrallarge2512: { aliases: ['mistral-large-2512'] },
-      }),
-      measuredAt: MEASURED_AT,
-    });
-
-    expect(result).toBeUndefined();
   });
 });

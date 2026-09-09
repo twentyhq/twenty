@@ -83,8 +83,7 @@ const lookup = (
 export type MatchBenchmarksArgs = {
   modelName: string;
   siblingModels: Record<string, ModelsDevModel>;
-  epochIndex: BenchmarkIndex;
-  artificialAnalysisIndex: BenchmarkIndex;
+  benchmarkIndex: BenchmarkIndex;
   measuredAt: string;
 };
 
@@ -97,46 +96,25 @@ export type BenchmarkMatch = {
 export const matchBenchmarks = ({
   modelName,
   siblingModels,
-  epochIndex,
-  artificialAnalysisIndex,
+  benchmarkIndex,
   measuredAt,
 }: MatchBenchmarksArgs): BenchmarkMatch | undefined => {
-  const candidates = buildLookupCandidates(modelName, siblingModels);
-  const epoch = lookup(epochIndex, candidates);
-  const artificialAnalysis = lookup(artificialAnalysisIndex, candidates);
+  const record = lookup(
+    benchmarkIndex,
+    buildLookupCandidates(modelName, siblingModels),
+  );
 
-  // Epoch's index aggregates over reasoning effort levels, so it is the
-  // headline intelligence number even when both sources have an opinion.
-  const intelligenceIndex =
-    epoch?.intelligenceIndex ?? artificialAnalysis?.intelligenceIndex;
-  const { outputTokensPerSecond, timeToFirstTokenSeconds, costPerTask } =
-    artificialAnalysis ?? {};
+  if (!isDefined(record)) {
+    return undefined;
+  }
 
-  const hasObservedPrice = [
-    artificialAnalysis?.observedPrices?.inputPerMillionTokens,
-    artificialAnalysis?.observedPrices?.outputPerMillionTokens,
-  ].some(isDefined);
-
-  const contributedArtificialAnalysis = [
+  const {
+    intelligenceIndex,
     outputTokensPerSecond,
     timeToFirstTokenSeconds,
     costPerTask,
-    artificialAnalysis?.intelligenceIndex,
-    hasObservedPrice ? true : undefined,
-  ].some(isDefined);
-
-  const sources: AiModelBenchmarks['sources'] = [
-    ...(isDefined(epoch?.intelligenceIndex) ? (['epoch-ai'] as const) : []),
-    ...(contributedArtificialAnalysis
-      ? (['artificial-analysis'] as const)
-      : []),
-  ];
-
-  // A source that matched but published nothing is not a measurement, so the
-  // model keeps no `benchmarks` entry at all rather than an empty one.
-  if (sources.length === 0) {
-    return undefined;
-  }
+    observedPrices,
+  } = record;
 
   return {
     benchmarks: {
@@ -144,18 +122,9 @@ export const matchBenchmarks = ({
       outputTokensPerSecond,
       timeToFirstTokenSeconds,
       costPerTask,
-      sources,
       measuredAt,
     },
-    aliases: [
-      ...new Set([
-        modelName,
-        ...(epoch?.aliases ?? []),
-        ...(artificialAnalysis?.aliases ?? []),
-      ]),
-    ],
-    observedPrices: hasObservedPrice
-      ? artificialAnalysis?.observedPrices
-      : undefined,
+    aliases: [...new Set([modelName, ...record.aliases])],
+    observedPrices,
   };
 };
