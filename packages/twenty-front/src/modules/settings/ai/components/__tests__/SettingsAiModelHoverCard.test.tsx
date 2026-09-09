@@ -5,7 +5,6 @@ import {
 } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactElement } from 'react';
-import { billingState } from '@/client-config/states/billingState';
 import userEvent from '@testing-library/user-event';
 import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 
@@ -22,20 +21,13 @@ const benchmark = {
   fetchedAt: '2026-09-08T12:00:00.000Z',
 };
 
-const render = (
-  element: ReactElement,
-  isBillingEnabled: boolean | null = true,
-) => {
+const render = (element: ReactElement) => {
   const store = createStore();
-  store.set(
-    billingState.atom,
-    isBillingEnabled === null ? null : { isBillingEnabled, trialPeriods: [] },
-  );
   return testingLibraryRender(<Provider store={store}>{element}</Provider>);
 };
 
 describe('SettingsAiModelHoverCard', () => {
-  it('does not attribute Twenty prices to an empty benchmark', () => {
+  it('does not display or attribute model token prices', () => {
     render(
       <SettingsAiModelHoverCard
         model={{
@@ -51,7 +43,7 @@ describe('SettingsAiModelHoverCard', () => {
         }}
       />,
     );
-    expect(screen.getByText('Input cost')).toBeInTheDocument();
+    expect(screen.queryByText('Input cost')).not.toBeInTheDocument();
     expect(
       screen.queryByText('Data from Artificial Analysis'),
     ).not.toBeInTheDocument();
@@ -84,29 +76,7 @@ describe('SettingsAiModelHoverCard', () => {
       screen.getByText('Data from Artificial Analysis'),
     ).toBeInTheDocument();
   });
-  it.each([false, null])(
-    'hides Twenty prices when billing is %s',
-    (isBillingEnabled) => {
-      render(
-        <SettingsAiModelHoverCard
-          model={{
-            modelId: 'openai/luna',
-            label: 'Luna',
-            benchmark,
-            inputCostPerMillionTokens: 0.2,
-            outputCostPerMillionTokens: 1.2,
-            contextWindowTokens: 1_000_000,
-          }}
-        />,
-        isBillingEnabled,
-      );
-      expect(screen.queryByText('Input cost')).not.toBeInTheDocument();
-      expect(screen.queryByText('Output cost')).not.toBeInTheDocument();
-      expect(screen.getByText('Intelligence')).toBeInTheDocument();
-      expect(screen.getByText('Context window')).toBeInTheDocument();
-    },
-  );
-  it('shows Twenty costs and Artificial Analysis cost with attribution', async () => {
+  it('shows benchmark comparisons and model information', async () => {
     const user = userEvent.setup();
     render(
       <SettingsAiModelHoverCard
@@ -132,10 +102,8 @@ describe('SettingsAiModelHoverCard', () => {
 
     expect(screen.getByText('84')).toBeVisible();
     expect(screen.getByText('62')).toBeVisible();
-    expect(screen.getByText('Input cost')).toBeVisible();
-    expect(screen.getByText('$0.2')).toBeVisible();
-    expect(screen.getByText('Output cost')).toBeVisible();
-    expect(screen.getByText('$1.2')).toBeVisible();
+    expect(screen.queryByText('Input cost')).not.toBeInTheDocument();
+    expect(screen.queryByText('Output cost')).not.toBeInTheDocument();
     expect(screen.getByText('Cost index')).toBeVisible();
     expect(screen.getByText('Very low')).toBeVisible();
     expect(screen.getByText('1M')).toBeVisible();
@@ -152,39 +120,6 @@ describe('SettingsAiModelHoverCard', () => {
       'Relative cost across available models',
     );
     expect(screen.getByRole('tooltip')).toHaveTextContent('#1/2');
-  });
-
-  it('describes input and output pricing separately', async () => {
-    const user = userEvent.setup();
-    const { unmount } = render(
-      <SettingsAiModelHoverCard
-        model={{
-          modelId: 'openai/luna',
-          label: 'Luna',
-          inputCostPerMillionTokens: 0.2,
-          outputCostPerMillionTokens: 1.2,
-        }}
-      />,
-    );
-
-    await user.hover(screen.getByText('$0.2'));
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
-      'Price per million input tokens billed with Twenty credits',
-    );
-    unmount();
-    render(
-      <SettingsAiModelHoverCard
-        model={{
-          modelId: 'openai/luna',
-          label: 'Luna',
-          outputCostPerMillionTokens: 1.2,
-        }}
-      />,
-    );
-    await user.hover(screen.getByText('$1.2'));
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
-      'Price per million output tokens billed with Twenty credits',
-    );
   });
 
   it('shows concise benchmark descriptions on focus', async () => {
@@ -223,8 +158,7 @@ describe('SettingsAiModelHoverCard', () => {
         }}
       />,
     );
-    expect(screen.getByText('Output cost')).toBeVisible();
-    expect(screen.getByText('$1.25')).toBeVisible();
+    expect(screen.queryByText('Output cost')).not.toBeInTheDocument();
     expect(screen.queryByText('Input cost')).not.toBeInTheDocument();
     expect(screen.queryByText('Cost index')).not.toBeInTheDocument();
     expect(screen.getByText('128K')).toBeVisible();
@@ -286,7 +220,7 @@ describe('SettingsAiModelHoverCard', () => {
       />,
     );
     expect(screen.getByText('0')).toBeVisible();
-    expect(screen.getByText('$0')).toBeVisible();
+    expect(screen.queryByText('Input cost')).not.toBeInTheDocument();
     expect(screen.queryByText('Cost index')).not.toBeInTheDocument();
     expect(screen.getByText('Intelligence')).toBeVisible();
     expect(screen.queryByText('Speed')).not.toBeInTheDocument();

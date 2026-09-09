@@ -9,8 +9,6 @@ import { SettingsAiModelComparisonBar } from '@/settings/ai/components/SettingsA
 import { SettingsAiModelInformation } from '@/settings/ai/components/SettingsAiModelInformation';
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';
 import { getAiModelComparisonItems } from '@/settings/ai/utils/getAiModelComparisonItems';
-import { billingState } from '@/client-config/states/billingState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledHoverCardWrapper = styled.div`
   backdrop-filter: blur(${themeCssVariables.blur.strong});
@@ -109,14 +107,10 @@ export const SettingsAiModelHoverCard = ({
 }: SettingsAiModelHoverCardProps) => {
   const { theme } = useContext(ThemeContext);
   const tooltipId = useId().replace(/:/g, '');
-  const billing = useAtomStateValue(billingState);
-  const isBillingEnabled = billing?.isBillingEnabled ?? false;
-  const { model, benchmark, benchmarkItems, pricingItems } =
-    getAiModelComparisonItems({
-      requestedModel,
-      comparisonModels,
-      isBillingEnabled,
-    });
+  const { model, benchmark, benchmarkItems } = getAiModelComparisonItems({
+    requestedModel,
+    comparisonModels,
+  });
   const renderItem = (
     item: ReturnType<
       typeof getAiModelComparisonItems
@@ -168,7 +162,6 @@ export const SettingsAiModelHoverCard = ({
     <StyledHoverCardWrapper>
       <StyledBody>
         {benchmarkItems.map(renderItem)}
-        {pricingItems.map(renderItem)}
         <SettingsAiModelInformation model={model} />
         {benchmarkItems.length > 0 && isDefined(benchmark) && (
           <StyledAttribution

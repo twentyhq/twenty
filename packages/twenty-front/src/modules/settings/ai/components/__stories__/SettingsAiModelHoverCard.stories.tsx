@@ -1,10 +1,7 @@
-import { isDisplayableNumber } from '@/settings/ai/utils/isDisplayableNumber';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { createStore, Provider } from 'jotai';
-import { billingState } from '@/client-config/states/billingState';
 import { isAutoSelectModelId } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -54,24 +51,7 @@ const comparisonModels = [
 const meta: Meta<typeof SettingsAiModelHoverCard> = {
   title: 'Settings/AI/ModelHoverCard',
   component: SettingsAiModelHoverCard,
-  decorators: [
-    ComponentDecorator,
-    (Story, context) => {
-      const [store] = useState(() => {
-        const store = createStore();
-        store.set(billingState.atom, {
-          isBillingEnabled: context.parameters.isBillingEnabled ?? true,
-          trialPeriods: [],
-        });
-        return store;
-      });
-      return (
-        <Provider store={store}>
-          <Story />
-        </Provider>
-      );
-    },
-  ],
+  decorators: [ComponentDecorator],
   args: { model, comparisonModels },
 };
 
@@ -82,7 +62,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Intelligence')).toBeVisible();
-    await expect(canvas.getByText('Input cost')).toBeVisible();
+    await expect(canvas.queryByText('Input cost')).not.toBeInTheDocument();
     await userEvent.hover(canvas.getByText('Speed'));
     await waitFor(() =>
       expect(
@@ -96,7 +76,6 @@ export const Default: Story = {
   },
 };
 export const SelfHosted: Story = {
-  parameters: { isBillingEnabled: false },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.queryByText('Input cost')).not.toBeInTheDocument();
@@ -112,7 +91,7 @@ export const WithoutBenchmarks: Story = {
     await expect(
       canvas.queryByText('Data from Artificial Analysis'),
     ).not.toBeInTheDocument();
-    await expect(canvas.getByText('Input cost')).toBeVisible();
+    await expect(canvas.queryByText('Input cost')).not.toBeInTheDocument();
   },
 };
 export const WithoutMetadata: Story = {
@@ -215,11 +194,8 @@ export const CloudCatalog: Story = {
     await expect(canvas.getAllByText('Context window')).toHaveLength(
       args.comparisonModels?.length ?? 0,
     );
-    await expect(canvas.queryAllByText('Input cost')).toHaveLength(
-      args.comparisonModels?.filter((model) =>
-        isDisplayableNumber(model.inputCostPerMillionTokens),
-      ).length ?? 0,
-    );
+    await expect(canvas.queryAllByText('Input cost')).toHaveLength(0);
+    await expect(canvas.queryAllByText('Output cost')).toHaveLength(0);
     await expect(
       canvas.getAllByText('Data from Artificial Analysis').length,
     ).toBeGreaterThan(0);

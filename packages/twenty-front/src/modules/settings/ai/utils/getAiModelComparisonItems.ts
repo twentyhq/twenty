@@ -1,17 +1,10 @@
 import { t } from '@lingui/core/macro';
 import { isAutoSelectModelId } from 'twenty-shared/utils';
-import {
-  IconArrowDown,
-  IconArrowUp,
-  IconChartBar,
-  IconCurrencyDollar,
-  IconGauge,
-} from 'twenty-ui/icon';
+import { IconChartBar, IconCurrencyDollar, IconGauge } from 'twenty-ui/icon';
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';
 import { getModelComparisonColor } from '@/settings/ai/utils/getModelComparisonColor';
 import { isDisplayableNumber } from '@/settings/ai/utils/isDisplayableNumber';
 import { formatCompactNumber } from '@/settings/ai/utils/formatCompactNumber';
-import { formatDollarPrice } from '@/settings/ai/utils/formatDollarPrice';
 import { getCostCategory } from '@/settings/ai/utils/getCostCategory';
 import { getModelComparisonScore } from '@/settings/ai/utils/getModelComparisonScore';
 import { withModelRanking } from '@/settings/ai/utils/withModelRanking';
@@ -29,11 +22,9 @@ type ModelInformationItem = {
 export const getAiModelComparisonItems = ({
   requestedModel,
   comparisonModels,
-  isBillingEnabled,
 }: {
   requestedModel: AiModelSummary;
   comparisonModels: AiModelSummary[];
-  isBillingEnabled: boolean;
 }) => {
   const availableModels = comparisonModels.filter(
     (entry) => !isAutoSelectModelId(entry.modelId) && !entry.isDeprecated,
@@ -75,12 +66,6 @@ export const getAiModelComparisonItems = ({
         benchmark?.intelligenceIndexVersion,
     )
     .map((comparisonModel) => comparisonModel.benchmark?.costPerTask)
-    .filter(isDisplayableNumber);
-  const comparableInputPricingValues = modelsToCompare
-    .map((comparisonModel) => comparisonModel.inputCostPerMillionTokens)
-    .filter(isDisplayableNumber);
-  const comparableOutputPricingValues = modelsToCompare
-    .map((comparisonModel) => comparisonModel.outputCostPerMillionTokens)
     .filter(isDisplayableNumber);
   const benchmarkItems: ModelInformationItem[] = [
     ...(isDisplayableNumber(benchmark?.intelligenceIndex)
@@ -163,63 +148,5 @@ export const getAiModelComparisonItems = ({
         ]
       : []),
   ];
-  const pricingItems: ModelInformationItem[] = [
-    ...(isBillingEnabled && isDisplayableNumber(model.inputCostPerMillionTokens)
-      ? [
-          {
-            comparisonLabel: t`Input pricing compared with available models`,
-            indicatorColor: getModelComparisonColor({
-              value: model.inputCostPerMillionTokens,
-              comparisonValues: comparableInputPricingValues,
-              lowerIsBetter: true,
-            }),
-            label: t`Input cost`,
-            maximumValue: 100,
-            rawValue: getModelComparisonScore({
-              value: model.inputCostPerMillionTokens,
-              comparisonValues: comparableInputPricingValues,
-              lowerIsBetter: true,
-            }),
-            value: formatDollarPrice(model.inputCostPerMillionTokens),
-            icon: IconArrowDown,
-            description: withModelRanking({
-              description: t`Price per million input tokens billed with Twenty credits`,
-              value: model.inputCostPerMillionTokens,
-              comparisonValues: comparableInputPricingValues,
-              lowerIsBetter: true,
-            }),
-          },
-        ]
-      : []),
-    ...(isBillingEnabled &&
-    isDisplayableNumber(model.outputCostPerMillionTokens)
-      ? [
-          {
-            comparisonLabel: t`Output pricing compared with available models`,
-            indicatorColor: getModelComparisonColor({
-              value: model.outputCostPerMillionTokens,
-              comparisonValues: comparableOutputPricingValues,
-              lowerIsBetter: true,
-            }),
-            label: t`Output cost`,
-            maximumValue: 100,
-            rawValue: getModelComparisonScore({
-              value: model.outputCostPerMillionTokens,
-              comparisonValues: comparableOutputPricingValues,
-              lowerIsBetter: true,
-            }),
-            value: formatDollarPrice(model.outputCostPerMillionTokens),
-            icon: IconArrowUp,
-            description: withModelRanking({
-              description: t`Price per million output tokens billed with Twenty credits`,
-              value: model.outputCostPerMillionTokens,
-              comparisonValues: comparableOutputPricingValues,
-              lowerIsBetter: true,
-            }),
-          },
-        ]
-      : []),
-  ];
-
-  return { model, benchmark, benchmarkItems, pricingItems };
+  return { model, benchmark, benchmarkItems };
 };

@@ -11,8 +11,6 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';
 import { useSettingsAiModelHoverCard } from '@/settings/ai/hooks/useSettingsAiModelHoverCard';
-import { billingState } from '@/client-config/states/billingState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getAiModelComparisonItems } from '@/settings/ai/utils/getAiModelComparisonItems';
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';
 import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
@@ -78,7 +76,6 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
 }: SettingsAiModelsTableProps<TModel>) => {
   const { theme } = useContext(ThemeContext);
   const tableId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
-  const billing = useAtomStateValue(billingState);
   const {
     activeHoverCard,
     hoverCardRef,
@@ -141,12 +138,11 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
             const safeId = `${tableId}-${Array.from(model.modelId, (character) => character.codePointAt(0)?.toString(16)).join('-')}`;
             const checked = isChecked(model);
             const disabled = isDisabled?.(model) ?? false;
-            const { benchmarkItems, pricingItems } = getAiModelComparisonItems({
+            const { benchmarkItems } = getAiModelComparisonItems({
               requestedModel: model,
               comparisonModels,
-              isBillingEnabled: billing?.isBillingEnabled ?? false,
             });
-            const modelDescription = [...benchmarkItems, ...pricingItems]
+            const modelDescription = benchmarkItems
               .map(
                 (item) =>
                   `${item.label}: ${item.value}. ${item.description ?? ''}`,
