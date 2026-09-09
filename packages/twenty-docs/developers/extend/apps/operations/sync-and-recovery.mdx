@@ -125,7 +125,7 @@ Each entity goes to the file that already defines it, so a second pull rewrites 
 
 **What it does not write:**
 
-- **Not exported yet** — roles and permissions, navigation, command menu items, logic functions and front components, and the stored source of your functions.
+- **Not exported yet** — roles and permissions, sharing rules, navigation, command menu items, logic functions and front components, and the stored source of your functions.
 - **Derived by the engine** — system fields, default relations, default views and backing indexes, and the default page layouts of each object. The server rebuilds them on apply. An object may still point its label identifier at one of them, as junction objects created in the UI do; the pointer is written and the build resolves it without adding a field.
 - **Placed on a default or foreign view** — filters, filter groups, sorts, groups and field groups added to an engine default view, or to a view owned by another application, have no source form yet and are reported. View fields added there are written as standalone files, since the view's identifier is known.
 - **Placed on a default or foreign page layout** — a widget added to a tab of an engine default page layout, or of a page layout owned by another application, has a source form, `definePageLayoutWidget()`, and the export carries it, but this version of pull does not write it to a file yet, so it is reported. Tabs added there are written as standalone files, since the layout's identifier is known.
