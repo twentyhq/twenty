@@ -96,9 +96,9 @@ describe('useSnackBar', () => {
     });
 
     expect(screen.getByRole('status')).toHaveTextContent('An error occurred.');
-    expect(
-      screen.getByRole('link', { name: 'View existing record' }),
-    ).toHaveAttribute('href', '/object/person/existing-record');
+    const action = screen.getByRole('link', { name: 'View existing record' });
+    expect(action).toHaveAttribute('href', '/object/person/existing-record');
+    expect(action.querySelector('button')).toBeNull();
   });
 
   it('should ignore aborted requests', () => {

@@ -4,8 +4,7 @@ import { type I18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type ToastVariant } from 'twenty-ui/feedback';
-import { LightButton } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { Button, LightButton } from 'twenty-ui/input';
 
 const DEFAULT_ARIA_LABEL_BY_VARIANT: Record<
   ToastVariant,
@@ -36,9 +35,13 @@ export const getToastPropsFromSnackBarProps = (
   const hasAction =
     isDefined(buttonLabel) && (isDefined(buttonOnClick) || isDefined(buttonTo));
   const action = isDefined(buttonTo) ? (
-    <UndecoratedLink to={buttonTo}>
-      <LightButton title={buttonLabel} />
-    </UndecoratedLink>
+    <Button
+      to={buttonTo}
+      title={buttonLabel}
+      ariaLabel={buttonLabel}
+      variant="tertiary"
+      size="small"
+    />
   ) : (
     <LightButton title={buttonLabel} onClick={buttonOnClick} />
   );
