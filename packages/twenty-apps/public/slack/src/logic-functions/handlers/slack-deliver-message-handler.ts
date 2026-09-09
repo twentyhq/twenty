@@ -1,0 +1,61 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
+
+import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
+import { SLACK_MESSAGE_DELIVERY_MAX_ATTEMPTS } from 'src/logic-functions/constants/slack-message-delivery-max-attempts';
+import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
+import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
+import { type SlackDeliverMessagePayload } from 'src/logic-functions/types/slack-deliver-message-payload.type';
+import { type SlackDeliverMessageResult } from 'src/logic-functions/types/slack-deliver-message-result.type';
+import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-slack-message-delivery';
+import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
+
+export const slackDeliverMessageHandler = async (
+  payload: SlackDeliverMessagePayload,
+): Promise<SlackDeliverMessageResult> => {
+  const { attempt = 1, slackAssistantRequestId, ...message } = payload;
+
+  const result = await slackPostMessageHandler(message);
+
+  if (result.success) {
+    if (isNonEmptyString(slackAssistantRequestId)) {
+      await updateSlackAssistantRequest(new CoreApiClient(), {
+        id: slackAssistantRequestId,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        responseText: message.messageText,
+      });
+    }
+
+    return { delivered: true, attempt };
+  }
+
+  if (
+    isDefined(result.retryAfterSeconds) &&
+    attempt < SLACK_MESSAGE_DELIVERY_MAX_ATTEMPTS
+  ) {
+    await enqueueSlackMessageDelivery({
+      payload,
+      retryAfterSeconds: result.retryAfterSeconds,
+    });
+
+    return { delivered: false, attempt, rescheduled: true };
+  }
+
+  const reason = result.error ?? result.message;
+
+  if (
+    isNonEmptyString(slackAssistantRequestId) &&
+    isNonEmptyString(message.parentMessageTimestamp)
+  ) {
+    await finishSlackAssistantRequestWithFailure({
+      client: new CoreApiClient(),
+      requestId: slackAssistantRequestId,
+      slackChannelId: message.slackChannelId,
+      parentMessageTimestamp: message.parentMessageTimestamp,
+      errorMessage: `Could not deliver Slack answer: ${reason}`,
+    });
+  }
+
+  return { delivered: false, attempt, rescheduled: false, error: reason };
+};
