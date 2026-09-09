@@ -114,7 +114,7 @@ describe('ApplicationManifestApplyService', () => {
     expect(callOrder).toEqual(['generateSdkClient', 'enqueueWarmUp']);
   });
 
-  it('skips the prebuilt warm-up job on dev sync', async () => {
+  it('skips the prebuilt warm-up job on dev sync, including the first apply', async () => {
     applicationSyncService.synchronizeFromManifest.mockResolvedValue({
       workspaceMigration: { actions: [] },
       hasSchemaMetadataChanged: true,
@@ -124,6 +124,11 @@ describe('ApplicationManifestApplyService', () => {
       workspaceId: WORKSPACE_ID,
       manifest,
       application,
+    });
+    await service.applyManifestToWorkspace({
+      workspaceId: WORKSPACE_ID,
+      manifest,
+      application: { ...application, version: null },
     });
 
     expect(messageQueueService.add).not.toHaveBeenCalled();

@@ -79,7 +79,7 @@ export class ApplicationManifestApplyService {
       });
     }
 
-    if (forceSdkClientGeneration || isFirstApply) {
+    if (forceSdkClientGeneration) {
       await this.messageQueueService.add<WarmUpApplicationLogicFunctionsJobData>(
         WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME,
         { workspaceId, applicationId: application.id },
