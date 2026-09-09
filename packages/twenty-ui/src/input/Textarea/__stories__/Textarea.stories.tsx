@@ -40,6 +40,10 @@ export const AutoResize: Story = {
     const textarea = canvas.getByRole('textbox', { name: 'Textarea' });
     const initialHeight = textarea.clientHeight;
 
+    await expect(
+      textarea.style.getPropertyValue('--tw-textarea-max-rows'),
+    ).toBe('4');
+
     await userEvent.type(textarea, 'one{enter}two{enter}three');
 
     await expect(textarea.clientHeight).toBeGreaterThan(initialHeight);
