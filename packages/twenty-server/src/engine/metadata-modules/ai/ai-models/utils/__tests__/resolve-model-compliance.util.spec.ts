@@ -37,9 +37,6 @@ describe('resolveModelCompliance', () => {
   });
 
   it('should drop a retention claim written at the provider level', () => {
-    // Retention has no provider fallback to reach, because the provider schema
-    // does not carry the field: a claim written one level too high is stripped
-    // rather than inherited by every model beneath it.
     const parsed = aiProviderConfigSchema.parse({
       npm: '@ai-sdk/anthropic',
       apiKey: 'key',
