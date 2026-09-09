@@ -1,4 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -21,6 +23,54 @@ const meta: Meta<typeof Checkbox> = {
 
 export default meta;
 type Story = StoryObj<typeof Checkbox>;
+
+type ControlledCheckboxExampleProps = {
+  onCheckedChange?: (checked: boolean) => void;
+};
+
+const ControlledCheckboxExample = ({
+  onCheckedChange,
+}: ControlledCheckboxExampleProps) => {
+  const [checked, setChecked] = useState(false);
+
+  return (
+    <>
+      <Checkbox
+        checked={checked}
+        onCheckedChange={onCheckedChange}
+        aria-label="Controlled checkbox"
+      />
+      <button type="button" onClick={() => setChecked(true)}>
+        Apply selection
+      </button>
+    </>
+  );
+};
+
+export const Controlled: Story = {
+  args: { onCheckedChange: fn() },
+  decorators: [ComponentDecorator],
+  render: (args) => (
+    <ControlledCheckboxExample onCheckedChange={args.onCheckedChange} />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const checkbox = canvas.getByRole('checkbox', {
+      name: 'Controlled checkbox',
+    });
+
+    await userEvent.click(checkbox);
+
+    await expect(args.onCheckedChange).toHaveBeenCalledWith(true);
+    await expect(checkbox).not.toBeChecked();
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Apply selection' }),
+    );
+
+    await expect(checkbox).toBeChecked();
+  },
+};
 
 export const Default: Story = {
   args: {

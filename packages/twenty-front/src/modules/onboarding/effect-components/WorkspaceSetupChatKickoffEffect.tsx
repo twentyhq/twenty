@@ -12,6 +12,7 @@ import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSk
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { WORKSPACE_SETUP_CHAT_ENRICHMENT_MAX_WAIT_MS } from '@/onboarding/constants/WorkspaceSetupChatEnrichmentMaxWaitMs';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
 import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
@@ -78,6 +79,10 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           result.outcome === WorkspaceSetupChatOutcome.UNAVAILABLE ||
           !isDefined(thread)
         ) {
+          return;
+        }
+
+        if (!store.get(shouldOpenAiChatAfterOnboardingState.atom)) {
           return;
         }
 

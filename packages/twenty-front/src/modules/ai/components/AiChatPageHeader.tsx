@@ -43,11 +43,7 @@ const StyledHeaderTitle = styled.div`
   white-space: nowrap;
 `;
 
-type AiChatPageHeaderProps = {
-  isOnboarding: boolean;
-};
-
-export const AiChatPageHeader = ({ isOnboarding }: AiChatPageHeaderProps) => {
+export const AiChatPageHeader = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
@@ -64,21 +60,15 @@ export const AiChatPageHeader = ({ isOnboarding }: AiChatPageHeaderProps) => {
       {!isNavigationDrawerExpanded && !isMobile && (
         <NavigationDrawerCollapseButton direction="right" />
       )}
-      {isDefined(currentAiChatThreadData) && !isOnboarding ? (
+      {isDefined(currentAiChatThreadData) ? (
         <AiChatPageThreadHeader
           key={currentAiChatThreadData.id}
           thread={currentAiChatThreadData}
         />
       ) : (
-        <StyledHeaderTitle>
-          {isOnboarding ? t`Onboarding` : isNewChat ? t`New chat` : null}
-        </StyledHeaderTitle>
+        <StyledHeaderTitle>{isNewChat ? t`New chat` : null}</StyledHeaderTitle>
       )}
-      {isMobile ? (
-        <AiChatCloseButton variant="primary" />
-      ) : (
-        isOnboarding && <AiChatCloseButton />
-      )}
+      {isMobile && <AiChatCloseButton variant="primary" />}
       <AiChatThreadDeleteConfirmationModal
         surface={AI_CHAT_THREAD_ACTIONS_SURFACE.PAGE_HEADER}
       />
