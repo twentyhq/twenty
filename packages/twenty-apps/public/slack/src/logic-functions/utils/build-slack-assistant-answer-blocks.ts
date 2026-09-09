@@ -5,6 +5,7 @@ import { SLACK_ASSISTANT_FEEDBACK_ACTION_ID } from 'src/logic-functions/constant
 import { SLACK_ASSISTANT_FEEDBACK_BUTTON_VALUE } from 'src/logic-functions/constants/slack-assistant-feedback-button-value';
 import { SLACK_ASSISTANT_REQUEST_OBJECT_NAME } from 'src/logic-functions/constants/slack-assistant-request-object-name';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
+import { truncateOnGraphemeBoundary } from 'src/logic-functions/utils/truncate-on-grapheme-boundary';
 
 const buildTruncationNotice = ({
   requestId,
@@ -32,12 +33,17 @@ const buildAnswerMarkdown = ({
 
   const notice = buildTruncationNotice({ requestId, workspaceBaseUrl });
   const budget = Math.max(SLACK_MARKDOWN_BLOCK_MAX_LENGTH - notice.length, 0);
-  const head = responseText.slice(0, budget);
+  const head = truncateOnGraphemeBoundary({
+    text: responseText,
+    maxLength: budget,
+  });
   const lastLineBreakIndex = head.lastIndexOf('\n');
+  const lastWhitespaceIndex = head.search(/\s+\S*$/);
+  const boundaryIndex =
+    lastLineBreakIndex > budget / 2 ? lastLineBreakIndex : lastWhitespaceIndex;
 
-  // cutting mid-line would leave half a link or a bullet rendering as raw markdown
   const keptText =
-    lastLineBreakIndex > budget / 2 ? head.slice(0, lastLineBreakIndex) : head;
+    boundaryIndex > budget / 2 ? head.slice(0, boundaryIndex) : head;
 
   return `${keptText}${notice}`;
 };

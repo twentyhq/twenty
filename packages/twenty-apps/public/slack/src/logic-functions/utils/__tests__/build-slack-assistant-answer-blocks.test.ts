@@ -85,9 +85,9 @@ describe('buildSlackAssistantAnswerBlocks', () => {
       workspaceBaseUrl: 'https://acme.twenty.com',
     });
 
-    expect(
-      (markdownBlock as { text: string }).text.length,
-    ).toBeLessThanOrEqual(SLACK_MARKDOWN_BLOCK_MAX_LENGTH);
+    expect((markdownBlock as { text: string }).text.length).toBeLessThanOrEqual(
+      SLACK_MARKDOWN_BLOCK_MAX_LENGTH,
+    );
   });
 
   it('should cut a too long answer on a line break so markdown stays renderable', () => {
@@ -106,5 +106,30 @@ describe('buildSlackAssistantAnswerBlocks', () => {
     );
     expect(responseText.startsWith(keptText)).toBe(true);
     expect(responseText[keptText.length]).toBe('\n');
+  });
+  it('should not split an emoji when cutting a too long answer', () => {
+    const responseText =
+      '\u{1F468}\u200D\u{1F469}\u200D\u{1F467}\u200D\u{1F466}'.repeat(2000);
+
+    const [markdownBlock] = buildSlackAssistantAnswerBlocks({
+      responseText,
+      requestId: REQUEST_ID,
+    });
+
+    const { text } = markdownBlock as { text: string };
+    const keptText = text.slice(0, text.indexOf('\n\n_Shortened'));
+
+    expect(text.length).toBeLessThanOrEqual(SLACK_MARKDOWN_BLOCK_MAX_LENGTH);
+    expect(responseText.startsWith(keptText)).toBe(true);
+    expect(
+      [...keptText].some(
+        (character) =>
+          /[\uD800-\uDFFF]/.test(character) && character.length === 1,
+      ),
+    ).toBe(false);
+    expect(
+      keptText.length %
+        '\u{1F468}\u200D\u{1F469}\u200D\u{1F467}\u200D\u{1F466}'.length,
+    ).toBe(0);
   });
 });
