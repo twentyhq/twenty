@@ -11,6 +11,7 @@ import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import type { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
+import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
 
@@ -313,7 +314,10 @@ describe('transformEventBatchToWebhookEvents', () => {
     const result = transformEventBatchToWebhookEvents({
       workspaceEventBatch,
       webhooks,
-      recordShareGate: { recordShares, principalIds: [EVERYONE_PRINCIPAL_ID] },
+      recordShareGate: {
+        recordSharesByRecordId: indexRecordSharesByRecordId(recordShares),
+        principalIds: [EVERYONE_PRINCIPAL_ID],
+      },
     });
 
     expect(result).toHaveLength(1);
