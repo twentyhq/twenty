@@ -18,7 +18,7 @@ describe('SsoService', () => {
 
     return new SsoService(
       {} as any,
-      mockTwentyConfigService as TwentyConfigService,
+      mockTwentyConfigService as unknown as TwentyConfigService,
       {} as BillingService,
       {} as ExceptionHandlerService,
     );
@@ -66,8 +66,10 @@ describe('SsoService', () => {
         {} as any,
       );
 
+      const agent = httpOptions.agent as http.Agent;
+
       expect(() => {
-        httpOptions.agent!.createConnection(
+        agent.createConnection(
           { host: '169.254.169.254' } as any,
           jest.fn() as any,
         );
