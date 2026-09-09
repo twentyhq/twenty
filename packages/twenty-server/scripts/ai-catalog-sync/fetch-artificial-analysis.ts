@@ -12,10 +12,14 @@ type ArtificialAnalysisModel = Record<string, unknown> & {
   name?: string;
 };
 
-const readNumber = (value: unknown): number | undefined =>
-  typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+// This endpoint returns 0 for "not measured", and a zero tokens-per-second is a
+// lie rather than a datum.
+const readPositiveNumber = (value: unknown): number | undefined =>
+  typeof value === 'number' && Number.isFinite(value) && value > 0
+    ? value
+    : undefined;
 
-const readNestedNumber = (
+const readNested = (
   model: ArtificialAnalysisModel,
   containerKey: string,
   leafKey: string,
@@ -23,10 +27,10 @@ const readNestedNumber = (
   const container = model[containerKey];
 
   if (typeof container !== 'object' || container === null) {
-    return readNumber(model[leafKey]);
+    return undefined;
   }
 
-  return readNumber((container as Record<string, unknown>)[leafKey]);
+  return readPositiveNumber((container as Record<string, unknown>)[leafKey]);
 };
 
 const readModels = (payload: unknown): ArtificialAnalysisModel[] => {
@@ -38,6 +42,17 @@ const readModels = (payload: unknown): ArtificialAnalysisModel[] => {
 
   return Array.isArray(data) ? (data as ArtificialAnalysisModel[]) : [];
 };
+
+// How much a row actually says. The endpoint carries several rows per model and
+// some hosts publish no measurements at all, so an unmeasured row must never
+// displace a measured one under the same key.
+const informationScore = (record: BenchmarkRecord): number =>
+  [
+    record.intelligenceIndex,
+    record.outputTokensPerSecond,
+    record.costPerTask,
+    record.timeToFirstTokenSeconds,
+  ].filter(isDefined).length;
 
 export const fetchArtificialAnalysisBenchmarks = async (
   apiKey: string,
@@ -66,27 +81,47 @@ export const fetchArtificialAnalysisBenchmarks = async (
   for (const model of models) {
     const aliases = [model.slug, model.id, model.name].filter(isDefined);
 
+    // The intelligence index sits under `evaluations` and cost per task under
+    // `cost_per_task`; only the speed figures are top level. Reading them all
+    // from the top level yields matched models carrying no usable number.
     const record: BenchmarkRecord = {
-      intelligenceIndex: readNestedNumber(
+      intelligenceIndex: readNested(
         model,
         'evaluations',
         'artificial_analysis_intelligence_index',
       ),
-      outputTokensPerSecond: readNumber(model.median_output_tokens_per_second),
-      timeToFirstTokenSeconds: readNumber(
+      outputTokensPerSecond: readPositiveNumber(
+        model.median_output_tokens_per_second,
+      ),
+      timeToFirstTokenSeconds: readPositiveNumber(
         model.median_time_to_first_token_seconds,
       ),
-      costPerTask: readNestedNumber(model, 'cost_per_task', 'total_cost'),
+      costPerTask: readNested(model, 'cost_per_task', 'total_cost'),
       aliases,
     };
 
+    if (informationScore(record) === 0) {
+      continue;
+    }
+
     for (const alias of aliases) {
       const key = normalizeModelName(alias);
+      const existing = index.get(key);
 
-      if (key.length > 0 && !index.has(key)) {
+      if (
+        key.length > 0 &&
+        (!isDefined(existing) ||
+          informationScore(record) > informationScore(existing))
+      ) {
         index.set(key, record);
       }
     }
+  }
+
+  if (index.size === 0) {
+    throw new Error(
+      `${models.length} models returned from ${url} but none carried a measurement`,
+    );
   }
 
   return index;
