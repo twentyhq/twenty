@@ -36,6 +36,7 @@ import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-mod
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
 import { getPositiveTokenLimitOrDefault } from 'src/engine/metadata-modules/ai/ai-models/utils/get-positive-token-limit-or-default.util';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
+import { resolveModelCompliance } from 'src/engine/metadata-modules/ai/ai-models/utils/resolve-model-compliance.util';
 import { isProviderConfigured } from 'src/engine/metadata-modules/ai/ai-models/utils/is-provider-configured.util';
 import {
   isModelAllowedByWorkspace,
@@ -211,8 +212,7 @@ export class AiModelRegistryService {
       sdkPackage: config.npm,
       label: modelDef.label,
       description: modelDef.description ?? compositeId,
-      dataResidency: modelDef.dataResidency ?? config.dataResidency,
-      zeroDataRetention: modelDef.zeroDataRetention,
+      ...resolveModelCompliance(modelDef, config),
       costPerMinute: modelDef.costPerMinute,
       isDeprecated: modelDef.isDeprecated,
     });
@@ -290,10 +290,7 @@ export class AiModelRegistryService {
       modelFamily:
         modelDef.modelFamily ??
         inferModelFamily(providerConfig.name ?? '', modelDef.name),
-      // The provider value is only a fallback: one Bedrock provider serves both
-      // eu.* and global.* models, which do not route to the same place.
-      dataResidency: modelDef.dataResidency ?? providerConfig.dataResidency,
-      zeroDataRetention: modelDef.zeroDataRetention,
+      ...resolveModelCompliance(modelDef, providerConfig),
       inputCostPerMillionTokens: modelDef.inputCostPerMillionTokens ?? 0,
       outputCostPerMillionTokens: modelDef.outputCostPerMillionTokens ?? 0,
       cachedInputCostPerMillionTokens: modelDef.cachedInputCostPerMillionTokens,
