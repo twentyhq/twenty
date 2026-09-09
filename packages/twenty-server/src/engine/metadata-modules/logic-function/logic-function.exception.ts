@@ -68,16 +68,12 @@ export class LogicFunctionException extends CustomException<LogicFunctionExcepti
   constructor(
     message: string,
     code: LogicFunctionExceptionCode,
-    {
-      userFriendlyMessage,
-      cause,
-    }: { userFriendlyMessage?: MessageDescriptor; cause?: unknown } = {},
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
         getLogicFunctionExceptionUserFriendlyMessage(code),
-      cause,
     });
   }
 }
