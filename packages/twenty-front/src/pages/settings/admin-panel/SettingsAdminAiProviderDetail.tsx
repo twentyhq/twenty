@@ -169,7 +169,9 @@ export const SettingsAdminAiProviderDetail = () => {
       .map((model) => ({
         ...model,
         benchmark: aiModels.find(
-          (clientModel) => clientModel.modelId === model.modelId,
+          (clientModel) =>
+            clientModel.modelId === model.modelId &&
+            clientModel.providerName === model.providerName,
         )?.benchmark,
       }));
   }, [modelsData, providerName, aiModels]);
@@ -366,7 +368,7 @@ export const SettingsAdminAiProviderDetail = () => {
             <SettingsAiModelsTable
               models={filteredModels}
               comparisonModels={providerModels.filter(
-                (model) => model.isAvailable,
+                (model) => model.isAvailable && model.isAdminEnabled,
               )}
               isChecked={(model) => model.isAdminEnabled}
               isDisabled={(model) =>

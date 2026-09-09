@@ -122,12 +122,18 @@ export const SettingsAdminAI = () => {
   const effectiveUsageData = usageData ?? previousUsageData;
   const usageByWorkspace = effectiveUsageData?.getAdminAiUsageByWorkspace ?? [];
 
-  const models = (data?.getAdminAiModels?.models ?? []).map((model) => ({
-    ...model,
-    benchmark: aiModels.find(
-      (clientModel) => clientModel.modelId === model.modelId,
-    )?.benchmark,
-  }));
+  const models = useMemo(
+    () =>
+      (data?.getAdminAiModels?.models ?? []).map((model) => ({
+        ...model,
+        benchmark: aiModels.find(
+          (clientModel) =>
+            clientModel.modelId === model.modelId &&
+            clientModel.providerName === model.providerName,
+        )?.benchmark,
+      })),
+    [data, aiModels],
+  );
 
   const providerItems = useMemo(
     () => parseProviderItems(providersData?.getAiProviders ?? {}),
