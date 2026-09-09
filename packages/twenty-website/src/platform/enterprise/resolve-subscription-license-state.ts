@@ -27,44 +27,44 @@ export type SubscriptionLicenseState =
       graceExpiresAt: null;
     };
 
+const licensed = (): SubscriptionLicenseState => ({
+  outcome: SUBSCRIPTION_LICENSE_OUTCOME.LICENSED,
+  graceExpiresAt: null,
+});
+
+const rejected = (): SubscriptionLicenseState => ({
+  outcome: SUBSCRIPTION_LICENSE_OUTCOME.REJECTED,
+  graceExpiresAt: null,
+});
+
+const grace = (graceExpiresAt: number): SubscriptionLicenseState => ({
+  outcome: SUBSCRIPTION_LICENSE_OUTCOME.GRACE,
+  graceExpiresAt,
+});
+
 export function resolveSubscriptionLicenseState({
   status,
   nextPaymentAttempt,
   now = new Date(),
 }: ResolveSubscriptionLicenseStateInput): SubscriptionLicenseState {
   if (LICENSED_STATUSES.has(status)) {
-    return {
-      outcome: SUBSCRIPTION_LICENSE_OUTCOME.LICENSED,
-      graceExpiresAt: null,
-    };
+    return licensed();
   }
 
-  if (!GRACE_STATUSES.has(status)) {
-    return {
-      outcome: SUBSCRIPTION_LICENSE_OUTCOME.REJECTED,
-      graceExpiresAt: null,
-    };
+  if (GRACE_STATUSES.has(status)) {
+    if (typeof nextPaymentAttempt !== 'number' || nextPaymentAttempt <= 0) {
+      return rejected();
+    }
+
+    const nowSeconds = Math.floor(now.getTime() / 1000);
+    const graceExpiresAt = nextPaymentAttempt + GRACE_MARGIN_SECONDS;
+
+    if (graceExpiresAt <= nowSeconds) {
+      return rejected();
+    }
+
+    return grace(graceExpiresAt);
   }
 
-  if (typeof nextPaymentAttempt !== 'number' || nextPaymentAttempt <= 0) {
-    return {
-      outcome: SUBSCRIPTION_LICENSE_OUTCOME.REJECTED,
-      graceExpiresAt: null,
-    };
-  }
-
-  const nowSeconds = Math.floor(now.getTime() / 1000);
-  const graceExpiresAt = nextPaymentAttempt + GRACE_MARGIN_SECONDS;
-
-  if (graceExpiresAt <= nowSeconds) {
-    return {
-      outcome: SUBSCRIPTION_LICENSE_OUTCOME.REJECTED,
-      graceExpiresAt: null,
-    };
-  }
-
-  return {
-    outcome: SUBSCRIPTION_LICENSE_OUTCOME.GRACE,
-    graceExpiresAt,
-  };
+  return rejected();
 }
