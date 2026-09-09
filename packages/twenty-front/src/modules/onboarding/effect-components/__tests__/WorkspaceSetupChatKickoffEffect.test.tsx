@@ -14,6 +14,7 @@ import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/curren
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
 import { personEnrichmentState } from '@/onboarding/states/personEnrichmentState';
@@ -114,10 +115,37 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
     resetJotaiStore();
     sessionStorage.clear();
     localStorage.clear();
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('preserves the selected conversation when setup finishes after leaving onboarding', async () => {
+    const mocks = [{ ...buildKickoffMock({ outcome: 'STARTED' }), delay: 50 }];
+    const tree = (showSetup: boolean) => (
+      <MockedProvider mocks={mocks as never}>
+        <JotaiProvider store={jotaiStore}>
+          {showSetup && <WorkspaceSetupChatKickoffEffect />}
+        </JotaiProvider>
+      </MockedProvider>
+    );
+    const { rerender } = render(tree(true));
+
+    act(() => {
+      jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+      jotaiStore.set(currentAiChatThreadState.atom, 'new-conversation');
+    });
+    rerender(tree(false));
+    await flushMutation();
+
+    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
+      'new-conversation',
+    );
+    expect(jotaiStore.get(skipMessagesSkeletonUntilLoadedState.atom)).toBe(
+      false,
+    );
   });
 
   it('should wait for an in-flight company enrichment before starting the chat', async () => {

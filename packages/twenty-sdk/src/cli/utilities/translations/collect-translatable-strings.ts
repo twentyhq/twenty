@@ -88,5 +88,11 @@ export const collectTranslatableStrings = (
     }
   }
 
+  for (const pageLayoutTab of manifest.pageLayoutTabs ?? []) {
+    for (const widget of pageLayoutTab.widgets ?? []) {
+      addEntityStrings(widget, 'pageLayoutWidget');
+    }
+  }
+
   return [...descriptorByKey.values()];
 };
