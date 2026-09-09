@@ -40,6 +40,10 @@ export class CalendarEventWebhookSyncService {
       });
 
     if (!isCalendarChannelScheduled) {
+      this.logger.log(
+        `Skipping webhook sync for calendar channel ${calendarChannelId}, a sync is already in progress`,
+      );
+
       return;
     }
 
