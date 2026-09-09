@@ -1,8 +1,8 @@
-import { execFileSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { Project, SyntaxKind } from 'ts-morph';
 
 const project = new Project({ skipAddingFilesFromTsConfig: true });
-const files = execFileSync(
+const searchResult = spawnSync(
   'rg',
   [
     '-l',
@@ -16,9 +16,17 @@ const files = execFileSync(
     '!**/generated/**',
   ],
   { encoding: 'utf8' },
-)
-  .trim()
-  .split('\n');
+);
+
+if (searchResult.error) {
+  throw searchResult.error;
+}
+
+if (searchResult.status !== 0 && searchResult.status !== 1) {
+  throw new Error(searchResult.stderr || 'Could not find Toggle consumers');
+}
+
+const files = searchResult.stdout.trim().split('\n').filter(Boolean).sort();
 
 for (const file of files) {
   const source = project.addSourceFileAtPath(file);
@@ -107,5 +115,6 @@ for (const file of files) {
       declaration.setModuleSpecifier('@ui/input/Switch/Switch');
     }
   }
-  source.saveSync();
 }
+
+project.saveSync();
