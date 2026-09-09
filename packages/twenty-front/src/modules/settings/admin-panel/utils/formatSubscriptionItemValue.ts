@@ -1,9 +1,9 @@
 import { plural } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import { BASE_PRODUCT_KEY } from '@/settings/admin-panel/constants/BillingProductKeys';
 import { type FormatNumberOptions } from '~/utils/format/formatNumber';
 
-const BASE_PRODUCT_KEY = 'BASE_PRODUCT';
 const EM_DASH = '—';
 
 type SubscriptionItem = {

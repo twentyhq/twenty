@@ -2,8 +2,9 @@ import { formatSubscriptionItemValue } from '@/settings/admin-panel/utils/format
 
 const formatNumber = (value: number) => String(value);
 
-const format = (item: Parameters<typeof formatSubscriptionItemValue>[0]['item']) =>
-  formatSubscriptionItemValue({ item, currency: 'USD', formatNumber });
+const format = (
+  item: Parameters<typeof formatSubscriptionItemValue>[0]['item'],
+) => formatSubscriptionItemValue({ item, currency: 'USD', formatNumber });
 
 describe('formatSubscriptionItemValue', () => {
   it('calls a base-product quantity seats', () => {
@@ -11,8 +12,6 @@ describe('formatSubscriptionItemValue', () => {
   });
 
   it('does not call a metered quantity seats', () => {
-    // A resource-credit item is billed on usage; its Stripe quantity is
-    // bookkeeping, so labelling it seats claims the workspace pays per user.
     expect(format({ productKey: 'RESOURCE_CREDIT', quantity: 1 })).toBe('1');
   });
 
