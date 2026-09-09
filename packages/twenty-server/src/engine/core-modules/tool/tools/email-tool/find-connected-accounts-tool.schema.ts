@@ -8,7 +8,3 @@ export const FindConnectedAccountsToolInputZodSchema = z.object({
     )
     .optional(),
 });
-
-export type FindConnectedAccountsToolInput = z.infer<
-  typeof FindConnectedAccountsToolInputZodSchema
->;
