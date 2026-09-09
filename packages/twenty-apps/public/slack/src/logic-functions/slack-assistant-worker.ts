@@ -178,7 +178,9 @@ export const slackAssistantWorkerHandler = async (
             }),
     };
 
-    const deliveryResult = await slackPostMessageHandler(answerMessage);
+    const deliveryResult = await slackPostMessageHandler(answerMessage, {
+      waitOutRateLimit: false,
+    });
 
     const deferredRetryAfterSeconds = deliveryResult.success
       ? undefined

@@ -4,7 +4,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { buildSlackUserLinkConsentBlocks } from 'src/logic-functions/utils/build-slack-user-link-consent-blocks';
 import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-slack-message-delivery';
 import { isSlackRateLimitedError } from 'src/logic-functions/utils/is-slack-rate-limited-error';
-import { retrySlackCallWhenRateLimited } from 'src/logic-functions/utils/retry-slack-call-when-rate-limited';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const sendSlackUserLinkConsentDm = async (
@@ -49,13 +48,10 @@ export const sendSlackUserLinkConsentDm = async (
     });
 
     try {
-      await retrySlackCallWhenRateLimited({
-        call: async () =>
-          slackClient.chat.postMessage({
-            channel: channelId,
-            text: messageText,
-            blocks: messageBlocks,
-          }),
+      await slackClient.chat.postMessage({
+        channel: channelId,
+        text: messageText,
+        blocks: messageBlocks,
       });
     } catch (error) {
       if (!isSlackRateLimitedError(error)) {

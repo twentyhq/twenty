@@ -16,15 +16,29 @@ export const slackDeliverMessageHandler = async (
 ): Promise<SlackDeliverMessageResult> => {
   const { attempt = 1, slackAssistantRequestId, ...message } = payload;
 
-  const result = await slackPostMessageHandler(message);
+  const result = await slackPostMessageHandler(message, {
+    waitOutRateLimit: false,
+  });
 
   if (result.success) {
-    if (isNonEmptyString(slackAssistantRequestId)) {
+    if (!isNonEmptyString(slackAssistantRequestId)) {
+      return { delivered: true, attempt };
+    }
+
+    try {
       await updateSlackAssistantRequest(new CoreApiClient(), {
         id: slackAssistantRequestId,
         status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
         responseText: message.messageText,
       });
+    } catch (error) {
+      // the message is already posted, so failing the job here would risk
+      // delivering it twice on any future retry
+      console.warn(
+        `[slack] delivered request ${slackAssistantRequestId} but could not mark it done: ${error instanceof Error ? error.message : 'unknown error'}`,
+      );
+
+      return { delivered: true, attempt, statusRecorded: false };
     }
 
     return { delivered: true, attempt };

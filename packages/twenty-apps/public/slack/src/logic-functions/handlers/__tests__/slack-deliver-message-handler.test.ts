@@ -60,6 +60,9 @@ describe('slackDeliverMessageHandler', () => {
     const result = await slackDeliverMessageHandler(ANSWER_PAYLOAD);
 
     expect(result).toEqual({ delivered: true, attempt: 1 });
+    expect(postMessageHandlerMock).toHaveBeenCalledWith(expect.anything(), {
+      waitOutRateLimit: false,
+    });
     expect(updateRequestMock).toHaveBeenCalledWith(expect.anything(), {
       id: REQUEST_ID,
       status: 'DONE',
@@ -130,5 +133,21 @@ describe('slackDeliverMessageHandler', () => {
     expect(result.delivered).toBe(false);
     expect(updateRequestMock).not.toHaveBeenCalled();
     expect(finishWithFailureMock).not.toHaveBeenCalled();
+  });
+  it('should keep the job successful when the status write fails after posting', async () => {
+    postMessageHandlerMock.mockResolvedValue({
+      success: true,
+      message: 'Message posted to Slack.',
+    });
+    updateRequestMock.mockRejectedValue(new Error('core api unreachable'));
+
+    const result = await slackDeliverMessageHandler(ANSWER_PAYLOAD);
+
+    expect(result).toEqual({
+      delivered: true,
+      attempt: 1,
+      statusRecorded: false,
+    });
+    expect(enqueueDeliveryMock).not.toHaveBeenCalled();
   });
 });

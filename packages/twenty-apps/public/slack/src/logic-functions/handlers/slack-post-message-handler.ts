@@ -1,10 +1,12 @@
 import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
+import { type SlackPostMessageOptions } from 'src/logic-functions/types/slack-post-message-options.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { postSlackMessage } from 'src/logic-functions/utils/post-slack-message';
 
 export const slackPostMessageHandler = async (
   parameters: SlackPostMessageInput,
+  options: SlackPostMessageOptions = {},
 ): Promise<SlackToolResult> => {
   const slackClientResult = await getSlackClient();
 
@@ -16,5 +18,5 @@ export const slackPostMessageHandler = async (
     };
   }
 
-  return await postSlackMessage(slackClientResult.client, parameters);
+  return await postSlackMessage(slackClientResult.client, parameters, options);
 };
