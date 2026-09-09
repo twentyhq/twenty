@@ -4,7 +4,6 @@ import { type ProviderOptions } from '@ai-sdk/provider-utils';
 import { type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import {
   AI_SDK_ANTHROPIC,
   AI_SDK_BEDROCK,
@@ -17,6 +16,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
+import { getClaudeReasoningConfig } from 'src/engine/metadata-modules/ai/ai-models/utils/get-claude-reasoning-config.util';
 import { getNativeModelToolsForSdkPackage } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-tools-for-sdk-package.util';
 
 @Injectable()
@@ -113,27 +113,22 @@ export class AiModelConfigService {
     }
 
     return {
-      anthropic: {
-        thinking: {
-          type: 'enabled',
-          budgetTokens: AGENT_CONFIG.REASONING_BUDGET_TOKENS,
-        },
-      },
+      anthropic: { thinking: getClaudeReasoningConfig(model.modelId) },
     };
   }
 
+  // Bedrock also serves Llama, Nova and DeepSeek, which take no Claude
+  // reasoning config; they keep receiving nothing, as they always have.
   private getBedrockProviderOptions(model: RegisteredAiModel): ProviderOptions {
-    if (!model.supportsReasoning) {
+    if (
+      !model.supportsReasoning ||
+      !model.modelId.includes('anthropic.claude-')
+    ) {
       return {};
     }
 
     return {
-      bedrock: {
-        thinking: {
-          type: 'enabled',
-          budgetTokens: AGENT_CONFIG.REASONING_BUDGET_TOKENS,
-        },
-      },
+      bedrock: { reasoningConfig: getClaudeReasoningConfig(model.modelId) },
     };
   }
 }
