@@ -22,6 +22,49 @@ describe('provider-options.util', () => {
       });
     });
 
+    it('keeps the thinking config the executor passes for Anthropic', () => {
+      // Replacing the anthropic object with the cache control used to drop
+      // this, so the model ran without reasoning whatever the config said.
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_ANTHROPIC,
+          providerOptions: { anthropic: { thinking: { type: 'adaptive' } } },
+        }),
+      ).toEqual({
+        anthropic: {
+          thinking: { type: 'adaptive' },
+          cacheControl: { type: 'ephemeral' },
+        },
+      });
+    });
+
+    it('keeps existing OpenAI options alongside store false', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_OPENAI,
+          providerOptions: { openai: { reasoningEffort: 'high' } },
+          promptCacheKey: 'thread-123',
+        }),
+      ).toEqual({
+        openai: {
+          reasoningEffort: 'high',
+          store: false,
+          promptCacheKey: 'thread-123',
+        },
+      });
+    });
+
+    it('keeps existing Azure options alongside store false', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_AZURE,
+          providerOptions: { azure: { reasoningEffort: 'high' } },
+        }),
+      ).toEqual({
+        azure: { reasoningEffort: 'high', store: false },
+      });
+    });
+
     it('merges existing provider options with call-level options', () => {
       expect(
         getCallLevelProviderOptions({
