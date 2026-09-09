@@ -3,6 +3,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { type AiChatSurface } from '@/ai/types/AiChatSurface';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
@@ -18,11 +19,11 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const getWrapper =
-  (pathname: string) =>
+  (pathname: string, surface?: AiChatSurface) =>
   ({ children }: { children: React.ReactNode }) => (
     <MemoryRouter initialEntries={[pathname]}>
       <JotaiProvider store={jotaiStore}>
-        <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.SIDE_PANEL}>
+        <AiChatSurfaceContext.Provider value={surface}>
           {children}
         </AiChatSurfaceContext.Provider>
       </JotaiProvider>
@@ -32,9 +33,11 @@ const getWrapper =
 const renderHooks = ({
   pathname,
   userSelectedModel = null,
+  surface,
 }: {
   pathname: string;
   userSelectedModel?: string | null;
+  surface?: AiChatSurface;
 }) => {
   const { result } = renderHook(
     () => {
@@ -51,7 +54,7 @@ const renderHooks = ({
         ...useAgentChatModelId(),
       };
     },
-    { wrapper: getWrapper(pathname) },
+    { wrapper: getWrapper(pathname, surface) },
   );
 
   act(() => {
@@ -94,6 +97,22 @@ describe('useAgentChatModelId', () => {
 
     expect(result.current.modelIdForRequest).toBeUndefined();
   });
+
+  it.each([undefined, AI_CHAT_SURFACE.PAGE, AI_CHAT_SURFACE.SIDE_PANEL])(
+    'keeps sends, retries and answers on the fast model in surface %s',
+    (surface) => {
+      jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+      const result = renderHooks({ pathname: onboardingChatPath, surface });
+
+      expect(result.current.modelIdForRequest).toBe('openai/gpt-5-mini');
+
+      act(() =>
+        jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, false),
+      );
+
+      expect(result.current.modelIdForRequest).toBeUndefined();
+    },
+  );
 
   it('should request no model elsewhere so the server falls back to the smart model', () => {
     const result = renderHooks({ pathname: '/objects/companies' });
