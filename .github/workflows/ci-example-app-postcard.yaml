@@ -25,7 +25,6 @@ jobs:
         packages/twenty-shared/**
         packages/twenty-server/**
         packages/twenty-ui/**
-        .github/workflows/ci-example-app-postcard.yaml
         !packages/twenty-sdk/package.json
         !packages/twenty-client-sdk/package.json
         !packages/twenty-shared/package.json

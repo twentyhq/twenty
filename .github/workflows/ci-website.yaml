@@ -22,7 +22,6 @@ jobs:
         packages/twenty-website/**
         packages/twenty-shared/**
         packages/twenty-ui/**
-        .github/workflows/ci-website.yaml
   website-task:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'

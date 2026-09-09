@@ -28,7 +28,6 @@ jobs:
     with:
       files: |
         packages/twenty-ui/**
-        .github/workflows/ci-e2e-main.yaml
 
   e2e-test:
     needs: changed-files-check
