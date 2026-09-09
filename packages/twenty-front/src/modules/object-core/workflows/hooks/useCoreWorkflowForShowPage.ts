@@ -74,12 +74,9 @@ export const useCoreWorkflowForShowPage = ({
       : [],
   );
 
-  const draftVersionIdFromServer = (
-    coreWorkflowVersionsData?.coreWorkflowVersions ?? []
-  ).find(
-    (coreWorkflowVersion) =>
-      coreWorkflowVersion.status === CoreWorkflowVersionStatus.DRAFT,
-  )?.workspaceWorkflowVersionId;
+  const draftVersionIdFromServer = versions.find(
+    (version) => version.status === CoreWorkflowVersionStatus.DRAFT,
+  )?.id;
 
   return {
     coreWorkflow: isDefined(coreWorkflow)
@@ -91,6 +88,6 @@ export const useCoreWorkflowForShowPage = ({
         }
       : undefined,
     versions,
-    draftVersionIdFromServer: draftVersionIdFromServer ?? undefined,
+    draftVersionIdFromServer,
   };
 };

@@ -32,15 +32,18 @@ export const useCoreWorkflowVersionContent = ({
 
   if (
     !isDefined(coreWorkflowVersion) ||
-    !isDefined(coreWorkflowVersion.workspaceWorkflowVersionId) ||
-    !isDefined(workspaceWorkflowId)
+    !isDefined(workspaceWorkflowId) ||
+    !isDefined(workspaceWorkflowVersionId) ||
+    coreWorkflowVersion.workspaceWorkflowVersionId !==
+      workspaceWorkflowVersionId ||
+    coreWorkflowVersion.workspaceWorkflowId !== workspaceWorkflowId
   ) {
     return undefined;
   }
 
   return {
     __typename: 'WorkflowVersion',
-    id: coreWorkflowVersion.workspaceWorkflowVersionId,
+    id: workspaceWorkflowVersionId,
     name: coreWorkflowVersion.label,
     status: coreWorkflowVersion.status,
     workflowId: workspaceWorkflowId,

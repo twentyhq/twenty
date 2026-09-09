@@ -2,6 +2,7 @@ import { type ApolloClient } from '@apollo/client';
 
 import {
   GetCoreWorkflowDocument,
+  GetCoreWorkflowVersionDocument,
   GetCoreWorkflowVersionsDocument,
 } from '~/generated/graphql';
 
@@ -17,6 +18,10 @@ export const invalidateCoreWorkflowVersions = async (
   }
 
   await apolloCoreClient.refetchQueries({
-    include: [GetCoreWorkflowVersionsDocument, GetCoreWorkflowDocument],
+    include: [
+      GetCoreWorkflowVersionsDocument,
+      GetCoreWorkflowVersionDocument,
+      GetCoreWorkflowDocument,
+    ],
   });
 };
