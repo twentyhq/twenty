@@ -35,6 +35,55 @@ const render = (
 };
 
 describe('SettingsAiModelHoverCard', () => {
+  it('does not attribute Twenty prices to an empty benchmark', () => {
+    render(
+      <SettingsAiModelHoverCard
+        model={{
+          modelId: 'empty',
+          label: 'Empty benchmark',
+          benchmark: {
+            ...benchmark,
+            intelligenceIndex: undefined,
+            outputTokensPerSecond: undefined,
+            costPerTask: undefined,
+          },
+          inputCostPerMillionTokens: 1,
+        }}
+      />,
+    );
+    expect(screen.getByText('Input cost')).toBeInTheDocument();
+    expect(
+      screen.queryByText('Data from Artificial Analysis'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('attributes a displayed cost index even without speed or intelligence', () => {
+    const costOnlyBenchmark = {
+      ...benchmark,
+      intelligenceIndex: undefined,
+      outputTokensPerSecond: undefined,
+    };
+    render(
+      <SettingsAiModelHoverCard
+        model={{
+          modelId: 'cost-only',
+          label: 'Cost only',
+          benchmark: costOnlyBenchmark,
+        }}
+        comparisonModels={[
+          {
+            modelId: 'other',
+            label: 'Other',
+            benchmark: { ...costOnlyBenchmark, costPerTask: 2 },
+          },
+        ]}
+      />,
+    );
+    expect(screen.getByText('Cost index')).toBeInTheDocument();
+    expect(
+      screen.getByText('Data from Artificial Analysis'),
+    ).toBeInTheDocument();
+  });
   it.each([false, null])(
     'hides Twenty prices when billing is %s',
     (isBillingEnabled) => {
@@ -146,10 +195,16 @@ describe('SettingsAiModelHoverCard', () => {
       />,
     );
     await user.tab();
+    expect(document.activeElement).toHaveAccessibleDescription(
+      'Artificial Analysis Intelligence Index',
+    );
     expect(await screen.findByRole('tooltip')).toHaveTextContent(
       'Artificial Analysis Intelligence Index',
     );
     await user.tab();
+    expect(document.activeElement).toHaveAccessibleDescription(
+      'Output tokens per second',
+    );
     await waitFor(() =>
       expect(screen.getByRole('tooltip')).toHaveTextContent(
         'Output tokens per second',

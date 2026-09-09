@@ -62,9 +62,17 @@ export const SettingsAiModelInformation = ({
             <IconServer size={14} />
             {t`Server location`}
           </StyledLabel>
-          <StyledValue id={`${tooltipId}-server-location`} tabIndex={0}>
+          <StyledValue
+            id={`${tooltipId}-server-location`}
+            aria-describedby={`${tooltipId}-server-description`}
+            tabIndex={0}
+          >
             {serverLocation.toUpperCase()}
           </StyledValue>
+          <span
+            id={`${tooltipId}-server-description`}
+            hidden
+          >{t`Region where the model is hosted`}</span>
           <AppTooltip
             anchorSelect={`#${tooltipId}-server-location`}
             title={t`Region where the model is hosted`}
@@ -76,13 +84,21 @@ export const SettingsAiModelInformation = ({
           <IconBox size={14} />
           {t`Context window`}
         </StyledLabel>
-        <StyledValue id={`${tooltipId}-context`} tabIndex={0}>
+        <StyledValue
+          id={`${tooltipId}-context`}
+          aria-describedby={`${tooltipId}-context-description`}
+          tabIndex={0}
+        >
           {isDefined(model.contextWindowTokens) && model.contextWindowTokens > 0
             ? formatNumber(model.contextWindowTokens, {
                 abbreviate: true,
               }).replace(/k$/, 'K')
             : t`Unknown`}
         </StyledValue>
+        <span
+          id={`${tooltipId}-context-description`}
+          hidden
+        >{t`Maximum context size in tokens`}</span>
         <AppTooltip
           anchorSelect={`#${tooltipId}-context`}
           title={t`Maximum context size in tokens`}

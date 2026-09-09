@@ -2,21 +2,13 @@ import { useId } from 'react';
 import { AppTooltip } from 'twenty-ui/surfaces';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isAutoSelectModelId, isDefined } from 'twenty-shared/utils';
-import {
-  IconArrowDown,
-  IconArrowUp,
-  IconChartBar,
-  IconCurrencyDollar,
-  IconGauge,
-} from 'twenty-ui/icon';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsAiModelComparisonBar } from '@/settings/ai/components/SettingsAiModelComparisonBar';
 import { SettingsAiModelInformation } from '@/settings/ai/components/SettingsAiModelInformation';
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';
-import { getModelComparisonColor } from '@/settings/ai/utils/getModelComparisonColor';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { getAiModelComparisonItems } from '@/settings/ai/utils/getAiModelComparisonItems';
 import { billingState } from '@/client-config/states/billingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -106,116 +98,9 @@ const StyledAttribution = styled.a`
   }
 `;
 
-const isDisplayableNumber = (
-  value: number | null | undefined,
-): value is number => isDefined(value) && Number.isFinite(value) && value >= 0;
-
-const formatCompactNumber = (value: number, decimals: number): string =>
-  formatNumber(value, { abbreviate: true, decimals }).replace(/k$/, 'K');
-
-const formatDollarPrice = (dollars: number): string => {
-  if (dollars === 0) {
-    return '$0';
-  }
-
-  if (Math.abs(dollars) < 0.01) {
-    return `$${dollars.toFixed(4)}`;
-  }
-
-  return `$${formatNumber(dollars, { decimals: 2 })}`;
-};
-
-const getCostCategory = (cost: number, comparisonCosts: number[]): string => {
-  if (comparisonCosts.length < 2) {
-    return t`Medium`;
-  }
-
-  const lowerCostCount = comparisonCosts.filter(
-    (comparisonCost) => comparisonCost < cost,
-  ).length;
-  const equalCostCount = comparisonCosts.filter(
-    (comparisonCost) => comparisonCost === cost,
-  ).length;
-  const percentile =
-    ((lowerCostCount + (equalCostCount - 1) / 2) /
-      (comparisonCosts.length - 1)) *
-    100;
-
-  if (percentile < 20) {
-    return t`Very low`;
-  }
-
-  if (percentile < 40) {
-    return t`Low`;
-  }
-
-  if (percentile < 60) {
-    return t`Medium`;
-  }
-
-  if (percentile < 80) {
-    return t`High`;
-  }
-
-  return t`Very high`;
-};
-
-const getModelComparisonScore = (
-  value: number,
-  comparisonValues: number[],
-  lowerIsBetter = false,
-): number => {
-  if (comparisonValues.length < 2) {
-    return 50;
-  }
-
-  const lowerValueCount = comparisonValues.filter(
-    (comparisonValue) => comparisonValue < value,
-  ).length;
-  const equalValueCount = comparisonValues.filter(
-    (comparisonValue) => comparisonValue === value,
-  ).length;
-  const percentile =
-    (lowerValueCount + (equalValueCount - 1) / 2) /
-    (comparisonValues.length - 1);
-
-  return Math.max((lowerIsBetter ? 1 - percentile : percentile) * 100, 8);
-};
-
-const withModelRanking = (
-  description: string,
-  value: number,
-  comparisonValues: number[],
-  lowerIsBetter = false,
-): string => {
-  if (comparisonValues.length < 2) {
-    return description;
-  }
-
-  const rank =
-    comparisonValues.filter((comparisonValue) =>
-      lowerIsBetter ? comparisonValue < value : comparisonValue > value,
-    ).length + 1;
-  const total = comparisonValues.length;
-  const ranking = `#${rank}/${total}`;
-
-  return `${ranking} · ${description}`;
-};
-
 type SettingsAiModelHoverCardProps = {
   comparisonModels?: AiModelSummary[];
   model: AiModelSummary;
-};
-
-type ModelInformationItem = {
-  comparisonLabel: string;
-  label: string;
-  maximumValue: number;
-  rawValue: number;
-  value: string;
-  icon: typeof IconGauge;
-  indicatorColor?: string;
-  description?: string;
 };
 
 export const SettingsAiModelHoverCard = ({
@@ -225,193 +110,18 @@ export const SettingsAiModelHoverCard = ({
   const tooltipId = useId().replace(/:/g, '');
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
-  const availableModels = comparisonModels.filter(
-    (entry) => !isAutoSelectModelId(entry.modelId) && !entry.isDeprecated,
-  );
-  const matchingModels = availableModels.filter(
-    (entry) =>
-      entry.label === requestedModel.label &&
-      entry.providerName === requestedModel.providerName,
-  );
-  const model =
-    isAutoSelectModelId(requestedModel.modelId) && matchingModels.length === 1
-      ? matchingModels[0]
-      : requestedModel;
-  const benchmark = model.benchmark;
-  const modelsToCompare =
-    isAutoSelectModelId(model.modelId) || model.isDeprecated
-      ? []
-      : [
-          ...new Map(
-            [...availableModels, model].map((entry) => [entry.modelId, entry]),
-          ).values(),
-        ];
-
-  const comparableSpeedValues = modelsToCompare
-    .map((comparisonModel) => comparisonModel.benchmark?.outputTokensPerSecond)
-    .filter(isDisplayableNumber);
-  const comparableIntelligenceValues = modelsToCompare
-    .filter(
-      (comparisonModel) =>
-        comparisonModel.benchmark?.intelligenceIndexVersion ===
-        benchmark?.intelligenceIndexVersion,
-    )
-    .map((comparisonModel) => comparisonModel.benchmark?.intelligenceIndex)
-    .filter(isDisplayableNumber);
-  const comparableCostPerTaskValues = modelsToCompare
-    .filter(
-      (comparisonModel) =>
-        comparisonModel.benchmark?.intelligenceIndexVersion ===
-        benchmark?.intelligenceIndexVersion,
-    )
-    .map((comparisonModel) => comparisonModel.benchmark?.costPerTask)
-    .filter(isDisplayableNumber);
-  const comparableInputPricingValues = modelsToCompare
-    .map((comparisonModel) => comparisonModel.inputCostPerMillionTokens)
-    .filter(isDisplayableNumber);
-  const comparableOutputPricingValues = modelsToCompare
-    .map((comparisonModel) => comparisonModel.outputCostPerMillionTokens)
-    .filter(isDisplayableNumber);
-  const benchmarkItems: ModelInformationItem[] = [
-    ...(isDisplayableNumber(benchmark?.intelligenceIndex)
-      ? [
-          {
-            comparisonLabel: t`Intelligence compared with available models`,
-            label: t`Intelligence`,
-            maximumValue: 100,
-            rawValue: getModelComparisonScore(
-              benchmark.intelligenceIndex,
-              comparableIntelligenceValues,
-            ),
-            value: formatCompactNumber(benchmark.intelligenceIndex, 1),
-            icon: IconChartBar,
-            indicatorColor: getModelComparisonColor(
-              benchmark.intelligenceIndex,
-              comparableIntelligenceValues,
-            ),
-            description: withModelRanking(
-              t`Artificial Analysis Intelligence Index`,
-              benchmark.intelligenceIndex,
-              comparableIntelligenceValues,
-            ),
-          },
-        ]
-      : []),
-    ...(isDisplayableNumber(benchmark?.outputTokensPerSecond)
-      ? [
-          {
-            comparisonLabel: t`Speed compared with available models`,
-            label: t`Speed`,
-            maximumValue: 100,
-            rawValue: getModelComparisonScore(
-              benchmark.outputTokensPerSecond,
-              comparableSpeedValues,
-            ),
-            value: formatCompactNumber(benchmark.outputTokensPerSecond, 0),
-            icon: IconGauge,
-            indicatorColor: getModelComparisonColor(
-              benchmark.outputTokensPerSecond,
-              comparableSpeedValues,
-            ),
-            description: withModelRanking(
-              t`Output tokens per second`,
-              benchmark.outputTokensPerSecond,
-              comparableSpeedValues,
-            ),
-          },
-        ]
-      : []),
-  ];
-  const pricingItems: ModelInformationItem[] = [
-    ...(isDisplayableNumber(benchmark?.costPerTask) &&
-    comparableCostPerTaskValues.length >= 2
-      ? [
-          {
-            comparisonLabel: t`Cost index compared with available models`,
-            label: t`Cost index`,
-            maximumValue: 100,
-            rawValue: getModelComparisonScore(
-              benchmark.costPerTask,
-              comparableCostPerTaskValues,
-              true,
-            ),
-            value: getCostCategory(
-              benchmark.costPerTask,
-              comparableCostPerTaskValues,
-            ),
-            icon: IconCurrencyDollar,
-            indicatorColor: getModelComparisonColor(
-              benchmark.costPerTask,
-              comparableCostPerTaskValues,
-              true,
-            ),
-            description: withModelRanking(
-              t`Relative cost across available models`,
-              benchmark.costPerTask,
-              comparableCostPerTaskValues,
-              true,
-            ),
-          },
-        ]
-      : []),
-    ...(isBillingEnabled && isDisplayableNumber(model.inputCostPerMillionTokens)
-      ? [
-          {
-            comparisonLabel: t`Input pricing compared with available models`,
-            indicatorColor: getModelComparisonColor(
-              model.inputCostPerMillionTokens,
-              comparableInputPricingValues,
-              true,
-            ),
-            label: t`Input cost`,
-            maximumValue: 100,
-            rawValue: getModelComparisonScore(
-              model.inputCostPerMillionTokens,
-              comparableInputPricingValues,
-              true,
-            ),
-            value: formatDollarPrice(model.inputCostPerMillionTokens),
-            icon: IconArrowDown,
-            description: withModelRanking(
-              t`Price per million input tokens billed with Twenty credits`,
-              model.inputCostPerMillionTokens,
-              comparableInputPricingValues,
-              true,
-            ),
-          },
-        ]
-      : []),
-    ...(isBillingEnabled &&
-    isDisplayableNumber(model.outputCostPerMillionTokens)
-      ? [
-          {
-            comparisonLabel: t`Output pricing compared with available models`,
-            indicatorColor: getModelComparisonColor(
-              model.outputCostPerMillionTokens,
-              comparableOutputPricingValues,
-              true,
-            ),
-            label: t`Output cost`,
-            maximumValue: 100,
-            rawValue: getModelComparisonScore(
-              model.outputCostPerMillionTokens,
-              comparableOutputPricingValues,
-              true,
-            ),
-            value: formatDollarPrice(model.outputCostPerMillionTokens),
-            icon: IconArrowUp,
-            description: withModelRanking(
-              t`Price per million output tokens billed with Twenty credits`,
-              model.outputCostPerMillionTokens,
-              comparableOutputPricingValues,
-              true,
-            ),
-          },
-        ]
-      : []),
-  ];
-  const renderItem = (item: ModelInformationItem) => {
-    const anchorId = `${tooltipId}-${item.label.replace(/\s/g, '-')}`;
+  const { model, benchmark, benchmarkItems, pricingItems } =
+    getAiModelComparisonItems(
+      requestedModel,
+      comparisonModels,
+      isBillingEnabled,
+    );
+  const renderItem = (
+    item: ReturnType<
+      typeof getAiModelComparisonItems
+    >['benchmarkItems'][number],
+  ) => {
+    const anchorId = `${tooltipId}-${item.label.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
 
     const Icon = item.icon;
 
@@ -419,6 +129,9 @@ export const SettingsAiModelHoverCard = ({
       <StyledItem
         id={anchorId}
         key={item.label}
+        aria-describedby={
+          isDefined(item.description) ? `${anchorId}-description` : undefined
+        }
         tabIndex={isDefined(item.description) ? 0 : undefined}
       >
         <StyledItemHeader>
@@ -434,6 +147,11 @@ export const SettingsAiModelHoverCard = ({
             value={item.rawValue}
           />
         </StyledItemValue>
+        {isDefined(item.description) && (
+          <span id={`${anchorId}-description`} hidden>
+            {item.description}
+          </span>
+        )}
         {isDefined(item.description) && (
           <AppTooltip
             anchorSelect={`#${anchorId}`}
@@ -451,16 +169,15 @@ export const SettingsAiModelHoverCard = ({
         {benchmarkItems.map(renderItem)}
         {pricingItems.map(renderItem)}
         <SettingsAiModelInformation model={model} />
-        {benchmarkItems.length + pricingItems.length > 0 &&
-          isDefined(benchmark) && (
-            <StyledAttribution
-              href={`https://artificialanalysis.ai/models/${encodeURIComponent(benchmark.modelSlug)}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {t`Data from Artificial Analysis`}
-            </StyledAttribution>
-          )}
+        {benchmarkItems.length > 0 && isDefined(benchmark) && (
+          <StyledAttribution
+            href={`https://artificialanalysis.ai/models/${encodeURIComponent(benchmark.modelSlug)}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t`Data from Artificial Analysis`}
+          </StyledAttribution>
+        )}
       </StyledBody>
     </StyledHoverCardWrapper>
   );

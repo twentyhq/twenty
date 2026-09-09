@@ -1,4 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -7,6 +9,7 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WRITE_BENCHMARK_CACHE_SCRIPT } from 'src/engine/metadata-modules/ai/ai-models/constants/write-benchmark-cache.script';
 import {
   artificialAnalysisResponseSchema,
   type ArtificialAnalysisModel,
@@ -17,7 +20,8 @@ const RETRY_DELAY_MS = 60 * 60 * 1000;
 const MAXIMUM_STALE_AGE_MS = 7 * REFRESH_INTERVAL_MS;
 const MAXIMUM_PAGES = 10;
 const MAXIMUM_REQUESTS_PER_WINDOW = 30;
-const REFRESH_TIMEOUT_MS = 5_000;
+const REQUEST_TIMEOUT_MS = 5_000;
+const REFRESH_TIMEOUT_MS = MAXIMUM_PAGES * REQUEST_TIMEOUT_MS + 5_000;
 const REFRESH_LOCK_TTL_MS = 60_000;
 const CATALOG_KEY = 'catalog';
 const REFRESH_STATE_KEY = 'refresh-state';
@@ -49,14 +53,20 @@ export class ArtificialAnalysisCatalogService {
 
   isSyncEnabled(): boolean {
     return (
-      !!this.twentyConfigService.get('ARTIFICIAL_ANALYSIS_API_KEY') &&
+      isNonEmptyString(
+        this.twentyConfigService.get('ARTIFICIAL_ANALYSIS_API_KEY'),
+      ) &&
       (this.twentyConfigService.get('ARTIFICIAL_ANALYSIS_SYNC_ENABLED') ??
         this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION)
     );
   }
 
   async getCatalog(): Promise<ArtificialAnalysisCatalog | undefined> {
-    if (!this.twentyConfigService.get('ARTIFICIAL_ANALYSIS_API_KEY')) {
+    if (
+      !isNonEmptyString(
+        this.twentyConfigService.get('ARTIFICIAL_ANALYSIS_API_KEY'),
+      )
+    ) {
       return undefined;
     }
 
@@ -80,17 +90,19 @@ export class ArtificialAnalysisCatalogService {
   async refreshCatalog(): Promise<void> {
     const apiKey = this.twentyConfigService.get('ARTIFICIAL_ANALYSIS_API_KEY');
 
-    if (!apiKey || !this.isSyncEnabled()) {
+    if (!isNonEmptyString(apiKey) || !this.isSyncEnabled()) {
       return;
     }
 
     try {
       const signal = AbortSignal.timeout(REFRESH_TIMEOUT_MS);
+      const owner = randomUUID();
 
       // Let the lease expire rather than risk releasing a newer worker's lock.
       // Its lifetime exceeds the total external request timeout.
-      const acquired = await this.cacheStorageService.acquireLock(
+      const acquired = await this.cacheStorageService.setIfAbsent(
         REFRESH_LOCK_KEY,
+        owner,
         REFRESH_LOCK_TTL_MS,
       );
 
@@ -117,7 +129,7 @@ export class ArtificialAnalysisCatalogService {
       }
 
       signal.throwIfAborted();
-      await this.refresh(apiKey, state, signal);
+      await this.refresh(apiKey, state, signal, owner);
     } catch {
       this.logger.warn(
         'Artificial Analysis background refresh unavailable; retaining cached benchmarks',
@@ -129,6 +141,7 @@ export class ArtificialAnalysisCatalogService {
     apiKey: string,
     state: RefreshState,
     signal: AbortSignal,
+    owner: string,
   ): Promise<void> {
     state.nextRefreshAt = Date.now() + RETRY_DELAY_MS;
 
@@ -164,12 +177,16 @@ export class ArtificialAnalysisCatalogService {
 
         // Reserve each page before sending it so crashes also consume budget.
         // The scope is shared across workspaces, workers and API key rotations.
-        await this.cacheStorageService.set(REFRESH_STATE_KEY, state, 0);
+        await this.writeCache(owner, REFRESH_STATE_KEY, state, 0);
         signal.throwIfAborted();
 
+        const requestSignal = AbortSignal.any([
+          signal,
+          AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+        ]);
         const response = await fetch(
           `https://artificialanalysis.ai/api/v2/language/models/free?page=${page}`,
-          { headers: { 'x-api-key': apiKey }, signal },
+          { headers: { 'x-api-key': apiKey }, signal: requestSignal },
         );
 
         this.updateQuota(state, response);
@@ -186,7 +203,7 @@ export class ArtificialAnalysisCatalogService {
           await response.json(),
         );
 
-        signal.throwIfAborted();
+        requestSignal.throwIfAborted();
 
         if (
           result.pagination.page !== page ||
@@ -206,7 +223,8 @@ export class ArtificialAnalysisCatalogService {
             fetchedAt: new Date().toISOString(),
           };
 
-          await this.cacheStorageService.set(
+          await this.writeCache(
+            owner,
             CATALOG_KEY,
             catalog,
             MAXIMUM_STALE_AGE_MS,
@@ -234,7 +252,24 @@ export class ArtificialAnalysisCatalogService {
         'Artificial Analysis refresh failed; retaining the last complete catalog',
       );
     } finally {
-      await this.cacheStorageService.set(REFRESH_STATE_KEY, state, 0);
+      await this.writeCache(owner, REFRESH_STATE_KEY, state, 0);
+    }
+  }
+
+  private async writeCache(
+    owner: string,
+    key: string,
+    value: unknown,
+    ttl: number,
+  ): Promise<void> {
+    const written = await this.cacheStorageService.runScript<number>({
+      script: WRITE_BENCHMARK_CACHE_SCRIPT,
+      keys: [REFRESH_LOCK_KEY, key],
+      args: [JSON.stringify(owner), JSON.stringify(value), String(ttl)],
+    });
+
+    if (written !== 1) {
+      throw new Error('Benchmark refresh lease expired');
     }
   }
 

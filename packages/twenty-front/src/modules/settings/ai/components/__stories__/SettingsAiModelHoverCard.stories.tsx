@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { createStore, Provider } from 'jotai';
 import { billingState } from '@/client-config/states/billingState';
 import { isAutoSelectModelId } from 'twenty-shared/utils';
@@ -76,13 +77,50 @@ const meta: Meta<typeof SettingsAiModelHoverCard> = {
 export default meta;
 type Story = StoryObj<typeof SettingsAiModelHoverCard>;
 
-export const Default: Story = {};
-export const SelfHosted: Story = { parameters: { isBillingEnabled: false } };
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Intelligence')).toBeVisible();
+    await expect(canvas.getByText('Input cost')).toBeVisible();
+    await userEvent.hover(canvas.getByText('Speed'));
+    await waitFor(() =>
+      expect(
+        within(canvasElement.ownerDocument.body).getByText(
+          '#2/2 · Output tokens per second',
+          { selector: 'span:not([hidden])' },
+        ),
+      ).toBeVisible(),
+    );
+    await userEvent.unhover(canvas.getByText('Speed'));
+  },
+};
+export const SelfHosted: Story = {
+  parameters: { isBillingEnabled: false },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.queryByText('Input cost')).not.toBeInTheDocument();
+    await expect(canvas.queryByText('Output cost')).not.toBeInTheDocument();
+    await expect(canvas.getByText('Cost index')).toBeVisible();
+  },
+};
 export const WithoutBenchmarks: Story = {
   args: { model: { ...model, benchmark: undefined } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.queryByText('Intelligence')).not.toBeInTheDocument();
+    await expect(
+      canvas.queryByText('Data from Artificial Analysis'),
+    ).not.toBeInTheDocument();
+    await expect(canvas.getByText('Input cost')).toBeVisible();
+  },
 };
 export const WithoutMetadata: Story = {
   args: { model: { modelId: 'custom', label: 'Custom model' } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Unknown')).toBeVisible();
+    await expect(canvas.queryByText('Server location')).not.toBeInTheDocument();
+  },
 };
 
 const Selector = () => {
@@ -118,7 +156,30 @@ const Selector = () => {
   );
 };
 
-export const InSelector: Story = { render: Selector };
+export const InSelector: Story = {
+  render: Selector,
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Luna' }),
+    );
+    await expect(await page.findByText('Intelligence')).toBeVisible();
+    await userEvent.hover(page.getByText('Speed'));
+    await waitFor(() =>
+      expect(
+        page.getByText('#2/2 · Output tokens per second', {
+          selector: 'span:not([hidden])',
+        }),
+      ).toBeVisible(),
+    );
+    await userEvent.unhover(page.getByText('Speed'));
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await expect(
+      within(canvasElement).getByRole('button', { name: 'Custom model' }),
+    ).toBeVisible();
+    await expect(page.queryByText('Intelligence')).not.toBeInTheDocument();
+  },
+};
 
 const StyledCloudCatalog = styled.div`
   display: grid;
@@ -146,6 +207,18 @@ const StyledCloudModelProvider = styled.div`
 `;
 
 export const CloudCatalog: Story = {
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getAllByText('Context window')).toHaveLength(
+      args.comparisonModels?.length ?? 0,
+    );
+    await expect(canvas.getAllByText('Input cost')).toHaveLength(
+      args.comparisonModels?.length ?? 0,
+    );
+    await expect(
+      canvas.getAllByText('Data from Artificial Analysis').length,
+    ).toBeGreaterThan(0);
+  },
   args: {
     comparisonModels: cloudModelsPreview.filter(
       (cloudModel) =>

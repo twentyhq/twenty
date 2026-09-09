@@ -39,7 +39,8 @@ describe('ArtificialAnalysisCatalogService', () => {
   let cacheStorage: {
     get: jest.Mock;
     set: jest.Mock;
-    acquireLock: jest.Mock;
+    setIfAbsent: jest.Mock;
+    runScript: jest.Mock;
   };
 
   const createService = async () => {
@@ -87,15 +88,24 @@ describe('ArtificialAnalysisCatalogService', () => {
       set: jest.fn(async (key: string, value: unknown, ttl: number) =>
         write(key, value, ttl),
       ),
-      acquireLock: jest.fn(async (key: string, ttl: number) => {
+      setIfAbsent: jest.fn(async (key: string, owner: string, ttl: number) => {
         if (read(key)) {
           return false;
         }
 
-        write(key, true, ttl);
+        write(key, owner, ttl);
 
         return true;
       }),
+      runScript: jest.fn(
+        async ({ keys, args }: { keys: string[]; args: string[] }) => {
+          if (JSON.stringify(read(keys[0])) !== args[0]) {
+            return 0;
+          }
+          write(keys[1], JSON.parse(args[1]), Number(args[2]));
+          return 1;
+        },
+      ),
     };
     fetchMock = jest
       .spyOn(globalThis, 'fetch')
@@ -114,6 +124,20 @@ describe('ArtificialAnalysisCatalogService', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it('does not overwrite a newer worker after its lease expires', async () => {
+    fetchMock.mockImplementationOnce(async () => {
+      jest.advanceTimersByTime(61_000);
+      await cacheStorage.setIfAbsent('refresh-lock', 'new-owner', 60_000);
+      await cacheStorage.set('refresh-state', { nextRefreshAt: 123 }, 0);
+      return response(createPage());
+    });
+    await service.refreshCatalog();
+    expect(await cacheStorage.get('refresh-state')).toEqual({
+      nextRefreshAt: 123,
+    });
+    expect(await service.getCatalog()).toBeUndefined();
+  });
+
   it('does not refresh without a key or when explicitly disabled', async () => {
     configuration.ARTIFICIAL_ANALYSIS_API_KEY = undefined;
     await service.refreshCatalog();
@@ -122,7 +146,22 @@ describe('ArtificialAnalysisCatalogService', () => {
     await service.refreshCatalog();
 
     expect(fetchMock).not.toHaveBeenCalled();
-    expect(cacheStorage.acquireLock).not.toHaveBeenCalled();
+    expect(cacheStorage.setIfAbsent).not.toHaveBeenCalled();
+  });
+
+  it('retains other models when optional benchmark groups are missing', async () => {
+    const page = createPage();
+    fetchMock.mockResolvedValueOnce(
+      response({
+        ...page,
+        data: [
+          ...page.data,
+          { id: 'unmeasured', name: 'Unmeasured', slug: 'unmeasured' },
+        ],
+      }),
+    );
+    await service.refreshCatalog();
+    expect((await service.getCatalog())?.models).toHaveLength(2);
   });
 
   it.each([NodeEnvironment.DEVELOPMENT, NodeEnvironment.TEST])(
@@ -170,6 +209,25 @@ describe('ArtificialAnalysisCatalogService', () => {
     await restartedServer.refreshCatalog();
     expect(fetchMock).toHaveBeenCalledTimes(3);
     expect((await service.getCatalog())?.models).toHaveLength(1);
+  });
+
+  it('allows multiple pages to take longer than one request timeout', async () => {
+    jest.spyOn(AbortSignal, 'timeout').mockImplementation((milliseconds) => {
+      const controller = new AbortController();
+      setTimeout(() => controller.abort(), milliseconds);
+      return controller.signal;
+    });
+    fetchMock.mockImplementation(async (url: string, options: RequestInit) => {
+      await new Promise((resolve) => setTimeout(resolve, 3_000));
+      options.signal?.throwIfAborted();
+      const page = Number(new URL(url).searchParams.get('page'));
+      return response(createPage(page, page === 1));
+    });
+    const refresh = service.refreshCatalog();
+    await jest.advanceTimersByTimeAsync(6_000);
+    await refresh;
+    expect((await service.getCatalog())?.models).toHaveLength(2);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   it('allows only one server to refresh concurrently without blocking readers', async () => {
@@ -364,7 +422,7 @@ describe('ArtificialAnalysisCatalogService', () => {
   });
 
   it('does not send a request if its quota reservation cannot be saved', async () => {
-    cacheStorage.set.mockRejectedValue(new Error('Redis unavailable'));
+    cacheStorage.runScript.mockRejectedValue(new Error('Redis unavailable'));
     await service.refreshCatalog();
     expect(fetchMock).not.toHaveBeenCalled();
   });

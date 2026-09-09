@@ -14,6 +14,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
 import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';
@@ -66,6 +67,7 @@ export const SettingsAdminAI = () => {
   const { formatUsageValue } = useUsageValueFormatter();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const billing = useAtomStateValue(billingState);
+  const aiModels = useAtomStateValue(aiModelsState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const hasEnterpriseAccess =
     isBillingEnabled ||
@@ -120,7 +122,12 @@ export const SettingsAdminAI = () => {
   const effectiveUsageData = usageData ?? previousUsageData;
   const usageByWorkspace = effectiveUsageData?.getAdminAiUsageByWorkspace ?? [];
 
-  const models = data?.getAdminAiModels?.models ?? [];
+  const models = (data?.getAdminAiModels?.models ?? []).map((model) => ({
+    ...model,
+    benchmark: aiModels.find(
+      (clientModel) => clientModel.modelId === model.modelId,
+    )?.benchmark,
+  }));
 
   const providerItems = useMemo(
     () => parseProviderItems(providersData?.getAiProviders ?? {}),

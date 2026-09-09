@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { Fragment, useContext } from 'react';
 
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -54,6 +54,7 @@ const getProviderDisplayLabel = (model: AiModelSummary): string =>
 
 type SettingsAiModelsTableProps<TModel extends AiModelSummary> = {
   models: TModel[];
+  comparisonModels?: TModel[];
   isChecked: (model: TModel) => boolean;
   isDisabled?: (model: TModel) => boolean;
   onToggle: (modelId: string, isCurrentlyChecked: boolean) => void;
@@ -65,6 +66,7 @@ type SettingsAiModelsTableProps<TModel extends AiModelSummary> = {
 
 export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
   models,
+  comparisonModels = models,
   isChecked,
   isDisabled,
   onToggle,
@@ -73,10 +75,7 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
   showProviderColumn = true,
   anchorPrefix,
 }: SettingsAiModelsTableProps<TModel>) => {
-  const [hoveredModelId, setHoveredModelId] = useState<string | null>(null);
   const { theme } = useContext(ThemeContext);
-
-  const hoveredModel = models.find((model) => model.modelId === hoveredModelId);
   const hasRemove = isDefined(onRemove);
   const gridColumns = hasRemove
     ? showProviderColumn
@@ -130,102 +129,97 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
             const disabled = isDisabled?.(model) ?? false;
 
             return (
-              <TableRow
-                key={model.modelId}
-                id={anchorPrefix ? `${anchorPrefix}-${safeId}` : undefined}
-                gridTemplateColumns={gridColumns}
-                onMouseEnter={
-                  anchorPrefix
-                    ? () => setHoveredModelId(model.modelId)
-                    : undefined
-                }
-                onMouseLeave={
-                  anchorPrefix ? () => setHoveredModelId(null) : undefined
-                }
-                onClick={
-                  disabled ? undefined : () => onToggle(model.modelId, checked)
-                }
-              >
-                <TableCell
-                  color={
+              <Fragment key={model.modelId}>
+                <TableRow
+                  key={model.modelId}
+                  id={anchorPrefix ? `${anchorPrefix}-${safeId}` : undefined}
+                  gridTemplateColumns={gridColumns}
+                  onClick={
                     disabled
-                      ? themeCssVariables.font.color.light
-                      : themeCssVariables.font.color.primary
+                      ? undefined
+                      : () => onToggle(model.modelId, checked)
                   }
                 >
-                  <StyledModelNameCell>
-                    <ModelIcon
-                      size={theme.icon.size.md}
-                      stroke={theme.icon.stroke.sm}
-                      color={
-                        disabled
-                          ? theme.font.color.light
-                          : theme.font.color.secondary
-                      }
-                    />
-                    <StyledModelLabel>{model.label}</StyledModelLabel>
-                    {disabled && model.isDeprecated && (
-                      <StyledDeprecatedSuffix>
-                        · <Trans>Deprecated</Trans>
-                      </StyledDeprecatedSuffix>
-                    )}
-                  </StyledModelNameCell>
-                </TableCell>
-                {showProviderColumn && (
+                  <TableCell
+                    color={
+                      disabled
+                        ? themeCssVariables.font.color.light
+                        : themeCssVariables.font.color.primary
+                    }
+                  >
+                    <StyledModelNameCell>
+                      <ModelIcon
+                        size={theme.icon.size.md}
+                        stroke={theme.icon.stroke.sm}
+                        color={
+                          disabled
+                            ? theme.font.color.light
+                            : theme.font.color.secondary
+                        }
+                      />
+                      <StyledModelLabel>{model.label}</StyledModelLabel>
+                      {disabled && model.isDeprecated && (
+                        <StyledDeprecatedSuffix>
+                          · <Trans>Deprecated</Trans>
+                        </StyledDeprecatedSuffix>
+                      )}
+                    </StyledModelNameCell>
+                  </TableCell>
+                  {showProviderColumn && (
+                    <TableCell
+                      align="right"
+                      color={themeCssVariables.font.color.tertiary}
+                    >
+                      {getProviderDisplayLabel(model)}
+                    </TableCell>
+                  )}
                   <TableCell
                     align="right"
-                    color={themeCssVariables.font.color.tertiary}
+                    onClick={(event) => event.stopPropagation()}
                   >
-                    {getProviderDisplayLabel(model)}
-                  </TableCell>
-                )}
-                <TableCell
-                  align="right"
-                  onClick={(event) => event.stopPropagation()}
-                >
-                  <Checkbox
-                    checked={checked}
-                    disabled={disabled}
-                    onChange={() => onToggle(model.modelId, checked)}
-                  />
-                </TableCell>
-                {hasRemove && (
-                  <TableCell align="right">
-                    <IconButton
-                      Icon={IconTrash}
-                      accent="danger"
-                      variant="tertiary"
-                      size="small"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onRemove(model);
-                      }}
+                    <Checkbox
+                      checked={checked}
+                      disabled={disabled}
+                      onChange={() => onToggle(model.modelId, checked)}
                     />
                   </TableCell>
+                  {hasRemove && (
+                    <TableCell align="right">
+                      <IconButton
+                        Icon={IconTrash}
+                        accent="danger"
+                        variant="tertiary"
+                        size="small"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onRemove(model);
+                        }}
+                      />
+                    </TableCell>
+                  )}
+                </TableRow>
+                {anchorPrefix && (
+                  <AppTooltip
+                    anchorSelect={`#${anchorPrefix}-${safeId}`}
+                    place="top-end"
+                    interactive
+                    noArrow
+                    offset={8}
+                    delay={TooltipDelay.noDelay}
+                    className={hoverCardTooltipClass}
+                    maxWidth="300px"
+                  >
+                    <SettingsAiModelHoverCard
+                      model={model}
+                      comparisonModels={comparisonModels}
+                    />
+                  </AppTooltip>
                 )}
-              </TableRow>
+              </Fragment>
             );
           })}
         </TableBody>
       </Table>
-
-      {anchorPrefix && hoveredModel && (
-        <AppTooltip
-          anchorSelect={`#${anchorPrefix}-${sanitizeIdForSelector(hoveredModel.modelId)}`}
-          place="top-end"
-          noArrow
-          offset={8}
-          delay={TooltipDelay.noDelay}
-          className={hoverCardTooltipClass}
-          maxWidth="300px"
-          isOpen={true}
-        >
-          <SettingsAiModelHoverCard
-            model={hoveredModel}
-            comparisonModels={models}
-          />
-        </AppTooltip>
-      )}
     </>
   );
 };

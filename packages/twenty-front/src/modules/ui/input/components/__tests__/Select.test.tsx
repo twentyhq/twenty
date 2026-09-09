@@ -33,6 +33,18 @@ const renderSelect = (onChange = jest.fn()) => {
 };
 
 describe('Select option hover cards', () => {
+  it('hides information when the pointer leaves the option and popup', async () => {
+    const user = userEvent.setup();
+    renderSelect();
+    await user.click(screen.getByRole('button'));
+    const option = screen.getByRole('option', { name: 'Model B' });
+    await user.hover(option);
+    await screen.findByRole('tooltip');
+    await user.unhover(option);
+    await waitFor(() =>
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument(),
+    );
+  });
   it('should show option information on hover without selecting the option', async () => {
     const user = userEvent.setup();
     const { onChange } = renderSelect();
@@ -78,6 +90,7 @@ describe('Select option hover cards', () => {
     const control = screen.getByRole('button');
 
     await user.click(control);
+    await screen.findByText('Information about Model A');
     await user.tab();
     expect(screen.getByText('Information about Model A')).toHaveFocus();
     await user.keyboard('{Escape}');

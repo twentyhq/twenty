@@ -1,4 +1,5 @@
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { getModelComparisonPercentile } from '@/settings/ai/utils/getModelComparisonPercentile';
 
 export const getModelComparisonColor = (
   value: number,
@@ -18,9 +19,7 @@ export const getModelComparisonColor = (
     return themeCssVariables.font.color.tertiary;
   }
 
-  const lowerCount = values.filter((entry) => entry < value).length;
-  const equalCount = values.filter((entry) => entry === value).length;
-  const percentile = (lowerCount + (equalCount - 1) / 2) / (values.length - 1);
+  const percentile = getModelComparisonPercentile(value, values);
   const relativeQuality = lowerIsBetter ? 1 - percentile : percentile;
 
   const sortedValues = [...values].sort((first, second) => first - second);

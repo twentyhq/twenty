@@ -191,6 +191,7 @@ export const SettingsAiModelsTab = () => {
 
             <SettingsAiModelsTable
               models={filteredModels}
+              comparisonModels={realModels}
               isChecked={(model) => enabledModelIdSet.has(model.modelId)}
               onToggle={handleModelToggle}
               onToggleAll={(shouldCheckAll) =>

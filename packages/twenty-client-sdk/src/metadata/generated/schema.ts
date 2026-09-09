@@ -1572,6 +1572,18 @@ export interface ApplicationRegistrationStats {
     __typename: 'ApplicationRegistrationStats'
 }
 
+export interface AiModelBenchmarkDTO {
+    modelId: Scalars['String']
+    modelName: Scalars['String']
+    modelSlug: Scalars['String']
+    outputTokensPerSecond?: Scalars['Float']
+    intelligenceIndex?: Scalars['Float']
+    costPerTask?: Scalars['Float']
+    intelligenceIndexVersion: Scalars['Float']
+    fetchedAt: Scalars['String']
+    __typename: 'AiModelBenchmarkDTO'
+}
+
 export interface BillingTrialPeriod {
     duration: Scalars['Float']
     isCreditCardRequired: Scalars['Boolean']
@@ -1631,6 +1643,7 @@ export interface NativeModelCapabilities {
 }
 
 export interface ClientAiModelConfig {
+    benchmark?: AiModelBenchmarkDTO
     modelId: Scalars['String']
     label: Scalars['String']
     modelFamily?: ModelFamily
@@ -5094,6 +5107,19 @@ export interface ApplicationRegistrationStatsGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AiModelBenchmarkDTOGenqlSelection{
+    modelId?: boolean | number
+    modelName?: boolean | number
+    modelSlug?: boolean | number
+    outputTokensPerSecond?: boolean | number
+    intelligenceIndex?: boolean | number
+    costPerTask?: boolean | number
+    intelligenceIndexVersion?: boolean | number
+    fetchedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface BillingTrialPeriodGenqlSelection{
     duration?: boolean | number
     isCreditCardRequired?: boolean | number
@@ -5156,6 +5182,7 @@ export interface NativeModelCapabilitiesGenqlSelection{
 }
 
 export interface ClientAiModelConfigGenqlSelection{
+    benchmark?: AiModelBenchmarkDTOGenqlSelection
     modelId?: boolean | number
     label?: boolean | number
     modelFamily?: boolean | number
@@ -8565,6 +8592,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isApplicationRegistrationStats = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationStats => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationStats"')
       return ApplicationRegistrationStats_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AiModelBenchmarkDTO_possibleTypes: string[] = ['AiModelBenchmarkDTO']
+    export const isAiModelBenchmarkDTO = (obj?: { __typename?: any } | null): obj is AiModelBenchmarkDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAiModelBenchmarkDTO"')
+      return AiModelBenchmarkDTO_possibleTypes.includes(obj.__typename)
     }
     
 

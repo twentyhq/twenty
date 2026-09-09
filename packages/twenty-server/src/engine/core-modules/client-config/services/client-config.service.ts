@@ -187,10 +187,10 @@ export class ClientConfigService {
             modelName: benchmark.name,
             modelSlug: benchmark.slug,
             outputTokensPerSecond:
-              benchmark.performance.median_output_tokens_per_second ??
+              benchmark.performance?.median_output_tokens_per_second ??
               undefined,
             intelligenceIndex:
-              benchmark.evaluations.artificial_analysis_intelligence_index ??
+              benchmark.evaluations?.artificial_analysis_intelligence_index ??
               undefined,
             costPerTask:
               benchmark.artificial_analysis_intelligence_index_cost

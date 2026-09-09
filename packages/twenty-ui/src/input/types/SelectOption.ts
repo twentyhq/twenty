@@ -1,6 +1,7 @@
+import { type ReactNode } from 'react';
+
 import { type IconComponent } from '@ui/icon';
 import { type ThemeColor } from '@ui/theme';
-import { type ReactNode } from 'react';
 
 export type SelectOption<
   Value extends string | number | boolean | null = string,

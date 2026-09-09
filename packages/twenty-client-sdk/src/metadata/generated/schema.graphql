@@ -1953,6 +1953,17 @@ type ApplicationRegistrationStats {
   versionDistribution: [VersionDistributionEntry!]!
 }
 
+type AiModelBenchmarkDTO {
+  modelId: String!
+  modelName: String!
+  modelSlug: String!
+  outputTokensPerSecond: Float
+  intelligenceIndex: Float
+  costPerTask: Float
+  intelligenceIndexVersion: Float!
+  fetchedAt: String!
+}
+
 type BillingTrialPeriod {
   duration: Float!
   isCreditCardRequired: Boolean!
@@ -2012,6 +2023,7 @@ type NativeModelCapabilities {
 }
 
 type ClientAiModelConfig {
+  benchmark: AiModelBenchmarkDTO
   modelId: String!
   label: String!
   modelFamily: ModelFamily

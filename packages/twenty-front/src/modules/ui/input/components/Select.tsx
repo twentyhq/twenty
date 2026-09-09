@@ -1,6 +1,7 @@
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { type MouseEvent, useId, useMemo, useRef, useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -97,6 +98,7 @@ type SelectOptionMenuItemProps<Value extends SelectValue> = {
   needIconCheck?: boolean;
   hoverCardAnchorId: string;
   onHoverCardAnchorChange: (anchorId: string | null) => void;
+  onHoverCardLeave: () => void;
   onClick: () => void;
 };
 
@@ -107,11 +109,13 @@ const SelectOptionMenuItem = <Value extends SelectValue>({
   needIconCheck,
   hoverCardAnchorId,
   onHoverCardAnchorChange,
+  onHoverCardLeave,
   onClick,
 }: SelectOptionMenuItemProps<Value>) => (
   <StyledOptionHoverCardAnchor
     id={hoverCardAnchorId}
     onMouseEnter={() => onHoverCardAnchorChange(hoverCardAnchorId)}
+    onMouseLeave={onHoverCardLeave}
   >
     <MenuItemSelect
       LeftIcon={option.Icon}
@@ -155,6 +159,17 @@ export const Select = <Value extends SelectValue>({
   const selectInstanceId = useId().replace(/[^a-zA-Z0-9-_]/g, '');
 
   const [searchInputValue, setSearchInputValue] = useState('');
+  const [isHoverCardOpen, setIsHoverCardOpen] = useState(true);
+  const hoverCardContentRef = useRef<HTMLDivElement>(null);
+  const scheduleHoverCardClose = useDebouncedCallback(() => {
+    if (!hoverCardContentRef.current?.contains(document.activeElement)) {
+      setIsHoverCardOpen(false);
+    }
+  }, 150);
+  const keepHoverCardOpen = () => {
+    scheduleHoverCardClose.cancel();
+    setIsHoverCardOpen(true);
+  };
   const [hoveredHoverCardAnchorId, setHoveredHoverCardAnchorId] = useState<
     string | null
   >(null);
@@ -265,6 +280,7 @@ export const Select = <Value extends SelectValue>({
   }, [selectedOption, showContextualTextInControl]);
 
   const handleDropdownOpen = () => {
+    keepHoverCardOpen();
     if (
       isDefined(controlSelectedOption) &&
       !isNonEmptyString(searchInputValue)
@@ -285,6 +301,7 @@ export const Select = <Value extends SelectValue>({
       onBlur={onBlur}
       onKeyDownCapture={(event) => {
         if (['ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) {
+          keepHoverCardOpen();
           setHoveredHoverCardAnchorId(null);
         }
       }}
@@ -338,7 +355,11 @@ export const Select = <Value extends SelectValue>({
                     }
                     needIconCheck={needIconCheck}
                     hoverCardAnchorId={getHoverCardAnchorId('pinned', 0)}
-                    onHoverCardAnchorChange={setHoveredHoverCardAnchorId}
+                    onHoverCardAnchorChange={(anchorId) => {
+                      keepHoverCardOpen();
+                      setHoveredHoverCardAnchorId(anchorId);
+                    }}
+                    onHoverCardLeave={scheduleHoverCardClose}
                     onClick={() => {
                       onChange?.(pinnedOption.value);
                       onBlur?.();
@@ -375,7 +396,11 @@ export const Select = <Value extends SelectValue>({
                           focused={selectedItemId === option.label}
                           needIconCheck={needIconCheck}
                           hoverCardAnchorId={hoverCardAnchorId}
-                          onHoverCardAnchorChange={setHoveredHoverCardAnchorId}
+                          onHoverCardAnchorChange={(anchorId) => {
+                            keepHoverCardOpen();
+                            setHoveredHoverCardAnchorId(anchorId);
+                          }}
+                          onHoverCardLeave={scheduleHoverCardClose}
                           onClick={() => {
                             onChange?.(option.value);
                             onBlur?.();
@@ -407,9 +432,14 @@ export const Select = <Value extends SelectValue>({
                   offset={8}
                   className={optionHoverCardTooltipClass}
                   maxWidth="300px"
-                  isOpen={true}
+                  isOpen={isHoverCardOpen}
                 >
                   <div
+                    ref={hoverCardContentRef}
+                    onMouseEnter={keepHoverCardOpen}
+                    onMouseLeave={scheduleHoverCardClose}
+                    onFocus={keepHoverCardOpen}
+                    onBlur={scheduleHoverCardClose}
                     onKeyDownCapture={(event) => {
                       if (event.key === 'Escape') {
                         event.preventDefault();
