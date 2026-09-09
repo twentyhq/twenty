@@ -6,7 +6,7 @@ import {
 import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai-models/utils/build-reasoning-provider-options.util';
 
 describe('buildReasoningProviderOptions', () => {
-  it('sends Anthropic its thinking config under the key it reads', () => {
+  it('sends Anthropic adaptive thinking under the key it reads', () => {
     expect(
       buildReasoningProviderOptions({
         modelId: 'anthropic/claude-opus-5',
@@ -16,7 +16,7 @@ describe('buildReasoningProviderOptions', () => {
     ).toEqual({ anthropic: { thinking: { type: 'adaptive' } } });
   });
 
-  it('sends Bedrock its reasoning config under the key it reads', () => {
+  it('sends Bedrock adaptive thinking under the key it reads', () => {
     expect(
       buildReasoningProviderOptions({
         modelId: 'amazon-bedrock/eu.anthropic.claude-opus-4-7',
@@ -24,6 +24,16 @@ describe('buildReasoningProviderOptions', () => {
         supportsReasoning: true,
       }),
     ).toEqual({ bedrock: { reasoningConfig: { type: 'adaptive' } } });
+  });
+
+  it('leaves a Claude model older than 4.6 without thinking', () => {
+    expect(
+      buildReasoningProviderOptions({
+        modelId: 'anthropic/claude-haiku-4-5-20251001',
+        sdkPackage: AI_SDK_ANTHROPIC,
+        supportsReasoning: true,
+      }),
+    ).toEqual({});
   });
 
   it('sends nothing to a Bedrock model that is not Claude', () => {
@@ -39,7 +49,7 @@ describe('buildReasoningProviderOptions', () => {
   it('sends nothing to a model that does not reason', () => {
     expect(
       buildReasoningProviderOptions({
-        modelId: 'anthropic/claude-haiku-4-5',
+        modelId: 'anthropic/claude-opus-5',
         sdkPackage: AI_SDK_ANTHROPIC,
         supportsReasoning: false,
       }),
