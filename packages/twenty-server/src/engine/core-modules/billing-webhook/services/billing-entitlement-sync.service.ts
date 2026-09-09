@@ -2,8 +2,10 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { buildBillingEntitlementStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-entitlement-state-lock-key.util';
 import { buildBillingEntitlementsFromLookupKeys } from 'src/engine/core-modules/billing/utils/build-billing-entitlements-from-lookup-keys.util';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
@@ -21,9 +23,34 @@ export class BillingEntitlementSyncService {
     private readonly billingEntitlementRepository: WorkspaceScopedRepository<BillingEntitlementEntity>,
     private readonly rowLevelPermissionPredicateGroupService: RowLevelPermissionPredicateGroupService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async syncEntitlements({
+    workspaceId,
+    stripeCustomerId,
+    activeLookupKeys,
+  }: {
+    workspaceId: string;
+    stripeCustomerId: string;
+    activeLookupKeys: string[];
+  }): Promise<{ key: BillingEntitlementKey; value: boolean }[]> {
+    // The whole transition is one unit. Reading the stored rows, acting on the
+    // difference and committing it are three steps, and this service is the
+    // only writer of those rows, so serializing here is what makes the
+    // difference a transition rather than a guess about one.
+    return await this.cacheLockService.withLock(
+      () =>
+        this.applyEntitlementTransition({
+          workspaceId,
+          stripeCustomerId,
+          activeLookupKeys,
+        }),
+      buildBillingEntitlementStateLockKey(workspaceId),
+    );
+  }
+
+  private async applyEntitlementTransition({
     workspaceId,
     stripeCustomerId,
     activeLookupKeys,
@@ -78,27 +105,12 @@ export class BillingEntitlementSyncService {
     // the predicate cache and never the entitlement, so committing the revoke
     // first is the direction that fails closed: a failure here leaves rows
     // filtered by predicates that outlived the feature, not unfiltered.
-    // Asked on every pass rather than on the revoke transition, so a failure
-    // is retried once the stored row already reads as revoked. Re-read rather
-    // than trust the snapshot this sync computed: a concurrent grant that
-    // committed after our upsert would otherwise have its predicates deleted
-    // here, which is the one direction that leaves the feature on with nothing
-    // to filter by.
+    // Asked on every pass rather than on the revoke transition, so a cleanup
+    // that failed after the revoke committed is retried by the next sync.
     if (!isGranted(BillingEntitlementKey.RLS)) {
-      const storedEntitlementsAfterUpsert =
-        await this.billingEntitlementRepository.find(workspaceId);
-
-      const isStillRevoked = !storedEntitlementsAfterUpsert.some(
-        (entitlement) =>
-          entitlement.key === BillingEntitlementKey.RLS &&
-          entitlement.value === true,
+      await this.rowLevelPermissionPredicateGroupService.deleteAllRowLevelPermissionPredicateGroups(
+        workspaceId,
       );
-
-      if (isStillRevoked) {
-        await this.rowLevelPermissionPredicateGroupService.deleteAllRowLevelPermissionPredicateGroups(
-          workspaceId,
-        );
-      }
     }
 
     return billingEntitlements.map(({ key, value }) => ({ key, value }));
