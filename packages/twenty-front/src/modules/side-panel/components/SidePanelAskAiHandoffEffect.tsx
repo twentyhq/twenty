@@ -6,6 +6,7 @@ import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinue
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isSettingsPath } from '~/utils/isSettingsPath';
 
 type SidePanelAskAiHandoffEffectProps = {
   onContinueChatFromFullWidth: () => void;
@@ -29,6 +30,10 @@ export const SidePanelAskAiHandoffEffect = ({
 
     store.set(shouldContinueAiChatInSidePanelState.atom, false);
     store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+
+    if (isSettingsPath(pathname)) {
+      return;
+    }
 
     onContinueChatFromFullWidth();
     openAskAiPage({ resetNavigationStack: true });

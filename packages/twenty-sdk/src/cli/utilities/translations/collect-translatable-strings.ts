@@ -70,6 +70,12 @@ export const collectTranslatableStrings = (
     }
   }
 
+  for (const objectManifest of manifest.objects ?? []) {
+    for (const field of objectManifest.fields ?? []) {
+      addEntityStrings(field, 'fieldMetadata');
+    }
+  }
+
   // Tab and widget titles live nested under pageLayouts[].tabs[], not in the
   // flat pageLayoutTabs array, so walk the tree to reach them.
   for (const pageLayout of manifest.pageLayouts ?? []) {
@@ -79,6 +85,12 @@ export const collectTranslatableStrings = (
       for (const widget of tab.widgets ?? []) {
         addEntityStrings(widget, 'pageLayoutWidget');
       }
+    }
+  }
+
+  for (const pageLayoutTab of manifest.pageLayoutTabs ?? []) {
+    for (const widget of pageLayoutTab.widgets ?? []) {
+      addEntityStrings(widget, 'pageLayoutWidget');
     }
   }
 

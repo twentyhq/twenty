@@ -3,14 +3,26 @@ import {
   printTypescriptValue,
 } from '@/cli/utilities/pull/print-typescript-value';
 import {
+  AggregateOperations,
   DateDisplayFormat,
   FieldMetadataType,
   IndexType,
   MetadataWritability,
   NumberDataType,
   ObjectOpenRecordIn,
+  ObjectRecordGroupByDateGranularity,
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
   RelationOnDeleteAction,
   RelationType,
+  ViewCalendarLayout,
+  ViewFilterGroupLogicalOperator,
+  ViewFilterOperand,
+  ViewOpenRecordIn,
+  ViewSortDirection,
+  ViewType,
+  ViewVisibility,
+  WidgetType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -73,6 +85,88 @@ export const OBJECT_ENUM_BINDINGS: EnumBinding[] = [
 
 export const INDEX_ENUM_BINDINGS: EnumBinding[] = [
   { path: ['indexType'], symbol: 'IndexType', members: IndexType },
+];
+
+const buildAggregateOperationBinding = (path: string[]): EnumBinding => ({
+  path,
+  symbol: 'AggregateOperations',
+  members: AggregateOperations,
+});
+
+export const VIEW_FIELD_ENUM_BINDINGS: EnumBinding[] = [
+  buildAggregateOperationBinding(['aggregateOperation']),
+];
+
+export const VIEW_ENUM_BINDINGS: EnumBinding[] = [
+  { path: ['type'], symbol: 'ViewType', members: ViewType },
+  { path: ['visibility'], symbol: 'ViewVisibility', members: ViewVisibility },
+  {
+    path: ['openRecordIn'],
+    symbol: 'ViewOpenRecordIn',
+    members: ViewOpenRecordIn,
+  },
+  buildAggregateOperationBinding(['kanbanAggregateOperation']),
+  {
+    path: ['calendarLayout'],
+    symbol: 'ViewCalendarLayout',
+    members: ViewCalendarLayout,
+  },
+  buildAggregateOperationBinding(['fields', '[]', 'aggregateOperation']),
+  {
+    path: ['filters', '[]', 'operand'],
+    symbol: 'ViewFilterOperand',
+    members: ViewFilterOperand,
+  },
+  {
+    path: ['filterGroups', '[]', 'logicalOperator'],
+    symbol: 'ViewFilterGroupLogicalOperator',
+    members: ViewFilterGroupLogicalOperator,
+  },
+  {
+    path: ['sorts', '[]', 'direction'],
+    symbol: 'ViewSortDirection',
+    members: ViewSortDirection,
+  },
+];
+
+const buildPageLayoutWidgetEnumBindings = (prefix: string[]): EnumBinding[] => [
+  { path: [...prefix, 'type'], symbol: 'WidgetType', members: WidgetType },
+  {
+    path: [...prefix, 'position', 'layoutMode'],
+    symbol: 'PageLayoutTabLayoutMode',
+    members: PageLayoutTabLayoutMode,
+  },
+  buildAggregateOperationBinding([
+    ...prefix,
+    'configuration',
+    'aggregateOperation',
+  ]),
+  ...[
+    'dateGranularity',
+    'primaryAxisDateGranularity',
+    'secondaryAxisGroupByDateGranularity',
+  ].map((key) => ({
+    path: [...prefix, 'configuration', key],
+    symbol: 'ObjectRecordGroupByDateGranularity',
+    members: ObjectRecordGroupByDateGranularity,
+  })),
+];
+
+const buildPageLayoutTabEnumBindings = (prefix: string[]): EnumBinding[] => [
+  {
+    path: [...prefix, 'layoutMode'],
+    symbol: 'PageLayoutTabLayoutMode',
+    members: PageLayoutTabLayoutMode,
+  },
+  ...buildPageLayoutWidgetEnumBindings([...prefix, 'widgets', '[]']),
+];
+
+export const PAGE_LAYOUT_TAB_ENUM_BINDINGS: EnumBinding[] =
+  buildPageLayoutTabEnumBindings([]);
+
+export const PAGE_LAYOUT_ENUM_BINDINGS: EnumBinding[] = [
+  { path: ['type'], symbol: 'PageLayoutType', members: PageLayoutType },
+  ...buildPageLayoutTabEnumBindings(['tabs', '[]']),
 ];
 
 const isSamePath = (left: string[], right: string[]): boolean =>
