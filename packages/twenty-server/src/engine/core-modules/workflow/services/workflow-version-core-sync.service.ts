@@ -18,6 +18,7 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
@@ -45,13 +46,14 @@ export class WorkflowVersionCoreSyncService {
 
     const applicationId = await this.getCustomApplicationIdOrThrow(workspaceId);
 
-    const coreWorkflowIdByWorkflowId =
-      await this.resolveCoreWorkflowIdByWorkflowId(
-        workspaceId,
-        workflowVersions.map((workflowVersion) => workflowVersion.workflowId),
-      );
+    const coreWorkflowIdByWorkflowId = this.hasCoreWorkflowIdColumn()
+      ? await this.resolveCoreWorkflowIdByWorkflowId(
+          workspaceId,
+          workflowVersions.map((workflowVersion) => workflowVersion.workflowId),
+        )
+      : new Map<string, string>();
 
-    const linkedCoreVersionIds = await this.resolveOwnedCoreVersionIds(
+    const ownedCoreVersions = await this.resolveOwnedCoreVersions(
       workspaceId,
       workflowVersions,
     );
@@ -63,7 +65,7 @@ export class WorkflowVersionCoreSyncService {
 
       const linkedCoreVersionId =
         isNonEmptyString(candidateCoreVersionId) &&
-        linkedCoreVersionIds.has(candidateCoreVersionId)
+        ownedCoreVersions.has(candidateCoreVersionId)
           ? candidateCoreVersionId
           : null;
 
@@ -76,11 +78,16 @@ export class WorkflowVersionCoreSyncService {
         );
       }
 
+      const resolvedCoreWorkflowId =
+        coreWorkflowIdByWorkflowId.get(workflowVersion.workflowId) ??
+        (isDefined(linkedCoreVersionId)
+          ? (ownedCoreVersions.get(linkedCoreVersionId) ?? null)
+          : null);
+
       return {
         id: coreWorkflowVersionId,
         workflowId: workflowVersion.workflowId,
-        coreWorkflowId:
-          coreWorkflowIdByWorkflowId.get(workflowVersion.workflowId) ?? null,
+        coreWorkflowId: resolvedCoreWorkflowId,
         triggers: isDefined(workflowVersion.trigger)
           ? [workflowVersion.trigger]
           : null,
@@ -104,27 +111,31 @@ export class WorkflowVersionCoreSyncService {
   }
 
   // Same caller-writable column as coreWorkflowId, see WorkflowCoreSyncService.
-  private async resolveOwnedCoreVersionIds(
+  private async resolveOwnedCoreVersions(
     workspaceId: string,
     workflowVersions: WorkflowVersionWorkspaceEntity[],
-  ): Promise<Set<string>> {
+  ): Promise<Map<string, string | null>> {
     const candidateIds = workflowVersions
       .map((workflowVersion) => workflowVersion.coreWorkflowVersionId)
       .filter(isNonEmptyString);
 
     if (candidateIds.length === 0) {
-      return new Set();
+      return new Map();
     }
 
     const ownedRows = await this.coreWorkflowVersionRepository.find(
       workspaceId,
       {
         where: { id: In(candidateIds) },
-        select: { id: true },
+        select: this.hasCoreWorkflowIdColumn()
+          ? { id: true, coreWorkflowId: true }
+          : { id: true },
       },
     );
 
-    return new Set(ownedRows.map((row) => row.id));
+    return new Map(
+      ownedRows.map((row) => [row.id, row.coreWorkflowId ?? null]),
+    );
   }
 
   async deleteFromCore(
@@ -188,29 +199,41 @@ export class WorkflowVersionCoreSyncService {
     const isNewLink = !isDefined(linkedCoreVersionId);
     const coreWorkflowVersionId = linkedCoreVersionId ?? uuidv4();
 
-    const coreWorkflowId = await this.resolveCoreWorkflowIdInTransaction(
-      workflowVersion.workflowId,
-      transactionScope,
-    );
+    const hasCoreWorkflowIdColumn = this.hasCoreWorkflowIdColumn();
+
+    const coreWorkflowId = hasCoreWorkflowIdColumn
+      ? await this.resolveCoreWorkflowIdInTransaction(
+          workflowVersion.workflowId,
+          transactionScope,
+        )
+      : null;
 
     // The conflict target is the primary key alone, so without the workspaceId
     // predicate a core row owned by another workspace would have its triggers
     // and steps overwritten.
     await transactionScope.executeRawQuery(
-      `INSERT INTO core."workflowVersion"
-         ("id", "workspaceId", "workflowId", "coreWorkflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-       ON CONFLICT ("id") DO UPDATE SET
-         "coreWorkflowId" = COALESCE(EXCLUDED."coreWorkflowId", core."workflowVersion"."coreWorkflowId"),
-         "triggers" = EXCLUDED."triggers",
-         "steps" = EXCLUDED."steps",
-         "status" = EXCLUDED."status"
-       WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId"`,
+      hasCoreWorkflowIdColumn
+        ? `INSERT INTO core."workflowVersion"
+             ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId", "coreWorkflowId")
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+           ON CONFLICT ("id") DO UPDATE SET
+             "triggers" = EXCLUDED."triggers",
+             "steps" = EXCLUDED."steps",
+             "status" = EXCLUDED."status",
+             "coreWorkflowId" = COALESCE(EXCLUDED."coreWorkflowId", core."workflowVersion"."coreWorkflowId")
+           WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId"`
+        : `INSERT INTO core."workflowVersion"
+             ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId")
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+           ON CONFLICT ("id") DO UPDATE SET
+             "triggers" = EXCLUDED."triggers",
+             "steps" = EXCLUDED."steps",
+             "status" = EXCLUDED."status"
+           WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId"`,
       [
         coreWorkflowVersionId,
         workspaceId,
         workflowVersion.workflowId,
-        coreWorkflowId,
         isDefined(workflowVersion.trigger)
           ? JSON.stringify([workflowVersion.trigger])
           : null,
@@ -220,6 +243,7 @@ export class WorkflowVersionCoreSyncService {
         workflowVersion.status,
         uuidv4(),
         resolvedApplicationId,
+        ...(hasCoreWorkflowIdColumn ? [coreWorkflowId] : []),
       ],
     );
 
@@ -269,6 +293,12 @@ export class WorkflowVersionCoreSyncService {
     }
 
     return coreWorkflowIdByWorkflowId;
+  }
+
+  private hasCoreWorkflowIdColumn(): boolean {
+    return !UpgradeAwareRepositoryState.getInstance()
+      .getHiddenColumnPropertyNames(WorkflowVersionEntity)
+      .has('coreWorkflowId');
   }
 
   private async resolveCoreWorkflowIdInTransaction(
