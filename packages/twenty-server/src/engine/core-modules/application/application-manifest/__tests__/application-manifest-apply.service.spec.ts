@@ -26,6 +26,17 @@ const manifest = {
   application: { universalIdentifier: 'test-app' },
 } as Manifest;
 
+const workspaceMigrationWithCreatedLogicFunction = {
+  applicationUniversalIdentifier: 'test-app',
+  actions: [
+    {
+      type: 'create',
+      metadataName: 'logicFunction',
+      flatEntity: { universalIdentifier: 'created-function' },
+    },
+  ],
+};
+
 describe('ApplicationManifestApplyService', () => {
   let service: ApplicationManifestApplyService;
 
@@ -87,6 +98,11 @@ describe('ApplicationManifestApplyService', () => {
   });
 
   it('enqueues the prebuilt warm-up job on install/upgrade after the SDK client regeneration', async () => {
+    applicationSyncService.synchronizeFromManifest.mockResolvedValue({
+      workspaceMigration: workspaceMigrationWithCreatedLogicFunction,
+      hasSchemaMetadataChanged: false,
+    });
+
     const callOrder: string[] = [];
 
     sdkClientGenerationService.generateSdkClientForApplication.mockImplementation(
@@ -108,15 +124,30 @@ describe('ApplicationManifestApplyService', () => {
     expect(messageQueueService.add).toHaveBeenCalledTimes(1);
     expect(messageQueueService.add).toHaveBeenCalledWith(
       WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME,
-      { workspaceId: WORKSPACE_ID, applicationId: APPLICATION_ID },
+      {
+        workspaceId: WORKSPACE_ID,
+        applicationId: APPLICATION_ID,
+        logicFunctionUniversalIdentifiers: ['created-function'],
+      },
       WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS,
     );
     expect(callOrder).toEqual(['generateSdkClient', 'enqueueWarmUp']);
   });
 
+  it('skips the prebuilt warm-up job when the migration touches no logic function bundle', async () => {
+    await service.applyManifestToWorkspace({
+      workspaceId: WORKSPACE_ID,
+      manifest,
+      application,
+      forceSdkClientGeneration: true,
+    });
+
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+  });
+
   it('skips the prebuilt warm-up job on dev sync, including the first apply', async () => {
     applicationSyncService.synchronizeFromManifest.mockResolvedValue({
-      workspaceMigration: { actions: [] },
+      workspaceMigration: workspaceMigrationWithCreatedLogicFunction,
       hasSchemaMetadataChanged: true,
     });
 

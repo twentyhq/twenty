@@ -14,6 +14,18 @@ const flatApplication = {
   universalIdentifier: 'test-app',
 };
 
+const ALL_UNIVERSAL_IDENTIFIERS = [
+  'universal-ready-1',
+  'universal-ready-2',
+  'universal-live',
+  'universal-not-built',
+  'universal-other-app',
+  'universal-installed',
+  'universal-outdated',
+  'universal-failing',
+  'universal-unknown',
+];
+
 const buildFlatLogicFunction = (overrides: {
   id: string;
   applicationId?: string;
@@ -88,7 +100,7 @@ describe('LogicFunctionPrebuiltWarmUpService', () => {
     service = module.get(LogicFunctionPrebuiltWarmUpService);
   });
 
-  it('installs the prebuilt bundle of every ready function of the application', async () => {
+  it('installs the prebuilt bundle of the listed ready functions of the application', async () => {
     setFlatLogicFunctions([
       buildFlatLogicFunction({ id: 'ready-1' }),
       buildFlatLogicFunction({ id: 'ready-2' }),
@@ -106,6 +118,7 @@ describe('LogicFunctionPrebuiltWarmUpService', () => {
     await service.warmUpApplicationLogicFunctions({
       workspaceId: WORKSPACE_ID,
       applicationId: APPLICATION_ID,
+      logicFunctionUniversalIdentifiers: ALL_UNIVERSAL_IDENTIFIERS,
     });
 
     expect(driver.installPrebuiltBundle).toHaveBeenCalledTimes(2);
@@ -135,12 +148,33 @@ describe('LogicFunctionPrebuiltWarmUpService', () => {
     await service.warmUpApplicationLogicFunctions({
       workspaceId: WORKSPACE_ID,
       applicationId: APPLICATION_ID,
+      logicFunctionUniversalIdentifiers: ALL_UNIVERSAL_IDENTIFIERS,
     });
 
     expect(driver.installPrebuiltBundle).toHaveBeenCalledTimes(1);
     expect(driver.installPrebuiltBundle).toHaveBeenCalledWith(
       expect.objectContaining({
         flatLogicFunction: expect.objectContaining({ id: 'outdated' }),
+      }),
+    );
+  });
+
+  it('only touches the listed functions', async () => {
+    setFlatLogicFunctions([
+      buildFlatLogicFunction({ id: 'ready-1' }),
+      buildFlatLogicFunction({ id: 'ready-2' }),
+    ]);
+
+    await service.warmUpApplicationLogicFunctions({
+      workspaceId: WORKSPACE_ID,
+      applicationId: APPLICATION_ID,
+      logicFunctionUniversalIdentifiers: ['universal-ready-2'],
+    });
+
+    expect(driver.installPrebuiltBundle).toHaveBeenCalledTimes(1);
+    expect(driver.installPrebuiltBundle).toHaveBeenCalledWith(
+      expect.objectContaining({
+        flatLogicFunction: expect.objectContaining({ id: 'ready-2' }),
       }),
     );
   });
@@ -153,6 +187,7 @@ describe('LogicFunctionPrebuiltWarmUpService', () => {
     await service.warmUpApplicationLogicFunctions({
       workspaceId: WORKSPACE_ID,
       applicationId: APPLICATION_ID,
+      logicFunctionUniversalIdentifiers: ALL_UNIVERSAL_IDENTIFIERS,
     });
 
     expect(driver.installPrebuiltBundle).not.toHaveBeenCalled();
@@ -175,6 +210,7 @@ describe('LogicFunctionPrebuiltWarmUpService', () => {
       service.warmUpApplicationLogicFunctions({
         workspaceId: WORKSPACE_ID,
         applicationId: APPLICATION_ID,
+        logicFunctionUniversalIdentifiers: ALL_UNIVERSAL_IDENTIFIERS,
       }),
     ).rejects.toThrow('Failed to warm up 1 of 2 prebuilt logic functions');
 

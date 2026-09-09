@@ -9,7 +9,6 @@ import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -67,9 +66,11 @@ export class LogicFunctionPrebuiltWarmUpService {
   async warmUpApplicationLogicFunctions({
     workspaceId,
     applicationId,
+    logicFunctionUniversalIdentifiers,
   }: {
     workspaceId: string;
     applicationId: string;
+    logicFunctionUniversalIdentifiers: string[];
   }): Promise<void> {
     const { flatLogicFunctionMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -87,10 +88,17 @@ export class LogicFunctionPrebuiltWarmUpService {
       return;
     }
 
-    const flatLogicFunctions = findFlatEntitiesByApplicationId({
-      flatEntityMaps: flatLogicFunctionMaps,
-      applicationId,
-    }).filter(isLogicFunctionReadyForPrebuiltInstall);
+    const flatLogicFunctions = logicFunctionUniversalIdentifiers
+      .map(
+        (universalIdentifier) =>
+          flatLogicFunctionMaps.byUniversalIdentifier[universalIdentifier],
+      )
+      .filter(isDefined)
+      .filter(
+        (flatLogicFunction) =>
+          flatLogicFunction.applicationId === applicationId &&
+          isLogicFunctionReadyForPrebuiltInstall(flatLogicFunction),
+      );
 
     const failedLogicFunctionIds: string[] = [];
 

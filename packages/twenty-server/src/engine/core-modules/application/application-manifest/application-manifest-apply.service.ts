@@ -12,6 +12,7 @@ import {
   WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS,
   type WarmUpApplicationLogicFunctionsJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-application-logic-functions.job-constants';
+import { findLogicFunctionUniversalIdentifiersToWarmUp } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/utils/find-logic-function-universal-identifiers-to-warm-up.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -79,10 +80,21 @@ export class ApplicationManifestApplyService {
       });
     }
 
-    if (forceSdkClientGeneration) {
+    const logicFunctionUniversalIdentifiersToWarmUp =
+      findLogicFunctionUniversalIdentifiersToWarmUp(workspaceMigration);
+
+    if (
+      forceSdkClientGeneration &&
+      logicFunctionUniversalIdentifiersToWarmUp.length > 0
+    ) {
       await this.messageQueueService.add<WarmUpApplicationLogicFunctionsJobData>(
         WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME,
-        { workspaceId, applicationId: application.id },
+        {
+          workspaceId,
+          applicationId: application.id,
+          logicFunctionUniversalIdentifiers:
+            logicFunctionUniversalIdentifiersToWarmUp,
+        },
         WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS,
       );
     }

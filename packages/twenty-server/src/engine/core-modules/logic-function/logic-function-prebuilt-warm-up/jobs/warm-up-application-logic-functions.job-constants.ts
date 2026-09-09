@@ -12,4 +12,5 @@ export const WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS: QueueJobOptions =
 export type WarmUpApplicationLogicFunctionsJobData = {
   workspaceId: string;
   applicationId: string;
+  logicFunctionUniversalIdentifiers: string[];
 };
