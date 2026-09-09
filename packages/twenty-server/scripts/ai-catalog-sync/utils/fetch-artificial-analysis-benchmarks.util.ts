@@ -67,10 +67,16 @@ const informationScore = (record: BenchmarkRecord): number =>
 const preferOver = (
   candidate: BenchmarkRecord,
   existing: BenchmarkRecord,
-): boolean =>
-  (candidate.intelligenceIndex ?? -1) !== (existing.intelligenceIndex ?? -1)
-    ? (candidate.intelligenceIndex ?? -1) > (existing.intelligenceIndex ?? -1)
-    : informationScore(candidate) > informationScore(existing);
+): boolean => {
+  const candidateIndex = candidate.intelligenceIndex ?? -1;
+  const existingIndex = existing.intelligenceIndex ?? -1;
+
+  if (candidateIndex !== existingIndex) {
+    return candidateIndex > existingIndex;
+  }
+
+  return informationScore(candidate) > informationScore(existing);
+};
 
 export const fetchArtificialAnalysisBenchmarks = async (
   apiKey: string,

@@ -55,13 +55,12 @@ export const buildLookupCandidates = ({
   const resolved = resolveRollingAlias(modelName, siblingModels);
 
   if (isDefined(resolved)) {
-    // Once the release an alias points at is known, an undated row is a
-    // different release and not a weaker spelling of this one. `mistral-large`
-    // on the leaderboard is the Feb '24 model; letting it stand in for
-    // `mistral-large-2512` published a two-year-old score as current.
-    return [
-      ...new Set([...candidates, resolved, resolved.replace(DATE_SUFFIX, '')]),
-    ];
+    // Once the release an alias points at is known, only a row naming that
+    // release will do. Every undated spelling is some other release the
+    // publisher happens to have measured: `mistral-large` on the leaderboard is
+    // the Feb '24 model, and standing in for `mistral-large-2512` it published a
+    // two-year-old score as current.
+    return [...new Set([...candidates, resolved])];
   }
 
   // No dated release to point at, so the bare name is the only thing left and
