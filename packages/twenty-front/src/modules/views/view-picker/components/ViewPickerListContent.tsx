@@ -21,6 +21,7 @@ import { ViewPickerOptionDropdown } from '@/views/view-picker/components/ViewPic
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+import { computeViewPickerVisibleViews } from '@/views/view-picker/utils/computeViewPickerVisibleViews';
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -42,11 +43,18 @@ export const ViewPickerListContent = () => {
     { objectMetadataItemId: objectMetadataItem.id },
   );
 
-  const workspaceViews = viewsOnCurrentObject.filter(
+  const { currentView } = useGetCurrentViewOnly();
+
+  const visibleViews = computeViewPickerVisibleViews({
+    views: viewsOnCurrentObject,
+    currentViewId: currentView?.id,
+  });
+
+  const workspaceViews = visibleViews.filter(
     (view) => view.visibility === ViewVisibility.WORKSPACE,
   );
 
-  const unlistedViews = viewsOnCurrentObject.filter(
+  const unlistedViews = visibleViews.filter(
     (view) => view.visibility === ViewVisibility.UNLISTED,
   );
 
@@ -54,8 +62,6 @@ export const ViewPickerListContent = () => {
 
   const shouldShowSectionLabels =
     workspaceViews.length > 0 && unlistedViews.length > 0;
-
-  const { currentView } = useGetCurrentViewOnly();
 
   const setViewPickerReferenceViewId = useSetAtomComponentState(
     viewPickerReferenceViewIdComponentState,

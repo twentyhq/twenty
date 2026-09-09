@@ -18,13 +18,19 @@ export const getObjectNavigationMenuItemComputedLink = (
     return '';
   }
 
+  const defaultViewId = views.find(
+    (view) =>
+      view.objectMetadataId === objectMetadataItem.id &&
+      view.key === ViewKey.DEFAULT,
+  )?.id;
+
   const indexViewId = views.find(
     (view) =>
       view.objectMetadataId === objectMetadataItem.id &&
       view.key === ViewKey.INDEX,
   )?.id;
 
-  const targetViewId = lastVisitedViewId ?? indexViewId;
+  const targetViewId = lastVisitedViewId ?? defaultViewId ?? indexViewId;
 
   return getAppPath(
     AppPath.RecordIndexPage,
