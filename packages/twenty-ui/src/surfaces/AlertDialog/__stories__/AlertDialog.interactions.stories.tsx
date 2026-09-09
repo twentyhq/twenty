@@ -63,8 +63,18 @@ export const KeyboardAndDismissal: Story = {
       async () => {
         const dialog = body.getByRole('alertdialog');
         const viewport = dialog.parentElement;
-        expect(viewport).not.toBeNull();
-        await userEvent.click(viewport!);
+        const outsideTarget = canvasElement.ownerDocument.elementFromPoint(
+          1,
+          1,
+        );
+
+        expect(outsideTarget).not.toBeNull();
+        expect(outsideTarget).toBe(viewport);
+        await userEvent.pointer({
+          keys: '[MouseLeft]',
+          target: outsideTarget!,
+          coords: { clientX: 1, clientY: 1 },
+        });
         expect(dialog).toBeVisible();
         expect(args.onOpenChange).toHaveBeenCalledTimes(1);
       },
