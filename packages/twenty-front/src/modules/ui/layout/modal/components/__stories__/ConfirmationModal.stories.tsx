@@ -203,14 +203,17 @@ export const ResetsInputWhenReopened: Story = {
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
     const input = await body.findByPlaceholderText('yes');
-    const confirmButton = await body.findByRole('button', { name: /Delete/ });
+    const confirmButton = await body.findByRole('button', {
+      name: /Delete/,
+    });
 
     expect(confirmButton).toBeDisabled();
 
     await userEvent.type(input, 'yes');
-    await userEvent.click(
-      await body.findByRole('button', { name: /Cancel/ }),
-    );
+    const cancelButton = await body.findByRole('button', {
+      name: /Cancel/,
+    });
+    await userEvent.click(cancelButton);
 
     jotaiStore.set(
       isModalOpenedComponentState.atomFamily({
@@ -222,7 +225,11 @@ export const ResetsInputWhenReopened: Story = {
     await sleep(400);
 
     await waitFor(() => {
-      expect(body.getByRole('button', { name: /Delete/ })).toBeDisabled();
+      expect(
+        body.getByRole('button', {
+          name: /Delete/,
+        }),
+      ).toBeDisabled();
     });
     expect(body.getByPlaceholderText('yes')).toHaveValue('');
   },
