@@ -44,15 +44,14 @@ it('shows connection before permissions and waits for the workspace to load', ()
   expect(screen.queryByRole('button', { name: 'Finish' })).toBeNull();
 });
 
-it('completes first-time setup through the ready screen without starting a recording', async () => {
+it('opens the app immediately after first-time setup without starting a recording', async () => {
   render(page(connectedState()));
   const user = userEvent.setup();
   await user.click(screen.getByRole('button', { name: 'Finish' }));
-  expect(command).toHaveBeenCalledExactlyOnceWith({
-    type: 'cancel-permission-setup',
-  });
-  await user.click(screen.getByRole('button', { name: 'Open my workspace' }));
-  expect(command).toHaveBeenLastCalledWith({ type: 'complete-setup' });
+  expect(command).toHaveBeenCalledExactlyOnceWith({ type: 'complete-setup' });
+  expect(
+    screen.queryByRole('button', { name: 'Open my workspace' }),
+  ).toBeNull();
   expect(command.mock.calls.some(([value]) => value.type === 'record')).toBe(
     false,
   );

@@ -4,7 +4,7 @@ import { type ReactNode, useState } from 'react';
 import { type CompanionState } from '../shared/types';
 import { Field } from '@ui/input/Field/Field';
 import { MainButton } from '@ui/input/MainButton/MainButton';
-import { IconArrowUpRight, IconArrowRight, IconRefresh } from 'twenty-ui/icon';
+import { IconArrowUpRight, IconRefresh } from 'twenty-ui/icon';
 import { Button } from '@ui/input/Button/Button';
 import { type ActionProps, SetupHeading, Empty } from './components';
 import { IS_PREVIEW } from './useCompanion';
@@ -59,37 +59,14 @@ const Welcome = ({ state, isPending, command }: ActionProps) => {
   );
 };
 
-const Ready = ({ isPending, command }: ActionProps) => (
-  <section className="setup-card ready">
-    <SetupHeading
-      title={i18n._('You are ready')}
-      continuation={i18n._('for your next conversation')}
-    />
-    <MainButton
-      fullWidth
-      disabled={isPending('complete-setup')}
-      onClick={() => void command({ type: 'complete-setup' })}
-      title={i18n._('Open my workspace')}
-      Icon={IconArrowRight}
-    />
-  </section>
-);
-
-const getOnboardingStep = (state: CompanionState, ready: boolean) => {
+const getOnboardingStep = (state: CompanionState) => {
   if (state.connection !== 'connected') return 'welcome';
   if (!state.updatedAt) return 'loading';
-  if (
-    ready &&
-    !state.permissionSetup &&
-    Object.values(state.permissions).every((status) => status === 'granted')
-  )
-    return 'ready';
   return 'permissions';
 };
 
 export const Onboarding = ({ state, isPending, command }: ActionProps) => {
-  const [ready, setReady] = useState(false);
-  const step = getOnboardingStep(state, ready);
+  const step = getOnboardingStep(state);
   let content: ReactNode;
   switch (step) {
     case 'welcome':
@@ -129,9 +106,6 @@ export const Onboarding = ({ state, isPending, command }: ActionProps) => {
         </Empty>
       );
       break;
-    case 'ready':
-      content = <Ready state={state} command={command} isPending={isPending} />;
-      break;
     case 'permissions':
       content = (
         <Permissions
@@ -143,8 +117,11 @@ export const Onboarding = ({ state, isPending, command }: ActionProps) => {
             state.settings.setupCompleted
           }
           onContinue={() => {
-            if (!state.settings.setupCompleted) setReady(true);
-            void command({ type: 'cancel-permission-setup' });
+            void command(
+              state.settings.setupCompleted
+                ? { type: 'cancel-permission-setup' }
+                : { type: 'complete-setup' },
+            );
           }}
         />
       );
