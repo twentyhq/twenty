@@ -91,6 +91,7 @@ export class ApplicationManifestMigrationService {
       navigationMenuItems: [],
       pageLayouts: [],
       pageLayoutTabs: [],
+      pageLayoutWidgets: [],
       commandMenuItems: [],
       timelineActivityTypes: [],
       sharingRules: [],

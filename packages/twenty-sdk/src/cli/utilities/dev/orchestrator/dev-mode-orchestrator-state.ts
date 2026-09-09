@@ -79,6 +79,7 @@ const ENTITY_TYPE_TO_SYNCABLE: Record<string, SyncableEntity | undefined> = {
   navigationMenuItems: SyncableEntity.NavigationMenuItem,
   pageLayouts: SyncableEntity.PageLayout,
   pageLayoutTabs: SyncableEntity.PageLayoutTab,
+  pageLayoutWidgets: SyncableEntity.PageLayoutWidget,
   commandMenuItems: SyncableEntity.CommandMenuItem,
   timelineActivityTypes: SyncableEntity.TimelineActivityType,
   sharingRules: SyncableEntity.SharingRule,

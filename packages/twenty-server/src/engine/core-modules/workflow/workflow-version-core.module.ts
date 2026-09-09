@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+
+import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
@@ -10,6 +12,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
+    RecordPositionModule,
     TypeOrmModule.forFeature([WorkflowVersionEntity, WorkspaceEntity]),
     WorkspaceCacheModule,
   ],

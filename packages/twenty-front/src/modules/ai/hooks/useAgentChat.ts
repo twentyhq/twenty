@@ -35,7 +35,7 @@ import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMess
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -46,7 +46,6 @@ import {
   markWorkspaceCreditsAvailable,
   markWorkspaceCreditsExhausted,
 } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
-import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useAgentChat = (
   ensureThreadIdForSend: () => Promise<string | null>,
@@ -201,12 +200,7 @@ export const useAgentChat = (
       // credits-exhausted before this response resolves; that event marks the
       // thread error, so its presence means the exhaustion is newer information
       // than the gate pass this response proves.
-      if (
-        !isGraphqlErrorOfType(
-          store.get(errorAtom),
-          AiChatErrorCode.BILLING_CREDITS_EXHAUSTED,
-        )
-      ) {
+      if (!isAiChatCreditsExhaustedError(store.get(errorAtom))) {
         store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
       }
 
@@ -259,9 +253,7 @@ export const useAgentChat = (
           : new Error('An unexpected error occurred'),
       );
 
-      if (
-        isGraphqlErrorOfType(error, AiChatErrorCode.BILLING_CREDITS_EXHAUSTED)
-      ) {
+      if (isAiChatCreditsExhaustedError(error)) {
         store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
       }
 
