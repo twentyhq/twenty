@@ -2,10 +2,7 @@ import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import {
-  type WorkflowStatus,
-  type WorkflowVersion,
-} from '@/workflow/types/Workflow';
+import { type Workflow, type WorkflowVersion } from '@/workflow/types/Workflow';
 import {
   CoreWorkflowVersionStatus,
   GetCoreWorkflowDocument,
@@ -17,6 +14,11 @@ type CoreWorkflowShowPageVersion = Pick<
   'id' | 'name' | 'status' | 'createdAt'
 >;
 
+type CoreWorkflowShowPageWorkflow = Pick<
+  Workflow,
+  'id' | 'name' | 'statuses' | 'lastPublishedVersionId'
+>;
+
 export const useCoreWorkflowForShowPage = ({
   workspaceWorkflowId,
   skip,
@@ -24,14 +26,7 @@ export const useCoreWorkflowForShowPage = ({
   workspaceWorkflowId: string | undefined;
   skip: boolean;
 }): {
-  coreWorkflow:
-    | {
-        id: string;
-        name: string;
-        statuses: WorkflowStatus[] | null;
-        lastPublishedVersionId: string | null;
-      }
-    | undefined;
+  coreWorkflow: CoreWorkflowShowPageWorkflow | undefined;
   versions: CoreWorkflowShowPageVersion[];
   draftVersionIdFromServer: string | undefined;
 } => {
