@@ -66,8 +66,7 @@ export const useCoreWorkflowForShowPage = ({
           {
             id: coreWorkflowVersion.workspaceWorkflowVersionId,
             name: coreWorkflowVersion.label,
-            status:
-              coreWorkflowVersion.status as unknown as WorkflowVersion['status'],
+            status: coreWorkflowVersion.status,
             createdAt: coreWorkflowVersion.createdAt,
           },
         ]
