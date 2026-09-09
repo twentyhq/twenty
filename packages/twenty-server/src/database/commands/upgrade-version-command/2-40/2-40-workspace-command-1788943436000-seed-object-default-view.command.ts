@@ -13,7 +13,7 @@ import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-m
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.40.0', 1788797504000)
+@RegisteredWorkspaceCommand('2.40.0', 1788943436000)
 @Command({
   name: 'upgrade:2-40:seed-object-default-view',
   description:

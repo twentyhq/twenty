@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { SyncRecordShareObjectCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788794677636-sync-record-share-object.command';
-import { SeedObjectDefaultViewCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788797504000-seed-object-default-view.command';
+import { SeedObjectDefaultViewCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788943436000-seed-object-default-view.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
