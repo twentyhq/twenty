@@ -29,6 +29,9 @@ type CampaignStatusTransition = {
   from: MessageCampaignStatus;
   to: MessageCampaignStatus;
   roleId?: string;
+  changes?: Partial<
+    Pick<MessageCampaignWorkspaceEntity, 'isClickTrackingEnabled'>
+  >;
 };
 
 @Injectable()
@@ -47,6 +50,7 @@ export class MessageCampaignLifecycleService {
     from,
     to,
     roleId,
+    changes,
   }: CampaignStatusTransition): Promise<boolean> {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -59,7 +63,7 @@ export class MessageCampaignLifecycleService {
 
         const { affected } = await campaignRepository.update(
           { id: campaignId, status: from },
-          { status: to },
+          { ...changes, status: to },
         );
 
         return affected === 1;

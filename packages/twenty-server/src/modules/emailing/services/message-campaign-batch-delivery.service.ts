@@ -36,6 +36,7 @@ import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-ob
 import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
 import { type CampaignDeliverySettlement } from 'src/modules/emailing/types/campaign-delivery-settlement.type';
 import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
+import { CampaignTrackingContentService } from 'src/modules/emailing/services/campaign-tracking-content.service';
 import { buildCampaignBatchReplacements } from 'src/modules/emailing/utils/build-campaign-batch-replacements.util';
 import { buildCampaignDeliverySettleQuery } from 'src/modules/emailing/utils/build-campaign-delivery-settle-query.util';
 import { compileCampaignBatchTemplate } from 'src/modules/emailing/utils/compile-campaign-batch-template.util';
@@ -66,6 +67,7 @@ export class MessageCampaignBatchDeliveryService {
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly emailBillingService: EmailBillingService,
     private readonly campaignVariableService: CampaignVariableService,
+    private readonly campaignTrackingContentService: CampaignTrackingContentService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly campaignSendSlotService: CampaignSendSlotService,
@@ -348,16 +350,38 @@ export class MessageCampaignBatchDeliveryService {
       );
     }
 
+    const trackedBatch = await this.campaignTrackingContentService
+      .prepareBatch({
+        workspaceId,
+        emailingDomainId,
+        campaign,
+        template,
+        variableNames,
+        recipients: claimedRecipients.map((recipient) => ({
+          deliveryId: recipient.messageId,
+          replacements: replacementsByDeliveryId.get(recipient.messageId) ?? {},
+        })),
+      })
+      .catch((error) => {
+        this.logger.warn(
+          `Campaign ${campaignId} of workspace ${workspaceId} is sending a batch without tracking: ${error}`,
+        );
+
+        return { template, replacementsByDeliveryId };
+      });
+
     const providerOutcome = await this.emailingDomainSenderService
       .sendEmailBatch({
         workspaceId,
         emailingDomainId,
         sendKind: 'MARKETING',
         from: campaign.fromAddress?.primaryEmail ?? '',
-        template,
+        template: trackedBatch.template,
         recipients: claimedRecipients.map((recipient) => ({
           email: recipient.email,
-          replacements: replacementsByDeliveryId.get(recipient.messageId) ?? {},
+          replacements:
+            trackedBatch.replacementsByDeliveryId.get(recipient.messageId) ??
+            {},
         })),
         unsubscribeTopicId: campaign.unsubscribeTopicId ?? undefined,
       })

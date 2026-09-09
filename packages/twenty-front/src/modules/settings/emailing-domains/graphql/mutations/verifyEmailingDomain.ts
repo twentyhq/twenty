@@ -7,6 +7,9 @@ export const VERIFY_EMAILING_DOMAIN = gql`
       domain
       status
       verifiedAt
+      isClickTrackingEnabled
+      trackingHostname
+      trackingHostnameStatus
       verificationRecords {
         type
         key

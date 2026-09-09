@@ -3,6 +3,7 @@ import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/core';
 import { useState } from 'react';
 
+import { CampaignEngagementSection } from '@/activities/emails/components/CampaignEngagementSection';
 import { CampaignSentEnvelope } from '@/activities/emails/components/CampaignSentEnvelope';
 import { EmailEditorCanvas } from '@/activities/emails/editor/components/EmailEditorCanvas';
 import { CAMPAIGN_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/CampaignBodyEditorProfile';
@@ -36,6 +37,7 @@ export const CampaignSentPreview = ({ campaign }: CampaignSentPreviewProps) => {
   return (
     <StyledContainer>
       <CampaignSentEnvelope campaign={campaign} width={canvasWidth} />
+      <CampaignEngagementSection campaign={campaign} width={canvasWidth} />
       <StyledBody>
         <FormAdvancedTextFieldInput
           defaultValue={campaign.bodyTemplate}

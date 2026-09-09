@@ -83,6 +83,7 @@ export enum MetricsKeys {
   ConnectedAccountSyncWebhookReceivedCalendar = 'connected-account-sync-webhook/received/calendar',
   ConnectedAccountWebhookSubscriptionCreated = 'connected-account-webhook-subscription/created',
   ConnectedAccountWebhookSubscriptionCreationFailed = 'connected-account-webhook-subscription/creation-failed',
+  CampaignEngagementCaptureFailed = 'campaign-engagement/capture-failed',
   ConnectedAccountWebhookSubscriptionRenewed = 'connected-account-webhook-subscription/renewed',
   ConnectedAccountWebhookSubscriptionRenewalFailed = 'connected-account-webhook-subscription/renewal-failed',
   ConnectedAccountWebhookSubscriptionDeleted = 'connected-account-webhook-subscription/deleted',

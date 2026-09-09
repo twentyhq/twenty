@@ -2,6 +2,7 @@ export const MATERIALIZE_CAMPAIGN_JOB = 'MaterializeCampaignJob';
 export const MATERIALIZE_CAMPAIGN_CHUNK_JOB = 'MaterializeCampaignChunkJob';
 export const SEND_CAMPAIGN_EMAIL_JOB = 'SendCampaignEmailJob';
 export const REFRESH_CAMPAIGN_STATS_JOB = 'RefreshCampaignStatsJob';
+export const RECORD_CAMPAIGN_ENGAGEMENT_JOB = 'RecordCampaignEngagementJob';
 export const RECONCILE_WORKSPACE_CAMPAIGN_STATS_JOB =
   'ReconcileWorkspaceCampaignStatsJob';
 

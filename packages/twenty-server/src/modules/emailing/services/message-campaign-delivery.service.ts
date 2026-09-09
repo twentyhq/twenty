@@ -33,6 +33,7 @@ import { EmailBillingService } from 'src/modules/emailing/services/email-billing
 import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
+import { CampaignTrackingContentService } from 'src/modules/emailing/services/campaign-tracking-content.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { resolveCampaignSendFailure } from 'src/modules/emailing/utils/resolve-campaign-send-failure.util';
@@ -60,6 +61,7 @@ export class MessageCampaignDeliveryService {
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly emailBillingService: EmailBillingService,
     private readonly campaignVariableService: CampaignVariableService,
+    private readonly campaignTrackingContentService: CampaignTrackingContentService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly campaignSendSlotService: CampaignSendSlotService,
@@ -309,6 +311,23 @@ export class MessageCampaignDeliveryService {
       variables,
     });
 
+    const trackedContent = await this.campaignTrackingContentService
+      .applyTo({
+        workspaceId,
+        emailingDomainId,
+        campaign,
+        deliveryId: messageId,
+        html,
+        text: plainText,
+      })
+      .catch((error) => {
+        this.logger.warn(
+          `Campaign ${campaignId} of workspace ${workspaceId} is sending message ${messageId} without tracking: ${error}`,
+        );
+
+        return { html, text: plainText };
+      });
+
     const result = await this.sendOrRecordFailure({
       messageId,
       claimToken,
@@ -319,8 +338,8 @@ export class MessageCampaignDeliveryService {
         from: campaign.fromAddress?.primaryEmail ?? '',
         to: [recipientEmail],
         subject,
-        text: plainText,
-        html,
+        text: trackedContent.text,
+        html: trackedContent.html,
         sendKind: 'MARKETING',
         unsubscribeTopicId: campaign.unsubscribeTopicId ?? undefined,
       },

@@ -133,6 +133,9 @@ export class MessageCampaignService {
         roleId,
         from: MessageCampaignStatus.DRAFT,
         to: MessageCampaignStatus.SENDING,
+        changes: {
+          isClickTrackingEnabled: emailingDomain.isClickTrackingEnabled,
+        },
       });
 
     if (!claimed) {

@@ -2193,6 +2193,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,
+    description:
+      'Operational kill switch for campaign open and click capture. When off, tracked links still redirect and pixels still render, but no engagement event is recorded',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  CAMPAIGN_TRACKING_CAPTURE_ENABLED = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     description: 'AWS region',
     type: ConfigVariableType.STRING,
   })

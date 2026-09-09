@@ -18,6 +18,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { CampaignSendSlotService } from 'src/modules/emailing/services/campaign-send-slot.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
+import { CampaignTrackingContentService } from 'src/modules/emailing/services/campaign-tracking-content.service';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { MessageCampaignBatchDeliveryService } from 'src/modules/emailing/services/message-campaign-batch-delivery.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
@@ -125,6 +126,25 @@ const buildHarness = () => {
   const campaignVariableService = {
     buildVariablesForPerson: jest.fn(async () => ({})),
   };
+  const campaignTrackingContentService = {
+    prepareBatch: jest.fn(
+      async ({
+        template,
+        recipients,
+      }: {
+        template: unknown;
+        recipients: { deliveryId: string; replacements: unknown }[];
+      }) => ({
+        template,
+        replacementsByDeliveryId: new Map(
+          recipients.map(({ deliveryId, replacements }) => [
+            deliveryId,
+            replacements,
+          ]),
+        ),
+      }),
+    ),
+  };
   const messageCampaignLifecycleService = {
     findRunningCampaign: jest.fn(async () => ({
       id: CAMPAIGN_ID,
@@ -178,6 +198,10 @@ const buildHarness = () => {
         },
         { provide: EmailBillingService, useValue: emailBillingService },
         { provide: CampaignVariableService, useValue: campaignVariableService },
+        {
+          provide: CampaignTrackingContentService,
+          useValue: campaignTrackingContentService,
+        },
         {
           provide: MessageCampaignLifecycleService,
           useValue: messageCampaignLifecycleService,
