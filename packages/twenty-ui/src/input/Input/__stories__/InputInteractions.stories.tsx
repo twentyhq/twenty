@@ -118,7 +118,7 @@ export const FieldStates: Story = {
       canvas.getByRole('button', { name: 'Disable input' }),
     );
 
-    await expect(input).toHaveAttribute('aria-invalid', 'true');
+    await expect(input).not.toHaveAttribute('aria-invalid');
     await expect(input).toHaveAttribute('data-invalid');
     await expect(input).toBeDisabled();
 
