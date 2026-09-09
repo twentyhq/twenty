@@ -32,7 +32,10 @@ export class CampaignTrackingHostnameService implements EmailingHostnameProvisio
   async resolveDesiredHostname(
     emailingDomain: EmailingDomainEntity,
   ): Promise<string | null> {
-    if (!emailingDomain.isClickTrackingEnabled) {
+    if (
+      !emailingDomain.isClickTrackingEnabled &&
+      !emailingDomain.isOpenTrackingEnabled
+    ) {
       return null;
     }
 

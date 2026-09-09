@@ -2,5 +2,5 @@ import { type MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standa
 
 export type CampaignTrackingFlags = Pick<
   MessageCampaignWorkspaceEntity,
-  'isClickTrackingEnabled'
+  'isClickTrackingEnabled' | 'isOpenTrackingEnabled'
 >;

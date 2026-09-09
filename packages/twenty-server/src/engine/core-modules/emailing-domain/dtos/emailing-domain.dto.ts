@@ -49,6 +49,9 @@ export class EmailingDomainDTO {
   @Field(() => Boolean)
   isClickTrackingEnabled: boolean;
 
+  @Field(() => Boolean)
+  isOpenTrackingEnabled: boolean;
+
   @Field(() => String, { nullable: true })
   trackingHostname: string | null;
 

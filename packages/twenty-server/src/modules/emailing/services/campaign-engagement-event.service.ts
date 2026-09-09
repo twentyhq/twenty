@@ -84,15 +84,21 @@ export class CampaignEngagementEventService {
   }
 
   async countEngagement(scope: CampaignScope): Promise<{
+    totalOpens: number;
     totalClicks: number;
+    uniqueOpeners: number;
     uniqueClickers: number;
   }> {
     const [row] = await this.select<{
+      totalOpens: string | number;
       totalClicks: string | number;
+      uniqueOpeners: string | number;
       uniqueClickers: string | number;
     }>(
       `SELECT
+         uniqExactIf(eventId, eventType = 'OPEN') AS totalOpens,
          uniqExactIf(eventId, eventType = 'CLICK') AS totalClicks,
+         uniqExactIf(deliveryId, eventType IN ('OPEN', 'CLICK')) AS uniqueOpeners,
          uniqExactIf(deliveryId, eventType = 'CLICK') AS uniqueClickers
        FROM ${CAMPAIGN_ENGAGEMENT_EVENT_TABLE}
        WHERE ${CAMPAIGN_SCOPE_CONDITION}
@@ -101,7 +107,9 @@ export class CampaignEngagementEventService {
     );
 
     return {
+      totalOpens: Number(row?.totalOpens ?? 0),
       totalClicks: Number(row?.totalClicks ?? 0),
+      uniqueOpeners: Number(row?.uniqueOpeners ?? 0),
       uniqueClickers: Number(row?.uniqueClickers ?? 0),
     };
   }
@@ -110,16 +118,18 @@ export class CampaignEngagementEventService {
     bucket,
     ...scope
   }: CampaignScope & { bucket: CampaignEngagementBucket }): Promise<
-    { bucketStart: Date; clicks: number }[]
+    { bucketStart: Date; opens: number; clicks: number }[]
   > {
     const bucketFunction = bucket === 'hour' ? 'toStartOfHour' : 'toStartOfDay';
 
     const rows = await this.select<{
       bucketStart: string;
+      opens: string | number;
       clicks: string | number;
     }>(
       `SELECT
          ${bucketFunction}(occurredAt) AS bucketStart,
+         uniqExactIf(eventId, eventType = 'OPEN') AS opens,
          uniqExactIf(eventId, eventType = 'CLICK') AS clicks
        FROM ${CAMPAIGN_ENGAGEMENT_EVENT_TABLE}
        WHERE ${CAMPAIGN_SCOPE_CONDITION}
@@ -131,6 +141,7 @@ export class CampaignEngagementEventService {
 
     return rows.map((row) => ({
       bucketStart: parseClickHouseDateTime(row.bucketStart),
+      opens: Number(row.opens),
       clicks: Number(row.clicks),
     }));
   }
@@ -171,17 +182,20 @@ export class CampaignEngagementEventService {
   }: CampaignScope & { limit: number }): Promise<
     {
       deliveryId: string;
+      firstOpenedAt: Date | null;
       firstClickedAt: Date | null;
       lastEngagedAt: Date;
     }[]
   > {
     const rows = await this.select<{
       deliveryId: string;
+      firstOpenedAt: string | null;
       firstClickedAt: string | null;
       lastEngagedAt: string;
     }>(
       `SELECT
          deliveryId,
+         minIfOrNull(occurredAt, eventType = 'OPEN') AS firstOpenedAt,
          minIfOrNull(occurredAt, eventType = 'CLICK') AS firstClickedAt,
          max(occurredAt) AS lastEngagedAt
        FROM ${CAMPAIGN_ENGAGEMENT_EVENT_TABLE}
@@ -195,6 +209,9 @@ export class CampaignEngagementEventService {
 
     return rows.map((row) => ({
       deliveryId: row.deliveryId,
+      firstOpenedAt: isDefined(row.firstOpenedAt)
+        ? parseClickHouseDateTime(row.firstOpenedAt)
+        : null,
       firstClickedAt: isDefined(row.firstClickedAt)
         ? parseClickHouseDateTime(row.firstClickedAt)
         : null,

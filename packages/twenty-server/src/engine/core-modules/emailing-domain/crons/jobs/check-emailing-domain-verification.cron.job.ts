@@ -117,6 +117,11 @@ export class CheckEmailingDomainVerificationCronJob {
             isClickTrackingEnabled: true,
             trackingHostnameId: IsNull(),
           },
+          {
+            status: EmailingDomainStatus.VERIFIED,
+            isOpenTrackingEnabled: true,
+            trackingHostnameId: IsNull(),
+          },
         ],
         select: ['id', 'workspaceId'],
       },

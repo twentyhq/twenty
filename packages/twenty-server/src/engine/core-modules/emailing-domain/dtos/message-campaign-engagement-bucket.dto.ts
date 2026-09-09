@@ -6,5 +6,8 @@ export class MessageCampaignEngagementBucketDTO {
   bucketStart: Date;
 
   @Field(() => Int)
+  opens: number;
+
+  @Field(() => Int)
   clicks: number;
 }

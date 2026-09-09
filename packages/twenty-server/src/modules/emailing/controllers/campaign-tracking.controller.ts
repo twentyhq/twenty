@@ -8,11 +8,12 @@ import {
   Param,
   Redirect,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type Request } from 'express';
+import { type Request, type Response } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -30,6 +31,11 @@ import { MessageCampaignLinkService } from 'src/modules/emailing/services/messag
 const FOUND_STATUS_CODE = 302;
 
 const REQUESTER_RATE_LIMIT = { maxRequests: 600, windowMs: 60_000 };
+
+const TRANSPARENT_GIF = Buffer.from(
+  'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+  'base64',
+);
 
 @Controller(ApiPath.Emailing)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
@@ -52,7 +58,7 @@ export class CampaignTrackingController {
   ): Promise<{ url: string; statusCode: number }> {
     await this.throttleByRequesterOrThrow(request);
 
-    const payload = this.verifyTokenOrThrow(token);
+    const payload = this.verifyTokenOrThrow(token, 'CLICK');
 
     const destination = await this.messageCampaignLinkService.findDestination(
       payload.destinationId,
@@ -68,6 +74,29 @@ export class CampaignTrackingController {
     });
 
     return { url: destination.url, statusCode: FOUND_STATUS_CODE };
+  }
+
+  @Get('o/:token')
+  async open(
+    @Param('token') token: string,
+    @Headers('user-agent') userAgent: string | undefined,
+    @Res() response: Response,
+  ): Promise<void> {
+    const payload = this.verifyTokenOrThrow(token, 'OPEN');
+
+    await this.campaignEngagementCaptureService.capture({
+      payload,
+      userAgent: userAgent ?? null,
+    });
+
+    response
+      .set({
+        'Cache-Control': 'no-store',
+        'Referrer-Policy': 'no-referrer',
+        'Content-Type': 'image/gif',
+        'Content-Length': String(TRANSPARENT_GIF.length),
+      })
+      .end(TRANSPARENT_GIF);
   }
 
   private async throttleByRequesterOrThrow(request: Request): Promise<void> {
@@ -87,7 +116,12 @@ export class CampaignTrackingController {
     }
   }
 
-  private verifyTokenOrThrow(token: string): CampaignTrackingTokenPayload {
+  private verifyTokenOrThrow<
+    TPurpose extends CampaignTrackingTokenPayload['purpose'],
+  >(
+    token: string,
+    purpose: TPurpose,
+  ): Extract<CampaignTrackingTokenPayload, { purpose: TPurpose }> {
     if (
       !isNonEmptyString(token) ||
       !CAMPAIGN_TRACKING_TOKEN_FORMAT.test(token)
@@ -97,10 +131,13 @@ export class CampaignTrackingController {
 
     const payload = this.campaignTrackingTokenService.verify(token);
 
-    if (!isDefined(payload)) {
+    if (!isDefined(payload) || payload.purpose !== purpose) {
       throw new BadRequestException('Invalid tracking token');
     }
 
-    return payload;
+    return payload as Extract<
+      CampaignTrackingTokenPayload,
+      { purpose: TPurpose }
+    >;
   }
 }

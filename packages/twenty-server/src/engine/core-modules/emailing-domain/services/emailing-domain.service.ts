@@ -246,21 +246,28 @@ export class EmailingDomainService {
   async setTracking({
     workspaceId,
     emailingDomainId,
-    isClickTrackingEnabled,
+    ...trackingFlags
   }: {
     workspaceId: string;
     emailingDomainId: string;
-    isClickTrackingEnabled: boolean;
+    isClickTrackingEnabled?: boolean;
+    isOpenTrackingEnabled?: boolean;
   }): Promise<EmailingDomainEntity> {
     await this.findEmailingDomainByIdOrThrow(workspaceId, emailingDomainId);
 
-    await this.emailingDomainRepository.update(
-      workspaceId,
-      { id: emailingDomainId },
-      { isClickTrackingEnabled },
+    const changedFlags = Object.fromEntries(
+      Object.entries(trackingFlags).filter(([, value]) => isDefined(value)),
     );
 
-    if (isClickTrackingEnabled) {
+    if (Object.keys(changedFlags).length > 0) {
+      await this.emailingDomainRepository.update(
+        workspaceId,
+        { id: emailingDomainId },
+        changedFlags,
+      );
+    }
+
+    if (Object.values(changedFlags).some((isEnabled) => isEnabled)) {
       await this.emailingHostnamesService.sync({
         workspaceId,
         emailingDomainId,

@@ -120,7 +120,8 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
 
   const isTrackingHostnamePending =
     isDefined(emailingDomain) &&
-    emailingDomain.isClickTrackingEnabled &&
+    (emailingDomain.isClickTrackingEnabled ||
+      emailingDomain.isOpenTrackingEnabled) &&
     emailingDomain.trackingHostnameStatus !== ManagedHostnameStatus.ACTIVE;
 
   const shouldShowDnsRecords = !isDomainVerified || isTrackingHostnamePending;
@@ -281,11 +282,12 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
           <Section>
             <H2Title
               title={t`Engagement tracking`}
-              description={t`Count how many recipients click the links in your campaigns.`}
+              description={t`Count how many recipients open your campaigns and click their links.`}
             />
             <SettingsEmailingDomainTrackingToggles
               emailingDomainId={emailingDomain.id}
               isClickTrackingEnabled={emailingDomain.isClickTrackingEnabled}
+              isOpenTrackingEnabled={emailingDomain.isOpenTrackingEnabled}
             />
           </Section>
         )}

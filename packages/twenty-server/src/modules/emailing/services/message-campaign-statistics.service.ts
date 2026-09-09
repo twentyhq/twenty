@@ -29,6 +29,7 @@ import { CampaignEngagementEventService } from 'src/modules/emailing/services/ca
 import { CampaignEngagementStatisticsService } from 'src/modules/emailing/services/campaign-engagement-statistics.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type CampaignEngagementCounts } from 'src/modules/emailing/types/campaign-engagement-counts.type';
+import { type CampaignTrackingFlags } from 'src/modules/emailing/types/campaign-tracking-flags.type';
 
 const RECONCILIATION_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 const ENGAGEMENT_RECONCILIATION_WINDOW_MS = 25 * 60 * 60 * 1000;
@@ -176,6 +177,7 @@ export class MessageCampaignStatisticsService {
         sentCount: counts.sentCount,
         bouncedCount: counts.bouncedCount,
         isClickTrackingEnabled: campaign.isClickTrackingEnabled,
+        isOpenTrackingEnabled: campaign.isOpenTrackingEnabled,
       });
 
     const storedCounts: StoredCampaignCounts = {
@@ -185,7 +187,9 @@ export class MessageCampaignStatisticsService {
       skippedCount: campaign.skippedCount,
       bouncedCount: campaign.bouncedCount,
       complainedCount: campaign.complainedCount,
+      openedCount: campaign.openedCount,
       clickedCount: campaign.clickedCount,
+      openRate: campaign.openRate,
       clickRate: campaign.clickRate,
     };
 
@@ -233,7 +237,7 @@ export class MessageCampaignStatisticsService {
     campaignId: string;
   }): Promise<Pick<
     MessageCampaignWorkspaceEntity,
-    keyof StoredCampaignCounts | 'isClickTrackingEnabled'
+    keyof StoredCampaignCounts | keyof CampaignTrackingFlags
   > | null> {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const campaignRepository = this.workspaceOrmManager.getRepository(
@@ -251,9 +255,12 @@ export class MessageCampaignStatisticsService {
           skippedCount: true,
           bouncedCount: true,
           complainedCount: true,
+          openedCount: true,
           clickedCount: true,
+          openRate: true,
           clickRate: true,
           isClickTrackingEnabled: true,
+          isOpenTrackingEnabled: true,
         },
       });
     }, buildSystemAuthContext(workspaceId));

@@ -4,18 +4,23 @@ import { useLingui } from '@lingui/react/macro';
 
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { IconClick } from 'twenty-ui/icon';
+import { IconClick, IconEye } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/surfaces';
-import { SetEmailingDomainTrackingDocument } from '~/generated-metadata/graphql';
+import {
+  SetEmailingDomainTrackingDocument,
+  type SetEmailingDomainTrackingMutationVariables,
+} from '~/generated-metadata/graphql';
 
 type SettingsEmailingDomainTrackingTogglesProps = {
   emailingDomainId: string;
   isClickTrackingEnabled: boolean;
+  isOpenTrackingEnabled: boolean;
 };
 
 export const SettingsEmailingDomainTrackingToggles = ({
   emailingDomainId,
   isClickTrackingEnabled,
+  isOpenTrackingEnabled,
 }: SettingsEmailingDomainTrackingTogglesProps) => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -23,11 +28,11 @@ export const SettingsEmailingDomainTrackingToggles = ({
     SetEmailingDomainTrackingDocument,
   );
 
-  const handleChange = async (isEnabled: boolean) => {
+  const handleChange = async (
+    change: Omit<SetEmailingDomainTrackingMutationVariables, 'id'>,
+  ) => {
     try {
-      await setTracking({
-        variables: { id: emailingDomainId, isClickTrackingEnabled: isEnabled },
-      });
+      await setTracking({ variables: { id: emailingDomainId, ...change } });
     } catch (error) {
       enqueueErrorSnackBar({
         ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
@@ -43,7 +48,20 @@ export const SettingsEmailingDomainTrackingToggles = ({
         description={t`Rewrite links in campaign emails so clicks are counted. Requires one extra DNS record.`}
         checked={isClickTrackingEnabled}
         disabled={loading}
-        onChange={handleChange}
+        onChange={(isEnabled) =>
+          handleChange({ isClickTrackingEnabled: isEnabled })
+        }
+        divider
+      />
+      <SettingsOptionCardContentToggle
+        Icon={IconEye}
+        title={t`Track opens`}
+        description={t`Add an invisible image so opens can be estimated. Mail clients that load images automatically can inflate this number.`}
+        checked={isOpenTrackingEnabled}
+        disabled={loading}
+        onChange={(isEnabled) =>
+          handleChange({ isOpenTrackingEnabled: isEnabled })
+        }
       />
     </Card>
   );

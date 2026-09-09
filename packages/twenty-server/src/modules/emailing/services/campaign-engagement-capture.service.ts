@@ -16,7 +16,7 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type CampaignEngagementObservation } from 'src/modules/emailing/types/campaign-engagement-observation.type';
 
-const CAPTURE_RATE_LIMIT_PER_LINK = { maxRequests: 60, windowMs: 60_000 };
+const CAPTURE_RATE_LIMIT_PER_TARGET = { maxRequests: 60, windowMs: 60_000 };
 
 const RESPONSE_RELEASE_BUDGET_MS = 100;
 
@@ -48,7 +48,7 @@ export class CampaignEngagementCaptureService {
       occurredAt: new Date().toISOString(),
       eventType: payload.purpose,
       deliveryId: payload.deliveryId,
-      destinationId: payload.destinationId,
+      destinationId: payload.purpose === 'CLICK' ? payload.destinationId : null,
       messagePart: payload.messagePart,
       userAgent,
     };
@@ -67,10 +67,10 @@ export class CampaignEngagementCaptureService {
   }): Promise<void> {
     try {
       await this.throttlerService.tokenBucketThrottleOrThrow(
-        `campaign-engagement:${payload.deliveryId}:${payload.destinationId}`,
+        this.buildThrottleKey(payload),
         1,
-        CAPTURE_RATE_LIMIT_PER_LINK.maxRequests,
-        CAPTURE_RATE_LIMIT_PER_LINK.windowMs,
+        CAPTURE_RATE_LIMIT_PER_TARGET.maxRequests,
+        CAPTURE_RATE_LIMIT_PER_TARGET.windowMs,
       );
 
       await this.messageQueueService.add<CampaignEngagementObservation>(
@@ -98,6 +98,15 @@ export class CampaignEngagementCaptureService {
       this.logger.warn(
         `Dropped ${observation.eventType} event for delivery ${observation.deliveryId}: ${error}`,
       );
+    }
+  }
+
+  private buildThrottleKey(payload: CampaignTrackingTokenPayload): string {
+    switch (payload.purpose) {
+      case 'CLICK':
+        return `campaign-engagement:click:${payload.deliveryId}:${payload.destinationId}`;
+      case 'OPEN':
+        return `campaign-engagement:open:${payload.deliveryId}`;
     }
   }
 

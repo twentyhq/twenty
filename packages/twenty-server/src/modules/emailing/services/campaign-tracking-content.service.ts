@@ -22,6 +22,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN } from 'src/modules/emailing/constants/campaign-batch-variable-tag-pattern.constant';
+import { CAMPAIGN_OPEN_PIXEL_TAG } from 'src/modules/emailing/constants/campaign-open-pixel-tag.constant';
 import { CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART } from 'src/modules/emailing/constants/campaign-tracking-tag.constant';
 import { MessageCampaignLinkService } from 'src/modules/emailing/services/message-campaign-link.service';
 import { type CampaignTrackingFlags } from 'src/modules/emailing/types/campaign-tracking-flags.type';
@@ -34,6 +35,8 @@ type TrackingRecipient = {
   deliveryId: string;
   replacements: Record<string, string>;
 };
+
+const OPEN_PIXEL_HTML = `<img src="{{${CAMPAIGN_OPEN_PIXEL_TAG}}}" width="1" height="1" alt="" style="display:none;width:1px;height:1px;border:0" />`;
 
 type PrepareBatchArgs = {
   workspaceId: string;
@@ -65,6 +68,8 @@ export class CampaignTrackingContentService {
     return {
       isClickTrackingEnabled:
         emailingDomain.isClickTrackingEnabled && canServeTrackedUrls,
+      isOpenTrackingEnabled:
+        emailingDomain.isOpenTrackingEnabled && canServeTrackedUrls,
     };
   }
 
@@ -89,13 +94,18 @@ export class CampaignTrackingContentService {
 
     const html = template.html ?? '';
 
-    if (!campaign.isClickTrackingEnabled || html.trim() === '') {
+    if (
+      (!campaign.isClickTrackingEnabled && !campaign.isOpenTrackingEnabled) ||
+      html.trim() === ''
+    ) {
       return untracked;
     }
 
-    const urlTemplates = collectTrackableLinkUrls(html);
+    const urlTemplates = campaign.isClickTrackingEnabled
+      ? collectTrackableLinkUrls(html)
+      : [];
 
-    if (urlTemplates.length === 0) {
+    if (urlTemplates.length === 0 && !campaign.isOpenTrackingEnabled) {
       return untracked;
     }
 
@@ -121,6 +131,7 @@ export class CampaignTrackingContentService {
         template,
         textPartHtml,
         urlTemplates,
+        withOpenPixel: campaign.isOpenTrackingEnabled,
       }),
       replacementsByDeliveryId: new Map(
         recipients.map((recipient) => [
@@ -132,6 +143,7 @@ export class CampaignTrackingContentService {
               recipient,
               urlTemplates,
               destinationIdByUrl,
+              withOpenPixel: campaign.isOpenTrackingEnabled,
             }),
           },
         ]),
@@ -143,10 +155,12 @@ export class CampaignTrackingContentService {
     template,
     textPartHtml,
     urlTemplates,
+    withOpenPixel,
   }: {
     template: EmailingDomainEmailTemplate;
     textPartHtml: string;
     urlTemplates: string[];
+    withOpenPixel: boolean;
   }): EmailingDomainEmailTemplate {
     const tagByUrl = (messagePart: CampaignMessagePart) =>
       new Map(
@@ -156,13 +170,28 @@ export class CampaignTrackingContentService {
         ]),
       );
 
+    const html = replaceTrackableLinkUrls(
+      template.html ?? '',
+      tagByUrl('HTML'),
+    );
+
     return {
       ...template,
-      html: replaceTrackableLinkUrls(template.html ?? '', tagByUrl('HTML')),
+      html: withOpenPixel ? this.appendOpenPixel(html) : html,
       text: toPlainText(
         replaceTrackableLinkUrls(textPartHtml, tagByUrl('TEXT')),
       ),
     };
+  }
+
+  private appendOpenPixel(html: string): string {
+    const bodyEndIndex = html.lastIndexOf('</body>');
+
+    if (bodyEndIndex === -1) {
+      return `${html}${OPEN_PIXEL_HTML}`;
+    }
+
+    return `${html.slice(0, bodyEndIndex)}${OPEN_PIXEL_HTML}${html.slice(bodyEndIndex)}`;
   }
 
   private async registerDestinations({
@@ -211,11 +240,13 @@ export class CampaignTrackingContentService {
     recipient,
     urlTemplates,
     destinationIdByUrl,
+    withOpenPixel,
   }: {
     baseUrl: string;
     recipient: TrackingRecipient;
     urlTemplates: string[];
     destinationIdByUrl: Map<string, string>;
+    withOpenPixel: boolean;
   }): Record<string, string> {
     const replacements: Record<string, string> = {};
 
@@ -240,6 +271,14 @@ export class CampaignTrackingContentService {
       }
     });
 
+    if (withOpenPixel) {
+      replacements[CAMPAIGN_OPEN_PIXEL_TAG] = this.buildTrackedUrl(baseUrl, {
+        purpose: 'OPEN',
+        deliveryId: recipient.deliveryId,
+        messagePart: 'HTML',
+      });
+    }
+
     return replacements;
   }
 
@@ -247,9 +286,10 @@ export class CampaignTrackingContentService {
     baseUrl: string,
     payload: CampaignTrackingTokenPayload,
   ): string {
+    const route = payload.purpose === 'CLICK' ? 'c' : 'o';
     const token = this.campaignTrackingTokenService.sign(payload);
 
-    return `${baseUrl}/${ApiPath.Emailing}/c/${token}`;
+    return `${baseUrl}/${ApiPath.Emailing}/${route}/${token}`;
   }
 
   private buildLinkTag({

@@ -32,7 +32,11 @@ const RECIPIENTS_LIMIT = 50;
 
 type ReportedCampaign = Pick<
   MessageCampaignWorkspaceEntity,
-  'id' | 'sentAt' | 'isClickTrackingEnabled' | 'engagementCalculatedAt'
+  | 'id'
+  | 'sentAt'
+  | 'isClickTrackingEnabled'
+  | 'isOpenTrackingEnabled'
+  | 'engagementCalculatedAt'
 >;
 
 @Injectable()
@@ -72,18 +76,24 @@ export class CampaignEngagementReportService {
 
     const isAvailable = this.campaignEngagementEventService.isAvailable();
 
+    const isTracked =
+      campaign.isClickTrackingEnabled || campaign.isOpenTrackingEnabled;
+
     const emptyReport: MessageCampaignEngagementDTO = {
       isAvailable,
       isClickTrackingEnabled: campaign.isClickTrackingEnabled,
+      isOpenTrackingEnabled: campaign.isOpenTrackingEnabled,
       calculatedAt: campaign.engagementCalculatedAt,
+      totalOpens: 0,
       totalClicks: 0,
+      uniqueOpeners: 0,
       uniqueClickers: 0,
       series: [],
       links: [],
       recipients: [],
     };
 
-    if (!isAvailable || !campaign.isClickTrackingEnabled) {
+    if (!isAvailable || !isTracked) {
       return emptyReport;
     }
 
@@ -114,7 +124,9 @@ export class CampaignEngagementReportService {
 
     return {
       ...emptyReport,
+      totalOpens: totals.totalOpens,
       totalClicks: totals.totalClicks,
+      uniqueOpeners: campaign.isOpenTrackingEnabled ? totals.uniqueOpeners : 0,
       uniqueClickers: totals.uniqueClickers,
       series: this.fillSeries({ series, bucket, sentAt: campaign.sentAt }),
       links: await this.rollUpLinksByAuthoredUrl({
@@ -157,6 +169,7 @@ export class CampaignEngagementReportService {
             id: true,
             sentAt: true,
             isClickTrackingEnabled: true,
+            isOpenTrackingEnabled: true,
             engagementCalculatedAt: true,
           },
         });
@@ -208,6 +221,7 @@ export class CampaignEngagementReportService {
       filled.push(
         countsByBucketMs.get(bucketStartMs) ?? {
           bucketStart: new Date(bucketStartMs),
+          opens: 0,
           clicks: 0,
         },
       );
@@ -275,6 +289,7 @@ export class CampaignEngagementReportService {
     messageCampaignId: string;
     engagedDeliveries: {
       deliveryId: string;
+      firstOpenedAt: Date | null;
       firstClickedAt: Date | null;
       lastEngagedAt: Date;
     }[];

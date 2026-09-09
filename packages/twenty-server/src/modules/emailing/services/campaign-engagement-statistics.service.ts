@@ -19,6 +19,7 @@ export class CampaignEngagementStatisticsService {
     sentCount,
     bouncedCount,
     isClickTrackingEnabled,
+    isOpenTrackingEnabled,
   }: {
     workspaceId: string;
     campaignId: string;
@@ -26,23 +27,28 @@ export class CampaignEngagementStatisticsService {
     bouncedCount: number;
   } & CampaignTrackingFlags): Promise<CampaignEngagementCounts | undefined> {
     if (
-      !isClickTrackingEnabled ||
+      (!isClickTrackingEnabled && !isOpenTrackingEnabled) ||
       !this.campaignEngagementEventService.isAvailable()
     ) {
       return undefined;
     }
 
     try {
-      const { uniqueClickers } =
+      const { uniqueClickers, uniqueOpeners } =
         await this.campaignEngagementEventService.countEngagement({
           workspaceId,
           messageCampaignId: campaignId,
           activityFilter: CampaignEngagementActivityFilter.FILTERED,
         });
+      const reachedCount = sentCount - bouncedCount;
+      const clickedCount = isClickTrackingEnabled ? uniqueClickers : null;
+      const openedCount = isOpenTrackingEnabled ? uniqueOpeners : null;
 
       return {
-        clickedCount: uniqueClickers,
-        clickRate: this.computeRate(uniqueClickers, sentCount - bouncedCount),
+        clickedCount,
+        openedCount,
+        clickRate: this.computeRate(clickedCount, reachedCount),
+        openRate: this.computeRate(openedCount, reachedCount),
       };
     } catch (error) {
       this.exceptionHandlerService.captureExceptions([error], {
@@ -53,7 +59,14 @@ export class CampaignEngagementStatisticsService {
     }
   }
 
-  private computeRate(count: number, reachedCount: number): number | null {
-    return reachedCount > 0 ? count / reachedCount : null;
+  private computeRate(
+    count: number | null,
+    reachedCount: number,
+  ): number | null {
+    if (count === null || reachedCount <= 0) {
+      return null;
+    }
+
+    return count / reachedCount;
   }
 }
