@@ -42,8 +42,10 @@ export class CalDavFetchEventsService {
   async listEventCalendars(client: DAVClient): Promise<DAVCalendar[]> {
     const calendars = await client.fetchCalendars();
 
-    return calendars.filter((calendar) =>
-      calendar.components?.includes('VEVENT'),
+    return calendars.filter(
+      (calendar) =>
+        !calendar.components?.length ||
+        calendar.components.includes('VEVENT'),
     );
   }
 
