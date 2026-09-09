@@ -108,9 +108,7 @@ describe('View side effect on object creation', () => {
       type: ViewType.TABLE,
     });
 
-    const seededView = createdViews.find(
-      (view) => view.name === 'All Dishes I love' && view.key === null,
-    );
+    const seededView = createdViews.find((view) => view.key === 'DEFAULT');
 
     if (!isDefined(seededView)) {
       throw new Error('expected a seeded user-owned view to be provisioned');
@@ -119,7 +117,7 @@ describe('View side effect on object creation', () => {
     expect(seededView).toMatchObject<Partial<FlatView>>({
       objectMetadataId: createdObjectMetadataId,
       type: ViewType.TABLE,
-      key: null,
+      name: 'All Dishes I love',
     });
 
     const {
