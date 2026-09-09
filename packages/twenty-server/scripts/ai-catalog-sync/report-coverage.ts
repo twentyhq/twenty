@@ -71,7 +71,7 @@ export const renderCoverageReport = (report: CoverageReport): string => {
   if (report.unscoredGeneralPurposeModelIds.length > 0) {
     lines.push(
       '',
-      '<details><summary>General-purpose models Artificial Analysis has not rated</summary>',
+      '<details><summary>General-purpose models with no matched intelligence index</summary>',
       '',
       ...report.unscoredGeneralPurposeModelIds.map((modelId) => `- ${modelId}`),
       '',

@@ -90,8 +90,34 @@ describe('matchBenchmarks', () => {
     expect(result?.benchmarks?.costPerTask).toBe(0.42);
   });
 
-  it('returns nothing for a model the publisher has not rated', () => {
+  it('returns nothing for a model absent from the index', () => {
     expect(match('mistral-large-2512', new Map())).toBeUndefined();
+  });
+
+  it('returns nothing for a matched row carrying no measurement at all', () => {
+    // The publisher lists models it has measured nothing about; matching one
+    // must not produce an overlay entry holding only a timestamp.
+    expect(
+      match(
+        'mistral-large-2512',
+        indexOf({ mistrallarge2512: { aliases: ['mistral-large-2512'] } }),
+      ),
+    ).toBeUndefined();
+  });
+
+  it('omits observed prices entirely when the row quotes none', () => {
+    const result = match(
+      'mistral-large-2512',
+      indexOf({
+        mistrallarge2512: {
+          intelligenceIndex: 41,
+          observedPrices: {},
+          aliases: [],
+        },
+      }),
+    );
+
+    expect(result?.observedPrices).toBeUndefined();
   });
 
   it('prefers the release a rolling alias resolves to over an undated row', () => {

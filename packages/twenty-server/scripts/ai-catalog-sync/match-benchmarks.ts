@@ -126,6 +126,17 @@ export const matchBenchmarks = ({
     costPerTask,
   ].some(isDefined);
 
+  // The publisher lists plenty of models it has measured nothing about, and a
+  // row of pure aliases says nothing worth carrying into either artifact.
+  const hasObservedPrice = [
+    observedPrices?.inputPerMillionTokens,
+    observedPrices?.outputPerMillionTokens,
+  ].some(isDefined);
+
+  if (!hasMeasurement && !hasObservedPrice) {
+    return undefined;
+  }
+
   return {
     benchmarks: hasMeasurement
       ? {
@@ -137,6 +148,6 @@ export const matchBenchmarks = ({
         }
       : undefined,
     aliases: [...new Set([modelName, ...record.aliases])],
-    observedPrices,
+    observedPrices: hasObservedPrice ? observedPrices : undefined,
   };
 };

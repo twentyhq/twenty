@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-// Every figure here comes from Artificial Analysis, deliberately from one
-// publisher: an index is only meaningful against models scored the same way, so
-// a second source would have to replace these rather than fill their gaps.
+// An index is only meaningful against models scored the same way, so whoever
+// fills these must use one publisher throughout rather than filling gaps from a
+// second. The generated catalog uses Artificial Analysis.
 export const aiModelBenchmarksSchema = z.object({
   intelligenceIndex: z.number().optional(),
   outputTokensPerSecond: z.number().positive().optional(),
