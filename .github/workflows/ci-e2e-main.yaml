@@ -22,24 +22,14 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
-  changed-files-check:
-    if: github.event_name == 'pull_request'
-    uses: ./.github/workflows/changed-files.yaml
-    with:
-      files: |
-        packages/twenty-ui/**
-
   e2e-test:
-    needs: changed-files-check
     if: >
-      always() && !cancelled() && (
       github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
-      needs.changed-files-check.outputs.any_changed == 'true' ||
       (github.event_name == 'pull_request' &&
        contains(github.event.pull_request.labels.*.name, 'qa-scout')) ||
       (github.event_name == 'pull_request' &&
-       contains(github.event.pull_request.labels.*.name, 'run-merge-queue')))
+       contains(github.event.pull_request.labels.*.name, 'run-merge-queue'))
     runs-on: ubuntu-latest-8-cores
     # 60 so build + suite plus the QA Scout's 15-minute step cap cannot hit
     # the job ceiling: a job timeout overrides step continue-on-error and
@@ -434,7 +424,7 @@ jobs:
     if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs: [changed-files-check, e2e-test]
+    needs: [e2e-test]
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')
