@@ -2,10 +2,9 @@ import { NextResponse } from 'next/server';
 
 import {
   getEnterpriseConfigError,
-  getGracePeriodDays,
   getStripeClient,
   getSubscriptionCurrentPeriodEnd,
-  getSubscriptionCurrentPeriodStart,
+  getSubscriptionNextPaymentAttempt,
   resolveSubscriptionLicenseState,
   SUBSCRIPTION_LICENSE_OUTCOME,
   verifyEnterpriseKey,
@@ -45,7 +44,9 @@ export async function POST(request: Request) {
     }
 
     const stripe = getStripeClient();
-    const subscription = await stripe.subscriptions.retrieve(payload.sub);
+    const subscription = await stripe.subscriptions.retrieve(payload.sub, {
+      expand: ['latest_invoice'],
+    });
 
     const rawCancelAt = subscription.cancel_at;
     const rawCancelAtPeriodEnd = subscription.cancel_at_period_end;
@@ -62,8 +63,7 @@ export async function POST(request: Request) {
 
     const licenseState = resolveSubscriptionLicenseState({
       status: subscription.status,
-      currentPeriodStart: getSubscriptionCurrentPeriodStart(subscription),
-      gracePeriodDays: getGracePeriodDays(),
+      nextPaymentAttempt: getSubscriptionNextPaymentAttempt(subscription),
     });
 
     return NextResponse.json({

@@ -1,9 +1,7 @@
 import type Stripe from 'stripe';
 
 import { getSubscriptionCurrentPeriodEnd } from './subscription-current-period-end';
-import { getSubscriptionCurrentPeriodStart } from './subscription-current-period-start';
 
-const PERIOD_START = 1786363200;
 const PERIOD_END = 1788955200;
 
 const subscriptionWith = (
@@ -11,38 +9,33 @@ const subscriptionWith = (
 ): Stripe.Response<Stripe.Subscription> =>
   shape as unknown as Stripe.Response<Stripe.Subscription>;
 
-describe('subscription current period accessors', () => {
+describe('getSubscriptionCurrentPeriodEnd', () => {
   it('reads the period bounds from the subscription item', () => {
     const subscription = subscriptionWith({
       items: {
         data: [
           {
-            current_period_start: PERIOD_START,
             current_period_end: PERIOD_END,
           },
         ],
       },
     });
 
-    expect(getSubscriptionCurrentPeriodStart(subscription)).toBe(PERIOD_START);
     expect(getSubscriptionCurrentPeriodEnd(subscription)).toBe(PERIOD_END);
   });
 
   it('ignores period bounds sitting on the subscription itself', () => {
     const subscription = subscriptionWith({
       items: { data: [] },
-      current_period_start: PERIOD_START,
       current_period_end: PERIOD_END,
     });
 
-    expect(getSubscriptionCurrentPeriodStart(subscription)).toBeNull();
     expect(getSubscriptionCurrentPeriodEnd(subscription)).toBeNull();
   });
 
   it('returns null when the item carries no bounds', () => {
     const subscription = subscriptionWith({ items: { data: [{}] } });
 
-    expect(getSubscriptionCurrentPeriodStart(subscription)).toBeNull();
     expect(getSubscriptionCurrentPeriodEnd(subscription)).toBeNull();
   });
 });

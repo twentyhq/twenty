@@ -7,14 +7,8 @@ const NOW_SECONDS = Math.floor(NOW.getTime() / 1000);
 
 const resolve = (
   status: string,
-  currentPeriodStart: number | null = NOW_SECONDS - 5 * SECONDS_PER_DAY,
-) =>
-  resolveSubscriptionLicenseState({
-    status,
-    currentPeriodStart,
-    gracePeriodDays: 14,
-    now: NOW,
-  });
+  nextPaymentAttempt: number | null = NOW_SECONDS + SECONDS_PER_DAY,
+) => resolveSubscriptionLicenseState({ status, nextPaymentAttempt, now: NOW });
 
 describe('resolveSubscriptionLicenseState', () => {
   it.each(['active', 'trialing'])('licenses a %s subscription', (status) => {
@@ -34,69 +28,42 @@ describe('resolveSubscriptionLicenseState', () => {
     },
   );
 
-  it('grants grace to a past_due subscription while dunning runs', () => {
-    const periodStart = NOW_SECONDS - 5 * SECONDS_PER_DAY;
+  it('grants grace while Stripe still has a retry scheduled', () => {
+    const nextAttempt = NOW_SECONDS + 2 * SECONDS_PER_DAY;
 
-    expect(resolve('past_due', periodStart)).toEqual({
+    expect(resolve('past_due', nextAttempt)).toEqual({
       outcome: 'grace',
-      graceExpiresAt: periodStart + 14 * SECONDS_PER_DAY,
+      graceExpiresAt: nextAttempt + SECONDS_PER_DAY,
     });
   });
 
-  it('rejects a past_due subscription once the grace window has elapsed', () => {
-    expect(resolve('past_due', NOW_SECONDS - 20 * SECONDS_PER_DAY)).toEqual({
-      outcome: 'rejected',
-      graceExpiresAt: null,
-    });
-  });
-
-  it('refuses grace when no period start anchors the deadline', () => {
+  it('refuses grace once Stripe has stopped retrying', () => {
     expect(resolve('past_due', null)).toEqual({
       outcome: 'rejected',
       graceExpiresAt: null,
     });
   });
 
-  it('keeps the deadline fixed across repeated refreshes', () => {
-    const periodStart = NOW_SECONDS - 5 * SECONDS_PER_DAY;
-
-    const firstRefresh = resolveSubscriptionLicenseState({
-      status: 'past_due',
-      currentPeriodStart: periodStart,
-      gracePeriodDays: 14,
-      now: NOW,
-    });
-    const laterRefresh = resolveSubscriptionLicenseState({
-      status: 'past_due',
-      currentPeriodStart: periodStart,
-      gracePeriodDays: 14,
-      now: new Date(NOW.getTime() + 3 * 24 * 60 * 60 * 1000),
-    });
-
-    expect(laterRefresh.graceExpiresAt).toBe(firstRefresh.graceExpiresAt);
+  it('keeps the license through a retry that has just fired', () => {
+    expect(resolve('past_due', NOW_SECONDS - 60).outcome).toBe('grace');
   });
 
-  it('reproduces the enquanta outage: past_due on the day after a failed cycle invoice stays licensed', () => {
-    const tradeInvoiceAt = Math.floor(
-      new Date('2026-08-10T04:01:00.000Z').getTime() / 1000,
+  it('refuses grace when the scheduled retry has gone stale', () => {
+    expect(resolve('past_due', NOW_SECONDS - 2 * SECONDS_PER_DAY)).toEqual({
+      outcome: 'rejected',
+      graceExpiresAt: null,
+    });
+  });
+
+  it('follows the dunning schedule forward instead of the billing period', () => {
+    const firstRetry = NOW_SECONDS + SECONDS_PER_DAY;
+    const rescheduled = NOW_SECONDS + 5 * SECONDS_PER_DAY;
+
+    expect(resolve('past_due', firstRetry).graceExpiresAt).toBe(
+      firstRetry + SECONDS_PER_DAY,
     );
-
-    const dayAfter = resolveSubscriptionLicenseState({
-      status: 'past_due',
-      currentPeriodStart: tradeInvoiceAt,
-      gracePeriodDays: 14,
-      now: new Date('2026-08-11T04:00:00.000Z'),
-    });
-
-    expect(dayAfter.outcome).toBe('grace');
-
-    const afterDunning = resolveSubscriptionLicenseState({
-      status: 'canceled',
-      currentPeriodStart: tradeInvoiceAt,
-      gracePeriodDays: 14,
-      now: new Date('2026-08-25T04:00:00.000Z'),
-    });
-
-    expect(afterDunning.outcome).toBe('rejected');
+    expect(resolve('past_due', rescheduled).graceExpiresAt).toBe(
+      rescheduled + SECONDS_PER_DAY,
+    );
   });
 });

@@ -6,10 +6,9 @@ import {
   evaluateValidityTokenEmissionRateLimit,
   getAutoReleaseDays,
   getEnterpriseConfigError,
-  getGracePeriodDays,
   getStripeClient,
   getSubscriptionCurrentPeriodEnd,
-  getSubscriptionCurrentPeriodStart,
+  getSubscriptionNextPaymentAttempt,
   parseInstanceType,
   resolveServerBinding,
   resolveSubscriptionLicenseState,
@@ -65,12 +64,13 @@ export async function POST(request: Request) {
     }
 
     const stripe = getStripeClient();
-    const subscription = await stripe.subscriptions.retrieve(payload.sub);
+    const subscription = await stripe.subscriptions.retrieve(payload.sub, {
+      expand: ['latest_invoice'],
+    });
 
     const licenseState = resolveSubscriptionLicenseState({
       status: subscription.status,
-      currentPeriodStart: getSubscriptionCurrentPeriodStart(subscription),
-      gracePeriodDays: getGracePeriodDays(),
+      nextPaymentAttempt: getSubscriptionNextPaymentAttempt(subscription),
     });
 
     if (licenseState.outcome === SUBSCRIPTION_LICENSE_OUTCOME.REJECTED) {

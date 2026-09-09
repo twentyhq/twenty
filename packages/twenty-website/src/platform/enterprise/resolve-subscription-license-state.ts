@@ -1,6 +1,7 @@
 import { SUBSCRIPTION_LICENSE_OUTCOME } from './subscription-license-outcome';
 
 const SECONDS_PER_DAY = 24 * 60 * 60;
+const GRACE_MARGIN_SECONDS = SECONDS_PER_DAY;
 
 const LICENSED_STATUSES = new Set(['active', 'trialing']);
 
@@ -8,8 +9,7 @@ const GRACE_STATUSES = new Set(['past_due']);
 
 export type ResolveSubscriptionLicenseStateInput = {
   status: string;
-  currentPeriodStart: number | null;
-  gracePeriodDays: number;
+  nextPaymentAttempt: number | null;
   now?: Date;
 };
 
@@ -29,8 +29,7 @@ export type SubscriptionLicenseState =
 
 export function resolveSubscriptionLicenseState({
   status,
-  currentPeriodStart,
-  gracePeriodDays,
+  nextPaymentAttempt,
   now = new Date(),
 }: ResolveSubscriptionLicenseStateInput): SubscriptionLicenseState {
   if (LICENSED_STATUSES.has(status)) {
@@ -47,7 +46,7 @@ export function resolveSubscriptionLicenseState({
     };
   }
 
-  if (typeof currentPeriodStart !== 'number' || currentPeriodStart <= 0) {
+  if (typeof nextPaymentAttempt !== 'number' || nextPaymentAttempt <= 0) {
     return {
       outcome: SUBSCRIPTION_LICENSE_OUTCOME.REJECTED,
       graceExpiresAt: null,
@@ -55,7 +54,7 @@ export function resolveSubscriptionLicenseState({
   }
 
   const nowSeconds = Math.floor(now.getTime() / 1000);
-  const graceExpiresAt = currentPeriodStart + gracePeriodDays * SECONDS_PER_DAY;
+  const graceExpiresAt = nextPaymentAttempt + GRACE_MARGIN_SECONDS;
 
   if (graceExpiresAt <= nowSeconds) {
     return {

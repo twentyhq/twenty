@@ -3,7 +3,7 @@ export { getEnterprisePriceId } from './enterprise-price-id';
 export { getLicenseeFromStripeCustomer } from './get-licensee-from-stripe-customer';
 export { getStripeClient } from './stripe-client';
 export { getSubscriptionCurrentPeriodEnd } from './subscription-current-period-end';
-export { getSubscriptionCurrentPeriodStart } from './subscription-current-period-start';
+export { getSubscriptionNextPaymentAttempt } from './subscription-next-payment-attempt';
 export {
   ENTERPRISE_INSTANCE_TYPE,
   type EnterpriseInstanceType,
@@ -21,7 +21,6 @@ export { VALIDITY_TOKEN_EMISSIONS_KEY_BY_INSTANCE_TYPE } from './validity-token-
 export { ENTERPRISE_RATE_LIMIT_CODE } from './enterprise-rate-limit-code';
 export { type StripeMetadata } from './stripe-metadata';
 export { getAutoReleaseDays } from './get-auto-release-days';
-export { getGracePeriodDays } from './get-grace-period-days';
 export {
   SUBSCRIPTION_LICENSE_OUTCOME,
   type SubscriptionLicenseOutcome,
