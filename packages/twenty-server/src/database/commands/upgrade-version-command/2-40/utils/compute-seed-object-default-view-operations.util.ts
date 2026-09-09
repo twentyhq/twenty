@@ -43,7 +43,7 @@ export const computeSeedObjectDefaultViewOperations = ({
     if (
       isDefined(flatView) &&
       flatView.key === ViewKey.INDEX &&
-      flatView.deletedAt === null
+      !isDefined(flatView.deletedAt)
     ) {
       flatIndexViewByObjectUniversalIdentifier.set(
         flatView.objectMetadataUniversalIdentifier,
