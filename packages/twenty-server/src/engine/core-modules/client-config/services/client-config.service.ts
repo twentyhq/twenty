@@ -179,6 +179,7 @@ export class ClientConfigService {
           models: benchmarkCatalog.models,
           modelId: model.modelId,
           label: model.label,
+          sdkPackage: model.sdkPackage,
         });
 
         if (isDefined(benchmark)) {
