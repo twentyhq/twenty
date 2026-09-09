@@ -39,25 +39,6 @@ import { Button } from 'twenty-ui';
 import { Button } from 'twenty-ui/input';
 ```
 
-# Migrating Toggle to Switch
-
-Import `Switch` from `twenty-ui/input`. Replace `value` with `checked`, `onChange` with `onCheckedChange`, and `toggleSize="small"` / `"medium"` with `size="sm"` / `"md"`. The default size remains `md`. The old `Toggle`, `ToggleProps`, and `ToggleSize` exports have been removed.
-
-```tsx
-<Switch
-  aria-label="Notifications"
-  checked={notificationsEnabled}
-  onCheckedChange={setNotificationsEnabled}
-  size="sm"
-/>
-```
-
-Use `defaultChecked` for uncontrolled state. `value` now identifies the string submitted with a form. Native props, refs, and Base UI's `render`, state callbacks, and cancelable change details pass through. Base UI 1.8 does not reset uncontrolled switch state on a native form reset; use controlled state and the form's `onReset` handler, as shown in the `FormAndField` story.
-
-Replace `color` with the CSS `color` property. Apply `align-self: center` only when `centered` is true; preserve false and dynamic values by conditionally applying the centering rule, leaving the default `flex-start` alignment otherwise. In twenty-front, apply these through Linaria styled components and use `themeCssVariables` for theme colors. The default color is already blue. The legacy `MenuItemToggle` and `AdvancedSettingsToggle` wrappers retain their existing APIs.
-
-From the repository root, run `npx tsx tools/codemods/toggle-to-switch.ts` to migrate direct JSX consumers. The script is idempotent and flags spread props, dynamic sizes, existing style objects, and frontend color or centering props for manual migration.
-
 # Entry points
 
 | Subpath | Contents |
