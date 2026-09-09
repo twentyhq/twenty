@@ -100,8 +100,6 @@ export class ApplicationManifestApplyService {
     return { workspaceMigration, hasSchemaMetadataChanged };
   }
 
-  // The migration is committed by now and functions self-heal on execution,
-  // so a lost warm-up must not fail an install or upgrade that already applied.
   private async enqueueLogicFunctionWarmUp(
     data: WarmUpApplicationLogicFunctionsJobData,
   ): Promise<void> {

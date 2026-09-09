@@ -55,13 +55,11 @@ export class LogicFunctionPrebuiltWarmUpService {
           `${cause}`,
         error instanceof Error ? error.stack : undefined,
       );
-      throw Object.assign(
-        new LogicFunctionException(
-          `Failed to install the prebuilt bundle for function '${flatLogicFunction.id}' ` +
-            `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}): ` +
-            `${cause}`,
-          LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
-        ),
+      throw new LogicFunctionException(
+        `Failed to install the prebuilt bundle for function '${flatLogicFunction.id}' ` +
+          `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}): ` +
+          `${cause}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
         { cause: error },
       );
     }
