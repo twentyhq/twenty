@@ -37,7 +37,9 @@ export class WebhookSyncTriggerService {
     workspaceId: string,
   ): Promise<void> {
     const isWorkspaceSuspended =
-      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId);
+      await this.workspaceActivationService.isWorkspaceSuspendedFromCache(
+        workspaceId,
+      );
 
     if (isWorkspaceSuspended) {
       return;
@@ -90,7 +92,9 @@ export class WebhookSyncTriggerService {
     workspaceId: string,
   ): Promise<void> {
     const isWorkspaceSuspended =
-      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId);
+      await this.workspaceActivationService.isWorkspaceSuspendedFromCache(
+        workspaceId,
+      );
 
     if (isWorkspaceSuspended) {
       return;
