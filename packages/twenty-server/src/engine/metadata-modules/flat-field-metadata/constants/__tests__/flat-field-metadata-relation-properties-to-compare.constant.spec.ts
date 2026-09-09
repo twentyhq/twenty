@@ -17,8 +17,6 @@ const RELATION_UNSUPPORTED_COMPARED_PROPERTIES: Record<string, string> = {
     'isUnique is derived from the single field unique indexes a relation never has, so the stored value is always false',
   isSearchable:
     'validateSearchableFlatFieldMetadata already refuses a searchable relation, and it runs before this allow-list is consulted',
-  isLabelSyncedWithName:
-    'the field settings UI hides the label sync toggle for relation fields, so a relation is not expected to carry a value change',
 };
 
 describe('FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE', () => {
