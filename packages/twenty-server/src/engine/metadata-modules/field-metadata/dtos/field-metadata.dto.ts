@@ -121,6 +121,11 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @Field({ nullable: true })
   isSearchable?: boolean;
 
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  isAuditLogged?: boolean;
+
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   defaultValue?: FieldMetadataDefaultValue<T>;

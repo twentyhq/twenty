@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { MANIFEST_ENTITY_REGISTRY } from 'src/engine/core-modules/application/application-manifest/utils/find-manifest-entity-descriptor-by-universal-identifier.util';
-import { type ViewChildMetadataName } from 'src/engine/core-modules/application/application-manifest/types/view-export-classification.type';
+import { type ChildMetadataName } from 'src/engine/core-modules/application/application-manifest/types/export-classification.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 
 export const getUnresolvableFieldReason = ({
@@ -9,7 +9,7 @@ export const getUnresolvableFieldReason = ({
   fieldMetadataUniversalIdentifier,
   allFlatEntityMaps,
 }: {
-  metadataName: ViewChildMetadataName;
+  metadataName: ChildMetadataName;
   fieldMetadataUniversalIdentifier: string;
   allFlatEntityMaps: AllFlatEntityMaps;
 }): string | undefined =>

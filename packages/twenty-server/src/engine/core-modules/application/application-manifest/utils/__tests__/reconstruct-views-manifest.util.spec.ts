@@ -31,9 +31,7 @@ import { reconstructViewsManifest } from 'src/engine/core-modules/application/ap
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/add-all-flat-entities-to-flat-entity-maps.test-util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
@@ -66,24 +64,6 @@ const PET_OWNERS_VIEW_UID = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
 const OTHER_ALL_PETS_VIEW_UID = '00000000-0000-4000-8000-000000000000';
 const STANDARD_APP_ID = 'standard-application-id';
 const EXPORTED_OBJECT_UNIVERSAL_IDENTIFIERS = new Set([PET_UID]);
-
-const addAllFlatEntitiesToFlatEntityMaps = <
-  TFlatEntity extends SyncableFlatEntity,
->({
-  flatEntities,
-  flatEntityMaps,
-}: {
-  flatEntities: TFlatEntity[];
-  flatEntityMaps: FlatEntityMaps<TFlatEntity>;
-}): FlatEntityMaps<TFlatEntity> =>
-  flatEntities.reduce(
-    (maps, flatEntity) =>
-      addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity,
-        flatEntityMaps: maps,
-      }),
-    flatEntityMaps,
-  );
 
 const buildMaps = ({
   objects = [],
