@@ -19,7 +19,7 @@ import {
   IconHttpPut,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { Toggle } from 'twenty-ui/input';
+import { Switch } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -132,12 +132,15 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
             }
           />
           <StyledAuthRow>
-            <Toggle
-              value={value.isAuthRequired}
-              onChange={(checked) => updateField('isAuthRequired', checked)}
+            <Switch
+              aria-label={t`Require authentication`}
+              checked={value.isAuthRequired}
+              onCheckedChange={(checked) =>
+                updateField('isAuthRequired', checked)
+              }
               disabled={readonly}
-              toggleSize="small"
-              color={theme.color.blue}
+              size="sm"
+              style={{ color: theme.color.blue }}
             />
             <StyledAuthLabel>{t`Require authentication`}</StyledAuthLabel>
           </StyledAuthRow>

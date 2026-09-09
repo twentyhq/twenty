@@ -39,6 +39,25 @@ import { Button } from 'twenty-ui';
 import { Button } from 'twenty-ui/input';
 ```
 
+# Migrating Toggle to Switch
+
+Import `Switch` from `twenty-ui/input`. Replace `value` with `checked`, `onChange` with `onCheckedChange`, and `toggleSize="small"` / `"medium"` with `size="sm"` / `"md"`. The default size remains `md`. The old `Toggle`, `ToggleProps`, and `ToggleSize` exports have been removed.
+
+```tsx
+<Switch
+  aria-label="Notifications"
+  checked={notificationsEnabled}
+  onCheckedChange={setNotificationsEnabled}
+  size="sm"
+/>
+```
+
+Use `defaultChecked` for uncontrolled state. `value` now identifies the string submitted with a form. Native props, refs, and Base UI's `render`, state callbacks, and cancelable change details pass through. Base UI 1.8 does not reset uncontrolled switch state on a native form reset; use controlled state and the form's `onReset` handler, as shown in the `FormAndField` story.
+
+Replace `color` with `style={{ color: … }}` and `centered` with `style={{ alignSelf: 'center' }}`. The legacy `MenuItemToggle` and `AdvancedSettingsToggle` wrappers retain their existing APIs.
+
+From the repository root, run `npx tsx tools/codemods/toggle-to-switch.ts` to migrate direct JSX consumers. The script is idempotent and flags spread props, dynamic sizes, and existing style objects for manual migration.
+
 # Entry points
 
 | Subpath | Contents |
@@ -49,7 +68,7 @@ import { Button } from 'twenty-ui/input';
 | `twenty-ui/data-display` | Avatars, chips, tags, and other display components |
 | `twenty-ui/feedback` | Progress bars, loaders, and status feedback |
 | `twenty-ui/icon` | Icon components and the icon provider |
-| `twenty-ui/input` | Buttons, toggles, and form inputs |
+| `twenty-ui/input` | Buttons, switches, and form inputs |
 | `twenty-ui/json-visualizer` | JSON tree viewer |
 | `twenty-ui/layout` | Layout primitives |
 | `twenty-ui/navigation` | Menus, links, and navigation components |

@@ -1,4 +1,4 @@
-import { Toggle } from '@ui/input';
+import { Switch } from '@ui/input';
 import { useTheme } from '@ui/theme-constants';
 import { clsx } from 'clsx';
 import { useId } from 'react';
@@ -28,11 +28,11 @@ export const AdvancedSettingsToggle = ({
   return (
     <label className={clsx(styles.container, className)} htmlFor={instanceId}>
       <div className={styles.text}>{label}</div>
-      <Toggle
+      <Switch
         id={instanceId}
-        onChange={onChange}
-        color={theme.color.yellow}
-        value={isAdvancedModeEnabled}
+        onCheckedChange={onChange}
+        checked={isAdvancedModeEnabled}
+        style={{ color: theme.color.yellow }}
       />
     </label>
   );

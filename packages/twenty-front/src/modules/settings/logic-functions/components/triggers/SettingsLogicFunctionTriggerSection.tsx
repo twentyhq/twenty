@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useContext, type ReactNode } from 'react';
 import { H2Title } from 'twenty-ui/typography';
-import { Toggle } from 'twenty-ui/input';
+import { Switch } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -44,11 +44,12 @@ export const SettingsLogicFunctionTriggerSection = ({
       <StyledHeader>
         <H2Title title={title} description={description} />
         {!readonly && (
-          <Toggle
-            value={enabled}
-            onChange={onEnabledChange}
-            toggleSize="small"
-            color={theme.color.blue}
+          <Switch
+            aria-label={title}
+            checked={enabled}
+            onCheckedChange={onEnabledChange}
+            size="sm"
+            style={{ color: theme.color.blue }}
           />
         )}
       </StyledHeader>

@@ -7,6 +7,22 @@
   },
   "ignorePatterns": ["node_modules", "generated", "**/*.module.scss.d.ts"],
   "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["twenty-ui", "twenty-ui/input", "@ui/input"],
+            "importNames": ["Toggle", "ToggleProps", "ToggleSize"],
+            "message": "Use Switch and its checked/onCheckedChange API instead of Toggle."
+          },
+          {
+            "group": ["**/Toggle/Toggle"],
+            "message": "Use Switch instead of the removed Toggle component."
+          }
+        ]
+      }
+    ],
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "no-console": [
       "warn",

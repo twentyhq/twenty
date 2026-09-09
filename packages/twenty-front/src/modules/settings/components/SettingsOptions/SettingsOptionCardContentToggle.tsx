@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { useContext, useId } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { Toggle } from 'twenty-ui/input';
+import { Switch } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSettingsCardToggleContent = styled.div<{ disabled?: boolean }>`
@@ -89,14 +89,16 @@ export const SettingsOptionCardContentToggle = ({
           )}
         </StyledSettingsCardTextContainer>
         <StyledSettingsCardToggleButtonContainer>
-          <Toggle
+          <Switch
             id={toggleId}
-            value={checked}
-            onChange={onChange}
+            checked={checked}
+            onCheckedChange={onChange}
             disabled={disabled}
-            toggleSize="small"
-            color={advancedMode ? theme.color.yellow : theme.color.blue}
-            centered={toggleCentered}
+            size="sm"
+            style={{
+              color: advancedMode ? theme.color.yellow : theme.color.blue,
+              alignSelf: toggleCentered ? 'center' : undefined,
+            }}
           />
         </StyledSettingsCardToggleButtonContainer>
       </StyledSettingsCardToggleContent>

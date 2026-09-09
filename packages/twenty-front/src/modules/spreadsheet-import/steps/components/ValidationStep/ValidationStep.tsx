@@ -26,7 +26,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type RowsChangeData } from 'react-data-grid';
 import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
-import { Button, Toggle } from 'twenty-ui/input';
+import { Button, Switch } from 'twenty-ui/input';
 import { generateColumns } from './components/columns';
 import { type ImportedStructuredRowMetadata } from './types';
 
@@ -318,10 +318,11 @@ export const ValidationStep = ({
           )}
           <StyledToolbar>
             <StyledErrorToggle>
-              <Toggle
-                value={filterByErrors}
-                onChange={() => setFilterByErrors(!filterByErrors)}
-                toggleSize="small"
+              <Switch
+                aria-label={t`Show only rows with errors`}
+                checked={filterByErrors}
+                onCheckedChange={() => setFilterByErrors(!filterByErrors)}
+                size="sm"
               />
               <StyledErrorToggleDescription>
                 <Trans>Show only rows with errors</Trans>

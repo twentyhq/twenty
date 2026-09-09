@@ -120,6 +120,9 @@ export type { SelectTriggerProps } from './Select/types/SelectTriggerProps';
 export type { SelectValueProps } from './Select/types/SelectValueProps';
 export type { SliderColor, SliderProps } from './Slider/Slider';
 export { Slider } from './Slider/Slider';
+export { Switch } from './Switch/Switch';
+export type { SwitchProps } from './Switch/types/SwitchProps';
+export type { SwitchSize } from './Switch/types/SwitchSize';
 export type { TabContentProps } from './TabButton/TabButton';
 export {
   StyledTabContainer,
@@ -128,8 +131,6 @@ export {
 } from './TabButton/TabButton';
 export { Textarea } from './Textarea/Textarea';
 export type { TextareaProps } from './Textarea/types/TextareaProps';
-export type { ToggleSize, ToggleProps } from './Toggle/Toggle';
-export { Toggle } from './Toggle/Toggle';
 export type { ColorScheme } from './types/ColorScheme';
 export type { InputSize } from './types/InputSize';
 export type { SelectOption } from './types/SelectOption';

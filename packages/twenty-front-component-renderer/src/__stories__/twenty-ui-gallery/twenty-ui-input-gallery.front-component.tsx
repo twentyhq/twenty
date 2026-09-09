@@ -33,7 +33,7 @@ import {
   StyledTabContainer,
   TabButton,
   TabContent,
-  Toggle,
+  Switch,
 } from 'twenty-ui/input';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
@@ -236,8 +236,14 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     node: <TabContent id="tc1" title="Content" />,
   },
   {
-    name: 'Toggle',
-    node: <Toggle value={false} onChange={() => {}} />,
+    name: 'Switch',
+    node: (
+      <Switch
+        aria-label="Example switch"
+        checked={false}
+        onCheckedChange={() => {}}
+      />
+    ),
   },
 ];
 

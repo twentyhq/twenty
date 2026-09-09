@@ -1,7 +1,7 @@
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
-import { Field, Toggle } from 'twenty-ui/input';
+import { Field, Switch } from 'twenty-ui/input';
 import { styled } from '@linaria/react';
 import { useId } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -63,11 +63,12 @@ export const FormBooleanFieldToggleInput = ({
         </FormFieldInputInnerContainer>
 
         <StyledToggleContainer>
-          <Toggle
-            value={value}
-            onChange={onChange}
+          <Switch
+            aria-label={label ?? description}
+            checked={value}
+            onCheckedChange={onChange}
             disabled={disabled}
-            toggleSize="small"
+            size="sm"
           />
         </StyledToggleContainer>
       </FormFieldInputRowContainer>

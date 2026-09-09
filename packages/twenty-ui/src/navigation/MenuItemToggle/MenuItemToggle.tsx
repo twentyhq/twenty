@@ -1,5 +1,5 @@
 import { type IconComponent } from '@ui/icon';
-import { Toggle, type ToggleSize } from '@ui/input';
+import { Switch } from '@ui/input';
 import { MenuItemLeftContent } from '@ui/navigation/MenuItem/parts/MenuItemLeftContent';
 import {
   StyledMenuItemBase,
@@ -16,7 +16,7 @@ export type MenuItemToggleProps = {
   text: string;
   className?: string;
   onToggleChange?: (toggled: boolean) => void;
-  toggleSize?: ToggleSize;
+  toggleSize?: 'small' | 'medium';
   disabled?: boolean;
 };
 
@@ -52,10 +52,10 @@ export const MenuItemToggle = ({
           disabled={disabled}
         />
         <StyledMenuItemRightContent onClick={(e) => e.stopPropagation()}>
-          <Toggle
-            value={toggled}
-            onChange={disabled ? undefined : onToggleChange}
-            toggleSize={toggleSize}
+          <Switch
+            checked={toggled}
+            onCheckedChange={disabled ? undefined : onToggleChange}
+            size={toggleSize === 'small' ? 'sm' : 'md'}
             disabled={disabled}
             aria-label={text}
           />
