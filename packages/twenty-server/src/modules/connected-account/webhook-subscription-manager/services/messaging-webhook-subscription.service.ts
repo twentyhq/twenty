@@ -7,7 +7,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -21,7 +20,10 @@ import { WebhookSubscriptionDriverFactory } from 'src/modules/connected-account/
 import { WebhookSubscriptionExceptionHandlerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service';
 import { WebhookSubscriptionStatusService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-status.service';
 import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
-import { type WebhookSubscriptionContext } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
+import {
+  type WebhookSubscriptionContext,
+  type WebhookSubscriptionResult,
+} from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
 
 @Injectable()
 export class MessagingWebhookSubscriptionService {
@@ -74,7 +76,6 @@ export class MessagingWebhookSubscriptionService {
       return;
     }
 
-    const clientState = messageChannel.webhookSubscriptionClientState ?? v4();
     const driver = this.webhookSubscriptionDriverFactory.getDriver(
       connectedAccount.provider,
     );
@@ -86,30 +87,29 @@ export class MessagingWebhookSubscriptionService {
       ? this.toContext(messageChannel)
       : null;
 
+    const clientState =
+      await this.webhookSubscriptionStatusService.claimSubscriptionCreation(
+        WebhookSubscriptionChannelType.MESSAGING,
+        messageChannel.id,
+        workspaceId,
+      );
+
+    if (!isDefined(clientState)) {
+      return;
+    }
+
+    let result: WebhookSubscriptionResult;
+
     try {
-      const result = await driver.createSubscription(
+      result = await driver.createSubscription(
         messageChannel.connectedAccountId,
         WebhookSubscriptionChannelType.MESSAGING,
         clientState,
       );
-
-      await this.webhookSubscriptionStatusService.markAsActive(
-        WebhookSubscriptionChannelType.MESSAGING,
-        messageChannel.id,
-        result,
-        clientState,
-      );
-
-      this.metricsService.incrementCounterBy({
-        key: MetricsKeys.ConnectedAccountWebhookSubscriptionCreated,
-        amount: 1,
-        attributes: this.buildMetricAttributes(connectedAccount.provider),
-      });
     } catch (error) {
       await this.webhookSubscriptionStatusService.resetPendingSubscription(
         WebhookSubscriptionChannelType.MESSAGING,
         messageChannel.id,
-        clientState,
       );
 
       this.metricsService.incrementCounterBy({
@@ -129,17 +129,39 @@ export class MessagingWebhookSubscriptionService {
       return;
     }
 
+    const hasSettledClaim =
+      await this.webhookSubscriptionStatusService.settleClaimedSubscription(
+        WebhookSubscriptionChannelType.MESSAGING,
+        messageChannel.id,
+        workspaceId,
+        clientState,
+        result,
+      );
+
+    if (!hasSettledClaim) {
+      await driver
+        .deleteSubscription({
+          connectedAccountId: messageChannel.connectedAccountId,
+          channelType: WebhookSubscriptionChannelType.MESSAGING,
+          externalSubscriptionId: result.externalSubscriptionId,
+          externalResourceId: null,
+          clientState,
+        })
+        .catch(() => undefined);
+
+      return;
+    }
+
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.ConnectedAccountWebhookSubscriptionCreated,
+      amount: 1,
+      attributes: this.buildMetricAttributes(connectedAccount.provider),
+    });
+
     if (isDefined(previousSubscription)) {
       await driver
         .deleteSubscription(previousSubscription)
         .catch(() => undefined);
-    }
-
-    const hasBeenSuspendedDuringCreation =
-      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId);
-
-    if (hasBeenSuspendedDuringCreation) {
-      await this.revokeSubscription({ messageChannelId, workspaceId });
     }
   }
 
