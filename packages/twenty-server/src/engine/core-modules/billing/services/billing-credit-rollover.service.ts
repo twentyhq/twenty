@@ -15,6 +15,7 @@ import { BillingCreditService } from 'src/engine/core-modules/billing/services/b
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { computeCarryForwardGrants } from 'src/engine/core-modules/billing/utils/compute-carry-forward-grants.util';
+import { formatBillingPeriodDate } from 'src/engine/core-modules/billing/utils/format-billing-period-date.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -169,7 +170,7 @@ export class BillingCreditRolloverService {
           // every balance depend on the next transition running, which is the
           // failure this settlement exists to survive.
           expiresAt: carryForwardGrant.expiresAt,
-          reason: `Carried over from the period starting ${closingPeriodStart.toISOString()}`,
+          reason: `Carried over from the period starting ${formatBillingPeriodDate(closingPeriodStart)}`,
           idempotencyKey: buildCarryForwardIdempotencyKey({
             workspaceId,
             nextPeriodStart,
