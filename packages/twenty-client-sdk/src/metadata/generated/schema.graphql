@@ -1415,6 +1415,7 @@ type BillingProductMetadata {
   planKey: BillingPlanKey!
   priceUsageBased: BillingUsageType!
   productKey: BillingProductKey!
+  isLegacy: String
 }
 
 """The different billing plans available"""
@@ -1440,6 +1441,7 @@ type BillingPriceLicensed {
   stripePriceId: String!
   priceUsageType: BillingUsageType!
   creditAmount: Float
+  isSellable: Boolean!
 }
 
 enum SubscriptionInterval {
@@ -1488,6 +1490,8 @@ type BillingSubscriptionItem {
   hasReachedCurrentPeriodCap: Boolean!
   quantity: Float
   stripePriceId: String!
+  unitAmount: Float
+  creditAmount: Float
   billingProduct: BillingProductDTO!
 }
 
@@ -2361,6 +2365,7 @@ type Field {
   isNullable: Boolean
   isUnique: Boolean
   isSearchable: Boolean
+  isAuditLogged: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -4821,6 +4826,7 @@ input CreateFieldInput {
   isNullable: Boolean
   isUnique: Boolean
   isSearchable: Boolean
+  isAuditLogged: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -4852,6 +4858,7 @@ input UpdateFieldInput {
   isNullable: Boolean
   isUnique: Boolean
   isSearchable: Boolean
+  isAuditLogged: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON

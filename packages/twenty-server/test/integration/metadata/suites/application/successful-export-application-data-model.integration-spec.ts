@@ -24,6 +24,9 @@ import {
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
   type ObjectManifest,
+  type PageLayoutManifest,
+  type PageLayoutTabManifest,
+  type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
   SYSTEM_VIEW_KEYS,
   type TranslationsManifest,
@@ -34,6 +37,7 @@ import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import {
   AggregateOperations,
   FieldMetadataType,
+  PageLayoutTabLayoutMode,
   RelationOnDeleteAction,
   RelationType,
   ViewFilterGroupLogicalOperator,
@@ -69,6 +73,19 @@ const VIEW_FILTER_ID = '7e3d1c2b-0015-4a7b-8c9d-0e1f2a3b4c5d';
 const VIEW_SORT_ID = '7e3d1c2b-0016-4a7b-8c9d-0e1f2a3b4c5d';
 const VIEW_GROUP_ID = '7e3d1c2b-0017-4a7b-8c9d-0e1f2a3b4c5d';
 const PROJECT_INDEX_VIEW_FIELD_ID = '7e3d1c2b-0018-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_PAGE_LAYOUT_ID = '7e3d1c2b-0019-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_PAGE_OVERVIEW_TAB_ID = '7e3d1c2b-0020-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_PAGE_FIELDS_WIDGET_ID = '7e3d1c2b-0021-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_BOARD_LAYOUT_ID = '7e3d1c2b-0022-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_BOARD_TAB_ID = '7e3d1c2b-0023-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_BOARD_DOCS_WIDGET_ID = '7e3d1c2b-0024-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_RECORD_PAGE_EXTRA_TAB_ID = '7e3d1c2b-0025-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_RECORD_PAGE_EXTRA_NOTES_WIDGET_ID =
+  '7e3d1c2b-0026-4a7b-8c9d-0e1f2a3b4c5d';
+const COMPANY_RECORD_PAGE_TAGLINE_TAB_ID =
+  '7e3d1c2b-0027-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID =
+  '7e3d1c2b-0028-4a7b-8c9d-0e1f2a3b4c5d';
 
 const ENGINE_DERIVED_FIELD_NAMES = [
   'id',
@@ -125,6 +142,25 @@ const buildIdentifierNames = (): Map<string, string> => {
     [VIEW_SORT_ID, 'OPEN_TICKETS_TITLE_SORT'],
     [VIEW_GROUP_ID, 'OPEN_TICKETS_OPEN_GROUP'],
     [PROJECT_INDEX_VIEW_FIELD_ID, 'PROJECT_INDEX_DELETED_AT_VIEW_FIELD'],
+    [TICKET_PAGE_LAYOUT_ID, 'TICKET_PAGE_LAYOUT'],
+    [TICKET_PAGE_OVERVIEW_TAB_ID, 'TICKET_PAGE_OVERVIEW_TAB'],
+    [TICKET_PAGE_FIELDS_WIDGET_ID, 'TICKET_PAGE_FIELDS_WIDGET'],
+    [TICKET_BOARD_LAYOUT_ID, 'TICKET_BOARD_LAYOUT'],
+    [TICKET_BOARD_TAB_ID, 'TICKET_BOARD_TAB'],
+    [TICKET_BOARD_DOCS_WIDGET_ID, 'TICKET_BOARD_DOCS_WIDGET'],
+    [TICKET_RECORD_PAGE_EXTRA_TAB_ID, 'TICKET_RECORD_PAGE_EXTRA_TAB'],
+    [
+      TICKET_RECORD_PAGE_EXTRA_NOTES_WIDGET_ID,
+      'TICKET_RECORD_PAGE_EXTRA_NOTES_WIDGET',
+    ],
+    [
+      COMPANY_RECORD_PAGE_TAGLINE_TAB_ID,
+      'STANDARD_COMPANY_RECORD_PAGE_TAGLINE_TAB',
+    ],
+    [
+      TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID,
+      'TICKET_RECORD_PAGE_HOME_DOCS_WIDGET',
+    ],
     [
       getIndexFieldUniversalIdentifier({
         applicationUniversalIdentifier: TEST_APP_ID,
@@ -529,6 +565,125 @@ const projectIndexViewField: StandaloneViewFieldManifest = {
   size: 180,
 };
 
+const ticketPageLayout: PageLayoutManifest = {
+  universalIdentifier: TICKET_PAGE_LAYOUT_ID,
+  name: 'Ticket page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: TICKET_OBJECT_ID,
+  defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier:
+    TICKET_PAGE_OVERVIEW_TAB_ID,
+  tabs: [
+    {
+      universalIdentifier: TICKET_PAGE_OVERVIEW_TAB_ID,
+      title: 'Overview',
+      position: 0,
+      icon: 'IconHome',
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgets: [
+        {
+          universalIdentifier: TICKET_PAGE_FIELDS_WIDGET_ID,
+          title: 'Fields',
+          type: 'FIELDS',
+          objectUniversalIdentifier: TICKET_OBJECT_ID,
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 0,
+          },
+          configuration: {
+            configurationType: 'FIELDS',
+            viewUniversalIdentifier: OPEN_TICKETS_VIEW_ID,
+            newFieldDefaultVisibility: true,
+          },
+        },
+      ],
+    },
+  ],
+};
+
+const ticketBoardLayout: PageLayoutManifest = {
+  universalIdentifier: TICKET_BOARD_LAYOUT_ID,
+  name: 'Ticket board',
+  type: 'STANDALONE_PAGE',
+  tabs: [
+    {
+      universalIdentifier: TICKET_BOARD_TAB_ID,
+      title: 'Board',
+      position: 0,
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      widgets: [
+        {
+          universalIdentifier: TICKET_BOARD_DOCS_WIDGET_ID,
+          title: 'Docs',
+          type: 'IFRAME',
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 0,
+            rowSpan: 4,
+            columnSpan: 6,
+          },
+          configuration: {
+            configurationType: 'IFRAME',
+            url: 'https://example.com/tickets',
+          },
+        },
+      ],
+    },
+  ],
+};
+
+const TICKET_RECORD_PAGE_LAYOUT_ID =
+  getSystemRecordPageLayoutUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+    objectUniversalIdentifier: TICKET_OBJECT_ID,
+  });
+
+const ticketRecordPageExtraTab: PageLayoutTabManifest = {
+  universalIdentifier: TICKET_RECORD_PAGE_EXTRA_TAB_ID,
+  pageLayoutUniversalIdentifier: TICKET_RECORD_PAGE_LAYOUT_ID,
+  title: 'Extra',
+  position: 60,
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+  widgets: [
+    {
+      universalIdentifier: TICKET_RECORD_PAGE_EXTRA_NOTES_WIDGET_ID,
+      title: 'Notes',
+      type: 'NOTES',
+      objectUniversalIdentifier: TICKET_OBJECT_ID,
+      position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
+      configuration: { configurationType: 'NOTES' },
+    },
+  ],
+};
+
+const companyRecordPageTaglineTab: PageLayoutTabManifest = {
+  universalIdentifier: COMPANY_RECORD_PAGE_TAGLINE_TAB_ID,
+  pageLayoutUniversalIdentifier: getSystemRecordPageLayoutUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+  }),
+  title: 'Tagline',
+  position: 60,
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+};
+
+const ticketRecordPageHomeDocsWidget: StandalonePageLayoutWidgetManifest = {
+  universalIdentifier: TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID,
+  pageLayoutTabUniversalIdentifier: getSystemPageLayoutTabUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+    pageLayoutUniversalIdentifier: TICKET_RECORD_PAGE_LAYOUT_ID,
+    title: 'Home',
+  }),
+  title: 'Docs',
+  type: 'IFRAME',
+  position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 1 },
+  configuration: {
+    configurationType: 'IFRAME',
+    url: 'https://example.com/tickets/docs',
+  },
+};
+
 const manifest = buildBaseManifest({
   appId: TEST_APP_ID,
   roleId: TEST_ROLE_ID,
@@ -550,6 +705,9 @@ const manifest = buildBaseManifest({
     ],
     views: [openTicketsView],
     viewFields: [projectIndexViewField],
+    pageLayouts: [ticketPageLayout, ticketBoardLayout],
+    pageLayoutTabs: [ticketRecordPageExtraTab, companyRecordPageTaglineTab],
+    pageLayoutWidgets: [ticketRecordPageHomeDocsWidget],
   },
 });
 
@@ -693,6 +851,15 @@ describe('Application export - data model', () => {
       ApplicationExportCoverageStatus.ENGINE_DERIVED,
     );
     expect(statusOf(PROJECT_INDEX_VIEW_FIELD_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TICKET_RECORD_PAGE_LAYOUT_ID)).toBe(
+      ApplicationExportCoverageStatus.ENGINE_DERIVED,
+    );
+    expect(statusOf(TICKET_RECORD_PAGE_EXTRA_TAB_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID)).toBe(
       ApplicationExportCoverageStatus.EXPORTED,
     );
   }, 60000);

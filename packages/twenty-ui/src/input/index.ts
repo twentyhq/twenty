@@ -109,6 +109,15 @@ export type {
   SegmentedControlProps,
 } from './SegmentedControl/SegmentedControl';
 export { SegmentedControl } from './SegmentedControl/SegmentedControl';
+export { Select } from './Select/Select';
+export type { SelectGroupLabelProps } from './Select/types/SelectGroupLabelProps';
+export type { SelectGroupProps } from './Select/types/SelectGroupProps';
+export type { SelectItemProps } from './Select/types/SelectItemProps';
+export type { SelectPopupProps } from './Select/types/SelectPopupProps';
+export type { SelectRootProps } from './Select/types/SelectRootProps';
+export type { SelectSeparatorProps } from './Select/types/SelectSeparatorProps';
+export type { SelectTriggerProps } from './Select/types/SelectTriggerProps';
+export type { SelectValueProps } from './Select/types/SelectValueProps';
 export type { SliderColor, SliderProps } from './Slider/Slider';
 export { Slider } from './Slider/Slider';
 export type { TabContentProps } from './TabButton/TabButton';

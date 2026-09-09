@@ -1,4 +1,7 @@
 import {
+  type PageLayoutManifest,
+  type PageLayoutTabManifest,
+  type PageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
   type ViewFieldGroupManifest,
   type ViewFieldManifest,
@@ -11,6 +14,8 @@ import {
 import {
   AggregateOperations,
   FieldMetadataType,
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
   ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
@@ -23,6 +28,12 @@ import {
 import { fromFlatFieldMetadataToFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-metadata-to-field-manifest.util';
 import { fromFlatIndexMetadataToIndexManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-index-metadata-to-index-manifest.util';
 import { fromFlatObjectMetadataToObjectManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-metadata-to-object-manifest.util';
+import { fromFlatPageLayoutTabToPageLayoutTabManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-tab-to-page-layout-tab-manifest.util';
+import { fromFlatPageLayoutToPageLayoutManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-to-page-layout-manifest.util';
+import { fromFlatPageLayoutWidgetToStandalonePageLayoutWidgetManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-widget-to-standalone-page-layout-widget-manifest.util';
+import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-manifest-to-universal-flat-page-layout.util';
+import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-tab-manifest-to-universal-flat-page-layout-tab.util';
+import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
 import { fromFlatViewFieldGroupToViewFieldGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-field-group-to-view-field-group-manifest.util';
 import { fromFlatViewFieldToStandaloneViewFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-field-to-standalone-view-field-manifest.util';
 import { fromFlatViewFilterGroupToViewFilterGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-filter-group-to-view-filter-group-manifest.util';
@@ -135,6 +146,47 @@ const VIEW_CHILD_CONVERSION_CONTEXT = {
   viewUniversalIdentifier: VIEW_UID,
   applicationUniversalIdentifier: APP_UID,
   now: NOW,
+};
+
+const PAGE_LAYOUT_UID = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
+const PAGE_LAYOUT_TAB_UID = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
+const PAGE_LAYOUT_WIDGET_UID = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
+
+const PAGE_LAYOUT_WIDGET_MANIFEST: PageLayoutWidgetManifest = {
+  universalIdentifier: PAGE_LAYOUT_WIDGET_UID,
+  title: 'Fields',
+  type: 'FIELDS',
+  objectUniversalIdentifier: OBJECT_UID,
+  conditionalDisplay: { device: 'DESKTOP' },
+  position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
+  configuration: {
+    configurationType: 'FIELDS',
+    viewUniversalIdentifier: VIEW_UID,
+    newFieldDefaultVisibility: true,
+  },
+};
+
+const PAGE_LAYOUT_TAB_MANIFEST: PageLayoutTabManifest = {
+  universalIdentifier: PAGE_LAYOUT_TAB_UID,
+  title: 'Overview',
+  position: 0,
+  icon: 'IconHome',
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+  widgets: [PAGE_LAYOUT_WIDGET_MANIFEST],
+};
+
+const PAGE_LAYOUT_MANIFEST: PageLayoutManifest = {
+  universalIdentifier: PAGE_LAYOUT_UID,
+  name: 'Pet page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: OBJECT_UID,
+  defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: PAGE_LAYOUT_TAB_UID,
+  tabs: [PAGE_LAYOUT_TAB_MANIFEST],
+};
+
+const PAGE_LAYOUT_KIND_GAPS = {
+  deletedAt:
+    'page layouts, tabs and widgets are never soft-deleted; the column is scheduled for removal',
 };
 
 const VIEW_KIND_GAPS = {
@@ -334,6 +386,76 @@ const EXPORTED_KINDS: ExportedKind[] = [
     renamedProperties: {},
     workspaceLocalProperties: [],
     knownGaps: NESTED_VIEW_CHILD_GAPS,
+  },
+  {
+    metadataName: 'pageLayout',
+    emittedProperties: Object.keys(
+      fromFlatPageLayoutToPageLayoutManifest({
+        flatPageLayout: fromPageLayoutManifestToUniversalFlatPageLayout({
+          pageLayoutManifest: PAGE_LAYOUT_MANIFEST,
+          applicationUniversalIdentifier: APP_UID,
+          now: NOW,
+        }),
+        tabs: [PAGE_LAYOUT_TAB_MANIFEST],
+      }),
+    ),
+    renamedProperties: {
+      objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
+    },
+    workspaceLocalProperties: [],
+    knownGaps: {
+      ...PAGE_LAYOUT_KIND_GAPS,
+      isFirstTabPinned:
+        'workspace-owned: the sync keeps the live value, so the forward default never diffs',
+    },
+  },
+  {
+    metadataName: 'pageLayoutTab',
+    emittedProperties: Object.keys(
+      fromFlatPageLayoutTabToPageLayoutTabManifest({
+        flatPageLayoutTab:
+          fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
+            pageLayoutTabManifest: PAGE_LAYOUT_TAB_MANIFEST,
+            pageLayoutUniversalIdentifier: PAGE_LAYOUT_UID,
+            pageLayoutType: PageLayoutType.RECORD_PAGE,
+            applicationUniversalIdentifier: APP_UID,
+            now: NOW,
+          }),
+        widgets: [PAGE_LAYOUT_WIDGET_MANIFEST],
+      }),
+    ),
+    renamedProperties: {},
+    workspaceLocalProperties: ['isActive', 'overrides'],
+    knownGaps: PAGE_LAYOUT_KIND_GAPS,
+  },
+  {
+    metadataName: 'pageLayoutWidget',
+    emittedProperties: Object.keys(
+      fromFlatPageLayoutWidgetToStandalonePageLayoutWidgetManifest({
+        flatPageLayoutWidget:
+          fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+            pageLayoutWidgetManifest: PAGE_LAYOUT_WIDGET_MANIFEST,
+            pageLayoutTabUniversalIdentifier: PAGE_LAYOUT_TAB_UID,
+            pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            applicationUniversalIdentifier: APP_UID,
+            now: NOW,
+          }),
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          index: 0,
+        },
+      }),
+    ),
+    renamedProperties: {
+      objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
+      universalConfiguration: 'configuration',
+    },
+    workspaceLocalProperties: ['isActive', 'universalOverrides'],
+    knownGaps: {
+      ...PAGE_LAYOUT_KIND_GAPS,
+      conditionalAvailabilityExpression:
+        'no manifest slot; a widget carrying one is reported as unsupported',
+    },
   },
 ];
 

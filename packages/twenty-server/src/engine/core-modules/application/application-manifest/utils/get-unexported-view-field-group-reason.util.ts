@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ParentViewStatus } from 'src/engine/core-modules/application/application-manifest/types/view-export-classification.type';
+import { type ParentStatus } from 'src/engine/core-modules/application/application-manifest/types/export-classification.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 
 export const getUnexportedViewFieldGroupReason = ({
@@ -10,7 +10,7 @@ export const getUnexportedViewFieldGroupReason = ({
 }: {
   viewFieldGroupUniversalIdentifier: string | null;
   applicationAllFlatEntityMaps: AllFlatEntityMaps;
-  parentViewStatusByUniversalIdentifier: ReadonlyMap<string, ParentViewStatus>;
+  parentViewStatusByUniversalIdentifier: ReadonlyMap<string, ParentStatus>;
 }): string | undefined => {
   if (!isDefined(viewFieldGroupUniversalIdentifier)) {
     return undefined;

@@ -23,7 +23,7 @@ export const ListItem = ({
   descriptionPlacement = 'inline',
   actions,
   hotkeys,
-  submenu = false,
+  hasSubmenu = false,
   className,
   children,
   render,
@@ -88,7 +88,7 @@ export const ListItem = ({
           {indicator === 'check' && selected && (
             <IconCheck className={styles.checkIndicator} aria-hidden />
           )}
-          {submenu && (
+          {hasSubmenu && (
             <IconChevronRight className={styles.submenuIcon} aria-hidden />
           )}
         </>

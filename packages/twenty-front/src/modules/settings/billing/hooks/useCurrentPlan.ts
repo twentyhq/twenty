@@ -2,6 +2,7 @@ import { BillingPlanKey } from '~/generated-metadata/graphql';
 import { assertIsDefinedOrThrow, findOrThrow } from 'twenty-shared/utils';
 import { usePlans } from './usePlans';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useCurrentPlan = () => {
@@ -11,19 +12,18 @@ export const useCurrentPlan = () => {
 
   assertIsDefinedOrThrow(currentWorkspace);
 
+  const currentPlanKey = getSubscriptionPlanKey(
+    currentWorkspace.currentBillingSubscription,
+  );
+
   const currentPlan = findOrThrow(
     listPlans(),
-    (plan) =>
-      plan.planKey ===
-      (currentWorkspace.currentBillingSubscription?.metadata?.['plan'] as
-        | BillingPlanKey
-        | undefined),
+    (plan) => plan.planKey === currentPlanKey,
     new Error('Current plan not found'),
   );
 
   const oppositPlan =
-    currentWorkspace?.currentBillingSubscription?.metadata?.['plan'] ===
-    BillingPlanKey.ENTERPRISE
+    currentPlanKey === BillingPlanKey.ENTERPRISE
       ? BillingPlanKey.PRO
       : BillingPlanKey.ENTERPRISE;
 
