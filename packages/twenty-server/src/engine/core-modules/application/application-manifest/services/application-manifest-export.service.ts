@@ -94,6 +94,7 @@ export class ApplicationManifestExportService {
     const {
       pageLayouts,
       pageLayoutTabs,
+      pageLayoutWidgets,
       coverage: pageLayoutsCoverage,
     } = reconstructPageLayoutsManifest({
       applicationAllFlatEntityMaps,
@@ -129,6 +130,7 @@ export class ApplicationManifestExportService {
       viewFields,
       navigationMenuItems: [],
       pageLayouts,
+      pageLayoutWidgets,
       pageLayoutTabs,
       commandMenuItems: [],
       timelineActivityTypes: [],

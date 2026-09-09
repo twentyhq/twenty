@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
-import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
+import {
+  EMPTY_CORE_WORKFLOWS_SELECTION,
+  coreWorkflowsSelectionState,
+} from '@/object-core/workflows/states/coreWorkflowsSelectionState';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
-import { getDeletableSelectedCoreWorkflows } from '@/object-core/workflows/utils/getDeletableSelectedCoreWorkflows';
+import { getSelectedCoreWorkflowRowIds } from '@/object-core/workflows/utils/getSelectedCoreWorkflowRowIds';
 import { toggleRowIdInSelection } from '@/object-core/utils/toggleRowIdInSelection';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useCoreWorkflowsSelection = <
@@ -15,10 +19,9 @@ export const useCoreWorkflowsSelection = <
 }: {
   coreWorkflows: TCoreWorkflow[];
 }) => {
-  const [selection, setSelection] = useState<{
-    filterSettings: FilterSettings;
-    rowIds: string[];
-  }>({ filterSettings: {}, rowIds: [] });
+  const [coreWorkflowsSelection, setCoreWorkflowsSelection] = useAtomState(
+    coreWorkflowsSelectionState,
+  );
 
   const [deletedCoreWorkflowIds, setDeletedCoreWorkflowIds] = useState<
     string[]
@@ -28,25 +31,24 @@ export const useCoreWorkflowsSelection = <
     coreWorkflowsFilterSettingsState,
   );
 
-  const selectedRowIds =
-    selection.filterSettings === coreWorkflowsFilterSettings
-      ? selection.rowIds
-      : [];
+  useEffect(
+    () => () => setCoreWorkflowsSelection(EMPTY_CORE_WORKFLOWS_SELECTION),
+    [setCoreWorkflowsSelection],
+  );
+
+  const selectedRowIds = getSelectedCoreWorkflowRowIds({
+    selection: coreWorkflowsSelection,
+    currentFilterSettings: coreWorkflowsFilterSettings,
+  });
 
   const selectRows = (rowIds: string[]) =>
-    setSelection({ filterSettings: coreWorkflowsFilterSettings, rowIds });
+    setCoreWorkflowsSelection({
+      filterSettings: coreWorkflowsFilterSettings,
+      rowIds,
+    });
 
   const displayedCoreWorkflows = coreWorkflows.filter(
     (coreWorkflow) => !deletedCoreWorkflowIds.includes(coreWorkflow.id),
-  );
-
-  const deletableSelectedCoreWorkflows = getDeletableSelectedCoreWorkflows({
-    coreWorkflows: displayedCoreWorkflows,
-    selectedRowIds,
-  });
-
-  const selectedWorkspaceWorkflowIds = deletableSelectedCoreWorkflows.map(
-    (deletableCoreWorkflow) => deletableCoreWorkflow.workspaceWorkflowId,
   );
 
   const toggleRow = (rowId: string) =>
@@ -79,7 +81,6 @@ export const useCoreWorkflowsSelection = <
   return {
     displayedCoreWorkflows,
     selectedRowIds,
-    selectedWorkspaceWorkflowIds,
     toggleRow,
     selectRows,
     forgetDeletedWorkspaceWorkflows,
