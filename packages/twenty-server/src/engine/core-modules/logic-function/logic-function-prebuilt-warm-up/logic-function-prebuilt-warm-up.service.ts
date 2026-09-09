@@ -55,8 +55,6 @@ export class LogicFunctionPrebuiltWarmUpService {
           `${cause}`,
         error instanceof Error ? error.stack : undefined,
       );
-      // The provider error can name the AWS account, ARNs and buckets, so it
-      // stays in the log; the thrown message reaches API clients.
       throw new LogicFunctionException(
         `Failed to install the prebuilt bundle for function '${flatLogicFunction.id}' ` +
           `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'})`,

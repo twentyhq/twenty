@@ -96,9 +96,6 @@ export class LambdaLayerManagerService {
       return existingArn;
     }
 
-    // The layer is shared by every function of the application while build
-    // locks are per function: without this lock two concurrent builds both
-    // delete all versions and one deletes the version the other just published.
     return this.cacheLockService.withLock(
       async () => {
         const refreshedFlatApplication =
