@@ -1,5 +1,7 @@
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
+import { isMissingMutationError } from '@/cli/utilities/api/is-missing-mutation-error';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
+import { putFileToUploadUrl } from '@/cli/utilities/file/put-file-to-upload-url';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -50,6 +52,19 @@ const getMimeType = (filename: string): string => {
   return MIME_TYPES[ext] || 'application/octet-stream';
 };
 
+export type AppTarballUploadTarget = {
+  fileId: string;
+  uploadUrl: string;
+  contentType: string;
+  expiresAt: string;
+};
+
+export type AppRegistrationSummary = {
+  id: string;
+  universalIdentifier: string;
+  name: string;
+};
+
 export type ApplicationFileUploadRequest = {
   fileFolder: FileFolder;
   filePath: string;
@@ -87,6 +102,100 @@ export type CompleteApplicationFileUploadsResult = {
 
 export class FileApi {
   constructor(private readonly client: AxiosInstance) {}
+
+  async deployAppTarball({
+    tarballPath,
+    universalIdentifier,
+  }: {
+    tarballPath: string;
+    universalIdentifier?: string;
+  }): Promise<ApiResponse<AppRegistrationSummary>> {
+    const size = fs.statSync(tarballPath).size;
+
+    const createResult = await this.createAppTarballUpload({ size });
+
+    if (!createResult.success) {
+      if (
+        isMissingMutationError(createResult.error ?? createResult.message, [
+          'createAppTarballUpload',
+          'CreateAppTarballUpload',
+        ])
+      ) {
+        return this.uploadAppTarball({
+          tarballBuffer: fs.readFileSync(tarballPath),
+          universalIdentifier,
+        });
+      }
+
+      return createResult;
+    }
+
+    const target = createResult.data;
+
+    try {
+      await putFileToUploadUrl({
+        absolutePath: tarballPath,
+        uploadUrl: target.uploadUrl,
+        contentType: target.contentType,
+      });
+    } catch (error) {
+      return { success: false, error: serializeError(error) };
+    }
+
+    return this.completeAppTarballUpload({
+      fileId: target.fileId,
+      universalIdentifier,
+    });
+  }
+
+  async createAppTarballUpload({
+    size,
+  }: {
+    size: number;
+  }): Promise<ApiResponse<AppTarballUploadTarget>> {
+    const mutation = `
+      mutation CreateAppTarballUpload($size: Float!) {
+        createAppTarballUpload(size: $size) {
+          fileId
+          uploadUrl
+          contentType
+          expiresAt
+        }
+      }
+    `;
+
+    return this.runMetadataMutation<AppTarballUploadTarget>({
+      mutation,
+      variables: { size },
+      resultKey: 'createAppTarballUpload',
+      defaultErrorMessage: 'Failed to create tarball upload',
+    });
+  }
+
+  async completeAppTarballUpload({
+    fileId,
+    universalIdentifier,
+  }: {
+    fileId: string;
+    universalIdentifier?: string;
+  }): Promise<ApiResponse<AppRegistrationSummary>> {
+    const mutation = `
+      mutation CompleteAppTarballUpload($fileId: String!, $universalIdentifier: String) {
+        completeAppTarballUpload(fileId: $fileId, universalIdentifier: $universalIdentifier) {
+          id
+          universalIdentifier
+          name
+        }
+      }
+    `;
+
+    return this.runMetadataMutation<AppRegistrationSummary>({
+      mutation,
+      variables: { fileId, universalIdentifier: universalIdentifier ?? null },
+      resultKey: 'completeAppTarballUpload',
+      defaultErrorMessage: 'Failed to finalize tarball upload',
+    });
+  }
 
   // TODO: Migrate to MetadataClient once available
   // (see https://github.com/twentyhq/core-team-issues/issues/2289)

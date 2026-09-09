@@ -1,5 +1,6 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { type ApplicationFileUploadRequest } from '@/cli/utilities/api/file-api';
+import { isMissingMutationError } from '@/cli/utilities/api/is-missing-mutation-error';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { putFileToUploadUrl } from '@/cli/utilities/file/put-file-to-upload-url';
 import * as fs from 'fs';
@@ -21,19 +22,6 @@ export type FileUploadFailure = {
 };
 
 const DIRECT_UPLOAD_CONCURRENCY = 10;
-
-const isMissingDirectUploadMutationError = (error: unknown): boolean => {
-  const message = serializeError(error);
-
-  return (
-    (message.includes('createApplicationFileUploads') ||
-      message.includes('ApplicationFileUploadRequestInput') ||
-      message.includes('CreateApplicationFileUploads')) &&
-    (message.includes('Cannot query field') ||
-      message.includes('Unknown type') ||
-      message.includes('Unknown field'))
-  );
-};
 
 export class FileUploader {
   private apiService = new ApiService();
@@ -93,9 +81,11 @@ export class FileUploader {
 
     if (!createResult.success) {
       if (
-        isMissingDirectUploadMutationError(
-          createResult.error ?? createResult.message,
-        )
+        isMissingMutationError(createResult.error ?? createResult.message, [
+          'createApplicationFileUploads',
+          'ApplicationFileUploadRequestInput',
+          'CreateApplicationFileUploads',
+        ])
       ) {
         return this.uploadBatchWithMultipartMutation(batch);
       }

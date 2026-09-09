@@ -41,6 +41,11 @@ export class UpdateWorkspaceInput {
   @IsOptional()
   logo?: string;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsUUID()
+  @IsOptional()
+  logoFileId?: string;
+
   @Field({ nullable: true })
   @IsString()
   @IsOptional()

@@ -8,7 +8,10 @@ import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import omit from 'lodash.omit';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
+import {
+  FileFolder,
+  TwoFactorAuthenticationStrategy,
+} from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -68,6 +71,8 @@ import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verifica
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
+import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
@@ -161,6 +166,7 @@ export class AuthResolver {
     private readonly impersonationAuthorizationService: ImpersonationAuthorizationService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly fileCorePictureService: FileCorePictureService,
+    private readonly fileUploadService: FileUploadService,
     private readonly userSessionService: UserSessionService,
     private readonly userSessionCookieService: UserSessionCookieService,
   ) {}
@@ -630,7 +636,10 @@ export class AuthResolver {
     };
   }
 
-  @Mutation(() => FileWithSignedUrlDTO)
+  @Mutation(() => FileWithSignedUrlDTO, {
+    deprecationReason:
+      'Use createNewWorkspaceLogoUpload and completeNewWorkspaceLogoUpload',
+  })
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async uploadNewWorkspaceLogo(
     @AuthUser() currentUser: AuthContextUser,
@@ -656,6 +665,55 @@ export class AuthResolver {
       filename,
       workspace,
     });
+  }
+
+  @Mutation(() => FileUploadTargetDTO)
+  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  async createNewWorkspaceLogoUpload(
+    @AuthUser() currentUser: AuthContextUser,
+    @Args('workspaceId') workspaceId: string,
+    @Args({ name: 'filename', type: () => String }) filename: string,
+    @Args({ name: 'size', type: () => Number }) size: number,
+  ): Promise<FileUploadTargetDTO> {
+    await this.fileCorePictureService.getPendingWorkspaceForLogoUploadOrThrow({
+      userId: currentUser.id,
+      workspaceId,
+    });
+
+    return this.fileUploadService.createFileUpload({
+      workspaceId,
+      filename,
+      size,
+      fileFolder: FileFolder.CorePicture,
+    });
+  }
+
+  @Mutation(() => FileWithSignedUrlDTO)
+  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  async completeNewWorkspaceLogoUpload(
+    @AuthUser() currentUser: AuthContextUser,
+    @Args('workspaceId') workspaceId: string,
+    @Args({ name: 'fileId', type: () => String }) fileId: string,
+  ): Promise<FileWithSignedUrlDTO> {
+    const workspace =
+      await this.fileCorePictureService.getPendingWorkspaceForLogoUploadOrThrow(
+        {
+          userId: currentUser.id,
+          workspaceId,
+        },
+      );
+
+    const file = await this.fileUploadService.completeFileUpload({
+      workspaceId,
+      fileId,
+    });
+
+    await this.fileCorePictureService.attachWorkspaceLogo({
+      workspace,
+      fileId: file.id,
+    });
+
+    return file;
   }
 
   @Mutation(() => TransientTokenDTO)

@@ -11,6 +11,7 @@ import { ApplicationRegistrationResolver } from 'src/engine/core-modules/applica
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSummaryResolver } from 'src/engine/core-modules/application/application-registration/application-registration-summary.resolver';
 import { ApplicationRegistrationVariableModule } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.module';
+import { ApplicationTarballUploadService } from 'src/engine/core-modules/application/application-registration/application-tarball-upload.service';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -20,12 +21,15 @@ import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 @Module({
@@ -34,6 +38,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
       ApplicationRegistrationEntity,
       ApplicationEntity,
       WorkspaceEntity,
+      FileEntity,
     ]),
     ApplicationRegistrationVariableModule,
     ApplicationModule,
@@ -47,6 +52,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     JwtModule,
     PermissionsModule,
     FileStorageModule,
+    FileUploadModule,
     FileUrlModule,
     MetricsModule,
     WorkspaceCacheStorageModule,
@@ -58,8 +64,10 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     ApplicationRegistrationResolver,
     ApplicationRegistrationSummaryResolver,
     ApplicationTarballService,
+    ApplicationTarballUploadService,
     ApplicationRegistrationAssetService,
     ApplicationRegistrationAssetUrlService,
+    provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
     ApplicationRegistrationService,

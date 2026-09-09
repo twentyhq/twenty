@@ -40,6 +40,7 @@ import { withDeadline } from 'src/utils/with-deadline';
 
 export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.FilesField,
+  FileFolder.CorePicture,
   FileFolder.Workflow,
   FileFolder.EmailAttachment,
   FileFolder.AgentChat,

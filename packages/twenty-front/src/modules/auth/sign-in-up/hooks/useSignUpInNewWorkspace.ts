@@ -6,9 +6,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { AppPath } from 'twenty-shared/types';
 import { useMutation } from '@apollo/client/react';
+import { putFileToUploadUrl } from '@/file/utils/putFileToUploadUrl';
 import {
+  CompleteNewWorkspaceLogoUploadDocument,
+  CreateNewWorkspaceLogoUploadDocument,
   SignUpInNewWorkspaceDocument,
-  UploadNewWorkspaceLogoDocument,
 } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -26,8 +28,11 @@ export const useSignUpInNewWorkspace = () => {
   const [signUpInNewWorkspaceMutation] = useMutation(
     SignUpInNewWorkspaceDocument,
   );
-  const [uploadNewWorkspaceLogoMutation] = useMutation(
-    UploadNewWorkspaceLogoDocument,
+  const [createNewWorkspaceLogoUploadMutation] = useMutation(
+    CreateNewWorkspaceLogoUploadDocument,
+  );
+  const [completeNewWorkspaceLogoUploadMutation] = useMutation(
+    CompleteNewWorkspaceLogoUploadDocument,
   );
 
   const createWorkspace = async ({
@@ -49,8 +54,27 @@ export const useSignUpInNewWorkspace = () => {
 
       if (isDefined(logo)) {
         try {
-          await uploadNewWorkspaceLogoMutation({
-            variables: { workspaceId, file: logo },
+          const { data: uploadTargetData } =
+            await createNewWorkspaceLogoUploadMutation({
+              variables: {
+                workspaceId,
+                filename: logo.name,
+                size: logo.size,
+              },
+            });
+
+          const uploadTarget = uploadTargetData?.createNewWorkspaceLogoUpload;
+
+          assertIsDefinedOrThrow(uploadTarget);
+
+          await putFileToUploadUrl({
+            file: logo,
+            uploadUrl: uploadTarget.uploadUrl,
+            contentType: uploadTarget.contentType,
+          });
+
+          await completeNewWorkspaceLogoUploadMutation({
+            variables: { workspaceId, fileId: uploadTarget.fileId },
           });
         } catch (logoUploadError) {
           enqueueErrorSnackBar(

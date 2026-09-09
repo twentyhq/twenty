@@ -1,3 +1,4 @@
+import { putFileToUploadUrl } from '@/file/utils/putFileToUploadUrl';
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -41,17 +42,12 @@ export const useDirectFileUpload = () => {
       throw new Error('Failed to initiate file upload');
     }
 
-    const putResponse = await fetch(uploadTarget.uploadUrl, {
-      method: 'PUT',
-      headers: { 'Content-Type': uploadTarget.contentType },
-      body: file,
-      credentials: 'omit',
+    await putFileToUploadUrl({
+      file,
+      uploadUrl: uploadTarget.uploadUrl,
+      contentType: uploadTarget.contentType,
       signal,
     });
-
-    if (!putResponse.ok) {
-      throw new Error(`File upload failed with status ${putResponse.status}`);
-    }
 
     const completeResult = await completeFileUpload({
       variables: { fileId: uploadTarget.fileId },

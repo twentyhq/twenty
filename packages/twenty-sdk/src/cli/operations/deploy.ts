@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { runSafe } from '@/cli/utilities/run-safe';
@@ -30,14 +28,12 @@ const innerAppDeploy = async (
 
   onProgress?.(`Uploading ${tarballPath}...`);
 
-  const tarballBuffer = fs.readFileSync(tarballPath);
-
   const apiService = new ApiService({
     serverUrl: options.serverUrl,
     token: options.token,
   });
 
-  const uploadResult = await apiService.uploadAppTarball({ tarballBuffer });
+  const uploadResult = await apiService.deployAppTarball({ tarballPath });
 
   if (!uploadResult.success) {
     return {

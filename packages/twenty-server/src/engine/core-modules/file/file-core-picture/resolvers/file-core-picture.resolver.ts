@@ -33,7 +33,10 @@ export class FileCorePictureResolver {
     private readonly fileCorePictureService: FileCorePictureService,
   ) {}
 
-  @Mutation(() => FileWithSignedUrlDTO)
+  @Mutation(() => FileWithSignedUrlDTO, {
+    deprecationReason:
+      'Use createFileUpload/completeFileUpload with the CorePicture folder, then updateWorkspace with logoFileId',
+  })
   @UseGuards(
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
@@ -55,7 +58,10 @@ export class FileCorePictureResolver {
     });
   }
 
-  @Mutation(() => FileWithSignedUrlDTO)
+  @Mutation(() => FileWithSignedUrlDTO, {
+    deprecationReason:
+      'Use createFileUpload/completeFileUpload with the CorePicture folder, then updateWorkspaceMember with avatarUrl',
+  })
   @UseGuards(WorkspaceAuthGuard, UploadProfilePicturePermissionGuard)
   async uploadWorkspaceMemberProfilePicture(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

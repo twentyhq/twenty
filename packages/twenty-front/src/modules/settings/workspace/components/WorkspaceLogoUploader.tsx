@@ -1,15 +1,16 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { useMutation } from '@apollo/client/react';
 import {
+  FileFolder,
   UpdateWorkspaceDocument,
-  UploadWorkspaceLogoDocument,
 } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const WorkspaceLogoUploader = () => {
-  const [uploadLogo] = useMutation(UploadWorkspaceLogoDocument);
+  const { uploadFile } = useDirectFileUpload();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -23,14 +24,20 @@ export const WorkspaceLogoUploader = () => {
       throw new Error('Workspace id not found');
     }
 
-    await uploadLogo({
+    const uploadedFile = await uploadFile(file, {
+      fileFolder: FileFolder.CorePicture,
+    });
+
+    await updateWorkspace({
       variables: {
-        file,
+        input: {
+          logoFileId: uploadedFile.id,
+        },
       },
       onCompleted: (data) => {
         setCurrentWorkspace({
           ...currentWorkspace,
-          logo: data.uploadWorkspaceLogo.url,
+          logo: data.updateWorkspace.logo,
         });
       },
     });
