@@ -93,6 +93,50 @@ describe('buildLookupCandidates', () => {
     });
   });
 
+  it('does not offer the undated name once the alias resolves to a release', () => {
+    // The leaderboard's bare `mistral-large` row is the Feb '24 model. Letting
+    // it stand in for the release `-latest` currently points at published a
+    // two-year-old score as the current one.
+    const candidates = buildLookupCandidates({
+      modelName: 'mistral-large-latest',
+      siblingModels: MISTRAL_MODELS,
+    });
+
+    expect(candidates).toContain('mistral-large-2512');
+    expect(candidates).not.toContain('mistral-large');
+  });
+
+  it('offers no undated spelling of a resolved full-date release either', () => {
+    // The publisher's undated row is whichever snapshot it last measured, which
+    // is the same trap as the bare rolling name in a longer date format.
+    const candidates = buildLookupCandidates({
+      modelName: 'claude-sonnet-5-latest',
+      siblingModels: {
+        'claude-sonnet-5-latest': modelsDevModel({
+          id: 'claude-sonnet-5-latest',
+        }),
+        'claude-sonnet-5-20260101': modelsDevModel({
+          id: 'claude-sonnet-5-20260101',
+          release_date: '2026-01-01',
+        }),
+      },
+    });
+
+    expect(candidates).toContain('claude-sonnet-5-20260101');
+    expect(candidates).not.toContain('claude-sonnet-5');
+  });
+
+  it('falls back to the undated name when no release can be resolved', () => {
+    const candidates = buildLookupCandidates({
+      modelName: 'mistral-large-latest',
+      siblingModels: {
+        'mistral-large-latest': modelsDevModel({ id: 'mistral-large-latest' }),
+      },
+    });
+
+    expect(candidates).toContain('mistral-large');
+  });
+
   it('offers the undated name for a dated snapshot', () => {
     expect(
       buildLookupCandidates({
