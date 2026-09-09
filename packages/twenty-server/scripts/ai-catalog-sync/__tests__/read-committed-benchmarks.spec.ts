@@ -25,7 +25,6 @@ const PUBLISHED = {
       outputTokensPerSecond: 92.1,
       measuredAt: '2026-09-01',
       aliases: ['claude-sonnet-5', 'claude-sonnet-5-20260630'],
-      artificialAnalysisPrices: { inputPerMillionTokens: 2 },
     },
   },
 };
@@ -38,13 +37,12 @@ describe('readCommittedBenchmarks', () => {
     ).toBe(0);
   });
 
-  it('recovers every measurement, including the observed prices', () => {
+  it('recovers every measurement', () => {
     const index = readCommittedBenchmarks(writeOverlay(PUBLISHED));
     const record = index.get('claudesonnet5');
 
     expect(record?.intelligenceIndex).toBe(38.4);
     expect(record?.outputTokensPerSecond).toBe(92.1);
-    expect(record?.observedPrices?.inputPerMillionTokens).toBe(2);
   });
 
   it('indexes the published aliases so matching still resolves them', () => {
@@ -65,6 +63,6 @@ describe('readCommittedBenchmarks', () => {
       measuredAt: '2026-09-09',
     });
 
-    expect(result?.benchmarks?.measuredAt).toBe('2026-09-01');
+    expect(result?.benchmark.measuredAt).toBe('2026-09-01');
   });
 });

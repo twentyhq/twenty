@@ -38,43 +38,23 @@ export const matchBenchmarks = ({
     return undefined;
   }
 
-  const {
-    intelligenceIndex,
-    outputTokensPerSecond,
-    timeToFirstTokenSeconds,
-    costPerTask,
-    observedPrices,
-  } = record;
-
-  const hasMeasurement = [
-    intelligenceIndex,
-    outputTokensPerSecond,
-    timeToFirstTokenSeconds,
-    costPerTask,
-  ].some(isDefined);
+  const { intelligenceIndex, outputTokensPerSecond, costPerTask } = record;
 
   // The publisher lists plenty of models it has measured nothing about, and a
   // row of pure aliases says nothing worth carrying into either artifact.
-  const hasObservedPrice = [
-    observedPrices?.inputPerMillionTokens,
-    observedPrices?.outputPerMillionTokens,
-  ].some(isDefined);
-
-  if (!hasMeasurement && !hasObservedPrice) {
+  if (
+    ![intelligenceIndex, outputTokensPerSecond, costPerTask].some(isDefined)
+  ) {
     return undefined;
   }
 
   return {
-    benchmarks: hasMeasurement
-      ? {
-          intelligenceIndex,
-          outputTokensPerSecond,
-          timeToFirstTokenSeconds,
-          costPerTask,
-          measuredAt: record.measuredAt ?? measuredAt,
-        }
-      : undefined,
+    benchmark: {
+      intelligenceIndex,
+      outputTokensPerSecond,
+      costPerTask,
+      measuredAt: record.measuredAt ?? measuredAt,
+    },
     aliases: [...new Set([modelName, ...record.aliases])],
-    observedPrices: hasObservedPrice ? observedPrices : undefined,
   };
 };

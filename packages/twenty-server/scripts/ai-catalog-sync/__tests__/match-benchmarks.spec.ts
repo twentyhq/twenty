@@ -81,8 +81,8 @@ describe('matchBenchmarks', () => {
       indexOf({ mistrallarge2512: { intelligenceIndex: 41, aliases: [] } }),
     );
 
-    expect(result?.benchmarks?.intelligenceIndex).toBe(41);
-    expect(result?.benchmarks?.measuredAt).toBe(MEASURED_AT);
+    expect(result?.benchmark.intelligenceIndex).toBe(41);
+    expect(result?.benchmark.measuredAt).toBe(MEASURED_AT);
   });
 
   it('carries speed and cost per task through to the catalog', () => {
@@ -97,8 +97,8 @@ describe('matchBenchmarks', () => {
       }),
     );
 
-    expect(result?.benchmarks?.outputTokensPerSecond).toBe(92);
-    expect(result?.benchmarks?.costPerTask).toBe(0.42);
+    expect(result?.benchmark.outputTokensPerSecond).toBe(92);
+    expect(result?.benchmark.costPerTask).toBe(0.42);
   });
 
   it('returns nothing for a model absent from the index', () => {
@@ -107,28 +107,13 @@ describe('matchBenchmarks', () => {
 
   it('returns nothing for a matched row carrying no measurement at all', () => {
     // The publisher lists models it has measured nothing about; matching one
-    // must not produce an overlay entry holding only a timestamp.
+    // must not produce an entry holding only a timestamp.
     expect(
       match(
         'mistral-large-2512',
         indexOf({ mistrallarge2512: { aliases: ['mistral-large-2512'] } }),
       ),
     ).toBeUndefined();
-  });
-
-  it('omits observed prices entirely when the row quotes none', () => {
-    const result = match(
-      'mistral-large-2512',
-      indexOf({
-        mistrallarge2512: {
-          intelligenceIndex: 41,
-          observedPrices: {},
-          aliases: [],
-        },
-      }),
-    );
-
-    expect(result?.observedPrices).toBeUndefined();
   });
 
   it('prefers the release a rolling alias resolves to over an undated row', () => {
@@ -140,24 +125,7 @@ describe('matchBenchmarks', () => {
       }),
     );
 
-    expect(result?.benchmarks?.intelligenceIndex).toBe(41);
-  });
-
-  it('emits no benchmarks for a row carrying only a price observation', () => {
-    // A phantom benchmarks block reads as "measured and unremarkable" rather
-    // than "not measured".
-    const result = match(
-      'mistral-large-2512',
-      indexOf({
-        mistrallarge2512: {
-          observedPrices: { inputPerMillionTokens: 2 },
-          aliases: [],
-        },
-      }),
-    );
-
-    expect(result?.benchmarks).toBeUndefined();
-    expect(result?.observedPrices?.inputPerMillionTokens).toBe(2);
+    expect(result?.benchmark.intelligenceIndex).toBe(41);
   });
 
   it('collects the aliases the publisher gives so consumers can join on them', () => {

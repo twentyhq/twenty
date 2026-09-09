@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { DATA_RESIDENCY_KEYS } from 'twenty-shared/ai';
 
 import { AI_MODEL_KINDS } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-model-kinds.const';
-import { aiModelBenchmarksSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmarks.schema';
+import { aiModelBenchmarkSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmark.schema';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { longContextCostSchema } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.schema';
 
@@ -29,7 +29,7 @@ export const aiProviderModelConfigSchema = z
     // provider serves both eu.* and global.* models, hence per model.
     dataResidency: z.enum(DATA_RESIDENCY_KEYS).optional(),
     zeroDataRetention: z.boolean().optional(),
-    benchmarks: aiModelBenchmarksSchema.optional(),
+    benchmark: aiModelBenchmarkSchema.optional(),
     isDeprecated: z.boolean().optional(),
   })
   .refine(

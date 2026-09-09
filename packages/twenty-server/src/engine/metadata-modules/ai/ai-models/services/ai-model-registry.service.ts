@@ -310,7 +310,7 @@ export class AiModelRegistryService {
       ),
       modalities: modelDef.modalities,
       supportsReasoning: modelDef.supportsReasoning,
-      benchmarks: modelDef.benchmarks,
+      benchmark: modelDef.benchmark,
       isDeprecated: modelDef.isDeprecated,
     };
   }

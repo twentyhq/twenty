@@ -32,43 +32,31 @@ describe('enrichCatalog', () => {
       new Map([['gptx', { intelligenceIndex: 41, aliases: ['gpt-x'] }]]),
     );
 
-    expect(catalog.openai.models[0].benchmarks).toEqual({
+    expect(catalog.openai.models[0].benchmark).toEqual({
       intelligenceIndex: 41,
       outputTokensPerSecond: undefined,
-      timeToFirstTokenSeconds: undefined,
       costPerTask: undefined,
       measuredAt: MEASURED_AT,
     });
     expect(overlay['gpt-x'].measuredAt).toBe(MEASURED_AT);
   });
 
-  it('does not date a price-only entry as though it were measured', () => {
+  it('leaves a row the publisher measured nothing about out of both artifacts', () => {
     const catalog = catalogOf('gpt-x');
     const overlay = enrich(
       catalog,
-      new Map([
-        [
-          'gptx',
-          {
-            observedPrices: { inputPerMillionTokens: 2 },
-            aliases: ['gpt-x'],
-          },
-        ],
-      ]),
+      new Map([['gptx', { aliases: ['gpt-x'] }]]),
     );
 
-    expect(overlay['gpt-x']).not.toHaveProperty('measuredAt');
-    expect(overlay['gpt-x'].artificialAnalysisPrices).toEqual({
-      inputPerMillionTokens: 2,
-    });
-    expect(catalog.openai.models[0].benchmarks).toBeUndefined();
+    expect(overlay).toEqual({});
+    expect(catalog.openai.models[0].benchmark).toBeUndefined();
   });
 
   it('leaves a model no publisher covers untouched and out of the overlay', () => {
     const catalog = catalogOf('gpt-x');
     const overlay = enrich(catalog, new Map());
 
-    expect(catalog.openai.models[0].benchmarks).toBeUndefined();
+    expect(catalog.openai.models[0].benchmark).toBeUndefined();
     expect(overlay).toEqual({});
   });
 
@@ -85,7 +73,7 @@ describe('enrichCatalog', () => {
     expect(Object.keys(catalog.openai.models[0])).toEqual([
       'name',
       'label',
-      'benchmarks',
+      'benchmark',
       'isDeprecated',
     ]);
   });

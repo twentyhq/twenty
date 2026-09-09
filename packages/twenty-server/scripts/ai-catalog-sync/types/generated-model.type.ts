@@ -1,4 +1,4 @@
-import { type AiModelBenchmarks } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmarks.type';
+import { type AiModelBenchmark } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmark.type';
 import { type LongContextCost } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.type';
 import { type ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 
@@ -16,6 +16,6 @@ export type GeneratedModel = {
   maxOutputTokens?: number;
   modalities?: string[];
   supportsReasoning?: boolean;
-  benchmarks?: AiModelBenchmarks;
+  benchmark?: AiModelBenchmark;
   isDeprecated?: boolean;
 };

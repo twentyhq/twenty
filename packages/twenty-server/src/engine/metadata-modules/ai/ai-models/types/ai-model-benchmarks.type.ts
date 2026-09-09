@@ -1,5 +1,0 @@
-import { z } from 'zod';
-
-import { aiModelBenchmarksSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmarks.schema';
-
-export type AiModelBenchmarks = z.infer<typeof aiModelBenchmarksSchema>;

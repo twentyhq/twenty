@@ -1,13 +1,8 @@
-import { type AiModelBenchmarks } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmarks.type';
-
-import { type ObservedPrices } from './observed-prices.type';
+import { type AiModelBenchmark } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmark.type';
 
 // The overlay is the cross-repo artifact: it carries what the catalog embeds
-// plus the alias set and price observations that only a joining consumer needs.
-// The measurement fields are optional because a model the publisher priced but
-// never measured earns an entry for its price alone, and stamping that with a
-// measuredAt would present a price as a measurement.
-export type BenchmarkOverlayEntry = Partial<AiModelBenchmarks> & {
+// plus the alias set a joining consumer needs to find the model under the
+// publisher's own spelling.
+export type BenchmarkOverlayEntry = AiModelBenchmark & {
   aliases: string[];
-  artificialAnalysisPrices?: ObservedPrices;
 };

@@ -7,7 +7,6 @@ import { type BenchmarkRecord } from '../types/benchmark-record.type';
 type CommittedEntry = Partial<BenchmarkRecord> & {
   measuredAt?: string;
   aliases?: string[];
-  artificialAnalysisPrices?: BenchmarkRecord['observedPrices'];
 };
 
 // The last published measurements, read back so a failed fetch degrades to
@@ -28,9 +27,7 @@ export const readCommittedBenchmarks = (filePath: string): BenchmarkIndex => {
     const record: BenchmarkRecord = {
       intelligenceIndex: entry.intelligenceIndex,
       outputTokensPerSecond: entry.outputTokensPerSecond,
-      timeToFirstTokenSeconds: entry.timeToFirstTokenSeconds,
       costPerTask: entry.costPerTask,
-      observedPrices: entry.artificialAnalysisPrices,
       measuredAt: entry.measuredAt,
       aliases: entry.aliases ?? [modelName],
     };

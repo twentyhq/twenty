@@ -1,9 +1,12 @@
 import benchmarkOverlay from 'src/engine/metadata-modules/ai/ai-models/ai-model-benchmarks.json';
 import defaultAiProviders from 'src/engine/metadata-modules/ai/ai-models/ai-providers.json';
-import { aiModelBenchmarksSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmarks.schema';
+import { aiModelBenchmarkSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmark.schema';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 
-const OVERLAY_MODELS = benchmarkOverlay.models as Record<string, unknown>;
+const OVERLAY_MODELS = benchmarkOverlay.models as Record<
+  string,
+  { aliases: string[] } & Record<string, unknown>
+>;
 
 const CATALOG_MODELS = Object.values(
   defaultAiProviders as AiProvidersConfig,
@@ -14,52 +17,36 @@ describe('ai-model-benchmarks.json integrity', () => {
     expect(benchmarkOverlay.source).toBe('artificialanalysis.ai');
   });
 
-  it('should pass Zod schema validation for every measured entry', () => {
-    Object.values(OVERLAY_MODELS)
-      .filter((entry) => 'measuredAt' in (entry as object))
-      .forEach((entry) => {
-        expect(() => aiModelBenchmarksSchema.parse(entry)).not.toThrow();
-      });
+  it('should pass Zod schema validation for every entry', () => {
+    Object.values(OVERLAY_MODELS).forEach(({ aliases: _aliases, ...entry }) => {
+      expect(() => aiModelBenchmarkSchema.parse(entry)).not.toThrow();
+    });
   });
 
-  it('should never hold an entry that says nothing at all', () => {
-    // An undated entry is a price observation, which is the only other reason
-    // a model earns a row here.
-    Object.values(OVERLAY_MODELS)
-      .filter((entry) => !('measuredAt' in (entry as object)))
-      .forEach((entry) => {
-        expect(
-          (entry as { artificialAnalysisPrices?: unknown })
-            .artificialAnalysisPrices,
-        ).toBeDefined();
-      });
-  });
-
-  it('should agree with the benchmarks merged into the catalog', () => {
+  it('should agree with the benchmark merged into the catalog', () => {
     // The overlay is empty until the sync runs with an API key configured, so
     // this checks the two artifacts cannot drift rather than pinning a count.
-    // The overlay may hold more entries than the catalog: a model with only a
-    // price observation earns an overlay row but no `benchmarks` block.
     const scored = CATALOG_MODELS.filter(
-      (model) => model.benchmarks !== undefined,
-    );
-
-    expect(scored.length).toBeLessThanOrEqual(
-      Object.keys(OVERLAY_MODELS).length,
+      (model) => model.benchmark !== undefined,
     );
 
     scored.forEach((model) => {
-      const {
-        aliases,
-        artificialAnalysisPrices: _prices,
-        ...overlayEntry
-      } = OVERLAY_MODELS[model.name] as {
-        aliases: string[];
-        artificialAnalysisPrices?: unknown;
-      };
+      const { aliases, ...overlayEntry } = OVERLAY_MODELS[model.name];
 
-      expect(overlayEntry).toEqual(model.benchmarks);
+      expect(overlayEntry).toEqual(model.benchmark);
       expect(aliases).toContain(model.name);
+    });
+  });
+
+  it('should hold no entry for a model the catalog does not score', () => {
+    const scoredNames = new Set(
+      CATALOG_MODELS.filter((model) => model.benchmark !== undefined).map(
+        (model) => model.name,
+      ),
+    );
+
+    Object.keys(OVERLAY_MODELS).forEach((name) => {
+      expect(scoredNames.has(name)).toBe(true);
     });
   });
 });

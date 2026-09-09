@@ -56,7 +56,7 @@ jobs:
 
           New models meeting inclusion criteria (tool calling, pricing data, context limits) are added
           automatically. Benchmark data is best-effort: a model Artificial Analysis has not rated keeps
-          every other field and simply carries no `benchmarks` entry.
+          every other field and simply carries no `benchmark` entry.
 
           **Please review before merging** and check the coverage summary below for models that silently
           stopped matching.

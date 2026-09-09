@@ -56,9 +56,6 @@ const informationScore = (record: BenchmarkRecord): number =>
     record.intelligenceIndex,
     record.outputTokensPerSecond,
     record.costPerTask,
-    record.timeToFirstTokenSeconds,
-    record.observedPrices?.inputPerMillionTokens,
-    record.observedPrices?.outputPerMillionTokens,
   ].filter(isDefined).length;
 
 export const fetchArtificialAnalysisBenchmarks = async (
@@ -94,7 +91,7 @@ export const fetchArtificialAnalysisBenchmarks = async (
     const aliases = [model.slug, model.id, model.name].filter(isDefined);
 
     // The intelligence index sits under `evaluations` and cost per task under
-    // `cost_per_task`; only the speed figures are top level. Reading them all
+    // `cost_per_task`; only the speed figure is top level. Reading them all
     // from the top level yields matched models carrying no usable number.
     const record: BenchmarkRecord = {
       intelligenceIndex: readNested({
@@ -105,26 +102,11 @@ export const fetchArtificialAnalysisBenchmarks = async (
       outputTokensPerSecond: readPositiveNumber(
         model.median_output_tokens_per_second,
       ),
-      timeToFirstTokenSeconds: readPositiveNumber(
-        model.median_time_to_first_token_seconds,
-      ),
       costPerTask: readNested({
         model,
         containerKey: 'cost_per_task',
         leafKey: 'total_cost',
       }),
-      observedPrices: {
-        inputPerMillionTokens: readNested({
-          model,
-          containerKey: 'pricing',
-          leafKey: 'price_1m_input_tokens',
-        }),
-        outputPerMillionTokens: readNested({
-          model,
-          containerKey: 'pricing',
-          leafKey: 'price_1m_output_tokens',
-        }),
-      },
       aliases,
     };
 

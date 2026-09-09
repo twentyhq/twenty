@@ -28,21 +28,13 @@ export const enrichCatalog = ({
         return model;
       }
 
-      overlay[model.name] = {
-        ...match.benchmarks,
-        aliases: match.aliases,
-        artificialAnalysisPrices: match.observedPrices,
-      };
-
-      if (!isDefined(match.benchmarks)) {
-        return model;
-      }
+      overlay[model.name] = { ...match.benchmark, aliases: match.aliases };
 
       const { isDeprecated, ...rest } = model;
 
       return {
         ...rest,
-        benchmarks: match.benchmarks,
+        benchmark: match.benchmark,
         ...(isDefined(isDeprecated) ? { isDeprecated } : {}),
       };
     });

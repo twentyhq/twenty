@@ -33,7 +33,7 @@ export const buildCoverageReport = (
 
       report.generalPurposeModelCount += 1;
 
-      if (isDefined(model.benchmarks?.intelligenceIndex)) {
+      if (isDefined(model.benchmark?.intelligenceIndex)) {
         report.scoredGeneralPurposeModelCount += 1;
       } else {
         report.unscoredGeneralPurposeModelIds.push(
