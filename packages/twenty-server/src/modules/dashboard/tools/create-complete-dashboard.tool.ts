@@ -177,7 +177,7 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
         }
       }
 
-      const dashboardId = await createDashboardRecord(
+      const dashboardId = await createDashboardRecordOrRollBackLayout(
         deps,
         context,
         parameters.title,
@@ -229,6 +229,31 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
     }
   },
 });
+
+// The dashboard insert is the only permission-checked write here, and it runs
+// last because it needs the layout id. A caller holding LAYOUTS but no create
+// permission on the dashboard object would otherwise leave the layout, its tab
+// and its widgets behind on every attempt.
+const createDashboardRecordOrRollBackLayout = async (
+  deps: DashboardToolDependencies,
+  context: DashboardToolContextWithPermissions,
+  title: string,
+  pageLayoutId: string,
+): Promise<string> => {
+  try {
+    return await createDashboardRecord(deps, context, title, pageLayoutId);
+  } catch (error) {
+    await deps.pageLayoutService
+      .destroy({
+        id: pageLayoutId,
+        workspaceId: context.workspaceId,
+        isLinkedDashboardAlreadyDestroyed: true,
+      })
+      .catch(() => undefined);
+
+    throw error;
+  }
+};
 
 const createDashboardRecord = async (
   deps: DashboardToolDependencies,

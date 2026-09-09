@@ -34,6 +34,7 @@ describe('createListDashboardsTool', () => {
     const result = await tool.execute({});
 
     expect(result.success).toBe(true);
+    expect(getRepository).toHaveBeenCalledTimes(1);
     expect(getRepository).toHaveBeenCalledWith('dashboard', {
       intersectionOf: [ROLE_ID],
     });
