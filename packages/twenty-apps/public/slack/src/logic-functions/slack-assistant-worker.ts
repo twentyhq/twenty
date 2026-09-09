@@ -5,6 +5,7 @@ import {
   defineLogicFunction,
   type ObjectRecordCreateEvent,
 } from 'twenty-sdk/define';
+import { type RunAgentResult } from 'twenty-sdk/logic-function';
 
 import {
   SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
@@ -27,8 +28,9 @@ import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspac
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
-import { runSlackAssistantAgentWithStatus } from 'src/logic-functions/utils/run-slack-assistant-agent-with-status';
+import { runSlackAssistantAgentWithDeadline } from 'src/logic-functions/utils/run-slack-assistant-agent-with-deadline';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
+import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
 
 const SLACK_ASSISTANT_REQUEST_OBJECT_NAME = 'slackAssistantRequest';
@@ -82,6 +84,13 @@ export const slackAssistantWorkerHandler = async (
     parentMessageTimestamp,
   };
 
+  // Shown before the thread, requester and run-as lookups so the thinking
+  // status is not delayed by the Slack and API round trips they take
+  const stopStatusUpdates = startSlackAssistantStatusUpdates({
+    slackChannelId,
+    threadTimestamp: parentMessageTimestamp,
+  });
+
   try {
     const [
       {
@@ -129,21 +138,27 @@ export const slackAssistantWorkerHandler = async (
       0,
     );
 
-    const agentResult = await runSlackAssistantAgentWithStatus({
-      agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
-      runAsWorkspaceMemberId,
-      messages: buildSlackAssistantMessages({
-        requestText,
-        requesterName,
-        conversationMessages,
+    let agentResult: RunAgentResult;
+
+    try {
+      agentResult = await runSlackAssistantAgentWithDeadline({
+        agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
         runAsWorkspaceMemberId,
-        timeoutSeconds: agentBudgetRemainingSeconds,
-        workspaceBaseUrl: workspaceBaseUrls[0],
-      }),
-      slackChannelId,
-      threadTimestamp: parentMessageTimestamp,
-      deadlineAtMs: agentDeadlineAtMs,
-    });
+        messages: buildSlackAssistantMessages({
+          requestText,
+          requesterName,
+          conversationMessages,
+          runAsWorkspaceMemberId,
+          timeoutSeconds: agentBudgetRemainingSeconds,
+          workspaceBaseUrl: workspaceBaseUrls[0],
+        }),
+        deadlineAtMs: agentDeadlineAtMs,
+      });
+    } finally {
+      // Stopped before any reply is posted so a late status refresh cannot
+      // land after the answer and stay pinned on the thread
+      await stopStatusUpdates();
+    }
 
     if (!agentResult.success) {
       return await finishSlackAssistantRequestWithFailure({
@@ -207,6 +222,8 @@ export const slackAssistantWorkerHandler = async (
 
     return { done: true };
   } catch (error) {
+    await stopStatusUpdates();
+
     return await finishSlackAssistantRequestWithFailure({
       ...failureContext,
       errorMessage:
