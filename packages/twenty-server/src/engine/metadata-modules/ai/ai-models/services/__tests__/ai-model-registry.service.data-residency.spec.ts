@@ -1,4 +1,5 @@
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { aiProviderConfigSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.schema';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 
 const buildRegistry = (providers: AiProvidersConfig) => {
@@ -85,22 +86,14 @@ describe('AiModelRegistryService data residency resolution', () => {
     ).toBeUndefined();
   });
 
-  it('should not let a provider-level retention claim reach the models under it', () => {
-    // zeroDataRetention has no provider fallback on purpose: retention is
-    // agreed per model deployment, so inheriting it would manufacture a
-    // compliance claim nobody made.
+  it('should read retention from the model, which is the only level that carries it', () => {
     const registry = buildRegistry({
       anthropic: {
         npm: '@ai-sdk/anthropic',
         apiKey: 'key',
-        zeroDataRetention: true,
         models: [
           { name: 'claude-sonnet-5', label: 'Sonnet 5' },
-          {
-            name: 'claude-opus-5',
-            label: 'Opus 5',
-            zeroDataRetention: true,
-          },
+          { name: 'claude-opus-5', label: 'Opus 5', zeroDataRetention: true },
         ],
       },
     } as AiProvidersConfig);
@@ -111,5 +104,22 @@ describe('AiModelRegistryService data residency resolution', () => {
     expect(
       registry.getModelConfig('anthropic/claude-opus-5')?.zeroDataRetention,
     ).toBe(true);
+  });
+
+  it('should drop a retention claim written at the provider level', () => {
+    // The provider schema carries dataResidency but deliberately not
+    // zeroDataRetention, so a claim written one level too high is discarded
+    // rather than inherited by every model beneath it. Silent stripping is
+    // what makes that safe, and what this pins.
+    const parsed = aiProviderConfigSchema.parse({
+      npm: '@ai-sdk/anthropic',
+      apiKey: 'key',
+      dataResidency: 'eu',
+      zeroDataRetention: true,
+      models: [{ name: 'claude-sonnet-5', label: 'Sonnet 5' }],
+    });
+
+    expect(parsed).not.toHaveProperty('zeroDataRetention');
+    expect(parsed.dataResidency).toBe('eu');
   });
 });
