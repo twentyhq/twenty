@@ -7,5 +7,4 @@ export type GranolaWebhookRegistration = {
   apiKeyFingerprint: string;
   scopes: GranolaWebhookScope[];
   folderIds: string[];
-  isActive: boolean;
 };

@@ -21,7 +21,8 @@ import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { type GranolaConnectionStatus } from 'src/front-components/types/granola-connection-status.type';
 import { fetchGranolaConnectionStatusOrThrow } from 'src/front-components/utils/fetch-granola-connection-status-or-throw.util';
 import { registerGranolaWebhookOrThrow } from 'src/front-components/utils/register-granola-webhook-or-throw.util';
-import { saveGranolaApiKeyOrThrow } from 'src/front-components/utils/save-granola-api-key-or-throw.util';
+import { removeGranolaWebhookOrThrow } from 'src/front-components/utils/remove-granola-webhook-or-throw.util';
+import { setGranolaApiKeyOrThrow } from 'src/front-components/utils/set-granola-api-key-or-throw.util';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -55,6 +56,8 @@ export const GranolaSettings = () => {
   const [state, setState] = useState<GranolaSettingsState>({ step: 'loading' });
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectError, setConnectError] = useState<string | undefined>();
+  const [isRemoving, setIsRemoving] = useState(false);
+  const [removeError, setRemoveError] = useState<string | undefined>();
   const [isRegistering, setIsRegistering] = useState(false);
   const [registrationError, setRegistrationError] = useState<
     string | undefined
@@ -105,7 +108,7 @@ export const GranolaSettings = () => {
     setConnectError(undefined);
 
     try {
-      await saveGranolaApiKeyOrThrow({ frontComponentId, apiKey });
+      await setGranolaApiKeyOrThrow({ frontComponentId, apiKey });
     } catch {
       setConnectError(t('Could not save the API key. Try again.'));
       setIsConnecting(false);
@@ -117,6 +120,27 @@ export const GranolaSettings = () => {
     setIsConnecting(false);
 
     return true;
+  };
+
+  // Deleting the endpoint needs the key that created it, so the webhook goes
+  // before the variable is cleared.
+  const handleRemove = async () => {
+    setIsRemoving(true);
+    setRemoveError(undefined);
+
+    try {
+      await removeGranolaWebhookOrThrow();
+      await setGranolaApiKeyOrThrow({ frontComponentId, apiKey: '' });
+    } catch (error) {
+      setRemoveError(
+        error instanceof Error
+          ? error.message
+          : t('Could not remove the API key. Try again.'),
+      );
+    }
+
+    await refreshConnectionStatus();
+    setIsRemoving(false);
   };
 
   // twenty-ui components read icon sizes off ThemeContext, and the context
@@ -147,8 +171,11 @@ export const GranolaSettings = () => {
             <GranolaConnectionSection
               status={state.status}
               isConnecting={isConnecting}
+              isRemoving={isRemoving}
               connectError={connectError}
+              removeError={removeError}
               onConnect={handleConnect}
+              onRemove={handleRemove}
               onRetry={refreshConnectionStatus}
             />
             {state.status.isConnected && !state.status.canManage && (

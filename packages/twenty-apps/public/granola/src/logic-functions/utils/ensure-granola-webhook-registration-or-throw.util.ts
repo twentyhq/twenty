@@ -10,7 +10,6 @@ import {
 import { GRANOLA_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/granola-api-key-env-var-name';
 import { type GranolaWebhookRegistration } from 'src/logic-functions/types/granola-webhook-registration.type';
 import { cleanupPendingGranolaRegistrationOrThrow } from 'src/logic-functions/utils/cleanup-pending-granola-registration-or-throw.util';
-import { cleanupStaleGranolaRegistrationsOrThrow } from 'src/logic-functions/utils/cleanup-stale-granola-registrations-or-throw.util';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { createGranolaWebhookEndpointOrThrow } from 'src/logic-functions/utils/create-granola-webhook-endpoint-or-throw.util';
 import { deleteStaleGranolaWebhookEndpointOrThrow } from 'src/logic-functions/utils/delete-stale-granola-webhook-endpoint-or-throw.util';
@@ -18,7 +17,6 @@ import { getGranolaApiKeyFingerprint } from 'src/logic-functions/utils/get-grano
 import { getGranolaRegistrationClaimKey } from 'src/logic-functions/utils/get-granola-registration-claim-key.util';
 import { getGranolaWebhookDestinationUrlOrThrow } from 'src/logic-functions/utils/get-granola-webhook-destination-url-or-throw.util';
 import { repairGranolaWebhookEndpointOrThrow } from 'src/logic-functions/utils/repair-granola-webhook-endpoint-or-throw.util';
-import { retireGranolaRegistrationOrThrow } from 'src/logic-functions/utils/retire-granola-registration-or-throw.util';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const ensureGranolaWebhookRegistrationOrThrow =
@@ -58,17 +56,16 @@ export const ensureGranolaWebhookRegistrationOrThrow =
         ...existing,
         scopes: repairedEndpoint.scopes,
         folderIds: repairedEndpoint.folder_ids,
-        isActive: repairedEndpoint.enabled,
       };
       await kv.set(GRANOLA_WEBHOOK_REGISTRATION_KEY, registration);
-      await cleanupStaleGranolaRegistrationsOrThrow({
-        client,
-        activeRegistrationId: registration.registrationId,
-      });
       return registration;
     }
-    if (isDefined(existing)) {
-      await retireGranolaRegistrationOrThrow(existing);
+    // Settings removes the key before a new one is added, so a foreign endpoint
+    // only appears after an out-of-band variable edit and cannot be deleted here.
+    if (!isExistingKeyCurrent && isDefined(endpoint)) {
+      console.error(
+        `[granola] Endpoint ${endpoint.id} belongs to a replaced API key; remove it in Granola settings.`,
+      );
     }
     const registrationId = randomUUID();
     const url = getGranolaWebhookDestinationUrlOrThrow({
@@ -92,7 +89,6 @@ export const ensureGranolaWebhookRegistrationOrThrow =
       apiKeyFingerprint,
       scopes: createdEndpoint.scopes,
       folderIds: createdEndpoint.folder_ids,
-      isActive: createdEndpoint.enabled,
     };
     try {
       await kv.set(GRANOLA_WEBHOOK_REGISTRATION_KEY, registration);
@@ -113,9 +109,5 @@ export const ensureGranolaWebhookRegistrationOrThrow =
       throw error;
     }
     await kv.delete(GRANOLA_PENDING_REGISTRATION_KEY);
-    await cleanupStaleGranolaRegistrationsOrThrow({
-      client,
-      activeRegistrationId: registration.registrationId,
-    });
     return registration;
   };

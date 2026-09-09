@@ -13,6 +13,7 @@ import { H2Title } from 'twenty-ui/typography';
 import { LabelledSettingsField } from 'src/front-components/components/LabelledSettingsField';
 import { SettingsOptionCardContent } from 'src/front-components/components/SettingsOptionCardContent';
 import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
+import { StyledSettingsError } from 'src/front-components/components/StyledSettingsError';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
 import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
 import { type GranolaConnectionStatus } from 'src/front-components/types/granola-connection-status.type';
@@ -24,16 +25,14 @@ const StyledKeyForm = styled.form`
   gap: ${() => themeCssVariables.spacing[3]};
 `;
 
-const StyledButtonRow = styled.div`
-  display: flex;
-  gap: ${() => themeCssVariables.spacing[2]};
-`;
-
 type GranolaConnectionSectionProps = {
   status: GranolaConnectionStatus;
   isConnecting: boolean;
+  isRemoving: boolean;
   connectError: string | undefined;
+  removeError: string | undefined;
   onConnect: (apiKey: string) => Promise<boolean>;
+  onRemove: () => Promise<void>;
   onRetry: () => void;
 };
 
@@ -54,20 +53,19 @@ const getConnectionDescription = (status: GranolaConnectionStatus) => {
 export const GranolaConnectionSection = ({
   status,
   isConnecting,
+  isRemoving,
   connectError,
+  removeError,
   onConnect,
+  onRemove,
   onRetry,
 }: GranolaConnectionSectionProps) => {
   const inputId = useId();
   const [apiKeyDraft, setApiKeyDraft] = useState('');
-  const [isReplacingKey, setIsReplacingKey] = useState(false);
 
   const trimmedApiKeyDraft = apiKeyDraft.trim();
   const isKeyRejected =
     status.isApiKeySet && !status.isConnected && status.isGranolaReachable;
-  const isKeyFormVisible =
-    !status.isApiKeySet || isKeyRejected || isReplacingKey;
-  const isCancelVisible = status.isConnected && isReplacingKey;
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -80,7 +78,6 @@ export const GranolaConnectionSection = ({
 
     if (isSaved) {
       setApiKeyDraft('');
-      setIsReplacingKey(false);
     }
   };
 
@@ -110,19 +107,21 @@ export const GranolaConnectionSection = ({
                   <LightButton title={t('Retry')} onClick={onRetry} />
                 </>
               )}
-              {status.isConnected && !isReplacingKey && (
-                <LightButton
-                  title={t('Replace')}
-                  onClick={() => setIsReplacingKey(true)}
-                />
-              )}
+              <LightButton
+                title={isRemoving ? t('Removing…') : t('Remove')}
+                disabled={isRemoving}
+                onClick={() => onRemove()}
+              />
             </SettingsOptionCardContent>
           </StyledSettingsCard>
         )}
-        {isKeyFormVisible && (
+        {isDefined(removeError) && (
+          <StyledSettingsError>{removeError}</StyledSettingsError>
+        )}
+        {!status.isApiKeySet && (
           <StyledKeyForm onSubmit={handleSubmit}>
             <LabelledSettingsField
-              label={status.isApiKeySet ? t('New API key') : t('API key')}
+              label={t('API key')}
               inputId={inputId}
               errorMessage={connectError}
               hint={t(
@@ -139,26 +138,13 @@ export const GranolaConnectionSection = ({
                 onChange={(event) => setApiKeyDraft(event.target.value)}
               />
             </LabelledSettingsField>
-            <StyledButtonRow>
-              <Button
-                type="submit"
-                title={t('Connect')}
-                accent="blue"
-                isLoading={isConnecting}
-                disabled={isConnecting || !isNonEmptyString(trimmedApiKeyDraft)}
-              />
-              {isCancelVisible && (
-                <Button
-                  title={t('Cancel')}
-                  variant="secondary"
-                  disabled={isConnecting}
-                  onClick={() => {
-                    setIsReplacingKey(false);
-                    setApiKeyDraft('');
-                  }}
-                />
-              )}
-            </StyledButtonRow>
+            <Button
+              type="submit"
+              title={t('Connect')}
+              accent="blue"
+              isLoading={isConnecting}
+              disabled={isConnecting || !isNonEmptyString(trimmedApiKeyDraft)}
+            />
           </StyledKeyForm>
         )}
       </StyledSettingsSectionStack>

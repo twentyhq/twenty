@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { kv, RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
 import {
   GRANOLA_PENDING_REGISTRATION_KEY,
@@ -42,14 +43,14 @@ export const granolaWebhookHandler = async ({
   }
   const apiKey = process.env[GRANOLA_API_KEY_ENV_VAR_NAME];
   if (
-    !registration?.isActive ||
+    !isDefined(registration) ||
     registration.registrationId !== registrationId ||
     !isNonEmptyString(apiKey) ||
     getGranolaApiKeyFingerprint(apiKey) !== registration.apiKeyFingerprint
   ) {
     return {
       success: false,
-      error: 'Unknown or inactive Granola registration',
+      error: 'Unknown Granola registration',
     };
   }
   const rawBody = routePayload.rawBody;
