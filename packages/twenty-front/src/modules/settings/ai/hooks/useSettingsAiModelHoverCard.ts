@@ -14,6 +14,7 @@ export const useSettingsAiModelHoverCard = (modelIds: string[]) => {
     const focusedElement = document.activeElement;
     if (
       hoverCardRef.current?.contains(focusedElement) ||
+      hoverCardRef.current?.matches(':hover') ||
       (activeHoverCard &&
         document.getElementById(`${activeHoverCard.anchorId}-name`) ===
           focusedElement)

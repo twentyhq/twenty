@@ -162,7 +162,10 @@ export const Select = <Value extends SelectValue>({
   const [isHoverCardOpen, setIsHoverCardOpen] = useState(true);
   const hoverCardContentRef = useRef<HTMLDivElement>(null);
   const scheduleHoverCardClose = useDebouncedCallback(() => {
-    if (!hoverCardContentRef.current?.contains(document.activeElement)) {
+    if (
+      !hoverCardContentRef.current?.contains(document.activeElement) &&
+      !hoverCardContentRef.current?.matches(':hover')
+    ) {
       setIsHoverCardOpen(false);
     }
   }, 150);

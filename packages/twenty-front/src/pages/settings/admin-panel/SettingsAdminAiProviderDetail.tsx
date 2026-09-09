@@ -365,7 +365,9 @@ export const SettingsAdminAiProviderDetail = () => {
           {filteredModels.length > 0 && (
             <SettingsAiModelsTable
               models={filteredModels}
-              comparisonModels={providerModels}
+              comparisonModels={providerModels.filter(
+                (model) => model.isAvailable,
+              )}
               isChecked={(model) => model.isAdminEnabled}
               isDisabled={(model) =>
                 !model.isAvailable || model.isDeprecated === true
