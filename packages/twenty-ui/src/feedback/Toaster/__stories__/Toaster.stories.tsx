@@ -350,14 +350,15 @@ export const ReopenDuringExit: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Add notification' }),
-    );
+    const add = canvas.getByRole('button', { name: 'Add notification' });
+    await userEvent.click(add);
+    await userEvent.click(add);
+    await userEvent.click(add);
     const region = body.getByRole('region', { name: 'Notifications' });
     await waitFor(() =>
       expect(region.getAnimations({ subtree: true })).toHaveLength(0),
     );
-    const toast = body.getByRole('status');
+    const [toast, secondToast, thirdToast] = body.getAllByRole('status');
     const id = toast.id;
     await userEvent.click(within(toast).getByRole('button', { name: 'Close' }));
     expect(toast).toBeInTheDocument();
@@ -367,9 +368,14 @@ export const ReopenDuringExit: Story = {
     await waitFor(() =>
       expect(region.getAnimations({ subtree: true })).toHaveLength(0),
     );
-    expect(body.getByRole('status')).toHaveTextContent('Restored notification');
-    expect(body.getByRole('status')).toHaveAttribute('id', id);
-    expect(body.getByRole('status')).toBeVisible();
+    const restoredToasts = body.getAllByRole('status');
+    expect(restoredToasts.map((notification) => notification.id)).toEqual([
+      secondToast.id,
+      thirdToast.id,
+      id,
+    ]);
+    expect(restoredToasts[2]).toHaveTextContent('Restored notification');
+    expect(restoredToasts[2]).toBeVisible();
     expect(args.onClose).toHaveBeenCalledOnce();
   },
 };

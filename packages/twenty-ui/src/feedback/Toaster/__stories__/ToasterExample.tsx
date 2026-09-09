@@ -17,7 +17,15 @@ export const ToastControls = ({ onClose }: ToasterExampleProps) => {
   const [toastId, setToastId] = useState('');
 
   const addToast = (options: ToastOptions) => {
-    setToastId(add({ progress: 100, onClose, ...options }));
+    const id = add({
+      progress: 100,
+      ...options,
+      onClose: () => {
+        setToastId(id);
+        (options.onClose ?? onClose)?.();
+      },
+    });
+    setToastId(id);
   };
 
   return (

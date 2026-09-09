@@ -6,22 +6,15 @@ export const useToastPresence = (toasts: ToastNotification[]) => {
   const [state, setState] = useState({ toasts, renderedToasts: toasts });
 
   if (state.toasts !== toasts) {
-    setState({
-      toasts,
-      renderedToasts: [
-        ...state.renderedToasts.map(
-          (renderedToast) =>
-            toasts.find((toast) => toast.id === renderedToast.id) ??
-            renderedToast,
-        ),
-        ...toasts.filter(
-          (toast) =>
-            !state.renderedToasts.some(
-              (renderedToast) => renderedToast.id === toast.id,
-            ),
-        ),
-      ],
+    const renderedToasts = [...toasts];
+
+    state.renderedToasts.forEach((toast, index) => {
+      if (!toasts.some((currentToast) => currentToast.id === toast.id)) {
+        renderedToasts.splice(index, 0, toast);
+      }
     });
+
+    setState({ toasts, renderedToasts });
   }
 
   const handleExitComplete = useCallback((id: string) => {
