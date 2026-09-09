@@ -208,7 +208,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
           {hasActiveInstalls && (
             <AppTooltip
               anchorSelect={`#${DELETE_REGISTRATION_BUTTON_ID}`}
-              content={t`Uninstall this app from all workspaces before deleting it`}
+              title={t`Uninstall this app from all workspaces before deleting it`}
               noArrow
               place="bottom"
               positionStrategy="fixed"

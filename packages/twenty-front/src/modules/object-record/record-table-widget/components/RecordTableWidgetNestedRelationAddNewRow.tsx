@@ -1,5 +1,5 @@
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
-import { RecordTableWidgetNestedRelationPickerDropdownContent } from '@/object-record/record-table-widget/components/RecordTableWidgetNestedRelationPickerDropdownContent';
+import { RecordTableWidgetRelationPickerDropdownContent } from '@/object-record/record-table-widget/components/RecordTableWidgetRelationPickerDropdownContent';
 import { type RecordTableWidgetNestedRelationCreateThrough } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -33,8 +33,11 @@ export const RecordTableWidgetNestedRelationAddNewRow = ({
         <RecordTableActionRow LeftIcon={IconPlus} text={t`Add New`} />
       }
       dropdownComponents={
-        <RecordTableWidgetNestedRelationPickerDropdownContent
-          nestedRelationCreateThrough={nestedRelationCreateThrough}
+        <RecordTableWidgetRelationPickerDropdownContent
+          objectNameSingular={
+            nestedRelationCreateThrough.relationObjectMetadataNameSingular
+          }
+          recordsFilter={nestedRelationCreateThrough.relationRecordsFilter}
           onRelationRecordSelected={handleRelationRecordSelected}
         />
       }

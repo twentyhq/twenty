@@ -62,12 +62,14 @@ export class ApplicationSyncService {
     applicationRegistrationId,
     dryRun = false,
     inferDeletionFromMissingEntities = true,
+    persistVersion = true,
   }: {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
     dryRun?: boolean;
     inferDeletionFromMissingEntities?: boolean;
+    persistVersion?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -78,6 +80,7 @@ export class ApplicationSyncService {
           workspaceId,
           manifest,
           applicationRegistrationId,
+          persistVersion,
         });
 
     let syncResult: {
@@ -212,6 +215,7 @@ export class ApplicationSyncService {
       workspaceId,
       manifest,
       applicationRegistrationId,
+      persistVersion: false,
     });
 
     const ownerFlatApplication: FlatApplication = application;
@@ -231,10 +235,12 @@ export class ApplicationSyncService {
     workspaceId,
     manifest,
     applicationRegistrationId,
+    persistVersion,
   }: {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
+    persistVersion: boolean;
   }): Promise<ApplicationEntity> {
     const name = manifest.application.displayName;
     const packageJson = JSON.parse(
@@ -273,7 +279,7 @@ export class ApplicationSyncService {
         name,
         description: manifest.application.description,
         logo: manifest.application.logo ?? manifest.application.logoUrl ?? null,
-        version: packageJson.version,
+        ...(persistVersion ? { version: packageJson.version } : {}),
         packageJsonChecksum: manifest.application.packageJsonChecksum,
         yarnLockChecksum: manifest.application.yarnLockChecksum,
         billing: manifest.application.billing ?? {},
@@ -356,34 +362,12 @@ export class ApplicationSyncService {
       );
     }
 
-    const shouldTransitionState =
-      application.state === ApplicationState.INSTALLED;
-
-    try {
-      if (shouldTransitionState) {
-        await this.applicationService.update(application.id, {
-          state: ApplicationState.UNINSTALLING,
-          workspaceId,
-        });
-      }
-
-      return await this.runUninstall({
-        application,
-        workspaceId,
-        applicationUniversalIdentifier,
-        shouldRunUninstallHook,
-      });
-    } catch (error) {
-      if (shouldTransitionState) {
-        await this.applicationService.revertStateToInstalledBestEffort({
-          applicationId: application.id,
-          universalIdentifier: applicationUniversalIdentifier,
-          workspaceId,
-        });
-      }
-
-      throw error;
-    }
+    return await this.runUninstall({
+      application,
+      workspaceId,
+      applicationUniversalIdentifier,
+      shouldRunUninstallHook,
+    });
   }
 
   private async runUninstall({

@@ -100,7 +100,9 @@ describe('Billing credit rollover (integration)', () => {
       revokedAt: null,
     });
     expect(new Date(grants[0].effectiveAt)).toEqual(CLOSING_PERIOD_END);
-    expect(new Date(grants[0].expiresAt)).toEqual(NEXT_PERIOD_END);
+    // Successors carry no deadline: stamping the next period end would put the
+    // balance back at the mercy of the transition after this one running.
+    expect(grants[0].expiresAt).toBeNull();
   });
 
   it('reads usage over the closing period, not the one just opened', async () => {
@@ -146,7 +148,7 @@ describe('Billing credit rollover (integration)', () => {
 
     // Its expiry was pulled back to the boundary, so the balance counts it
     // once through its carried-forward copy rather than twice.
-    expect(new Date(compensation!.expiresAt)).toEqual(CLOSING_PERIOD_END);
+    expect(compensation?.expiresAt).toEqual(CLOSING_PERIOD_END);
     expect(
       grants.some(
         (grant) =>
@@ -322,7 +324,7 @@ describe('Billing credit rollover (integration)', () => {
         amountMicro: 250_000,
         type: BillingCreditGrantType.ONBOARDING_REWARD,
         effectiveAt: CLOSING_PERIOD_START,
-        expiresAt: CLOSING_PERIOD_END,
+        expiresAt: null,
       });
 
       await postInvoiceFinalized('in_test_trial').expect(200);
@@ -334,8 +336,8 @@ describe('Billing credit rollover (integration)', () => {
       );
 
       expect(reward).toBeDefined();
-      expect(reward!.amountMicro).toBe(250_000);
-      expect(new Date(reward!.expiresAt)).toEqual(NEXT_PERIOD_END);
+      expect(reward?.amountMicro).toBe(250_000);
+      expect(reward?.expiresAt).toBeNull();
     });
   });
 });

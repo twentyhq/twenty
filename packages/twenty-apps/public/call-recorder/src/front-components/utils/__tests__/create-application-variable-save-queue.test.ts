@@ -16,7 +16,7 @@ describe('createApplicationVariableSaveQueue', () => {
     const firstSave = createDeferredPromise();
     const latestSave = createDeferredPromise();
     const saveValue = vi
-      .fn<(value: string) => Promise<void>>()
+      .fn<(value: string, isSupersededValue: () => boolean) => Promise<void>>()
       .mockReturnValueOnce(firstSave.promise)
       .mockReturnValueOnce(latestSave.promise);
     const { enqueueSave } = createApplicationVariableSaveQueue({ saveValue });
@@ -26,16 +26,45 @@ describe('createApplicationVariableSaveQueue', () => {
     enqueueSave('latest');
 
     expect(saveValue).toHaveBeenCalledTimes(1);
-    expect(saveValue).toHaveBeenNthCalledWith(1, 'first');
+    expect(saveValue).toHaveBeenNthCalledWith(1, 'first', expect.any(Function));
 
     firstSave.resolvePromise();
     await firstSave.promise;
     await Promise.resolve();
 
     expect(saveValue).toHaveBeenCalledTimes(2);
-    expect(saveValue).toHaveBeenNthCalledWith(2, 'latest');
+    expect(saveValue).toHaveBeenNthCalledWith(
+      2,
+      'latest',
+      expect.any(Function),
+    );
 
     latestSave.resolvePromise();
     await latestSave.promise;
+  });
+
+  it('reports a value as superseded only while a newer one is queued', async () => {
+    const firstSave = createDeferredPromise();
+    const supersededByValue: Record<string, boolean> = {};
+    const saveValue = vi
+      .fn<(value: string, isSupersededValue: () => boolean) => Promise<void>>()
+      .mockImplementation(async (value, isSupersededValue) => {
+        if (value === 'first') {
+          await firstSave.promise;
+        }
+
+        supersededByValue[value] = isSupersededValue();
+      });
+    const { enqueueSave } = createApplicationVariableSaveQueue({ saveValue });
+
+    enqueueSave('first');
+    enqueueSave('latest');
+
+    firstSave.resolvePromise();
+    await firstSave.promise;
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(supersededByValue).toEqual({ first: true, latest: false });
   });
 });

@@ -516,6 +516,12 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           members: 'Members',
         },
       },
+      members: {
+        title: 'Members',
+        widgets: {
+          members: 'Members',
+        },
+      },
     },
   }),
   messageCampaignRecordPage: buildStandardObjectRecordPageLayout({
