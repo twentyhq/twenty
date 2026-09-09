@@ -99,7 +99,9 @@ describe('collectTranslatableStrings', () => {
       ],
       fields: [{ label: 'Thrust', description: 'Newtons' }],
       views: [{ name: 'All Rockets' }],
-      pageLayoutTabs: [{ title: 'Telemetry' }],
+      pageLayoutTabs: [
+        { title: 'Telemetry', widgets: [{ title: 'Trip log' }] },
+      ],
       commandMenuItems: [{ label: 'Launch Rocket', shortLabel: 'Launch' }],
       navigationMenuItems: [{ name: 'Missions' }],
       timelineActivityTypes: [{ label: 'Launched a rocket' }],
@@ -120,6 +122,7 @@ describe('collectTranslatableStrings', () => {
         { message: 'Newtons', context: 'fieldMetadata.description' },
         { message: 'All Rockets', context: 'view.name' },
         { message: 'Telemetry', context: 'pageLayoutTab.title' },
+        { message: 'Trip log', context: 'pageLayoutWidget.title' },
         { message: 'Launch Rocket', context: 'commandMenuItem.label' },
         { message: 'Launch', context: 'commandMenuItem.shortLabel' },
         { message: 'Missions', context: 'navigationMenuItem.name' },

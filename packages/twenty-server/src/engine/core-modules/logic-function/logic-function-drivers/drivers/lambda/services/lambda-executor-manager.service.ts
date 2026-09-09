@@ -16,6 +16,7 @@ import { Logger } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ObjectFieldIndexFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/object-field-index-flat-entity-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import {
@@ -50,6 +51,7 @@ type ExecutorBuildContext = {
   flatLogicFunction: FlatLogicFunction;
   flatApplication: FlatApplication;
   applicationUniversalIdentifier: string;
+  flatEntityMapsOverride?: ObjectFieldIndexFlatEntityMaps;
 };
 
 export class LambdaExecutorManagerService {
@@ -306,6 +308,7 @@ export class LambdaExecutorManagerService {
     flatLogicFunction,
     flatApplication,
     applicationUniversalIdentifier,
+    flatEntityMapsOverride,
     lambdaExecutor,
   }: ExecutorBuildContext & {
     lambdaExecutor: GetFunctionCommandOutput | undefined;
@@ -342,6 +345,7 @@ export class LambdaExecutorManagerService {
       sdkLayerArn = await this.layerManager.ensureSdkLayer({
         flatApplication,
         applicationUniversalIdentifier,
+        flatEntityMapsOverride,
       });
     } catch (error) {
       this.logger.error(
