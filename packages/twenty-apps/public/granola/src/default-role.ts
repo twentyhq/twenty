@@ -25,6 +25,15 @@ export default defineApplicationRole({
   objectPermissions: [
     {
       objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventParticipant
+          .universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: false,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    {
+      objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEvent.universalIdentifier,
       canReadObjectRecords: true,
       canUpdateObjectRecords: false,

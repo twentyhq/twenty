@@ -1276,6 +1276,7 @@ export type CreateFieldInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  isAuditLogged?: InputMaybe<Scalars['Boolean']['input']>;
   isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']['input']>;
   isNullable?: InputMaybe<Scalars['Boolean']['input']>;
   isRemoteCreation?: InputMaybe<Scalars['Boolean']['input']>;
@@ -1977,6 +1978,7 @@ export type Field = {
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   isActive?: Maybe<Scalars['Boolean']['output']>;
+  isAuditLogged?: Maybe<Scalars['Boolean']['output']>;
   isLabelSyncedWithName?: Maybe<Scalars['Boolean']['output']>;
   isNullable?: Maybe<Scalars['Boolean']['output']>;
   isSearchable?: Maybe<Scalars['Boolean']['output']>;
@@ -6163,6 +6165,7 @@ export type UpdateFieldInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  isAuditLogged?: InputMaybe<Scalars['Boolean']['input']>;
   isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']['input']>;
   isNullable?: InputMaybe<Scalars['Boolean']['input']>;
   isSearchable?: InputMaybe<Scalars['Boolean']['input']>;
