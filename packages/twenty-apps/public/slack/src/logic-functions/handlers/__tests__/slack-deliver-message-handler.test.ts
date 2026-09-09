@@ -4,19 +4,19 @@ import { SLACK_MESSAGE_DELIVERY_MAX_ATTEMPTS } from 'src/logic-functions/constan
 import { slackDeliverMessageHandler } from 'src/logic-functions/handlers/slack-deliver-message-handler';
 
 const {
-  postMessageHandlerMock,
+  sendSlackMessageMock,
   enqueueDeliveryMock,
   updateRequestMock,
   finishWithFailureMock,
 } = vi.hoisted(() => ({
-  postMessageHandlerMock: vi.fn(),
+  sendSlackMessageMock: vi.fn(),
   enqueueDeliveryMock: vi.fn(),
   updateRequestMock: vi.fn(),
   finishWithFailureMock: vi.fn(),
 }));
 
-vi.mock('src/logic-functions/handlers/slack-post-message-handler', () => ({
-  slackPostMessageHandler: postMessageHandlerMock,
+vi.mock('src/logic-functions/utils/send-slack-message', () => ({
+  sendSlackMessage: sendSlackMessageMock,
 }));
 
 vi.mock('src/logic-functions/utils/enqueue-slack-message-delivery', () => ({
@@ -52,7 +52,7 @@ describe('slackDeliverMessageHandler', () => {
   });
 
   it('should mark the assistant request done once the message is delivered', async () => {
-    postMessageHandlerMock.mockResolvedValue({
+    sendSlackMessageMock.mockResolvedValue({
       success: true,
       message: 'Message posted to Slack.',
     });
@@ -60,7 +60,7 @@ describe('slackDeliverMessageHandler', () => {
     const result = await slackDeliverMessageHandler(ANSWER_PAYLOAD);
 
     expect(result).toEqual({ delivered: true, attempt: 1 });
-    expect(postMessageHandlerMock).toHaveBeenCalledWith(expect.anything(), {
+    expect(sendSlackMessageMock).toHaveBeenCalledWith(expect.anything(), {
       waitOutRateLimit: false,
     });
     expect(updateRequestMock).toHaveBeenCalledWith(expect.anything(), {
@@ -72,7 +72,7 @@ describe('slackDeliverMessageHandler', () => {
   });
 
   it('should reschedule with the delay Slack asked for when still rate limited', async () => {
-    postMessageHandlerMock.mockResolvedValue({
+    sendSlackMessageMock.mockResolvedValue({
       success: false,
       message: 'Failed to post Slack message',
       error: 'A rate limit was exceeded',
@@ -95,7 +95,7 @@ describe('slackDeliverMessageHandler', () => {
   });
 
   it('should stop rescheduling and fail the request once the attempt cap is reached', async () => {
-    postMessageHandlerMock.mockResolvedValue({
+    sendSlackMessageMock.mockResolvedValue({
       success: false,
       message: 'Failed to post Slack message',
       error: 'A rate limit was exceeded',
@@ -119,7 +119,7 @@ describe('slackDeliverMessageHandler', () => {
   });
 
   it('should not touch any assistant request when the payload carries none', async () => {
-    postMessageHandlerMock.mockResolvedValue({
+    sendSlackMessageMock.mockResolvedValue({
       success: false,
       message: 'Failed to post Slack message',
       error: 'channel_not_found',
@@ -135,7 +135,7 @@ describe('slackDeliverMessageHandler', () => {
     expect(finishWithFailureMock).not.toHaveBeenCalled();
   });
   it('should keep the job successful when the status write fails after posting', async () => {
-    postMessageHandlerMock.mockResolvedValue({
+    sendSlackMessageMock.mockResolvedValue({
       success: true,
       message: 'Message posted to Slack.',
     });

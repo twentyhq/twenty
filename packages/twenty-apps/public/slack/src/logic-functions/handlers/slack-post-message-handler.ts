@@ -1,22 +1,9 @@
 import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
-import { type SlackPostMessageOptions } from 'src/logic-functions/types/slack-post-message-options.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
-import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
-import { postSlackMessage } from 'src/logic-functions/utils/post-slack-message';
+import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
 
+// the logic function runtime calls this with (input, context), so it must stay
+// single-argument: internal callers that need options use sendSlackMessage
 export const slackPostMessageHandler = async (
   parameters: SlackPostMessageInput,
-  options: SlackPostMessageOptions = {},
-): Promise<SlackToolResult> => {
-  const slackClientResult = await getSlackClient();
-
-  if (!slackClientResult.success) {
-    return {
-      success: false,
-      message: 'Slack is not connected',
-      error: slackClientResult.error,
-    };
-  }
-
-  return await postSlackMessage(slackClientResult.client, parameters, options);
-};
+): Promise<SlackToolResult> => await sendSlackMessage(parameters);

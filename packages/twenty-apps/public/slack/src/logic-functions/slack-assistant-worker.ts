@@ -16,7 +16,6 @@ import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/sl
 import { SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-worker-timeout-seconds';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
-import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
 import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build-slack-assistant-answer-blocks';
 import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-slack-assistant-messages';
@@ -29,6 +28,7 @@ import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspac
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
+import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
 import { runSlackAssistantAgentWithStatus } from 'src/logic-functions/utils/run-slack-assistant-agent-with-status';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
@@ -179,7 +179,7 @@ export const slackAssistantWorkerHandler = async (
             }),
     };
 
-    const deliveryResult = await slackPostMessageHandler(answerMessage, {
+    const deliveryResult = await sendSlackMessage(answerMessage, {
       waitOutRateLimit: false,
     });
 
