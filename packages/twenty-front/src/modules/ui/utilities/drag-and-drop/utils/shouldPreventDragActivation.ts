@@ -12,13 +12,15 @@ const NON_DRAGGABLE_TARGET_SELECTOR = [
   '[data-dnd-drag-disable]',
 ].join(', ');
 
+type DragActivationEvent = Pick<PointerEvent, 'target'>;
+
 type DragActivationSource = {
   element?: Element | null;
   handle?: Element | null;
 };
 
 export const shouldPreventDragActivation = (
-  event: PointerEvent,
+  event: DragActivationEvent,
   source: DragActivationSource,
 ): boolean => {
   const target = event.target;

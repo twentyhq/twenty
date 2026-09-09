@@ -1,7 +1,6 @@
 import { shouldPreventDragActivation } from '@/ui/utilities/drag-and-drop/utils/shouldPreventDragActivation';
 
-const createPointerEvent = (target: Element) =>
-  ({ target }) as unknown as PointerEvent;
+const createPointerEvent = (target: Element) => ({ target });
 
 describe('shouldPreventDragActivation', () => {
   it('should prevent activation when the target opts out of dragging', () => {
