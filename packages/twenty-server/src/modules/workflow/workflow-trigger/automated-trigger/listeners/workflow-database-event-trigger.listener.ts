@@ -32,6 +32,7 @@ import { RecordShareService } from 'src/engine/record-share/services/record-shar
 import { type RecordShareGate } from 'src/engine/record-share/types/record-share-gate.type';
 import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
 import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
+import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -445,12 +446,14 @@ export class WorkflowDatabaseEventTriggerListener {
             universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
           })?.id,
       ],
-      fetchRecordShares: () =>
-        this.recordShareService.findByRecordIds({
-          workspaceId: payload.workspaceId,
-          objectMetadataId: payload.objectMetadata.id,
-          recordIds: payload.events.map((event) => event.recordId),
-        }),
+      fetchRecordSharesByRecordId: async () =>
+        indexRecordSharesByRecordId(
+          await this.recordShareService.findByRecordIds({
+            workspaceId: payload.workspaceId,
+            objectMetadataId: payload.objectMetadata.id,
+            recordIds: payload.events.map((event) => event.recordId),
+          }),
+        ),
     });
   }
 
@@ -478,9 +481,8 @@ export class WorkflowDatabaseEventTriggerListener {
     }
 
     return isRecordSharedWithPrincipals({
-      recordShares: recordShareGate.recordShares,
+      recordShareGate,
       recordId: eventPayload.recordId,
-      principalIds: recordShareGate.principalIds,
       accessLevels: resolveRequiredRecordShareAccessLevels('select'),
     });
   }
