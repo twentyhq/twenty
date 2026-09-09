@@ -9,6 +9,7 @@ import {
 import { DENY_ALL_RECORD_SHARE_GATE } from 'src/engine/record-share/constants/deny-all-record-share-gate.constant';
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
 import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
+import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
 
 const RECORD_SHARE: RecordShare = {
   id: 'record-share-1',
@@ -23,31 +24,35 @@ const RECORD_SHARE: RecordShare = {
 
 describe('buildRecordShareGate', () => {
   it('does not gate an OPEN object and does not fetch the rows', async () => {
-    const fetchRecordShares = jest.fn(async () => [RECORD_SHARE]);
+    const fetchRecordSharesByRecordId = jest.fn(async () =>
+      indexRecordSharesByRecordId([RECORD_SHARE]),
+    );
 
     const gate = await buildRecordShareGate({
       readability: MetadataReadability.OPEN,
       isOwningApplication: false,
       principalIds: ['member-1'],
-      fetchRecordShares,
+      fetchRecordSharesByRecordId,
     });
 
     expect(gate).toBeNull();
-    expect(fetchRecordShares).not.toHaveBeenCalled();
+    expect(fetchRecordSharesByRecordId).not.toHaveBeenCalled();
   });
 
   it('denies everyone on a SYSTEM object without fetching the rows', async () => {
-    const fetchRecordShares = jest.fn(async () => [RECORD_SHARE]);
+    const fetchRecordSharesByRecordId = jest.fn(async () =>
+      indexRecordSharesByRecordId([RECORD_SHARE]),
+    );
 
     const gate = await buildRecordShareGate({
       readability: MetadataReadability.SYSTEM,
       isOwningApplication: false,
       principalIds: ['member-1'],
-      fetchRecordShares,
+      fetchRecordSharesByRecordId,
     });
 
     expect(gate).toBe(DENY_ALL_RECORD_SHARE_GATE);
-    expect(fetchRecordShares).not.toHaveBeenCalled();
+    expect(fetchRecordSharesByRecordId).not.toHaveBeenCalled();
   });
 
   it('lets the owning application through an APPLICATION object', async () => {
@@ -55,7 +60,7 @@ describe('buildRecordShareGate', () => {
       readability: MetadataReadability.APPLICATION,
       isOwningApplication: true,
       principalIds: [],
-      fetchRecordShares: async () => [],
+      fetchRecordSharesByRecordId: async () => new Map(),
     });
 
     expect(gate).toBeNull();
@@ -72,11 +77,12 @@ describe('buildRecordShareGate', () => {
         'role-1',
         null,
       ],
-      fetchRecordShares: async () => [RECORD_SHARE],
+      fetchRecordSharesByRecordId: async () =>
+        indexRecordSharesByRecordId([RECORD_SHARE]),
     });
 
     expect(gate).toEqual({
-      recordShares: [RECORD_SHARE],
+      recordSharesByRecordId: indexRecordSharesByRecordId([RECORD_SHARE]),
       principalIds: [EVERYONE_PRINCIPAL_ID, 'role-1'],
     });
   });
