@@ -790,6 +790,7 @@ enum ViewType {
 
 enum ViewKey {
   INDEX
+  DEFAULT
 }
 
 enum ViewOpenRecordIn {
