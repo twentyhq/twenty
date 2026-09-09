@@ -11,6 +11,7 @@ import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/typ
 import { buildCatalog } from './build-catalog';
 import { fetchArtificialAnalysisBenchmarks } from './fetch-artificial-analysis';
 import { matchBenchmarks } from './match-benchmarks';
+import { readCommittedBenchmarks } from './read-committed-benchmarks';
 import { buildCoverageReport, renderCoverageReport } from './report-coverage';
 import {
   type BenchmarkIndex,
@@ -158,7 +159,20 @@ const main = async (): Promise<void> => {
 
   log(`Fetched ${Object.keys(modelsDevData).length} providers from models.dev`);
 
-  const benchmarkIndex = await fetchBenchmarks();
+  const fetched = await fetchBenchmarks();
+
+  // A failed fetch must not delete measurements we already published: the
+  // catalog PR is automerged, so an empty index would silently strip every
+  // benchmark until the next healthy run.
+  const benchmarkIndex =
+    fetched.size > 0 ? fetched : readCommittedBenchmarks(BENCHMARKS_PATH);
+
+  if (fetched.size === 0 && benchmarkIndex.size > 0) {
+    warn(
+      `Reusing ${benchmarkIndex.size} committed benchmark aliases from a previous run`,
+    );
+  }
+
   const catalog = buildCatalog(modelsDevData);
 
   const overlay = enrichCatalog({

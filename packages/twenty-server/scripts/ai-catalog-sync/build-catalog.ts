@@ -83,9 +83,7 @@ const extractCost = (
   model.cachedInputCostPerMillionTokens = cost.cache_read;
   model.cacheCreationCostPerMillionTokens = cost.cache_write;
 
-  const longContextCost = (
-    cost as { context_over_200k?: NonNullable<ModelsDevModel['cost']> }
-  ).context_over_200k;
+  const longContextCost = cost.context_over_200k;
 
   if (!isDefined(longContextCost?.input)) {
     return;

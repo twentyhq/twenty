@@ -122,7 +122,7 @@ export const matchBenchmarks = ({
       outputTokensPerSecond,
       timeToFirstTokenSeconds,
       costPerTask,
-      measuredAt,
+      measuredAt: record.measuredAt ?? measuredAt,
     },
     aliases: [...new Set([modelName, ...record.aliases])],
     observedPrices,

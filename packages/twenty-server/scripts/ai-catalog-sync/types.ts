@@ -52,6 +52,9 @@ export type BenchmarkRecord = {
   // merged into the catalog, which prices from models.dev: a second
   // independent observation is only useful while it stays independent.
   observedPrices?: ObservedPrices;
+  // Set only on a record recovered from the committed overlay, so preserved
+  // measurements keep the date they were actually taken.
+  measuredAt?: string;
   aliases: string[];
 };
 
