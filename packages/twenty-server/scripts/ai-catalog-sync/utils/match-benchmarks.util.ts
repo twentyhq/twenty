@@ -31,7 +31,7 @@ export const matchBenchmarks = ({
 }: MatchBenchmarksArgs): BenchmarkMatch | undefined => {
   const record = lookup(
     benchmarkIndex,
-    buildLookupCandidates(modelName, siblingModels),
+    buildLookupCandidates({ modelName, siblingModels }),
   );
 
   if (!isDefined(record)) {

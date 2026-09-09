@@ -11,14 +11,13 @@ const languageModel = {
   limit: { context: 128000, output: 8192 },
 };
 
-const payload = (): ModelsDevData =>
-  ({
-    openai: { id: 'openai', models: { 'gpt-x': languageModel } },
-    anthropic: { id: 'anthropic', models: { 'claude-x': languageModel } },
-    google: { id: 'google', models: { 'gemini-x': languageModel } },
-    xai: { id: 'xai', models: { 'grok-x': languageModel } },
-    mistral: { id: 'mistral', models: { 'mistral-x': languageModel } },
-  }) as unknown as ModelsDevData;
+const payload = (): ModelsDevData => ({
+  openai: { id: 'openai', models: { 'gpt-x': languageModel } },
+  anthropic: { id: 'anthropic', models: { 'claude-x': languageModel } },
+  google: { id: 'google', models: { 'gemini-x': languageModel } },
+  xai: { id: 'xai', models: { 'grok-x': languageModel } },
+  mistral: { id: 'mistral', models: { 'mistral-x': languageModel } },
+});
 
 describe('assertPayloadIsUsable', () => {
   it('accepts a payload carrying models for every native provider', () => {

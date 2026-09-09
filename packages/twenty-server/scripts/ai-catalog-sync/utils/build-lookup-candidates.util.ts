@@ -38,10 +38,13 @@ const resolveRollingAlias = (
   return twins[0]?.[0];
 };
 
-export const buildLookupCandidates = (
-  modelName: string,
-  siblingModels: Record<string, ModelsDevModel>,
-): string[] => {
+export const buildLookupCandidates = ({
+  modelName,
+  siblingModels,
+}: {
+  modelName: string;
+  siblingModels: Record<string, ModelsDevModel>;
+}): string[] => {
   const candidates = [modelName, modelName.replace(DATE_SUFFIX, '')];
 
   const resolved = resolveRollingAlias(modelName, siblingModels);

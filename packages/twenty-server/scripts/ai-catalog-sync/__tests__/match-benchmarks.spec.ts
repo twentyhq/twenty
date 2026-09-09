@@ -44,14 +44,20 @@ const match = (modelName: string, benchmarkIndex: BenchmarkIndex) =>
 describe('buildLookupCandidates', () => {
   it('resolves a rolling alias to the priced-identical release it points at', () => {
     expect(
-      buildLookupCandidates('mistral-large-latest', MISTRAL_MODELS),
+      buildLookupCandidates({
+        modelName: 'mistral-large-latest',
+        siblingModels: MISTRAL_MODELS,
+      }),
     ).toContain('mistral-large-2512');
   });
 
   it('prefers the newest release when several share the same price and limits', () => {
-    const candidates = buildLookupCandidates('mistral-large-latest', {
-      ...MISTRAL_MODELS,
-      'mistral-large-2506': modelsDevModel({ release_date: '2025-06-01' }),
+    const candidates = buildLookupCandidates({
+      modelName: 'mistral-large-latest',
+      siblingModels: {
+        ...MISTRAL_MODELS,
+        'mistral-large-2506': modelsDevModel({ release_date: '2025-06-01' }),
+      },
     });
 
     expect(candidates).toContain('mistral-large-2512');
@@ -59,9 +65,12 @@ describe('buildLookupCandidates', () => {
   });
 
   it('offers the undated name for a dated snapshot', () => {
-    expect(buildLookupCandidates('claude-sonnet-4-5-20250929', {})).toContain(
-      'claude-sonnet-4-5',
-    );
+    expect(
+      buildLookupCandidates({
+        modelName: 'claude-sonnet-4-5-20250929',
+        siblingModels: {},
+      }),
+    ).toContain('claude-sonnet-4-5');
   });
 });
 

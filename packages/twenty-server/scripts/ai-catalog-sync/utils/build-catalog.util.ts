@@ -69,10 +69,13 @@ const meetsInclusionCriteria = (modelData: ModelsDevModel): boolean =>
   isDefined(modelData.cost?.input) &&
   isDefined(modelData.limit?.context);
 
-const extractCost = (
-  modelData: ModelsDevModel,
-  model: GeneratedModel,
-): void => {
+const extractCost = ({
+  modelData,
+  model,
+}: {
+  modelData: ModelsDevModel;
+  model: GeneratedModel;
+}): void => {
   const cost = modelData.cost;
 
   if (!isDefined(cost)) {
@@ -115,7 +118,7 @@ const buildModel = ({
     modelFamily: inferModelFamily(providerName, modelId),
   };
 
-  extractCost(modelData, model);
+  extractCost({ modelData, model });
 
   model.contextWindowTokens = modelData.limit?.context;
   model.maxOutputTokens = modelData.limit?.output;
@@ -128,7 +131,7 @@ const buildModel = ({
     model.modalities = modalities;
   }
 
-  if (modelData.reasoning === true) {
+  if (modelData.reasoning) {
     model.supportsReasoning = true;
   }
 

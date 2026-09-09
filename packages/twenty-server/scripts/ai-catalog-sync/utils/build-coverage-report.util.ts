@@ -22,7 +22,7 @@ export const buildCoverageReport = (
 
   for (const [providerName, provider] of Object.entries(catalog)) {
     for (const model of provider.models) {
-      if (model.isDeprecated === true) {
+      if (model.isDeprecated) {
         continue;
       }
 

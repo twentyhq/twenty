@@ -1,6 +1,12 @@
 import { type CoverageReport } from '../types/coverage-report.type';
 
-const asPercentage = (numerator: number, denominator: number): string =>
+const asPercentage = ({
+  numerator,
+  denominator,
+}: {
+  numerator: number;
+  denominator: number;
+}): string =>
   denominator === 0 ? 'n/a' : `${Math.round((numerator / denominator) * 100)}%`;
 
 export const renderCoverageReport = (report: CoverageReport): string => {
@@ -12,7 +18,7 @@ export const renderCoverageReport = (report: CoverageReport): string => {
   const lines = [
     '### Benchmark coverage',
     '',
-    `- General-purpose models with an intelligence index: **${scored}/${total}** (${asPercentage(scored, total)})`,
+    `- General-purpose models with an intelligence index: **${scored}/${total}** (${asPercentage({ numerator: scored, denominator: total })})`,
     `- Specialized models excluded from the denominator: ${report.specializedModelCount}`,
   ];
 
