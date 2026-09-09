@@ -5,8 +5,7 @@ import { type EntityManager } from 'typeorm';
 import { v5 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
-import { UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
+import { isCoreWorkflowIdColumnAvailable } from 'src/engine/core-modules/workflow/utils/is-core-workflow-id-column-available.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -877,9 +876,7 @@ export const prefillWorkflows = async (
     .returning('*')
     .execute();
 
-  const hasCoreWorkflowIdColumn = !UpgradeAwareRepositoryState.getInstance()
-    .getHiddenColumnPropertyNames(WorkflowVersionEntity)
-    .has('coreWorkflowId');
+  const hasCoreWorkflowIdColumn = isCoreWorkflowIdColumnAvailable();
 
   await entityManager
     .createQueryBuilder()

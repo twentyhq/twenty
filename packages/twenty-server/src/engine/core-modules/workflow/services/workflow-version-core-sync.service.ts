@@ -18,7 +18,7 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
+import { isCoreWorkflowIdColumnAvailable } from 'src/engine/core-modules/workflow/utils/is-core-workflow-id-column-available.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
@@ -46,7 +46,7 @@ export class WorkflowVersionCoreSyncService {
 
     const applicationId = await this.getCustomApplicationIdOrThrow(workspaceId);
 
-    const coreWorkflowIdByWorkflowId = this.hasCoreWorkflowIdColumn()
+    const coreWorkflowIdByWorkflowId = isCoreWorkflowIdColumnAvailable()
       ? await this.resolveCoreWorkflowIdByWorkflowId(
           workspaceId,
           workflowVersions.map((workflowVersion) => workflowVersion.workflowId),
@@ -127,7 +127,7 @@ export class WorkflowVersionCoreSyncService {
       workspaceId,
       {
         where: { id: In(candidateIds) },
-        select: this.hasCoreWorkflowIdColumn()
+        select: isCoreWorkflowIdColumnAvailable()
           ? { id: true, coreWorkflowId: true }
           : { id: true },
       },
@@ -199,7 +199,7 @@ export class WorkflowVersionCoreSyncService {
     const isNewLink = !isDefined(linkedCoreVersionId);
     const coreWorkflowVersionId = linkedCoreVersionId ?? uuidv4();
 
-    const hasCoreWorkflowIdColumn = this.hasCoreWorkflowIdColumn();
+    const hasCoreWorkflowIdColumn = isCoreWorkflowIdColumnAvailable();
 
     const coreWorkflowId = hasCoreWorkflowIdColumn
       ? await this.resolveCoreWorkflowIdInTransaction(
@@ -293,12 +293,6 @@ export class WorkflowVersionCoreSyncService {
     }
 
     return coreWorkflowIdByWorkflowId;
-  }
-
-  private hasCoreWorkflowIdColumn(): boolean {
-    return !UpgradeAwareRepositoryState.getInstance()
-      .getHiddenColumnPropertyNames(WorkflowVersionEntity)
-      .has('coreWorkflowId');
   }
 
   private async resolveCoreWorkflowIdInTransaction(
