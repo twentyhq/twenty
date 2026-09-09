@@ -38,6 +38,9 @@ export const WithLabel: Story = {
 
     await canvas.findByText('Settings');
     await canvas.findByText('Continue on iteration failure');
+    expect(
+      canvas.getByRole('switch', { name: 'Continue on iteration failure' }),
+    ).not.toBeChecked();
   },
 };
 

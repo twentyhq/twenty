@@ -48,6 +48,7 @@ export const FormBooleanFieldToggleInput = ({
   disabled,
 }: FormBooleanFieldToggleInputProps) => {
   const instanceId = useId();
+  const descriptionId = `${instanceId}-description`;
 
   return (
     <FormFieldInputContainer>
@@ -59,12 +60,14 @@ export const FormBooleanFieldToggleInput = ({
           hasRightElement
           preventFocusStackUpdate
         >
-          <StyledDescription>{description}</StyledDescription>
+          <StyledDescription id={descriptionId}>
+            {description}
+          </StyledDescription>
         </FormFieldInputInnerContainer>
 
         <StyledToggleContainer>
           <Switch
-            aria-label={label ?? description}
+            aria-labelledby={descriptionId}
             checked={value}
             onCheckedChange={onChange}
             disabled={disabled}
