@@ -23,7 +23,6 @@ jobs:
         packages/twenty-sdk/**
         packages/twenty-client-sdk/**
         packages/twenty-shared/**
-        packages/twenty-ui/**
         !packages/twenty-sdk/package.json
         !packages/twenty-client-sdk/package.json
         !packages/twenty-shared/package.json

@@ -29,7 +29,6 @@ jobs:
         packages/twenty-client-sdk/**
         packages/twenty-emails/**
         packages/twenty-shared/**
-        packages/twenty-ui/**
 
   upgrade-changed-files-check:
     if: github.event_name != 'merge_group'
