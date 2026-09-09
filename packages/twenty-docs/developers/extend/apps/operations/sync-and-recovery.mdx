@@ -115,14 +115,21 @@ Pull needs an existing project — scaffold one with `npx create-twenty-app@late
 - objects, with their fields inline;
 - fields your app added to objects it does not own;
 - authored indexes;
+- views, with their fields, field groups, filters, filter groups, sorts and groups inline;
+- view fields your app added to views it does not own, as standalone `defineViewField()` files;
+- page layouts, with their tabs and widgets inline;
+- tabs your app added to page layouts it does not own, as standalone `definePageLayoutTab()` files;
 - published translations, as `locales/<locale>.json` for the strings pull can read back from the pulled metadata and source, and `locales/compiled/<locale>.json` for the rest.
 
 Each entity goes to the file that already defines it, so a second pull rewrites only what changed on the server. New entities are placed beside existing files of their kind, and a generated name that would land on an unrelated file is qualified rather than overwriting it.
 
 **What it does not write:**
 
-- **Not exported yet** — roles and permissions, views, page layouts, navigation, command menu items, logic functions and front components, and the stored source of your functions.
-- **Derived by the engine** — system fields, default relations, default views and backing indexes. The server rebuilds them on apply. An object may still point its label identifier at one of them, as junction objects created in the UI do; the pointer is written and the build resolves it without adding a field.
+- **Not exported yet** — roles and permissions, navigation, command menu items, logic functions and front components, and the stored source of your functions.
+- **Derived by the engine** — system fields, default relations, default views and backing indexes, and the default page layouts of each object. The server rebuilds them on apply. An object may still point its label identifier at one of them, as junction objects created in the UI do; the pointer is written and the build resolves it without adding a field.
+- **Placed on a default or foreign view** — filters, filter groups, sorts, groups and field groups added to an engine default view, or to a view owned by another application, have no source form yet and are reported. View fields added there are written as standalone files, since the view's identifier is known.
+- **Placed on a default or foreign page layout** — widgets added to a tab of an engine default page layout, or of a page layout owned by another application, have no source form yet and are reported. Tabs added there are written as standalone files, since the layout's identifier is known.
+- **Widgets the export cannot carry yet** — on any layout, including your own, a widget of the deprecated `VIEW` type, a widget showing one of your app's own front components or command menu items, or a widget without a position for its tab's layout mode is reported, and the layout or tab is written without it.
 - **Workspace runtime state** — member and API-key role assignments, webhooks and per-user navigation, all excluded by design.
 - **Owned by another application** — reported, never pulled.
 

@@ -4,8 +4,10 @@ import {
   type PullEntity,
   type PullEntityKind,
 } from '@/cli/utilities/pull/build-pull-entities';
+import { capFileBaseName } from '@/cli/utilities/pull/pull-file-base-name';
 import { type ScannedDefineFile } from '@/cli/utilities/pull/scan-project-define-files';
 import { writeDefineFile } from '@/cli/utilities/pull/write-define-file';
+import { kebabCase } from '@/cli/utilities/string/kebab-case';
 import { dirname, posix } from 'node:path';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -40,6 +42,10 @@ const ENTITY_KEY_BY_KIND: Record<PullEntityKind, ManifestEntityKey> = {
   object: ManifestEntityKey.Objects,
   field: ManifestEntityKey.Fields,
   index: ManifestEntityKey.Indexes,
+  view: ManifestEntityKey.Views,
+  viewField: ManifestEntityKey.ViewFields,
+  pageLayout: ManifestEntityKey.PageLayouts,
+  pageLayoutTab: ManifestEntityKey.PageLayoutTabs,
 };
 
 const toPosixPath = (value: string): string => value.split('\\').join('/');
@@ -94,18 +100,25 @@ const resolveFileBaseNames = (entities: PullEntity[]): Map<string, string> => {
 
     const qualifiedNames = collidingEntities.map((entity) =>
       isDefined(entity.parentName)
-        ? `${entity.parentName}-${entity.fileBaseName}`
+        ? capFileBaseName(
+            `${kebabCase(entity.parentName)}-${entity.fileBaseName}`,
+          )
         : entity.fileBaseName,
     );
-    const hasUniqueQualifiedNames =
-      new Set(qualifiedNames).size === qualifiedNames.length;
 
     collidingEntities.forEach((entity, index) => {
+      const qualifiedName = qualifiedNames[index];
+      const isQualifiedNameUnique =
+        qualifiedNames.indexOf(qualifiedName) ===
+        qualifiedNames.lastIndexOf(qualifiedName);
+
       fileBaseNameByUniversalIdentifier.set(
         entity.universalIdentifier,
-        hasUniqueQualifiedNames
-          ? qualifiedNames[index]
-          : `${entity.universalIdentifier.slice(0, 8)}-${entity.fileBaseName}`,
+        isQualifiedNameUnique
+          ? qualifiedName
+          : capFileBaseName(
+              `${entity.universalIdentifier.slice(0, 8)}-${qualifiedName}`,
+            ),
       );
     });
   }

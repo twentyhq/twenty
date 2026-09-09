@@ -6,45 +6,45 @@ type CallRecordingTranscriptFollowScrollEffectProps = {
   activeEntryElementRef: RefObject<HTMLLIElement | null>;
   isFollowingPlayback: boolean;
   scrollContainerElementRef: RefObject<HTMLDivElement | null>;
-  videoElement?: HTMLVideoElement;
-  onVideoSeeking: () => void;
+  mediaElement?: HTMLMediaElement;
+  onMediaSeeking: () => void;
 };
 
 export const CallRecordingTranscriptFollowScrollEffect = ({
   activeEntryElementRef,
   isFollowingPlayback,
   scrollContainerElementRef,
-  videoElement,
-  onVideoSeeking,
+  mediaElement,
+  onMediaSeeking,
 }: CallRecordingTranscriptFollowScrollEffectProps) => {
   useEffect(() => {
     const scrollContainerElement = scrollContainerElementRef.current;
 
-    if (!isDefined(videoElement)) {
+    if (!isDefined(mediaElement)) {
       return;
     }
 
-    videoElement.addEventListener('seeking', onVideoSeeking);
+    mediaElement.addEventListener('seeking', onMediaSeeking);
 
     const stopWatchingFollowScroll =
       isFollowingPlayback && isDefined(scrollContainerElement)
         ? watchCallRecordingTranscriptFollowScroll({
-            videoElement,
+            videoElement: mediaElement,
             scrollContainerElement,
             getActiveEntryElement: () => activeEntryElementRef.current,
           })
         : undefined;
 
     return () => {
-      videoElement.removeEventListener('seeking', onVideoSeeking);
+      mediaElement.removeEventListener('seeking', onMediaSeeking);
       stopWatchingFollowScroll?.();
     };
   }, [
     activeEntryElementRef,
     isFollowingPlayback,
-    onVideoSeeking,
+    onMediaSeeking,
     scrollContainerElementRef,
-    videoElement,
+    mediaElement,
   ]);
 
   return null;

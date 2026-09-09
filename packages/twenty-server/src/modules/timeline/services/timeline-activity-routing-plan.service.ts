@@ -11,8 +11,10 @@ import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/f
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { buildDirectRelationTargetShape } from 'src/modules/timeline/utils/build-direct-relation-target-shape.util';
 import { buildJunctionTargetShape } from 'src/modules/timeline/utils/build-junction-target-shape.util';
+import { buildNonAuditLoggedFieldNamesByObjectMetadataId } from 'src/modules/timeline/utils/build-non-audit-logged-field-names-by-object-metadata-id.util';
 import { buildTimelineActivitySelfRule } from 'src/modules/timeline/utils/build-timeline-activity-self-rule.util';
 import { resolveTimelineActivityTypeRouting } from 'src/modules/timeline/utils/resolve-timeline-activity-type-routing.util';
+import { readLruEntry, writeLruEntry } from 'src/utils/lru-map.util';
 import {
   buildTimelineActivityTypeResolution,
   toResolvedTimelineActivityType,
@@ -20,9 +22,12 @@ import {
   type TimelineActivityTypeResolver,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 
+const EMPTY_NON_AUDIT_LOGGED_FIELD_NAMES: ReadonlySet<string> = new Set();
+
 type TimelineActivityRulesForEventBatch = {
   sourceRules: TimelineActivityRule[];
   junctionRules: TimelineActivityRule[];
+  nonAuditLoggedFieldNames: ReadonlySet<string>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
@@ -31,9 +36,14 @@ type TimelineActivityRoutingPlan = {
   activeTimelineActivityTypes: ResolvableTimelineActivityType[];
   throughRules: TimelineActivityRule[];
   eligibleNonAuditedObjectMetadataIds: Set<string>;
+  nonAuditLoggedFieldNamesByObjectMetadataId: Map<string, ReadonlySet<string>>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
+
+// A routing plan holds that workspace's whole flat field metadata maps, so an
+// unbounded map grows with the number of workspaces a worker ever routes for.
+const MAX_CACHED_WORKSPACES = 128;
 
 @Injectable()
 export class TimelineActivityRoutingPlanService {
@@ -50,7 +60,7 @@ export class TimelineActivityRoutingPlanService {
     flatObjectMetadata,
     workspaceId,
   }: {
-    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'isAuditLogged'>;
     workspaceId: string;
   }): Promise<boolean> {
     if (flatObjectMetadata.isAuditLogged) {
@@ -89,6 +99,10 @@ export class TimelineActivityRoutingPlanService {
           rule.targetShape.kind === 'JUNCTION' &&
           rule.targetShape.junctionObjectMetadataId === flatObjectMetadata.id,
       ),
+      nonAuditLoggedFieldNames:
+        routingPlan.nonAuditLoggedFieldNamesByObjectMetadataId.get(
+          flatObjectMetadata.id,
+        ) ?? EMPTY_NON_AUDIT_LOGGED_FIELD_NAMES,
       flatFieldMetadataMaps: routingPlan.flatFieldMetadataMaps,
       resolveTimelineActivityType: routingPlan.resolveTimelineActivityType,
     };
@@ -113,7 +127,10 @@ export class TimelineActivityRoutingPlanService {
       hashes.flatFieldMetadataMapsOrm,
       hashes.flatTimelineActivityTypeMaps,
     ].join('|');
-    const cachedRoutingPlan = this.routingPlanByWorkspaceId.get(workspaceId);
+    const cachedRoutingPlan = readLruEntry({
+      map: this.routingPlanByWorkspaceId,
+      key: workspaceId,
+    });
 
     if (cachedRoutingPlan?.cacheKey === cacheKey) {
       return cachedRoutingPlan.routingPlan;
@@ -121,9 +138,11 @@ export class TimelineActivityRoutingPlanService {
 
     const routingPlan = this.buildRoutingPlan(data);
 
-    this.routingPlanByWorkspaceId.set(workspaceId, {
-      cacheKey,
-      routingPlan,
+    writeLruEntry({
+      map: this.routingPlanByWorkspaceId,
+      key: workspaceId,
+      value: { cacheKey, routingPlan },
+      maxEntries: MAX_CACHED_WORKSPACES,
     });
 
     return routingPlan;
@@ -262,6 +281,8 @@ export class TimelineActivityRoutingPlanService {
       activeTimelineActivityTypes,
       throughRules,
       eligibleNonAuditedObjectMetadataIds,
+      nonAuditLoggedFieldNamesByObjectMetadataId:
+        buildNonAuditLoggedFieldNamesByObjectMetadataId(flatFieldMetadataMaps),
       flatFieldMetadataMaps,
       resolveTimelineActivityType,
     };

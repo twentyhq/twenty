@@ -20,6 +20,8 @@ import { UsageLimitException } from 'src/engine/core-modules/usage-limit/excepti
 import { usageLimitToGraphqlApiExceptionHandler } from 'src/engine/core-modules/usage-limit/utils/usage-limit-to-graphql-api-exception-handler.util';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { permissionGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util';
+import { RecordShareException } from 'src/engine/record-share/record-share.exception';
+import { recordShareGraphqlApiExceptionHandler } from 'src/engine/record-share/utils/record-share-graphql-api-exception-handler.util';
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { twentyOrmGraphqlApiExceptionHandler } from 'src/engine/twenty-orm/utils/twenty-orm-graphql-api-exception-handler.util';
 import { WorkflowQueryValidationException } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
@@ -45,6 +47,8 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       return twentyOrmGraphqlApiExceptionHandler(error);
     case error instanceof CommonQueryRunnerException:
       return commonQueryRunnerToGraphqlApiExceptionHandler(error);
+    case error instanceof RecordShareException:
+      return recordShareGraphqlApiExceptionHandler(error);
     case error instanceof AuthException:
       return authGraphqlApiExceptionHandler(error);
     case error instanceof ApiKeyException:
