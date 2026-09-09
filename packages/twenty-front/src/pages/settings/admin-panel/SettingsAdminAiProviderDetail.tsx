@@ -25,6 +25,8 @@ import { Section } from 'twenty-ui/layout';
 import { RoundedLink, UndecoratedLink } from 'twenty-ui/navigation';
 
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
@@ -55,6 +57,7 @@ export const SettingsAdminAiProviderDetail = () => {
   const navigate = useNavigate();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { refetch: refetchClientConfig } = useClientConfig();
+  const aiModels = useAtomStateValue(aiModelsState);
   const { openModal } = useModal();
   const [searchQuery, setSearchQuery] = useState('');
   const [modelToRemove, setModelToRemove] = useState<{
@@ -161,8 +164,15 @@ export const SettingsAdminAiProviderDetail = () => {
   const providerModels = useMemo(() => {
     const allModels = modelsData?.getAdminAiModels?.models ?? [];
 
-    return allModels.filter((model) => model.providerName === providerName);
-  }, [modelsData, providerName]);
+    return allModels
+      .filter((model) => model.providerName === providerName)
+      .map((model) => ({
+        ...model,
+        benchmark: aiModels.find(
+          (clientModel) => clientModel.modelId === model.modelId,
+        )?.benchmark,
+      }));
+  }, [modelsData, providerName, aiModels]);
 
   const filteredModels =
     searchQuery.trim().length === 0
@@ -355,6 +365,7 @@ export const SettingsAdminAiProviderDetail = () => {
           {filteredModels.length > 0 && (
             <SettingsAiModelsTable
               models={filteredModels}
+              comparisonModels={providerModels}
               isChecked={(model) => model.isAdminEnabled}
               isDisabled={(model) =>
                 !model.isAvailable || model.isDeprecated === true

@@ -296,6 +296,7 @@ export const SettingsAdminAI = () => {
 
           <SettingsAiModelsTable
             models={enabledModels}
+            comparisonModels={enabledModels}
             isChecked={(model) => model.isRecommended === true}
             onToggle={handleRecommendedToggle}
             onToggleAll={async (shouldCheckAll) => {

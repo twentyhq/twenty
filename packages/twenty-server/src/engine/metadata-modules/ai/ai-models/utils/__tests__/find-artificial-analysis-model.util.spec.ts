@@ -13,37 +13,45 @@ const benchmark: ArtificialAnalysisModel = {
 describe('findArtificialAnalysisModel', () => {
   it('matches exact routing names across punctuation differences', () => {
     expect(
-      findArtificialAnalysisModel([benchmark], 'openai/gpt-5.6-luna', 'Luna'),
+      findArtificialAnalysisModel({
+        models: [benchmark],
+        modelId: 'openai/gpt-5.6-luna',
+        label: 'Luna',
+      }),
     ).toBe(benchmark);
   });
 
   it('preserves the measured reasoning variant in the returned data', () => {
     expect(
-      findArtificialAnalysisModel(
-        [benchmark],
-        'gateway/custom',
-        'GPT-5.6 Luna (max)',
-      )?.name,
+      findArtificialAnalysisModel({
+        models: [benchmark],
+        modelId: 'gateway/custom',
+        label: 'GPT-5.6 Luna (max)',
+      })?.name,
     ).toBe('GPT-5.6 Luna (max)');
   });
 
   it('does not guess versions, reasoning variants, or ambiguous matches', () => {
     expect(
-      findArtificialAnalysisModel([benchmark], 'openai/gpt-5.6-sol', 'Sol'),
+      findArtificialAnalysisModel({
+        models: [benchmark],
+        modelId: 'openai/gpt-5.6-sol',
+        label: 'Sol',
+      }),
     ).toBeUndefined();
     expect(
-      findArtificialAnalysisModel(
-        [benchmark],
-        'openai/gpt-5.6-luna-low',
-        'GPT-5.6 Luna (low)',
-      ),
+      findArtificialAnalysisModel({
+        models: [benchmark],
+        modelId: 'openai/gpt-5.6-luna-low',
+        label: 'GPT-5.6 Luna (low)',
+      }),
     ).toBeUndefined();
     expect(
-      findArtificialAnalysisModel(
-        [benchmark, { ...benchmark, id: 'other' }],
-        'openai/gpt-5.6-luna',
-        'Luna',
-      ),
+      findArtificialAnalysisModel({
+        models: [benchmark, { ...benchmark, id: 'other' }],
+        modelId: 'openai/gpt-5.6-luna',
+        label: 'Luna',
+      }),
     ).toBeUndefined();
   });
 });

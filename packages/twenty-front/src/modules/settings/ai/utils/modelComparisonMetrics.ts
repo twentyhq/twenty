@@ -51,11 +51,15 @@ export const getCostCategory = (
   return t`Very high`;
 };
 
-export const getModelComparisonScore = (
-  value: number,
-  comparisonValues: number[],
+export const getModelComparisonScore = ({
+  value,
+  comparisonValues,
   lowerIsBetter = false,
-): number => {
+}: {
+  value: number;
+  comparisonValues: number[];
+  lowerIsBetter?: boolean;
+}): number => {
   if (comparisonValues.length < 2) {
     return 50;
   }
@@ -65,12 +69,17 @@ export const getModelComparisonScore = (
   return Math.max((lowerIsBetter ? 1 - percentile : percentile) * 100, 8);
 };
 
-export const withModelRanking = (
-  description: string,
-  value: number,
-  comparisonValues: number[],
+export const withModelRanking = ({
+  description,
+  value,
+  comparisonValues,
   lowerIsBetter = false,
-): string => {
+}: {
+  description: string;
+  value: number;
+  comparisonValues: number[];
+  lowerIsBetter?: boolean;
+}): string => {
   if (comparisonValues.length < 2) {
     return description;
   }

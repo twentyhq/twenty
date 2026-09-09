@@ -91,21 +91,21 @@ export const getAiModelComparisonItems = ({
             comparisonLabel: t`Intelligence compared with available models`,
             label: t`Intelligence`,
             maximumValue: 100,
-            rawValue: getModelComparisonScore(
-              benchmark.intelligenceIndex,
-              comparableIntelligenceValues,
-            ),
+            rawValue: getModelComparisonScore({
+              value: benchmark.intelligenceIndex,
+              comparisonValues: comparableIntelligenceValues,
+            }),
             value: formatCompactNumber(benchmark.intelligenceIndex, 1),
             icon: IconChartBar,
-            indicatorColor: getModelComparisonColor(
-              benchmark.intelligenceIndex,
-              comparableIntelligenceValues,
-            ),
-            description: withModelRanking(
-              t`Artificial Analysis Intelligence Index`,
-              benchmark.intelligenceIndex,
-              comparableIntelligenceValues,
-            ),
+            indicatorColor: getModelComparisonColor({
+              value: benchmark.intelligenceIndex,
+              comparisonValues: comparableIntelligenceValues,
+            }),
+            description: withModelRanking({
+              description: t`Artificial Analysis Intelligence Index`,
+              value: benchmark.intelligenceIndex,
+              comparisonValues: comparableIntelligenceValues,
+            }),
           },
         ]
       : []),
@@ -115,21 +115,21 @@ export const getAiModelComparisonItems = ({
             comparisonLabel: t`Speed compared with available models`,
             label: t`Speed`,
             maximumValue: 100,
-            rawValue: getModelComparisonScore(
-              benchmark.outputTokensPerSecond,
-              comparableSpeedValues,
-            ),
+            rawValue: getModelComparisonScore({
+              value: benchmark.outputTokensPerSecond,
+              comparisonValues: comparableSpeedValues,
+            }),
             value: formatCompactNumber(benchmark.outputTokensPerSecond, 0),
             icon: IconGauge,
-            indicatorColor: getModelComparisonColor(
-              benchmark.outputTokensPerSecond,
-              comparableSpeedValues,
-            ),
-            description: withModelRanking(
-              t`Output tokens per second`,
-              benchmark.outputTokensPerSecond,
-              comparableSpeedValues,
-            ),
+            indicatorColor: getModelComparisonColor({
+              value: benchmark.outputTokensPerSecond,
+              comparisonValues: comparableSpeedValues,
+            }),
+            description: withModelRanking({
+              description: t`Output tokens per second`,
+              value: benchmark.outputTokensPerSecond,
+              comparisonValues: comparableSpeedValues,
+            }),
           },
         ]
       : []),
@@ -140,27 +140,27 @@ export const getAiModelComparisonItems = ({
             comparisonLabel: t`Cost index compared with available models`,
             label: t`Cost index`,
             maximumValue: 100,
-            rawValue: getModelComparisonScore(
-              benchmark.costPerTask,
-              comparableCostPerTaskValues,
-              true,
-            ),
+            rawValue: getModelComparisonScore({
+              value: benchmark.costPerTask,
+              comparisonValues: comparableCostPerTaskValues,
+              lowerIsBetter: true,
+            }),
             value: getCostCategory(
               benchmark.costPerTask,
               comparableCostPerTaskValues,
             ),
             icon: IconCurrencyDollar,
-            indicatorColor: getModelComparisonColor(
-              benchmark.costPerTask,
-              comparableCostPerTaskValues,
-              true,
-            ),
-            description: withModelRanking(
-              t`Relative cost across available models`,
-              benchmark.costPerTask,
-              comparableCostPerTaskValues,
-              true,
-            ),
+            indicatorColor: getModelComparisonColor({
+              value: benchmark.costPerTask,
+              comparisonValues: comparableCostPerTaskValues,
+              lowerIsBetter: true,
+            }),
+            description: withModelRanking({
+              description: t`Relative cost across available models`,
+              value: benchmark.costPerTask,
+              comparisonValues: comparableCostPerTaskValues,
+              lowerIsBetter: true,
+            }),
           },
         ]
       : []),
@@ -170,26 +170,26 @@ export const getAiModelComparisonItems = ({
       ? [
           {
             comparisonLabel: t`Input pricing compared with available models`,
-            indicatorColor: getModelComparisonColor(
-              model.inputCostPerMillionTokens,
-              comparableInputPricingValues,
-              true,
-            ),
+            indicatorColor: getModelComparisonColor({
+              value: model.inputCostPerMillionTokens,
+              comparisonValues: comparableInputPricingValues,
+              lowerIsBetter: true,
+            }),
             label: t`Input cost`,
             maximumValue: 100,
-            rawValue: getModelComparisonScore(
-              model.inputCostPerMillionTokens,
-              comparableInputPricingValues,
-              true,
-            ),
+            rawValue: getModelComparisonScore({
+              value: model.inputCostPerMillionTokens,
+              comparisonValues: comparableInputPricingValues,
+              lowerIsBetter: true,
+            }),
             value: formatDollarPrice(model.inputCostPerMillionTokens),
             icon: IconArrowDown,
-            description: withModelRanking(
-              t`Price per million input tokens billed with Twenty credits`,
-              model.inputCostPerMillionTokens,
-              comparableInputPricingValues,
-              true,
-            ),
+            description: withModelRanking({
+              description: t`Price per million input tokens billed with Twenty credits`,
+              value: model.inputCostPerMillionTokens,
+              comparisonValues: comparableInputPricingValues,
+              lowerIsBetter: true,
+            }),
           },
         ]
       : []),
@@ -198,26 +198,26 @@ export const getAiModelComparisonItems = ({
       ? [
           {
             comparisonLabel: t`Output pricing compared with available models`,
-            indicatorColor: getModelComparisonColor(
-              model.outputCostPerMillionTokens,
-              comparableOutputPricingValues,
-              true,
-            ),
+            indicatorColor: getModelComparisonColor({
+              value: model.outputCostPerMillionTokens,
+              comparisonValues: comparableOutputPricingValues,
+              lowerIsBetter: true,
+            }),
             label: t`Output cost`,
             maximumValue: 100,
-            rawValue: getModelComparisonScore(
-              model.outputCostPerMillionTokens,
-              comparableOutputPricingValues,
-              true,
-            ),
+            rawValue: getModelComparisonScore({
+              value: model.outputCostPerMillionTokens,
+              comparisonValues: comparableOutputPricingValues,
+              lowerIsBetter: true,
+            }),
             value: formatDollarPrice(model.outputCostPerMillionTokens),
             icon: IconArrowUp,
-            description: withModelRanking(
-              t`Price per million output tokens billed with Twenty credits`,
-              model.outputCostPerMillionTokens,
-              comparableOutputPricingValues,
-              true,
-            ),
+            description: withModelRanking({
+              description: t`Price per million output tokens billed with Twenty credits`,
+              value: model.outputCostPerMillionTokens,
+              comparisonValues: comparableOutputPricingValues,
+              lowerIsBetter: true,
+            }),
           },
         ]
       : []),

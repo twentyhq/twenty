@@ -3,11 +3,15 @@ import { type ArtificialAnalysisModel } from 'src/engine/metadata-modules/ai/ai-
 const normalizeModelIdentifier = (value: string): string =>
   value.toLowerCase().replace(/[ ._-]/g, '');
 
-export const findArtificialAnalysisModel = (
-  models: ArtificialAnalysisModel[],
-  modelId: string,
-  label: string,
-): ArtificialAnalysisModel | undefined => {
+export const findArtificialAnalysisModel = ({
+  models,
+  modelId,
+  label,
+}: {
+  models: ArtificialAnalysisModel[];
+  modelId: string;
+  label: string;
+}): ArtificialAnalysisModel | undefined => {
   const modelName = modelId.substring(modelId.lastIndexOf('/') + 1);
   const identifiers = [modelName, label].map(normalizeModelIdentifier);
   const matches = models.filter((model) =>

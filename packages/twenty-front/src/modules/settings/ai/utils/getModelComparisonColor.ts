@@ -1,11 +1,15 @@
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getModelComparisonPercentile } from '@/settings/ai/utils/getModelComparisonPercentile';
 
-export const getModelComparisonColor = (
-  value: number,
-  comparisonValues: number[],
+export const getModelComparisonColor = ({
+  value,
+  comparisonValues,
   lowerIsBetter = false,
-): string => {
+}: {
+  value: number;
+  comparisonValues: number[];
+  lowerIsBetter?: boolean;
+}): string => {
   const values = comparisonValues.filter(
     (comparisonValue) =>
       Number.isFinite(comparisonValue) && comparisonValue >= 0,

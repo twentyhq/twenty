@@ -71,6 +71,7 @@ it('opens model information on keyboard focus and closes it on blur', async () =
         <SettingsAiModelsTable
           models={[model]}
           isChecked={() => true}
+          comparisonModels={[model]}
           onToggle={onToggle}
           anchorPrefix="keyboard-model"
         />
@@ -79,6 +80,15 @@ it('opens model information on keyboard focus and closes it on blur', async () =
     </Provider>,
   );
   await user.tab();
+  expect(
+    screen.getByRole('button', { name: 'Model A' }),
+  ).toHaveAccessibleDescription(
+    'Intelligence: 60. Artificial Analysis Intelligence Index',
+  );
+  expect(screen.getByRole('button', { name: 'Model A' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
   await screen.findByRole('tooltip');
   await user.keyboard('{Enter}');
   expect(onToggle).toHaveBeenCalledWith('model', true);

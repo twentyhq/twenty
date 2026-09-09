@@ -10,6 +10,9 @@ import { Checkbox, IconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';
+import { billingState } from '@/client-config/states/billingState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getAiModelComparisonItems } from '@/settings/ai/utils/getAiModelComparisonItems';
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';
 import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -54,7 +57,7 @@ const getProviderDisplayLabel = (model: AiModelSummary): string =>
 
 type SettingsAiModelsTableProps<TModel extends AiModelSummary> = {
   models: TModel[];
-  comparisonModels?: TModel[];
+  comparisonModels: TModel[];
   isChecked: (model: TModel) => boolean;
   isDisabled?: (model: TModel) => boolean;
   onToggle: (modelId: string, isCurrentlyChecked: boolean) => void;
@@ -66,7 +69,7 @@ type SettingsAiModelsTableProps<TModel extends AiModelSummary> = {
 
 export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
   models,
-  comparisonModels = models,
+  comparisonModels,
   isChecked,
   isDisabled,
   onToggle,
@@ -76,6 +79,7 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
   anchorPrefix,
 }: SettingsAiModelsTableProps<TModel>) => {
   const { theme } = useContext(ThemeContext);
+  const billing = useAtomStateValue(billingState);
   const hasRemove = isDefined(onRemove);
   const gridColumns = hasRemove
     ? showProviderColumn
@@ -127,6 +131,17 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
             const safeId = sanitizeIdForSelector(model.modelId);
             const checked = isChecked(model);
             const disabled = isDisabled?.(model) ?? false;
+            const { benchmarkItems, pricingItems } = getAiModelComparisonItems({
+              requestedModel: model,
+              comparisonModels,
+              isBillingEnabled: billing?.isBillingEnabled ?? false,
+            });
+            const modelDescription = [...benchmarkItems, ...pricingItems]
+              .map(
+                (item) =>
+                  `${item.label}: ${item.value}. ${item.description ?? ''}`,
+              )
+              .join(' ');
 
             return (
               <Fragment key={model.modelId}>
@@ -154,6 +169,14 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
                           : undefined
                       }
                       tabIndex={anchorPrefix ? 0 : undefined}
+                      role={anchorPrefix ? 'button' : undefined}
+                      aria-pressed={anchorPrefix ? checked : undefined}
+                      aria-disabled={anchorPrefix ? disabled : undefined}
+                      aria-describedby={
+                        anchorPrefix
+                          ? `${anchorPrefix}-${safeId}-description`
+                          : undefined
+                      }
                       onKeyDown={(event) => {
                         if (!disabled && ['Enter', ' '].includes(event.key)) {
                           event.preventDefault();
@@ -171,6 +194,14 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
                         }
                       />
                       <StyledModelLabel>{model.label}</StyledModelLabel>
+                      {anchorPrefix && (
+                        <span
+                          id={`${anchorPrefix}-${safeId}-description`}
+                          hidden
+                        >
+                          {modelDescription}
+                        </span>
+                      )}
                       {disabled && model.isDeprecated && (
                         <StyledDeprecatedSuffix>
                           · <Trans>Deprecated</Trans>

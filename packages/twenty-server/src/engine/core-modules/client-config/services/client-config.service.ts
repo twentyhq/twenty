@@ -175,11 +175,11 @@ export class ClientConfigService {
 
     if (isDefined(benchmarkCatalog)) {
       for (const model of aiModels) {
-        const benchmark = findArtificialAnalysisModel(
-          benchmarkCatalog.models,
-          model.modelId,
-          model.label,
-        );
+        const benchmark = findArtificialAnalysisModel({
+          models: benchmarkCatalog.models,
+          modelId: model.modelId,
+          label: model.label,
+        });
 
         if (isDefined(benchmark)) {
           model.benchmark = {
