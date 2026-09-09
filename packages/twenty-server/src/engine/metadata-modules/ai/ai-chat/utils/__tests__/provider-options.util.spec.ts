@@ -23,8 +23,6 @@ describe('provider-options.util', () => {
     });
 
     it('keeps the thinking config the executor passes for Anthropic', () => {
-      // Replacing the anthropic object with the cache control used to drop
-      // this, so the model ran without reasoning whatever the config said.
       expect(
         getCallLevelProviderOptions({
           sdkPackage: AI_SDK_ANTHROPIC,

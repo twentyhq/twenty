@@ -40,8 +40,6 @@ describe('getClaudeReasoningConfig', () => {
   });
 
   it('keeps a fixed budget for an id that names no version', () => {
-    // A custom provider alias got a budget before this rule existed, and
-    // nothing here can tell which generation it points at.
     expect(getClaudeReasoningConfig('my-provider/claude-custom-alias')).toEqual(
       FIXED_BUDGET,
     );

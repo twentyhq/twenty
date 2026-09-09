@@ -28,9 +28,6 @@ export const getCallLevelProviderOptions = ({
   providerOptions?: ProviderOptions;
   promptCacheKey?: string;
 }): ProviderOptions | undefined => {
-  // The call-level keys join whatever the caller already set for that
-  // provider. Replacing the provider object instead dropped the reasoning
-  // config the agent executor passes in, so Anthropic never actually thought.
   switch (sdkPackage) {
     case AI_SDK_ANTHROPIC:
       return {

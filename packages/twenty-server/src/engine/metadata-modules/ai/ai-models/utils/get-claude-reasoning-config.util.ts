@@ -1,5 +1,11 @@
+import { type AnthropicLanguageModelOptions } from '@ai-sdk/anthropic';
+import { isDefined } from 'twenty-shared/utils';
+
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
-import { type ClaudeReasoningConfig } from 'src/engine/metadata-modules/ai/ai-models/types/claude-reasoning-config.type';
+
+type ClaudeReasoningConfig = NonNullable<
+  AnthropicLanguageModelOptions['thinking']
+>;
 
 const CLAUDE_VERSION_PATTERN =
   /claude-(?:opus|sonnet|haiku|fable|mythos)-(\d+)(?:-(\d+))?/;
@@ -10,14 +16,14 @@ const FIXED_BUDGET: ClaudeReasoningConfig = {
 };
 
 // Claude 4.6 and later think adaptively and, from 4.7 on, reject a fixed
-// budget with a 400; Haiku 4.5 and everything older still require one. An id
-// that names no version keeps the budget it has always been sent.
+// budget; Haiku 4.5 and older still require one. An id that names no version
+// cannot be placed, so it keeps the budget.
 export const getClaudeReasoningConfig = (
   modelId: string,
 ): ClaudeReasoningConfig => {
   const match = CLAUDE_VERSION_PATTERN.exec(modelId);
 
-  if (match === null) {
+  if (!isDefined(match)) {
     return FIXED_BUDGET;
   }
 
