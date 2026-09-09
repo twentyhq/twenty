@@ -18,6 +18,9 @@ const meta: Meta<typeof ToasterExample> = {
 export default meta;
 type Story = StoryObj<typeof ToasterExample>;
 
+const isMotionEnabled = () =>
+  !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 export const Default: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 400, height: 200 } },
@@ -90,7 +93,9 @@ export const Dismissal: Story = {
       ).toBe('1'),
     );
     await userEvent.click(body.getByRole('button', { name: 'Close' }));
-    expect(toast).toBeInTheDocument();
+    if (isMotionEnabled()) {
+      expect(toast).toBeInTheDocument();
+    }
     expect(args.onClose).toHaveBeenCalledOnce();
     await waitFor(() => expect(toast).not.toBeInTheDocument());
     expect(args.onClose).toHaveBeenCalledOnce();
@@ -326,13 +331,15 @@ export const StackReflow: Story = {
     await userEvent.click(
       within(middle).getByRole('button', { name: 'Close' }),
     );
-    expect(middle).toBeInTheDocument();
-    await waitFor(() => {
-      const distance =
-        (movingToast.getBoundingClientRect().top - movingTop) * direction;
-      expect(distance).toBeGreaterThan(1);
-      expect(distance).toBeLessThan(gap - 1);
-    });
+    if (isMotionEnabled()) {
+      expect(middle).toBeInTheDocument();
+      await waitFor(() => {
+        const distance =
+          (movingToast.getBoundingClientRect().top - movingTop) * direction;
+        expect(distance).toBeGreaterThan(1);
+        expect(distance).toBeLessThan(gap - 1);
+      });
+    }
     await waitFor(() => expect(middle).not.toBeInTheDocument());
     expect(movingToast.getBoundingClientRect().top).toBeCloseTo(
       movingTop + gap * direction,
@@ -361,7 +368,9 @@ export const ReopenDuringExit: Story = {
     const [toast, secondToast, thirdToast] = body.getAllByRole('status');
     const id = toast.id;
     await userEvent.click(within(toast).getByRole('button', { name: 'Close' }));
-    expect(toast).toBeInTheDocument();
+    if (isMotionEnabled()) {
+      expect(toast).toBeInTheDocument();
+    }
     await userEvent.click(
       canvas.getByRole('button', { name: 'Restore last notification' }),
     );
