@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -21,13 +22,14 @@ import { CalendarWebhookSubscriptionService } from 'src/modules/connected-accoun
 import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
 import { WebhookSubscriptionExceptionHandlerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service';
 import { WebhookSubscriptionStatusService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-status.service';
+import { WebhookSubscriptionWorkspaceSyncService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-workspace-sync.service';
 import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
-import { WorkspaceWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-webhook-subscription.service';
 import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/webhook-subscription-manager/webhook-subscription-manager.module';
 
 @Module({
   imports: [
     WebhookSubscriptionManagerModule,
+    CoreEntityCacheModule,
     FeatureFlagModule,
     MetricsModule,
     WorkspaceIteratorModule,
@@ -40,7 +42,7 @@ import { WebhookSubscriptionManagerModule } from 'src/modules/connected-account/
   ],
   providers: [
     WorkspaceActivationService,
-    WorkspaceWebhookSubscriptionService,
+    WebhookSubscriptionWorkspaceSyncService,
     WebhookSubscriptionWorkspaceActivationListener,
     WebhookSubscriptionStatusService,
     WebhookSubscriptionExceptionHandlerService,

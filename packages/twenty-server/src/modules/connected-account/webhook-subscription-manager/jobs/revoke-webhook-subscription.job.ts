@@ -5,7 +5,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
 import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
-import { type RevokeWebhookSubscriptionJobData } from 'src/modules/connected-account/webhook-subscription-manager/types/revoke-webhook-subscription-job-data.type';
+import { type WebhookSubscriptionChannelReference } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-channel-reference.type';
 
 @Processor(MessageQueue.webhookQueue)
 export class RevokeWebhookSubscriptionJob {
@@ -15,7 +15,7 @@ export class RevokeWebhookSubscriptionJob {
   ) {}
 
   @Process(RevokeWebhookSubscriptionJob.name)
-  async handle(data: RevokeWebhookSubscriptionJobData): Promise<void> {
+  async handle(data: WebhookSubscriptionChannelReference): Promise<void> {
     const { channelType, channelId, workspaceId } = data;
 
     switch (channelType) {

@@ -1,6 +1,6 @@
 import { WebhookSubscriptionChannelType } from 'twenty-shared/types';
 
-export type RevokeWebhookSubscriptionJobData = {
+export type WebhookSubscriptionChannelReference = {
   channelType: WebhookSubscriptionChannelType;
   channelId: string;
   workspaceId: string;

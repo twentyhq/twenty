@@ -12,7 +12,7 @@ import { type WorkspaceSuspendedEvent } from 'src/engine/core-modules/workspace/
 import { WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-job-retry-limit.constant';
 import { SyncWorkspaceWebhookSubscriptionsJob } from 'src/modules/connected-account/webhook-subscription-manager/jobs/sync-workspace-webhook-subscriptions.job';
 import { type SyncWorkspaceWebhookSubscriptionsJobData } from 'src/modules/connected-account/webhook-subscription-manager/types/sync-workspace-webhook-subscriptions-job-data.type';
-import { type WorkspaceWebhookSubscriptionAction } from 'src/modules/connected-account/webhook-subscription-manager/types/workspace-webhook-subscription-action.type';
+import { type WebhookSubscriptionSyncAction } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-sync-action.type';
 
 @Injectable()
 export class WebhookSubscriptionWorkspaceActivationListener {
@@ -38,7 +38,7 @@ export class WebhookSubscriptionWorkspaceActivationListener {
 
   private async enqueueSync(
     workspaceId: string,
-    action: WorkspaceWebhookSubscriptionAction,
+    action: WebhookSubscriptionSyncAction,
   ): Promise<void> {
     await this.webhookQueueService
       .add<SyncWorkspaceWebhookSubscriptionsJobData>(

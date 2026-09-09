@@ -17,10 +17,10 @@ import { REVOCABLE_WEBHOOK_SUBSCRIPTION_STATUSES } from 'src/modules/connected-a
 import { WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-job-retry-limit.constant';
 import { CreateWebhookSubscriptionJob } from 'src/modules/connected-account/webhook-subscription-manager/jobs/create-webhook-subscription.job';
 import { RevokeWebhookSubscriptionJob } from 'src/modules/connected-account/webhook-subscription-manager/jobs/revoke-webhook-subscription.job';
-import { type WorkspaceWebhookSubscriptionChannel } from 'src/modules/connected-account/webhook-subscription-manager/types/workspace-webhook-subscription-channel.type';
+import { type WebhookSubscriptionChannelReference } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-channel-reference.type';
 
 @Injectable()
-export class WorkspaceWebhookSubscriptionService {
+export class WebhookSubscriptionWorkspaceSyncService {
   constructor(
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
@@ -66,7 +66,7 @@ export class WorkspaceWebhookSubscriptionService {
     workspaceId: string;
     webhookSubscriptionStatuses: WebhookSubscriptionStatus[];
     syncEnabledOnly?: boolean;
-  }): Promise<WorkspaceWebhookSubscriptionChannel[]> {
+  }): Promise<WebhookSubscriptionChannelReference[]> {
     const where = {
       workspaceId,
       webhookSubscriptionStatus: In(webhookSubscriptionStatuses),
@@ -98,7 +98,7 @@ export class WorkspaceWebhookSubscriptionService {
 
   private async enqueue(
     jobName: string,
-    channels: WorkspaceWebhookSubscriptionChannel[],
+    channels: WebhookSubscriptionChannelReference[],
   ): Promise<void> {
     await this.webhookQueueService.bulkAdd(
       jobName,
