@@ -103,7 +103,7 @@ export class LogicFunctionPrebuiltWarmUpService {
           isLogicFunctionReadyForPrebuiltInstall(flatLogicFunction),
       );
 
-    const failedLogicFunctionIds: string[] = [];
+    const failures: string[] = [];
 
     for (const flatLogicFunctionsChunk of chunk(
       flatLogicFunctions,
@@ -118,19 +118,19 @@ export class LogicFunctionPrebuiltWarmUpService {
         ),
       );
 
-      failedLogicFunctionIds.push(
-        ...flatLogicFunctionsChunk
-          .filter(
-            (_flatLogicFunction, index) => results[index].status === 'rejected',
-          )
-          .map((flatLogicFunction) => flatLogicFunction.id),
-      );
+      results.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          failures.push(
+            `${flatLogicFunctionsChunk[index].id}: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
+          );
+        }
+      });
     }
 
-    if (failedLogicFunctionIds.length > 0) {
+    if (failures.length > 0) {
       throw new LogicFunctionException(
-        `Failed to warm up ${failedLogicFunctionIds.length} of ${flatLogicFunctions.length} prebuilt logic functions ` +
-          `for application ${applicationId} in workspace ${workspaceId}: ${failedLogicFunctionIds.join(', ')}`,
+        `Failed to warm up ${failures.length} of ${flatLogicFunctions.length} prebuilt logic functions ` +
+          `for application ${applicationId} in workspace ${workspaceId}: ${failures.join('; ')}`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
       );
     }

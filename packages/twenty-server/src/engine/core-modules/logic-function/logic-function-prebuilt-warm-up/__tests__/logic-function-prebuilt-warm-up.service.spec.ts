@@ -242,7 +242,9 @@ describe('LogicFunctionPrebuiltWarmUpService', () => {
         applicationId: APPLICATION_ID,
         logicFunctionUniversalIdentifiers: ALL_UNIVERSAL_IDENTIFIERS,
       }),
-    ).rejects.toThrow('Failed to warm up 1 of 3 prebuilt logic functions');
+    ).rejects.toThrow(
+      /Failed to warm up 1 of 3 prebuilt logic functions .*: failing: Failed to install the prebuilt bundle for function 'failing'/,
+    );
 
     expect(driver.installPrebuiltBundle).toHaveBeenCalledTimes(3);
   });
