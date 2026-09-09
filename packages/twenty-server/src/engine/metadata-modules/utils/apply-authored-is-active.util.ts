@@ -9,8 +9,8 @@ type FlatEntityWithIsActive = {
 
 // The owner writes the column, as for any of its properties; another author
 // writes its entry and readers resolve the effective value from there.
-// isActive carries no foreign key, so the universal twin of the blob takes
-// the same entry change without a converter.
+// isActive carries no foreign key, so universalOverrides takes the same entry
+// change without a converter.
 export const applyAuthoredIsActive = <T extends FlatEntityWithIsActive>({
   flatEntity,
   isActive,
@@ -36,7 +36,7 @@ export const applyAuthoredIsActive = <T extends FlatEntityWithIsActive>({
     ownerApplicationUniversalIdentifier:
       flatEntity.applicationUniversalIdentifier,
   };
-  const computeIsActiveBlob = (existingOverrides: unknown) =>
+  const computeIsActiveOverrides = (existingOverrides: unknown) =>
     computeMetadataOverridesBlob<{ isActive: boolean }>({
       overridableProperties: ['isActive'],
       updatedProperties: { isActive },
@@ -48,10 +48,10 @@ export const applyAuthoredIsActive = <T extends FlatEntityWithIsActive>({
 
   return {
     ...flatEntity,
-    overrides: computeIsActiveBlob(flatEntity.overrides),
+    overrides: computeIsActiveOverrides(flatEntity.overrides),
     ...('universalOverrides' in flatEntity
       ? {
-          universalOverrides: computeIsActiveBlob(
+          universalOverrides: computeIsActiveOverrides(
             flatEntity.universalOverrides,
           ),
         }

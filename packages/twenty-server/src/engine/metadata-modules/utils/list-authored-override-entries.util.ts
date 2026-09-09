@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { isFlatOverridesBlob } from 'src/engine/metadata-modules/utils/is-flat-overrides-blob.util';
+import { isLegacyNonAuthoredOverride } from 'src/engine/metadata-modules/utils/is-legacy-non-authored-override.util';
 import { computeOverrideAuthorOrder } from 'src/engine/metadata-modules/utils/compute-override-author-order.util';
 import { normalizeAuthoredOverrides } from 'src/engine/metadata-modules/utils/normalize-authored-overrides.util';
 import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/utils/override-author-context.type';
@@ -39,9 +39,9 @@ export const listAuthoredOverrideEntries = <TEntry>({
       .filter(isDefined);
   }
 
-  // A flat blob predates author keys and was written by the custom
+  // A legacy non-authored override predates author keys and was written by the custom
   // application, so it reads as the one non-owner entry.
-  if (isFlatOverridesBlob(overrides)) {
+  if (isLegacyNonAuthoredOverride(overrides)) {
     return [overrides as TEntry];
   }
 

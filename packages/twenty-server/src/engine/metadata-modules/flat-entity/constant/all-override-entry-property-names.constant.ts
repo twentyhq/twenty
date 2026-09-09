@@ -5,7 +5,7 @@ type OverridablePropertyConfiguration = {
   universalProperty?: string;
 };
 
-// Every key an override entry can carry, in flat and universal form. A blob
+// Every key an override entry can carry, in flat and universal form. Overrides
 // whose keys include one of these is a flat entry rather than an author map:
 // author keys are application universal identifiers, which never collide with
 // a property name.

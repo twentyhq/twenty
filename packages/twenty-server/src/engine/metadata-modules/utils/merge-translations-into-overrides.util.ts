@@ -16,9 +16,9 @@ const isSafeObjectKey = (key: string): boolean =>
 
 // Mirrors computeMetadataOverridesBlob for the nested translations key of the
 // author's entry: an empty value deletes the translation, empty locale groups,
-// an empty entry and an empty blob collapse so a fully-reverted entity stores
+// an empty entry and empty overrides collapse so a fully-reverted entity stores
 // no overrides at all. Custom entities call this too: their property edits
-// live in base columns, but per-locale translations still belong in the blob.
+// live in base columns, but per-locale translations still belong in overrides.
 export const mergeTranslationsIntoOverrides = <
   TEntry = Record<string, unknown>,
 >({
