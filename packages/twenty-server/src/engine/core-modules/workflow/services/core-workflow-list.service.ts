@@ -9,6 +9,7 @@ import {
   encodeCursorData,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { type CoreWorkflowConnectionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-connection.dto';
+import { type CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
 import {
   CoreWorkflowOrderByDirection,
   CoreWorkflowOrderByField,
@@ -24,6 +25,7 @@ type CoreWorkflowRow = {
   id: string;
   cursorSortValue: string | null;
   name: string | null;
+  lastPublishedVersionId: string | null;
   applicationId: string | null;
   workspaceWorkflowId: string | null;
   updatedAt: Date;
@@ -58,7 +60,7 @@ const SORT_COLUMN_BY_FIELD: Record<
   },
 };
 
-const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."updatedAt"`;
+const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."updatedAt", c."lastPublishedVersionId"`;
 
 const buildWorkflowVersionsJoinClause = (schemaName: string) =>
   `LEFT JOIN ${schemaName}."workflow" wf
@@ -130,6 +132,7 @@ export class CoreWorkflowListService {
          c.id,
          ${cursorExpression} AS "cursorSortValue",
          c.name,
+         c."lastPublishedVersionId",
          c."applicationId",
          min(wf.id::text) AS "workspaceWorkflowId",
          c."updatedAt",
@@ -166,6 +169,7 @@ export class CoreWorkflowListService {
           hasActiveVersion: row.hasActiveVersion,
           hasDeactivatedVersion: row.hasDeactivatedVersion,
         }),
+        lastPublishedVersionId: row.lastPublishedVersionId,
         applicationId: row.applicationId,
         workspaceWorkflowId: row.workspaceWorkflowId,
         updatedAt: row.updatedAt.toISOString(),
@@ -183,6 +187,56 @@ export class CoreWorkflowListService {
         hasNextPage,
       },
       totalCount,
+    };
+  }
+
+  async findOneByWorkspaceWorkflowId({
+    workspaceId,
+    workspaceWorkflowId,
+  }: {
+    workspaceId: string;
+    workspaceWorkflowId: string;
+  }): Promise<CoreWorkflowDTO | null> {
+    const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
+
+    const rows: CoreWorkflowRow[] = await this.coreDataSource.query(
+      `SELECT
+         c.id,
+         null AS "cursorSortValue",
+         c.name,
+         c."lastPublishedVersionId",
+         c."applicationId",
+         min(wf.id::text) AS "workspaceWorkflowId",
+         c."updatedAt",
+         coalesce(bool_or(v.status = 'DRAFT'), false) AS "hasDraftVersion",
+         coalesce(bool_or(v.status = 'ACTIVE'), false) AS "hasActiveVersion",
+         coalesce(bool_or(v.status = 'DEACTIVATED'), false) AS "hasDeactivatedVersion"
+       FROM core."workflow" c
+       ${buildWorkflowVersionsJoinClause(schemaName)}
+       WHERE c."workspaceId" = $1 AND wf.id = $2
+       GROUP BY ${GROUPED_WORKFLOW_COLUMNS}, c."applicationId"
+       LIMIT 1`,
+      [workspaceId, workspaceWorkflowId],
+    );
+
+    const [row] = rows;
+
+    if (!isDefined(row)) {
+      return null;
+    }
+
+    return {
+      id: row.id,
+      name: row.name,
+      statuses: computeCoreWorkflowStatuses({
+        hasDraftVersion: row.hasDraftVersion,
+        hasActiveVersion: row.hasActiveVersion,
+        hasDeactivatedVersion: row.hasDeactivatedVersion,
+      }),
+      lastPublishedVersionId: row.lastPublishedVersionId,
+      applicationId: row.applicationId,
+      workspaceWorkflowId: row.workspaceWorkflowId,
+      updatedAt: row.updatedAt.toISOString(),
     };
   }
 
