@@ -26,6 +26,7 @@ import {
   type ObjectManifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
+  type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
   SYSTEM_VIEW_KEYS,
   type TranslationsManifest,
@@ -83,6 +84,8 @@ const TICKET_RECORD_PAGE_EXTRA_NOTES_WIDGET_ID =
   '7e3d1c2b-0026-4a7b-8c9d-0e1f2a3b4c5d';
 const COMPANY_RECORD_PAGE_TAGLINE_TAB_ID =
   '7e3d1c2b-0027-4a7b-8c9d-0e1f2a3b4c5d';
+const TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID =
+  '7e3d1c2b-0028-4a7b-8c9d-0e1f2a3b4c5d';
 
 const ENGINE_DERIVED_FIELD_NAMES = [
   'id',
@@ -153,6 +156,10 @@ const buildIdentifierNames = (): Map<string, string> => {
     [
       COMPANY_RECORD_PAGE_TAGLINE_TAB_ID,
       'STANDARD_COMPANY_RECORD_PAGE_TAGLINE_TAB',
+    ],
+    [
+      TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID,
+      'TICKET_RECORD_PAGE_HOME_DOCS_WIDGET',
     ],
     [
       getIndexFieldUniversalIdentifier({
@@ -661,6 +668,22 @@ const companyRecordPageTaglineTab: PageLayoutTabManifest = {
   layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
 };
 
+const ticketRecordPageHomeDocsWidget: StandalonePageLayoutWidgetManifest = {
+  universalIdentifier: TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID,
+  pageLayoutTabUniversalIdentifier: getSystemPageLayoutTabUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier: TEST_APP_ID,
+    pageLayoutUniversalIdentifier: TICKET_RECORD_PAGE_LAYOUT_ID,
+    title: 'Home',
+  }),
+  title: 'Docs',
+  type: 'IFRAME',
+  position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 1 },
+  configuration: {
+    configurationType: 'IFRAME',
+    url: 'https://example.com/tickets/docs',
+  },
+};
+
 const manifest = buildBaseManifest({
   appId: TEST_APP_ID,
   roleId: TEST_ROLE_ID,
@@ -684,6 +707,7 @@ const manifest = buildBaseManifest({
     viewFields: [projectIndexViewField],
     pageLayouts: [ticketPageLayout, ticketBoardLayout],
     pageLayoutTabs: [ticketRecordPageExtraTab, companyRecordPageTaglineTab],
+    pageLayoutWidgets: [ticketRecordPageHomeDocsWidget],
   },
 });
 
@@ -833,6 +857,9 @@ describe('Application export - data model', () => {
       ApplicationExportCoverageStatus.ENGINE_DERIVED,
     );
     expect(statusOf(TICKET_RECORD_PAGE_EXTRA_TAB_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID)).toBe(
       ApplicationExportCoverageStatus.EXPORTED,
     );
   }, 60000);
