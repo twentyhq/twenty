@@ -5,11 +5,11 @@ export const readLruEntry = <Key, Value>({
   map: Map<Key, Value>;
   key: Key;
 }): Value | undefined => {
-  if (!map.has(key)) {
+  const value = map.get(key);
+
+  if (value === undefined) {
     return undefined;
   }
-
-  const value = map.get(key) as Value;
 
   map.delete(key);
   map.set(key, value);
@@ -34,7 +34,7 @@ export const writeLruEntry = <Key, Value>({
   while (map.size > maxEntries) {
     const leastRecentlyUsed = map.keys().next();
 
-    if (leastRecentlyUsed.done === true) {
+    if (leastRecentlyUsed.done) {
       return;
     }
 
