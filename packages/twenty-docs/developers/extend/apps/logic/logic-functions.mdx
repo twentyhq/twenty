@@ -344,7 +344,7 @@ When the caller must read the response body on the same request (challenge hands
 
 #### Database event trigger payload
 
-When a database event trigger invokes your logic function, it receives one `DatabaseEventPayload` per changed record (or a `DatabaseEventBatchPayload` covering up to `batchSize` records when batching is enabled). The payload combines metadata about the source workspace and object with the record-level event.
+When a database event trigger invokes your logic function, it receives one `DatabaseEventPayload` per changed record (or a `DatabaseEventBatchPayload` covering several records when `batchMode` is enabled). The payload combines metadata about the source workspace and object with the record-level event.
 
 ```ts
 import type {
@@ -392,7 +392,7 @@ For permanent deletes, use `.destroyed`.
 |----------|-------------|
 | `eventName` | Event to listen on, such as `person.updated`. Supports `*` for the object name, the operation, or both. |
 | `updatedFields` | Optional list of field names. On `.updated` events, only changes touching one of them trigger the function. |
-| `batchSize` | Optional integer greater than or equal to 1. When set, the handler is called once per chunk of up to `batchSize` records instead of once per record. |
+| `batchMode` | Optional boolean. When `true`, the handler is called once per batch of records instead of once per record. The server decides how many records a batch holds. |
 
 Created event example:
 
@@ -462,14 +462,14 @@ const handler = async (event: PersonDestroyedEvent) => {
 
 #### Batching database events
 
-A bulk write emits many events at once: importing a mailbox, for instance, can update thousands of records in a single operation, and one call per record floods the queue. Set `batchSize` to receive them together:
+A bulk write emits many events at once: importing a mailbox, for instance, can update thousands of records in a single operation, and one call per record floods the queue. Set `batchMode` to receive them together:
 
 ```ts
 export default defineLogicFunction({
   ...,
   databaseEventTriggerSettings: {
     eventName: 'person.updated',
-    batchSize: 100,
+    batchMode: true,
   },
 });
 ```
@@ -490,9 +490,13 @@ const handler = async (batch: PeopleUpdatedBatch) => {
 };
 ```
 
-Events are grouped by the user who caused them before being chunked, so every call covers a single actor and `context.workspaceMemberId` stays meaningful. `updatedFields` filtering is applied before chunking, so a batch only contains records you asked for. The server caps `batchSize` at its own maximum, which means a batch can be smaller than requested but never larger.
+<Note>
+Batch size is not something a handler can rely on. The server decides how many events a call carries, and a batch holds anything from a single event up to that maximum, depending on how many the originating write produced. Write the handler to loop over `events` whatever its length.
+</Note>
 
-Without `batchSize`, the handler keeps receiving one `DatabaseEventPayload` per record.
+Events are grouped by the user who caused them before being batched, so every call covers a single actor and `context.workspaceMemberId` stays meaningful. `updatedFields` filtering is applied before batching, so a batch only contains records you asked for.
+
+Without `batchMode`, the handler keeps receiving one `DatabaseEventPayload` per record.
 
 #### Execution context
 

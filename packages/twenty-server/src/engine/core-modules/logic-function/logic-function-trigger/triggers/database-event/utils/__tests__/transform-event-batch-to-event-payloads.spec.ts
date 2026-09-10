@@ -1,5 +1,6 @@
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
+import { MAX_EVENTS_PER_TRIGGER_JOB } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/constants/max-events-per-trigger-job.constant';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -457,7 +458,7 @@ describe('transformEventBatchToEventPayloads', () => {
     });
   });
 
-  describe('batchSize', () => {
+  describe('batchMode', () => {
     const createEvents = (
       count: number,
       overrides: Partial<ObjectRecordEvent> = {},
@@ -469,7 +470,7 @@ describe('transformEventBatchToEventPayloads', () => {
     const getBatchedEvents = (payload: unknown) =>
       (payload as { events: ObjectRecordEvent[] }).events;
 
-    it('should keep one job per event when batchSize is not set', () => {
+    it('should keep one job per event when batchMode is not set', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch({
         events: createEvents(3),
       });
@@ -496,7 +497,30 @@ describe('transformEventBatchToEventPayloads', () => {
       });
     });
 
-    it('should emit one job per chunk when batchSize exactly divides the event count', () => {
+    it('should keep one job per event when batchMode is false', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch({
+        events: createEvents(3),
+      });
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions: [
+          createMockLogicFunction({
+            databaseEventTriggerSettings: {
+              eventName: 'company.updated',
+              batchMode: false,
+            },
+          }),
+        ],
+      });
+
+      expect(result).toHaveLength(3);
+      result.forEach((jobData) => {
+        expect(jobData.payload).not.toHaveProperty('events');
+      });
+    });
+
+    it('should emit a single job when every event fits one chunk', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch({
         events: createEvents(6),
       });
@@ -507,10 +531,45 @@ describe('transformEventBatchToEventPayloads', () => {
           createMockLogicFunction({
             databaseEventTriggerSettings: {
               eventName: 'company.updated',
-              batchSize: 2,
+              batchMode: true,
             },
           }),
         ],
+      });
+
+      expect(result).toHaveLength(1);
+      expect(
+        getBatchedEvents(result[0].payload).map((event) => event.recordId),
+      ).toEqual([
+        'record-1',
+        'record-2',
+        'record-3',
+        'record-4',
+        'record-5',
+        'record-6',
+      ]);
+      expect(result[0].payload).toMatchObject({
+        name: 'company.updated',
+        workspaceId: 'workspace-1',
+      });
+    });
+
+    it('should chunk by the configured maximum when it exactly divides the event count', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch({
+        events: createEvents(6),
+      });
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions: [
+          createMockLogicFunction({
+            databaseEventTriggerSettings: {
+              eventName: 'company.updated',
+              batchMode: true,
+            },
+          }),
+        ],
+        maxBatchSize: 2,
       });
 
       expect(result).toHaveLength(3);
@@ -523,10 +582,6 @@ describe('transformEventBatchToEventPayloads', () => {
         ['record-3', 'record-4'],
         ['record-5', 'record-6'],
       ]);
-      expect(result[0].payload).toMatchObject({
-        name: 'company.updated',
-        workspaceId: 'workspace-1',
-      });
     });
 
     it('should emit a smaller last job for the remainder', () => {
@@ -540,10 +595,11 @@ describe('transformEventBatchToEventPayloads', () => {
           createMockLogicFunction({
             databaseEventTriggerSettings: {
               eventName: 'company.updated',
-              batchSize: 2,
+              batchMode: true,
             },
           }),
         ],
+        maxBatchSize: 2,
       });
 
       expect(result).toHaveLength(3);
@@ -552,9 +608,9 @@ describe('transformEventBatchToEventPayloads', () => {
       ).toEqual([2, 2, 1]);
     });
 
-    it('should clamp a batchSize above the maximum', () => {
+    it('should never exceed the static ceiling even when the configured maximum is higher', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch({
-        events: createEvents(10),
+        events: createEvents(MAX_EVENTS_PER_TRIGGER_JOB + 1),
       });
 
       const result = transformEventBatchToEventPayloads({
@@ -563,17 +619,17 @@ describe('transformEventBatchToEventPayloads', () => {
           createMockLogicFunction({
             databaseEventTriggerSettings: {
               eventName: 'company.updated',
-              batchSize: 100_000,
+              batchMode: true,
             },
           }),
         ],
-        maxBatchSize: 4,
+        maxBatchSize: 100_000,
       });
 
-      expect(result).toHaveLength(3);
+      expect(result).toHaveLength(2);
       expect(
         result.map((jobData) => getBatchedEvents(jobData.payload).length),
-      ).toEqual([4, 4, 2]);
+      ).toEqual([MAX_EVENTS_PER_TRIGGER_JOB, 1]);
     });
 
     it('should fall back to one event per job when the maximum is set to 1', () => {
@@ -587,7 +643,7 @@ describe('transformEventBatchToEventPayloads', () => {
           createMockLogicFunction({
             databaseEventTriggerSettings: {
               eventName: 'company.updated',
-              batchSize: 100,
+              batchMode: true,
             },
           }),
         ],
@@ -628,7 +684,7 @@ describe('transformEventBatchToEventPayloads', () => {
           createMockLogicFunction({
             databaseEventTriggerSettings: {
               eventName: 'company.updated',
-              batchSize: 100,
+              batchMode: true,
             },
           }),
         ],
@@ -691,10 +747,11 @@ describe('transformEventBatchToEventPayloads', () => {
             databaseEventTriggerSettings: {
               eventName: 'company.updated',
               updatedFields: ['name'],
-              batchSize: 2,
+              batchMode: true,
             },
           }),
         ],
+        maxBatchSize: 2,
       });
 
       expect(result).toHaveLength(2);
@@ -717,10 +774,11 @@ describe('transformEventBatchToEventPayloads', () => {
           createMockLogicFunction({
             databaseEventTriggerSettings: {
               eventName: 'company.created',
-              batchSize: 2,
+              batchMode: true,
             },
           }),
         ],
+        maxBatchSize: 2,
       });
 
       expect(result).toHaveLength(2);
@@ -742,7 +800,7 @@ describe('transformEventBatchToEventPayloads', () => {
             id: 'function-2',
             databaseEventTriggerSettings: {
               eventName: 'company.updated',
-              batchSize: 4,
+              batchMode: true,
             },
           }),
         ],
@@ -777,7 +835,7 @@ describe('transformEventBatchToEventPayloads', () => {
             databaseEventTriggerSettings: {
               eventName: 'company.updated',
               updatedFields: ['name'],
-              batchSize: 10,
+              batchMode: true,
             },
           }),
         ],

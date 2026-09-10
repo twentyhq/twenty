@@ -47,7 +47,7 @@ export default defineLogicFunction({
     //   eventName: 'objectName.created',
     //   // Optional: receive one call per batch of events instead of one per event,
     //   // the handler payload then becomes { ...eventInfo, events: [...] }
-    //   batchSize: 100,
+    //   batchMode: true,
     // },
 });
 `;

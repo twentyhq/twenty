@@ -34,9 +34,7 @@ export const transformEventBatchToEventPayloads = ({
       triggerUpdatedFields: triggerSettings?.updatedFields,
     });
 
-    const batchSize = triggerSettings?.batchSize;
-
-    if (!isDefined(batchSize)) {
+    if (triggerSettings?.batchMode !== true) {
       for (const event of filteredEvents) {
         result.push({
           logicFunctionId: logicFunction.id,
@@ -49,16 +47,13 @@ export const transformEventBatchToEventPayloads = ({
       continue;
     }
 
-    const effectiveBatchSize = clampBatchSize({ batchSize, maxBatchSize });
+    const eventsPerJob = resolveEventsPerJob(maxBatchSize);
 
     // A job carries a single auth context, so events acted by different users can never share one
     for (const eventsSharingAuthContext of groupEventsByAuthContext(
       filteredEvents,
     )) {
-      for (const eventsChunk of chunk(
-        eventsSharingAuthContext,
-        effectiveBatchSize,
-      )) {
+      for (const eventsChunk of chunk(eventsSharingAuthContext, eventsPerJob)) {
         result.push({
           logicFunctionId: logicFunction.id,
           workspaceId: logicFunction.workspaceId,
@@ -72,18 +67,13 @@ export const transformEventBatchToEventPayloads = ({
   return result;
 };
 
-const clampBatchSize = ({
-  batchSize,
-  maxBatchSize,
-}: {
-  batchSize: number;
-  maxBatchSize?: number;
-}): number =>
+const resolveEventsPerJob = (maxBatchSize?: number): number =>
   Math.max(
     1,
     Math.min(
-      Math.floor(batchSize),
-      isDefined(maxBatchSize) ? maxBatchSize : MAX_EVENTS_PER_TRIGGER_JOB,
+      isDefined(maxBatchSize)
+        ? Math.floor(maxBatchSize)
+        : MAX_EVENTS_PER_TRIGGER_JOB,
       MAX_EVENTS_PER_TRIGGER_JOB,
     ),
   );

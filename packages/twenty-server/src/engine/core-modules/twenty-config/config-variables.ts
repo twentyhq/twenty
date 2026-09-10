@@ -1741,7 +1741,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description:
-      'Upper bound applied to the batchSize a logic function database event trigger can request. Set to 1 to disable batching for every application',
+      'Maximum number of database events delivered in a single job to a logic function trigger using batchMode. Set to 1 to disable batching for every application',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()

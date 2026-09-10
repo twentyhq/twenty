@@ -53,32 +53,21 @@ describe('defineLogicFunction', () => {
     expect(result.config.databaseEventTriggerSettings?.eventName).toBeDefined();
   });
 
-  const buildBatchedConfig = (batchSize: number): LogicFunctionConfig => ({
-    universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
-    name: 'On Contact Created',
-    handler: mockHandler,
-    databaseEventTriggerSettings: {
-      eventName: 'contact.created',
-      batchSize,
-    },
-  });
+  it('should accept databaseEventTriggerSettings with batchMode enabled', () => {
+    const config: LogicFunctionConfig = {
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Contact Created',
+      handler: mockHandler,
+      databaseEventTriggerSettings: {
+        eventName: 'contact.created',
+        batchMode: true,
+      },
+    };
 
-  it.each([0, -1, 1.5])(
-    'should reject a databaseEventTriggerSettings batchSize of %p',
-    (batchSize) => {
-      const result = defineLogicFunction(buildBatchedConfig(batchSize));
-
-      expect(result.errors).toContain(
-        'Database event trigger batchSize must be an integer greater than or equal to 1',
-      );
-    },
-  );
-
-  it('should accept a valid databaseEventTriggerSettings batchSize', () => {
-    const result = defineLogicFunction(buildBatchedConfig(100));
+    const result = defineLogicFunction(config);
 
     expect(result.errors).toEqual([]);
-    expect(result.config.databaseEventTriggerSettings?.batchSize).toBe(100);
+    expect(result.config.databaseEventTriggerSettings?.batchMode).toBe(true);
   });
 
   it('should pass through optional fields', () => {
