@@ -75,6 +75,13 @@ describe('View side effect on object creation', () => {
     return createOneObject;
   };
 
+  const findSeededViews = <TView extends { key: string | null; type: string }>(
+    views: TView[],
+  ) =>
+    views.filter(
+      (view) => !isDefined(view.key) && view.type === ViewType.TABLE,
+    );
+
   const findIndexView = async (objectMetadataId: string) => {
     const {
       data: { getViews },
@@ -108,9 +115,7 @@ describe('View side effect on object creation', () => {
       type: ViewType.TABLE,
     });
 
-    expect(
-      createdViews.find((view) => view.name === 'All Dishes I love'),
-    ).toBeUndefined();
+    expect(findSeededViews(createdViews)).toHaveLength(0);
 
     const {
       data: { getViewFields: indexViewFields },
@@ -141,13 +146,13 @@ describe('View side effect on object creation', () => {
         expectToFail: false,
       });
 
-      const seededView = createdViews.find(
-        (view) => view.name === 'All Dishes I love',
-      );
+      const [seededView, ...extraSeededViews] = findSeededViews(createdViews);
 
       if (!isDefined(seededView)) {
         throw new Error('expected a seeded user-owned view to be exposed');
       }
+
+      expect(extraSeededViews).toHaveLength(0);
 
       expect(seededView).toMatchObject<Partial<FlatView>>({
         objectMetadataId: createdObjectMetadataId,
