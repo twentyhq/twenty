@@ -3,7 +3,10 @@
 `TwentyUiGallery.stories.tsx` contains the component catalogs and focused
 component stories. Each fixture has React and Preact stories built with
 `createGalleryStory`. Custom scenarios override `play` and share their checks
-between runtimes where behavior matches.
+between runtimes where behavior matches. The story file contains the metadata
+and named entries; `utils/` holds the story factory, shared assertions, render
+checks, interaction checks, and known-failure scenarios. Shared types and error
+patterns live in `types/` and `constants/`.
 
 | Fixture | Components |
 | --- | --- |
