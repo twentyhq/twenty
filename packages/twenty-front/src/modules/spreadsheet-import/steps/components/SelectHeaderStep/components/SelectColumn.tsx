@@ -1,5 +1,5 @@
 // prettier-ignore
-import { useRowSelection, type Column, type RenderCellProps } from 'react-data-grid';
+import { type Column, type RenderCellProps } from 'react-data-grid';
 
 import { t } from '@lingui/core/macro';
 import { type ImportedRow } from '@/spreadsheet-import/types';
@@ -7,27 +7,19 @@ import { Radio } from 'twenty-ui/input';
 
 const SELECT_COLUMN_KEY = 'select-row';
 
-type SelectFormatterProps = RenderCellProps<unknown>;
+type SelectFormatterProps = RenderCellProps<ImportedRow>;
 
 const SelectFormatter = (props: SelectFormatterProps) => {
-  const { isRowSelected, onRowSelectionChange } = useRowSelection();
-
   return (
     <Radio
       aria-label={t`Select`}
-      checked={isRowSelected}
-      onChange={(event) => {
-        onRowSelectionChange({
-          row: props.row,
-          checked: Boolean(event.target.checked),
-          isShiftClick: (event.nativeEvent as MouseEvent).shiftKey,
-        });
-      }}
+      value={props.rowIdx}
+      tabIndex={props.tabIndex}
     />
   );
 };
 
-export const SelectColumn: Column<any, any> = {
+export const SelectColumn: Column<ImportedRow> = {
   key: SELECT_COLUMN_KEY,
   name: '',
   width: 35,

@@ -13,6 +13,18 @@
     "src/remote/sandbox/generated"
   ],
   "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["twenty-ui", "twenty-ui/*", "@ui/input", "@ui/input/*"],
+            "importNames": ["RadioSize", "LabelPosition"],
+            "message": "Use Radio size=\"sm\" | \"md\" and children for its label; selection belongs to RadioGroup."
+          }
+        ]
+      }
+    ],
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "no-console": "off",
     "no-control-regex": "off",

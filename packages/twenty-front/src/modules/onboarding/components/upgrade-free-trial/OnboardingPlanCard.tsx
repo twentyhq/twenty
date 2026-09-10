@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { isValidElement, type ReactNode } from 'react';
+import { isValidElement, type ReactNode, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Radio } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -15,12 +15,13 @@ const StyledCard = styled.div`
   width: 100%;
 `;
 
-const StyledHeader = styled.button<{ hasBody: boolean; hasNote: boolean }>`
+const StyledHeader = styled.label<{ hasBody: boolean; hasNote: boolean }>`
   align-items: center;
   background-color: transparent;
   border: none;
   border-bottom: ${({ hasBody }) =>
     hasBody ? `1px solid ${themeCssVariables.border.color.light}` : 'none'};
+  box-sizing: border-box;
   cursor: pointer;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
@@ -122,8 +123,7 @@ type OnboardingPlanCardProps = {
   titleSuffix?: string;
   note?: string;
   badge?: string;
-  selected: boolean;
-  onSelect: () => void;
+  value: boolean;
   children?: ReactNode;
 };
 
@@ -132,40 +132,44 @@ export const OnboardingPlanCard = ({
   titleSuffix,
   note,
   badge,
-  selected,
-  onSelect,
+  value,
   children,
 }: OnboardingPlanCardProps) => {
+  const titleId = useId();
+  const noteId = useId();
   const hasBody = isValidElement(children);
   const hasNote = isDefined(note);
 
   return (
     <StyledCard>
-      <StyledHeader
-        type="button"
-        hasBody={hasBody}
-        hasNote={hasNote}
-        onClick={onSelect}
-      >
+      <StyledHeader hasBody={hasBody} hasNote={hasNote}>
         <StyledHeaderLeft hasNote={hasNote}>
           <StyledTitleRow>
-            <StyledTitle>{title}</StyledTitle>
+            <StyledTitle id={titleId}>{title}</StyledTitle>
             {isDefined(titleSuffix) && (
               <StyledTitleSuffix isEmphasized={hasNote}>
                 {titleSuffix}
               </StyledTitleSuffix>
             )}
           </StyledTitleRow>
-          {hasNote && <StyledNote>{note}</StyledNote>}
+          {hasNote && <StyledNote id={noteId}>{note}</StyledNote>}
         </StyledHeaderLeft>
         {hasNote ? (
           <StyledRadioContainer>
-            <Radio checked={selected} />
+            <Radio
+              value={value}
+              aria-labelledby={titleId}
+              aria-describedby={hasNote ? noteId : undefined}
+            />
           </StyledRadioContainer>
         ) : (
           <StyledHeaderRight>
             {isDefined(badge) && <StyledBadge>{badge}</StyledBadge>}
-            <Radio checked={selected} />
+            <Radio
+              value={value}
+              aria-labelledby={titleId}
+              aria-describedby={hasNote ? noteId : undefined}
+            />
           </StyledHeaderRight>
         )}
       </StyledHeader>

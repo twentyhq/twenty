@@ -38,6 +38,11 @@
       {
         "patterns": [
           {
+            "group": ["twenty-ui", "twenty-ui/*", "@ui/input", "@ui/input/*"],
+            "importNames": ["RadioSize", "LabelPosition"],
+            "message": "Use Radio size=\"sm\" | \"md\" and children for its label; selection belongs to RadioGroup."
+          },
+          {
             "group": ["../*"],
             "message": "Relative parent imports are not allowed. Use @/ alias instead."
           },
