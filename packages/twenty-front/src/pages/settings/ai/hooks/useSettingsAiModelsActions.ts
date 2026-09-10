@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { type AiModelTier } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   currentWorkspaceState,
@@ -69,8 +70,9 @@ export const useSettingsAiModelsActions = () => {
       currentWorkspace?.aiModelIdByTier ?? {};
 
     return updateAiModelSettings({
-      aiModelIdByTier:
-        modelId === null ? otherPins : { ...otherPins, [tier]: modelId },
+      aiModelIdByTier: isDefined(modelId)
+        ? { ...otherPins, [tier]: modelId }
+        : otherPins,
     });
   };
 

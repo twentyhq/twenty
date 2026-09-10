@@ -215,7 +215,7 @@ export class WorkspaceService {
         );
       }
 
-      if (modelId === storedAiModelIdByTier[tier]) {
+      if (modelId === storedAiModelIdByTier?.[tier]) {
         continue;
       }
 
