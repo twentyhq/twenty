@@ -10,7 +10,10 @@ import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
+import { type UsagePeriodAnchor } from 'src/engine/core-modules/usage/types/usage-period-anchor.type';
 import { buildRecurringChargeKey } from 'src/engine/core-modules/usage/utils/build-recurring-charge-key.util';
+import { buildUsagePeriodClause } from 'src/engine/core-modules/usage/utils/build-usage-period-clause.util';
 import { fillUsageTimeSeriesGaps } from 'src/engine/core-modules/usage/utils/fill-usage-time-series-gaps.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { toDollars } from 'src/engine/core-modules/usage/utils/to-dollars.util';
@@ -68,6 +71,67 @@ const DECLARED_OPERATION_KEY_SEPARATOR = ':';
 @Injectable()
 export class UsageAnalyticsService {
   constructor(private readonly clickHouseService: ClickHouseService) {}
+
+  async getConsumptionRows({
+    workspaceId,
+    resourceType,
+    periodStart,
+    periodEnd,
+    periodAnchor,
+  }: {
+    workspaceId: string;
+    resourceType: UsageResourceType;
+    periodStart: Date;
+    periodEnd: Date;
+    periodAnchor: UsagePeriodAnchor;
+  }): Promise<UsageConsumptionRow[]> {
+    const periodClause = buildUsagePeriodClause(periodAnchor);
+
+    // The filtered keys are grouped again so the shape matches the
+    // consumption_by_scope projection, which is only picked on a full key match.
+    return this.clickHouseService.selectOrThrow<UsageConsumptionRow>(
+      `SELECT operationType, userWorkspaceId, apiKeyId, applicationId, agentId,
+              workflowId, logicFunctionId,
+              sum(creditsUsedMicro) AS creditsUsedMicro,
+              sum(quantity) AS quantity
+       FROM usageEvent
+       WHERE workspaceId = {workspaceId:String}
+         AND resourceType = {resourceType:String}
+         ${periodClause}
+       GROUP BY workspaceId, resourceType, toStartOfDay(timestamp, 'UTC'),
+                operationType, userWorkspaceId, apiKeyId, applicationId,
+                agentId, workflowId, logicFunctionId`,
+      {
+        workspaceId,
+        resourceType,
+        periodStart: formatDateTimeForClickHouse(periodStart),
+        periodEnd: formatDateTimeForClickHouse(periodEnd),
+      },
+    );
+  }
+
+  async getCreditsUsedMicroForBillingPeriod({
+    workspaceId,
+    periodStart,
+  }: {
+    workspaceId: string;
+    periodStart: Date;
+  }): Promise<number> {
+    // Both keys are pinned, so the grouping only exists to match the
+    // billing_by_workspace_period projection; it still returns a single row.
+    const rows = await this.clickHouseService.selectOrThrow<{
+      total: string | number | null;
+    }>(
+      `SELECT sum(creditsUsedMicro) AS total
+       FROM usageEvent
+       WHERE workspaceId = {workspaceId:String}
+         AND periodStart = {periodStart:DateTime64(3)}
+       GROUP BY workspaceId, periodStart`,
+      { workspaceId, periodStart: formatDateTimeForClickHouse(periodStart) },
+    );
+
+    return Number(rows[0]?.total ?? 0);
+  }
 
   async getAdminAiUsageByWorkspace(params: {
     periodStart: Date;

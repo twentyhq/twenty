@@ -5,7 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { type UpsertUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/upsert-usage-limit.input';
+import { type CreateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/create-usage-limit.input';
+import { type UpdateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/update-usage-limit.input';
 import {
   UsageLimitException,
   UsageLimitExceptionCode,
@@ -15,6 +16,7 @@ import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/serv
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
+import { buildUsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 import { isIntraWorkspaceScoped } from 'src/engine/core-modules/usage-limit/utils/is-intra-workspace-scoped.util';
 import { validateUsageLimitAgainstDefinition } from 'src/engine/core-modules/usage-limit/utils/validate-usage-limit-against-definition.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -49,13 +51,124 @@ export class UsageLimitService {
     return this.usageLimitRepository.find(workspaceId);
   }
 
-  async upsert({
+  async create({
     workspaceId,
     input,
   }: {
     workspaceId: string;
-    input: UpsertUsageLimitInput;
+    input: CreateUsageLimitInput;
   }): Promise<UsageLimitEntity> {
+    await this.validateInput({ workspaceId, input });
+
+    const scope = buildUsageLimitScope(input);
+
+    await this.assertScopeIsFree({ workspaceId, scope });
+
+    await this.usageLimitRepository.insert(workspaceId, {
+      workspaceId,
+      ...scope,
+      limitValue: input.limitValue,
+      burstValue: input.burstValue ?? null,
+    });
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'usageLimits',
+    ]);
+
+    const usageLimit = await this.usageLimitRepository.findOneOrFail(
+      workspaceId,
+      { where: scope },
+    );
+
+    await this.usageLimitQuotaService.dropLimitCounter(usageLimit);
+
+    return usageLimit;
+  }
+
+  async update({
+    workspaceId,
+    input,
+  }: {
+    workspaceId: string;
+    input: UpdateUsageLimitInput;
+  }): Promise<UsageLimitEntity> {
+    await this.validateInput({ workspaceId, input: input.payload });
+
+    const usageLimit = await this.usageLimitRepository.findOne(workspaceId, {
+      where: { id: input.id },
+    });
+
+    if (!isDefined(usageLimit)) {
+      throw new UsageLimitException(
+        `No usage limit ${input.id} in this workspace`,
+        UsageLimitExceptionCode.LIMIT_INVALID,
+      );
+    }
+
+    const scope = buildUsageLimitScope(input.payload);
+
+    await this.assertScopeIsFree({
+      workspaceId,
+      scope,
+      allowedUsageLimitId: usageLimit.id,
+    });
+
+    await this.usageLimitRepository.update(
+      workspaceId,
+      { id: usageLimit.id },
+      {
+        ...scope,
+        limitValue: input.payload.limitValue,
+        burstValue: input.payload.burstValue ?? null,
+      },
+    );
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'usageLimits',
+    ]);
+
+    const updatedUsageLimit = await this.usageLimitRepository.findOneOrFail(
+      workspaceId,
+      { where: { id: usageLimit.id } },
+    );
+
+    await this.usageLimitQuotaService.dropLimitCounter(usageLimit);
+
+    return updatedUsageLimit;
+  }
+
+  private async assertScopeIsFree({
+    workspaceId,
+    scope,
+    allowedUsageLimitId,
+  }: {
+    workspaceId: string;
+    scope: ReturnType<typeof buildUsageLimitScope>;
+    allowedUsageLimitId?: string;
+  }): Promise<void> {
+    const usageLimitHoldingScope = await this.usageLimitRepository.findOne(
+      workspaceId,
+      { where: scope },
+    );
+
+    if (
+      isDefined(usageLimitHoldingScope) &&
+      usageLimitHoldingScope.id !== allowedUsageLimitId
+    ) {
+      throw new UsageLimitException(
+        'Another usage limit already covers this scope',
+        UsageLimitExceptionCode.LIMIT_INVALID,
+      );
+    }
+  }
+
+  private async validateInput({
+    workspaceId,
+    input,
+  }: {
+    workspaceId: string;
+    input: CreateUsageLimitInput;
+  }): Promise<void> {
     validateUsageLimitAgainstDefinition(input);
 
     if (
@@ -87,43 +200,6 @@ export class UsageLimitService {
         spenderId: input.spenderId,
       });
     }
-
-    const scope = {
-      resourceType: input.resourceType,
-      operationType: input.operationType,
-      spenderType: input.spenderType,
-      spenderId: input.spenderId ?? '',
-      limitKind: input.limitKind,
-      periodCount: input.periodCount,
-      periodUnit: input.periodUnit,
-      meter: input.meter,
-    };
-
-    await this.usageLimitRepository.upsert(
-      workspaceId,
-      {
-        workspaceId,
-        ...scope,
-        limitValue: input.limitValue,
-        burstValue: input.burstValue ?? null,
-      },
-      { conflictPaths: ['workspaceId', ...Object.keys(scope)] },
-    );
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'usageLimits',
-    ]);
-
-    const usageLimit = await this.usageLimitRepository.findOneOrFail(
-      workspaceId,
-      {
-        where: scope,
-      },
-    );
-
-    await this.usageLimitQuotaService.dropLimitCounter(usageLimit);
-
-    return usageLimit;
   }
 
   async delete({
