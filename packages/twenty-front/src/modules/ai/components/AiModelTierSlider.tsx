@@ -162,7 +162,7 @@ export const AiModelTierSlider = ({
   const model = resolvedTier.model;
 
   // The base model's reading stands in until the sync measures this effort.
-  const isBenchmarkInherited = model?.isBenchmarkInherited === true;
+  const isBenchmarkInherited = model?.isBenchmarkInherited ?? false;
   const inheritedNote = isBenchmarkInherited
     ? t` Not measured at this effort yet, so this is the base model's reading.`
     : '';
