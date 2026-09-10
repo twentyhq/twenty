@@ -1,4 +1,4 @@
-import { dispatchIsActiveToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-to-authored-override.util';
+import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
 
 type EntityWithApplicationIdentifier = {
   applicationUniversalIdentifier: string;
@@ -33,7 +33,7 @@ export const splitEntitiesByRemovalStrategy = <
       toHardDelete.push(entity);
     } else {
       toDeactivate.push({
-        ...dispatchIsActiveToAuthoredOverride({
+        ...dispatchIsActiveUpdateToAuthoredOverride({
           flatEntity: entity,
           isActive: false,
           authorUniversalIdentifier:

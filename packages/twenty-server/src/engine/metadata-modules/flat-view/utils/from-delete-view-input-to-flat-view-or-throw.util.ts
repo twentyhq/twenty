@@ -13,7 +13,7 @@ import {
   ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
-import { dispatchIsActiveToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-to-authored-override.util';
+import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
 
 export const fromDeleteViewInputToFlatViewOrThrow = ({
   deleteViewInput: rawDeleteViewInput,
@@ -55,7 +55,7 @@ export const fromDeleteViewInputToFlatViewOrThrow = ({
 
   if (shouldDeactivate) {
     return {
-      ...dispatchIsActiveToAuthoredOverride({
+      ...dispatchIsActiveUpdateToAuthoredOverride({
         flatEntity: existingFlatViewToDelete,
         isActive: false,
         authorUniversalIdentifier: callerApplicationUniversalIdentifier,

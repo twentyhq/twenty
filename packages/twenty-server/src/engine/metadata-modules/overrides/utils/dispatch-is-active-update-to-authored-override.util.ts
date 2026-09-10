@@ -11,7 +11,7 @@ type FlatEntityWithIsActive = {
 // writes its entry and readers resolve the effective value from there.
 // isActive carries no foreign key, so universalOverrides takes the same entry
 // change without a converter.
-export const dispatchIsActiveToAuthoredOverride = <
+export const dispatchIsActiveUpdateToAuthoredOverride = <
   T extends FlatEntityWithIsActive,
 >({
   flatEntity,
