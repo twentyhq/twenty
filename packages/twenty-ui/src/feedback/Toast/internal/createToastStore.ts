@@ -34,10 +34,13 @@ export const createToastStore = ({
     listeners.forEach((listener) => listener());
   };
 
-  const dismiss = (
-    toastsToClose: ToastEntry[],
-    nextToasts: ToastEntry[] = toasts,
-  ) => {
+  const dismiss = ({
+    toastsToClose,
+    nextToasts = toasts,
+  }: {
+    toastsToClose: ToastEntry[];
+    nextToasts?: ToastEntry[];
+  }) => {
     publish(
       nextToasts.map((toast) =>
         toastsToClose.includes(toast) ? { ...toast, status: 'closing' } : toast,
@@ -77,10 +80,13 @@ export const createToastStore = ({
       const renderKey = nextRenderKey;
       nextRenderKey += 1;
       const removedCount = Math.max(0, visibleToasts.length - limit + 1);
-      dismiss(visibleToasts.slice(0, removedCount), [
-        ...toasts.filter((toast) => toast.notification.id !== id),
-        { notification: { ...options, id }, status: 'visible', renderKey },
-      ]);
+      dismiss({
+        toastsToClose: visibleToasts.slice(0, removedCount),
+        nextToasts: [
+          ...toasts.filter((toast) => toast.notification.id !== id),
+          { notification: { ...options, id }, status: 'visible', renderKey },
+        ],
+      });
       return id;
     },
     close: (id?: string) => {
@@ -94,7 +100,7 @@ export const createToastStore = ({
         return;
       }
 
-      dismiss(toastsToClose);
+      dismiss({ toastsToClose });
     },
     completeExit: (toast: ToastEntry) => {
       const isCurrentClosingToast =
