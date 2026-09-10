@@ -1,10 +1,6 @@
 import * as dns from 'dns/promises';
 
-import { isAllowedInternalHost } from 'src/engine/core-modules/secure-http-client/utils/is-allowed-internal-host.util';
-import {
-  isLinkLocalIp,
-  isPrivateIp,
-} from 'src/engine/core-modules/secure-http-client/utils/is-private-ip.util';
+import { getIsBlockedIp } from 'src/engine/core-modules/secure-http-client/utils/is-allowed-internal-host.util';
 
 export const resolveAndValidateHostname = async (
   hostnameOrUrl: string,
@@ -21,11 +17,7 @@ export const resolveAndValidateHostname = async (
     hostname = hostnameOrUrl;
   }
 
-  // An allowlisted host may reach private networks but never the link-local
-  // range, so a DNS change cannot turn it into a path to the metadata service.
-  const isBlockedIp = isAllowedInternalHost(hostname, allowedInternalHosts)
-    ? isLinkLocalIp
-    : isPrivateIp;
+  const isBlockedIp = getIsBlockedIp(hostname, allowedInternalHosts);
 
   const { address: resolvedIp } = await dnsLookup(hostname);
 

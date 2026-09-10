@@ -3,23 +3,9 @@ import * as https from 'https';
 import { type Socket } from 'net';
 import { type Duplex } from 'stream';
 
-import { isAllowedInternalHost } from 'src/engine/core-modules/secure-http-client/utils/is-allowed-internal-host.util';
-import {
-  isLinkLocalIp,
-  isPrivateIp,
-} from 'src/engine/core-modules/secure-http-client/utils/is-private-ip.util';
+import { getIsBlockedIp } from 'src/engine/core-modules/secure-http-client/utils/is-allowed-internal-host.util';
 
-type IsBlockedIp = (address: string) => boolean;
-
-// An allowlisted host may reach private networks but never the link-local
-// range, so a DNS change cannot turn it into a path to the metadata service.
-const getIsBlockedIp = (
-  host: string | undefined,
-  allowedInternalHosts: string[],
-): IsBlockedIp =>
-  host && isAllowedInternalHost(host, allowedInternalHosts)
-    ? isLinkLocalIp
-    : isPrivateIp;
+type IsBlockedIp = ReturnType<typeof getIsBlockedIp>;
 
 // Checks whether a hostname is a blocked IP literal.
 // Returns false for domain names — those are validated after DNS
