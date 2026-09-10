@@ -18,6 +18,9 @@ export const buildCoverageReport = (
     scoredGeneralPurposeModelCount: 0,
     unscoredGeneralPurposeModelIds: [],
     specializedModelCount: 0,
+    declaredEffortVariantCount: 0,
+    scoredEffortVariantCount: 0,
+    unscoredEffortVariantIds: [],
   };
 
   for (const [providerName, provider] of Object.entries(catalog)) {
@@ -39,6 +42,18 @@ export const buildCoverageReport = (
         report.unscoredGeneralPurposeModelIds.push(
           `${providerName}/${model.name}`,
         );
+      }
+
+      for (const effort of model.efforts ?? []) {
+        report.declaredEffortVariantCount += 1;
+
+        if (isDefined(model.benchmarkByEffort?.[effort]?.intelligenceIndex)) {
+          report.scoredEffortVariantCount += 1;
+        } else {
+          report.unscoredEffortVariantIds.push(
+            `${providerName}/${model.name}@${effort}`,
+          );
+        }
       }
     }
   }
