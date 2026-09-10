@@ -311,7 +311,7 @@ export class AdminPanelResolver {
     // The model the tier actually runs on here, not the head of the chain: a
     // chain can start with a provider this instance holds no key for.
     const hasAvailableModel =
-      this.aiModelRegistryService.getAvailableModels().length > 0;
+      this.aiModelRegistryService.getAdminFilteredModels().length > 0;
 
     return {
       models,

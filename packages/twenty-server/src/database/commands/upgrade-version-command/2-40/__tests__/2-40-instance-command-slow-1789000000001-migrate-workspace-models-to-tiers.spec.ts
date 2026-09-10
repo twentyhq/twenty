@@ -54,6 +54,7 @@ describe('MigrateWorkspaceModelsToTiersSlowInstanceCommand', () => {
     expect(workspaceUpdate).toContain('"isAutoModelSelectionEnabled" = false');
     expect(workspaceUpdate).toContain(`"smartModel" LIKE '%/%'`);
     expect(workspaceUpdate).toContain(`"fastModel" LIKE '%/%'`);
+    expect(workspaceUpdate).toContain(`"aiModelIdByTier" = '{}'::jsonb`);
   });
 
   it('keeps a workspace that picked its smart model on the Smart tier', async () => {

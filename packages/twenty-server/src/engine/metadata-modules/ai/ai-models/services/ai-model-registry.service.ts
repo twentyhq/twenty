@@ -565,10 +565,14 @@ export class AiModelRegistryService {
       return true;
     }
 
-    const prefs = this.preferencesService.getPreferences();
-    const disabledModels = prefs.disabledModels ?? [];
+    const disabledModels =
+      this.preferencesService.getPreferences().disabledModels ?? [];
+    // Disabling a model disables every effort it can be pinned at.
+    const { modelId: baseModelId } = parseModelVariantId(modelId);
 
-    return !disabledModels.includes(modelId);
+    return (
+      !disabledModels.includes(modelId) && !disabledModels.includes(baseModelId)
+    );
   }
 
   // Catalog membership rather than registration: an instance can name a

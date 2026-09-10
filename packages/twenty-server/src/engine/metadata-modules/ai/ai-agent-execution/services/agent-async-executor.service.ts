@@ -293,9 +293,9 @@ export class AgentAsyncExecutorService {
     let resolvedModelId: string | undefined;
 
     try {
-      const workspace = isDefined(agent)
-        ? await this.workspaceRepository.findOneBy({ id: agent.workspaceId })
-        : null;
+      const workspace = await this.workspaceRepository.findOneBy({
+        id: workspaceId,
+      });
 
       if (isDefined(agent)) {
         this.aiModelRegistryService.validateModelAvailability(agent.modelId);
