@@ -23,7 +23,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/data-display';
 import { IconEye, IconEyeOff } from 'twenty-ui/icon';
-import { Checkbox, CheckboxVariant, LightIconButton } from 'twenty-ui/input';
+import { Checkbox, LightIconButton } from 'twenty-ui/input';
 import { useIsMobile, useIsTouchDevice } from 'twenty-ui/utilities';
 
 const StyledCompactIconContainer = styled.div`
@@ -120,11 +120,11 @@ export const RecordBoardCardHeader = () => {
             <Checkbox
               hoverable
               checked={isRecordBoardCardSelected}
-              onChange={(value) => {
-                setIsRecordBoardCardSelected(value.target.checked);
+              onCheckedChange={(isChecked) => {
+                setIsRecordBoardCardSelected(isChecked);
                 checkIfLastUnselectAndCloseDropdown();
               }}
-              variant={CheckboxVariant.Secondary}
+              variant={'outline'}
             />
           </StopPropagationContainer>
         </StyledCheckboxContainer>

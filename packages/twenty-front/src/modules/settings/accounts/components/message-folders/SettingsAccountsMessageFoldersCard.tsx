@@ -17,7 +17,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo, useState } from 'react';
 import { Label } from 'twenty-ui/typography';
-import { Checkbox, CheckboxSize } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -158,8 +158,8 @@ export const SettingsAccountsMessageFoldersCard = () => {
           >
             <Checkbox
               checked={allSynced}
-              onChange={handleToggleAllFolders}
-              size={CheckboxSize.Small}
+              onCheckedChange={() => handleToggleAllFolders()}
+              size={'sm'}
             />
           </TableCell>
         </StyledSectionHeader>
