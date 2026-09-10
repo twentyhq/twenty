@@ -32,7 +32,7 @@ const FLAT_VIEW_ROWS_REQUIREMENT = {
     groupBy: ['viewId'],
   },
   viewSort: {
-    columns: ['id', 'universalIdentifier'],
+    columns: ['id', 'universalIdentifier', 'createdAt'],
     groupBy: ['viewId'],
   },
   viewFieldGroup: {
@@ -81,7 +81,13 @@ export class WorkspaceFlatViewMapCacheService extends MetadataFlatEntityMapsCach
           viewFilters: viewFilters.byViewId.get(viewEntity.id) || [],
           viewGroups: viewGroups.byViewId.get(viewEntity.id) || [],
           viewFilterGroups: viewFilterGroups.byViewId.get(viewEntity.id) || [],
-          viewSorts: viewSorts.byViewId.get(viewEntity.id) || [],
+          // Array order defines multi-sort priority; grouped rows are shared across providers.
+          viewSorts: [...(viewSorts.byViewId.get(viewEntity.id) ?? [])].sort(
+            (firstViewSort, secondViewSort) =>
+              firstViewSort.createdAt.getTime() -
+                secondViewSort.createdAt.getTime() ||
+              firstViewSort.id.localeCompare(secondViewSort.id),
+          ),
           viewFieldGroups: viewFieldGroups.byViewId.get(viewEntity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
