@@ -21,7 +21,7 @@ import {
   readPullBaseManifest,
   writePullBaseManifest,
 } from '@/cli/utilities/pull/pull-base-file';
-import { scanProjectDefineFiles } from '@/cli/utilities/pull/scan-project-define-files';
+import { scanProjectSourceFiles } from '@/cli/utilities/pull/scan-project-source-files';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { join } from 'node:path';
 import { isDefined } from 'twenty-shared/utils';
@@ -109,7 +109,7 @@ const innerAppPull = async (
 
   onProgress?.('Reading local source files...');
 
-  const scannedFiles = await scanProjectDefineFiles(appPath);
+  const scannedFiles = await scanProjectSourceFiles(appPath);
   const localApplicationUniversalIdentifier = scannedFiles.find(
     (scannedFile) => scannedFile.entityKey === ManifestEntityKey.Application,
   )?.universalIdentifier;

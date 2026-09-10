@@ -9,7 +9,7 @@ import { readFile } from 'node:fs/promises';
 import { relative } from 'node:path';
 import { isDefined } from 'twenty-shared/utils';
 
-export type ScannedDefineFile = {
+export type ScannedSourceFile = {
   relativePath: string;
   entityKey: ManifestEntityKey | null;
   universalIdentifier: string | null;
@@ -20,9 +20,9 @@ type ExtractedConfig = {
   universalIdentifier?: unknown;
 };
 
-export const scanProjectDefineFiles = async (
+export const scanProjectSourceFiles = async (
   appPath: string,
-): Promise<ScannedDefineFile[]> => {
+): Promise<ScannedSourceFile[]> => {
   const filePaths = await glob(['**/*.ts', '**/*.tsx'], {
     cwd: appPath,
     absolute: true,
@@ -30,7 +30,7 @@ export const scanProjectDefineFiles = async (
     onlyFiles: true,
   });
 
-  const scannedFiles: ScannedDefineFile[] = [];
+  const scannedFiles: ScannedSourceFile[] = [];
 
   for (const filePath of filePaths) {
     const relativePath = relative(appPath, filePath);
@@ -52,6 +52,12 @@ export const scanProjectDefineFiles = async (
     const targetFunctionName = extractDefineEntity(fileContent);
 
     if (!isDefined(targetFunctionName)) {
+      scannedFiles.push({
+        relativePath,
+        entityKey: null,
+        universalIdentifier: null,
+        isReadable: true,
+      });
       continue;
     }
 
