@@ -23,6 +23,7 @@ export const GET_ADMIN_AI_MODELS = gql`
         providerLabel
         name
         dataResidency
+        efforts
       }
     }
   }

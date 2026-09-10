@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export { AI_MODEL_EFFORT_LABELS } from './constants/ai-model-effort-labels.const';
 export type { AiModelEffort } from './constants/ai-model-effort.const';
 export { AI_MODEL_EFFORTS } from './constants/ai-model-effort.const';
 export type { AiModelTier } from './constants/ai-model-tier.const';
@@ -71,3 +72,4 @@ export { isCompleteWorkspaceSetupToolPart } from './utils/is-complete-workspace-
 export { isDataResidency } from './utils/is-data-residency.util';
 export { isSucceededCompleteWorkspaceSetupToolPart } from './utils/is-succeeded-complete-workspace-setup-tool-part.util';
 export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-response-schema-property-key.util';
+export { parseAiModelVariantId } from './utils/parse-ai-model-variant-id.util';

@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
@@ -22,8 +22,7 @@ import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { getAiModelTierLabel } from '@/ai/utils/getAiModelTierLabel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { AUTOMATIC_MODEL_PIN } from '@/settings/ai/constants/AutomaticModelPin';
-import { getAiModelPinOptions } from '@/settings/ai/utils/getAiModelPinOptions';
+import { AiModelPinSelect } from '@/settings/ai/components/AiModelPinSelect';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
@@ -72,12 +71,6 @@ export const SettingsAiModelsTab = () => {
     value: tier,
     label: getAiModelTierLabel(tier),
   }));
-
-  const pinnableModelOptions = useMemo(
-    () =>
-      isAutoModelSelectionEnabled ? [] : getAiModelPinOptions({ aiModels }),
-    [aiModels, isAutoModelSelectionEnabled],
-  );
 
   return (
     <>
@@ -140,21 +133,14 @@ export const SettingsAiModelsTab = () => {
                   }
                   divider={index < tiers.length - 1}
                 >
-                  <Select
+                  <AiModelPinSelect
                     dropdownId={`models-tab-pinned-model-select-${tier.tier}`}
-                    value={aiModelIdByTier[tier.tier] ?? AUTOMATIC_MODEL_PIN}
-                    onChange={(value) =>
-                      handlePinnedModelChange(
-                        tier.tier,
-                        value === AUTOMATIC_MODEL_PIN ? null : value,
-                      )
+                    modelId={aiModelIdByTier[tier.tier] ?? null}
+                    onChange={(modelId) =>
+                      handlePinnedModelChange(tier.tier, modelId)
                     }
-                    emptyOption={{
-                      value: AUTOMATIC_MODEL_PIN,
-                      label: t`Automatic`,
-                    }}
-                    options={pinnableModelOptions}
-                    withSearchInput
+                    aiModels={aiModels}
+                    emptyOptionLabel={t`Automatic`}
                     selectSizeVariant="small"
                     dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
                   />

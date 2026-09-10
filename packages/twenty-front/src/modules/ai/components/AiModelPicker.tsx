@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import {
   AUTO_SELECT_MODEL_ID_BY_TIER,
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
@@ -15,9 +15,7 @@ import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { getAiModelTierForAgentModelId } from '@/ai/utils/getAiModelTierForAgentModelId';
 import { getNearestAiModelTier } from '@/ai/utils/getNearestAiModelTier';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { AUTOMATIC_MODEL_PIN } from '@/settings/ai/constants/AutomaticModelPin';
-import { getAiModelPinOptions } from '@/settings/ai/utils/getAiModelPinOptions';
-import { Select } from '@/ui/input/components/Select';
+import { AiModelPinSelect } from '@/settings/ai/components/AiModelPinSelect';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -74,22 +72,6 @@ export const AiModelPicker = ({
   const selectedTier =
     tierFromModelId ?? getNearestAiModelTier(pinnedModel, tiers);
 
-  const pinnedModelOptions = useMemo(
-    () =>
-      isAdvancedOpen
-        ? getAiModelPinOptions({ aiModels, keepModelId: modelId })
-        : [],
-    [aiModels, isAdvancedOpen, modelId],
-  );
-
-  const handlePinnedModelChange = (value: string) => {
-    onModelIdChange(
-      value === AUTOMATIC_MODEL_PIN
-        ? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID
-        : value,
-    );
-  };
-
   return (
     <StyledContainer>
       <StyledSliderCard>
@@ -119,15 +101,18 @@ export const AiModelPicker = ({
         )}
       </StyledFooter>
       {isAdvancedOpen && (
-        <Select
+        <AiModelPinSelect
           dropdownId="ai-model-picker-pinned-model"
           label={t`Pin a specific model`}
           description={t`Overrides the tier above until you switch back to automatic`}
-          value={hasPinnedModel ? modelId : AUTOMATIC_MODEL_PIN}
-          onChange={handlePinnedModelChange}
-          emptyOption={{ value: AUTOMATIC_MODEL_PIN, label: t`Automatic` }}
-          options={pinnedModelOptions}
-          withSearchInput
+          modelId={hasPinnedModel ? modelId : null}
+          onChange={(pinnedModelId) =>
+            onModelIdChange(
+              pinnedModelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+            )
+          }
+          aiModels={aiModels}
+          emptyOptionLabel={t`Automatic`}
           disabled={disabled}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />

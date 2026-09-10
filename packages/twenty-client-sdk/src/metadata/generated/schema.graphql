@@ -2043,6 +2043,8 @@ type ClientAiModelConfig {
   intelligenceIndex: Float
   outputTokensPerSecond: Float
   costPerTask: Float
+  efforts: [String!]
+  effort: String
   isBenchmarkInherited: Boolean
 }
 

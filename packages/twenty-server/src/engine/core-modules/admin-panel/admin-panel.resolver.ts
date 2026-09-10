@@ -105,6 +105,7 @@ import { AdminPanelHealthServiceDataDTO } from './dtos/admin-panel-health-servic
 import { MaintenanceModeDTO } from './dtos/maintenance-mode.dto';
 import { QueueMetricsDataDTO } from './dtos/queue-metrics-data.dto';
 import { SetMaintenanceModeInput } from './dtos/set-maintenance-mode.input';
+import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/utils/get-available-efforts.util';
 
 @UsePipes(ResolverValidationPipe)
 @AdminResolver()
@@ -305,6 +306,9 @@ export class AdminPanelResolver {
             : undefined,
           name,
           dataResidency: modelConfig.dataResidency,
+          efforts: isDefined(modelConfig.effort)
+            ? undefined
+            : getAvailableEfforts(modelConfig),
         }),
       );
 

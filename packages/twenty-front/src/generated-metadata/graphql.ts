@@ -1022,6 +1022,8 @@ export type ClientAiModelConfig = {
   contextWindowTokens?: Maybe<Scalars['Float']['output']>;
   costPerTask?: Maybe<Scalars['Float']['output']>;
   dataResidency?: Maybe<Scalars['String']['output']>;
+  effort?: Maybe<Scalars['String']['output']>;
+  efforts?: Maybe<Array<Scalars['String']['output']>>;
   inputCostPerMillionTokens?: Maybe<Scalars['Float']['output']>;
   intelligenceIndex?: Maybe<Scalars['Float']['output']>;
   isBenchmarkInherited?: Maybe<Scalars['Boolean']['output']>;

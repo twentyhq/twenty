@@ -88,6 +88,14 @@ export class ClientAiModelConfig {
   @Field(() => Number, { nullable: true })
   costPerTask?: number;
 
+  // Reasoning levels a pin may name as `modelId@effort`; empty for a model
+  // that takes none, unset on a variant that already names its own.
+  @Field(() => [String], { nullable: true })
+  efforts?: string[];
+
+  @Field(() => String, { nullable: true })
+  effort?: string;
+
   // A pinned effort without a reading of its own shows the base model's
   // figures until the benchmark sync measures it.
   @Field(() => Boolean, { nullable: true })
@@ -155,6 +163,9 @@ export class AdminAiModelConfig {
 
   @Field(() => String, { nullable: true })
   dataResidency?: string;
+
+  @Field(() => [String], { nullable: true })
+  efforts?: string[];
 }
 
 @ObjectType()

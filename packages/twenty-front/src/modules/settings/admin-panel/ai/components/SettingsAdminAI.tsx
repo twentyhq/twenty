@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { IconMessage } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
@@ -27,9 +27,9 @@ import { GET_ADMIN_AI_USAGE_BY_WORKSPACE } from '@/settings/admin-panel/ai/graph
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
 import { parseProviderItems } from '@/settings/admin-panel/ai/utils/parseProviderItems';
-import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
+import { AiModelPinSelect } from '@/settings/ai/components/AiModelPinSelect';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { getPeriodDates } from '@/settings/usage/utils/getPeriodDates';
@@ -137,12 +137,6 @@ export const SettingsAdminAI = () => {
     (model) => model.isAvailable && model.isAdminEnabled && !model.isDeprecated,
   );
 
-  const availableModelOptions = enabledModels.map((model) => ({
-    value: model.modelId,
-    label: model.label,
-    Icon: getModelIcon(model.modelFamily, model.providerName),
-  }));
-
   const handleDefaultModelChange = async (
     tier: AiModelTier,
     modelId: string,
@@ -199,7 +193,7 @@ export const SettingsAdminAI = () => {
         )}
       </Section>
 
-      {availableModelOptions.length > 0 && (
+      {enabledModels.length > 0 && (
         <Section>
           <H2Title
             title={t`Default Models`}
@@ -213,18 +207,19 @@ export const SettingsAdminAI = () => {
                 title={getAiModelTierLabel(tier)}
                 divider={index < AI_MODEL_TIERS.length - 1}
               >
-                <Select
+                <AiModelPinSelect
                   dropdownId={`admin-default-model-select-${tier}`}
-                  value={
+                  modelId={
                     defaultModelByTier.find(
                       (defaultModel) => defaultModel.tier === tier,
-                    )?.modelId ?? undefined
+                    )?.modelId ?? null
                   }
-                  onChange={(value: string) =>
-                    handleDefaultModelChange(tier, value)
-                  }
-                  options={availableModelOptions}
-                  withSearchInput
+                  onChange={(modelId) => {
+                    if (isDefined(modelId)) {
+                      void handleDefaultModelChange(tier, modelId);
+                    }
+                  }}
+                  aiModels={enabledModels}
                   selectSizeVariant="small"
                   dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
                 />

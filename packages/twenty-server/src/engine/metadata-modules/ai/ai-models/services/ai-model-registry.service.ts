@@ -10,6 +10,8 @@ import {
   type AiModelEffort,
   type AiModelTier,
   type AiSdkPackage,
+  AI_MODEL_EFFORT_LABELS,
+  parseAiModelVariantId,
 } from 'twenty-shared/ai';
 
 import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-enterprise-key.constant';
@@ -40,7 +42,6 @@ import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/ut
 import { getPositiveTokenLimitOrDefault } from 'src/engine/metadata-modules/ai/ai-models/utils/get-positive-token-limit-or-default.util';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
 import { isProviderConfigured } from 'src/engine/metadata-modules/ai/ai-models/utils/is-provider-configured.util';
-import { parseModelVariantId } from 'src/engine/metadata-modules/ai/ai-models/utils/parse-model-variant-id.util';
 import { type WorkspaceAiModelSettings } from 'src/engine/metadata-modules/ai/ai-models/types/workspace-ai-model-settings.type';
 
 export interface RegisteredAiModel {
@@ -185,49 +186,51 @@ export class AiModelRegistryService {
     }
   }
 
-  // A variant exists only where an operator listed one, so no caller reaches an
-  // effort the catalog never declared by typing an id.
   private registerConfiguredVariants(): void {
-    const listedModelIds = new Set(
-      AI_MODEL_TIERS.flatMap((tier) =>
-        this.preferencesService.getDefaultModelIdsForTier(tier),
-      ),
-    );
-
-    for (const variantId of listedModelIds) {
-      const variant = this.resolveConfiguredVariant(variantId);
-
-      if (!isDefined(variant)) {
-        continue;
+    for (const tier of AI_MODEL_TIERS) {
+      for (const variantId of this.preferencesService.getDefaultModelIdsForTier(
+        tier,
+      )) {
+        this.registerVariant(variantId);
       }
+    }
+  }
 
-      const { baseConfig, effort } = variant;
+  // Any effort the catalog declares for a model is reachable by id, whether it
+  // sits in a chain, a workspace pin or an agent. An undeclared one never is.
+  private registerVariant(variantId: string): void {
+    const variant = this.resolveConfiguredVariant(variantId);
 
-      this.modelConfigCache.set(variantId, {
-        ...baseConfig,
+    if (!isDefined(variant)) {
+      return;
+    }
+
+    const { baseConfig, effort } = variant;
+
+    this.modelConfigCache.set(variantId, {
+      ...baseConfig,
+      modelId: variantId,
+      label: `${baseConfig.label} (${AI_MODEL_EFFORT_LABELS[effort]})`,
+      effort,
+      // A reading describes the effort it was taken at, so the variant gets
+      // the one taken at its effort or none, never the base model's ceiling.
+      benchmark: baseConfig.benchmarkByEffort?.[effort],
+    });
+
+    const baseModelDef = this.providerModelDefCache.get(baseConfig.modelId);
+
+    if (isDefined(baseModelDef)) {
+      this.providerModelDefCache.set(variantId, baseModelDef);
+    }
+
+    const baseModel = this.modelRegistry.get(baseConfig.modelId);
+
+    if (isDefined(baseModel)) {
+      this.modelRegistry.set(variantId, {
+        ...baseModel,
         modelId: variantId,
-        label: `${baseConfig.label} (${effort})`,
         effort,
-        // A reading describes the effort it was taken at, so the variant gets
-        // the one taken at its effort or none, never the base model's ceiling.
-        benchmark: baseConfig.benchmarkByEffort?.[effort],
       });
-
-      const baseModelDef = this.providerModelDefCache.get(baseConfig.modelId);
-
-      if (isDefined(baseModelDef)) {
-        this.providerModelDefCache.set(variantId, baseModelDef);
-      }
-
-      const baseModel = this.modelRegistry.get(baseConfig.modelId);
-
-      if (isDefined(baseModel)) {
-        this.modelRegistry.set(variantId, {
-          ...baseModel,
-          modelId: variantId,
-          effort,
-        });
-      }
     }
   }
 
@@ -238,7 +241,7 @@ export class AiModelRegistryService {
       return undefined;
     }
 
-    const { modelId, effort } = parseModelVariantId(variantId);
+    const { modelId, effort } = parseAiModelVariantId(variantId);
 
     if (!isDefined(effort)) {
       return undefined;
@@ -251,10 +254,6 @@ export class AiModelRegistryService {
     }
 
     if (!getAvailableEfforts(baseConfig).includes(effort)) {
-      this.logger.warn(
-        `Skipping "${variantId}": effort "${effort}" is not available for ${modelId}`,
-      );
-
       return undefined;
     }
 
@@ -397,6 +396,7 @@ export class AiModelRegistryService {
 
   getModel(modelId: string): RegisteredAiModel | undefined {
     this.ensureFresh();
+    this.registerVariant(modelId);
 
     return this.modelRegistry.get(modelId);
   }
@@ -409,6 +409,7 @@ export class AiModelRegistryService {
 
   getModelConfig(modelId: string): AiModelConfig | undefined {
     this.ensureFresh();
+    this.registerVariant(modelId);
 
     return this.modelConfigCache.get(modelId);
   }
@@ -573,7 +574,7 @@ export class AiModelRegistryService {
 
     const disabledModels = this.preferencesService.getDisabledModelIds();
     // Disabling a model disables every effort it can be pinned at.
-    const { modelId: baseModelId } = parseModelVariantId(modelId);
+    const { modelId: baseModelId } = parseAiModelVariantId(modelId);
 
     return (
       !disabledModels.includes(modelId) && !disabledModels.includes(baseModelId)

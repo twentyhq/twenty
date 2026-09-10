@@ -1653,6 +1653,8 @@ export interface ClientAiModelConfig {
     intelligenceIndex?: Scalars['Float']
     outputTokensPerSecond?: Scalars['Float']
     costPerTask?: Scalars['Float']
+    efforts?: Scalars['String'][]
+    effort?: Scalars['String']
     isBenchmarkInherited?: Scalars['Boolean']
     __typename: 'ClientAiModelConfig'
 }
@@ -5192,6 +5194,8 @@ export interface ClientAiModelConfigGenqlSelection{
     intelligenceIndex?: boolean | number
     outputTokensPerSecond?: boolean | number
     costPerTask?: boolean | number
+    efforts?: boolean | number
+    effort?: boolean | number
     isBenchmarkInherited?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
