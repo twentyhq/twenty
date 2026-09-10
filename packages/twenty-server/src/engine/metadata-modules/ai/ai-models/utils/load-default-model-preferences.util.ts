@@ -12,37 +12,37 @@ import { type AiModelTier } from 'twenty-shared/ai';
 // at, and so one model family can back neighbouring tiers at different speeds.
 export const DEFAULT_MODELS_BY_TIER: Record<AiModelTier, string[]> = {
   extraFast: [
-    'openai/gpt-5.6-luna@none',
+    'openai/gpt-5.6-luna@low',
     'google/gemini-3.8-flash@low',
     'anthropic/claude-sonnet-5@low',
     'xai/grok-4.5@low',
     'mistral/mistral-small-latest@none',
   ],
   fast: [
-    'openai/gpt-5.6-luna@low',
+    'openai/gpt-5.6-luna@medium',
     'google/gemini-3.8-flash@medium',
     'anthropic/claude-sonnet-5@medium',
     'xai/grok-4.5@medium',
     'mistral/mistral-medium-latest',
   ],
   balanced: [
-    'openai/gpt-5.6-terra@medium',
-    'anthropic/claude-sonnet-5@high',
+    'openai/gpt-5.6-luna@high',
     'google/gemini-3.8-flash@high',
+    'anthropic/claude-sonnet-5@high',
     'xai/grok-4.6@medium',
     'mistral/mistral-large-latest',
   ],
   smart: [
     'openai/gpt-5.6-sol@high',
-    'anthropic/claude-opus-5@high',
     'google/gemini-3.8-flash@high',
+    'anthropic/claude-opus-5@high',
     'xai/grok-4.6@high',
     'mistral/mistral-large-latest',
   ],
   extraSmart: [
     'openai/gpt-6-astra@xhigh',
-    'anthropic/claude-fable-5-1@xhigh',
     'google/gemini-3.8-flash@high',
+    'anthropic/claude-fable-5-1@xhigh',
     'xai/grok-4.6@xhigh',
     'mistral/mistral-large-latest',
   ],
