@@ -1,5 +1,9 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isFieldRestrictable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/isFieldRestrictable';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
+
+// The soft delete filter selects deletedAt on every read, so restricting it
+// denies the role every record of the object.
+const NON_READ_RESTRICTABLE_FIELD_NAMES = new Set(['deletedAt']);
 
 export const isFieldReadRestrictable = ({
   fieldMetadataItem,
@@ -8,5 +12,6 @@ export const isFieldReadRestrictable = ({
   fieldMetadataItem: FieldMetadataItem;
   labelIdentifierFieldMetadataId: string;
 }) =>
-  isFieldRestrictable(fieldMetadataItem) &&
+  !isHiddenSystemField(fieldMetadataItem) &&
+  !NON_READ_RESTRICTABLE_FIELD_NAMES.has(fieldMetadataItem.name) &&
   fieldMetadataItem.id !== labelIdentifierFieldMetadataId;

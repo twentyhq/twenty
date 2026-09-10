@@ -74,6 +74,14 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
     const { upsertFieldPermissionInDraftRole } =
       useUpsertFieldPermissionInDraftRole(roleId);
 
+    const canRestrictRead = isFieldReadRestrictable({
+      fieldMetadataItem,
+      labelIdentifierFieldMetadataId:
+        objectMetadataItem.labelIdentifierFieldMetadataId,
+    });
+
+    const canRestrictUpdate = isFieldRestrictable(fieldMetadataItem);
+
     const handleSeeChange = () => {
       if (isDefined(fieldPermissionForThisFieldMetadataItem)) {
         if (
@@ -82,6 +90,9 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
           upsertFieldPermissionInDraftRole({
             ...fieldPermissionForThisFieldMetadataItem,
             canReadFieldValue: null,
+            canUpdateFieldValue: canRestrictUpdate
+              ? fieldPermissionForThisFieldMetadataItem.canUpdateFieldValue
+              : null,
           });
         } else {
           upsertFieldPermissionInDraftRole({
@@ -145,14 +156,6 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
         roleId,
         objectMetadataItemId: objectMetadataItem.id,
       });
-
-    const canRestrictRead = isFieldReadRestrictable({
-      fieldMetadataItem,
-      labelIdentifierFieldMetadataId:
-        objectMetadataItem.labelIdentifierFieldMetadataId,
-    });
-
-    const canRestrictUpdate = isFieldRestrictable(fieldMetadataItem);
 
     return (
       <TableRow

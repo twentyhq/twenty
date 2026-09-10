@@ -1,4 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
+import { useRemoveReadOverrideOnAllFieldsOfObject } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRemoveReadOverrideOnAllFieldsOfObject';
 import { useRestrictReadOnAllFieldsOfObject } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRestrictReadOnAllFieldsOfObject';
 import { useRestrictUpdateOnAllFieldsOfObject } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRestrictUpdateOnAllFieldsOfObject';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
@@ -34,6 +35,9 @@ const renderRestrictHooks = () =>
       ...useRestrictUpdateOnAllFieldsOfObject({
         roleId: MOCK_ROLE_ID_GRANTS_ALL,
       }),
+      ...useRemoveReadOverrideOnAllFieldsOfObject({
+        roleId: MOCK_ROLE_ID_GRANTS_ALL,
+      }),
       settingsDraftRole: useAtomFamilyStateValue(
         settingsDraftRoleFamilyState,
         MOCK_ROLE_ID_GRANTS_ALL,
@@ -61,7 +65,7 @@ describe('restricting all fields of an object', () => {
     initializeRolesMockJotaiStore();
   });
 
-  it('should not restrict read on system fields nor on the label identifier', () => {
+  it('should not restrict read on deletedAt nor on the label identifier', () => {
     const { result } = renderRestrictHooks();
 
     act(() => {
@@ -74,11 +78,12 @@ describe('restricting all fields of an object', () => {
     );
 
     expect(restrictedFieldNames).toContain('emails');
+    expect(restrictedFieldNames).toContain('createdAt');
+    expect(restrictedFieldNames).toContain('createdBy');
     expect(restrictedFieldNames).not.toContain('name');
-    expect(restrictedFieldNames).not.toContain('createdAt');
-    expect(restrictedFieldNames).not.toContain('updatedAt');
     expect(restrictedFieldNames).not.toContain('deletedAt');
-    expect(restrictedFieldNames).not.toContain('createdBy');
+    expect(restrictedFieldNames).not.toContain('id');
+    expect(restrictedFieldNames).not.toContain('searchVector');
   });
 
   it('should not restrict update on system fields', () => {
@@ -103,7 +108,7 @@ describe('restricting all fields of an object', () => {
     expect(restrictedFieldNames).not.toContain('createdBy');
   });
 
-  it('should leave system fields untouched when field permissions already exist', () => {
+  it('should leave unrestrictable fields untouched when field permissions already exist', () => {
     const { result } = renderRestrictHooks();
 
     act(() => {
@@ -122,7 +127,30 @@ describe('restricting all fields of an object', () => {
     );
 
     expect(restrictedFieldNames).toContain('emails');
-    expect(restrictedFieldNames).not.toContain('createdAt');
+    expect(restrictedFieldNames).not.toContain('name');
     expect(restrictedFieldNames).not.toContain('deletedAt');
+  });
+
+  it('should clear the update restriction implied by a read restriction on a non editable field', () => {
+    const { result } = renderRestrictHooks();
+
+    act(() => {
+      result.current.restrictReadOnAllFieldsOfObject(personObjectMetadataItem);
+    });
+
+    act(() => {
+      result.current.removeReadOverrideOnAllFieldsOfObject(
+        personObjectMetadataItem,
+      );
+    });
+
+    const restrictedFieldNames = getRestrictedFieldNames(
+      result.current.settingsDraftRole,
+      'canUpdateFieldValue',
+    );
+
+    expect(restrictedFieldNames).toContain('emails');
+    expect(restrictedFieldNames).not.toContain('createdAt');
+    expect(restrictedFieldNames).not.toContain('createdBy');
   });
 });

@@ -16,7 +16,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 @Command({
   name: 'upgrade:2-40:clear-unrestrictable-field-permissions',
   description:
-    'Clear field permissions the roles UI cannot represent: restrictions on the non-editable createdAt/updatedAt/deletedAt/createdBy fields, and read restrictions on label identifiers. Idempotent.',
+    'Clear field permissions no admin could have set from the roles UI: restrictions written by the All toggle on the non-editable createdAt/updatedAt/deletedAt/createdBy fields, and read restrictions on label identifiers. Idempotent.',
 })
 export class ClearUnrestrictableFieldPermissionsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(

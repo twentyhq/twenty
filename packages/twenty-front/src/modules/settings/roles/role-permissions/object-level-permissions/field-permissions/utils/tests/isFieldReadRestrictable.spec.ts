@@ -29,6 +29,18 @@ describe('isFieldReadRestrictable', () => {
     ).toBe(true);
   });
 
+  it.each(['createdAt', 'updatedAt', 'createdBy', 'updatedBy'])(
+    'should return true for the non editable %s field',
+    (fieldName) => {
+      expect(
+        isFieldReadRestrictable({
+          fieldMetadataItem: getFieldOrThrow(fieldName),
+          labelIdentifierFieldMetadataId,
+        }),
+      ).toBe(true);
+    },
+  );
+
   it('should return false for the label identifier field', () => {
     expect(
       isFieldReadRestrictable({
@@ -38,8 +50,17 @@ describe('isFieldReadRestrictable', () => {
     ).toBe(false);
   });
 
-  it.each(['createdAt', 'updatedAt', 'deletedAt', 'createdBy'])(
-    'should return false for the %s system field',
+  it('should return false for deletedAt, which every read selects', () => {
+    expect(
+      isFieldReadRestrictable({
+        fieldMetadataItem: getFieldOrThrow('deletedAt'),
+        labelIdentifierFieldMetadataId,
+      }),
+    ).toBe(false);
+  });
+
+  it.each(['id', 'position', 'searchVector'])(
+    'should return false for the hidden %s system field',
     (fieldName) => {
       expect(
         isFieldReadRestrictable({
