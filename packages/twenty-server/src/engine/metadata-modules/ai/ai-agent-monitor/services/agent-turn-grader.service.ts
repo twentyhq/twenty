@@ -85,7 +85,7 @@ Respond ONLY with valid JSON in this exact format:
         model: defaultModel.model,
         prompt,
         temperature: 0.3,
-        experimental_telemetry: buildAiTelemetry({
+        ...buildAiTelemetry({
           functionId: 'agent-turn-grading',
           workspaceId: turn.workspaceId,
           agentId: turn.agentId,

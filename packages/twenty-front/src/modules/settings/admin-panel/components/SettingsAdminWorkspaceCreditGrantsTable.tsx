@@ -15,6 +15,10 @@ import { CREDIT_GRANT_TYPE_COLORS } from '@/settings/admin-panel/constants/Credi
 import { CREDIT_GRANT_TYPE_LABELS } from '@/settings/admin-panel/constants/CreditGrantTypeLabels';
 import { REVOKE_WORKSPACE_CREDIT_GRANT } from '@/settings/admin-panel/graphql/mutations/revokeWorkspaceCreditGrant';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
+import {
+  collapseCreditGrantChains,
+  type CollapsedCreditGrant,
+} from '@/settings/admin-panel/utils/collapseCreditGrantChains';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -37,7 +41,7 @@ type SettingsAdminWorkspaceCreditGrantsTableProps = {
 // and a wide tag pushes the columns after it out of line with the rows above.
 // Fixed widths for all but the reason, which takes what is left because its
 // cell hides the overflow.
-const CREDIT_GRANTS_GRID_AUTO_COLUMNS = '88px 152px 96px 112px 1fr 36px';
+const CREDIT_GRANTS_GRID_AUTO_COLUMNS = '88px 140px 88px 108px 108px 1fr 36px';
 const REVOKE_CREDIT_GRANT_MODAL_ID = 'revoke-credit-grant-modal';
 const EM_DASH = '—';
 
@@ -55,6 +59,8 @@ const getStatus = (
   return { label: msg`Expired`, color: 'gray' };
 };
 
+type CreditGrantRow = CollapsedCreditGrant<CreditGrant>;
+
 export const SettingsAdminWorkspaceCreditGrantsTable = ({
   workspaceId,
   creditGrants,
@@ -68,6 +74,8 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
 
   const [grantPendingRevocation, setGrantPendingRevocation] =
     useState<CreditGrant | null>(null);
+
+  const creditGrantRows = collapseCreditGrantChains(creditGrants);
   const [isRevoking, setIsRevoking] = useState(false);
 
   const [revokeWorkspaceCreditGrant] = useMutation(
@@ -110,51 +118,63 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
 
   return (
     <>
-      <SettingsTableListSection<CreditGrant>
+      <SettingsTableListSection<CreditGrantRow>
         title={t`Granted credits`}
-        description={t`Credits handed out on top of the plan allowance`}
-        items={creditGrants}
+        description={t`Credits handed out on top of the plan allowance. They stay spendable until used up.`}
+        items={creditGrantRows}
         columns={[
           {
             label: t`Amount`,
-            Cell: ({ item }) => <>{formatCredits(item.amount)}</>,
+            Cell: ({ item }) => <>{formatCredits(item.current.amount)}</>,
           },
           {
             label: t`Type`,
             Cell: ({ item }) => (
               <Tag
-                color={CREDIT_GRANT_TYPE_COLORS[item.type]}
-                text={t(CREDIT_GRANT_TYPE_LABELS[item.type])}
+                color={CREDIT_GRANT_TYPE_COLORS[item.current.type]}
+                text={t(CREDIT_GRANT_TYPE_LABELS[item.current.type])}
               />
             ),
           },
           {
             label: t`Status`,
             Cell: ({ item }) => {
-              const status = getStatus(item);
+              const status = getStatus(item.current);
 
               return <Tag color={status.color} text={t(status.label)} />;
             },
           },
           {
+            label: t`Granted`,
+            Cell: ({ item }) => <>{beautifyExactDate(item.origin.createdAt)}</>,
+          },
+          {
             label: t`Expires`,
-            Cell: ({ item }) => <>{beautifyExactDate(item.expiresAt)}</>,
+            Cell: ({ item }) => (
+              <>
+                {isDefined(item.current.expiresAt)
+                  ? beautifyExactDate(item.current.expiresAt)
+                  : t`Never`}
+              </>
+            ),
           },
           {
             label: t`Reason`,
             overflow: 'hidden',
             Cell: ({ item }) => (
-              <OverflowingTextWithTooltip text={item.reason ?? EM_DASH} />
+              <OverflowingTextWithTooltip
+                text={item.origin.reason ?? EM_DASH}
+              />
             ),
           },
           {
             label: '',
             align: 'right',
             Cell: ({ item }) =>
-              item.isActive ? (
+              item.current.isActive ? (
                 <SettingsAdminWorkspaceCreditGrantRowDropdownMenu
-                  creditGrantId={item.id}
-                  onRevoke={() => handleRevokeClick(item)}
+                  creditGrantId={item.current.id}
+                  onRevoke={() => handleRevokeClick(item.current)}
                 />
               ) : null,
           },

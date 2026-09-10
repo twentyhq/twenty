@@ -11,7 +11,9 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
+import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
+import { computeWebhookOperationsToMatch } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-operations-to-match.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -25,6 +27,7 @@ export class CallWebhookJobsJob {
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly webhookRateLimitService: WebhookRateLimitService,
   ) {}
 
   @Process(CallWebhookJobsJob.name)
@@ -38,12 +41,10 @@ export class CallWebhookJobsJob {
 
     const [nameSingular, operation] = workspaceEventBatch.name.split('.');
 
-    const operationsToMatch = [
-      `${nameSingular}.${operation}`,
-      `*.${operation}`,
-      `${nameSingular}.*`,
-      '*.*',
-    ];
+    const operationsToMatch = computeWebhookOperationsToMatch({
+      nameSingular,
+      operation,
+    });
 
     const { flatWebhookMaps } = await this.workspaceCacheService.getOrRecompute(
       workspaceEventBatch.workspaceId,
@@ -63,7 +64,16 @@ export class CallWebhookJobsJob {
       webhooks,
     });
 
-    const webhookEventsChunks = chunk(webhookEvents, WEBHOOK_JOBS_CHUNK_SIZE);
+    const admittedWebhookEvents =
+      await this.webhookRateLimitService.admitWebhookEventsWithinRateLimit({
+        workspaceId: workspaceEventBatch.workspaceId,
+        webhookEvents,
+      });
+
+    const webhookEventsChunks = chunk(
+      admittedWebhookEvents,
+      WEBHOOK_JOBS_CHUNK_SIZE,
+    );
 
     for (const webhookEventsChunk of webhookEventsChunks) {
       await this.messageQueueService.add<CallWebhookJobData[]>(

@@ -2,7 +2,11 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { i18n } from '@lingui/core';
+import { InjectDataSource } from '@nestjs/typeorm';
+
 import { isDefined } from 'twenty-shared/utils';
+import { DataSource, type EntityManager } from 'typeorm';
 
 import {
   BillingException,
@@ -22,7 +26,6 @@ type ProcessRolloverParams = {
   closingPeriodEnd: Date;
   closingAllowanceMicro: number;
   nextPeriodStart: Date;
-  nextPeriodEnd: Date;
   nextAllowanceMicro: number;
 };
 
@@ -38,6 +41,8 @@ export class BillingCreditRolloverService {
     private readonly billingCreditService: BillingCreditService,
     private readonly cacheLockService: CacheLockService,
     private readonly twentyConfigService: TwentyConfigService,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
   ) {}
 
   async processRolloverOnPeriodTransition(
@@ -78,26 +83,58 @@ export class BillingCreditRolloverService {
     );
   }
 
-  private async carryGrantsForward({
+  private async carryGrantsForward(
+    params: ProcessRolloverParams & { usageMicro: number },
+  ): Promise<void> {
+    const { workspaceId, nextPeriodStart, nextAllowanceMicro } = params;
+
+    const rolloverCapMultiplier = this.twentyConfigService.get(
+      'BILLING_ROLLOVER_TOTAL_CAP_MULTIPLIER',
+    );
+
+    // Closing the old grants and writing their successors is one settlement:
+    // committing the first half alone would leave the workspace with every
+    // grant closed and nothing carrying the unspent part forward.
+    const { carriedForwardMicro, hasReplayedGrant } =
+      await this.dataSource.transaction(async (entityManager) =>
+        this.settleGrants({
+          ...params,
+          entityManager,
+          rolloverCapMicro: (rolloverCapMultiplier - 1) * nextAllowanceMicro,
+        }),
+      );
+
+    await this.billingCreditService.refreshWorkspaceCreditState({
+      workspaceId,
+      availableDeltaMicro: carriedForwardMicro,
+      isReplay: hasReplayedGrant,
+      adjustmentKey: buildRolloverAdjustmentKey(nextPeriodStart),
+    });
+  }
+
+  private async settleGrants({
+    entityManager,
     workspaceId,
     closingPeriodStart,
     closingPeriodEnd,
     closingAllowanceMicro,
     nextPeriodStart,
-    nextPeriodEnd,
-    nextAllowanceMicro,
     usageMicro,
-  }: ProcessRolloverParams & { usageMicro: number }): Promise<void> {
+    rolloverCapMicro,
+  }: ProcessRolloverParams & {
+    usageMicro: number;
+    rolloverCapMicro: number;
+    entityManager: EntityManager;
+  }): Promise<{ carriedForwardMicro: number; hasReplayedGrant: boolean }> {
     const closingGrants =
-      await this.billingCreditGrantService.findGrantsLiveDuringPeriod({
-        workspaceId,
-        periodStart: closingPeriodStart,
-        periodEnd: closingPeriodEnd,
-      });
-
-    const rolloverCapMultiplier = this.twentyConfigService.get(
-      'BILLING_ROLLOVER_TOTAL_CAP_MULTIPLIER',
-    );
+      await this.billingCreditGrantService.findGrantsLiveDuringPeriod(
+        {
+          workspaceId,
+          periodStart: closingPeriodStart,
+          periodEnd: closingPeriodEnd,
+        },
+        entityManager,
+      );
 
     const carryForwardGrants = computeCarryForwardGrants({
       allowanceMicro: closingAllowanceMicro,
@@ -106,35 +143,50 @@ export class BillingCreditRolloverService {
         type: grant.type,
         amountMicro: grant.amountMicro,
         createdAt: grant.createdAt,
+        expiresAt: grant.expiresAt,
       })),
       usageMicro,
-      rolloverCapMicro: (rolloverCapMultiplier - 1) * nextAllowanceMicro,
+      rolloverCapMicro,
+      boundary: closingPeriodEnd,
     });
 
-    await this.billingCreditGrantService.closeGrantsAtPeriodEnd({
-      workspaceId,
-      periodEnd: closingPeriodEnd,
-    });
+    await this.billingCreditGrantService.closeGrantsAtPeriodEnd(
+      { workspaceId, periodEnd: closingPeriodEnd },
+      entityManager,
+    );
 
     let carriedForwardMicro = 0;
     let hasReplayedGrant = false;
 
     for (const carryForwardGrant of carryForwardGrants) {
-      const grant = await this.billingCreditGrantService.createGrant({
-        workspaceId,
-        amountMicro: carryForwardGrant.amountMicro,
-        type: carryForwardGrant.type,
-        sourceGrantId: carryForwardGrant.sourceGrantId,
-        effectiveAt: nextPeriodStart,
-        expiresAt: nextPeriodEnd,
-        reason: `Carried over from the period starting ${closingPeriodStart.toISOString()}`,
-        idempotencyKey: buildCarryForwardIdempotencyKey({
+      const grant = await this.billingCreditGrantService.createGrant(
+        {
           workspaceId,
-          nextPeriodStart,
+          amountMicro: carryForwardGrant.amountMicro,
           type: carryForwardGrant.type,
           sourceGrantId: carryForwardGrant.sourceGrantId,
-        }),
-      });
+          effectiveAt: nextPeriodStart,
+          // Null for everything but a time-boxed grant, whose deadline the
+          // successor inherits. Stamping the period end here instead would make
+          // every balance depend on the next transition running, which is the
+          // failure this settlement exists to survive.
+          expiresAt: carryForwardGrant.expiresAt,
+          // Pinned to UTC: Stripe's boundaries are UTC instants, and a
+          // midnight boundary rendered in the server's local zone dates to the
+          // previous day.
+          reason: `Carried over from the period starting ${i18n.date(
+            closingPeriodStart,
+            { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' },
+          )}`,
+          idempotencyKey: buildCarryForwardIdempotencyKey({
+            workspaceId,
+            nextPeriodStart,
+            type: carryForwardGrant.type,
+            sourceGrantId: carryForwardGrant.sourceGrantId,
+          }),
+        },
+        entityManager,
+      );
 
       if (isDefined(grant)) {
         carriedForwardMicro += grant.amountMicro;
@@ -143,12 +195,7 @@ export class BillingCreditRolloverService {
       }
     }
 
-    await this.billingCreditService.refreshWorkspaceCreditState({
-      workspaceId,
-      availableDeltaMicro: carriedForwardMicro,
-      isReplay: hasReplayedGrant,
-      adjustmentKey: buildRolloverAdjustmentKey(nextPeriodStart),
-    });
+    return { carriedForwardMicro, hasReplayedGrant };
   }
 }
 

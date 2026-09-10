@@ -15,6 +15,7 @@ export const REVOKE_WORKSPACE_CREDIT_GRANT = gql`
       effectiveAt
       expiresAt
       revokedAt
+      sourceGrantId
       reason
       isActive
       createdAt
