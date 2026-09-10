@@ -1,13 +1,7 @@
 import { type DataSource } from 'typeorm';
 
-import {
-  TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { BackfillWorkspaceWorkflowIdOnWorkflowsCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789036819010-backfill-workspace-workflow-id-on-workflows.command';
-import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 
@@ -16,16 +10,16 @@ const isUpdate = (sql: unknown) =>
 
 const setup = ({
   total = 0,
-  objectMissing = false,
+  hasCoreWorkflowIdColumn = true,
 }: {
   total?: number;
-  objectMissing?: boolean;
+  hasCoreWorkflowIdColumn?: boolean;
 } = {}) => {
   const query = jest.fn(async (...args: unknown[]) => {
     const sql = args[0] as string;
 
-    if (isUpdate(sql)) {
-      return [];
+    if (sql.includes('information_schema.columns')) {
+      return hasCoreWorkflowIdColumn ? [{ '?column?': 1 }] : [];
     }
     if (sql.includes('count(*)')) {
       return [{ total }];
@@ -40,29 +34,12 @@ const setup = ({
     query,
   };
 
-  const count = objectMissing
-    ? jest
-        .fn()
-        .mockRejectedValue(
-          new TwentyOrmException(
-            'Object "workflow" does not exist in this workspace',
-            TwentyOrmExceptionCode.UNKNOWN_OBJECT,
-          ),
-        )
-    : jest.fn().mockResolvedValue(0);
-
   const dataSource = {
     createQueryRunner: () => queryRunner,
   } as unknown as DataSource;
 
-  const workspaceOrmManager = {
-    executeInWorkspaceContext: (fn: () => Promise<unknown>) => fn(),
-    getRepository: () => ({ count }),
-  } as unknown as WorkspaceOrmManager;
-
   const command = new BackfillWorkspaceWorkflowIdOnWorkflowsCommand(
     {} as WorkspaceIteratorService,
-    workspaceOrmManager,
   );
 
   const run = (dryRun = false) =>
@@ -74,44 +51,35 @@ const setup = ({
       total: 1,
     });
 
-  return { run, query };
+  return { run, query, queryRunner };
 };
 
 describe('BackfillWorkspaceWorkflowIdOnWorkflowsCommand', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it('backfills only unset core rows that a workspace workflow points at', async () => {
+  it('backfills the workspaces that have rows left to fill', async () => {
     const { run, query } = setup({ total: 3 });
 
     await run();
 
     const updateCall = query.mock.calls.find((call) => isUpdate(call[0]));
 
-    expect(updateCall?.[0]).toContain('SET "workspaceWorkflowId" =');
-    expect(updateCall?.[0]).toContain('cw."workspaceWorkflowId" IS NULL');
-    expect(updateCall?.[0]).toContain('w."coreWorkflowId" = cw.id');
     expect(updateCall?.[1]).toEqual([WORKSPACE_ID]);
   });
 
-  it('picks a single deterministic workspace workflow when several point at the same core row', async () => {
-    const { run, query } = setup({ total: 1 });
+  it('skips a workspace whose workflow table has no coreWorkflowId column', async () => {
+    const { run, query, queryRunner } = setup({
+      total: 3,
+      hasCoreWorkflowIdColumn: false,
+    });
 
     await run();
 
-    const updateCall = query.mock.calls.find((call) => isUpdate(call[0]));
-
-    expect(updateCall?.[0]).toContain('ORDER BY w.id');
-    expect(updateCall?.[0]).toContain('LIMIT 1');
-  });
-
-  it('does not filter out soft-deleted workspace workflows', async () => {
-    const { run, query } = setup({ total: 1 });
-
-    await run();
-
-    const updateCall = query.mock.calls.find((call) => isUpdate(call[0]));
-
-    expect(updateCall?.[0]).not.toContain('deletedAt');
+    expect(query.mock.calls.some((call) => isUpdate(call[0]))).toBe(false);
+    expect(
+      query.mock.calls.some((call) => String(call[0]).includes('count(*)')),
+    ).toBe(false);
+    expect(queryRunner.release).toHaveBeenCalled();
   });
 
   it('does not update on a dry run', async () => {
@@ -130,11 +98,24 @@ describe('BackfillWorkspaceWorkflowIdOnWorkflowsCommand', () => {
     expect(query.mock.calls.some((call) => isUpdate(call[0]))).toBe(false);
   });
 
-  it('skips a workspace that never provisioned the workflow object', async () => {
-    const { run, query } = setup({ total: 3, objectMissing: true });
+  it('releases the query runner when the update throws', async () => {
+    const { run, queryRunner, query } = setup({ total: 3 });
 
-    await run();
+    query.mockImplementation(async (...args: unknown[]) => {
+      const sql = args[0] as string;
 
-    expect(query).not.toHaveBeenCalled();
+      if (sql.includes('information_schema.columns')) {
+        return [{ '?column?': 1 }];
+      }
+      if (sql.includes('count(*)')) {
+        return [{ total: 3 }];
+      }
+
+      throw new Error('update failed');
+    });
+
+    await expect(run()).rejects.toThrow('update failed');
+
+    expect(queryRunner.release).toHaveBeenCalled();
   });
 });

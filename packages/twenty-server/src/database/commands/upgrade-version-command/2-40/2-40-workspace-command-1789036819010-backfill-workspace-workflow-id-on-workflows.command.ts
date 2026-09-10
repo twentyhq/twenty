@@ -1,15 +1,12 @@
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
+import { type QueryRunner } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { isWorkspaceObjectNotFoundError } from 'src/database/commands/upgrade-version-command/utils/is-workspace-object-not-found-error.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 @RegisteredWorkspaceCommand('2.40.0', 1789036819010)
 @Command({
@@ -20,7 +17,6 @@ import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standa
 export class BackfillWorkspaceWorkflowIdOnWorkflowsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {
     super(workspaceIteratorService);
   }
@@ -31,25 +27,11 @@ export class BackfillWorkspaceWorkflowIdOnWorkflowsCommand extends ProvisionedWo
     dataSource,
   }: RunOnWorkspaceArgs): Promise<void> {
     if (!isDefined(dataSource)) {
+      this.logger.warn(
+        `No data source for workspace ${workspaceId}, skipping backfill`,
+      );
+
       return;
-    }
-
-    try {
-      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const workflowRepository =
-          this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-            'workflow',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        return workflowRepository.count();
-      }, buildSystemAuthContext(workspaceId));
-    } catch (error) {
-      if (isWorkspaceObjectNotFoundError(error)) {
-        return;
-      }
-
-      throw error;
     }
 
     const schema = getWorkspaceSchemaName(workspaceId);
@@ -58,22 +40,25 @@ export class BackfillWorkspaceWorkflowIdOnWorkflowsCommand extends ProvisionedWo
       SELECT w.id
       FROM "${schema}"."workflow" w
       WHERE w."coreWorkflowId" = cw.id
+        AND w."deletedAt" IS NULL
       ORDER BY w.id
       LIMIT 1`;
-
-    const targetRowsClause = `
-      FROM core."workflow" cw
-      WHERE cw."workspaceId" = $1
-        AND cw."workspaceWorkflowId" IS NULL
-        AND EXISTS (${mappedWorkspaceWorkflowId})`;
 
     const queryRunner = dataSource.createQueryRunner();
 
     await queryRunner.connect();
 
     try {
+      if (!(await this.hasCoreWorkflowIdColumn(queryRunner, schema))) {
+        return;
+      }
+
       const [counts] = await queryRunner.query(
-        `SELECT count(*)::int AS total ${targetRowsClause}`,
+        `SELECT count(*)::int AS total
+         FROM core."workflow" cw
+         WHERE cw."workspaceId" = $1
+           AND cw."workspaceWorkflowId" IS NULL
+           AND EXISTS (${mappedWorkspaceWorkflowId})`,
         [workspaceId],
       );
 
@@ -104,5 +89,22 @@ export class BackfillWorkspaceWorkflowIdOnWorkflowsCommand extends ProvisionedWo
     } finally {
       await queryRunner.release();
     }
+  }
+
+  private async hasCoreWorkflowIdColumn(
+    queryRunner: QueryRunner,
+    schema: string,
+  ): Promise<boolean> {
+    const rows = await queryRunner.query(
+      `SELECT 1
+       FROM information_schema.columns
+       WHERE table_schema = $1
+         AND table_name = 'workflow'
+         AND column_name = 'coreWorkflowId'
+       LIMIT 1`,
+      [schema],
+    );
+
+    return rows.length > 0;
   }
 }

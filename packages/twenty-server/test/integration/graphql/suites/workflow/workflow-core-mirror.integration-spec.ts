@@ -20,6 +20,18 @@ describe('workflow core mirror (e2e)', () => {
   let workflowId: string;
   let alreadyDestroyed = false;
 
+  const fetchWorkspaceWorkflowIdOnCoreRowNamed = async (
+    name: string,
+  ): Promise<string | null | undefined> => {
+    const rows = await global.testDataSource.query(
+      `SELECT "workspaceWorkflowId" FROM core."workflow"
+       WHERE "workspaceId" = $1 AND "name" = $2`,
+      [SEED_APPLE_WORKSPACE_ID, name],
+    );
+
+    return rows[0]?.workspaceWorkflowId;
+  };
+
   const countCoreWorkflowsNamed = async (name: string): Promise<number> => {
     const rows = await global.testDataSource.query(
       `SELECT "id" FROM core."workflow"
@@ -80,6 +92,9 @@ describe('workflow core mirror (e2e)', () => {
     workflowId = createResponse.body.data.createWorkflow.id;
 
     expect(await waitForCoreWorkflowsNamed(INITIAL_NAME, 1)).toBe(1);
+    expect(await fetchWorkspaceWorkflowIdOnCoreRowNamed(INITIAL_NAME)).toBe(
+      workflowId,
+    );
 
     const renameResponse = await graphql(
       `
