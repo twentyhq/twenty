@@ -170,18 +170,29 @@ export const MainNavigationDrawerModeSwitcher = () => {
           );
         })}
       </StyledSwitcher>
-      {shouldShowTooltips &&
-        modes.map(({ label, mode }) => (
+      {modes.map(({ label, mode }) => {
+        const isDisabled =
+          mode === NAVIGATION_DRAWER_TABS.SETTINGS &&
+          isLayoutCustomizationModeEnabled;
+
+        if (!shouldShowTooltips && !isDisabled) {
+          return null;
+        }
+
+        return (
           <AppTooltip
             key={mode}
             anchorSelect={`[data-tooltip-id='${tooltipId}-${mode}']`}
-            title={label}
+            title={
+              isDisabled ? t`Finish editing the layout to open Settings` : label
+            }
             delay={TooltipDelay.noDelay}
-            place={TooltipPosition.Right}
+            place={isExpanded ? TooltipPosition.Bottom : TooltipPosition.Right}
             positionStrategy="fixed"
             noArrow
           />
-        ))}
+        );
+      })}
     </>
   );
 };
