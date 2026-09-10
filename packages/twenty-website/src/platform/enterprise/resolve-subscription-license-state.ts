@@ -10,7 +10,6 @@ const GRACE_STATUSES = new Set(['past_due']);
 export type ResolveSubscriptionLicenseStateInput = {
   status: string;
   nextPaymentAttempt: number | null;
-  now?: Date;
 };
 
 export type SubscriptionLicenseState =
@@ -45,7 +44,6 @@ const grace = (graceExpiresAt: number): SubscriptionLicenseState => ({
 export function resolveSubscriptionLicenseState({
   status,
   nextPaymentAttempt,
-  now = new Date(),
 }: ResolveSubscriptionLicenseStateInput): SubscriptionLicenseState {
   if (LICENSED_STATUSES.has(status)) {
     return licensed();
@@ -56,7 +54,7 @@ export function resolveSubscriptionLicenseState({
       return rejected();
     }
 
-    const nowSeconds = Math.floor(now.getTime() / 1000);
+    const nowSeconds = Math.floor(Date.now() / 1000);
     const graceExpiresAt = nextPaymentAttempt + GRACE_MARGIN_SECONDS;
 
     if (graceExpiresAt <= nowSeconds) {

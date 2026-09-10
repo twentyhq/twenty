@@ -8,9 +8,17 @@ const NOW_SECONDS = Math.floor(NOW.getTime() / 1000);
 const resolve = (
   status: string,
   nextPaymentAttempt: number | null = NOW_SECONDS + SECONDS_PER_DAY,
-) => resolveSubscriptionLicenseState({ status, nextPaymentAttempt, now: NOW });
+) => resolveSubscriptionLicenseState({ status, nextPaymentAttempt });
 
 describe('resolveSubscriptionLicenseState', () => {
+  beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(NOW);
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it.each(['active', 'trialing'])('licenses a %s subscription', (status) => {
     expect(resolve(status)).toEqual({
       outcome: 'licensed',
