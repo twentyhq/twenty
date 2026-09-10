@@ -6,6 +6,8 @@ const PROXY_HOST = '127.0.0.1';
 
 const ENTITY_TAG_PATTERN =
   /<((?:[\w.-]+:)?)getetag(?:\s[^>]*)?>[\s\S]*?<\/\1getetag>/g;
+const LAST_MODIFIED_PATTERN =
+  /<((?:[\w.-]+:)?)getlastmodified(?:\s[^>]*)?>[\s\S]*?<\/\1getlastmodified>/g;
 const SUPPORTED_REPORT_PATTERN =
   /<((?:[\w.-]+:)?)supported-report>[\s\S]*?<\/\1supported-report>/g;
 const RESPONSE_PATTERN = /<((?:[\w.-]+:)?)response>[\s\S]*?<\/\1response>/g;
@@ -14,8 +16,10 @@ const HREF_PATTERN = /<(?:[\w.-]+:)?href>\s*([^<]*?)\s*<\/(?:[\w.-]+:)?href>/;
 export type NonCompliantCalDavProxy = {
   host: string;
   port: number;
-  hideCollectionMembers: () => void;
-  revealCollectionMembers: () => void;
+  degradations: {
+    blankLastModified: boolean;
+    hideCollectionMembers: boolean;
+  };
   stop: () => Promise<void>;
 };
 
@@ -31,6 +35,9 @@ const readBody = async (message: IncomingMessage): Promise<Buffer> => {
 
 const blankEntityTags = (body: string): string =>
   body.replace(ENTITY_TAG_PATTERN, '<$1getetag />');
+
+const blankLastModified = (body: string): string =>
+  body.replace(LAST_MODIFIED_PATTERN, '<$1getlastmodified />');
 
 const dropSyncCollectionReport = (body: string): string =>
   body.replace(SUPPORTED_REPORT_PATTERN, (report) =>
@@ -49,7 +56,10 @@ export const startNonCompliantCalDavProxy = async ({
   targetHost: string;
   targetPort: number;
 }): Promise<NonCompliantCalDavProxy> => {
-  let membersHidden = false;
+  const degradations = {
+    blankLastModified: false,
+    hideCollectionMembers: false,
+  };
 
   const server = createServer((incoming, outgoing) => {
     void readBody(incoming)
@@ -78,7 +88,14 @@ export const startNonCompliantCalDavProxy = async ({
                 );
                 const rewrites = [blankEntityTags, dropSyncCollectionReport];
 
-                if (membersHidden && incoming.method === 'PROPFIND') {
+                if (degradations.blankLastModified) {
+                  rewrites.push(blankLastModified);
+                }
+
+                if (
+                  degradations.hideCollectionMembers &&
+                  incoming.method === 'PROPFIND'
+                ) {
                   rewrites.push(dropMemberResponses);
                 }
 
@@ -108,12 +125,7 @@ export const startNonCompliantCalDavProxy = async ({
   return {
     host: PROXY_HOST,
     port: (server.address() as AddressInfo).port,
-    hideCollectionMembers: () => {
-      membersHidden = true;
-    },
-    revealCollectionMembers: () => {
-      membersHidden = false;
-    },
+    degradations,
     stop: async () => {
       server.closeAllConnections();
       server.close();

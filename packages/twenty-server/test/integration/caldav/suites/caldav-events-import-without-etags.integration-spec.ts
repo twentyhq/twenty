@@ -167,34 +167,46 @@ describe('CalDAV calendar events import without entity tags (integration)', () =
     ).toEqual([firstSummary, secondSummary].sort());
   }, 300000);
 
-  it('keeps imported events and recovers when a listing returns no readable members', async () => {
-    const keptSummary = `CalDAV untagged event ${randomUUID()}`;
-    const hiddenSummary = `CalDAV untagged event ${randomUUID()}`;
+  it('re-imports the collection after a listing comes back with no members', async () => {
+    const summary = `CalDAV untagged event ${randomUUID()}`;
 
-    await putEvent({
-      uid: `caldav-event-${randomUUID()}`,
-      summary: keptSummary,
-    });
+    await putEvent({ uid: `caldav-event-${randomUUID()}`, summary });
     await syncCalendarChannel();
 
-    proxy.hideCollectionMembers();
+    expect(await findImportedCalendarEventTitles([summary])).toEqual([summary]);
 
-    await putEvent({
-      uid: `caldav-event-${randomUUID()}`,
-      summary: hiddenSummary,
-    });
-    await syncCalendarChannel();
-
-    expect(
-      await findImportedCalendarEventTitles([keptSummary, hiddenSummary]),
-    ).toEqual([keptSummary]);
-
-    proxy.revealCollectionMembers();
+    proxy.degradations.hideCollectionMembers = true;
 
     await syncCalendarChannel();
 
-    expect(
-      await findImportedCalendarEventTitles([keptSummary, hiddenSummary]),
-    ).toEqual([keptSummary, hiddenSummary].sort());
+    expect(await findImportedCalendarEventTitles([summary])).toEqual([]);
+
+    proxy.degradations.hideCollectionMembers = false;
+
+    await syncCalendarChannel();
+
+    expect(await findImportedCalendarEventTitles([summary])).toEqual([summary]);
+  }, 300000);
+
+  it('imports an edit when the server returns neither entity tag nor last modified date', async () => {
+    const uid = `caldav-event-${randomUUID()}`;
+    const originalSummary = `CalDAV unversioned event ${randomUUID()}`;
+    const editedSummary = `CalDAV unversioned event ${randomUUID()}`;
+
+    proxy.degradations.blankLastModified = true;
+
+    await putEvent({ uid, summary: originalSummary });
+    await syncCalendarChannel();
+
+    expect(await findImportedCalendarEventTitles([originalSummary])).toEqual([
+      originalSummary,
+    ]);
+
+    await putEvent({ uid, summary: editedSummary });
+    await syncCalendarChannel();
+
+    expect(await findImportedCalendarEventTitles([editedSummary])).toEqual([
+      editedSummary,
+    ]);
   }, 300000);
 });

@@ -11,6 +11,7 @@ import {
 } from 'tsdav';
 import { isDefined } from 'twenty-shared/utils';
 
+import { CALDAV_UNVERSIONED_RESOURCE } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/constants/caldav-unversioned-resource.constant';
 import { type CalDavSyncCursor } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/types/caldav-sync-cursor';
 import { extractICalData } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/extract-ical-data.util';
 import { isCalDavCollectionHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-caldav-collection-href.util';
@@ -21,10 +22,7 @@ import { isValidCalDavHref } from 'src/modules/calendar/calendar-event-import-ma
 import { mapCalDavStatusToExceptionCode } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/map-caldav-status-to-exception-code.util';
 import { parseICalEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-ical-event.util';
 import { resolveCalDavResourceVersion } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/resolve-caldav-resource-version.util';
-import {
-  CalendarEventImportDriverException,
-  CalendarEventImportDriverExceptionCode,
-} from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
+import { CalendarEventImportDriverException } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
 type CalendarSyncResult = {
@@ -319,18 +317,22 @@ export class CalDavFetchEventsService {
     const currentEtags = await this.fetchEtagsByHref(client, calendar.url);
 
     const changedHrefs = Object.keys(currentEtags).filter(
-      (href) => storedEtags[href] !== currentEtags[href],
+      (href) =>
+        currentEtags[href] === CALDAV_UNVERSIONED_RESOURCE ||
+        storedEtags[href] !== currentEtags[href],
     );
     const cancelledHrefs = Object.keys(storedEtags).filter(
       (href) =>
         !(href in currentEtags) && !isCalDavCollectionHref(href, calendar.url),
     );
 
+    const listedResources = Object.keys(currentEtags).length > 0;
+
     return {
       calendarUrl: calendar.url,
       changedHrefs,
       cancelledHrefs,
-      newCtag,
+      newCtag: listedResources ? newCtag : undefined,
       newEtags: currentEtags,
     };
   }
@@ -373,26 +375,14 @@ export class CalDavFetchEventsService {
         !isCalDavCollectionHref(response.href, calendarUrl),
     );
 
-    const etagsByHref = memberResponses.reduce<Record<string, string>>(
-      (map, response) => {
-        if (!isValidCalDavHref(response.href)) {
-          return map;
-        }
-
-        map[response.href] = resolveCalDavResourceVersion(response);
-
+    return memberResponses.reduce<Record<string, string>>((map, response) => {
+      if (!isValidCalDavHref(response.href)) {
         return map;
-      },
-      {},
-    );
+      }
 
-    if (memberResponses.length > 0 && Object.keys(etagsByHref).length === 0) {
-      throw new CalendarEventImportDriverException(
-        `PROPFIND on ${calendarUrl} listed ${memberResponses.length} members but none could be read as calendar object resources`,
-        CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
-      );
-    }
+      map[response.href] = resolveCalDavResourceVersion(response);
 
-    return etagsByHref;
+      return map;
+    }, {});
   }
 }
