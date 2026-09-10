@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Readable, Transform } from 'stream';
@@ -16,7 +16,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { COMPLETE_FILE_UPLOAD_DEADLINE_MS } from 'src/engine/core-modules/file/file-upload/constants/complete-file-upload-deadline.constant';
 import { MAX_SANITIZABLE_SVG_BYTES } from 'src/engine/core-modules/file/file-upload/constants/max-sanitizable-svg-size.constant';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
 import {
@@ -34,7 +33,6 @@ import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { withDeadline } from 'src/utils/with-deadline';
 
 export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.FilesField,
@@ -46,8 +44,6 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
 
 @Injectable()
 export class FileUploadService {
-  private readonly logger = new Logger(FileUploadService.name);
-
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly fileUrlService: FileUrlService,
@@ -277,34 +273,19 @@ export class FileUploadService {
       file,
     });
 
-    const completedFile = await withDeadline({
-      promise: this.fileUploadCompletionService.completeUploadedFile({
-        workspaceId,
-        file,
-        storageLocation: {
-          fileFolder: fileFolder as FileFolder,
-          applicationUniversalIdentifier: application.universalIdentifier,
+    const completedFile =
+      await this.fileUploadCompletionService.completeUploadedFileWithinDeadline(
+        {
           workspaceId,
-          resourcePath,
-        },
-      }),
-      timeoutMs: COMPLETE_FILE_UPLOAD_DEADLINE_MS,
-      createTimeoutError: () =>
-        new FileUploadException(
-          `Completion of file ${fileId} exceeded ${COMPLETE_FILE_UPLOAD_DEADLINE_MS}ms waiting on storage`,
-          FileUploadExceptionCode.STORAGE_TIMEOUT,
-          {
-            userFriendlyMessage: msg`File storage took too long to respond. Please retry.`,
+          file,
+          storageLocation: {
+            fileFolder: fileFolder as FileFolder,
+            applicationUniversalIdentifier: application.universalIdentifier,
+            workspaceId,
+            resourcePath,
           },
-        ),
-      onSettleAfterDeadline: (settlement) => {
-        this.logger.warn(
-          settlement.status === 'fulfilled'
-            ? `Completion of file ${fileId} succeeded after the deadline had been reported to the client`
-            : `Completion of file ${fileId} failed after the deadline had been reported to the client: ${settlement.error}`,
-        );
-      },
-    });
+        },
+      );
 
     return this.toFileWithSignedUrl({
       file: { ...file, ...completedFile, status: FILE_STATUS.UPLOADED },

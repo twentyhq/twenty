@@ -142,14 +142,18 @@ export class ApplicationTarballService {
       resourcePath: removeFileFolderFromFileEntityPath(file.path),
     };
 
-    await this.fileUploadCompletionService.completeUploadedFile({
-      workspaceId,
-      file,
-      storageLocation,
-    });
+    const completedFile =
+      await this.fileUploadCompletionService.completeUploadedFileWithinDeadline(
+        {
+          workspaceId,
+          file,
+          storageLocation,
+        },
+      );
 
     const tarballBuffer = await streamToBuffer(
       await this.fileStorageService.readFile(storageLocation),
+      completedFile.size,
     );
 
     try {

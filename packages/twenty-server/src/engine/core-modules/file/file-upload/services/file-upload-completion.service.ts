@@ -9,6 +9,7 @@ import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/t
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { COMPLETE_FILE_UPLOAD_DEADLINE_MS } from 'src/engine/core-modules/file/file-upload/constants/complete-file-upload-deadline.constant';
 import { FILE_CONTENT_SNIFF_BYTE_COUNT } from 'src/engine/core-modules/file/file-upload/constants/file-content-sniff.constant';
 import { MAX_SANITIZABLE_SVG_BYTES } from 'src/engine/core-modules/file/file-upload/constants/max-sanitizable-svg-size.constant';
 import {
@@ -31,6 +32,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { withDeadline } from 'src/utils/with-deadline';
 
 export type BatchCompleteUploadRequest = {
   workspaceId: string;
@@ -75,6 +77,34 @@ export class FileUploadCompletionService {
         }
       }),
     );
+  }
+
+  async completeUploadedFileWithinDeadline(params: {
+    workspaceId: string;
+    file: FileEntity;
+    storageLocation: FileUploadStorageLocation;
+  }): Promise<CompletedUploadedFile> {
+    const { id: fileId } = params.file;
+
+    return withDeadline({
+      promise: this.completeUploadedFile(params),
+      timeoutMs: COMPLETE_FILE_UPLOAD_DEADLINE_MS,
+      createTimeoutError: () =>
+        new FileUploadException(
+          `Completion of file ${fileId} exceeded ${COMPLETE_FILE_UPLOAD_DEADLINE_MS}ms waiting on storage`,
+          FileUploadExceptionCode.STORAGE_TIMEOUT,
+          {
+            userFriendlyMessage: msg`File storage took too long to respond. Please retry.`,
+          },
+        ),
+      onSettleAfterDeadline: (settlement) => {
+        this.logger.warn(
+          settlement.status === 'fulfilled'
+            ? `Completion of file ${fileId} succeeded after the deadline had been reported to the client`
+            : `Completion of file ${fileId} failed after the deadline had been reported to the client: ${settlement.error}`,
+        );
+      },
+    });
   }
 
   async completeUploadedFile({
