@@ -15,7 +15,7 @@ export class SmtpDriver implements EmailDriverInterface {
   private transport: Transporter;
 
   constructor(options: SMTPConnection.Options) {
-    this.transport = createTransport(options);
+    this.transport = createTransport({ ...options, pool: true });
   }
 
   async send(sendMailOptions: SendMailOptions): Promise<void> {
