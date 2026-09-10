@@ -8,9 +8,12 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { v4 } from 'uuid';
 
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { CLAIMABLE_WEBHOOK_SUBSCRIPTION_STATUSES } from 'src/modules/connected-account/webhook-subscription-manager/constants/claimable-webhook-subscription-statuses.constant';
+import { WEBHOOK_SUBSCRIPTION_CLAIM_STALE_MS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-claim-stale-ms.constant';
 import {
   type WebhookSubscribableChannel,
   type WebhookSubscriptionResult,
@@ -25,19 +28,76 @@ export class WebhookSubscriptionStatusService {
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
   ) {}
 
+  public async claimSubscriptionCreation(
+    channelType: WebhookSubscriptionChannelType,
+    channelId: string,
+    workspaceId: string,
+  ): Promise<string | null> {
+    const clientState = v4();
+
+    const updateResult = await this.getRepository(channelType)
+      .createQueryBuilder()
+      .update()
+      .set({
+        webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+        webhookSubscriptionClientState: clientState,
+      })
+      .where('"id" = :channelId', { channelId })
+      .andWhere('"workspaceId" = :workspaceId', { workspaceId })
+      .andWhere(
+        `("webhookSubscriptionStatus" IS NULL
+          OR "webhookSubscriptionStatus" IN (:...claimableStatuses)
+          OR ("webhookSubscriptionStatus" = :pendingStatus AND "updatedAt" <= :staleClaimBefore))`,
+        {
+          claimableStatuses: CLAIMABLE_WEBHOOK_SUBSCRIPTION_STATUSES,
+          pendingStatus: WebhookSubscriptionStatus.PENDING,
+          staleClaimBefore: new Date(
+            Date.now() - WEBHOOK_SUBSCRIPTION_CLAIM_STALE_MS,
+          ),
+        },
+      )
+      .returning('id')
+      .execute();
+
+    return updateResult.raw.length > 0 ? clientState : null;
+  }
+
+  public async settleClaimedSubscription(
+    channelType: WebhookSubscriptionChannelType,
+    channelId: string,
+    workspaceId: string,
+    clientState: string,
+    result: WebhookSubscriptionResult,
+  ): Promise<boolean> {
+    const { affected } = await this.getRepository(channelType).update(
+      {
+        id: channelId,
+        workspaceId,
+        webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+        webhookSubscriptionClientState: clientState,
+      },
+      {
+        webhookSubscriptionExternalId: result.externalSubscriptionId,
+        webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
+        webhookSubscriptionExpiresAt: result.expiresAt,
+        ...(channelType === WebhookSubscriptionChannelType.CALENDAR
+          ? { webhookSubscriptionExternalResourceId: result.externalResourceId }
+          : {}),
+      },
+    );
+
+    return isDefined(affected) && affected > 0;
+  }
+
   public async markAsActive(
     channelType: WebhookSubscriptionChannelType,
     channelId: string,
     result: WebhookSubscriptionResult,
-    clientState?: string,
   ) {
     await this.update(channelType, channelId, {
       webhookSubscriptionExternalId: result.externalSubscriptionId,
       webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
       webhookSubscriptionExpiresAt: result.expiresAt,
-      ...(isDefined(clientState)
-        ? { webhookSubscriptionClientState: clientState }
-        : {}),
       ...(channelType === WebhookSubscriptionChannelType.CALENDAR
         ? { webhookSubscriptionExternalResourceId: result.externalResourceId }
         : {}),
@@ -65,10 +125,8 @@ export class WebhookSubscriptionStatusService {
   public async resetPendingSubscription(
     channelType: WebhookSubscriptionChannelType,
     channelId: string,
-    clientState: string,
   ) {
     await this.update(channelType, channelId, {
-      webhookSubscriptionClientState: clientState,
       webhookSubscriptionExpiresAt: null,
     });
   }
