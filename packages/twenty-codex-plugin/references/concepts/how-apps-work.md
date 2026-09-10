@@ -21,7 +21,7 @@ A Twenty app depends on two SDK packages:
 
 `twenty-sdk/front-component` provides runtime APIs available inside front components: `navigate`, `enqueueSnackbar`, `openSidePanelPage`, `useSelectedRecordIds`, `getApplicationVariable`, and others.
 
-Twenty UI components (`Button`, `Chip`, `Tag`, `Status`, `H2Title`, `ThemeProvider`, icons, `themeCssVariables`) live in the `twenty-ui` package. Install `twenty-ui@1.0.0-alpha.2` from npm and import from its subpaths (`twenty-ui/input`, `twenty-ui/data-display`, `twenty-ui/icon`, `twenty-ui/typography`, `twenty-ui/theme-constants`, and others).
+Twenty UI components (`Button`, `Chip`, `Tag`, `Status`, `H2Title`, `ThemeProvider`, icons, `themeCssVariables`) live in the `twenty-ui` package. Install `twenty-ui` from npm at the same version as `twenty-sdk` and `twenty-client-sdk` and import from its subpaths (`twenty-ui/input`, `twenty-ui/data-display`, `twenty-ui/icon`, `twenty-ui/typography`, `twenty-ui/theme-constants`, and others).
 
 `twenty-client-sdk/core` provides `CoreApiClient` for querying and mutating workspace records (companies, people, custom objects). `twenty-client-sdk/metadata` provides access to workspace metadata (object definitions, field definitions).
 
