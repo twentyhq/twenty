@@ -77,7 +77,13 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Checkbox',
-    node: <Checkbox checked={false} onChange={() => {}} />,
+    node: (
+      <Checkbox
+        aria-label="Checkbox"
+        checked={false}
+        onCheckedChange={() => {}}
+      />
+    ),
   },
   {
     name: 'CoreEditorHeader',
