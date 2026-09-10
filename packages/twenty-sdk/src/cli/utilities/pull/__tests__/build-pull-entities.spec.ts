@@ -868,15 +868,16 @@ describe('buildPullEntities', () => {
     expect(navigationMenuItem?.parentName).toBeNull();
   });
 
-  it('should report a standalone page layout widget as not written rather than dropping it', () => {
+  it('should write a standalone page layout widget into src/page-layout-widgets, named after its title', () => {
     const { entities, skipped } = buildPullEntities(
       buildManifest({
         pageLayoutWidgets: [
           {
             universalIdentifier: WIDGET_UID,
             pageLayoutTabUniversalIdentifier: PAGE_LAYOUT_TAB_UID,
-            title: 'Docs',
+            title: 'Care notes',
             type: 'IFRAME',
+            objectUniversalIdentifier: PET_UID,
             position: {
               layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
               index: 1000,
@@ -884,22 +885,24 @@ describe('buildPullEntities', () => {
             configuration: {
               configurationType: 'IFRAME',
               url: 'https://example.com/docs',
+              __typename: 'IframeConfiguration',
             },
           },
         ],
-      } as Partial<Manifest>),
+      } as unknown as Partial<Manifest>),
+    );
+    const widget = entities.find(
+      (entity) => entity.kind === 'pageLayoutWidget',
     );
 
+    expect(skipped).toEqual([]);
+    expect(widget?.definer).toBe('definePageLayoutWidget');
     expect(
-      entities.some((entity) => entity.universalIdentifier === WIDGET_UID),
-    ).toBe(false);
-    expect(skipped).toEqual([
-      {
-        kind: 'pageLayoutWidget',
-        universalIdentifier: WIDGET_UID,
-        reason: 'has a source form this version does not write yet',
-      },
-    ]);
+      `${widget?.defaultFolder}/${widget?.fileBaseName}${widget?.fileSuffix}`,
+    ).toBe('src/page-layout-widgets/care-notes.page-layout-widget.ts');
+    expect(widget?.parentName).toBe('pet');
+    expect(widget?.config).not.toHaveProperty('configuration.__typename');
+    expect(JSON.stringify(widget?.config)).not.toContain('__typename');
   });
 
   it('should build a manifest that has no views, view fields, page layouts and page layout tabs properties without producing their entities', () => {

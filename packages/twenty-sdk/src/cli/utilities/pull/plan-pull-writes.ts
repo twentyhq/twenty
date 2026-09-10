@@ -47,6 +47,7 @@ const ENTITY_KEY_BY_KIND: Record<PullEntityKind, ManifestEntityKey> = {
   pageLayout: ManifestEntityKey.PageLayouts,
   pageLayoutTab: ManifestEntityKey.PageLayoutTabs,
   navigationMenuItem: ManifestEntityKey.NavigationMenuItems,
+  pageLayoutWidget: ManifestEntityKey.PageLayoutWidgets,
 };
 
 const toPosixPath = (value: string): string => value.split('\\').join('/');

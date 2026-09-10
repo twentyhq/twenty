@@ -2,6 +2,7 @@ import {
   FIELD_ENUM_BINDINGS,
   INDEX_ENUM_BINDINGS,
   NAVIGATION_MENU_ITEM_ENUM_BINDINGS,
+  PAGE_LAYOUT_WIDGET_ENUM_BINDINGS,
   OBJECT_ENUM_BINDINGS,
   PAGE_LAYOUT_ENUM_BINDINGS,
   PAGE_LAYOUT_TAB_ENUM_BINDINGS,
@@ -43,6 +44,7 @@ export const PULL_ENTITY_KINDS = [
   'pageLayout',
   'pageLayoutTab',
   'navigationMenuItem',
+  'pageLayoutWidget',
 ] as const;
 
 export type PullEntityKind = (typeof PULL_ENTITY_KINDS)[number];
@@ -60,7 +62,7 @@ export type PullEntity = {
 };
 
 export type SkippedPullEntity = {
-  kind: PullEntityKind | 'pageLayoutWidget';
+  kind: PullEntityKind;
   universalIdentifier: string;
   reason: string;
 };
@@ -504,10 +506,23 @@ export const buildPullEntities = (
   }
 
   for (const pageLayoutWidgetManifest of manifest.pageLayoutWidgets ?? []) {
-    skipped.push({
+    const { objectUniversalIdentifier } = pageLayoutWidgetManifest;
+
+    entities.push({
       kind: 'pageLayoutWidget',
       universalIdentifier: pageLayoutWidgetManifest.universalIdentifier,
-      reason: 'has a source form this version does not write yet',
+      definer: 'definePageLayoutWidget',
+      config: stripGraphqlTypename(pageLayoutWidgetManifest),
+      enumBindings: PAGE_LAYOUT_WIDGET_ENUM_BINDINGS,
+      defaultFolder: 'src/page-layout-widgets',
+      fileSuffix: '.page-layout-widget.ts',
+      fileBaseName: toFileBaseName({
+        segments: [pageLayoutWidgetManifest.title],
+        universalIdentifier: pageLayoutWidgetManifest.universalIdentifier,
+      }),
+      parentName: isDefined(objectUniversalIdentifier)
+        ? getObjectName({ objectUniversalIdentifier, manifest })
+        : null,
     });
   }
 
