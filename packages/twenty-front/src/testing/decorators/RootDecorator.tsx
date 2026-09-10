@@ -1,4 +1,4 @@
-import '@/viewport-zoom.css';
+import '~/viewport-zoom.css';
 import { ApolloProvider } from '@apollo/client/react';
 import { type Decorator } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
