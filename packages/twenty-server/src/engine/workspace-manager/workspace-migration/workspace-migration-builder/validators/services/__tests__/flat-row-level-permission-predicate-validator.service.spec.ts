@@ -18,6 +18,10 @@ const WORKSPACE_MEMBER_RELATION_FIELD_UNIVERSAL_IDENTIFIER =
   '00000000-0000-4000-8000-0000000000b3';
 const WORKSPACE_MEMBER_OTHER_RELATION_FIELD_UNIVERSAL_IDENTIFIER =
   '00000000-0000-4000-8000-0000000000b4';
+const ONE_TO_MANY_FIELD_UNIVERSAL_IDENTIFIER =
+  '00000000-0000-4000-8000-0000000000b5';
+const WORKSPACE_MEMBER_MORPH_FIELD_UNIVERSAL_IDENTIFIER =
+  '00000000-0000-4000-8000-0000000000b6';
 const RELATION_TARGET_OBJECT_UNIVERSAL_IDENTIFIER =
   '00000000-0000-4000-8000-0000000000c2';
 const OTHER_RELATION_TARGET_OBJECT_UNIVERSAL_IDENTIFIER =
@@ -36,13 +40,15 @@ const buildPredicate = ({
   operand,
   value,
   workspaceMemberFieldMetadataUniversalIdentifier = null,
+  fieldMetadataUniversalIdentifier = FIELD_UNIVERSAL_IDENTIFIER,
 }: {
   operand: RowLevelPermissionPredicateOperand;
   value: unknown;
   workspaceMemberFieldMetadataUniversalIdentifier?: string | null;
+  fieldMetadataUniversalIdentifier?: string;
 }) => ({
   universalIdentifier: PREDICATE_UNIVERSAL_IDENTIFIER,
-  fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+  fieldMetadataUniversalIdentifier,
   objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
   roleUniversalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
   rowLevelPermissionPredicateGroupUniversalIdentifier: null,
@@ -60,8 +66,29 @@ const relatedMaps = (fieldType: FieldMetadataType) => ({
       type: fieldType,
       name: 'accountOwner',
       label: 'Account Owner',
+      universalSettings: { relationType: RelationType.MANY_TO_ONE },
       relationTargetObjectMetadataUniversalIdentifier:
         RELATION_TARGET_OBJECT_UNIVERSAL_IDENTIFIER,
+    },
+    {
+      universalIdentifier: ONE_TO_MANY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldMetadataType.RELATION,
+      name: 'people',
+      label: 'People',
+      universalSettings: { relationType: RelationType.ONE_TO_MANY },
+      relationTargetObjectMetadataUniversalIdentifier:
+        RELATION_TARGET_OBJECT_UNIVERSAL_IDENTIFIER,
+    },
+    {
+      universalIdentifier: WORKSPACE_MEMBER_MORPH_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldMetadataType.MORPH_RELATION,
+      name: 'target',
+      label: 'Target',
+      universalSettings: { relationType: RelationType.MANY_TO_ONE },
+      relationTargetObjectMetadataUniversalIdentifier:
+        RELATION_TARGET_OBJECT_UNIVERSAL_IDENTIFIER,
+      objectMetadataUniversalIdentifier:
+        STANDARD_OBJECTS.workspaceMember.universalIdentifier,
     },
     {
       universalIdentifier: WORKSPACE_MEMBER_ID_FIELD_UNIVERSAL_IDENTIFIER,
@@ -106,17 +133,20 @@ const buildCreationArgs = ({
   operand,
   value,
   workspaceMemberFieldMetadataUniversalIdentifier = null,
+  fieldMetadataUniversalIdentifier,
 }: {
   fieldType: FieldMetadataType;
   operand: RowLevelPermissionPredicateOperand;
   value: unknown;
   workspaceMemberFieldMetadataUniversalIdentifier?: string | null;
+  fieldMetadataUniversalIdentifier?: string;
 }) =>
   ({
     flatEntityToValidate: buildPredicate({
       operand,
       value,
       workspaceMemberFieldMetadataUniversalIdentifier,
+      fieldMetadataUniversalIdentifier,
     }),
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRowLevelPermissionPredicateMaps: mapsFrom([]),
@@ -304,6 +334,40 @@ describe('FlatRowLevelPermissionPredicateValidatorService', () => {
       expect(result.errors[0].message).toContain(
         'is not a field of the workspaceMember object',
       );
+    });
+
+    it('should reject a morph relation on the workspace member', () => {
+      const result = service.validateFlatRowLevelPermissionPredicateCreation(
+        buildCreationArgs({
+          fieldType: FieldMetadataType.RELATION,
+          operand: RowLevelPermissionPredicateOperand.IS,
+          value: null,
+          workspaceMemberFieldMetadataUniversalIdentifier:
+            WORKSPACE_MEMBER_MORPH_FIELD_UNIVERSAL_IDENTIFIER,
+        }),
+      );
+
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].message).toContain(
+        'is not a many-to-one relation, its value cannot be resolved',
+      );
+    });
+
+    it('should reject a record field that is not a many-to-one relation', () => {
+      const result = service.validateFlatRowLevelPermissionPredicateCreation(
+        buildCreationArgs({
+          fieldType: FieldMetadataType.RELATION,
+          operand: RowLevelPermissionPredicateOperand.IS,
+          value: null,
+          fieldMetadataUniversalIdentifier:
+            ONE_TO_MANY_FIELD_UNIVERSAL_IDENTIFIER,
+          workspaceMemberFieldMetadataUniversalIdentifier:
+            WORKSPACE_MEMBER_RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+        }),
+      );
+
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].message).toContain('has no join column');
     });
 
     it('should reject an operand the relation query filter cannot express', () => {

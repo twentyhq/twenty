@@ -438,6 +438,17 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     });
   }
 
+  private isOwningRelationFlatFieldMetadata(
+    flatFieldMetadata: UniversalFlatFieldMetadata,
+  ): boolean {
+    return (
+      flatFieldMetadata.type === FieldMetadataType.RELATION &&
+      isMorphOrRelationUniversalFlatFieldMetadata(flatFieldMetadata) &&
+      flatFieldMetadata.universalSettings?.relationType ===
+        RelationType.MANY_TO_ONE
+    );
+  }
+
   private getWorkspaceMemberFieldError({
     fieldMetadata,
     operand,
@@ -474,8 +485,11 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       };
     }
 
+    const isRecordFieldFilteredAsRelation =
+      getFilterTypeFromFieldType(fieldMetadata.type) === 'RELATION';
+
     if (
-      getFilterTypeFromFieldType(fieldMetadata.type) === 'RELATION' &&
+      isRecordFieldFilteredAsRelation &&
       operand !== RowLevelPermissionPredicateOperand.IS &&
       operand !== RowLevelPermissionPredicateOperand.IS_NOT
     ) {
@@ -487,24 +501,31 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     }
 
     if (
-      !isMorphOrRelationUniversalFlatFieldMetadata(
-        workspaceMemberFieldMetadata,
-      ) ||
-      workspaceMemberFieldMetadata.type !== FieldMetadataType.RELATION
+      isRecordFieldFilteredAsRelation &&
+      !this.isOwningRelationFlatFieldMetadata(fieldMetadata)
+    ) {
+      const fieldName = fieldMetadata.name;
+
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`Field "${fieldName}" is not a many-to-one relation, it has no join column to compare against`,
+        userFriendlyMessage: msg`This relation field cannot be used in a record rule`,
+      };
+    }
+
+    if (
+      !isMorphOrRelationUniversalFlatFieldMetadata(workspaceMemberFieldMetadata)
     ) {
       return undefined;
     }
 
-    if (
-      workspaceMemberFieldMetadata.universalSettings?.relationType !==
-      RelationType.MANY_TO_ONE
-    ) {
+    if (!this.isOwningRelationFlatFieldMetadata(workspaceMemberFieldMetadata)) {
       const workspaceMemberFieldName = workspaceMemberFieldMetadata.name;
 
       return {
         code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
-        message: t`Workspace member field "${workspaceMemberFieldName}" holds several records, only a many-to-one relation can be compared`,
-        userFriendlyMessage: msg`This workspace member field holds several records and cannot be compared`,
+        message: t`Workspace member field "${workspaceMemberFieldName}" is not a many-to-one relation, its value cannot be resolved for the current user`,
+        userFriendlyMessage: msg`This workspace member field cannot be compared`,
       };
     }
 
