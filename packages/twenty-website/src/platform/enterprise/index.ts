@@ -3,7 +3,8 @@ export { getEnterprisePriceId } from './enterprise-price-id';
 export { getLicenseeFromStripeCustomer } from './get-licensee-from-stripe-customer';
 export { getStripeClient } from './stripe-client';
 export { getSubscriptionCurrentPeriodEnd } from './subscription-current-period-end';
-export { getSubscriptionNextPaymentAttempt } from './subscription-next-payment-attempt';
+export { findNextPaymentAttempt } from './find-next-payment-attempt';
+export { SUBSCRIPTION_GRACE_STATUSES } from './subscription-grace-statuses';
 export {
   ENTERPRISE_INSTANCE_TYPE,
   type EnterpriseInstanceType,

@@ -4,9 +4,6 @@ import {
   getEnterpriseConfigError,
   getStripeClient,
   getSubscriptionCurrentPeriodEnd,
-  getSubscriptionNextPaymentAttempt,
-  resolveSubscriptionLicenseState,
-  SUBSCRIPTION_LICENSE_OUTCOME,
   verifyEnterpriseKey,
 } from '@/platform/enterprise';
 
@@ -44,9 +41,7 @@ export async function POST(request: Request) {
     }
 
     const stripe = getStripeClient();
-    const subscription = await stripe.subscriptions.retrieve(payload.sub, {
-      expand: ['latest_invoice'],
-    });
+    const subscription = await stripe.subscriptions.retrieve(payload.sub);
 
     const rawCancelAt = subscription.cancel_at;
     const rawCancelAtPeriodEnd = subscription.cancel_at_period_end;
@@ -61,20 +56,12 @@ export async function POST(request: Request) {
     const isCancellationScheduled =
       subscription.status !== 'canceled' && effectiveCancelAt !== null;
 
-    const licenseState = resolveSubscriptionLicenseState({
-      status: subscription.status,
-      nextPaymentAttempt: getSubscriptionNextPaymentAttempt(subscription),
-    });
-
     return NextResponse.json({
       subscriptionId: subscription.id,
       status: subscription.status,
       cancelAt: effectiveCancelAt,
       currentPeriodEnd: rawCurrentPeriodEnd,
       isCancellationScheduled,
-      isInGracePeriod:
-        licenseState.outcome === SUBSCRIPTION_LICENSE_OUTCOME.GRACE,
-      graceExpiresAt: licenseState.graceExpiresAt,
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';

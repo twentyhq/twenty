@@ -4,16 +4,17 @@ import {
   ENTERPRISE_RATE_LIMIT_CODE,
   EnterpriseInstanceType,
   evaluateValidityTokenEmissionRateLimit,
+  findNextPaymentAttempt,
   getAutoReleaseDays,
   getEnterpriseConfigError,
   getStripeClient,
   getSubscriptionCurrentPeriodEnd,
-  getSubscriptionNextPaymentAttempt,
   parseInstanceType,
   resolveServerBinding,
   resolveSubscriptionLicenseState,
   SERVER_BINDING_OUTCOME,
   signValidityToken,
+  SUBSCRIPTION_GRACE_STATUSES,
   SUBSCRIPTION_LICENSE_OUTCOME,
   verifyEnterpriseKey,
 } from '@/platform/enterprise';
@@ -64,13 +65,20 @@ export async function POST(request: Request) {
     }
 
     const stripe = getStripeClient();
-    const subscription = await stripe.subscriptions.retrieve(payload.sub, {
-      expand: ['latest_invoice'],
-    });
+    const subscription = await stripe.subscriptions.retrieve(payload.sub);
+
+    const nextPaymentAttempt = SUBSCRIPTION_GRACE_STATUSES.has(
+      subscription.status,
+    )
+      ? await findNextPaymentAttempt({
+          stripe,
+          subscriptionId: subscription.id,
+        })
+      : null;
 
     const licenseState = resolveSubscriptionLicenseState({
       status: subscription.status,
-      nextPaymentAttempt: getSubscriptionNextPaymentAttempt(subscription),
+      nextPaymentAttempt,
     });
 
     if (licenseState.outcome === SUBSCRIPTION_LICENSE_OUTCOME.REJECTED) {
@@ -79,9 +87,6 @@ export async function POST(request: Request) {
         { status: 403 },
       );
     }
-
-    const isInGracePeriod =
-      licenseState.outcome === SUBSCRIPTION_LICENSE_OUTCOME.GRACE;
 
     const serverId = instanceMetadata?.serverId;
     const instanceType = parseInstanceType(instanceMetadata?.instanceType);
@@ -151,8 +156,6 @@ export async function POST(request: Request) {
       subscriptionStatus: subscription.status,
       instanceType,
       isBillable: binding.isBillable,
-      isInGracePeriod,
-      graceExpiresAt: licenseState.graceExpiresAt,
     });
   } catch (error: unknown) {
     console.error('Enterprise key validation failed', error);

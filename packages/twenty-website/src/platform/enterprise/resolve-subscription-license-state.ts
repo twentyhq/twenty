@@ -1,11 +1,10 @@
+import { SUBSCRIPTION_GRACE_STATUSES } from './subscription-grace-statuses';
 import { SUBSCRIPTION_LICENSE_OUTCOME } from './subscription-license-outcome';
 
 const SECONDS_PER_DAY = 24 * 60 * 60;
 const GRACE_MARGIN_SECONDS = SECONDS_PER_DAY;
 
 const LICENSED_STATUSES = new Set(['active', 'trialing']);
-
-const GRACE_STATUSES = new Set(['past_due']);
 
 export type ResolveSubscriptionLicenseStateInput = {
   status: string;
@@ -49,7 +48,7 @@ export function resolveSubscriptionLicenseState({
     return licensed();
   }
 
-  if (GRACE_STATUSES.has(status)) {
+  if (SUBSCRIPTION_GRACE_STATUSES.has(status)) {
     if (typeof nextPaymentAttempt !== 'number' || nextPaymentAttempt <= 0) {
       return rejected();
     }
