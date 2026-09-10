@@ -1584,8 +1584,6 @@ type EnterpriseSubscriptionStatusDTO {
   cancelAt: DateTime
   currentPeriodEnd: DateTime
   isCancellationScheduled: Boolean!
-  isInGracePeriod: Boolean!
-  graceExpiresAt: DateTime
 }
 
 type FileWithSignedUrl {

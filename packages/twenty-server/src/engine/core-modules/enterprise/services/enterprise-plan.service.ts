@@ -460,8 +460,6 @@ export class EnterprisePlanService implements OnModuleInit {
     cancelAt: Date | null;
     currentPeriodEnd: Date | null;
     isCancellationScheduled: boolean;
-    isInGracePeriod: boolean;
-    graceExpiresAt: Date | null;
   } | null> {
     this.refreshKeyPayload();
 
@@ -501,10 +499,6 @@ export class EnterprisePlanService implements OnModuleInit {
           ? new Date(data.currentPeriodEnd * 1000)
           : null,
         isCancellationScheduled: data.isCancellationScheduled ?? false,
-        isInGracePeriod: data.isInGracePeriod ?? false,
-        graceExpiresAt: data.graceExpiresAt
-          ? new Date(data.graceExpiresAt * 1000)
-          : null,
       };
     } catch (error) {
       this.logger.warn(

@@ -3036,12 +3036,6 @@ export default {
             "isCancellationScheduled": [
                 8
             ],
-            "isInGracePeriod": [
-                8
-            ],
-            "graceExpiresAt": [
-                4
-            ],
             "__typename": [
                 1
             ]

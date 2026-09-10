@@ -60,8 +60,6 @@ type SubscriptionStatus = {
   cancelAt: string | null;
   currentPeriodEnd: string | null;
   isCancellationScheduled: boolean;
-  isInGracePeriod: boolean;
-  graceExpiresAt: string | null;
 };
 
 type StatusDotVariant = 'active' | 'warning' | 'inactive';
@@ -241,21 +239,12 @@ export const SettingsEnterprise = ({
     ? new Date(subscriptionStatus.currentPeriodEnd)
     : null;
 
-  const isInGracePeriod = subscriptionStatus?.isInGracePeriod === true;
-
-  const graceExpiresAt = isDefined(subscriptionStatus?.graceExpiresAt)
-    ? new Date(subscriptionStatus.graceExpiresAt)
+  const licenseExpiresAt = isDefined(subscriptionStatus?.expiresAt)
+    ? new Date(subscriptionStatus.expiresAt)
     : null;
 
-  const effectiveGraceExpiresAt =
-    isDefined(graceExpiresAt) &&
-    isDefined(cancelAt) &&
-    cancelAt < graceExpiresAt
-      ? cancelAt
-      : graceExpiresAt;
-
-  const graceExpiresAtDate = isDefined(effectiveGraceExpiresAt)
-    ? effectiveGraceExpiresAt.toLocaleDateString()
+  const licenseExpiresAtDate = isDefined(licenseExpiresAt)
+    ? licenseExpiresAt.toLocaleDateString()
     : '';
 
   const cancelAtDate =
@@ -894,7 +883,7 @@ export const SettingsEnterprise = ({
             <H2Title
               title={t`Enterprise License`}
               description={
-                isInGracePeriod
+                hasValidityToken
                   ? t`A payment on your subscription failed. Your enterprise features stay active while we retry it.`
                   : t`There is a payment issue with your subscription. Your enterprise features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one.`
               }
@@ -906,17 +895,17 @@ export const SettingsEnterprise = ({
                 currentValue={
                   <StyledStatusContainer>
                     <StyledStatusDot
-                      variant={isInGracePeriod ? 'warning' : 'inactive'}
+                      variant={hasValidityToken ? 'warning' : 'inactive'}
                     />
                     <Trans>Payment issue</Trans>
                   </StyledStatusContainer>
                 }
               />
-              {isInGracePeriod && isDefined(effectiveGraceExpiresAt) && (
+              {hasValidityToken && isDefined(licenseExpiresAt) && (
                 <SubscriptionInfoRowContainer
                   label={t`Features active until`}
                   Icon={IconCalendarRepeat}
-                  currentValue={graceExpiresAtDate}
+                  currentValue={licenseExpiresAtDate}
                 />
               )}
               <SubscriptionInfoRowContainer
@@ -932,9 +921,9 @@ export const SettingsEnterprise = ({
                 }
               />
             </SubscriptionInfoContainer>
-            {isInGracePeriod && isDefined(effectiveGraceExpiresAt) && (
+            {hasValidityToken && isDefined(licenseExpiresAt) && (
               <StyledCancellationNotice>
-                {t`Update your payment method before ${graceExpiresAtDate} to avoid losing access.`}
+                {t`Update your payment method before ${licenseExpiresAtDate} to avoid losing access.`}
               </StyledCancellationNotice>
             )}
           </Section>
@@ -942,7 +931,7 @@ export const SettingsEnterprise = ({
             <H2Title
               title={t`Update payment method`}
               description={
-                isInGracePeriod
+                hasValidityToken
                   ? t`Fix the payment issue to keep your enterprise features active.`
                   : t`Fix the payment issue to restore your enterprise features.`
               }
