@@ -424,11 +424,13 @@ export class AiModelRegistryService {
     return undefined;
   }
 
+  // The last resort is any model the admin still allows: a chain that names
+  // only disabled models must not hand a disabled one to the client.
   getDefaultModelForTier(tier: AiModelTier): RegisteredAiModel {
     const model =
       this.getFirstAvailableModelFromList(
         this.preferencesService.getDefaultModelIdsForTier(tier),
-      ) ?? this.getAvailableModels()[0];
+      ) ?? this.getAdminFilteredModels()[0];
 
     if (!model) {
       throw new AiException(
