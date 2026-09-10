@@ -77,7 +77,13 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Checkbox',
-    node: <Checkbox checked={false} onChange={() => {}} />,
+    node: (
+      <Checkbox
+        aria-label="Checkbox"
+        checked={false}
+        onCheckedChange={() => {}}
+      />
+    ),
   },
   {
     name: 'CoreEditorHeader',
@@ -207,7 +213,16 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Slider',
-    node: <Slider max={100} value={50} onChange={() => {}} />,
+    node: (
+      <Slider.Root defaultValue={50}>
+        <Slider.Control>
+          <Slider.Track>
+            <Slider.Indicator />
+            <Slider.Thumb aria-label="Volume" />
+          </Slider.Track>
+        </Slider.Control>
+      </Slider.Root>
+    ),
   },
   {
     name: 'StyledTabContainer',

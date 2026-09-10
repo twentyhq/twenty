@@ -5,6 +5,6 @@ import { GranolaSettings } from 'src/front-components/components/GranolaSettings
 export default defineSettingsFrontComponent({
   universalIdentifier: GRANOLA_SETTINGS_UNIVERSAL_IDENTIFIER,
   name: 'granola-settings',
-  description: 'Granola connection settings.',
+  description: 'Granola account connection settings.',
   component: GranolaSettings,
 });

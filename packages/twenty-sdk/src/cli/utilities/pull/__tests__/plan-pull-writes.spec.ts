@@ -3,6 +3,7 @@ import { planPullWrites } from '@/cli/utilities/pull/plan-pull-writes';
 import { type ScannedDefineFile } from '@/cli/utilities/pull/scan-project-define-files';
 import {
   type Manifest,
+  type NavigationMenuItemManifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
   type StandaloneViewFieldManifest,
@@ -11,6 +12,7 @@ import {
 } from 'twenty-shared/application';
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import {
+  NavigationMenuItemType,
   PageLayoutTabLayoutMode,
   ViewFilterOperand,
 } from 'twenty-shared/types';
@@ -37,6 +39,13 @@ const SECOND_PET_PAGE_LAYOUT_UID = '14141414-1414-4141-8141-141414141414';
 const COMPANY_EXTRA_TAB_UID = '15151515-1515-4151-8151-151515151515';
 const PERSON_EXTRA_TAB_UID = '16161616-1616-4161-8161-161616161616';
 const DOCS_WIDGET_UID = '17171717-1717-4171-8171-171717171717';
+const PET_CARE_FOLDER_NAVIGATION_ITEM_UID =
+  '18181818-1818-4181-8181-181818181818';
+const DAILY_OPS_FOLDER_NAVIGATION_ITEM_UID =
+  '19191919-1919-4191-8191-191919191919';
+const DOCS_NAVIGATION_ITEM_UID = '1a1a1a1a-1a1a-41a1-81a1-1a1a1a1a1a1a';
+const SECOND_DOCS_NAVIGATION_ITEM_UID = '1b1b1b1b-1b1b-41b1-81b1-1b1b1b1b1b1b';
+const PET_NAVIGATION_ITEM_UID = '1c1c1c1c-1c1c-41c1-81c1-1c1c1c1c1c1c';
 
 const buildObject = ({
   universalIdentifier,
@@ -126,6 +135,16 @@ const buildPageLayoutTab = (
   ...overrides,
 });
 
+const buildNavigationMenuItem = (
+  overrides: Partial<NavigationMenuItemManifest> & {
+    universalIdentifier: string;
+  },
+): NavigationMenuItemManifest => ({
+  type: NavigationMenuItemType.LINK,
+  position: 0,
+  ...overrides,
+});
+
 const buildManifestWithDocsPageLayout = (url: string): Manifest => ({
   ...buildManifest([
     buildObject({
@@ -186,6 +205,24 @@ const buildManifestWithFilteredView = (filterValue: string): Manifest => ({
       universalIdentifier: HEALTHY_PETS_VIEW_UID,
       name: 'Healthy pets',
       filters: [buildNameFilter(filterValue)],
+    }),
+  ],
+});
+
+const buildManifestWithNavigationMenu = (link: string): Manifest => ({
+  ...MANIFEST,
+  navigationMenuItems: [
+    buildNavigationMenuItem({
+      universalIdentifier: PET_CARE_FOLDER_NAVIGATION_ITEM_UID,
+      type: NavigationMenuItemType.FOLDER,
+      name: 'Pet care',
+    }),
+    buildNavigationMenuItem({
+      universalIdentifier: DOCS_NAVIGATION_ITEM_UID,
+      name: 'Docs',
+      link,
+      position: 1,
+      folderUniversalIdentifier: PET_CARE_FOLDER_NAVIGATION_ITEM_UID,
     }),
   ],
 });
@@ -965,5 +1002,184 @@ describe('planPullWrites', () => {
       'layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,',
     );
     expect(plan.writes[0].content).toContain('type: WidgetType.IFRAME,');
+  });
+
+  it('should place a new navigation menu item beside existing navigation menu item files', () => {
+    const plan = planPullWrites({
+      manifest: {
+        ...MANIFEST,
+        navigationMenuItems: [
+          buildNavigationMenuItem({
+            universalIdentifier: PET_CARE_FOLDER_NAVIGATION_ITEM_UID,
+            type: NavigationMenuItemType.FOLDER,
+            name: 'Pet care',
+          }),
+          buildNavigationMenuItem({
+            universalIdentifier: PET_NAVIGATION_ITEM_UID,
+            type: NavigationMenuItemType.OBJECT,
+            position: 8,
+            targetObjectUniversalIdentifier: PET_UID,
+            folderUniversalIdentifier: PET_CARE_FOLDER_NAVIGATION_ITEM_UID,
+          }),
+        ],
+      },
+      baseManifest: null,
+      scannedFiles: [
+        {
+          relativePath: 'app/navigation/pet-care.navigation-menu-item.ts',
+          entityKey: ManifestEntityKey.NavigationMenuItems,
+          universalIdentifier: PET_CARE_FOLDER_NAVIGATION_ITEM_UID,
+          isReadable: true,
+        },
+      ],
+    });
+
+    expect(
+      plan.writes.find(
+        (write) => write.universalIdentifier === PET_NAVIGATION_ITEM_UID,
+      )?.relativePath,
+    ).toBe('app/navigation/pet.navigation-menu-item.ts');
+  });
+
+  it('should qualify colliding navigation menu item file names with the kebab-cased name of each folder', () => {
+    const plan = planPullWrites({
+      manifest: {
+        ...MANIFEST,
+        navigationMenuItems: [
+          buildNavigationMenuItem({
+            universalIdentifier: PET_CARE_FOLDER_NAVIGATION_ITEM_UID,
+            type: NavigationMenuItemType.FOLDER,
+            name: 'Pet care',
+          }),
+          buildNavigationMenuItem({
+            universalIdentifier: DAILY_OPS_FOLDER_NAVIGATION_ITEM_UID,
+            type: NavigationMenuItemType.FOLDER,
+            name: 'Daily ops',
+            position: 1,
+          }),
+          buildNavigationMenuItem({
+            universalIdentifier: DOCS_NAVIGATION_ITEM_UID,
+            name: 'Docs',
+            link: 'https://example.com/pet-care',
+            folderUniversalIdentifier: PET_CARE_FOLDER_NAVIGATION_ITEM_UID,
+          }),
+          buildNavigationMenuItem({
+            universalIdentifier: SECOND_DOCS_NAVIGATION_ITEM_UID,
+            name: 'Docs',
+            link: 'https://example.com/daily-ops',
+            folderUniversalIdentifier: DAILY_OPS_FOLDER_NAVIGATION_ITEM_UID,
+          }),
+        ],
+      },
+      baseManifest: null,
+      scannedFiles: [],
+    });
+
+    expect(
+      plan.writes.find(
+        (write) => write.universalIdentifier === DOCS_NAVIGATION_ITEM_UID,
+      )?.relativePath,
+    ).toBe('src/navigation-menu-items/pet-care-docs.navigation-menu-item.ts');
+    expect(
+      plan.writes.find(
+        (write) =>
+          write.universalIdentifier === SECOND_DOCS_NAVIGATION_ITEM_UID,
+      )?.relativePath,
+    ).toBe('src/navigation-menu-items/daily-ops-docs.navigation-menu-item.ts');
+    expect(
+      plan.writes.find(
+        (write) =>
+          write.universalIdentifier === PET_CARE_FOLDER_NAVIGATION_ITEM_UID,
+      )?.relativePath,
+    ).toBe('src/navigation-menu-items/pet-care.navigation-menu-item.ts');
+    expect(
+      plan.writes.find(
+        (write) =>
+          write.universalIdentifier === DAILY_OPS_FOLDER_NAVIGATION_ITEM_UID,
+      )?.relativePath,
+    ).toBe('src/navigation-menu-items/daily-ops.navigation-menu-item.ts');
+  });
+
+  it('should fall back to identifier-prefixed names when two navigation menu items outside any folder share a name', () => {
+    const plan = planPullWrites({
+      manifest: {
+        ...MANIFEST,
+        navigationMenuItems: [
+          buildNavigationMenuItem({
+            universalIdentifier: DOCS_NAVIGATION_ITEM_UID,
+            name: 'Docs',
+            link: 'https://example.com/pet-care',
+          }),
+          buildNavigationMenuItem({
+            universalIdentifier: SECOND_DOCS_NAVIGATION_ITEM_UID,
+            name: 'Docs',
+            link: 'https://example.com/daily-ops',
+            position: 1,
+          }),
+        ],
+      },
+      baseManifest: null,
+      scannedFiles: [],
+    });
+
+    expect(
+      plan.writes
+        .filter((write) => write.kind === 'navigationMenuItem')
+        .map((write) => write.relativePath)
+        .sort(),
+    ).toEqual([
+      `src/navigation-menu-items/${DOCS_NAVIGATION_ITEM_UID.slice(0, 8)}-docs.navigation-menu-item.ts`,
+      `src/navigation-menu-items/${SECOND_DOCS_NAVIGATION_ITEM_UID.slice(0, 8)}-docs.navigation-menu-item.ts`,
+    ]);
+  });
+
+  it('should leave an unchanged navigation menu item untouched and regenerate the item whose link changed on the server', () => {
+    const scannedFiles: ScannedDefineFile[] = [
+      {
+        relativePath: 'src/application.config.ts',
+        entityKey: ManifestEntityKey.Application,
+        universalIdentifier: APP_UID,
+        isReadable: true,
+      },
+      {
+        relativePath: 'src/objects/pet.object.ts',
+        entityKey: ManifestEntityKey.Objects,
+        universalIdentifier: PET_UID,
+        isReadable: true,
+      },
+      {
+        relativePath:
+          'src/navigation-menu-items/pet-care.navigation-menu-item.ts',
+        entityKey: ManifestEntityKey.NavigationMenuItems,
+        universalIdentifier: PET_CARE_FOLDER_NAVIGATION_ITEM_UID,
+        isReadable: true,
+      },
+      {
+        relativePath: 'src/navigation-menu-items/docs.navigation-menu-item.ts',
+        entityKey: ManifestEntityKey.NavigationMenuItems,
+        universalIdentifier: DOCS_NAVIGATION_ITEM_UID,
+        isReadable: true,
+      },
+    ];
+
+    const plan = planPullWrites({
+      manifest: buildManifestWithNavigationMenu('https://example.com/new'),
+      baseManifest: buildManifestWithNavigationMenu('https://example.com/old'),
+      scannedFiles,
+    });
+
+    expect(
+      plan.unchanged.map((entity) => entity.universalIdentifier),
+    ).toContain(PET_CARE_FOLDER_NAVIGATION_ITEM_UID);
+    expect(plan.writes.map((write) => write.relativePath)).toEqual([
+      'src/navigation-menu-items/docs.navigation-menu-item.ts',
+    ]);
+    expect(plan.writes[0].isRegeneration).toBe(true);
+    expect(plan.writes[0].content).toContain(
+      "link: 'https://example.com/new',",
+    );
+    expect(plan.writes[0].content).toContain(
+      'type: NavigationMenuItemType.LINK,',
+    );
   });
 });
