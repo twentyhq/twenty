@@ -325,7 +325,10 @@ export class FieldsWidgetUpsertService {
 
       const newViewFieldGroupId = inputGroup.id;
 
-      const effectiveExistingField = resolveEffectiveFlatEntity(existingField);
+      const effectiveExistingField = resolveEffectiveFlatEntity({
+        metadataName: 'viewField',
+        flatEntity: existingField,
+      });
 
       const hasChanged =
         effectiveExistingField.isVisible !== inputField.isVisible ||
@@ -630,7 +633,10 @@ export class FieldsWidgetUpsertService {
         return [];
       }
 
-      const effectiveExistingField = resolveEffectiveFlatEntity(existingField);
+      const effectiveExistingField = resolveEffectiveFlatEntity({
+        metadataName: 'viewField',
+        flatEntity: existingField,
+      });
 
       const hasChanged =
         effectiveExistingField.isVisible !== inputField.isVisible ||
@@ -899,7 +905,10 @@ export class FieldsWidgetUpsertService {
     existing: FlatViewFieldGroup,
     input: UpsertFieldsWidgetGroupInput,
   ): boolean {
-    const effectiveExisting = resolveEffectiveFlatEntity(existing);
+    const effectiveExisting = resolveEffectiveFlatEntity({
+      metadataName: 'viewFieldGroup',
+      flatEntity: existing,
+    });
 
     return (
       effectiveExisting.name !== input.name ||

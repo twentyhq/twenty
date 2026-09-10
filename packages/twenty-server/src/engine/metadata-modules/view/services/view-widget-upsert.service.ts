@@ -480,8 +480,10 @@ export class ViewWidgetUpsertService {
         existingFieldByViewFieldId ?? existingFieldByFieldMetadataId;
 
       if (isDefined(existingField)) {
-        const effectiveExistingField =
-          resolveEffectiveFlatEntity(existingField);
+        const effectiveExistingField = resolveEffectiveFlatEntity({
+          metadataName: 'viewField',
+          flatEntity: existingField,
+        });
 
         const hasChanged =
           effectiveExistingField.isVisible !== inputField.isVisible ||

@@ -183,8 +183,8 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   }
 
   const effectiveFlatViewToUpdate = resolveEffectiveFlatEntity({
-    ...mergedRecord,
-    overrides,
+    metadataName: 'view',
+    flatEntity: { ...mergedRecord, overrides },
   });
 
   const { flatViewGroupsToDelete, flatViewGroupsToCreate } =

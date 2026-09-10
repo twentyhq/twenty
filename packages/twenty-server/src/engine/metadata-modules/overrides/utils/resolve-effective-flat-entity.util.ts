@@ -1,32 +1,41 @@
-import { ALL_OVERRIDE_ENTRY_PROPERTY_NAMES } from 'src/engine/metadata-modules/overrides/constants/all-override-entry-property-names.constant';
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
+import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/overrides/constants/all-overridable-properties-by-metadata-name.constant';
 import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/overrides/types/override-author-context.type';
 import {
   type OverridableFlatEntity,
   resolveEffectiveFlatEntityProperty,
 } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
-type FlatEntityWithOverrides = Record<string, unknown> & OverridableFlatEntity;
-
-// Walks the overridable registry rather than the entries' keys so the entry
-// walk stays private to readAuthoredOverrideProperty; a name the entity does
-// not carry, such as a universal twin's, is skipped.
-export const resolveEffectiveFlatEntity = <T extends FlatEntityWithOverrides>(
-  flatEntity: T,
+// Every overridable property of the kind resolved across author entries, with
+// its own type. Translatable properties are not translated here; that is
+// resolveEffectiveTranslatedFlatEntity, at the read edge with a locale.
+export const resolveEffectiveFlatEntity = <
+  TFlatEntity extends OverridableFlatEntity & Record<string, unknown>,
+>({
+  metadataName,
+  flatEntity,
+  authorContext,
+}: {
+  metadataName: AllMetadataName;
+  flatEntity: TFlatEntity;
   authorContext?: Pick<
     OverrideAuthorReadContext,
     'workspaceCustomApplicationUniversalIdentifier'
-  >,
-): T =>
-  [...ALL_OVERRIDE_ENTRY_PROPERTY_NAMES]
-    .filter((property) => property !== 'translations' && property in flatEntity)
-    .reduce<T>(
-      (effectiveEntity, property) => ({
-        ...effectiveEntity,
-        [property]: resolveEffectiveFlatEntityProperty(
-          flatEntity as FlatEntityWithOverrides,
-          property,
-          authorContext,
-        ),
-      }),
-      flatEntity,
-    );
+  >;
+}): TFlatEntity => {
+  const overridableProperties: readonly string[] =
+    ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME[metadataName];
+
+  return overridableProperties.reduce<TFlatEntity>(
+    (effectiveFlatEntity, property) => ({
+      ...effectiveFlatEntity,
+      [property]: resolveEffectiveFlatEntityProperty(
+        flatEntity,
+        property,
+        authorContext,
+      ),
+    }),
+    flatEntity,
+  );
+};
