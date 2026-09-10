@@ -11,6 +11,7 @@ import {
   WorkflowVersionEntity,
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
@@ -32,6 +33,7 @@ export class WorkflowVersionCoreSyncService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly recordPositionService: RecordPositionService,
   ) {}
 
   async upsertToCore(
@@ -271,6 +273,35 @@ export class WorkflowVersionCoreSyncService {
     }
 
     return coreIdByWorkspaceRecordId;
+  }
+
+  async createInitialDraftVersionForWorkflow(
+    workspaceId: string,
+    workflowId: string,
+  ): Promise<void> {
+    await this.writeWorkflowVersionAndMirror(
+      workspaceId,
+      async (workflowVersionRepository) => {
+        const position = await this.recordPositionService.buildRecordPosition({
+          value: 'first',
+          objectMetadata: {
+            isCustom: false,
+            nameSingular: 'workflowVersion',
+          },
+          workspaceId,
+        });
+
+        const insertResult = await workflowVersionRepository.insert({
+          workflowId,
+          status: WorkflowVersionStatus.DRAFT,
+          name: 'v1',
+          position,
+        });
+
+        return (insertResult.generatedMaps[0] as WorkflowVersionWorkspaceEntity)
+          .id;
+      },
+    );
   }
 
   async writeWorkflowVersionAndMirror(

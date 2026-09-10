@@ -102,6 +102,7 @@ describe('collectTranslatableStrings', () => {
       pageLayoutTabs: [
         { title: 'Telemetry', widgets: [{ title: 'Trip log' }] },
       ],
+      pageLayoutWidgets: [{ title: 'Odometer' }],
       commandMenuItems: [{ label: 'Launch Rocket', shortLabel: 'Launch' }],
       navigationMenuItems: [{ name: 'Missions' }],
       timelineActivityTypes: [{ label: 'Launched a rocket' }],
@@ -123,6 +124,7 @@ describe('collectTranslatableStrings', () => {
         { message: 'All Rockets', context: 'view.name' },
         { message: 'Telemetry', context: 'pageLayoutTab.title' },
         { message: 'Trip log', context: 'pageLayoutWidget.title' },
+        { message: 'Odometer', context: 'pageLayoutWidget.title' },
         { message: 'Launch Rocket', context: 'commandMenuItem.label' },
         { message: 'Launch', context: 'commandMenuItem.shortLabel' },
         { message: 'Missions', context: 'navigationMenuItem.name' },

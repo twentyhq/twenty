@@ -14,7 +14,11 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 13,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-4.1-nano",
@@ -26,6 +30,10 @@
         "contextWindowTokens": 1047576,
         "maxOutputTokens": 32768,
         "modalities": ["image"],
+        "benchmark": {
+          "intelligenceIndex": 7.8,
+          "measuredAt": "2026-09-10"
+        },
         "isDeprecated": true
       },
       {
@@ -37,6 +45,10 @@
         "contextWindowTokens": 128000,
         "maxOutputTokens": 4096,
         "modalities": ["image"],
+        "benchmark": {
+          "intelligenceIndex": 7.3,
+          "measuredAt": "2026-09-10"
+        },
         "isDeprecated": true
       },
       {
@@ -68,7 +80,12 @@
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 47.1,
+          "outputTokensPerSecond": 73.005,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-4o-2024-08-06",
@@ -79,7 +96,11 @@
         "cachedInputCostPerMillionTokens": 1.25,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": ["image"]
+        "modalities": ["image"],
+        "benchmark": {
+          "intelligenceIndex": 7.7,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-6-astra",
@@ -99,7 +120,12 @@
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 52.8,
+          "outputTokensPerSecond": 60.822,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-5.2-pro",
@@ -133,7 +159,11 @@
         "cachedInputCostPerMillionTokens": 0.1,
         "contextWindowTokens": 1047576,
         "maxOutputTokens": 32768,
-        "modalities": ["image", "pdf"]
+        "modalities": ["image", "pdf"],
+        "benchmark": {
+          "intelligenceIndex": 10.2,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-5.4",
@@ -151,7 +181,11 @@
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 39,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-4-turbo",
@@ -162,6 +196,10 @@
         "contextWindowTokens": 128000,
         "maxOutputTokens": 4096,
         "modalities": ["image"],
+        "benchmark": {
+          "intelligenceIndex": 7,
+          "measuredAt": "2026-09-10"
+        },
         "isDeprecated": true
       },
       {
@@ -174,7 +212,11 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 24.7,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "o1",
@@ -187,6 +229,10 @@
         "maxOutputTokens": 100000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 15.2,
+          "measuredAt": "2026-09-10"
+        },
         "isDeprecated": true
       },
       {
@@ -198,7 +244,11 @@
         "cachedInputCostPerMillionTokens": 1.25,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": ["image", "pdf"]
+        "modalities": ["image", "pdf"],
+        "benchmark": {
+          "intelligenceIndex": 9,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-5.6-luna",
@@ -218,7 +268,12 @@
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 37.5,
+          "outputTokensPerSecond": 123.243,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-5.3-codex",
@@ -230,7 +285,12 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 32.5,
+          "outputTokensPerSecond": 143.044,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-4o-mini",
@@ -241,7 +301,11 @@
         "cachedInputCostPerMillionTokens": 0.075,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": ["image", "pdf"]
+        "modalities": ["image", "pdf"],
+        "benchmark": {
+          "intelligenceIndex": 6.7,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "o1-pro",
@@ -253,6 +317,10 @@
         "maxOutputTokens": 100000,
         "modalities": ["image"],
         "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 12.4,
+          "measuredAt": "2026-09-10"
+        },
         "isDeprecated": true
       },
       {
@@ -264,7 +332,11 @@
         "cachedInputCostPerMillionTokens": 0.5,
         "contextWindowTokens": 1047576,
         "maxOutputTokens": 32768,
-        "modalities": ["image", "pdf"]
+        "modalities": ["image", "pdf"],
+        "benchmark": {
+          "intelligenceIndex": 12.7,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-5.4-nano",
@@ -276,7 +348,11 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 21.2,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-5.5-pro",
@@ -304,7 +380,11 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 24.6,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-5.6",
@@ -336,7 +416,11 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 20.6,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-5.4-pro",
@@ -372,7 +456,12 @@
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 42.3,
+          "outputTokensPerSecond": 124.121,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-4",
@@ -382,6 +471,10 @@
         "outputCostPerMillionTokens": 60,
         "contextWindowTokens": 8192,
         "maxOutputTokens": 8192,
+        "benchmark": {
+          "intelligenceIndex": 6.7,
+          "measuredAt": "2026-09-10"
+        },
         "isDeprecated": true
       },
       {
@@ -394,7 +487,11 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 30.4,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-5",
@@ -406,7 +503,11 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 23,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-5.2-chat-latest",
@@ -432,6 +533,10 @@
         "maxOutputTokens": 100000,
         "modalities": ["image"],
         "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 16.7,
+          "measuredAt": "2026-09-10"
+        },
         "isDeprecated": true
       },
       {
@@ -456,6 +561,10 @@
         "contextWindowTokens": 200000,
         "maxOutputTokens": 100000,
         "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 12.5,
+          "measuredAt": "2026-09-10"
+        },
         "isDeprecated": true
       },
       {
@@ -468,7 +577,12 @@
         "contextWindowTokens": 200000,
         "maxOutputTokens": 100000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 20.2,
+          "outputTokensPerSecond": 151.22,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "o3-pro",
@@ -479,7 +593,11 @@
         "contextWindowTokens": 200000,
         "maxOutputTokens": 100000,
         "modalities": ["image"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 21.9,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-5.3-chat-latest",
@@ -509,7 +627,11 @@
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 38.6,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gpt-4o-2024-11-20",
@@ -520,7 +642,11 @@
         "cachedInputCostPerMillionTokens": 1.25,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": ["image"]
+        "modalities": ["image"],
+        "benchmark": {
+          "intelligenceIndex": 9,
+          "measuredAt": "2026-09-10"
+        }
       }
     ]
   },
@@ -540,7 +666,11 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 30.5,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "claude-opus-5",
@@ -553,7 +683,12 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 50.7,
+          "outputTokensPerSecond": 55.074,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "claude-opus-4-5",
@@ -566,7 +701,11 @@
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 29.1,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "claude-fable-5-1",
@@ -579,7 +718,12 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 53.4,
+          "outputTokensPerSecond": 69.904,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "claude-opus-4-6",
@@ -592,7 +736,11 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 31.9,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "claude-sonnet-4-5-20250929",
@@ -618,7 +766,11 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 40.7,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "claude-haiku-4-5-20251001",
@@ -644,7 +796,12 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 49.7,
+          "outputTokensPerSecond": 68.133,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "claude-haiku-4-5",
@@ -683,7 +840,11 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 42,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "claude-sonnet-5",
@@ -696,7 +857,12 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 38.4,
+          "outputTokensPerSecond": 83.464,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "claude-opus-4-5-20251101",
@@ -709,7 +875,11 @@
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 29.1,
+          "measuredAt": "2026-09-10"
+        }
       }
     ]
   },
@@ -781,7 +951,12 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 30.4,
+          "outputTokensPerSecond": 127.691,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "deep-research-preview-04-2026",
@@ -811,7 +986,11 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "audio", "video", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 8.5,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gemini-2.5-computer-use-preview-10-2025",
@@ -839,7 +1018,12 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 34.3,
+          "outputTokensPerSecond": 184.677,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gemini-3.1-flash-lite",
@@ -851,7 +1035,11 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 16,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gemini-3.1-flash-live-preview",
@@ -874,7 +1062,12 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 33.6,
+          "outputTokensPerSecond": 239.733,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gemini-3.1-flash-lite-preview",
@@ -887,6 +1080,10 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 16,
+          "measuredAt": "2026-09-10"
+        },
         "isDeprecated": true
       },
       {
@@ -899,7 +1096,12 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 22.7,
+          "outputTokensPerSecond": 365.348,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gemini-flash-lite-latest",
@@ -911,7 +1113,12 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 22.7,
+          "outputTokensPerSecond": 365.348,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gemini-3-flash-preview",
@@ -923,7 +1130,11 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 26.3,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gemini-3.8-flash",
@@ -935,7 +1146,12 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 41.2,
+          "outputTokensPerSecond": 342.779,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gemini-3.7-flash",
@@ -947,7 +1163,12 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 39.6,
+          "outputTokensPerSecond": 329.345,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gemini-2.5-pro",
@@ -965,7 +1186,11 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "audio", "video", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 16.7,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gemini-flash-latest",
@@ -977,7 +1202,12 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 41.2,
+          "outputTokensPerSecond": 342.779,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "gemini-2.5-flash",
@@ -989,7 +1219,11 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "audio", "video", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 13.1,
+          "measuredAt": "2026-09-10"
+        }
       }
     ]
   },
@@ -1036,7 +1270,11 @@
         "outputCostPerMillionTokens": 1.5,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 128000,
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 8.2,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "devstral-2512",
@@ -1056,6 +1294,10 @@
         "outputCostPerMillionTokens": 0.3,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 128000,
+        "benchmark": {
+          "intelligenceIndex": 8.7,
+          "measuredAt": "2026-09-10"
+        },
         "isDeprecated": true
       },
       {
@@ -1077,7 +1319,11 @@
         "outputCostPerMillionTokens": 5,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 9.1,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "open-mixtral-8x22b",
@@ -1293,7 +1539,11 @@
         "outputCostPerMillionTokens": 6,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 128000,
-        "modalities": ["image"]
+        "modalities": ["image"],
+        "benchmark": {
+          "intelligenceIndex": 7.1,
+          "measuredAt": "2026-09-10"
+        }
       }
     ]
   },
@@ -1318,7 +1568,11 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 30000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 25.4,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "grok-4.20-0309-reasoning",
@@ -1354,7 +1608,12 @@
         "contextWindowTokens": 500000,
         "maxOutputTokens": 500000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 39.1,
+          "outputTokensPerSecond": 52.947,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "grok-build-0.1",
@@ -1390,7 +1649,12 @@
         "contextWindowTokens": 500000,
         "maxOutputTokens": 500000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 44.4,
+          "outputTokensPerSecond": 62.454,
+          "measuredAt": "2026-09-10"
+        }
       },
       {
         "name": "grok-4.20-0309-non-reasoning",
@@ -1407,7 +1671,11 @@
         },
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 30000,
-        "modalities": ["image", "pdf"]
+        "modalities": ["image", "pdf"],
+        "benchmark": {
+          "intelligenceIndex": 14.6,
+          "measuredAt": "2026-09-10"
+        }
       }
     ]
   }
