@@ -239,6 +239,24 @@ exports[`Application export - data model exports the whole application as a stab
       "universalIdentifier": "<TICKET_TITLE_INDEX>",
     },
     {
+      "metadataName": "navigationMenuItem",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKETS_INDEX_VIEW_NAVIGATION_ITEM>",
+    },
+    {
+      "metadataName": "navigationMenuItem",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
+    },
+    {
+      "metadataName": "navigationMenuItem",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKETS_NAVIGATION_ITEM>",
+    },
+    {
       "metadataName": "objectMetadata",
       "reason": null,
       "status": "EXPORTED",
@@ -447,6 +465,12 @@ exports[`Application export - data model exports the whole application as a stab
       "reason": null,
       "status": "EXPORTED",
       "universalIdentifier": "<TICKET_RECORD_PAGE_EXTRA_NOTES_WIDGET>",
+    },
+    {
+      "metadataName": "pageLayoutWidget",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKET_RECORD_PAGE_HOME_DOCS_WIDGET>",
     },
     {
       "metadataName": "pageLayoutWidget",
@@ -772,7 +796,31 @@ exports[`Application export - data model exports the whole application as a stab
     },
   ],
   "logicFunctions": [],
-  "navigationMenuItems": [],
+  "navigationMenuItems": [
+    {
+      "name": "Support",
+      "position": 40,
+      "type": "FOLDER",
+      "universalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
+    },
+    {
+      "folderUniversalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
+      "icon": "IconTicket",
+      "position": 41,
+      "targetObjectUniversalIdentifier": "<TICKET_OBJECT>",
+      "type": "OBJECT",
+      "universalIdentifier": "<TICKETS_NAVIGATION_ITEM>",
+    },
+    {
+      "folderUniversalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
+      "icon": "IconList",
+      "name": "All tickets",
+      "position": 42,
+      "type": "VIEW",
+      "universalIdentifier": "<TICKETS_INDEX_VIEW_NAVIGATION_ITEM>",
+      "viewUniversalIdentifier": "<TICKET_INDEX_ENGINE_VIEW>",
+    },
+  ],
   "objects": [
     {
       "color": "blue",
@@ -904,6 +952,22 @@ exports[`Application export - data model exports the whole application as a stab
       "position": 60,
       "title": "Tagline",
       "universalIdentifier": "<STANDARD_COMPANY_RECORD_PAGE_TAGLINE_TAB>",
+    },
+  ],
+  "pageLayoutWidgets": [
+    {
+      "configuration": {
+        "configurationType": "IFRAME",
+        "url": "https://example.com/tickets/docs",
+      },
+      "pageLayoutTabUniversalIdentifier": "<TICKET_RECORD_PAGE_TAB_Home>",
+      "position": {
+        "index": 1,
+        "layoutMode": "VERTICAL_LIST",
+      },
+      "title": "Docs",
+      "type": "IFRAME",
+      "universalIdentifier": "<TICKET_RECORD_PAGE_HOME_DOCS_WIDGET>",
     },
   ],
   "pageLayouts": [

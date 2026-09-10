@@ -233,6 +233,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         navigationMenuItems: [],
         pageLayouts: [],
         pageLayoutTabs: [],
+        pageLayoutWidgets: [],
         commandMenuItems: [],
       });
 
