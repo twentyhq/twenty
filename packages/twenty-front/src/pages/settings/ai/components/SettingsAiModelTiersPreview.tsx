@@ -22,14 +22,13 @@ const StyledInheritedValue = styled.span`
   color: ${themeCssVariables.font.color.light};
 `;
 
-const getInheritedAnchorClassName = (tier: ResolvedAiModelTier) =>
-  `ai-model-tier-inherited-benchmark-${tier.tier}`;
+const INHERITED_BENCHMARK_CLASS_NAME = 'ai-model-tier-inherited-benchmark';
 
 // The reading belongs to the base model, so it is dimmed and explained rather
 // than passed off as a measurement at this effort.
 const renderBenchmarkValue = (tier: ResolvedAiModelTier, value: string) =>
   tier.model?.isBenchmarkInherited === true && value !== EMPTY_VALUE ? (
-    <StyledInheritedValue className={getInheritedAnchorClassName(tier)}>
+    <StyledInheritedValue className={INHERITED_BENCHMARK_CLASS_NAME}>
       {value}
     </StyledInheritedValue>
   ) : (
@@ -55,10 +54,7 @@ const formatCost = (tier: ResolvedAiModelTier) => {
   }
 
   if (isDefined(tier.model.costPerTask)) {
-    return renderBenchmarkValue(
-      tier,
-      t`$${formatNumber(tier.model.costPerTask, { decimals: 2 })} / task`,
-    );
+    return t`$${formatNumber(tier.model.costPerTask, { decimals: 2 })} / task`;
   }
 
   const blendedCost = getAiModelBlendedCostPerMillionTokens(tier.model);
@@ -101,16 +97,13 @@ export const SettingsAiModelTiersPreview = () => {
           </TableRow>
         ))}
       </Table>
-      {tiers
-        .filter((tier) => tier.model?.isBenchmarkInherited === true)
-        .map((tier) => (
-          <AppTooltip
-            key={tier.tier}
-            anchorSelect={`.${getInheritedAnchorClassName(tier)}`}
-            title={t`Not measured at this effort yet. Showing the base model's reading.`}
-            delay={TooltipDelay.shortDelay}
-          />
-        ))}
+      {tiers.some((tier) => tier.model?.isBenchmarkInherited === true) && (
+        <AppTooltip
+          anchorSelect={`.${INHERITED_BENCHMARK_CLASS_NAME}`}
+          title={t`Not measured at this effort yet. Showing the base model's reading.`}
+          delay={TooltipDelay.shortDelay}
+        />
+      )}
     </Section>
   );
 };

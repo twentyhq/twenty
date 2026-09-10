@@ -308,18 +308,14 @@ export class AdminPanelResolver {
         }),
       );
 
-    // The model the tier actually runs on here, not the head of the chain: a
-    // chain can start with a provider this instance holds no key for.
-    const hasAvailableModel =
-      this.aiModelRegistryService.getAdminFilteredModels().length > 0;
-
     return {
       models,
+      // The model the tier actually runs on here, not the head of the chain: a
+      // chain can start with a provider this instance holds no key for.
       defaultModelByTier: AI_MODEL_TIERS.map((tier) => ({
         tier,
-        modelId: hasAvailableModel
-          ? this.aiModelRegistryService.getDefaultModelForTier(tier).modelId
-          : undefined,
+        modelId:
+          this.aiModelRegistryService.findDefaultModelForTier(tier)?.modelId,
       })),
     };
   }

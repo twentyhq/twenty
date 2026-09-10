@@ -9,7 +9,6 @@ import {
 } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
-import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -49,6 +48,7 @@ import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usa
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 
 @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
@@ -180,8 +180,7 @@ export class AgentChatResolver {
       );
     }
 
-    const resolvedModelId =
-      modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER[workspace.aiChatModelTier];
+    const resolvedModelId = getChatModelId(modelId, workspace);
 
     this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
 
@@ -296,7 +295,7 @@ export class AgentChatResolver {
     }
 
     this.aiModelRegistryService.validateModelAvailability(
-      modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER[workspace.aiChatModelTier],
+      getChatModelId(modelId, workspace),
     );
 
     await this.aiBillingService.assertAiExecutionAllowed({
@@ -349,8 +348,7 @@ export class AgentChatResolver {
       );
     }
 
-    const resolvedModelId =
-      modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER[workspace.aiChatModelTier];
+    const resolvedModelId = getChatModelId(modelId, workspace);
 
     this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
 

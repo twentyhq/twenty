@@ -4,25 +4,13 @@ import { type AiModelTier } from 'twenty-shared/ai';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AI_MODELS_DEFAULT_CONFIG_KEY_BY_TIER } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models-default-config-key-by-tier.const';
-import { type AiModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-preferences.type';
 
 @Injectable()
 export class AiModelPreferencesService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  getPreferences(): AiModelPreferences {
-    return {
-      disabledModels: this.twentyConfigService.get(
-        'AI_MODELS_DEFAULT_DISABLED',
-      ),
-      defaultModelsByTier: {
-        extraFast: this.getDefaultModelIdsForTier('extraFast'),
-        fast: this.getDefaultModelIdsForTier('fast'),
-        balanced: this.getDefaultModelIdsForTier('balanced'),
-        smart: this.getDefaultModelIdsForTier('smart'),
-        extraSmart: this.getDefaultModelIdsForTier('extraSmart'),
-      },
-    };
+  getDisabledModelIds(): string[] {
+    return this.twentyConfigService.get('AI_MODELS_DEFAULT_DISABLED');
   }
 
   getDefaultModelIdsForTier(tier: AiModelTier): string[] {
@@ -39,7 +27,7 @@ export class AiModelPreferencesService {
     modelIds: string[],
     enabled: boolean,
   ): Promise<void> {
-    const current = this.getPreferences().disabledModels;
+    const current = this.getDisabledModelIds();
     const idSet = new Set(modelIds);
 
     const disabledModels = enabled

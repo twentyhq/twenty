@@ -14,12 +14,7 @@ export enum AiModelTier {
 
 registerEnumType(AiModelTier, { name: 'AiModelTier' });
 
-const assertTierValuesMatchShared: Record<SharedAiModelTier, AiModelTier> = {
-  extraFast: AiModelTier.extraFast,
-  fast: AiModelTier.fast,
-  balanced: AiModelTier.balanced,
-  smart: AiModelTier.smart,
-  extraSmart: AiModelTier.extraSmart,
-};
-
-void assertTierValuesMatchShared;
+// The enum object itself must satisfy the shared record, so a tier added on
+// one side without the other fails to compile.
+const _assertTierValuesMatchShared: Record<SharedAiModelTier, AiModelTier> =
+  AiModelTier;

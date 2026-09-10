@@ -1,10 +1,7 @@
 import { Body, Controller, Post, UseFilters, UseGuards } from '@nestjs/common';
 
 import { generateText } from 'ai';
-import {
-  AUTO_SELECT_FAST_MODEL_ID,
-  PermissionFlagType,
-} from 'twenty-shared/constants';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
@@ -29,6 +26,7 @@ import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
+import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
 
 @Controller(`${ApiPath.Rest}/ai`)
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
@@ -65,7 +63,7 @@ export class AiGenerateTextController {
       spenders: { userWorkspaceId },
     });
 
-    const resolvedModelId = body.modelId ?? AUTO_SELECT_FAST_MODEL_ID;
+    const resolvedModelId = body.modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER.fast;
 
     this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
 

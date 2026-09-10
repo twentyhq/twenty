@@ -1,24 +1,17 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import {
-  AI_MODEL_TIERS,
-  DEFAULT_AI_CHAT_MODEL_TIER,
-  isAiModelTier,
-  type AiModelTier,
-} from 'twenty-shared/ai';
+import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiModelTierSlider } from '@/ai/components/AiModelTierSlider';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
+import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const SLIDER_DROPDOWN_WIDTH_PX = 286;
 
@@ -37,22 +30,16 @@ export const AiModelTierDropdown = ({
 }: AiModelTierDropdownProps) => {
   const { t } = useLingui();
   const tiers = useAiModelTiers();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const { chatTier } = useWorkspaceAiModelTiers();
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const [agentChatUserSelectedModelTier, setAgentChatUserSelectedModelTier] =
     useAtomState(agentChatUserSelectedModelTierState);
-  const { closeDropdown } = useCloseDropdown();
 
   // The setup chat runs on the fast tier server-side whatever the workspace
   // setting says, so the control shows what will actually answer.
-  const workspaceTier: AiModelTier = isWorkspaceSetupChat
-    ? 'fast'
-    : (currentWorkspace?.aiChatModelTier ?? DEFAULT_AI_CHAT_MODEL_TIER);
+  const workspaceTier: AiModelTier = isWorkspaceSetupChat ? 'fast' : chatTier;
 
-  // The persisted value comes from localStorage, so it is not trusted blindly.
-  const selectedTier = isAiModelTier(agentChatUserSelectedModelTier)
-    ? agentChatUserSelectedModelTier
-    : workspaceTier;
+  const selectedTier = agentChatUserSelectedModelTier ?? workspaceTier;
   const selectedResolvedTier = tiers[AI_MODEL_TIERS.indexOf(selectedTier)];
 
   const handleTierChange = (tier: AiModelTier) => {
@@ -80,11 +67,6 @@ export const AiModelTierDropdown = ({
           <StyledSliderContainer
             role="group"
             aria-label={t`Choose a model tier`}
-            onKeyDown={(event) => {
-              if (event.key === 'Escape') {
-                closeDropdown(dropdownId);
-              }
-            }}
           >
             <AiModelTierSlider
               selectedTier={selectedTier}

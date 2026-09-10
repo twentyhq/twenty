@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { AUTO_SELECT_FAST_MODEL_ID } from 'twenty-shared/constants';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -26,6 +25,7 @@ import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/uti
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
 
 const WORKSPACE_SETUP_CHAT_THREAD_TITLE = msg`Workspace setup`;
 
@@ -175,7 +175,7 @@ export class WorkspaceSetupChatService {
           },
           locale,
         }),
-        modelId: AUTO_SELECT_FAST_MODEL_ID,
+        modelId: AUTO_SELECT_MODEL_ID_BY_TIER.fast,
       });
 
     if (!isDefined(kickoffResult)) {

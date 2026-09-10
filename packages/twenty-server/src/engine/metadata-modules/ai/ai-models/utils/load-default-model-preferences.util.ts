@@ -8,8 +8,6 @@
 // provider resolves the tier to nothing.
 import { type AiModelTier } from 'twenty-shared/ai';
 
-import { type AiModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-preferences.type';
-
 // Efforts are pinned so a tier runs at the effort its benchmark was measured
 // at, and so one model family can back neighbouring tiers at different speeds.
 export const DEFAULT_MODELS_BY_TIER: Record<AiModelTier, string[]> = {
@@ -51,8 +49,3 @@ export const DEFAULT_MODELS_BY_TIER: Record<AiModelTier, string[]> = {
 };
 
 export const DEFAULT_DISABLED_MODELS: string[] = [];
-
-export const DEFAULT_MODEL_PREFERENCES: AiModelPreferences = {
-  disabledModels: DEFAULT_DISABLED_MODELS,
-  defaultModelsByTier: DEFAULT_MODELS_BY_TIER,
-};

@@ -8,7 +8,6 @@ import {
   toUIMessageStream,
 } from 'ai';
 import {
-  AUTO_SELECT_MODEL_ID_BY_TIER,
   type CodeExecutionData,
   type ExtendedUIMessage,
   type ExtendedUIMessagePart,
@@ -58,6 +57,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 
 import { STREAM_AGENT_CHAT_JOB_NAME } from './stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from './stream-agent-chat-job.types';
+import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 
 export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
 
@@ -256,11 +256,9 @@ export class StreamAgentChatJob {
     requestedModelId: string | undefined,
     workspace: WorkspaceEntity | null,
   ): string {
-    const modelId =
-      requestedModelId ??
-      (isDefined(workspace)
-        ? AUTO_SELECT_MODEL_ID_BY_TIER[workspace.aiChatModelTier]
-        : undefined);
+    const modelId = isDefined(workspace)
+      ? getChatModelId(requestedModelId, workspace)
+      : requestedModelId;
 
     if (!isNonEmptyString(modelId)) {
       return 'unknown';

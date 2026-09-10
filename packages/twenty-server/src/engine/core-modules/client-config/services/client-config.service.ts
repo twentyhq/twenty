@@ -24,6 +24,7 @@ import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/co
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelBenchmark } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmark.type';
+import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { parseModelVariantId } from 'src/engine/metadata-modules/ai/ai-models/utils/parse-model-variant-id.util';
 
 @Injectable()
@@ -37,18 +38,17 @@ export class ClientConfigService {
 
   // A variant carries only the reading taken at its own effort, so until the
   // sync measures it the base model's reading is shown, flagged as such.
-  private resolveBenchmark(modelId: string): {
+  private resolveBenchmark(modelConfig: AiModelConfig | undefined): {
     benchmark?: AiModelBenchmark;
     isInherited: boolean;
   } {
-    const ownBenchmark =
-      this.aiModelRegistryService.getModelConfig(modelId)?.benchmark;
-
-    if (isDefined(ownBenchmark)) {
-      return { benchmark: ownBenchmark, isInherited: false };
+    if (isDefined(modelConfig?.benchmark)) {
+      return { benchmark: modelConfig.benchmark, isInherited: false };
     }
 
-    const { modelId: baseModelId, effort } = parseModelVariantId(modelId);
+    const { modelId: baseModelId, effort } = parseModelVariantId(
+      modelConfig?.modelId ?? '',
+    );
     const baseBenchmark = isDefined(effort)
       ? this.aiModelRegistryService.getModelConfig(baseModelId)?.benchmark
       : undefined;
@@ -100,9 +100,7 @@ export class ClientConfigService {
 
         const modelFamily = modelConfig?.modelFamily;
         const providerName = registeredModel.providerName;
-        const { benchmark, isInherited } = this.resolveBenchmark(
-          registeredModel.modelId,
-        );
+        const { benchmark, isInherited } = this.resolveBenchmark(modelConfig);
 
         return {
           modelId: registeredModel.modelId,
@@ -131,16 +129,13 @@ export class ClientConfigService {
       },
     );
 
-    // No model at all means no tier resolves; the client shows its
-    // "configure a provider" state from the empty list rather than an error.
-    const aiModelTiers =
-      aiModels.length > 0
-        ? AI_MODEL_TIERS.map((tier) => ({
-            tier,
-            modelId:
-              this.aiModelRegistryService.getDefaultModelForTier(tier).modelId,
-          }))
-        : [];
+    // A tier with no model is left out; the client shows its "configure a
+    // provider" state from the empty list rather than an error.
+    const aiModelTiers = AI_MODEL_TIERS.flatMap((tier) => {
+      const model = this.aiModelRegistryService.findDefaultModelForTier(tier);
+
+      return isDefined(model) ? [{ tier, modelId: model.modelId }] : [];
+    });
 
     const clientConfig: ClientConfig = {
       appVersion: this.twentyConfigService.get('APP_VERSION'),

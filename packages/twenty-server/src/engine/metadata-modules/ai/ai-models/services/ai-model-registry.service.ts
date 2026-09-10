@@ -188,9 +188,10 @@ export class AiModelRegistryService {
   // A variant exists only where an operator listed one, so no caller reaches an
   // effort the catalog never declared by typing an id.
   private registerConfiguredVariants(): void {
-    const preferences = this.preferencesService.getPreferences();
     const listedModelIds = new Set(
-      AI_MODEL_TIERS.flatMap((tier) => preferences.defaultModelsByTier[tier]),
+      AI_MODEL_TIERS.flatMap((tier) =>
+        this.preferencesService.getDefaultModelIdsForTier(tier),
+      ),
     );
 
     for (const variantId of listedModelIds) {
@@ -428,11 +429,16 @@ export class AiModelRegistryService {
 
   // The last resort is any model the admin still allows: a chain that names
   // only disabled models must not hand a disabled one to the client.
-  getDefaultModelForTier(tier: AiModelTier): RegisteredAiModel {
-    const model =
+  findDefaultModelForTier(tier: AiModelTier): RegisteredAiModel | undefined {
+    return (
       this.getFirstAvailableModelFromList(
         this.preferencesService.getDefaultModelIdsForTier(tier),
-      ) ?? this.getAdminFilteredModels()[0];
+      ) ?? this.getAdminFilteredModels()[0]
+    );
+  }
+
+  getDefaultModelForTier(tier: AiModelTier): RegisteredAiModel {
+    const model = this.findDefaultModelForTier(tier);
 
     if (!model) {
       throw new AiException(
@@ -447,7 +453,7 @@ export class AiModelRegistryService {
   // A pin only applies while the pinned model still resolves and is not
   // disabled, so a workspace never loses a tier because a provider key went
   // away or an admin disabled the model after it was pinned.
-  resolveModelForTier(
+  private resolveModelForTier(
     tier: AiModelTier,
     workspaceSettings?: WorkspaceAiModelSettings,
   ): RegisteredAiModel {
@@ -565,8 +571,7 @@ export class AiModelRegistryService {
       return true;
     }
 
-    const disabledModels =
-      this.preferencesService.getPreferences().disabledModels ?? [];
+    const disabledModels = this.preferencesService.getDisabledModelIds();
     // Disabling a model disables every effort it can be pinned at.
     const { modelId: baseModelId } = parseModelVariantId(modelId);
 

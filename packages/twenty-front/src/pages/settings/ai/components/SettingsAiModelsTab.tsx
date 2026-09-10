@@ -1,13 +1,8 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import {
-  AI_MODEL_TIERS,
-  DEFAULT_AI_AGENT_MODEL_TIER,
-  DEFAULT_AI_CHAT_MODEL_TIER,
-  type AiModelTier,
-} from 'twenty-shared/ai';
+import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -23,11 +18,12 @@ import { Card } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
+import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { getAiModelTierLabel } from '@/ai/utils/getAiModelTierLabel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { getDataResidencyDisplay } from '@/settings/ai/utils/getDataResidencyDisplay';
-import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
+import { AUTOMATIC_MODEL_PIN } from '@/settings/ai/constants/AutomaticModelPin';
+import { getAiModelPinOptions } from '@/settings/ai/utils/getAiModelPinOptions';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
@@ -39,8 +35,6 @@ import { SettingsAiModelTiersPreview } from '~/pages/settings/ai/components/Sett
 import { useSettingsAiModelsActions } from '~/pages/settings/ai/hooks/useSettingsAiModelsActions';
 import { formatNumber } from '~/utils/format/formatNumber';
 
-const AUTOMATIC_PIN = '';
-
 const StyledPinnedModelsContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[4]};
 `;
@@ -50,6 +44,7 @@ export const SettingsAiModelsTab = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const aiModels = useAtomStateValue(aiModelsState);
   const tiers = useAiModelTiers();
+  const { chatTier, agentTier } = useWorkspaceAiModelTiers();
   const {
     handleChatTierChange,
     handleAgentTierChange,
@@ -78,21 +73,11 @@ export const SettingsAiModelsTab = () => {
     label: getAiModelTierLabel(tier),
   }));
 
-  const pinnableModelOptions = aiModels
-    .filter((model) => !model.isDeprecated)
-    .map((model) => {
-      const residencyFlag = model.dataResidency
-        ? ` ${getDataResidencyDisplay(model.dataResidency)}`
-        : '';
-
-      return {
-        value: model.modelId,
-        label: `${model.label}${residencyFlag}`,
-        contextualText: model.providerLabel ?? model.providerName ?? undefined,
-        Icon: getModelIcon(model.modelFamily, model.providerName),
-      };
-    })
-    .sort((first, second) => first.label.localeCompare(second.label));
+  const pinnableModelOptions = useMemo(
+    () =>
+      isAutoModelSelectionEnabled ? [] : getAiModelPinOptions({ aiModels }),
+    [aiModels, isAutoModelSelectionEnabled],
+  );
 
   return (
     <>
@@ -110,9 +95,7 @@ export const SettingsAiModelsTab = () => {
           >
             <Select
               dropdownId="models-tab-chat-tier-select"
-              value={
-                currentWorkspace?.aiChatModelTier ?? DEFAULT_AI_CHAT_MODEL_TIER
-              }
+              value={chatTier}
               onChange={handleChatTierChange}
               options={tierOptions}
               selectSizeVariant="small"
@@ -126,10 +109,7 @@ export const SettingsAiModelsTab = () => {
           >
             <Select
               dropdownId="models-tab-agent-tier-select"
-              value={
-                currentWorkspace?.aiAgentModelTier ??
-                DEFAULT_AI_AGENT_MODEL_TIER
-              }
+              value={agentTier}
               onChange={handleAgentTierChange}
               options={tierOptions}
               selectSizeVariant="small"
@@ -162,14 +142,17 @@ export const SettingsAiModelsTab = () => {
                 >
                   <Select
                     dropdownId={`models-tab-pinned-model-select-${tier.tier}`}
-                    value={aiModelIdByTier[tier.tier] ?? AUTOMATIC_PIN}
+                    value={aiModelIdByTier[tier.tier] ?? AUTOMATIC_MODEL_PIN}
                     onChange={(value) =>
                       handlePinnedModelChange(
                         tier.tier,
-                        value === AUTOMATIC_PIN ? null : value,
+                        value === AUTOMATIC_MODEL_PIN ? null : value,
                       )
                     }
-                    emptyOption={{ value: AUTOMATIC_PIN, label: t`Automatic` }}
+                    emptyOption={{
+                      value: AUTOMATIC_MODEL_PIN,
+                      label: t`Automatic`,
+                    }}
                     options={pinnableModelOptions}
                     withSearchInput
                     selectSizeVariant="small"

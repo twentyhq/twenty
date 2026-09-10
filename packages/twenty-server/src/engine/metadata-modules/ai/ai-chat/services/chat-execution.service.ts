@@ -11,10 +11,7 @@ import {
   type SystemModelMessage,
   type ToolSet,
 } from 'ai';
-import {
-  AUTO_SELECT_MODEL_ID_BY_TIER,
-  type ExtendedUIMessage,
-} from 'twenty-shared/ai';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
@@ -96,6 +93,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
+import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
@@ -190,8 +188,7 @@ export class ChatExecutionService {
       { compactOutput: true, spillLargeOutput: true },
     );
 
-    const resolvedModelId =
-      modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER[workspace.aiChatModelTier];
+    const resolvedModelId = getChatModelId(modelId, workspace);
 
     this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
 

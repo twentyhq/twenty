@@ -1,4 +1,4 @@
-import { type AiModelTier } from 'twenty-shared/ai';
+import { isAiModelTier, type AiModelTier } from 'twenty-shared/ai';
 
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
@@ -9,4 +9,6 @@ export const agentChatUserSelectedModelTierState =
     defaultValue: null,
     useLocalStorage: true,
     localStorageOptions: { getOnInit: true },
+    // A stale tier name in localStorage hydrates as null instead.
+    validateInitFn: isAiModelTier,
   });

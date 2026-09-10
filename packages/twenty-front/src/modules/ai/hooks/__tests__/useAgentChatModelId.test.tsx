@@ -35,7 +35,6 @@ describe('useAgentChatModelId', () => {
   it('sends nothing so the server falls back to the workspace chat tier', () => {
     const { result } = renderHooks();
 
-    expect(result.current.selectedTier).toBeNull();
     expect(result.current.modelIdForRequest).toBeUndefined();
   });
 
@@ -47,7 +46,6 @@ describe('useAgentChatModelId', () => {
 
     const { result } = renderHooks();
 
-    expect(result.current.selectedTier).toBeNull();
     expect(result.current.modelIdForRequest).toBeUndefined();
   });
 
@@ -58,7 +56,6 @@ describe('useAgentChatModelId', () => {
       result.current.setSelectedTier('smart');
     });
 
-    expect(result.current.selectedTier).toBe('smart');
     expect(result.current.modelIdForRequest).toBe('default-smart-model');
   });
 

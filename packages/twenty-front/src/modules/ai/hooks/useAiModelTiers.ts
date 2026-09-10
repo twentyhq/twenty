@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,36 +18,39 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
   const aiModels = useAtomStateValue(aiModelsState);
   const aiModelTiers = useAtomStateValue(aiModelTiersState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const isAutoModelSelectionEnabled =
+    currentWorkspace?.isAutoModelSelectionEnabled;
+  const aiModelIdByTier = currentWorkspace?.aiModelIdByTier;
 
-  const findModel = (modelId: string | undefined) =>
-    aiModels.find((model) => model.modelId === modelId);
+  return useMemo(() => {
+    const findModel = (modelId: string | undefined) =>
+      aiModels.find((model) => model.modelId === modelId);
 
-  const resolveModel = (tier: AiModelTier) => {
-    const pinnedModelId =
-      currentWorkspace?.isAutoModelSelectionEnabled === false
-        ? currentWorkspace.aiModelIdByTier?.[tier]
-        : undefined;
-    const pinnedModel = findModel(pinnedModelId);
+    const resolvedModels = AI_MODEL_TIERS.map((tier) => {
+      const pinnedModel =
+        isAutoModelSelectionEnabled === false
+          ? findModel(aiModelIdByTier?.[tier])
+          : undefined;
 
-    if (isDefined(pinnedModel)) {
-      return { model: pinnedModel, isPinned: true };
-    }
+      if (isDefined(pinnedModel)) {
+        return { tier, model: pinnedModel, isPinned: true };
+      }
 
-    return {
-      model: findModel(
-        aiModelTiers.find((instanceTier) => instanceTier.tier === tier)
-          ?.modelId,
-      ),
-      isPinned: false,
-    };
-  };
+      return {
+        tier,
+        model: findModel(
+          aiModelTiers.find((instanceTier) => instanceTier.tier === tier)
+            ?.modelId,
+        ),
+        isPinned: false,
+      };
+    });
 
-  const referenceModel = resolveModel(REFERENCE_TIER).model;
+    const referenceModel = resolvedModels.find(
+      (resolved) => resolved.tier === REFERENCE_TIER,
+    )?.model;
 
-  return AI_MODEL_TIERS.map((tier) => {
-    const { model, isPinned } = resolveModel(tier);
-
-    return {
+    return resolvedModels.map(({ tier, model, isPinned }) => ({
       tier,
       label: getAiModelTierLabel(tier),
       model,
@@ -59,6 +63,6 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
         value: model?.intelligenceIndex,
         reference: referenceModel?.intelligenceIndex,
       }),
-    };
-  });
+    }));
+  }, [aiModels, aiModelTiers, isAutoModelSelectionEnabled, aiModelIdByTier]);
 };
