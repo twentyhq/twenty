@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useId } from 'react';
 import { CardContent } from 'twenty-ui/surfaces';
 import { type IconComponent } from 'twenty-ui/icon';
@@ -56,6 +57,7 @@ export const SettingsRadioCard = ({
   const titleId = useId();
   const descriptionId = useId();
   const { theme } = useContext(ThemeContext);
+  const hasDescription = isNonEmptyString(description);
 
   return (
     <StyledRadioCardContentContainer>
@@ -63,7 +65,7 @@ export const SettingsRadioCard = ({
         {Icon && <Icon size={theme.icon.size.xl} color={theme.color.gray10} />}
         <span>
           {title && <StyledTitle id={titleId}>{title}</StyledTitle>}
-          {description && (
+          {hasDescription && (
             <StyledDescription id={descriptionId}>
               {description}
             </StyledDescription>
@@ -73,7 +75,7 @@ export const SettingsRadioCard = ({
           <Radio
             value={value}
             aria-labelledby={titleId}
-            aria-describedby={description ? descriptionId : undefined}
+            aria-describedby={hasDescription ? descriptionId : undefined}
           />
         </StyledRadioContainer>
       </CardContent>
