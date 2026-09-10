@@ -1,4 +1,4 @@
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -118,7 +118,7 @@ export const SettingsApplicationTimelineActivityTypeSettingsTab = ({
           description={t`Choose whether this activity type appears in record timelines`}
         />
         <Card rounded fullWidth>
-          <SettingsOptionCardContentToggle
+          <SettingsOptionCardContentSwitch
             Icon={IconTimelineEvent}
             title={t`Active`}
             description={t`Show this activity type in record timelines`}

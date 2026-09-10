@@ -1,4 +1,4 @@
-import { type ToolSet } from 'ai';
+import { type ToolExecuteFunction, type ToolSet } from 'ai';
 import { type ToolCategory } from 'twenty-shared/ai';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -21,8 +21,17 @@ export const executeToolFromToolSet = async (
     );
   }
 
-  return tool.execute(args, {
+  // ToolSet widens execute to a union no argument satisfies; these tools are
+  // dispatched by name and take no per-tool context.
+  const execute = tool.execute as ToolExecuteFunction<
+    Record<string, unknown>,
+    ToolOutput,
+    undefined
+  >;
+
+  return execute(args, {
     toolCallId: '',
     messages: [],
+    context: undefined,
   }) as Promise<ToolOutput>;
 };
