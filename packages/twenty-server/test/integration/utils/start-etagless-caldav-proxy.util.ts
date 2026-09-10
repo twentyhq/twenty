@@ -1,18 +1,42 @@
 import {
-  createServer,
-  request,
-  type IncomingHttpHeaders,
-  type IncomingMessage,
-  type Server,
-  type ServerResponse,
-} from 'node:http';
+  GenericContainer,
+  type StartedNetwork,
+  type StartedTestContainer,
+  Wait,
+} from 'testcontainers';
 
-const SYNC_COLLECTION_REPORT_PATTERN =
-  /<supported-report>\s*<report>\s*<sync-collection\s*\/>\s*<\/report>\s*<\/supported-report>/g;
-const GETETAG_PATTERN =
-  /<(?:[A-Za-z0-9]+:)?getetag>[^<]*<\/(?:[A-Za-z0-9]+:)?getetag>/g;
-const GETLASTMODIFIED_PATTERN =
-  /<(?:[A-Za-z0-9]+:)?getlastmodified>[^<]*<\/(?:[A-Za-z0-9]+:)?getlastmodified>/g;
+const MITMPROXY_IMAGE =
+  'mitmproxy/mitmproxy:12.1.2@sha256:0d7b2a14b4a71a908cd6f31b8f50e29bbc5c8720fe6caa706acf782da558e5c7';
+const MITMPROXY_PORT = 8080;
+const ADDON_PATH = '/addon.py';
+
+const STRIP_CHANGE_SIGNALS_ADDON = String.raw`
+import os
+import re
+
+SYNC_COLLECTION_REPORT = re.compile(
+    rb"<supported-report>\s*<report>\s*<sync-collection\s*/>\s*</report>\s*</supported-report>"
+)
+GETETAG = re.compile(rb"<(?:[A-Za-z0-9]+:)?getetag>[^<]*</(?:[A-Za-z0-9]+:)?getetag>")
+GETLASTMODIFIED = re.compile(
+    rb"<(?:[A-Za-z0-9]+:)?getlastmodified>[^<]*</(?:[A-Za-z0-9]+:)?getlastmodified>"
+)
+
+COLLECTION_WITHOUT_LAST_MODIFIED = os.environ["COLLECTION_WITHOUT_LAST_MODIFIED"]
+
+
+def response(flow):
+    if "xml" not in flow.response.headers.get("content-type", ""):
+        return
+
+    content = SYNC_COLLECTION_REPORT.sub(b"", flow.response.content)
+    content = GETETAG.sub(b"<getetag />", content)
+
+    if COLLECTION_WITHOUT_LAST_MODIFIED in flow.request.path:
+        content = GETLASTMODIFIED.sub(b"<getlastmodified />", content)
+
+    flow.response.content = content
+`;
 
 export type EtaglessCalDavProxy = {
   host: string;
@@ -20,154 +44,45 @@ export type EtaglessCalDavProxy = {
   stop: () => Promise<void>;
 };
 
-const withoutSyncCollectionAndChangeSignals = (body: string): string =>
-  body
-    .replace(SYNC_COLLECTION_REPORT_PATTERN, '')
-    .replace(GETETAG_PATTERN, '<getetag />')
-    .replace(GETLASTMODIFIED_PATTERN, '<getlastmodified />');
-
-const readBody = (stream: IncomingMessage): Promise<Buffer> =>
-  new Promise((resolve, reject) => {
-    const chunks: Buffer[] = [];
-
-    stream.on('data', (chunk: Buffer) => chunks.push(chunk));
-    stream.on('end', () => resolve(Buffer.concat(chunks)));
-    stream.on('error', reject);
-  });
-
-const buildUpstreamHeaders = ({
-  headers,
-  upstreamAuthority,
-  contentLength,
-}: {
-  headers: IncomingHttpHeaders;
-  upstreamAuthority: string;
-  contentLength: number;
-}): IncomingHttpHeaders => {
-  const upstreamHeaders: IncomingHttpHeaders = {
-    ...headers,
-    host: upstreamAuthority,
-    'accept-encoding': 'identity',
-    'content-length': String(contentLength),
-  };
-
-  delete upstreamHeaders['transfer-encoding'];
-
-  return upstreamHeaders;
-};
-
-const buildDownstreamHeaders = ({
-  headers,
-  contentLength,
-}: {
-  headers: IncomingHttpHeaders;
-  contentLength: number;
-}): IncomingHttpHeaders => {
-  const downstreamHeaders: IncomingHttpHeaders = {
-    ...headers,
-    'content-length': String(contentLength),
-  };
-
-  delete downstreamHeaders['transfer-encoding'];
-  delete downstreamHeaders['content-encoding'];
-
-  return downstreamHeaders;
-};
-
-const readListeningPort = (server: Server): number => {
-  const address = server.address();
-
-  if (address === null || typeof address === 'string') {
-    throw new Error('The CalDAV proxy is not listening on a TCP port');
-  }
-
-  return address.port;
-};
-
-const forwardRequest = async ({
-  incomingRequest,
-  serverResponse,
-  upstreamHost,
-  upstreamPort,
-}: {
-  incomingRequest: IncomingMessage;
-  serverResponse: ServerResponse;
-  upstreamHost: string;
-  upstreamPort: number;
-}): Promise<void> => {
-  const requestBody = await readBody(incomingRequest);
-
-  const upstreamRequest = request(
-    {
-      host: upstreamHost,
-      port: upstreamPort,
-      method: incomingRequest.method,
-      path: incomingRequest.url,
-      headers: buildUpstreamHeaders({
-        headers: incomingRequest.headers,
-        upstreamAuthority: `${upstreamHost}:${upstreamPort}`,
-        contentLength: requestBody.length,
-      }),
-    },
-    (upstreamResponse) => {
-      readBody(upstreamResponse)
-        .then((upstreamBody) => {
-          const isXml = (
-            upstreamResponse.headers['content-type'] ?? ''
-          ).includes('xml');
-          const responseBody = isXml
-            ? Buffer.from(
-                withoutSyncCollectionAndChangeSignals(
-                  upstreamBody.toString('utf8'),
-                ),
-                'utf8',
-              )
-            : upstreamBody;
-
-          serverResponse.writeHead(
-            upstreamResponse.statusCode ?? 502,
-            buildDownstreamHeaders({
-              headers: upstreamResponse.headers,
-              contentLength: responseBody.length,
-            }),
-          );
-          serverResponse.end(responseBody);
-        })
-        .catch(() => serverResponse.destroy());
-    },
-  );
-
-  upstreamRequest.on('error', () => serverResponse.destroy());
-  upstreamRequest.end(requestBody);
-};
-
 export const startEtaglessCalDavProxy = async ({
-  upstreamHost,
-  upstreamPort,
+  network,
+  upstreamUrl,
+  collectionWithoutLastModified,
 }: {
-  upstreamHost: string;
-  upstreamPort: number;
+  network: StartedNetwork;
+  upstreamUrl: string;
+  collectionWithoutLastModified: string;
 }): Promise<EtaglessCalDavProxy> => {
-  const server = createServer((incomingRequest, serverResponse) => {
-    forwardRequest({
-      incomingRequest,
-      serverResponse,
-      upstreamHost,
-      upstreamPort,
-    }).catch(() => serverResponse.destroy());
-  });
-
-  await new Promise<void>((resolve) => {
-    server.listen(0, '127.0.0.1', resolve);
-  });
+  const container: StartedTestContainer = await new GenericContainer(
+    MITMPROXY_IMAGE,
+  )
+    .withNetwork(network)
+    .withCopyContentToContainer([
+      { content: STRIP_CHANGE_SIGNALS_ADDON, target: ADDON_PATH },
+    ])
+    .withEnvironment({
+      COLLECTION_WITHOUT_LAST_MODIFIED: collectionWithoutLastModified,
+    })
+    .withCommand([
+      'mitmdump',
+      '--mode',
+      `reverse:${upstreamUrl}`,
+      '--listen-host',
+      '0.0.0.0',
+      '--listen-port',
+      String(MITMPROXY_PORT),
+      '--scripts',
+      ADDON_PATH,
+    ])
+    .withExposedPorts(MITMPROXY_PORT)
+    .withWaitStrategy(Wait.forListeningPorts())
+    .start();
 
   return {
-    host: '127.0.0.1',
-    port: readListeningPort(server),
-    stop: () =>
-      new Promise<void>((resolve) => {
-        server.closeAllConnections();
-        server.close(() => resolve());
-      }),
+    host: container.getHost(),
+    port: container.getMappedPort(MITMPROXY_PORT),
+    stop: async () => {
+      await container.stop();
+    },
   };
 };

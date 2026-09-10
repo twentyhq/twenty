@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { Network, type StartedNetwork } from 'testcontainers';
 
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 
@@ -21,15 +22,26 @@ import {
 } from 'test/integration/utils/start-radicale-container.util';
 
 const HANDLE = `caldav-etagless-import-${randomUUID()}@acme.test`;
-const POPULATED_COLLECTION = 'personal';
-const EMPTY_COLLECTION = 'vacant';
 const PASSWORD = 'radicale-password';
+const RADICALE_NETWORK_ALIAS = 'radicale';
+
+const LAST_MODIFIED_COLLECTION = 'lastmodified';
+const NO_CHANGE_SIGNAL_COLLECTION = 'nosignals';
+const EMPTY_COLLECTION = 'vacant';
+
+const HTTP_DATE_RESOLUTION_MS = 1100;
 
 const authorizationHeader = `Basic ${Buffer.from(`${HANDLE}:${PASSWORD}`).toString('base64')}`;
 
 type CalDavSyncCursorSnapshot = {
   ctags?: Record<string, string>;
+  etags?: Record<string, Record<string, string>>;
 };
+
+const waitForNextHttpDateSecond = () =>
+  new Promise<void>((resolve) => {
+    setTimeout(resolve, HTTP_DATE_RESOLUTION_MS);
+  });
 
 const icalEvent = ({ uid, summary }: { uid: string; summary: string }) =>
   [
@@ -57,6 +69,7 @@ const calendarCollectionBody = (displayName: string) =>
     </mkcol>`;
 
 describe('CalDAV events import from a server that omits getetag (integration)', () => {
+  let network: StartedNetwork;
   let radicale: RadicaleServer;
   let proxy: EtaglessCalDavProxy;
   let connectedAccountId: string;
@@ -100,16 +113,28 @@ describe('CalDAV events import from a server that omits getetag (integration)', 
       ).findOneByOrFail({ id: calendarChannelId })
     ).syncCursor;
 
-  const readCollectionsWithCachedTag = async (): Promise<string[]> => {
-    const syncCursor = await readSyncCursor();
+  const readSyncCursorSnapshot =
+    async (): Promise<CalDavSyncCursorSnapshot> => {
+      const syncCursor = await readSyncCursor();
 
-    if (!isNonEmptyString(syncCursor)) {
-      return [];
-    }
+      if (!isNonEmptyString(syncCursor)) {
+        return {};
+      }
 
-    const parsedSyncCursor: CalDavSyncCursorSnapshot = JSON.parse(syncCursor);
+      return JSON.parse(syncCursor);
+    };
 
-    return Object.keys(parsedSyncCursor.ctags ?? {});
+  const readCollectionsWithCachedTag = async (): Promise<string[]> =>
+    Object.keys((await readSyncCursorSnapshot()).ctags ?? {});
+
+  const readChangeSignals = async (collection: string): Promise<string[]> => {
+    const { etags } = await readSyncCursorSnapshot();
+
+    const collectionEntry = Object.entries(etags ?? {}).find(([url]) =>
+      url.endsWith(`/${collection}/`),
+    );
+
+    return Object.values(collectionEntry?.[1] ?? {});
   };
 
   const syncCalendarChannel = async () => {
@@ -122,17 +147,23 @@ describe('CalDAV events import from a server that omits getetag (integration)', 
       input: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: false },
     });
 
+    network = await new Network().start();
+
     radicale = await startRadicaleContainer({
       username: HANDLE,
       password: PASSWORD,
+      network,
+      networkAlias: RADICALE_NETWORK_ALIAS,
     });
 
     proxy = await startEtaglessCalDavProxy({
-      upstreamHost: radicale.host,
-      upstreamPort: radicale.port,
+      network,
+      upstreamUrl: `http://${RADICALE_NETWORK_ALIAS}:${radicale.internalPort}`,
+      collectionWithoutLastModified: NO_CHANGE_SIGNAL_COLLECTION,
     });
 
-    await createCollection(POPULATED_COLLECTION);
+    await createCollection(LAST_MODIFIED_COLLECTION);
+    await createCollection(NO_CHANGE_SIGNAL_COLLECTION);
     await createCollection(EMPTY_COLLECTION);
 
     const { data } = await saveImapSmtpCaldavAccount({
@@ -173,13 +204,14 @@ describe('CalDAV events import from a server that omits getetag (integration)', 
 
     await proxy?.stop().catch(() => undefined);
     await radicale?.stop().catch(() => undefined);
+    await network?.stop().catch(() => undefined);
   });
 
-  it('imports events when the server returns no etag on the collection listing', async () => {
+  it('imports events when the server omits getetag but reports a last modified time', async () => {
     const summary = `CalDAV event ${randomUUID()}`;
 
     await putEvent({
-      collection: POPULATED_COLLECTION,
+      collection: LAST_MODIFIED_COLLECTION,
       uid: `caldav-event-${randomUUID()}`,
       summary,
     });
@@ -187,15 +219,67 @@ describe('CalDAV events import from a server that omits getetag (integration)', 
     await syncCalendarChannel();
 
     expect(await findImportedCalendarEventTitles([summary])).toEqual([summary]);
+    expect(await readChangeSignals(LAST_MODIFIED_COLLECTION)).toEqual([
+      expect.stringMatching(/GMT$/),
+    ]);
   }, 300000);
 
-  it('re-imports an event edited in place on a server without per-resource change signals', async () => {
+  it('re-imports an event edited in place once its last modified time moves', async () => {
     const uid = `caldav-event-${randomUUID()}`;
     const summaryBeforeEdit = `CalDAV event ${randomUUID()}`;
     const summaryAfterEdit = `CalDAV event ${randomUUID()}`;
 
     await putEvent({
-      collection: POPULATED_COLLECTION,
+      collection: LAST_MODIFIED_COLLECTION,
+      uid,
+      summary: summaryBeforeEdit,
+    });
+    await syncCalendarChannel();
+
+    expect(await findImportedCalendarEventTitles([summaryBeforeEdit])).toEqual([
+      summaryBeforeEdit,
+    ]);
+
+    await waitForNextHttpDateSecond();
+    await putEvent({
+      collection: LAST_MODIFIED_COLLECTION,
+      uid,
+      summary: summaryAfterEdit,
+    });
+    await syncCalendarChannel();
+
+    expect(
+      await findImportedCalendarEventTitles([
+        summaryBeforeEdit,
+        summaryAfterEdit,
+      ]),
+    ).toEqual([summaryAfterEdit]);
+  }, 300000);
+
+  it('imports events when the server omits every per-resource change signal', async () => {
+    const summary = `CalDAV event ${randomUUID()}`;
+
+    await putEvent({
+      collection: NO_CHANGE_SIGNAL_COLLECTION,
+      uid: `caldav-event-${randomUUID()}`,
+      summary,
+    });
+
+    await syncCalendarChannel();
+
+    expect(await findImportedCalendarEventTitles([summary])).toEqual([summary]);
+    expect(await readChangeSignals(NO_CHANGE_SIGNAL_COLLECTION)).toEqual([
+      expect.stringMatching(/\.ics:/),
+    ]);
+  }, 300000);
+
+  it('re-imports an event without change signals once the collection tag moves', async () => {
+    const uid = `caldav-event-${randomUUID()}`;
+    const summaryBeforeEdit = `CalDAV event ${randomUUID()}`;
+    const summaryAfterEdit = `CalDAV event ${randomUUID()}`;
+
+    await putEvent({
+      collection: NO_CHANGE_SIGNAL_COLLECTION,
       uid,
       summary: summaryBeforeEdit,
     });
@@ -206,7 +290,7 @@ describe('CalDAV events import from a server that omits getetag (integration)', 
     ]);
 
     await putEvent({
-      collection: POPULATED_COLLECTION,
+      collection: NO_CHANGE_SIGNAL_COLLECTION,
       uid,
       summary: summaryAfterEdit,
     });
@@ -227,7 +311,7 @@ describe('CalDAV events import from a server that omits getetag (integration)', 
 
     expect(
       collectionsWithCachedTag.filter((url) =>
-        url.endsWith(`/${POPULATED_COLLECTION}/`),
+        url.endsWith(`/${LAST_MODIFIED_COLLECTION}/`),
       ),
     ).toHaveLength(1);
     expect(
