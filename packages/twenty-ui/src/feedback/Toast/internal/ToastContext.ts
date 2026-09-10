@@ -1,7 +1,5 @@
 import { createContext } from 'react';
 
-import { type createToastStore } from './createToastStore';
+import { type ToastStore } from './ToastStore';
 
-export const ToastContext = createContext<
-  { store: ReturnType<typeof createToastStore>; limit: number } | undefined
->(undefined);
+export const ToastContext = createContext<ToastStore | undefined>(undefined);

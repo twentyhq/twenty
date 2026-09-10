@@ -1,19 +1,20 @@
 import { useCallback } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
 import { type SnackBarOptions } from '@/ui/feedback/snack-bar-manager/types/SnackBarOptions';
-import { getToastPropsFromSnackBarProps } from '@/ui/feedback/snack-bar-manager/utils/getToastPropsFromSnackBarProps';
 import { buildErrorAction } from '@/ui/feedback/snack-bar-manager/utils/buildErrorAction';
+import { getToastPropsFromSnackBarProps } from '@/ui/feedback/snack-bar-manager/utils/getToastPropsFromSnackBarProps';
 import { type ErrorLike } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { useToast } from 'twenty-ui/feedback';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 export const useSnackBar = () => {
-  const { add, close: handleSnackBarClose } = useToast();
+  const { add } = useToast();
 
-  const setSnackBarQueue = useCallback(
-    (options: SnackBarOptions) => add(getToastPropsFromSnackBarProps(options)),
+  const addSnackBar = useCallback(
+    (options: SnackBarOptions) => {
+      add(getToastPropsFromSnackBarProps(options));
+    },
     [add],
   );
 
@@ -23,16 +24,15 @@ export const useSnackBar = () => {
       options,
     }: {
       message: string;
-      options?: Omit<SnackBarOptions, 'message' | 'id'>;
+      options?: Omit<SnackBarOptions, 'message'>;
     }) => {
-      setSnackBarQueue({
-        id: uuidv4(),
+      addSnackBar({
         message,
         ...options,
         variant: 'success',
       });
     },
-    [setSnackBarQueue],
+    [addSnackBar],
   );
 
   const enqueueInfoSnackBar = useCallback(
@@ -41,16 +41,15 @@ export const useSnackBar = () => {
       options,
     }: {
       message: string;
-      options?: Omit<SnackBarOptions, 'message' | 'id'>;
+      options?: Omit<SnackBarOptions, 'message'>;
     }) => {
-      setSnackBarQueue({
-        id: uuidv4(),
+      addSnackBar({
         message,
         ...options,
         variant: 'info',
       });
     },
-    [setSnackBarQueue],
+    [addSnackBar],
   );
 
   const enqueueWarningSnackBar = useCallback(
@@ -59,16 +58,15 @@ export const useSnackBar = () => {
       options,
     }: {
       message: string;
-      options?: Omit<SnackBarOptions, 'message' | 'id'>;
+      options?: Omit<SnackBarOptions, 'message'>;
     }) => {
-      setSnackBarQueue({
-        id: uuidv4(),
+      addSnackBar({
         message,
         ...options,
         variant: 'warning',
       });
     },
-    [setSnackBarQueue],
+    [addSnackBar],
   );
 
   const enqueueErrorSnackBar = useCallback(
@@ -80,7 +78,7 @@ export const useSnackBar = () => {
       | { apolloError: ErrorLike; message?: never }
       | { apolloError?: never; message?: string }
     ) & {
-      options?: Omit<SnackBarOptions, 'message' | 'id'>;
+      options?: Omit<SnackBarOptions, 'message'>;
     }) => {
       if (apolloError?.name === 'AbortError') {
         return;
@@ -94,19 +92,17 @@ export const useSnackBar = () => {
 
       const errorAction = buildErrorAction(apolloError);
 
-      setSnackBarQueue({
-        id: uuidv4(),
+      addSnackBar({
         message: errorMessage,
         ...errorAction,
         ...options,
         variant: 'error',
       });
     },
-    [setSnackBarQueue],
+    [addSnackBar],
   );
 
   return {
-    handleSnackBarClose,
     enqueueSuccessSnackBar,
     enqueueErrorSnackBar,
     enqueueInfoSnackBar,

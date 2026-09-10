@@ -54,6 +54,10 @@ export const QueueOverflow: Story = {
     await waitFor(() =>
       expect(body.queryByText('Notification 1')).not.toBeInTheDocument(),
     );
+    const region = body.getByRole('region', { name: 'Notifications' });
+    await waitFor(() =>
+      expect(region.getAnimations({ subtree: true })).toHaveLength(0),
+    );
     expect(body.getAllByRole('status')).toHaveLength(limit);
     expect(body.getByText(`Notification ${limit + 1}`)).toBeVisible();
     expect(args.onClose).toHaveBeenCalledOnce();
@@ -91,10 +95,9 @@ export const Dismissal: Story = {
       canvas.getByRole('button', { name: 'Add notification' }),
     );
     const toast = body.getByRole('status');
+    const region = body.getByRole('region', { name: 'Notifications' });
     await waitFor(() =>
-      expect(
-        getComputedStyle(toast.parentElement!.parentElement!).opacity,
-      ).toBe('1'),
+      expect(region.getAnimations({ subtree: true })).toHaveLength(0),
     );
     await userEvent.click(body.getByRole('button', { name: 'Close' }));
     if (isMotionEnabled()) {

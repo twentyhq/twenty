@@ -1,19 +1,36 @@
+import { isNonEmptyArray } from '@sniptt/guards';
+
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type ToastOptions } from '../types/ToastOptions';
 import { type ToastEntry } from './ToastEntry';
 
-export const createToastStore = () => {
+const DEFAULT_TOAST_LIMIT = 3;
+
+type CreateToastStoreParams = {
+  limit?: number;
+};
+
+const isVisibleToast = (toast: ToastEntry) => toast.status === 'visible';
+
+export const createToastStore = ({
+  limit = DEFAULT_TOAST_LIMIT,
+}: CreateToastStoreParams = {}) => {
+  if (!Number.isInteger(limit) || limit < 1) {
+    throw new Error('Toast limit must be a positive integer.');
+  }
+
   const emptyToasts: ToastEntry[] = [];
   let toasts = emptyToasts;
+  let nextRenderKey = 0;
   const listeners = new Set<() => void>();
 
+  const hasViewportToAnimateExits = () => listeners.size > 0;
+
   const publish = (nextToasts: ToastEntry[]) => {
-    // Closing cards only need retaining while a viewport can animate them.
-    toasts =
-      listeners.size === 0
-        ? nextToasts.filter((toast) => toast.status === 'visible')
-        : nextToasts;
+    toasts = hasViewportToAnimateExits()
+      ? nextToasts
+      : nextToasts.filter(isVisibleToast);
     listeners.forEach((listener) => listener());
   };
 
@@ -34,17 +51,15 @@ export const createToastStore = () => {
       listeners.add(listener);
       return () => {
         listeners.delete(listener);
-        if (listeners.size === 0) {
+        if (!hasViewportToAnimateExits()) {
           publish(toasts);
         }
       };
     },
     getSnapshot: () => toasts,
     getServerSnapshot: () => emptyToasts,
-    add: (options: ToastOptions, limit: number) => {
-      const visibleToasts = toasts.filter(
-        (toast) => toast.status === 'visible',
-      );
+    add: (options: ToastOptions) => {
+      const visibleToasts = toasts.filter(isVisibleToast);
       const existingToast = visibleToasts.find(
         ({ notification }) =>
           (isDefined(options.dedupeKey) &&
@@ -59,29 +74,33 @@ export const createToastStore = () => {
       const id =
         options.id ??
         `toast-${crypto.getRandomValues(new Uint32Array(4)).join('-')}`;
+      const renderKey = nextRenderKey;
+      nextRenderKey += 1;
       const removedCount = Math.max(0, visibleToasts.length - limit + 1);
       dismiss(visibleToasts.slice(0, removedCount), [
         ...toasts.filter((toast) => toast.notification.id !== id),
-        { notification: { ...options, id }, status: 'visible' },
+        { notification: { ...options, id }, status: 'visible', renderKey },
       ]);
       return id;
     },
     close: (id?: string) => {
       const toastsToClose = toasts.filter(
         (toast) =>
-          toast.status === 'visible' &&
+          isVisibleToast(toast) &&
           (!isDefined(id) || toast.notification.id === id),
       );
 
-      if (toastsToClose.length === 0) {
+      if (!isNonEmptyArray(toastsToClose)) {
         return;
       }
 
       dismiss(toastsToClose);
     },
     completeExit: (toast: ToastEntry) => {
-      // An old exit must not remove a restored toast, even if it closed again.
-      if (toast.status !== 'closing' || !toasts.includes(toast)) {
+      const isCurrentClosingToast =
+        toast.status === 'closing' && toasts.includes(toast);
+
+      if (!isCurrentClosingToast) {
         return;
       }
 

@@ -11,7 +11,6 @@ export type SnackBarOptions = Pick<
   | 'variant'
   | 'dedupeKey'
 > & {
-  id: string;
   message: string;
   buttonLabel?: string;
   buttonOnClick?: () => void;

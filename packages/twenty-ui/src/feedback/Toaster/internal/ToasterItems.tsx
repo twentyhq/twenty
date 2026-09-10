@@ -10,7 +10,7 @@ type ToasterItemsProps = {
 };
 
 export const ToasterItems = ({ getToastProps }: ToasterItemsProps) => {
-  const { store } = useToastContext();
+  const store = useToastContext();
   const toasts = useSyncExternalStore(
     store.subscribe,
     store.getSnapshot,
@@ -19,7 +19,7 @@ export const ToasterItems = ({ getToastProps }: ToasterItemsProps) => {
 
   return toasts.map((toast) => (
     <ToasterItem
-      key={toast.notification.id}
+      key={toast.renderKey}
       toastEntry={toast}
       getToastProps={getToastProps}
       onClose={store.close}

@@ -7,6 +7,7 @@ import {
 } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
 import { graphql, HttpResponse } from 'msw';
+import { type PropsWithChildren, useState } from 'react';
 import { Context as ResponsiveContext } from 'react-responsive';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
@@ -48,6 +49,19 @@ const StyledStoryContainer = styled.div`
     animation: none !important;
   }
 `;
+
+const SnackBarStoryContainer = ({ children }: PropsWithChildren) => {
+  const [toastContainer, setToastContainer] = useState<HTMLDivElement | null>(
+    null,
+  );
+
+  return (
+    <StyledStoryContainer ref={setToastContainer}>
+      <SnackBarToaster container={toastContainer} />
+      {children}
+    </StyledStoryContainer>
+  );
+};
 
 const createCommandMenuItem = (
   overrides: Partial<CommandMenuItemFieldsFragment> &
@@ -179,10 +193,9 @@ const createDecorator =
                 }}
               >
                 <BaseThemeProvider>
-                  <StyledStoryContainer>
-                    <SnackBarToaster />
+                  <SnackBarStoryContainer>
                     <Story />
-                  </StyledStoryContainer>
+                  </SnackBarStoryContainer>
                 </BaseThemeProvider>
               </CommandMenuContext.Provider>
             </CommandMenuComponentInstanceContext.Provider>

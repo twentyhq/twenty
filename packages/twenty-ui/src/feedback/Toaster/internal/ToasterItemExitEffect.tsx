@@ -21,15 +21,17 @@ export const ToasterItemExitEffect = ({
     }
 
     let isCancelled = false;
-    // The card's countdown must not delay removal when its wrapper finishes.
-    const animations = elementRef.current?.getAnimations?.() ?? [];
-    Promise.allSettled(animations.map((animation) => animation.finished)).then(
-      () => {
-        if (!isCancelled) {
-          onExitComplete(toastEntry);
-        }
-      },
-    );
+    const wrapperOwnAnimationsWithoutCardCountdown =
+      elementRef.current?.getAnimations?.() ?? [];
+    Promise.allSettled(
+      wrapperOwnAnimationsWithoutCardCountdown.map(
+        (animation) => animation.finished,
+      ),
+    ).then(() => {
+      if (!isCancelled) {
+        onExitComplete(toastEntry);
+      }
+    });
 
     return () => {
       isCancelled = true;
