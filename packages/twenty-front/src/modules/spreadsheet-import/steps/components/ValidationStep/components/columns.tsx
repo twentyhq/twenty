@@ -13,7 +13,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import camelCase from 'lodash.camelcase';
 import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
+import { Checkbox, Toggle } from 'twenty-ui/input';
 import { type ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 
 const StyledHeaderContainer = styled.div`
@@ -39,6 +39,17 @@ const StyledCheckboxContainer = styled.div`
   justify-content: center;
   line-height: 0;
   width: 100%;
+
+  [role='checkbox'] > span::before {
+    border-width: 1.43px;
+  }
+
+  [role='checkbox'][data-unchecked]:not([data-disabled]):not(
+      [data-indeterminate]
+    )
+    > span::before {
+    border-color: ${themeCssVariables.border.color.medium};
+  }
 `;
 
 const StyledToggleContainer = styled.div`
@@ -95,12 +106,14 @@ export const generateColumns = (
           <Checkbox
             aria-label={t`Select`}
             checked={isRowSelected}
-            variant={CheckboxVariant.Tertiary}
-            onChange={(event) => {
+            variant={'outline'}
+            onCheckedChange={(isChecked, eventDetails) => {
               onRowSelectionChange({
                 row: props.row,
-                checked: event.target.checked,
-                isShiftClick: (event.nativeEvent as MouseEvent).shiftKey,
+                checked: isChecked,
+                isShiftClick:
+                  'shiftKey' in eventDetails.event &&
+                  eventDetails.event.shiftKey === true,
               });
             }}
           />

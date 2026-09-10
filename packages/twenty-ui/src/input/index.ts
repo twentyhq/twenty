@@ -24,13 +24,12 @@ export { baseTransitionTiming } from './Button/constant';
 export type { ButtonGroupProps } from './ButtonGroup/ButtonGroup';
 export { ButtonGroup } from './ButtonGroup/ButtonGroup';
 export { CardPicker } from './CardPicker/CardPicker';
-export {
-  CheckboxVariant,
-  CheckboxShape,
-  CheckboxSize,
-  CheckboxAccent,
-  Checkbox,
-} from './Checkbox/Checkbox';
+export { Checkbox } from './Checkbox/Checkbox';
+export type { CheckboxColor } from './Checkbox/types/CheckboxColor';
+export type { CheckboxProps } from './Checkbox/types/CheckboxProps';
+export type { CheckboxShape } from './Checkbox/types/CheckboxShape';
+export type { CheckboxSize } from './Checkbox/types/CheckboxSize';
+export type { CheckboxVariant } from './Checkbox/types/CheckboxVariant';
 export { CodeEditor } from './CodeEditor/CodeEditor';
 export { BASE_CODE_EDITOR_THEME_ID } from './CodeEditor/constants/BaseCodeEditorThemeId';
 export { getBaseCodeEditorTheme } from './CodeEditor/utils/getBaseCodeEditorTheme';

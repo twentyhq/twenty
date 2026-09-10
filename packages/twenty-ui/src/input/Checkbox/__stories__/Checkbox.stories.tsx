@@ -1,6 +1,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
+
+import { Checkbox } from '@ui/input/Checkbox/Checkbox';
+import { type CheckboxColor } from '@ui/input/Checkbox/types/CheckboxColor';
+import { type CheckboxProps } from '@ui/input/Checkbox/types/CheckboxProps';
+import { type CheckboxSize } from '@ui/input/Checkbox/types/CheckboxSize';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -8,38 +13,20 @@ import {
   ComponentDecorator,
 } from '@ui/testing';
 
-import {
-  Checkbox,
-  CheckboxAccent,
-  CheckboxShape,
-  CheckboxSize,
-  CheckboxVariant,
-} from '@ui/input/Checkbox/Checkbox';
-
 const meta: Meta<typeof Checkbox> = {
   title: 'UI/Input/Checkbox/Checkbox',
   component: Checkbox,
+  args: { 'aria-label': 'Checkbox' },
 };
 
 export default meta;
 type Story = StoryObj<typeof Checkbox>;
 
-type ControlledCheckboxExampleProps = {
-  onCheckedChange?: (checked: boolean) => void;
-};
-
-const ControlledCheckboxExample = ({
-  onCheckedChange,
-}: ControlledCheckboxExampleProps) => {
+const ControlledExample = (props: CheckboxProps) => {
   const [checked, setChecked] = useState(false);
-
   return (
     <>
-      <Checkbox
-        checked={checked}
-        onCheckedChange={onCheckedChange}
-        aria-label="Controlled checkbox"
-      />
+      <Checkbox {...props} checked={checked} />
       <button type="button" onClick={() => setChecked(true)}>
         Apply selection
       </button>
@@ -50,101 +37,94 @@ const ControlledCheckboxExample = ({
 export const Controlled: Story = {
   args: { onCheckedChange: fn() },
   decorators: [ComponentDecorator],
-  render: (args) => (
-    <ControlledCheckboxExample onCheckedChange={args.onCheckedChange} />
-  ),
+  render: (args) => <ControlledExample {...args} />,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const checkbox = canvas.getByRole('checkbox', {
-      name: 'Controlled checkbox',
-    });
-
+    const checkbox = canvas.getByRole('checkbox');
     await userEvent.click(checkbox);
-
-    await expect(args.onCheckedChange).toHaveBeenCalledWith(true);
+    await expect(args.onCheckedChange).toHaveBeenCalledWith(
+      true,
+      expect.objectContaining({
+        event: expect.objectContaining({ type: 'click' }),
+      }),
+    );
     await expect(checkbox).not.toBeChecked();
-
     await userEvent.click(
       canvas.getByRole('button', { name: 'Apply selection' }),
     );
-
     await expect(checkbox).toBeChecked();
   },
 };
 
 export const Default: Story = {
-  args: {
-    checked: false,
-    indeterminate: false,
-    hoverable: false,
-    disabled: false,
-    variant: CheckboxVariant.Primary,
-    size: CheckboxSize.Small,
-    shape: CheckboxShape.Squared,
-    accent: CheckboxAccent.Blue,
-    'aria-label': 'Checkbox',
-  },
+  args: { hoverable: false },
   decorators: [ComponentDecorator],
 };
 
+export const Round: Story = {
+  args: { shape: 'round', defaultChecked: true },
+  decorators: [ComponentDecorator],
+};
+
+export const Outline: Story = {
+  args: { variant: 'outline' },
+  decorators: [ComponentDecorator],
+};
+
+export const Success: Story = {
+  args: { color: 'success', defaultChecked: true },
+  decorators: [ComponentDecorator],
+};
+
+export const Warning: Story = {
+  args: { color: 'warning', defaultChecked: true },
+  decorators: [ComponentDecorator],
+};
+
+type CatalogState =
+  | 'unchecked'
+  | 'checked'
+  | 'mixed'
+  | 'disabled'
+  | 'disabled on';
+
+const CATALOG_STATE_PROPS: Record<CatalogState, Partial<CheckboxProps>> = {
+  unchecked: {},
+  checked: { checked: true },
+  mixed: { indeterminate: true },
+  disabled: { disabled: true },
+  'disabled on': { checked: true, disabled: true },
+};
+
 export const Catalog: CatalogStory<Story, typeof Checkbox> = {
-  args: { 'aria-label': 'Checkbox' },
-  argTypes: {
-    variant: { control: false },
-    size: { control: false },
-    indeterminate: { control: false },
-    checked: { control: false },
-    hoverable: { control: false },
-    shape: { control: false },
-    accent: { control: false },
-  },
+  decorators: [CatalogDecorator],
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
       dimensions: [
         {
           name: 'state',
-          values: ['disabled', 'unchecked', 'checked', 'indeterminate'],
-          props: (state: string) => {
-            if (state === 'disabled') {
-              return { disabled: true };
-            }
-            if (state === 'checked') {
-              return { checked: true };
-            }
-            if (state === 'indeterminate') {
-              return { indeterminate: true };
-            }
-            return {};
-          },
+          values: Object.keys(CATALOG_STATE_PROPS),
+          props: (state: CatalogState) => CATALOG_STATE_PROPS[state],
         },
         {
-          name: 'shape',
-          values: Object.values(CheckboxShape),
-          props: (shape: CheckboxShape) => ({ shape }),
-        },
-        {
-          name: 'isHoverable',
-          values: ['default', 'hoverable'],
-          props: (isHoverable: string) => {
-            if (isHoverable === 'hoverable') {
-              return { hoverable: true };
-            }
-            return {};
-          },
+          name: 'color',
+          values: ['accent', 'success', 'warning'],
+          props: (color: CheckboxColor) => ({ color }),
         },
         {
           name: 'size',
-          values: Object.values(CheckboxSize),
+          values: ['sm', 'md'],
           props: (size: CheckboxSize) => ({ size }),
         },
-        {
-          name: 'accent',
-          values: Object.values(CheckboxAccent),
-          props: (accent: CheckboxAccent) => ({ accent }),
-        },
       ],
+      options: { elementContainer: { style: { width: 60 } } },
     },
   },
-  decorators: [CatalogDecorator],
+};
+
+export const CatalogDark: CatalogStory<Story, typeof Checkbox> = {
+  ...Catalog,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
 };
