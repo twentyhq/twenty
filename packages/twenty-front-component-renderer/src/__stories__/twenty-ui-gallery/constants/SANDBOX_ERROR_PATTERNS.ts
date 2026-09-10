@@ -1,5 +1,5 @@
 export const SANDBOX_ERROR_PATTERNS = {
-  TABS_ORDER:
+  DOCUMENT_POSITION:
     /^(?:Uncaught TypeError: )?\w+\.compareDocumentPosition is not a function$/,
   COMPOSED_PATH:
     "Uncaught TypeError: Cannot use 'in' operator to search for 'composedPath' in undefined",

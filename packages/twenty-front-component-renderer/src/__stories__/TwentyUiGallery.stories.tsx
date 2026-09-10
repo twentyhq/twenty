@@ -6,8 +6,11 @@ import {
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { type TwentyUiGalleryStory as Story } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
 import {
+  createCheckboxTest,
   createFieldControlsTest,
+  createRadioGroupPreactTest,
   listItemTest,
+  sliderTest,
   toastTest,
 } from '@/__stories__/twenty-ui-gallery/utils/componentInteractionTests';
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
@@ -26,7 +29,9 @@ import {
   alertDialogTest,
   menuTest,
   popoverTest,
+  radioGroupReactTest,
   selectTest,
+  sliderRangeTest,
   switchTest,
   tabsPreactTest,
   tabsReactTest,
@@ -293,4 +298,59 @@ export const SwitchPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-switch',
   runtime: 'preact',
   play: switchTest,
+});
+
+export const CheckboxReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-checkbox',
+  runtime: 'react',
+  play: createCheckboxTest({ expectedAriaTrue: '' }),
+});
+export const CheckboxPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-checkbox',
+  runtime: 'preact',
+  play: createCheckboxTest({ expectedAriaTrue: 'true' }),
+});
+
+export const SliderReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-slider',
+  runtime: 'react',
+  play: sliderTest,
+});
+export const SliderPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-slider',
+  runtime: 'preact',
+  play: sliderTest,
+});
+
+export const SliderRangeReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-slider-range',
+  runtime: 'react',
+  play: sliderRangeTest,
+});
+export const SliderRangePreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-slider-range',
+  runtime: 'preact',
+  play: sliderRangeTest,
+});
+
+export const RadioGroupReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-radio-group',
+  runtime: 'react',
+  play: radioGroupReactTest,
+});
+export const RadioGroupPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-radio-group',
+  runtime: 'preact',
+  play: createRadioGroupPreactTest({ optionName: 'Daily' }),
+});
+
+export const CardPickerReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-radio-group',
+  runtime: 'react',
+  play: radioGroupReactTest,
+});
+export const CardPickerPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-radio-group',
+  runtime: 'preact',
+  play: createRadioGroupPreactTest({ optionName: 'Pro plan' }),
 });

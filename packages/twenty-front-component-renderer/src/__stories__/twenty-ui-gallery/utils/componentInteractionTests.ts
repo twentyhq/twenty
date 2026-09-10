@@ -2,7 +2,10 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { TYPING_DELAY } from '@/__stories__/shared/test-utils/timeouts';
+import {
+  INTERACTION_TIMEOUT,
+  TYPING_DELAY,
+} from '@/__stories__/shared/test-utils/timeouts';
 import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
@@ -11,6 +14,52 @@ type CreateFieldControlsTestOptions = {
   expectedAriaInvalid: '' | 'true';
   expectedReportedValues: string | RegExp;
 };
+
+// React serializes true boolean ARIA attributes as empty strings in the sandbox.
+type CreateCheckboxTestOptions = {
+  expectedAriaTrue: '' | 'true';
+};
+
+export const createCheckboxTest =
+  ({
+    expectedAriaTrue,
+  }: CreateCheckboxTestOptions): TwentyUiGalleryPlayFunction =>
+  async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expectFrontComponentMounted(canvas);
+
+    const checkbox = canvas.getByRole('checkbox', { name: 'Select account' });
+    const uncontrolled = canvas.getByRole('checkbox', {
+      name: 'Uncontrolled selection',
+    });
+    expect(checkbox).not.toBeChecked();
+    expect(uncontrolled).toHaveAttribute('aria-checked', expectedAriaTrue);
+    expect(
+      canvas.getByRole('checkbox', { name: 'Partial selection' }),
+    ).toBePartiallyChecked();
+    const disabled = canvas.getByRole('checkbox', {
+      name: 'Disabled selection',
+    });
+    expect(disabled).toHaveAttribute('aria-disabled', expectedAriaTrue);
+    await userEvent.click(disabled);
+    expect(disabled).not.toBeChecked();
+
+    const readOnly = canvas.getByRole('checkbox', {
+      name: 'Read-only selection',
+    });
+    await userEvent.click(readOnly);
+    expect(readOnly).toHaveAttribute('aria-checked', expectedAriaTrue);
+    expect(errorHandler).not.toHaveBeenCalled();
+
+    // Checkbox activation forwards a click through an unavailable PointerEvent.
+    await userEvent.click(checkbox);
+    await expectSandboxErrors({
+      requiredErrors: [SANDBOX_ERROR_PATTERNS.POINTER_EVENT_CONSTRUCTOR],
+    });
+    expect(canvas.getByRole('status')).toHaveTextContent(
+      'Selection: unselected; Changes: 0',
+    );
+  };
 
 export const createFieldControlsTest =
   ({
@@ -107,3 +156,57 @@ export const toastTest: TwentyUiGalleryPlayFunction = async ({
   ).toBeVisible();
   expect(errorHandler).not.toHaveBeenCalled();
 };
+
+// Slider's synchronous layout measurements leave its thumbs hidden in the sandbox.
+export const sliderTest: TwentyUiGalleryPlayFunction = async ({
+  canvasElement,
+}) => {
+  const canvas = within(canvasElement);
+  await expectFrontComponentMounted(canvas);
+  const volume = within(canvas.getByRole('group', { name: 'Volume' }));
+  const slider = volume.getByRole('slider', { hidden: true });
+  expect(volume.getByRole('status')).toHaveTextContent('40');
+  expect(slider).toHaveValue('40');
+  const disabledVolume = within(
+    canvas.getByRole('group', { name: 'Disabled volume' }),
+  );
+  expect(disabledVolume.getByRole('slider', { hidden: true })).toBeDisabled();
+  await expect(
+    waitFor(() => expect(slider).toBeVisible(), {
+      timeout: INTERACTION_TIMEOUT,
+    }),
+  ).rejects.toThrow();
+  expect(canvas.getByText('Volume: 40; Committed: 40')).toBeVisible();
+  expect(errorHandler).not.toHaveBeenCalled();
+};
+
+type CreateRadioGroupPreactTestOptions = {
+  optionName: 'Daily' | 'Pro plan';
+};
+
+export const createRadioGroupPreactTest =
+  ({
+    optionName,
+  }: CreateRadioGroupPreactTestOptions): TwentyUiGalleryPlayFunction =>
+  async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expectFrontComponentMounted(canvas);
+    expect(canvas.getByRole('radio', { name: 'Weekly' })).toBeChecked();
+    const disabled = canvas.getByRole('radio', { name: 'Monthly' });
+    expect(disabled).toHaveAttribute('aria-disabled', 'true');
+    await userEvent.click(disabled);
+    expect(disabled).not.toBeChecked();
+    expect(canvas.getByRole('radio', { name: 'Basic plan' })).toBeChecked();
+
+    // Preact can report ordering and forwarded-event errors before PointerEvent fails.
+    await userEvent.click(canvas.getByRole('radio', { name: optionName }));
+    await expectSandboxErrors({
+      requiredErrors: [SANDBOX_ERROR_PATTERNS.POINTER_EVENT_CONSTRUCTOR],
+      allowedAdditionalErrors: [
+        SANDBOX_ERROR_PATTERNS.DOCUMENT_POSITION,
+        SANDBOX_ERROR_PATTERNS.COMPOSED_PATH,
+      ],
+    });
+    expect(canvas.getByText('Frequency: weekly')).toBeVisible();
+    expect(canvas.getByText('Plan: basic')).toBeVisible();
+  };
