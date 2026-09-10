@@ -9,7 +9,7 @@ import { useMemo, useState } from 'react';
 import { IconArchive } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { SearchInput } from 'twenty-ui/input';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { MenuItemSwitch } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -104,12 +104,12 @@ export const SettingsAgentSkillsTab = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemToggle
+                    <MenuItemSwitch
                       LeftIcon={IconArchive}
-                      onToggleChange={setShowDeactivated}
-                      toggled={showDeactivated}
+                      onCheckedChange={setShowDeactivated}
+                      checked={showDeactivated}
                       text={t`Deactivated`}
-                      toggleSize="small"
+                      size="sm"
                     />
                   </DropdownMenuItemsContainer>
                 </DropdownContent>

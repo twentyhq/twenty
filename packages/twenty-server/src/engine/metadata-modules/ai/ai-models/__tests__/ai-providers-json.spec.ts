@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import defaultAiProviders from 'src/engine/metadata-modules/ai/ai-models/ai-providers.json';
 import { aiProvidersConfigSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.schema';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
@@ -39,6 +41,16 @@ describe('ai-providers.json integrity', () => {
         expect(model.outputCostPerMillionTokens).toBeDefined();
         expect(model.contextWindowTokens).toBeGreaterThan(0);
         expect(model.maxOutputTokens).toBeGreaterThan(0);
+      });
+    });
+  });
+
+  it('should declare efforts only on reasoning models', () => {
+    Object.values(PROVIDERS).forEach((config) => {
+      (config.models ?? []).forEach((model) => {
+        if (isDefined(model.efforts)) {
+          expect(model.supportsReasoning).toBe(true);
+        }
       });
     });
   });

@@ -55,13 +55,15 @@ export const buildLookupCandidates = ({
   const resolved = resolveRollingAlias(modelName, siblingModels);
 
   if (isDefined(resolved)) {
-    candidates.push(resolved, resolved.replace(DATE_SUFFIX, ''));
+    // Once the release an alias points at is known, only a row naming that
+    // release will do. Every undated spelling is some other release the
+    // publisher happens to have measured: `mistral-large` on the leaderboard is
+    // the Feb '24 model, and standing in for `mistral-large-2512` it published a
+    // two-year-old score as current.
+    return [...new Set([...candidates, resolved])];
   }
 
-  // Last: an undated `mistral-large` row in the index is whichever release the
-  // publisher last measured, so it must not win over the release the alias
-  // currently resolves to.
-  candidates.push(modelName.replace(ROLLING_SUFFIX, ''));
-
-  return [...new Set(candidates)];
+  // No dated release to point at, so the bare name is the only thing left and
+  // whichever release the publisher measured is the best answer available.
+  return [...new Set([...candidates, modelName.replace(ROLLING_SUFFIX, '')])];
 };
