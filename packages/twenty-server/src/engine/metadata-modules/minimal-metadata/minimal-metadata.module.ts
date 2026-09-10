@@ -5,6 +5,7 @@ import { MinimalMetadataResolver } from 'src/engine/metadata-modules/minimal-met
 import { MinimalMetadataService } from 'src/engine/metadata-modules/minimal-metadata/minimal-metadata.service';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { HiddenSeededViewModule } from 'src/engine/metadata-modules/view/hidden-seeded-view.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -13,6 +14,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
     ApplicationModule,
     FeatureFlagModule,
+    HiddenSeededViewModule,
   ],
   providers: [MinimalMetadataResolver, MinimalMetadataService],
   exports: [MinimalMetadataService],
