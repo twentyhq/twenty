@@ -48,7 +48,7 @@ export class AgentTitleGenerationService {
       const result = await generateText({
         model: defaultModel.model,
         prompt: `Generate a concise, descriptive title (maximum 60 characters) for a chat thread based on the following message. The title should capture the main topic or purpose of the conversation. Return only the title, nothing else. Message: "${messageContent}"`,
-        experimental_telemetry: buildAiTelemetry({
+        ...buildAiTelemetry({
           functionId: 'agent-title-generation',
           workspaceId,
           userWorkspaceId,

@@ -1805,6 +1805,7 @@ enum UsageResourceType {
   API
   LOGIC_FUNCTION
   EMAIL
+  WEBHOOK
 }
 
 enum UsageOperationType {
@@ -1817,6 +1818,7 @@ enum UsageOperationType {
   CALL_RECORDING
   EMAIL_SEND
   API_REQUEST
+  WEBHOOK_CALL
   SUBSCRIPTION
 }
 
@@ -1924,6 +1926,7 @@ enum FeatureFlagKey {
   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_SHARING_ENABLED
+  IS_WEBHOOK_RATE_LIMIT_ENABLED
 }
 
 type WorkspaceUrls {
@@ -5013,6 +5016,7 @@ input SendEmailViaDomainInput {
 
 input SendMessageCampaignInput {
   campaignId: String!
+  scheduledAt: DateTime
 }
 
 input CancelMessageCampaignInput {
