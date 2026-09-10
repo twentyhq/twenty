@@ -219,7 +219,10 @@ describe('createSsrfSafeAgent', () => {
     it('should allow an allowed private IP literal', () => {
       const agent = createSsrfSafeAgent('http', ['192.168.1.10']);
 
-      agent.createConnection({ host: '192.168.1.10' } as any, jest.fn() as any);
+      agent.createConnection(
+        { host: '192.168.1.10' } as http.ClientRequestArgs,
+        jest.fn(),
+      );
 
       expect(createConnectionSpy).toHaveBeenCalled();
     });
@@ -227,7 +230,10 @@ describe('createSsrfSafeAgent', () => {
     it('should skip DNS validation for an allowed hostname', () => {
       const agent = createSsrfSafeAgent('http', ['keycloak']);
 
-      agent.createConnection({ host: 'Keycloak' } as any, jest.fn() as any);
+      agent.createConnection(
+        { host: 'Keycloak' } as http.ClientRequestArgs,
+        jest.fn(),
+      );
 
       mockSocket.emit('lookup', null, '172.18.0.5', 4, 'Keycloak');
 
@@ -238,7 +244,10 @@ describe('createSsrfSafeAgent', () => {
       const agent = createSsrfSafeAgent('http', ['keycloak']);
 
       expect(() => {
-        agent.createConnection({ host: '10.0.0.1' } as any, jest.fn() as any);
+        agent.createConnection(
+          { host: '10.0.0.1' } as http.ClientRequestArgs,
+          jest.fn(),
+        );
       }).toThrow('Request to internal IP address 10.0.0.1 is not allowed.');
     });
 
@@ -246,8 +255,8 @@ describe('createSsrfSafeAgent', () => {
       const agent = createSsrfSafeAgent('http', ['*']);
 
       agent.createConnection(
-        { host: '169.254.169.254' } as any,
-        jest.fn() as any,
+        { host: '169.254.169.254' } as http.ClientRequestArgs,
+        jest.fn(),
       );
 
       expect(createConnectionSpy).toHaveBeenCalled();

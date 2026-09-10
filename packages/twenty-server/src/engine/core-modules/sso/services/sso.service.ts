@@ -34,6 +34,8 @@ export class SsoService {
   // openid-client resolves this hook on whichever object issues the request:
   // the Issuer class for discovery, the issuer instance for JWKS and the
   // client instance for token and userinfo calls, so it is set on all three.
+  // It deep-merges what the hook returns with its own per-request options
+  // (method, headers, body), so only the agent needs to be returned.
   private readonly oidcHttpOptions = (url: URL) => ({
     agent: this.secureHttpClientService.getSsrfSafeAgent(url),
   });
