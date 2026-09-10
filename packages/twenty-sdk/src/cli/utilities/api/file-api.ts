@@ -1,5 +1,4 @@
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
-import { isMissingMutationError } from '@/cli/utilities/api/is-missing-mutation-error';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { putFileToUploadUrl } from '@/cli/utilities/file/put-file-to-upload-url';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
@@ -7,7 +6,7 @@ import { randomUUID } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
-import { type FileFolder } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined, pascalCase } from 'twenty-shared/utils';
 
 const MIME_TYPES: Record<string, string> = {
@@ -109,7 +108,7 @@ export class FileApi {
     const createResult = await this.createApplicationFileUploads({
       files: [
         {
-          fileFolder: 'app-tarball' as FileFolder,
+          fileFolder: FileFolder.AppTarball,
           filePath,
           size: fs.statSync(tarballPath).size,
         },
@@ -117,19 +116,6 @@ export class FileApi {
     });
 
     if (!createResult.success) {
-      if (
-        isMissingMutationError(createResult.error ?? createResult.message, [
-          'createApplicationFileUploads',
-          'ApplicationFileUploadRequestInput',
-          'CreateApplicationFileUploads',
-        ])
-      ) {
-        return this.uploadAppTarball({
-          tarballBuffer: fs.readFileSync(tarballPath),
-          universalIdentifier,
-        });
-      }
-
       return createResult;
     }
 
@@ -196,95 +182,6 @@ export class FileApi {
       resultKey: 'publishAppTarball',
       defaultErrorMessage: 'Failed to publish tarball',
     });
-  }
-
-  // TODO: Migrate to MetadataClient once available
-  // (see https://github.com/twentyhq/core-team-issues/issues/2289)
-  async uploadAppTarball({
-    tarballBuffer,
-    universalIdentifier,
-  }: {
-    tarballBuffer: Buffer;
-    universalIdentifier?: string;
-  }): Promise<
-    ApiResponse<{
-      id: string;
-      universalIdentifier: string;
-      name: string;
-    }>
-  > {
-    try {
-      const mutation = `
-        mutation UploadAppTarball($file: Upload!, $universalIdentifier: String) {
-          uploadAppTarball(file: $file, universalIdentifier: $universalIdentifier) {
-            id
-            universalIdentifier
-            name
-          }
-        }
-      `;
-
-      const operations = JSON.stringify({
-        query: mutation,
-        variables: {
-          file: null,
-          universalIdentifier: universalIdentifier ?? null,
-        },
-      });
-
-      const map = JSON.stringify({
-        '0': ['variables.file'],
-      });
-
-      const formData = new FormData();
-
-      formData.append('operations', operations);
-      formData.append('map', map);
-      formData.append(
-        '0',
-        new Blob([new Uint8Array(tarballBuffer)], {
-          type: 'application/gzip',
-        }),
-        'app.tar.gz',
-      );
-
-      const response: AxiosResponse = await this.client.post(
-        '/metadata',
-        formData,
-      );
-
-      if (response.data.errors) {
-        return {
-          success: false,
-          error: response.data.errors[0]?.message || 'Failed to upload tarball',
-        };
-      }
-
-      return {
-        success: true,
-        data: response.data.data.uploadAppTarball,
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        if (error.response.status === 401) {
-          return {
-            success: false,
-            error: error.response.data?.errors?.[0]?.message || error.message,
-            isAuthError: true,
-          };
-        }
-
-        return {
-          success: false,
-          error: error.response.data?.errors?.[0]?.message || error.message,
-        };
-      }
-
-      return {
-        success: false,
-        error,
-      };
-    }
   }
 
   async installTarballApp({

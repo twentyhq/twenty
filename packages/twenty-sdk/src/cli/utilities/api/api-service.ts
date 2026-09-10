@@ -140,10 +140,6 @@ export class ApiService {
     return this.logicFunctionApi.subscribeToLogs(...args);
   }
 
-  uploadAppTarball(...args: Parameters<FileApi['uploadAppTarball']>) {
-    return this.fileApi.uploadAppTarball(...args);
-  }
-
   deployAppTarball(...args: Parameters<FileApi['deployAppTarball']>) {
     return this.fileApi.deployAppTarball(...args);
   }
