@@ -572,10 +572,10 @@ export const SettingsAdminNewAiModel = () => {
                         }}
                       >
                         <Checkbox
+                          aria-label={option.label}
                           checked={isChecked}
-                          onChange={(event) => {
-                            event.stopPropagation();
-                            const updated = event.target.checked
+                          onCheckedChange={(isChecked) => {
+                            const updated = isChecked
                               ? [...value, option.value]
                               : value.filter(
                                   (modality) => modality !== option.value,
@@ -583,6 +583,7 @@ export const SettingsAdminNewAiModel = () => {
 
                             onChange(updated);
                           }}
+                          onClick={(event) => event.stopPropagation()}
                         />
                         <span>{option.label}</span>
                       </StyledCheckboxRow>
