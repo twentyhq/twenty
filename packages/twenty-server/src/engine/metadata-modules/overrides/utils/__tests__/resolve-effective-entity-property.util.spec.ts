@@ -4,7 +4,10 @@ import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { translateStandardLabel } from 'src/engine/core-modules/i18n/utils/translate-standard-label.util';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
+import {
+  readOverrideTranslation,
+  resolveEffectiveEntityProperty,
+} from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 
 // Frozen reference implementations of the three resolvers that existed before
@@ -427,5 +430,62 @@ describe('resolveEffectiveEntityProperty (parity with the per-entity resolvers)'
       'title',
       'pageLayoutWidget.title',
     );
+  });
+});
+
+describe('readOverrideTranslation', () => {
+  const CUSTOM = '20202020-aaaa-4aaa-8aaa-000000000001';
+  const OWNER = '20202020-bbbb-4bbb-8bbb-000000000002';
+  const authorContext = {
+    workspaceCustomApplicationUniversalIdentifier: CUSTOM,
+    ownerApplicationUniversalIdentifier: OWNER,
+  };
+
+  it('reads the locale translation of the first author carrying it', () => {
+    expect(
+      readOverrideTranslation({
+        overrides: {
+          [OWNER]: { translations: { 'fr-FR': { label: 'Compte' } } },
+          [CUSTOM]: { translations: { 'fr-FR': { label: 'Société' } } },
+        },
+        locale: 'fr-FR',
+        property: 'label',
+        authorContext,
+      }),
+    ).toBe('Société');
+  });
+
+  it('falls through a locale or property the entries do not carry', () => {
+    const overrides = {
+      [CUSTOM]: { translations: { 'fr-FR': { label: 'Société' } } },
+    };
+
+    expect(
+      readOverrideTranslation({
+        overrides,
+        locale: 'de-DE',
+        property: 'label',
+        authorContext,
+      }),
+    ).toBeUndefined();
+    expect(
+      readOverrideTranslation({
+        overrides,
+        locale: 'fr-FR',
+        property: 'description',
+        authorContext,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('ignores a non-string translation value', () => {
+    expect(
+      readOverrideTranslation({
+        overrides: { [CUSTOM]: { translations: { 'fr-FR': { label: null } } } },
+        locale: 'fr-FR',
+        property: 'label',
+        authorContext,
+      }),
+    ).toBeUndefined();
   });
 });
