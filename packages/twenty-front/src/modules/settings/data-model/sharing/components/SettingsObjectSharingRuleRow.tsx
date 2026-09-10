@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { IconFilter, IconTrash } from 'twenty-ui/icon';
-import { LightIconButton, Toggle } from 'twenty-ui/input';
+import { LightIconButton, Switch } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -113,12 +113,12 @@ export const SettingsObjectSharingRuleRow = ({
             updateSharingRule({ id: sharingRule.id, accessLevel })
           }
         />
-        <Toggle
+        <Switch
           aria-label={t`Active`}
-          value={sharingRule.isActive}
+          size="sm"
+          checked={sharingRule.isActive}
           disabled={isLocked}
-          toggleSize="small"
-          onChange={(isActive) =>
+          onCheckedChange={(isActive) =>
             updateSharingRule({ id: sharingRule.id, isActive })
           }
         />
