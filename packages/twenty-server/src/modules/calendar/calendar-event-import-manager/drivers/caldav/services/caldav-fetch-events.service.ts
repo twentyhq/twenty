@@ -20,7 +20,11 @@ import { isSameCalDavResource } from 'src/modules/calendar/calendar-event-import
 import { isValidCalDavHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-valid-caldav-href.util';
 import { mapCalDavStatusToExceptionCode } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/map-caldav-status-to-exception-code.util';
 import { parseICalEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-ical-event.util';
-import { CalendarEventImportDriverException } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
+import { resolveCalDavResourceVersion } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/resolve-caldav-resource-version.util';
+import {
+  CalendarEventImportDriverException,
+  CalendarEventImportDriverExceptionCode,
+} from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
 type CalendarSyncResult = {
@@ -356,26 +360,45 @@ export class CalDavFetchEventsService {
   ): Promise<Record<string, string>> {
     const responses = await client.propfind({
       url: calendarUrl,
-      props: { [`${DAVNamespaceShort.DAV}:getetag`]: {} },
+      props: {
+        [`${DAVNamespaceShort.DAV}:getetag`]: {},
+        [`${DAVNamespaceShort.DAV}:getlastmodified`]: {},
+      },
       depth: '1',
     });
 
-    return responses.reduce<Record<string, string>>((map, response) => {
-      const href = response.href;
-      const etag = response.props?.getetag;
+    const etagsByHref = responses.reduce<Record<string, string>>(
+      (map, response) => {
+        const href = response.href;
 
-      if (
-        !isNonEmptyString(href) ||
-        !isNonEmptyString(etag) ||
-        !isValidCalDavHref(href) ||
-        isCalDavCollectionHref(href, calendarUrl)
-      ) {
+        if (
+          !isNonEmptyString(href) ||
+          !isValidCalDavHref(href) ||
+          isCalDavCollectionHref(href, calendarUrl)
+        ) {
+          return map;
+        }
+
+        map[href] = resolveCalDavResourceVersion(response);
+
         return map;
-      }
+      },
+      {},
+    );
 
-      map[href] = etag;
+    const listedMembers = responses.filter(
+      (response) =>
+        isNonEmptyString(response.href) &&
+        !isCalDavCollectionHref(response.href, calendarUrl),
+    );
 
-      return map;
-    }, {});
+    if (listedMembers.length > 0 && Object.keys(etagsByHref).length === 0) {
+      throw new CalendarEventImportDriverException(
+        `PROPFIND on ${calendarUrl} listed ${listedMembers.length} members but none could be read as calendar object resources`,
+        CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+      );
+    }
+
+    return etagsByHref;
   }
 }
