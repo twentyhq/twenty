@@ -114,18 +114,15 @@ export class WorkspaceMigrationRunnerService {
       ]),
     ];
 
-    try {
-      await this.workspaceCacheService.invalidateAndRecompute(
+    await this.workspaceCacheService.invalidateAndRecompute(
+      workspaceId,
+      cacheKeyNamesToInvalidate,
+    );
+
+    if (shouldIncrementMetadataGraphqlSchemaVersion) {
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
-        cacheKeyNamesToInvalidate,
       );
-    } finally {
-      // The flush precedes the recompute, so a failed recompute must still signal the schema change
-      if (shouldIncrementMetadataGraphqlSchemaVersion) {
-        await this.workspaceMetadataVersionService.incrementMetadataVersion(
-          workspaceId,
-        );
-      }
     }
 
     this.logger.perfTimeEnd(
