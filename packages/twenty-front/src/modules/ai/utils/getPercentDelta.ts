@@ -1,9 +1,14 @@
 import { isDefined } from 'twenty-shared/utils';
 
-export const getPercentDelta = (
-  value: number | null | undefined,
-  reference: number | null | undefined,
-): number | undefined => {
+type GetPercentDeltaArgs = {
+  value: number | null | undefined;
+  reference: number | null | undefined;
+};
+
+export const getPercentDelta = ({
+  value,
+  reference,
+}: GetPercentDeltaArgs): number | undefined => {
   if (!isDefined(value) || !isDefined(reference) || reference <= 0) {
     return undefined;
   }

@@ -51,14 +51,14 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
       label: getAiModelTierLabel(tier),
       model,
       isPinned,
-      speedDeltaPercent: getPercentDelta(
-        model?.outputTokensPerSecond,
-        referenceModel?.outputTokensPerSecond,
-      ),
-      intelligenceDeltaPercent: getPercentDelta(
-        model?.intelligenceIndex,
-        referenceModel?.intelligenceIndex,
-      ),
+      speedDeltaPercent: getPercentDelta({
+        value: model?.outputTokensPerSecond,
+        reference: referenceModel?.outputTokensPerSecond,
+      }),
+      intelligenceDeltaPercent: getPercentDelta({
+        value: model?.intelligenceIndex,
+        reference: referenceModel?.intelligenceIndex,
+      }),
     };
   });
 };
