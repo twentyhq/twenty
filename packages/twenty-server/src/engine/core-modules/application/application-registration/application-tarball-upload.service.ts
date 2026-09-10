@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,15 +23,13 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const STAGED_TARBALL_DIRECTORY = 'staged-uploads';
 
-const STAGED_TARBALL_FILE_SETTINGS = {
-  isTemporaryFile: true,
+const TARBALL_FILE_SETTINGS = {
+  isTemporaryFile: false,
   toDelete: false,
 } as const;
 
 @Injectable()
 export class ApplicationTarballUploadService {
-  private readonly logger = new Logger(ApplicationTarballUploadService.name);
-
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly applicationTarballService: ApplicationTarballService,
@@ -60,7 +58,7 @@ export class ApplicationTarballUploadService {
           fileFolder: FileFolder.AppTarball,
           resourcePath: `${STAGED_TARBALL_DIRECTORY}/${v4()}/app.tar.gz`,
           size,
-          settings: STAGED_TARBALL_FILE_SETTINGS,
+          settings: TARBALL_FILE_SETTINGS,
         },
       ]);
 
@@ -114,29 +112,19 @@ export class ApplicationTarballUploadService {
       );
     }
 
-    const resourcePath = removeFileFolderFromFileEntityPath(file.path);
+    const stream = await this.fileStorageService.readFile({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.AppTarball,
+      resourcePath: removeFileFolderFromFileEntityPath(file.path),
+    });
 
-    try {
-      const stream = await this.fileStorageService.readFile({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.AppTarball,
-        resourcePath,
-      });
-
-      return await this.applicationTarballService.uploadTarball({
-        tarballBuffer: await streamToBuffer(stream),
-        universalIdentifier,
-        ownerWorkspaceId: workspaceId,
-      });
-    } finally {
-      await this.discardStagedTarball({
-        workspaceId,
-        applicationUniversalIdentifier,
-        resourcePath,
-        fileId,
-      });
-    }
+    return this.applicationTarballService.uploadTarball({
+      tarballBuffer: await streamToBuffer(stream),
+      tarballFileId: file.id,
+      universalIdentifier,
+      ownerWorkspaceId: workspaceId,
+    });
   }
 
   private async getWorkspaceApplicationUniversalIdentifier(
@@ -148,34 +136,5 @@ export class ApplicationTarballUploadService {
       );
 
     return workspaceCustomFlatApplication.universalIdentifier;
-  }
-
-  // uploadTarball re-writes the archive at its final, registration-scoped path,
-  // so the staged copy is dead weight once it has been read back.
-  private async discardStagedTarball({
-    workspaceId,
-    applicationUniversalIdentifier,
-    resourcePath,
-    fileId,
-  }: {
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-    resourcePath: string;
-    fileId: string;
-  }): Promise<void> {
-    try {
-      await this.fileStorageService.deleteFile({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.AppTarball,
-        resourcePath,
-      });
-
-      await this.fileRepository.delete(workspaceId, { id: fileId });
-    } catch (error) {
-      this.logger.warn(
-        `Failed to discard staged tarball ${fileId}: ${error.message}`,
-      );
-    }
   }
 }

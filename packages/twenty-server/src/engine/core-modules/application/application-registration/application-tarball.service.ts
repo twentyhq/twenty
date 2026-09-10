@@ -47,6 +47,7 @@ export class ApplicationTarballService {
 
   async uploadTarball(params: {
     tarballBuffer: Buffer;
+    tarballFileId?: string;
     universalIdentifier?: string;
     ownerWorkspaceId: string;
   }): Promise<ApplicationRegistrationEntity> {
@@ -94,11 +95,17 @@ export class ApplicationTarballService {
             ownerWorkspaceId: params.ownerWorkspaceId,
           });
 
-      const savedFile = await this.storeTarballFile({
-        appRegistration,
-        tarballBuffer: params.tarballBuffer,
-        ownerWorkspaceId: params.ownerWorkspaceId,
-      });
+      // A direct upload has already stored the archive; only the multipart
+      // path still has to write it.
+      const tarballFileId =
+        params.tarballFileId ??
+        (
+          await this.storeTarballFile({
+            appRegistration,
+            tarballBuffer: params.tarballBuffer,
+            ownerWorkspaceId: params.ownerWorkspaceId,
+          })
+        ).id;
 
       await this.applicationRegistrationService.updateFromManifest({
         applicationRegistrationId: appRegistration.id,
@@ -106,7 +113,7 @@ export class ApplicationTarballService {
         sourceType: ApplicationRegistrationSourceType.TARBALL,
         latestAvailableVersion: packageJson?.version ?? null,
         additionalFields: {
-          tarballFileId: savedFile.id,
+          tarballFileId,
           isListed: false,
           isVetted: false,
           ownerWorkspaceId: params.ownerWorkspaceId,
