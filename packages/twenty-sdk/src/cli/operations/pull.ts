@@ -21,6 +21,7 @@ import {
   readPullBaseManifest,
   writePullBaseManifest,
 } from '@/cli/utilities/pull/pull-base-file';
+import { getApplicationMismatchMessage } from '@/cli/utilities/pull/get-application-mismatch-message';
 import { scanProjectSourceFiles } from '@/cli/utilities/pull/scan-project-source-files';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { join } from 'node:path';
@@ -126,6 +127,21 @@ const innerAppPull = async (
           'Could not tell which application to pull.\n\n' +
           '  Pass the identifier explicitly:\n' +
           '    yarn twenty pull -u <universalIdentifier>',
+      },
+    };
+  }
+
+  const applicationMismatchMessage = getApplicationMismatchMessage({
+    requestedUniversalIdentifier: options.universalIdentifier,
+    localApplicationUniversalIdentifier,
+  });
+
+  if (isDefined(applicationMismatchMessage)) {
+    return {
+      success: false,
+      error: {
+        code: APP_ERROR_CODES.PULL_FAILED,
+        message: applicationMismatchMessage,
       },
     };
   }
