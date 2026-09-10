@@ -134,7 +134,6 @@ import { FileModule } from './file/file.module';
     RoleModule,
     RedisClientModule,
     WorkspaceQueryRunnerModule,
-    // Workers run metadata migrations too, and the runner recomputes this cache key after each one
     WorkspaceResolverNameMapCacheModule,
     GeoMapModule,
     SubscriptionsModule,
