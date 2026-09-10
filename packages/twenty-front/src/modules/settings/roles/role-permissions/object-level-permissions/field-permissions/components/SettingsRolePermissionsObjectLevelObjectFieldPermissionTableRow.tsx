@@ -7,7 +7,7 @@ import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFiel
 import { useFieldPermissionTableColumns } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useFieldPermissionTableColumns';
 import { useUpsertFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useUpsertFieldPermissionInDraftRole';
 import { isFieldReadRestrictable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/isFieldReadRestrictable';
-import { isFieldUpdateRestrictable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/isFieldUpdateRestrictable';
+import { isFieldRestrictable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/isFieldRestrictable';
 import { OverridableCheckbox } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/OverridableCheckbox';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -152,7 +152,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
         objectMetadataItem.labelIdentifierFieldMetadataId,
     });
 
-    const canRestrictUpdate = isFieldUpdateRestrictable(fieldMetadataItem);
+    const canRestrictUpdate = isFieldRestrictable(fieldMetadataItem);
 
     return (
       <TableRow

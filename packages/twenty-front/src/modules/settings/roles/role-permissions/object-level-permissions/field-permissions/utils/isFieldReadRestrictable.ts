@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isFieldUpdateRestrictable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/isFieldUpdateRestrictable';
+import { isFieldRestrictable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/isFieldRestrictable';
 
 export const isFieldReadRestrictable = ({
   fieldMetadataItem,
@@ -8,5 +8,5 @@ export const isFieldReadRestrictable = ({
   fieldMetadataItem: FieldMetadataItem;
   labelIdentifierFieldMetadataId: string;
 }) =>
-  isFieldUpdateRestrictable(fieldMetadataItem) &&
+  isFieldRestrictable(fieldMetadataItem) &&
   fieldMetadataItem.id !== labelIdentifierFieldMetadataId;
