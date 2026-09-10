@@ -52,45 +52,54 @@ export const startNonCompliantCalDavProxy = async ({
   let membersHidden = false;
 
   const server = createServer((incoming, outgoing) => {
-    void readBody(incoming).then((requestBody) => {
-      const upstream = request(
-        {
-          host: targetHost,
-          port: targetPort,
-          method: incoming.method,
-          path: incoming.url,
-          headers: { ...incoming.headers, host: `${targetHost}:${targetPort}` },
-        },
-        (upstreamResponse) => {
-          void readBody(upstreamResponse).then((responseBody) => {
-            const headers = { ...upstreamResponse.headers };
+    void readBody(incoming)
+      .then((requestBody) => {
+        const upstream = request(
+          {
+            host: targetHost,
+            port: targetPort,
+            method: incoming.method,
+            path: incoming.url,
+            headers: {
+              ...incoming.headers,
+              host: `${targetHost}:${targetPort}`,
+            },
+          },
+          (upstreamResponse) => {
+            void readBody(upstreamResponse)
+              .then((responseBody) => {
+                const headers = { ...upstreamResponse.headers };
 
-            delete headers['content-length'];
-            delete headers['transfer-encoding'];
+                delete headers['content-length'];
+                delete headers['transfer-encoding'];
 
-            const isXml = String(headers['content-type'] ?? '').includes('xml');
-            const rewrites = [blankEntityTags, dropSyncCollectionReport];
+                const isXml = String(headers['content-type'] ?? '').includes(
+                  'xml',
+                );
+                const rewrites = [blankEntityTags, dropSyncCollectionReport];
 
-            if (membersHidden && incoming.method === 'PROPFIND') {
-              rewrites.push(dropMemberResponses);
-            }
+                if (membersHidden && incoming.method === 'PROPFIND') {
+                  rewrites.push(dropMemberResponses);
+                }
 
-            outgoing.writeHead(upstreamResponse.statusCode ?? 502, headers);
-            outgoing.end(
-              isXml
-                ? rewrites.reduce(
-                    (body, rewrite) => rewrite(body),
-                    responseBody.toString('utf8'),
-                  )
-                : responseBody,
-            );
-          });
-        },
-      );
+                outgoing.writeHead(upstreamResponse.statusCode ?? 502, headers);
+                outgoing.end(
+                  isXml
+                    ? rewrites.reduce(
+                        (body, rewrite) => rewrite(body),
+                        responseBody.toString('utf8'),
+                      )
+                    : responseBody,
+                );
+              })
+              .catch(() => outgoing.destroy());
+          },
+        );
 
-      upstream.on('error', () => outgoing.destroy());
-      upstream.end(requestBody);
-    });
+        upstream.on('error', () => outgoing.destroy());
+        upstream.end(requestBody);
+      })
+      .catch(() => outgoing.destroy());
   });
 
   server.listen(0, PROXY_HOST);

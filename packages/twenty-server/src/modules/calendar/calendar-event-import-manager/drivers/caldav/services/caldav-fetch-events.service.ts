@@ -367,34 +367,28 @@ export class CalDavFetchEventsService {
       depth: '1',
     });
 
-    const etagsByHref = responses.reduce<Record<string, string>>(
-      (map, response) => {
-        const href = response.href;
+    const memberResponses = responses.filter(
+      (response): response is DAVResponse & { href: string } =>
+        isNonEmptyString(response.href) &&
+        !isCalDavCollectionHref(response.href, calendarUrl),
+    );
 
-        if (
-          !isNonEmptyString(href) ||
-          !isValidCalDavHref(href) ||
-          isCalDavCollectionHref(href, calendarUrl)
-        ) {
+    const etagsByHref = memberResponses.reduce<Record<string, string>>(
+      (map, response) => {
+        if (!isValidCalDavHref(response.href)) {
           return map;
         }
 
-        map[href] = resolveCalDavResourceVersion(response);
+        map[response.href] = resolveCalDavResourceVersion(response);
 
         return map;
       },
       {},
     );
 
-    const listedMembers = responses.filter(
-      (response) =>
-        isNonEmptyString(response.href) &&
-        !isCalDavCollectionHref(response.href, calendarUrl),
-    );
-
-    if (listedMembers.length > 0 && Object.keys(etagsByHref).length === 0) {
+    if (memberResponses.length > 0 && Object.keys(etagsByHref).length === 0) {
       throw new CalendarEventImportDriverException(
-        `PROPFIND on ${calendarUrl} listed ${listedMembers.length} members but none could be read as calendar object resources`,
+        `PROPFIND on ${calendarUrl} listed ${memberResponses.length} members but none could be read as calendar object resources`,
         CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
       );
     }
