@@ -3,27 +3,35 @@ import { expect, waitFor, within } from 'storybook/test';
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { MOUNT_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
-import { type TwentyUiGalleryStory } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
-import { createGalleryTest } from '@/__stories__/twenty-ui-gallery/utils/createGalleryTest';
+import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
+import { createGalleryRenderTest } from '@/__stories__/twenty-ui-gallery/utils/createGalleryRenderTest';
+
+export const galleryRenderTest = createGalleryRenderTest({
+  expectedFailedComponents: [],
+});
 
 // LinkChip crashes without a router context in the sandbox.
-export const dataDisplayTest = createGalleryTest(['LinkChip']);
+export const dataDisplayTest = createGalleryRenderTest({
+  expectedFailedComponents: ['LinkChip'],
+});
 
 // Base UI 1.8 radios require Element.matches(':disabled'),
 // which the sandbox DOM does not implement.
-export const inputReactTest = createGalleryTest([
-  'CardPicker',
-  'Radio',
-  'RadioGroup',
-]);
-export const inputPreactTest = createGalleryTest(['CardPicker']);
+export const inputReactTest = createGalleryRenderTest({
+  expectedFailedComponents: ['CardPicker', 'Radio', 'RadioGroup'],
+});
+export const inputPreactTest = createGalleryRenderTest({
+  expectedFailedComponents: ['CardPicker'],
+});
 
 // react-router Links crash without a router context.
-export const navigationTest = createGalleryTest(['RawLink', 'UndecoratedLink']);
+export const navigationTest = createGalleryRenderTest({
+  expectedFailedComponents: ['RawLink', 'UndecoratedLink'],
+});
 
 // An open Modal portal hangs the React render without an error, so the
 // missing gallery status is the only observable failure. Preact can mount it.
-export const modalOpenHangTest: TwentyUiGalleryStory['play'] = async ({
+export const modalOpenHangTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
 }) => {
   const canvas = within(canvasElement);
@@ -35,7 +43,7 @@ export const modalOpenHangTest: TwentyUiGalleryStory['play'] = async ({
 
 // Monaco cannot load scripts inside the sandbox worker, so the wrapper mounts
 // but the editor's onMount never fires.
-export const codeEditorTest: TwentyUiGalleryStory['play'] = async ({
+export const codeEditorTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
 }) => {
   const canvas = within(canvasElement);
@@ -51,7 +59,7 @@ export const codeEditorTest: TwentyUiGalleryStory['play'] = async ({
   expect(codeEditor).toHaveAttribute('data-monaco-mount-state', 'pending');
 };
 
-export const themeTokenTest: TwentyUiGalleryStory['play'] = async ({
+export const themeTokenTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
 }) => {
   const canvas = within(canvasElement);
@@ -72,7 +80,7 @@ export const themeTokenTest: TwentyUiGalleryStory['play'] = async ({
   expect(errorHandler).not.toHaveBeenCalled();
 };
 
-export const displayHelpersTest: TwentyUiGalleryStory['play'] = async ({
+export const displayHelpersTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
 }) => {
   const canvas = within(canvasElement);

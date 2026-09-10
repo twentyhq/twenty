@@ -4,11 +4,19 @@ import { errorHandler } from '@/__stories__/shared/test-utils/createFrontCompone
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { TYPING_DELAY } from '@/__stories__/shared/test-utils/timeouts';
 import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
-import { type TwentyUiGalleryStory } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
+import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
 
-export const fieldControlsTest =
-  (runtime: 'react' | 'preact'): NonNullable<TwentyUiGalleryStory['play']> =>
+type CreateFieldControlsTestOptions = {
+  expectedAriaInvalid: '' | 'true';
+  expectedReportedValues: string | RegExp;
+};
+
+export const createFieldControlsTest =
+  ({
+    expectedAriaInvalid,
+    expectedReportedValues,
+  }: CreateFieldControlsTestOptions): TwentyUiGalleryPlayFunction =>
   async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expectFrontComponentMounted(canvas);
@@ -17,10 +25,9 @@ export const fieldControlsTest =
     const notes = canvas.getByRole('textbox', { name: 'Notes' });
 
     expect(email).toHaveAccessibleDescription('Use your work email');
-    // React writes boolean ARIA attributes as empty strings on remote elements.
     expect(
       canvas.getByRole('textbox', { name: 'Required name' }),
-    ).toHaveAttribute('aria-invalid', runtime === 'react' ? '' : 'true');
+    ).toHaveAttribute('aria-invalid', expectedAriaInvalid);
     expect(canvas.getByText('Name is required')).toBeVisible();
     expect(canvas.getByRole('textbox', { name: 'Reference' })).toHaveValue(
       'REF-42',
@@ -36,18 +43,17 @@ export const fieldControlsTest =
     await userEvent.type(email, 'alice', { delay: TYPING_DELAY });
     await userEvent.type(notes, 'Follow up', { delay: TYPING_DELAY });
     await userEvent.click(canvas.getByRole('button', { name: 'Read values' }));
-    // Textarea's render element loses its change handler in the React runtime.
     await waitFor(() =>
       expect(canvas.getByTestId('reported-values')).toHaveTextContent(
-        runtime === 'react'
-          ? /^Email: alice; Notes:$/
-          : 'Email: alice; Notes: Follow up',
+        expectedReportedValues,
       ),
     );
-    await expectSandboxErrors([SANDBOX_ERROR_PATTERNS.COMPOSED_PATH]);
+    await expectSandboxErrors({
+      requiredErrors: [SANDBOX_ERROR_PATTERNS.COMPOSED_PATH],
+    });
   };
 
-export const listItemTest: TwentyUiGalleryStory['play'] = async ({
+export const listItemTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
 }) => {
   const canvas = within(canvasElement);
@@ -68,7 +74,7 @@ export const listItemTest: TwentyUiGalleryStory['play'] = async ({
   expect(errorHandler).not.toHaveBeenCalled();
 };
 
-export const toastTest: TwentyUiGalleryStory['play'] = async ({
+export const toastTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
 }) => {
   const canvas = within(canvasElement);

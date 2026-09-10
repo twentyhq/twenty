@@ -4,49 +4,48 @@ import { createSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/
 // React cannot mount Tabs without compareDocumentPosition; Preact activation
 // expects nativeEvent.composedPath, which the forwarded event lacks.
 export const tabsReactTest = createSandboxFailureTest({
-  expectedErrors: [SANDBOX_ERROR_PATTERNS.TABS_ORDER],
+  trigger: { type: 'mount' },
+  requiredErrors: [SANDBOX_ERROR_PATTERNS.TABS_ORDER],
 });
 export const tabsPreactTest = createSandboxFailureTest({
-  trigger: { role: 'tab', name: 'Activity' },
-  expectedErrors: [SANDBOX_ERROR_PATTERNS.COMPOSED_PATH],
-  optionalErrors: [SANDBOX_ERROR_PATTERNS.TABS_ORDER],
+  trigger: { type: 'click', role: 'tab', name: 'Activity' },
+  requiredErrors: [SANDBOX_ERROR_PATTERNS.COMPOSED_PATH],
+  allowedAdditionalErrors: [SANDBOX_ERROR_PATTERNS.TABS_ORDER],
 });
 
 // Opening the popover requires viewport data absent from the sandbox.
 export const popoverTest = createSandboxFailureTest({
-  trigger: { role: 'button', name: 'Account details' },
-  expectedErrors: [SANDBOX_ERROR_PATTERNS.VIEWPORT_WIDTH],
+  trigger: { type: 'click', role: 'button', name: 'Account details' },
+  requiredErrors: [SANDBOX_ERROR_PATTERNS.VIEWPORT_WIDTH],
 });
 
 // Menu opening lacks viewport data and nativeEvent.pointerType.
 export const menuTest = createSandboxFailureTest({
-  trigger: { role: 'button', name: 'Account actions' },
-  expectedErrors: [SANDBOX_ERROR_PATTERNS.POINTER_TYPE],
-  optionalErrors: [SANDBOX_ERROR_PATTERNS.VIEWPORT_WIDTH],
+  trigger: { type: 'click', role: 'button', name: 'Account actions' },
+  requiredErrors: [SANDBOX_ERROR_PATTERNS.POINTER_TYPE],
+  allowedAdditionalErrors: [SANDBOX_ERROR_PATTERNS.VIEWPORT_WIDTH],
 });
 
 // Select opening lacks viewport data and nativeEvent.pointerType.
 export const selectTest = createSandboxFailureTest({
-  trigger: { role: 'combobox', name: 'Account stage' },
-  expectedErrors: [SANDBOX_ERROR_PATTERNS.POINTER_TYPE],
-  optionalErrors: [
+  trigger: { type: 'click', role: 'combobox', name: 'Account stage' },
+  requiredErrors: [SANDBOX_ERROR_PATTERNS.POINTER_TYPE],
+  allowedAdditionalErrors: [
     SANDBOX_ERROR_PATTERNS.VIEWPORT_WIDTH,
     SANDBOX_ERROR_PATTERNS.COMPOSED_PATH,
     SANDBOX_ERROR_PATTERNS.TABS_ORDER,
-    /^(?:Uncaught TypeError: )?\w+\.matches is not a function$/,
+    SANDBOX_ERROR_PATTERNS.ELEMENT_MATCHES,
   ],
 });
 
 // Opening the alert dialog requires viewport data absent from the sandbox.
 export const alertDialogTest = createSandboxFailureTest({
-  trigger: { role: 'button', name: 'Delete account' },
-  expectedErrors: [SANDBOX_ERROR_PATTERNS.VIEWPORT_WIDTH],
+  trigger: { type: 'click', role: 'button', name: 'Delete account' },
+  requiredErrors: [SANDBOX_ERROR_PATTERNS.VIEWPORT_WIDTH],
 });
 
 // Switch activation constructs a PointerEvent, which the sandbox lacks.
 export const switchTest = createSandboxFailureTest({
-  trigger: { role: 'switch', name: 'Email notifications' },
-  expectedErrors: [
-    /^Uncaught TypeError: .+\.PointerEvent is not a constructor$/,
-  ],
+  trigger: { type: 'click', role: 'switch', name: 'Email notifications' },
+  requiredErrors: [SANDBOX_ERROR_PATTERNS.POINTER_EVENT_CONSTRUCTOR],
 });

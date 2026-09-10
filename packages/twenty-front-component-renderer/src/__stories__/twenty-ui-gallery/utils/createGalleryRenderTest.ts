@@ -1,12 +1,19 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { expect, waitFor, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { MOUNT_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
-import { type TwentyUiGalleryStory } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
+import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
+
+type CreateGalleryRenderTestOptions = {
+  expectedFailedComponents: readonly string[];
+};
 
 // Exact failure sets catch regressions and make fixes require updated assertions.
-export const createGalleryTest =
-  (expectedFailedComponents: string[] = []): TwentyUiGalleryStory['play'] =>
+export const createGalleryRenderTest =
+  ({
+    expectedFailedComponents,
+  }: CreateGalleryRenderTestOptions): TwentyUiGalleryPlayFunction =>
   async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const status = await canvas.findByTestId(
@@ -18,7 +25,7 @@ export const createGalleryTest =
     await waitFor(() => {
       const failedComponents = (status.getAttribute('data-failed-names') ?? '')
         .split(', ')
-        .filter((failedComponent) => failedComponent.length > 0)
+        .filter(isNonEmptyString)
         .sort();
 
       expect(failedComponents).toEqual([...expectedFailedComponents].sort());

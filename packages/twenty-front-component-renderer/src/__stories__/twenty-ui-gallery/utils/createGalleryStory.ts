@@ -1,16 +1,23 @@
+import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { type TwentyUiGalleryStory } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
-import { createGalleryTest } from '@/__stories__/twenty-ui-gallery/utils/createGalleryTest';
 import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
 
-export const createGalleryStory = (
-  name: string,
-  runtime?: 'preact',
-): TwentyUiGalleryStory => ({
+type CreateGalleryStoryOptions = {
+  frontComponentBundleName: string;
+  runtime: 'react' | 'preact';
+  play: TwentyUiGalleryPlayFunction;
+};
+
+export const createGalleryStory = ({
+  frontComponentBundleName,
+  runtime,
+  play,
+}: CreateGalleryStoryOptions): TwentyUiGalleryStory => ({
   args: {
     componentUrl: getBuiltStoryComponentPathForRender(
-      `${name}.front-component`,
+      `${frontComponentBundleName}.front-component`,
       runtime,
     ),
   },
-  play: createGalleryTest(),
+  play,
 });
