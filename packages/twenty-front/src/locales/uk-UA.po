@@ -566,7 +566,7 @@ msgstr "{morphRelationCount} об’єктів"
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
-msgstr "{num, selectordinal, one {{num}-й} few {{num}-й} many {{num}-й} other {{num}-й}}"
+msgstr "{num, selectordinal, few {{num}-й} other {{num}-й}}"
 
 #. js-lingui-id: fTSz8d
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -1811,7 +1811,7 @@ msgstr "Розширені"
 #. js-lingui-id: cBdysG
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Advanced Encryption"
-msgstr "Розширене шифрування}]} }]}```? Wait need ensure formatting correct. I will correct. JSON must be valid. Let's output correct: {"
+msgstr "Розширене шифрування"
 
 #. js-lingui-id: tMFFwF
 #: src/modules/views/components/ViewBarFilterDropdownAdvancedFilterButton.tsx
@@ -12887,7 +12887,7 @@ msgstr "Назвіть і опишіть свою функцію"
 #. js-lingui-id: zaxmAs
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-msgstr "Назва в однині <b>(</b>наприклад, 'Рахунок') та множині <b>(</b>наприклад, 'Рахунки')."
+msgstr "Назва в однині (наприклад, 'Рахунок') та множині (наприклад, 'Рахунки')."
 
 #. js-lingui-id: z+6jaZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -18853,7 +18853,7 @@ msgstr "Передплату переключено на помісячну."
 #. js-lingui-id: A5YO8f
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to Yearly."
-msgstr "Перехід на передплату <b>на рік</b> здійснено."
+msgstr "Перехід на передплату на рік здійснено."
 
 #. js-lingui-id: ulJRqh
 #. placeholder {0}: getTargetPlanLabel(targetPlanKey)

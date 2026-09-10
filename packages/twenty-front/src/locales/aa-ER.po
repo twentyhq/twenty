@@ -217,12 +217,6 @@ msgstr "crwdns132865:0{0}crwdne132865:0"
 msgid "{0} days"
 msgstr "crwdns132867:0{0}crwdne132867:0"
 
-#. js-lingui-id: okrK9q
-#. placeholder {0}: preview.duplicateEmails
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "{0} duplicate"
-msgstr "crwdns132869:0{0}crwdne132869:0"
-
 #. js-lingui-id: stCODw
 #. placeholder {0}: appObject.fields.length
 #: src/modules/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication.ts
@@ -234,19 +228,6 @@ msgstr "crwdns119278:0{0}crwdne119278:0"
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "{0} have no relation to {loadBalancePoolObjectLabel}. Pick a different object to balance by."
 msgstr "crwdns132871:0{0}crwdnd132871:0{loadBalancePoolObjectLabel}crwdne132871:0"
-
-#. js-lingui-id: TDB80r
-#. placeholder {0}: preview.totalMembers
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "{0} in this list"
-msgstr "crwdns136075:0{0}crwdne136075:0"
-
-#. js-lingui-id: /PXxEG
-#. placeholder {0}: preview.totalMembers
-#. placeholder {1}: preview.sendable
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "{0} in this list, {1} sendable ({breakdown})"
-msgstr "crwdns136077:0{0}crwdnd136077:0{1}crwdnd136077:0{breakdown}crwdne136077:0"
 
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
@@ -326,12 +307,6 @@ msgstr "crwdns119282:0{0}crwdne119282:0"
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 msgid "{0} widgets"
 msgstr "crwdns119284:0{0}crwdne119284:0"
-
-#. js-lingui-id: Aixgij
-#. placeholder {0}: preview.withoutEmail
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "{0} without email"
-msgstr "crwdns132885:0{0}crwdne132885:0"
 
 #. js-lingui-id: 2UKfhY
 #. placeholder {0}: selectedItemNames.length
@@ -1912,11 +1887,6 @@ msgstr "crwdns113240:0crwdne113240:0"
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "AI Model"
 msgstr "crwdns6334:0crwdne6334:0"
-
-#. js-lingui-id: Sfwld8
-#: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
-msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
-msgstr "crwdns105180:0crwdne105180:0"
 
 #. js-lingui-id: jwOWhc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3622,16 +3592,6 @@ msgstr "crwdns108576:0crwdne108576:0"
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Calls"
 msgstr "crwdns133043:0crwdne133043:0"
-
-#. js-lingui-id: 06mPlO
-#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
-msgid "Campaign queued to {queuedCount} recipient(s)"
-msgstr "crwdns133045:0{queuedCount}crwdne133045:0"
-
-#. js-lingui-id: 6nG/xd
-#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
-msgid "Campaign queued to {queuedCount} recipient(s), {skippedCount} skipped"
-msgstr "crwdns133047:0{queuedCount}crwdnd133047:0{skippedCount}crwdne133047:0"
 
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -13639,11 +13599,6 @@ msgstr "crwdns7060:0crwdne7060:0"
 msgid "No provenance attestation was found for this package. Publish it from GitHub Actions with npm trusted publishing, then try claiming again."
 msgstr "crwdns134921:0crwdne134921:0"
 
-#. js-lingui-id: 5sv+ia
-#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
-msgid "No recipients to send to ({skippedCount} skipped)"
-msgstr "crwdns133521:0{skippedCount}crwdne133521:0"
-
 #. js-lingui-id: V/+aTW
 #: src/modules/object-record/record-field/ui/form-types/components/FormMorphRelationToOneFieldInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip.tsx
@@ -19271,11 +19226,6 @@ msgstr "crwdns137985:0crwdne137985:0"
 msgid "The transcript is being prepared…"
 msgstr "crwdns141745:0crwdne141745:0"
 
-#. js-lingui-id: qrhV2s
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it."
-msgstr "crwdns133799:0crwdne133799:0"
-
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field"
@@ -22414,26 +22364,6 @@ msgstr "crwdns136099:0crwdne136099:0"
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "crwdns5913:0crwdne5913:0"
 
-#. js-lingui-id: Z5uTAF
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. \n"
-"Reach to our support team to upgrade."
-msgstr "crwdns116356:0crwdne116356:0"
-
-#. js-lingui-id: NTyvVW
-#. placeholder {0}: nextResourceCreditsAmount ?? ''
-#. placeholder {1}: nextResourceCreditPrice ?? ''
-#. placeholder {2}: nextTierInterval ?? ''
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. \n"
-"Upgrade to {0} credits for ${1}/{2}."
-msgstr "crwdns133969:0{0}crwdnd133969:0${1}crwdnd133969:0{2}crwdne133969:0"
-
-#. js-lingui-id: yZ0wRS
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. Subscribe for more usage."
-msgstr "crwdns116360:0crwdne116360:0"
-
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts
 msgid "Your app version is out of date. Please refresh the page."
@@ -22569,11 +22499,6 @@ msgstr "crwdns6038:0crwdne6038:0"
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
 msgid "Your workspace doesn't have an active subscription. Please contact your admin."
 msgstr "crwdns6040:0crwdne6040:0"
-
-#. js-lingui-id: fAVJ0D
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "Your workspace hit its AI usage limit. Ask an admin to upgrade the plan."
-msgstr "crwdns133987:0crwdne133987:0"
 
 #. js-lingui-id: RhNbPE
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx

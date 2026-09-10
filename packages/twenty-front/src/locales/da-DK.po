@@ -566,7 +566,7 @@ msgstr "{morphRelationCount} objekter"
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
-msgstr "{num, selectordinal, one {{num}ste} other {{num}te}}"
+msgstr "{num, selectordinal, other {{num}te}}"
 
 #. js-lingui-id: fTSz8d
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -9111,7 +9111,7 @@ msgstr "Felt på destination"
 #. js-lingui-id: P8JCfj
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field permission"
-msgstr "felttilladelse}]}]}** Error: The JSON is invalid and cannot be parsed. ** Correction is applied below. ** Corrected JSON: {"
+msgstr "felttilladelse"
 
 #. js-lingui-id: lcNTiF
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts

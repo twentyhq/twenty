@@ -217,12 +217,6 @@ msgstr "{0} kredita"
 msgid "{0} days"
 msgstr "{0} dana"
 
-#. js-lingui-id: okrK9q
-#. placeholder {0}: preview.duplicateEmails
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "{0} duplicate"
-msgstr "{0} duplikat"
-
 #. js-lingui-id: stCODw
 #. placeholder {0}: appObject.fields.length
 #: src/modules/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication.ts
@@ -234,19 +228,6 @@ msgstr "{0} polja"
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "{0} have no relation to {loadBalancePoolObjectLabel}. Pick a different object to balance by."
 msgstr "{0} nemaju nikakvu povezanost sa {loadBalancePoolObjectLabel}. Izaberite drugi objekat za balansiranje."
-
-#. js-lingui-id: TDB80r
-#. placeholder {0}: preview.totalMembers
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "{0} in this list"
-msgstr "{0} na ovoj listi"
-
-#. js-lingui-id: /PXxEG
-#. placeholder {0}: preview.totalMembers
-#. placeholder {1}: preview.sendable
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "{0} in this list, {1} sendable ({breakdown})"
-msgstr "{0} na ovoj listi, {1} mogu da prime poruku ({breakdown})"
 
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
@@ -326,12 +307,6 @@ msgstr "{0} prikaz"
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 msgid "{0} widgets"
 msgstr "{0} vidžeta"
-
-#. js-lingui-id: Aixgij
-#. placeholder {0}: preview.withoutEmail
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "{0} without email"
-msgstr "{0} bez imejla"
 
 #. js-lingui-id: 2UKfhY
 #. placeholder {0}: selectedItemNames.length
@@ -542,7 +517,7 @@ msgstr "{morphRelationCount} objekata"
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
-msgstr "{num, selectordinal, one {{num}st} few {{num}nd} other {{num}ti}}"
+msgstr "{num, selectordinal, other {{num}ti}}"
 
 #. js-lingui-id: fTSz8d
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -1912,11 +1887,6 @@ msgstr "Potrošnja AI tokom vremena."
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "AI Model"
 msgstr "AI model"
-
-#. js-lingui-id: Sfwld8
-#: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
-msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
-msgstr "AI nije podešen. Podesite OPENAI_API_KEY, ANTHROPIC_API_KEY ili XAI_API_KEY u vašem okruženju."
 
 #. js-lingui-id: jwOWhc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3622,16 +3592,6 @@ msgstr "Pozivni kod"
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Calls"
 msgstr "Pozivi"
-
-#. js-lingui-id: 06mPlO
-#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
-msgid "Campaign queued to {queuedCount} recipient(s)"
-msgstr "Kampanja je stavljena u red za {queuedCount} primaoca"
-
-#. js-lingui-id: 6nG/xd
-#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
-msgid "Campaign queued to {queuedCount} recipient(s), {skippedCount} skipped"
-msgstr "Kampanja je stavljena u red za {queuedCount} primaoca, {skippedCount} preskočeno"
 
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -13653,11 +13613,6 @@ msgstr "Nema postavljenih dozvola za pojedinačne objekte."
 msgid "No provenance attestation was found for this package. Publish it from GitHub Actions with npm trusted publishing, then try claiming again."
 msgstr "Nije pronađeno uverenje o poreklu (provenance attestation) za ovaj paket. Objavite ga iz GitHub Actions uz npm trusted publishing, a zatim ponovo pokušajte potvrđivanje vlasništva."
 
-#. js-lingui-id: 5sv+ia
-#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
-msgid "No recipients to send to ({skippedCount} skipped)"
-msgstr "Nema primalaca za slanje ({skippedCount} preskočeno)"
-
 #. js-lingui-id: V/+aTW
 #: src/modules/object-record/record-field/ui/form-types/components/FormMorphRelationToOneFieldInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip.tsx
@@ -19304,11 +19259,6 @@ msgstr "Transkript nije mogao da se generiše."
 msgid "The transcript is being prepared…"
 msgstr "Transkript se priprema…"
 
-#. js-lingui-id: qrhV2s
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it."
-msgstr "Tema za odjavu kojoj pripada ovaj imejl. Primaoci koji su se odjavili od nje biće preskočeni, a link za odjavu će biti vezan za nju."
-
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field"
@@ -22447,28 +22397,6 @@ msgstr "Prestaćete da primate ove imejlove."
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "Uskoro ćete promeniti poddomen vašeg radnog prostora. Ova akcija će odjaviti sve korisnike."
 
-#. js-lingui-id: Z5uTAF
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. \n"
-"Reach to our support team to upgrade."
-msgstr "Dostigli ste ograničenje korišćenja. \n"
-"Obratite se našem timu za podršku radi nadogradnje."
-
-#. js-lingui-id: NTyvVW
-#. placeholder {0}: nextResourceCreditsAmount ?? ''
-#. placeholder {1}: nextResourceCreditPrice ?? ''
-#. placeholder {2}: nextTierInterval ?? ''
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. \n"
-"Upgrade to {0} credits for ${1}/{2}."
-msgstr "Dostigli ste ograničenje korišćenja. \n"
-"Nadogradite na {0} kredita za ${1}/{2}."
-
-#. js-lingui-id: yZ0wRS
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. Subscribe for more usage."
-msgstr "Dostigli ste ograničenje korišćenja. Pretplatite se za veći obim korišćenja."
-
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts
 msgid "Your app version is out of date. Please refresh the page."
@@ -22604,11 +22532,6 @@ msgstr "Vaš radni prostor nema aktivnu pretplatu."
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
 msgid "Your workspace doesn't have an active subscription. Please contact your admin."
 msgstr "Vaš radni prostor nema aktivnu pretplatu. Molimo vas stupite u kontakt sa vašim administratorom."
-
-#. js-lingui-id: fAVJ0D
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "Your workspace hit its AI usage limit. Ask an admin to upgrade the plan."
-msgstr "Vaš radni prostor je dostigao svoje AI ograničenje korišćenja. Zamolite administratora da nadogradi plan."
 
 #. js-lingui-id: RhNbPE
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx

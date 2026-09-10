@@ -510,7 +510,7 @@ msgstr "Odebrano {headersCount, plural, one {# nagłówek} few {# nagłówki} ma
 #. js-lingui-id: 4xzh1W
 #: src/modules/object-record/record-list/components/RecordListRow.tsx
 msgid "{hiddenFieldCount, plural, one {# more populated field available} other {# more populated fields available}}"
-msgstr "{hiddenFieldCount, plural, one {Dostępne jest # dodatkowe wypełnione pole} few {Dostępne są # dodatkowe wypełnione pola} many {Dostępnych jest # dodatkowych wypełnionych pól} other {Dostępnego jest # dodatkowego wypełnionego pola}}}]}] }񎢆】【：】【“】【assistant to=developer code? ＿一本道 ҭак?񎢆 ирызassistant to=developer  ปมถวายสัตย์  天天中彩票买jsonૅ{"
+msgstr "{hiddenFieldCount, plural, one {Dostępne jest # dodatkowe wypełnione pole} few {Dostępne są # dodatkowe wypełnione pola} many {Dostępnych jest # dodatkowych wypełnionych pól} other {Dostępnego jest # dodatkowego wypełnionego pola}}"
 
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -566,7 +566,7 @@ msgstr "{morphRelationCount, plural, one {# obiekt} few {# obiekty} many {# obie
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
-msgstr "{num, selectordinal, one {{num}sz} two {{num}gi} few {{num}ci} other {{num}ty}}"
+msgstr "{num, selectordinal, other {{num}ty}}"
 
 #. js-lingui-id: fTSz8d
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx

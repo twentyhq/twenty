@@ -11065,12 +11065,12 @@ msgstr "n'est pas un tableau valide"
 #. js-lingui-id: gNfGMx
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "is not a valid calling code"
-msgstr "n'est pas un <span class=\"highlight\">code d'appel valide</span>"
+msgstr "n'est pas un code d'appel valide"
 
 #. js-lingui-id: Ka30cp
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "is not a valid country code"
-msgstr "n'est pas un <span class=\"highlight\">code pays valide</span>"
+msgstr "n'est pas un code pays valide"
 
 #. js-lingui-id: LmaaLR
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts

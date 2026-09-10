@@ -213,7 +213,7 @@ msgstr "{0, plural, zero {# أشياء} one {# شيء} two {# شيئان} few {#
 #. placeholder {0}: failedCount + behindCount
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 msgid "{0, plural, one {# workspace failed or behind} other {# workspaces failed or behind}}"
-msgstr "{0, plural, zero {لا مساحات عمل فاشلة أو متأخرة} one {مساحة عمل واحدة فاشلة أو متأخرة} two {مساحتا عمل فاشلتان أو متأخرتان} few {# مساحات عمل فاشلة أو متأخرة} many {# مساحة عمل فاشلة أو متأخرة} other {# مساحة عمل فاشلة أو متأخرة}}},{"
+msgstr "{0, plural, zero {لا مساحات عمل فاشلة أو متأخرة} one {مساحة عمل واحدة فاشلة أو متأخرة} two {مساحتا عمل فاشلتان أو متأخرتان} few {# مساحات عمل فاشلة أو متأخرة} many {# مساحة عمل فاشلة أو متأخرة} other {# مساحة عمل فاشلة أو متأخرة}}"
 
 #. js-lingui-id: V5p/Lu
 #. placeholder {0}: canceled.canceledMessageCount
@@ -566,7 +566,7 @@ msgstr "{morphRelationCount, plural, zero {لا كائنات} one {كائن وا
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
-msgstr "{num, selectordinal, one {{num}} two {{num}} few {{num}} other {{num}}}"
+msgstr "{num, selectordinal, other {{num}}}"
 
 #. js-lingui-id: fTSz8d
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -12924,7 +12924,7 @@ msgstr "التنقل"
 #. js-lingui-id: FpO6v4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "navigation menu item"
-msgstr "عنصر قائمة التنقل}]} }]]=## Error: JSON parsing failed due to invalid syntax. Please correct any formatting issues and try again.------------------------------------------------------------------------{"
+msgstr "عنصر قائمة التنقل"
 
 #. js-lingui-id: jRptK+
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx

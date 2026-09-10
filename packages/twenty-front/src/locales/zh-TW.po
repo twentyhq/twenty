@@ -371,7 +371,7 @@ msgstr "{advancedFilterCount, plural, other {{advancedFilterCount} 條進階規�
 #. js-lingui-id: XWd9bY
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}}"
-msgstr "{agentCount, plural, one {{agentCount} 位客服人員} other {{agentCount} 位客服人員}}"
+msgstr "{agentCount, plural, other {{agentCount} 位客服人員}}"
 
 #. js-lingui-id: WGnqk6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -391,7 +391,7 @@ msgstr "{aggregateLabel} 的 {fieldLabel}"
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
-msgstr "{apiKeyCount, plural, one {{apiKeyCount} 個 API 金鑰} other {{apiKeyCount} 個 API 金鑰}}"
+msgstr "{apiKeyCount, plural, other {{apiKeyCount} 個 API 金鑰}}"
 
 #. js-lingui-id: u1mVnV
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
@@ -443,7 +443,7 @@ msgstr "{days, plural, other {{days} 天}}"
 #. placeholder {1}: (1000).toFixed(decimals)
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
-msgstr "{decimals, plural, one {例如 {0}，用於 {decimals} 位小數} other {例如 {1}，用於 {decimals} 位小數}}"
+msgstr "{decimals, plural, other {例如 {1}，用於 {decimals} 位小數}}"
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -550,7 +550,7 @@ msgstr "{label} 清單"
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{memberCount, plural, one {{memberCount} member} other {{memberCount} members}}"
-msgstr "{memberCount, plural, one {{memberCount} 位成員} other {{memberCount} 位成員}}"
+msgstr "{memberCount, plural, other {{memberCount} 位成員}}"
 
 #. js-lingui-id: Y32cMj
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages.tsx

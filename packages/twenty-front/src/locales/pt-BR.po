@@ -566,7 +566,7 @@ msgstr "{morphRelationCount} objetos"
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
-msgstr "{num, selectordinal, one {{num}º} other {{num}º}}"
+msgstr "{num, selectordinal, other {{num}º}}"
 
 #. js-lingui-id: fTSz8d
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -9919,7 +9919,7 @@ msgstr "Agrupe vários campos deste registro"
 #. js-lingui-id: WcF1uL
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
 msgid "Group name"
-msgstr "Nome do grupo}]}``` }}} code block? Wait. We messed up. Actually we must create proper valid JSON. We inadvertently typed wrongly while writing code. Let's correct JSON, ensure proper quotes and braces. The JSON should be: {"
+msgstr "Nome do grupo"
 
 #. js-lingui-id: 6JlTu+
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
@@ -16074,7 +16074,7 @@ msgstr "Nível de registro"
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record(s) selected"
-msgstr "{count, plural, one {# registro selecionado} other {# registros selecionados}}"
+msgstr "Registros selecionados"
 
 #. js-lingui-id: 3esxl/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

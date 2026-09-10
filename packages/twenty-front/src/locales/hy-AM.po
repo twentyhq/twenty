@@ -217,12 +217,6 @@ msgstr "{0} կրեդիտներ"
 msgid "{0} days"
 msgstr "{0} օր"
 
-#. js-lingui-id: okrK9q
-#. placeholder {0}: preview.duplicateEmails
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "{0} duplicate"
-msgstr "{0} կրկնօրինակ"
-
 #. js-lingui-id: stCODw
 #. placeholder {0}: appObject.fields.length
 #: src/modules/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication.ts
@@ -234,19 +228,6 @@ msgstr "{0} դաշտեր"
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "{0} have no relation to {loadBalancePoolObjectLabel}. Pick a different object to balance by."
 msgstr "{0}-ը կապ չունեն {loadBalancePoolObjectLabel}-ի հետ։ Ընտրեք բալանսավորման համար այլ օբյեկտ։"
-
-#. js-lingui-id: TDB80r
-#. placeholder {0}: preview.totalMembers
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "{0} in this list"
-msgstr "{0} այս ցուցակում"
-
-#. js-lingui-id: /PXxEG
-#. placeholder {0}: preview.totalMembers
-#. placeholder {1}: preview.sendable
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "{0} in this list, {1} sendable ({breakdown})"
-msgstr "{0} այս ցուցակում, {1} ուղարկման ենթակա ({breakdown})"
 
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
@@ -326,12 +307,6 @@ msgstr "{0} դիտում"
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 msgid "{0} widgets"
 msgstr "{0} վիջեթներ"
-
-#. js-lingui-id: Aixgij
-#. placeholder {0}: preview.withoutEmail
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "{0} without email"
-msgstr "{0} առանց էլ. փոստի"
 
 #. js-lingui-id: 2UKfhY
 #. placeholder {0}: selectedItemNames.length
@@ -542,7 +517,7 @@ msgstr "{morphRelationCount} օբյեկտներ"
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
-msgstr "{num, selectordinal, one {{num}-ին} two {{num}-րդ} few {{num}-րդ} other {{num}-րդ}}"
+msgstr "{num, selectordinal, one {{num}-ին} other {{num}-րդ}}"
 
 #. js-lingui-id: fTSz8d
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -1912,11 +1887,6 @@ msgstr "AI սպառում ժամանակի ընթացքում։"
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "AI Model"
 msgstr "AI մոդել"
-
-#. js-lingui-id: Sfwld8
-#: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
-msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
-msgstr "AI-ն կարգավորված չէ։ Սահմանեք OPENAI_API_KEY, ANTHROPIC_API_KEY կամ XAI_API_KEY ձեր միջավայրում։"
 
 #. js-lingui-id: jwOWhc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3622,16 +3592,6 @@ msgstr "Զանգի կոդ"
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Calls"
 msgstr "Զանգեր"
-
-#. js-lingui-id: 06mPlO
-#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
-msgid "Campaign queued to {queuedCount} recipient(s)"
-msgstr "Էլ. փոստի արշավը հերթագրվել է {queuedCount} ստացող(ներ)ի համար"
-
-#. js-lingui-id: 6nG/xd
-#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
-msgid "Campaign queued to {queuedCount} recipient(s), {skippedCount} skipped"
-msgstr "Էլ. փոստի արշավը հերթագրվել է {queuedCount} ստացող(ներ)ի համար, {skippedCount}-ը շրջանցվել է"
 
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -13653,11 +13613,6 @@ msgstr "Առանձին օբյեկտների համար թույլտվությո�
 msgid "No provenance attestation was found for this package. Publish it from GitHub Actions with npm trusted publishing, then try claiming again."
 msgstr "Այս փաթեթի համար ծագման հավաստում չի գտնվել։ Հրապարակեք այն GitHub Actions-ից՝ npm trusted publishing-ով, այնուհետև կրկին փորձեք ստանձնել դրա սեփականությունը։"
 
-#. js-lingui-id: 5sv+ia
-#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
-msgid "No recipients to send to ({skippedCount} skipped)"
-msgstr "Ուղարկելու ստացողներ չկան ({skippedCount} բաց է թողնվել)"
-
 #. js-lingui-id: V/+aTW
 #: src/modules/object-record/record-field/ui/form-types/components/FormMorphRelationToOneFieldInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip.tsx
@@ -19304,11 +19259,6 @@ msgstr "Արտագրությունը հնարավոր չէր ստեղծել։"
 msgid "The transcript is being prepared…"
 msgstr "Արտագրությունը պատրաստվում է…"
 
-#. js-lingui-id: qrhV2s
-#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it."
-msgstr "Այն հրաժարվելու թեման, որին պատկանում է այս էլ. նամակը։ Այդ թեմայից հրաժարված ստացողները կշրջանցվեն, իսկ հրաժարվելու հղումը կվերաբերվի հենց այդ թեմային։"
-
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field"
@@ -22447,28 +22397,6 @@ msgstr "Դուք կդադարեք ստանալ այս էլ․ նամակները
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "Դուք պատրաստվում եք փոխել ձեր աշխատանքային տարածքի ենթադոմենը։ Այս գործողությունը բոլոր օգտատերերին դուրս կբերի համակարգից։"
 
-#. js-lingui-id: Z5uTAF
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. \n"
-"Reach to our support team to upgrade."
-msgstr "Դուք հասել եք օգտագործման սահմանաչափին։\n"
-"Կապվեք մեր աջակցման թիմի հետ՝ թարմացման համար։"
-
-#. js-lingui-id: NTyvVW
-#. placeholder {0}: nextResourceCreditsAmount ?? ''
-#. placeholder {1}: nextResourceCreditPrice ?? ''
-#. placeholder {2}: nextTierInterval ?? ''
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. \n"
-"Upgrade to {0} credits for ${1}/{2}."
-msgstr "Դուք հասել եք ձեր օգտագործման սահմանին։ \n"
-"Թարմացրեք մինչև {0} կրեդիտ՝ ${1}/{2} արժեքով։"
-
-#. js-lingui-id: yZ0wRS
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. Subscribe for more usage."
-msgstr "Դուք հասել եք օգտագործման սահմանաչափին։ Պատվիրեք բաժանորդագրություն՝ ավելի շատ օգտագործման համար։"
-
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts
 msgid "Your app version is out of date. Please refresh the page."
@@ -22604,11 +22532,6 @@ msgstr "Ձեր աշխատատարածքն ակտիվ բաժանորդագրու�
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
 msgid "Your workspace doesn't have an active subscription. Please contact your admin."
 msgstr "Ձեր աշխատատարածքն ակտիվ բաժանորդագրություն չունի։ Խնդրում ենք կապվել ձեր ադմինի հետ։"
-
-#. js-lingui-id: fAVJ0D
-#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "Your workspace hit its AI usage limit. Ask an admin to upgrade the plan."
-msgstr "Ձեր աշխատատարածքը հասել է AI-ի օգտագործման սահմանին։ Խնդրեք ադմինին՝ թարմացնել փաթեթը։"
 
 #. js-lingui-id: RhNbPE
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx

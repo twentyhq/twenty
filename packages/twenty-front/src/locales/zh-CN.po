@@ -194,13 +194,13 @@ msgstr ""
 #. placeholder {0}: Math.abs(days)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} day} other {{days} days}}"
-msgstr "{0, plural, one {{days} 天} other {{days} 天}}"
+msgstr "{0, plural, other {{days} 天}}"
 
 #. js-lingui-id: dXYycw
 #. placeholder {0}: Math.abs(years)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} year} other {{years} years}}"
-msgstr "{0, plural, one {{years} 年} other {{years} 年}}"
+msgstr "{0, plural, other {{years} 年}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -213,7 +213,7 @@ msgstr "{0, plural, other {# 个对象}}"
 #. placeholder {0}: failedCount + behindCount
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 msgid "{0, plural, one {# workspace failed or behind} other {# workspaces failed or behind}}"
-msgstr "{0, plural, one {# 个工作区失败或落后} other {# 个工作区失败或落后}}"
+msgstr "{0, plural, other {# 个工作区失败或落后}}"
 
 #. js-lingui-id: V5p/Lu
 #. placeholder {0}: canceled.canceledMessageCount
@@ -371,7 +371,7 @@ msgstr "{advancedFilterCount, plural, other {{advancedFilterCount} 个高级规�
 #. js-lingui-id: XWd9bY
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}}"
-msgstr "{agentCount, plural, one {{agentCount} 名坐席} other {{agentCount} 名坐席}}"
+msgstr "{agentCount, plural, other {{agentCount} 名坐席}}"
 
 #. js-lingui-id: WGnqk6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -391,7 +391,7 @@ msgstr "{aggregateLabel} 的 {fieldLabel}"
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
-msgstr "{apiKeyCount, plural, one {{apiKeyCount} 个 API 密钥} other {{apiKeyCount} 个 API 密钥}}"
+msgstr "{apiKeyCount, plural, other {{apiKeyCount} 个 API 密钥}}"
 
 #. js-lingui-id: u1mVnV
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
@@ -407,7 +407,7 @@ msgstr "{appName} 请求执行以下操作："
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "{behindCount, plural, one {# workspace behind} other {# workspaces behind}}"
-msgstr "{behindCount, plural, one {# 个工作区落后} other {# 个工作区落后}}"
+msgstr "{behindCount, plural, other {# 个工作区落后}}"
 
 #. js-lingui-id: SWRSbi
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
@@ -455,7 +455,7 @@ msgstr ""
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "{failedCount, plural, one {# workspace failed} other {# workspaces failed}}"
-msgstr "{failedCount, plural, one {# 个工作区失败} other {# 个工作区失败}}"
+msgstr "{failedCount, plural, other {# 个工作区失败}}"
 
 #. js-lingui-id: POhzPf
 #: src/modules/ai/hooks/useAiChatFileUpload.ts
@@ -550,7 +550,7 @@ msgstr "{label} 列表"
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{memberCount, plural, one {{memberCount} member} other {{memberCount} members}}"
-msgstr "{memberCount, plural, one {{memberCount} 名成员} other {{memberCount} 名成员}}"
+msgstr "{memberCount, plural, other {{memberCount} 名成员}}"
 
 #. js-lingui-id: Y32cMj
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages.tsx
@@ -654,7 +654,7 @@ msgstr "{serviceLabel} 服务不可访问"
 #. js-lingui-id: 8vJ+2V
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "{stepCount, plural, one {# step} other {# steps}}"
-msgstr "{stepCount, plural, one {# 步} other {# 步}}"
+msgstr "{stepCount, plural, other {# 步}}"
 
 #. js-lingui-id: Bzjg0/
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -674,42 +674,42 @@ msgstr "{totalFieldsCount} 个可见字段"
 #. js-lingui-id: fzpQ2b
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Day} other {Days}}"
-msgstr "{unitCount, plural, one {天} other {天}}"
+msgstr "{unitCount, plural, other {天}}"
 
 #. js-lingui-id: D02E4w
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Hour} other {Hours}}"
-msgstr "{unitCount, plural, one {小时} other {小时}}"
+msgstr "{unitCount, plural, other {小时}}"
 
 #. js-lingui-id: ywrpHp
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Minute} other {Minutes}}"
-msgstr "{unitCount, plural, one {分钟} other {分钟}}"
+msgstr "{unitCount, plural, other {分钟}}"
 
 #. js-lingui-id: GiWRiw
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Month} other {Months}}"
-msgstr "{unitCount, plural, one {月} other {月}}"
+msgstr "{unitCount, plural, other {月}}"
 
 #. js-lingui-id: OlALtW
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Quarter} other {Quarters}}"
-msgstr "{unitCount, plural, one {季度} other {季度}}"
+msgstr "{unitCount, plural, other {季度}}"
 
 #. js-lingui-id: 8qhX2K
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Second} other {Seconds}}"
-msgstr "{unitCount, plural, one {秒} other {秒}}"
+msgstr "{unitCount, plural, other {秒}}"
 
 #. js-lingui-id: mRxyPD
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Week} other {Weeks}}"
-msgstr "{unitCount, plural, one {周} other {周}}"
+msgstr "{unitCount, plural, other {周}}"
 
 #. js-lingui-id: J407xr
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Year} other {Years}}"
-msgstr "{unitCount, plural, one {年} other {年}}"
+msgstr "{unitCount, plural, other {年}}"
 
 #. js-lingui-id: YdwR4T
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx

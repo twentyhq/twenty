@@ -566,7 +566,7 @@ msgstr "{morphRelationCount} objektů"
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
-msgstr "{num, selectordinal, one {{num}.} few {{num}.} many {{num}.} other {{num}.}}"
+msgstr "{num, selectordinal, other {{num}.}}"
 
 #. js-lingui-id: fTSz8d
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -10390,7 +10390,7 @@ msgstr "Pokud obměníte toto tajemství, každá integrace používající aktu
 #. js-lingui-id: j843N3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
-msgstr "Pokud jste ztratili tento klíč, můžete jej obnovit, ale mějte na paměti, že všechny skripty používající tento klíč bude potřeba aktualizovat. Prosím, napište \"<b>{confirmationValue}</b>\" pro potvrzení."
+msgstr "Pokud jste ztratili tento klíč, můžete jej obnovit, ale mějte na paměti, že všechny skripty používající tento klíč bude potřeba aktualizovat. Prosím, napište \"{confirmationValue}\" pro potvrzení."
 
 #. js-lingui-id: KDMdBi
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
@@ -12887,7 +12887,7 @@ msgstr "Pojmenujte a popište svou funkci"
 #. js-lingui-id: zaxmAs
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-msgstr "Název v jednotném (<b>např.</b>, 'Faktura') i množném (<b>např.</b>, 'Faktury') čísle."
+msgstr "Název v jednotném (např., 'Faktura') i množném (např., 'Faktury') čísle."
 
 #. js-lingui-id: z+6jaZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx

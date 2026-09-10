@@ -194,13 +194,13 @@ msgstr ""
 #. placeholder {0}: Math.abs(days)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} day} other {{days} days}}"
-msgstr "{0, plural, one {{days}日} other {{days}日}}"
+msgstr "{0, plural, other {{days}日}}"
 
 #. js-lingui-id: dXYycw
 #. placeholder {0}: Math.abs(years)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} year} other {{years} years}}"
-msgstr "{0, plural, one {{years}年} other {{years}年}}"
+msgstr "{0, plural, other {{years}年}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -213,7 +213,7 @@ msgstr "{0, plural, other {# オブジェクト}}"
 #. placeholder {0}: failedCount + behindCount
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 msgid "{0, plural, one {# workspace failed or behind} other {# workspaces failed or behind}}"
-msgstr "{0, plural, one {# 件のワークスペースが失敗または遅れています} other {# 件のワークスペースが失敗または遅れています}}"
+msgstr "{0, plural, other {# 件のワークスペースが失敗または遅れています}}"
 
 #. js-lingui-id: V5p/Lu
 #. placeholder {0}: canceled.canceledMessageCount
@@ -371,7 +371,7 @@ msgstr "{advancedFilterCount, plural, other {{advancedFilterCount} 件の高度�
 #. js-lingui-id: XWd9bY
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}}"
-msgstr "{agentCount, plural, one {{agentCount} 名のエージェント} other {{agentCount} 名のエージェント}}"
+msgstr "{agentCount, plural, other {{agentCount} 名のエージェント}}"
 
 #. js-lingui-id: WGnqk6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -391,7 +391,7 @@ msgstr "{fieldLabel}の{aggregateLabel}"
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
-msgstr "{apiKeyCount, plural, one {{apiKeyCount} 件の API キー} other {{apiKeyCount} 件の API キー}}"
+msgstr "{apiKeyCount, plural, other {{apiKeyCount} 件の API キー}}"
 
 #. js-lingui-id: u1mVnV
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
@@ -407,7 +407,7 @@ msgstr "{appName} は次の操作を行おうとしています。"
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "{behindCount, plural, one {# workspace behind} other {# workspaces behind}}"
-msgstr "{behindCount, plural, one {# 件のワークスペースが遅れています} other {# 件のワークスペースが遅れています}}"
+msgstr "{behindCount, plural, other {# 件のワークスペースが遅れています}}"
 
 #. js-lingui-id: SWRSbi
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
@@ -443,7 +443,7 @@ msgstr "{days, plural, other {{days} 日}}"
 #. placeholder {1}: (1000).toFixed(decimals)
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
-msgstr "{decimals, plural, one {例: 小数点以下 {decimals} 桁の場合は {0}} other {例: 小数点以下 {decimals} 桁の場合は {1}}}"
+msgstr "{decimals, plural, other {例: 小数点以下 {decimals} 桁の場合は {1}}}"
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -455,7 +455,7 @@ msgstr "{deletedCount, plural, other {正常に削除されたジョブ数: {del
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "{failedCount, plural, one {# workspace failed} other {# workspaces failed}}"
-msgstr "{failedCount, plural, one {# 件のワークスペースが失敗しています} other {# 件のワークスペースが失敗しています}}"
+msgstr "{failedCount, plural, other {# 件のワークスペースが失敗しています}}"
 
 #. js-lingui-id: POhzPf
 #: src/modules/ai/hooks/useAiChatFileUpload.ts
@@ -480,7 +480,7 @@ msgstr "{fileName} のアップロードは拒否されました"
 #. js-lingui-id: bv2QCV
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 msgid "{filterRulesCount, plural, one {{filterRulesCount} rule} other {{filterRulesCount} rules}}"
-msgstr "{filterRulesCount, plural, one {{filterRulesCount} 件のルール} other {{filterRulesCount} 件のルール}}"
+msgstr "{filterRulesCount, plural, other {{filterRulesCount} 件のルール}}"
 
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -510,7 +510,7 @@ msgstr "{headersCount} 件のヘッダーを受信"
 #. js-lingui-id: 4xzh1W
 #: src/modules/object-record/record-list/components/RecordListRow.tsx
 msgid "{hiddenFieldCount, plural, one {# more populated field available} other {# more populated fields available}}"
-msgstr "{hiddenFieldCount, plural, other {利用可能な入力済みフィールドが # 件増えました}}]}]}ેણ</analysis to=system ＿一本道  日本一本道ികായി  ചികിതിക  天天购彩票 񹚻കം  天天中彩票是不是? Wait plural ICU Japanese other only yes. Need preserve variable. Good. But wording "
+msgstr "{hiddenFieldCount, plural, other {利用可能な入力済みフィールドが # 件増えました}}"
 
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -550,7 +550,7 @@ msgstr "{label} リスト"
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{memberCount, plural, one {{memberCount} member} other {{memberCount} members}}"
-msgstr "{memberCount, plural, one {{memberCount} 名のメンバー} other {{memberCount} 名のメンバー}}"
+msgstr "{memberCount, plural, other {{memberCount} 名のメンバー}}"
 
 #. js-lingui-id: Y32cMj
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages.tsx
@@ -654,7 +654,7 @@ msgstr "{serviceLabel} サービスに到達できません"
 #. js-lingui-id: 8vJ+2V
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "{stepCount, plural, one {# step} other {# steps}}"
-msgstr "{stepCount, plural, one {# ステップ} other {# ステップ}}"
+msgstr "{stepCount, plural, other {# ステップ}}"
 
 #. js-lingui-id: Bzjg0/
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -674,42 +674,42 @@ msgstr "表示中のフィールド {totalFieldsCount}"
 #. js-lingui-id: fzpQ2b
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Day} other {Days}}"
-msgstr "{unitCount, plural, one {日} other {日}}"
+msgstr "{unitCount, plural, other {日}}"
 
 #. js-lingui-id: D02E4w
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Hour} other {Hours}}"
-msgstr "{unitCount, plural, one {時間} other {時間}}"
+msgstr "{unitCount, plural, other {時間}}"
 
 #. js-lingui-id: ywrpHp
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Minute} other {Minutes}}"
-msgstr "{unitCount, plural, one {分} other {分}}"
+msgstr "{unitCount, plural, other {分}}"
 
 #. js-lingui-id: GiWRiw
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Month} other {Months}}"
-msgstr "{unitCount, plural, one {か月} other {か月}}"
+msgstr "{unitCount, plural, other {か月}}"
 
 #. js-lingui-id: OlALtW
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Quarter} other {Quarters}}"
-msgstr "{unitCount, plural, one {四半期} other {四半期}}"
+msgstr "{unitCount, plural, other {四半期}}"
 
 #. js-lingui-id: 8qhX2K
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Second} other {Seconds}}"
-msgstr "{unitCount, plural, one {秒} other {秒}}"
+msgstr "{unitCount, plural, other {秒}}"
 
 #. js-lingui-id: mRxyPD
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Week} other {Weeks}}"
-msgstr "{unitCount, plural, one {週} other {週}}"
+msgstr "{unitCount, plural, other {週}}"
 
 #. js-lingui-id: J407xr
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Year} other {Years}}"
-msgstr "{unitCount, plural, one {年} other {年}}"
+msgstr "{unitCount, plural, other {年}}"
 
 #. js-lingui-id: YdwR4T
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -2525,7 +2525,7 @@ msgstr "API名（複数形）"
 #. js-lingui-id: KclpRp
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "API Name (Singular)"
-msgstr "API名<b>（</b>単数形<b>）</b>"
+msgstr "API名（単数形）"
 
 #. js-lingui-id: /eZE05
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -7049,7 +7049,7 @@ msgstr "ドメインセットアップ"
 #. js-lingui-id: 7kVRe6
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
-msgstr "ドメインは<b>256</b>文字未満でなければならず、スペースや特殊文字を含めることはできません。"
+msgstr "ドメインは256文字未満でなければならず、スペースや特殊文字を含めることはできません。"
 
 #. js-lingui-id: KUxVkp
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
@@ -7427,7 +7427,7 @@ msgstr "プロフィールを編集"
 #. js-lingui-id: 19vPbj
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 msgid "Edit Record Table"
-msgstr "レコードテーブルを編集},{"
+msgstr "レコードテーブルを編集"
 
 #. js-lingui-id: 6n2zpV
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -9361,17 +9361,17 @@ msgstr "第一"
 #. js-lingui-id: ZyIk6Y
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "First 10 lines"
-msgstr "最初の<b>10</b>行"
+msgstr "最初の10行"
 
 #. js-lingui-id: I3hko2
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "First 2 lines"
-msgstr "最初の<b>2</b>行"
+msgstr "最初の2行"
 
 #. js-lingui-id: BDDkm3
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "First 5 lines"
-msgstr "最初の<b>5</b>行"
+msgstr "最初の5行"
 
 #. js-lingui-id: V1EGGU
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -10196,7 +10196,7 @@ msgstr ""
 "npx create-twenty-app@latest my-twenty-app\n"
 "```\n"
 "\n"
-"詳しい手順は[入門ガイド](https://twenty.com/developers/extend/apps/getting-started)を参照し、`defineApplication` / `defineEntity` API については[アプリの構築](https://twenty.com/developers/extend/apps/building)を参照してください。},{"
+"詳しい手順は[入門ガイド](https://twenty.com/developers/extend/apps/getting-started)を参照し、`defineApplication` / `defineEntity` API については[アプリの構築](https://twenty.com/developers/extend/apps/building)を参照してください。"
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -11382,7 +11382,7 @@ msgstr "前回"
 #. js-lingui-id: DU27lO
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 1 hour"
-msgstr "過去<b>1</b>時間"
+msgstr "過去1時間"
 
 #. js-lingui-id: 0LzSIl
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -11402,7 +11402,7 @@ msgstr "最近作成されたユーザー10人。クリックして機能フラ�
 #. js-lingui-id: XUlP/Y
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 12 hours"
-msgstr "過去<b>12</b>時間"
+msgstr "過去12時間"
 
 #. js-lingui-id: n7EOpf
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -11422,7 +11422,7 @@ msgstr "過去30日間"
 #. js-lingui-id: gdAJ4I
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 4 hours"
-msgstr "過去<b>4</b>時間"
+msgstr "過去4時間"
 
 #. js-lingui-id: MjAVB0
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -12887,7 +12887,7 @@ msgstr "関数に名前を付けて説明"
 #. js-lingui-id: zaxmAs
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-msgstr "単数形<b>（</b>例えば、「Invoice」<b>）</b>および複数形<b>（</b>例えば、「Invoices」<b>）</b>の名前。"
+msgstr "単数形（例えば、「Invoice」）および複数形（例えば、「Invoices」）の名前。"
 
 #. js-lingui-id: z+6jaZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -16052,7 +16052,7 @@ msgstr "レコードページ"
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Record Table Settings"
-msgstr "レコードテーブルの設定},{"
+msgstr "レコードテーブルの設定"
 
 #. js-lingui-id: kvxD0C
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
@@ -18449,7 +18449,7 @@ msgstr "並べ替え"
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Sorts"
-msgstr "ソート},{"
+msgstr "ソート"
 
 #. js-lingui-id: wdxz7K
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts

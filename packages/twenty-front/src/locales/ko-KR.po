@@ -371,7 +371,7 @@ msgstr "{advancedFilterCount, plural, other {{advancedFilterCount}개 고급 규
 #. js-lingui-id: XWd9bY
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}}"
-msgstr "{agentCount, plural, one {{agentCount}명 상담원} other {{agentCount}명 상담원}}"
+msgstr "{agentCount, plural, other {{agentCount}명 상담원}}"
 
 #. js-lingui-id: WGnqk6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -391,7 +391,7 @@ msgstr "{fieldLabel}의 {aggregateLabel}"
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
-msgstr "{apiKeyCount, plural, one {{apiKeyCount}개 API 키} other {{apiKeyCount}개 API 키}}"
+msgstr "{apiKeyCount, plural, other {{apiKeyCount}개 API 키}}"
 
 #. js-lingui-id: u1mVnV
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
@@ -443,7 +443,7 @@ msgstr "{days, plural, other {{days}일}}"
 #. placeholder {1}: (1000).toFixed(decimals)
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
-msgstr "{decimals, plural, one {예: 소수 {decimals}자리인 경우 {0}} other {예: 소수 {decimals}자리인 경우 {1}}}"
+msgstr "{decimals, plural, other {예: 소수 {decimals}자리인 경우 {1}}}"
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -480,7 +480,7 @@ msgstr "{fileName} 업로드가 거부되었습니다"
 #. js-lingui-id: bv2QCV
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 msgid "{filterRulesCount, plural, one {{filterRulesCount} rule} other {{filterRulesCount} rules}}"
-msgstr "{filterRulesCount, plural, one {{filterRulesCount}개 규칙} other {{filterRulesCount}개 규칙}}"
+msgstr "{filterRulesCount, plural, other {{filterRulesCount}개 규칙}}"
 
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -550,7 +550,7 @@ msgstr "{label} 목록"
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{memberCount, plural, one {{memberCount} member} other {{memberCount} members}}"
-msgstr "{memberCount, plural, one {{memberCount}명 구성원} other {{memberCount}명 구성원}}"
+msgstr "{memberCount, plural, other {{memberCount}명 구성원}}"
 
 #. js-lingui-id: Y32cMj
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages.tsx
@@ -674,42 +674,42 @@ msgstr "표시되는 필드 {totalFieldsCount}개"
 #. js-lingui-id: fzpQ2b
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Day} other {Days}}"
-msgstr "{unitCount, plural, one {일} other {일}}"
+msgstr "{unitCount, plural, other {일}}"
 
 #. js-lingui-id: D02E4w
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Hour} other {Hours}}"
-msgstr "{unitCount, plural, one {시간} other {시간}}"
+msgstr "{unitCount, plural, other {시간}}"
 
 #. js-lingui-id: ywrpHp
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Minute} other {Minutes}}"
-msgstr "{unitCount, plural, one {분} other {분}}"
+msgstr "{unitCount, plural, other {분}}"
 
 #. js-lingui-id: GiWRiw
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Month} other {Months}}"
-msgstr "{unitCount, plural, one {개월} other {개월}}"
+msgstr "{unitCount, plural, other {개월}}"
 
 #. js-lingui-id: OlALtW
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Quarter} other {Quarters}}"
-msgstr "{unitCount, plural, one {분기} other {분기}}"
+msgstr "{unitCount, plural, other {분기}}"
 
 #. js-lingui-id: 8qhX2K
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Second} other {Seconds}}"
-msgstr "{unitCount, plural, one {초} other {초}}"
+msgstr "{unitCount, plural, other {초}}"
 
 #. js-lingui-id: mRxyPD
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Week} other {Weeks}}"
-msgstr "{unitCount, plural, one {주} other {주}}"
+msgstr "{unitCount, plural, other {주}}"
 
 #. js-lingui-id: J407xr
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Year} other {Years}}"
-msgstr "{unitCount, plural, one {년} other {년}}"
+msgstr "{unitCount, plural, other {년}}"
 
 #. js-lingui-id: YdwR4T
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -11382,7 +11382,7 @@ msgstr "최근"
 #. js-lingui-id: DU27lO
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 1 hour"
-msgstr "지난 <b>1</b>시간"
+msgstr "지난 1시간"
 
 #. js-lingui-id: 0LzSIl
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -11402,7 +11402,7 @@ msgstr "최근 생성된 사용자 10명입니다. 클릭하면 기능 플래그
 #. js-lingui-id: XUlP/Y
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 12 hours"
-msgstr "지난 <b>12</b>시간"
+msgstr "지난 12시간"
 
 #. js-lingui-id: n7EOpf
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -11422,7 +11422,7 @@ msgstr "지난 30일"
 #. js-lingui-id: gdAJ4I
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 4 hours"
-msgstr "지난 <b>4</b>시간"
+msgstr "지난 4시간"
 
 #. js-lingui-id: MjAVB0
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx

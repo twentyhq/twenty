@@ -566,7 +566,7 @@ msgstr "{morphRelationCount} Objekte"
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
-msgstr "{num, selectordinal, one {{num}ste} other {{num}de}}"
+msgstr "{num, selectordinal, other {{num}de}}"
 
 #. js-lingui-id: fTSz8d
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -3863,7 +3863,7 @@ msgstr "CC"
 #. js-lingui-id: Dgsw8A
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 msgid "Cc/Bcc"
-msgstr "Cc/Bcc},{"
+msgstr "Cc/Bcc"
 
 #. js-lingui-id: tHntRt
 #: src/modules/blocknote-editor/components/CustomSideMenu.tsx
@@ -16074,7 +16074,7 @@ msgstr "Rekordvlak"
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record(s) selected"
-msgstr "{count, plural, one {Rekord gekies} other {Rekords gekies}}"
+msgstr "Rekords gekies"
 
 #. js-lingui-id: 3esxl/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
