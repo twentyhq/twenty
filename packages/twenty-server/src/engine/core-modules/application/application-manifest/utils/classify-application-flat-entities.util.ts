@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import { compareByCodePoint } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-code-point.util';
+import { getWorkspaceRuntimeReason } from 'src/engine/metadata-modules/flat-entity/utils/get-workspace-runtime-reason.util';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -61,34 +62,24 @@ const classifyFlatEntity = ({
     };
   }
 
+  const workspaceRuntimeReason = getWorkspaceRuntimeReason({
+    metadataName,
+    flatEntity,
+  });
+
+  if (isDefined(workspaceRuntimeReason)) {
+    return {
+      status: ApplicationExportCoverageStatus.EXCLUDED,
+      reason: workspaceRuntimeReason,
+    };
+  }
+
   switch (metadataName) {
-    case 'webhook':
-      return {
-        status: ApplicationExportCoverageStatus.EXCLUDED,
-        reason: 'runtime configuration',
-      };
     case 'searchFieldMetadata':
       return { status: ApplicationExportCoverageStatus.ENGINE_DERIVED };
     case 'roleTarget':
-      return ('userWorkspaceId' in flatEntity &&
-        isDefined(flatEntity.userWorkspaceId)) ||
-        ('apiKeyId' in flatEntity && isDefined(flatEntity.apiKeyId))
-        ? {
-            status: ApplicationExportCoverageStatus.EXCLUDED,
-            reason: 'member or API key role assignment',
-          }
-        : { status: ApplicationExportCoverageStatus.UNSUPPORTED };
+      return { status: ApplicationExportCoverageStatus.UNSUPPORTED };
     case 'commandMenuItem':
-      if (
-        'workflowVersionId' in flatEntity &&
-        isDefined(flatEntity.workflowVersionId)
-      ) {
-        return {
-          status: ApplicationExportCoverageStatus.EXCLUDED,
-          reason: 'workflow trigger command',
-        };
-      }
-
       return 'frontComponentUniversalIdentifier' in flatEntity &&
         isDefined(flatEntity.frontComponentUniversalIdentifier)
         ? { status: ApplicationExportCoverageStatus.UNSUPPORTED }
