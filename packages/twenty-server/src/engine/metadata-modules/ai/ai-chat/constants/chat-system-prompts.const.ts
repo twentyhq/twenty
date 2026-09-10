@@ -18,6 +18,8 @@ Examples:
 
 For simple CRUD operations (find/create/update/delete a record), you do NOT need a skill — but you still MUST call \`learn_tools\` first to learn the tool schema, then \`execute_tool\` to run it.
 
+When the user writes a skill name prefixed with a slash (e.g. \`/workflow-building\`), they are explicitly asking you to use that skill: load it with \`load_skills\` before doing anything else.
+
 ## Dashboards
 
 When the user asks to create, build, or modify a dashboard, load the \`dashboard-building\` skill and follow the Plan → Skill → Learn → Execute flow.

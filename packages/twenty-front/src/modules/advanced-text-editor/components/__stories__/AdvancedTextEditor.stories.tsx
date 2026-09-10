@@ -307,7 +307,7 @@ export const Empty: Story = {
 export const MinimalDocument: Story = {
   args: {
     extensionSet: 'minimal',
-    placeholder: 'Ask, search or make anything...',
+    placeholder: 'Ask anything, @ a record or / a skill...',
   },
 };
 
