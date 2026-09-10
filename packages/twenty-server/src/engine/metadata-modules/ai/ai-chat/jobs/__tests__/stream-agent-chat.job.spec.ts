@@ -1,4 +1,6 @@
-import { type UIMessageChunk } from 'ai';
+import { type LanguageModelUsage, type TextStreamPart, type ToolSet } from 'ai';
+import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
@@ -7,65 +9,132 @@ import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
 type PublishedEvent = { type: string } & Record<string, unknown>;
 
-const TEXT_CHUNKS: UIMessageChunk[] = [
-  { type: 'start', messageId: 'assistant-message-id' },
-  { type: 'start-step' },
-  { type: 'text-start', id: 'text-1' },
-  { type: 'text-delta', id: 'text-1', delta: 'Hello' },
-  { type: 'text-end', id: 'text-1' },
-];
+type ModelStreamPart = TextStreamPart<ToolSet>;
 
-const RESPONSE_MESSAGE = {
-  role: 'assistant' as const,
-  parts: [{ type: 'text' as const, text: 'Hello' }],
+const USAGE: LanguageModelUsage = {
+  inputTokens: 12,
+  inputTokenDetails: {
+    noCacheTokens: 12,
+    cacheReadTokens: 0,
+    cacheWriteTokens: 0,
+  },
+  outputTokens: 3,
+  outputTokenDetails: { textTokens: 3, reasoningTokens: 0 },
+  totalTokens: 15,
 };
 
+const START_PARTS: ModelStreamPart[] = [
+  { type: 'start' },
+  { type: 'start-step', request: {}, warnings: [] },
+];
+
+const FINISH_PARTS: ModelStreamPart[] = [
+  {
+    type: 'finish-step',
+    response: {
+      id: 'response-id',
+      timestamp: new Date(0),
+      modelId: 'gpt-5.6-luna',
+    },
+    usage: USAGE,
+    performance: {
+      effectiveOutputTokensPerSecond: 0,
+      outputTokensPerSecond: undefined,
+      inputTokensPerSecond: undefined,
+      effectiveTotalTokensPerSecond: 0,
+      stepTimeMs: 0,
+      responseTimeMs: 0,
+      timeToFirstOutputMs: 0,
+      toolExecutionMs: {},
+    },
+    finishReason: 'stop',
+    rawFinishReason: undefined,
+    providerMetadata: undefined,
+  },
+  {
+    type: 'finish',
+    finishReason: 'stop',
+    rawFinishReason: undefined,
+    totalUsage: USAGE,
+  },
+];
+
+const TEXT_PARTS: ModelStreamPart[] = [
+  ...START_PARTS,
+  { type: 'text-start', id: 'text-1' },
+  { type: 'text-delta', id: 'text-1', text: 'Hello' },
+  { type: 'text-end', id: 'text-1' },
+  ...FINISH_PARTS,
+];
+
+const EMPTY_REPLY_PARTS: ModelStreamPart[] = [...START_PARTS, ...FINISH_PARTS];
+
+const PENDING_QUESTION_PARTS: ModelStreamPart[] = [
+  ...START_PARTS,
+  {
+    type: 'tool-input-start',
+    id: 'tool-call-id',
+    toolName: ASK_QUESTIONS_TOOL_NAME,
+  },
+  {
+    type: 'tool-call',
+    toolCallId: 'tool-call-id',
+    toolName: ASK_QUESTIONS_TOOL_NAME,
+    input: {},
+  },
+  {
+    type: 'tool-result',
+    toolCallId: 'tool-call-id',
+    toolName: ASK_QUESTIONS_TOOL_NAME,
+    input: {},
+    output: { result: { status: 'pending' } },
+  },
+  ...FINISH_PARTS,
+];
+
 const createFakeChatStream = ({
-  chunks = TEXT_CHUNKS,
-  responseMessage = RESPONSE_MESSAGE,
+  parts = TEXT_PARTS,
   midStreamError,
-  onFirstChunk,
+  onFirstPart,
+  isAborted = false,
 }: {
-  chunks?: UIMessageChunk[];
-  responseMessage?: typeof RESPONSE_MESSAGE;
+  parts?: ModelStreamPart[];
   midStreamError?: Error;
-  onFirstChunk?: () => void;
+  onFirstPart?: () => void;
+  isAborted?: boolean;
 } = {}) => ({
-  toUIMessageStream: (options: {
-    onError?: (error: unknown) => string;
-    onFinish?: (event: {
-      responseMessage: typeof RESPONSE_MESSAGE;
-      isAborted: boolean;
-    }) => Promise<void> | void;
-  }) =>
-    new ReadableStream<UIMessageChunk>({
-      async start(controller) {
-        let isFirstChunk = true;
+  stream: new ReadableStream<ModelStreamPart>(
+    {
+      pull(controller) {
+        parts.forEach((part, index) => {
+          controller.enqueue(part);
 
-        for (const chunk of chunks) {
-          controller.enqueue(chunk);
-
-          if (isFirstChunk) {
-            isFirstChunk = false;
-            onFirstChunk?.();
+          if (index === 0) {
+            onFirstPart?.();
           }
-        }
+        });
 
         if (midStreamError) {
-          const errorText = options.onError?.(midStreamError) ?? '';
-
-          controller.enqueue({ type: 'error', errorText });
+          controller.enqueue({ type: 'error', error: midStreamError });
         }
 
-        await options.onFinish?.({ responseMessage, isAborted: false });
+        if (isAborted) {
+          controller.enqueue({ type: 'abort' });
+        }
 
         controller.close();
       },
-    }),
+    },
+    // Produced on the first read, so the tests' triggers fire while the job is streaming.
+    { highWaterMark: 0 },
+  ),
 });
 
 describe('StreamAgentChatJob', () => {
-  const workspace = { id: 'workspace-id' } as WorkspaceEntity;
+  const workspace = {
+    id: 'workspace-id',
+    smartModel: 'default-smart-model',
+  } as WorkspaceEntity;
 
   const jobData: StreamAgentChatJobData = {
     threadId: 'thread-id',
@@ -88,6 +157,7 @@ describe('StreamAgentChatJob', () => {
     addMessageRejection,
     assistantPersistRejection,
     totalsUpdateAffected = 1,
+    finalPublishRejection,
   }: {
     workspaceFound?: boolean;
     chatStream?: ReturnType<typeof createFakeChatStream>;
@@ -95,6 +165,7 @@ describe('StreamAgentChatJob', () => {
     addMessageRejection?: Error;
     assistantPersistRejection?: Error;
     totalsUpdateAffected?: number;
+    finalPublishRejection?: Error;
   } = {}) => {
     const publishedEvents: PublishedEvent[] = [];
 
@@ -131,7 +202,11 @@ describe('StreamAgentChatJob', () => {
         ? jest.fn().mockRejectedValue(streamChatRejection)
         : jest.fn().mockResolvedValue({
             stream: chatStream,
-            modelConfig: { contextWindowTokens: 100000 },
+            modelConfig: {
+              contextWindowTokens: 100000,
+              inputCostPerMillionTokens: 1,
+              outputCostPerMillionTokens: 2,
+            },
             hasNoMoreAvailableCredits: () => false,
           }),
     };
@@ -140,6 +215,13 @@ describe('StreamAgentChatJob', () => {
       publish: jest
         .fn()
         .mockImplementation(({ event }: { event: PublishedEvent }) => {
+          if (
+            isDefined(finalPublishRejection) &&
+            event.type === 'message-persisted'
+          ) {
+            return Promise.reject(finalPublishRejection);
+          }
+
           publishedEvents.push(event);
 
           return Promise.resolve();
@@ -164,6 +246,12 @@ describe('StreamAgentChatJob', () => {
       markClaimed: jest.fn().mockResolvedValue(undefined),
       clear: jest.fn().mockResolvedValue(undefined),
     };
+    const metricsService = { incrementCounterBy: jest.fn() };
+    const aiModelRegistryService = {
+      getEffectiveModelConfig: jest
+        .fn()
+        .mockReturnValue({ modelId: 'openai/gpt-5.6-luna' }),
+    };
     const job = new StreamAgentChatJob(
       threadRepository as never,
       workspaceRepository as never,
@@ -173,8 +261,14 @@ describe('StreamAgentChatJob', () => {
       cancelSubscriberService as never,
       agentChatStreamingService as never,
       streamHeartbeatService as never,
-      { incrementCounterBy: jest.fn() } as never,
+      metricsService as never,
+      aiModelRegistryService as never,
     );
+
+    const turnCounts = (key: string) =>
+      metricsService.incrementCounterBy.mock.calls
+        .map(([call]) => call)
+        .filter((call: { key: string }) => call.key === key);
 
     return {
       job,
@@ -184,6 +278,9 @@ describe('StreamAgentChatJob', () => {
       eventPublisherService,
       agentChatStreamingService,
       cancelCallbacks,
+      metricsService,
+      aiModelRegistryService,
+      turnCounts,
     };
   };
 
@@ -202,7 +299,9 @@ describe('StreamAgentChatJob', () => {
       (event) => event.type === 'stream-chunk',
     );
 
-    expect(chunkEvents).toHaveLength(TEXT_CHUNKS.length);
+    expect(
+      chunkEvents.map((event) => (event.chunk as { type: string }).type),
+    ).toEqual(TEXT_PARTS.map((part) => part.type));
     expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
       type: 'message-persisted',
     });
@@ -284,7 +383,7 @@ describe('StreamAgentChatJob', () => {
       (event) => event.type === 'stream-chunk',
     );
 
-    expect(chunkEvents).toHaveLength(TEXT_CHUNKS.length);
+    expect(chunkEvents).toHaveLength(TEXT_PARTS.length);
     expect(publishedEvents[publishedEvents.length - 2]).toMatchObject({
       type: 'stream-error',
       code: 'STREAM_EXECUTION_FAILED',
@@ -347,7 +446,7 @@ describe('StreamAgentChatJob', () => {
       (event) => event.type === 'stream-chunk',
     );
 
-    expect(chunkEvents).toHaveLength(TEXT_CHUNKS.length);
+    expect(chunkEvents).toHaveLength(TEXT_PARTS.length);
     expect(publishedEvents[publishedEvents.length - 2]).toMatchObject({
       type: 'stream-error',
     });
@@ -439,7 +538,7 @@ describe('StreamAgentChatJob', () => {
       agentChatStreamingService,
     } = buildJob({
       chatStream: createFakeChatStream({
-        onFirstChunk: () => triggerShutdown?.(),
+        onFirstPart: () => triggerShutdown?.(),
       }),
     });
 
@@ -486,7 +585,7 @@ describe('StreamAgentChatJob', () => {
     const { job, publishedEvents, agentChatStreamingService, cancelCallbacks } =
       buildJob({
         chatStream: createFakeChatStream({
-          onFirstChunk: () => triggerUserCancel?.(),
+          onFirstPart: () => triggerUserCancel?.(),
         }),
       });
 
@@ -515,7 +614,7 @@ describe('StreamAgentChatJob', () => {
       cancelCallbacks,
     } = buildJob({
       chatStream: createFakeChatStream({
-        onFirstChunk: () => triggerCancel?.(),
+        onFirstPart: () => triggerCancel?.(),
       }),
     });
 
@@ -530,5 +629,174 @@ describe('StreamAgentChatJob', () => {
       agentChatStreamingService.flushNextQueuedMessage,
     ).not.toHaveBeenCalled();
     expect(agentChatService.notifyThreadUsageUpdated).toHaveBeenCalled();
+  });
+  it('labels turn-started with the resolved model, not the auto-select id', async () => {
+    const { job, aiModelRegistryService, turnCounts } = buildJob();
+
+    await job.handle({ ...jobData, modelId: 'default-fast-model' });
+
+    expect(aiModelRegistryService.getEffectiveModelConfig).toHaveBeenCalledWith(
+      'default-fast-model',
+    );
+    expect(turnCounts('ai-chat/turn-started')).toEqual([
+      expect.objectContaining({
+        attributes: { model: 'openai/gpt-5.6-luna' },
+      }),
+    ]);
+  });
+
+  it('falls back to the workspace default model when the turn did not pick one', async () => {
+    const { job, aiModelRegistryService } = buildJob();
+
+    await job.handle(jobData);
+
+    expect(aiModelRegistryService.getEffectiveModelConfig).toHaveBeenCalledWith(
+      'default-smart-model',
+    );
+  });
+
+  it('counts a text reply once, as an answered completion', async () => {
+    const { job, turnCounts } = buildJob();
+
+    await job.handle(jobData);
+
+    expect(turnCounts('ai-chat/turn-completed')).toEqual([
+      expect.objectContaining({
+        attributes: { model: 'openai/gpt-5.6-luna', outcome: 'answered' },
+      }),
+    ]);
+    expect(turnCounts('ai-chat/turn-failed')).toEqual([]);
+    expect(turnCounts('ai-chat/turn-cancelled')).toEqual([]);
+  });
+
+  it('counts a turn that ended on a question as completed and awaiting the user', async () => {
+    const { job, turnCounts } = buildJob({
+      chatStream: createFakeChatStream({
+        parts: PENDING_QUESTION_PARTS,
+      }),
+    });
+
+    await job.handle(jobData);
+
+    expect(turnCounts('ai-chat/turn-completed')).toEqual([
+      expect.objectContaining({
+        attributes: { model: 'openai/gpt-5.6-luna', outcome: 'awaiting_user' },
+      }),
+    ]);
+    expect(turnCounts('ai-chat/turn-failed')).toEqual([]);
+  });
+
+  it('counts an aborted turn as cancelled rather than leaving it unaccounted', async () => {
+    const { job, turnCounts } = buildJob({
+      chatStream: createFakeChatStream({
+        parts: START_PARTS,
+        isAborted: true,
+      }),
+    });
+
+    await job.handle(jobData);
+
+    expect(turnCounts('ai-chat/turn-cancelled')).toEqual([
+      expect.objectContaining({
+        attributes: {
+          model: 'openai/gpt-5.6-luna',
+          reason: 'user_cancelled',
+        },
+      }),
+    ]);
+    expect(turnCounts('ai-chat/turn-completed')).toEqual([]);
+  });
+
+  it('counts a turn whose claim moved on as superseded', async () => {
+    const { job, turnCounts } = buildJob({ totalsUpdateAffected: 0 });
+
+    await job.handle(jobData);
+
+    expect(turnCounts('ai-chat/turn-cancelled')).toEqual([
+      expect.objectContaining({
+        attributes: { model: 'openai/gpt-5.6-luna', reason: 'superseded' },
+      }),
+    ]);
+    expect(turnCounts('ai-chat/turn-completed')).toEqual([]);
+  });
+
+  it('counts an empty reply as a no_text failure exactly once', async () => {
+    const { job, turnCounts } = buildJob({
+      chatStream: createFakeChatStream({
+        parts: EMPTY_REPLY_PARTS,
+      }),
+    });
+
+    await job.handle(jobData);
+
+    expect(turnCounts('ai-chat/turn-failed')).toEqual([
+      expect.objectContaining({
+        attributes: { model: 'openai/gpt-5.6-luna', failure_phase: 'no_text' },
+      }),
+    ]);
+  });
+
+  it('leaves a stream error to the execution counter so it is not counted twice', async () => {
+    const { job, turnCounts } = buildJob({
+      streamChatRejection: new Error('provider exploded'),
+    });
+
+    await job.handle(jobData).catch(() => {});
+
+    expect(turnCounts('ai-chat/turn-failed')).toEqual([
+      expect.objectContaining({
+        attributes: expect.objectContaining({
+          model: 'openai/gpt-5.6-luna',
+          failure_phase: 'execution',
+        }),
+      }),
+    ]);
+    expect(turnCounts('ai-chat/turn-completed')).toEqual([]);
+  });
+
+  it('records exactly one outcome for every started turn', async () => {
+    const scenarios = [
+      buildJob(),
+      buildJob({ totalsUpdateAffected: 0 }),
+      buildJob({
+        chatStream: createFakeChatStream({
+          parts: PENDING_QUESTION_PARTS,
+        }),
+      }),
+      buildJob({
+        chatStream: createFakeChatStream({
+          parts: START_PARTS,
+          isAborted: true,
+        }),
+      }),
+      buildJob({ streamChatRejection: new Error('provider exploded') }),
+    ];
+
+    for (const scenario of scenarios) {
+      await scenario.job.handle(jobData).catch(() => {});
+
+      const started = scenario.turnCounts('ai-chat/turn-started').length;
+      const terminal =
+        scenario.turnCounts('ai-chat/turn-completed').length +
+        scenario.turnCounts('ai-chat/turn-cancelled').length +
+        scenario.turnCounts('ai-chat/turn-failed').length;
+
+      expect({ started, terminal }).toEqual({ started: 1, terminal: 1 });
+    }
+  });
+  it('does not count a turn twice when the final publish fails after the outcome was recorded', async () => {
+    const { job, turnCounts } = buildJob({
+      finalPublishRejection: new Error('redis is down'),
+    });
+
+    await job.handle(jobData).catch(() => {});
+
+    expect(turnCounts('ai-chat/turn-completed')).toEqual([
+      expect.objectContaining({
+        attributes: { model: 'openai/gpt-5.6-luna', outcome: 'answered' },
+      }),
+    ]);
+    expect(turnCounts('ai-chat/turn-failed')).toEqual([]);
+    expect(turnCounts('ai-chat/turn-started')).toHaveLength(1);
   });
 });

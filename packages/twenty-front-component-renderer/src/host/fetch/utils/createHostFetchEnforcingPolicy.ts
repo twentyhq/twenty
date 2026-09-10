@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { CustomError, getURLSafely, isDefined } from 'twenty-shared/utils';
+import { CustomError, getUrlSafely, isDefined } from 'twenty-shared/utils';
 
 import { resolveHostFetchRedirectMode } from '@/host/fetch/utils/resolveHostFetchRedirectMode';
 import { serializeResponseToHostFetchResult } from '@/host/fetch/utils/serializeResponseToHostFetchResult';
@@ -17,7 +17,7 @@ export const createHostFetchEnforcingPolicy = (
   );
 
   return async (input: HostFetchInput): Promise<HostFetchResult> => {
-    const requestOrigin = getURLSafely(input.url)?.origin;
+    const requestOrigin = getUrlSafely(input.url)?.origin;
 
     if (!isDefined(requestOrigin) || !allowedOriginSet.has(requestOrigin)) {
       throw new CustomError(

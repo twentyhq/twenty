@@ -6,6 +6,7 @@ import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdow
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
+import { isRecordGroupingOptionalForViewType } from '@/object-record/record-group/utils/isRecordGroupingOptionalForViewType';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
@@ -22,8 +23,8 @@ import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { ViewType } from '@/views/types/ViewType';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -37,7 +38,7 @@ import {
 import {
   MenuItem,
   MenuItemNavigate,
-  MenuItemToggle,
+  MenuItemSwitch,
 } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
@@ -87,7 +88,8 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     useGetAvailableFieldsToGroupRecordsBy();
 
   const isGroupByFieldPickerDisabled =
-    availableFieldsForGrouping.length <= 1 && viewType !== ViewType.TABLE;
+    availableFieldsForGrouping.length <= 1 &&
+    !isRecordGroupingOptionalForViewType(viewType);
 
   const isRelationGroupBy =
     isDefined(recordIndexGroupFieldMetadataItem) &&
@@ -102,9 +104,12 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     }
   }, [hiddenRecordGroupIds, currentContentId, onContentChange]);
 
+  const scopedObjectOptionsDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(OBJECT_OPTIONS_DROPDOWN_ID);
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    OBJECT_OPTIONS_DROPDOWN_ID,
+    scopedObjectOptionsDropdownId,
   );
 
   const selectableItemIdArray = [
@@ -172,13 +177,13 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
             itemId="HideEmptyGroups"
             onEnter={() => handleHideEmptyRecordGroupChange()}
           >
-            <MenuItemToggle
+            <MenuItemSwitch
               focused={selectedItemId === 'HideEmptyGroups'}
               LeftIcon={IconCircleOff}
-              onToggleChange={handleHideEmptyRecordGroupChange}
-              toggled={shouldHideEmptyGroups}
+              onCheckedChange={handleHideEmptyRecordGroupChange}
+              checked={shouldHideEmptyGroups}
               text={t`Hide empty groups`}
-              toggleSize="small"
+              size="sm"
             />
           </SelectableListItem>
         </SelectableList>

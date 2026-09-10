@@ -5,6 +5,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import {
+  EmailingDomainDriverException,
+  EmailingDomainDriverExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { UNSUBSCRIBE_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant';
 import {
   type EmailingDomainDriverInterface,
@@ -12,11 +16,16 @@ import {
   type EmailingDomainVerificationResult,
 } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import { type EmailingDomainSendEmailBatchRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-batch-request.type';
+import { type EmailingDomainSendEmailBatchResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-batch-result.type';
+import { applyReplacementTags } from 'src/engine/core-modules/emailing-domain/utils/apply-replacement-tags.util';
 import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { UnsubscribeContentService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-content.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+
+const SIMULATED_PROVIDER = { sendLatencyMs: 50, throttleFailureRatio: 0 };
 
 @Injectable()
 export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
@@ -40,24 +49,24 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
   async verifyDomain(
     input: EmailingDomainResourceInput,
   ): Promise<EmailingDomainVerificationResult> {
-    this.logger.log(
-      `[log-driver] verifyDomain(${input.domain}) → VERIFIED (instant)`,
-    );
-
-    return {
-      status: EmailingDomainStatus.VERIFIED,
-      verificationRecords: this.buildSyntheticVerificationRecords(input.domain),
-    };
+    return this.alwaysVerified('verifyDomain', input.domain);
   }
 
   async getDomainStatus(
     input: EmailingDomainResourceInput,
   ): Promise<EmailingDomainVerificationResult> {
-    this.logger.log(`[log-driver] getDomainStatus(${input.domain}) → VERIFIED`);
+    return this.alwaysVerified('getDomainStatus', input.domain);
+  }
+
+  private alwaysVerified(
+    operation: string,
+    domain: string,
+  ): EmailingDomainVerificationResult {
+    this.logger.log(`[log-driver] ${operation}(${domain}) → VERIFIED`);
 
     return {
       status: EmailingDomainStatus.VERIFIED,
-      verificationRecords: this.buildSyntheticVerificationRecords(input.domain),
+      verificationRecords: this.buildSyntheticVerificationRecords(domain),
     };
   }
 
@@ -106,9 +115,26 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
     this.logger.log(`[log-driver] cleanupDomain(${input.domain})`);
   }
 
+  private async simulateProviderCall(): Promise<void> {
+    if (SIMULATED_PROVIDER.sendLatencyMs > 0) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, SIMULATED_PROVIDER.sendLatencyMs),
+      );
+    }
+
+    if (Math.random() < SIMULATED_PROVIDER.throttleFailureRatio) {
+      throw new EmailingDomainDriverException(
+        '[log-driver] simulated provider throttling',
+        EmailingDomainDriverExceptionCode.TEMPORARY_ERROR,
+      );
+    }
+  }
+
   async sendEmail(
     input: EmailingDomainSendEmailRequest,
   ): Promise<EmailingDomainSendEmailResult> {
+    await this.simulateProviderCall();
+
     const unsubscribeBaseUrl = await this.getUnsubscribeBaseUrl(
       input.workspaceId,
     );
@@ -140,6 +166,47 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
         cc: emailToSend.cc ?? [],
         bcc: emailToSend.bcc ?? [],
       },
+    };
+  }
+
+  async sendEmailBatch(
+    input: EmailingDomainSendEmailBatchRequest,
+  ): Promise<EmailingDomainSendEmailBatchResult> {
+    await this.simulateProviderCall();
+
+    const unsubscribeBaseUrl = await this.getUnsubscribeBaseUrl(
+      input.workspaceId,
+    );
+    const batchToSend = this.unsubscribeContentService.addToBatch(
+      input,
+      unsubscribeBaseUrl,
+    );
+
+    this.logger.log(
+      `[log-driver] sendEmailBatch → ${batchToSend.recipients.length} destination(s) from ${batchToSend.from}`,
+    );
+
+    return {
+      entries: batchToSend.recipients.map((recipient, index) => {
+        const messageId = `log-${v4()}`;
+
+        this.logger.log(
+          `[log-driver] batch entry → fake messageId=${messageId}\n` +
+            `To: ${recipient.email}\n` +
+            `Subject: ${applyReplacementTags(batchToSend.template.subject, recipient.replacements)}\n` +
+            `Content Text: ${applyReplacementTags(batchToSend.template.text, recipient.replacements)}\n` +
+            `Content HTML: ${
+              isNonEmptyString(batchToSend.template.html)
+                ? applyReplacementTags(
+                    batchToSend.template.html,
+                    recipient.replacements,
+                  )
+                : '(none)'
+            }`,
+        );
+
+        return { recipientIndex: index, messageId, errorMessage: null };
+      }),
     };
   }
 

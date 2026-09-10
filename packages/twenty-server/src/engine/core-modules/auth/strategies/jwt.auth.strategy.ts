@@ -66,7 +66,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  private async validateAPIKey(
+  private async validateApiKey(
     payload: ApiKeyTokenJwtPayload,
   ): Promise<AuthContext> {
     const workspace = await this.coreEntityCacheService.get(
@@ -477,7 +477,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       payload.type === JwtTokenTypeEnum.API_KEY ||
       this.isLegacyApiKeyPayload(payload)
     ) {
-      return await this.validateAPIKey(payload);
+      return await this.validateApiKey(payload);
     }
 
     if (payload.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC) {

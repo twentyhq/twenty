@@ -12,12 +12,13 @@ import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateStep';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { IconLego, IconTrash, IconUsers } from 'twenty-ui/icon';
+import { IconLego, IconSettings, IconTrash, IconUsers } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -36,6 +37,7 @@ export const WorkflowStepFooter = ({
   const workflowId = useSidePanelWorkflowIdOrThrow();
   const {
     openWorkflowEditStepTypeInSidePanel,
+    openWorkflowStepSettingsInSidePanel,
     openWorkflowTriggerTypeInSidePanel,
   } = useSidePanelWorkflowNavigation();
   const { deleteStep } = useDeleteStep();
@@ -53,7 +55,10 @@ export const WorkflowStepFooter = ({
   const selectableItemIdArray = [
     WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.changeNode,
     ...(stepId !== TRIGGER_STEP_ID
-      ? [WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.duplicateNode]
+      ? [
+          WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.duplicateNode,
+          WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings,
+        ]
       : []),
     ...(hasViewAgentOption ? ['view-agent'] : []),
     ...(hasViewRoleOption ? ['view-role'] : []),
@@ -82,6 +87,11 @@ export const WorkflowStepFooter = ({
     deleteStep(stepId);
   };
 
+  const handleNodeSettings = () => {
+    closeDropdown(dropdownId);
+    openWorkflowStepSettingsInSidePanel({ workflowId, stepId });
+  };
+
   const handleViewAgent = () => {
     closeDropdown(dropdownId);
     if (isDefined(agentId)) {
@@ -98,9 +108,12 @@ export const WorkflowStepFooter = ({
     }
   };
 
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    dropdownId,
+    scopedDropdownId,
   );
 
   const OptionsDropdown = (
@@ -117,6 +130,22 @@ export const WorkflowStepFooter = ({
         }
         onDeleteNode={!shouldPinDeleteButton ? handleDeleteNode : undefined}
       >
+        {stepId !== TRIGGER_STEP_ID ? (
+          <SelectableListItem
+            itemId={WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings}
+            onEnter={handleNodeSettings}
+          >
+            <MenuItem
+              focused={
+                selectedItemId ===
+                WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings
+              }
+              onClick={handleNodeSettings}
+              text={t`Node settings`}
+              LeftIcon={IconSettings}
+            />
+          </SelectableListItem>
+        ) : null}
         {hasViewAgentOption ? (
           <SelectableListItem itemId="view-agent" onEnter={handleViewAgent}>
             <MenuItem

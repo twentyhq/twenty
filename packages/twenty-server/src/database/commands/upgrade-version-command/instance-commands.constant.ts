@@ -161,11 +161,28 @@ import { AddLabelToApplicationVariableFastInstanceCommand } from 'src/database/c
 import { AddUsageLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-instance-command-fast-1787821567133-add-usage-limit';
 import { MakeUserEmailCaseInsensitiveFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-fast-1787836741000-make-user-email-case-insensitive';
 import { BackfillMissingPageLayoutWidgetPositionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-slow-1787838153752-backfill-missing-page-layout-widget-positions';
+import { AddCommandMenuItemConditionalPinnedExpressionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788701640813-add-command-menu-item-conditional-pinned-expression';
+import { AddCampaignDeliveryClaimTokenIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788767400000-add-campaign-delivery-claim-token-index';
+import { AddBillingToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788340843000-add-billing-to-application';
+import { AddPricingDescriptionToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788340844000-add-pricing-description-to-application-registration';
 import { AddRecordFormPageLayoutAndFormFieldWidgetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787920209300-add-record-form-page-layout-and-form-field-widget';
 import { DropBillingCustomerCreditBalanceMicroFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787906740818-drop-billing-customer-credit-balance-micro';
 import { DropHasReachedCurrentPeriodCapFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787906740819-drop-has-reached-current-period-cap';
 import { AddTimelineActivityHappensAtFieldFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787918663364-add-timeline-activity-happens-at-field';
 import { AddPageLayoutIsFirstTabPinnedFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787929843737-add-page-layout-is-first-tab-pinned';
+import { CreateCampaignDeliveryFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788200700000-create-campaign-delivery';
+import { AddStateToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788260646460-add-state-to-application';
+import { RenameEmailingDomainPermanentlySuspendedToSandboxFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788272351966-rename-emailing-domain-permanently-suspended-to-sandbox';
+import { RelaxNavigationPayloadCheckFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788272351970-relax-navigation-payload-check';
+import { EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-slow-1788272351971-erase-object-navigation-command-menu-item-payloads';
+import { ReshapeUsageLimitPeriodFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788367160891-reshape-usage-limit-period';
+import { AddLogoToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788542613404-add-logo-to-connection-provider';
+import { AddReadabilityToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788548844925-add-readability-to-object-metadata';
+import { AddAuthFailedReasonToConnectedAccountFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788781233982-add-auth-failed-reason-to-connected-account';
+import { MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788871259040-make-billing-credit-grant-expires-at-nullable';
+import { ConvertLiveCreditGrantsToNoExpirySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1788877128693-convert-live-credit-grants-to-no-expiry';
+import { AddIsAuditLoggedToFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788885873410-add-is-audit-logged-to-field-metadata';
+import { BackfillIsAuditLoggedOnPositionFieldMetadataSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1788885873411-backfill-is-audit-logged-on-position-field-metadata';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -329,9 +346,26 @@ export const INSTANCE_COMMANDS = [
   AddUsageLimitFastInstanceCommand,
   MakeUserEmailCaseInsensitiveFastInstanceCommand,
   BackfillMissingPageLayoutWidgetPositionsSlowInstanceCommand,
+  AddBillingToApplicationFastInstanceCommand,
+  AddPricingDescriptionToApplicationRegistrationFastInstanceCommand,
   AddRecordFormPageLayoutAndFormFieldWidgetFastInstanceCommand,
   DropBillingCustomerCreditBalanceMicroFastInstanceCommand,
   DropHasReachedCurrentPeriodCapFastInstanceCommand,
   AddTimelineActivityHappensAtFieldFastInstanceCommand,
   AddPageLayoutIsFirstTabPinnedFastInstanceCommand,
+  CreateCampaignDeliveryFastInstanceCommand,
+  AddStateToApplicationFastInstanceCommand,
+  RenameEmailingDomainPermanentlySuspendedToSandboxFastInstanceCommand,
+  RelaxNavigationPayloadCheckFastInstanceCommand,
+  EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand,
+  ReshapeUsageLimitPeriodFastInstanceCommand,
+  AddLogoToConnectionProviderFastInstanceCommand,
+  AddReadabilityToObjectMetadataFastInstanceCommand,
+  AddCommandMenuItemConditionalPinnedExpressionFastInstanceCommand,
+  AddCampaignDeliveryClaimTokenIndexFastInstanceCommand,
+  AddAuthFailedReasonToConnectedAccountFastInstanceCommand,
+  MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand,
+  ConvertLiveCreditGrantsToNoExpirySlowInstanceCommand,
+  AddIsAuditLoggedToFieldMetadataFastInstanceCommand,
+  BackfillIsAuditLoggedOnPositionFieldMetadataSlowInstanceCommand,
 ];

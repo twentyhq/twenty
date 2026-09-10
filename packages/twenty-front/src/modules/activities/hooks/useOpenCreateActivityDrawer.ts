@@ -1,7 +1,5 @@
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
-import { viewableRecordNameSingularState } from '@/object-record/record-side-panel/states/viewableRecordNameSingularState';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
@@ -44,10 +42,6 @@ export const useOpenCreateActivityDrawer = ({
   const setActivityTargetableEntityArray = useSetAtomState(
     activityTargetableEntityArrayState,
   );
-  const setViewableRecordId = useSetAtomState(viewableRecordIdState);
-  const setViewableRecordNameSingular = useSetAtomState(
-    viewableRecordNameSingularState,
-  );
 
   const setIsUpsertingActivityInDB = useSetAtomState(
     isUpsertingActivityInDBState,
@@ -62,9 +56,6 @@ export const useOpenCreateActivityDrawer = ({
     targetableObjects: ActivityTargetableObject[];
     customAssignee?: WorkspaceMember;
   }) => {
-    setViewableRecordId(null);
-    setViewableRecordNameSingular(activityObjectNameSingular);
-
     const activity = await createOneActivity({
       ...(activityObjectNameSingular === CoreObjectNameSingular.Task
         ? {
@@ -117,8 +108,6 @@ export const useOpenCreateActivityDrawer = ({
       objectNameSingular: activityObjectNameSingular,
       isNewRecord: true,
     });
-
-    setViewableRecordId(activity.id);
 
     setIsUpsertingActivityInDB(false);
   };

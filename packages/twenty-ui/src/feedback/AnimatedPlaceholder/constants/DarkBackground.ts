@@ -16,4 +16,6 @@ export const DARK_BACKGROUND = {
     '/images/placeholders/dark-background/no_deleted_record_bg.png',
   noWidgets: '/images/placeholders/dark-background/no_widgets_bg.png',
   notShared: '/images/placeholders/dark-background/not_shared_bg.png',
+  noCallRecording:
+    '/images/placeholders/dark-background/no_call_recording_bg.png',
 };

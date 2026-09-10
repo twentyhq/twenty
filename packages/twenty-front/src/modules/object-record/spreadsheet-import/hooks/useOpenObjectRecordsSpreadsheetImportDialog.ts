@@ -43,6 +43,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     mutationBatchSize: SPREADSHEET_IMPORT_CREATE_RECORDS_BATCH_SIZE,
     setBatchedRecordsCount: setSpreadsheetImportCreatedRecordsProgress,
     abortController,
+    skipPostOptimisticEffect: true,
   });
 
   const openObjectRecordsSpreadsheetImportDialog = (

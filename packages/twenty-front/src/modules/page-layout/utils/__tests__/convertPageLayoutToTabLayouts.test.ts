@@ -182,7 +182,7 @@ describe('convertPageLayoutToTabLayouts', () => {
 
     const result = convertPageLayoutToTabLayouts(pageLayout);
 
-    expect(result['tab-1'].desktop[0]).toMatchObject({
+    expect(result['tab-1'].desktop![0]).toMatchObject({
       i: 'widget-no-grid-pos',
       x: 0,
       y: 0,
@@ -254,7 +254,7 @@ describe('convertPageLayoutToTabLayouts', () => {
     const richTextMinSize =
       WIDGET_SIZES[WidgetType.STANDALONE_RICH_TEXT]!.minimum;
 
-    expect(result['tab-1'].desktop[0]).toMatchObject({
+    expect(result['tab-1'].desktop![0]).toMatchObject({
       i: 'rich-text-widget',
       minW: richTextMinSize.w,
       minH: richTextMinSize.h,
@@ -323,7 +323,7 @@ describe('convertPageLayoutToTabLayouts', () => {
     const result = convertPageLayoutToTabLayouts(pageLayout);
     const iframeMinSize = WIDGET_SIZES[WidgetType.IFRAME]!.minimum;
 
-    expect(result['tab-1'].desktop[0]).toMatchObject({
+    expect(result['tab-1'].desktop![0]).toMatchObject({
       i: 'iframe-widget',
       minW: iframeMinSize.w,
       minH: iframeMinSize.h,

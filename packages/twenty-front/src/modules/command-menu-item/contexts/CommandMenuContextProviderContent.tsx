@@ -6,11 +6,15 @@ import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/comm
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
+import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
-import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
+import {
+  currentPageLayoutIdState,
+  PageLayoutIdContext,
+} from '@/page-layout/states/currentPageLayoutIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
 
@@ -32,6 +36,11 @@ export const CommandMenuContextProviderContent = ({
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const commandMenuItemsDraft = useAtomStateValue(commandMenuItemsDraftState);
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
+  const pageLayoutIdFromContext = useContext(PageLayoutIdContext);
+  const effectivePageLayoutId =
+    pageLayoutIdFromContext === undefined
+      ? currentPageLayoutId
+      : pageLayoutIdFromContext;
 
   const filteredCommandMenuItems = useMemo(() => {
     const currentObjectMetadataItemId =
@@ -48,13 +57,14 @@ export const CommandMenuContextProviderContent = ({
       )
       .filter(doesCommandMenuItemMatchPageType(commandMenuContextApi.pageType))
       .filter(doesCommandMenuItemMatchSelectionState(hasSelectedRecords))
-      .filter(doesCommandMenuItemMatchPageLayoutId(currentPageLayoutId))
+      .filter(doesCommandMenuItemMatchPageLayoutId(effectivePageLayoutId))
       .filter((item) =>
         evaluateConditionalAvailabilityExpression(
           item.conditionalAvailabilityExpression,
           commandMenuContextApi,
         ),
       )
+      .map((item) => resolveCommandMenuItemPinning(item, commandMenuContextApi))
       .sort(
         (firstItem, secondItem) => firstItem.position - secondItem.position,
       );
@@ -62,7 +72,7 @@ export const CommandMenuContextProviderContent = ({
     commandMenuContextApi,
     commandMenuItems,
     commandMenuItemsDraft,
-    currentPageLayoutId,
+    effectivePageLayoutId,
     isInPreviewMode,
   ]);
 

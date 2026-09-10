@@ -7,6 +7,7 @@ import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/u
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
@@ -37,6 +38,7 @@ export const useTriggerCommandMenuDropdown = ({
 
   const { openDropdown } = useOpenDropdown();
   const { closeSidePanelMenu } = useSidePanelMenu();
+  const workspaceSurface = useWorkspaceSurface();
   const store = useStore();
 
   const triggerCommandMenuDropdown = useCallback(
@@ -54,7 +56,9 @@ export const useTriggerCommandMenuDropdown = ({
         store.set(isRowSelectedFamilyState(recordId), true);
       }
 
-      closeSidePanelMenu();
+      if (workspaceSurface.type === 'main') {
+        closeSidePanelMenu();
+      }
 
       openDropdown({
         dropdownComponentInstanceIdFromProps: commandMenuDropdownId,
@@ -67,6 +71,7 @@ export const useTriggerCommandMenuDropdown = ({
       openDropdown,
       commandMenuDropdownId,
       store,
+      workspaceSurface.type,
     ],
   );
 

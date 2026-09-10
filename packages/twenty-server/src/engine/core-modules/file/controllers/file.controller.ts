@@ -100,6 +100,7 @@ export class FileController {
     try {
       await pipeline(fileResponse.stream, res);
     } catch (error) {
+      fileResponse.stream.destroy();
       this.logger.error(
         'Application registration file stream failed mid-transfer',
         { error },
@@ -176,6 +177,7 @@ export class FileController {
     try {
       await pipeline(fileResponse.stream, res);
     } catch (error) {
+      fileResponse.stream.destroy();
       this.logger.error('Public asset stream failed mid-transfer', { error });
 
       if (!res.headersSent) {
@@ -252,6 +254,7 @@ export class FileController {
     try {
       await pipeline(fileResponse.stream, res);
     } catch (error) {
+      fileResponse.stream.destroy();
       this.logger.error('File-by-id stream failed mid-transfer', { error });
 
       if (!res.headersSent) {

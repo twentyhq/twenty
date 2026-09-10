@@ -1,17 +1,16 @@
-import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
-import { type UsageLimitDefinition } from 'src/engine/core-modules/usage-limit/types/usage-limit-definition.type';
+import { type UsageLimitDefinitions } from 'src/engine/core-modules/usage-limit/types/usage-limit-definition.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
 export const USAGE_LIMIT_DEFINITIONS: Record<
   UsageResourceType,
-  Partial<Record<LimitKind, UsageLimitDefinition>>
+  UsageLimitDefinitions
 > = {
   [UsageResourceType.API]: {
     speed: {
       allowedOperationTypes: [UsageOperationType.API_REQUEST],
       allowedSpenderTypes: ['apiKey', 'application'],
-      fallbacks: [
+      defaults: [
         {
           spenderType: 'apiKey',
           counterScope: 'perWorkspace',
@@ -36,10 +35,68 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
       ],
     },
   },
-  [UsageResourceType.AI]: {},
+  [UsageResourceType.AI]: {
+    quota: {
+      allowedOperationTypes: [
+        UsageOperationType.AI_CHAT_TOKEN,
+        UsageOperationType.AI_WORKFLOW_TOKEN,
+        UsageOperationType.WEB_SEARCH,
+      ],
+      allowedSpenderTypes: [
+        'workspace',
+        'userWorkspace',
+        'apiKey',
+        'application',
+        'agent',
+      ],
+      allowedMeters: ['creditsUsedMicro', 'quantity'],
+    },
+  },
   [UsageResourceType.WORKFLOW]: {},
   [UsageResourceType.APP]: {},
   [UsageResourceType.STORAGE]: {},
   [UsageResourceType.LOGIC_FUNCTION]: {},
-  [UsageResourceType.EMAIL]: {},
+  [UsageResourceType.EMAIL]: {
+    speed: {
+      allowedOperationTypes: [UsageOperationType.EMAIL_SEND],
+      allowedSpenderTypes: ['workspace'],
+      // Two buckets, and a send has to fit both. The workspace one keeps a
+      // single tenant's campaign from spending the whole instance budget; the
+      // server-wide one is what actually protects the provider account. The
+      // narrower scope is declared first so it names the scope when a refusal
+      // reports which limit was hit.
+      defaults: [
+        {
+          spenderType: 'workspace',
+          counterScope: 'perWorkspace',
+          limitValueConfigVariable: 'EMAIL_SEND_WORKSPACE_RATE_LIMITING_LIMIT',
+          windowMsConfigVariable:
+            'EMAIL_SEND_WORKSPACE_RATE_LIMITING_TTL_IN_MS',
+          isOverridable: true,
+        },
+        {
+          spenderType: 'workspace',
+          counterScope: 'crossWorkspace',
+          limitValueConfigVariable: 'EMAIL_SEND_RATE_LIMITING_LIMIT',
+          windowMsConfigVariable: 'EMAIL_SEND_RATE_LIMITING_TTL_IN_MS',
+          isOverridable: false,
+        },
+      ],
+    },
+  },
+  [UsageResourceType.WEBHOOK]: {
+    speed: {
+      allowedOperationTypes: [UsageOperationType.WEBHOOK_CALL],
+      allowedSpenderTypes: ['workspace'],
+      defaults: [
+        {
+          spenderType: 'workspace',
+          counterScope: 'perWorkspace',
+          limitValueConfigVariable: 'WEBHOOK_CALL_RATE_LIMITING_LIMIT',
+          windowMsConfigVariable: 'WEBHOOK_CALL_RATE_LIMITING_TTL_IN_MS',
+          isOverridable: true,
+        },
+      ],
+    },
+  },
 };

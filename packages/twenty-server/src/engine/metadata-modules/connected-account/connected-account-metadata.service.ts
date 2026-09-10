@@ -17,6 +17,7 @@ import {
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
+import { type ConnectedAccountWithoutCredentials } from 'src/engine/metadata-modules/connected-account/types/connected-account-without-credentials.type';
 import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -38,6 +39,38 @@ export class ConnectedAccountMetadataService {
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
+
+  async findUsableByCaller({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<ConnectedAccountWithoutCredentials[]> {
+    const connectedAccounts = await this.repository.find({
+      where: { workspaceId, archivedAt: IsNull() },
+      order: { createdAt: 'ASC', id: 'ASC' },
+      select: {
+        id: true,
+        handle: true,
+        handleAliases: true,
+        provider: true,
+        name: true,
+        visibility: true,
+        userWorkspaceId: true,
+      },
+    });
+
+    if (!isDefined(userWorkspaceId)) {
+      return connectedAccounts.filter(
+        (connectedAccount) => connectedAccount.visibility === 'workspace',
+      );
+    }
+
+    return connectedAccounts.filter((connectedAccount) =>
+      isConnectedAccountUsableByCaller({ connectedAccount, userWorkspaceId }),
+    );
+  }
 
   async findByUserWorkspaceId({
     userWorkspaceId,
@@ -246,17 +279,25 @@ export class ConnectedAccountMetadataService {
       `WorkspaceId: ${workspaceId} Deleting connected account ${id} with ${messageChannels.length} message channel(s) and ${calendarChannels.length} calendar channel(s)`,
     );
 
-    await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
-
-    await this.repository.delete({ id, workspaceId });
-
     if (isDefined(connectedAccount.connectionProviderId)) {
-      await this.connectionProviderLifecycleHookService.dispatchOnDisconnect({
+      await this.connectionProviderLifecycleHookService.runOnDisconnect({
         connectionProviderId: connectedAccount.connectionProviderId,
         workspaceId,
         connectedAccountId: id,
       });
     }
+
+    // The hook may have refreshed the tokens through getConnection, and an
+    // overlapping delete may already have removed the row.
+    const latestConnectedAccount = await this.repository.findOne({
+      where: { id, workspaceId },
+    });
+
+    if (isDefined(latestConnectedAccount)) {
+      await this.appOAuthRevokeService.revokeIfApp(latestConnectedAccount);
+    }
+
+    await this.repository.delete({ id, workspaceId });
 
     this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
       MESSAGE_CHANNEL_DELETED_EVENT,

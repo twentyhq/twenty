@@ -18,7 +18,7 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
 const DEFAULT_DELAY_BETWEEN_MUTATIONS_MS = 50;
@@ -224,30 +224,46 @@ export const useIncrementalDeleteManyRecords = <T>({
     let totalDeletedCount = 0;
     const allDeletedRecordIds: string[] = [];
 
-    await incrementalFetchAndMutate(
-      async ({ recordIds, totalCount, abortSignal }) => {
-        await deleteManyRecordsBatch(recordIds, abortSignal);
+    let deletionError: unknown;
 
-        allDeletedRecordIds.push(...recordIds);
-        totalDeletedCount += recordIds.length;
+    try {
+      await incrementalFetchAndMutate(
+        async ({ recordIds, totalCount, abortSignal }) => {
+          await deleteManyRecordsBatch(recordIds, abortSignal);
 
-        updateProgress(totalDeletedCount, totalCount);
-      },
-    );
+          allDeletedRecordIds.push(...recordIds);
+          totalDeletedCount += recordIds.length;
+
+          updateProgress(totalDeletedCount, totalCount);
+        },
+      );
+    } catch (error) {
+      deletionError = error;
+    }
+
+    if (isNonEmptyArray(allDeletedRecordIds)) {
+      removeNavigationMenuItemsByTargetRecordIds(allDeletedRecordIds);
+
+      dispatchObjectRecordOperationBrowserEvent({
+        objectMetadataItem,
+        operation: {
+          type: 'delete-many',
+          deletedRecordIds: allDeletedRecordIds,
+        },
+      });
+    }
 
     await refetchAggregateQueries({
       objectMetadataNamePlural: objectMetadataItem.namePlural,
+    }).catch((refetchError: unknown) => {
+      if (!isDefined(deletionError)) {
+        throw refetchError;
+      }
     });
 
-    removeNavigationMenuItemsByTargetRecordIds(allDeletedRecordIds);
-
-    dispatchObjectRecordOperationBrowserEvent({
-      objectMetadataItem,
-      operation: {
-        type: 'delete-many',
-        deletedRecordIds: allDeletedRecordIds,
-      },
-    });
+    if (isDefined(deletionError)) {
+      throw deletionError;
+    }
 
     return totalDeletedCount;
   };

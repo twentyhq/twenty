@@ -4,31 +4,21 @@ import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Status } from 'twenty-ui/data-display';
+import { Avatar, Status } from 'twenty-ui/data-display';
 import { Info } from 'twenty-ui/feedback';
-import {
-  IconChevronRight,
-  IconPlus,
-  IconUser,
-  IconUsers,
-} from 'twenty-ui/icon';
+import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { MenuItem } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useMyAppConnectedAccounts } from '~/pages/settings/applications/hooks/useMyAppConnectedAccounts';
 import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
-import { type FrontendApplicationConnectionProvider } from '~/pages/settings/applications/types/FrontendApplicationConnectionProvider';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
   'minmax(0, 1fr) 160px 180px 36px';
@@ -43,55 +33,6 @@ const StyledTableRowsContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   padding: ${themeCssVariables.spacing[2]} 0;
 `;
-
-const AddConnectionDropdown = ({
-  provider,
-  onPick,
-}: {
-  provider: FrontendApplicationConnectionProvider;
-  onPick: (visibility: 'user' | 'workspace') => void;
-}) => {
-  const { t } = useLingui();
-  const dropdownId = `app-connection-add-${provider.id}`;
-  const { closeDropdown } = useCloseDropdown();
-
-  const handleSelect = (visibility: 'user' | 'workspace') => {
-    closeDropdown(dropdownId);
-    onPick(visibility);
-  };
-
-  return (
-    <Dropdown
-      dropdownId={dropdownId}
-      dropdownPlacement="bottom-start"
-      clickableComponent={
-        <Button
-          title={t`Add connection`}
-          Icon={IconPlus}
-          variant="secondary"
-          accent="default"
-          size="small"
-        />
-      }
-      dropdownComponents={
-        <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              text={t`Just for me`}
-              LeftIcon={IconUser}
-              onClick={() => handleSelect('user')}
-            />
-            <MenuItem
-              text={t`Workspace shared`}
-              LeftIcon={IconUsers}
-              onClick={() => handleSelect('workspace')}
-            />
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-    />
-  );
-};
 
 export const SettingsApplicationConnectionsSection = ({
   applicationId,
@@ -125,6 +66,13 @@ export const SettingsApplicationConnectionsSection = ({
             <H2Title
               title={provider.displayName}
               description={t`Manage connections used by this app to call ${provider.displayName}.`}
+              adornment={
+                <Avatar
+                  type="app"
+                  avatarUrl={getAbsoluteImageUrl(provider.logoUrl)}
+                  placeholder={provider.displayName}
+                />
+              }
             />
             {isOAuth && !isClientCredentialsConfigured && (
               <Info
@@ -207,13 +155,17 @@ export const SettingsApplicationConnectionsSection = ({
             )}
             {isClientCredentialsConfigured && (
               <StyledFooter>
-                <AddConnectionDropdown
-                  provider={provider}
-                  onPick={(visibility) =>
+                <Button
+                  title={t`Add connection`}
+                  Icon={IconPlus}
+                  variant="secondary"
+                  accent="default"
+                  size="small"
+                  onClick={() =>
                     triggerAppOAuth({
                       applicationId,
                       providerName: provider.name,
-                      visibility,
+                      visibility: 'workspace',
                     })
                   }
                 />

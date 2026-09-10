@@ -2,10 +2,11 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment } from 'react/jsx-runtime';
-import { type SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { type SidePanelNavigationStackItem } from '@/side-panel/states/sidePanelNavigationStackState';
 
 const StyledChip = styled.button<{
   withText: boolean;
@@ -58,10 +59,7 @@ export type SidePanelContextChipProps = {
   testId?: string;
   maxWidth?: string;
   forceEmptyText?: boolean;
-  page?: {
-    page: SidePanelPages;
-    pageId: string;
-  };
+  page?: SidePanelNavigationStackItem;
 };
 
 export const SidePanelContextChip = ({

@@ -100,7 +100,10 @@ const mocks: MockedResponse[] = [
                         domainName {
                           primaryLinkUrl
                           primaryLinkLabel
-                          secondaryLinks
+                          secondaryLinks {
+                            label
+                            url
+                          }
                         }
                         id
                         name

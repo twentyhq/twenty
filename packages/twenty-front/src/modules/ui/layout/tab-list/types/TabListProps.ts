@@ -7,7 +7,6 @@ export type TabListProps = {
   loading?: boolean;
   behaveAsLinks?: boolean;
   className?: string;
-  isInSidePanel?: boolean;
   componentInstanceId: string;
   onChangeTab?: (tabId: string) => void;
   rightComponent?: ReactNode;

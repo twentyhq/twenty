@@ -11,7 +11,7 @@ import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
 import { useNavigationMenuItemTitleEdit } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemTitleEdit';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
+import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TitleInput } from '@/ui/input/components/TitleInput';
@@ -25,7 +25,7 @@ const StyledClickableIconWrapper = styled.div`
 export const SidePanelFolderInfo = () => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoState);
+  const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoSelector);
   const [sidePanelShouldFocusTitleInput, setSidePanelShouldFocusTitleInput] =
     useAtomComponentState(
       sidePanelShouldFocusTitleInputComponentState,

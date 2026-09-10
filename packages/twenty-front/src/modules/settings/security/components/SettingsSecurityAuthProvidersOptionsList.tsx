@@ -3,8 +3,8 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
+import { ssoIdentitiesProvidersState } from '@/settings/security/states/ssoIdentitiesProvidersState';
 import { Select } from '@/ui/input/components/Select';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -29,7 +29,7 @@ import {
   WorkspaceDiscoverability,
 } from '~/generated-metadata/graphql';
 
-import { Toggle2FA } from './Toggle2FA';
+import { TwoFactorAuthenticationSwitch } from './TwoFactorAuthenticationSwitch';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledSettingsSecurityOptionsList = styled.div`
@@ -42,7 +42,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
   const { t } = useLingui();
 
   const { enqueueErrorSnackBar } = useSnackBar();
-  const SSOIdentitiesProviders = useAtomStateValue(SSOIdentitiesProvidersState);
+  const ssoIdentitiesProviders = useAtomStateValue(ssoIdentitiesProvidersState);
   const authProviders = useAtomStateValue(authProvidersState);
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
@@ -79,7 +79,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
       currentWorkspace.isGoogleAuthEnabled,
       currentWorkspace.isMicrosoftAuthEnabled,
       currentWorkspace.isPasswordAuthEnabled,
-      (SSOIdentitiesProviders?.length ?? 0) > 0,
+      (ssoIdentitiesProviders?.length ?? 0) > 0,
     ];
 
     if (
@@ -204,7 +204,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         <>
           <Card rounded>
             {authProviders.google === true && (
-              <SettingsOptionCardContentToggle
+              <SettingsOptionCardContentSwitch
                 Icon={IconGoogle}
                 title={t`Google`}
                 description={t`Allow logins through Google's single sign-on functionality.`}
@@ -217,7 +217,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
               />
             )}
             {authProviders.microsoft === true && (
-              <SettingsOptionCardContentToggle
+              <SettingsOptionCardContentSwitch
                 Icon={IconMicrosoft}
                 title={t`Microsoft`}
                 description={t`Allow logins through Microsoft's single sign-on functionality.`}
@@ -230,7 +230,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
               />
             )}
             {authProviders.password === true && (
-              <SettingsOptionCardContentToggle
+              <SettingsOptionCardContentSwitch
                 Icon={IconPassword}
                 title={t`Password`}
                 description={t`Allow users to sign in with an email and password.`}
@@ -241,7 +241,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
             )}
           </Card>
           <Card rounded>
-            <SettingsOptionCardContentToggle
+            <SettingsOptionCardContentSwitch
               Icon={IconLink}
               title={t`Invite by Link`}
               description={t`Allow the invitation of new users by sharing an invite link.`}
@@ -272,7 +272,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
                 />
               </SettingsOptionCardContentSelect>
             )}
-            <Toggle2FA />
+            <TwoFactorAuthenticationSwitch />
           </Card>
         </>
       )}

@@ -20,10 +20,10 @@ export class MessagingMessageParticipantService {
     participants: ParticipantWithMessageId[],
     workspaceId: string,
     transactionScope: WorkspaceTransactionScope,
-  ): Promise<void> {
+  ): Promise<MessageParticipantWorkspaceEntity[]> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(
+    return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageParticipantRepository =
           transactionScope.getRepository<MessageParticipantWorkspaceEntity>(
@@ -65,18 +65,33 @@ export class MessagingMessageParticipantService {
         const { identifiers } =
           await messageParticipantRepository.insert(participantsToCreate);
 
-        const createdParticipants = await messageParticipantRepository.find({
+        return messageParticipantRepository.find({
           where: { id: In(identifiers.map(({ id }) => id)) },
         });
+      },
+      authContext,
+      { lite: true },
+    );
+  }
 
+  public async matchMessageParticipants({
+    participants,
+    messageIds,
+    workspaceId,
+  }: {
+    participants: MessageParticipantWorkspaceEntity[];
+    messageIds: string[];
+    workspaceId: string;
+  }): Promise<void> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
         await this.matchParticipantService.matchParticipants({
-          participants: createdParticipants,
-          sourceRecordIds: [
-            ...new Set(participants.map(({ messageId }) => messageId)),
-          ],
+          participants,
+          sourceRecordIds: messageIds,
           objectMetadataName: 'messageParticipant',
           matchWith: 'workspaceMemberAndPerson',
-          transactionScope,
         });
       },
       authContext,

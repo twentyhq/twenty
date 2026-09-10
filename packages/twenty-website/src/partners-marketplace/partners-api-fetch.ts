@@ -1,17 +1,9 @@
-// Authed GET against the Twenty partners API, cached at the fetch layer (the
-// house pattern — no unstable_cache wrapper). Env-gated: throws when the env is
+// Authed GET against the Twenty partners API. Env-gated: throws when the env is
 // missing so the seam's catch can fall back to [] cleanly.
-const REVALIDATE_SECONDS = 300;
-
-type PartnersApiFetchOptions = {
-  /** Profile pages are force-dynamic; skip the Data Cache so edits show immediately. */
-  cache?: RequestCache;
-};
-
-export async function partnersApiFetch(
-  path: string,
-  options: PartnersApiFetchOptions = {},
-): Promise<unknown> {
+//
+// Never cached. Every payload embeds file URLs signed with a token that expires
+// in 24h, so a Data Cache entry outliving its tokens serves a page of 403s.
+export async function partnersApiFetch(path: string): Promise<unknown> {
   const baseUrl = process.env.TWENTY_PARTNERS_API_URL;
   const apiKey = process.env.TWENTY_PARTNERS_API_KEY;
   if (baseUrl === undefined || apiKey === undefined) {
@@ -23,9 +15,7 @@ export async function partnersApiFetch(
       Accept: 'application/json',
       Authorization: `Bearer ${apiKey}`,
     },
-    ...(options.cache === 'no-store'
-      ? { cache: 'no-store' as const }
-      : { next: { revalidate: REVALIDATE_SECONDS } }),
+    cache: 'no-store',
   });
 
   if (!response.ok) {

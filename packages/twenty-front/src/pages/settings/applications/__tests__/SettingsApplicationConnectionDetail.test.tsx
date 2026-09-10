@@ -125,6 +125,7 @@ describe('SettingsApplicationConnectionDetail', () => {
           type: 'oauth',
           name: 'google-calendar',
           displayName: 'Google Calendar',
+          logoUrl: null,
           oauth: {
             scopes: ['calendar.readonly'],
             isClientCredentialsConfigured: true,
@@ -170,12 +171,12 @@ describe('SettingsApplicationConnectionDetail', () => {
     );
 
     expect(mockOpenModal).toHaveBeenCalledWith(
-      'change-application-connection-visibility-modal-account-1',
+      'share-application-connection-with-workspace-modal-account-1',
     );
 
     fireEvent.click(
       screen.getByRole('button', {
-        name: 'Reconnect and change visibility',
+        name: 'Reconnect and share',
       }),
     );
 

@@ -1,6 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -60,17 +60,21 @@ export const validateJunctionTargetSettings = ({
     ];
   }
 
-  const targetField =
+  const findFieldByUniversalIdentifier = (universalIdentifier: string) =>
     (isDefined(remainingFlatFieldMetadataMaps)
       ? findFlatEntityByUniversalIdentifier({
-          universalIdentifier: junctionTargetFieldUniversalIdentifier,
+          universalIdentifier,
           flatEntityMaps: remainingFlatFieldMetadataMaps,
         })
       : undefined) ??
     findFlatEntityByUniversalIdentifier({
-      universalIdentifier: junctionTargetFieldUniversalIdentifier,
+      universalIdentifier,
       flatEntityMaps: flatFieldMetadataMaps,
     });
+
+  const targetField = findFieldByUniversalIdentifier(
+    junctionTargetFieldUniversalIdentifier,
+  );
 
   if (!isDefined(targetField)) {
     return [
@@ -108,9 +112,31 @@ export const validateJunctionTargetSettings = ({
     ];
   }
 
-  // MORPH_RELATION fields are polymorphic and don't require MANY_TO_ONE check
-  if (targetField.type === FieldMetadataType.MORPH_RELATION) {
-    return [];
+  // The frontend mirrors the direction and source-group checks in
+  // isValidJunctionTargetField after resolving GraphQL relation groups. These
+  // representations use different identifiers, so update both together.
+  const sourceFieldUniversalIdentifier =
+    universalFlatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier;
+  const sourceField = isDefined(sourceFieldUniversalIdentifier)
+    ? findFieldByUniversalIdentifier(sourceFieldUniversalIdentifier)
+    : undefined;
+  const targetsSourceMorphRelation =
+    isDefined(sourceField) &&
+    isDefined(sourceField.morphId) &&
+    sourceField.morphId === targetField.morphId;
+
+  if (
+    junctionTargetFieldUniversalIdentifier === sourceFieldUniversalIdentifier ||
+    targetsSourceMorphRelation
+  ) {
+    return [
+      createError(
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        'Junction source and target fields must be different',
+        msg`Junction source and target fields must be different`,
+        junctionTargetFieldUniversalIdentifier,
+      ),
+    ];
   }
 
   if (targetField.universalSettings.relationType !== RelationType.MANY_TO_ONE) {

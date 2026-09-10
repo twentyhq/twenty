@@ -1,5 +1,4 @@
-import { type ObjectLiteral } from 'typeorm';
-import { type FeatureFlagKey } from 'twenty-shared/types';
+import { type FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
@@ -13,7 +12,7 @@ export type CommonExtendedQueryRunnerContext = Omit<
 > & {
   authContext: WorkspaceAuthContext;
   rolePermissionConfig: RolePermissionConfig;
-  repository: WorkspaceRepository<ObjectLiteral>;
+  repository: WorkspaceRepository<ObjectRecord>;
   commonQueryParser: GraphqlQueryParser;
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
 };

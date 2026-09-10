@@ -1,21 +1,28 @@
+import { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/twenty-public-app-universal-identifiers.constant';
+
 export const MARKETPLACE_VETTED_APPLICATIONS: {
   universalIdentifier: string;
   position?: number;
 }[] = [
   {
-    universalIdentifier: '8da4b8b5-5edf-4880-b51f-ab6e679ec617',
+    universalIdentifier: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.CALL_RECORDER,
     position: 1,
   },
   {
-    universalIdentifier: '4a1178c1-3535-4a47-b592-231d3216b36f',
+    universalIdentifier:
+      TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.PEOPLE_DATA_LABS,
     position: 2,
   },
   {
-    universalIdentifier: '66a504cc-0a75-410e-a43f-cdeae1db1522',
+    universalIdentifier: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.LAST_CONTACT,
     position: 3,
   },
   {
-    universalIdentifier: '2b7f4a2e-9c4b-4a11-b63c-2e5e7d3f5a9a',
+    universalIdentifier: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.EXA,
     position: 4,
+  },
+  {
+    universalIdentifier: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.SLACK,
+    position: 5,
   },
 ];

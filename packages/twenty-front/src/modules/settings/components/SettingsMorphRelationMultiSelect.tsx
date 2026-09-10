@@ -21,6 +21,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -101,6 +102,8 @@ export const SettingsMorphRelationMultiSelect = ({
   hasRightElement,
   error,
 }: SettingsMorphRelationMultiSelectProps) => {
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState('');
@@ -162,10 +165,10 @@ export const SettingsMorphRelationMultiSelect = ({
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    dropdownId,
+    scopedDropdownId,
   );
 
-  const { setSelectedItemId } = useSelectableList(dropdownId);
+  const { setSelectedItemId } = useSelectableList(scopedDropdownId);
 
   const handleDropdownOpen = () => {
     if (selectedOptions.length > 0 && !searchInputValue) {

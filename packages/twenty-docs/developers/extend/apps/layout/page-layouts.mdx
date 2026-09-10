@@ -1,15 +1,16 @@
 ---
 title: Page Layouts
-description: Customize record detail pages — tabs, widgets, and where front components render — using definePageLayout and definePageLayoutTab.
+description: Customize record detail pages — tabs, widgets, and where front components render — using definePageLayout, definePageLayoutTab and definePageLayoutWidget.
 icon: 'table-columns'
 ---
 
-A **page layout** controls how a record's detail page is arranged: which tabs appear and what widgets they contain. Use `definePageLayout()` to declare a layout for an object you own, or `definePageLayoutTab()` to add a single tab to a layout that already exists (yours or a standard Twenty one).
+A **page layout** controls how a record's detail page is arranged: which tabs appear and what widgets they contain. Use `definePageLayout()` to declare a layout for an object you own, `definePageLayoutTab()` to add a single tab to a layout that already exists (yours or a standard Twenty one), or `definePageLayoutWidget()` to add a single widget to a tab that already exists.
 
 | Use case                                                               | Entity                |
 | ---------------------------------------------------------------------- | --------------------- |
 | Define the entire layout for a record page on an object you own        | `definePageLayout`    |
 | Add one tab to an existing layout (your own object, or a standard one) | `definePageLayoutTab` |
+| Add one widget to an existing tab (the Home tab of a record page, or a tab you defined) | `definePageLayoutWidget` |
 
 ## definePageLayout
 
@@ -51,7 +52,7 @@ export default definePageLayout({
 
 ### Key points
 
-- `type` is one of `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'`, `'STANDALONE_PAGE'` or `'RECORD_FORM'`. Use `'RECORD_PAGE'` to customize the detail view of a specific object. `'RECORD_FORM'` describes the creation form of an object and only accepts `FORM_FIELD` widgets, each rendering a single field; conversely, every other widget type is rejected in a `'RECORD_FORM'` layout. Twenty does not render record forms yet.
+- `type` is one of `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'`, `'STANDALONE_PAGE'` or `'RECORD_FORM'`. Use `'RECORD_PAGE'` to customize the detail view of a specific object. `'RECORD_FORM'` describes the creation form of an object and holds `FORM_FIELD` widgets, each rendering a single field. Twenty provisions one `'RECORD_FORM'` layout per object with one widget per creatable field, so you rarely need to author one; it does not render record forms yet.
 - `objectUniversalIdentifier` specifies which object this layout applies to.
 - Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode`: `VERTICAL_LIST` for record pages and standalone pages, `GRID` for dashboards, and `CANVAS` for a single widget that should fill the tab viewport. A `VERTICAL_LIST` tab stacks widgets vertically. Built-in widgets that manage their own scrolling, such as timelines, files, notes, tasks, and workflows, fill one viewport; fields, front components, graphs, and other fit-content widgets render at their content or configured height. A `GRID` tab always lays its widgets out as cards on a 12-column grid. A `CANVAS` widget has no coordinates and can omit `position`; Twenty normalizes it to `{ layoutMode: PageLayoutTabLayoutMode.CANVAS }` from the tab layout mode. If a canvas tab contains multiple widgets, they render at their content height instead of filling the viewport.
 - A widget `position` matches its tab layout mode. `VERTICAL_LIST` uses `{ layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index }`, `GRID` uses `{ layoutMode: PageLayoutTabLayoutMode.GRID, row, column, rowSpan, columnSpan }`, and `CANVAS` uses `{ layoutMode: PageLayoutTabLayoutMode.CANVAS }` or omits `position`.
@@ -59,10 +60,13 @@ export default definePageLayout({
 - Each `widget` inside a tab can render a [front component](/developers/extend/apps/layout/front-components), a relation list, or other built-in widget types.
 - A `FRONT_COMPONENT` widget can set `headerCommandMenuItemUniversalIdentifiers` to an ordered array of command menu item universal identifiers from the same app. These actions appear as icon buttons in the widget card header and keep their command-level availability and permission checks. Identifiers must be unique and must resolve when the app is installed.
 - `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
+- `yarn twenty pull` writes page layouts back with their tabs and widgets inline. A widget the export cannot carry yet, such as one showing your app's own front component or one of the deprecated `VIEW` type, is reported by pull instead of written; see [what pull does not write](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 
 ### Field widgets
 
-A `FIELD` widget renders one field of the record. For relation fields it can also embed a list of related records:
+A `FIELD` widget renders one field of the current record. For relation fields, it can also embed a view of records related to the current record.
+
+To embed a view that is not scoped to the current record, use a [record table widget](#record-table-widgets).
 
 ```ts
 {
@@ -80,7 +84,33 @@ A `FIELD` widget renders one field of the record. For relation fields it can als
 
 - `fieldMetadataId` takes the universal identifier of a field on the layout's object.
 - `fieldDisplayMode` is one of `'FIELD'`, `'CARD'`, `'EDITOR'`, `'VIEW'` or `'TABLE'`. `TABLE` embeds a view listing the records of a one-to-many relation field.
+- `isUIEditable` applies to relation fields in `TABLE` display mode. It defaults to `true`; set it to `false` to prevent editing records from the embedded table or kanban.
 - `nestedRelationFieldMetadataId` is optional and takes the universal identifier of a one-to-many relation field on the relation target object, to list records two relation hops away (e.g. a Company page listing the opportunities of the company's people, or a Person page listing the opportunities of the person's company). The first hop can be a one-to-many or a many-to-one relation field, the second must be one-to-many (junction relations are not supported), and it requires `fieldDisplayMode: 'TABLE'` — combining it with any other display mode is a validation error, since a nested widget always renders as an embedded view.
+
+### Record table widgets
+
+A `RECORD_TABLE` widget embeds a saved view on a dashboard, record page, or standalone page. The saved view determines the records, fields, filters, sorts, and layout shown in the widget.
+
+```ts
+{
+  universalIdentifier: 'd1d2d3d4-d5d6-4000-8000-000000000004',
+  title: 'Open opportunities',
+  type: 'RECORD_TABLE',
+  configuration: {
+    configurationType: 'RECORD_TABLE',
+    viewUniversalIdentifier: OPPORTUNITIES_VIEW_UNIVERSAL_IDENTIFIER,
+    recordLimit: 8,
+    isUIEditable: false,
+  },
+}
+```
+
+- `viewUniversalIdentifier` identifies the view to display.
+- `recordLimit` is optional and caps how many records the widget displays.
+- `isUIEditable` applies to table and kanban views. It enables table cell editing or kanban card editing, moving, and creation. It defaults to `true` on `RECORD_PAGE` layouts and `false` on other layouts.
+- `isUIEditable` controls UI actions only. Record permissions still apply, and view settings remain editable only in the page layout editor.
+
+Workspace admins can configure the same behavior with **Allow editing** in the [dashboard widget](/user-guide/dashboards/capabilities/widgets#editing-records) and [record page](/user-guide/layout/capabilities/record-pages#editing-related-records) editors.
 
 ## definePageLayoutTab
 
@@ -154,3 +184,58 @@ export default definePageLayoutTab({
 - `widgets` are scoped to this tab only — they reference [front components](/developers/extend/apps/layout/front-components), views, etc. exactly like widgets defined inline in `definePageLayout`.
 - `position` controls ordering against existing tabs on the targeted layout. Pick a value that places your tab where you want it relative to built-in tabs.
 - Use this instead of `definePageLayout` when you only want to add to an existing layout. Use `definePageLayout` when you own the entire layout.
+- `yarn twenty pull` writes a tab you added to a page layout you do not own back as a `definePageLayoutTab()` file, with its widgets inline, under the same limits as widgets of a `definePageLayout()`.
+
+## definePageLayoutWidget
+
+Use this when you only want to **add** a widget to a tab that already exists — for example, a front component on the Home tab of the standard Company page, or a chart on the Home tab of your own object's record page.
+
+```ts src/page-layout-widgets/example-home-widget.ts
+import {
+  definePageLayoutWidget,
+  PageLayoutTabLayoutMode,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayoutWidget({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000003',
+  pageLayoutTabUniversalIdentifier:
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.home
+      .universalIdentifier,
+  title: 'Hello World',
+  type: 'FRONT_COMPONENT',
+  position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 1000 },
+  configuration: {
+    configurationType: 'FRONT_COMPONENT',
+    frontComponentUniversalIdentifier:
+      HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+### Key points
+
+- `pageLayoutTabUniversalIdentifier` is **required** and must point to a tab that already exists at install time: a standard Twenty tab (`STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.<object>RecordPage.tabs.<tab>.universalIdentifier`), a tab of one of your own layouts, or a tab of the record page Twenty generates for one of your objects. The generated tabs have deterministic identifiers, so you can compute them:
+
+  ```ts
+  import {
+    getSystemPageLayoutTabUniversalIdentifier,
+    getSystemRecordPageLayoutUniversalIdentifier,
+  } from 'twenty-sdk/define';
+
+  const EXAMPLE_HOME_TAB_UNIVERSAL_IDENTIFIER =
+    getSystemPageLayoutTabUniversalIdentifier({
+      objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      pageLayoutUniversalIdentifier: getSystemRecordPageLayoutUniversalIdentifier({
+        objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+      }),
+      title: 'Home',
+    });
+  ```
+
+- `position` is **required**, since the tab is not part of your manifest and its layout mode cannot be inferred. Match the tab's layout mode: record page tabs are vertical lists, so use `{ layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index }` with an index above the built-in widgets (the Fields widget sits at 0).
+- `configuration` works exactly like a widget defined inline in `definePageLayout` or `definePageLayoutTab`: it references [front components](/developers/extend/apps/layout/front-components), views, fields and so on.
+- Use this instead of `definePageLayoutTab` when the tab already exists and you only want to place one widget on it. Use `definePageLayoutTab` when you want a tab of your own.
+- `yarn twenty pull` does not write `definePageLayoutWidget()` files yet. A widget on a tab your app does not own is carried by the export but reported rather than written, so keep pushing such a tree with `yarn twenty apply --no-delete`; see [what pull does not write](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).

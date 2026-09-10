@@ -66,7 +66,6 @@ const TabSelectionPreview = () => {
       />
       <TabListFromUrlOptionalEffect
         tabListIds={tabsToRenderInTabList.map((tab) => tab.id)}
-        isInSidePanel={false}
       />
       <output aria-label="Current tab URL">{hash}</output>
       <output aria-label="Active tab">{activeTabId}</output>
@@ -151,7 +150,6 @@ const meta: Meta<typeof SidePanelPageLayoutTabSettingsContent> = {
       >
         <LayoutRenderingProvider
           value={{
-            isInSidePanel: false,
             layoutType: PageLayoutType.RECORD_PAGE,
             targetRecordIdentifier: {
               id: RECORD_ID,

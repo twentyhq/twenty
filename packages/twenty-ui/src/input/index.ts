@@ -7,7 +7,6 @@
  *                              |___/
  */
 
-export { AdvancedSettingsToggle } from './AdvancedSettingsToggle/AdvancedSettingsToggle';
 export type { AnimatedButtonProps } from './AnimatedButton/AnimatedButton';
 export { AnimatedButton } from './AnimatedButton/AnimatedButton';
 export type { AnimatedLightIconButtonProps } from './AnimatedLightIconButton/AnimatedLightIconButton';
@@ -74,6 +73,10 @@ export { IconButtonGroup } from './IconButtonGroup/IconButtonGroup';
 export type { IconButtonWithTooltipProps } from './IconButtonWithTooltip/IconButtonWithTooltip';
 export { IconButtonWithTooltip } from './IconButtonWithTooltip/IconButtonWithTooltip';
 export { IconListViewGrip } from './IconListViewGrip/IconListViewGrip';
+export { Input } from './Input/Input';
+export type { InputProps } from './Input/types/InputProps';
+export { InputGroup } from './InputGroup/InputGroup';
+export type { InputGroupProps } from './InputGroup/types/InputGroupProps';
 export { InputHint } from './InputHint/InputHint';
 export { InputLabel } from './InputLabel/InputLabel';
 export type { InsideButtonProps } from './InsideButton/InsideButton';
@@ -105,15 +108,28 @@ export type {
   SegmentedControlProps,
 } from './SegmentedControl/SegmentedControl';
 export { SegmentedControl } from './SegmentedControl/SegmentedControl';
+export { Select } from './Select/Select';
+export type { SelectGroupLabelProps } from './Select/types/SelectGroupLabelProps';
+export type { SelectGroupProps } from './Select/types/SelectGroupProps';
+export type { SelectItemProps } from './Select/types/SelectItemProps';
+export type { SelectPopupProps } from './Select/types/SelectPopupProps';
+export type { SelectRootProps } from './Select/types/SelectRootProps';
+export type { SelectSeparatorProps } from './Select/types/SelectSeparatorProps';
+export type { SelectTriggerProps } from './Select/types/SelectTriggerProps';
+export type { SelectValueProps } from './Select/types/SelectValueProps';
 export type { SliderColor, SliderProps } from './Slider/Slider';
 export { Slider } from './Slider/Slider';
+export { Switch } from './Switch/Switch';
+export type { SwitchProps } from './Switch/types/SwitchProps';
+export type { SwitchSize } from './Switch/types/SwitchSize';
 export type { TabContentProps } from './TabButton/TabButton';
 export {
   StyledTabContainer,
   TabContent,
   TabButton,
 } from './TabButton/TabButton';
-export type { ToggleSize, ToggleProps } from './Toggle/Toggle';
-export { Toggle } from './Toggle/Toggle';
+export { Textarea } from './Textarea/Textarea';
+export type { TextareaProps } from './Textarea/types/TextareaProps';
 export type { ColorScheme } from './types/ColorScheme';
+export type { InputSize } from './types/InputSize';
 export type { SelectOption } from './types/SelectOption';

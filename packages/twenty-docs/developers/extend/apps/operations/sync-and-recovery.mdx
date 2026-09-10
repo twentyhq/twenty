@@ -17,6 +17,8 @@ For day-to-day local iteration you almost always want `yarn twenty dev`. Deployi
 | Iterate locally with live sync | `yarn twenty dev` | Watches your files and syncs on every change. |
 | Sync once and exit (CI, scripts, hooks) | `yarn twenty apply` | One build + sync, then exits. Add `--force` to skip the destructive-change confirmation. |
 | Preview changes **without applying them** | `yarn twenty plan` | Computes and prints the diff; writes nothing. |
+| Sync without deleting anything | `yarn twenty apply --no-delete` | Creates and updates only: entities that exist in the workspace but not in your source are left alone. Also accepted by `plan` and `dev`. |
+| Regenerate local source from the workspace | `yarn twenty pull` | **Experimental.** Writes the installed app back to define files. See below. |
 | Remove the app from the workspace | `yarn twenty app:uninstall` | Add `--yes` to skip the prompt. |
 | Ship a tarball to a server | `yarn twenty app:publish --private` | Requires a **strictly higher** `package.json` version — see [Publishing](/developers/extend/apps/operations/publishing). |
 | Publish to the marketplace (npm) | `yarn twenty app:publish` | — |
@@ -53,6 +55,8 @@ This is your first diagnostic: it tells you exactly which objects, fields, and l
 
 Destructive changes (`to destroy`) are listed with what they drop (e.g. `objectMetadata "auditNote" — drops the table and all its rows`) and require interactive confirmation, or `--force` in scripts.
 
+A sync deletes every entity your app owns that your source no longer declares. When a plan contains destroys it says so and points at `--no-delete`, which makes the sync additive: creates and updates are applied, nothing missing from your source is deleted, and the settings component and uninstall hook bindings of the app stay as they are when your source does not declare them. Use it when your source is intentionally partial, for example while adopting an app that was built in the UI.
+
 When a sync fails on a single entity, the error names the offending entity and its `universalIdentifier`, for example:
 
 ```text
@@ -88,8 +92,50 @@ A plan:
 - Is useful before a risky change, when reviewing an AI-generated change, or in a script that should fail if an unexpected change is about to land.
 
 <Note>
-A plan only previews **metadata** changes, and it requires the app to have been synced at least once (so the workspace knows about it). If you run it against an app that was never synced, the server reports that the app is not installed — run `yarn twenty dev` once first.
+A plan only previews **metadata** changes. It also works for an app that was never synced: the server evaluates the manifest against an empty application, so the plan lists everything your source would create.
 </Note>
+
+## Pulling an installed app back to source
+
+<Warning>
+`yarn twenty pull` is **experimental**. It covers only part of an application today, its output shape may change between releases, and it overwrites the files that define the entities it pulls. It restores published translations into `locales/`, keeping the entries whose source strings are not in your tree yet in `locales/compiled/` so that a push does not lose them. Commit your work before running it, and review the diff.
+</Warning>
+
+`yarn twenty pull` is the inverse of `apply`: it reads an application out of the workspace and writes it back as define files.
+
+```bash
+yarn twenty pull -u <universalIdentifier>
+```
+
+Pull needs an existing project — scaffold one with `npx create-twenty-app@latest` first, then pull into it. Without `-u`, pull targets the application your local `defineApplication()` file declares. Add `-v` to expand the coverage sections of the report, which then name up to 20 identifiers per metadata type instead of only the totals.
+
+**What it writes:**
+
+- the application config;
+- objects, with their fields inline;
+- fields your app added to objects it does not own;
+- authored indexes;
+- views, with their fields, field groups, filters, filter groups, sorts and groups inline;
+- view fields your app added to views it does not own, as standalone `defineViewField()` files;
+- page layouts, with their tabs and widgets inline;
+- tabs your app added to page layouts it does not own, as standalone `definePageLayoutTab()` files;
+- published translations, as `locales/<locale>.json` for the strings pull can read back from the pulled metadata and source, and `locales/compiled/<locale>.json` for the rest.
+
+Each entity goes to the file that already defines it, so a second pull rewrites only what changed on the server. New entities are placed beside existing files of their kind, and a generated name that would land on an unrelated file is qualified rather than overwriting it.
+
+**What it does not write:**
+
+- **Not exported yet** — roles and permissions, navigation, command menu items, logic functions and front components, and the stored source of your functions.
+- **Derived by the engine** — system fields, default relations, default views and backing indexes, and the default page layouts of each object. The server rebuilds them on apply. An object may still point its label identifier at one of them, as junction objects created in the UI do; the pointer is written and the build resolves it without adding a field.
+- **Placed on a default or foreign view** — filters, filter groups, sorts, groups and field groups added to an engine default view, or to a view owned by another application, have no source form yet and are reported. View fields added there are written as standalone files, since the view's identifier is known.
+- **Placed on a default or foreign page layout** — a widget added to a tab of an engine default page layout, or of a page layout owned by another application, has a source form, `definePageLayoutWidget()`, and the export carries it, but this version of pull does not write it to a file yet, so it is reported. Tabs added there are written as standalone files, since the layout's identifier is known.
+- **Widgets the export cannot carry yet** — on any layout, including your own, a widget of the deprecated `VIEW` type, a widget showing one of your app's own front components or command menu items, or a widget without a position for its tab's layout mode is reported, and the layout or tab is written without it.
+- **Workspace runtime state** — member and API-key role assignments, webhooks and per-user navigation, all excluded by design.
+- **Owned by another application** — reported, never pulled.
+
+The report at the end of a pull lists all of it, grouped by reason. Everything it names as not written is still in your workspace, so push a pulled tree back with `yarn twenty apply --no-delete` until the missing kinds are covered. A pruning `yarn twenty apply` would delete them, and `yarn twenty plan` lists exactly which.
+
+**The base file.** Pull records what it pulled in `.twenty/pull-base.json`, which is gitignored and per checkout. That file is what a later pull compares against to leave untouched the files whose entity did not change, and to delete the file of an entity that is gone from the workspace. A checkout without it simply writes everything and deletes nothing.
 
 ## Recovery ladder
 
@@ -120,6 +166,7 @@ The server serializes syncs per workspace to prevent this, but you should still 
 When something goes wrong, the metadata diff and named errors let you place the failure:
 
 - **Manifest build error** — the CLI fails before syncing (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); fix your app source.
+- **Registration ownership error** — the sync is refused because the app's `universalIdentifier` belongs to another workspace, or to no workspace at all; see [Registration ownership](/developers/extend/apps/operations/publishing#registration-ownership).
 - **Sync / migration error** — the build succeeds but applying the diff fails, naming the entity and `universalIdentifier`; fix the conflicting metadata.
 - **Dependencies size error** — the sync or install fails because the app's production `dependencies` are too large to install as a runtime layer (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); move packages your logic functions do not import at runtime (UI libraries, dev tooling) to `devDependencies`.
 - **App code runtime error** — the sync succeeds but your logic functions or components misbehave at runtime; check [function logs](/developers/extend/apps/operations/cli).

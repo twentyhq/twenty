@@ -55,18 +55,24 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
   compute({
     manifest,
     ownerFlatApplication,
+    fromAllFlatEntityMaps,
+    isLogicFunctionPrebuiltModeEnabled,
     now,
     workspaceId,
   }: {
     manifest: Manifest;
     ownerFlatApplication: FlatApplication;
+    fromAllFlatEntityMaps: AllFlatEntityMaps;
+    isLogicFunctionPrebuiltModeEnabled: boolean;
     now: string;
     workspaceId: string;
   }): AllFlatEntityMaps {
     const allUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
-    const { universalIdentifier: applicationUniversalIdentifier } =
-      ownerFlatApplication;
+    const {
+      universalIdentifier: applicationUniversalIdentifier,
+      sourceType: applicationSourceType,
+    } = ownerFlatApplication;
 
     for (const objectManifest of manifest.objects) {
       const flatObjectMetadata =
@@ -93,6 +99,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             fieldManifest: enrichedFieldManifest,
             applicationUniversalIdentifier,
             now,
+            objectLabelIdentifierFieldMetadataUniversalIdentifier:
+              objectManifest.labelIdentifierFieldMetadataUniversalIdentifier,
+            objectIsSearchable: flatObjectMetadata.isSearchable,
           },
         );
 
@@ -109,6 +118,14 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         fieldManifest: fieldManifest,
         applicationUniversalIdentifier,
         now,
+        objectLabelIdentifierFieldMetadataUniversalIdentifier:
+          allUniversalFlatEntityMaps.flatObjectMetadataMaps
+            .byUniversalIdentifier[fieldManifest.objectUniversalIdentifier]
+            ?.labelIdentifierFieldMetadataUniversalIdentifier,
+        objectIsSearchable:
+          allUniversalFlatEntityMaps.flatObjectMetadataMaps
+            .byUniversalIdentifier[fieldManifest.objectUniversalIdentifier]
+            ?.isSearchable,
       });
 
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
@@ -194,6 +211,10 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           fromLogicFunctionManifestToUniversalFlatLogicFunction({
             logicFunctionManifest,
             applicationUniversalIdentifier,
+            applicationSourceType,
+            existingFlatLogicFunctionMaps:
+              fromAllFlatEntityMaps.flatLogicFunctionMaps,
+            isPrebuiltModeEnabled: isLogicFunctionPrebuiltModeEnabled,
             now,
           }),
         universalFlatEntityMapsToMutate:
@@ -592,6 +613,29 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             allUniversalFlatEntityMaps.flatPageLayoutWidgetMaps,
         });
       }
+    }
+
+    for (const pageLayoutWidgetManifest of manifest.pageLayoutWidgets ?? []) {
+      if (
+        !isDefined(pageLayoutWidgetManifest.pageLayoutTabUniversalIdentifier)
+      ) {
+        throw new Error(
+          `Top-level pageLayoutWidget "${pageLayoutWidgetManifest.universalIdentifier}" is missing required pageLayoutTabUniversalIdentifier`,
+        );
+      }
+
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity:
+          fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+            pageLayoutWidgetManifest,
+            pageLayoutTabUniversalIdentifier:
+              pageLayoutWidgetManifest.pageLayoutTabUniversalIdentifier,
+            applicationUniversalIdentifier,
+            now,
+          }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatPageLayoutWidgetMaps,
+      });
     }
 
     for (const [key, applicationVariableManifest] of Object.entries(

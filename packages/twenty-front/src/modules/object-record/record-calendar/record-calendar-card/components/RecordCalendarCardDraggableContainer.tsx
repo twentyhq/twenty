@@ -1,3 +1,4 @@
+import { pointerIntersection } from '@dnd-kit/collision';
 import { styled } from '@linaria/react';
 
 import { RECORD_CALENDAR_CARD_DND_TYPE } from '@/object-record/record-calendar/constants/RecordCalendarCardDndType';
@@ -36,6 +37,7 @@ export const RecordCalendarCardDraggableContainer = ({
       group={calendarDay}
       type={RECORD_CALENDAR_CARD_DND_TYPE}
       accept={RECORD_CALENDAR_CARD_DND_TYPE}
+      collisionDetector={pointerIntersection}
       disabled={dragIsDisabled}
       fadeSourceWhileDragging
     >

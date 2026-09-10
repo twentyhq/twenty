@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -21,6 +22,8 @@ import {
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -45,6 +48,7 @@ const StyledContentContainer = styled.div`
 
 export const SettingsObjectDetailPage = () => {
   const navigateApp = useNavigateApp();
+  const workspaceSurface = useWorkspaceSurface();
   const { t } = useLingui();
   const { objectNamePlural = '' } = useParams();
 
@@ -65,10 +69,14 @@ export const SettingsObjectDetailPage = () => {
       objectMetadataItem,
     }) || isDDLLocked;
 
+  const tabsComponentInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
+    SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+  );
+
   const activeTabId =
     useAtomComponentStateValue(
       activeTabIdComponentState,
-      SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+      tabsComponentInstanceId,
     ) ?? SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS;
 
   const [isDeleting, setIsDeleting] = useState(false);
@@ -76,7 +84,11 @@ export const SettingsObjectDetailPage = () => {
   useEffect(() => {
     if (objectNamePlural === updatedObjectNamePlural)
       setUpdatedObjectNamePlural('');
-    if (!isDeleting && !isDefined(objectMetadataItem))
+    if (
+      workspaceSurface.type === 'main' &&
+      !isDeleting &&
+      !isDefined(objectMetadataItem)
+    )
       navigateApp(AppPath.NotFound);
   }, [
     objectMetadataItem,
@@ -85,10 +97,13 @@ export const SettingsObjectDetailPage = () => {
     updatedObjectNamePlural,
     setUpdatedObjectNamePlural,
     isDeleting,
+    workspaceSurface.type,
   ]);
 
   if (!isDefined(objectMetadataItem)) {
-    return null;
+    return workspaceSurface.type === 'side-panel' ? (
+      <WorkspaceRouteUnavailable />
+    ) : null;
   }
 
   const tabs = [
@@ -178,9 +193,7 @@ export const SettingsObjectDetailPage = () => {
       secondaryBar={
         <SettingsTabBar
           tabs={tabs}
-          componentInstanceId={
-            SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
-          }
+          componentInstanceId={tabsComponentInstanceId}
         />
       }
     >

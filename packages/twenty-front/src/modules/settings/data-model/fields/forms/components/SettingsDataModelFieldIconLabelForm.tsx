@@ -8,7 +8,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { AdvancedSettingsContentWrapperWithDot } from '@/settings/components/AdvancedSettingsContentWrapperWithDot';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { getErrorMessageFromError } from '@/settings/data-model/fields/forms/utils/errorMessages';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -214,7 +214,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                                 />
                                 <AppTooltip
                                   anchorSelect="#info-circle-id-name"
-                                  content={apiNameTooltipText}
+                                  title={apiNameTooltipText}
                                   offset={5}
                                   noArrow
                                   place="bottom"
@@ -241,7 +241,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                       dotPosition="centered"
                     >
                       <Card rounded>
-                        <SettingsOptionCardContentToggle
+                        <SettingsOptionCardContentSwitch
                           Icon={IconRefresh}
                           title={t`Synchronize Field Label and API Name`}
                           description={t`Should changing a field's label also change the API name?`}

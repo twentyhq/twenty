@@ -27,6 +27,7 @@ describe('HOW_TO_APPLY_STEPS', () => {
     expect(text).toMatch(/Won/);
     expect(text).toMatch(/Declined/);
     expect(text).toMatch(/do not set those/i);
+    expect(text).toMatch(/My Applications still shows the brief/i);
   });
 
   it('names unpitchable states as the complement of PITCHABLE_STATES', () => {

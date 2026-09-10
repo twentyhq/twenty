@@ -62,12 +62,12 @@ export const WorkflowDiagramStepNodeEditable = ({
     setWorkflowSelectedNode(id);
 
     if (isDefined(workflowVisualizerWorkflowId)) {
-      openWorkflowEditStepInSidePanel(
-        workflowVisualizerWorkflowId,
-        data.name,
-        getIcon(getWorkflowNodeIconKey(data)),
-        id,
-      );
+      openWorkflowEditStepInSidePanel({
+        workflowId: workflowVisualizerWorkflowId,
+        title: data.name,
+        icon: getIcon(getWorkflowNodeIconKey(data)),
+        stepId: id,
+      });
     }
   };
 

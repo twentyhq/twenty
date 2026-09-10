@@ -10,6 +10,7 @@ Every app must have exactly one `defineApplication` call. It declares:
 - **Permissions** — which role its logic functions and front components run under.
 - **Variables** *(optional)* — key–value pairs exposed to your code as environment variables.
 - **Pre-install / post-install / uninstall hooks** *(optional)* — see [Logic Functions](/developers/extend/apps/logic/logic-functions).
+- **Billing** *(optional)* — `billing.recurring` for subscription fees the platform raises automatically, `billing.operations` for what your app charges credits for, and `billing.description` for the marketplace; see [Charging Credits](/developers/extend/apps/logic/credits).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -31,7 +32,7 @@ export default defineApplication({
 ```
 
 Notes:
-- `universalIdentifier` fields are deterministic IDs you own. Generate them once and keep them stable across syncs.
+- `universalIdentifier` fields are deterministic IDs you own. Generate them once and keep them stable across syncs. The application's own `universalIdentifier` is unique across the whole instance and is bound to the workspace that owns its registration, so only that workspace can sync the app — see [Registration ownership](/developers/extend/apps/operations/publishing#registration-ownership).
 - `applicationVariables` accept an optional `label` — a user-friendly name displayed in the app's settings page instead of the raw variable key.
 - `applicationVariables` become environment variables for your functions and front components. In logic functions (server-side), they are available as `process.env.VARIABLE_NAME`. In front components, use `getApplicationVariable('VARIABLE_NAME')` from `twenty-sdk/front-component`. Variables marked with `isSecret: true` are only injected into logic functions. Front components receive only non-secret variables.
 - The default role is detected automatically from the role file marked with [`defineApplicationRole()`](/developers/extend/apps/config/roles) — you do not need to reference it from `defineApplication()`.
@@ -115,6 +116,7 @@ If you plan to [publish your app](/developers/extend/apps/operations/publishing)
 | `logo` | Path to your app logo bundled in `public/` (e.g., `public/logo.png`) |
 | `galleryImages` | Array of gallery image paths bundled in `public/` (e.g., `public/screenshot-1.png`) |
 | `aboutDescription` | Longer markdown description for the "About" tab. If omitted, the marketplace uses the package's `README.md` from npm |
+| `billing.description` | What the app costs, in one short friendly line shown next to the install button (e.g. `$0.02 per minute recorded`). Set it if your app [charges credits](/developers/extend/apps/logic/credits) |
 | `websiteUrl` | Link to your website |
 | `termsUrl` | Link to terms of service |
 | `emailSupport` | Support email address |

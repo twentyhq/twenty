@@ -77,10 +77,10 @@ export class EmailingDomainResolver {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
 
     const emailingDomain =
-      await this.emailingDomainService.verifyEmailingDomain(
-        currentWorkspace,
-        id,
-      );
+      await this.emailingDomainService.verifyEmailingDomain({
+        workspaceId: currentWorkspace.id,
+        emailingDomainId: id,
+      });
 
     return emailingDomain;
   }

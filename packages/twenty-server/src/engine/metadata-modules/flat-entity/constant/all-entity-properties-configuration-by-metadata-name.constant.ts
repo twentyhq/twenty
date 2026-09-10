@@ -92,6 +92,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    isSearchable: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isAuditLogged: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     label: {
       toCompare: true,
       toStringify: false,
@@ -259,6 +269,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     writability: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    readability: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
@@ -1242,6 +1257,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    conditionalPinnedExpression: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     availabilityObjectMetadataId: {
       toCompare: true,
       toStringify: false,
@@ -1839,6 +1859,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    logo: { toCompare: true, toStringify: false, universalProperty: undefined },
     type: { toCompare: true, toStringify: false, universalProperty: undefined },
     oauthConfig: {
       toCompare: true,

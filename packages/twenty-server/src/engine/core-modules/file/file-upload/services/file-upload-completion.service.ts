@@ -1,28 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { Readable } from 'stream';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_CONTENT_SNIFF_BYTE_COUNT } from 'src/engine/core-modules/file/file-upload/constants/file-content-sniff.constant';
+import { MAX_SANITIZABLE_SVG_BYTES } from 'src/engine/core-modules/file/file-upload/constants/max-sanitizable-svg-size.constant';
 import {
   FileUploadException,
   FileUploadExceptionCode,
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { type BatchFileResult } from 'src/engine/core-modules/file/file-upload/types/batch-file-result.type';
+import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
+import { buildSvgTooLargeException } from 'src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util';
 import { toBatchErrorMessage } from 'src/engine/core-modules/file/file-upload/utils/to-batch-error-message.util';
-import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import {
+  ANY_MIME_TYPE,
+  fileFolderConfigs,
+} from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { readReadablePrefix } from 'src/utils/read-readable-prefix';
+import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 export type BatchCompleteUploadRequest = {
@@ -42,6 +49,8 @@ type CompletedUploadedFile = FileDTO & Pick<FileEntity, 'mimeType'>;
 
 @Injectable()
 export class FileUploadCompletionService {
+  private readonly logger = new Logger(FileUploadCompletionService.name);
+
   constructor(
     private readonly fileStorageService: FileStorageService,
     @InjectWorkspaceScopedRepository(FileEntity)
@@ -77,8 +86,20 @@ export class FileUploadCompletionService {
     file: FileEntity;
     storageLocation: FileUploadStorageLocation;
   }): Promise<CompletedUploadedFile> {
+    const pendingLocation: FileUploadStorageLocation = {
+      ...storageLocation,
+      resourcePath: buildPendingUploadResourcePath({
+        fileId: file.id,
+        resourcePath: storageLocation.resourcePath,
+      }),
+    };
+
+    // Only the quarantined object is ever evidence of this upload. Falling
+    // back to the final path would let an object left there by a previous
+    // upload of the same resource path complete an upload that never
+    // delivered any bytes.
     const metadata =
-      await this.fileStorageService.getFileMetadata(storageLocation);
+      await this.fileStorageService.getFileMetadata(pendingLocation);
 
     if (!isDefined(metadata)) {
       throw new FileUploadException(
@@ -103,23 +124,53 @@ export class FileUploadCompletionService {
     }
 
     const mimeType = await this.detectUploadedMimeTypeOrThrow({
-      ...storageLocation,
+      ...pendingLocation,
       filename: file.path,
     });
 
-    this.assertMimeTypeAllowedForFolder(storageLocation.fileFolder, mimeType);
+    this.assertMimeTypeAllowedForFolder(pendingLocation.fileFolder, mimeType);
 
-    const size = await this.sanitizeUploadedFileIfNeeded({
-      storageLocation,
+    const { size, checksum } = await this.sanitizeUploadedFileIfNeeded({
+      storageLocation: pendingLocation,
       mimeType,
-      size: metadata.size,
+      metadata,
     });
 
-    await this.fileRepository.update(
+    // The presigned PUT stays usable until it expires, so the quarantined
+    // object can still be overwritten between the sniff above and this move.
+    // Promoting only the version that was inspected is what makes the
+    // recorded mimeType describe the bytes that end up at the final path.
+    await this.fileStorageService.move({
+      from: pendingLocation,
+      to: storageLocation,
+      ifMatchChecksum: checksum,
+    });
+
+    const { affected } = await this.fileRepository.update(
       workspaceId,
       { id: file.id },
       { status: FILE_STATUS.UPLOADED, mimeType, size },
     );
+
+    // The cleanup cron claims a stale PENDING row by deleting it, then deletes
+    // its objects, so losing the row here means it won. The promoting copy may
+    // have landed after its sweep and be orphaned; it is deliberately left
+    // there rather than rolled back, because this path cannot prove the object
+    // is still the one it wrote, and deleting a later upload's bytes is far
+    // worse than leaking one object.
+    if (affected === 0) {
+      this.logger.warn(
+        `File ${file.id} was reaped while completing; the object promoted to "${file.path}" may be orphaned`,
+      );
+
+      throw new FileUploadException(
+        `File ${file.id} was reaped while its upload was being completed`,
+        FileUploadExceptionCode.FILE_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`This upload expired before it was confirmed. Please upload the file again.`,
+        },
+      );
+    }
 
     return {
       id: file.id,
@@ -152,17 +203,13 @@ export class FileUploadCompletionService {
     resourcePath,
     filename,
   }: FileUploadStorageLocation & { filename: string }): Promise<string> {
-    const stream = await this.fileStorageService.readFile({
+    const prefix = await this.fileStorageService.readFilePrefix({
       fileFolder,
       applicationUniversalIdentifier,
       workspaceId,
       resourcePath,
+      byteCount: FILE_CONTENT_SNIFF_BYTE_COUNT,
     });
-
-    const prefix = await readReadablePrefix(
-      stream,
-      FILE_CONTENT_SNIFF_BYTE_COUNT,
-    );
 
     const { mimeType } = await extractFileInfoOrThrow({
       file: prefix,
@@ -178,7 +225,10 @@ export class FileUploadCompletionService {
   ): void {
     const { allowedMimeTypes } = fileFolderConfigs[fileFolder];
 
-    if (!allowedMimeTypes || allowedMimeTypes.includes(mimeType)) {
+    if (
+      allowedMimeTypes === ANY_MIME_TYPE ||
+      allowedMimeTypes.includes(mimeType)
+    ) {
       return;
     }
 
@@ -194,19 +244,44 @@ export class FileUploadCompletionService {
   private async sanitizeUploadedFileIfNeeded({
     storageLocation,
     mimeType,
-    size,
+    metadata,
   }: {
     storageLocation: FileUploadStorageLocation;
     mimeType: string;
-    size: number;
-  }): Promise<number> {
+    metadata: FileStorageMetadata;
+  }): Promise<FileStorageMetadata> {
+    const { size } = metadata;
+
     if (mimeType !== 'image/svg+xml') {
-      return size;
+      return metadata;
+    }
+
+    if (size > MAX_SANITIZABLE_SVG_BYTES) {
+      throw buildSvgTooLargeException(
+        `storage reports ${size} bytes, above the ${MAX_SANITIZABLE_SVG_BYTES} byte limit`,
+      );
     }
 
     const stream = await this.fileStorageService.readFile(storageLocation);
+
+    let file: Buffer;
+
+    try {
+      file = await streamToBuffer(stream, MAX_SANITIZABLE_SVG_BYTES);
+    } catch (error) {
+      if (error instanceof StreamSizeExceededError) {
+        // Deliberately does not quote `size`: storage understated it, so
+        // repeating it here would contradict the failure being reported.
+        throw buildSvgTooLargeException(
+          `content exceeds the ${MAX_SANITIZABLE_SVG_BYTES} byte limit`,
+        );
+      }
+
+      throw error;
+    }
+
     const sanitizedFile = sanitizeFile({
-      file: await streamToBuffer(stream),
+      file,
       ext: 'svg',
       mimeType,
     });
@@ -221,6 +296,30 @@ export class FileUploadCompletionService {
       mimeType,
     });
 
-    return sanitizedBuffer.length;
+    // Rewriting the object gives it a new version identity, so the checksum
+    // read before sanitizing would no longer match on the promoting copy.
+    const sanitizedMetadata =
+      await this.fileStorageService.getFileMetadata(storageLocation);
+
+    // Returning no identity here would silently downgrade that copy to an
+    // unconditional one, so a backend that reported one before the rewrite
+    // has to report one after it.
+    if (
+      !isDefined(sanitizedMetadata) ||
+      (isDefined(metadata.checksum) && !isDefined(sanitizedMetadata.checksum))
+    ) {
+      throw new FileUploadException(
+        `Could not read back the sanitized SVG at "${storageLocation.resourcePath}"`,
+        FileUploadExceptionCode.STORAGE_INCONSISTENT,
+        {
+          userFriendlyMessage: msg`File storage did not confirm the processed file. Please retry.`,
+        },
+      );
+    }
+
+    return {
+      size: sanitizedBuffer.length,
+      checksum: sanitizedMetadata.checksum,
+    };
   }
 }

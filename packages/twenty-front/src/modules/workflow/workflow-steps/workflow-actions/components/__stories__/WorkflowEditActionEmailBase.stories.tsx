@@ -23,6 +23,7 @@ const mockedConnectedAccounts = [
     handle: 'tim@apple.dev',
     provider: 'google',
     authFailedAt: null,
+    authFailedReason: null,
     archivedAt: null,
     scopes: ['email', 'calendar'],
     handleAliases: ['sales@apple.dev'],
@@ -59,7 +60,7 @@ const DEFAULT_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: false,
+        value: 0,
       },
       continueOnFailure: {
         value: false,
@@ -89,7 +90,7 @@ const CONFIGURED_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: true,
+        value: 3,
       },
       continueOnFailure: {
         value: false,
@@ -119,7 +120,7 @@ const DEFAULT_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: false,
+        value: 0,
       },
       continueOnFailure: {
         value: false,
@@ -149,7 +150,7 @@ const VARIABLE_SENDER_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: false,
+        value: 0,
       },
       continueOnFailure: {
         value: false,
@@ -179,7 +180,7 @@ const VARIABLE_SENDER_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: false,
+        value: 0,
       },
       continueOnFailure: {
         value: false,

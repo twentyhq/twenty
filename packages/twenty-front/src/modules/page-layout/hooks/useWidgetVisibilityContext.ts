@@ -1,7 +1,9 @@
+import { useHiddenWorkspaceWorkflowRunRelationFields } from '@/object-core/workflows/hooks/useHiddenWorkspaceWorkflowRunRelationFields';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,20 +15,30 @@ import { useIsMobile } from 'twenty-ui/utilities';
 // widgets does this tab render".
 export const useWidgetVisibilityContext = (): WidgetVisibilityContext => {
   const isMobile = useIsMobile();
-  const { isInSidePanel, targetRecordIdentifier } = useLayoutRenderingContext();
+  const { targetRecordIdentifier } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const recordStore = useAtomFamilyStateValue(
     recordStoreFamilyState,
     targetRecordIdentifier?.id ?? '',
   );
 
+  // Remove with the workspace workflow and workflowVersion objects, once the
+  // core migration owns them.
+  const hiddenFieldMetadataIdsOrNames =
+    useHiddenWorkspaceWorkflowRunRelationFields(
+      targetRecordIdentifier?.targetObjectNameSingular,
+    );
+
   return useMemo(
-    () =>
-      buildWidgetVisibilityContext({
+    () => ({
+      ...buildWidgetVisibilityContext({
         isMobile,
         isInSidePanel,
         targetRecord: isDefined(recordStore) ? recordStore : undefined,
       }),
-    [isMobile, isInSidePanel, recordStore],
+      hiddenFieldMetadataIdsOrNames,
+    }),
+    [isMobile, isInSidePanel, recordStore, hiddenFieldMetadataIdsOrNames],
   );
 };

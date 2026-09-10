@@ -427,6 +427,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
         },
         "viewFields": {
+          "calendarEventTargets": {
+            "universalIdentifier": "ccfb6671-0211-56d6-a5bc-d91c1f0cb5bc",
+          },
           "conferenceLink": {
             "universalIdentifier": "a4520a9a-427d-5fca-af4b-9b7fc83be97a",
           },
@@ -1054,9 +1057,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "deletedAt": {
         "universalIdentifier": "918cb351-2490-540b-b02d-e6052042dddc",
       },
-      "deliveryStatus": {
-        "universalIdentifier": "209254fa-2b89-429d-a72a-c401c4bd5a78",
-      },
       "headerMessageId": {
         "universalIdentifier": "20202020-72b5-416d-aed8-b55609067d01",
       },
@@ -1101,6 +1101,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "indexes": {
+      "headerMessageIdIndex": {
+        "universalIdentifier": "0904b3e4-6052-4a8d-bf41-f12a27c7e34a",
+      },
       "messageCampaignIdIndex": {
         "universalIdentifier": "79e777ca-7008-46c5-b3a6-3108b7c7dfb6",
       },
@@ -1158,6 +1161,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "deletedAt": {
         "universalIdentifier": "da77cebd-4e72-5568-b808-027e21f748e8",
       },
+      "deliveredCount": {
+        "universalIdentifier": "f4ee1d33-7379-42fe-ad63-e023449baea6",
+      },
       "failedCount": {
         "universalIdentifier": "d373fcd7-b1ce-4c77-8031-a5785c475028",
       },
@@ -1182,6 +1188,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "recipients": {
         "universalIdentifier": "05a3271c-5b91-493c-8f30-2d27b31d019e",
       },
+      "scheduledAt": {
+        "universalIdentifier": "0b281092-f5a5-4dd6-969b-5229f6620071",
+      },
       "searchVector": {
         "universalIdentifier": "f4cf203c-6ef6-561f-864c-5532e07f94ad",
       },
@@ -1190,6 +1199,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "sentCount": {
         "universalIdentifier": "2f333d2b-37b8-4ddc-ad0d-c07c6ce066ad",
+      },
+      "skippedCount": {
+        "universalIdentifier": "a1f4c6d2-5e8b-4a37-9c60-31b7f0d2a984",
       },
       "status": {
         "universalIdentifier": "c7117256-3de6-48e1-87df-c99c32bad610",
@@ -1235,6 +1247,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "createdAt": {
             "universalIdentifier": "88484379-8afd-5f7c-ab3c-7d937bb7ed13",
           },
+          "deliveredCount": {
+            "universalIdentifier": "5b202e1b-0267-5c56-a039-2434d9eeb35b",
+          },
           "failedCount": {
             "universalIdentifier": "2f44ac38-194f-56a7-bd94-a292db4bc210",
           },
@@ -1250,11 +1265,17 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "recipients": {
             "universalIdentifier": "40f278c1-2716-5324-8035-c14ea62a4eb7",
           },
+          "scheduledAt": {
+            "universalIdentifier": "047b0a55-9d35-5679-9783-5b58db81d9fc",
+          },
           "sentAt": {
             "universalIdentifier": "a9389297-3927-5364-8c9d-4bcb8039020e",
           },
           "sentCount": {
             "universalIdentifier": "e55b655a-038e-5257-ab2c-f2966900d2de",
+          },
+          "skippedCount": {
+            "universalIdentifier": "9ab64cf1-133e-56a4-8eda-e33a4bc8aba9",
           },
           "status": {
             "universalIdentifier": "68714967-d906-5082-af8c-2791705ce682",
@@ -1278,14 +1299,23 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "complainedCount": {
             "universalIdentifier": "7188a9aa-4821-5ae6-adec-642a7aca271b",
           },
+          "deliveredCount": {
+            "universalIdentifier": "8ead247b-28bb-535c-867c-e912366f68f9",
+          },
           "failedCount": {
             "universalIdentifier": "a46efdb6-a451-5dfe-bd85-a5b9a6a0306a",
+          },
+          "scheduledAt": {
+            "universalIdentifier": "b4789064-9ec6-5200-8017-30c47583a7f1",
           },
           "sentAt": {
             "universalIdentifier": "4de342aa-3734-5dfd-9612-88d3e7f4b808",
           },
           "sentCount": {
             "universalIdentifier": "46bd8f8e-4053-5418-9abc-e67e0842701b",
+          },
+          "skippedCount": {
+            "universalIdentifier": "87b7b9db-3692-5c0a-af1b-e28530f24d82",
           },
           "status": {
             "universalIdentifier": "246db7b1-e241-5d06-87df-99af5d4ba9bc",
@@ -1509,6 +1539,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "deletedAt": {
         "universalIdentifier": "717071cc-9630-5fe6-8d6a-22d4f0ae0d43",
       },
+      "description": {
+        "universalIdentifier": "2484463a-12e0-411e-9586-81892bd7721c",
+      },
       "id": {
         "universalIdentifier": "1bb14df7-602a-542c-b26e-c63f7454a7ee",
       },
@@ -1549,6 +1582,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "createdAt": {
             "universalIdentifier": "69d178f4-f4b8-5bc2-a01b-bfc21f3a753a",
+          },
+          "description": {
+            "universalIdentifier": "1169ccfe-9136-5574-96d4-5a0855316cd4",
           },
           "members": {
             "universalIdentifier": "8e64ce89-0910-58df-a896-ccbe514f3913",
@@ -1602,6 +1638,25 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "universalIdentifier": "27773d24-8ce3-40f8-aa6c-1f590f2c08d2",
+    "views": {
+      "allMessageListMembers": {
+        "universalIdentifier": "3644ee45-c77f-5d55-a358-b982e0bfcb24",
+        "viewFields": {
+          "createdAt": {
+            "universalIdentifier": "a682eecd-e89c-5101-b3e2-b4d8153e2e75",
+          },
+          "id": {
+            "universalIdentifier": "9b3e754c-a529-5e1b-9da2-fc72bbd3af1e",
+          },
+          "list": {
+            "universalIdentifier": "fa1c5fad-d1e0-5aaf-8dfa-6f3c01c99463",
+          },
+          "person": {
+            "universalIdentifier": "d3bd59ad-04b8-55b1-8322-d7bd90be4064",
+          },
+        },
+      },
+    },
   },
   "messageParticipant": {
     "fields": {
@@ -1941,34 +1996,16 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "general": {
             "universalIdentifier": "6e673f29-b3c9-58be-b830-352cc1274806",
           },
-          "system": {
-            "universalIdentifier": "f8b067db-b793-5b4e-b6c6-5b7884d436e0",
-          },
         },
         "viewFields": {
           "attachments": {
             "universalIdentifier": "0417604b-fe0a-5c43-a0b2-a1f71664e25d",
-          },
-          "bodyV2": {
-            "universalIdentifier": "de624e40-0c8e-58dc-ab30-4dc6239dd758",
-          },
-          "createdAt": {
-            "universalIdentifier": "e45009c4-c19a-5907-a18d-da1df196c788",
-          },
-          "createdBy": {
-            "universalIdentifier": "c367e175-8ded-5ef6-987f-7dafc91252da",
           },
           "noteTargets": {
             "universalIdentifier": "447e46f9-81a2-5c99-a865-f6efa6e892c5",
           },
           "timelineActivities": {
             "universalIdentifier": "113232e3-ba0e-566f-98fa-016a1e8d44d9",
-          },
-          "updatedAt": {
-            "universalIdentifier": "556a3d3e-cc58-5863-a36e-3f742f019676",
-          },
-          "updatedBy": {
-            "universalIdentifier": "c4c7e2f7-3827-53e4-aae0-ef14dbd15ca2",
           },
         },
       },
@@ -2017,8 +2054,17 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "companyIdIndex": {
         "universalIdentifier": "2d83909a-a383-4e82-b00a-8b7739f3f906",
       },
+      "noteCompanyUniqueIndex": {
+        "universalIdentifier": "e3b92659-04cf-4496-8fd4-4f32c747c26a",
+      },
       "noteIdIndex": {
         "universalIdentifier": "9294d9e3-0225-4c7f-9d6e-23b4c25b6b24",
+      },
+      "noteOpportunityUniqueIndex": {
+        "universalIdentifier": "58002741-8aa7-4812-b7af-f4cf98dd2433",
+      },
+      "notePersonUniqueIndex": {
+        "universalIdentifier": "29be76d1-ff4f-4f0f-b05c-f679a234e90a",
       },
       "opportunityIdIndex": {
         "universalIdentifier": "0d1a59b4-cc87-4b7d-804a-656e8504f371",
@@ -2384,6 +2430,25 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
         },
       },
+      "messageListRecordPageMembers": {
+        "universalIdentifier": "bef79e8e-9ef3-4458-81ed-78a299e2566f",
+        "viewFields": {
+          "company": {
+            "universalIdentifier": "3db54119-df4d-449b-91c9-22fca1e5d599",
+          },
+          "emails": {
+            "universalIdentifier": "180e9cbb-34c2-4e27-8648-2915be88a50e",
+          },
+          "name": {
+            "universalIdentifier": "a4f0d7b4-3956-44a6-8bb2-df45a699609b",
+          },
+        },
+        "viewFilters": {
+          "listMembershipsListIsCurrentRecord": {
+            "universalIdentifier": "256dceea-a9b5-42b7-8461-a6ce62e7fa6c",
+          },
+        },
+      },
       "personRecordPageFields": {
         "universalIdentifier": "7f34ab76-9b33-595a-bd22-d8d434147c8e",
         "viewFieldGroups": {
@@ -2458,6 +2523,68 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         },
       },
     },
+  },
+  "recordShare": {
+    "fields": {
+      "accessLevel": {
+        "universalIdentifier": "943b9926-9620-43de-8a46-8ebfee74dea3",
+      },
+      "createdAt": {
+        "universalIdentifier": "5a199f71-d282-50bf-9456-dd9d05579dc3",
+      },
+      "createdBy": {
+        "universalIdentifier": "558a8d87-de8e-540f-8fa9-9c413656e588",
+      },
+      "deletedAt": {
+        "universalIdentifier": "a25180d7-c4ea-516d-9406-24831210a118",
+      },
+      "id": {
+        "universalIdentifier": "e5a5509c-f262-558d-a698-d148516b4dea",
+      },
+      "objectMetadataId": {
+        "universalIdentifier": "504cec47-6aae-4e5b-85fd-1581b62602e3",
+      },
+      "position": {
+        "universalIdentifier": "db40ca46-5ea0-535d-b3bc-a3000fc61584",
+      },
+      "principalId": {
+        "universalIdentifier": "c1849ee2-1d2a-409e-800d-16fc16621257",
+      },
+      "principalType": {
+        "universalIdentifier": "556161f6-1a01-478e-8f01-acc413102e44",
+      },
+      "recordId": {
+        "universalIdentifier": "01edb657-6339-475c-b581-784a0c3e0509",
+      },
+      "rowCause": {
+        "universalIdentifier": "be27640e-f739-4d07-8979-dba4526e406a",
+      },
+      "searchVector": {
+        "universalIdentifier": "80a32ec3-1583-5383-acb6-c9373a57761f",
+      },
+      "sourceId": {
+        "universalIdentifier": "534a2244-9feb-4d21-afd9-c9a20052b300",
+      },
+      "updatedAt": {
+        "universalIdentifier": "413637e8-c0e3-5315-9238-6fd36c91ba58",
+      },
+      "updatedBy": {
+        "universalIdentifier": "52dd5a05-1197-5a77-a7fb-90b15e61cda9",
+      },
+    },
+    "indexes": {
+      "principalIdIndex": {
+        "universalIdentifier": "66fbc3d2-6126-4e29-a306-dbe9995bf062",
+      },
+      "recordPrincipalCauseSourceUniqueIndex": {
+        "universalIdentifier": "4580f104-47a7-4110-87a8-26cb6f63ce7b",
+      },
+      "sourceIdIndex": {
+        "universalIdentifier": "21b84593-c647-40ce-bdf4-a8b4ac658f57",
+      },
+    },
+    "universalIdentifier": "fecdb92c-d150-4544-81f8-f1158d18a7a2",
+    "views": {},
   },
   "task": {
     "fields": {
@@ -2631,9 +2758,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "general": {
             "universalIdentifier": "0e7ffa21-9969-50ca-9daf-25078563e697",
           },
-          "system": {
-            "universalIdentifier": "e48c1875-31be-511f-b229-d85cecc319b3",
-          },
         },
         "viewFields": {
           "assignee": {
@@ -2641,15 +2765,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "attachments": {
             "universalIdentifier": "db69d80b-8e9e-5351-bd08-f4b625b9f721",
-          },
-          "bodyV2": {
-            "universalIdentifier": "1481e9a9-d79c-5d97-9ea3-0babff9d6535",
-          },
-          "createdAt": {
-            "universalIdentifier": "fc5d2a89-8d8d-56f2-96bd-fcde0a04e1cb",
-          },
-          "createdBy": {
-            "universalIdentifier": "6e98e5c0-e188-56f8-a5a8-1f6569e7b2e8",
           },
           "dueAt": {
             "universalIdentifier": "42a26270-40be-557d-9bd9-99b0f8f013dd",
@@ -2662,12 +2777,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "timelineActivities": {
             "universalIdentifier": "3f0dd6fd-3b96-5f34-b96c-c7018b6b7230",
-          },
-          "updatedAt": {
-            "universalIdentifier": "466bec84-2ac8-5a73-9c44-43e905c29a6b",
-          },
-          "updatedBy": {
-            "universalIdentifier": "2a224a0a-0fd7-5e0e-9872-53eaec638ebf",
           },
         },
       },
@@ -2722,8 +2831,17 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "personIdIndex": {
         "universalIdentifier": "b7d305d1-6fae-4ed6-9bdc-354fe9032c0e",
       },
+      "taskCompanyUniqueIndex": {
+        "universalIdentifier": "637dce5e-f609-49f4-89e3-c0ef9e330d3a",
+      },
       "taskIdIndex": {
         "universalIdentifier": "c882f7a4-b025-4d32-aa26-5ef2595bdbf9",
+      },
+      "taskOpportunityUniqueIndex": {
+        "universalIdentifier": "eb5422ff-7a41-48d2-a2df-3de1cbf7bced",
+      },
+      "taskPersonUniqueIndex": {
+        "universalIdentifier": "4adf4d5a-ad69-4c5c-bc62-2807816b3aa8",
       },
     },
     "morphIds": {

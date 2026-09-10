@@ -18,6 +18,7 @@ import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils
 import { getTabPresentation } from '@/page-layout/utils/getTabPresentation';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -126,16 +127,21 @@ export const PageLayoutSingleTabRenderer = ({
 }: PageLayoutSingleTabRendererProps) => {
   const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
 
-  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
-    pageLayoutId,
-    layoutType,
-    targetRecordIdentifier,
-  });
+  const pageLayoutComponentInstanceId =
+    useWorkspaceSurfaceScopedComponentInstanceId(pageLayoutId);
+
+  const tabListInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
+    getTabListInstanceIdFromPageLayoutAndRecord({
+      pageLayoutId,
+      layoutType,
+      targetRecordIdentifier,
+    }),
+  );
 
   return (
     <PageLayoutComponentInstanceContext.Provider
       value={{
-        instanceId: pageLayoutId,
+        instanceId: pageLayoutComponentInstanceId,
       }}
     >
       <TabListComponentInstanceContext.Provider

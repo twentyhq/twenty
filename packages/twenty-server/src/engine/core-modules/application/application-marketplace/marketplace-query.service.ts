@@ -66,7 +66,7 @@ export class MarketplaceQueryService {
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity> {
     const registration =
-      await this.applicationRegistrationService.findOneByUniversalIdentifier(
+      await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
         universalIdentifier,
       );
 
@@ -120,6 +120,10 @@ export class MarketplaceQueryService {
       aboutDescription:
         registration.aboutDescription ??
         registration.manifest?.application?.aboutDescription ??
+        undefined,
+      pricingDescription:
+        registration.pricingDescription ??
+        registration.manifest?.application?.billing?.description ??
         undefined,
       termsUrl:
         registration.termsUrl ??

@@ -1,3 +1,4 @@
+import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -18,7 +19,7 @@ jest.mock('@/ai/components/suggested-prompts/AiChatSuggestedPrompts', () => ({
 }));
 
 const INSTANCE_ID = 'aiChatEmptyStateTest';
-const THREAD_ID = 'thread-1';
+const THREAD_ID = AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
@@ -39,7 +40,7 @@ describe('AiChatEmptyState', () => {
   });
 
   it('should render the suggested prompts when there is no message, no error and nothing loading', () => {
-    const { getByTestId } = render(<AiChatEmptyState editor={null} />, {
+    const { getByTestId } = render(<AiChatEmptyState />, {
       wrapper: Wrapper,
     });
 
@@ -55,7 +56,7 @@ describe('AiChatEmptyState', () => {
       true,
     );
 
-    const { container } = render(<AiChatEmptyState editor={null} />, {
+    const { container } = render(<AiChatEmptyState />, {
       wrapper: Wrapper,
     });
 
@@ -71,7 +72,7 @@ describe('AiChatEmptyState', () => {
       true,
     );
 
-    const { container } = render(<AiChatEmptyState editor={null} />, {
+    const { container } = render(<AiChatEmptyState />, {
       wrapper: Wrapper,
     });
 

@@ -22,6 +22,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
@@ -60,11 +61,15 @@ export class ApplicationSyncService {
     manifest,
     applicationRegistrationId,
     dryRun = false,
+    inferDeletionFromMissingEntities = true,
+    persistVersion = true,
   }: {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
     dryRun?: boolean;
+    inferDeletionFromMissingEntities?: boolean;
+    persistVersion?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -75,6 +80,7 @@ export class ApplicationSyncService {
           workspaceId,
           manifest,
           applicationRegistrationId,
+          persistVersion,
         });
 
     let syncResult: {
@@ -90,6 +96,7 @@ export class ApplicationSyncService {
             workspaceId,
             ownerFlatApplication,
             dryRun,
+            inferDeletionFromMissingEntities,
           },
         );
     } catch (error) {
@@ -159,12 +166,14 @@ export class ApplicationSyncService {
       logoFileId: null,
       version: null,
       sourceType: ApplicationRegistrationSourceType.LOCAL,
+      state: ApplicationState.INSTALLED,
       sourcePath: manifest.application.universalIdentifier,
       packageJsonChecksum: null,
       packageJsonFileId: null,
       yarnLockChecksum: null,
       yarnLockFileId: null,
       availablePackages: {},
+      billing: manifest.application.billing ?? {},
       logicFunctionLayerId: null,
       defaultRoleId: null,
       defaultRole: null,
@@ -206,6 +215,7 @@ export class ApplicationSyncService {
       workspaceId,
       manifest,
       applicationRegistrationId,
+      persistVersion: false,
     });
 
     const ownerFlatApplication: FlatApplication = application;
@@ -225,10 +235,12 @@ export class ApplicationSyncService {
     workspaceId,
     manifest,
     applicationRegistrationId,
+    persistVersion,
   }: {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
+    persistVersion: boolean;
   }): Promise<ApplicationEntity> {
     const name = manifest.application.displayName;
     const packageJson = JSON.parse(
@@ -267,9 +279,10 @@ export class ApplicationSyncService {
         name,
         description: manifest.application.description,
         logo: manifest.application.logo ?? manifest.application.logoUrl ?? null,
-        version: packageJson.version,
+        ...(persistVersion ? { version: packageJson.version } : {}),
         packageJsonChecksum: manifest.application.packageJsonChecksum,
         yarnLockChecksum: manifest.application.yarnLockChecksum,
+        billing: manifest.application.billing ?? {},
         frontComponentSharedDependenciesChecksum,
         frontComponentSharedDependenciesBuiltPath,
         applicationRegistrationId: resolvedRegistrationId,
@@ -349,6 +362,25 @@ export class ApplicationSyncService {
       );
     }
 
+    return await this.runUninstall({
+      application,
+      workspaceId,
+      applicationUniversalIdentifier,
+      shouldRunUninstallHook,
+    });
+  }
+
+  private async runUninstall({
+    application,
+    workspaceId,
+    applicationUniversalIdentifier,
+    shouldRunUninstallHook,
+  }: {
+    application: ApplicationEntity;
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    shouldRunUninstallHook: boolean;
+  }): Promise<WorkspaceMigration> {
     if (shouldRunUninstallHook) {
       await this.applicationUninstallService.runUninstallHookBestEffort({
         application,

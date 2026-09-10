@@ -7,7 +7,7 @@ import {
 import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
 import { CALL_RECORDER_PREFERENCE_OFF_OPTION_ID } from 'src/constants/call-recorder-preference-off-option-id';
 import { CALL_RECORDER_PREFERENCE_ON_OPTION_ID } from 'src/constants/call-recorder-preference-on-option-id';
-import { CALL_RECORDER_PREFERENCE_ON_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-preference-on-calendar-event-field-universal-identifier';
+import { CALL_RECORDER_PREFERENCE_ON_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 export default defineField({
   universalIdentifier:
@@ -18,10 +18,9 @@ export default defineField({
   name: 'callRecorderPreference',
   label: 'Recording Bot',
   description:
-    'Call recording is on by default when the app is installed. Turn it off for this event when needed.',
+    'Set to On by the app when it schedules the recorder for this meeting. Turn it off to skip this event.',
   icon: 'IconRobot',
-  isNullable: false,
-  defaultValue: `'${CallRecorderPreference.ON}'`,
+  isNullable: true,
   options: [
     {
       id: CALL_RECORDER_PREFERENCE_ON_OPTION_ID,

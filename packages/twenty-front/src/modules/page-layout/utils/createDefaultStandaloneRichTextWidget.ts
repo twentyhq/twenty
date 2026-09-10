@@ -1,39 +1,39 @@
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { buildDraftPageLayoutWidget } from '@/page-layout/utils/buildDraftPageLayoutWidget';
 import {
-  type PageLayoutWidget,
   type PageLayoutWidgetGridPosition,
+  type PageLayoutWidgetVerticalListPosition,
   type RichTextBody,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
-export const createDefaultStandaloneRichTextWidget = (
-  id: string,
-  pageLayoutTabId: string,
-  body: RichTextBody,
-  position: PageLayoutWidgetGridPosition,
-  objectMetadataId?: string | null,
-): PageLayoutWidget => {
-  return {
-    __typename: 'PageLayoutWidget',
+type CreateDefaultStandaloneRichTextWidgetParams = {
+  id: string;
+  pageLayoutTabId: string;
+  body: RichTextBody;
+  position: PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition;
+  objectMetadataId?: string | null;
+  title?: string;
+};
+
+export const createDefaultStandaloneRichTextWidget = ({
+  id,
+  pageLayoutTabId,
+  body,
+  position,
+  objectMetadataId,
+  title = 'Untitled Rich Text',
+}: CreateDefaultStandaloneRichTextWidgetParams): PageLayoutWidget =>
+  buildDraftPageLayoutWidget({
     id,
-    applicationId: '',
-    universalIdentifier: id,
-    isSystemSideEffect: false,
     pageLayoutTabId,
-    title: 'Untitled Rich Text',
-    isActive: true,
+    title,
     type: WidgetType.STANDALONE_RICH_TEXT,
     configuration: {
       configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
       body,
     },
-    position: {
-      ...position,
-      __typename: 'PageLayoutWidgetGridPosition',
-    },
-    objectMetadataId: objectMetadataId ?? null,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    deletedAt: null,
-  };
-};
+    position,
+    objectMetadataId,
+  });

@@ -21,6 +21,7 @@ import {
   type FieldMetadataSettings,
   FieldMetadataType,
   type FieldMetadataDefaultValue,
+  MetadataWritability,
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -90,6 +91,11 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @Field({ nullable: true })
   isUIEditable?: boolean;
 
+  @IsEnum(MetadataWritability)
+  @IsOptional()
+  @Field(() => MetadataWritability, { nullable: true })
+  writability?: MetadataWritability;
+
   // Deprecated alias kept for one release: stays exposed (and filterable via
   // FieldFilter) so external API consumers are not broken.
   @IsBoolean()
@@ -109,6 +115,16 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IsOptional()
   @Field({ nullable: true })
   isUnique?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  isSearchable?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  isAuditLogged?: boolean;
 
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })

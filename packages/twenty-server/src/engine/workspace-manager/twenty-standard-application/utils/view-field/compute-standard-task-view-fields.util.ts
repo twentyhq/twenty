@@ -292,19 +292,6 @@ export const computeStandardTaskViewFields = (
         viewFieldGroupName: 'general',
       },
     }),
-    taskRecordPageFieldsBodyV2: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'task',
-      context: {
-        viewName: 'taskRecordPageFields',
-        viewFieldName: 'bodyV2',
-        fieldName: 'bodyV2',
-        position: 3,
-        isVisible: true,
-        size: 150,
-        viewFieldGroupName: 'general',
-      },
-    }),
     taskRecordPageFieldsTaskTargets: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'task',
@@ -346,57 +333,5 @@ export const computeStandardTaskViewFields = (
         },
       },
     ),
-    taskRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'task',
-      context: {
-        viewName: 'taskRecordPageFields',
-        viewFieldName: 'createdAt',
-        fieldName: 'createdAt',
-        position: 0,
-        isVisible: true,
-        size: 150,
-        viewFieldGroupName: 'system',
-      },
-    }),
-    taskRecordPageFieldsCreatedBy: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'task',
-      context: {
-        viewName: 'taskRecordPageFields',
-        viewFieldName: 'createdBy',
-        fieldName: 'createdBy',
-        position: 1,
-        isVisible: true,
-        size: 150,
-        viewFieldGroupName: 'system',
-      },
-    }),
-    taskRecordPageFieldsUpdatedAt: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'task',
-      context: {
-        viewName: 'taskRecordPageFields',
-        viewFieldName: 'updatedAt',
-        fieldName: 'updatedAt',
-        position: 2,
-        isVisible: false,
-        size: 150,
-        viewFieldGroupName: 'system',
-      },
-    }),
-    taskRecordPageFieldsUpdatedBy: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'task',
-      context: {
-        viewName: 'taskRecordPageFields',
-        viewFieldName: 'updatedBy',
-        fieldName: 'updatedBy',
-        position: 3,
-        isVisible: false,
-        size: 150,
-        viewFieldGroupName: 'system',
-      },
-    }),
   };
 };

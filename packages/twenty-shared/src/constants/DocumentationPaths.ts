@@ -63,6 +63,7 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/logic/background-jobs',
   DEVELOPERS_EXTEND_APPS_LOGIC_CONNECTIONS:
     '/developers/extend/apps/logic/connections',
+  DEVELOPERS_EXTEND_APPS_LOGIC_CREDITS: '/developers/extend/apps/logic/credits',
   DEVELOPERS_EXTEND_APPS_LOGIC_KEY_VALUE_STORE:
     '/developers/extend/apps/logic/key-value-store',
   DEVELOPERS_EXTEND_APPS_LOGIC_LOGIC_FUNCTIONS:
@@ -150,6 +151,12 @@ export const DOCUMENTATION_PATHS = {
     '/user-guide/calendar-emails/how-tos/can-i-track-email-activity-on-all-objects',
   USER_GUIDE_CALENDAR_EMAILS_HOW_TOS_CONNECT_SEVERAL_MAILBOXES_PER_USER:
     '/user-guide/calendar-emails/how-tos/connect-several-mailboxes-per-user',
+  USER_GUIDE_CALENDAR_EMAILS_HOW_TOS_FORWARD_A_SHARED_INBOX_FROM_ANY_MAIL_PROVIDER:
+    '/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider',
+  USER_GUIDE_CALENDAR_EMAILS_HOW_TOS_FORWARD_A_SHARED_INBOX_FROM_GOOGLE_WORKSPACE:
+    '/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace',
+  USER_GUIDE_CALENDAR_EMAILS_HOW_TOS_FORWARD_A_SHARED_INBOX_FROM_MICROSOFT_365:
+    '/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365',
   USER_GUIDE_CALENDAR_EMAILS_HOW_TOS_I_DONT_SEE_EMAILS_ON_RECORDS:
     '/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records',
   USER_GUIDE_CALENDAR_EMAILS_HOW_TOS_LIMIT_EMAILS_IMPORTED:

@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import {
+  IsBoolean,
   IsIn,
   IsInt,
   IsNotEmpty,
@@ -32,4 +33,9 @@ export class RecordTableConfigurationDTO implements RecordTableConfiguration {
   @IsInt()
   @Min(1)
   recordLimit?: number;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  isUIEditable?: boolean;
 }

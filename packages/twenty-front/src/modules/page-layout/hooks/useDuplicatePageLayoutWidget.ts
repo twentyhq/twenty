@@ -95,12 +95,10 @@ export const useDuplicatePageLayoutWidget = (
         ...generateDuplicatedTimestamps(),
       };
 
-      const currentTabLayouts = allTabLayouts[sourceTab.id] ?? {
-        desktop: [],
-        mobile: [],
-      };
+      const currentTabDesktopLayouts =
+        allTabLayouts[sourceTab.id]?.desktop ?? [];
 
-      const sourceLayout = currentTabLayouts.desktop.find(
+      const sourceLayout = currentTabDesktopLayouts.find(
         (layout) => layout.i === widgetId,
       );
 
@@ -108,7 +106,7 @@ export const useDuplicatePageLayoutWidget = (
         throw new Error(`Layout for widget ${widgetId} not found`);
       }
 
-      const maxY = currentTabLayouts.desktop.reduce(
+      const maxY = currentTabDesktopLayouts.reduce(
         (max, layout) => Math.max(max, layout.y + layout.h),
         0,
       );

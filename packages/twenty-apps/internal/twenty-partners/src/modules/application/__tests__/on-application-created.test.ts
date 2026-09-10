@@ -29,7 +29,7 @@ describe('on-application-created', () => {
     mutationMock.mockResolvedValue({ updateApplication: { id: APPLICATION_ID } });
   });
 
-  it('does nothing when the admin-created row already carries partnerUser', async () => {
+  it('does not stamp when the admin-created row already carries partnerUser and has no opportunity', async () => {
     const result = await handler(
       event({
         id: APPLICATION_ID,
@@ -40,6 +40,50 @@ describe('on-application-created', () => {
     expect(result).toEqual({});
     expect(queryMock).not.toHaveBeenCalled();
     expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  it('grants opportunity visibility on an apply row that already has partnerUser', async () => {
+    queryMock
+      .mockResolvedValueOnce({
+        opportunities: {
+          edges: [
+            { node: { id: OPPORTUNITY_ID, applicantPartnerUserIds: null } },
+          ],
+        },
+      })
+      .mockResolvedValueOnce({
+        opportunities: {
+          edges: [
+            {
+              node: {
+                id: OPPORTUNITY_ID,
+                applicantPartnerUserIds: [MEMBER_ID],
+              },
+            },
+          ],
+        },
+      });
+
+    const result = await handler(
+      event({
+        id: APPLICATION_ID,
+        partnerId: PARTNER_ID,
+        partnerUserId: MEMBER_ID,
+        opportunityId: OPPORTUNITY_ID,
+      }),
+    );
+
+    expect(result).toEqual({});
+    expect(mutationMock).toHaveBeenCalledTimes(1);
+    expect(mutationMock).toHaveBeenCalledWith({
+      updateOpportunity: {
+        __args: {
+          id: OPPORTUNITY_ID,
+          data: { applicantPartnerUserIds: [MEMBER_ID] },
+        },
+        id: true,
+      },
+    });
   });
 
   it('stamps partnerUser from the partner on an admin-created row', async () => {
@@ -56,6 +100,64 @@ describe('on-application-created', () => {
     const args = mutationMock.mock.calls[0][0].updateApplication.__args;
     expect(args.id).toBe(APPLICATION_ID);
     expect(args.data).toEqual({ partnerUserId: MEMBER_ID });
+  });
+
+  it('stamps partnerUser and grants opportunity visibility on an invite with an opportunity', async () => {
+    queryMock
+      .mockResolvedValueOnce({
+        partners: {
+          edges: [{ node: { id: PARTNER_ID, partnerUserId: MEMBER_ID } }],
+        },
+      })
+      .mockResolvedValueOnce({
+        opportunities: {
+          edges: [
+            { node: { id: OPPORTUNITY_ID, applicantPartnerUserIds: null } },
+          ],
+        },
+      })
+      .mockResolvedValueOnce({
+        opportunities: {
+          edges: [
+            {
+              node: {
+                id: OPPORTUNITY_ID,
+                applicantPartnerUserIds: [MEMBER_ID],
+              },
+            },
+          ],
+        },
+      });
+
+    const result = await handler(
+      event({
+        id: APPLICATION_ID,
+        partnerId: PARTNER_ID,
+        opportunityId: OPPORTUNITY_ID,
+      }),
+    );
+
+    expect(result).toEqual({ stamped: MEMBER_ID });
+
+    const stampCall = mutationMock.mock.calls.find(
+      (mutationCall) => mutationCall[0].updateApplication,
+    )?.[0];
+    expect(stampCall.updateApplication.__args.data).toEqual({
+      partnerUserId: MEMBER_ID,
+    });
+
+    const grantCall = mutationMock.mock.calls.find(
+      (mutationCall) => mutationCall[0].updateOpportunity,
+    )?.[0];
+    expect(grantCall).toEqual({
+      updateOpportunity: {
+        __args: {
+          id: OPPORTUNITY_ID,
+          data: { applicantPartnerUserIds: [MEMBER_ID] },
+        },
+        id: true,
+      },
+    });
   });
 
   it('leaves an admin-created row alone when the partner has no member', async () => {
@@ -150,7 +252,26 @@ describe('on-application-created', () => {
       .mockResolvedValueOnce({
         partners: { edges: [{ node: { id: PARTNER_ID } }] },
       })
-      .mockResolvedValueOnce({ applications: { edges: [] } });
+      .mockResolvedValueOnce({ applications: { edges: [] } })
+      .mockResolvedValueOnce({
+        opportunities: {
+          edges: [
+            { node: { id: OPPORTUNITY_ID, applicantPartnerUserIds: null } },
+          ],
+        },
+      })
+      .mockResolvedValueOnce({
+        opportunities: {
+          edges: [
+            {
+              node: {
+                id: OPPORTUNITY_ID,
+                applicantPartnerUserIds: [MEMBER_ID],
+              },
+            },
+          ],
+        },
+      });
 
     const result = await handler(
       event({
@@ -161,13 +282,27 @@ describe('on-application-created', () => {
     );
 
     expect(result).toEqual({ applied: true, partnerId: PARTNER_ID });
-    expect(queryMock).toHaveBeenCalledTimes(2);
-    expect(mutationMock).toHaveBeenCalledTimes(1);
-    const call = mutationMock.mock.calls[0][0];
+
+    const call = mutationMock.mock.calls.find(
+      (mutationCall) => mutationCall[0].updateApplication,
+    )?.[0];
     expect(call.updateApplication.__args.id).toBe(APPLICATION_ID);
     expect(call.updateApplication.__args.data.partnerId).toBe(PARTNER_ID);
     expect(call.updateApplication.__args.data.partnerUserId).toBe(MEMBER_ID);
     expect(call.updateApplication.__args.data.state).toBe('APPLIED');
+
+    const grantCall = mutationMock.mock.calls.find(
+      (mutationCall) => mutationCall[0].updateOpportunity,
+    )?.[0];
+    expect(grantCall).toEqual({
+      updateOpportunity: {
+        __args: {
+          id: OPPORTUNITY_ID,
+          data: { applicantPartnerUserIds: [MEMBER_ID] },
+        },
+        id: true,
+      },
+    });
   });
 
   it('soft-deletes a duplicate application and keeps the existing one', async () => {

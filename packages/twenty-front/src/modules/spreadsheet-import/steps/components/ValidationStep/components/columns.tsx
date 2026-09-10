@@ -13,7 +13,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import camelCase from 'lodash.camelcase';
 import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
+import { Checkbox, CheckboxVariant, Switch } from 'twenty-ui/input';
 import { type ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 
 const StyledHeaderContainer = styled.div`
@@ -41,10 +41,14 @@ const StyledCheckboxContainer = styled.div`
   width: 100%;
 `;
 
-const StyledToggleContainer = styled.div`
+const StyledSwitchContainer = styled.div`
   align-items: center;
   display: flex;
   height: 100%;
+`;
+
+const StyledSwitch = styled(Switch)`
+  align-self: center;
 `;
 
 const StyledInputContainer = styled.div`
@@ -127,7 +131,7 @@ export const generateColumns = (
                 <AppTooltip
                   anchorSelect={`#${formatSafeId(column.key)}`}
                   place="top"
-                  content={column.description}
+                  title={column.description}
                 />,
                 document.body,
               )}
@@ -175,23 +179,23 @@ export const generateColumns = (
         switch (column.fieldType.type) {
           case 'checkbox':
             component = (
-              <StyledToggleContainer
+              <StyledSwitchContainer
                 id={formatSafeId(`${columnKey}-${row.__index}`)}
                 onClick={(event) => {
                   event.stopPropagation();
                 }}
               >
-                <Toggle
-                  centered
-                  value={row[columnKey] as boolean}
-                  onChange={() => {
+                <StyledSwitch
+                  aria-label={column.label}
+                  checked={row[columnKey] as boolean}
+                  onCheckedChange={() => {
                     onRowChange({
                       ...row,
                       [columnKey]: !row[columnKey],
                     });
                   }}
                 />
-              </StyledToggleContainer>
+              </StyledSwitchContainer>
             );
             break;
           case 'select':
@@ -223,7 +227,7 @@ export const generateColumns = (
                 <AppTooltip
                   anchorSelect={`#${formatSafeId(`${columnKey}-${row.__index}`)}`}
                   place="top"
-                  content={row.__errors?.[columnKey]?.message}
+                  title={row.__errors?.[columnKey]?.message}
                   delay={TooltipDelay.shortDelay}
                 />,
                 document.body,

@@ -25,6 +25,7 @@ import {
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -120,9 +121,12 @@ export const ObjectOptionsDropdownCustomView = ({
     'Delete view',
   ];
 
+  const scopedObjectOptionsDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(OBJECT_OPTIONS_DROPDOWN_ID);
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    OBJECT_OPTIONS_DROPDOWN_ID,
+    scopedObjectOptionsDropdownId,
   );
 
   if (!customViewData) {
@@ -229,7 +233,7 @@ export const ObjectOptionsDropdownCustomView = ({
               onClick={() => onContentChange('fields')}
               LeftIcon={IconListDetails}
               text={t`Fields`}
-              contextualText={t`${visibleFieldsCount} shown`}
+              contextualText={t`${visibleFieldsCount} selected`}
               contextualTextPosition="right"
               hasSubMenu
             />
@@ -268,10 +272,10 @@ export const ObjectOptionsDropdownCustomView = ({
           {isDefaultView && (
             <AppTooltip
               anchorSelect={`#group-by-menu-item`}
-              content={t`Not available on Default View`}
+              title={t`Not available on Default View`}
               noArrow
               place="bottom"
-              width="100%"
+              maxWidth="100%"
             />
           )}
         </DropdownMenuItemsContainer>
@@ -295,14 +299,14 @@ export const ObjectOptionsDropdownCustomView = ({
           {(isDefaultView || isLastView) && (
             <AppTooltip
               anchorSelect={`#delete-view-menu-item`}
-              content={
+              title={
                 isDefaultView
                   ? t`Not available on Default View`
                   : t`Cannot delete the only view`
               }
               noArrow
               place="bottom"
-              width="100%"
+              maxWidth="100%"
             />
           )}
         </DropdownMenuItemsContainer>

@@ -28,6 +28,20 @@ jest.mock('@/page-layout/hooks/useOpenPageLayoutTabSettings', () => ({
   }),
 }));
 
+jest.mock('twenty-ui/input', () => ({
+  IconButtonWithTooltip: ({
+    ariaLabel,
+    onClick,
+  }: {
+    ariaLabel: string;
+    onClick: () => void;
+  }) => (
+    <button aria-label={ariaLabel} onClick={onClick}>
+      {ariaLabel}
+    </button>
+  ),
+}));
+
 jest.mock(
   '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue',
   () => ({
@@ -51,7 +65,7 @@ describe('PageLayoutRecordIdentifierBar', () => {
     jest.useRealTimers();
   });
 
-  it('moves the creation date after the tabs only when no tab is pinned', () => {
+  it('shows the creation date after the tabs only when no tab is pinned', () => {
     const { rerender } = render(
       <PageLayoutRecordIdentifierBar
         targetRecordIdentifier={TARGET_RECORD_IDENTIFIER}
@@ -61,9 +75,7 @@ describe('PageLayoutRecordIdentifierBar', () => {
       { wrapper: Wrapper },
     );
 
-    expect(screen.getByText('Google').parentElement).toContainElement(
-      screen.getByText('Created 2 days ago'),
-    );
+    expect(screen.queryByText('Created 2 days ago')).not.toBeInTheDocument();
     expect(screen.getByText('Home')).toBeVisible();
 
     rerender(
@@ -83,7 +95,7 @@ describe('PageLayoutRecordIdentifierBar', () => {
     );
   });
 
-  it('keeps the pinned tab settings accessible beside the creation date', async () => {
+  it('keeps the pinned tab settings accessible without a creation date', async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
 
     const { rerender } = render(
@@ -95,9 +107,7 @@ describe('PageLayoutRecordIdentifierBar', () => {
       { wrapper: Wrapper },
     );
 
-    expect(screen.getByText('Google').parentElement).toContainElement(
-      screen.getByText('Created 2 days ago'),
-    );
+    expect(screen.queryByText('Created 2 days ago')).not.toBeInTheDocument();
 
     expect(screen.queryByText('Tasks')).not.toBeInTheDocument();
 
@@ -119,9 +129,7 @@ describe('PageLayoutRecordIdentifierBar', () => {
     expect(
       screen.queryByRole('button', { name: 'Edit pinned tab: Tasks' }),
     ).not.toBeInTheDocument();
-    expect(screen.getByText('Google').parentElement).toContainElement(
-      screen.getByText('Created 2 days ago'),
-    );
+    expect(screen.queryByText('Created 2 days ago')).not.toBeInTheDocument();
   });
 
   it('does not show pinned tab settings outside edit mode', () => {
@@ -163,6 +171,22 @@ describe('PageLayoutRecordIdentifierBar', () => {
       screen.queryByRole('button', { name: 'Edit pinned tab: Tasks' }),
     ).not.toBeInTheDocument();
     expect(screen.getByText('Created 2 days ago')).toBeVisible();
+  });
+
+  it('does not render an empty tab cell when the tab list is false', () => {
+    render(
+      <PageLayoutRecordIdentifierBar
+        targetRecordIdentifier={TARGET_RECORD_IDENTIFIER}
+        tabList={false}
+      />,
+      { wrapper: Wrapper },
+    );
+
+    const identifierCell = screen.getByText('Google').parentElement;
+    const bar = identifierCell?.parentElement;
+
+    expect(bar).toHaveTextContent('GoogleCreated 2 days ago');
+    expect(bar?.children).toHaveLength(2);
   });
 
   it('renders the record header without a creation date', () => {

@@ -3,7 +3,10 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { INVALID_INPUT_USER_FRIENDLY_MESSAGE } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants';
+import {
+  INVALID_INPUT_USER_FRIENDLY_MESSAGE,
+  TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE,
+} from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum TwentyOrmExceptionCode {
@@ -21,6 +24,7 @@ export enum TwentyOrmExceptionCode {
   METHOD_NOT_ALLOWED = 'METHOD_NOT_ALLOWED',
   ENUM_TYPE_NAME_NOT_FOUND = 'ENUM_TYPE_NAME_NOT_FOUND',
   QUERY_READ_TIMEOUT = 'QUERY_READ_TIMEOUT',
+  TRANSIENT_DATABASE_ERROR = 'TRANSIENT_DATABASE_ERROR',
   DUPLICATE_ENTRY_DETECTED = 'DUPLICATE_ENTRY_DETECTED',
   TOO_MANY_RECORDS_TO_UPDATE = 'TOO_MANY_RECORDS_TO_UPDATE',
   INVALID_INPUT = 'INVALID_INPUT',
@@ -69,6 +73,8 @@ const getTwentyOrmExceptionUserFriendlyMessage = (
       return msg`This operation is not allowed.`;
     case TwentyOrmExceptionCode.QUERY_READ_TIMEOUT:
       return msg`Query timed out. Please try again.`;
+    case TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR:
+      return TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE;
     case TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED:
       return msg`A duplicate entry was detected.`;
     case TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:

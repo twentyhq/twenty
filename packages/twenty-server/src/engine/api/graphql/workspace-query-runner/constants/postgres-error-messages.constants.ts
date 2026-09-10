@@ -5,10 +5,14 @@ import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-r
 
 export const QUERY_READ_TIMEOUT_MESSAGE = 'Query read timeout';
 
+export const CONNECTION_TERMINATED_MESSAGE = 'Connection terminated';
+
 export const DUPLICATE_ENTRY_DETECTED_MESSAGE =
   'A duplicate entry was detected';
 
 export const QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE = msg`We are experiencing a temporary issue with our database. Please try again later.`;
+
+export const TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE = msg`We are experiencing a temporary issue with our database. Please try again later.`;
 
 export const DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE = msg`This record already exists. Please check your data and try again.`;
 

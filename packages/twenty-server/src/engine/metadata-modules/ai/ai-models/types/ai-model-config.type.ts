@@ -1,4 +1,9 @@
-import { type AiSdkPackage, type DataResidency } from 'twenty-shared/ai';
+import {
+  type AiModelEffort,
+  type AiSdkPackage,
+  type DataResidency,
+} from 'twenty-shared/ai';
+import { type AiModelBenchmark } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmark.type';
 import { type LongContextCost } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.type';
 import { type ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 
@@ -10,6 +15,7 @@ export type AiModelConfig = {
   description: string;
   modelFamily?: ModelFamily;
   dataResidency?: DataResidency;
+  zeroDataRetention?: boolean;
   inputCostPerMillionTokens: number;
   outputCostPerMillionTokens: number;
   contextWindowTokens: number;
@@ -19,5 +25,9 @@ export type AiModelConfig = {
   longContextCost?: LongContextCost;
   modalities?: string[];
   supportsReasoning?: boolean;
+  efforts?: AiModelEffort[];
+  // Pinned by a variant id (`model@effort`); unset runs the provider default.
+  effort?: AiModelEffort;
+  benchmark?: AiModelBenchmark;
   isDeprecated?: boolean;
 };

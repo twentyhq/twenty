@@ -69,18 +69,75 @@ describe('keepWorkspaceOwnedProperties', () => {
     ).toEqual(standardPageLayout);
   });
 
-  it('should return the standard entities untouched for a metadata without workspace-owned properties', () => {
-    const toFlatEntityMaps = {
-      byUniversalIdentifier: {
-        'view-universal-identifier': { name: 'All Companies' },
+  it('should keep a skill deactivated by the workspace', () => {
+    const shippedSkill = {
+      universalIdentifier: 'skill-universal-identifier',
+      name: 'summarize',
+      isActive: true,
+    };
+
+    const result = keepWorkspaceOwnedProperties({
+      metadataName: 'skill',
+      fromFlatEntityMaps: {
+        byUniversalIdentifier: {
+          'skill-universal-identifier': { ...shippedSkill, isActive: false },
+        },
       },
+      toFlatEntityMaps: {
+        byUniversalIdentifier: {
+          'skill-universal-identifier': shippedSkill,
+        },
+      },
+    });
+
+    expect(result.byUniversalIdentifier['skill-universal-identifier']).toEqual({
+      ...shippedSkill,
+      isActive: false,
+    });
+  });
+
+  it('should keep the creator of a view the workspace already has', () => {
+    const shippedView = {
+      universalIdentifier: 'view-universal-identifier',
+      name: 'All Companies',
+      createdByUserWorkspaceId: null,
     };
 
     const result = keepWorkspaceOwnedProperties({
       metadataName: 'view',
       fromFlatEntityMaps: {
         byUniversalIdentifier: {
-          'view-universal-identifier': { name: 'Renamed by the workspace' },
+          'view-universal-identifier': {
+            ...shippedView,
+            createdByUserWorkspaceId: 'user-workspace-id',
+          },
+        },
+      },
+      toFlatEntityMaps: {
+        byUniversalIdentifier: {
+          'view-universal-identifier': shippedView,
+        },
+      },
+    });
+
+    expect(result.byUniversalIdentifier['view-universal-identifier']).toEqual({
+      ...shippedView,
+      createdByUserWorkspaceId: 'user-workspace-id',
+    });
+  });
+
+  it('should return the standard entities untouched for a metadata without workspace-owned properties', () => {
+    const toFlatEntityMaps = {
+      byUniversalIdentifier: {
+        'role-universal-identifier': { label: 'Manager' },
+      },
+    };
+
+    const result = keepWorkspaceOwnedProperties({
+      metadataName: 'role',
+      fromFlatEntityMaps: {
+        byUniversalIdentifier: {
+          'role-universal-identifier': { label: 'Renamed by the workspace' },
         },
       },
       toFlatEntityMaps,

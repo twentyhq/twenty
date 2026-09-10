@@ -1,4 +1,5 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { FieldDescriptionTooltipProvider } from '@/object-record/record-field/ui/components/FieldDescriptionTooltipProvider';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
@@ -9,8 +10,8 @@ import { FieldsWidgetFieldList } from '@/page-layout/widgets/fields/components/F
 import { FieldsWidgetGroupContainer } from '@/page-layout/widgets/fields/components/FieldsWidgetGroupContainer';
 import { useFieldsWidgetGroupsForDisplay } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay';
 import { useFieldsWidgetHiddenFieldsForDisplay } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetHiddenFieldsForDisplay';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -53,7 +54,7 @@ type FieldsWidgetProps = {
 
 export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   const targetRecord = useTargetRecord();
-  const { isInSidePanel } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const instanceId = `fields-${widget.id}-${targetRecord.id}${isInSidePanel ? '-side-panel' : ''}`;
 
@@ -121,61 +122,63 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   }
 
   return (
-    <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
-      <StyledWidgetScrollContainer>
-        <RecordFieldListComponentInstanceContext.Provider
-          value={{
-            instanceId,
-          }}
-        >
-          {shouldDisplayGroupHeaders ? (
-            groups.map((group) => (
-              <FieldsWidgetGroupContainer key={group.id} title={group.name}>
+    <FieldDescriptionTooltipProvider>
+      <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
+        <StyledWidgetScrollContainer>
+          <RecordFieldListComponentInstanceContext.Provider
+            value={{
+              instanceId,
+            }}
+          >
+            {shouldDisplayGroupHeaders ? (
+              groups.map((group) => (
+                <FieldsWidgetGroupContainer key={group.id} title={group.name}>
+                  <StyledPropertyBox>
+                    <FieldsWidgetFieldList
+                      fields={group.fields}
+                      instanceId={instanceId}
+                    />
+                  </StyledPropertyBox>
+                </FieldsWidgetGroupContainer>
+              ))
+            ) : (
+              <StyledInlineFieldsPropertyBox
+                hasMoreGroup={shouldShowHiddenFields}
+              >
+                <FieldsWidgetFieldList
+                  fields={visibleFields}
+                  instanceId={instanceId}
+                />
+              </StyledInlineFieldsPropertyBox>
+            )}
+
+            {shouldShowHiddenFields && (
+              <FieldsWidgetGroupContainer
+                title={t`More (${hiddenFieldsWithOffsetGlobalIndex.length})`}
+                defaultExpanded={false}
+              >
                 <StyledPropertyBox>
                   <FieldsWidgetFieldList
-                    fields={group.fields}
+                    fields={hiddenFieldsWithOffsetGlobalIndex}
                     instanceId={instanceId}
                   />
                 </StyledPropertyBox>
               </FieldsWidgetGroupContainer>
-            ))
-          ) : (
-            <StyledInlineFieldsPropertyBox
-              hasMoreGroup={shouldShowHiddenFields}
-            >
-              <FieldsWidgetFieldList
-                fields={visibleFields}
-                instanceId={instanceId}
-              />
-            </StyledInlineFieldsPropertyBox>
-          )}
+            )}
 
-          {shouldShowHiddenFields && (
-            <FieldsWidgetGroupContainer
-              title={t`More (${hiddenFieldsWithOffsetGlobalIndex.length})`}
-              defaultExpanded={false}
-            >
-              <StyledPropertyBox>
-                <FieldsWidgetFieldList
-                  fields={hiddenFieldsWithOffsetGlobalIndex}
-                  instanceId={instanceId}
-                />
-              </StyledPropertyBox>
-            </FieldsWidgetGroupContainer>
-          )}
-
-          <FieldsWidgetCellHoveredPortal
-            objectMetadataItem={objectMetadataItem}
-            recordId={targetRecord.id}
-            flattenedFieldMetadataItems={flattenedFieldMetadataItems}
-          />
-          <FieldsWidgetCellEditModePortal
-            objectMetadataItem={objectMetadataItem}
-            recordId={targetRecord.id}
-            flattenedFieldMetadataItems={flattenedFieldMetadataItems}
-          />
-        </RecordFieldListComponentInstanceContext.Provider>
-      </StyledWidgetScrollContainer>
-    </RecordFieldsScopeContextProvider>
+            <FieldsWidgetCellHoveredPortal
+              objectMetadataItem={objectMetadataItem}
+              recordId={targetRecord.id}
+              flattenedFieldMetadataItems={flattenedFieldMetadataItems}
+            />
+            <FieldsWidgetCellEditModePortal
+              objectMetadataItem={objectMetadataItem}
+              recordId={targetRecord.id}
+              flattenedFieldMetadataItems={flattenedFieldMetadataItems}
+            />
+          </RecordFieldListComponentInstanceContext.Provider>
+        </StyledWidgetScrollContainer>
+      </RecordFieldsScopeContextProvider>
+    </FieldDescriptionTooltipProvider>
   );
 };

@@ -24,7 +24,7 @@ import { IconHierarchy } from 'twenty-ui/icon';
 | --- | --- | --- | --- | --- | --- |
 | Data Model | `IconHierarchy` | `hierarchy` | Representing the data model or schema as a whole. | Representing one object, one field, or an organization chart. | schema, data model, objects and fields |
 | Object | `IconBox` | `box` | Representing an individual data-model object. | Representing a record instance or the complete data model. | object metadata, entity, data object |
-| Field | `IconListDetails` | `list-details` | Representing a field or field metadata. | Representing a list of records or a generic menu. | field metadata, property, attribute, column |
+| Field | `IconListSearch` | `list-search` | Representing a field or field metadata. | Representing a list of records or a generic menu. | field metadata, property, attribute, column |
 | Record | `IconAddressBook` | `address-book` | Representing a record or record-oriented content. | Representing the object definition that records belong to. | record, record instance, CRM entry |
 
 ## CRM
@@ -115,6 +115,7 @@ import { IconHierarchy } from 'twenty-ui/icon';
 | Notification | `IconBell` | `bell` | Representing notifications or notification settings. | Representing an error severity, favorite, or decorative star. | notification, notice, notification settings, alert |
 | Files | `IconFiles` | `files` | Representing a collection of files or a files section. | Representing one file, an attachment, or an upload action. | files, file collection, documents, file section |
 | Attachments | `IconPaperclip` | `paperclip` | Representing attachments or an attachment relationship. | Representing a general file collection, import, or upload action. | attachment, attachments, attached file, record attachment |
+| Dictation | `IconMicrophone` | `microphone` | Representing voice input or a dictation control. | Representing audio playback, a call recording, or a phone number. | dictation, voice input, speech to text, microphone |
 | App | `IconApps` | `apps` | Representing an application or the apps platform. | Representing a widget, integration, or one navigation item. | app, application, Twenty app |
 | Navigation Sidebar | `IconLayoutSidebar` | `layout-sidebar` | Representing the application navigation sidebar. | Representing a destination inside the navigation menu. | navigation sidebar, sidebar, left navigation |
 | Iframe | `IconFrame` | `frame` | Representing an iframe or embedded external page. | Representing a native page layout or browser window. | iframe, embedded page, web frame |
@@ -126,4 +127,4 @@ import { IconHierarchy } from 'twenty-ui/icon';
 2. Confirm the visual choice in the linked Figma dictionary.
 3. Run `npx nx generateIconDictionary twenty-ui`.
 4. Review the `UI/Icon/Icon Dictionary` Storybook story.
-5. Run `npx jest packages/twenty-ui/src/icon/__tests__/TwentyIconDictionary.test.ts --config=packages/twenty-ui/jest.config.mjs`.
+5. Run `npx vitest run --root packages/twenty-ui --project unit src/icon/__tests__/TwentyIconDictionary.test.ts`.

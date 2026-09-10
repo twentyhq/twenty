@@ -17,6 +17,11 @@ export type PageLayoutWidgetManifest = SyncableEntityOptions & {
   configuration: PageLayoutWidgetUniversalConfiguration;
 };
 
+export type StandalonePageLayoutWidgetManifest = PageLayoutWidgetManifest & {
+  pageLayoutTabUniversalIdentifier: string;
+  position: PageLayoutWidgetPosition;
+};
+
 export type PageLayoutTabManifest = SyncableEntityOptions & {
   title: string;
   position: number;

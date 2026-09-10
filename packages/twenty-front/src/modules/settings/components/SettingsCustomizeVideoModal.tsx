@@ -5,7 +5,7 @@ import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
 export type SettingsCustomizeVideoModalTab = {
   id: string;
@@ -21,8 +21,14 @@ type SettingsCustomizeVideoModalProps = {
   tabs: SettingsCustomizeVideoModalTab[];
 };
 
-const StyledHeader = styled.div`
+// the tab list draws its own separator, so the header only needs one when the
+// single tab is replaced by a plain title
+const StyledHeader = styled.div<{ $hasBottomBorder: boolean }>`
   align-items: center;
+  border-bottom: ${({ $hasBottomBorder }) =>
+    $hasBottomBorder
+      ? `1px solid ${themeCssVariables.border.color.light}`
+      : 'none'};
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   height: 48px;
@@ -34,6 +40,27 @@ const StyledTabsContainer = styled.div`
   flex: 1 1 auto;
   min-width: 0;
   padding-left: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledTitle = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.primary};
+  display: flex;
+  flex: 1 1 auto;
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
+  padding-left: ${themeCssVariables.spacing[5]};
+
+  & > svg {
+    flex-shrink: 0;
+  }
+`;
+
+const StyledTitleText = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledVideoContainer = styled.div`
@@ -58,6 +85,7 @@ export const SettingsCustomizeVideoModal = ({
   tabsInstanceId,
   tabs,
 }: SettingsCustomizeVideoModalProps) => {
+  const theme = useTheme();
   const { closeModal } = useModal();
   const [activeTabId, setActiveTabId] = useState<string>(tabs[0]?.id ?? '');
 
@@ -66,6 +94,8 @@ export const SettingsCustomizeVideoModal = ({
   }
 
   const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0];
+  const hasMultipleTabs = tabs.length > 1;
+  const ActiveTabIcon = activeTab.Icon;
 
   const handleClose = () => {
     closeModal(modalInstanceId);
@@ -80,15 +110,26 @@ export const SettingsCustomizeVideoModal = ({
       onClose={handleClose}
       renderInDocumentBody
     >
-      <StyledHeader>
-        <StyledTabsContainer>
-          <TabList
-            tabs={tabs}
-            behaveAsLinks={false}
-            componentInstanceId={tabsInstanceId}
-            onChangeTab={(tabId) => setActiveTabId(tabId)}
-          />
-        </StyledTabsContainer>
+      <StyledHeader $hasBottomBorder={!hasMultipleTabs}>
+        {hasMultipleTabs ? (
+          <StyledTabsContainer>
+            <TabList
+              tabs={tabs}
+              behaveAsLinks={false}
+              componentInstanceId={tabsInstanceId}
+              onChangeTab={(tabId) => setActiveTabId(tabId)}
+            />
+          </StyledTabsContainer>
+        ) : (
+          <StyledTitle>
+            <ActiveTabIcon
+              size={theme.icon.size.md}
+              color={theme.font.color.primary}
+              aria-hidden
+            />
+            <StyledTitleText>{activeTab.title}</StyledTitleText>
+          </StyledTitle>
+        )}
         <IconButton Icon={IconX} onClick={handleClose} size="small" />
       </StyledHeader>
       <StyledVideoContainer>

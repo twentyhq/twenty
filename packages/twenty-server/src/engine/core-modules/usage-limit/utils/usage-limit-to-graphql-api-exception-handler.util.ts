@@ -28,13 +28,16 @@ export const usageLimitToGraphqlApiExceptionHandler = (
     {
       ...commonExtensions,
       limitKind: exhaustedScope.limitKind,
+      exhaustedKind: exhaustedScope.exhaustedKind,
       limit: exhaustedScope.limitValue,
       remaining: exhaustedScope.remaining,
-      windowSeconds: exhaustedScope.windowSeconds,
+      periodCount: exhaustedScope.periodCount,
+      periodUnit: exhaustedScope.periodUnit,
       retryAfterMs: exhaustedScope.retryAfterMs,
       scope: {
         spenderType: exhaustedScope.spenderType,
         spenderId: exhaustedScope.spenderId,
+        operationType: exhaustedScope.operationType,
       },
     },
   );

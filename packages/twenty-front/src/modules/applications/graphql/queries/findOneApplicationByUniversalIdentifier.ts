@@ -6,6 +6,7 @@ export const FIND_ONE_APPLICATION_BY_UNIVERSAL_IDENTIFIER = gql`
       id
       universalIdentifier
       name
+      logoUrl
       version
     }
   }

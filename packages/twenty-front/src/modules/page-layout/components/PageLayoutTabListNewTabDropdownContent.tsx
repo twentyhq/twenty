@@ -54,11 +54,11 @@ export const PageLayoutTabListNewTabDropdownContent = ({
     (tabId: string) => {
       updatePageLayoutTab(tabId, { isActive: true });
       setActiveTabId(tabId);
-      setPageLayoutTabSettingsOpenTabId(tabId);
       navigatePageLayoutSidePanel({
         sidePanelPage: SidePanelPages.PageLayoutTabSettings,
         resetNavigationStack: true,
       });
+      setPageLayoutTabSettingsOpenTabId(tabId);
       closeDropdown(dropdownId);
     },
     [

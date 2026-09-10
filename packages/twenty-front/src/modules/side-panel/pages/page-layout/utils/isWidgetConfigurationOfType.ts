@@ -152,9 +152,6 @@ type WidgetConfigurationTypenameMap = {
 
 type WidgetConfigurationTypename = keyof WidgetConfigurationTypenameMap;
 
-export type WidgetConfigurationOfType<T extends WidgetConfigurationTypename> =
-  WidgetConfigurationTypenameMap[T];
-
 export const isWidgetConfigurationOfType = <
   T extends WidgetConfigurationTypename,
 >(

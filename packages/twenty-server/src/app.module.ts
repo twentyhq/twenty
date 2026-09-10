@@ -27,6 +27,7 @@ import { WorkspaceAuthContextMiddleware } from 'src/engine/core-modules/auth/mid
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { ApiRequestContextMiddleware } from 'src/engine/core-modules/usage/middlewares/api-request-context.middleware';
 import { CookieSessionCsrfMiddleware } from 'src/engine/middlewares/cookie-session-csrf.middleware';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
 import { MiddlewareModule } from 'src/engine/middlewares/middleware.module';
@@ -118,6 +119,7 @@ export class AppModule {
 
     consumer
       .apply(
+        ApiRequestContextMiddleware,
         GraphQLHydrateRequestFromTokenMiddleware,
         WorkspaceAuthContextMiddleware,
       )
@@ -138,12 +140,16 @@ export class AppModule {
       .forRoutes({ path: ApiPath.AdminPanel, method: RequestMethod.ALL });
 
     consumer
-      .apply(McpMethodGuardMiddleware)
+      .apply(ApiRequestContextMiddleware, McpMethodGuardMiddleware)
       .forRoutes({ path: ApiPath.Mcp, method: RequestMethod.ALL });
 
     for (const method of MIGRATED_REST_METHODS) {
       consumer
-        .apply(RestCoreMiddleware, WorkspaceAuthContextMiddleware)
+        .apply(
+          ApiRequestContextMiddleware,
+          RestCoreMiddleware,
+          WorkspaceAuthContextMiddleware,
+        )
         .forRoutes({ path: `${ApiPath.Rest}/*path`, method });
     }
   }

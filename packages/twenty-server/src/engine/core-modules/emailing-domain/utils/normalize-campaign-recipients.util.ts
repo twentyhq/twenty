@@ -6,12 +6,10 @@ import { type RawCampaignRecipient } from 'src/engine/core-modules/emailing-doma
 
 export const normalizeCampaignRecipients = (
   rawRecipients: RawCampaignRecipient[],
-  maxRecipients: number,
 ): { recipients: CampaignRecipient[]; skipped: CampaignSkippedBreakdown } => {
   const skipped: CampaignSkippedBreakdown = {
     noEmail: 0,
     deduped: 0,
-    overCap: 0,
   };
   const seenEmails = new Set<string>();
   const recipients: CampaignRecipient[] = [];
@@ -30,12 +28,6 @@ export const normalizeCampaignRecipients = (
     }
 
     seenEmails.add(normalizedEmail);
-
-    if (recipients.length >= maxRecipients) {
-      skipped.overCap += 1;
-      continue;
-    }
-
     recipients.push({ email: normalizedEmail, personId: candidate.personId });
   }
 

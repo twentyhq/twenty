@@ -2,7 +2,7 @@ import { isPathCommandMenuItemPayload } from '@/command-menu-item/engine-command
 import { type CommandMenuItemPayload } from '~/generated-metadata/graphql';
 
 describe('isPathCommandMenuItemPayload', () => {
-  it('should return true for a PathCommandMenuItemPayload', () => {
+  it('should return true for a payload carrying a path', () => {
     const payload: CommandMenuItemPayload = {
       __typename: 'PathCommandMenuItemPayload',
       path: '/settings',
@@ -11,12 +11,16 @@ describe('isPathCommandMenuItemPayload', () => {
     expect(isPathCommandMenuItemPayload(payload)).toBe(true);
   });
 
-  it('should return false for an ObjectMetadataCommandMenuItemPayload', () => {
+  it('should return false for a payload without a path', () => {
     const payload: CommandMenuItemPayload = {
       __typename: 'ObjectMetadataCommandMenuItemPayload',
       objectMetadataItemId: 'some-uuid',
     };
 
     expect(isPathCommandMenuItemPayload(payload)).toBe(false);
+  });
+
+  it('should return false for an empty path', () => {
+    expect(isPathCommandMenuItemPayload({ path: '' })).toBe(false);
   });
 });

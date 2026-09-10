@@ -54,6 +54,7 @@ export { getConnection } from '@/sdk/logic-function/connections/get-connection';
 export { listConnections } from '@/sdk/logic-function/connections/list-connections';
 export type { ListConnectionsFilter } from '@/sdk/logic-function/connections/list-connections';
 export { findConnectionForRequest } from '@/sdk/logic-function/connections/find-connection-for-request';
+export { reportConnectionAuthFailure } from '@/sdk/logic-function/connections/report-connection-auth-failure';
 export { AppConnectionAuthFailedError } from '@/sdk/logic-function/connections/errors/app-connection-auth-failed.error';
 export type { AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
 
@@ -62,12 +63,16 @@ export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
 
 export { enqueueJob } from '@/sdk/logic-function/jobs/enqueue-job';
 export { enqueueJobs } from '@/sdk/logic-function/jobs/enqueue-jobs';
+export { getJobs } from '@/sdk/logic-function/jobs/get-jobs';
 export type {
   EnqueueJobInput,
+  EnqueueJobItem,
   EnqueueJobOptions,
   EnqueueJobResult,
   EnqueueJobsInput,
   EnqueueJobsResult,
+  JobStatusResult,
+  JobStatusState,
 } from 'twenty-shared/application';
 
 export { createTimelineActivity } from '@/sdk/logic-function/timeline/create-timeline-activity';

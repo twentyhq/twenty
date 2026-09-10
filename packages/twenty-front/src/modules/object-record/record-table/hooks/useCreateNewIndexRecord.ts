@@ -1,6 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
+import { useRecordCreationForm } from '@/object-record/record-form/hooks/useRecordCreationForm';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
@@ -13,6 +14,7 @@ import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -50,6 +52,7 @@ export const useCreateNewIndexRecord = ({
   );
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const workspaceSurface = useWorkspaceSurface();
 
   const openRecordIn = useResolveOpenRecordIn(objectMetadataItem.nameSingular);
 
@@ -61,6 +64,9 @@ export const useCreateNewIndexRecord = ({
   });
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
+
+  const { shouldOpenRecordCreationForm, requestRecordCreation } =
+    useRecordCreationForm({ objectMetadataItem });
 
   const navigate = useNavigateApp();
 
@@ -74,7 +80,7 @@ export const useCreateNewIndexRecord = ({
       objectMetadataItem,
     });
 
-  const createNewIndexRecord = useCallback(
+  const createIndexRecord = useCallback(
     async (recordInput?: Partial<ObjectRecord>) => {
       const recordId = v4();
       const recordInputFromRLSPredicates = buildRecordInputFromRLSPredicates();
@@ -91,17 +97,35 @@ export const useCreateNewIndexRecord = ({
         ...mergedRecordInput,
       });
 
-      if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
+      const labelIdentifierFieldMetadataItem =
+        getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+
+      const shouldOpenLabelIdentifierInEditMode =
+        !isDefined(labelIdentifierFieldMetadataItem) ||
+        !isDefined(
+          recordInput?.[
+            getFieldMetadataItemGqlFieldName(labelIdentifierFieldMetadataItem)
+          ],
+        );
+
+      if (workspaceSurface.type === 'side-panel') {
         openRecordInSidePanel({
           recordId,
           objectNameSingular: objectMetadataItem.nameSingular,
-          isNewRecord: true,
+          isNewRecord: shouldOpenLabelIdentifierInEditMode,
+          resetNavigationStack: false,
+        });
+      } else if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
+        openRecordInSidePanel({
+          recordId,
+          objectNameSingular: objectMetadataItem.nameSingular,
+          isNewRecord: shouldOpenLabelIdentifierInEditMode,
         });
       } else {
-        const labelIdentifierFieldMetadataItem =
-          getLabelIdentifierFieldMetadataItem(objectMetadataItem);
-
-        if (isDefined(labelIdentifierFieldMetadataItem)) {
+        if (
+          shouldOpenLabelIdentifierInEditMode &&
+          isDefined(labelIdentifierFieldMetadataItem)
+        ) {
           store.set(newRecordTitleCellToOpenState.atom, {
             recordId,
             fieldName: labelIdentifierFieldMetadataItem.name,
@@ -168,7 +192,25 @@ export const useCreateNewIndexRecord = ({
       recordIndexRecordIdsByGroupCallbackState,
       upsertRecordsInStore,
       closeSidePanelMenu,
+      workspaceSurface.type,
     ],
+  );
+
+  const createNewIndexRecord = useCallback(
+    async (recordInput?: Partial<ObjectRecord>) => {
+      if (!shouldOpenRecordCreationForm) {
+        return createIndexRecord(recordInput);
+      }
+
+      const createdRecord = await requestRecordCreation({
+        initialDraftRecord: recordInput,
+        createRecord: (draftRecord) =>
+          createIndexRecord({ ...recordInput, ...draftRecord }),
+      });
+
+      return createdRecord ?? undefined;
+    },
+    [createIndexRecord, requestRecordCreation, shouldOpenRecordCreationForm],
   );
 
   return {

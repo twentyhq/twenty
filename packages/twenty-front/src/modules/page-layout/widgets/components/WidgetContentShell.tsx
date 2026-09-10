@@ -1,5 +1,5 @@
 import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { type ReactNode } from 'react';
 
@@ -8,7 +8,7 @@ type WidgetContentShellProps = {
 };
 
 export const WidgetContentShell = ({ children }: WidgetContentShellProps) => {
-  const { isInSidePanel } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   return (
     <SidePanelProvider value={{ isInSidePanel }}>

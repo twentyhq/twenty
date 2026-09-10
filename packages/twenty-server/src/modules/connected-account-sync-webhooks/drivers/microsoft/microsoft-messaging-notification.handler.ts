@@ -9,6 +9,7 @@ import { type AssertUnreachable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -31,6 +32,7 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
     private readonly messagingWebhookSubscriptionService: MessagingWebhookSubscriptionService,
     private readonly webhookSyncTriggerService: WebhookSyncTriggerService,
     private readonly metricsService: MetricsService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async handle(notifications: MicrosoftGraphNotification[]): Promise<void> {
@@ -98,12 +100,15 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
           lifecycleEvent: notification.lifecycleEvent,
           removedSubscriptionId: notification.subscriptionId,
           messageChannel,
-        }).catch((error) =>
+        }).catch((error) => {
           this.logger.error(
             `Failed to handle ${notification.lifecycleEvent} lifecycle event for message channel ${messageChannel.id}`,
             error,
-          ),
-        );
+          );
+          this.exceptionHandlerService.captureExceptions([error], {
+            workspace: { id: messageChannel.workspaceId },
+          });
+        });
         continue;
       }
 

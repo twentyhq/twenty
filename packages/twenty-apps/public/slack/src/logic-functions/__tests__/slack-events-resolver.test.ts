@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  SLACK_ENTITY_DETAILS_UNIVERSAL_IDENTIFIER,
   SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
   SLACK_INSTALL_REVOKED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  SLACK_LINK_UNFURL_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { slackEventsResolverHandler } from 'src/logic-functions/slack-events-resolver';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
@@ -154,6 +156,55 @@ describe('slackEventsResolverHandler', () => {
         }),
       ),
     ).rejects.toThrow('No workspace has claimed Slack team T123');
+  });
+
+  it('should route link_shared to the link unfurl function', async () => {
+    resolveWorkspaceMock.mockResolvedValue('workspace-1');
+
+    const body: SlackEventsRequestBody = {
+      type: 'event_callback',
+      team_id: 'T123',
+      event: {
+        type: 'link_shared',
+        channel: 'C123',
+        message_ts: '1700000000.000100',
+        user: 'U123',
+        links: [{ url: 'https://crm.example.com/object/person/uuid' }],
+      },
+    };
+
+    const result = await slackEventsResolverHandler(buildRoutePayload(body));
+
+    expect(result).toEqual({
+      workspaceId: 'workspace-1',
+      targetLogicFunctionUniversalIdentifier:
+        SLACK_LINK_UNFURL_UNIVERSAL_IDENTIFIER,
+      payload: body,
+    });
+  });
+
+  it('should route entity_details_requested to the entity details function', async () => {
+    resolveWorkspaceMock.mockResolvedValue('workspace-1');
+
+    const body: SlackEventsRequestBody = {
+      type: 'event_callback',
+      team_id: 'T123',
+      event: {
+        type: 'entity_details_requested',
+        user: 'U123',
+        trigger_id: 'trigger-1',
+        external_ref: { id: 'uuid', type: 'person' },
+      },
+    };
+
+    const result = await slackEventsResolverHandler(buildRoutePayload(body));
+
+    expect(result).toEqual({
+      workspaceId: 'workspace-1',
+      targetLogicFunctionUniversalIdentifier:
+        SLACK_ENTITY_DETAILS_UNIVERSAL_IDENTIFIER,
+      payload: body,
+    });
   });
 
   it('should route other events unchanged', async () => {

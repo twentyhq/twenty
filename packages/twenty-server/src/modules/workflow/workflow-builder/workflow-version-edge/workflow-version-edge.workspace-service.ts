@@ -15,7 +15,7 @@ import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util';
-import { WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepCreationOptions';
+import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepConnectionOptions';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -40,6 +40,8 @@ export class WorkflowVersionEdgeWorkspaceService {
     workspaceId: string;
     sourceConnectionOptions?: WorkflowStepConnectionOptions;
   }): Promise<WorkflowVersionStepChangesDTO> {
+    this.assertConnectionOptionsAreSupported(sourceConnectionOptions);
+
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
@@ -100,6 +102,8 @@ export class WorkflowVersionEdgeWorkspaceService {
     workspaceId: string;
     sourceConnectionOptions?: WorkflowStepConnectionOptions;
   }): Promise<WorkflowVersionStepChangesDTO> {
+    this.assertConnectionOptionsAreSupported(sourceConnectionOptions);
+
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
@@ -566,6 +570,19 @@ export class WorkflowVersionEdgeWorkspaceService {
           },
           shouldPersist: true,
         };
+    }
+  }
+
+  private assertConnectionOptionsAreSupported(
+    sourceConnectionOptions?: WorkflowStepConnectionOptions,
+  ) {
+    if (
+      sourceConnectionOptions?.connectedStepType === WorkflowActionType.IF_ELSE
+    ) {
+      throw new WorkflowVersionEdgeException(
+        'If/Else connections must be updated through their branch settings',
+        WorkflowVersionEdgeExceptionCode.INVALID_REQUEST,
+      );
     }
   }
 }

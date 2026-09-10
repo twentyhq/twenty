@@ -21,11 +21,20 @@ export class ProviderConfigService {
     );
   }
 
-  getResolvedProviders(): AiProvidersConfig {
+  getResolvedProviders({
+    includeCustomProviders = true,
+  }: { includeCustomProviders?: boolean } = {}): AiProvidersConfig {
     const rawCatalog = this.defaultAiCatalogService.getDefaultAiCatalog();
     // Only resolve {{VAR}} templates in the committed catalog — never in
     // user-supplied custom providers, to prevent config variable exfiltration.
     const catalog = this.resolveTemplates(rawCatalog);
+
+    // Dropping the custom entries rather than filtering the merged map also
+    // restores a catalog provider that a custom entry of the same name shadows.
+    if (!includeCustomProviders) {
+      return catalog;
+    }
+
     const custom = this.twentyConfigService.get('AI_PROVIDERS');
 
     return { ...catalog, ...custom };

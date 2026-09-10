@@ -11,6 +11,7 @@ import { CreateCalendarEventTool } from 'src/engine/core-modules/tool/tools/cale
 import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
+import { FindConnectedAccountsTool } from 'src/engine/core-modules/tool/tools/email-tool/find-connected-accounts-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
@@ -19,6 +20,7 @@ import { SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navi
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -33,6 +35,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     MessagingSendManagerModule,
     CalendarEventCreationManagerModule,
     TypeOrmModule.forFeature([FileEntity, ConnectedAccountEntity]),
+    ConnectedAccountMetadataModule,
     ApplicationModule,
     FeatureFlagModule,
     FileModule,
@@ -47,6 +50,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     HttpTool,
     SendEmailTool,
     DraftEmailTool,
+    FindConnectedAccountsTool,
     CreateCalendarEventTool,
     EmailComposerService,
     SearchHelpCenterTool,
@@ -61,6 +65,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     HttpTool,
     SendEmailTool,
     DraftEmailTool,
+    FindConnectedAccountsTool,
     CreateCalendarEventTool,
     EmailComposerService,
     SearchHelpCenterTool,

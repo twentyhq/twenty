@@ -23,7 +23,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -44,7 +44,7 @@ import {
 } from 'twenty-ui/icon';
 import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
-import { Button, Toggle } from 'twenty-ui/input';
+import { Button, Switch } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -230,14 +230,15 @@ export const SettingsAdminWorkspaceDetail = () => {
           children: workspaceName,
         },
       ]}
-    >
-      <SettingsPageContainer>
-        <TabList
+      secondaryBar={
+        <SettingsTabBar
           tabs={tabs}
           behaveAsLinks={false}
           componentInstanceId={WORKSPACE_DETAIL_TABS_ID}
         />
-
+      }
+    >
+      <SettingsPageContainer>
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.INFO && workspace && (
           <SettingsAdminWorkspaceContent
             activeWorkspace={workspace}
@@ -358,9 +359,10 @@ export const SettingsAdminWorkspaceDetail = () => {
                         <TableCell>{flag.key}</TableCell>
                         <TableCell align="right">
                           {isDefined(flag.key) && (
-                            <Toggle
-                              value={displayedValue}
-                              onChange={(newValue) =>
+                            <Switch
+                              aria-label={flag.key}
+                              checked={displayedValue}
+                              onCheckedChange={(newValue) =>
                                 handleFeatureFlagUpdate(flag.key!, newValue)
                               }
                             />

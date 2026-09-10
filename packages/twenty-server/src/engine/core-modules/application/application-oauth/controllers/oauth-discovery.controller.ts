@@ -39,7 +39,7 @@ export class OAuthDiscoveryController {
         : `${authorizeBase}/authorize?iss=${encodeURIComponent(issuer)}`;
 
     const cliRegistration =
-      await this.applicationRegistrationService.findOneByUniversalIdentifier(
+      await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
         TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
       );
 

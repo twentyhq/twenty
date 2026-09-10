@@ -124,12 +124,14 @@ export class UserWorkspaceService {
       isExistingUser,
       pictureUrl,
       applicationUniversalIdentifier,
+      locale,
     }: {
       userId: string;
       workspaceId: string;
       isExistingUser: boolean;
       pictureUrl?: string;
       applicationUniversalIdentifier?: string;
+      locale?: UserWorkspaceEntity['locale'];
     },
     queryRunner?: QueryRunner,
   ): Promise<UserWorkspaceEntity> {
@@ -146,6 +148,7 @@ export class UserWorkspaceService {
       userId,
       workspaceId,
       defaultAvatarUrl,
+      locale: locale ?? SOURCE_LOCALE,
     });
 
     return queryRunner
@@ -234,6 +237,7 @@ export class UserWorkspaceService {
       userId: user.id,
       workspaceId: workspace.id,
       isExistingUser: true,
+      locale: user.locale,
     });
 
     await this.createWorkspaceMember(workspace.id, user);
@@ -370,7 +374,7 @@ export class UserWorkspaceService {
       relations: {
         userWorkspaces: {
           workspace: {
-            workspaceSSOIdentityProviders: true,
+            workspaceSsoIdentityProviders: true,
             approvedAccessDomains: true,
           },
         },
@@ -399,7 +403,7 @@ export class UserWorkspaceService {
     )
       ? getJoinableWorkspacesFromApprovedAccessDomains({
           approvedAccessDomains:
-            await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
+            await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSsoIdentityProvidersDomain(
               getDomainFromEmailOrThrow(email),
             ),
           alreadyMemberWorkspaceIds: alreadyMemberWorkspacesIds,
@@ -624,7 +628,7 @@ export class UserWorkspaceService {
           })
         : '',
       sso:
-        workspace.workspaceSSOIdentityProviders?.reduce(
+        workspace.workspaceSsoIdentityProviders?.reduce(
           (acc, identityProvider) =>
             acc.concat(
               identityProvider.status === 'Inactive'

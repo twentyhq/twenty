@@ -248,6 +248,10 @@ jobs:
           # Move current branch files to temp directory
           mv current-* /tmp/current-branch-files/ 2>/dev/null || echo "No current-* files to preserve"
 
+          # Both servers must be introspected with the same query, and checking
+          # out main would otherwise swap in main's copy of it
+          cp packages/twenty-utils/graphql-introspection-query.graphql /tmp/graphql-introspection-query.graphql
+
           echo "Preserved current branch files for later restoration"
 
       - name: Stop current branch server
@@ -370,8 +374,8 @@ jobs:
           # Read admin token from shared test tokens file (single source of truth)
           ADMIN_TOKEN=$(jq -r '.APPLE_JANE_ADMIN_ACCESS_TOKEN' packages/twenty-server/test/integration/constants/test-tokens.json)
 
-          # Load introspection query from file
-          INTROSPECTION_QUERY=$(cat packages/twenty-utils/graphql-introspection-query.graphql)
+          # Load introspection query preserved from the current branch
+          INTROSPECTION_QUERY=$(cat /tmp/graphql-introspection-query.graphql)
 
           # Prepare the query payload
           QUERY_PAYLOAD=$(echo "$INTROSPECTION_QUERY" | tr '\n' ' ' | sed 's/"/\\"/g')

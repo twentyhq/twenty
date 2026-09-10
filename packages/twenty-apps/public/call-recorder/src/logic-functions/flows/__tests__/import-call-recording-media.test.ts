@@ -3,7 +3,7 @@ import { PassThrough, Readable } from 'node:stream';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-video-field-universal-identifier';
+import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { importCallRecordingMedia } from 'src/logic-functions/flows/import-call-recording-media.util';
 
 const mutationMock = vi.hoisted(() => vi.fn());
@@ -211,14 +211,14 @@ describe('importCallRecordingMedia', () => {
   });
 
   it('streams and uploads every missing artifact', async () => {
-    const updateFields = await importCallRecordingMedia({
+    const { updateData } = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
       hasVideo: false,
     });
 
-    expect(updateFields).toEqual({
+    expect(updateData).toEqual({
       video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
     });
@@ -281,28 +281,28 @@ describe('importCallRecordingMedia', () => {
   });
 
   it('skips artifacts already on the record', async () => {
-    const updateFields = await importCallRecordingMedia({
+    const { updateData } = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
       hasVideo: true,
     });
 
-    expect(updateFields).toEqual({
+    expect(updateData).toEqual({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
     });
     expect(getUploadRequestCall('video.mp4')).toBeUndefined();
   });
 
   it('does not fetch the recording when both artifacts are present', async () => {
-    const updateFields = await importCallRecordingMedia({
+    const { updateData } = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: true,
       hasVideo: true,
     });
 
-    expect(updateFields).toEqual({});
+    expect(updateData).toEqual({});
     expect(fetchMock).not.toHaveBeenCalled();
     expect(mutationMock).not.toHaveBeenCalled();
   });
@@ -329,16 +329,17 @@ describe('importCallRecordingMedia', () => {
       },
     });
 
-    const updateFields = await importCallRecordingMedia({
+    const { updateData, hasRetryableFailure } = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
       hasVideo: false,
     });
 
-    expect(updateFields).toEqual({
+    expect(updateData).toEqual({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
     });
+    expect(hasRetryableFailure).toBe(true);
     expect(cancelMock).toHaveBeenCalledTimes(1);
     expect(getUploadRequestCall('video.mp4')).toBeUndefined();
     expect(console.warn).toHaveBeenCalledWith(
@@ -346,7 +347,7 @@ describe('importCallRecordingMedia', () => {
     );
   });
 
-  it('omits an artifact and warns when the download has no content length', async () => {
+  it('keeps the artifact it imported and asks for a redelivery when the other download has no content length', async () => {
     const cancelMock = vi.fn().mockRejectedValue(new Error('cancel exploded'));
 
     stubFetch({
@@ -358,16 +359,17 @@ describe('importCallRecordingMedia', () => {
       },
     });
 
-    const updateFields = await importCallRecordingMedia({
+    const { updateData, hasRetryableFailure } = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
       hasVideo: false,
     });
 
-    expect(updateFields).toEqual({
+    expect(updateData).toEqual({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
     });
+    expect(hasRetryableFailure).toBe(true);
     expect(getUploadRequestCall('video.mp4')).toBeUndefined();
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('content-length'),
@@ -377,20 +379,23 @@ describe('importCallRecordingMedia', () => {
     );
   });
 
-  it('returns nothing when the recording exposes no media urls', async () => {
+  it('returns nothing and asks for no redelivery when the recording exposes no media urls', async () => {
     buildRecallRecordingResponse = () =>
       new Response(JSON.stringify({ id: 'recall-recording-1' }), {
         status: 200,
       });
 
-    const updateFields = await importCallRecordingMedia({
+    const mediaImportResult = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
       hasVideo: false,
     });
 
-    expect(updateFields).toEqual({});
+    expect(mediaImportResult).toEqual({
+      updateData: {},
+      hasRetryableFailure: false,
+    });
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
@@ -401,16 +406,19 @@ describe('importCallRecordingMedia', () => {
       });
     vi.useFakeTimers();
 
-    const updateFieldsPromise = importCallRecordingMedia({
+    const mediaImportResultPromise = importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
       hasVideo: false,
     });
     await vi.runAllTimersAsync();
-    const updateFields = await updateFieldsPromise;
+    const mediaImportResult = await mediaImportResultPromise;
 
-    expect(updateFields).toEqual({});
+    expect(mediaImportResult).toEqual({
+      updateData: {},
+      hasRetryableFailure: true,
+    });
     expect(mutationMock).not.toHaveBeenCalled();
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('recording boom'),
@@ -430,14 +438,14 @@ describe('importCallRecordingMedia', () => {
       },
     });
 
-    const updateFields = await importCallRecordingMedia({
+    const { updateData } = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
       hasVideo: false,
     });
 
-    expect(updateFields).toEqual({
+    expect(updateData).toEqual({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
       callRecorderFailureReason: 'video_file_too_large',
     });
@@ -463,14 +471,14 @@ describe('importCallRecordingMedia', () => {
       },
     });
 
-    const updateFields = await importCallRecordingMedia({
+    const { updateData } = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
       hasVideo: false,
     });
 
-    expect(updateFields).toEqual({
+    expect(updateData).toEqual({
       callRecorderFailureReason: 'video_file_too_large,audio_file_too_large',
     });
     expect(mutationMock).not.toHaveBeenCalled();
@@ -485,14 +493,14 @@ describe('importCallRecordingMedia', () => {
       },
     });
 
-    const updateFields = await importCallRecordingMedia({
+    const { updateData } = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: true,
       hasVideo: false,
     });
 
-    expect(updateFields).toEqual({
+    expect(updateData).toEqual({
       video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
     });
   });

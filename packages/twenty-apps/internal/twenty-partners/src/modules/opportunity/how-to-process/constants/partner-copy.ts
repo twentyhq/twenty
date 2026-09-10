@@ -30,6 +30,6 @@ export const HOW_TO_APPLY_STEPS: PlaybookStep[] = [
     num: '03',
     heading: 'What happens next',
     body: 'Your row lands in My Applications as Applied. Twenty may also invite you. Then the row is Invited. After an intro, wait for Twenty. Do not chase the client unless Twenty asks. Won or Declined is set when Twenty picks the Partner. You do not set those yourself.',
-    note: 'A listed brief can still have a decided row. Listing and the winner field are not the same thing.',
+    note: 'A listed brief can still have a decided row. Listing and the winner field are not the same thing. My Applications still shows the brief after it leaves Open Briefs.',
   },
 ];

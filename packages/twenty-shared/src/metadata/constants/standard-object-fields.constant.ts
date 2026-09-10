@@ -557,9 +557,15 @@ export const STANDARD_OBJECT_FIELDS = {
       universalIdentifier: '91e1a33c-c1ff-411a-b720-9085e13c05db',
     },
     status: { universalIdentifier: 'c7117256-3de6-48e1-87df-c99c32bad610' },
+    scheduledAt: {
+      universalIdentifier: '0b281092-f5a5-4dd6-969b-5229f6620071',
+    },
     sentAt: { universalIdentifier: 'e2315b4f-9edf-4df2-96b9-961e76368671' },
     sentCount: {
       universalIdentifier: '2f333d2b-37b8-4ddc-ad0d-c07c6ce066ad',
+    },
+    deliveredCount: {
+      universalIdentifier: 'f4ee1d33-7379-42fe-ad63-e023449baea6',
     },
     failedCount: {
       universalIdentifier: 'd373fcd7-b1ce-4c77-8031-a5785c475028',
@@ -569,6 +575,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     complainedCount: {
       universalIdentifier: '82842cfa-f12a-4bab-bbde-b2cf587d0406',
+    },
+    skippedCount: {
+      universalIdentifier: 'a1f4c6d2-5e8b-4a37-9c60-31b7f0d2a984',
     },
     unsubscribeTopicId: {
       universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c',
@@ -594,6 +603,9 @@ export const STANDARD_OBJECT_FIELDS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageList,
     ),
     name: { universalIdentifier: '69b9ed8b-7b26-4108-894f-05700ef7e8ee' },
+    description: {
+      universalIdentifier: '2484463a-12e0-411e-9586-81892bd7721c',
+    },
     members: {
       universalIdentifier: '92df3493-91cf-4665-8587-1b08917d299b',
     },
@@ -767,9 +779,6 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     messageCampaign: {
       universalIdentifier: '77cff00b-a0ba-48d6-80de-0d5ccf14e45b',
-    },
-    deliveryStatus: {
-      universalIdentifier: '209254fa-2b89-429d-a72a-c401c4bd5a78',
     },
     isDraft: {
       universalIdentifier: '20202020-4d3a-4b6e-9c1f-2a5e7b9d0c34',
@@ -998,6 +1007,32 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     listMemberships: {
       universalIdentifier: '8b8d1be0-4c94-4413-a2c9-c7ede205a81d',
+    },
+  },
+  recordShare: {
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.recordShare,
+    ),
+    recordId: {
+      universalIdentifier: '01edb657-6339-475c-b581-784a0c3e0509',
+    },
+    objectMetadataId: {
+      universalIdentifier: '504cec47-6aae-4e5b-85fd-1581b62602e3',
+    },
+    principalId: {
+      universalIdentifier: 'c1849ee2-1d2a-409e-800d-16fc16621257',
+    },
+    principalType: {
+      universalIdentifier: '556161f6-1a01-478e-8f01-acc413102e44',
+    },
+    accessLevel: {
+      universalIdentifier: '943b9926-9620-43de-8a46-8ebfee74dea3',
+    },
+    rowCause: {
+      universalIdentifier: 'be27640e-f739-4d07-8979-dba4526e406a',
+    },
+    sourceId: {
+      universalIdentifier: '534a2244-9feb-4d21-afd9-c9a20052b300',
     },
   },
   task: {

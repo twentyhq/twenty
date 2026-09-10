@@ -36,12 +36,10 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerMainGroupByFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerMainGroupByFieldMetadataIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { IconX } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledFieldAvailableContainer = styled.div`
   color: ${themeCssVariables.font.color.light};
@@ -55,9 +53,6 @@ export const ViewPickerContentCreateMode = () => {
   const { t } = useLingui();
   const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
   const [hasManuallySelectedIcon, setHasManuallySelectedIcon] = useState(false);
-  const isListViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_LIST_VIEW_ENABLED,
-  );
 
   const viewObjectMetadataId = useAtomComponentStateValue(
     viewObjectMetadataIdComponentState,
@@ -192,9 +187,7 @@ export const ViewPickerContentCreateMode = () => {
                 setViewPickerSelectedIcon(viewTypeIconKeyMapping(value));
               }
             }}
-            options={VIEW_PICKER_TYPE_SELECT_OPTIONS.filter(
-              (option) => option.value !== ViewType.LIST || isListViewEnabled,
-            ).map((option) => ({
+            options={VIEW_PICKER_TYPE_SELECT_OPTIONS.map((option) => ({
               ...option,
               label: t(option.label),
             }))}

@@ -3,6 +3,7 @@ import { type RoutePayload } from 'twenty-sdk/define';
 
 import { FIREFLIES_BACKFILL_WORKER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import firefliesBackfillLogicFunction from 'src/logic-functions/fireflies-backfill';
+import { LOGIC_FUNCTION_EXECUTION_CONTEXT } from 'src/logic-functions/__tests__/logic-function-execution-context.test-support';
 
 const enqueueJobMock = vi.hoisted(() => vi.fn());
 
@@ -49,6 +50,7 @@ describe('firefliesBackfillLogicFunction', () => {
   it('rejects an empty route body', async () => {
     const result = await firefliesBackfillLogicFunction.config.handler(
       buildRoutePayload(null),
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
     );
 
     expect(result).toEqual({
@@ -63,6 +65,7 @@ describe('firefliesBackfillLogicFunction', () => {
 
     const result = await firefliesBackfillLogicFunction.config.handler(
       buildRoutePayload({ days: 30 }),
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
     );
 
     expect(result).toEqual({
@@ -75,6 +78,7 @@ describe('firefliesBackfillLogicFunction', () => {
   it('enqueues discovery instead of listing transcripts in the route', async () => {
     const result = await firefliesBackfillLogicFunction.config.handler(
       buildRoutePayload({ days: 30 }),
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
     );
 
     expect(result).toEqual({ outcome: 'started' });
