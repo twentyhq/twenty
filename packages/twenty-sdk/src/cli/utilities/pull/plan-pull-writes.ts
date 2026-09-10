@@ -5,7 +5,7 @@ import {
   type PullEntityKind,
 } from '@/cli/utilities/pull/build-pull-entities';
 import { capFileBaseName } from '@/cli/utilities/pull/pull-file-base-name';
-import { type ScannedDefineFile } from '@/cli/utilities/pull/scan-project-define-files';
+import { type ScannedSourceFile } from '@/cli/utilities/pull/scan-project-source-files';
 import { writeDefineFile } from '@/cli/utilities/pull/write-define-file';
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
 import { dirname, posix } from 'node:path';
@@ -55,7 +55,7 @@ const findExistingFolderForKind = ({
   scannedFiles,
   entityKey,
 }: {
-  scannedFiles: ScannedDefineFile[];
+  scannedFiles: ScannedSourceFile[];
   entityKey: ManifestEntityKey;
 }): string | null => {
   const folderCounts = new Map<string, number>();
@@ -169,7 +169,7 @@ const findExistingPath = ({
   pathByUniversalIdentifier,
 }: {
   entity: PullEntity;
-  applicationFile: ScannedDefineFile | undefined;
+  applicationFile: ScannedSourceFile | undefined;
   pathByUniversalIdentifier: Map<string, string>;
 }): string | undefined => {
   if (entity.kind !== 'application') {
@@ -203,7 +203,7 @@ export const planPullWrites = ({
 }: {
   manifest: Manifest;
   baseManifest: Manifest | null;
-  scannedFiles: ScannedDefineFile[];
+  scannedFiles: ScannedSourceFile[];
 }): PullWritePlan & {
   skipped: ReturnType<typeof buildPullEntities>['skipped'];
 } => {

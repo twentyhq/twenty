@@ -1,6 +1,6 @@
 import { ManifestEntityKey } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { planPullWrites } from '@/cli/utilities/pull/plan-pull-writes';
-import { type ScannedDefineFile } from '@/cli/utilities/pull/scan-project-define-files';
+import { type ScannedSourceFile } from '@/cli/utilities/pull/scan-project-source-files';
 import {
   type Manifest,
   type NavigationMenuItemManifest,
@@ -244,7 +244,7 @@ describe('planPullWrites', () => {
   });
 
   it('should regenerate the application config in the file that already declares one', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/application-config.ts',
         entityKey: ManifestEntityKey.Application,
@@ -267,7 +267,7 @@ describe('planPullWrites', () => {
   });
 
   it('should leave a file untouched when its entity has not changed since the base', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/application.config.ts',
         entityKey: ManifestEntityKey.Application,
@@ -293,7 +293,7 @@ describe('planPullWrites', () => {
   });
 
   it('should rewrite only the entity that changed on the server', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/application.config.ts',
         entityKey: ManifestEntityKey.Application,
@@ -329,7 +329,7 @@ describe('planPullWrites', () => {
   });
 
   it('should delete the file of an entity the base knew and the workspace no longer has', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/objects/rocket.object.ts',
         entityKey: ManifestEntityKey.Objects,
@@ -365,7 +365,7 @@ describe('planPullWrites', () => {
   });
 
   it('should report a local entity that neither the workspace nor the base knows', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/objects/unpushed.object.ts',
         entityKey: ManifestEntityKey.Objects,
@@ -387,7 +387,7 @@ describe('planPullWrites', () => {
   });
 
   it('should place a new entity beside existing files of its kind', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'app/data-model/rocket.object.ts',
         entityKey: ManifestEntityKey.Objects,
@@ -747,7 +747,7 @@ describe('planPullWrites', () => {
   });
 
   it('should leave an unchanged view untouched and regenerate the view whose filter changed on the server', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/application.config.ts',
         entityKey: ManifestEntityKey.Application,
@@ -951,7 +951,7 @@ describe('planPullWrites', () => {
   });
 
   it('should leave an unchanged page layout untouched and regenerate the page layout whose widget changed on the server', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/application.config.ts',
         entityKey: ManifestEntityKey.Application,
@@ -1134,7 +1134,7 @@ describe('planPullWrites', () => {
   });
 
   it('should leave an unchanged navigation menu item untouched and regenerate the item whose link changed on the server', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/application.config.ts',
         entityKey: ManifestEntityKey.Application,
