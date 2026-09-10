@@ -3,19 +3,19 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.40.0', 1788957600000)
-export class AddOwnerFieldToObjectMetadataFastInstanceCommand
+@RegisteredInstanceCommand('2.40.0', 1788960600000)
+export class AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."objectMetadata" ADD "ownerFieldMetadataId" uuid',
+      'ALTER TABLE "core"."objectMetadata" ADD "readabilityParentFieldUniversalIdentifiers" uuid array',
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."objectMetadata" DROP COLUMN "ownerFieldMetadataId"',
+      'ALTER TABLE "core"."objectMetadata" DROP COLUMN "readabilityParentFieldUniversalIdentifiers"',
     );
   }
 }

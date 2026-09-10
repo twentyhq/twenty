@@ -4,7 +4,7 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { MetadataReadability } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
-import { MakeMessagingAndCalendarPrivateCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788957500000-make-messaging-and-calendar-private.command';
+import { MakeMessagingAndCalendarPrivateCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788960800000-make-messaging-and-calendar-private.command';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -35,7 +35,7 @@ const RUN_ON_WORKSPACE_ARGS = {
   total: 1,
 };
 
-describe('2-40 workspace command 1788957500000 - MakeMessagingAndCalendarPrivateCommand (integration)', () => {
+describe('2-40 workspace command 1788960800000 - MakeMessagingAndCalendarPrivateCommand (integration)', () => {
   let command: MakeMessagingAndCalendarPrivateCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
   let objectMetadataIdByName: Record<string, string>;
