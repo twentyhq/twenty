@@ -20,6 +20,7 @@ import { isSameCalDavResource } from 'src/modules/calendar/calendar-event-import
 import { isValidCalDavHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-valid-caldav-href.util';
 import { mapCalDavStatusToExceptionCode } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/map-caldav-status-to-exception-code.util';
 import { parseICalEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-ical-event.util';
+import { resolveCalDavResourceEtag } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/resolve-caldav-resource-etag.util';
 import { CalendarEventImportDriverException } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
@@ -312,7 +313,11 @@ export class CalDavFetchEventsService {
       };
     }
 
-    const currentEtags = await this.fetchEtagsByHref(client, calendar.url);
+    const currentEtags = await this.fetchEtagsByHref(
+      client,
+      calendar.url,
+      newCtag,
+    );
 
     const changedHrefs = Object.keys(currentEtags).filter(
       (href) => storedEtags[href] !== currentEtags[href],
@@ -322,11 +327,13 @@ export class CalDavFetchEventsService {
         !(href in currentEtags) && !isCalDavCollectionHref(href, calendar.url),
     );
 
+    const hasCollectedResources = Object.keys(currentEtags).length > 0;
+
     return {
       calendarUrl: calendar.url,
       changedHrefs,
       cancelledHrefs,
-      newCtag,
+      newCtag: hasCollectedResources ? newCtag : undefined,
       newEtags: currentEtags,
     };
   }
@@ -353,27 +360,34 @@ export class CalDavFetchEventsService {
   private async fetchEtagsByHref(
     client: DAVClient,
     calendarUrl: string,
+    ctag: string | undefined,
   ): Promise<Record<string, string>> {
     const responses = await client.propfind({
       url: calendarUrl,
-      props: { [`${DAVNamespaceShort.DAV}:getetag`]: {} },
+      props: {
+        [`${DAVNamespaceShort.DAV}:getetag`]: {},
+        [`${DAVNamespaceShort.DAV}:getlastmodified`]: {},
+      },
       depth: '1',
     });
 
     return responses.reduce<Record<string, string>>((map, response) => {
       const href = response.href;
-      const etag = response.props?.getetag;
 
       if (
         !isNonEmptyString(href) ||
-        !isNonEmptyString(etag) ||
         !isValidCalDavHref(href) ||
         isCalDavCollectionHref(href, calendarUrl)
       ) {
         return map;
       }
 
-      map[href] = etag;
+      map[href] = resolveCalDavResourceEtag({
+        etag: response.props?.getetag,
+        lastModified: response.props?.getlastmodified,
+        ctag,
+        href,
+      });
 
       return map;
     }, {});
