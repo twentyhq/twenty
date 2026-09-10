@@ -26,6 +26,10 @@ export class CreateCommandMenuItemInput {
 
   @IsUUID()
   @IsOptional()
+  coreWorkflowVersionId?: string;
+
+  @IsUUID()
+  @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   frontComponentId?: string;
 

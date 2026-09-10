@@ -4,6 +4,7 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { SyncRecordShareObjectCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788794677636-sync-record-share-object.command';
 import { AddMessageCampaignScheduledAtCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788957151735-add-message-campaign-scheduled-at.command';
 import { BackfillCoreWorkflowIdOnWorkflowVersionsCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788960408162-backfill-core-workflow-id-on-workflow-versions.command';
+import { BackfillCoreVersionPointersCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789056077009-backfill-core-version-pointers.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
@@ -23,6 +24,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     SyncRecordShareObjectCommand,
     AddMessageCampaignScheduledAtCommand,
     BackfillCoreWorkflowIdOnWorkflowVersionsCommand,
+    BackfillCoreVersionPointersCommand,
   ],
 })
 export class V2_40_UpgradeVersionCommandModule {}

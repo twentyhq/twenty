@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 
 import { CREATE_WORKFLOW_CORE_TABLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/create-workflow-core-table-upgrade-command-name.constant';
+import { ADD_CORE_VERSION_POINTERS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-40/add-core-version-pointers-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -26,6 +27,12 @@ export class WorkflowEntity extends SyncableEntity {
 
   @Column({ type: 'uuid', nullable: true })
   lastPublishedVersionId: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_CORE_VERSION_POINTERS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'uuid', nullable: true })
+  lastPublishedCoreVersionId: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

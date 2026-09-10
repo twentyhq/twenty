@@ -510,6 +510,8 @@ export class WorkflowTriggerWorkspaceService {
       await this.commandMenuItemService.create(
         {
           workflowVersionId: workflowVersion.id,
+          coreWorkflowVersionId:
+            workflowVersion.coreWorkflowVersionId ?? undefined,
           engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
           label,
           shortLabel: label,

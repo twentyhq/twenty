@@ -118,6 +118,28 @@ describe('workflow lifecycle core mirror with an active version (e2e)', () => {
     }
   });
 
+  it('points the core workflow at the core id of the published version', async () => {
+    const rows = await global.testDataSource.query(
+      `SELECT cw."lastPublishedCoreVersionId" AS "coreVersionId",
+              published.id IS NOT NULL AS "resolves"
+       FROM core."workflow" cw
+       LEFT JOIN core."workflowVersion" published
+         ON published.id = cw."lastPublishedCoreVersionId"
+       WHERE cw."workspaceId" = $1
+         AND cw.id IN (
+           SELECT cv."coreWorkflowId"
+           FROM core."workflowVersion" cv
+           WHERE cv."workspaceId" = $1
+             AND cv."workflowId" = $2
+             AND cv."coreWorkflowId" IS NOT NULL
+         )`,
+      [SEED_APPLE_WORKSPACE_ID, workflowId],
+    );
+
+    expect(rows[0]?.coreVersionId).toBeDefined();
+    expect(rows[0]?.resolves).toBe(true);
+  });
+
   it('removes the core version row on delete, recreates it on restore, removes it on destroy', async () => {
     // the v1 version created with the workflow is mirrored to core
     expect(await coreVersionRowCount()).toBeGreaterThan(0);
