@@ -56,6 +56,22 @@ describe('isMatchingStringFilter', () => {
         }),
       ).toBe(false);
     });
+
+    it('value matches like pattern with underscore wildcard', () => {
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { like: 't_st' },
+          value: 'test',
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { like: 't_st' },
+          value: 'toast',
+        }),
+      ).toBe(false);
+    });
   });
 
   describe('ilike', () => {
@@ -73,6 +89,22 @@ describe('isMatchingStringFilter', () => {
         isMatchingStringFilter({
           stringFilter: { ilike: 'AB%' },
           value: 'test',
+        }),
+      ).toBe(false);
+    });
+
+    it('value matches ilike pattern with underscore wildcard', () => {
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { ilike: 'T_ST' },
+          value: 'test',
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { ilike: 'T_ST' },
+          value: 'toast',
         }),
       ).toBe(false);
     });

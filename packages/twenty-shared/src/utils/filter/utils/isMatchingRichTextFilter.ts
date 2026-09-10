@@ -6,15 +6,44 @@ export const isMatchingRichTextFilter = ({
   value,
 }: {
   richTextFilter: RichTextFilter;
-  value: string;
+  value: string | { markdown?: string; blocknote?: string } | null;
 }) => {
   switch (true) {
     case richTextFilter.markdown !== undefined: {
-      const escapedPattern = escapeRegExp(richTextFilter.markdown.ilike);
-      const regexPattern = escapedPattern.replace(/%/g, '.*');
-      const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'i');
+      const targetValue =
+        typeof value === 'object' && value !== null
+          ? (value.markdown ?? '')
+          : value;
 
-      return regexCaseInsensitive.test(value);
+      if (typeof targetValue !== 'string') {
+        return false;
+      }
+
+      const escapedPattern = escapeRegExp(richTextFilter.markdown.ilike ?? '');
+      const regexPattern = escapedPattern
+        .replace(/%/g, '.*')
+        .replace(/_/g, '.');
+      const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'is');
+
+      return regexCaseInsensitive.test(targetValue);
+    }
+    case richTextFilter.blocknote !== undefined: {
+      const targetValue =
+        typeof value === 'object' && value !== null
+          ? (value.blocknote ?? '')
+          : value;
+
+      if (typeof targetValue !== 'string') {
+        return false;
+      }
+
+      const escapedPattern = escapeRegExp(richTextFilter.blocknote.ilike ?? '');
+      const regexPattern = escapedPattern
+        .replace(/%/g, '.*')
+        .replace(/_/g, '.');
+      const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'is');
+
+      return regexCaseInsensitive.test(targetValue);
     }
     default: {
       throw new Error(

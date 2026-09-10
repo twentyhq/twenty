@@ -29,15 +29,19 @@ export const isMatchingStringFilter = ({
     }
     case stringFilter.like !== undefined: {
       const escapedPattern = escapeRegExp(stringFilter.like);
-      const regexPattern = escapedPattern.replace(/%/g, '.*');
-      const regexCaseSensitive = new RegExp(`^${regexPattern}$`);
+      const regexPattern = escapedPattern
+        .replace(/%/g, '.*')
+        .replace(/_/g, '.');
+      const regexCaseSensitive = new RegExp(`^${regexPattern}$`, 's');
 
       return regexCaseSensitive.test(value);
     }
     case stringFilter.ilike !== undefined: {
       const escapedPattern = escapeRegExp(stringFilter.ilike);
-      const regexPattern = escapedPattern.replace(/%/g, '.*');
-      const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'i');
+      const regexPattern = escapedPattern
+        .replace(/%/g, '.*')
+        .replace(/_/g, '.');
+      const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'is');
 
       return regexCaseInsensitive.test(value);
     }
