@@ -392,8 +392,8 @@ describe('planPullWrites', () => {
     expect(plan.deletions).toEqual([]);
   });
 
-  it('should not call a local entity unknown to the workspace when the export reported it', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+  it('should not report a local file as local-only when the export reported its entity', () => {
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/roles/guest.role.ts',
         entityKey: ManifestEntityKey.Roles,
