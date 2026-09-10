@@ -133,4 +133,40 @@ describe('getObjectNavigationMenuItemComputedLink', () => {
 
     expect(result).toBe('/objects/people?viewId=view-index');
   });
+
+  it('should ignore a last visited view pointing at the index view when the flag is on', () => {
+    const result = getObjectNavigationMenuItemComputedLink(
+      { targetObjectMetadataId: 'metadata-1' },
+      mockObjectMetadataItems,
+      mockViewsWithSeededView,
+      'view-index',
+      true,
+    );
+
+    expect(result).toBe('/objects/people?viewId=view-seeded');
+  });
+
+  it('should still honour a last visited view that is not the index view when the flag is on', () => {
+    const result = getObjectNavigationMenuItemComputedLink(
+      { targetObjectMetadataId: 'metadata-1' },
+      mockObjectMetadataItems,
+      mockViewsWithSeededView,
+      'view-42',
+      true,
+    );
+
+    expect(result).toBe('/objects/people?viewId=view-42');
+  });
+
+  it('should still honour a last visited index view when the flag is off', () => {
+    const result = getObjectNavigationMenuItemComputedLink(
+      { targetObjectMetadataId: 'metadata-1' },
+      mockObjectMetadataItems,
+      mockViewsWithSeededView,
+      'view-index',
+      false,
+    );
+
+    expect(result).toBe('/objects/people?viewId=view-index');
+  });
 });

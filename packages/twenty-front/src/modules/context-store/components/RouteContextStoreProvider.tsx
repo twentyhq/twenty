@@ -105,15 +105,16 @@ export const RouteContextStoreProvider = () => {
     (view) => view.id === lastVisitedViewIdRaw,
   );
 
-  const lastVisitedViewId =
-    isDefined(lastVisitedView) &&
-    lastVisitedView.type !== ViewType.FIELDS_WIDGET
-      ? lastVisitedViewIdRaw
-      : undefined;
-
   const isSeededDefaultViewEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
   );
+
+  const lastVisitedViewId =
+    isDefined(lastVisitedView) &&
+    lastVisitedView.type !== ViewType.FIELDS_WIDGET &&
+    !(isSeededDefaultViewEnabled && lastVisitedView.key === ViewKey.INDEX)
+      ? lastVisitedViewIdRaw
+      : undefined;
 
   const seededDefaultViewId = isSeededDefaultViewEnabled
     ? views.find(

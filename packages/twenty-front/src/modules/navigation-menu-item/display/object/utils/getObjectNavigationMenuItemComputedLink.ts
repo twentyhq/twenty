@@ -37,7 +37,13 @@ export const getObjectNavigationMenuItemComputedLink = (
       view.key === ViewKey.INDEX,
   )?.id;
 
-  const targetViewId = lastVisitedViewId ?? seededDefaultViewId ?? indexViewId;
+  const applicableLastVisitedViewId =
+    isSeededDefaultViewEnabled && lastVisitedViewId === indexViewId
+      ? undefined
+      : lastVisitedViewId;
+
+  const targetViewId =
+    applicableLastVisitedViewId ?? seededDefaultViewId ?? indexViewId;
 
   return getAppPath(
     AppPath.RecordIndexPage,
