@@ -22,5 +22,6 @@ export type GeneratedModel = {
   dataResidency?: DataResidency;
   zeroDataRetention?: boolean;
   benchmark?: AiModelBenchmark;
+  benchmarkByEffort?: Partial<Record<AiModelEffort, AiModelBenchmark>>;
   isDeprecated?: boolean;
 };
