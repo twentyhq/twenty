@@ -1,37 +1,16 @@
-import React from 'react';
+import { RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group';
 
-import { themeCssVariables } from '@ui/theme-constants';
-import { type RadioProps } from '@ui/input/Radio/Radio';
+import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
-type RadioGroupProps = React.PropsWithChildren & {
-  value?: string;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onValueChange?: (value: string) => void;
-};
+import styles from './RadioGroup.module.scss';
+import { type RadioGroupProps } from './types/RadioGroupProps';
 
-export const RadioGroup = ({
-  value,
-  onChange,
-  onValueChange,
-  children,
-}: RadioGroupProps) => {
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onChange?.(event);
-    onValueChange?.(event.target.value);
-  };
-
-  return (
-    <>
-      {React.Children.map(children, (child) => {
-        if (React.isValidElement<RadioProps>(child)) {
-          return React.cloneElement(child, {
-            style: { marginBottom: themeCssVariables.spacing[2] },
-            checked: child.props.value === value,
-            onChange: handleChange,
-          });
-        }
-        return child;
-      })}
-    </>
-  );
-};
+export const RadioGroup = <TValue,>({
+  className,
+  ...props
+}: RadioGroupProps<TValue>) => (
+  <RadioGroupPrimitive
+    {...props}
+    className={mergeClassNames(styles.root, className)}
+  />
+);

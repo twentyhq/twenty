@@ -15,13 +15,13 @@ export const dataDisplayTest = createGalleryRenderTest({
   expectedFailedComponents: ['LinkChip'],
 });
 
-// Base UI 1.8 radios require Element.matches(':disabled'),
-// which the sandbox DOM does not implement.
+// Unselected radios need Element.matches(':disabled'); React radio groups
+// also need compareDocumentPosition, which the sandbox DOM does not implement.
 export const inputReactTest = createGalleryRenderTest({
-  expectedFailedComponents: ['CardPicker', 'Radio', 'RadioGroup'],
+  expectedFailedComponents: ['Radio', 'RadioGroup'],
 });
 export const inputPreactTest = createGalleryRenderTest({
-  expectedFailedComponents: ['CardPicker'],
+  expectedFailedComponents: ['Radio'],
 });
 
 // react-router Links crash without a router context.
