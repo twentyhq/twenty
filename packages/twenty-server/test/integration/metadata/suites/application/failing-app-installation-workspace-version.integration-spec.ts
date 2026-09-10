@@ -8,7 +8,7 @@ import { scrubSemverVersions } from 'test/utils/scrub-semver-versions.util';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
+import { extractVersionFromCommandNameOrThrow } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name-or-throw.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 // The full install flow runs cache-lock retries with real delays, so fake
@@ -76,13 +76,9 @@ describe('Install application is gated by the workspace completed upgrade versio
   beforeAll(async () => {
     jest.useRealTimers();
 
-    // Derive the gate version from the last attempted instance command, which
-    // is exactly what the upload-time server-compat check uses
-    // (getInferredVersion). The seeded workspace cursor can sit a version ahead
-    // of the instance right after a version bump whose newest segment ends in
-    // workspace-scoped commands with no new instance command: requiring
-    // >=workspaceVersion would then fail the instance gate at upload time,
-    // before the workspace gate under test is reached.
+    // Derive the gate version from the last attempted instance command, so the
+    // requirement is one the instance gate at upload time always satisfies and
+    // the workspace gate under test is actually reached.
     const [instanceCommand] = await global.testDataSource.query(
       `SELECT migration.name AS name
        FROM core."upgradeMigration" migration
@@ -107,17 +103,9 @@ describe('Install application is gated by the workspace completed upgrade versio
     // instance), so the install reaches the workspace gate.
     currentVersionCommandName = instanceCommand.name;
 
-    const inferredServerVersion = extractVersionFromCommandName(
+    currentServerVersion = extractVersionFromCommandNameOrThrow(
       currentVersionCommandName,
     );
-
-    if (!isDefined(inferredServerVersion)) {
-      throw new Error(
-        `Could not extract a server version from upgrade cursor "${currentVersionCommandName}"`,
-      );
-    }
-
-    currentServerVersion = inferredServerVersion;
   });
 
   afterEach(async () => {

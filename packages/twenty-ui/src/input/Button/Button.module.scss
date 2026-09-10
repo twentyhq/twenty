@@ -78,8 +78,10 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
 }
 
 // Applied to both the wrapper and the button; declared after them so the
-// width wins the cascade at equal specificity.
+// sizing wins the cascade at equal specificity, including over
+// .wrapperLoading's max-width shrink which only applies to auto-width buttons.
 .fullWidth {
+  max-width: 100%;
   width: 100%;
 }
 

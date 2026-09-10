@@ -204,7 +204,13 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 * Microsoft Graph: profile
 * Microsoft Graph: offline_access
 
-Примечание: «Mail.ReadWrite» и «Mail.Send» обязательны только если вы хотите отправлять письма с использованием наших действий рабочего процесса. Вы можете использовать «Mail.Read», если хотите получать только письма.
+<Note>
+«Mail.ReadWrite» и «Mail.Send» обязательны только если вы хотите отправлять письма с использованием наших действий рабочего процесса. Вы можете использовать «Mail.Read», если хотите получать только письма.
+</Note>
+
+<Note>
+«Calendars.ReadWrite» является обязательным, если вы хотите создавать события календаря с использованием наших действий рабочего процесса. Если вы хотите только синхронизировать события календаря, используйте «Calendars.Read».
+</Note>
 
 ### Авторизованные URI перенаправления
 
@@ -271,9 +277,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
 2. Найдите раздел **Электронной почты**.
 3. Настройте параметры вашего SMTP:
 
-<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+<Tabs>
 
-  <ArticleTab>
+  <Tab title="Gmail">
 
   Вам потребуется предоставить [Пароль Приложения](https://support.google.com/accounts/answer/185833).
   * EMAIL_DRIVER=smtp
@@ -282,9 +288,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   * EMAIL_SMTP_USER=gmail_email_address
   * EMAIL_SMTP_PASSWORD='gmail_app_password'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="Office365">
 
   Помните, что если у вас включена двухфакторная аутентификация, вам потребуется предоставить [пароль приложения](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
   * EMAIL_DRIVER=smtp
@@ -293,9 +299,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   * EMAIL_SMTP_USER=office365_email_address
   * EMAIL_SMTP_PASSWORD='office365_password'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="smtp4dev">
 
   **smtp4dev** - это поддельный SMTP почтовый сервер для разработки и тестирования.
   * Запустите образ smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
@@ -305,9 +311,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
     * EMAIL_SMTP_HOST=localhost
     * EMAIL_SMTP_PORT=2525
 
-  </ArticleTab>
+  </Tab>
 
-</ArticleTabs>
+</Tabs>
 
 <Warning>
 **Режим только для среды:** если вы установили `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, добавьте эти переменные в свой `.env` файл вместо этого.
@@ -380,3 +386,28 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 <Note>
 При использовании `LOGIC_FUNCTION_TYPE=DISABLED` или `CODE_INTERPRETER_TYPE=DISABLED` любая попытка выполнения вернёт ошибку. Это полезно, если вы хотите запускать Twenty без этих возможностей.
 </Note>
+
+## API и фронтенд на отдельных хостах
+
+Актуально только в том случае, если вы не позволяете бэкенду обслуживать фронтенд. Для развертываний с одинаковым origin
+здесь ничего не требуется.
+
+Укажите каждый браузерный origin, который обращается к API, через запятую. `SERVER_URL`
+и `FRONTEND_URL` уже считаются доверенными. Сервер записывает предупреждение в журнал, когда браузер
+обращается к нему с неуказанного источника.
+
+```bash
+AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
+```
+
+<Warning>
+Фронтенд отправляет учетные данные при каждом запросе, а браузеры отклоняют
+ответ с учетными данными от неуказанного источника, поэтому приложение не загружается, пока
+вы не зададите этот параметр.
+</Warning>
+
+Если два хоста находятся в разных регистрируемых доменах (а не просто в разных
+поддоменах), также установите `AUTH_COOKIE_SAME_SITE=none`, что требует HTTPS.
+
+При включённой поддержке нескольких рабочих пространств не перечисляйте здесь все поддомены рабочих пространств.
+Вместо этого маршрутизируйте пути API (`/graphql`, `/metadata`, `/rest`, `/auth/`, `/client-config`, `/file`) на бэкенд для каждого имени хоста рабочего пространства, чтобы каждое рабочее пространство оставалось в рамках одного источника (same-origin) — именно так работает Twenty Cloud.

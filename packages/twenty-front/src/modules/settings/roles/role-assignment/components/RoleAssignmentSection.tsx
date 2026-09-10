@@ -79,7 +79,7 @@ export const RoleAssignmentSection = ({
               {config.tooltip && (
                 <AppTooltip
                   anchorSelect={`#${config.tooltip.anchorId}`}
-                  content={config.tooltip.content()}
+                  title={config.tooltip.content()}
                   delay={TooltipDelay.noDelay}
                   hidden={
                     !config.tooltip.shouldShow(allWorkspaceMembersHaveThisRole)

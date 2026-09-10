@@ -4,7 +4,7 @@ import { UpgradeHealthEnum } from 'twenty-shared/types';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import {
-  type InstanceAndAllWorkspacesUpgradeStatus,
+  type InstanceAndWorkspaceCountsUpgradeStatus,
   UpgradeStatusService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 
@@ -21,10 +21,10 @@ const UPGRADE_STATUS_TTL_MS = 60_000;
 export class UpgradeGaugeService implements OnModuleInit {
   private readonly logger = new Logger(UpgradeGaugeService.name);
 
-  private cachedUpgradeStatus: InstanceAndAllWorkspacesUpgradeStatus | null =
+  private cachedUpgradeStatus: InstanceAndWorkspaceCountsUpgradeStatus | null =
     null;
   private cachedUpgradeStatusExpiresAt = 0;
-  private inflightUpgradeStatusPromise: Promise<InstanceAndAllWorkspacesUpgradeStatus> | null =
+  private inflightUpgradeStatusPromise: Promise<InstanceAndWorkspaceCountsUpgradeStatus> | null =
     null;
 
   constructor(
@@ -62,7 +62,7 @@ export class UpgradeGaugeService implements OnModuleInit {
       callback: async () => {
         const upgradeStatus = await this.getCachedUpgradeStatus();
 
-        return upgradeStatus?.workspacesBehind.length ?? 0;
+        return upgradeStatus?.behindWorkspaceCount ?? 0;
       },
       cacheValue: true,
     });
@@ -75,7 +75,7 @@ export class UpgradeGaugeService implements OnModuleInit {
       callback: async () => {
         const upgradeStatus = await this.getCachedUpgradeStatus();
 
-        return upgradeStatus?.workspacesFailed.length ?? 0;
+        return upgradeStatus?.failedWorkspaceCount ?? 0;
       },
       cacheValue: true,
     });
@@ -110,7 +110,7 @@ export class UpgradeGaugeService implements OnModuleInit {
     });
   }
 
-  private async getCachedUpgradeStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus | null> {
+  private async getCachedUpgradeStatus(): Promise<InstanceAndWorkspaceCountsUpgradeStatus | null> {
     if (
       this.cachedUpgradeStatus &&
       Date.now() < this.cachedUpgradeStatusExpiresAt
@@ -123,7 +123,7 @@ export class UpgradeGaugeService implements OnModuleInit {
     }
 
     this.inflightUpgradeStatusPromise =
-      this.upgradeStatusService.getInstanceAndAllWorkspacesStatus();
+      this.upgradeStatusService.getInstanceAndWorkspaceCountsStatus();
 
     try {
       this.cachedUpgradeStatus = await this.inflightUpgradeStatusPromise;

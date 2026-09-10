@@ -1,4 +1,3 @@
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
@@ -22,16 +21,20 @@ export const useQueryVariablesFromParentView = ({
 
   const contextStoreRecordShowParentView = useAtomComponentStateValue(
     contextStoreRecordShowParentViewComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
+  const parentView =
+    contextStoreRecordShowParentView?.parentViewObjectNameSingular ===
+    objectMetadataItem.nameSingular
+      ? contextStoreRecordShowParentView
+      : undefined;
+
   const { filter, orderBy } = getQueryVariablesFromFiltersAndSorts({
-    recordFilterGroups:
-      contextStoreRecordShowParentView?.parentViewFilterGroups ?? [],
-    recordFilters: contextStoreRecordShowParentView?.parentViewFilters ?? [],
-    recordSorts: contextStoreRecordShowParentView?.parentViewSorts ?? [],
+    recordFilterGroups: parentView?.parentViewFilterGroups ?? [],
+    recordFilters: parentView?.parentViewFilters ?? [],
+    recordSorts: parentView?.parentViewSorts ?? [],
     objectMetadataItem,
     objectMetadataItems,
     fieldMetadataItems: flattenedFieldMetadataItems,
@@ -39,7 +42,7 @@ export const useQueryVariablesFromParentView = ({
   });
 
   const isSoftDeleteFilterActive =
-    contextStoreRecordShowParentView?.parentViewFilters.some((recordFilter) =>
+    parentView?.parentViewFilters.some((recordFilter) =>
       isRecordFilterAboutSoftDelete({ recordFilter, objectMetadataItems }),
     ) ?? false;
 

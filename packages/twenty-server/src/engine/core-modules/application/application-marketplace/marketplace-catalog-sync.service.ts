@@ -47,7 +47,7 @@ export class MarketplaceCatalogSyncService {
           fetchedManifest.application.universalIdentifier;
 
         const previousVersion = (
-          await this.applicationRegistrationService.findOneByUniversalIdentifier(
+          await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
             universalIdentifier,
           )
         )?.latestAvailableVersion;
@@ -62,7 +62,7 @@ export class MarketplaceCatalogSyncService {
         });
 
         const registration =
-          await this.applicationRegistrationService.findOneByUniversalIdentifier(
+          await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
             universalIdentifier,
           );
 

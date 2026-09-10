@@ -5,15 +5,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import {
-  IconCalendarWeek,
-  IconRelationManyToMany,
-  IconSparkles,
-  type IconComponent,
-} from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { type FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledCardGrid = styled.div`
   display: grid;
@@ -29,14 +24,9 @@ const StyledImage = styled.img`
   width: 100%;
 `;
 
-const labFeatureFlagIcons: Partial<Record<FeatureFlagKey, IconComponent>> = {
-  [FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED]: IconCalendarWeek,
-  [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: IconRelationManyToMany,
-  [FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED]: IconSparkles,
-};
-
 export const SettingsLabContent = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const { getIcon } = useIcons();
   const { labPublicFeatureFlags, handleLabPublicFeatureFlagUpdate } =
     useLabPublicFeatureFlags();
   const [hasImageLoadingError, setHasImageLoadingError] = useState<
@@ -75,7 +65,7 @@ export const SettingsLabContent = () => {
               />
             )}
             <SettingsOptionCardContentToggle
-              Icon={labFeatureFlagIcons[flag.key]}
+              Icon={getIcon(flag.metadata.icon)}
               title={flag.metadata.label}
               description={flag.metadata.description}
               checked={flag.value}
@@ -93,7 +83,7 @@ export const SettingsLabContent = () => {
             {labPublicFeatureFlagsWithoutImage.map((flag, index) => (
               <SettingsOptionCardContentToggle
                 key={flag.key}
-                Icon={labFeatureFlagIcons[flag.key]}
+                Icon={getIcon(flag.metadata.icon)}
                 title={flag.metadata.label}
                 description={flag.metadata.description}
                 checked={flag.value}

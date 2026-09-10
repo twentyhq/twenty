@@ -1,3 +1,4 @@
+import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useCallback } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -100,6 +101,8 @@ export const useDeleteOneWorkflowVersion = () => {
   }) => {
     await deleteOneRecord(workflowVersionId);
     handleUpdate(workflowVersionId);
+
+    await invalidateCoreWorkflowVersions(apolloCoreClient);
   };
 
   return { deleteOneWorkflowVersion };

@@ -19,7 +19,7 @@ Mit Iterator können Sie ein Array von Datensätzen durchlaufen und für jeden D
 Iterator erwartet ein **Array** als Eingabe. Dann:
 
 1. Nimmt das erste Element aus dem Array
-2. Führt alle Aktionen innerhalb des Iterators mit diesem Element aus
+2. Führt alle Aktionen im Iterator mit diesem Item aus
 3. Wechselt zum nächsten Element
 4. Wiederholt sich, bis alle Elemente verarbeitet sind
 
@@ -58,7 +58,7 @@ Wenn ein **Code**- oder **Logic Function**-Schritt ein *Top-Level-Array* zurück
 
 Aktionen, die nach dem Iterator platziert werden, werden für jedes Element ausgeführt:
 
-1. Fügen Sie eine **E-Mail senden**-Aktion hinzu (im Iterator)
+1. Füge **E-Mail senden** Aktion (innerhalb des Iterators) hinzu
 2. An: `{{iterator.currentItem.email}}`
 3. Betreff: Hallo `{{iterator.currentItem.firstName}}`!
 4. Text: Personalisierte Nachricht unter Verwendung der Felder des aktuellen Elements

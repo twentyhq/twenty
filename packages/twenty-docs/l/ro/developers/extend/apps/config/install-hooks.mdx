@@ -1,12 +1,12 @@
 ---
 title: Hook-uri de instalare
-description: Rulați logică înainte sau după instalare — pentru a popula cu date inițiale, a face copii de rezervă ale înregistrărilor, a valida actualizarea.
+description: Rulați logică în timpul ciclului de viață de instalare, actualizare sau dezinstalare — populați date, faceți backup pentru înregistrări, validați actualizarea, curățați resursele externe.
 icon: wrench
 ---
 
-Hook-urile de instalare sunt funcții logice speciale care rulează în timpul ciclului de viață al instalării sau actualizării. Acestea folosesc același runtime de handler ca și [funcțiile logice](/l/ro/developers/extend/apps/logic/logic-functions) obișnuite și primesc un `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` este `undefined` la o instalare nouă), dar sunt declarate cu propriile lor funcții de definire și există în afara modelului obișnuit de declanșatori (HTTP, cron, evenimente de bază de date).
+Hook-urile de instalare sunt funcții logice speciale care rulează în timpul ciclului de viață de instalare, actualizare sau dezinstalare. Acestea folosesc același runtime de handler ca și [funcțiile logice](/l/ro/developers/extend/apps/logic/logic-functions) obișnuite, dar sunt declarate cu propriile lor funcții de definire și există în afara modelului obișnuit de declanșatori (HTTP, cron, evenimente de bază de date). Hook-urile de instalare primesc un `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` este `undefined` la o instalare nouă); hook-ul de dezinstalare primește un `UninstallPayload` (`{ version?: string }` — versiunea care este eliminată).
 
-Fiecare aplicație poate defini **cel mult o funcție de pre-instalare** și **cel mult o funcție de post-instalare**. Construirea manifestului va genera o eroare dacă se detectează mai mult de una din oricare dintre ele.
+Fiecare aplicație poate defini **cel mult unul** din fiecare hook (pre-instalare, post-instalare, dezinstalare). Construirea manifestului va genera o eroare dacă se detectează mai mult de unul de orice tip.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -142,3 +142,47 @@ export default definePreInstallLogicFunction({
 
 </Accordion>
 </AccordionGroup>
+
+## Hook de dezinstalare
+
+`defineUninstallLogicFunction` declară un hook care rulează atunci când un utilizator dezinstalează aplicația ta. Acesta este executat **înainte** ca metadatele, datele și codul aplicației să fie eliminate — odată ce migrarea de ștergere rulează, nu mai rămâne nimic de executat — astfel încât handler-ul tău poate încă interoga obiectele și înregistrările aplicației. Folosește-l pentru curățarea resurselor externe: deprovisionarea resurselor API, ștergerea boților rămași, revocarea webhook-urilor.
+
+Notițe:
+
+* Hook-ul funcționează după principiul „best-effort“: rulează sincron, dar o eroare este înregistrată și **nu blochează niciodată dezinstalarea** — curățarea nu trebuie să facă imposibilă eliminarea unei aplicații.
+* Acesta primește `UninstallPayload` (`{ version?: string }` — versiunea care este eliminată).
+* Nu rulează atunci când o instalare nouă eșuată este anulată — aplicația nu a terminat niciodată instalarea.
+* Hook-ul nu poate rula după ce aplicația a dispărut, astfel încât curățarea externă care depinde de datele aplicației (de ex. ID-uri de boți stocate în înregistrări) trebuie făcută aici, nu într-un job programat extern.
+* La fel ca hook-urile de instalare, **nu este executat în modul de dezvoltare (dev mode)** — declanșează-l manual în schimb:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --uninstall
+```
+
+```ts src/logic-functions/uninstall.ts
+import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (_payload: UninstallPayload): Promise<void> => {
+  const client = new CoreApiClient();
+  const { meetingBots } = await client.query({
+    meetingBots: { edges: { node: { id: true, externalBotId: true } } },
+  });
+
+  // Delete the provider-side bots so nothing keeps recording after uninstall.
+  for (const { node } of meetingBots.edges) {
+    await fetch(`https://api.recorder.example/bots/${node.externalBotId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${process.env.RECORDER_API_KEY}` },
+    });
+  }
+};
+
+export default defineUninstallLogicFunction({
+  universalIdentifier: 'b2c3d4e5-6789-01bc-def0-234567890abc',
+  name: 'uninstall',
+  description: 'Deletes remaining recorder bots when the app is uninstalled.',
+  timeoutSeconds: 300,
+  handler,
+});
+```

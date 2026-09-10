@@ -13,7 +13,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus, useIcons } from 'twenty-ui/icon';
@@ -41,9 +41,8 @@ export const PageLayoutTabListNewTabDropdownContent = ({
   );
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
-  const inactiveTabs = useMemo(
-    () => sortTabsByPosition(currentPageLayout.tabs.filter(isReactivatableTab)),
-    [currentPageLayout.tabs],
+  const inactiveTabs = sortTabsByPosition(
+    currentPageLayout.tabs.filter(isReactivatableTab),
   );
 
   const handleCreateEmptyTab = useCallback(() => {
@@ -55,11 +54,11 @@ export const PageLayoutTabListNewTabDropdownContent = ({
     (tabId: string) => {
       updatePageLayoutTab(tabId, { isActive: true });
       setActiveTabId(tabId);
-      setPageLayoutTabSettingsOpenTabId(tabId);
       navigatePageLayoutSidePanel({
         sidePanelPage: SidePanelPages.PageLayoutTabSettings,
         resetNavigationStack: true,
       });
+      setPageLayoutTabSettingsOpenTabId(tabId);
       closeDropdown(dropdownId);
     },
     [

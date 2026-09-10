@@ -33,7 +33,7 @@ export const WorkflowAiAgentPermissionList = ({
   onDeletePermission,
   searchQuery,
 }: WorkflowAiAgentPermissionListProps) => {
-  const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
+  const { activeObjectMetadataItems: objectMetadataItems } =
     useFilteredObjectMetadataItems();
 
   const sortedExistingPermissions = objectPermissions

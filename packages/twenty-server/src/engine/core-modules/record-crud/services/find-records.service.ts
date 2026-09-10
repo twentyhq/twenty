@@ -7,6 +7,7 @@ import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query
 
 import { isNonEmptyArray } from '@sniptt/guards';
 import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-many-query-runner.service';
+import { getRelationsSelectFields } from 'src/engine/api/common/common-select-fields/utils/get-relations-select-fields.util';
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { type FindRecordsResult } from 'src/engine/core-modules/record-crud/types/find-records-result.type';
@@ -34,6 +35,7 @@ export class FindRecordsService {
       limit,
       offset = 0,
       authContext,
+      rolePermissionConfig,
       select,
       shouldBuildEffectiveSelectFields,
     } = params;
@@ -51,10 +53,13 @@ export class FindRecordsService {
         queryRunnerContext,
         selectedFields: allSelectableFields,
         flatObjectMetadata,
+        flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        objectsPermissions,
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
+        rolePermissionConfig,
       });
 
       const { effectiveSelectedFields, warnings } =
@@ -66,7 +71,17 @@ export class FindRecordsService {
               objectName,
               flatObjectMetadata,
               flatFieldMetadataMaps,
+              flatObjectMetadataMaps,
               selectedFields: allSelectableFields,
+              objectsPermissions,
+              selectableRelationFields: getRelationsSelectFields({
+                flatObjectMetadataMaps,
+                flatFieldMetadataMaps,
+                flatObjectMetadata,
+                objectsPermissions,
+                depth: 1,
+                onlyUseLabelIdentifierFieldsInRelations: true,
+              }),
             })
           : { effectiveSelectedFields: allSelectableFields, warnings: [] };
 
@@ -77,7 +92,7 @@ export class FindRecordsService {
       ];
 
       const {
-        results: { records, totalCount },
+        results: { records, totalCount, pageInfo },
       } = await this.commonFindManyRunner.execute(
         {
           filter,
@@ -106,7 +121,8 @@ export class FindRecordsService {
         message: `Found ${records.length} ${objectName} records`,
         result: {
           records,
-          count: totalCount,
+          count: totalCount ?? 0,
+          hasNextPage: pageInfo.hasNextPage,
         },
         ...(isNonEmptyArray(warnings) ? { warnings: warnings } : {}),
         recordReferences,

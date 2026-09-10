@@ -31,7 +31,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Lütfen bu alan adını doğrulayı
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "A heads up before your trial ends"
-msgstr "Deneme süreniz bitmeden önce küçük bir bilgilendirme"
+msgstr "Deneme süreniz bitmeden önce bir bilgilendirme"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx

@@ -30,7 +30,7 @@ export const PageLayoutWidgetInvalidConfigDisplay = ({
       </div>
       <AppTooltip
         anchorSelect={`#${tooltipId}`}
-        content={tooltipContent}
+        title={tooltipContent}
         place="top"
       />
     </StyledInvalidConfigContainer>

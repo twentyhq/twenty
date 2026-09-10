@@ -4,10 +4,13 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import {
+  type SidePanelNavigationStackItem,
+  sidePanelNavigationStackState,
+} from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderSidePanelButtonClickOutsideId';
@@ -15,15 +18,16 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/icon';
 
 const mockAppTooltip = jest.fn();
+let mockIsMobile = false;
 
 jest.mock('twenty-ui/utilities', () => ({
-  useIsMobile: () => false,
+  useIsMobile: () => mockIsMobile,
   getOsControlSymbol: () => '⌘',
 }));
 
 jest.mock('twenty-ui/surfaces', () => ({
   ...jest.requireActual('twenty-ui/surfaces'),
-  AppTooltip: (props: { content: string }) => {
+  AppTooltip: (props: { title: string }) => {
     mockAppTooltip(props);
 
     return null;
@@ -32,29 +36,27 @@ jest.mock('twenty-ui/surfaces', () => ({
 
 const renderSidePanelToggleButton = ({
   isSidePanelOpened = false,
-  sidePanelPage = SidePanelPages.CommandMenuDisplay,
   sidePanelNavigationStack = [],
   sidePanelSearch = '',
   sidePanelSearchObjectFilter = null,
+  isLayoutCustomizationModeEnabled = false,
 }: {
   isSidePanelOpened?: boolean;
-  sidePanelPage?: SidePanelPages;
-  sidePanelNavigationStack?: Array<{
-    page: SidePanelPages;
-    pageTitle: string;
-    pageIcon: typeof IconDotsVertical;
-    pageId: string;
-  }>;
+  sidePanelNavigationStack?: SidePanelNavigationStackItem[];
   sidePanelSearch?: string;
   sidePanelSearchObjectFilter?: string | null;
+  isLayoutCustomizationModeEnabled?: boolean;
 } = {}) => {
   const store = createStore();
 
   store.set(isSidePanelOpenedState.atom, isSidePanelOpened);
-  store.set(sidePanelPageState.atom, sidePanelPage);
   store.set(sidePanelNavigationStackState.atom, sidePanelNavigationStack);
   store.set(sidePanelSearchState.atom, sidePanelSearch);
   store.set(sidePanelSearchObjectFilterState.atom, sidePanelSearchObjectFilter);
+  store.set(
+    isLayoutCustomizationModeEnabledState.atom,
+    isLayoutCustomizationModeEnabled,
+  );
 
   render(
     <I18nProvider i18n={i18n}>
@@ -77,6 +79,7 @@ const renderSidePanelToggleButton = ({
 describe('SidePanelToggleButton', () => {
   beforeEach(() => {
     mockAppTooltip.mockClear();
+    mockIsMobile = false;
   });
 
   it('opens the command menu when the side panel is closed', () => {
@@ -85,16 +88,14 @@ describe('SidePanelToggleButton', () => {
     fireEvent.click(screen.getByTestId('page-header-side-panel-button'));
 
     expect(store.get(isSidePanelOpenedState.atom)).toBe(true);
-    expect(store.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.CommandMenuDisplay,
-    );
-    expect(store.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
+    expect(store.get(sidePanelNavigationStackState.atom)).toMatchObject([
+      { page: SidePanelPages.CommandMenuDisplay },
+    ]);
   });
 
   it('hides the navbar command menu button while the command menu is open', () => {
     renderSidePanelToggleButton({
       isSidePanelOpened: true,
-      sidePanelPage: SidePanelPages.CommandMenuDisplay,
       sidePanelNavigationStack: [
         {
           page: SidePanelPages.CommandMenuDisplay,
@@ -113,7 +114,6 @@ describe('SidePanelToggleButton', () => {
   it('hides the navbar command menu button when the side panel has command-menu history', () => {
     renderSidePanelToggleButton({
       isSidePanelOpened: true,
-      sidePanelPage: SidePanelPages.ViewRecord,
       sidePanelNavigationStack: [
         {
           page: SidePanelPages.CommandMenuDisplay,
@@ -122,10 +122,17 @@ describe('SidePanelToggleButton', () => {
           pageId: 'command-menu',
         },
         {
-          page: SidePanelPages.ViewRecord,
+          page: SidePanelPages.RoutedPage,
           pageTitle: 'Company',
           pageIcon: IconDotsVertical,
           pageId: 'view-record',
+          routedLocation: {
+            pathname: '/object/company/record-id',
+            search: '',
+            hash: '',
+            state: null,
+            key: 'routed-page',
+          },
         },
       ],
     });
@@ -138,7 +145,6 @@ describe('SidePanelToggleButton', () => {
   it('keeps the navbar command menu button on unrelated side-panel drill-down pages', () => {
     renderSidePanelToggleButton({
       isSidePanelOpened: true,
-      sidePanelPage: SidePanelPages.WorkflowStepCreate,
       sidePanelNavigationStack: [
         {
           page: SidePanelPages.WorkflowStepEdit,
@@ -158,12 +164,67 @@ describe('SidePanelToggleButton', () => {
     expect(screen.getByTestId('page-header-side-panel-button')).toBeVisible();
   });
 
+  it('hides the navbar command menu button on mobile while the side panel is open', () => {
+    mockIsMobile = true;
+
+    renderSidePanelToggleButton({
+      isSidePanelOpened: true,
+      sidePanelNavigationStack: [
+        {
+          page: SidePanelPages.AskAI,
+          pageTitle: 'Ask AI',
+          pageIcon: IconDotsVertical,
+          pageId: 'ask-ai',
+        },
+      ],
+    });
+
+    expect(
+      screen.queryByTestId('page-header-side-panel-button'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('keeps the navbar command menu button on mobile in layout customization mode', () => {
+    mockIsMobile = true;
+
+    renderSidePanelToggleButton({
+      isSidePanelOpened: true,
+      isLayoutCustomizationModeEnabled: true,
+      sidePanelNavigationStack: [
+        {
+          page: SidePanelPages.AskAI,
+          pageTitle: 'Ask AI',
+          pageIcon: IconDotsVertical,
+          pageId: 'ask-ai',
+        },
+      ],
+    });
+
+    expect(screen.getByTestId('page-header-side-panel-button')).toBeVisible();
+  });
+
+  it('keeps the navbar command menu button on desktop while the AI chat is open', () => {
+    renderSidePanelToggleButton({
+      isSidePanelOpened: true,
+      sidePanelNavigationStack: [
+        {
+          page: SidePanelPages.AskAI,
+          pageTitle: 'Ask AI',
+          pageIcon: IconDotsVertical,
+          pageId: 'ask-ai',
+        },
+      ],
+    });
+
+    expect(screen.getByTestId('page-header-side-panel-button')).toBeVisible();
+  });
+
   it('shows the command menu keyboard shortcut in the tooltip', () => {
     renderSidePanelToggleButton();
 
     expect(mockAppTooltip).toHaveBeenCalledWith(
       expect.objectContaining({
-        content: 'Command menu | ⌘K',
+        title: 'Command menu | ⌘K',
       }),
     );
   });
@@ -184,15 +245,21 @@ describe('SidePanelToggleButton', () => {
   it('replaces a directly opened side-panel page with the root command menu', () => {
     const { store } = renderSidePanelToggleButton({
       isSidePanelOpened: true,
-      sidePanelPage: SidePanelPages.ViewRecord,
       sidePanelSearch: 'acme',
       sidePanelSearchObjectFilter: 'company',
       sidePanelNavigationStack: [
         {
-          page: SidePanelPages.ViewRecord,
+          page: SidePanelPages.RoutedPage,
           pageTitle: 'Company',
           pageIcon: IconDotsVertical,
           pageId: 'view-record',
+          routedLocation: {
+            pathname: '/object/company/record-id',
+            search: '',
+            hash: '',
+            state: null,
+            key: 'routed-page',
+          },
         },
       ],
     });
@@ -200,9 +267,6 @@ describe('SidePanelToggleButton', () => {
     fireEvent.click(screen.getByTestId('page-header-side-panel-button'));
 
     expect(store.get(isSidePanelOpenedState.atom)).toBe(true);
-    expect(store.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.CommandMenuDisplay,
-    );
     expect(store.get(sidePanelNavigationStackState.atom)).toMatchObject([
       {
         page: SidePanelPages.CommandMenuDisplay,

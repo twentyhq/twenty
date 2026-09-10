@@ -69,7 +69,7 @@ const SETTINGS_OBJECT_RELATION_TABLE_METADATA: TableMetadata<FieldMetadataItem> 
     ],
     initialSort: {
       fieldName: 'label',
-      orderBy: 'AscNullsLast',
+      direction: 'asc',
     },
   };
 

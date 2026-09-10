@@ -53,6 +53,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   webhook: {},
   applicationVariable: {},
   connectionProvider: {},
+  timelineActivityType: {},
   searchFieldMetadata: {},
 } as const satisfies MetadataSerializedRelationProperties;
 

@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client/react';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { PREVIEW_MESSAGE_CAMPAIGN_AUDIENCE } from '@/activities/emails/graphql/metadata-queries/previewMessageCampaignAudience';
 import {
@@ -17,7 +18,7 @@ export const useCampaignAudiencePreview = ({
   listId,
   unsubscribeTopicId,
 }: UseCampaignAudiencePreviewArgs) => {
-  const { data } = useQuery<
+  const { data, error } = useQuery<
     PreviewMessageCampaignAudienceQuery,
     PreviewMessageCampaignAudienceQueryVariables
   >(PREVIEW_MESSAGE_CAMPAIGN_AUDIENCE, {
@@ -31,5 +32,10 @@ export const useCampaignAudiencePreview = ({
     fetchPolicy: 'cache-and-network',
   });
 
-  return data?.previewMessageCampaignAudience ?? null;
+  return {
+    audiencePreview: isDefined(error)
+      ? null
+      : (data?.previewMessageCampaignAudience ?? null),
+    hasFailed: isDefined(error),
+  };
 };

@@ -6,6 +6,7 @@ type RemoteStyleRendererProps = {
   styleKey?: string;
 };
 
+// oxlint-disable-next-line twenty/effect-components
 export const RemoteStyleRenderer = ({
   cssText,
   styleKey,

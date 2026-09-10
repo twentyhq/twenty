@@ -31,6 +31,23 @@ describe('appendCommonExceptionCode', () => {
 });
 
 describe('CustomException', () => {
+  it('should assign the statusCode option when provided', () => {
+    const exception = new UnknownException('Not found', 'NOT_FOUND', {
+      userFriendlyMessage: msg`Not found`,
+      statusCode: 404,
+    });
+
+    expect(exception.statusCode).toBe(404);
+  });
+
+  it('should leave statusCode undefined when the option is omitted', () => {
+    const exception = new UnknownException('Boom', 'INTERNAL_SERVER_ERROR', {
+      userFriendlyMessage: msg`Boom`,
+    });
+
+    expect(exception.statusCode).toBeUndefined();
+  });
+
   class TestException extends CustomException<string> {
     constructor(
       message: string,

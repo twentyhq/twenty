@@ -1,0 +1,104 @@
+import { CHECK_EMAILING_DOMAIN_VERIFICATION_CRON_PATTERN } from 'src/engine/core-modules/emailing-domain/constants/check-emailing-domain-verification-cron-pattern.constant';
+import { Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { In, Repository } from 'typeorm';
+
+import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { NON_TERMINAL_EMAILING_DOMAIN_STATUSES } from 'src/engine/core-modules/emailing-domain/constants/non-terminal-emailing-domain-statuses.constant';
+import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory';
+import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
+import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
+import { UnsubscribeHostnameService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+
+@Processor(MessageQueue.cronQueue)
+export class CheckEmailingDomainVerificationCronJob {
+  private readonly logger = new Logger(
+    CheckEmailingDomainVerificationCronJob.name,
+  );
+
+  constructor(
+    @InjectRepository(EmailingDomainEntity)
+    private readonly emailingDomainRepository: Repository<EmailingDomainEntity>,
+    private readonly emailingDomainService: EmailingDomainService,
+    private readonly unsubscribeHostnameService: UnsubscribeHostnameService,
+    private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
+  ) {}
+
+  @Process(CheckEmailingDomainVerificationCronJob.name)
+  @SentryCronMonitor(
+    CheckEmailingDomainVerificationCronJob.name,
+    CHECK_EMAILING_DOMAIN_VERIFICATION_CRON_PATTERN,
+  )
+  async handle(): Promise<void> {
+    await this.refreshUnverifiedDomains();
+    await this.refreshPendingUnsubscribeHostnames();
+    await this.reprovisionVerifiedWorkspaces();
+  }
+
+  private async reprovisionVerifiedWorkspaces(): Promise<void> {
+    const verifiedDomains = await this.emailingDomainRepository.find({
+      where: { status: EmailingDomainStatus.VERIFIED },
+      select: ['workspaceId'],
+    });
+
+    const workspaceIds = new Set(
+      verifiedDomains.map((emailingDomain) => emailingDomain.workspaceId),
+    );
+
+    for (const workspaceId of workspaceIds) {
+      await this.emailingDomainDriverFactory
+        .getCurrentDriver()
+        .provisionWorkspace(workspaceId)
+        .catch((error) => {
+          this.logger.error(
+            `[${CheckEmailingDomainVerificationCronJob.name}] Cannot reprovision emailing resources for workspace ${workspaceId}: ${error}`,
+          );
+        });
+    }
+  }
+
+  private async refreshUnverifiedDomains(): Promise<void> {
+    const unverifiedDomains = await this.emailingDomainRepository.find({
+      where: { status: In(NON_TERMINAL_EMAILING_DOMAIN_STATUSES) },
+      select: ['id', 'workspaceId', 'domain'],
+    });
+
+    for (const emailingDomain of unverifiedDomains) {
+      await this.emailingDomainService
+        .verifyEmailingDomain({
+          workspaceId: emailingDomain.workspaceId,
+          emailingDomainId: emailingDomain.id,
+        })
+        .catch((error) => {
+          this.logger.error(
+            `[${CheckEmailingDomainVerificationCronJob.name}] Cannot verify emailing domain ${emailingDomain.domain} of workspace ${emailingDomain.workspaceId}: ${error}`,
+          );
+        });
+    }
+  }
+
+  private async refreshPendingUnsubscribeHostnames(): Promise<void> {
+    const verifiedDomainsWithPendingHostname =
+      await this.emailingDomainRepository.find({
+        where: {
+          status: EmailingDomainStatus.VERIFIED,
+          unsubscribeHostnameStatus: UnsubscribeHostnameStatus.PENDING,
+        },
+        select: ['id', 'workspaceId'],
+      });
+
+    for (const emailingDomain of verifiedDomainsWithPendingHostname) {
+      await this.unsubscribeHostnameService.sync(
+        emailingDomain.workspaceId,
+        emailingDomain.id,
+        { provision: false },
+      );
+    }
+  }
+}

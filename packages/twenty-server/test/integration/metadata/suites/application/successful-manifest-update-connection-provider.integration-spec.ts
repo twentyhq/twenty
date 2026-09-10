@@ -83,6 +83,8 @@ describe('Manifest update - connection providers', () => {
         tokenRequestContentType: 'json',
         usePkce: true,
       },
+      onConnectLogicFunctionUniversalIdentifier: null,
+      onDisconnectLogicFunctionUniversalIdentifier: null,
     });
   }, 60000);
 

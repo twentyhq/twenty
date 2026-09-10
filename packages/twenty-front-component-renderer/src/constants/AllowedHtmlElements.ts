@@ -1,7 +1,7 @@
-import { type PropertySchema } from './PropertySchema';
-import { SVG_PRESENTATION_PROPERTIES } from './SvgPresentationProperties';
+import { type PropertySchema } from '@/types/PropertySchema';
+import { SVG_PRESENTATION_PROPERTIES } from '@/constants/SvgPresentationProperties';
 
-export type AllowedHtmlElement = {
+type AllowedHtmlElement = {
   tag: string;
   name: string;
   properties: Record<string, PropertySchema>;

@@ -14,6 +14,7 @@ import {
 
 import { type Response } from 'express';
 import Stripe from 'stripe';
+import { ApiPath } from 'twenty-shared/types';
 
 import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-customer.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-entitlement.service';
@@ -50,7 +51,7 @@ export class BillingWebhookController {
     private readonly billingWebhookSubscriptionScheduleService: BillingWebhookSubscriptionScheduleService,
   ) {}
 
-  @Post(['webhooks/stripe'])
+  @Post(`${ApiPath.Webhooks}/stripe`)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async handleWebhooks(
     @Headers('stripe-signature') signature: string,

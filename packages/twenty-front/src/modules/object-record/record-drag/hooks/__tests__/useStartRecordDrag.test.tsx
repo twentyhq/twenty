@@ -1,4 +1,3 @@
-import { type DragStart } from '@hello-pangea/dnd';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
@@ -9,16 +8,6 @@ import { originalDragSelectionComponentState } from '@/object-record/record-drag
 import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-
-const createDragStart = (draggableId: string, index: number): DragStart => ({
-  draggableId,
-  type: 'record',
-  source: {
-    droppableId: 'test-droppable',
-    index,
-  },
-  mode: 'FLUID',
-});
 
 describe('useStartRecordDrag', () => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({});
@@ -52,11 +41,11 @@ describe('useStartRecordDrag', () => {
       { wrapper: Wrapper },
     );
 
-    const dragStart = createDragStart('record-1', 0);
+    const draggedRecordId = 'record-1';
     const selectedRecordIds = ['record-2', 'record-3'];
 
     act(() => {
-      result.current.startRecordDrag(dragStart.draggableId, selectedRecordIds);
+      result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
     });
 
     expect(result.current.isMultiDragActive).toBe(true);
@@ -94,11 +83,11 @@ describe('useStartRecordDrag', () => {
       { wrapper: Wrapper },
     );
 
-    const dragStart = createDragStart('record-1', 0);
+    const draggedRecordId = 'record-1';
     const selectedRecordIds = ['record-1'];
 
     act(() => {
-      result.current.startRecordDrag(dragStart.draggableId, selectedRecordIds);
+      result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
     });
 
     expect(result.current.isMultiDragActive).toBe(true);
@@ -136,11 +125,11 @@ describe('useStartRecordDrag', () => {
       { wrapper: Wrapper },
     );
 
-    const dragStart = createDragStart('record-2', 1);
+    const draggedRecordId = 'record-2';
     const selectedRecordIds = ['record-1', 'record-2', 'record-3'];
 
     act(() => {
-      result.current.startRecordDrag(dragStart.draggableId, selectedRecordIds);
+      result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
     });
 
     expect(result.current.isMultiDragActive).toBe(true);
@@ -186,11 +175,11 @@ describe('useStartRecordDrag', () => {
       { wrapper: Wrapper },
     );
 
-    const dragStart = createDragStart('record-1', 0);
+    const draggedRecordId = 'record-1';
     const selectedRecordIds: string[] = [];
 
     act(() => {
-      result.current.startRecordDrag(dragStart.draggableId, selectedRecordIds);
+      result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
     });
 
     expect(result.current.isMultiDragActive).toBe(true);
@@ -228,11 +217,11 @@ describe('useStartRecordDrag', () => {
       { wrapper: Wrapper },
     );
 
-    const dragStart = createDragStart('record-1', 0);
+    const draggedRecordId = 'record-1';
     const selectedRecordIds = ['record-2', 'record-3'];
 
     act(() => {
-      result.current.startRecordDrag(dragStart.draggableId, selectedRecordIds);
+      result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
     });
 
     expect(result.current.isMultiDragActive).toBe(true);
@@ -270,11 +259,11 @@ describe('useStartRecordDrag', () => {
       { wrapper: Wrapper },
     );
 
-    const dragStart = createDragStart('record-2', 1);
+    const draggedRecordId = 'record-2';
     const selectedRecordIds = ['record-1', 'record-2', 'record-3'];
 
     act(() => {
-      result.current.startRecordDrag(dragStart.draggableId, selectedRecordIds);
+      result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
     });
 
     expect(result.current.isMultiDragActive).toBe(true);

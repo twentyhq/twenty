@@ -1,7 +1,7 @@
 import { type JSX } from 'react';
-import { Link as EmailLink } from '@react-email/components';
+import { Link as EmailLink } from 'react-email';
 
-import { emailTheme } from 'src/common-style';
+import { canvasTheme } from 'src/common-style';
 
 const linkStyle = {
   textDecoration: 'underline',
@@ -19,7 +19,7 @@ export const Link = ({ value, href, color }: LinkProps) => {
       href={href}
       style={{
         ...linkStyle,
-        color: color ?? emailTheme.font.colors.tertiary,
+        color: color ?? canvasTheme.font.colors.tertiary,
       }}
     >
       {value}

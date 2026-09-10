@@ -2,7 +2,7 @@
 
 import { useLingui } from '@lingui/react';
 
-import { CategoryCardSelect, Field, TagInput, TextareaField } from '@/ui';
+import { CategoryCardSelect, Field, TagInput } from '@/ui';
 
 import { PARTNER_SCOPE_OPTIONS } from '../../data/partner-scope-options';
 import { PARTNER_SKILL_POOL } from '../../data/partner-skill-pool';
@@ -18,7 +18,7 @@ export function ExpertiseStep({
   controller: PartnerApplicationController;
 }) {
   const { i18n } = useLingui();
-  const { setField, setSkills, state, toggleScope } = controller;
+  const { setSkills, state, toggleScope } = controller;
 
   const scopeOptions = PARTNER_SCOPE_OPTIONS.map((option) => ({
     description: i18n._(option.description),
@@ -52,15 +52,6 @@ export function ExpertiseStep({
           searchPool={PARTNER_SKILL_POOL}
           suggestions={PARTNER_SKILL_SUGGESTIONS}
           values={state.skills}
-        />
-      </Field>
-      <Field label={i18n._(FIELDS.applicationNotes)}>
-        <TextareaField
-          ariaLabel={i18n._(FIELDS.applicationNotes)}
-          name="applicationNotes"
-          onValueChange={(value) => setField('applicationNotes', value)}
-          placeholder={i18n._(FIELDS.applicationNotesPlaceholder)}
-          value={state.applicationNotes}
         />
       </Field>
     </>

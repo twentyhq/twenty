@@ -29,12 +29,12 @@ Avant de configurer le flux de travail :
 3. Choisissez l'objet auquel vous souhaitez joindre des PDF (par exemple, **Entreprise** ou **Opportunité**)
 
 <Tip>
-Avec un déclencheur manuel, les utilisateurs peuvent exécuter ce flux de travail à l'aide d'un bouton qui apparaît en haut à droite une fois un enregistrement sélectionné, afin de générer et de joindre un PDF.
+Avec un déclencheur manuel, les utilisateurs peuvent exécuter ce workflow en utilisant un bouton qui apparaît en haut à droite une fois qu'un enregistrement est sélectionné — cela exécute le workflow pour générer et joindre un PDF.
 </Tip>
 
 ### Étape 2 : Ajouter une fonction logique
 
-1. Ajoutez une action **Code** (fonction logique)
+1. Ajoute une action **Code** (fonction logique)
 2. Créez une nouvelle fonction avec le code ci-dessous
 3. Configurez les paramètres d'entrée
 
@@ -237,7 +237,7 @@ Pour créer des devis ou des factures dynamiques :
 | 1     | Déclencheur manuel (Entreprise) | L'utilisateur lance l'action depuis un enregistrement                   |
 | 2     | Rechercher un enregistrement    | Obtenir les détails de l'Opportunité ou des lignes d'articles           |
 | 3     | Requête HTTP                    | Appeler l'API de génération de PDF avec les données de l'enregistrement |
-| 4     | Fonction sans serveur           | Télécharger et joindre le PDF généré                                    |
+| 4     | Fonction logique                | Télécharger et joindre le PDF généré                                    |
 
 ### Services populaires de génération de PDF
 
@@ -246,7 +246,7 @@ Pour créer des devis ou des factures dynamiques :
 * **DocuSeal** - Plateforme d'automatisation de documents
 * **Documint** - Génération de documents axée sur l'API
 
-Chaque service fournit une API qui renvoie une URL de PDF, que vous pouvez ensuite transmettre à la fonction logique.
+Chaque service fournit une API qui retourne une URL PDF, que vous pouvez ensuite passer à la fonction logique.
 
 ## Résolution des problèmes
 

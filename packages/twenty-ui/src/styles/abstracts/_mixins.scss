@@ -4,3 +4,12 @@
     outline-offset: 1px;
   }
 }
+
+// A tap leaves :hover applied until the next tap lands elsewhere, so anything
+// that paints on hover has to be limited to pointers that can actually hover.
+// Mirrors useIsTouchDevice.
+@mixin hover-capable {
+  @media (hover: hover) {
+    @content;
+  }
+}

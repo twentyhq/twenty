@@ -1,6 +1,7 @@
 import { Controller, Get, Header, Req, UseGuards } from '@nestjs/common';
 
 import { type Request } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 
 import { buildApiCatalog } from 'src/engine/core-modules/well-known/utils/build-api-catalog.util';
 import { buildMcpServerCard } from 'src/engine/core-modules/well-known/utils/build-mcp-server-card.util';
@@ -13,7 +14,7 @@ import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version
 const DISCOVERY_CACHE_CONTROL = 'public, max-age=3600';
 const FALLBACK_SERVER_VERSION = '0.0.0';
 
-@Controller('.well-known')
+@Controller(ApiPath.WellKnown)
 export class WellKnownController {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 

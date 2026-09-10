@@ -33,6 +33,7 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
       : undefined;
 
   const fieldDefintionMetadata = {
+    description: field.description,
     fieldName: field.name,
     placeHolder: field.label,
     relationType,

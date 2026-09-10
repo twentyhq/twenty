@@ -3,10 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { type CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step.input';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-action.dto';
 import { type WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
+import { type WorkflowVersionTriggerDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-trigger.dto';
 import { WorkflowVersionStepCreationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-creation.workspace-service';
 import { WorkflowVersionStepDeletionWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-deletion.workspace-service';
+import { WorkflowVersionStepHelpersWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-helpers.workspace-service';
 import { WorkflowVersionStepUpdateWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-update.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 @Injectable()
 export class WorkflowVersionStepWorkspaceService {
@@ -14,6 +17,7 @@ export class WorkflowVersionStepWorkspaceService {
     private readonly workflowVersionStepCreationWorkspaceService: WorkflowVersionStepCreationWorkspaceService,
     private readonly workflowVersionStepUpdateWorkspaceService: WorkflowVersionStepUpdateWorkspaceService,
     private readonly workflowVersionStepDeletionWorkspaceService: WorkflowVersionStepDeletionWorkspaceService,
+    private readonly workflowVersionStepHelpersWorkspaceService: WorkflowVersionStepHelpersWorkspaceService,
   ) {}
 
   async createWorkflowVersionStep({
@@ -47,6 +51,33 @@ export class WorkflowVersionStepWorkspaceService {
         step,
       },
     );
+  }
+
+  async updateWorkflowVersionTrigger({
+    workspaceId,
+    workflowVersionId,
+    trigger,
+  }: {
+    workspaceId: string;
+    workflowVersionId: string;
+    trigger: WorkflowTrigger;
+  }): Promise<WorkflowVersionTriggerDTO> {
+    await this.workflowVersionStepHelpersWorkspaceService.getValidatedDraftWorkflowVersion(
+      {
+        workflowVersionId,
+        workspaceId,
+      },
+    );
+
+    await this.workflowVersionStepHelpersWorkspaceService.updateWorkflowVersionStepsAndTrigger(
+      {
+        workspaceId,
+        workflowVersionId,
+        trigger,
+      },
+    );
+
+    return { trigger };
   }
 
   async deleteWorkflowVersionStep({

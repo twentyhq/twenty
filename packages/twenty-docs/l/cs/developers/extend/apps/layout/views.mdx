@@ -4,10 +4,12 @@ description: Dodávejte předem nakonfigurovaná uložená zobrazení – pořad
 icon: list
 ---
 
-**Zobrazení** je uložená konfigurace toho, jak se zobrazují záznamy objektu: která pole se zobrazují, v jakém pořadí, zda jsou viditelná a jaké filtry nebo seskupení jsou použity. Pomocí `defineView()` můžete s aplikací dodávat předem nakonfigurovaná zobrazení – obvykle výchozí indexové zobrazení pro každý vlastní objekt, který vytvoříte.
+**Zobrazení** je uložená konfigurace toho, jak se zobrazují záznamy objektu: která pole se zobrazují, v jakém pořadí, zda jsou viditelná a jaké filtry nebo seskupení jsou použity. Pomocí `defineView()` můžete k aplikaci přidat předkonfigurovaná zobrazení.
+
+Každý objekt automaticky získá své hlavní zobrazení seznamu (tabulku „All ...“, kterou otevírá navigační položka `OBJECT`), poskytované serverem – včetně objektů, které vaše aplikace vytváří, s jedním sloupcem pro každé pole, které vaše aplikace deklaruje. Zobrazení, která definujete pomocí `defineView()`, jsou vždy **dodatečná** zobrazení nad rámec tohoto výchozího.
 
 ```ts src/views/example-view.ts
-import { defineView, ViewKey } from 'twenty-sdk/define';
+import { defineView } from 'twenty-sdk/define';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 
@@ -16,7 +18,6 @@ export default defineView({
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconList',
-  key: ViewKey.INDEX,
   position: 0,
   fields: [
     {
@@ -33,23 +34,23 @@ export default defineView({
 ## Hlavní body
 
 * `objectUniversalIdentifier` určuje, na který objekt se toto zobrazení vztahuje. Může to být vlastní objekt, který jste definovali, nebo standardní objekt Twenty.
-* `key: ViewKey.INDEX` označuje zobrazení jako hlavní seznamové zobrazení objektu (to, které se otevře po kliknutí na navigační položku `OBJECT`).
-* `fields` určuje, které sloupce se zobrazí a v jakém pořadí. Každé pole odkazuje na `fieldMetadataUniversalIdentifier`. Chcete-li odkazovat na automaticky vytvořené systémové pole, například `createdAt`, podívejte se na [Cílení na systémová pole](/l/cs/developers/extend/apps/data/system-fields).
+* Hlavní zobrazení seznamu objektu je vlastněné serverem: `key` je zastaralý a ignorován, takže si je zobrazení definované v manifestu nikdy nemůže nárokovat. Dodejte navigační položku `VIEW`, pokud chcete mít své zobrazení na jedno kliknutí v postranním panelu.
+* `fields` určuje, které sloupce se zobrazí a v jakém pořadí. Každé pole odkazuje na `fieldMetadataUniversalIdentifier`. Chcete-li odkazovat na automaticky vytvořené systémové pole, například `createdAt`, podívejte se na [Cílení na systémová metadata](/l/cs/developers/extend/apps/data/system-fields).
 * Pro pokročilé konfigurace můžete také deklarovat `filters`, `filterGroups`, `sorts`, `groups` a `fieldGroups`.
 * `position` určuje pořadí, pokud pro stejný objekt existuje více zobrazení.
 
 ## Volitelné vlastnosti
 
-| Vlastnost                                                                                                   | Hodnoty                                                                            | Popis                                                                                                                                                                    |
-| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `type`                                                                                                      | `ViewType.TABLE` (výchozí), `ViewType.KANBAN`, `ViewType.CALENDAR`                 | Jak jsou záznamy uspořádány. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET` a `CALENDAR_WIDGET` také existují, ale jsou používány interně widgety rozvržení stránky.) |
-| `visibility`                                                                                                | `ViewVisibility.WORKSPACE` (výchozí), `ViewVisibility.UNLISTED`                    | Zda je zobrazení viditelné v celém pracovním prostoru, nebo není dostupné ve výběrových prvcích.                                                                         |
-| `openRecordIn`                                                                                              | `ViewOpenRecordIn.SIDE_PANEL` (výchozí), `ViewOpenRecordIn.RECORD_PAGE`            | Kde se záznam otevře po kliknutí.                                                                                                                                        |
-| `sorts`                                                                                                     | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | Výchozí pořadí řazení.                                                                                                                                                   |
-| `isCompact`                                                                                                 | `boolean`                                                                          | Kompaktní zobrazení řádků.                                                                                                                                               |
-| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | Seskupení záznamů (např. sloupce kanbanu) podle pole.                                                                                                                    |
-| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | Agregace a velikost sloupců v kanbanu.                                                                                                                                   |
-| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | Zobrazení kalendáře: rozvržení, datumové pole, které určuje umístění záznamů, a volitelné pole koncového data.                                                           |
+| Vlastnost                                                                                                   | Hodnoty                                                                             | Popis                                                                                                                                                                                                                                           |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`                                                                                                      | `ViewType.TABLE` (výchozí), `ViewType.LIST`, `ViewType.KANBAN`, `ViewType.CALENDAR` | Jak jsou záznamy uspořádány. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, `LIST_WIDGET` a `CALENDAR_WIDGET` také existují, ale jsou používány interně widgety rozvržení stránky.)                                                         |
+| `visibility`                                                                                                | `ViewVisibility.WORKSPACE` (výchozí), `ViewVisibility.UNLISTED`                     | Zda je zobrazení viditelné v celém pracovním prostoru, nebo není dostupné ve výběrových prvcích.                                                                                                                                                |
+| `openRecordIn`                                                                                              | zastaralé                                                                           | Již se nečte: místo toho je nyní umístění, kde se záznamy otevírají, vlastností [objektu](/l/cs/developers/extend/apps/data/objects) (`openRecordIn` v `defineObject()`), přičemž se v případě potřeby použije individuální předvolba každého člena. |
+| `sorts`                                                                                                     | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]`  | Výchozí pořadí řazení.                                                                                                                                                                                                                          |
+| `isCompact`                                                                                                 | `boolean`                                                                           | Kompaktní zobrazení řádků.                                                                                                                                                                                                                      |
+| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                   | Seskupení záznamů (např. sloupce kanbanu) podle pole.                                                                                                                                                                                           |
+| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                             | Agregace a velikost sloupců v kanbanu.                                                                                                                                                                                                          |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                         | Zobrazení kalendáře: rozvržení, datumové pole, které určuje umístění záznamů, a volitelné pole koncového data.                                                                                                                                  |
 
 Všechny výše uvedené výčtové typy jsou exportovány z `twenty-sdk/define`.
 
@@ -109,4 +110,4 @@ Pole `value` je vždy hodnota serializovatelná do JSON, ale její očekávaný 
 
 ## Jak se zobrazení objevují v uživatelském rozhraní
 
-Samotné zobrazení není z postranního panelu dostupné. Aby se tam zobrazilo, spárujte ho s [položkou navigačního menu](/l/cs/developers/extend/apps/layout/navigation-menu-items) typu `VIEW`, která odkazuje na `universalIdentifier` daného zobrazení. To je kanonický vzor: každý vlastní objekt obvykle dodává výchozí zobrazení + položku v postranním panelu, která ho otevírá.
+Samotné zobrazení není z postranního panelu dostupné. Aby se tam zobrazilo, spárujte ho s [položkou navigačního menu](/l/cs/developers/extend/apps/layout/navigation-menu-items) typu `VIEW`, která odkazuje na `universalIdentifier` daného zobrazení. To je kanonický vzor: každý vlastní objekt získá při vytvoření výchozí indexové zobrazení automaticky vygenerované, takže stačí pouze dodat položku v postranním panelu, která jej otevře.

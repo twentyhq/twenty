@@ -6,7 +6,6 @@ describe('stripAnsiEscapes', () => {
   });
 
   it('strips SGR color codes from a yellow value', () => {
-    // What `console.log(chalk.yellow('4 '))` emits.
     expect(stripAnsiEscapes('\u001B[33m4 \u001B[39m')).toBe('4 ');
   });
 
@@ -40,9 +39,6 @@ describe('stripAnsiEscapes', () => {
   });
 
   it('leaves untouched the bracket text that survived a missing ESC', () => {
-    // Defensive: if the ESC byte was already stripped upstream, we should not
-    // try to "fix" the bracketed remnants (we cannot tell them apart from real
-    // user text).
     expect(stripAnsiEscapes('[33m4 [39m')).toBe('[33m4 [39m');
   });
 });

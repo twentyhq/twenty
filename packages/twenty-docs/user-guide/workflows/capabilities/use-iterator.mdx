@@ -19,7 +19,7 @@ Iterator lets you loop through an array of records and perform actions on each o
 
 Iterator expects an **array** as input. It then:
 1. Takes the first item from the array
-2. Runs all actions inside the iterator with that item
+2. Runs all actions inside the Iterator with that item
 3. Moves to the next item
 4. Repeats until all items are processed
 
@@ -58,7 +58,7 @@ When a **Code** or **Logic Function** step returns a *top-level array*, its outp
 
 Actions placed after Iterator run for each item:
 
-1. Add **Send Email** action (inside iterator)
+1. Add **Send Email** action (inside Iterator)
 2. To: `{{iterator.currentItem.email}}`
 3. Subject: Hello `{{iterator.currentItem.firstName}}`!
 4. Body: Personalized message using current item fields

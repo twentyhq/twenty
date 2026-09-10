@@ -37,7 +37,9 @@ export const useSelectFirstRecordForEditMode = () => {
       return;
     }
 
-    const viewType = store.get(recordIndexViewTypeState.atom);
+    const viewType = store.get(
+      recordIndexViewTypeState.atomFamily({ instanceId: recordIndexId }),
+    );
 
     switch (viewType) {
       case ViewType.TABLE: {

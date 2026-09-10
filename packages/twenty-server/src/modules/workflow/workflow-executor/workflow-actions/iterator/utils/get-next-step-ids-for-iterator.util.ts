@@ -26,11 +26,17 @@ export const getNextStepIdsForIterator = ({
     : (executedStep.settings.input.initialLoopStepIds ?? []);
 
   if (executedStepOutput.shouldSkipStepExecution) {
-    return { nextStepIdsToSkip: initialLoopStepIds };
+    return {
+      nextStepIdsToSkip: initialLoopStepIds,
+      nextStepIdsToExecute: executedStep.nextStepIds,
+    };
   }
 
   if (executedStepOutput.shouldFailSafely) {
-    return { nextStepIdsToFailSafely: initialLoopStepIds };
+    return {
+      nextStepIdsToFailSafely: initialLoopStepIds,
+      nextStepIdsToExecute: executedStep.nextStepIds,
+    };
   }
 
   const iteratorStepResult = executedStepOutput.result as

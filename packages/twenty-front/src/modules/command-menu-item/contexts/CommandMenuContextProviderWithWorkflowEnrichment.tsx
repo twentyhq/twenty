@@ -42,6 +42,8 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
         currentVersion: workflowWithCurrentVersion.currentVersion,
         versions: workflowWithCurrentVersion.versions,
         statuses: workflowWithCurrentVersion.statuses,
+        lastPublishedVersionId:
+          workflowWithCurrentVersion.lastPublishedVersionId,
       };
     },
   );

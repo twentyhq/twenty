@@ -1,0 +1,1 @@
+export const SES_BULK_MAX_DESTINATIONS = 50;

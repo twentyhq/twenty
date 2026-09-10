@@ -1,4 +1,7 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  PageLayoutTabLayoutMode,
+} from 'twenty-shared/types';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { createGetDashboardTool } from 'src/modules/dashboard/tools/get-dashboard.tool';
@@ -70,7 +73,13 @@ describe('get_dashboard tool', () => {
               id: 'widget-1',
               title: 'Widget',
               type: 'GRAPH',
-              gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
+              position: {
+                layoutMode: PageLayoutTabLayoutMode.GRID,
+                row: 0,
+                column: 0,
+                rowSpan: 4,
+                columnSpan: 4,
+              },
               objectMetadataId: 'company',
               configuration: {
                 configurationType: WidgetConfigurationType.BAR_CHART,
@@ -85,7 +94,13 @@ describe('get_dashboard tool', () => {
               id: 'widget-2',
               title: 'Widget 2',
               type: 'GRAPH',
-              gridPosition: { row: 4, column: 0, rowSpan: 4, columnSpan: 4 },
+              position: {
+                layoutMode: PageLayoutTabLayoutMode.GRID,
+                row: 4,
+                column: 0,
+                rowSpan: 4,
+                columnSpan: 4,
+              },
               objectMetadataId: 'company',
               configuration: {
                 configurationType: WidgetConfigurationType.BAR_CHART,
@@ -104,11 +119,11 @@ describe('get_dashboard tool', () => {
       pageLayoutService: {
         findByIdOrThrow: jest.fn().mockResolvedValue(pageLayout),
       },
-      globalWorkspaceOrmManager: {
+      workspaceOrmManager: {
         executeInWorkspaceContext: jest
           .fn()
           .mockImplementation(async (fn) => fn()),
-        getRepository: jest.fn().mockResolvedValue({
+        getRepository: jest.fn().mockReturnValue({
           findOne: jest.fn().mockResolvedValue(dashboard),
         }),
       },
@@ -123,7 +138,7 @@ describe('get_dashboard tool', () => {
       deps as unknown as Pick<
         DashboardToolDependencies,
         | 'pageLayoutService'
-        | 'globalWorkspaceOrmManager'
+        | 'workspaceOrmManager'
         | 'flatEntityMapsCacheService'
       >,
       {

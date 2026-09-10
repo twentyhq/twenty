@@ -5,15 +5,13 @@ import { In } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 
 @Injectable()
 export class NotePostQueryHookService {
-  constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   async handleNoteTargetsDelete(
     authContext: WorkspaceAuthContext,
@@ -27,10 +25,9 @@ export class NotePostQueryHookService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const noteTargetRepository =
-        await this.globalWorkspaceOrmManager.getRepository<NoteTargetWorkspaceEntity>(
-          workspace.id,
+        this.workspaceOrmManager.getRepository<NoteTargetWorkspaceEntity>(
           'noteTarget',
         );
 
@@ -52,10 +49,9 @@ export class NotePostQueryHookService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const noteTargetRepository =
-        await this.globalWorkspaceOrmManager.getRepository<NoteTargetWorkspaceEntity>(
-          workspace.id,
+        this.workspaceOrmManager.getRepository<NoteTargetWorkspaceEntity>(
           'noteTarget',
         );
 

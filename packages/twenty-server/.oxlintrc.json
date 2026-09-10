@@ -37,6 +37,17 @@
     "no-restricted-imports": [
       "error",
       {
+        "paths": [
+          {
+            "name": "twenty-shared/i18n",
+            "importNames": ["generateMessageId"],
+            "message": "Provider-owned metadata strings must resolve through resolveEffectiveEntityProperty, which owns the catalog lookup. Hashing message ids by hand is how the per-entity resolvers drifted apart."
+          },
+          {
+            "name": "src/engine/core-modules/i18n/utils/translate-standard-label.util",
+            "message": "Call resolveEffectiveEntityProperty instead: it arbitrates overrides and overrides.translations before delegating here."
+          }
+        ],
         "patterns": [
           {
             "group": ["**../"],
@@ -111,6 +122,34 @@
       "files": ["**/constants/*.ts", "**/*.constants.ts"],
       "rules": {
         "twenty/max-consts-per-file": "off"
+      }
+    },
+    {
+      "files": [
+        "src/engine/core-modules/i18n/utils/translate-standard-label.util.ts",
+        "src/engine/core-modules/tool-provider/**",
+        "src/engine/metadata-modules/utils/resolve-effective-entity-property.util.ts",
+        "src/engine/metadata-modules/utils/__tests__/**",
+        "src/engine/core-modules/i18n/utils/__tests__/**",
+        "src/engine/workspace-manager/twenty-standard-application/__tests__/**",
+        "test/**"
+      ],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["**../"],
+                "message": "Relative imports are not allowed."
+              },
+              {
+                "group": ["lodash"],
+                "message": "Please use the standalone lodash package (for instance: `import groupBy from 'lodash.groupby'` instead of `import { groupBy } from 'lodash'`)"
+              }
+            ]
+          }
+        ]
       }
     }
   ]

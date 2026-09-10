@@ -7,15 +7,18 @@ import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/co
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
 export class MessageCampaignWorkspaceEntity extends BaseWorkspaceEntity {
+  name: string;
   subject: string | null;
   bodyTemplate: string | null;
   fromAddress: EmailsMetadata | null;
   status: string;
   sentAt: Date | null;
   sentCount: number;
+  deliveredCount: number;
   failedCount: number;
   bouncedCount: number;
   complainedCount: number;
+  skippedCount: number;
   unsubscribeTopicId: string | null;
   list: EntityRelation<MessageListWorkspaceEntity> | null;
   listId: string | null;

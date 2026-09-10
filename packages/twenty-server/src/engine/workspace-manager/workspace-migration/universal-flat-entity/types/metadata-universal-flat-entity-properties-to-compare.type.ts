@@ -39,8 +39,10 @@ type Assertions = [
       | 'overrides'
       | 'options'
       | 'isUnique'
+      | 'isSearchable'
       | 'isLabelSyncedWithName'
       | 'isUIEditable'
+      | 'writability'
       | 'isNullable'
       | 'universalSettings'
     >
@@ -54,7 +56,6 @@ type Assertions = [
       | 'deletedAt'
       | 'type'
       | 'position'
-      | 'key'
       | 'isCompact'
       | 'openRecordIn'
       | 'kanbanAggregateOperation'

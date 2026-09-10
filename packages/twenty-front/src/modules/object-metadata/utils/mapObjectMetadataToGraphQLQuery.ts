@@ -1,5 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { getRelationIdFieldNames } from '@/object-metadata/utils/getRelationIdFieldNames';
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
 import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueried';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
@@ -10,9 +11,7 @@ import {
   type ObjectPermissions,
 } from 'twenty-shared/types';
 import {
-  computeMorphRelationGqlFieldJoinColumnName,
   computeMorphRelationGqlFieldName,
-  computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -66,34 +65,12 @@ export const mapObjectMetadataToGraphQLQuery = ({
     });
 
   const manyToOneRelationGqlFieldWithFieldMetadata =
-    manyToOneRelationFields.flatMap((fieldMetadata) => {
-      const isMorphRelation =
-        fieldMetadata.type === FieldMetadataType.MORPH_RELATION;
-      if (!isMorphRelation) {
-        return {
-          gqlField: computeRelationGqlFieldJoinColumnName({
-            name: fieldMetadata.name,
-          }),
-          fieldMetadata: fieldMetadata,
-        };
-      }
-
-      if (!isDefined(fieldMetadata.morphRelations)) {
-        return [];
-      }
-
-      return fieldMetadata.morphRelations.map((morphRelation) => ({
-        gqlField: computeMorphRelationGqlFieldJoinColumnName({
-          fieldName: fieldMetadata.name,
-          relationType: morphRelation.type,
-          targetObjectMetadataNameSingular:
-            morphRelation.targetObjectMetadata.nameSingular,
-          targetObjectMetadataNamePlural:
-            morphRelation.targetObjectMetadata.namePlural,
-        }),
-        fieldMetadata: fieldMetadata,
-      }));
-    });
+    manyToOneRelationFields.flatMap((fieldMetadata) =>
+      getRelationIdFieldNames(fieldMetadata).map((gqlField) => ({
+        gqlField,
+        fieldMetadata,
+      })),
+    );
 
   const readableFields = objectMetadataItem.readableFields.filter(
     (fieldMetadata) => fieldMetadata.isActive,

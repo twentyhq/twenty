@@ -3,22 +3,25 @@ import { Suspense, lazy } from 'react';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
+import { StyledWidgetContentFrame } from '@/page-layout/widgets/components/WidgetContentFrame';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
-const StyledContainer = styled.div<{
-  isCanvasLayout: boolean;
+const StyledContainer = styled(StyledWidgetContentFrame)<{
   isInEditMode: boolean;
+  isSoloLayout: boolean;
 }>`
-  height: 100%;
-  overflow: ${({ isCanvasLayout }) => (isCanvasLayout ? 'visible' : 'auto')};
+  height: var(--widget-height, 100%);
+  overflow: var(
+    --widget-scroll-overflow,
+    ${({ isSoloLayout }) => (isSoloLayout ? 'visible' : 'auto')}
+  );
   pointer-events: ${({ isInEditMode }) => (isInEditMode ? 'none' : 'auto')};
-  width: 100%;
 `;
 
 const FrontComponentRenderer = lazy(() =>
@@ -35,7 +38,7 @@ export const FrontComponentWidgetRenderer = ({
   widget,
 }: FrontComponentWidgetRendererProps) => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
-  const { layoutMode } = usePageLayoutContentContext();
+  const { presentation } = usePageLayoutContentContext();
   const { targetRecordIdentifier } = useLayoutRenderingContext();
 
   const configuration = widget.configuration;
@@ -54,13 +57,14 @@ export const FrontComponentWidgetRenderer = ({
 
   return (
     <StyledContainer
-      isCanvasLayout={layoutMode === PageLayoutTabLayoutMode.CANVAS}
       isInEditMode={isPageLayoutInEditMode}
+      isSoloLayout={presentation === 'solo'}
     >
-      <Suspense fallback={null}>
+      <Suspense fallback={<FrontComponentSkeletonLoader />}>
         <FrontComponentRenderer
           frontComponentId={frontComponentId}
           selectedRecordIds={selectedRecordIds}
+          loadingFallback={<FrontComponentSkeletonLoader />}
         />
       </Suspense>
     </StyledContainer>

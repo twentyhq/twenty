@@ -20,6 +20,8 @@ export type ClientConfig = {
   authProviders: AuthProviders;
   billing: Billing;
   calendarBookingPageId?: string;
+  isBookCallOnboardingStepEnabled: boolean;
+  isCompanyEnrichmentEnabled: boolean;
   canManageFeatureFlags: boolean;
   captcha: Captcha;
   defaultSubdomain?: string;
@@ -38,7 +40,8 @@ export type ClientConfig = {
   isCloudflareIntegrationEnabled: boolean;
   isClickHouseConfigured: boolean;
   isWorkspaceSchemaDDLLocked: boolean;
-  onboarding: OnboardingConfig;
+  isOnboardingAiChatEnabled: boolean;
+  onboarding: OnboardingConfig | null;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
   signInPrefilled: boolean;

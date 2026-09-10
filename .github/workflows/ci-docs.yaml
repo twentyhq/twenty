@@ -39,3 +39,5 @@ jobs:
       - name: Docs / Lint
         run: npx nx lint twenty-docs
 
+      - name: Docs / Test
+        run: npx nx test twenty-docs

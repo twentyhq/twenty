@@ -5,13 +5,6 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 
-import {
-  Authorize,
-  FilterableField,
-  IDField,
-  QueryOptions,
-  Relation,
-} from '@ptc-org/nestjs-query-graphql';
 import { Transform } from 'class-transformer';
 import {
   IsBoolean,
@@ -28,13 +21,13 @@ import {
   type FieldMetadataSettings,
   FieldMetadataType,
   type FieldMetadataDefaultValue,
+  MetadataWritability,
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
 import { type FieldMetadataOverrides } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-overrides.type';
 import { type FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
 
 registerEnumType(FieldMetadataType, {
@@ -43,25 +36,11 @@ registerEnumType(FieldMetadataType, {
 });
 
 @ObjectType('Field')
-@Authorize({
-  // oxlint-disable-next-line typescript/no-explicit-any
-  authorize: (context: any) => ({
-    workspaceId: { eq: context?.req?.workspace?.id },
-  }),
-})
-@QueryOptions({
-  defaultResultSize: 10,
-  disableSort: true,
-  maxResultsSize: 1000,
-})
-@Relation('object', () => ObjectMetadataDTO, {
-  nullable: true,
-})
 // TODO refactor nullable fields to be typed as nullable and not optional
 export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IsUUID()
   @IsNotEmpty()
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @IsNotEmpty()
@@ -99,25 +78,29 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
 
   @IsBoolean()
   @IsOptional()
-  @FilterableField({ nullable: true })
+  @Field({ nullable: true })
   isActive?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  @FilterableField({ nullable: true })
+  @Field({ nullable: true })
   isSystem?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  @FilterableField({ nullable: true })
+  @Field({ nullable: true })
   isUIEditable?: boolean;
 
-  // Deprecated alias kept for one release: stays filterable so the GraphQL
-  // input types (CreateFieldInput, UpdateFieldInput, FieldFilter) keep their
-  // isUIReadOnly member and external API consumers are not broken.
+  @IsEnum(MetadataWritability)
+  @IsOptional()
+  @Field(() => MetadataWritability, { nullable: true })
+  writability?: MetadataWritability;
+
+  // Deprecated alias kept for one release: stays exposed (and filterable via
+  // FieldFilter) so external API consumers are not broken.
   @IsBoolean()
   @IsOptional()
-  @FilterableField({
+  @Field({
     nullable: true,
     deprecationReason: 'Use isUIEditable',
   })
@@ -132,6 +115,11 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IsOptional()
   @Field({ nullable: true })
   isUnique?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  isSearchable?: boolean;
 
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
@@ -151,7 +139,7 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @HideField()
   workspaceId: string;
 
-  @FilterableField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   objectMetadataId: string;
 
   @IsBoolean()

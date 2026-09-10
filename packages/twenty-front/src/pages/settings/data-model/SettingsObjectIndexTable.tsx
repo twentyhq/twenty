@@ -60,7 +60,7 @@ const TABLE_METADATA: TableMetadata<SettingsObjectIndexesTableItem> = {
   fields: TABLE_FIELDS,
   initialSort: {
     fieldName: 'indexFields',
-    orderBy: 'AscNullsLast',
+    direction: 'asc',
   },
 };
 

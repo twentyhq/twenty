@@ -5,6 +5,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import {
   AI_SDK_ANTHROPIC,
+  AI_SDK_AZURE,
   AI_SDK_BEDROCK,
   AI_SDK_OPENAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
@@ -61,6 +62,36 @@ describe('provider-options.util', () => {
         openai: {
           store: false,
           promptCacheKey: 'thread-123',
+        },
+      });
+    });
+
+    it('returns store false for Azure models', () => {
+      expect(getCallLevelProviderOptions({ sdkPackage: AI_SDK_AZURE })).toEqual(
+        {
+          azure: {
+            store: false,
+          },
+        },
+      );
+    });
+
+    it('merges existing provider options with Azure store false', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_AZURE,
+          providerOptions: {
+            xai: {
+              searchParameters: { mode: 'auto' },
+            },
+          },
+        }),
+      ).toEqual({
+        xai: {
+          searchParameters: { mode: 'auto' },
+        },
+        azure: {
+          store: false,
         },
       });
     });

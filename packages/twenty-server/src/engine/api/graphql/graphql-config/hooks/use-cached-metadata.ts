@@ -5,48 +5,100 @@ import { type Request } from 'express';
 import { type Plugin } from 'graphql-yoga';
 import { isDefined } from 'twenty-shared/utils';
 
-import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
+
+export type CachedOperationConfig = {
+  dependencies: WorkspaceCacheKeyName[];
+  scope: 'workspace' | 'userWorkspace';
+};
 
 export type CacheMetadataPluginConfig = {
   // oxlint-disable-next-line typescript/no-explicit-any
   cacheGetter: (key: string) => any;
   // oxlint-disable-next-line typescript/no-explicit-any
   cacheSetter: (key: string, value: any) => void;
-  operationsToCache: string[];
+  operationsToCache: Record<string, CachedOperationConfig>;
+  dependencyHashGetter: (
+    workspaceId: string,
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ) => Promise<string>;
 };
 
 export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
-  const computeCacheKey = ({
+  const computeCacheKey = async ({
     operationName,
+    operationConfig,
+    workspaceId,
     request,
   }: {
     operationName: string;
-    request: Pick<Request, 'workspace' | 'locale' | 'body' | 'userWorkspaceId'>;
-  }) => {
-    const workspace = request.workspace;
-
-    if (!isDefined(workspace)) {
-      throw new InternalServerError('Workspace is not defined');
-    }
-
-    const workspaceMetadataVersion = workspace.metadataVersion ?? '0';
-    const locale = request.locale;
+    operationConfig: CachedOperationConfig;
+    workspaceId: string;
+    request: Pick<Request, 'locale' | 'body' | 'userWorkspaceId'>;
+  }): Promise<string> => {
+    const dependencyHash = await config.dependencyHashGetter(
+      workspaceId,
+      operationConfig.dependencies,
+    );
     const queryHash = createHash('sha256')
       .update(request.body.query)
+      .update(JSON.stringify(request.body.variables ?? null))
       .digest('hex');
+    const userScopeSegment =
+      operationConfig.scope === 'userWorkspace'
+        ? `:${request.userWorkspaceId}`
+        : '';
 
-    if (operationName === 'FindAllViews') {
-      return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${request.userWorkspaceId}:${queryHash}`;
-    }
-
-    return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${locale}:${queryHash}`;
+    return `graphql:operations:${operationName}:${workspaceId}:${dependencyHash}${userScopeSegment}:${request.locale}:${queryHash}`;
   };
 
   // oxlint-disable-next-line typescript/no-explicit-any
   const getOperationName = (serverContext: any) =>
     serverContext?.req?.body?.operationName;
 
+  const getOperationCacheConfig = (
+    operationName: unknown,
+  ): CachedOperationConfig | undefined =>
+    typeof operationName === 'string' &&
+    Object.prototype.hasOwnProperty.call(
+      config.operationsToCache,
+      operationName,
+    )
+      ? config.operationsToCache[operationName]
+      : undefined;
+
   const cacheHitRequests = new WeakSet<Request>();
+  const requestCacheKeys = new WeakMap<Request, string | null>();
+
+  const resolveCacheKey = async ({
+    operationName,
+    operationConfig,
+    workspaceId,
+    request,
+  }: {
+    operationName: string;
+    operationConfig: CachedOperationConfig;
+    workspaceId: string;
+    request: Request;
+  }): Promise<string | null> => {
+    let cacheKey: string | null;
+
+    try {
+      cacheKey = await computeCacheKey({
+        operationName,
+        operationConfig,
+        workspaceId,
+        request,
+      });
+    } catch (error) {
+      Sentry.captureException(error);
+      cacheKey = null;
+    }
+
+    requestCacheKeys.set(request, cacheKey);
+
+    return cacheKey;
+  };
 
   const getCachedResponse = ({
     cacheKey,
@@ -81,24 +133,33 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
     onRequest: async ({ endResponse, serverContext }) => {
       // TODO: we should probably override the graphql-yoga request type to include the workspace and locale
       const request = (serverContext as unknown as { req: Request }).req;
+      const workspaceId = request.workspace?.id;
 
-      if (!request.workspace?.id) {
+      if (!workspaceId) {
         return;
       }
 
       const operationName = getOperationName(serverContext);
+      const operationConfig = getOperationCacheConfig(operationName);
 
-      if (!config.operationsToCache.includes(operationName)) {
+      if (!isDefined(operationConfig)) {
         return;
       }
 
       Sentry.setTags({ operationName, operation: 'query' });
       Sentry.getCurrentScope().setTransactionName(operationName);
 
-      const cacheKey = computeCacheKey({
+      const cacheKey = await resolveCacheKey({
         operationName,
+        operationConfig,
+        workspaceId,
         request,
       });
+
+      if (!isDefined(cacheKey)) {
+        return;
+      }
+
       const cachedResponse = await getCachedResponse({
         cacheKey,
         operationName,
@@ -122,7 +183,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
 
       const operationName = getOperationName(serverContext);
 
-      if (!config.operationsToCache.includes(operationName)) {
+      if (!isDefined(getOperationCacheConfig(operationName))) {
         return;
       }
 
@@ -130,10 +191,11 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
         return;
       }
 
-      const cacheKey = computeCacheKey({
-        operationName,
-        request,
-      });
+      const cacheKey = requestCacheKeys.get(request);
+
+      if (!isDefined(cacheKey)) {
+        return;
+      }
 
       const cachedResponse = await getCachedResponse({
         cacheKey,

@@ -7,7 +7,7 @@ import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/sen
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -23,7 +23,7 @@ export class SendEmailWorkflowAction extends EmailWorkflowActionBase {
   constructor(
     private readonly sendEmailTool: SendEmailTool,
     workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
-    globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(ConnectedAccountEntity)
     connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -32,7 +32,7 @@ export class SendEmailWorkflowAction extends EmailWorkflowActionBase {
     super(
       SendEmailWorkflowAction.name,
       workflowRunStepLogService,
-      globalWorkspaceOrmManager,
+      workspaceOrmManager,
       connectedAccountRepository,
       userWorkspaceRepository,
     );

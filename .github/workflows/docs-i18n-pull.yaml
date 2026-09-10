@@ -28,7 +28,7 @@ on:
       - '.github/workflows/docs-i18n-pull.yaml'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
@@ -78,6 +78,12 @@ jobs:
           crowdin pre-translate --method mt --engine-id 2 $COMMON || echo "::warning::MT pre-translate failed (non-blocking)"
           echo "=== AI pre-translate (prompt 1; covers ko/tr + markup MT skips) ==="
           crowdin pre-translate --method ai --ai-prompt 1 $COMMON || echo "::warning::AI pre-translate failed (non-blocking)"
+        env:
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Normalize translations in Crowdin
+        if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        run: npx tsx packages/twenty-utils/crowdin-normalizer/normalize-crowdin-translations.ts --project=2 --apply --rules=escaped-inline-code-tags || echo "::warning::translation normalization failed (non-blocking)"
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 

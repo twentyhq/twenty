@@ -11,6 +11,8 @@ export const permissionRestApiExceptionCodeToHttpStatus = (
     case PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS:
     case PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN:
     case PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE:
+    case PermissionsExceptionCode.CANNOT_DELETE_OWN_ROLE:
+    case PermissionsExceptionCode.CANNOT_REVOKE_OWN_SETTINGS_ACCESS:
     case PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER:
     case PermissionsExceptionCode.ROLE_NOT_EDITABLE:
     case PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT:

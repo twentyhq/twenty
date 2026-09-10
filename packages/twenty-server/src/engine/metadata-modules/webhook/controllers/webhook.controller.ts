@@ -6,13 +6,18 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import { isMetadataRestRequest } from 'src/engine/api/rest/metadata/utils/is-metadata-rest-request.util';
+import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
@@ -26,7 +31,7 @@ import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhoo
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 
-@Controller(['rest/webhooks', 'rest/metadata/webhooks'])
+@Controller([`${ApiPath.Rest}/webhooks`, `${ApiPath.Rest}/metadata/webhooks`])
 @UseGuards(
   JwtAuthGuard,
   WorkspaceAuthGuard,
@@ -43,9 +48,14 @@ export class WebhookController {
 
   @Get()
   async findAll(
+    @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<WebhookDTO[]> {
-    return this.webhookService.findAll(workspace.id);
+  ) {
+    const webhooks = await this.webhookService.findAll(workspace.id);
+
+    return isMetadataRestRequest(request)
+      ? paginateMetadataRestItems({ items: webhooks, request })
+      : webhooks;
   }
 
   @Get(':id')

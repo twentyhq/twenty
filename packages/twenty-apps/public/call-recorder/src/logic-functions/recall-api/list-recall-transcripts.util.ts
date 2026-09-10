@@ -34,6 +34,7 @@ export const listRecallTranscripts = async ({
     config: configResult.config,
     initialPath: `/transcript/?${searchParams.toString()}`,
     maxPages: RECALL_TRANSCRIPT_LIST_MAX_PAGES,
+    shouldStartPageRequest: () => true,
     extractPageItems: extractRecallTranscriptSummaries,
     malformedErrorMessage: 'Recall API returned malformed transcript list',
   });

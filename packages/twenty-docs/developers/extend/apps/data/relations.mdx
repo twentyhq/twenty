@@ -84,6 +84,29 @@ export default defineField({
 **Circular imports:** both relation fields reference each other's `universalIdentifier`. To avoid circular import issues, export your field IDs as named constants from each file and import them in the other. The build system resolves these at compile time.
 </Note>
 
+## Junction relations
+
+A junction object connects one source record to one or more target records. For example, `PostCardRecipient` can hold both a `postCard` relation and a `recipient` relation. On the source object's `ONE_TO_MANY` field, set `junctionTargetFieldUniversalIdentifier` to the relation field on the junction object that points to the target:
+
+```ts
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+    junctionTargetFieldUniversalIdentifier: RECIPIENT_FIELD_ID,
+  },
+});
+```
+
+`RECIPIENT_FIELD_ID` must identify a `MANY_TO_ONE` or morph relation on the junction object. It tells Twenty which related record is the target when a feature such as [timeline activity fan-out](/developers/extend/apps/data/timeline-activity-types#automatic-and-explicit-events) traverses the junction.
+
 ## Relating to standard objects
 
 To create a relation with a built-in Twenty object (Person, Company, etc.), use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
@@ -130,6 +153,7 @@ export default defineField({
 | `universalSettings.relationType` | Yes | `RelationType.MANY_TO_ONE` or `RelationType.ONE_TO_MANY` |
 | `universalSettings.onDelete` | MANY_TO_ONE only | What happens when the referenced record is deleted: `CASCADE`, `SET_NULL`, `RESTRICT`, or `NO_ACTION` |
 | `universalSettings.joinColumnName` | MANY_TO_ONE only | Database column name for the foreign key (e.g., `postCardId`) |
+| `universalSettings.junctionTargetFieldUniversalIdentifier` | Junction ONE_TO_MANY only | Relation field on the junction object that points to the fan-out target |
 
 ## Inline relation fields
 

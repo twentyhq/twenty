@@ -1,15 +1,15 @@
-import { PageLayoutCanvasViewer } from '@/page-layout/components/PageLayoutCanvasViewer';
 import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
-import { PageLayoutVerticalListEditor } from '@/page-layout/components/PageLayoutVerticalListEditor';
-import { PageLayoutVerticalListViewer } from '@/page-layout/components/PageLayoutVerticalListViewer';
+import { PageLayoutVerticalList } from '@/page-layout/components/PageLayoutVerticalList';
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
-import { useReorderPageLayoutWidgets } from '@/page-layout/hooks/useReorderPageLayoutWidgets';
-import { StandaloneWidgetPlaceholder } from '@/page-layout/widgets/components/StandaloneWidgetPlaceholder';
 import { RecordPageAddWidgetSection } from '@/page-layout/widgets/components/RecordPageAddWidgetSection';
+import { RecordPageWidgetInsertionSeparator } from '@/page-layout/widgets/components/RecordPageWidgetInsertionSeparator';
+import { StandaloneWidgetPlaceholder } from '@/page-layout/widgets/components/StandaloneWidgetPlaceholder';
+import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
@@ -23,21 +23,17 @@ const StyledEmptyStandalonePageContainer = styled.div`
 export const PageLayoutContent = () => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
-  const { tabId } = usePageLayoutContentContext();
-
-  const { reorderWidgets } = useReorderPageLayoutWidgets(tabId);
+  const { layoutMode, tabId } = usePageLayoutContentContext();
 
   const activeTab = usePageLayoutTabWithVisibleWidgetsOrThrow(tabId);
-
-  const { layoutMode } = usePageLayoutContentContext();
+  const firstWidget = activeTab.widgets[0];
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
   const isRecordPageLayout =
     currentPageLayout.type === PageLayoutType.RECORD_PAGE;
 
-  const isCanvasLayout = layoutMode === PageLayoutTabLayoutMode.CANVAS;
-  const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
+  const isGridLayout = layoutMode === PageLayoutTabLayoutMode.GRID;
 
   const isEmptyStandalonePage =
     currentPageLayout.type === PageLayoutType.STANDALONE_PAGE &&
@@ -51,24 +47,34 @@ export const PageLayoutContent = () => {
     );
   }
 
-  if (isCanvasLayout) {
-    return <PageLayoutCanvasViewer widgets={activeTab.widgets} />;
+  if (isGridLayout) {
+    return <PageLayoutGridLayout tabId={tabId} />;
   }
 
-  if (isVerticalList) {
-    if (isPageLayoutInEditMode && isRecordPageLayout) {
-      return (
-        <PageLayoutVerticalListEditor
-          widgets={activeTab.widgets}
-          onReorder={reorderWidgets}
-          isReorderEnabled={true}
-          trailingElement={<RecordPageAddWidgetSection />}
-        />
-      );
-    }
-
-    return <PageLayoutVerticalListViewer widgets={activeTab.widgets} />;
-  }
-
-  return <PageLayoutGridLayout tabId={tabId} />;
+  return (
+    <PageLayoutVerticalList
+      isInEditMode={isPageLayoutInEditMode && isRecordPageLayout}
+      widgets={activeTab.widgets}
+      leadingElement={
+        isRecordPageLayout &&
+        isDefined(firstWidget) &&
+        isViewportFillingWidgetType(firstWidget.type) ? (
+          <RecordPageAddWidgetSection
+            insertionContext={{
+              targetWidgetId: firstWidget.id,
+              direction: 'above',
+            }}
+          />
+        ) : undefined
+      }
+      trailingElement={
+        isRecordPageLayout ? <RecordPageAddWidgetSection /> : undefined
+      }
+      renderWidgetSeparator={
+        isRecordPageLayout
+          ? (widget) => <RecordPageWidgetInsertionSeparator widget={widget} />
+          : undefined
+      }
+    />
+  );
 };

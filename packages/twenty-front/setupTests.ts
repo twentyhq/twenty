@@ -1,7 +1,3 @@
-// jest-dom adds custom jest matchers for asserting on DOM nodes.
-// allows you to do things like:
-// expect(element).toHaveTextContent(/react/i)
-// learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
 import {
   ReadableStream as NodeReadableStream,
@@ -13,7 +9,6 @@ import { i18n } from '@lingui/core';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { messages as enMessages } from '~/locales/generated/en';
 
-// Initialize i18n for all tests
 i18n.load({ [SOURCE_LOCALE]: enMessages });
 i18n.activate(SOURCE_LOCALE);
 
@@ -38,7 +33,19 @@ if (typeof window !== 'undefined') {
   });
 }
 
-// Add Jest matchers for toThrowError and other missing methods
+// jsdom does not implement ResizeObserver; @dnd-kit/dom expects it at import
+// time.
+class ResizeObserverMock {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+if (globalThis.ResizeObserver === undefined) {
+  globalThis.ResizeObserver =
+    ResizeObserverMock as unknown as typeof ResizeObserver;
+}
+
 declare global {
   namespace jest {
     interface Matchers<R> {

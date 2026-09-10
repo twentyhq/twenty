@@ -56,11 +56,6 @@ La acción Search Records está limitada a devolver un máximo de 200 registros.
 ### Paso 4: Actualizar el registro de Person con una acción Create or Update Record
 
 1. Añada una acción **Create or Update Record**
-
-<Warning>
-Utilice **Upsert Record** en lugar de **Update Record** aquí. Esto le permite identificar a la persona por su dirección de correo electrónico (el campo `handle`) en lugar de requerir un ID de registro de un paso anterior.
-</Warning>
-
 2. Seleccione **People** como el objeto
 3. Busque a la persona haciendo coincidir su correo electrónico con el `handle` del Message Participant
 4. Establezca su campo personalizado "Número de correos electrónicos recibidos" en `{{searchRecords.totalCount}}`

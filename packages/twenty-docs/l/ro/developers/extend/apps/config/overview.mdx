@@ -24,6 +24,11 @@ icon: screwdriver-wrench
        ┌──────────────────────────────────┐
        │ Post-install hook                │  after metadata migration
        └──────────────────────────────────┘
+                          │
+                          ▼  (at uninstall time)
+       ┌──────────────────────────────────┐
+       │ Uninstall hook                   │  before app removal
+       └──────────────────────────────────┘
 ```
 
 ## În această secțiune
@@ -36,7 +41,7 @@ icon: screwdriver-wrench
     `defineRole` — declară ce pot citi și scrie funcțiile de logică ale aplicației dvs.
   </Card>
   <Card title="Hook-uri de instalare" icon="wrench" href="/l/ro/developers/extend/apps/config/install-hooks">
-    `definePreInstallLogicFunction` și `definePostInstallLogicFunction` — fac backup la date, introduc valori implicite, validează actualizările.
+    `definePreInstallLogicFunction`, `definePostInstallLogicFunction` și `defineUninstallLogicFunction` — fac backup la date, introduc valori implicite, validează actualizările și curăță la eliminare.
   </Card>
 </CardGroup>
 
@@ -44,7 +49,7 @@ icon: screwdriver-wrench
 
 * **Aplicația** este punctul de intrare. Fiecare aplicație are exact un apel `defineApplication()`, iar acesta indică un singur **Rol** ca implicit.
 * **Rolul** controlează ce pot citi și scrie funcțiile de logică și componentele front-end ale aplicației. Respectați principiul celui mai mic privilegiu: acordați doar permisiunile de care codul dvs. are cu adevărat nevoie.
-* **Hook-urile de instalare** rulează în timpul instalării sau actualizării — pre-install înainte de migrarea metadatelor (astfel încât să poată refuza o actualizare riscantă), post-install după migrare (astfel încât să poată introduce date implicite în noua schemă).
+* **Hook-urile de instalare** rulează în timpul instalării sau actualizării — pre-install înainte de migrarea metadatelor (astfel încât să poată refuza o actualizare riscantă), post-install după migrare (astfel încât să poată introduce date implicite în noua schemă). Hook-ul de dezinstalare rulează chiar înainte ca aplicația să fie eliminată, astfel încât poate curăța resursele externe cât timp datele aplicației sunt încă lizibile.
 
 <Note>
 Hook-urile de instalare împart același runtime cu [funcțiile de logică](/l/ro/developers/extend/apps/logic/logic-functions) — aceeași semnătură a handlerului, aceleași variabile de mediu, același client API tipizat — dar sunt declarate cu propriile lor funcții `define` și există în afara modelului obișnuit de declanșare (HTTP, cron, evenimente de bază de date).

@@ -1,17 +1,22 @@
 import { z } from 'zod';
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
+import { workflowVariableReferenceSchema } from './workflow-variable-reference-schema';
 
 export const workflowFindRecordsActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
       objectName: z.string(),
-      limit: z.number().optional(),
-      offset: z.number().int().nonnegative().optional(),
+      limit: z.union([z.number(), workflowVariableReferenceSchema]).optional(),
+      offset: z
+        .union([
+          z.number().int().nonnegative(),
+          workflowVariableReferenceSchema,
+        ])
+        .optional(),
       filter: z
         .object({
           recordFilterGroups: z.array(z.any()).optional(),
           recordFilters: z.array(z.any()).optional(),
-          gqlOperationFilter: z.any().optional().nullable(),
         })
         .optional(),
       orderBy: z

@@ -4,6 +4,7 @@ import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { useWorkspaceSurfaceScopedComponentInstanceIdResolver } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useStore } from 'jotai';
@@ -22,16 +23,22 @@ export const useToggleDropdown = () => {
   const { closeDropdown } = useCloseDropdown();
 
   const store = useStore();
+  const resolveComponentInstanceId =
+    useWorkspaceSurfaceScopedComponentInstanceIdResolver();
 
   const toggleDropdown = useCallback(
     (args?: ToggleDropdownArgs | null | undefined) => {
-      const dropdownComponentInstanceId =
+      const rawDropdownComponentInstanceId =
         args?.dropdownComponentInstanceIdFromProps ??
         dropdownComponentInstanceIdFromContext;
 
-      if (!isDefined(dropdownComponentInstanceId)) {
+      if (!isDefined(rawDropdownComponentInstanceId)) {
         throw new Error('Dropdown component instance ID is not defined');
       }
+
+      const dropdownComponentInstanceId = resolveComponentInstanceId(
+        rawDropdownComponentInstanceId,
+      );
 
       const isDropdownOpen = store.get(
         isDropdownOpenComponentState.atomFamily({
@@ -52,6 +59,7 @@ export const useToggleDropdown = () => {
       closeDropdown,
       openDropdown,
       dropdownComponentInstanceIdFromContext,
+      resolveComponentInstanceId,
       store,
     ],
   );

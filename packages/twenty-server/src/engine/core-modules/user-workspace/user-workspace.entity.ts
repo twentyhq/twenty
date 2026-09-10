@@ -102,4 +102,7 @@ export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
 
   @Field(() => [TwoFactorAuthenticationMethodSummaryDTO], { nullable: true })
   twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryDTO[];
+
+  @Field(() => Boolean, { nullable: true })
+  isImpersonating?: boolean;
 }

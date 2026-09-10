@@ -26,15 +26,16 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
   CreateStandardFieldArgs<'taskTarget', FieldMetadataType>,
   'context'
 >): Record<AllStandardObjectFieldName<'taskTarget'>, FlatFieldMetadata> => ({
-  // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg`Id`),
-      description: i18nLabel(msg`Id`),
+      label: i18nLabel(msg({ message: `Id`, context: 'fieldMetadata.label' })),
+      description: i18nLabel(
+        msg({ message: `Id`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
@@ -52,8 +53,12 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Creation date`),
-      description: i18nLabel(msg`Creation date`),
+      label: i18nLabel(
+        msg({ message: `Creation date`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Creation date`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
@@ -74,8 +79,15 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Last update`),
-      description: i18nLabel(msg`Last time the record was changed`),
+      label: i18nLabel(
+        msg({ message: `Last update`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Last time the record was changed`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
@@ -96,8 +108,15 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Deleted at`),
-      description: i18nLabel(msg`Date when the record was deleted`),
+      label: i18nLabel(
+        msg({ message: `Deleted at`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Date when the record was deleted`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
@@ -117,8 +136,15 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
-      label: i18nLabel(msg`Created by`),
-      description: i18nLabel(msg`The creator of the record`),
+      label: i18nLabel(
+        msg({ message: `Created by`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `The creator of the record`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
       isUIEditable: false,
@@ -140,9 +166,14 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedBy',
       type: FieldMetadataType.ACTOR,
-      label: i18nLabel(msg`Updated by`),
+      label: i18nLabel(
+        msg({ message: `Updated by`, context: 'fieldMetadata.label' }),
+      ),
       description: i18nLabel(
-        msg`The workspace member who last updated the record`,
+        msg({
+          message: `The workspace member who last updated the record`,
+          context: 'fieldMetadata.description',
+        }),
       ),
       icon: 'IconUserCircle',
       isSystem: true,
@@ -165,8 +196,15 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
-      label: i18nLabel(msg`Position`),
-      description: i18nLabel(msg`TaskTarget record position`),
+      label: i18nLabel(
+        msg({ message: `Position`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `TaskTarget record position`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
@@ -183,8 +221,15 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
-      label: i18nLabel(msg`Search vector`),
-      description: i18nLabel(msg`Field used for full-text search`),
+      label: i18nLabel(
+        msg({ message: `Search vector`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Field used for full-text search`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
@@ -195,7 +240,6 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Relation fields
   task: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -203,8 +247,15 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'task',
-      label: i18nLabel(msg`Task`),
-      description: i18nLabel(msg`TaskTarget task`),
+      label: i18nLabel(
+        msg({ message: `Task`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `TaskTarget task`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCheckbox',
       isNullable: true,
       isUIEditable: false,
@@ -228,8 +279,15 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.taskTarget.morphIds.targetMorphId.morphId,
       fieldName: 'targetPerson',
-      label: i18nLabel(msg`Person`),
-      description: i18nLabel(msg`TaskTarget target`),
+      label: i18nLabel(
+        msg({ message: `Person`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `TaskTarget target`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCheckbox',
       isNullable: true,
       isUIEditable: false,
@@ -254,8 +312,15 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.taskTarget.morphIds.targetMorphId.morphId,
       fieldName: 'targetCompany',
-      label: i18nLabel(msg`Company`),
-      description: i18nLabel(msg`TaskTarget target`),
+      label: i18nLabel(
+        msg({ message: `Company`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `TaskTarget target`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCheckbox',
       isNullable: true,
       isUIEditable: false,
@@ -280,8 +345,15 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.taskTarget.morphIds.targetMorphId.morphId,
       fieldName: 'targetOpportunity',
-      label: i18nLabel(msg`Opportunity`),
-      description: i18nLabel(msg`TaskTarget target`),
+      label: i18nLabel(
+        msg({ message: `Opportunity`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `TaskTarget target`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCheckbox',
       isNullable: true,
       isUIEditable: false,

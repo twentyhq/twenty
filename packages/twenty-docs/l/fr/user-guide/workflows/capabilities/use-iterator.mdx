@@ -19,7 +19,7 @@ L'itérateur vous permet de parcourir un tableau d'enregistrements et d'exécute
 L'itérateur attend un **tableau** en entrée. Il va ensuite :
 
 1. Prend le premier élément du tableau
-2. Exécute toutes les actions à l'intérieur de l'itérateur avec cet élément
+2. Exécute toutes les actions à l'intérieur de l'itérateur avec cet objet
 3. Passe à l'élément suivant
 4. Répète jusqu'à ce que tous les éléments soient traités
 
@@ -58,7 +58,7 @@ Lorsqu’une étape **Code** ou **Logic Function** renvoie un *tableau de premie
 
 Les actions placées dans l'itérateur s'exécutent pour chaque élément :
 
-1. Ajoutez une action **Envoyer un e-mail** (dans l'itérateur)
+1. Ajouter l'action **Envoyer Email** (à l'intérieur de l'itérateur)
 2. À : `{{iterator.currentItem.email}}`
 3. Objet : Bonjour `{{iterator.currentItem.firstName}}` !
 4. Corps : Message personnalisé utilisant les champs de l'élément en cours

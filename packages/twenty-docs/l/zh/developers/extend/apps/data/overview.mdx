@@ -35,18 +35,22 @@ Twenty 应用的 **数据层（data layer）** 是你的应用*添加*到工作�
   <Card title="关系" icon="diagram-project" href="/l/zh/developers/extend/apps/data/relations">
     对象之间的双向 `MANY_TO_ONE` / `ONE_TO_MANY` 连接。
   </Card>
+  <Card title="时间线活动类型" icon="clock-rotate-left" href="/l/zh/developers/extend/apps/data/timeline-activity-types">
+    为记录时间线定义自动审计事件和显式应用事件。
+  </Card>
 </CardGroup>
 
 ## 实体一览
 
-| 实体     | 目的                                                    | 定义方式                                        |
-| ------ | ----------------------------------------------------- | ------------------------------------------- |
-| **对象** | 具有自有字段的新自定义记录类型（例如 PostCard、Invoice）                  | `defineObject()`                            |
-| **字段** | 对象上的一列。 独立字段可以扩展你未创建的对象（例如向 Company 添加 `loyaltyTier`） | `defineField()`                             |
-| **关系** | 两个对象之间的双向链接——双方都声明为字段                                 | 使用 `defineField()` 并指定 `FieldType.RELATION` |
-| **索引** | 用于加速在某个对象上经常执行的查询的数据库索引                               | `defineIndex()`                             |
+| 实体          | 目的                                                    | 定义方式                                        |
+| ----------- | ----------------------------------------------------- | ------------------------------------------- |
+| **对象**      | 具有自有字段的新自定义记录类型（例如 PostCard、Invoice）                  | `defineObject()`                            |
+| **字段**      | 对象上的一列。 独立字段可以扩展你未创建的对象（例如向 Company 添加 `loyaltyTier`） | `defineField()`                             |
+| **关系**      | 两个对象之间的双向链接——双方都声明为字段                                 | 使用 `defineField()` 并指定 `FieldType.RELATION` |
+| **索引**      | 用于加速在某个对象上经常执行的查询的数据库索引                               | `defineIndex()`                             |
+| **时间线活动类型** | 显示在记录时间线中的自动审计事件或显式域事件                                | `defineTimelineActivityType()`              |
 
-SDK 会在构建时通过 AST 分析检测这些内容，因此文件组织方式由你决定——约定是使用 `src/objects/`、`src/fields/` 和 `src/indexes/`。 稳定的 `universalIdentifier` UUID 在不同部署之间将一切关联在一起。
+SDK 会在构建时通过 AST 分析检测这些内容，因此文件组织方式由你决定——约定是使用 `src/objects/`、`src/fields/`、`src/indexes/` 和 `src/timeline-activity-types/`。 稳定的 `universalIdentifier` UUID 在不同部署之间将一切关联在一起。
 
 ## 索引（可选）
 

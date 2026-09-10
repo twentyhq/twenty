@@ -1,6 +1,8 @@
 import { type FieldManifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
+  MetadataWritability,
   type RelationAndMorphRelationFieldMetadataType,
 } from 'twenty-shared/types';
 
@@ -51,16 +53,40 @@ const getRelationTargetUniversalIdentifiers = (
   };
 };
 
+const resolveManifestFieldIsSearchable = ({
+  fieldManifest,
+  objectLabelIdentifierFieldMetadataUniversalIdentifier,
+  objectIsSearchable,
+}: {
+  fieldManifest: FieldManifest;
+  objectLabelIdentifierFieldMetadataUniversalIdentifier?: string | null;
+  objectIsSearchable?: boolean;
+}): boolean => {
+  if (isDefined(fieldManifest.isSearchable)) {
+    return fieldManifest.isSearchable;
+  }
+
+  return (
+    (objectIsSearchable ?? true) &&
+    fieldManifest.universalIdentifier ===
+      objectLabelIdentifierFieldMetadataUniversalIdentifier
+  );
+};
+
 export const fromFieldManifestToUniversalFlatFieldMetadata = ({
   fieldManifest,
   applicationUniversalIdentifier,
   now,
+  objectLabelIdentifierFieldMetadataUniversalIdentifier,
+  objectIsSearchable,
 }: {
   fieldManifest: FieldManifest & {
     objectUniversalIdentifier: string;
   };
   applicationUniversalIdentifier: string;
   now: string;
+  objectLabelIdentifierFieldMetadataUniversalIdentifier?: string | null;
+  objectIsSearchable?: boolean;
 }): UniversalFlatFieldMetadata => {
   const {
     relationTargetFieldMetadataUniversalIdentifier,
@@ -92,9 +118,15 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     isSystem: false,
     isSystemSideEffect: false,
     isUIEditable: fieldManifest.isUIEditable ?? true,
+    writability: fieldManifest.writability ?? MetadataWritability.OPEN,
     isNullable: fieldManifest.isNullable ?? true,
     isUnique: fieldManifest.isUnique ?? false,
-    isLabelSyncedWithName: false,
+    isSearchable: resolveManifestFieldIsSearchable({
+      fieldManifest,
+      objectLabelIdentifierFieldMetadataUniversalIdentifier,
+      objectIsSearchable,
+    }),
+    isLabelSyncedWithName: fieldManifest.isLabelSyncedWithName ?? false,
     morphId:
       fieldManifest.type === FieldMetadataType.MORPH_RELATION
         ? (fieldManifest.morphId ?? null)

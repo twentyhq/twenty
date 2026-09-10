@@ -23,6 +23,12 @@ export const BUTTON_STYLE = {
   fontSize: 13,
 };
 
+export const STATUS_STYLE = {
+  fontSize: 13,
+  color: '#1f2937',
+  fontFamily: 'monospace',
+};
+
 export const SUBJECT_WRAPPER_STYLE = {
   display: 'flex',
   flexDirection: 'column' as const,

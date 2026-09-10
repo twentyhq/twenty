@@ -7,6 +7,8 @@ import {
 import {
   type InFlightQueueJob,
   MessageQueueDriver,
+  type QueueJobDetails,
+  type QueueJobToAdd,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
   type MessageQueueJobData,
@@ -34,8 +36,26 @@ export class MessageQueueService {
     jobName: string,
     data: T,
     options?: QueueJobOptions,
-  ): Promise<void> {
+  ): Promise<string | undefined> {
     return this.driver.add(this.queueName, jobName, data, options);
+  }
+
+  bulkAdd<T extends MessageQueueJobData>(
+    jobName: string,
+    jobs: QueueJobToAdd<T>[],
+    options?: QueueJobOptions,
+  ): Promise<string[]> {
+    return this.driver.bulkAdd(this.queueName, jobName, jobs, options);
+  }
+
+  getJobs<T extends MessageQueueJobData>(
+    jobIds: string[],
+  ): Promise<Partial<Record<string, QueueJobDetails<T>>>> {
+    if (typeof this.driver.getJobs !== 'function') {
+      return Promise.resolve({});
+    }
+
+    return this.driver.getJobs(this.queueName, jobIds);
   }
 
   getInFlightJobs<T extends MessageQueueJobData>(): Promise<

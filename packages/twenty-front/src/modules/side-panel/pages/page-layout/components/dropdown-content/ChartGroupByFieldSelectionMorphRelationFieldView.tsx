@@ -11,6 +11,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -34,6 +35,7 @@ type ChartGroupByFieldSelectionMorphRelationFieldViewProps = {
     perTargetFieldId: string;
     subFieldName: string;
   }) => void;
+  onSelectTargetRecord: (params: { perTargetFieldId: string }) => void;
 };
 
 export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
@@ -42,6 +44,7 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
   currentSubFieldName,
   onBack,
   onSelectTargetSubField,
+  onSelectTargetRecord,
 }: ChartGroupByFieldSelectionMorphRelationFieldViewProps) => {
   const { getIcon } = useIcons();
 
@@ -54,9 +57,12 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
     DropdownComponentInstanceContext,
   );
 
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    dropdownId,
+    scopedDropdownId,
   );
   const availableTargets = useMemo<MorphRelationTarget[]>(() => {
     return (morphField.morphRelations ?? [])
@@ -92,11 +98,19 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
             ? currentSubFieldName
             : undefined
         }
+        isCurrentGroupByField={
+          selectedTarget.perTargetFieldId === currentFieldMetadataId
+        }
         onBack={() => setSelectedTarget(null)}
         onSelectSubField={(subFieldName) =>
           onSelectTargetSubField({
             perTargetFieldId: selectedTarget.perTargetFieldId,
             subFieldName,
+          })
+        }
+        onSelectRecord={() =>
+          onSelectTargetRecord({
+            perTargetFieldId: selectedTarget.perTargetFieldId,
           })
         }
       />

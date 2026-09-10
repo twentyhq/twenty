@@ -42,6 +42,12 @@ export default defineConnectionProvider({
     // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
     // revokeEndpoint: 'https://example.com/oauth/revoke',
   },
+  // Optional: a logic function in this app to run right after a connection is
+  // established. See "Run a logic function on connect".
+  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // Optional: a logic function in this app to run right after a connection is
+  // removed. See "Run a logic function on disconnect".
+  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
 });
 ```
 
@@ -84,6 +90,76 @@ export default defineApplication({
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="تشغيل دالة منطقية عند الاتصال" description="التفاعل فور إنشاء الاتصال">
+
+بعض المزوّدين يسلّمونك بيانات وقت الاتصال تحتاج إلى الاحتفاظ بها قبل أن يصبح الاتصال قابلاً للاستخدام — المثال الكلاسيكي هو Slack، حيث يحدّد رد OAuth معرّف الفريق `team_id` الخاص بمساحة العمل الذي ستُربط به الأحداث الواردة. عيِّن `onConnectLogicFunction` للإشارة إلى دالة منطقية في التطبيق نفسه (حسب `universalIdentifier` الخاص بها)، وسيتم تشغيلها مباشرة بعد إنشاء `ConnectedAccount`.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs claimSlackTeam after every successful Slack connection.
+  onConnectLogicFunction: {
+    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
+  },
+});
+```
+
+يعمل الـ hook **بشكل غير متزامن في مساحة العمل التي تجري الاتصال** (يتم وضعه في قائمة الانتظار، ولا يُنتظر انتهاؤه)، لذلك لن يؤدي hook بطيء أو فاشل إلى حظر أو تعطيل رد نداء OAuth — اجعله قابلاً للتكرار دون آثار جانبية (idempotent) ويتولى إعادة المحاولات بنفسه. يتلقى المعالج:
+
+```ts
+type OnConnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+من هناك استخدم `getConnection(connectedAccountId)` لقراءة رمز الوصول الجديد واستدعاء واجهة برمجة تطبيقات المزوّد (على سبيل المثال، Slack `auth.test`) أو حفظ تعيين باستخدام [مخزن المفاتيح والقيم](/l/ar/developers/extend/apps/logic/key-value-store).
+
+</Accordion>
+
+<Accordion title="تشغيل دالة منطقية عند قطع الاتصال" description="نظّف عند إزالة اتصال">
+
+أي شيء يطالب به تطبيق ما وقت الاتصال يجب تحريره عندما يزول الاتصال. على سبيل المثال، يجب على تكامل Slack الذي يطالب بـ `team_id` عند الاتصال تحرير تلك المطالبة حتى تتمكن مساحة عمل أخرى من ربط فريق Slack نفسه. عيِّن `onDisconnectLogicFunction` للإشارة إلى دالة منطقية في التطبيق نفسه، وسيتم تشغيلها مباشرة بعد حذف `ConnectedAccount`.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+تمامًا مثل خطاف on-connect، يتم تشغيله **بشكل غير متزامن في مساحة العمل التي يتم قطع اتصالها** ولا يمنع عملية قطع الاتصال أبدًا. يتلقى المعالج نفس شكل الحمولة:
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+يكون `ConnectedAccount` قد أُزيل بالفعل عندما يتم تشغيل الخطاف، لذلك لم يعد `getConnection(connectedAccountId)` يُرجع نتيجة. أي شيء يحتاجه إجراء التنظيف (مثل `team_id` أو معرّف اشتراك خارجي) يجب أن يكون قد كُتب في [مخزن القيم المفتاحية](/l/ar/developers/extend/apps/logic/key-value-store) في وقت الاتصال، مع استخدام `connectedAccountId` كمفتاح.
+
+يتم إطلاق الخطاف عندما تتم إزالة اتصال بمفرده. يؤدي إلغاء تثبيت التطبيق إلى حذف اتصالاته عبر حذف متسلسل في قاعدة البيانات، لذلك لا يتم تشغيل الخطاف في هذه الحالة. صرّح عن `uninstallLogicFunction` على `defineApplication` لذلك المسار: يتم تشغيله قبل حذف بيانات التعريف الخاصة بالتطبيق، لذا لا يزال بإمكانه استدعاء `listConnections` وتنظيف أي شيء متبقٍّ.
 
 </Accordion>
 
@@ -136,15 +212,16 @@ export const createLinearIssueHandler = async (input: {
 
 يحتوي كل اتصال على:
 
-| الحقل             | الوصف                                                                                             |
-| ----------------- | ------------------------------------------------------------------------------------------------- |
-| `id`              | معرّف صف فريد؛ مرّره إلى `getConnection(id)` لإعادة جلب واحد فقط                                  |
-| `visibility`      | `'user'` (خاص بعضو واحد في مساحة العمل) أو `'workspace'` (مشترك مع جميع الأعضاء)                  |
-| `scopes`          | أذونات OAuth الممنوحة من قِبل المزوّد الأصلي (مختلفة عن `visibility` — ولا علاقة لها به)          |
-| `userWorkspaceId` | معرّف userWorkspace للمالك — مفيد لاختيار "اتصال مستخدم الطلب" في مشغّلات مسارات HTTP             |
-| `accessToken`     | رمز وصول OAuth حديث (يُحدَّث تلقائيًا إذا انتهت صلاحيته)                                          |
-| `name` / `handle` | الاسم المعروض للاتصال (يُستمد تلقائيًا عند ردّ نداء OAuth، وقابل لإعادة التسمية من قِبل المستخدم) |
-| `authFailedAt`    | يُضبط عند فشل أحدث عملية تحديث؛ يجب على المستخدم إعادة الاتصال                                    |
+| الحقل             | الوصف                                                                                                                                                                                                       |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | معرّف صف فريد؛ مرّره إلى `getConnection(id)` لإعادة جلب واحد فقط                                                                                                                                            |
+| `visibility`      | `'user'` (خاص بعضو واحد في مساحة العمل) أو `'workspace'` (مشترك مع جميع الأعضاء)                                                                                                                            |
+| `scopes`          | أذونات OAuth الممنوحة من قِبل المزوّد الأصلي (مختلفة عن `visibility` — ولا علاقة لها به)                                                                                                                    |
+| `userWorkspaceId` | معرّف userWorkspace للمالك — مفيد لاختيار "اتصال مستخدم الطلب" في مشغّلات مسارات HTTP                                                                                                                       |
+| `accessToken`     | رمز وصول OAuth حديث (يُحدَّث تلقائيًا إذا انتهت صلاحيته)                                                                                                                                                    |
+| `name`            | الاسم المعروض للاتصال (يُستمد تلقائيًا عند ردّ نداء OAuth، وقابل لإعادة التسمية من قِبل المستخدم)                                                                                                           |
+| `معالجة`          | البريد الإلكتروني لحساب التمهيد المتصل ، تم تحديثه على كل إعادة اتصال؛ تم حلها من OIDC 'id_token' العائدة في تبادل الرموز الرمزية ، العودة إلى رسالة توصيل المستخدم العشرين عندما لا يعود مقدم الخدمة واحدة |
+| `authFailedAt`    | يُضبط عند فشل أحدث عملية تحديث؛ يجب على المستخدم إعادة الاتصال                                                                                                                                              |
 
 النقاط الرئيسية:
 

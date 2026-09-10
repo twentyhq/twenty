@@ -2,6 +2,7 @@ import { authenticator } from 'otplib';
 
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
+import { TwoFactorAuthenticationException } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
 
 import { TotpStrategy } from './totp.strategy';
 
@@ -10,21 +11,19 @@ import {
   type TotpContext,
 } from './constants/totp.strategy.constants';
 
-const RESYNCH_WINDOW = 3;
+const FIXED_EPOCH_MS = 1_700_000_000_000;
+const STEP_DURATION_MS = 30 * 1000;
+
+const generateTokenAtEpoch = (secret: string, epochMs: number): string =>
+  authenticator.clone({ epoch: epochMs }).generate(secret);
 
 describe('TOTPStrategy Configuration', () => {
   let strategy: TotpStrategy;
   let secret: string;
   let context: TotpContext;
-  let warnSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    warnSpy = jest.spyOn(console, 'warn').mockImplementation();
     secret = authenticator.generateSecret();
-  });
-
-  afterEach(() => {
-    warnSpy.mockRestore();
   });
 
   describe('Valid Configurations', () => {
@@ -43,27 +42,22 @@ describe('TOTPStrategy Configuration', () => {
       expect(() => new TotpStrategy(validOptions)).not.toThrow();
     });
 
-    it('should warn when all custom options are valid but not recommended', () => {
-      // Since we simplified the implementation, this test no longer applies
-      // as we don't have custom configuration warnings
+    it('should accept a large window', () => {
       expect(() => new TotpStrategy({ window: 10 })).not.toThrow();
-      // Remove the warning expectation since our simplified implementation doesn't warn
+    });
+  });
+
+  describe('Invalid Configurations', () => {
+    it('should throw for a negative window', () => {
+      expect(() => new TotpStrategy({ window: -1 })).toThrow(
+        TwoFactorAuthenticationException,
+      );
     });
 
-    it('should correctly set the window property', () => {
-      // Since we simplified the implementation to use otplib defaults,
-      // we can't directly access internal configuration
-      const strategy = new TotpStrategy({ window: 10 });
-
-      expect(strategy).toBeDefined();
-    });
-
-    it('should default window to 0 if not provided', () => {
-      // Since we simplified the implementation to use otplib defaults,
-      // we can't directly access internal configuration
-      const strategy = new TotpStrategy();
-
-      expect(strategy).toBeDefined();
+    it('should throw for digits below the minimum', () => {
+      expect(() => new TotpStrategy({ digits: 4 })).toThrow(
+        TwoFactorAuthenticationException,
+      );
     });
   });
 
@@ -92,9 +86,7 @@ describe('TOTPStrategy Configuration', () => {
 
   describe('validate', () => {
     beforeEach(() => {
-      strategy = new TotpStrategy({
-        window: RESYNCH_WINDOW,
-      });
+      strategy = new TotpStrategy({ window: 1, epoch: FIXED_EPOCH_MS });
 
       context = {
         status: OTPStatus.VERIFIED,
@@ -103,12 +95,9 @@ describe('TOTPStrategy Configuration', () => {
     });
 
     it('should return true for a valid token at the current counter', () => {
-      // Use the initiate method to generate a proper secret
-      const initResult = strategy.initiate('test@example.com', 'TestApp');
-      // Use authenticator.generate to match what authenticator.check expects
-      const token = authenticator.generate(initResult.context.secret);
+      const token = generateTokenAtEpoch(secret, FIXED_EPOCH_MS);
 
-      const result = strategy.validate(token, initResult.context);
+      const result = strategy.validate(token, context);
 
       expect(result.isValid).toBe(true);
     });
@@ -120,23 +109,49 @@ describe('TOTPStrategy Configuration', () => {
       expect(result.isValid).toBe(false);
     });
 
-    it('should succeed if the token is valid within the window', () => {
-      // Use the initiate method to generate a proper secret
-      const initResult = strategy.initiate('test@example.com', 'TestApp');
-      // Use authenticator.generate to match what authenticator.check expects
-      const futureToken = authenticator.generate(initResult.context.secret);
+    it('should accept the previous token within the window', () => {
+      const previousToken = generateTokenAtEpoch(
+        secret,
+        FIXED_EPOCH_MS - STEP_DURATION_MS,
+      );
 
-      const result = strategy.validate(futureToken, initResult.context);
+      const result = strategy.validate(previousToken, context);
 
       expect(result.isValid).toBe(true);
     });
 
-    it('should fail if the token is valid but outside the window', () => {
-      // For this test, we'll use a completely invalid token since we can't easily
-      // generate tokens outside the window with the simplified implementation
-      const invalidToken = '000000';
+    it('should accept the next token within the window', () => {
+      const nextToken = generateTokenAtEpoch(
+        secret,
+        FIXED_EPOCH_MS + STEP_DURATION_MS,
+      );
 
-      const result = strategy.validate(invalidToken, context);
+      const result = strategy.validate(nextToken, context);
+
+      expect(result.isValid).toBe(true);
+    });
+
+    it('should reject a token generated outside the window', () => {
+      const staleToken = generateTokenAtEpoch(
+        secret,
+        FIXED_EPOCH_MS - 2 * STEP_DURATION_MS,
+      );
+
+      const result = strategy.validate(staleToken, context);
+
+      expect(result.isValid).toBe(false);
+    });
+
+    it('should reject the previous token when no window is configured', () => {
+      const strategyWithoutWindow = new TotpStrategy({
+        epoch: FIXED_EPOCH_MS,
+      });
+      const previousToken = generateTokenAtEpoch(
+        secret,
+        FIXED_EPOCH_MS - STEP_DURATION_MS,
+      );
+
+      const result = strategyWithoutWindow.validate(previousToken, context);
 
       expect(result.isValid).toBe(false);
     });
@@ -147,8 +162,6 @@ describe('TOTPStrategy Configuration', () => {
         secret: 'invalid-secret' as PlaintextString,
       };
 
-      // The authenticator.check method doesn't throw for invalid secrets,
-      // it just returns false
       const result = strategy.validate('123456', invalidContext);
 
       expect(result.isValid).toBe(false);
@@ -160,18 +173,17 @@ describe('TOTPStrategy Configuration', () => {
         secret: '' as PlaintextString,
       };
 
-      // The authenticator.check method doesn't throw for empty secrets,
-      // it just returns false
       const result = strategy.validate('123456', invalidContext);
 
       expect(result.isValid).toBe(false);
     });
 
     it('should return the original context on validation success', () => {
-      // Use the initiate method to generate a proper secret
       const initResult = strategy.initiate('test@example.com', 'TestApp');
-      // Use authenticator.generate to match what authenticator.check expects
-      const token = authenticator.generate(initResult.context.secret);
+      const token = generateTokenAtEpoch(
+        initResult.context.secret,
+        FIXED_EPOCH_MS,
+      );
 
       const result = strategy.validate(token, initResult.context);
 
@@ -194,24 +206,27 @@ describe('TOTPStrategy Configuration', () => {
     });
 
     it('should handle empty token gracefully', () => {
-      const context = {
+      const errorHandlingContext = {
         status: OTPStatus.VERIFIED,
         secret: secret as PlaintextString,
       };
 
-      const result = strategy.validate('', context);
+      const result = strategy.validate('', errorHandlingContext);
 
       expect(result.isValid).toBe(false);
       expect(result.context.status).toBe(OTPStatus.VERIFIED);
     });
 
     it('should handle null token gracefully', () => {
-      const context = {
+      const errorHandlingContext = {
         status: OTPStatus.VERIFIED,
         secret: secret as PlaintextString,
       };
 
-      const result = strategy.validate(null as any, context);
+      const result = strategy.validate(
+        null as unknown as string,
+        errorHandlingContext,
+      );
 
       expect(result.isValid).toBe(false);
       expect(result.context.status).toBe(OTPStatus.VERIFIED);

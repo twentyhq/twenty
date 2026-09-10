@@ -18,11 +18,6 @@ export type SearchResultItem = {
   avatarType: 'squared' | 'rounded';
 };
 
-export type SearchResultGroup = {
-  heading: string;
-  items: SearchResultItem[];
-};
-
 export const useSidePanelSearchRecords = () => {
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
   const sidePanelSearchObjectFilter = useAtomStateValue(

@@ -145,6 +145,14 @@
               "label": "Návody"
             }
           }
+        },
+        "legal": {
+          "label": "Právní",
+          "groups": {
+            "legalHowTos": {
+              "label": "Návody"
+            }
+          }
         }
       }
     },

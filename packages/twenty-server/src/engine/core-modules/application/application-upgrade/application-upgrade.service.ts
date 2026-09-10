@@ -2,26 +2,29 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import axios from 'axios';
-import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { In, Repository } from 'typeorm';
 import { z } from 'zod';
 
+import {
+  WorkspaceIteratorService,
+  type WorkspaceIteratorReport,
+} from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 const npmPackageMetadataSchema = z.object({
   version: z.string(),
 });
-
-const UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE = 5;
 
 @Injectable()
 export class ApplicationUpgradeService {
@@ -35,6 +38,8 @@ export class ApplicationUpgradeService {
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly workspaceVersionService: WorkspaceVersionService,
   ) {}
 
   async checkForUpdates(
@@ -111,15 +116,22 @@ export class ApplicationUpgradeService {
     }
   }
 
-  async upgradeAllApplications({
+  async findApplicationsToUpgrade({
     applicationRegistrationId,
     onlyAutoUpgrade = false,
-    batchSize = UPGRADE_APPLICATIONS_DEFAULT_BATCH_SIZE,
+    workspaceIds,
+    workspaceCountLimit,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
-    batchSize?: number;
-  }): Promise<void> {
+    workspaceIds?: string[];
+    workspaceCountLimit?: number;
+  }): Promise<{
+    appRegistration: ApplicationRegistrationEntity;
+    targetVersion: string | null;
+    applicationsToUpgrade: ApplicationEntity[];
+    skippedNonProvisionedWorkspaceIds: string[];
+  }> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: applicationRegistrationId },
     });
@@ -127,49 +139,110 @@ export class ApplicationUpgradeService {
     const targetVersion = appRegistration.latestAvailableVersion;
 
     if (!isDefined(targetVersion)) {
-      return;
+      return {
+        appRegistration,
+        targetVersion: null,
+        applicationsToUpgrade: [],
+        skippedNonProvisionedWorkspaceIds: [],
+      };
     }
 
     const applications = await this.applicationRepository.find({
       where: {
         applicationRegistrationId,
         ...(onlyAutoUpgrade ? { autoUpgrade: true } : {}),
+        ...(isNonEmptyArray(workspaceIds)
+          ? { workspaceId: In(workspaceIds) }
+          : {}),
       },
     });
 
-    const applicationsToUpgrade = applications.filter(
+    const outdatedApplications = applications.filter(
       (application) => application.version !== targetVersion,
     );
 
-    const sanitizedBatchSize = Math.max(1, Math.floor(batchSize));
+    const provisionedWorkspaceIds = new Set(
+      await this.workspaceVersionService.getProvisionedWorkspaceIds(),
+    );
 
-    for (
-      let batchStart = 0;
-      batchStart < applicationsToUpgrade.length;
-      batchStart += sanitizedBatchSize
-    ) {
-      const batch = applicationsToUpgrade.slice(
-        batchStart,
-        batchStart + sanitizedBatchSize,
-      );
+    const provisionedApplications = outdatedApplications.filter((application) =>
+      provisionedWorkspaceIds.has(application.workspaceId),
+    );
 
-      await Promise.all(
-        batch.map(async (application) => {
-          try {
-            await this.upgradeApplicationToVersion({
-              appRegistration,
-              targetVersion,
-              workspaceId: application.workspaceId,
-            });
-          } catch (error) {
-            this.logger.error(
-              `Failed to upgrade application ${application.id} to version ${targetVersion} in workspace ${application.workspaceId}`,
-              error,
-            );
-          }
-        }),
-      );
+    const skippedNonProvisionedWorkspaceIds = outdatedApplications
+      .filter(
+        (application) => !provisionedWorkspaceIds.has(application.workspaceId),
+      )
+      .map((application) => application.workspaceId);
+
+    const applicationsToUpgrade = isDefined(workspaceCountLimit)
+      ? provisionedApplications.slice(0, workspaceCountLimit)
+      : provisionedApplications;
+
+    return {
+      appRegistration,
+      targetVersion,
+      applicationsToUpgrade,
+      skippedNonProvisionedWorkspaceIds,
+    };
+  }
+
+  async upgradeApplications({
+    appRegistration,
+    targetVersion,
+    applications,
+  }: {
+    appRegistration: ApplicationRegistrationEntity;
+    targetVersion: string;
+    applications: ApplicationEntity[];
+  }): Promise<WorkspaceIteratorReport> {
+    // An empty workspace id list makes the iterator fall back to every
+    // provisioned workspace, which would upgrade workspaces that were
+    // filtered out.
+    if (!isNonEmptyArray(applications)) {
+      return { success: [], fail: [], interrupted: false };
     }
+
+    return this.workspaceIteratorService.iterate({
+      workspaceIds: applications.map((application) => application.workspaceId),
+      callback: async ({ workspaceId }) => {
+        await this.upgradeApplicationToVersion({
+          appRegistration,
+          targetVersion,
+          workspaceId,
+        });
+      },
+    });
+  }
+
+  async upgradeAllApplications({
+    applicationRegistrationId,
+    onlyAutoUpgrade = false,
+    workspaceIds,
+    workspaceCountLimit,
+  }: {
+    applicationRegistrationId: string;
+    onlyAutoUpgrade?: boolean;
+    workspaceIds?: string[];
+    workspaceCountLimit?: number;
+  }): Promise<void> {
+    const { appRegistration, targetVersion, applicationsToUpgrade } =
+      await this.findApplicationsToUpgrade({
+        applicationRegistrationId,
+        onlyAutoUpgrade,
+        workspaceIds,
+        workspaceCountLimit,
+      });
+
+    if (!isDefined(targetVersion)) {
+      return;
+    }
+
+    await this.upgradeApplications({
+      appRegistration,
+      targetVersion,
+      applications: applicationsToUpgrade,
+    });
   }
 
   async upgradeApplication(params: {

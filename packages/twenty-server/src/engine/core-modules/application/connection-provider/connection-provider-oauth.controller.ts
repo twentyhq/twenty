@@ -2,7 +2,7 @@ import { Controller, Get, Logger, Query, Res, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Response } from 'express';
-import { SettingsPath } from 'twenty-shared/types';
+import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -15,6 +15,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
+import { parseRelativeUrl } from 'src/engine/core-modules/domain/domain-server-config/utils/parse-relative-url.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -23,7 +24,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-@Controller('auth/apps')
+@Controller(`${ApiPath.Auth}/apps`)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 export class ConnectionProviderOAuthController {
   private readonly logger = new Logger(ConnectionProviderOAuthController.name);
@@ -203,13 +204,16 @@ export class ConnectionProviderOAuthController {
         );
       }
 
-      const pathname =
+      const { pathname, searchParams, hash } = parseRelativeUrl(
         redirectLocation ||
-        getSettingsPath(SettingsPath.ApplicationDetail, { applicationId });
+          getSettingsPath(SettingsPath.ApplicationDetail, { applicationId }),
+      );
 
       const url = this.workspaceDomainsService.buildWorkspaceURL({
         workspace,
         pathname,
+        searchParams,
+        hash,
       });
 
       // Frontend tab list reads the URL hash to pick the active tab.

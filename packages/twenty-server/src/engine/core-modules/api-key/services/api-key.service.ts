@@ -28,10 +28,13 @@ export class ApiKeyService {
   ) {}
 
   async create(
-    apiKeyData: Partial<ApiKeyEntity> & { roleId: string; workspaceId: string },
+    apiKeyData: Pick<ApiKeyEntity, 'name' | 'expiresAt' | 'revokedAt'> & {
+      roleId: string;
+      workspaceId: string;
+    },
   ): Promise<ApiKeyEntity> {
     const { roleId, workspaceId, ...apiKeyFields } = apiKeyData;
-    const savedApiKey = await this.apiKeyRepository.save(
+    const savedApiKey = await this.apiKeyRepository.insertAndReturnOne(
       workspaceId,
       apiKeyFields,
     );
@@ -65,12 +68,15 @@ export class ApiKeyService {
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ApiKeyEntity[]> {
-    return this.apiKeyRepository.find(workspaceId);
+    return this.apiKeyRepository.find(workspaceId, {
+      order: { createdAt: 'ASC', id: 'ASC' },
+    });
   }
 
   async findActiveByWorkspaceId(workspaceId: string): Promise<ApiKeyEntity[]> {
     return this.apiKeyRepository.find(workspaceId, {
       where: { revokedAt: IsNull() },
+      order: { createdAt: 'ASC', id: 'ASC' },
     });
   }
 

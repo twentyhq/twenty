@@ -24,7 +24,6 @@ export const Toggle2FA = () => {
     const newEnforceValue = !currentWorkspace.isTwoFactorAuthenticationEnforced;
 
     try {
-      // Optimistic update
       setCurrentWorkspace({
         ...currentWorkspace,
         isTwoFactorAuthenticationEnforced: newEnforceValue,
@@ -38,7 +37,6 @@ export const Toggle2FA = () => {
         },
       });
     } catch (err: any) {
-      // Rollback optimistic update if error
       setCurrentWorkspace({
         ...currentWorkspace,
         isTwoFactorAuthenticationEnforced: !newEnforceValue,

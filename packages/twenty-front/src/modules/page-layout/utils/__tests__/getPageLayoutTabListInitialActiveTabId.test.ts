@@ -3,6 +3,8 @@ import { getPageLayoutTabListInitialActiveTabId } from '@/page-layout/utils/getP
 
 describe('getPageLayoutTabListInitialActiveTabId', () => {
   const createMockTab = (id: string): PageLayoutTab => ({
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     id,
     applicationId: '',
     isActive: true,

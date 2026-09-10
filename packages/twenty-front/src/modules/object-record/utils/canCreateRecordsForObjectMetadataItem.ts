@@ -6,14 +6,15 @@ type CanCreateRecordsForObjectMetadataItemParams = {
   objectPermissions?: ObjectPermission;
   objectMetadataItem: Pick<
     EnrichedObjectMetadataItem,
-    'isUICreatable' | 'isUIEditable' | 'isSystem' | 'isRemote' | 'applicationId'
+    'isUICreatable' | 'isUIEditable' | 'isRemote' | 'writability'
   >;
 };
 
 // Single predicate for every generic "create a record" UI affordance.
-// Creatability is driven solely by isUICreatable: isSystem only controls
-// Data-Model visibility, so a system object can still be user-creatable
-// (e.g. marketing message lists kept out of the Data Model).
+// Creatability is driven by isUICreatable: isSystem only controls Data-Model
+// visibility, so a system object can still be user-creatable (e.g. marketing
+// message lists kept out of the Data Model), while a non-OPEN writability
+// rules the user session out regardless of the affordance flags.
 // Creation requires effective editability because today's inline creation UX
 // creates a blank record that the user must then be able to edit.
 // There is no CREATE permission yet, so canUpdateObjectRecords (checked

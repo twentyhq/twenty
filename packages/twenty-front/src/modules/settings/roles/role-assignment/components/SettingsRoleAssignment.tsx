@@ -11,6 +11,7 @@ import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles'
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useState } from 'react';
@@ -59,6 +60,9 @@ export const SettingsRoleAssignment = ({
   const { data: apiKeysData } = useQuery(GetApiKeysDocument);
 
   const { openModal, closeModal } = useModal();
+  const modalInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
+    ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID,
+  );
   const [selectedRoleTarget, setSelectRoleTarget] =
     useState<SettingsRoleAssignmentConfirmationModalSelectedRoleTarget | null>(
       null,
@@ -89,7 +93,7 @@ export const SettingsRoleAssignment = ({
 
   const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
-    ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID,
+    modalInstanceId,
   );
 
   const handleConfirm = async () => {

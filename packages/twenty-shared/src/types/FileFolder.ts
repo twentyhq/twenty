@@ -9,6 +9,7 @@ export enum FileFolder {
   Dependencies = 'dependencies',
   Workflow = 'workflow',
   EmailAttachment = 'email-attachment',
+  EmailImage = 'email-image',
   AppTarball = 'app-tarball',
   GeneratedSdkClient = 'generated-sdk-client',
   Dpa = 'dpa',

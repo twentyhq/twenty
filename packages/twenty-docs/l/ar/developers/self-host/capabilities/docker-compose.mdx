@@ -109,7 +109,7 @@ curl http://localhost:3000
 
 ### جعل Twenty متاحاً للوصول الخارجي
 
-افتراضياً، يعمل Twenty على `localhost` على المنفذ `3000`. للوصول إليه عبر نطاق خارجي أو عنوان IP، تحتاج إلى تكوين `SERVER_URL` في ملف `.env`.
+افتراضياً، يعمل Twenty على `localhost` على المنفذ `3000`. تقوم واجهة المستخدم بحل واجهة برمجة التطبيقات (API) من مصدر المتصفح نفسه، لذلك يتم تحميلها من أي اسم مضيف يصل إلى الحاوية — لكن يجب مع ذلك تعيين `SERVER_URL` إلى عنوان URL العام الخاص بك: يستخدمه الخادم للروابط المُنشأة (رسائل البريد الإلكتروني، استدعاءات OAuth) ولاكتشاف HTTPS لملفات تعريف الارتباط الآمنة.
 
 #### فهم `SERVER_URL`
 
@@ -229,7 +229,7 @@ docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).
 1. إيقاف التطبيق:
 
 ```bash
-docker compose stop twenty-server twenty-front
+docker compose stop server worker
 ```
 
 2. استعادة قاعدة البيانات:

@@ -1,15 +1,18 @@
 export enum CacheStorageNamespace {
+  ModuleApplications = 'module:applications',
   ModuleMessaging = 'module:messaging',
   ModuleEmailing = 'module:emailing',
   ModuleCalendar = 'module:calendar',
   ModuleWorkflow = 'module:workflow',
   EngineWorkspace = 'engine:workspace',
   EngineCoreEntity = 'engine:core-entity',
+  EngineAuthSession = 'engine:auth-session',
   EngineLock = 'engine:lock',
   EngineHealth = 'engine:health',
   EngineMetrics = 'engine:metrics',
   EngineSubscriptions = 'engine:subscriptions',
   EngineBillingUsage = 'engine:billing-usage',
+  EngineUsageLimit = 'engine:usage-limit',
   EngineOnboardingInviteSuggestions = 'engine:onboarding-invite-suggestions',
   IntegrationTests = 'integration-tests',
 }

@@ -201,7 +201,7 @@ export const SettingsObjectFieldItemTableRow = ({
                 </SettingsNameCellSecondaryLabel>
                 <AppTooltip
                   anchorSelect={`#${mostlyEmptyLabelId}`}
-                  content={t`Appears filled in fewer than 5% of ${objectMetadataItem.labelPlural}. Fields that stay empty can be deactivated.`}
+                  title={t`Appears filled in fewer than 5% of ${objectMetadataItem.labelPlural}. Fields that stay empty can be deactivated.`}
                   delay={TooltipDelay.shortDelay}
                 />
               </>

@@ -1,124 +1,66 @@
-import { useLingui } from '@lingui/react/macro';
-
-import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { MobileNavigationBarScrollEffect } from '@/navigation/components/MobileNavigationBarScrollEffect';
+import { MOBILE_NAVIGATION_BAR_PADDING } from '@/navigation/constants/MobileNavigationBarPadding';
+import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
+import { isMobileNavigationBarVisibleState } from '@/navigation/states/isMobileNavigationBarVisibleState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useNavigate } from 'react-router-dom';
-import {
-  type IconComponent,
-  IconList,
-  IconMessageCirclePlus,
-  IconSearch,
-} from 'twenty-ui/icon';
+import { styled } from '@linaria/react';
+import { useLocation } from 'react-router-dom';
 import { NavigationBar } from 'twenty-ui/navigation';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { isAiChatPath } from '~/utils/isAiChatPath';
 
-type NavigationBarItemName = 'main' | 'search' | 'newAiChat';
+// The bar floats over the page, so the container has to let taps through to
+// whatever is scrolling underneath it. flex-start rather than left so the bar
+// follows the writing direction in RTL locales.
+const StyledFloatingContainer = styled.div`
+  bottom: 0;
+  display: flex;
+  justify-content: flex-start;
+  left: 0;
+  padding: ${MOBILE_NAVIGATION_BAR_PADDING};
+  padding-bottom: calc(
+    ${MOBILE_NAVIGATION_BAR_PADDING} + env(safe-area-inset-bottom, 0px)
+  );
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  z-index: ${RootStackingContextZIndices.MobileNavigationBar};
+
+  > * {
+    pointer-events: auto;
+  }
+
+  @media print {
+    display: none;
+  }
+`;
 
 export const MobileNavigationBar = () => {
-  const { t } = useLingui();
-  const navigate = useNavigate();
-  const { defaultHomePagePath } = useDefaultHomePagePath();
+  const { pathname } = useLocation();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
-  const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
-  const { closeSidePanelMenu } = useSidePanelMenu();
-  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
-  const isSettingsPage = useIsSettingsPage();
-  const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useAtomState(isNavigationDrawerExpandedState);
-  const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
-    useAtomState(currentMobileNavigationDrawerState);
-  const { switchToNewChat } = useSwitchToNewAiChat();
-  const { alphaSortedActiveNonSystemObjectMetadataItems } =
-    useFilteredObjectMetadataItems();
-  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
-
-  const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  const isMobileNavigationBarVisible = useAtomStateValue(
+    isMobileNavigationBarVisibleState,
   );
+  const { items, activeItemName } = useMobileNavigationBarItems();
 
-  const activeItemName = isNavigationDrawerExpanded
-    ? currentMobileNavigationDrawer
-    : isSidePanelOpened
-      ? 'search'
-      : 'main';
+  // The chat page keeps the keyboard up most of the time, which leaves no room
+  // for the bar, and it carries its own close button to leave by.
+  const isHidden =
+    isSidePanelOpened ||
+    !isMobileNavigationBarVisible ||
+    isAiChatPath(pathname);
 
-  const items: {
-    name: NavigationBarItemName;
-    label: string;
-    Icon: IconComponent;
-    onClick: () => void;
-  }[] = [
-    {
-      name: 'main',
-      label: t`Main navigation`,
-      Icon: IconList,
-      onClick: () => {
-        closeSidePanelMenu();
-        setIsNavigationDrawerExpanded(
-          (previousIsOpen) => activeItemName !== 'main' || !previousIsOpen,
-        );
-        setCurrentMobileNavigationDrawer('main');
-
-        if (isSettingsPage) {
-          navigate(
-            navigationMemorizedUrl !== '/'
-              ? navigationMemorizedUrl
-              : defaultHomePagePath,
-          );
-        }
-      },
-    },
-    {
-      name: 'search',
-      label: t`Search`,
-      Icon: IconSearch,
-      onClick: () => {
-        setIsNavigationDrawerExpanded(false);
-        closeSidePanelMenu();
-
-        if (isSettingsPage) {
-          const firstObjectMetadataItem =
-            alphaSortedActiveNonSystemObjectMetadataItems[0];
-          if (firstObjectMetadataItem !== undefined) {
-            setContextStoreCurrentObjectMetadataItemId(
-              firstObjectMetadataItem.id,
-            );
-          }
-        }
-
-        openRecordsSearchPage();
-      },
-    },
-    ...(hasAiPermission
-      ? [
-          {
-            name: 'newAiChat' as const,
-            label: t`New AI chat`,
-            Icon: IconMessageCirclePlus,
-            onClick: () => {
-              setIsNavigationDrawerExpanded(false);
-              closeSidePanelMenu();
-              switchToNewChat();
-            },
-          },
-        ]
-      : []),
-  ];
-
-  return <NavigationBar activeItemName={activeItemName} items={items} />;
+  return (
+    <>
+      <MobileNavigationBarScrollEffect />
+      <StyledFloatingContainer>
+        <NavigationBar
+          activeItemName={activeItemName}
+          isHidden={isHidden}
+          items={items}
+        />
+      </StyledFloatingContainer>
+    </>
+  );
 };

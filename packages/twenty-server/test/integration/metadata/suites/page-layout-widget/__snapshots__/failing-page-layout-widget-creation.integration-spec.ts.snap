@@ -80,17 +80,6 @@ exports[`Page layout widget creation should fail Edge case configuration validat
 }
 `;
 
-exports[`Page layout widget creation should fail General validation failures when gridPosition has invalid values 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "row must not be less than 0",
-  "name": "UserInputError",
-}
-`;
-
 exports[`Page layout widget creation should fail General validation failures when pageLayoutTabId references non-existent tab 1`] = `
 {
   "extensions": {

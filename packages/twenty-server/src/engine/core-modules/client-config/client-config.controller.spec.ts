@@ -78,6 +78,7 @@ describe('ClientConfigController', () => {
           environment: 'development',
           release: '1.0.0',
           dsn: undefined,
+          tracesSampleRate: 0.1,
         },
         captcha: {
           provider: undefined,
@@ -96,6 +97,7 @@ describe('ClientConfigController', () => {
         analyticsEnabled: false,
         canManageFeatureFlags: true,
         publicFeatureFlags: [],
+        isCookieSessionEnabled: true,
         isMicrosoftMessagingEnabled: false,
         isMicrosoftCalendarEnabled: false,
         isGoogleMessagingEnabled: false,
@@ -104,11 +106,14 @@ describe('ClientConfigController', () => {
         isImapSmtpCaldavEnabled: false,
         isEmailingDomainInDemoMode: false,
         calendarBookingPageId: undefined,
+        isBookCallOnboardingStepEnabled: false,
+        isCompanyEnrichmentEnabled: false,
         isTwoFactorAuthenticationEnabled: false,
         allowRequestsToTwentyIcons: true,
         isCloudflareIntegrationEnabled: false,
         isClickHouseConfigured: false,
         isWorkspaceSchemaDDLLocked: false,
+        isOnboardingAiChatEnabled: false,
         enterpriseInstanceType: ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
       };
 

@@ -1,4 +1,5 @@
 import { DOCUMENTATION_BASE_URL } from 'twenty-shared/constants';
+import { ApiPath } from 'twenty-shared/types';
 
 const API_DOCS_URL = `${DOCUMENTATION_BASE_URL}/developers/extend/api`;
 const MCP_DOCS_URL = `${DOCUMENTATION_BASE_URL}/user-guide/ai/capabilities/mcp`;
@@ -8,34 +9,40 @@ const MCP_DOCS_URL = `${DOCUMENTATION_BASE_URL}/user-guide/ai/capabilities/mcp`;
 export const buildApiCatalog = (baseUrl: string) => ({
   linkset: [
     {
-      anchor: `${baseUrl}/rest`,
+      anchor: `${baseUrl}/${ApiPath.Rest}`,
       'service-desc': [
-        { href: `${baseUrl}/rest/open-api/core`, type: 'application/json' },
+        {
+          href: `${baseUrl}/${ApiPath.Rest}/open-api/core`,
+          type: 'application/json',
+        },
       ],
       'service-doc': [{ href: API_DOCS_URL, type: 'text/html' }],
       'service-meta': [
         {
-          href: `${baseUrl}/.well-known/oauth-protected-resource`,
+          href: `${baseUrl}/${ApiPath.WellKnown}/oauth-protected-resource`,
           type: 'application/json',
         },
       ],
     },
     {
-      anchor: `${baseUrl}/rest/metadata`,
+      anchor: `${baseUrl}/${ApiPath.Rest}/metadata`,
       'service-desc': [
-        { href: `${baseUrl}/rest/open-api/metadata`, type: 'application/json' },
+        {
+          href: `${baseUrl}/${ApiPath.Rest}/open-api/metadata`,
+          type: 'application/json',
+        },
       ],
       'service-doc': [{ href: API_DOCS_URL, type: 'text/html' }],
     },
     {
-      anchor: `${baseUrl}/graphql`,
+      anchor: `${baseUrl}/${ApiPath.GraphQL}`,
       'service-doc': [{ href: API_DOCS_URL, type: 'text/html' }],
     },
     {
-      anchor: `${baseUrl}/mcp`,
+      anchor: `${baseUrl}/${ApiPath.Mcp}`,
       'service-desc': [
         {
-          href: `${baseUrl}/.well-known/mcp/server-card.json`,
+          href: `${baseUrl}/${ApiPath.WellKnown}/mcp/server-card.json`,
           type: 'application/json',
         },
       ],

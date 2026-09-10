@@ -3,8 +3,8 @@ import { type FlatViewFilter } from '@/metadata-store/types/FlatViewFilter';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { usePerformViewFilterAPIPersist } from '@/views/hooks/internal/usePerformViewFilterAPIPersist';
-import { usePerformViewFilterGroupAPIPersist } from '@/views/hooks/internal/usePerformViewFilterGroupAPIPersist';
+import { usePerformViewFilterApiPersist } from '@/views/hooks/internal/usePerformViewFilterApiPersist';
+import { usePerformViewFilterGroupApiPersist } from '@/views/hooks/internal/usePerformViewFilterGroupApiPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewFilterGroupsToCreate } from '@/views/utils/getViewFilterGroupsToCreate';
@@ -27,16 +27,16 @@ export const useSaveRecordFiltersAndGroupFiltersToViewFiltersAndGroupFilters =
     const store = useStore();
 
     const {
-      performViewFilterGroupAPICreate,
-      performViewFilterGroupAPIUpdate,
-      performViewFilterGroupAPIDestroy,
-    } = usePerformViewFilterGroupAPIPersist();
+      performViewFilterGroupApiCreate,
+      performViewFilterGroupApiUpdate,
+      performViewFilterGroupApiDestroy,
+    } = usePerformViewFilterGroupApiPersist();
 
     const {
-      performViewFilterAPICreate,
-      performViewFilterAPIUpdate,
-      performViewFilterAPIDestroy,
-    } = usePerformViewFilterAPIPersist();
+      performViewFilterApiCreate,
+      performViewFilterApiUpdate,
+      performViewFilterApiDestroy,
+    } = usePerformViewFilterApiPersist();
 
     const currentRecordFilterGroupsCallbackState =
       useAtomComponentStateCallbackState(
@@ -84,11 +84,20 @@ export const useSaveRecordFiltersAndGroupFiltersToViewFiltersAndGroupFilters =
           (viewFilterGroup) => viewFilterGroup.id,
         );
 
-        await performViewFilterGroupAPICreate(
+        const createFilterGroupResult = await performViewFilterGroupApiCreate(
           viewFilterGroupsToCreate,
           currentView,
         );
-        await performViewFilterGroupAPIUpdate(viewFilterGroupsToUpdate);
+        if (createFilterGroupResult.status === 'failed') {
+          return;
+        }
+
+        const updateFilterGroupResult = await performViewFilterGroupApiUpdate(
+          viewFilterGroupsToUpdate,
+        );
+        if (updateFilterGroupResult.status === 'failed') {
+          return;
+        }
 
         const currentViewFilters = currentView.viewFilters ?? [];
         const currentRecordFilters = store.get(
@@ -160,28 +169,33 @@ export const useSaveRecordFiltersAndGroupFiltersToViewFiltersAndGroupFilters =
           }),
         );
 
-        const createResult = await performViewFilterAPICreate(
+        const createResult = await performViewFilterApiCreate(
           createViewFilterInputs,
         );
         if (createResult.status === 'failed') {
           return;
         }
 
-        const updateResult = await performViewFilterAPIUpdate(
+        const updateResult = await performViewFilterApiUpdate(
           updateViewFilterInputs,
         );
         if (updateResult.status === 'failed') {
           return;
         }
 
-        const deleteResult = await performViewFilterAPIDestroy(
+        const deleteResult = await performViewFilterApiDestroy(
           destroyViewFilterInputs,
         );
         if (deleteResult.status === 'failed') {
           return;
         }
 
-        await performViewFilterGroupAPIDestroy(viewFilterGroupIdsToDestroy);
+        const destroyFilterGroupResult = await performViewFilterGroupApiDestroy(
+          viewFilterGroupIdsToDestroy,
+        );
+        if (destroyFilterGroupResult.status === 'failed') {
+          return;
+        }
 
         // Mirror the DB cascade: remove cascade-deleted viewFilters from the store
         if (viewFilterGroupIdsToDestroy.length > 0) {
@@ -202,12 +216,12 @@ export const useSaveRecordFiltersAndGroupFiltersToViewFiltersAndGroupFilters =
         store,
         currentRecordFilterGroupsCallbackState,
         currentRecordFiltersCallbackState,
-        performViewFilterGroupAPICreate,
-        performViewFilterGroupAPIUpdate,
-        performViewFilterGroupAPIDestroy,
-        performViewFilterAPICreate,
-        performViewFilterAPIUpdate,
-        performViewFilterAPIDestroy,
+        performViewFilterGroupApiCreate,
+        performViewFilterGroupApiUpdate,
+        performViewFilterGroupApiDestroy,
+        performViewFilterApiCreate,
+        performViewFilterApiUpdate,
+        performViewFilterApiDestroy,
       ]);
 
     return {

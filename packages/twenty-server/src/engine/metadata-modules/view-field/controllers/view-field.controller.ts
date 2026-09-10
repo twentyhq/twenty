@@ -7,13 +7,17 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -31,12 +35,11 @@ import {
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { ViewFieldRestApiExceptionFilter } from 'src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
-import { CreateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-field-permission.guard';
-import { DeleteViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-field-permission.guard';
-import { UpdateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-field-permission.guard';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
+import { CreateViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-child-entity-permission.guard';
+import { ViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-child-entity-permission.guard';
 
-@Controller('rest/metadata/viewFields')
+@Controller(`${ApiPath.Rest}/metadata/viewFields`)
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(
   PermissionsRestApiExceptionFilter,
@@ -50,14 +53,15 @@ export class ViewFieldController {
   @Get()
   @UseGuards(NoPermissionGuard)
   async findMany(
+    @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('viewId') viewId?: string,
-  ): Promise<ViewFieldDTO[]> {
-    if (viewId) {
-      return this.viewFieldService.findByViewId(workspace.id, viewId);
-    }
+  ) {
+    const items = viewId
+      ? await this.viewFieldService.findByViewId(workspace.id, viewId)
+      : await this.viewFieldService.findByWorkspaceId(workspace.id);
 
-    return this.viewFieldService.findByWorkspaceId(workspace.id);
+    return paginateMetadataRestItems({ items, request });
   }
 
   @Get(':id')
@@ -87,7 +91,7 @@ export class ViewFieldController {
   }
 
   @Patch(':id')
-  @UseGuards(UpdateViewFieldPermissionGuard)
+  @UseGuards(ViewChildEntityPermissionGuard('viewField'))
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewFieldInput['update'],
@@ -100,7 +104,7 @@ export class ViewFieldController {
   }
 
   @Post()
-  @UseGuards(CreateViewFieldPermissionGuard)
+  @UseGuards(CreateViewChildEntityPermissionGuard)
   async create(
     @Body() input: CreateViewFieldInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -112,7 +116,7 @@ export class ViewFieldController {
   }
 
   @Delete(':id')
-  @UseGuards(DeleteViewFieldPermissionGuard)
+  @UseGuards(ViewChildEntityPermissionGuard('viewField'))
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

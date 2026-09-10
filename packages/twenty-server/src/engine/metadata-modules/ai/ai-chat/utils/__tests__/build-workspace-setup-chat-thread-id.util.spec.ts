@@ -1,0 +1,38 @@
+import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
+
+const workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+const userWorkspaceId = '20202020-9e3b-46d4-a556-88b9ddc2b034';
+
+const THREAD_ID_ALREADY_STORED_FOR_THIS_PAIR =
+  'b23986d5-fd50-5d81-8bd5-311e3a4b6a0d';
+
+describe('buildWorkspaceSetupChatThreadId', () => {
+  it('should keep deriving the thread id already stored for existing workspaces', () => {
+    expect(
+      buildWorkspaceSetupChatThreadId({ workspaceId, userWorkspaceId }),
+    ).toBe(THREAD_ID_ALREADY_STORED_FOR_THIS_PAIR);
+  });
+
+  it('should give each workspace and user workspace pair its own thread id', () => {
+    const otherWorkspaceId = '20202020-3d15-4f4d-a9b6-1fd1d0a8b5c0';
+    const otherUserWorkspaceId = '20202020-7a6f-4b2e-9c33-2f1e6b7c8d90';
+
+    expect(
+      buildWorkspaceSetupChatThreadId({ workspaceId, userWorkspaceId }),
+    ).not.toBe(
+      buildWorkspaceSetupChatThreadId({
+        workspaceId: otherWorkspaceId,
+        userWorkspaceId,
+      }),
+    );
+
+    expect(
+      buildWorkspaceSetupChatThreadId({ workspaceId, userWorkspaceId }),
+    ).not.toBe(
+      buildWorkspaceSetupChatThreadId({
+        workspaceId,
+        userWorkspaceId: otherUserWorkspaceId,
+      }),
+    );
+  });
+});

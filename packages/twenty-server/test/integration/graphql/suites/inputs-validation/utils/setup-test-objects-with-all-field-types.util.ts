@@ -1,10 +1,9 @@
 import { getFieldMetadataCreationInputs } from 'test/integration/graphql/suites/inputs-validation/utils/get-field-metadata-creation-inputs.util';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { uploadFilesFieldFileMutation } from 'test/integration/graphql/utils/upload-files-field-file-mutation.util';
+import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -116,26 +115,16 @@ export const setupTestObjectsWithAllFieldTypes = async (
       throw new Error('FILES field metadata was not created');
     }
 
-    const testFileContent = 'Test document content';
-    const testFileName = 'Document.txt';
-    const testMimeType = 'text/plain';
-
-    const uploadResponse = await makeMetadataAPIRequestWithFileUpload(
-      {
-        query: uploadFilesFieldFileMutation,
-        variables: { file: null, fieldMetadataId: filesFieldMetadataId },
-      },
-      {
-        field: 'file',
-        buffer: Buffer.from(testFileContent),
-        filename: testFileName,
-        contentType: testMimeType,
-      },
-    );
+    const uploadedFile = await uploadFileWithDirectUpload({
+      filename: 'Document.txt',
+      content: Buffer.from('Test document content'),
+      fileFolder: 'FilesField',
+      fieldMetadataId: filesFieldMetadataId,
+    });
 
     jest.useFakeTimers();
 
-    uploadedFileId = uploadResponse.body.data.uploadFilesFieldFile.id;
+    uploadedFileId = uploadedFile.id;
   }
 
   await makeGraphqlAPIRequest(

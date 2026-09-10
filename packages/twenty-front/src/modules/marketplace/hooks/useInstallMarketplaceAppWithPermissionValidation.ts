@@ -5,9 +5,15 @@ import { useCallback } from 'react';
 const INSTALL_PERMISSION_VALIDATION_MODAL_ID =
   'install-permission-validation-modal';
 
-export const useInstallMarketplaceAppWithPermissionValidation = () => {
+type UseInstallMarketplaceAppWithPermissionValidationArgs = Parameters<
+  typeof useInstallMarketplaceApp
+>[0];
+
+export const useInstallMarketplaceAppWithPermissionValidation = (
+  args?: UseInstallMarketplaceAppWithPermissionValidationArgs,
+) => {
   const { openModal } = useModal();
-  const { install, isInstalling } = useInstallMarketplaceApp();
+  const { install, isInstalling } = useInstallMarketplaceApp(args);
 
   const requestInstall = useCallback(() => {
     openModal(INSTALL_PERMISSION_VALIDATION_MODAL_ID);

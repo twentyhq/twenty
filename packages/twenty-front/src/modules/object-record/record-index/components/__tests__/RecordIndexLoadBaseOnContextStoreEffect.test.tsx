@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react';
 
 import { RecordIndexLoadBaseOnContextStoreEffect } from '@/object-record/record-index/components/RecordIndexLoadBaseOnContextStoreEffect';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 jest.mock(
   '@/object-record/record-index/hooks/useLoadRecordIndexStates',
@@ -27,9 +26,6 @@ jest.mock(
     useContextStoreObjectMetadataItemOrThrow: jest.fn(),
   }),
 );
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: jest.fn(),
-}));
 
 const useLoadRecordIndexStatesMock = jest.requireMock(
   '@/object-record/record-index/hooks/useLoadRecordIndexStates',
@@ -43,9 +39,6 @@ const useAtomFamilySelectorValueMock = jest.requireMock(
 const useContextStoreObjectMetadataItemOrThrowMock = jest.requireMock(
   '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow',
 ).useContextStoreObjectMetadataItemOrThrow;
-const useIsFeatureEnabledMock = jest.requireMock(
-  '@/workspace/hooks/useIsFeatureEnabled',
-).useIsFeatureEnabled;
 
 describe('RecordIndexLoadBaseOnContextStoreEffect', () => {
   const loadRecordIndexStates = jest.fn();
@@ -60,10 +53,9 @@ describe('RecordIndexLoadBaseOnContextStoreEffect', () => {
     useContextStoreObjectMetadataItemOrThrowMock.mockReturnValue({
       objectMetadataItem,
     });
-    useIsFeatureEnabledMock.mockReturnValue(false);
   });
 
-  it('reloads the persisted view state when the week-view flag changes', () => {
+  it('does not reload an unchanged view', () => {
     const { rerender } = render(<RecordIndexLoadBaseOnContextStoreEffect />);
 
     expect(loadRecordIndexStates).toHaveBeenCalledTimes(1);
@@ -75,13 +67,48 @@ describe('RecordIndexLoadBaseOnContextStoreEffect', () => {
     rerender(<RecordIndexLoadBaseOnContextStoreEffect />);
 
     expect(loadRecordIndexStates).toHaveBeenCalledTimes(1);
+  });
 
-    useIsFeatureEnabledMock.mockReturnValue(true);
+  it('reloads the persisted view state when the view groups change', () => {
+    const viewWithGroups = {
+      id: 'view-id',
+      viewGroups: [{ id: 'group-1' }],
+    };
+    useAtomFamilySelectorValueMock.mockReturnValue(viewWithGroups);
+
+    const { rerender } = render(<RecordIndexLoadBaseOnContextStoreEffect />);
+
+    expect(loadRecordIndexStates).toHaveBeenCalledTimes(1);
+
+    rerender(<RecordIndexLoadBaseOnContextStoreEffect />);
+
+    expect(loadRecordIndexStates).toHaveBeenCalledTimes(1);
+
+    useAtomFamilySelectorValueMock.mockReturnValue({
+      ...viewWithGroups,
+      viewGroups: [...viewWithGroups.viewGroups, { id: 'group-2' }],
+    });
     rerender(<RecordIndexLoadBaseOnContextStoreEffect />);
 
     expect(loadRecordIndexStates).toHaveBeenCalledTimes(2);
-    expect(useIsFeatureEnabledMock).toHaveBeenCalledWith(
-      FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-    );
+  });
+
+  it('does not reload when the view groups are only reordered', () => {
+    useAtomFamilySelectorValueMock.mockReturnValue({
+      id: 'view-id',
+      viewGroups: [{ id: 'group-1' }, { id: 'group-2' }],
+    });
+
+    const { rerender } = render(<RecordIndexLoadBaseOnContextStoreEffect />);
+
+    expect(loadRecordIndexStates).toHaveBeenCalledTimes(1);
+
+    useAtomFamilySelectorValueMock.mockReturnValue({
+      id: 'view-id',
+      viewGroups: [{ id: 'group-2' }, { id: 'group-1' }],
+    });
+    rerender(<RecordIndexLoadBaseOnContextStoreEffect />);
+
+    expect(loadRecordIndexStates).toHaveBeenCalledTimes(1);
   });
 });

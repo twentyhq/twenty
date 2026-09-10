@@ -3,6 +3,7 @@ import { type SidePanelPages } from 'twenty-shared/types';
 export type PageLayoutSidePanelPage =
   | SidePanelPages.PageLayoutDashboardWidgetTypeSelect
   | SidePanelPages.PageLayoutTabSettings
+  | SidePanelPages.PageLayoutWidgetSettings
   | SidePanelPages.DashboardChartSettings
   | SidePanelPages.DashboardIframeSettings
   | SidePanelPages.DashboardRecordTableSettings

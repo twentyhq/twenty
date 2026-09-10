@@ -33,9 +33,6 @@ export const WelcomeHalftoneCanvasEffect = ({
     const dotColor = canvasStyles
       .getPropertyValue('--welcome-dot-color')
       .trim();
-    const dotHighlightColor =
-      canvasStyles.getPropertyValue('--welcome-dot-highlight').trim() ||
-      dotColor;
     const readDevicePixelRatio = () =>
       Math.min(window.devicePixelRatio || 1, 2);
     const readCanvasClientSize = () => ({
@@ -47,7 +44,6 @@ export const WelcomeHalftoneCanvasEffect = ({
     const sharedControllerOptions = {
       canvas,
       dotColor,
-      dotHighlightColor,
       prefersReducedMotion,
       initialCanvasWidth: initialCanvasSize.width,
       initialCanvasHeight: initialCanvasSize.height,

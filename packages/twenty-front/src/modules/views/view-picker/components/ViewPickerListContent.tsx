@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type DropResult } from '@hello-pangea/dnd';
+import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { type MouseEvent, useCallback } from 'react';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
@@ -12,7 +12,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
+import { usePerformViewApiUpdate } from '@/views/hooks/internal/usePerformViewApiUpdate';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useOpenCreateViewDropdown } from '@/views/hooks/useOpenCreateViewDropown';
@@ -63,7 +63,7 @@ export const ViewPickerListContent = () => {
 
   const { setViewPickerMode } = useViewPickerMode();
 
-  const { performViewAPIUpdate } = usePerformViewAPIUpdate();
+  const { performViewApiUpdate } = usePerformViewApiUpdate();
   const { changeView } = useChangeView();
 
   const { closeDropdown } = useCloseDropdown();
@@ -89,7 +89,7 @@ export const ViewPickerListContent = () => {
   };
 
   const handleWorkspaceDragEnd = useCallback(
-    async (result: DropResult) => {
+    async (result: DraggableListDropResult) => {
       if (!result.destination) return;
 
       const viewsReordered = moveArrayItem(workspaceViews, {
@@ -100,7 +100,7 @@ export const ViewPickerListContent = () => {
       Promise.all(
         viewsReordered.map(async (view, index) => {
           if (view.position !== index) {
-            await performViewAPIUpdate({
+            await performViewApiUpdate({
               id: view.id,
               input: { position: index },
             });
@@ -108,11 +108,11 @@ export const ViewPickerListContent = () => {
         }),
       );
     },
-    [performViewAPIUpdate, workspaceViews],
+    [performViewApiUpdate, workspaceViews],
   );
 
   const handleUnlistedDragEnd = useCallback(
-    async (result: DropResult) => {
+    async (result: DraggableListDropResult) => {
       if (!result.destination) return;
 
       const viewsReordered = moveArrayItem(unlistedViews, {
@@ -123,7 +123,7 @@ export const ViewPickerListContent = () => {
       Promise.all(
         viewsReordered.map(async (view, index) => {
           if (view.position !== index) {
-            await performViewAPIUpdate({
+            await performViewApiUpdate({
               id: view.id,
               input: { position: index },
             });
@@ -131,7 +131,7 @@ export const ViewPickerListContent = () => {
         }),
       );
     },
-    [performViewAPIUpdate, unlistedViews],
+    [performViewApiUpdate, unlistedViews],
   );
 
   return (

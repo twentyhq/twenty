@@ -3,6 +3,7 @@ import { type ReactNode, useEffect } from 'react';
 
 import { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from 'twenty-shared/constants';
 import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
+import { type CommandMenuItemConfirmationModalLinkButton } from '@/command-menu-item/confirmation-modal/states/commandMenuItemConfirmationModalState';
 import { type CommandMenuConfirmationModalResultBrowserEventDetail } from 'twenty-shared/types';
 import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
@@ -14,6 +15,7 @@ export type HeadlessConfirmationModalEngineCommandEffectProps = {
   subtitle: ReactNode;
   confirmButtonText: string;
   confirmButtonAccent?: ButtonAccent;
+  linkButton?: CommandMenuItemConfirmationModalLinkButton;
   execute: () => void | Promise<unknown>;
 };
 
@@ -22,6 +24,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
   subtitle,
   confirmButtonText,
   confirmButtonAccent = 'danger',
+  linkButton,
   execute,
 }: HeadlessConfirmationModalEngineCommandEffectProps) => {
   const { isInitializedRef, setIsInitialized } =
@@ -46,6 +49,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
       subtitle,
       confirmButtonText,
       confirmButtonAccent,
+      linkButton,
     });
   }, [
     isInitializedRef,
@@ -56,6 +60,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
     subtitle,
     confirmButtonText,
     confirmButtonAccent,
+    linkButton,
   ]);
 
   useEffect(() => {

@@ -8,7 +8,6 @@ export const computeStandardNoteTargetViewFields = (
   args: Omit<CreateStandardViewFieldArgs<'noteTarget'>, 'context'>,
 ): Record<string, FlatViewField> => {
   return {
-    // Label identifier for junction tables
     allNoteTargetsId: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'noteTarget',

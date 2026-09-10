@@ -75,7 +75,7 @@ export class BillingResolver {
     @Args() { returnUrlPath, forPaymentMethodUpdate }: BillingSessionInput,
   ) {
     return {
-      url: await this.billingPortalWorkspaceService.computeBillingPortalSessionURLOrThrow(
+      url: await this.billingPortalWorkspaceService.computeBillingPortalSessionUrlOrThrow(
         workspace,
         returnUrlPath,
         forPaymentMethodUpdate,
@@ -324,7 +324,7 @@ export class BillingResolver {
 
     if (!result.hasPaymentMethod && result.stripeCustomerId) {
       const billingPortalUrl =
-        await this.billingPortalWorkspaceService.computeBillingPortalSessionURLForPaymentMethodUpdate(
+        await this.billingPortalWorkspaceService.computeBillingPortalSessionUrlForPaymentMethodUpdate(
           workspace,
           result.stripeCustomerId,
           '/settings/billing',
@@ -340,6 +340,14 @@ export class BillingResolver {
     return {
       hasPaymentMethod: result.hasPaymentMethod,
       status: result.status,
+      currentBillingSubscription:
+        await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+          { workspaceId: workspace.id },
+        ),
+      billingSubscriptions:
+        await this.billingSubscriptionService.getBillingSubscriptions(
+          workspace.id,
+        ),
     };
   }
 

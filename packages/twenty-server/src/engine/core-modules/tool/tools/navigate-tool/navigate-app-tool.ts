@@ -20,7 +20,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 @Injectable()
@@ -37,7 +37,7 @@ export class NavigateAppTool implements Tool {
     private readonly navigationMenuItemService: NavigationMenuItemService,
     private readonly viewService: ViewService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async execute(
@@ -333,22 +333,19 @@ export class NavigateAppTool implements Tool {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const records =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const repository =
-            await this.globalWorkspaceOrmManager.getRepository<ObjectRecord>(
-              workspaceId,
-              objectNameSingular,
-              { shouldBypassPermissionChecks: true },
-            );
+    const records = await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const repository = this.workspaceOrmManager.getRepository<ObjectRecord>(
+          objectNameSingular,
+          { shouldBypassPermissionChecks: true },
+        );
 
-          return repository.find({
-            select: selectColumns,
-          });
-        },
-        authContext,
-      );
+        return repository.find({
+          select: selectColumns,
+        });
+      },
+      authContext,
+    );
 
     const recordsWithDisplayName = records.map((record) => {
       let displayName: string;

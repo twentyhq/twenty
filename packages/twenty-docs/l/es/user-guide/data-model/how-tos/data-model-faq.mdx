@@ -42,7 +42,6 @@ Todos los objetos activos aparecen en la navegación. Puedes desactivar los obje
 No, los tipos de campo no se pueden cambiar después de su creación. Si necesitas un tipo diferente, crea un campo nuevo con el tipo correcto, migra tus datos y luego desactiva el campo anterior.
 </Accordion>
 
-
 <Accordion title="¿Por qué necesito nombres singulares y plurales diferentes?">
 Nuestra API de GraphQL usa ambas formas para diferentes operaciones:
 * `createPerson` (singular) para acciones de registro único
@@ -73,15 +72,15 @@ Actualmente, no puedes hacer que los campos personalizados sean obligatorios. To
 </Accordion>
 
 <Accordion title="¿Puedo crear campos de fórmula?">
-Los campos de fórmula llegarán en **Q1 2026**. Mientras tanto, puedes usar flujos de trabajo para calcular y actualizar automáticamente los valores de los campos.
+Los campos de Fórmula están llegando en el **H2 2026**. Mientras tanto, puedes usar flujos de trabajo para calcular y actualizar automáticamente los valores de los campos.
 </Accordion>
 
 <Accordion title="¿Puedo tener campos anidados en mis objetos?">
-Los campos anidados llegarán en **Q1 2026**. Actualmente, puedes usar flujos de trabajo para traer valores de campo de objetos relacionados. Por ejemplo, para mostrar la industria de una empresa en un registro de Persona, crea un campo personalizado en Personas y usa un flujo de trabajo para sincronizar el valor.
+Los campos anidados vienen en **H2 2026**. Actualmente, puedes usar flujos de trabajo para traer valores de campo de objetos relacionados. Por ejemplo, para mostrar la industria de una empresa en un registro de Persona, crea un campo personalizado en Personas y usa un flujo de trabajo para sincronizar el valor.
 </Accordion>
 
 <Accordion title="¿Puedo reorganizar campos en objetos?">
-El reordenamiento de campos estará disponible con diseños personalizados en **Q4 2025**. Actualmente, los campos aparecen en orden alfabético.
+Sí, vaya a Ajustes → Modelo de datos → objeto de su elección → Diseño y haga clic en **Personalizar página de registro**. Si este botón está desactivado, debe crear un registro.
 </Accordion>
 </AccordionGroup>
 
@@ -93,7 +92,7 @@ El reordenamiento de campos estará disponible con diseños personalizados en **
 </Accordion>
 
 <Accordion title="¿Puedo crear relaciones de muchos a muchos?">
-Las relaciones de muchos a muchos llegarán en **H1 2026**. Actualmente, crea un objeto intermedio con dos relaciones de uno a muchos como solución alternativa.
+Las relaciones de muchos-a-muchos están llegando en **H2 2026**. Actualmente, crea un objeto intermedio con dos relaciones de uno a muchos como solución alternativa.
 
 Por ejemplo, para vincular Personas y Proyectos (muchos a muchos), crea un objeto "Asignaciones de proyecto" con:
 * Una relación con Personas (muchas asignaciones → una persona)
@@ -146,6 +145,10 @@ Sí, puedes importar datos CSV en cualquier objeto, incluidos los objetos person
 
 <Accordion title="¿Puedo exportar la configuración de mi modelo de datos?">
 Actualmente, no hay una exportación integrada para la configuración del modelo de datos. Contacta con soporte si necesitas migrar tu modelo de datos entre espacios de trabajo.
+</Accordion>
+
+<Accordion title="¿Cuántos campos puede tener un solo objeto?">
+El número máximo de campos que puede tener un único objeto es de 1600 campos según los límites de Postgres, incluyendo ambos campos existentes y eliminados. Tenga en cuenta que Veinte no arreglará su espacio de trabajo si se alcanza el límite de 1600 campos ya que entra dentro de nuestra política de Uso Justo.
 </Accordion>
 </AccordionGroup>
 

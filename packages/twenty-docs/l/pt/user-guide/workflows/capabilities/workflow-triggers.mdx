@@ -26,8 +26,8 @@ Inicia o fluxo de trabalho quando um novo registro é criado em um objeto seleci
 **Configuração**: Selecione o tipo de objeto para monitorar novos registros.
 
 <Note>
-* Este gatilho é ótimo para registros criados por CSV, sincronização de caixa de correio e calendário, API.
-* **Não é recomendado para registros criados manualmente**: com este gatilho, os fluxos de trabalho começam assim que o registro é criado. Como o Twenty UI oferece salvamento automático em tempo real (não há um modo de edição e depois uma validação para salvar registros), o fluxo de trabalho será acionado antes que o usuário preencha todos os campos.
+* Este gatilho é ótimo para registros criados por CSV, caixa de correio e sincronização de calendário, ou API.
+* **Não é recomendado para registros criados manualmente**: com este gatilho, os fluxos de trabalho começam assim que o registro é criado. Uma vez que Vinte Interface oferece auto-salvamento em tempo real (não há modo de edição e depois uma validação para salvar registros), o fluxo de trabalho será acionado antes do usuário inserir todos os campos.
   Para acionar este fluxo de trabalho em registros criados manualmente, recomenda-se usar o gatilho `Record is created or updated`.
 </Note>
 
@@ -70,15 +70,17 @@ Inicia o fluxo de trabalho quando acionado por uma ação do usuário. Este gati
 **Configuração de Disponibilidade**:
 Escolha como o fluxo de trabalho deve lidar com a seleção de registros:
 
-* **Global**: Nenhum registro é necessário para acionar este fluxo de trabalho. O fluxo de trabalho é acionado a partir do menu de comando `Cmd + K` em qualquer lugar (de qualquer objeto) e não usa registros como entrada.
+* **Global**: Nenhum registro é necessário para acionar este fluxo de trabalho. O fluxo de trabalho é acionado no menu de comando `Cmd+K` em qualquer lugar (de qualquer objeto) e não usa o(s) registro(s) como entrada.
 
-* **Único**: O(s) registro(s) selecionado(s) será(ão) passado(s) para o seu fluxo de trabalho. Está configurado para um determinado objeto. Vários registros podem ser selecionados antes de acionar o fluxo de trabalho. O fluxo de trabalho será executado do início ao fim tantas vezes quanto houver registros selecionados.
+Para a disponibilidade de **Single** e **Bulk**, os registros selecionados serão passados para o seu fluxo de trabalho. Isto é configurado para um determinado objeto, e vários registros podem ser selecionados antes de acionar o fluxo de trabalho.
+
+* **Simples**: O fluxo de trabalho será executado do início ao fim tantas vezes quanto há registros selecionados.
 
   <Note>
     **Limite flexível: 100 execuções/minuto**. Além disso, os fluxos de trabalho permanecem com o status "Not Started" e são processados gradualmente — seja por uma tarefa em segundo plano ou quando outro fluxo de trabalho entra na fila. Isso significa que você pode selecionar mais de 100 registros com um gatilho único; a execução será apenas mais lenta.
   </Note>
 
-* **Em Massa**: O(s) registro(s) selecionado(s) será(ão) passado(s) para o seu fluxo de trabalho. Está configurado para um determinado objeto. Vários registros podem ser selecionados antes de acionar o fluxo de trabalho. O fluxo de trabalho será executado uma vez, fornecendo a lista completa de registros como entrada. Isso significa que o fluxo de trabalho precisa conter uma [ação de iterador](/l/pt/user-guide/workflows/capabilities/workflow-actions#iterator).
+* **Bulk**: O fluxo de trabalho será executado uma vez, fornecendo toda a lista de registros como entrada. Isso significa que o fluxo de trabalho precisa conter uma [ação de iterador](/l/pt/user-guide/workflows/capabilities/workflow-actions#iterator).
 
 <Note>
 Isto é mais avançado e é melhor para pessoas que desejam otimizar o número de execuções de fluxo de trabalho.

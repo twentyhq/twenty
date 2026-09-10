@@ -25,11 +25,15 @@ const BriefContainer = styled.div`
   }
 `;
 
-export function ClientBriefPageContent() {
+export function ClientBriefPageContent({
+  partnerSlug,
+}: {
+  partnerSlug?: string;
+}) {
   return (
     <BriefBackground data-scheme="dark">
       <BriefContainer>
-        <ClientBriefWizard />
+        <ClientBriefWizard partnerSlug={partnerSlug} />
       </BriefContainer>
     </BriefBackground>
   );

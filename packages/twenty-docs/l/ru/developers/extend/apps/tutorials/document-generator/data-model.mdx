@@ -1,0 +1,135 @@
+---
+title: 1. Модель данных
+icon: database
+description: Типовые документы и шаблоны с объектами, полями и отношениями.
+---
+
+Нашему приложению нужны два пользовательских объекта: **шаблоны документов** (что записывать) и
+**документы** (сгенерированный результат). Давайте определим их.
+
+Строительство каждого файла сущности с CLI — он генерирует правильный UUID и правую папку
+для вас:
+
+```bash filename="Terminal"
+yarn twenty dev:add object
+```
+
+Ниже мы показываем готовые файлы.
+
+<Note>
+Каждый `*_UNIVERSAL_IDENTIFIER` живет в константе
+`src/constants/universal-identifiers.ts` и импортируется там, где используется. В приведенных ниже фрагментах
+эти импорты опущены для краткости — в своих файлах не удаляйте их.
+</Note>
+
+## Объект шаблона
+
+Шаблон имеет `name`, `body` с `{{placeholders}}` и `target`, который
+указывает, предназначен ли он для Person или Company. `body` — это поле
+`RICH_TEXT`, поэтому двадцать дает ему полный редактор rich-text.
+
+```ts filename="src/objects/document-template.object.ts"
+import { defineObject, FieldType } from 'twenty-sdk/define';
+
+export default defineObject({
+  universalIdentifier: DOCUMENT_TEMPLATE_OBJECT_UNIVERSAL_IDENTIFIER,
+  nameSingular: 'documentTemplate',
+  namePlural: 'documentTemplates',
+  labelSingular: 'Document template',
+  labelPlural: 'Document templates',
+  icon: 'IconFileText',
+  labelIdentifierFieldMetadataUniversalIdentifier:
+    TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  fields: [
+    { universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconAbc' },
+    { universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
+      description: 'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.' },
+    { universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT, name: 'target', label: 'Target', icon: 'IconTarget',
+      defaultValue: `'PERSON'`,
+      options: [
+        { id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
+          value: 'PERSON', label: 'Person', color: 'blue', position: 0 },
+        { id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
+          value: 'COMPANY', label: 'Company', color: 'green', position: 1 },
+      ] },
+  ],
+});
+```
+
+<Warning>
+Опция `SELECT` **values** должна быть `UPPER_CASE` (`PERSON`, не `person`), а опция
+`defaultValue` завернута в дополнительные кавычки: `` `'PERSON'` ``. `label` - это то, что видят
+пользователей.
+</Warning>
+
+## Объект документа
+
+Генерируемый документ хранит отображенный `content` и `status`. Определите
+так же с параметром `status` из `DRAFT` / `GENERATED`. Полный файл:
+[`document.object.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/objects/document.object.ts).
+
+## Связать их с отношением
+
+Каждый документ должен ссылаться на шаблон, из которого он вышел. Отношения
+**двусторонний** — вы определяете обе стороны в своём собственном файле полей.
+
+```ts filename="src/fields/document-template-relation.field.ts"
+import { defineField, FieldType, OnDeleteAction, RelationType } from 'twenty-sdk/define';
+
+// The "many" side: each document belongs to one template.
+export default defineField({
+  universalIdentifier: DOCUMENT_TEMPLATE_FIELD_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'template',
+  label: 'Template',
+  relationTargetObjectMetadataUniversalIdentifier:
+    DOCUMENT_TEMPLATE_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier:
+    TEMPLATE_DOCUMENTS_FIELD_UNIVERSAL_IDENTIFIER,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.SET_NULL,
+    joinColumnName: 'templateId',
+  },
+});
+```
+
+Другая сторона (`template-documents-relation.field.ts`) — это поле
+`RelationType.ONE_TO_MANY` с именем `documents`, которое указывает на противоположный путь.
+Смотрите раздел [Relations](/l/ru/developers/extend/apps/data/relations) для полного шаблона.
+
+## Смотрите в двадцать
+
+С запуском `yarn twenty dev` откройте **Settings → Data model**. Оба объекта
+появляются, помеченные вашим приложением.
+
+<Frame caption="Оба пользовательских объекта, принадлежащие приложению Генератор документов.">
+  <img src="/images/docs/developers/extends/apps/document-generator/01-data-model.png" alt="Настройки модели данных с отображением шаблонов документов и документов" />
+</Frame>
+
+Создайте один шаблон для тестирования — имя *Предложение продаж*, установите **цель** на
+*Персонал* и вставьте тело с несколькими заполнителями:
+
+```text
+Dear {{name.firstName}} {{name.lastName}},
+
+As {{jobTitle}} at {{company.name}}, we think you'll love our product.
+
+Best,
+The Team
+```
+
+<Frame caption="Запись шаблона. Тело хранит свои заполнители до тех пор, пока документ не будет сгенерирован.">
+  <img src="/images/docs/developers/extends/apps/document-generator/03-template-record.png" alt="Запись шаблона предложения продаж с плейсхолдером" />
+</Frame>
+
+**После этого шага:** у вас есть объекты `documentTemplate` и `document`, связанные
+отношением и одним шаблоном для генерации данных. Далее заполняется логика.
+
+<Card title="Далее: генерация документов →" icon="bolt" href="/l/ru/developers/extend/apps/tutorials/document-generator/generating-documents">
+  Напишите логическую функцию, которая заполняет шаблон.
+</Card>

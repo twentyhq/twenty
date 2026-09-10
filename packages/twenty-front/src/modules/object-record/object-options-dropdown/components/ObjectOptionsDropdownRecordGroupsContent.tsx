@@ -6,6 +6,7 @@ import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdow
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
+import { isRecordGroupingOptionalForViewType } from '@/object-record/record-group/utils/isRecordGroupingOptionalForViewType';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
@@ -23,15 +24,16 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconArrowsSort,
   IconChevronLeft,
   IconCircleOff,
   IconEyeOff,
   IconLayoutList,
   IconPlus,
-  IconSortDescending,
 } from 'twenty-ui/icon';
 import {
   MenuItem,
@@ -85,7 +87,9 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const { availableFieldsForGrouping } =
     useGetAvailableFieldsToGroupRecordsBy();
 
-  const hasOnlyOneGroupByOption = availableFieldsForGrouping.length <= 1;
+  const isGroupByFieldPickerDisabled =
+    availableFieldsForGrouping.length <= 1 &&
+    !isRecordGroupingOptionalForViewType(viewType);
 
   const isRelationGroupBy =
     isDefined(recordIndexGroupFieldMetadataItem) &&
@@ -100,9 +104,12 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     }
   }, [hiddenRecordGroupIds, currentContentId, onContentChange]);
 
+  const scopedObjectOptionsDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(OBJECT_OPTIONS_DROPDOWN_ID);
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    OBJECT_OPTIONS_DROPDOWN_ID,
+    scopedObjectOptionsDropdownId,
   );
 
   const selectableItemIdArray = [
@@ -135,13 +142,13 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
               <SelectableListItem
                 itemId="GroupBy"
                 onEnter={() =>
-                  !hasOnlyOneGroupByOption &&
+                  !isGroupByFieldPickerDisabled &&
                   onContentChange('recordGroupFields')
                 }
               >
                 <MenuItem
                   focused={selectedItemId === 'GroupBy'}
-                  disabled={hasOnlyOneGroupByOption}
+                  disabled={isGroupByFieldPickerDisabled}
                   onClick={() => onContentChange('recordGroupFields')}
                   LeftIcon={IconLayoutList}
                   text={t`Group by`}
@@ -157,7 +164,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                 <MenuItem
                   focused={selectedItemId === 'Sort'}
                   onClick={() => onContentChange('recordGroupSort')}
-                  LeftIcon={IconSortDescending}
+                  LeftIcon={IconArrowsSort}
                   text={t`Sort`}
                   contextualText={recordIndexRecordGroupSort}
                   contextualTextPosition="right"

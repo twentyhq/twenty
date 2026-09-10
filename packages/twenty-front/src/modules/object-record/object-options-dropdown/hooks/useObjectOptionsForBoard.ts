@@ -1,4 +1,4 @@
-import { type OnDragEndResponder } from '@hello-pangea/dnd';
+import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { useCallback, useMemo } from 'react';
 
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
@@ -12,7 +12,7 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { produce } from 'immer';
@@ -32,7 +32,7 @@ export const useObjectOptionsForBoard = ({
   recordBoardId,
 }: useObjectOptionsForBoardParams) => {
   const [recordIndexFieldDefinitions, setRecordIndexFieldDefinitions] =
-    useAtomState(recordIndexFieldDefinitionsState);
+    useAtomComponentState(recordIndexFieldDefinitionsState, recordBoardId);
 
   const { saveViewFields } = useSaveCurrentViewFields();
 
@@ -92,8 +92,8 @@ export const useObjectOptionsForBoard = ({
     [availableColumnDefinitions, recordIndexFieldDefinitionsByKey],
   );
 
-  const handleReorderBoardFields: OnDragEndResponder = useCallback(
-    (result) => {
+  const handleReorderBoardFields = useCallback(
+    (result: DraggableListDropResult) => {
       if (!result.destination) {
         return;
       }

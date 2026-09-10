@@ -3,7 +3,9 @@ import { timingSafeEqual } from 'crypto';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type LifecycleEventType } from '@microsoft/microsoft-graph-types';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type AssertUnreachable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -91,21 +93,17 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
         continue;
       }
 
-      if (
-        isNonEmptyString(notification.lifecycleEvent) &&
-        notification.lifecycleEvent !== 'missed'
-      ) {
-        try {
-          await this.messagingWebhookSubscriptionService.renewSubscription({
-            messageChannelId: messageChannel.id,
-            workspaceId: messageChannel.workspaceId,
-          });
-        } catch (error) {
+      if (isNonEmptyString(notification.lifecycleEvent)) {
+        await this.handleLifecycleEvent({
+          lifecycleEvent: notification.lifecycleEvent,
+          removedSubscriptionId: notification.subscriptionId,
+          messageChannel,
+        }).catch((error) =>
           this.logger.error(
-            `Failed to renew messaging subscription for channel ${messageChannel.id}`,
+            `Failed to handle ${notification.lifecycleEvent} lifecycle event for message channel ${messageChannel.id}`,
             error,
-          );
-        }
+          ),
+        );
         continue;
       }
 
@@ -117,6 +115,51 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
       this.logger.log(
         `Triggered messaging sync for message channel ${messageChannel.id} from Microsoft notification`,
       );
+    }
+  }
+
+  private async handleLifecycleEvent({
+    lifecycleEvent,
+    removedSubscriptionId,
+    messageChannel,
+  }: {
+    lifecycleEvent: LifecycleEventType;
+    removedSubscriptionId: string;
+    messageChannel: MessageChannelEntity;
+  }): Promise<void> {
+    switch (lifecycleEvent) {
+      case 'subscriptionRemoved':
+        await this.messagingWebhookSubscriptionService.recreateSubscription({
+          messageChannelId: messageChannel.id,
+          workspaceId: messageChannel.workspaceId,
+          removedSubscriptionId,
+        });
+        await this.webhookSyncTriggerService.triggerMessagingSync(
+          messageChannel.id,
+          messageChannel.workspaceId,
+        );
+        break;
+      case 'reauthorizationRequired':
+        await this.messagingWebhookSubscriptionService.renewSubscription({
+          messageChannelId: messageChannel.id,
+          workspaceId: messageChannel.workspaceId,
+        });
+        break;
+      case 'missed':
+        await this.webhookSyncTriggerService.triggerMessagingSync(
+          messageChannel.id,
+          messageChannel.workspaceId,
+        );
+        break;
+      default: {
+        const unhandledLifecycleEvent: AssertUnreachable<
+          typeof lifecycleEvent
+        > = lifecycleEvent;
+
+        this.logger.warn(
+          `Ignored unrecognized lifecycle event ${unhandledLifecycleEvent} for message channel ${messageChannel.id}`,
+        );
+      }
     }
   }
 }

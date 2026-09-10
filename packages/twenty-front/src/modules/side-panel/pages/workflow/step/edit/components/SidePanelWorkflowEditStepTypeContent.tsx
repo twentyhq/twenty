@@ -68,12 +68,12 @@ export const SidePanelWorkflowEditStepTypeContent = () => {
 
     setSidePanelNavigationStack([]);
 
-    openWorkflowEditStepInSidePanel(
-      workflowVisualizerWorkflowId,
-      updatedStep.name,
-      getIcon(getActionIcon(updatedStep.type as WorkflowActionType)),
-      updatedStep.id,
-    );
+    openWorkflowEditStepInSidePanel({
+      workflowId: workflowVisualizerWorkflowId,
+      title: updatedStep.name,
+      icon: getIcon(getActionIcon(updatedStep.type as WorkflowActionType)),
+      stepId: updatedStep.id,
+    });
   };
 
   return (

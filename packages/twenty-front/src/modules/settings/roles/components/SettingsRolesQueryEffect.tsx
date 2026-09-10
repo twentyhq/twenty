@@ -1,4 +1,3 @@
-import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { settingsRoleIdsState } from '@/settings/roles/states/settingsRoleIdsState';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
@@ -31,19 +30,11 @@ export const SettingsRolesQueryEffect = () => {
           settingsPersistedRoleFamilyState.atomFamily(role.id),
         );
 
-        const currentDraftRole = store.get(
-          settingsDraftRoleFamilyState.atomFamily(role.id),
-        );
-
         if (isDeeplyEqual(role, persistedRole)) {
           return;
         }
 
         store.set(settingsPersistedRoleFamilyState.atomFamily(role.id), role);
-
-        if (!isDeeplyEqual(currentDraftRole, role)) {
-          store.set(settingsDraftRoleFamilyState.atomFamily(role.id), role);
-        }
       });
     },
     [store],

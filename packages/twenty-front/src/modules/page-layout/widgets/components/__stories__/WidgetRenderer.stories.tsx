@@ -32,8 +32,8 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
-import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import {
   AggregateOperations,
   AxisNameDisplay,
@@ -74,7 +74,6 @@ const companyPeopleField = getMockFieldMetadataItemOrThrow({
 const TEST_RECORD_ID = 'test-record-123';
 const TEST_PERSON_RECORD_ID = 'test-person-456';
 
-// Widget ID constants for stories
 const WIDGET_ID_NUMBER_CHART = 'widget-number-chart';
 const WIDGET_ID_BAR_CHART = 'widget-bar-chart';
 const WIDGET_ID_SMALL = 'widget-small';
@@ -86,6 +85,7 @@ const WIDGET_ID_MANY_TO_ONE_RELATION = 'widget-relation-field';
 const WIDGET_ID_ONE_TO_MANY_RELATION = 'widget-one-to-many-relation-field';
 const WIDGET_ID_CATALOG = 'catalog-widget';
 const TAB_ID_OVERVIEW = 'tab-overview';
+const SIDE_PANEL_INSTANCE_ID = 'widget-side-panel';
 
 const mockPersonRecord: ObjectRecord = {
   __typename: 'Person',
@@ -135,13 +135,18 @@ const createPageLayoutWithWidget = (
   widget: PageLayoutWidget,
   pageLayoutType: PageLayoutType = PageLayoutType.DASHBOARD,
 ): PageLayout => ({
+  applicationId: 'application-id-mock',
   id: PAGE_LAYOUT_TEST_INSTANCE_ID,
   name: 'Mock Page Layout',
   type: pageLayoutType,
+  isSystemSideEffect: false,
+  isFirstTabPinned: true,
   objectMetadataId: companyObjectMetadataItem.id,
   universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [
     {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutTab',
       isActive: true,
       applicationId: '',
@@ -252,6 +257,8 @@ type Story = StoryObj<typeof WidgetRenderer>;
 export const WithNumberChart: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -260,8 +267,9 @@ export const WithNumberChart: Story = {
       type: WidgetType.GRAPH,
       title: 'Sales Pipeline',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 2,
@@ -305,7 +313,6 @@ export const WithNumberChart: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -317,6 +324,7 @@ export const WithNumberChart: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -340,6 +348,8 @@ export const WithNumberChart: Story = {
 export const WithBarChart: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -348,8 +358,9 @@ export const WithBarChart: Story = {
       type: WidgetType.GRAPH,
       title: 'Monthly Trends',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 5,
@@ -397,7 +408,6 @@ export const WithBarChart: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -409,6 +419,7 @@ export const WithBarChart: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -439,6 +450,8 @@ export const SmallWidget: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -447,8 +460,9 @@ export const SmallWidget: Story = {
       type: WidgetType.GRAPH,
       title: 'Small Widget (2x2 grid)',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 2,
@@ -492,7 +506,6 @@ export const SmallWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -504,6 +517,7 @@ export const SmallWidget: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -534,6 +548,8 @@ export const MediumWidget: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -542,8 +558,9 @@ export const MediumWidget: Story = {
       type: WidgetType.GRAPH,
       title: 'Medium Widget (4x3 grid)',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 3,
@@ -591,7 +608,6 @@ export const MediumWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -603,6 +619,7 @@ export const MediumWidget: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -633,6 +650,8 @@ export const LargeWidget: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -641,8 +660,9 @@ export const LargeWidget: Story = {
       type: WidgetType.GRAPH,
       title: 'Large Widget (6x4 grid)',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 4,
@@ -690,7 +710,6 @@ export const LargeWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -702,6 +721,7 @@ export const LargeWidget: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -732,6 +752,8 @@ export const WideWidget: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -740,8 +762,9 @@ export const WideWidget: Story = {
       type: WidgetType.GRAPH,
       title: 'Wide Widget (8x2 grid)',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 2,
@@ -785,7 +808,6 @@ export const WideWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -797,6 +819,7 @@ export const WideWidget: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -827,6 +850,8 @@ export const TallWidget: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -835,8 +860,9 @@ export const TallWidget: Story = {
       type: WidgetType.GRAPH,
       title: 'Tall Widget (3x6 grid)',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 6,
@@ -884,7 +910,6 @@ export const TallWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -896,6 +921,7 @@ export const TallWidget: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -927,6 +953,8 @@ export const WithManyToOneRelationFieldWidget: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -935,8 +963,9 @@ export const WithManyToOneRelationFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'Account Owner',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 1,
@@ -984,7 +1013,6 @@ export const WithManyToOneRelationFieldWidget: Story = {
       recordStoreFamilyState.atomFamily(TEST_RECORD_ID),
       mockCompanyRecord,
     );
-    // Set the related WorkspaceMember record for relation field display
     if (
       mockCompanyRecord.accountOwner !== null &&
       mockCompanyRecord.accountOwner !== undefined
@@ -1004,7 +1032,6 @@ export const WithManyToOneRelationFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1016,6 +1043,7 @@ export const WithManyToOneRelationFieldWidget: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -1047,6 +1075,8 @@ export const WithOneToManyRelationFieldWidget: Story = {
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -1055,8 +1085,9 @@ export const WithOneToManyRelationFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'People',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 1,
@@ -1116,7 +1147,6 @@ export const WithOneToManyRelationFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1128,6 +1158,7 @@ export const WithOneToManyRelationFieldWidget: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -1153,12 +1184,14 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
     docs: {
       description: {
         story:
-          'A ONE_TO_MANY relation field widget with visible "See all" button and a well-formed link.',
+          'A solo ONE_TO_MANY relation field widget with visible header actions and a well-formed "See all" link.',
       },
     },
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -1167,8 +1200,9 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
       type: WidgetType.FIELD,
       title: 'People',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 1,
@@ -1220,7 +1254,6 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
       recordStoreFamilyState.atomFamily(TEST_PERSON_RECORD_ID),
       mockPersonRecord,
     );
-    // Set hover state to make the "See all" button visible
     jotaiStore.set(
       widgetCardHoveredComponentFamilyState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -1236,7 +1269,6 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1248,6 +1280,7 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                    presentation: 'solo',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -1269,13 +1302,27 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Find the "See all" link button by its test id
-    const seeAllLink = await canvas.findByTestId('widget-see-all-link');
+    const header = canvasElement.querySelector('.widget-card-header');
 
-    // Verify the button is visible
+    expect(header).not.toBeNull();
+
+    if (!(header instanceof HTMLElement)) {
+      throw new Error('Widget header not found');
+    }
+
+    const headerCanvas = within(header);
+
+    expect(headerCanvas.getByText('People')).toBeVisible();
+    expect(
+      headerCanvas.getByRole('button', { name: 'Edit relation' }),
+    ).toBeVisible();
+
+    const seeAllLink = await canvas.findByRole('link', {
+      name: /See all .* linked to this record/,
+    });
+
     expect(seeAllLink).toBeVisible();
 
-    // Verify it has a well-formed link (should contain the filter query params)
     expect(seeAllLink).toHaveAttribute('href');
     const href = seeAllLink.getAttribute('href');
     expect(href).toContain('/objects/people');
@@ -1290,13 +1337,14 @@ export const OnMobile: Story = {
     },
     docs: {
       description: {
-        story:
-          'Widget on mobile viewport should use side-column variant instead of record-page variant.',
+        story: 'Widget on mobile viewport should use the flush variant.',
       },
     },
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -1305,8 +1353,9 @@ export const OnMobile: Story = {
       type: WidgetType.GRAPH,
       title: 'Mobile Widget',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 2,
@@ -1353,7 +1402,6 @@ export const OnMobile: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1365,6 +1413,7 @@ export const OnMobile: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -1389,13 +1438,14 @@ export const InSidePanel: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Widget in side panel should use side-column variant instead of record-page variant.',
+        story: 'Widget in side panel should use the flush variant.',
       },
     },
   },
   render: () => {
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
@@ -1404,8 +1454,9 @@ export const InSidePanel: Story = {
       type: WidgetType.GRAPH,
       title: 'Side Panel Widget',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 2,
@@ -1428,7 +1479,7 @@ export const InSidePanel: Story = {
       getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
-    const pageLayoutData = createPageLayoutWithWidget(
+    const sidePanelPageLayoutData = createPageLayoutWithWidget(
       widget,
       PageLayoutType.RECORD_PAGE,
     );
@@ -1436,47 +1487,55 @@ export const InSidePanel: Story = {
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
-      pageLayoutData,
+      sidePanelPageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
-      pageLayoutData,
+      sidePanelPageLayoutData,
     );
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper store={jotaiStore}>
-              <LayoutRenderingProvider
-                value={{
-                  isInSidePanel: true,
-                  layoutType: PageLayoutType.RECORD_PAGE,
-                  targetRecordIdentifier: {
-                    id: TEST_RECORD_ID,
-                    targetObjectNameSingular:
-                      companyObjectMetadataItem.nameSingular,
-                  },
-                }}
-              >
-                <PageLayoutContentProvider
+            <WorkspaceSurfaceContext.Provider
+              value={{
+                type: 'side-panel',
+                instanceId: SIDE_PANEL_INSTANCE_ID,
+                ownsRouteLocation: false,
+              }}
+            >
+              <PageLayoutTestWrapper store={jotaiStore}>
+                <LayoutRenderingProvider
                   value={{
-                    layoutMode: PageLayoutTabLayoutMode.GRID,
-                    tabId: TAB_ID_OVERVIEW,
+                    layoutType: PageLayoutType.RECORD_PAGE,
+                    targetRecordIdentifier: {
+                      id: TEST_RECORD_ID,
+                      targetObjectNameSingular:
+                        companyObjectMetadataItem.nameSingular,
+                    },
                   }}
                 >
-                  <WidgetComponentInstanceContext.Provider
+                  <PageLayoutContentProvider
                     value={{
-                      instanceId: 'widget-side-panel',
+                      layoutMode: PageLayoutTabLayoutMode.GRID,
+                      presentation: 'stack',
+                      tabId: TAB_ID_OVERVIEW,
                     }}
                   >
-                    <WidgetRenderer widget={widget} />
-                  </WidgetComponentInstanceContext.Provider>
-                </PageLayoutContentProvider>
-              </LayoutRenderingProvider>
-            </PageLayoutTestWrapper>
+                    <WidgetComponentInstanceContext.Provider
+                      value={{
+                        instanceId: SIDE_PANEL_INSTANCE_ID,
+                      }}
+                    >
+                      <WidgetRenderer widget={widget} />
+                    </WidgetComponentInstanceContext.Provider>
+                  </PageLayoutContentProvider>
+                </LayoutRenderingProvider>
+              </PageLayoutTestWrapper>
+            </WorkspaceSurfaceContext.Provider>
           </CoreClientProviderWrapper>
         </JestMetadataAndApolloMocksWrapper>
       </div>
@@ -1537,35 +1596,38 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
   },
   render: (args) => {
     const state = (args as any).catalogState || 'default';
-    const variantKey = (args as any).catalogVariant || 'record-page';
+    const scenarioKey = (args as any).catalogVariant || 'record-page';
 
-    const isRestricted = variantKey.includes('-restricted');
-    const variant = variantKey.replace('-restricted', '') as WidgetCardVariant;
+    const isRestricted = scenarioKey.includes('-restricted');
+    const scenario = scenarioKey.replace('-restricted', '');
 
     const isInEditMode = state !== 'read';
 
     const pageLayoutType =
-      variant === 'dashboard'
+      scenario === 'dashboard'
         ? PageLayoutType.DASHBOARD
         : PageLayoutType.RECORD_PAGE;
 
     const layoutMode =
-      variant === 'canvas'
-        ? PageLayoutTabLayoutMode.CANVAS
-        : PageLayoutTabLayoutMode.GRID;
+      scenario === 'dashboard'
+        ? PageLayoutTabLayoutMode.GRID
+        : PageLayoutTabLayoutMode.VERTICAL_LIST;
 
     const widget: PageLayoutWidget = {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutWidget',
       applicationId: '',
       isActive: true,
       id: WIDGET_ID_CATALOG,
       pageLayoutTabId:
-        variant === 'side-column' ? 'pinned-tab' : TAB_ID_OVERVIEW,
+        scenario === 'side-column' ? 'pinned-tab' : TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
       title: 'Widget name',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 2,
@@ -1617,7 +1679,6 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       );
     }
 
-    // currentUserWorkspaceState is now a Jotai state, set it directly
     if (isRestricted === true) {
       jotaiStore.set(currentUserWorkspaceState.atom, {
         permissionFlags: [],
@@ -1656,14 +1717,19 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
 
     const pageLayoutData: PageLayout = {
       id: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      applicationId: 'application-id-mock',
       name: 'Mock Page Layout',
       type: pageLayoutType,
+      isSystemSideEffect: false,
+      isFirstTabPinned: true,
       objectMetadataId: companyObjectMetadataItem.id,
       universalIdentifier: '20202020-0000-0000-0000-000000000001',
       tabs:
-        variant === 'side-column'
+        scenario === 'side-column'
           ? [
               {
+                isSystemSideEffect: false,
+                universalIdentifier: 'universal-identifier-mock',
                 __typename: 'PageLayoutTab',
                 isActive: true,
                 applicationId: '',
@@ -1680,6 +1746,8 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
                 __typename: 'PageLayoutTab',
                 isActive: true,
                 applicationId: '',
+                universalIdentifier: 'universal-identifier-mock',
+                isSystemSideEffect: false,
                 id: 'other-tab',
                 title: 'Other Tab',
                 position: 1,
@@ -1695,6 +1763,8 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
                 __typename: 'PageLayoutTab',
                 isActive: true,
                 applicationId: '',
+                universalIdentifier: 'universal-identifier-mock',
+                isSystemSideEffect: false,
                 id: TAB_ID_OVERVIEW,
                 title: 'Overview',
                 position: 0,
@@ -1741,7 +1811,6 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: pageLayoutType,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -1753,8 +1822,9 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode,
+                    presentation: 'stack',
                     tabId:
-                      variant === 'side-column'
+                      scenario === 'side-column'
                         ? 'pinned-tab'
                         : TAB_ID_OVERVIEW,
                   }}

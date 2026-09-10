@@ -7,6 +7,11 @@ import {
   RECALL_BOT_IMAGE_MAX_BYTES,
   RECALL_BOT_IMAGE_WIDTH,
 } from 'src/logic-functions/constants/recall-bot-image-config';
+import {
+  RECORDING_STATUS_BADGE_HEIGHT,
+  RECORDING_STATUS_BADGE_INSET,
+  RECORDING_STATUS_BADGE_WIDTH,
+} from 'src/logic-functions/constants/recording-status-badge-config';
 
 const createLogo = (format: 'png' | 'gif' | 'jpeg'): Promise<Buffer> => {
   const image = sharp({
@@ -81,6 +86,34 @@ describe('buildBotImage', () => {
     expect(metadata.width).toBe(RECALL_BOT_IMAGE_WIDTH);
     expect(metadata.height).toBe(RECALL_BOT_IMAGE_HEIGHT);
     expect(metadata.format).toBe('jpeg');
+  });
+
+  it('composites the recording badge at the badge inset', async () => {
+    const logoBuffer = await createLogo('png');
+
+    const readBadgeRegion = async (
+      withRecordingStatusBadge: boolean,
+    ): Promise<Buffer> => {
+      const base64Jpeg = await buildBotImage({
+        logoBuffer,
+        background: '#ffffff',
+        withRecordingStatusBadge,
+      });
+
+      return sharp(Buffer.from(base64Jpeg as string, 'base64'))
+        .extract({
+          top: RECORDING_STATUS_BADGE_INSET,
+          left: RECORDING_STATUS_BADGE_INSET,
+          width: RECORDING_STATUS_BADGE_WIDTH,
+          height: RECORDING_STATUS_BADGE_HEIGHT,
+        })
+        .raw()
+        .toBuffer();
+    };
+
+    expect(await readBadgeRegion(true)).not.toEqual(
+      await readBadgeRegion(false),
+    );
   });
 
   it('returns undefined when the source cannot be decoded', async () => {

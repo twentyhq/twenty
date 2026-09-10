@@ -25,6 +25,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { RelationType } from '~/generated-metadata/graphql';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const personMetadata = getMockObjectMetadataItemOrThrow('person');
 const companyMetadata = getMockObjectMetadataItemOrThrow('company');
@@ -125,6 +126,7 @@ const meta: Meta = {
   component: RelationOneToManyFieldInputWithContext,
   args: {},
   decorators: [
+    MemoryRouterDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     FileUploadDecorator,

@@ -6,7 +6,7 @@ import {
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import {
   type WorkflowActionType,
@@ -30,9 +30,7 @@ export const SidePanelWorkflowCreateStepContent = () => {
 
   const { createStep } = useCreateStep();
   const { updateStep } = useUpdateStep();
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
-    workflowVisualizerWorkflowId,
-  );
+  const flow = useAtomComponentStateValue(flowComponentState);
 
   const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
   const { closeRightClickMenu } = useCloseRightClickMenu();
@@ -81,13 +79,16 @@ export const SidePanelWorkflowCreateStepContent = () => {
       return;
     }
 
-    const steps = workflowWithCurrentVersion?.currentVersion?.steps;
+    const steps = flow?.steps;
     const parentStep =
       isDefined(parentStepId) && isDefined(steps) && isDefined(position)
         ? steps.find((step) => step.id === parentStepId)
         : undefined;
 
-    if (parentStep?.type === 'IF_ELSE') {
+    if (
+      parentStep?.type === 'IF_ELSE' &&
+      connectionOptions?.connectedStepType !== 'IF_ELSE'
+    ) {
       await handleIfElseParentStep({
         parentStep,
         createdStepId: createdStep.id,
@@ -104,12 +105,12 @@ export const SidePanelWorkflowCreateStepContent = () => {
 
     setSidePanelNavigationStack([]);
 
-    openWorkflowEditStepInSidePanel(
-      workflowVisualizerWorkflowId,
-      createdStep.name,
-      getIcon(getActionIcon(createdStep.type as WorkflowActionType)),
-      createdStep.id,
-    );
+    openWorkflowEditStepInSidePanel({
+      workflowId: workflowVisualizerWorkflowId,
+      title: createdStep.name,
+      icon: getIcon(getActionIcon(createdStep.type as WorkflowActionType)),
+      stepId: createdStep.id,
+    });
   };
 
   return <SidePanelWorkflowSelectAction onActionSelected={handleCreateStep} />;

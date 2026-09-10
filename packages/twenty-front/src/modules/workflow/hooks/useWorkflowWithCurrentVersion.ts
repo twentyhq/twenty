@@ -55,6 +55,14 @@ export const useWorkflowWithCurrentVersion = (
     {
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
       objectRecordId: currentVersionId,
+      recordGqlFields: {
+        id: true,
+        name: true,
+        status: true,
+        workflowId: true,
+        createdAt: true,
+        updatedAt: true,
+      },
       skip: !isDefined(currentVersionId),
     },
   );

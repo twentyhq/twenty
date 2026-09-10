@@ -1,27 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
-import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
-import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type ViewChildEntityKind } from 'src/engine/metadata-modules/view-permissions/types/view-permissions.types';
-import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class ViewEntityLookupService {
   constructor(
-    @InjectWorkspaceScopedRepository(ViewFieldEntity)
-    private readonly viewFieldRepository: WorkspaceScopedRepository<ViewFieldEntity>,
-    @InjectWorkspaceScopedRepository(ViewFilterEntity)
-    private readonly viewFilterRepository: WorkspaceScopedRepository<ViewFilterEntity>,
-    @InjectWorkspaceScopedRepository(ViewFilterGroupEntity)
-    private readonly viewFilterGroupRepository: WorkspaceScopedRepository<ViewFilterGroupEntity>,
-    @InjectWorkspaceScopedRepository(ViewGroupEntity)
-    private readonly viewGroupRepository: WorkspaceScopedRepository<ViewGroupEntity>,
-    @InjectWorkspaceScopedRepository(ViewSortEntity)
-    private readonly viewSortRepository: WorkspaceScopedRepository<ViewSortEntity>,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   async findViewIdByEntityIdAndKind(
@@ -31,58 +17,76 @@ export class ViewEntityLookupService {
   ): Promise<string | null> {
     switch (kind) {
       case 'viewField': {
-        const row = await this.viewFieldRepository.findOne(workspaceId, {
-          where: { id: entityId },
-          select: ['viewId'],
-        });
+        const { flatViewFieldMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            { workspaceId, flatMapsKeys: ['flatViewFieldMaps'] },
+          );
 
-        if (row) return row.viewId;
-        break;
+        return (
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: entityId,
+            flatEntityMaps: flatViewFieldMaps,
+          })?.viewId ?? null
+        );
       }
 
       case 'viewFilter': {
-        const row = await this.viewFilterRepository.findOne(workspaceId, {
-          where: { id: entityId },
-          select: ['viewId'],
-        });
+        const { flatViewFilterMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            { workspaceId, flatMapsKeys: ['flatViewFilterMaps'] },
+          );
 
-        if (row) return row.viewId;
-        break;
+        return (
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: entityId,
+            flatEntityMaps: flatViewFilterMaps,
+          })?.viewId ?? null
+        );
       }
 
       case 'viewFilterGroup': {
-        const row = await this.viewFilterGroupRepository.findOne(workspaceId, {
-          where: { id: entityId },
-          select: ['viewId'],
-        });
+        const { flatViewFilterGroupMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            { workspaceId, flatMapsKeys: ['flatViewFilterGroupMaps'] },
+          );
 
-        if (row) return row.viewId;
-        break;
+        return (
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: entityId,
+            flatEntityMaps: flatViewFilterGroupMaps,
+          })?.viewId ?? null
+        );
       }
 
       case 'viewGroup': {
-        const row = await this.viewGroupRepository.findOne(workspaceId, {
-          where: { id: entityId },
-          select: ['viewId'],
-        });
+        const { flatViewGroupMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            { workspaceId, flatMapsKeys: ['flatViewGroupMaps'] },
+          );
 
-        if (row) return row.viewId;
-        break;
+        return (
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: entityId,
+            flatEntityMaps: flatViewGroupMaps,
+          })?.viewId ?? null
+        );
       }
 
       case 'viewSort': {
-        const row = await this.viewSortRepository.findOne(workspaceId, {
-          where: { id: entityId },
-          select: ['viewId'],
-        });
+        const { flatViewSortMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            { workspaceId, flatMapsKeys: ['flatViewSortMaps'] },
+          );
 
-        if (row) return row.viewId;
-        break;
+        return (
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: entityId,
+            flatEntityMaps: flatViewSortMaps,
+          })?.viewId ?? null
+        );
       }
       default:
-        break;
+        return null;
     }
-
-    return null;
   }
 }

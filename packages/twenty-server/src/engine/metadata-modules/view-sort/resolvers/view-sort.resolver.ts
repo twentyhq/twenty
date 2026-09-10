@@ -8,10 +8,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { CreateViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-sort-permission.guard';
-import { DeleteViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-sort-permission.guard';
-import { DestroyViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-sort-permission.guard';
-import { UpdateViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-sort-permission.guard';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
 import { UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/update-view-sort.input';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
@@ -19,6 +15,8 @@ import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 import { DeleteViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/delete-view-sort.input';
 import { DestroyViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/destroy-view-sort.input';
+import { CreateViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-child-entity-permission.guard';
+import { ViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-child-entity-permission.guard';
 
 @MetadataResolver(() => ViewSortDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -50,7 +48,7 @@ export class ViewSortResolver {
   }
 
   @Mutation(() => ViewSortDTO)
-  @UseGuards(CreateViewSortPermissionGuard)
+  @UseGuards(CreateViewChildEntityPermissionGuard)
   async createViewSort(
     @Args('input') createViewSortInput: CreateViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -62,7 +60,7 @@ export class ViewSortResolver {
   }
 
   @Mutation(() => ViewSortDTO)
-  @UseGuards(UpdateViewSortPermissionGuard)
+  @UseGuards(ViewChildEntityPermissionGuard('viewSort'))
   async updateViewSort(
     @Args('input') updateViewSortInput: UpdateViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -74,7 +72,7 @@ export class ViewSortResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(DeleteViewSortPermissionGuard)
+  @UseGuards(ViewChildEntityPermissionGuard('viewSort'))
   async deleteViewSort(
     @Args('input') deleteViewSortInput: DeleteViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -88,7 +86,7 @@ export class ViewSortResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(DestroyViewSortPermissionGuard)
+  @UseGuards(ViewChildEntityPermissionGuard('viewSort'))
   async destroyViewSort(
     @Args('input') destroyViewSortInput: DestroyViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

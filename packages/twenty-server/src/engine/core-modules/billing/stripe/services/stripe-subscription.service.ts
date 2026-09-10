@@ -37,23 +37,52 @@ export class StripeSubscriptionService {
     return subscription.data[0]?.customer ?? undefined;
   }
 
-  async collectLastInvoice(stripeSubscriptionId: string) {
-    const subscription = await this.stripe.subscriptions.retrieve(
-      stripeSubscriptionId,
-      { expand: ['latest_invoice'] },
-    );
-    const latestInvoice = subscription.latest_invoice;
+  async payOpenInvoices({
+    stripeSubscriptionId,
+    stripePaymentMethodId,
+  }: {
+    stripeSubscriptionId: string;
+    stripePaymentMethodId: string;
+  }) {
+    const openInvoices: Stripe.Invoice[] = [];
 
-    if (
-      !(
-        latestInvoice &&
-        typeof latestInvoice !== 'string' &&
-        latestInvoice.status === 'draft'
-      )
-    ) {
-      return;
+    for await (const invoice of this.stripe.invoices.list({
+      subscription: stripeSubscriptionId,
+      status: 'open',
+      collection_method: 'charge_automatically',
+      limit: 100,
+    })) {
+      openInvoices.push(invoice);
     }
-    await this.stripe.invoices.pay(latestInvoice.id);
+
+    // Stripe lists the most recent invoices first, settle the oldest overdue period first
+    for (const invoice of openInvoices.reverse()) {
+      try {
+        await this.stripe.invoices.pay(invoice.id, {
+          payment_method: stripePaymentMethodId,
+        });
+      } catch (error) {
+        // A decline is final for this webhook, Stripe dunning retries the invoice
+        // on its own schedule
+        if (error instanceof this.stripe.errors.StripeCardError) {
+          this.logger.error(
+            `Card declined for invoice ${invoice.id} of subscription ${stripeSubscriptionId}: ${error.message}`,
+          );
+
+          continue;
+        }
+
+        // Stripe dunning or a concurrent webhook can have settled the invoice
+        // in the meantime, only a still open one is worth a webhook retry
+        const refreshedInvoice = await this.stripe.invoices.retrieve(
+          invoice.id,
+        );
+
+        if (refreshedInvoice.status === 'open') {
+          throw error;
+        }
+      }
+    }
   }
 
   async updateSubscription(

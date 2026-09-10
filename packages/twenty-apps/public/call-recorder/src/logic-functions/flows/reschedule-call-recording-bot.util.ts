@@ -42,6 +42,7 @@ export const rescheduleCallRecordingBot = async (
   const rescheduleResult = await rescheduleRecallBot({
     externalBotId,
     meetingUrl,
+    meetingStartsAt,
     joinAt,
     metadata: buildRecallRoutingMetadata({
       callRecordingId: callRecording.id,

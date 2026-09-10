@@ -42,6 +42,16 @@ export function partnerApplicationReducer(
         : [...state.languages, action.value];
       return { ...state, languages: next };
     }
+    case 'TOGGLE_EXPERIENCE': {
+      const next = state.twentyExperience.includes(action.value)
+        ? state.twentyExperience.filter((value) => value !== action.value)
+        : [...state.twentyExperience, action.value];
+      return {
+        ...state,
+        twentyExperience: next,
+        fieldErrors: dropError(state.fieldErrors, 'twentyExperience'),
+      };
+    }
     case 'SET_SKILLS':
       return { ...state, skills: action.value };
     case 'GO_NEXT': {
@@ -75,7 +85,10 @@ export function partnerApplicationReducer(
       };
     case 'RESET':
       return INITIAL_PARTNER_APPLICATION_STATE;
-    default:
+    default: {
+      const _exhaustive: never = action;
+      void _exhaustive;
       return state;
+    }
   }
 }

@@ -13,12 +13,14 @@ export const fetchRecallListPages = async <TItem>({
   config,
   initialPath,
   maxPages,
+  shouldStartPageRequest,
   extractPageItems,
   malformedErrorMessage,
 }: {
   config: RecallApiConfig;
   initialPath: string;
   maxPages: number;
+  shouldStartPageRequest: () => boolean;
   extractPageItems: (
     response: RecallListResponse | undefined,
   ) => TItem[] | undefined;
@@ -34,6 +36,10 @@ export const fetchRecallListPages = async <TItem>({
     !isUndefined(path) && pageIndex < maxPages;
     pageIndex++
   ) {
+    if (!shouldStartPageRequest()) {
+      break;
+    }
+
     const result = await recallBotApiRequest<RecallListResponse>({
       config,
       path,

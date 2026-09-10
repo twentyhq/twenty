@@ -26,8 +26,8 @@ Avvia il flusso di lavoro quando viene creato un nuovo record in un oggetto sele
 **Configurazione**: Seleziona il tipo di oggetto da monitorare per i nuovi record.
 
 <Note>
-* Questo attivatore è ottimo per i record creati tramite csv, sincronizzazione della casella di posta e del calendario, API.
-* **Non è consigliato per i record creati manualmente**: con questo attivatore, i flussi di lavoro iniziano non appena il record viene creato. Poiché Twenty UI offre il salvataggio automatico al volo (non esiste una modalità di modifica e poi una validazione per salvare i record), il flusso di lavoro verrà attivato prima che l'utente inserisca tutti i campi.
+* Questo trigger è ottimo per i record creati da CSV, mailbox e sincronizzazione del calendario, o API.
+* **Non è consigliato per i record creati manualmente**: con questo attivatore, i flussi di lavoro iniziano non appena il record viene creato. Dal momento che Twenty UI offre il salvataggio automatico sul volo (non c'è alcuna modalità di modifica e quindi una convalida per salvare i record), il flusso di lavoro verrà attivato prima che l'utente inserisca tutti i campi.
   Per attivare questo flusso di lavoro sui record creati manualmente, si consiglia invece di usare l'attivatore `Record is created or updated`.
 </Note>
 
@@ -70,15 +70,17 @@ Avvia il flusso di lavoro quando viene attivato da un'azione dell'utente. È pos
 **Configurazione di Disponibilità:**
 Scegli come il flusso di lavoro dovrebbe gestire la selezione dei record:
 
-* **Globale:** Non è richiesto alcun record per attivare questo flusso di lavoro. Il flusso di lavoro viene attivato dal menu comandi `Cmd + K` ovunque (da qualsiasi oggetto) e non utilizza record come input.
+* **Globale:** Non è richiesto alcun record per attivare questo flusso di lavoro. Il flusso di lavoro viene attivato dal menu di comando `Cmd+K` ovunque (da qualsiasi oggetto) e non usa i record come input.
 
-* **Singolo**: I record selezionati verranno passati al tuo flusso di lavoro. Questo è configurato per un determinato oggetto. Diversi record possono essere selezionati prima di attivare il flusso di lavoro. Il flusso di lavoro verrà eseguito dall'inizio alla fine tante volte quanti sono i record selezionati.
+Per la disponibilità **Single** e **Bulk**, i record selezionati saranno passati al tuo flusso di lavoro. Questo è configurato per un dato oggetto, e diversi record possono essere selezionati prima di attivare il flusso di lavoro.
+
+* **Singolo**: Il flusso di lavoro verrà eseguito dall'inizio alla fine quante volte ci sono record selezionati.
 
   <Note>
     **Limite soft: 100 esecuzioni/minuto**. Oltre questa soglia, i flussi di lavoro rimangono nello stato "Not Started" e vengono elaborati gradualmente—o da un processo in background oppure quando un altro flusso di lavoro entra in coda. Questo significa che puoi selezionare più di 100 record con un attivatore Singolo; l'esecuzione sarà semplicemente più lenta.
   </Note>
 
-* **Bulk**: I record selezionati verranno passati al tuo flusso di lavoro. Questo è configurato per un determinato oggetto. Diversi record possono essere selezionati prima di attivare il flusso di lavoro. Il flusso di lavoro verrà eseguito una sola volta, fornendo l'intero elenco di record come input. Questo significa che il flusso di lavoro deve contenere un'[azione Iteratore](/l/it/user-guide/workflows/capabilities/workflow-actions#iterator).
+* **Bulk**: Il flusso di lavoro verrà eseguito una volta, fornendo l'intero elenco di record come input. Questo significa che il flusso di lavoro deve contenere un'[azione Iteratore](/l/it/user-guide/workflows/capabilities/workflow-actions#iterator).
 
 <Note>
 È più avanzato ed è ideale per chi vuole ottimizzare il numero di esecuzioni del flusso di lavoro.

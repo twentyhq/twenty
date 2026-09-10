@@ -1,6 +1,10 @@
 import { useAtomValue, useStore } from 'jotai';
 import { useEffect } from 'react';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isValidUuid,
+  tipTapDocumentToMarkdown,
+} from 'twenty-shared/utils';
 
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
@@ -105,7 +109,7 @@ export const AgentChatThreadInitializationEffect = () => {
         store.get(agentChatDraftsByThreadIdState.atom)[firstThread.id] ?? '';
 
       setCurrentAiChatThread(firstThread.id);
-      setAgentChatInput(draftForThread);
+      setAgentChatInput(tipTapDocumentToMarkdown(draftForThread));
 
       const firstThreadFamilyKey = { threadId: firstThread.id };
 
@@ -136,9 +140,11 @@ export const AgentChatThreadInitializationEffect = () => {
       store.set(hasTriggeredCreateForDraftState.atom, false);
       setCurrentAiChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
       setAgentChatInput(
-        store.get(agentChatDraftsByThreadIdState.atom)[
-          AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-        ] ?? '',
+        tipTapDocumentToMarkdown(
+          store.get(agentChatDraftsByThreadIdState.atom)[
+            AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+          ] ?? '',
+        ),
       );
     }
   }, [

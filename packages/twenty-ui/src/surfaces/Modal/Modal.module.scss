@@ -10,7 +10,7 @@
   z-index: var(--modal-z-index, 40);
   width: auto;
   height: auto;
-  max-height: 90dvh;
+  max-height: calc(90dvh / var(--t-zoom, 1));
   // framer-motion faded the deprecated modal in and out over the theme's
   // normal duration; Base UI drives the same fade through its
   // data-starting-style and data-ending-style transition states

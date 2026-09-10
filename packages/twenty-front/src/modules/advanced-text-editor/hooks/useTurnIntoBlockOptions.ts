@@ -1,5 +1,7 @@
+import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
+import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
 import { useLingui } from '@lingui/react/macro';
-import { type Editor, useEditorState } from '@tiptap/react';
+import { type Editor } from '@tiptap/react';
 import {
   type IconComponent,
   IconH1,
@@ -17,68 +19,51 @@ export type TurnIntoBlockOptions = {
   icon: IconComponent;
 };
 
+const HEADING_ICONS: Record<number, IconComponent> = {
+  1: IconH1,
+  2: IconH2,
+  3: IconH3,
+};
+
 export const useTurnIntoBlockOptions = (editor: Editor) => {
   const { t } = useLingui();
 
-  return useEditorState({
-    editor,
-    selector: ({ editor }): TurnIntoBlockOptions[] => [
-      {
-        id: 'paragraph',
-        title: t`Paragraph`,
-        icon: IconPilcrow,
-        onClick: () => {
-          return editor.chain().focus().setParagraph().run();
-        },
-        disabled: () => {
-          return !editor.can().setParagraph();
-        },
-        isActive: () => {
-          return editor.isActive('paragraph');
-        },
+  const headingTitles: Record<number, string> = {
+    1: t`Heading 1`,
+    2: t`Heading 2`,
+    3: t`Heading 3`,
+  };
+
+  return useLiveEditorState(editor, (currentEditor): TurnIntoBlockOptions[] => [
+    {
+      id: 'paragraph',
+      title: t`Paragraph`,
+      icon: IconPilcrow,
+      onClick: () => {
+        return currentEditor.chain().focus().setParagraph().run();
       },
-      {
-        id: 'heading1',
-        title: t`Heading 1`,
-        icon: IconH1,
-        onClick: () => {
-          return editor.chain().focus().setHeading({ level: 1 }).run();
-        },
-        disabled: () => {
-          return !editor.can().setHeading({ level: 1 });
-        },
-        isActive: () => {
-          return editor.isActive('heading', { level: 1 });
-        },
+      disabled: () => {
+        return !currentEditor.can().setParagraph();
       },
-      {
-        id: 'heading2',
-        title: t`Heading 2`,
-        icon: IconH2,
-        onClick: () => {
-          return editor.chain().focus().setHeading({ level: 2 }).run();
-        },
-        disabled: () => {
-          return !editor.can().setHeading({ level: 2 });
-        },
-        isActive: () => {
-          return editor.isActive('heading', { level: 2 });
-        },
+      isActive: () => {
+        return currentEditor.isActive('paragraph');
       },
-      {
-        id: 'heading3',
-        title: t`Heading 3`,
-        icon: IconH3,
-        onClick: () => {
-          return editor.chain().focus().setHeading({ level: 3 }).run();
-        },
-        disabled: () => {
-          return !editor.can().setHeading({ level: 3 });
-        },
-        isActive: () => {
-          return editor.isActive('heading', { level: 3 });
-        },
-      },
-    ],
-  });
+    },
+    ...(hasEditorExtension(currentEditor, 'heading')
+      ? ([1, 2, 3] as const).map((level) => ({
+          id: `heading${level}`,
+          title: headingTitles[level],
+          icon: HEADING_ICONS[level],
+          onClick: () => {
+            return currentEditor.chain().focus().setHeading({ level }).run();
+          },
+          disabled: () => {
+            return !currentEditor.can().setHeading({ level });
+          },
+          isActive: () => {
+            return currentEditor.isActive('heading', { level });
+          },
+        }))
+      : []),
+  ]);
 };

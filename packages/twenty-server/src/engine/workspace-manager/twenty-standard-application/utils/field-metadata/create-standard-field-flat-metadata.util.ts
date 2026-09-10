@@ -1,4 +1,5 @@
 import {
+  MetadataWritability,
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
   type FieldMetadataDefaultValue,
@@ -6,6 +7,8 @@ import {
   type FieldMetadataType,
 } from 'twenty-shared/types';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+
+import { SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/search-fields-by-standard-object-name.constant';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -69,6 +72,8 @@ export const createStandardFieldFlatMetadata = <
   const fieldIds = standardObjectMetadataRelatedEntityIds[objectName].fields;
 
   const name = fieldName.toString();
+  const searchFields: ReadonlyArray<{ name: string }> =
+    SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName];
 
   return {
     id: fieldIds[fieldName].id,
@@ -86,7 +91,14 @@ export const createStandardFieldFlatMetadata = <
     isSystemSideEffect: name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS,
     isNullable,
     isUnique,
+    isSearchable: searchFields.some((searchField) => searchField.name === name),
     isUIEditable,
+    writability:
+      name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
+        ? PARTIAL_SYSTEM_FLAT_FIELD_METADATAS[
+            name as keyof typeof PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
+          ].writability
+        : MetadataWritability.OPEN,
     isLabelSyncedWithName: false,
     overrides: null,
     defaultValue: defaultValue ?? null,

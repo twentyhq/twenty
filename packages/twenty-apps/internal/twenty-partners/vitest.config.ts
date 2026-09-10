@@ -18,15 +18,30 @@ export default defineConfig({
     }),
   ],
   test: {
-    testTimeout: 120_000,
-    hookTimeout: 120_000,
-    fileParallelism: false,
-    include: ['src/**/*.integration-test.ts'],
-    globalSetup: ['src/__tests__/global-setup.ts'],
-    setupFiles: ['src/__tests__/rate-limit-retry.setup.ts'],
-    env: {
-      TWENTY_API_URL,
-      TWENTY_API_KEY,
-    },
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: 'unit',
+          include: ['src/**/*.test.ts'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'integration',
+          include: ['src/**/*.integration-test.ts'],
+          testTimeout: 120_000,
+          hookTimeout: 120_000,
+          fileParallelism: false,
+          globalSetup: ['src/__tests__/global-setup.ts'],
+          setupFiles: ['src/__tests__/rate-limit-retry.setup.ts'],
+          env: {
+            TWENTY_API_URL,
+            TWENTY_API_KEY,
+          },
+        },
+      },
+    ],
   },
 });

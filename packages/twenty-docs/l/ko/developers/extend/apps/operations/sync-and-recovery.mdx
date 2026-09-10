@@ -121,5 +121,6 @@ plan은 **메타데이터** 변경만 미리 보여 주며, 앱이 최소 한 �
 
 * **매니페스트 빌드 오류** — 동기화 전에 CLI가 실패합니다(`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`). 앱 소스를 수정하세요.
 * **동기화 / 마이그레이션 오류** — 빌드는 성공했지만 diff를 적용하는 데 실패하며, 메시지에 엔티티와 `universalIdentifier`가 표시됩니다. 충돌하는 메타데이터를 수정하세요.
+* **종속 항목 크기 오류** — 동기화 또는 설치가 실패했습니다. 앱의 프로덕션 `dependencies`가 런타임 레이어로 설치하기에는 너무 커서 실패했습니다 (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`). 런타임 중에 로직 함수에서 실제로 import하지 않는 패키지(UI 라이브러리, 개발 도구 등)는 `devDependencies`로 이동하세요.
 * **앱 코드 런타임 오류** — 동기화는 성공했지만 로직 함수나 컴포넌트가 런타임에 올바르게 동작하지 않는 경우입니다. [function logs](/l/ko/developers/extend/apps/operations/cli)를 확인하세요.
 * **로컬 인스턴스 상태** — 위의 어느 경우에도 해당하지 않지만 워크스페이스가 여전히 잘못되어 보이는 경우입니다. 복구 사다리를 순서대로 따라가세요.

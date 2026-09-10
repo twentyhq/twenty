@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { CommandShutdownModule } from 'src/database/commands/command-runners/command-shutdown.module';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { InstanceCommandProviderModule } from 'src/database/commands/upgrade-version-command/instance-command-provider.module';
 import { WorkspaceCommandProviderModule } from 'src/database/commands/upgrade-version-command/workspace-command-provider.module';
@@ -14,6 +15,7 @@ import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-v
 
 @Module({
   imports: [
+    CommandShutdownModule,
     InstanceCommandProviderModule,
     MetricsModule,
     UpgradeStatusModule,

@@ -1,5 +1,7 @@
 # Pull down translations from Crowdin every two hours or when triggered manually.
-# When force_pull input is true, translations will be pulled regardless of compilation status.
+# Schedule and workflow_dispatch always download. workflow_call downloads when
+# force_pull is true. We cannot gate on `lingui compile --strict`: English is the
+# fallback locale, so empty msgstr values compile successfully.
 
 name: 'Pull translations from Crowdin'
 
@@ -11,28 +13,23 @@ on:
   schedule:
     - cron: '0 */2 * * *' # Every two hours.
   workflow_dispatch:
-    inputs:
-      force_pull:
-        description: 'Force pull translations regardless of compilation status'
-        required: false
-        type: boolean
-        default: false
   workflow_call:
     inputs:
       force_pull:
-        description: 'Force pull translations regardless of compilation status'
+        description: 'Download translations even though the caller was not triggered by a schedule'
         required: false
         type: boolean
         default: false
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   pull_translations:
     name: Pull translations
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -51,15 +48,6 @@ jobs:
       - name: Build twenty-shared
         run: npx nx build twenty-shared
 
-      # Strict mode fails if there are missing translations.
-      - name: Compile translations
-        id: compile_translations_strict
-        run: |
-          npx nx run twenty-server:lingui:compile --strict
-          npx nx run twenty-emails:lingui:compile --strict
-          npx nx run twenty-front:lingui:compile --strict
-        continue-on-error: true
-
       - name: Stash any changes before pulling translations
         run: |
           git config --global user.name 'github-actions'
@@ -68,7 +56,7 @@ jobs:
           git stash
 
       - name: Pull translations from Crowdin
-        if: inputs.force_pull || steps.compile_translations_strict.outcome == 'failure'
+        if: inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         uses: crowdin/github-action@8868a33591d21088edfc398968173a3b98d51706 # v2
         with:
           upload_sources: false
@@ -100,15 +88,19 @@ jobs:
         run: sudo chown -R runner:docker .
 
       # Fix encoding issues (escaped Unicode like \u62db -> 招) and push fixes back to Crowdin
-      - name: Fix translation encoding and sync to Crowdin
-        run: npx ts-node packages/twenty-utils/fix-crowdin-translations.ts
+      - name: Normalize translations in Crowdin
+        run: npx tsx packages/twenty-utils/crowdin-normalizer/normalize-crowdin-translations.ts --project=1 --apply --rules=escaped-unicode || echo "::warning::translation normalization failed (non-blocking)"
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
+      - name: Normalize downloaded catalogs to lingui format
+        run: |
+          npx nx run twenty-server:lingui:extract
+          npx nx run twenty-emails:lingui:extract
+          npx nx run twenty-front:lingui:extract
+
       - name: Compile translations
         id: compile_translations
-        # Because we have set English as a fallback locale, this condition does not work anymore
-        # if: inputs.force_pull || steps.compile_translations_strict.outcome == 'failure'
         run: |
           npx nx run twenty-server:lingui:compile
           npx nx run twenty-emails:lingui:compile

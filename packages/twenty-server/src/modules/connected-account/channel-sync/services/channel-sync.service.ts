@@ -16,12 +16,13 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   CalendarEventListFetchJob,
   type CalendarEventListFetchJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
+import { WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-creation-retry-limit.constant';
 import {
   CreateWebhookSubscriptionJob,
   type CreateWebhookSubscriptionJobData,
@@ -42,7 +43,7 @@ export class ChannelSyncService {
   private readonly logger = new Logger(ChannelSyncService.name);
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
@@ -70,7 +71,7 @@ export class ChannelSyncService {
   ): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageChannels = await this.messageChannelRepository.find({
         where: {
           connectedAccountId,
@@ -110,6 +111,7 @@ export class ChannelSyncService {
               channelId: messageChannel.id,
               workspaceId,
             },
+            { retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT },
           );
         } catch (error) {
           this.logger.warn(
@@ -127,7 +129,7 @@ export class ChannelSyncService {
   ): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const calendarChannels = await this.calendarChannelRepository.find({
         where: {
           connectedAccountId,
@@ -170,6 +172,7 @@ export class ChannelSyncService {
               channelId: calendarChannel.id,
               workspaceId,
             },
+            { retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT },
           );
         } catch (error) {
           this.logger.warn(

@@ -26,8 +26,8 @@ Pornește fluxul de lucru când este creată o nouă înregistrare într-un obie
 **Configurare**: Selectați tipul de obiect pentru a monitoriza noile înregistrări.
 
 <Note>
-* Acest declanșator este grozav pentru înregistrările create de csv, poștală și sincronizare calendar, API.
-* **Nu este recomandat pentru înregistrările create manual**: cu acest declanșator, fluxurile de lucru încep imediat ce înregistrarea este creată. Deoarece 20 de UI oferă salvare automată în zbor (nu există un mod de editare și apoi o validare pentru a salva înregistrările), fluxul de lucru va fi declanșat înainte ca utilizatorul să introducă toate câmpurile.
+* Acest declanșator este grozav pentru înregistrările create de CSV, cutia poștală și sincronizarea calendarului, sau API.
+* **Nu este recomandat pentru înregistrările create manual**: cu acest declanșator, fluxurile de lucru încep imediat ce înregistrarea este creată. Deoarece 20 de UI oferă salvare automată în zbor (nu există nici un mod de editare și apoi o validare pentru a salva înregistrările), fluxul de lucru va fi declanșat înainte ca utilizatorul să introducă toate câmpurile.
   Pentru a declanșa acest flux de lucru pe înregistrările create manual, este recomandat să utilizați declanșatorul `Record este creat sau actualizat`.
 </Note>
 
@@ -70,15 +70,17 @@ Pornește fluxul de lucru când este declanșat de o acțiune a utilizatorului. 
 **Configurare disponibilitate**:
 Alegeți cum ar trebui ca fluxul de lucru să gestioneze selecția înregistrărilor:
 
-* **Global**: Nu se necesită nicio înregistrare pentru a declanșa acest flux de lucru. Fluxul de lucru este declanșat din meniul de comandă `Cmd + K` oriunde (de la orice obiect) și nu folosește înregistrarea (înregistrările) ca intrare.
+* **Global**: Nu se necesită nicio înregistrare pentru a declanșa acest flux de lucru. Fluxul de lucru este declanșat din meniul de comandă `Cmd+K` oriunde (de la orice obiect) și nu folosește înregistrarea (înregistrările) ca intrare.
 
-* **Single**: Înregistrările selectate vor fi transmise către fluxul dumneavoastră de lucru. Se configurează pentru un obiect dat. Mai multe înregistrări pot fi selectate înainte de a declanșa fluxul de lucru. Fluxul de lucru va rula de la început la sfârşit de câte ori există înregistrări selectate. (Automatic Translation)
+Pentru disponibilitatea **Single** și **Bulk**, înregistrările selectate vor fi transmise la fluxul de lucru. Aceasta este configurată pentru un obiect dat, și mai multe înregistrări pot fi selectate înainte de a declanșa fluxul de lucru.
+
+* **Single**: Fluxul de lucru va rula de la început la sfârșit de câte ori există înregistrări selectate.
 
   <Note>
     **Limita soft: 100 runs/minut**. Dincolo de aceasta, fluxurile de lucru rămân în starea „Nu s-a început” și sunt procesate treptat — fie de un job de fundal sau atunci când un alt flux de lucru intră în coadă. Asta înseamnă că poți selecta mai mult de 100 de înregistrări cu un singur declanșator; execuția va fi mai lentă.
   </Note>
 
-* **Bulk**: Înregistrările selectate vor fi transmise către fluxul dumneavoastră de lucru. Se configurează pentru un obiect dat. Mai multe înregistrări pot fi selectate înainte de a declanșa fluxul de lucru. Fluxul de lucru va rula o singură dată, oferind întreaga listă de înregistrări ca intrare. Aceasta înseamnă că fluxul de lucru trebuie să conțină o [acțiune Iterator](/l/ro/user-guide/workflows/capabilities/workflow-actions#iterator).
+* **Bulk**: Fluxul de lucru va rula o dată, furnizând întreaga listă de înregistrări ca intrare. Aceasta înseamnă că fluxul de lucru trebuie să conțină o [acțiune Iterator](/l/ro/user-guide/workflows/capabilities/workflow-actions#iterator).
 
 <Note>
 Acest lucru este mai avansat, și cel mai bine pentru cei care doresc să optimizeze numărul de alergări de fluxuri de lucru.

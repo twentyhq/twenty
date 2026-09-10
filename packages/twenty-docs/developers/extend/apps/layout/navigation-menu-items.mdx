@@ -13,7 +13,7 @@ import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
 export default defineNavigationMenuItem({
   universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
   name: 'example-navigation-menu-item',
-  icon: 'IconList',
+  icon: 'IconCompass',
   color: 'blue',
   position: 0,
   type: NavigationMenuItemType.VIEW,
@@ -39,5 +39,5 @@ export default defineNavigationMenuItem({
 - `folderUniversalIdentifier` is also available on any item to nest it inside a `FOLDER`-type parent.
 
 <Note>
-**Common pitfall:** creating an object without an associated view + navigation menu item makes that object invisible to users. Unless it's a technical/internal object, every custom object should have a default view *and* a sidebar entry pointing at it.
+**Common pitfall:** creating an object without an associated navigation menu item makes that object unreachable from the sidebar. Unless it's a technical/internal object, every custom object should have a sidebar entry pointing at it.
 </Note>

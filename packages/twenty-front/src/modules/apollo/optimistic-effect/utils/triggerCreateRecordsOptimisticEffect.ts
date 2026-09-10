@@ -135,6 +135,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
               record: recordToCreate,
               filter: rootQueryFilter,
               objectMetadataItem,
+              objectMetadataItems,
             })
           ) {
             return [];
@@ -200,6 +201,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
   triggerUpdateGroupByQueriesOptimisticEffect({
     cache,
     objectMetadataItem,
+    objectMetadataItems,
     operation: 'create',
     records: recordsToCreate,
     shouldMatchRootQueryFilter,

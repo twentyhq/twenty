@@ -7,7 +7,7 @@ export const LATEST_RELEASE: {
   title: string;
   previewImage: string;
 } = {
-  release: '2.0.0',
-  title: 'Build an app',
-  previewImage: '/images/releases/2.0/2.0.0-build-anything.webp',
+  release: '2.26.0',
+  title: 'Richer relation layouts',
+  previewImage: '/images/releases/2.0/2.0.0-custom-layouts.webp',
 };

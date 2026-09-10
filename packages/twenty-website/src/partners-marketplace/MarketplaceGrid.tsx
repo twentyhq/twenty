@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 
 import { mediaUp, spacing } from '@/tokens';
 
@@ -22,13 +23,17 @@ const CardGrid = styled.div`
 `;
 
 type MarketplaceGridProps = {
+  matchCardCta: ReactNode;
   partners: readonly MarketplacePartner[];
 };
 
-export function MarketplaceGrid({ partners }: MarketplaceGridProps) {
+export function MarketplaceGrid({
+  matchCardCta,
+  partners,
+}: MarketplaceGridProps) {
   return (
     <CardGrid>
-      <MarketplaceMatchCard index={0} />
+      <MarketplaceMatchCard cta={matchCardCta} index={0} />
       {partners.map((partner, index) => (
         <PartnerCard key={partner.slug} partner={partner} index={index + 1} />
       ))}

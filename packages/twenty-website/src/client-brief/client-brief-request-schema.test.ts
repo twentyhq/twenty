@@ -68,4 +68,22 @@ describe('clientBriefRequestSchema', () => {
         .success,
     ).toBe(false);
   });
+
+  it('accepts a payload carrying a referring partner slug', () => {
+    expect(
+      clientBriefRequestSchema.safeParse({
+        ...minimalValid,
+        partnerSlug: 'acme-consulting',
+      }).success,
+    ).toBe(true);
+  });
+
+  it('rejects a malformed partner slug', () => {
+    expect(
+      clientBriefRequestSchema.safeParse({
+        ...minimalValid,
+        partnerSlug: 'Acme Consulting!',
+      }).success,
+    ).toBe(false);
+  });
 });

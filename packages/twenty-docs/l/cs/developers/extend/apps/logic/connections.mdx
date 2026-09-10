@@ -42,6 +42,12 @@ export default defineConnectionProvider({
     // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
     // revokeEndpoint: 'https://example.com/oauth/revoke',
   },
+  // Optional: a logic function in this app to run right after a connection is
+  // established. See "Run a logic function on connect".
+  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // Optional: a logic function in this app to run right after a connection is
+  // removed. See "Run a logic function on disconnect".
+  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
 });
 ```
 
@@ -84,6 +90,76 @@ URL zpětného volání OAuth, kterou musí váš poskytovatel zařadit na sezna
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="Spusťte logickou funkci při připojení" description="Reagujte ve chvíli, kdy je připojení navázáno">
+
+Někteří poskytovatelé vám při připojení předají data, která je potřeba uložit dříve, než lze připojení používat — klasickým příkladem je Slack, kde odpověď OAuth určuje `team_id` pracovního prostoru, podle kterého budou příchozí události indexovány. Nastavte `onConnectLogicFunction` tak, aby odkazovala na logickou funkci ve stejné aplikaci (podle jejího `universalIdentifier`), a ta se spustí hned poté, co je vytvořen `ConnectedAccount`.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs claimSlackTeam after every successful Slack connection.
+  onConnectLogicFunction: {
+    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
+  },
+});
+```
+
+Hook běží **asynchronně v připojujícím se pracovním prostoru** (je zařazen do fronty, nečeká se na něj), takže pomalý nebo chybující hook nikdy neblokuje ani nenaruší OAuth callback — udělejte jej idempotentní a zajistěte, aby sám zpracovával opakované pokusy. Obslužná funkce přijímá:
+
+```ts
+type OnConnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+Odtud použijte `getConnection(connectedAccountId)` ke čtení čerstvého přístupového tokenu a zavolejte API poskytovatele (např. Slack `auth.test`) nebo uložte mapování pomocí [úložiště klíč–hodnota](/l/cs/developers/extend/apps/logic/key-value-store).
+
+</Accordion>
+
+<Accordion title="Spusťte logickou funkci při odpojení" description="Proveďte vyčištění při odstranění připojení">
+
+Cokoli, co aplikace nárokuje v čase připojení, musí být uvolněno, jakmile připojení zanikne. Integrace Slacku, která si například při připojení nárokuje `team_id`, musí tento nárok uvolnit, aby se mohl jiný pracovní prostor připojit ke stejnému týmu ve Slacku. Nastavte `onDisconnectLogicFunction` tak, aby odkazovala na logickou funkci ve stejné aplikaci, a ta se spustí hned poté, co je `ConnectedAccount` smazán.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+Stejně jako hook pro připojení běží **asynchronně v odpojovaném pracovním prostoru** a nikdy neblokuje odpojení. Handler dostává stejný tvar payloadu:
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+`ConnectedAccount` už v době spuštění hooku neexistuje, takže `getConnection(connectedAccountId)` už nic nevrátí. Všechno, co čištění potřebuje (například `team_id`, externí ID předplatného), muselo být při připojení zapsáno do [key-value store](/l/cs/developers/extend/apps/logic/key-value-store) pod klíčem `connectedAccountId`.
+
+Hook se spustí, když se připojení odstraní samostatně. Odinstalace aplikace zruší její připojení pomocí kaskádového mazání v databázi, takže se hook v tomto případě nespustí. Pro tento případ deklarujte `uninstallLogicFunction` na `defineApplication`: spustí se před tím, než jsou smazána metadata aplikace, takže může stále volat `listConnections` a dočistit vše, co zůstalo.
 
 </Accordion>
 
@@ -136,15 +212,16 @@ export const createLinearIssueHandler = async (input: {
 
 Každé připojení má:
 
-| Pole              | Popis                                                                                                      |
-| ----------------- | ---------------------------------------------------------------------------------------------------------- |
-| `id`              | Jedinečné ID řádku; předejte do `getConnection(id)` pro opětovné načtení jednoho záznamu                   |
-| `visibility`      | `'user'` (soukromé pro jednoho člena pracovního prostoru) nebo `'workspace'` (sdílené se všemi členy)      |
-| `scopes`          | Oprávnění OAuth udělená poskytovatelem (odlišná od `visibility` — ty spolu nesouvisejí)                    |
-| `userWorkspaceId` | ID `userWorkspace` vlastníka — užitečné pro výběr "připojení uživatele požadavku" ve spouštěčích tras HTTP |
-| `accessToken`     | Aktuální přístupový token OAuth (v případě vypršení je automaticky obnoven)                                |
-| `name` / `handle` | Zobrazovaný název připojení (automaticky odvozený při OAuth callbacku, uživatelem přejmenovatelný)         |
-| `authFailedAt`    | Nastaveno, když poslední obnovení selhalo; uživatel se musí znovu připojit                                 |
+| Pole              | Popis                                                                                                                                                                                                                                     |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | Jedinečné ID řádku; předejte do `getConnection(id)` pro opětovné načtení jednoho záznamu                                                                                                                                                  |
+| `visibility`      | `'user'` (soukromé pro jednoho člena pracovního prostoru) nebo `'workspace'` (sdílené se všemi členy)                                                                                                                                     |
+| `scopes`          | Oprávnění OAuth udělená poskytovatelem (odlišná od `visibility` — ty spolu nesouvisejí)                                                                                                                                                   |
+| `userWorkspaceId` | ID `userWorkspace` vlastníka — užitečné pro výběr "připojení uživatele požadavku" ve spouštěčích tras HTTP                                                                                                                                |
+| `accessToken`     | Aktuální přístupový token OAuth (v případě vypršení je automaticky obnoven)                                                                                                                                                               |
+| `name`            | Zobrazovaný název připojení (automaticky odvozený při OAuth callbacku, uživatelem přejmenovatelný)                                                                                                                                        |
+| `handle`          | e-mail, který je připojen na předcházející účet, aktualizován při každém opětovném propojení; vyřešeno z OIDC `id_token` vráceno při výměně tokenu, spadne se zpět na spojovací e-mail dvaceti uživatelů, pokud jej poskytovatel nevrátí. |
+| `authFailedAt`    | Nastaveno, když poslední obnovení selhalo; uživatel se musí znovu připojit                                                                                                                                                                |
 
 Hlavní body:
 

@@ -127,6 +127,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isActive": true,
         "isLabelSyncedWithName": false,
         "isNullable": true,
+        "isSearchable": false,
         "isSystem": false,
         "isSystemSideEffect": false,
         "isUIEditable": true,
@@ -151,6 +152,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "viewFieldUniversalIdentifiers": [],
         "viewFilterUniversalIdentifiers": [],
         "viewSortUniversalIdentifiers": [],
+        "writability": "OPEN",
       },
       {
         "applicationUniversalIdentifier": Any<String>,
@@ -164,6 +166,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isActive": true,
         "isLabelSyncedWithName": false,
         "isNullable": true,
+        "isSearchable": false,
         "isSystem": false,
         "isSystemSideEffect": false,
         "isUIEditable": true,
@@ -190,6 +193,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "viewFieldUniversalIdentifiers": [],
         "viewFilterUniversalIdentifiers": [],
         "viewSortUniversalIdentifiers": [],
+        "writability": "OPEN",
       },
       {
         "applicationUniversalIdentifier": Any<String>,
@@ -203,6 +207,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isActive": true,
         "isLabelSyncedWithName": false,
         "isNullable": true,
+        "isSearchable": false,
         "isSystem": false,
         "isSystemSideEffect": false,
         "isUIEditable": true,
@@ -227,6 +232,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "viewFieldUniversalIdentifiers": [],
         "viewFilterUniversalIdentifiers": [],
         "viewSortUniversalIdentifiers": [],
+        "writability": "OPEN",
       },
       {
         "applicationUniversalIdentifier": Any<String>,
@@ -240,6 +246,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isActive": true,
         "isLabelSyncedWithName": false,
         "isNullable": true,
+        "isSearchable": false,
         "isSystem": false,
         "isSystemSideEffect": false,
         "isUIEditable": true,
@@ -266,6 +273,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "viewFieldUniversalIdentifiers": [],
         "viewFilterUniversalIdentifiers": [],
         "viewSortUniversalIdentifiers": [],
+        "writability": "OPEN",
       },
     ],
     "indexMetadatas": [

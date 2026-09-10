@@ -1,6 +1,7 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
 import {
+  PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -10,6 +11,8 @@ describe('filterVisibleWidgets', () => {
     id: string,
     conditionalDisplay?: any,
   ): PageLayoutTab['widgets'][0] => ({
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     __typename: 'PageLayoutWidget',
     id,
     applicationId: '',
@@ -18,8 +21,9 @@ describe('filterVisibleWidgets', () => {
     title: `Widget ${id}`,
     type: WidgetType.FIELDS,
     objectMetadataId: null,
-    gridPosition: {
-      __typename: 'GridPosition',
+    position: {
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      __typename: 'PageLayoutWidgetGridPosition',
       row: 0,
       column: 0,
       rowSpan: 1,
@@ -45,7 +49,7 @@ describe('filterVisibleWidgets', () => {
 
     const result = filterVisibleWidgets({
       widgets,
-      context: { device: 'DESKTOP' },
+      context: { device: 'DESKTOP', selectedRecords: [] },
     });
 
     expect(result).toHaveLength(3);
@@ -65,7 +69,7 @@ describe('filterVisibleWidgets', () => {
 
     const result = filterVisibleWidgets({
       widgets,
-      context: { device: 'MOBILE' },
+      context: { device: 'MOBILE', selectedRecords: [] },
     });
 
     expect(result).toHaveLength(2);
@@ -85,7 +89,7 @@ describe('filterVisibleWidgets', () => {
 
     const result = filterVisibleWidgets({
       widgets,
-      context: { device: 'DESKTOP' },
+      context: { device: 'DESKTOP', selectedRecords: [] },
     });
 
     expect(result).toHaveLength(2);
@@ -95,7 +99,7 @@ describe('filterVisibleWidgets', () => {
   it('should handle empty widgets array', () => {
     const result = filterVisibleWidgets({
       widgets: [],
-      context: { device: 'DESKTOP' },
+      context: { device: 'DESKTOP', selectedRecords: [] },
     });
 
     expect(result).toHaveLength(0);
@@ -113,7 +117,7 @@ describe('filterVisibleWidgets', () => {
 
     filterVisibleWidgets({
       widgets,
-      context: { device: 'DESKTOP' },
+      context: { device: 'DESKTOP', selectedRecords: [] },
     });
 
     expect(widgets).toHaveLength(originalLength);

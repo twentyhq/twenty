@@ -1,6 +1,5 @@
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
 import {
   type AnimationControls,
@@ -22,28 +21,23 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
 }) => {
   const { theme } = useContext(ThemeContext);
   const isSettingsPage = useIsSettingsPage();
-  const isNavigationDrawerExpanded = useAtomStateValue(
-    isNavigationDrawerExpandedState,
-  );
+  const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
 
-  if (isSettingsPage) {
-    return children;
-  }
+  const shouldShowContent = isSettingsPage || isNavigationDrawerExpanded;
 
-  const animate: AnimationControls | TargetAndTransition =
-    isNavigationDrawerExpanded
-      ? {
-          opacity: 1,
-          width: 'auto',
-          height: 'auto',
-          pointerEvents: 'auto',
-        }
-      : {
-          opacity: 0,
-          width: 0,
-          height: 0,
-          pointerEvents: 'none',
-        };
+  const animate: AnimationControls | TargetAndTransition = shouldShowContent
+    ? {
+        opacity: 1,
+        width: 'auto',
+        height: 'auto',
+        pointerEvents: 'auto',
+      }
+    : {
+        opacity: 0,
+        width: 0,
+        height: 0,
+        pointerEvents: 'none',
+      };
 
   return (
     <StyledAnimatedContainer

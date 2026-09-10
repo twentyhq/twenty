@@ -4,8 +4,9 @@ import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/fla
 import { type FlatCommandMenuItemMaps } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item-maps.type';
 import { type FlatConnectionProviderMaps } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider-maps.type';
 import { type FlatConnectionProvider } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider.type';
+import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type-maps.type';
+import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatFieldPermissionMaps } from 'src/engine/metadata-modules/flat-field-permission/types/flat-field-permission-maps.type';
@@ -47,6 +48,11 @@ import { type FlatViewSortMaps } from 'src/engine/metadata-modules/flat-view-sor
 import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FlatSearchFieldMetadataMaps } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata-maps.type';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
+import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-maps.type';
+import { type FlatIndexMetadataMaps } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata-maps.type';
+import { type FlatLogicFunctionMaps } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function-maps.type';
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-maps.type';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
@@ -62,6 +68,7 @@ import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-module
 import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent.type';
 import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 import { type UniversalFlatConnectionProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-connection-provider.type';
+import { type UniversalFlatTimelineActivityType } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-timeline-activity-type.type';
 import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
 import { type UniversalFlatFrontComponent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-front-component.type';
@@ -114,6 +121,14 @@ import {
   type UniversalDeleteConnectionProviderAction,
   type UniversalUpdateConnectionProviderAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/connection-provider/types/workspace-migration-connection-provider-action.type';
+import {
+  type FlatCreateTimelineActivityTypeAction,
+  type FlatDeleteTimelineActivityTypeAction,
+  type FlatUpdateTimelineActivityTypeAction,
+  type UniversalCreateTimelineActivityTypeAction,
+  type UniversalDeleteTimelineActivityTypeAction,
+  type UniversalUpdateTimelineActivityTypeAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/timeline-activity-type/types/workspace-migration-timeline-activity-type-action.type';
 import {
   type FlatCreateFieldPermissionAction,
   type FlatDeleteFieldPermissionAction,
@@ -341,7 +356,7 @@ import {
 
 export type AllFlatEntityTypesByMetadataName = {
   fieldMetadata: {
-    flatEntityMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatEntityMaps: FlatFieldMetadataMaps;
     universalActions: {
       create: UniversalCreateFieldAction;
       update: UniversalUpdateFieldAction;
@@ -360,7 +375,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'fieldMetadata'>;
   };
   objectMetadata: {
-    flatEntityMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatEntityMaps: FlatObjectMetadataMaps;
     universalActions: {
       create: UniversalCreateObjectAction;
       update: UniversalUpdateObjectAction;
@@ -504,7 +519,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'viewFilterGroup'>;
   };
   index: {
-    flatEntityMaps: FlatEntityMaps<FlatIndexMetadata>;
+    flatEntityMaps: FlatIndexMetadataMaps;
     universalActions: {
       create: UniversalCreateIndexAction;
       update: UniversalUpdateIndexAction;
@@ -520,7 +535,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'index'>;
   };
   logicFunction: {
-    flatEntityMaps: FlatEntityMaps<FlatLogicFunction>;
+    flatEntityMaps: FlatLogicFunctionMaps;
     universalActions: {
       create: UniversalCreateLogicFunctionAction;
       update: UniversalUpdateLogicFunctionAction;
@@ -552,7 +567,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'viewFilter'>;
   };
   role: {
-    flatEntityMaps: FlatEntityMaps<FlatRole>;
+    flatEntityMaps: FlatRoleMaps;
     universalActions: {
       create: UniversalCreateRoleAction;
       update: UniversalUpdateRoleAction;
@@ -838,5 +853,21 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatSearchFieldMetadata;
     universalFlatEntity: UniversalFlatSearchFieldMetadata;
     entity: MetadataEntity<'searchFieldMetadata'>;
+  };
+  timelineActivityType: {
+    flatEntityMaps: FlatTimelineActivityTypeMaps;
+    universalActions: {
+      create: UniversalCreateTimelineActivityTypeAction;
+      update: UniversalUpdateTimelineActivityTypeAction;
+      delete: UniversalDeleteTimelineActivityTypeAction;
+    };
+    flatActions: {
+      create: FlatCreateTimelineActivityTypeAction;
+      update: FlatUpdateTimelineActivityTypeAction;
+      delete: FlatDeleteTimelineActivityTypeAction;
+    };
+    flatEntity: FlatTimelineActivityType;
+    universalFlatEntity: UniversalFlatTimelineActivityType;
+    entity: MetadataEntity<'timelineActivityType'>;
   };
 };

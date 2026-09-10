@@ -12,12 +12,16 @@ import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-man
 
 const PAGE_LAYOUT_EXCEPTION_CODE = {
   PAGE_LAYOUT_NOT_FOUND: 'PAGE_LAYOUT_NOT_FOUND',
+  INVALID_PAGE_LAYOUT_DATA: 'INVALID_PAGE_LAYOUT_DATA',
 } as const;
 
 @Injectable()
 export class FlatPageLayoutValidatorService {
   public validateFlatPageLayoutCreation({
     flatEntityToValidate: flatPageLayout,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatObjectMetadataMaps,
+    },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.pageLayout
   >): FailedFlatEntityValidation<'pageLayout', 'create'> {
@@ -29,6 +33,22 @@ export class FlatPageLayoutValidatorService {
       metadataName: 'pageLayout',
       type: 'create',
     });
+
+    // Workspace-level layouts are not attached to any object
+    if (isDefined(flatPageLayout.objectMetadataUniversalIdentifier)) {
+      const optimisticFlatObjectMetadata = findFlatEntityByUniversalIdentifier({
+        universalIdentifier: flatPageLayout.objectMetadataUniversalIdentifier,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+
+      if (!isDefined(optimisticFlatObjectMetadata)) {
+        validationResult.errors.push({
+          code: PAGE_LAYOUT_EXCEPTION_CODE.INVALID_PAGE_LAYOUT_DATA,
+          message: t`Object metadata not found`,
+          userFriendlyMessage: msg`Object metadata not found`,
+        });
+      }
+    }
 
     return validationResult;
   }

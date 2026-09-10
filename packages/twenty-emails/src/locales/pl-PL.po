@@ -46,7 +46,7 @@ msgstr "Dodaj metodę płatności"
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "After that, the workspace and all of its data will be permanently deleted — and we won't be able to bring it back."
-msgstr "Po tym czasie miejsce pracy i wszystkie jego dane zostaną trwale usunięte — i nie będziemy mogli ich przywrócić."
+msgstr "Po tym czasie przestrzeń robocza i wszystkie jej dane zostaną trwale usunięte — nie będziemy mogli ich przywrócić."
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -86,7 +86,7 @@ msgstr "Wyłączony"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Enabled"
-msgstr "Włączone"
+msgstr "Włączony"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -96,7 +96,7 @@ msgstr "Github"
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Good news first: your workspace <0>{workspaceDisplayName}</0> is only paused — none of your data is gone."
-msgstr "Najpierw dobre wieści: Twoje miejsce pracy <0>{workspaceDisplayName}</0> jest tylko wstrzymane — żadna z Twoich danych nie została utracona."
+msgstr "Najpierw dobre wiadomości: Twoja przestrzeń robocza <0>{workspaceDisplayName}</0> jest tylko wstrzymana — żadne Twoje dane nie zostały utracone."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -130,12 +130,12 @@ msgstr "Jeśli to nie Ty zainicjowałeś tę zmianę, skontaktuj się niezwłocz
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
-msgstr "Jeśli nic nie zrobisz, wstrzymamy Twoje miejsce pracy i będziemy bezpiecznie przechowywać Twoje dane przez {dataRetentionDays} dni na wypadek, gdybyś zmienił zdanie — żadna karta nie zostanie obciążona."
+msgstr "Jeśli nic nie zrobisz, wstrzymamy Twoją przestrzeń roboczą i będziemy bezpiecznie przechowywać Twoje dane przez {dataRetentionDays} dni na wypadek, gdybyś zmienił zdanie — żadna karta nie zostanie obciążona."
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
-msgstr "Jeśli kiedykolwiek będziesz chciał ponownie wypróbować Twenty, możesz w kilka minut uruchomić nowe miejsce pracy — z przyjemnością powitamy Cię z powrotem."
+msgstr "Jeśli kiedykolwiek zechcesz ponownie wypróbować Twenty, możesz w kilka minut utworzyć nową przestrzeń roboczą — z przyjemnością powitamy Cię z powrotem."
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
@@ -145,7 +145,7 @@ msgstr "To jest CRM, oprogramowanie pomagające firmom w zarządzaniu danymi i r
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Its data has been removed and can no longer be recovered."
-msgstr "Jego dane zostały usunięte i nie można ich już odzyskać."
+msgstr "Jej dane zostały usunięte i nie można ich już odzyskać."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -176,12 +176,12 @@ msgstr "Hasło zaktualizowane"
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Reactivate it within the next {remainingDays} {dayOrDays} and you'll pick up exactly where you left off, with every record, view and setting right where you left it."
-msgstr "Aktywuj je ponownie w ciągu najbliższych {remainingDays} {dayOrDays}, a będziesz mógł kontynuować dokładnie tam, gdzie przerwałeś, z każdym rekordem, widokiem i ustawieniem na swoim miejscu."
+msgstr "Aktywuj ją ponownie w ciągu najbliższych {remainingDays} {dayOrDays}, a będziesz mógł kontynuować dokładnie tam, gdzie przerwałeś — każdy rekord, widok i ustawienie pozostaną na swoim miejscu."
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Reactivate workspace"
-msgstr "Aktywuj ponownie miejsce pracy"
+msgstr "Aktywuj ponownie przestrzeń roboczą"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -211,22 +211,22 @@ msgstr "Zmieniono dostęp administratora serwera"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.fullAdmin"
-msgstr "serverAdminAccessChanged.fullAdmin"
+msgstr "Pełne uprawnienia administratora"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.impersonation"
-msgstr "serverAdminAccessChanged.impersonation"
+msgstr "Podszywanie się pod użytkownika"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.summary"
-msgstr "serverAdminAccessChanged.summary"
+msgstr "Zmiana dostępu administratora serwera — podsumowanie"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.warning"
-msgstr "serverAdminAccessChanged.warning"
+msgstr "Ostrzeżenie"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -241,7 +241,7 @@ msgstr "Ustaw swoje hasło 🗝"
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Start a new workspace"
-msgstr "Rozpocznij nowe miejsce pracy"
+msgstr "Utwórz nową przestrzeń roboczą"
 
 #. js-lingui-explicit-id
 #: src/emails/test.email.tsx
@@ -261,7 +261,7 @@ msgstr "Ten link jest ważny tylko przez {duration}. Jeśli link nie działa, mo
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
-msgstr "Aby zachować swoje miejsce pracy i wszystko, co w nim stworzyłeś, dodaj metodę płatności i wybierz plan."
+msgstr "Aby zachować swoją przestrzeń roboczą i wszystko, co w niej stworzyłeś, dodaj metodę płatności i wybierz plan."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -347,14 +347,14 @@ msgstr "Twój okres próbny wkrótce się kończy"
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
-msgstr "Twoje miejsce pracy <0>{workspaceDisplayName}</0> zostało teraz trwale usunięte — zostało wstrzymane {daysSinceInactive} dni temu i nie zostało ponownie aktywowane na czas."
+msgstr "Twoja przestrzeń robocza <0>{workspaceDisplayName}</0> została teraz trwale usunięta — wstrzymano ją {daysSinceInactive} dni temu i nie została ponownie aktywowana na czas."
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Your workspace has been deleted"
-msgstr "Twoje miejsce pracy zostało usunięte"
+msgstr "Twoja przestrzeń robocza została usunięta"
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Your workspace is paused"
-msgstr "Twoje miejsce pracy jest wstrzymane"
+msgstr "Twoja przestrzeń robocza jest wstrzymana"

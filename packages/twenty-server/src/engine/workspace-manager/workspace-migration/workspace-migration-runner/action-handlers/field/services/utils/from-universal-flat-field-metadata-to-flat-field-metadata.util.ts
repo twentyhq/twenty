@@ -127,7 +127,6 @@ export const fromUniversalFlatFieldMetadataToFlatFieldMetadata = ({
     relationTargetObjectMetadataUniversalIdentifier:
       relationTargetObjectMetadataUniversalIdentifier ?? null,
     applicationUniversalIdentifier,
-    // Empty aggregator arrays for newly created entities
     viewFieldIds: [],
     viewFilterIds: [],
     fieldPermissionIds: [],

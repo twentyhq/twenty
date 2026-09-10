@@ -1,0 +1,1 @@
+export const STALE_CHUNK_RELOAD_COOLDOWN_MS = 60_000;

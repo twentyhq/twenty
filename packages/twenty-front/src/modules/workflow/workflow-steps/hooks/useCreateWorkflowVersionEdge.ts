@@ -7,12 +7,13 @@ import {
   type CreateWorkflowVersionEdgeInput,
 } from '~/generated/graphql';
 import { CREATE_WORKFLOW_VERSION_EDGE } from '@/workflow/graphql/mutations/createWorkflowVersionEdge';
-import { useUpdateWorkflowVersionCache } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionCache';
+import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
 
 export const useCreateWorkflowVersionEdge = () => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { updateWorkflowVersionCache } = useUpdateWorkflowVersionCache();
+  const { applyWorkflowVersionStepChanges } =
+    useApplyWorkflowVersionStepChanges();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const [mutate] = useMutation<
@@ -32,7 +33,7 @@ export const useCreateWorkflowVersionEdge = () => {
 
     const workflowVersionStepChanges = result?.data?.createWorkflowVersionEdge;
 
-    updateWorkflowVersionCache({
+    applyWorkflowVersionStepChanges({
       workflowVersionStepChanges,
       workflowVersionId: input.workflowVersionId,
     });

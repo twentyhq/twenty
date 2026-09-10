@@ -68,6 +68,42 @@ describe('runAgent', () => {
     });
   });
 
+  it('POSTs messages when provided instead of prompt', async () => {
+    const payload = {
+      result: { response: 'done' },
+      error: null,
+      success: true,
+    };
+
+    fetchSpy.mockResolvedValue(
+      new Response(JSON.stringify({ data: { runAgent: payload } }), {
+        status: 200,
+      }),
+    );
+
+    const messages = [
+      { role: 'user' as const, content: 'Hello' },
+      { role: 'assistant' as const, content: 'Hi' },
+      { role: 'user' as const, content: 'Status?' },
+    ];
+
+    const result = await runAgent({
+      agentUniversalIdentifier: 'agent-uid',
+      messages,
+    });
+
+    expect(result).toEqual(payload);
+
+    const sentBody = JSON.parse(fetchSpy.mock.calls[0][1]?.body as string);
+
+    expect(sentBody.variables).toEqual({
+      input: {
+        agentUniversalIdentifier: 'agent-uid',
+        messages,
+      },
+    });
+  });
+
   it('surfaces GraphQL errors as a regular Error', async () => {
     fetchSpy.mockResolvedValue(
       new Response(

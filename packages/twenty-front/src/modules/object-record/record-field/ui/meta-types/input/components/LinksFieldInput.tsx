@@ -1,3 +1,4 @@
+import { getLinksVariant } from '@/object-record/spreadsheet-import/utils/getLinksVariant';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useLinksField } from '@/object-record/record-field/ui/meta-types/hooks/useLinksField';
 import { LinksFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldMenuItem';
@@ -9,7 +10,11 @@ import { linksFieldValueSchema } from '@/object-record/record-field/ui/validatio
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext, useMemo } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
-import { absoluteUrlSchema, isDefined } from 'twenty-shared/utils';
+import {
+  absoluteUrlSchema,
+  isDefined,
+  isValidDomain,
+} from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
@@ -21,7 +26,7 @@ type LinkRecord = {
 export const LinksFieldInput = () => {
   const { draftValue, fieldDefinition, setDraftValue } = useLinksField();
 
-  const { onEscape, onClickOutside, onEnter } = useContext(
+  const { onEscape, onClickOutside, onEnter, onSubmit } = useContext(
     FieldInputEventContext,
   );
 
@@ -80,9 +85,27 @@ export const LinksFieldInput = () => {
     onEnter?.({ newValue: parseArrayToLinksValue(updatedLinks) });
   };
 
+  const handleSubmit = (updatedLinks: LinkRecord[]) => {
+    onSubmit?.({
+      newValue: parseArrayToLinksValue(updatedLinks),
+      skipClose: true,
+    });
+  };
+
   const maxNumberOfValues =
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
     MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
+
+  const isDomainField =
+    getLinksVariant({
+      type: FieldMetadataType.LINKS,
+      settings: fieldDefinition.metadata.settings,
+    }) === 'domain';
+
+  const validateInput = (input: string) =>
+    isDomainField
+      ? isValidDomain(input)
+      : absoluteUrlSchema.safeParse(input).success;
 
   return (
     <MultiItemFieldInput
@@ -90,11 +113,12 @@ export const LinksFieldInput = () => {
       onChange={handleChange}
       onEscape={handleEscape}
       onEnter={handleEnter}
+      onSubmit={handleSubmit}
       onClickOutside={handleClickOutside}
-      placeholder="URL"
+      placeholder={isDomainField ? 'Domain' : 'URL'}
       fieldMetadataType={FieldMetadataType.LINKS}
       validateInput={(input) => ({
-        isValid: absoluteUrlSchema.safeParse(input).success,
+        isValid: validateInput(input),
         errorMessage: '',
       })}
       onError={handleError}

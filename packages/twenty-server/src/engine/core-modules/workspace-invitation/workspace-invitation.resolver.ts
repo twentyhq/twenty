@@ -17,7 +17,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -35,7 +35,7 @@ import { SendInvitationsInput } from './dtos/send-invitations.input';
 @MetadataResolver()
 export class WorkspaceInvitationResolver {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
   ) {}
 
@@ -60,23 +60,19 @@ export class WorkspaceInvitationResolver {
     const authContext = buildSystemAuthContext(workspace.id);
 
     const workspaceMember =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspace.id,
-              'workspaceMember',
-              { shouldBypassPermissionChecks: true },
-            );
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workspaceMemberRepository =
+          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
 
-          return workspaceMemberRepository.findOneOrFail({
-            where: {
-              userId: user.id,
-            },
-          });
-        },
-        authContext,
-      );
+        return workspaceMemberRepository.findOneOrFail({
+          where: {
+            userId: user.id,
+          },
+        });
+      }, authContext);
 
     return this.workspaceInvitationService.resendWorkspaceInvitation(
       appTokenId,
@@ -100,29 +96,25 @@ export class WorkspaceInvitationResolver {
     const authContext = buildSystemAuthContext(workspace.id);
 
     const workspaceMember =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspace.id,
-              'workspaceMember',
-              { shouldBypassPermissionChecks: true },
-            );
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workspaceMemberRepository =
+          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
 
-          return workspaceMemberRepository.findOneOrFail({
-            where: {
-              userId: user.id,
-            },
-          });
-        },
-        authContext,
-      );
+        return workspaceMemberRepository.findOneOrFail({
+          where: {
+            userId: user.id,
+          },
+        });
+      }, authContext);
 
-    return await this.workspaceInvitationService.sendInvitations(
-      sendInviteLinkInput.emails,
+    return await this.workspaceInvitationService.sendInvitations({
+      emails: sendInviteLinkInput.emails,
       workspace,
-      workspaceMember,
-      sendInviteLinkInput.roleId ?? undefined,
-    );
+      sender: workspaceMember,
+      roleId: sendInviteLinkInput.roleId ?? undefined,
+    });
   }
 }

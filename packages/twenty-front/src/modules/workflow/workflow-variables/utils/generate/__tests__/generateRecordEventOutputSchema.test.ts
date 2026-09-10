@@ -261,7 +261,7 @@ describe('generateRecordEventOutputSchema', () => {
       });
     });
 
-    it('should convert MORPH_RELATION fields to prefixed UUID id fields when MANY_TO_ONE', () => {
+    it('should expand MORPH_RELATION fields into one prefixed UUID id field per target when MANY_TO_ONE', () => {
       const objectMetadataItem = createMockObjectMetadataItem({
         fields: [
           {
@@ -275,6 +275,22 @@ describe('generateRecordEventOutputSchema', () => {
             settings: {
               relationType: RelationType.MANY_TO_ONE,
             },
+            morphRelations: [
+              {
+                type: RelationType.MANY_TO_ONE,
+                targetObjectMetadata: {
+                  nameSingular: 'company',
+                  namePlural: 'companies',
+                },
+              },
+              {
+                type: RelationType.MANY_TO_ONE,
+                targetObjectMetadata: {
+                  nameSingular: 'person',
+                  namePlural: 'people',
+                },
+              },
+            ],
           },
         ] as any,
       });
@@ -284,8 +300,16 @@ describe('generateRecordEventOutputSchema', () => {
         DatabaseEventAction.CREATED,
       );
 
-      expect(Object.keys(result.fields)).toContain('properties.after.targetId');
-      expect(result.fields['properties.after.targetId']).toMatchObject({
+      expect(Object.keys(result.fields)).toContain(
+        'properties.after.targetCompanyId',
+      );
+      expect(Object.keys(result.fields)).toContain(
+        'properties.after.targetPersonId',
+      );
+      expect(Object.keys(result.fields)).not.toContain(
+        'properties.after.targetId',
+      );
+      expect(result.fields['properties.after.targetCompanyId']).toMatchObject({
         isLeaf: true,
         type: FieldMetadataType.UUID,
       });

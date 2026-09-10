@@ -59,7 +59,7 @@ Chcete-li vyvolat logickou funkci spuštěnou trasou z (bezhlavé) front-endové
 * **cron**: Spouští vaši funkci podle plánu pomocí výrazu CRON.
 * **databaseEvent**: Spouští se při událostech životního cyklu objektů v pracovním prostoru. Když je operace události `updated`, lze konkrétní sledovaná pole určit v poli `updatedFields`. Pokud zůstane nedefinované nebo prázdné, spustí funkci jakákoli aktualizace.
 > např. `person.updated`, `*.created`, `company.*`
-* **serverRoute**: Zpřístupňuje jednu registrací omezenou trasu HTTP. Funkce **resolver** (deklarovaná pomocí `serverRouteTriggerSettings`) běží ve vlastnickém workspace a vrací cílový workspace i cílovou logickou funkci, na kterou se má směrovat; platforma poté spustí tuto **cílovou** funkci a vrátí její odpověď. Viz [spouštěč serverové trasy](#server-route-trigger).
+* **serverRoute**: Zpřístupňuje jednu registrací omezenou trasu HTTP. Funkce **resolver** (deklarovaná pomocí `serverRouteTriggerSettings`) běží ve vlastnickém workspace a buď vrátí synchronní `Response`, nebo cílový workspace a logickou funkci, která se má zařadit do fronty; v případě zařazení platforma potvrdí přijetí kódem `202` a spustí tuto **cílovou** funkci ve frontě workeru. Viz [spouštěč serverové trasy](#server-route-trigger).
 
 <Note>
 Funkci můžete také spustit ručně pomocí CLI:
@@ -172,19 +172,28 @@ Z bezpečnostních důvodů jsou hlavičky odpovědi omezeny na seznam povolený
 Stavový kód musí být platný stavový kód HTTP (mezi 100 a 599). Názvy hlaviček odpovědi se porovnávají bez rozlišení velikosti písmen.
 </Note>
 
+#### Chybové odpovědi platformy
+
+Kromě vlastních odpovědí vašeho handleru platforma v některých situacích odpovídá na volání rout přímo: `404`, když route nebo funkce neexistuje, `403`, když je aplikace zastavena, `429`, když je dosaženo limitu rychlosti vykonávání, a `422`, když jsou produkční `dependencies` aplikace příliš velké na to, aby se nainstalovaly — viz [dependencies size limits](/l/cs/developers/extend/apps/getting-started/project-structure#dependencies).
+
 #### Spouštěč serverové trasy
 
 `httpRouteTriggerSettings` zpřístupňuje funkci pod `/s/` a workspace určuje z hostitele požadavku — což funguje, když má každý workspace svou vlastní doménu. Poskytovatelé třetích stran však doručují události každého tenanta na **jednu** adresu URL. Pro tento případ použijte `serverRouteTriggerSettings`.
 
 Spouštěč má dvě části:
 
-1. Logická funkce **resolveru** — deklarovaná pomocí `serverRouteTriggerSettings` — běží ve vašem **vlastnickém workspace** (workspace, který je vlastníkem registrace aplikace). Prohlédne si příchozí request a vrátí `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }`, čímž zvolí *obě* — cílový workspace i cílovou funkci. Resolver je jediným místem autorizace — URL nese pouze identifikátor resolveru. **Toto je preferované místo pro ověřování podpisů requestů**: resolver běží před jakýmikoli vedlejšími efekty, má přístup k původnímu `rawBody` a předaným hlavičkám a může request odmítnout, aniž by se vůbec dotkl cíle.
-2. Cílová (**target**) logická funkce — běžná per-workspace logická funkce — pak běží v určeném workspace s payloadem vráceným resolverem (nebo s původním payloadem requestu, pokud jej resolver neupravil). Její návratová hodnota se stává HTTP odpovědí.
+1. Logická funkce **resolveru** — deklarovaná pomocí `serverRouteTriggerSettings` — běží ve vašem **vlastnickém workspace** (workspace, který je vlastníkem registrace aplikace). Prozkoumá příchozí požadavek a vrátí buď:
+
+   * `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — platforma zařadí tento cíl do fronty v určeném workspace a potvrdí přijetí s `202 { queued: true }`, nebo
+   * `Response` z `twenty-sdk/logic-function` — platforma tento HTTP response vrátí **synchronně** a cíl do fronty **ne**zařadí (použijte pro ověřovací handshake, například Slack `url_verification`).
+
+   Resolver je jediným místem autorizace — URL nese pouze identifikátor resolveru. **Toto je preferované místo pro ověřování podpisů requestů**: resolver běží před jakýmikoli vedlejšími efekty, má přístup k původnímu `rawBody` a předaným hlavičkám a může request odmítnout, aniž by se vůbec dotkl cíle.
+2. Cílová (**target**) logická funkce — běžná per-workspace logická funkce — pak běží v určeném workspace s payloadem vráceným resolverem (nebo s původním payloadem requestu, pokud jej resolver neupravil). Návratovou hodnotu volající HTTP **nevidí**, když resolver zvolí cestu zařazení do fronty.
 
 ```ts src/logic-functions/resolve-server-route.logic-function.ts
 import { createHmac, timingSafeEqual } from 'crypto';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { Response, type RoutePayload } from 'twenty-sdk/logic-function';
 
 // Runs in the owner workspace. Verifies the request signature, picks
 // which target function should handle the event, and returns the
@@ -211,12 +220,25 @@ const handler = async (event: RoutePayload) => {
   }
 
   const body = (event.body ?? {}) as {
+    challenge?: string;
     metadata?: { twentyWorkspaceId?: string };
     type?: string;
   };
 
+  // Handshakes must be answered on this same response, so reply from the
+  // resolver instead of returning a dispatch target.
+  if (body.type === 'url_verification') {
+    return new Response({ challenge: body.challenge });
+  }
+
+  const workspaceId = body.metadata?.twentyWorkspaceId;
+
+  if (!workspaceId) {
+    throw new Error('event is not linked to a workspace');
+  }
+
   return {
-    workspaceId: body.metadata?.twentyWorkspaceId ?? '',
+    workspaceId,
     // Route different event types to different target functions.
     targetLogicFunctionUniversalIdentifier:
       body.type === 'invoice.paid'
@@ -261,11 +283,33 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 Identifikátor je `universalIdentifier` resolveru z vašeho manifestu. Zaregistrujte tuto adresu URL u poskytovatele.
 
+**Odpověď na ověřovací požadavek GET.** Někteří poskytovatelé ověřují koncový bod před doručováním tím, že na stejnou adresu URL, na kterou budou později pomocí `POST` odesílat události, zašlou požadavek `GET` s výzvou — jedním z nich je WhatsApp Cloud API od společnosti Meta. Trasa serveru odpovídá pouze na `POST`, pokud neuvedete jinak, proto deklarujte obě metody:
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+Výzva dorazí v `event.queryStringParameters` a vrácením objektu `Response` ji ve stejném požadavku odešlete zpět poskytovateli. Tělo řetězce se odesílá jako `text/plain`, což tito poskytovatelé očekávají:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods` nahrazuje výchozí nastavení, namísto aby je doplňovalo, takže samotné `['GET']` způsobí, že trasa odmítne `POST`. Podporovány jsou pouze `GET` a `POST`. Ponechte je nenastavené, pokud poskytovatel nepotřebuje druhé sloveso: trasa, která deklaruje `GET`, bude mít svůj resolver spuštěný jakýmkoli neověřeným volajícím, včetně crawlerů a nástrojů pro rozbalení odkazů, které bez vyžádání odesílají `GET`. Na cokoli, pro co platforma nemá metodu, se odpoví `405`, aniž by se resolver kdy spustil.
+
 <Note>
 **Aplikace musí být převzata do vlastnictví a nainstalována v pracovním prostoru vlastníka.** Protože resolver běží v **pracovním prostoru vlastníka** (pracovní prostor, který vlastní registraci aplikace), spouštěč serverové trasy funguje pouze tehdy, když byla aplikace *převzata do vlastnictví* — tj. má pracovní prostor vlastníka — **a** tato aplikace je **nainstalována v pracovním prostoru vlastníka**. Dokud nejsou obě podmínky splněny, resolver nemá kde běžet, takže trasu nelze zpracovat. Aplikace, která zpřístupňuje logickou funkci `serverRouteTriggerSettings`, proto nemůže být uvedena na Marketplace, dokud není převzata do vlastnictví a nainstalována v pracovním prostoru vlastníka.
 </Note>
 
-**Smlouva resolveru.** Typ `LogicFunctionConfig` v SDK toto vynucuje v době kompilace: jakmile nastavíte `serverRouteTriggerSettings`, váš handler je omezen tak, aby vracel `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (nebo `Promise` této hodnoty). `workspaceId` musí být workspace, ve kterém je cílová funkce nainstalována, jinak je request odmítnut s chybou `404`.
+**Smlouva resolveru.** Typ `LogicFunctionConfig` v SDK toto vynucuje v době kompilace: jakmile nastavíte `serverRouteTriggerSettings`, váš handler je omezen tak, aby vracel buď `Response`, nebo `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (nebo `Promise` jedné z těchto možností). Na dispatch cestě musí být `workspaceId` workspace, ve kterém je cílová funkce nainstalována, jinak je request odmítnut s chybou `404`. Výsledek, který neodpovídá ani jedné z těchto struktur — včetně takového, jehož identifikátory nejsou UUID — je odmítnut s chybou `502`.
 
 | Pole                                     | Typ                  | Poznámky                                                                       |
 | ---------------------------------------- | -------------------- | ------------------------------------------------------------------------------ |
@@ -290,7 +334,9 @@ U podpisů requestů většina poskytovatelů podepisuje pomocí HMAC-SHA256; č
 Příklad resolveru výše už ukazuje GitHub HMAC-SHA256 flow — přizpůsobte název hlavičky, kódování digestu a podepsaný řetězec payloadu podle poskytovatele, se kterým se integrujete.
 
 <Note>
-Cíl běží **synchronně** a jeho návratová hodnota se stává HTTP odpovědí, takže volající vidí váš stavový kód a mohou opakovat požadavek při jiném než 2xx kódu. Udržujte oba handlery rychlé — některým poskytovatelům (např. Slack) vyprší časový limit během několika sekund. Protože je resolver dostupný jako veřejný endpoint, chraňte ho omezením rychlosti (rate limiting) na své edge vrstvě.
+Když resolver vrátí dispatch objekt, route odpoví `202 { queued: true }` a cíl běží ve frontě workeru — volající nikdy nevidí latenci cíle, výsledek ani chyby (ty jsou zaznamenané v logách běhu). Tím se zabrání tomu, aby opakované doručování na straně odesílatele znásobovalo zpomalení zpracování, což je přesně to, co chcete pro příjem webhooků.
+
+Když volající musí v rámci stejného requestu přečíst tělo odpovědi (challenge handshaky, interaktivní potvrzení), vraťte místo toho z **resolveru** `Response`. Platforma jej synchronně zopakuje a přeskočí frontu; jeho hlavičky procházejí stejným seznamem povolených položek jako odpovědi HTTP rout. Udržujte resolver rychlý — některým poskytovatelům (např. Slack) vyprší časový limit během několika sekund. Protože je resolver dostupný jako veřejný endpoint, chraňte ho omezením rychlosti (rate limiting) na své edge vrstvě.
 </Note>
 
 #### Payload spouštěče databázové události
@@ -401,6 +447,78 @@ const handler = async (event: PersonDestroyedEvent) => {
   };
 };
 ```
+
+#### Kontext provádění
+
+Každá obslužná funkce obdrží druhý argument popisující samotný běh bez ohledu na to, co jej spustilo. Zatímco tvar prvního argumentu se liší podle spouštěče, tento se nemění:
+
+```ts
+import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
+
+const handler = async (
+  event: DatabaseEventPayload,
+  { workspaceId, workspaceMemberId }: LogicFunctionExecutionContext,
+) => {
+  if (workspaceMemberId === null) {
+    throw new Error('This function must be triggered by a person');
+  }
+
+  return { reviewedBy: workspaceMemberId, workspaceId };
+};
+```
+
+| Pole                | Typ              | Popis                                                                                        |
+| ------------------- | ---------------- | -------------------------------------------------------------------------------------------- |
+| `workspaceId`       | `string`         | Pracovní prostor, ke kterému běh patří.                                                      |
+| `userWorkspaceId`   | `string \| null` | Osoba, která běh spustila, jako její členství v tomto pracovním prostoru.                    |
+| `workspaceMemberId` | `string \| null` | Tatáž osoba jako záznam člena pracovního prostoru, což je to, k čemu propojujete záznamy.    |
+| `retryCount`        | `number`         | `0` při prvním pokusu. Viz [Úlohy na pozadí](/l/cs/developers/extend/apps/logic/background-jobs). |
+| `maxRetries`        | `number`         | Horní limit opakovaných pokusů požadovaných aplikací.                                        |
+
+`userWorkspaceId` a `workspaceMemberId` mají hodnotu `null`, když běh nikdo nespustil: plány cron, hooky instalace a neověřené webhooky za sebou nemají žádnou osobu. Hodnotu `null` mají také tehdy, když osoba nemá záznam člena pracovního prostoru nebo když byl její záznam odstraněn.
+
+<Note>
+**Kontext vám sdělí, kdo běh spustil.** To, co běh smí *dělat*, je samostatná deklarace uvedená níže.
+</Note>
+
+#### Čí přístup volání používá
+
+Každý klient — `CoreApiClient`, `MetadataApiClient` a `RestApiClient` — jedná jako osoba, která běh spustila: její role se protíná s rolí vaší aplikace, takže volání nikdy nemůže udělat více, než může kterýkoli z vás. Toto je výchozí chování a znamená, že osoba nikdy nemůže použít vaši aplikaci k překročení vlastních oprávnění.
+
+Když běh nikdo nespustil, není žádná osoba, za kterou by bylo možné jednat, takže stejný klient přejde na vlastní přístup vaší aplikace: plány cron, hooky instalace a neověřené webhooky nevyžadují zvláštní zpracování.
+
+Některá volání oprávněně potřebují vlastní přístup aplikace, i když za během *je* osoba — například pro čtení konfiguračních záznamů vaší aplikace nebo provádění práce, kterou by tato osoba sama nemohla vykonat. Pro tyto případy vytvořte druhého klienta:
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const asPerson = new CoreApiClient();
+const asApplication = new CoreApiClient({ runAs: 'application' });
+
+const handler = async (event: DatabaseEventPayload) => {
+  // config records only your app may read
+  const { slackUserLinks } = await asApplication.query({ ... });
+
+  // created as the person, so it is attributed and permission-checked
+  await asPerson.mutation({ createNote: { ... } });
+};
+```
+
+Oba vytvořte jednou v rozsahu modulu a každé místo volání pak podle volaného klienta určí, který přístup používá. `RestApiClient` přijímá stejnou možnost:
+
+```ts
+import { RestApiClient } from 'twenty-client-sdk/rest';
+
+const asApplication = new RestApiClient({ runAs: 'application' });
+```
+
+<Note>
+**Běh, který nikdo nespustil, jedná jako vaše aplikace.** Plány cron, hooky instalace a neověřené webhooky za sebou nemají žádnou osobu, takže výchozí klient přejde na vlastní přístup vaší aplikace a nadále funguje. `runAs: 'application'` je potřeba jen tehdy, když tento přístup chcete při běhu, který osoba *skutečně* spustila.
+
+Když se funkce chová odlišně podle toho, zda za ní někdo stojí, zkontrolujte `context.workspaceMemberId`, například pro přiřazení záznamu.
+</Note>
+
+Pomocné funkce SDK, které přistupují k vlastním prostředkům vaší aplikace, vždy používají její přístup a ignorují `runAs`: [úložiště klíč-hodnota](/l/cs/developers/extend/apps/logic/key-value-store), [připojení](/l/cs/developers/extend/apps/logic/connections), `runAgent`, `getPublicAssetUrl` a účtování kreditů.
 
 #### Zpřístupnění funkce jako nástroje AI nebo akce pracovního postupu
 
@@ -593,8 +711,47 @@ const handler = async (params: { parentMessageId?: string }) => {
 </Note>
 
 <Note>
-**Instalační hooky** — předinstalační a poinstalační handlery — sdílejí toto běhové prostředí, ale deklarují se vlastními funkcemi `define` a nepřebírají nastavení spouštěče (triggeru). Viz [Instalační hooky](/l/cs/developers/extend/apps/config/install-hooks) pro `definePreInstallLogicFunction` a `definePostInstallLogicFunction`.
+**Instalační hooky** — předinstalační, poinstalační a odinstalační handlery — sdílejí toto běhové prostředí, ale deklarují se vlastními funkcemi `define` a nepřebírají nastavení spouštěče (triggeru). Viz [Instalační hooky](/l/cs/developers/extend/apps/config/install-hooks) pro `definePreInstallLogicFunction`, `definePostInstallLogicFunction` a `defineUninstallLogicFunction`.
 </Note>
+
+## Vytvoření aktivity časové osy.
+
+Pomocí `createTimelineActivity()` publikujte explicitní doménovou událost z logické funkce. Nejprve definujte událost jako [typ aktivity časové osy](/l/cs/developers/extend/apps/data/timeline-activity-types) a poté typ a objekty adresujte pomocí jejich stabilních univerzálních identifikátorů:
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+Twenty převede univerzální identifikátory na ID metadat specifická pro instalaci, ověří, že typ aktivity časové osy patří volající aplikaci, a uloží snímek metadat prezentace do nové aktivity.
+
+Požadované vstupy jsou `timelineActivityTypeUniversalIdentifier`, `targetObjectUniversalIdentifier` a `targetRecordId`. Můžete také zadat `happensAt`, `properties` a `workspaceMemberId`. `happensAt` určuje pozici události a zobrazený čas na časové ose; výchozí hodnotou je čas vytvoření.
+
+Chcete-li k události přidružit jiný záznam, zadejte společně `linkedRecordId` a `linkedObjectMetadataUniversalIdentifier`. Jako záložní možnost historického zobrazení můžete navíc zadat `linkedRecordCachedName`:
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+Role logické funkce musí mít oprávnění k zápisu do standardního objektu `timelineActivity`. Explicitní typy událostí ponechte nevázané na `action`; typ vázaný na akci již automaticky přijímá události auditu a jinak by vytvářel duplicitní řádky.
 
 ## Typovaní klienti API (twenty-client-sdk)
 
@@ -677,7 +834,7 @@ setCompany(result.company);
 </Accordion>
 <Accordion title="MetadataApiClient" description="Konfigurace pracovního prostoru, aplikace a nahrávání souborů">
 
-`MetadataApiClient` je dodáván předem sestavený v rámci SDK (není vyžadováno žádné generování). Odesílá dotazy na endpoint `/metadata` pro konfiguraci pracovního prostoru, aplikace a nahrávání souborů.
+`MetadataApiClient` je dodáván předem sestavený v rámci SDK (není vyžadováno žádné generování). Odesílá dotazy na endpoint `/metadata` pro konfiguraci pracovního prostoru, aplikace a nahrávání souborů. Přijímá stejnou možnost `runAs` jako `CoreApiClient` — viz [Čí přístup volání používá](#whose-access-a-call-uses).
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -745,7 +902,8 @@ Hlavní body:
   Když váš kód běží na Twenty (logické funkce nebo frontendové komponenty), platforma vloží přihlašovací údaje jako proměnné prostředí:
 
   * `TWENTY_API_URL` — Základní URL Twenty API
-  * `TWENTY_APP_ACCESS_TOKEN` — krátkodobý klíč s rozsahem omezeným na výchozí roli funkce vaší aplikace
+  * `TWENTY_APP_ACCESS_TOKEN` — krátkodobý klíč pro výchozí přístup: roli osoby, když někdo stojí za během, protíná role vaší aplikace; když nikdo nestojí za během, používá se vlastní role vaší aplikace. Osobou je kdokoli, kdo spustil běh v logické funkci, nebo kdokoli, kdo si prohlíží stránku ve frontové komponentě.
+  * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — krátkodobý klíč s rozsahem omezeným pouze na vlastní roli vaší aplikace. Pouze pro logické funkce, vždy se do nich vkládá a používá jej `runAs: 'application'`.
 
-  Není nutné je předávat klientům — čtou je automaticky z `process.env`. Oprávnění API klíče jsou určena rolí deklarovanou pomocí `defineApplicationRole()` (nebo odkazovanou prostřednictvím `defaultRoleUniversalIdentifier` v `application-config.ts`).
+  Tyto hodnoty klientům **nemusíte** předávat — automaticky je čtou z `process.env` a [Čí přístup volání používá](#whose-access-a-call-uses) popisuje volbu mezi nimi. Vlastní oprávnění vaší aplikace jsou určena rolí deklarovanou pomocí `defineApplicationRole()` (nebo odkazovanou prostřednictvím `defaultRoleUniversalIdentifier` v `application-config.ts`); běh jednající jako osoba nikdy nemůže překročit ani tuto roli, ani roli této osoby.
 </Note>

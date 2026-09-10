@@ -244,7 +244,23 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
               },
             ];
           }
-          case FieldMetadataType.LINKS:
+          case FieldMetadataType.LINKS: {
+            return [
+              gqlField,
+              {
+                ...value,
+                ...(Array.isArray(value?.secondaryLinks) && {
+                  secondaryLinks: value.secondaryLinks.map(
+                    (secondaryLink: object) => ({
+                      ...secondaryLink,
+                      __typename: 'SecondaryLink',
+                    }),
+                  ),
+                }),
+                __typename: pascalCase(field.type),
+              },
+            ];
+          }
           case FieldMetadataType.ADDRESS:
           case FieldMetadataType.FULL_NAME:
           case FieldMetadataType.CURRENCY: {

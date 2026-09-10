@@ -19,3 +19,4 @@ export {
   StyledTextWrapper,
   StyledText,
 } from './StyledText/StyledText';
+export { Text } from './Text/Text';

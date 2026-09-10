@@ -211,22 +211,22 @@ msgstr "Quyền truy cập quản trị viên máy chủ đã thay đổi"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.fullAdmin"
-msgstr "serverAdminAccessChanged.fullAdmin"
+msgstr "Quyền quản trị viên đầy đủ"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.impersonation"
-msgstr "serverAdminAccessChanged.impersonation"
+msgstr "Mạo danh người dùng"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.summary"
-msgstr "serverAdminAccessChanged.summary"
+msgstr "Tóm tắt thay đổi quyền truy cập quản trị viên máy chủ"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.warning"
-msgstr "serverAdminAccessChanged.warning"
+msgstr "Cảnh báo"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

@@ -14,7 +14,8 @@ import { join } from 'path';
 import { type Readable } from 'stream';
 
 import { Request, Response } from 'express';
-import { FileFolder, ServerFileFolder } from 'twenty-shared/types';
+import { ApiPath, FileFolder, ServerFileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   FileStorageException,
@@ -37,6 +38,9 @@ import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-f
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
+// workspaceId is bound onto the request by FileByIdGuard.
+type FileByIdRequest = Request & { workspaceId: string };
+
 @Controller()
 @UseFilters(FileApiExceptionFilter)
 export class FileController {
@@ -51,7 +55,9 @@ export class FileController {
   // public folder path. These are instance-global marketplace resources, also
   // displayed on the public OAuth authorize page, hence no auth token, unlike
   // the workspace-scoped /file/:folder/:id.
-  @Get('files/application-registrations/:applicationRegistrationId/*path')
+  @Get(
+    `${ApiPath.Files}/application-registrations/:applicationRegistrationId/*path`,
+  )
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getApplicationRegistrationAsset(
     @Res() res: Response,
@@ -94,6 +100,7 @@ export class FileController {
     try {
       await pipeline(fileResponse.stream, res);
     } catch (error) {
+      fileResponse.stream.destroy();
       this.logger.error(
         'Application registration file stream failed mid-transfer',
         { error },
@@ -110,7 +117,7 @@ export class FileController {
     }
   }
 
-  @Get('public-assets/:workspaceId/:applicationId/*path')
+  @Get(`${ApiPath.PublicAssets}/:workspaceId/:applicationId/*path`)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getPublicAssets(
     @Res() res: Response,
@@ -170,6 +177,7 @@ export class FileController {
     try {
       await pipeline(fileResponse.stream, res);
     } catch (error) {
+      fileResponse.stream.destroy();
       this.logger.error('Public asset stream failed mid-transfer', { error });
 
       if (!res.headersSent) {
@@ -183,24 +191,28 @@ export class FileController {
     }
   }
 
-  @Get('file/:fileFolder/:id')
+  @Get(`${ApiPath.File}/:fileFolder/:id`)
   @UseGuards(FileByIdGuard, NoPermissionGuard)
   async getFileById(
     @Res() res: Response,
-    @Req() req: Request,
+    @Req() req: FileByIdRequest,
     @Param('fileFolder') fileFolder: SupportedFileFolder,
     @Param('id') fileId: string,
   ) {
-    // oxlint-disable-next-line typescript/no-explicit-any
-    const workspaceId = (req as any)?.workspaceId;
+    const workspaceId = req.workspaceId;
 
     const fileResponse = await this.fileService
       .getFilePresignedUrlOrStreamById({
         fileId,
         workspaceId,
         fileFolder,
+        rangeHeader: req.headers.range,
       })
       .catch((error) => {
+        if (error instanceof FileException) {
+          throw error;
+        }
+
         this.logger.error(
           'getFilePresignedUrlOrStreamById failed unexpectedly',
           {
@@ -226,10 +238,23 @@ export class FileController {
     }
 
     setFileResponseHeaders(res, fileResponse.mimeType, fileFolder);
+    res.setHeader('Accept-Ranges', 'bytes');
+
+    if (isDefined(fileResponse.contentRange)) {
+      const { startByte, endByte, fileSizeInBytes } = fileResponse.contentRange;
+
+      res.status(206);
+      res.setHeader(
+        'Content-Range',
+        `bytes ${startByte}-${endByte}/${fileSizeInBytes}`,
+      );
+      res.setHeader('Content-Length', String(endByte - startByte + 1));
+    }
 
     try {
       await pipeline(fileResponse.stream, res);
     } catch (error) {
+      fileResponse.stream.destroy();
       this.logger.error('File-by-id stream failed mid-transfer', { error });
 
       if (!res.headersSent) {

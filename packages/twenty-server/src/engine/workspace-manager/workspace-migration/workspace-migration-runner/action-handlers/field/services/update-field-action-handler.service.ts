@@ -24,8 +24,7 @@ import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-f
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
-import { deriveSearchVectorAsExpressionForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/derive-search-vector-as-expression-for-ts-vector-field.util';
-import { getTargetSearchFieldMetadatasForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/get-target-search-field-metadatas-for-ts-vector-field.util';
+import { resolveSearchVectorAsExpressionForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/resolve-search-vector-as-expression-for-ts-vector-field.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -156,7 +155,11 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     // payload only so per-type validators (e.g. FILES rejection) can run
     // — the actual state change is handled by the metadata side-effect
     // engine, which owns the backing unique index lifecycle.
-    const { isUnique: _droppedIsUnique, ...persistedUpdate } = update;
+    const {
+      isUnique: _droppedIsUnique,
+      isSearchable: _droppedIsSearchable,
+      ...persistedUpdate
+    } = update;
 
     if (Object.keys(persistedUpdate).length === 0) {
       return;
@@ -354,30 +357,15 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         FieldMetadataType.TS_VECTOR,
       )
     ) {
-      const indexedFieldById = new Map(
-        findManyFlatEntityByIdInFlatEntityMaps({
-          flatEntityMaps: flatFieldMetadataMaps,
-          flatEntityIds: flatObjectMetadata.fieldIds,
-        }).map((indexedFlatFieldMetadata) => [
-          indexedFlatFieldMetadata.id,
-          {
-            name: indexedFlatFieldMetadata.name,
-            type: indexedFlatFieldMetadata.type,
-          },
-        ]),
-      );
-
       const searchVectorAsExpression =
-        deriveSearchVectorAsExpressionForTsVectorField({
-          targetSearchFieldMetadatas:
-            getSearchFieldMetadatasByTsVectorFieldId?.(
-              optimisticFlatFieldMetadata.id,
-            ) ??
-            getTargetSearchFieldMetadatasForTsVectorField({
-              tsVectorFieldMetadataId: optimisticFlatFieldMetadata.id,
-              flatSearchFieldMetadataMaps,
-            }),
-          indexedFieldById,
+        resolveSearchVectorAsExpressionForTsVectorField({
+          tsVectorFieldMetadataId: optimisticFlatFieldMetadata.id,
+          objectFlatFieldMetadatas: findManyFlatEntityByIdInFlatEntityMaps({
+            flatEntityMaps: flatFieldMetadataMaps,
+            flatEntityIds: flatObjectMetadata.fieldIds,
+          }),
+          flatSearchFieldMetadataMaps,
+          getSearchFieldMetadatasByTsVectorFieldId,
         });
 
       const columnDefinitions = generateColumnDefinitions({

@@ -11,7 +11,7 @@ import {
 import { pipeline } from 'stream/promises';
 
 import { Response } from 'express';
-import { FileFolder } from 'twenty-shared/types';
+import { ApiPath, FileFolder } from 'twenty-shared/types';
 
 import {
   FileStorageException,
@@ -34,7 +34,7 @@ import { FrontComponentService } from 'src/engine/metadata-modules/front-compone
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 
-@Controller('rest/front-components')
+@Controller(`${ApiPath.Rest}/front-components`)
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(
   PermissionsRestApiExceptionFilter,
@@ -100,6 +100,7 @@ export class FrontComponentController {
     try {
       await pipeline(fileResponse.stream, res);
     } catch (error) {
+      fileResponse.stream.destroy();
       this.logger.error('Front component stream failed mid-transfer', {
         error,
       });

@@ -33,12 +33,20 @@ module.exports = {
     './src/modules/front-components/graphql/**/*.{ts,tsx}',
 
     './src/modules/page-layout/widgets/**/graphql/**/*.{ts,tsx}',
+    './src/modules/activities/calendar/graphql/mutations/**/*.{ts,tsx}',
     './src/modules/activities/emails/graphql/mutations/**/*.{ts,tsx}',
+    './src/modules/activities/timeline-activities/graphql/**/*.{ts,tsx}',
     './src/modules/activities/emails/graphql/metadata-queries/**/*.{ts,tsx}',
 
     './src/modules/dashboards/graphql/**/*.{ts,tsx}',
     './src/modules/page-layout/graphql/**/*.{ts,tsx}',
     './src/modules/marketplace/graphql/**/*.{ts,tsx}',
+    './src/modules/metadata-store/graphql/**/*.{ts,tsx}',
+    './src/modules/sse-db-event/graphql/**/*.{ts,tsx}',
+    './src/modules/geo-map/graphql-query/*.{ts,tsx}',
+
+    './src/pages/**/graphql/**/*.{ts,tsx}',
+
     '!./src/**/*.test.{ts,tsx}',
     '!./src/**/*.stories.{ts,tsx}',
     '!./src/**/__mocks__/*.ts',

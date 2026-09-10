@@ -9,15 +9,26 @@ describe('getPageLayoutBaseFile', () => {
       type: PageLayoutType.STANDALONE_PAGE,
     });
 
-    expect(result).toContain(
-      "import { definePageLayout, PageLayoutType } from 'twenty-sdk/define';",
-    );
+    expect(result).toContain("} from 'twenty-sdk/define';");
+    expect(result).toContain('definePageLayout,');
     expect(result).toContain('export default definePageLayout({');
     expect(result).toContain("name: 'my-layout'");
     expect(result).toContain('type: PageLayoutType.STANDALONE_PAGE');
     expect(result).toContain("title: 'Overview'");
+    expect(result).toContain('position: 0');
     expect(result).toContain('widgets: []');
     expect(result).toContain('tabs: [');
+  });
+
+  it('should render a standalone page tab in VERTICAL_LIST so a lone widget owns the page', () => {
+    const result = getPageLayoutBaseFile({
+      name: 'my-layout',
+      type: PageLayoutType.STANDALONE_PAGE,
+    });
+
+    expect(result).toContain(
+      'layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST',
+    );
   });
 
   it('should render proper file with DASHBOARD type', () => {
@@ -27,6 +38,7 @@ describe('getPageLayoutBaseFile', () => {
     });
 
     expect(result).toContain('type: PageLayoutType.DASHBOARD');
+    expect(result).toContain('layoutMode: PageLayoutTabLayoutMode.GRID');
   });
 
   it('should generate valid UUIDs for layout and tab', () => {

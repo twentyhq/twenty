@@ -1,3 +1,4 @@
+import { normalizePartnerSlug } from '@/client-brief/normalize-partner-slug';
 import {
   getRouteI18n,
   type LocaleRouteParams,
@@ -10,10 +11,13 @@ export const generateMetadata = buildRouteMetadata('partnersBrief');
 
 export default async function ClientBriefPage({
   params,
+  searchParams,
 }: {
   params: Promise<LocaleRouteParams>;
+  searchParams: Promise<{ partner?: string | string[] }>;
 }) {
   await getRouteI18n(params);
+  const { partner } = await searchParams;
 
-  return <ClientBriefPageContent />;
+  return <ClientBriefPageContent partnerSlug={normalizePartnerSlug(partner)} />;
 }

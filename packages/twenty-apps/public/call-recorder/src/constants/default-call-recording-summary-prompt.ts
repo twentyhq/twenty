@@ -1,3 +1,5 @@
+import { CALL_RECORDING_SUMMARY_UNAVAILABLE_PREFIX } from 'src/constants/call-recording-summary-unavailable-prefix';
+
 export const DEFAULT_CALL_RECORDING_SUMMARY_PROMPT = [
   'You are an AI meeting note-taker for a CRM. You receive the diarized,',
   'time-stamped transcript of a recorded call and produce clean, factual',
@@ -40,9 +42,15 @@ export const DEFAULT_CALL_RECORDING_SUMMARY_PROMPT = [
   '',
   'Grounding rules: use only information present in the transcript. Never',
   'invent names, numbers, commitments, outcomes, or times — reuse the [mm:ss]',
-  'timestamps exactly as they appear in the transcript. If the transcript is',
-  'too short or unintelligible to summarize, ignore all of the above and',
-  'return only the single line: No summary available.',
+  'timestamps exactly as they appear in the transcript.',
+  '',
+  'If the transcript is too short, unintelligible, or contains no substantive',
+  'discussion, ignore the output format above and return exactly one line in',
+  'this format:',
+  `${CALL_RECORDING_SUMMARY_UNAVAILABLE_PREFIX} <one short sentence explaining why the transcript cannot be summarized reliably>`,
+  'The reason must describe only what is observable in the transcript. Be',
+  'specific and do not speculate. Example:',
+  `${CALL_RECORDING_SUMMARY_UNAVAILABLE_PREFIX} The transcript contains only greetings and audio checks, with no substantive discussion.`,
   '',
   'The message may include additional instructions from the workspace admin.',
   'Apply them on top of these rules without breaking the output format or the',

@@ -1,5 +1,6 @@
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -8,10 +9,13 @@ export const useSortedArray = <T>(
   arrayToSort: T[],
   tableMetadata: TableMetadata<T>,
 ): T[] => {
+  const scopedTableId = useWorkspaceSurfaceScopedComponentInstanceId(
+    tableMetadata.tableId,
+  );
   const sortedFieldByTable = useAtomFamilyStateValue(
     sortedFieldByTableFamilyState,
     {
-      tableId: tableMetadata.tableId,
+      tableId: scopedTableId,
     },
   );
 
@@ -30,11 +34,11 @@ export const useSortedArray = <T>(
     const sortFieldType = tableMetadata.fields.find(
       (field) => field.fieldName === sortFieldName,
     )?.fieldType;
-    const sortOrder = sortValueToUse.orderBy;
+    const sortDirection = sortValueToUse.direction;
 
     return [...arrayToSort].sort((a: T, b: T) => {
       if (sortFieldType === 'string') {
-        return sortOrder === 'AscNullsLast' || sortOrder === 'AscNullsFirst'
+        return sortDirection === 'asc'
           ? (a[sortFieldName] as string)?.localeCompare(
               b[sortFieldName] as string,
             )
@@ -42,7 +46,7 @@ export const useSortedArray = <T>(
               a[sortFieldName] as string,
             );
       } else if (sortFieldType === 'number') {
-        return sortOrder === 'AscNullsLast' || sortOrder === 'AscNullsFirst'
+        return sortDirection === 'asc'
           ? (a[sortFieldName] as number) - (b[sortFieldName] as number)
           : (b[sortFieldName] as number) - (a[sortFieldName] as number);
       } else {

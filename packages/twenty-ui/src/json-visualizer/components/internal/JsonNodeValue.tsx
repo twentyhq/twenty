@@ -21,19 +21,25 @@ export const JsonNodeValue = ({
     onNodeValueClick?.(valueAsString);
   };
 
-  return (
-    <span
-      className={clsx(
-        styles.text,
-        highlighting === 'blue' && styles.blue,
-        highlighting === 'red' && styles.red,
-      )}
-      role={isInteractive ? 'button' : undefined}
-      tabIndex={isInteractive ? 0 : undefined}
-      onClick={isInteractive ? handleClick : undefined}
-      onKeyDown={handleClickableElementKeyDown}
-    >
-      {valueAsString}
-    </span>
+  const valueClassName = clsx(
+    styles.text,
+    highlighting === 'blue' && styles.blue,
+    highlighting === 'red' && styles.red,
   );
+
+  if (isInteractive) {
+    return (
+      <span
+        className={valueClassName}
+        role="button"
+        tabIndex={0}
+        onClick={handleClick}
+        onKeyDown={handleClickableElementKeyDown}
+      >
+        {valueAsString}
+      </span>
+    );
+  }
+
+  return <span className={valueClassName}>{valueAsString}</span>;
 };

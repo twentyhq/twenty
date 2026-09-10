@@ -1,4 +1,4 @@
-import { defineCommandMenuItem, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+import { defineCommandMenuItem, isSelectAll, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 import {
   PDL_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
   PDL_FRONT_COMPONENT_UNIVERSAL_IDENTIFIERS
@@ -11,4 +11,5 @@ export default defineCommandMenuItem({
   PDL_FRONT_COMPONENT_UNIVERSAL_IDENTIFIERS.enrichCompanies,
   label: 'Enrich companies',
   availabilityType: 'RECORD_SELECTION',
+  conditionalAvailabilityExpression: !isSelectAll,
 });

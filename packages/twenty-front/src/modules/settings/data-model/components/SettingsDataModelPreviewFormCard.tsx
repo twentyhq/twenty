@@ -15,13 +15,13 @@ type SettingsDataModelPreviewFormCardProps = {
 };
 
 const StyledPreviewContainerWrapper = styled.div`
-  > * {
+  > div {
     background-color: ${themeCssVariables.background.transparent.lighter};
   }
 `;
 
 const StyledFormContainerWrapper = styled.div`
-  > * {
+  > div {
     padding: 0;
   }
 `;

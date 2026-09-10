@@ -1,3 +1,5 @@
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
+import { createElement, type ReactNode } from 'react';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { act, renderHook } from '@testing-library/react';
 
@@ -44,6 +46,13 @@ jest.mock('@apollo/client/react', () => ({
   useMutation: () => [mockMutate],
 }));
 
+const Wrapper = ({ children }: { children: ReactNode }) =>
+  createElement(
+    WorkflowVisualizerComponentInstanceContext.Provider,
+    { value: { instanceId: 'workflow-visualizer-test' } },
+    children,
+  );
+
 describe('useUpdateWorkflowVersionStep', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -65,7 +74,9 @@ describe('useUpdateWorkflowVersionStep', () => {
       steps: [{ id: 'step-1', name: 'Create Record', type: 'CREATE_RECORD' }],
     });
 
-    const { result } = renderHook(() => useUpdateWorkflowVersionStep());
+    const { result } = renderHook(() => useUpdateWorkflowVersionStep(), {
+      wrapper: Wrapper,
+    });
 
     await act(async () => {
       await result.current.updateWorkflowVersionStep({
@@ -83,7 +94,9 @@ describe('useUpdateWorkflowVersionStep', () => {
   it('should not mark step for recomputation when mutation returns no data', async () => {
     mockMutate.mockResolvedValue({ data: null });
 
-    const { result } = renderHook(() => useUpdateWorkflowVersionStep());
+    const { result } = renderHook(() => useUpdateWorkflowVersionStep(), {
+      wrapper: Wrapper,
+    });
 
     await act(async () => {
       await result.current.updateWorkflowVersionStep({
@@ -108,7 +121,9 @@ describe('useUpdateWorkflowVersionStep', () => {
 
     mockGetRecordFromCache.mockReturnValue(undefined);
 
-    const { result } = renderHook(() => useUpdateWorkflowVersionStep());
+    const { result } = renderHook(() => useUpdateWorkflowVersionStep(), {
+      wrapper: Wrapper,
+    });
 
     await act(async () => {
       await result.current.updateWorkflowVersionStep({

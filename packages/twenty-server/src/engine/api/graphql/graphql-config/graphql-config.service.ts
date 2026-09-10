@@ -8,6 +8,7 @@ import {
 } from '@graphql-yoga/nestjs';
 import * as Sentry from '@sentry/node';
 import GraphQLJSON from 'graphql-type-json';
+import { ApiPath } from 'twenty-shared/types';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
@@ -86,6 +87,7 @@ export class GraphQLConfigService implements GqlOptionsFactory<
       buildSchemaOptions: {},
       resolvers: { JSON: GraphQLJSON },
       plugins: plugins,
+      path: `/${ApiPath.GraphQL}`,
       context: () => ({
         loaders: this.dataloaderService.createLoaders(),
       }),

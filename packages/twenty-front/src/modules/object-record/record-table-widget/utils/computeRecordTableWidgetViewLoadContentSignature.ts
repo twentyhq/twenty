@@ -11,6 +11,7 @@ export const computeRecordTableWidgetViewLoadContentSignature = (
         fieldMetadataId: field.fieldMetadataId,
         isVisible: field.isVisible,
         position: field.position,
+        aggregateOperation: field.aggregateOperation,
       })),
     filters: [...view.viewFilters]
       .sort((filterA, filterB) => filterA.id.localeCompare(filterB.id))
@@ -26,6 +27,7 @@ export const computeRecordTableWidgetViewLoadContentSignature = (
       logicalOperator: group.logicalOperator,
       parentViewFilterGroupId: group.parentViewFilterGroupId,
     })),
+    anyFieldFilterValue: view.anyFieldFilterValue,
     sorts: view.viewSorts.map((sort) => ({
       id: sort.id,
       fieldMetadataId: sort.fieldMetadataId,

@@ -30,7 +30,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
-import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { WorkspaceSsoIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
@@ -74,7 +74,6 @@ registerEnumType(WorkspaceDiscoverability, {
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
 export class WorkspaceEntity {
-  // Fields
   @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -144,7 +143,6 @@ export class WorkspaceEntity {
   @Column({ type: 'integer', default: 90 })
   eventLogRetentionDays: number;
 
-  // Relations
   @OneToMany(() => AppTokenEntity, (appToken) => appToken.workspace, {
     cascade: true,
   })
@@ -203,10 +201,10 @@ export class WorkspaceEntity {
   suspendedAt: Date | null;
 
   @OneToMany(
-    () => WorkspaceSSOIdentityProviderEntity,
-    (workspaceSSOIdentityProviders) => workspaceSSOIdentityProviders.workspace,
+    () => WorkspaceSsoIdentityProviderEntity,
+    (workspaceSsoIdentityProviders) => workspaceSsoIdentityProviders.workspace,
   )
-  workspaceSSOIdentityProviders: Relation<WorkspaceSSOIdentityProviderEntity[]>;
+  workspaceSsoIdentityProviders: Relation<WorkspaceSsoIdentityProviderEntity[]>;
 
   @OneToMany(() => AgentEntity, (agent) => agent.workspace, {
     onDelete: 'CASCADE',
@@ -246,7 +244,10 @@ export class WorkspaceEntity {
   @OneToMany(() => ViewSortEntity, (viewSort) => viewSort.workspace)
   viewSorts: Relation<ViewSortEntity[]>;
 
-  @Field()
+  @Field({
+    deprecationReason:
+      'No longer used for metadata cache invalidation, will be removed',
+  })
   @Column({ default: 1 })
   metadataVersion: number;
 

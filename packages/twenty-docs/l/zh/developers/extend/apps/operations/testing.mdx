@@ -8,7 +8,7 @@ icon: flask
 
 ## 使用 npm 包
 
-可以在应用中安装并使用任意 npm 包。 逻辑函数和前端组件都通过 [esbuild](https://esbuild.github.io/) 打包，所有依赖都会被内联到输出中——运行时不需要 `node_modules`。
+可以在应用中安装并使用任意 npm 包。 逻辑函数和前端组件都通过 [esbuild](https://esbuild.github.io/) 打包，其依赖会被内联到输出中——运行时不需要 `node_modules`。
 
 ### 安装包
 
@@ -56,13 +56,15 @@ export default defineFrontComponent({
 
 ### 打包的工作原理
 
-构建步骤使用 esbuild 为每个逻辑函数和每个前端组件生成一个自包含文件。 所有导入的包都会被内联到打包产物中。
+构建步骤使用 esbuild 为每个逻辑函数和每个前端组件生成一个自包含文件。 导入的包会被内联到打包文件中，下面列出的除外。
 
 **逻辑函数** 运行在 Node.js 环境中。 Node 内置模块（`fs`、`path`、`crypto`、`http` 等） 可用且无需安装。
 
-**前端组件** 运行在 Web Worker 中。 Node 内置模块不可用——仅可使用浏览器 API 以及可在浏览器环境中运行的 npm 包。
+**前端组件** 运行在 Web Worker 中。 Node 内置模块不可用——仅可使用可在浏览器环境中运行的 npm 包。 请注意，沙盒实现了*部分* DOM，因此一个包在构建时可能一切正常，但在运行时仍可能失败；参见[当前限制](/l/zh/developers/extend/apps/layout/front-components#current-limitations)。
 
 两个环境都将 `twenty-client-sdk/core` 和 `twenty-client-sdk/metadata` 作为预置模块提供 — 这些模块不会被打包，而是在运行时由服务器解析。
+
+前端组件也可以通过[共享依赖包](/l/zh/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components)来共享依赖。 列在应用 package.json 的 `frontComponentSharedDependencies` 字段中的包会被构建到一个单独的文件中，并在运行时从该文件加载，而不是被内联到每个组件中，因此只导入共享包的组件几乎不包含任何自身的依赖代码。
 
 ## 设置
 

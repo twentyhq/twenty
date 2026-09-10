@@ -54,6 +54,11 @@ registerEnumType(MessageChannelPendingGroupEmailsAction, {
   'isSyncEnabled',
   'syncStage',
 ])
+@Index(
+  'IDX_MESSAGE_CHANNEL_WEBHOOK_SUBSCRIPTION_EXTERNAL_ID',
+  ['webhookSubscriptionExternalId'],
+  { where: '"webhookSubscriptionExternalId" IS NOT NULL' },
+)
 export class MessageChannelEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -67,6 +72,9 @@ export class MessageChannelEntity extends WorkspaceRelatedEntity {
 
   @Column({ type: 'varchar', nullable: false })
   handle: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  displayName: string | null;
 
   @Column({
     type: 'enum',

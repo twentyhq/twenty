@@ -191,4 +191,36 @@ describe('formatGraphValue', () => {
       expect(result).toBeDefined();
     });
   });
+
+  describe('formatNumberFn option', () => {
+    const germanFormatNumberFn = (value: number) =>
+      value.toLocaleString('de-DE');
+
+    it('should use the provided formatNumberFn for number display type', () => {
+      const result = formatGraphValue(1234567, {
+        displayType: 'number',
+        formatNumberFn: germanFormatNumberFn,
+      });
+
+      expect(result).toBe('1.234.567');
+    });
+
+    it('should use the provided formatNumberFn for currency display type', () => {
+      const result = formatGraphValue(1234567, {
+        displayType: 'currency',
+        formatNumberFn: germanFormatNumberFn,
+      });
+
+      expect(result).toBe('$1.234.567');
+    });
+
+    it('should not apply formatNumberFn to abbreviated short numbers', () => {
+      const result = formatGraphValue(1234567, {
+        displayType: 'shortNumber',
+        formatNumberFn: germanFormatNumberFn,
+      });
+
+      expect(result).toBe('1.2m');
+    });
+  });
 });

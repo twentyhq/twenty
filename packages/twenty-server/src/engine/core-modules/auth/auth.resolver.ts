@@ -1,8 +1,9 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { Logger, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation, Query } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import bytes from 'bytes';
+import { type Request } from 'express';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import omit from 'lodash.omit';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -31,8 +32,8 @@ import { AvailableWorkspacesAndAccessTokensDTO } from 'src/engine/core-modules/a
 import { EmailPasswordResetLinkDTO } from 'src/engine/core-modules/auth/dto/email-password-reset-link.dto';
 import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
 import { GetAuthTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-auth-token-from-email-verification-token.input';
-import { GetAuthorizationUrlForSSODTO } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.dto';
-import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
+import { GetAuthorizationUrlForSsoDTO } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.dto';
+import { GetAuthorizationUrlForSsoInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
 import { InvalidatePasswordDTO } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
 import { SignUpDTO } from 'src/engine/core-modules/auth/dto/sign-up.dto';
 import { TransientTokenDTO } from 'src/engine/core-modules/auth/dto/transient-token.dto';
@@ -42,12 +43,15 @@ import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dt
 import { VerifyEmailAndGetLoginTokenDTO } from 'src/engine/core-modules/auth/dto/verify-email-and-get-login-token.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
+import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
+import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -70,10 +74,12 @@ import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.typ
 import { IMPERSONATION_DENIAL_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant';
 import { IMPERSONATION_DENIAL_LOG_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-log-message-by-reason.constant';
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -91,12 +97,14 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 import { ApiKeyToken } from './dto/api-key-token.dto';
 import { AuthToken } from './dto/auth-token.dto';
 import { AuthTokens } from './dto/auth-tokens.dto';
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
+import { GetAuthTokensFromSsoExchangeTokenInput } from './dto/get-auth-tokens-from-sso-exchange-token.input';
 import { LoginTokenDTO } from './dto/login-token.dto';
 import { SignUpInNewWorkspaceInput } from './dto/sign-up-in-new-workspace.input';
 import { SignUpInput } from './dto/sign-up.input';
@@ -107,6 +115,9 @@ import { WorkspaceInviteHashValidDTO } from './dto/workspace-invite-hash-valid.d
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
 
+const PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX = 3;
+const PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 @UseFilters(
@@ -116,10 +127,14 @@ import { AuthService } from './services/auth.service';
   EmailVerificationExceptionFilter,
   TwoFactorAuthenticationExceptionFilter,
   WorkspaceGraphqlApiExceptionFilter,
+  ThrottlerGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
 export class AuthResolver {
+  private readonly logger = new Logger(AuthResolver.name);
+
   constructor(
+    private readonly throttlerService: ThrottlerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(AppTokenEntity)
@@ -133,6 +148,7 @@ export class AuthResolver {
     private resetPasswordService: ResetPasswordService,
     private loginTokenService: LoginTokenService,
     private workspaceAgnosticTokenService: WorkspaceAgnosticTokenService,
+    private ssoExchangeTokenService: SsoExchangeTokenService,
     private refreshTokenService: RefreshTokenService,
     private signInUpService: SignInUpService,
     private transientTokenService: TransientTokenService,
@@ -140,11 +156,13 @@ export class AuthResolver {
     private workspaceDomainsService: WorkspaceDomainsService,
     private userWorkspaceService: UserWorkspaceService,
     private emailVerificationTokenService: EmailVerificationTokenService,
-    private ssoService: SSOService,
+    private ssoService: SsoService,
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly impersonationAuthorizationService: ImpersonationAuthorizationService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly fileCorePictureService: FileCorePictureService,
+    private readonly userSessionService: UserSessionService,
+    private readonly userSessionCookieService: UserSessionCookieService,
   ) {}
 
   @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
@@ -157,10 +175,10 @@ export class AuthResolver {
     );
   }
 
-  @Mutation(() => GetAuthorizationUrlForSSODTO)
+  @Mutation(() => GetAuthorizationUrlForSsoDTO)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getAuthorizationUrlForSSO(
-    @Args('input') params: GetAuthorizationUrlForSSOInput,
+    @Args('input') params: GetAuthorizationUrlForSsoInput,
   ) {
     return await this.ssoService.getAuthorizationUrlForSSO(
       params.identityProviderId,
@@ -228,6 +246,7 @@ export class AuthResolver {
   async signIn(
     @Args()
     userCredentials: UserCredentialsInput,
+    @Context() context: { req: Request },
   ): Promise<AvailableWorkspacesAndAccessTokensDTO> {
     const user =
       await this.authService.validateLoginWithPassword(userCredentials);
@@ -237,7 +256,7 @@ export class AuthResolver {
         user.email,
       );
 
-    return {
+    const result = {
       availableWorkspaces:
         await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
           availableWorkspaces,
@@ -259,6 +278,14 @@ export class AuthResolver {
         }),
       },
     };
+
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: result.tokens,
+      request: context.req,
+      origin: 'sign_in',
+    });
+
+    return result;
   }
 
   @Mutation(() => VerifyEmailAndGetLoginTokenDTO)
@@ -267,7 +294,6 @@ export class AuthResolver {
     @Args()
     getAuthTokenFromEmailVerificationTokenInput: GetAuthTokenFromEmailVerificationTokenInput,
     @Args('origin') origin: string,
-    @AuthProvider() authProvider: AuthProviderEnum,
   ) {
     const appToken =
       await this.emailVerificationTokenService.validateEmailVerificationTokenOrThrow(
@@ -297,7 +323,7 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
-      authProvider,
+      AuthProviderEnum.Password,
     );
 
     const workspaceUrls =
@@ -311,7 +337,7 @@ export class AuthResolver {
   async verifyEmailAndGetWorkspaceAgnosticToken(
     @Args()
     getAuthTokenFromEmailVerificationTokenInput: GetAuthTokenFromEmailVerificationTokenInput,
-    @AuthProvider() authProvider: AuthProviderEnum,
+    @Context() context: { req: Request },
   ) {
     const appToken =
       await this.emailVerificationTokenService.validateEmailVerificationTokenOrThrow(
@@ -337,12 +363,12 @@ export class AuthResolver {
         user.email,
       );
 
-    return {
+    const result = {
       availableWorkspaces:
         await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
           availableWorkspaces,
           user,
-          authProvider,
+          AuthProviderEnum.Password,
         ),
       tokens: {
         accessOrWorkspaceAgnosticToken:
@@ -359,6 +385,14 @@ export class AuthResolver {
         }),
       },
     };
+
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: result.tokens,
+      request: context.req,
+      origin: 'sign_in',
+    });
+
+    return result;
   }
 
   @Mutation(() => AuthTokens)
@@ -367,6 +401,7 @@ export class AuthResolver {
     @Args()
     twoFactorAuthenticationVerificationInput: TwoFactorAuthenticationVerificationInput,
     @Args('origin') origin: string,
+    @Context() context: { req: Request },
   ): Promise<AuthTokens> {
     const {
       sub: email,
@@ -387,13 +422,26 @@ export class AuthResolver {
       TwoFactorAuthenticationStrategy.TOTP,
     );
 
-    return await this.authService.verify(email, workspace.id, authProvider);
+    const authTokens = await this.authService.verify(
+      email,
+      workspace.id,
+      authProvider,
+    );
+
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: authTokens.tokens,
+      request: context.req,
+      origin: 'sign_in',
+    });
+
+    return authTokens;
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensDTO)
   @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async signUp(
     @Args() signUpInput: UserCredentialsInput,
+    @Context() context: { req: Request },
   ): Promise<AvailableWorkspacesAndAccessTokensDTO> {
     const user = await this.signInUpService.signUpWithoutWorkspace(
       {
@@ -420,7 +468,7 @@ export class AuthResolver {
       verificationTrigger: EmailVerificationTrigger.SIGN_UP,
     });
 
-    return {
+    const result = {
       availableWorkspaces:
         await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
           availableWorkspaces,
@@ -442,13 +490,20 @@ export class AuthResolver {
         }),
       },
     };
+
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: result.tokens,
+      request: context.req,
+      origin: 'sign_in',
+    });
+
+    return result;
   }
 
   @Mutation(() => SignUpDTO)
   @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async signUpInWorkspace(
     @Args() signUpInput: SignUpInput,
-    @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<SignUpDTO> {
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
       workspaceInviteHash: signUpInput.workspaceInviteHash,
@@ -506,7 +561,7 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
-      authProvider,
+      AuthProviderEnum.Password,
     );
 
     return {
@@ -545,6 +600,14 @@ export class AuthResolver {
     @AuthProvider() authProvider: AuthProviderEnum,
     @Args('input', { nullable: true }) input?: SignUpInNewWorkspaceInput,
   ): Promise<SignUpDTO> {
+    assertIsDefinedOrThrow(
+      authProvider,
+      new AuthException(
+        'Authentication provider is missing',
+        AuthExceptionCode.UNAUTHENTICATED,
+      ),
+    );
+
     const fullUser = await this.userService.findUserByIdOrThrow(currentUser.id);
 
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
@@ -624,6 +687,7 @@ export class AuthResolver {
   async getAuthTokensFromLoginToken(
     @Args() getAuthTokensFromLoginTokenInput: GetAuthTokensFromLoginTokenInput,
     @Args('origin') origin: string,
+    @Context() context: { req: Request },
   ): Promise<AuthTokens> {
     const tokenPayload = await this.validateAndDecodeLoginToken(
       getAuthTokensFromLoginTokenInput.loginToken,
@@ -639,6 +703,8 @@ export class AuthResolver {
       tokenPayload.workspaceId,
     );
 
+    let authTokens: AuthTokens;
+
     if (tokenPayload.authProvider === AuthProviderEnum.Impersonation) {
       const {
         workspaceId,
@@ -652,24 +718,69 @@ export class AuthResolver {
         user.email,
       );
 
-      return await this.authService.generateImpersonationAccessTokenAndRefreshToken(
-        {
+      authTokens =
+        await this.authService.generateImpersonationAccessTokenAndRefreshToken({
           workspaceId,
           impersonatorUserWorkspaceId,
           impersonatedUserWorkspaceId,
           _impersonatorUserId: impersonatorUserId,
           impersonatedUserId,
-        },
-      );
+        });
     } else {
       await this.validateRegularAuthentication(workspace, userWorkspace);
 
-      return await this.authService.verify(
+      authTokens = await this.authService.verify(
         user.email,
         workspace.id,
         tokenPayload.authProvider,
       );
     }
+
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: authTokens.tokens,
+      request: context.req,
+      origin: 'sign_in',
+    });
+
+    return authTokens;
+  }
+
+  @Mutation(() => AuthTokens)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  async getAuthTokensFromSSOExchangeToken(
+    @Args()
+    { ssoExchangeToken }: GetAuthTokensFromSsoExchangeTokenInput,
+    @Context() context: { req: Request },
+  ): Promise<AuthTokens> {
+    const { userId, authProvider } =
+      await this.ssoExchangeTokenService.validateAndConsumeSsoExchangeTokenOrThrow(
+        ssoExchangeToken,
+      );
+
+    const authTokens = {
+      tokens: {
+        accessOrWorkspaceAgnosticToken:
+          await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
+            {
+              userId,
+              authProvider,
+            },
+          ),
+        refreshToken: await this.refreshTokenService.generateRefreshToken({
+          userId,
+          authProvider,
+          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
+        }),
+      },
+    };
+
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: authTokens.tokens,
+      request: context.req,
+      origin: 'sign_in',
+    });
+
+    return authTokens;
   }
 
   private async validateAndDecodeLoginToken(
@@ -835,22 +946,61 @@ export class AuthResolver {
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: { req: Request },
   ): Promise<AuthorizeAppDTO> {
-    return await this.authService.generateAuthorizationCode(
+    return await this.authService.generateAuthorizationCode({
       authorizeAppInput,
       user,
       workspace,
-    );
+      requestBaseUrl: getRequestBaseUrl(context.req),
+    });
   }
 
   @Mutation(() => AuthTokens)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-  async renewToken(@Args() args: AppTokenInput): Promise<AuthTokens> {
+  async renewToken(
+    @Args() args: AppTokenInput,
+    @Context() context: { req: Request },
+  ): Promise<AuthTokens> {
     const tokens = await this.renewTokenService.generateTokensFromRefreshToken(
       args.appToken,
     );
 
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: tokens,
+      request: context.req,
+      origin: 'renewal_bridge',
+    });
+
     return { tokens: tokens };
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  async signOut(
+    @Context() context: { req: Request },
+    @Args('refreshToken', { nullable: true }) refreshToken?: string,
+  ): Promise<boolean> {
+    try {
+      await this.userSessionService.signOut({
+        sessionToken:
+          this.userSessionCookieService.extractSessionTokenFromRequest(
+            context.req,
+          ),
+        refreshToken,
+      });
+    } finally {
+      // This mutation is public and SameSite=Lax keeps the cookie off cross-site
+      // POSTs, so clearing unconditionally would let any site sign a visitor out.
+      if (
+        isDefined(context.req.res) &&
+        this.userSessionCookieService.hasSessionCookie(context.req)
+      ) {
+        this.userSessionCookieService.clearSessionCookie(context.req.res);
+      }
+    }
+
+    return true;
   }
 
   @UseGuards(
@@ -889,22 +1039,31 @@ export class AuthResolver {
   }
 
   @Mutation(() => EmailPasswordResetLinkDTO)
-  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async emailPasswordResetLink(
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
     @Context() context: I18nContext,
   ): Promise<EmailPasswordResetLinkDTO> {
-    const resetToken =
-      await this.resetPasswordService.generatePasswordResetToken(
-        emailPasswordResetInput.email,
-        emailPasswordResetInput.workspaceId,
-      );
+    const normalizedEmail = emailPasswordResetInput.email.toLowerCase();
 
-    return await this.resetPasswordService.sendEmailPasswordResetLink({
-      resetToken,
-      email: emailPasswordResetInput.email,
-      locale: context.req.locale,
-    });
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `password-reset-email:${normalizedEmail}`,
+      1,
+      PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX,
+      PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS,
+    );
+
+    void this.resetPasswordService
+      .generateAndSendPasswordResetLink({
+        email: normalizedEmail,
+        workspaceId: emailPasswordResetInput.workspaceId,
+        locale: context.req.locale,
+      })
+      .catch((error) => {
+        this.logger.error('Failed to send the password reset link', error);
+      });
+
+    return { success: true };
   }
 
   @Mutation(() => InvalidatePasswordDTO)

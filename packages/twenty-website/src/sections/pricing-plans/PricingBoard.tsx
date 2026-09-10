@@ -68,7 +68,7 @@ const CardsGrid = styled.div`
 
   ${mediaUp('md')} {
     column-gap: ${spacing(6)};
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     row-gap: 0;
   }
 `;
@@ -80,6 +80,7 @@ export function PricingBoard() {
   const maxBullets = Math.max(
     PLANS_DATA.pro.cells[hosting][billing].featureBullets.length,
     PLANS_DATA.organization.cells[hosting][billing].featureBullets.length,
+    PLANS_DATA.enterprise.cells[hosting][billing].featureBullets.length,
   );
 
   return (
@@ -105,6 +106,12 @@ export function PricingBoard() {
           hosting={hosting}
           maxBullets={maxBullets}
           tierId="organization"
+        />
+        <PlanCard
+          billing={billing}
+          hosting={hosting}
+          maxBullets={maxBullets}
+          tierId="enterprise"
         />
       </CardsGrid>
     </Board>

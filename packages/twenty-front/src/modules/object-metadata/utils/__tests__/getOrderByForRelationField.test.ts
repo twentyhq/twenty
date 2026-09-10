@@ -29,7 +29,6 @@ describe('getOrderByForRelationField', () => {
       orderByDirection: 'AscNullsLast',
     });
 
-    // Should produce nested structure: { company: { name: 'AscNullsLast' } }
     expect(result).toEqual([{ company: { name: 'AscNullsLast' } }]);
   });
 

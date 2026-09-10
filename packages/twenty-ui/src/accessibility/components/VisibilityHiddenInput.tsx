@@ -9,7 +9,6 @@ export const VisibilityHiddenInput = forwardRef<
   HTMLInputElement,
   React.ComponentPropsWithoutRef<'input'>
 >(({ className, ...props }, ref) => (
-  // oxlint-disable-next-line react/jsx-props-no-spreading
   <input ref={ref} className={clsx(styles.root, className)} {...props} />
 ));
 

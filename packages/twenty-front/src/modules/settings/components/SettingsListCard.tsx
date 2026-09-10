@@ -9,7 +9,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 
 const StyledFooterContainer = styled.div`
-  > * {
+  > div {
     align-items: center;
     display: flex;
     padding: ${themeCssVariables.spacing[1]};
@@ -44,7 +44,7 @@ type SettingsListCardProps<ListItem extends { id: string }> = {
   isLoading?: boolean;
   onRowClick?: (item: ListItem) => void;
   RowIcon?: IconComponent;
-  RowIconFn?: (item: ListItem) => IconComponent;
+  RowIconFn?: (item: ListItem) => IconComponent | undefined;
   RowIconColor?: string;
   RowRightComponent: ComponentType<{ item: ListItem }>;
   footerButtonLabel?: string;

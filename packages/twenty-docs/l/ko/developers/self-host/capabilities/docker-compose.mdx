@@ -109,7 +109,7 @@ curl http://localhost:3000
 
 ### Twenty를 외부 액세스에 노출
 
-기본적으로 Twenty는 `localhost`의 포트 `3000`에서 실행됩니다. 외부 도메인 또는 IP 주소로 액세스하려면 `.env` 파일의 `SERVER_URL`을 구성해야 합니다.
+기본적으로 Twenty는 `localhost`의 포트 `3000`에서 실행됩니다. UI는 브라우저 자체의 origin에서 API를 확인하므로, 컨테이너에 도달할 수 있는 어떤 호스트명에서도 로드됩니다. 하지만 여전히 `SERVER_URL`은 공개용 URL로 설정해야 합니다. 서버는 이를 생성된 링크(이메일, OAuth 콜백)와 HTTPS 감지(보안 쿠키용)에 사용합니다.
 
 #### `SERVER_URL` 이해하기
 
@@ -229,7 +229,7 @@ crontab에 추가하세요 (`crontab -e`):
 1. 애플리케이션을 중지하세요:
 
 ```bash
-docker compose stop twenty-server twenty-front
+docker compose stop server worker
 ```
 
 2. 데이터베이스를 복원하세요:

@@ -48,59 +48,53 @@ export const AvatarOrIcon = ({
     );
   }
 
-  const isClickable = isDefined(onClick);
   const accessibleLabel = isNonEmptyString(placeholder)
     ? placeholder
     : 'Avatar';
 
-  if (isIconInverted || isDefined(IconBackgroundColor)) {
-    return (
+  const iconContent =
+    isIconInverted || isDefined(IconBackgroundColor) ? (
       <div
-        className={styles.wrapper}
-        data-clickable={isClickable || undefined}
-        role={isClickable ? 'button' : undefined}
-        tabIndex={isClickable ? 0 : undefined}
-        aria-label={isClickable ? accessibleLabel : undefined}
-        onClick={onClick}
-        onKeyDown={handleClickableElementKeyDown}
+        className={styles.iconWithBackgroundContainer}
+        style={
+          isDefined(IconBackgroundColor)
+            ? ({
+                '--avatar-or-icon-background': IconBackgroundColor,
+              } as React.CSSProperties)
+            : undefined
+        }
       >
-        <div
-          className={styles.iconWithBackgroundContainer}
-          style={
-            isDefined(IconBackgroundColor)
-              ? ({
-                  '--avatar-or-icon-background': IconBackgroundColor,
-                } as React.CSSProperties)
-              : undefined
-          }
-        >
-          <Icon
-            color={theme.font.color.inverted}
-            size={theme.icon.size.sm}
-            stroke={theme.icon.stroke.sm}
-            aria-hidden
-          />
-        </div>
+        <Icon
+          color={theme.font.color.inverted}
+          size={theme.icon.size.sm}
+          stroke={theme.icon.stroke.sm}
+          aria-hidden
+        />
       </div>
-    );
-  }
-
-  return (
-    <div
-      className={styles.wrapper}
-      data-clickable={isClickable || undefined}
-      role={isClickable ? 'button' : undefined}
-      tabIndex={isClickable ? 0 : undefined}
-      aria-label={isClickable ? accessibleLabel : undefined}
-      onClick={onClick}
-      onKeyDown={handleClickableElementKeyDown}
-    >
+    ) : (
       <Icon
         size={theme.icon.size.sm}
         stroke={theme.icon.stroke.sm}
         color={IconColor || 'currentColor'}
         aria-hidden
       />
-    </div>
-  );
+    );
+
+  if (isDefined(onClick)) {
+    return (
+      <div
+        className={styles.wrapper}
+        data-clickable={true}
+        role="button"
+        tabIndex={0}
+        aria-label={accessibleLabel}
+        onClick={onClick}
+        onKeyDown={handleClickableElementKeyDown}
+      >
+        {iconContent}
+      </div>
+    );
+  }
+
+  return <div className={styles.wrapper}>{iconContent}</div>;
 };

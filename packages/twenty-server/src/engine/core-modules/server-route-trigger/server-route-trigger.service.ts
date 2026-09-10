@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isString } from '@sniptt/guards';
 import { Request } from 'express';
+import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -15,22 +15,26 @@ import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { type RouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
+import {
+  buildRouteTriggerResponse,
+  type RouteTriggerResponse,
+} from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
+import { DEFAULT_SERVER_ROUTE_HTTP_METHODS } from 'src/engine/core-modules/server-route-trigger/constants/default-server-route-http-methods.constant';
 import {
   ServerRouteTriggerException,
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
+import { parseResolverDispatchResultOrThrow } from 'src/engine/core-modules/server-route-trigger/utils/parse-resolver-dispatch-result-or-throw.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-
-type ResolverResult = {
-  workspaceId: string;
-  targetLogicFunctionUniversalIdentifier: string;
-  payload?: object;
-};
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
 const QUEUED_TARGET_RETRY_LIMIT = 3;
 
@@ -65,6 +69,19 @@ export class ServerRouteTriggerService {
       );
     }
 
+    const allowedHttpMethods =
+      resolver.serverRouteTriggerSettings?.httpMethods ??
+      DEFAULT_SERVER_ROUTE_HTTP_METHODS;
+
+    if (
+      !allowedHttpMethods.some((httpMethod) => httpMethod === request.method)
+    ) {
+      throw new ServerRouteTriggerException(
+        `Server resolver function ${resolverLogicFunctionUniversalIdentifier} does not accept ${request.method} requests`,
+        ServerRouteTriggerExceptionCode.METHOD_NOT_ALLOWED,
+      );
+    }
+
     if (resolver.httpRouteTriggerSettings?.isAuthRequired === true) {
       throw new ServerRouteTriggerException(
         `Server resolver function ${resolverLogicFunctionUniversalIdentifier} requires authentication and cannot be dispatched through the public server route`,
@@ -95,13 +112,27 @@ export class ServerRouteTriggerService {
       workspaceId: resolver.workspaceId,
       payload: event,
     });
-    const resolved = this.parseResolverResult(resolverResult);
+
+    if (isDefined(resolverResult.error)) {
+      throw new ServerRouteTriggerException(
+        resolverResult.error.errorMessage,
+        ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR,
+      );
+    }
+
+    if (isLogicFunctionHttpResponse(resolverResult.data)) {
+      return buildRouteTriggerResponse(resolverResult.data);
+    }
+
+    const dispatchResult = parseResolverDispatchResultOrThrow(
+      resolverResult.data,
+    );
 
     return await this.enqueueTargetFunction({
       logicFunctionUniversalIdentifier:
-        resolved.targetLogicFunctionUniversalIdentifier,
-      workspaceId: resolved.workspaceId,
-      payload: resolved.payload ?? event,
+        dispatchResult.targetLogicFunctionUniversalIdentifier,
+      workspaceId: dispatchResult.workspaceId,
+      payload: dispatchResult.payload ?? event,
       applicationRegistrationId,
     });
   }
@@ -130,44 +161,6 @@ export class ServerRouteTriggerService {
     );
   }
 
-  private parseResolverResult(result: {
-    data: object | null;
-    error?: { errorMessage: string };
-  }): ResolverResult {
-    if (isDefined(result.error)) {
-      throw new ServerRouteTriggerException(
-        result.error.errorMessage,
-        ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR,
-      );
-    }
-
-    const data = result.data as {
-      workspaceId?: unknown;
-      targetLogicFunctionUniversalIdentifier?: unknown;
-      payload?: unknown;
-    };
-
-    if (
-      !isString(data?.workspaceId) ||
-      !isString(data?.targetLogicFunctionUniversalIdentifier)
-    ) {
-      throw new ServerRouteTriggerException(
-        'Resolver logic function must return { workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }',
-        ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
-      );
-    }
-
-    return {
-      workspaceId: data.workspaceId,
-      targetLogicFunctionUniversalIdentifier:
-        data.targetLogicFunctionUniversalIdentifier,
-      payload:
-        typeof data.payload === 'object' && data.payload !== null
-          ? (data.payload as object)
-          : undefined,
-    };
-  }
-
   private async enqueueTargetFunction({
     logicFunctionUniversalIdentifier,
     workspaceId,
@@ -185,19 +178,20 @@ export class ServerRouteTriggerService {
       applicationRegistrationId,
     });
 
-    await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+    await this.messageQueueService.add<LogicFunctionTriggerJobData>(
       LogicFunctionTriggerJob.name,
-      [
-        {
-          logicFunctionId: logicFunction.id,
-          workspaceId,
-          payload,
-        },
-      ],
-      { retryLimit: QUEUED_TARGET_RETRY_LIMIT },
+      {
+        logicFunctionId: logicFunction.id,
+        workspaceId,
+        payload,
+      },
+      {
+        retryLimit: QUEUED_TARGET_RETRY_LIMIT,
+        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+      },
     );
 
-    return { statusCode: 202, headers: {}, body: { queued: true } };
+    return { statusCode: 200, headers: {}, body: { queued: true } };
   }
 
   private async findLogicFunctionOrFail({
@@ -274,6 +268,8 @@ export class ServerRouteTriggerService {
         return 'Rate limit exceeded';
       case ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
         return 'Logic function not found';
+      case ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_DISABLED:
+        return 'Logic function execution is disabled';
       default:
         return 'An unexpected error occurred while handling the server route';
     }
@@ -282,6 +278,13 @@ export class ServerRouteTriggerService {
   private mapExecutorErrorToServerRouteCode(
     error: unknown,
   ): ServerRouteTriggerExceptionCode {
+    if (
+      error instanceof LogicFunctionException &&
+      error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED
+    ) {
+      return ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_DISABLED;
+    }
+
     if (!(error instanceof LogicFunctionExecutionException)) {
       return ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR;
     }

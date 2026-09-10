@@ -1,6 +1,6 @@
 import { SettingsAccountsMessageFoldersCard } from '@/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard';
 import { SettingsAccountsMessageFolderIcon } from '@/settings/accounts/components/SettingsAccountsMessageFolderIcon';
-import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
+import { SettingsRadioSettingsCard } from '@/settings/components/SettingsRadioSettingsCard';
 import { msg } from '@lingui/core/macro';
 import { MessageFolderImportPolicy } from 'twenty-shared/types';
 
@@ -37,7 +37,7 @@ export const SettingsAccountsMessageFolderCard = ({
   onChange,
   value = MessageFolderImportPolicy.SELECTED_FOLDERS,
 }: SettingsAccountsMessageFolderCardProps) => (
-  <SettingsAccountsRadioSettingsCard
+  <SettingsRadioSettingsCard
     name="message-folder-import-policy"
     options={INBOX_SETTINGS_VISIBILITY_OPTIONS}
     value={value}

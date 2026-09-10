@@ -12,8 +12,10 @@ import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { getUniqueConstraintsFields, pascalCase } from 'twenty-shared/utils';
 
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
+import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
+import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
 import { computeRelationConnectInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-relation-connect-input-type-key.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -49,23 +51,42 @@ export class RelationConnectGqlInputTypeGenerator {
   ): GraphQLInputObjectType {
     return new GraphQLInputObjectType({
       name: `${pascalCase(flatObjectMetadata.nameSingular)}RelationInput`,
-      fields: () => ({
-        [RELATION_NESTED_QUERY_KEYWORDS.CONNECT]: {
-          type: new GraphQLInputObjectType({
-            name: `${pascalCase(flatObjectMetadata.nameSingular)}ConnectInput`,
-            fields: this.generateRelationWhereInputType(
-              flatObjectMetadata,
-              fields,
-              context,
-            ),
-          }),
-          description: `Connect to a ${flatObjectMetadata.nameSingular} record`,
-        },
-        [RELATION_NESTED_QUERY_KEYWORDS.DISCONNECT]: {
-          type: GraphQLBoolean,
-          description: `Disconnect from a ${flatObjectMetadata.nameSingular} record`,
-        },
-      }),
+      fields: () => {
+        const createInputType = this.gqlTypesStorage.getGqlTypeByKey(
+          computeObjectMetadataInputTypeKey(
+            flatObjectMetadata.nameSingular,
+            GqlInputTypeDefinitionKind.Create,
+          ),
+        );
+
+        if (!(createInputType instanceof GraphQLInputObjectType)) {
+          throw new Error(
+            `Create input type not found for ${flatObjectMetadata.nameSingular}`,
+          );
+        }
+
+        return {
+          [RELATION_NESTED_QUERY_KEYWORDS.CONNECT]: {
+            type: new GraphQLInputObjectType({
+              name: `${pascalCase(flatObjectMetadata.nameSingular)}ConnectInput`,
+              fields: this.generateRelationWhereInputType(
+                flatObjectMetadata,
+                fields,
+                context,
+              ),
+            }),
+            description: `Connect to a ${flatObjectMetadata.nameSingular} record`,
+          },
+          [RELATION_NESTED_QUERY_KEYWORDS.CREATE]: {
+            type: createInputType,
+            description: `Create and connect a ${flatObjectMetadata.nameSingular} record`,
+          },
+          [RELATION_NESTED_QUERY_KEYWORDS.DISCONNECT]: {
+            type: GraphQLBoolean,
+            description: `Disconnect from a ${flatObjectMetadata.nameSingular} record`,
+          },
+        };
+      },
     });
   }
 

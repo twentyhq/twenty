@@ -18,9 +18,12 @@ import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueueMetadataAccessor } from 'src/engine/core-modules/message-queue/message-queue-metadata.accessor';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { QUEUE_WORKER_OPTIONS } from 'src/engine/core-modules/message-queue/message-queue-worker-options.constant';
+import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { EventLoopStallMonitorService } from 'src/engine/core-modules/message-queue/services/event-loop-stall-monitor.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { shouldCreateWorkerForQueue } from 'src/engine/core-modules/message-queue/utils/should-create-worker-for-queue.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 
 interface ProcessorGroup {
@@ -41,6 +44,8 @@ export class MessageQueueExplorer implements OnModuleInit {
     private readonly metadataAccessor: MessageQueueMetadataAccessor,
     private readonly metadataScanner: MetadataScanner,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly eventLoopStallMonitorService: EventLoopStallMonitorService,
   ) {}
 
   onModuleInit() {
@@ -60,17 +65,61 @@ export class MessageQueueExplorer implements OnModuleInit {
 
     const groupedProcessors = this.groupProcessorsByQueueName(processors);
 
-    for (const [queueName, processorGroupCollection] of Object.entries(
-      groupedProcessors,
-    )) {
+    // Filter out empty entries: an explicit empty env value is parsed as ['']
+    // by the shared ARRAY transformer, which would otherwise turn an empty
+    // allowlist (meaning "all queues") into "no queues"
+    const enabledQueues = this.twentyConfigService
+      .get('WORKER_ENABLED_QUEUES')
+      .filter((queueName) => queueName.length > 0);
+    const excludedQueues = this.twentyConfigService
+      .get('WORKER_EXCLUDED_QUEUES')
+      .filter((queueName) => queueName.length > 0);
+
+    this.warnAboutUnknownQueueNames([...enabledQueues, ...excludedQueues]);
+
+    const groupedProcessorEntries = Object.entries(groupedProcessors) as [
+      MessageQueue,
+      ProcessorGroup[],
+    ][];
+
+    for (const [
+      queueName,
+      processorGroupCollection,
+    ] of groupedProcessorEntries) {
+      if (
+        !shouldCreateWorkerForQueue({
+          queueName,
+          enabledQueues,
+          excludedQueues,
+        })
+      ) {
+        this.logger.log(
+          `Skipping worker creation for queue ${queueName} (filtered out by WORKER_ENABLED_QUEUES/WORKER_EXCLUDED_QUEUES)`,
+        );
+        continue;
+      }
+
       const queueToken = getQueueToken(queueName);
       const messageQueueService = this.getQueueService(queueToken);
 
       this.handleProcessorGroupCollection(
         processorGroupCollection,
         messageQueueService,
-        QUEUE_WORKER_OPTIONS[queueName as MessageQueue],
+        MESSAGE_QUEUE_WORKER_CONFIG[queueName].workerOptions,
+        queueName,
       );
+    }
+  }
+
+  private warnAboutUnknownQueueNames(queueNames: string[]) {
+    const knownQueueNames = Object.values(MessageQueue) as string[];
+
+    for (const queueName of queueNames) {
+      if (!knownQueueNames.includes(queueName)) {
+        this.logger.warn(
+          `Unknown queue name "${queueName}" in WORKER_ENABLED_QUEUES/WORKER_EXCLUDED_QUEUES, expected one of: ${knownQueueNames.join(', ')}`,
+        );
+      }
     }
   }
 
@@ -135,11 +184,23 @@ export class MessageQueueExplorer implements OnModuleInit {
   private handleProcessorGroupCollection(
     processorGroupCollection: ProcessorGroup[],
     queue: MessageQueueService,
-    options?: MessageQueueWorkerOptions,
+    options: MessageQueueWorkerOptions,
+    queueName: MessageQueue,
   ) {
     queue.work(async (job) => {
-      for (const processorGroup of processorGroupCollection) {
-        await this.handleProcessor(processorGroup, job);
+      const stallMonitorToken =
+        this.eventLoopStallMonitorService.registerJobStart({
+          queueName,
+          jobName: job.name,
+          workspaceId: job.data?.workspaceId,
+        });
+
+      try {
+        for (const processorGroup of processorGroupCollection) {
+          await this.handleProcessor(processorGroup, job);
+        }
+      } finally {
+        this.eventLoopStallMonitorService.registerJobEnd(stallMonitorToken);
       }
     }, options);
   }
@@ -159,7 +220,6 @@ export class MessageQueueExplorer implements OnModuleInit {
       },
     );
 
-    // Return early if no matching methods found
     if (filteredProcessMethodNames.length === 0) {
       return;
     }
@@ -170,7 +230,6 @@ export class MessageQueueExplorer implements OnModuleInit {
       if (this.moduleRef.registerRequestByContextId) {
         this.moduleRef.registerRequestByContextId(
           {
-            // Add workspaceId to the request object
             req: {
               workspaceId: job.data?.workspaceId,
             },
@@ -210,6 +269,8 @@ export class MessageQueueExplorer implements OnModuleInit {
         // @ts-expect-error legacy noImplicitAny
         await instance[processMethodName].call(instance, job.data, {
           abortSignal: job.abortSignal,
+          retryLimit: job.retryLimit,
+          updateData: job.updateData,
         });
       } catch (err) {
         if (shouldCaptureException(err)) {

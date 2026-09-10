@@ -13,12 +13,12 @@ const serializeScalarValue = (value: unknown): unknown => {
   return value ?? null;
 };
 
-const BASE_SCALAR_PROPERTY_NAMES = [
-  'id',
-  'workspaceId',
-  'applicationId',
-  'universalIdentifier',
-] as const;
+export const BASE_SCALAR_PROPERTY_NAME = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  applicationId: 'applicationId',
+  universalIdentifier: 'universalIdentifier',
+} as const;
 
 // Allow-list counterpart to removePropertiesFromRecord: rather than forwarding
 // every entity property except the known relations (deny-list), this forwards only
@@ -42,7 +42,7 @@ export const fromEntityToScalarEntity = <T extends AllMetadataName>({
   const scalarProperties: Record<string, unknown> = {};
 
   for (const propertyName of [
-    ...BASE_SCALAR_PROPERTY_NAMES,
+    ...Object.values(BASE_SCALAR_PROPERTY_NAME),
     ...Object.keys(propertiesConfiguration),
   ]) {
     scalarProperties[propertyName] = serializeScalarValue(

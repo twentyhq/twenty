@@ -100,16 +100,6 @@ export class ObjectPermissionService {
           },
         );
       }
-
-      if (objectMetadata.isSystem === true) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
-          PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
-          {
-            userFriendlyMessage: msg`You cannot set permissions on system objects as they are managed by the platform.`,
-          },
-        );
-      }
     }
 
     const flatEntityToCreate: (UniversalFlatObjectPermission & {

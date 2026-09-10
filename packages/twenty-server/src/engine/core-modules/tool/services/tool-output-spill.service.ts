@@ -12,6 +12,7 @@ import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { formatBytes } from 'src/engine/core-modules/tool/utils/format-bytes.util';
 import { jsonPreview } from 'src/engine/core-modules/tool/utils/json-preview.util';
+import { truncateHeadTail } from 'src/engine/core-modules/tool/utils/truncate-head-tail.util';
 
 type SpillContext = {
   workspaceId: string;
@@ -24,6 +25,12 @@ type SpillOptions = {
 const OUTPUT_NAVIGATION_TOOL_NAME_SET = new Set<string>(
   OUTPUT_NAVIGATION_TOOL_NAMES,
 );
+
+const NAVIGATION_TOOL_TRUNCATION_GUIDANCE =
+  'Narrow the query (more specific pattern or paths, lower maxMatches/maxItems/contextChars) or page through the data with the offset parameter to reach the omitted middle.';
+
+const SPILL_FAILURE_TRUNCATION_GUIDANCE =
+  'Re-run the tool with narrower filters or pagination to retrieve the omitted middle.';
 
 @Injectable()
 export class ToolOutputSpillService {
@@ -43,10 +50,6 @@ export class ToolOutputSpillService {
       return output;
     }
 
-    if (OUTPUT_NAVIGATION_TOOL_NAME_SET.has(options.toolName)) {
-      return output;
-    }
-
     let serialized: string | undefined;
 
     try {
@@ -63,6 +66,15 @@ export class ToolOutputSpillService {
 
     if (sizeBytes <= MAX_INLINE_TOOL_OUTPUT_BYTES) {
       return output;
+    }
+
+    if (OUTPUT_NAVIGATION_TOOL_NAME_SET.has(options.toolName)) {
+      return this.buildTruncatedInlineOutput(
+        output,
+        serialized,
+        sizeBytes,
+        NAVIGATION_TOOL_TRUNCATION_GUIDANCE,
+      );
     }
 
     try {
@@ -89,7 +101,7 @@ export class ToolOutputSpillService {
         },
       });
 
-      const hint = `Output too large to inline (${formatBytes(sizeBytes)}). "preview" is a truncated sample (first items, all keys); use extract_json_paths (for json objects) or search_output (for text) with this fileId to read the full data, or code_interpreter for analysis.`;
+      const hint = `Output too large to inline (${formatBytes(sizeBytes)}). "preview" is a truncated sample (first items, all keys). To read the full data, call learn_tools with extract_json_paths (for json objects) or search_output (for text), then invoke it through execute_tool with this fileId; or use code_interpreter for analysis. These are registry tools, not directly callable.`;
 
       return {
         success: output.success,
@@ -106,17 +118,43 @@ export class ToolOutputSpillService {
       };
     } catch (error) {
       this.logger.warn(
-        `Failed to spill large output for "${options.toolName}"; returning full output inline.`,
+        `Failed to spill large output for "${options.toolName}"; returning truncated output inline.`,
         error,
       );
 
       return {
-        ...output,
+        ...this.buildTruncatedInlineOutput(
+          output,
+          serialized,
+          sizeBytes,
+          SPILL_FAILURE_TRUNCATION_GUIDANCE,
+        ),
         warnings: [
           ...(output.warnings ?? []),
-          'Large output spill failed; the full output is returned inline.',
+          'Large output spill failed; the output was truncated inline.',
         ],
       };
     }
+  }
+
+  private buildTruncatedInlineOutput(
+    output: ToolOutput,
+    serialized: string,
+    sizeBytes: number,
+    guidance: string,
+  ): ToolOutput {
+    return {
+      success: output.success,
+      message: output.message,
+      result: {
+        truncated: true,
+        originalSizeBytes: sizeBytes,
+        content: truncateHeadTail({
+          text: serialized,
+          maxBytes: MAX_INLINE_TOOL_OUTPUT_BYTES,
+          guidance,
+        }),
+      },
+    };
   }
 }

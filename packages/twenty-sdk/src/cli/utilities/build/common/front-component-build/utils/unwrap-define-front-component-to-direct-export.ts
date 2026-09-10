@@ -1,8 +1,8 @@
 const DEFINE_FRONT_COMPONENT_IMPORT_PATTERN =
-  /import\s*\{\s*defineFrontComponent\s*\}\s*from\s*['"][^'"]+['"];?\n?/g;
+  /import\s*\{\s*define(?:Settings)?FrontComponent\s*\}\s*from\s*['"][^'"]+['"];?\n?/g;
 
 const DEFINE_FRONT_COMPONENT_EXPORT_OPENING_PATTERN =
-  /export\s+default\s+defineFrontComponent\s*\(/;
+  /export\s+default\s+define(?:Settings)?FrontComponent\s*\(/;
 
 const IDENTIFIER_COMPONENT_VALUE_PATTERN =
   /component\s*:\s*([A-Za-z_$][\w$]*)\s*[,}]/;

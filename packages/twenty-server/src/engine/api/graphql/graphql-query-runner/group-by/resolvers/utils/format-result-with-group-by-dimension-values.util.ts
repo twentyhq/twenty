@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { type GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
@@ -29,7 +29,7 @@ export const formatResultWithGroupByDimensionValues = async ({
   recordsResult?: Array<Record<string, unknown>>;
   flatObjectMetadata?: FlatObjectMetadata;
   flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps?: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps?: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): Promise<CommonGroupByOutputItem[]> => {
   const formattedResult: CommonGroupByOutputItem[] = [];
 

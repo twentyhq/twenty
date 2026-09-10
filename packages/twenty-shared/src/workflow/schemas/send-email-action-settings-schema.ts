@@ -1,18 +1,15 @@
 import { z } from 'zod';
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
 import { workflowFileSchema } from './workflow-file-action-schema';
+import { workflowVariableReferenceSchema } from './workflow-variable-reference-schema';
 
 export const workflowEmailFilesSchema = z
   .array(
     z.union([
       workflowFileSchema,
-      z
-        .string()
-        .regex(
-          /^{{[^{}]+}}$/,
-          'Expected a workflow variable reference like {{stepId.path}}',
-        )
-        .describe('A workflow variable reference resolving to files'),
+      workflowVariableReferenceSchema.describe(
+        'A workflow variable reference resolving to files',
+      ),
     ]),
   )
   .optional()
@@ -24,6 +21,7 @@ export const workflowSendEmailActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
       connectedAccountId: z.string(),
+      fromHandle: z.string().trim().optional(),
       recipients: z.object({
         to: z.string().optional().default(''),
         cc: z.string().optional().default(''),

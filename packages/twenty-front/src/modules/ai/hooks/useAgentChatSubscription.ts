@@ -31,7 +31,7 @@ import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { BillingProductKey } from '~/generated-metadata/graphql';
+import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 
 const THROTTLE_MS = 100;
 
@@ -377,33 +377,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
 
         case 'credits-exhausted': {
           //TODO : add real time on currentUser
-          store.set(currentWorkspaceState.atom, (currentWorkspace) => {
-            const currentBillingSubscription =
-              currentWorkspace?.currentBillingSubscription;
-            const billingSubscriptionItems =
-              currentBillingSubscription?.billingSubscriptionItems;
-
-            if (
-              !isDefined(currentWorkspace) ||
-              !isDefined(currentBillingSubscription) ||
-              !isDefined(billingSubscriptionItems)
-            ) {
-              return currentWorkspace;
-            }
-
-            return {
-              ...currentWorkspace,
-              currentBillingSubscription: {
-                ...currentBillingSubscription,
-                billingSubscriptionItems: billingSubscriptionItems.map((item) =>
-                  item.billingProduct.metadata?.['productKey'] ===
-                  BillingProductKey.RESOURCE_CREDIT
-                    ? { ...item, hasReachedCurrentPeriodCap: true }
-                    : item,
-                ),
-              },
-            };
-          });
+          store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
 
           store.set(
             errorAtom,

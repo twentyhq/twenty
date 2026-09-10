@@ -7,11 +7,12 @@ import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMar
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type Manifest } from 'twenty-shared/application';
@@ -21,14 +22,14 @@ import { InlineBanner } from 'twenty-ui/feedback';
 import {
   IconBook,
   IconBox,
+  IconBrandTypescript,
   IconCommand,
   IconEyeOff,
-  IconGraph,
   IconInfoCircle,
   IconLego,
+  IconLayoutGridAdd,
   IconListDetails,
   IconLock,
-  IconShield,
 } from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
@@ -51,8 +52,19 @@ export const SettingsAvailableApplicationDetails = () => {
   }>();
 
   const navigateSettings = useNavigateSettings();
+  const handleInstallCompleted = useCallback(
+    (installedApplication: { id: string }) => {
+      navigateSettings(SettingsPath.ApplicationDetail, {
+        applicationId: installedApplication.id,
+      });
+    },
+    [navigateSettings],
+  );
   const { requestInstall, install, isInstalling, modalInstanceId } =
-    useInstallMarketplaceAppWithPermissionValidation();
+    useInstallMarketplaceAppWithPermissionValidation({
+      universalIdentifier: availableApplicationId,
+      onCompleted: handleInstallCompleted,
+    });
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
@@ -109,22 +121,6 @@ export const SettingsAvailableApplicationDetails = () => {
     isDefined(currentVersion) &&
     isNewerSemver(latestAvailableVersion, currentVersion);
 
-  const handleInstall = async () => {
-    if (isDefined(detail)) {
-      const data = await install({
-        universalIdentifier: detail.universalIdentifier,
-      });
-
-      const applicationId = data?.installApplication?.id;
-
-      if (isDefined(applicationId)) {
-        navigateSettings(SettingsPath.ApplicationDetail, {
-          applicationId,
-        });
-      }
-    }
-  };
-
   const handleUpgrade = async () => {
     if (!isDefined(registrationId) || !isDefined(latestAvailableVersion)) {
       return;
@@ -150,13 +146,13 @@ export const SettingsAvailableApplicationDetails = () => {
       many: t`fields`,
     },
     {
-      icon: IconCommand,
+      icon: IconBrandTypescript,
       count: (manifest?.logicFunctions ?? []).length,
       one: t`logic function`,
       many: t`logic functions`,
     },
     {
-      icon: IconGraph,
+      icon: IconLayoutGridAdd,
       count: (manifest?.frontComponents ?? []).filter(
         (fc) =>
           !(manifest?.commandMenuItems ?? [])
@@ -179,7 +175,7 @@ export const SettingsAvailableApplicationDetails = () => {
       many: t`commands`,
     },
     {
-      icon: IconShield,
+      icon: IconLock,
       count: (detail?.roles ?? []).filter(
         (role) =>
           role.universalIdentifier !== detail?.defaultRoleUniversalIdentifier,
@@ -222,6 +218,7 @@ export const SettingsAvailableApplicationDetails = () => {
             displayName={displayName}
             description={description}
             aboutDescription={detail.aboutDescription ?? undefined}
+            pricingDescription={detail.pricingDescription ?? undefined}
             screenshots={detail.galleryImages}
             author={detail.author ?? 'Unknown'}
             category={detail.category ?? undefined}
@@ -255,7 +252,7 @@ export const SettingsAvailableApplicationDetails = () => {
             manifestContent={manifest}
             applicationInfo={{
               name: displayName,
-              logo: detail.logo,
+              logoUrl: detail.logoUrl,
               universalIdentifier: detail.universalIdentifier,
             }}
           />
@@ -295,12 +292,18 @@ export const SettingsAvailableApplicationDetails = () => {
         icon={
           <AppChip
             applicationId={application?.id}
-            logoUrl={detail?.logo}
+            logoUrl={detail?.logoUrl}
             fallbackApplicationData={{
               name: displayName,
             }}
             size="md"
             chipOnly
+          />
+        }
+        secondaryBar={
+          <SettingsTabBar
+            tabs={tabs}
+            componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
           />
         }
       >
@@ -311,19 +314,15 @@ export const SettingsAvailableApplicationDetails = () => {
               message={t`Application not listed on the marketplace. It was shared via a direct link`}
             />
           )}
-          <TabList
-            tabs={tabs}
-            componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
-          />
           {renderActiveTabContent()}
         </SettingsPageContainer>
       </SettingsPageLayout>
       <SettingsApplicationInstallPermissionValidationModal
         modalInstanceId={modalInstanceId}
         appDisplayName={displayName}
-        appLogoUrl={detail?.logo ?? undefined}
+        appLogoUrl={detail?.logoUrl ?? undefined}
         defaultRole={defaultRole}
-        onAuthorize={handleInstall}
+        onAuthorize={install}
         isInstalling={isInstalling}
       />
     </CurrentApplicationContext.Provider>

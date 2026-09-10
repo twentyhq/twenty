@@ -30,6 +30,7 @@ export class UpdateRecordService {
       objectRecord,
       fieldsToUpdate,
       authContext,
+      rolePermissionConfig,
     } = params;
 
     if (!isDefined(objectRecordId) || !isValidUuid(objectRecordId)) {
@@ -49,6 +50,7 @@ export class UpdateRecordService {
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
+        rolePermissionConfig,
       });
 
       if (
@@ -72,7 +74,6 @@ export class UpdateRecordService {
         };
       }
 
-      // Filter objectRecord to only include fieldsToUpdate
       const filteredObjectRecord = Object.keys(objectRecord).reduce(
         (acc, key) => {
           if (fieldsToUpdateArray.includes(key)) {

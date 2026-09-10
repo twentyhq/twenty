@@ -31,8 +31,8 @@ You can import data for any object using CSV, XLSX, or XLS files. Each file shou
 6. Review errors (highlighted in yellow) and fix them, directly editing in the UI
 7. Confirm the import
 
-### Importing relations between objects
-You can import relations between objects using the csv import function. You need to reference the related object using a unique field from this object: the `id`, the `email` for People and Workspace Members, the `domain` for companies, any other field set as unique in the data model for any other object.
+### Importing Relations Between Objects
+You can import relations between objects using the CSV import function. You need to reference the related object using a unique field from this object: the `id`, the `email` for People and Workspace Members, the `domain` for companies, any other field set as unique in the data model for any other object.
 
 <Note>**Deleted records count toward uniqueness.** Soft-deleted records (visible under Command Menu → See deleted records) are included in uniqueness checks. If you import a record with the same unique value as a deleted record, the deleted record will be restored.</Note>
 
@@ -41,8 +41,8 @@ You can import relations between objects using the csv import function. You need
 
 When importing related objects, upload files in this order:
 1. **Companies** first (the "one" side of relationships)
-2. **People** second (linked to companies via companyId)
-3. **Opportunities** third (linked to companies/people)
+2. **People** second (linked to Companies via companyId)
+3. **Opportunities** third (linked to Companies/People)
 4. **Custom objects** with relations last
 
 Why? The "one" side of a one-to-many relationship must exist before you can reference it. For example, the Company record must exist before you import a Person with that company's ID.

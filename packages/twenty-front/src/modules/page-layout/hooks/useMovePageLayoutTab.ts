@@ -19,29 +19,39 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
 
   const store = useStore();
 
-  const moveLeft = useCallback(
-    (tabId: string) => {
+  // Deleting a tab only deactivates it in the draft, so an inactive tab must
+  // not become the neighbour a move swaps positions with: that would leave the
+  // rendered order untouched.
+  const swapWithNeighborTab = useCallback(
+    (tabId: string, offset: -1 | 1) => {
       store.set(pageLayoutDraftState, (prev) => {
-        const sorted = sortTabsByPosition(prev.tabs);
-        const index = sorted.findIndex((t) => t.id === tabId);
-        if (index <= 0) {
+        const sortedActiveTabs = sortTabsByPosition(
+          prev.tabs.filter((tab) => tab.isActive),
+        );
+        const index = sortedActiveTabs.findIndex((tab) => tab.id === tabId);
+        const neighborIndex = index + offset;
+
+        if (
+          index < 0 ||
+          neighborIndex < 0 ||
+          neighborIndex >= sortedActiveTabs.length
+        ) {
           return prev;
         }
 
-        const neighborId = sorted[index - 1].id;
-        const currentPosition = sorted[index].position;
-        const neighborPosition = sorted[index - 1].position;
+        const neighborTab = sortedActiveTabs[neighborIndex];
+        const currentPosition = sortedActiveTabs[index].position;
 
         return {
           ...prev,
-          tabs: prev.tabs.map((t) => {
-            if (t.id === tabId) {
-              return { ...t, position: neighborPosition };
+          tabs: prev.tabs.map((tab) => {
+            if (tab.id === tabId) {
+              return { ...tab, position: neighborTab.position };
             }
-            if (t.id === neighborId) {
-              return { ...t, position: currentPosition };
+            if (tab.id === neighborTab.id) {
+              return { ...tab, position: currentPosition };
             }
-            return t;
+            return tab;
           }),
         };
       });
@@ -49,34 +59,14 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     [pageLayoutDraftState, store],
   );
 
+  const moveLeft = useCallback(
+    (tabId: string) => swapWithNeighborTab(tabId, -1),
+    [swapWithNeighborTab],
+  );
+
   const moveRight = useCallback(
-    (tabId: string) => {
-      store.set(pageLayoutDraftState, (prev) => {
-        const sorted = sortTabsByPosition(prev.tabs);
-        const index = sorted.findIndex((t) => t.id === tabId);
-        if (index < 0 || index >= sorted.length - 1) {
-          return prev;
-        }
-
-        const neighborId = sorted[index + 1].id;
-        const currentPosition = sorted[index].position;
-        const neighborPosition = sorted[index + 1].position;
-
-        return {
-          ...prev,
-          tabs: prev.tabs.map((t) => {
-            if (t.id === tabId) {
-              return { ...t, position: neighborPosition };
-            }
-            if (t.id === neighborId) {
-              return { ...t, position: currentPosition };
-            }
-            return t;
-          }),
-        };
-      });
-    },
-    [pageLayoutDraftState, store],
+    (tabId: string) => swapWithNeighborTab(tabId, 1),
+    [swapWithNeighborTab],
   );
 
   return { moveLeft, moveRight };

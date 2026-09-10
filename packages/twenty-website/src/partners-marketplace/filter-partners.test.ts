@@ -25,6 +25,7 @@ const partner = (
   city: '',
   country: '',
   skills: [],
+  superPartner: false,
   services: [],
   portfolio: [],
   clients: [],

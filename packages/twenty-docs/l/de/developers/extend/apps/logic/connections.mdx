@@ -42,6 +42,12 @@ export default defineConnectionProvider({
     // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
     // revokeEndpoint: 'https://example.com/oauth/revoke',
   },
+  // Optional: a logic function in this app to run right after a connection is
+  // established. See "Run a logic function on connect".
+  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // Optional: a logic function in this app to run right after a connection is
+  // removed. See "Run a logic function on disconnect".
+  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
 });
 ```
 
@@ -84,6 +90,76 @@ Die OAuth-Callback-URL, die Ihr Anbieter auf die Whitelist setzen muss, lautet:
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="Beim Verbindungsaufbau eine Logikfunktion ausführen" description="Reagiere in dem Moment, in dem eine Verbindung hergestellt wird">
+
+Einige Anbieter liefern dir beim Verbindungsaufbau Daten, die du persistieren musst, bevor die Verbindung nutzbar ist – das klassische Beispiel ist Slack, bei dem die OAuth-Antwort die `team_id` des Workspaces angibt, anhand derer eingehende Ereignisse zugeordnet werden. Setze `onConnectLogicFunction` so, dass auf eine Logikfunktion in derselben App (über ihren `universalIdentifier`) verwiesen wird; sie wird direkt nach dem Erstellen des `ConnectedAccount` ausgeführt.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs claimSlackTeam after every successful Slack connection.
+  onConnectLogicFunction: {
+    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
+  },
+});
+```
+
+Der Hook wird **asynchron im verbindenden Workspace** ausgeführt (er wird in eine Warteschlange gestellt, nicht abgewartet), sodass ein langsamer oder fehlerhafter Hook niemals den OAuth-Callback blockiert oder unterbricht – mache ihn idempotent und lass ihn seine eigenen Wiederholungen handhaben. Der Handler erhält:
+
+```ts
+type OnConnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+Verwenden Sie von dort `getConnection(connectedAccountId)`, um das aktuelle Zugriffstoken auszulesen und die API des Anbieters aufzurufen (z. B. Slack `auth.test`) oder eine Zuordnung im [Key-Value Store](/l/de/developers/extend/apps/logic/key-value-store) zu persistieren.
+
+</Accordion>
+
+<Accordion title="Beim Trennen der Verbindung eine Logikfunktion ausführen" description="Bereinigen, wenn eine Verbindung entfernt wird">
+
+Alles, was eine App zum Zeitpunkt des Verbindungsaufbaus beansprucht, muss freigegeben werden, wenn die Verbindung endet. Eine Slack-Integration, die zum Beispiel beim Verbindungsaufbau eine `team_id` für sich beansprucht, muss diesen Anspruch wieder freigeben, damit ein anderer Arbeitsbereich dasselbe Slack-Team verbinden kann. Setze `onDisconnectLogicFunction` so, dass auf eine Logikfunktion in derselben App verwiesen wird; sie wird direkt nach dem Löschen des `ConnectedAccount` ausgeführt.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+Wie der On-Connect-Hook läuft er **asynchron im Workspace, in dem die Trennung erfolgt**, und blockiert die Trennung nie. Der Handler erhält dieselbe Payload-Struktur:
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+Der `ConnectedAccount` ist bereits entfernt, wenn der Hook ausgeführt wird, daher wird `getConnection(connectedAccountId)` nicht mehr aufgelöst. Alles, was die Bereinigung benötigt (eine `team_id`, eine externe Abonnement-ID), muss zum Zeitpunkt des Verbindungsaufbaus im [Key-Value-Store](/l/de/developers/extend/apps/logic/key-value-store) gespeichert worden sein, indiziert nach `connectedAccountId`.
+
+Der Hook wird ausgelöst, wenn eine Verbindung eigenständig entfernt wird. Die Deinstallation der App entfernt ihre Verbindungen hingegen über eine Datenbankkaskade, sodass der Hook dort nicht ausgeführt wird. Deklariere eine `uninstallLogicFunction` in `defineApplication` für diesen Pfad: Sie wird ausgeführt, bevor die Metadaten der App gelöscht werden, sodass sie weiterhin `listConnections` aufrufen und den verbleibenden Rest bereinigen kann.
 
 </Accordion>
 
@@ -136,15 +212,16 @@ export const createLinearIssueHandler = async (input: {
 
 Jede Verbindung hat:
 
-| Feld              | Beschreibung                                                                                                                       |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `id`              | Eindeutige Zeilen-ID; an `getConnection(id)` übergeben, um eine einzelne Verbindung erneut abzurufen                               |
-| `visibility`      | `'user'` (privat für ein Mitglied des Arbeitsbereichs) oder `'workspace'` (mit allen Mitgliedern geteilt)                          |
-| `scopes`          | Vom Upstream-Anbieter gewährte OAuth-Berechtigungen (unabhängig von `visibility` — diese sind nicht miteinander verknüpft)         |
-| `userWorkspaceId` | Die userWorkspace-ID des Eigentümers — nützlich, um "die Verbindung des anfragenden Benutzers" in HTTP-Routen-Triggern auszuwählen |
-| `accessToken`     | Frisches OAuth-Zugriffstoken (wird bei Ablauf automatisch erneuert)                                                                |
-| `name` / `handle` | Anzeigename der Verbindung (automatisch beim OAuth-Callback abgeleitet, vom Benutzer umbenennbar)                                  |
-| `authFailedAt`    | Gesetzt, wenn die jüngste Aktualisierung fehlgeschlagen ist; der Benutzer muss die Verbindung erneut herstellen                    |
+| Feld              | Beschreibung                                                                                                                                                                                                                                                |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | Eindeutige Zeilen-ID; an `getConnection(id)` übergeben, um eine einzelne Verbindung erneut abzurufen                                                                                                                                                        |
+| `visibility`      | `'user'` (privat für ein Mitglied des Arbeitsbereichs) oder `'workspace'` (mit allen Mitgliedern geteilt)                                                                                                                                                   |
+| `scopes`          | Vom Upstream-Anbieter gewährte OAuth-Berechtigungen (unabhängig von `visibility` — diese sind nicht miteinander verknüpft)                                                                                                                                  |
+| `userWorkspaceId` | Die userWorkspace-ID des Eigentümers — nützlich, um "die Verbindung des anfragenden Benutzers" in HTTP-Routen-Triggern auszuwählen                                                                                                                          |
+| `accessToken`     | Frisches OAuth-Zugriffstoken (wird bei Ablauf automatisch erneuert)                                                                                                                                                                                         |
+| `name`            | Anzeigename der Verbindung (automatisch beim OAuth-Callback abgeleitet, vom Benutzer umbenennbar)                                                                                                                                                           |
+| 'handle'          | Die E-Mail des verbundenen Upstream-Accounts wurde bei jeder erneuten Verbindung aktualisiert; aufgelöst von der OIDC `id_token` gab beim Token-Austausch zurück, zurück auf die Verbindung von zwanzig Benutzer-E-Mail, wenn der Provider keine zurückgibt |
+| `authFailedAt`    | Gesetzt, wenn die jüngste Aktualisierung fehlgeschlagen ist; der Benutzer muss die Verbindung erneut herstellen                                                                                                                                             |
 
 Hauptpunkte:
 

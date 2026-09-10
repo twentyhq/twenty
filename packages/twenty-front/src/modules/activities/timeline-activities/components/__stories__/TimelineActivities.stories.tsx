@@ -10,11 +10,13 @@ import { PageLayoutType } from '~/generated-metadata/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { mockedTimelineActivityRecords } from '~/testing/mock-data/generated/data/timelineActivities/mock-timelineActivities-data';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<typeof TimelineCard> = {
   title: 'Modules/TimelineActivities/TimelineCard',
   component: TimelineCard,
   decorators: [
+    MemoryRouterDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
@@ -27,7 +29,6 @@ const meta: Meta<typeof TimelineCard> = {
               targetObjectNameSingular: CoreObjectNameSingular.Company,
             },
             layoutType: PageLayoutType.RECORD_PAGE,
-            isInSidePanel: false,
           }}
         >
           <TimelineActivityContext.Provider value={{ recordId: 'mock-id' }}>

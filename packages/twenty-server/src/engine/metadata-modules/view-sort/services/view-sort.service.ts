@@ -306,6 +306,7 @@ export class ViewSortService {
       where: {
         deletedAt: IsNull(),
       },
+      order: { createdAt: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view'],
     });
   }
@@ -319,6 +320,7 @@ export class ViewSortService {
         viewId,
         deletedAt: IsNull(),
       },
+      order: { createdAt: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view'],
     });
   }

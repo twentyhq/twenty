@@ -5,23 +5,23 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRoleToDB';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
-  IconList,
   IconListCheck,
   IconLock,
   IconSettings,
+  IconTerminal,
   useIcons,
 } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
@@ -54,10 +54,6 @@ const StyledContentContainer = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[8]};
   width: 100%;
-`;
-
-const StyledTabListContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[8]};
 `;
 
 export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
@@ -110,7 +106,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           name: agent.name,
           label: agent.label,
           description: agent.description,
-          icon: agent.icon || 'IconRobot',
+          icon: agent.icon || 'IconLego',
           modelId: agent.modelId,
           role: agent.roleId,
           prompt: agent.prompt,
@@ -280,7 +276,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     {
       id: SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.LOGS,
       title: t`Logs`,
-      Icon: IconList,
+      Icon: IconTerminal,
     },
   ];
 
@@ -384,7 +380,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       ? t`Agent`
       : agent?.label
     : t`New Agent`;
-  const AgentIcon = getIcon(formValues.icon || 'IconRobot');
+  const AgentIcon = getIcon(formValues.icon || 'IconLego');
   const breadcrumbText = !isCreateMode
     ? loading
       ? t`Agent`
@@ -429,51 +425,50 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
           { children: breadcrumbText },
         ]}
+        secondaryBar={
+          isEditMode && loading ? undefined : (
+            <SettingsTabBar
+              tabs={tabs}
+              componentInstanceId={tabListComponentId}
+            />
+          )
+        }
       >
         <SettingsPageContainer>
           <Section>
             {isEditMode && loading ? (
               <SettingsAgentDetailSkeletonLoader />
             ) : (
-              <>
-                <StyledTabListContainer>
-                  <TabList
-                    tabs={tabs}
-                    className="tab-list"
-                    componentInstanceId={tabListComponentId}
+              <StyledContentContainer>
+                {isRoleTab && (
+                  <SettingsAgentRoleTab
+                    formValues={formValues}
+                    onFieldChange={handleFieldChange}
+                    disabled={isFormDisabled}
+                    agentId={agentId}
+                    agentLabel={formValues.label}
                   />
-                </StyledTabListContainer>
-                <StyledContentContainer>
-                  {isRoleTab && (
-                    <SettingsAgentRoleTab
-                      formValues={formValues}
-                      onFieldChange={handleFieldChange}
-                      disabled={isFormDisabled}
-                      agentId={agentId}
-                      agentLabel={formValues.label}
-                    />
-                  )}
-                  {isSettingsTab && (
-                    <SettingsAgentSettingsTab
-                      formValues={formValues}
-                      onFieldChange={handleFieldChange}
-                      disabled={isFormDisabled}
-                      agent={agent}
-                    />
-                  )}
-                  {isEvalsTab && (
-                    <SettingsAgentEvalsTab
-                      agentId={agentId}
-                      evaluationInputs={formValues.evaluationInputs}
-                      onEvaluationInputsChange={(inputs) =>
-                        handleFieldChange('evaluationInputs', inputs)
-                      }
-                      disabled={isEvalsDisabled}
-                    />
-                  )}
-                  {isLogsTab && <SettingsAgentLogsTab agentId={agentId} />}
-                </StyledContentContainer>
-              </>
+                )}
+                {isSettingsTab && (
+                  <SettingsAgentSettingsTab
+                    formValues={formValues}
+                    onFieldChange={handleFieldChange}
+                    disabled={isFormDisabled}
+                    agent={agent}
+                  />
+                )}
+                {isEvalsTab && (
+                  <SettingsAgentEvalsTab
+                    agentId={agentId}
+                    evaluationInputs={formValues.evaluationInputs}
+                    onEvaluationInputsChange={(inputs) =>
+                      handleFieldChange('evaluationInputs', inputs)
+                    }
+                    disabled={isEvalsDisabled}
+                  />
+                )}
+                {isLogsTab && <SettingsAgentLogsTab agentId={agentId} />}
+              </StyledContentContainer>
             )}
           </Section>
         </SettingsPageContainer>

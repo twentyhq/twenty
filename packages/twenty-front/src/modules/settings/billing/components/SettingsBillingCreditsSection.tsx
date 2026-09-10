@@ -14,6 +14,7 @@ import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPha
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -118,12 +119,16 @@ const StyledCreditUsageFooterActions = styled.div`
 
 export const SettingsBillingCreditsSection = ({
   currentBillingSubscription,
+  onManageBilling,
+  isManageBillingDisabled,
   onUpdatePayment,
   isUpdatePaymentDisabled,
 }: {
   currentBillingSubscription: NonNullable<
     CurrentWorkspace['currentBillingSubscription']
   >;
+  onManageBilling: () => void;
+  isManageBillingDisabled: boolean;
   onUpdatePayment: () => void;
   isUpdatePaymentDisabled: boolean;
 }) => {
@@ -149,9 +154,7 @@ export const SettingsBillingCreditsSection = ({
   const { getIntervalLabel } = useBillingWording();
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
-  const shouldUpdatePayment =
-    subscriptionStatus === SubscriptionStatus.PastDue ||
-    subscriptionStatus === SubscriptionStatus.Unpaid;
+  const shouldUpdatePayment = isSubscriptionPaymentOverdue(subscriptionStatus);
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
     usePermissionFlagMap();
 
@@ -183,7 +186,9 @@ export const SettingsBillingCreditsSection = ({
     ? MIN_VISIBLE_EMPTY_CREDIT_PROGRESS_PERCENTAGE
     : clampedRemainingCreditsPercentage;
 
-  const hasRolloverCredits = rolloverCredits > 0;
+  // rolloverCredits sums every active grant, not just the rolled-over ones
+  const extraCredits = rolloverCredits;
+  const hasExtraCredits = extraCredits > 0;
 
   const usedCreditsDisplay = formatNumber(usedCredits, { decimals: 2 });
   const grantedCreditsDisplay = formatNumber(displayedGrantedCredits, {
@@ -192,7 +197,7 @@ export const SettingsBillingCreditsSection = ({
   const totalGrantedCreditsDisplay = formatNumber(totalGrantedCredits, {
     decimals: 2,
   });
-  const rolloverCreditsDisplay = formatNumber(rolloverCredits, {
+  const extraCreditsDisplay = formatNumber(extraCredits, {
     decimals: 2,
   });
   const rolloverCapDisplay = formatNumber(displayedGrantedCredits * 2, {
@@ -240,8 +245,8 @@ export const SettingsBillingCreditsSection = ({
             shouldRedirectToManageBilling={isCancellationScheduled}
             shouldRedirectToUpdatePayment={shouldUpdatePayment}
             canEndTrialPeriod={hasPermissionToEndTrialPeriod}
-            onManageBilling={onUpdatePayment}
-            isManageBillingDisabled={isUpdatePaymentDisabled}
+            onManageBilling={onManageBilling}
+            isManageBillingDisabled={isManageBillingDisabled}
             onUpdatePayment={onUpdatePayment}
             isUpdatePaymentDisabled={isUpdatePaymentDisabled}
             canCancelCreditPackSwitch={canCancelCreditPackSwitch}
@@ -269,12 +274,12 @@ export const SettingsBillingCreditsSection = ({
                 </StyledMetricValue>
                 {t`credits available during the trial period`}
               </StyledRolloverText>
-            ) : hasRolloverCredits ? (
+            ) : hasExtraCredits ? (
               <StyledRolloverText>
                 <StyledMetricValue>
                   {totalGrantedCreditsDisplay}
                 </StyledMetricValue>
-                {t`credits available (Including ${rolloverCreditsDisplay} from rollover)`}
+                {t`credits available (including ${extraCreditsDisplay} on top of your plan)`}
               </StyledRolloverText>
             ) : (
               <StyledRolloverText>

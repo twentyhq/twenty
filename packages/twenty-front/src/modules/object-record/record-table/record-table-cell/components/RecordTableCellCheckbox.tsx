@@ -7,6 +7,7 @@ import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidthClassName';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,6 +28,7 @@ export const RecordTableCellCheckbox = () => {
   const { t } = useLingui();
 
   const { isSelected } = useRecordTableRowContextOrThrow();
+  const { isDragging } = useRecordTableRowDraggableContextOrThrow();
 
   const { setCurrentRowSelected } = useSetCurrentRowSelected();
 
@@ -43,6 +45,7 @@ export const RecordTableCellCheckbox = () => {
   return (
     <RecordTableCellStyleWrapper
       isSelected={isSelected}
+      isDragging={isDragging}
       hasRightBorder={false}
       widthClassName={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME}
     >

@@ -125,9 +125,11 @@ export const CalendarEventRow = ({
           <CalendarEventNotSharedContent />
         )}
       </StyledLabels>
-      {!!calendarEvent.participants?.length && (
+      {(!!calendarEvent.participants?.length ||
+        !!calendarEvent.callRecordings?.length) && (
         <CalendarEventParticipantsAvatarGroup
-          participants={calendarEvent.participants}
+          participants={calendarEvent.participants ?? []}
+          callRecordings={calendarEvent.callRecordings}
         />
       )}
     </StyledContainer>

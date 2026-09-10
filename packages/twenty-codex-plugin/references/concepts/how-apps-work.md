@@ -51,11 +51,11 @@ The development loop is:
 create → develop → sync → validate → repeat
 ```
 
-1. **Create**: `npx create-twenty-app@latest <app-name>` generates the project, installs dependencies, starts a local Twenty server, and runs an initial sync. The scaffolder handles everything in one command — do not run `yarn twenty dev --once` after scaffolding because the sync already happened.
+1. **Create**: `npx create-twenty-app@latest <app-name>` generates the project, installs dependencies, starts a local Twenty server, and runs an initial sync. The scaffolder handles everything in one command — do not run `yarn twenty apply` after scaffolding because the sync already happened.
 
 2. **Develop**: Add or modify entities in `src/`. Objects go in `src/objects/`, front components in `src/front-components/`, logic functions in `src/logic-functions/`, page layouts in `src/page-layouts/`, and so on. Each entity file exports a `define*` call.
 
-3. **Sync**: `yarn twenty dev --once` builds, deploys, and installs the app on the active remote in one step. The Twenty instance updates its schema, registers new objects and fields, mounts front components, and activates logic functions. This is the primary way to get changes onto a Twenty instance during development. Sync after every meaningful change.
+3. **Sync**: `yarn twenty apply` builds, deploys, and installs the app on the active remote in one step. The Twenty instance updates its schema, registers new objects and fields, mounts front components, and activates logic functions. This is the primary way to get changes onto a Twenty instance during development. Sync after every meaningful change.
 
 4. **Validate**: `yarn twenty dev:typecheck` checks generated types. `yarn lint` checks local lint rules. Open the workspace in a browser to verify front components render and logic functions execute.
 
@@ -106,5 +106,5 @@ my-app/
 
 - **Universal identifiers**: Stable UUIDs assigned to every entity. They survive renames, version bumps, and resyncs. Never change a universal identifier after first sync.
 - **Remotes**: Named connections to Twenty instances. Stored in `~/.twenty/config.json`. Switch with `yarn twenty remote:use <name>`.
-- **Sync**: `yarn twenty dev --once` builds, deploys, and installs the app on the active remote in one step. This is the standard way to get code changes onto a Twenty instance.
+- **Sync**: `yarn twenty apply` builds, deploys, and installs the app on the active remote in one step. This is the standard way to get code changes onto a Twenty instance.
 - **Publish**: `yarn twenty app:publish` packages the app for distribution to other instances or the marketplace. Requires a strictly higher semver version than the previously published version.

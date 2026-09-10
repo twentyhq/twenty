@@ -1,12 +1,9 @@
 import { RecordBoardContainer } from '@/object-record/record-board/components/RecordBoardContainer';
-import { RecordBoardWidgetViewSettingsReadOnlyEffect } from '@/object-record/record-board-widget/components/RecordBoardWidgetViewSettingsReadOnlyEffect';
+import { RecordBoardWidgetStatesEffect } from '@/object-record/record-board-widget/components/RecordBoardWidgetStatesEffect';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledBoardContainer = styled.div`
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -15,20 +12,20 @@ const StyledBoardContainer = styled.div`
 `;
 
 type RecordBoardWidgetProps = {
-  isReadOnly?: boolean;
+  isUIEditable?: boolean;
 };
 
 export const RecordBoardWidget = ({
-  isReadOnly = true,
+  isUIEditable = false,
 }: RecordBoardWidgetProps) => {
   const { objectNameSingular, recordIndexId, viewBarInstanceId } =
     useRecordIndexContextOrThrow();
 
   return (
     <>
-      <RecordBoardWidgetViewSettingsReadOnlyEffect
+      <RecordBoardWidgetStatesEffect
         recordBoardId={recordIndexId}
-        isViewSettingsReadOnly={isReadOnly}
+        isUIEditable={isUIEditable}
       />
       <StyledBoardContainer>
         <RecordBoardContainer

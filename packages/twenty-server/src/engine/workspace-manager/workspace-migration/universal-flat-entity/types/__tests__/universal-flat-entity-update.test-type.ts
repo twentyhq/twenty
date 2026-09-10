@@ -16,8 +16,10 @@ type Assertions = [
       | 'overrides'
       | 'options'
       | 'isUnique'
+      | 'isSearchable'
       | 'isLabelSyncedWithName'
       | 'isUIEditable'
+      | 'writability'
       | 'isNullable'
       | 'universalSettings'
     >
@@ -28,6 +30,7 @@ type Assertions = [
       keyof UniversalFlatEntityUpdate<'objectMetadata'>,
       | 'icon'
       | 'color'
+      | 'openRecordIn'
       | 'description'
       | 'isActive'
       | 'overrides'
@@ -41,6 +44,8 @@ type Assertions = [
       | 'isSearchable'
       | 'isUIEditable'
       | 'isUICreatable'
+      | 'writability'
+      | 'readability'
     >
   >,
 ];

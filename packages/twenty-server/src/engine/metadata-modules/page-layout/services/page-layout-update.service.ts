@@ -26,13 +26,14 @@ import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
+import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
 import {
+  generatePageLayoutExceptionMessage,
   PageLayoutException,
   PageLayoutExceptionCode,
   PageLayoutExceptionMessageKey,
-  generatePageLayoutExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
@@ -100,7 +101,6 @@ export class PageLayoutUpdateService {
         PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
       );
     }
-    ///
 
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -114,6 +114,8 @@ export class PageLayoutUpdateService {
       name: updateData.name,
       type: updateData.type,
       objectMetadataId: updateData.objectMetadataId,
+      isFirstTabPinned:
+        updateData.isFirstTabPinned ?? existingPageLayout.isFirstTabPinned,
       updatedAt: new Date().toISOString(),
     };
 
@@ -542,7 +544,7 @@ export class PageLayoutUpdateService {
     widgetsToDelete: FlatPageLayoutWidget[];
   } {
     for (const widgetInput of widgets) {
-      this.validateChartFieldReferences({
+      this.validateConfigurationFieldReferences({
         widgetInput,
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
@@ -730,7 +732,6 @@ export class PageLayoutUpdateService {
       title: widgetInput.title,
       type: widgetInput.type,
       objectMetadataId: widgetInput.objectMetadataId ?? null,
-      gridPosition: widgetInput.gridPosition,
       position: widgetInput.position ?? null,
       configuration,
       pageLayoutTabId: widgetInput.pageLayoutTabId,
@@ -847,7 +848,7 @@ export class PageLayoutUpdateService {
     );
   }
 
-  private validateChartFieldReferences({
+  private validateConfigurationFieldReferences({
     widgetInput,
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
@@ -866,6 +867,13 @@ export class PageLayoutUpdateService {
       widgetTitle: widgetInput.title,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
+    });
+
+    validateFieldConfigurationNestedRelationOrThrow({
+      widgetConfiguration: widgetInput.configuration,
+      widgetObjectMetadataId: widgetInput.objectMetadataId,
+      widgetTitle: widgetInput.title,
+      flatFieldMetadataMaps,
     });
   }
 

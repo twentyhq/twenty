@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { plural } from '@lingui/core/macro';
 import { Tag, type TagColor } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { JobState } from '~/generated-admin/graphql';
@@ -24,17 +25,6 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledAttemptBadge = styled.span`
-  background-color: ${themeCssVariables.background.danger};
-  border: 1px solid ${themeCssVariables.border.color.danger};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.danger};
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[1]};
-  white-space: nowrap;
-`;
-
 export const SettingsAdminJobStateBadge = ({
   state,
   attemptsMade = 1,
@@ -46,7 +36,15 @@ export const SettingsAdminJobStateBadge = ({
     <StyledContainer>
       <Tag color={color} text={state} />
       {showAttempts && (
-        <StyledAttemptBadge>{attemptsMade} attempts</StyledAttemptBadge>
+        <Tag
+          color="red"
+          text={plural(attemptsMade, {
+            one: `${attemptsMade} attempt`,
+            other: `${attemptsMade} attempts`,
+          })}
+          weight="medium"
+          preventShrink
+        />
       )}
     </StyledContainer>
   );

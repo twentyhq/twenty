@@ -29,7 +29,13 @@ const parseStatusChanges = (value: unknown): RecallBotStatusChange[] => {
       return [];
     }
 
-    return [{ code, createdAt: getString(asRecord(statusChange)?.created_at) }];
+    return [
+      {
+        code,
+        subCode: getString(asRecord(statusChange)?.sub_code),
+        createdAt: getString(asRecord(statusChange)?.created_at),
+      },
+    ];
   });
 };
 

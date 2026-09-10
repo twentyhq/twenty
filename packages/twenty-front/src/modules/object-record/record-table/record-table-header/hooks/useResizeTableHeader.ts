@@ -1,4 +1,6 @@
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
+import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
+import { getViewPersistTarget } from '@/object-record/record-table-widget/utils/getViewPersistTarget';
 
 import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthVariableName';
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
@@ -7,14 +9,15 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
 
-import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
+import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
-import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
+import { useRecordTableFirstColumnWidthOverride } from '@/object-record/record-table/hooks/useRecordTableFirstColumnWidthOverride';
 import { computeLastRecordTableColumnWidth } from '@/object-record/record-table/utils/computeLastRecordTableColumnWidth';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
+import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
@@ -24,7 +27,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSaveRecordFields } from '@/views/hooks/useSaveRecordFields';
 import { useStore } from 'jotai';
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import {
   findById,
   findByProperty,
@@ -33,6 +36,7 @@ import {
 
 export const useResizeTableHeader = () => {
   const { recordTableId, visibleRecordFields } = useRecordTableContextOrThrow();
+  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
 
   const resizeFieldOffset = useAtomComponentStateCallbackState(
     resizeFieldOffsetComponentState,
@@ -66,24 +70,25 @@ export const useResizeTableHeader = () => {
     recordTableId,
   );
 
-  const shouldCompactRecordTableFirstColumn = useAtomComponentStateValue(
-    shouldCompactRecordTableFirstColumnComponentState,
-    recordTableId,
-  );
+  const firstColumnWidthOverride =
+    useRecordTableFirstColumnWidthOverride(recordTableId);
 
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(
     isRecordTableDragColumnHiddenComponentState,
     recordTableId,
   );
 
-  const isRecordTableCheckboxColumnHidden = useAtomComponentStateValue(
-    isRecordTableCheckboxColumnHiddenComponentState,
-    recordTableId,
-  );
+  const isRecordTableCheckboxColumnHidden =
+    useIsRecordTableCheckboxColumnHidden(recordTableId);
+
+  // captured once per drag: reading computed style on every move would
+  // force a synchronous style recalc, and the zoom cannot change mid-drag
+  const [dragUiZoom, setDragUiZoom] = useState(1);
 
   const handleResizeHandlerStart = useCallback<PointerEventListener>(
     ({ x }) => {
       resetTableRowSelection();
+      setDragUiZoom(getUiZoom());
       setInitialPointerPositionX(x);
     },
     [resetTableRowSelection],
@@ -95,7 +100,7 @@ export const useResizeTableHeader = () => {
 
       throwIfNotDefined(recordField, 'recordField');
 
-      const newResizeOffset = x - initialPointerPositionX;
+      const newResizeOffset = (x - initialPointerPositionX) / dragUiZoom;
 
       const newRecordFieldSizeWithOffset = recordField.size + newResizeOffset;
 
@@ -117,7 +122,7 @@ export const useResizeTableHeader = () => {
 
       const { lastColumnWidth } = computeLastRecordTableColumnWidth({
         recordFields: visibleRecordFields,
-        shouldCompactFirstColumn: shouldCompactRecordTableFirstColumn,
+        firstColumnWidthOverride,
         tableWidth: recordTableWidth,
         isDragColumnHidden: isRecordTableDragColumnHidden,
         isCheckboxColumnHidden: isRecordTableCheckboxColumnHidden,
@@ -142,14 +147,15 @@ export const useResizeTableHeader = () => {
         `${newGroupSectionLastColumnWidth}px`,
       );
 
-      setResizeFieldOffset(x - initialPointerPositionX);
+      setResizeFieldOffset((x - initialPointerPositionX) / dragUiZoom);
     },
     [
+      dragUiZoom,
       initialPointerPositionX,
       recordField,
       recordTableId,
       visibleRecordFields,
-      shouldCompactRecordTableFirstColumn,
+      firstColumnWidthOverride,
       recordTableWidth,
       isRecordTableDragColumnHidden,
       isRecordTableCheckboxColumnHidden,
@@ -184,7 +190,18 @@ export const useResizeTableHeader = () => {
         size: nextWidth,
       });
 
-      saveRecordFields([updatedRecordField]);
+      const persistTarget = getViewPersistTarget(recordTableWidgetContext);
+
+      if (persistTarget.target === 'api') {
+        saveRecordFields([updatedRecordField]);
+      } else if (persistTarget.target === 'pageLayoutDraft') {
+        persistTarget.widgetContext.updateViewDraftField(
+          updatedRecordField.id,
+          {
+            size: nextWidth,
+          },
+        );
+      }
     }
 
     setDragSelectionStartEnabled(true);
@@ -197,6 +214,7 @@ export const useResizeTableHeader = () => {
     updateRecordField,
     setDragSelectionStartEnabled,
     recordField,
+    recordTableWidgetContext,
   ]);
 
   useTrackPointer({

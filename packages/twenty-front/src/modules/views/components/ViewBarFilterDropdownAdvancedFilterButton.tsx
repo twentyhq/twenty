@@ -30,7 +30,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 
 const StyledPillContainer = styled.span`
-  & > * {
+  & > span {
     background: ${themeCssVariables.color.blue3};
     color: ${themeCssVariables.color.blue};
   }

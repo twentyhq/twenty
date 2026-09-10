@@ -1,4 +1,3 @@
-// TEMP_DISABLED_TEST: Removed unused imports due to commented test
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import {
@@ -24,18 +23,3 @@ const meta: Meta<PageDecoratorArgs> = {
 export default meta;
 
 export type Story = StoryObj<typeof SettingsWorkspaceMembers>;
-
-// TEMP_DISABLED_TEST: Temporarily commented out due to test failure
-// export const Default: Story = {
-//   play: async ({ canvasElement }) => {
-//     const canvas = within(canvasElement);
-
-//     await sleep(1000);
-
-//     const buttons = await canvas.getAllByRole('button');
-
-//     expect(
-//       buttons.findIndex((button) => button.outerHTML.includes('Copy link')),
-//     ).toBeGreaterThan(-1);
-//   },
-// };

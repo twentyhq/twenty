@@ -63,7 +63,6 @@ export const WithOpenMonthSelect: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    // Wait for date picker to load and click calendar icon to open month/year selector
     const calendarButton = await canvas.findByRole(
       'button',
       { name: 'Select month and year' },
@@ -71,7 +70,6 @@ export const WithOpenMonthSelect: Story = {
     );
     await userEvent.click(calendarButton);
 
-    // Now find and click the month select
     const monthSelect = await body.findByText(
       'January',
       {},
@@ -106,7 +104,6 @@ export const WithOpenYearSelect: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    // Wait for date picker to load and click calendar icon to open month/year selector
     const calendarButton = await canvas.findByRole(
       'button',
       { name: 'Select month and year' },

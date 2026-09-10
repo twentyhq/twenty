@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Converts a Zod schema to a lean JSON Schema for LLM tool optimised consumption.
 export const toToolJsonSchema = (schema: z.ZodTypeAny): object => {
   const result = z.toJSONSchema(schema, {
     io: 'input',

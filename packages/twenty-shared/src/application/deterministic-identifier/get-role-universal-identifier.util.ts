@@ -1,6 +1,5 @@
 import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
 
-// A role is identified by its label within its application.
 export const getRoleUniversalIdentifier = ({
   applicationUniversalIdentifier,
   label,

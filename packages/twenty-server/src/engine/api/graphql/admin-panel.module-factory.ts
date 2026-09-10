@@ -1,6 +1,7 @@
 import { type YogaDriverConfig } from '@graphql-yoga/nestjs';
 import * as Sentry from '@sentry/node';
 import GraphQLJSON from 'graphql-type-json';
+import { ApiPath } from 'twenty-shared/types';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
@@ -29,7 +30,7 @@ export const adminPanelModuleFactory = async (
     resolverSchemaScope: 'admin',
     buildSchemaOptions: {},
     renderGraphiQL() {
-      return renderApolloPlayground({ path: 'admin-panel' });
+      return renderApolloPlayground({ path: ApiPath.AdminPanel });
     },
     resolvers: { JSON: GraphQLJSON },
     plugins: [
@@ -50,7 +51,7 @@ export const adminPanelModuleFactory = async (
         checkDuplicateRootResolvers: true,
       }),
     ],
-    path: '/admin-panel',
+    path: `/${ApiPath.AdminPanel}`,
     context: () => ({
       loaders: dataloaderService.createLoaders(),
     }),
@@ -58,7 +59,7 @@ export const adminPanelModuleFactory = async (
 
   if (twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT) {
     config.renderGraphiQL = () => {
-      return renderApolloPlayground({ path: 'admin-panel' });
+      return renderApolloPlayground({ path: ApiPath.AdminPanel });
     };
   }
 

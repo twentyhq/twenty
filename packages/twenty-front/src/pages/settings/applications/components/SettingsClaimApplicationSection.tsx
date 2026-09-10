@@ -210,7 +210,9 @@ export const SettingsClaimApplicationSection = () => {
         availableApplicationId: app.universalIdentifier,
       })}
     >
-      <ApplicationDisplay application={{ name: app.name, logo: app.logoUrl }} />
+      <ApplicationDisplay
+        application={{ name: app.name, logoUrl: app.logoUrl }}
+      />
     </StyledResultTitleLink>
   );
 

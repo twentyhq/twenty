@@ -13,9 +13,10 @@ export const MARKETPLACE_APP_DETAIL_FRAGMENT = gql`
     description
     author
     category
-    logo
+    logoUrl
     websiteUrl
     aboutDescription
+    pricingDescription
     termsUrl
     emailSupport
     issueReportUrl

@@ -1,8 +1,8 @@
-import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
+import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { IconBell } from 'twenty-ui/icon';
 import { MenuItemDraggable } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -11,13 +11,7 @@ const meta: Meta<typeof DraggableItem> = {
   title: 'UI/Layout/DraggableList/DraggableItem',
   component: DraggableItem,
   decorators: [
-    (Story) => (
-      <DragDropContext onDragEnd={fn()}>
-        <Droppable droppableId="droppable-id">
-          {(_provided) => <Story />}
-        </Droppable>
-      </DragDropContext>
-    ),
+    (Story) => <DraggableList onDragEnd={fn()} draggableItems={<Story />} />,
     ComponentDecorator,
   ],
   parameters: {

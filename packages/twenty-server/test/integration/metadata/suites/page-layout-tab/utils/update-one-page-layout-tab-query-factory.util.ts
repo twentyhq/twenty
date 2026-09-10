@@ -11,6 +11,7 @@ const DEFAULT_PAGE_LAYOUT_TAB_GQL_FIELDS = `
   id
   title
   position
+  layoutMode
   pageLayoutId
   createdAt
   updatedAt
@@ -34,6 +35,7 @@ export const updateOnePageLayoutTabQueryFactory = ({
       title: input.title,
       position: input.position,
       icon: input.icon,
+      layoutMode: input.layoutMode,
     },
   },
 });

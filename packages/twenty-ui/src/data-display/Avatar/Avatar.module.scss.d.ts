@@ -5,6 +5,7 @@ declare const classNames: {
   readonly md: 'md';
   readonly sm: 'sm';
   readonly xs: 'xs';
+  readonly pulsing: 'pulsing';
   readonly image: 'image';
   readonly placeholderChar: 'placeholderChar';
 };

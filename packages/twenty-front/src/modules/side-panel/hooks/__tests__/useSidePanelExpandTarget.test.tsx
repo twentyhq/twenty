@@ -1,0 +1,165 @@
+import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
+import { type ReactNode } from 'react';
+import { SidePanelPages } from 'twenty-shared/types';
+
+import { useSidePanelExpandTarget } from '@/side-panel/hooks/useSidePanelExpandTarget';
+import {
+  type SidePanelNavigationStackItem,
+  sidePanelNavigationStackState,
+} from '@/side-panel/states/sidePanelNavigationStackState';
+import { type ActiveSidePanelPage } from '@/side-panel/types/SidePanelPage';
+import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { IconDotsVertical } from 'twenty-ui/icon';
+
+const mockAskAiExpandTarget: SidePanelExpandTarget = {
+  label: 'Expand chat',
+  hasExpandShortcut: true,
+  expand: jest.fn(),
+};
+
+let mockRecordExpandTarget: SidePanelExpandTarget | null = null;
+
+const RECORD_EXPAND_TARGET: SidePanelExpandTarget = {
+  label: 'Expand record',
+  hasExpandShortcut: true,
+  expand: jest.fn(),
+};
+
+const mockRichTextExpandTarget: SidePanelExpandTarget = {
+  label: 'Expand record',
+  hasExpandShortcut: true,
+  expand: jest.fn(),
+};
+
+const mockRoutedExpandTarget: SidePanelExpandTarget = {
+  label: 'Open in full page',
+  hasExpandShortcut: true,
+  expand: jest.fn(),
+};
+
+let mockHasSidePanelSubPages = false;
+let mockIsMobile = false;
+
+jest.mock('twenty-ui/utilities', () => ({
+  ...jest.requireActual('twenty-ui/utilities'),
+  useIsMobile: () => mockIsMobile,
+}));
+
+jest.mock(
+  '@/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage',
+  () => ({
+    useExpandAskAiSidePanelPage: () => mockAskAiExpandTarget,
+  }),
+);
+
+jest.mock('@/side-panel/routing/hooks/useExpandRecordSidePanelPage', () => ({
+  useExpandRecordSidePanelPage: () => mockRecordExpandTarget,
+}));
+
+jest.mock(
+  '@/side-panel/pages/rich-text-page/hooks/useExpandRichTextSidePanelPage',
+  () => ({
+    useExpandRichTextSidePanelPage: () => mockRichTextExpandTarget,
+  }),
+);
+
+jest.mock('@/side-panel/routing/hooks/useExpandRoutedSidePanelPage', () => ({
+  useExpandRoutedSidePanelPage: () => mockRoutedExpandTarget,
+}));
+
+jest.mock('@/side-panel/hooks/useSidePanelSubPageHistory', () => ({
+  useSidePanelSubPageHistory: () => ({
+    hasSidePanelSubPages: mockHasSidePanelSubPages,
+  }),
+}));
+
+const wrapper = ({ children }: { children: ReactNode }) => (
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+);
+
+const renderExpandTarget = (sidePanelPage: ActiveSidePanelPage) => {
+  const navigationItem: SidePanelNavigationStackItem =
+    sidePanelPage === SidePanelPages.RoutedPage
+      ? {
+          page: sidePanelPage,
+          pageTitle: 'Test page',
+          pageIcon: IconDotsVertical,
+          pageId: 'test-page',
+          routedLocation: {
+            pathname: '/test',
+            search: '',
+            hash: '',
+            state: null,
+            key: 'test',
+          },
+        }
+      : {
+          page: sidePanelPage,
+          pageTitle: 'Test page',
+          pageIcon: IconDotsVertical,
+          pageId: 'test-page',
+        };
+
+  jotaiStore.set(sidePanelNavigationStackState.atom, [navigationItem]);
+
+  return renderHook(() => useSidePanelExpandTarget(), { wrapper });
+};
+
+describe('useSidePanelExpandTarget', () => {
+  beforeEach(() => {
+    mockHasSidePanelSubPages = false;
+    mockIsMobile = false;
+    mockRecordExpandTarget = RECORD_EXPAND_TARGET;
+    jest.clearAllMocks();
+  });
+
+  it('should return the ask ai target when the ask ai page is open', () => {
+    const { result } = renderExpandTarget(SidePanelPages.AskAI);
+
+    expect(result.current).toBe(mockAskAiExpandTarget);
+  });
+
+  it('should return the record target when a hosted record page is open', () => {
+    const { result } = renderExpandTarget(SidePanelPages.RoutedPage);
+
+    expect(result.current).toBe(RECORD_EXPAND_TARGET);
+  });
+
+  it('should return the routed target when a hosted page is not a record', () => {
+    mockRecordExpandTarget = null;
+
+    const { result } = renderExpandTarget(SidePanelPages.RoutedPage);
+
+    expect(result.current).toBe(mockRoutedExpandTarget);
+  });
+
+  it('should return the rich text target when a rich text page is open', () => {
+    const { result } = renderExpandTarget(SidePanelPages.EditRichText);
+
+    expect(result.current).toBe(mockRichTextExpandTarget);
+  });
+
+  it('should return null when the page has no full page equivalent', () => {
+    const { result } = renderExpandTarget(SidePanelPages.SearchRecords);
+
+    expect(result.current).toBeNull();
+  });
+
+  it('should return null when a sub page has taken over the panel', () => {
+    mockHasSidePanelSubPages = true;
+
+    const { result } = renderExpandTarget(SidePanelPages.RoutedPage);
+
+    expect(result.current).toBeNull();
+  });
+
+  it('should return null on mobile where the panel already fills the viewport', () => {
+    mockIsMobile = true;
+
+    const { result } = renderExpandTarget(SidePanelPages.RoutedPage);
+
+    expect(result.current).toBeNull();
+  });
+});

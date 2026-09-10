@@ -8,11 +8,12 @@ import { getSettingsPath } from 'twenty-shared/utils';
 
 import { t } from '@lingui/core/macro';
 import {
+  IconBook,
   IconChartBar,
   IconCpu,
   IconLayoutDashboard,
   IconPlus,
-  IconSparkles,
+  IconSparkle2,
   IconTool,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
@@ -48,7 +49,7 @@ export const SettingsAI = () => {
     {
       id: SETTINGS_AI_TABS.TABS_IDS.SKILLS,
       title: t`Skills`,
-      Icon: IconSparkles,
+      Icon: IconBook,
     },
     {
       id: SETTINGS_AI_TABS.TABS_IDS.TOOLS,
@@ -119,22 +120,11 @@ export const SettingsAI = () => {
             instanceIdPrefix={SETTINGS_AI_HERO_INSTANCE_ID_PREFIX}
             tabs={[
               {
-                id: 'skills',
-                title: t`Skills`,
-                Icon: IconSparkles,
-                vimeoId: '1185511734',
-              },
-              {
-                id: 'tools',
-                title: t`Tools`,
-                Icon: IconTool,
-                vimeoId: '1185511734',
-              },
-              {
-                id: 'models',
-                title: t`Models`,
-                Icon: IconCpu,
-                vimeoId: '1185511734',
+                id: 'ai_walkthrough',
+                title: t`Walkthrough`,
+                Icon: IconSparkle2,
+                vimeoId: '1217964358',
+                hasSound: true,
               },
             ]}
             playButtonAriaLabel={t`Watch AI demo`}

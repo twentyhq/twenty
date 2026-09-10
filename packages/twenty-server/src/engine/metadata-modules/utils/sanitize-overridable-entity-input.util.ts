@@ -3,14 +3,15 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-overridable-properties-by-metadata-name.constant';
 import { computeMetadataOverridesBlob } from 'src/engine/metadata-modules/utils/compute-metadata-overrides-blob.util';
 
-type FlatEntityWithOverrides = {
+type FlatEntityWithOverrides<TOverrides> = {
   [key: string]: unknown;
-  overrides: Record<string, unknown> | null;
+  overrides: TOverrides | null;
 };
 
 export const sanitizeOverridableEntityInput = <
   T extends AllMetadataName,
   TProperties extends Record<string, unknown>,
+  TOverrides = Record<string, unknown>,
 >({
   metadataName,
   existingFlatEntity,
@@ -18,11 +19,11 @@ export const sanitizeOverridableEntityInput = <
   shouldOverride,
 }: {
   metadataName: T;
-  existingFlatEntity: FlatEntityWithOverrides;
+  existingFlatEntity: FlatEntityWithOverrides<TOverrides>;
   updatedEditableProperties: TProperties;
   shouldOverride: boolean;
 }): {
-  overrides: Record<string, unknown> | null;
+  overrides: TOverrides | null;
   updatedEditableProperties: TProperties;
 } => {
   if (!shouldOverride) {
@@ -32,7 +33,10 @@ export const sanitizeOverridableEntityInput = <
     };
   }
 
-  const { overrides, remainingProperties } = computeMetadataOverridesBlob({
+  const { overrides, remainingProperties } = computeMetadataOverridesBlob<
+    TProperties,
+    TOverrides
+  >({
     overridableProperties: ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME[
       metadataName
     ] as string[],

@@ -41,7 +41,7 @@ export class MessagingBlocklistListener {
     );
   }
 
-  @OnDatabaseBatchEvent('blocklist', DatabaseEventAction.CREATED)
+  @OnDatabaseBatchEvent('blocklist', DatabaseEventAction.DELETED)
   async handleDeletedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>

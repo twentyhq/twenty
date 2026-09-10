@@ -71,12 +71,6 @@ describe('useAddressSettingsFormInitialValues', () => {
   });
 
   it('should return all address subfields when settings.subFields is null', () => {
-    // const fieldMetadataItem: Pick<FieldMetadataItem, 'settings'> = {
-    //   settings: {
-    //     subFields: null,
-    //   },
-    // };
-
     const { result } = renderHook(
       () =>
         useAddressSettingsFormInitialValues({
@@ -98,12 +92,6 @@ describe('useAddressSettingsFormInitialValues', () => {
   });
 
   it('should return all address subfields when settings.subFields is empty array', () => {
-    // const fieldMetadataItem: Pick<FieldMetadataItem, 'settings'> = {
-    //   settings: {
-    //     subFields: [],
-    //   },
-    // };
-
     const { result } = renderHook(
       () =>
         useAddressSettingsFormInitialValues({

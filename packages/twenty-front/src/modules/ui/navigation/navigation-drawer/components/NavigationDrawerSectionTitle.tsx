@@ -1,7 +1,6 @@
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import React, { useContext } from 'react';
@@ -83,9 +82,7 @@ export const NavigationDrawerSectionTitle = ({
 }: NavigationDrawerSectionTitleProps) => {
   const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
-  const isNavigationDrawerExpanded = useAtomStateValue(
-    isNavigationDrawerExpandedState,
-  );
+  const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
   const isSettingsPage = useIsSettingsPage();
   const handleTitleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();

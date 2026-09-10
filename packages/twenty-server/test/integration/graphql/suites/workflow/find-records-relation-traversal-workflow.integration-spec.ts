@@ -3,12 +3,14 @@ import request from 'supertest';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 import {
   destroyWorkflowRun,
   runWorkflowVersion,
   waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -29,7 +31,7 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
   let createdWorkflowId: string | null = null;
   let createdWorkflowVersionId: string | null = null;
   let findRecordsStepId: string | null = null;
-  let createdWorkflowRunId: string | null = null;
+  const createdWorkflowRunIds: string[] = [];
   let personCompanyFieldMetadataId: string | null = null;
   let companyNameFieldMetadataId: string | null = null;
 
@@ -153,28 +155,16 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
     createdWorkflowVersionId =
       getWorkflowResponse.body.data.workflow.versions.edges[0].node.id;
 
-    await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation UpdateWorkflowVersion($id: UUID!, $data: WorkflowVersionUpdateInput!) {
-            updateWorkflowVersion(id: $id, data: $data) { id }
-          }
-        `,
-        variables: {
-          id: createdWorkflowVersionId,
-          data: {
-            trigger: {
-              name: 'Manual Trigger',
-              type: 'MANUAL',
-              settings: { outputSchema: {} },
-              nextStepIds: [],
-              position: { x: 0, y: 0 },
-            },
-          },
-        },
-      });
+    await updateWorkflowVersionTrigger({
+      workflowVersionId: createdWorkflowVersionId!,
+      trigger: {
+        name: 'Manual Trigger',
+        type: 'MANUAL',
+        settings: { outputSchema: {} },
+        nextStepIds: [],
+        position: { x: 0, y: 0 },
+      },
+    });
 
     const createStepResponse = await client
       .post('/graphql')
@@ -246,9 +236,9 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
                         id: filterId,
                         type: 'TEXT',
                         label: 'Company → Name',
-                        value: 'AirbnbWorkflowTest',
+                        value: '{{trigger.companyName}}',
                         operand: 'CONTAINS',
-                        displayValue: 'AirbnbWorkflowTest',
+                        displayValue: '{{trigger.companyName}}',
                         fieldMetadataId: personCompanyFieldMetadataId,
                         relationTargetFieldMetadataId:
                           companyNameFieldMetadataId,
@@ -283,6 +273,17 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
     expect(activateResponse.body.errors).toBeUndefined();
   };
 
+  const runWithCompanyName = async (companyName: string | null) => {
+    const workflowRunId = await runWorkflowVersion({
+      workflowVersionId: createdWorkflowVersionId!,
+      payload: { companyName },
+    });
+
+    createdWorkflowRunIds.push(workflowRunId);
+
+    return waitForWorkflowCompletion(workflowRunId);
+  };
+
   beforeAll(async () => {
     await lookupFieldMetadataIds();
     await seedTestRecords();
@@ -290,8 +291,8 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
   });
 
   afterAll(async () => {
-    if (createdWorkflowRunId) {
-      await destroyWorkflowRun(createdWorkflowRunId);
+    for (const workflowRunId of createdWorkflowRunIds) {
+      await destroyWorkflowRun(workflowRunId);
     }
     if (createdWorkflowId) {
       await client
@@ -321,13 +322,7 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
   });
 
   it('should apply a one-hop relation-traversal filter and return only matching records', async () => {
-    const workflowRunId = await runWorkflowVersion({
-      workflowVersionId: createdWorkflowVersionId!,
-    });
-
-    createdWorkflowRunId = workflowRunId;
-
-    const workflowRun = await waitForWorkflowCompletion(workflowRunId);
+    const workflowRun = await runWithCompanyName('AirbnbWorkflowTest');
 
     expect(workflowRun?.status).toBe('COMPLETED');
     expect(workflowRun?.state?.stepInfos?.[findRecordsStepId!]?.status).toBe(
@@ -344,5 +339,35 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
     expect(returnedIds).toContain(TEST_PERSON_AIRBNB_1_ID);
     expect(returnedIds).toContain(TEST_PERSON_AIRBNB_2_ID);
     expect(returnedIds).not.toContain(TEST_PERSON_STRIPE_1_ID);
+  });
+
+  it('should complete the run when the filter value resolves to empty', async () => {
+    const workflowRun = await runWithCompanyName(null);
+
+    expect(workflowRun?.status).toBe('COMPLETED');
+    expect(workflowRun?.state?.stepInfos?.[findRecordsStepId!]?.status).toBe(
+      'SUCCESS',
+    );
+
+    const result = workflowRun?.state?.stepInfos?.[findRecordsStepId!]
+      ?.result as
+      | {
+          all?: Array<{ id: string; companyId: string | null }>;
+          totalCount?: number | string;
+        }
+      | undefined;
+
+    const returnedRecords = result?.all;
+
+    expect(Array.isArray(returnedRecords)).toBe(true);
+    expect(Number.isFinite(Number(result?.totalCount))).toBe(true);
+
+    // An empty filter value can only match people with no company, and other
+    // specs sharing the database seed those, so assert the shape rather than []
+    const returnedCompanyIds = (returnedRecords ?? []).map(
+      (record) => record.companyId,
+    );
+
+    expect(returnedCompanyIds.filter(isDefined)).toEqual([]);
   });
 });

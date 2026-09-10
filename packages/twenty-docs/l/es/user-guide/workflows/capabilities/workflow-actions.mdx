@@ -19,7 +19,7 @@ Las acciones definen lo que ocurre después de que se dispara un activador. Pued
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
-### Crear un Registro
+### Crear Registro
 
 Agrega un nuevo registro a un objeto seleccionado.
 
@@ -112,12 +112,12 @@ Crea un registro nuevo o actualiza uno existente según criterios de coincidenci
 
 **Configuración**:
 
-* Seleccione el array de registros de un paso anterior (p. ej., resultados de Buscar registros, de un disparador Manual con disponibilidad Masiva, de un nodo de código). Cuando un paso de Code o de una función lógica devuelve un array de nivel superior, selecciona la opción **Lista completa** para iterar sobre toda la salida.
+* Seleccione la matriz de registros de un paso anterior (por ejemplo, resultados de registros de búsqueda, de un disparador manual con disponibilidad masiva, de un nodo Code). Cuando un paso de Code o de una función lógica devuelve un array de nivel superior, selecciona la opción **Lista completa** para iterar sobre toda la salida.
 * Defina las acciones a realizar en cada registro en el bucle.
 
 <Note>
-- Puede añadir varias acciones dentro de un iterador.
-- Al usar ramas dentro de un iterador, asegúrese de que el último paso de cada rama se conecte de nuevo al iterador para cerrar el bucle.
+- Puede agregar varias acciones dentro de un Iterador.
+- Cuando use ramas dentro de un Iterador, asegúrese de que el último paso de cada rama se conecta de vuelta al Iterador para cerrar el bucle.
 </Note>
 
 * Acceda a los campos de `Elemento actual`: para usar campos del registro que se está procesando, haga clic en el paso **Iterador** y luego seleccione **Elemento actual**. Se mostrará la lista de campos disponibles de ese registro y podrá seleccionarlos para usarlos en acciones posteriores. También puedes seleccionar **Usar el elemento completo** para pasar el elemento actual completo a un paso posterior.
@@ -181,7 +181,7 @@ La fecha programada no puede estar en el pasado. Si se usa un campo de fecha de 
 ### Enviar correo electrónico
 
 Envía un correo electrónico desde su flujo de trabajo. Esto es ideal para correos electrónicos grupales con plantillas. Los correos se verán como los que envía desde su buzón.
-No es adecuado para boletines (que requieren un formato más rico) ni para secuencias de correos automatizadas.
+No es adecuado para boletines (que requieren un formato más richer) o secuencias de correo electrónico automatizadas.
 
 **Prerrequisitos**: Agregue una cuenta de correo electrónico en Configuración → Cuentas
 
@@ -202,7 +202,7 @@ Por el momento, solo es posible un destinatario.
 </Note>
 
 * Establezca la línea de asunto.
-* Redacte el cuerpo del mensaje. Puede formatear enlaces, crear listas numeradas, listas con viñetas y añadir archivos adjuntos.
+* Redacte el cuerpo del mensaje. Puede formatear enlaces, crear listas numeradas, listas de puntos de ballet y añadir archivos adjuntos.
 
 <Note>
 No es posible agregar firmas HTML por el momento.
@@ -213,24 +213,24 @@ No es posible agregar firmas HTML por el momento.
 Solicita un formulario durante la ejecución del flujo de trabajo para recopilar la entrada del usuario. Las respuestas pueden usarse luego en pasos posteriores para crear registros, enviar correos o ejecutar cualquier otra acción según la entrada.
 
 <Warning>
-**Los formularios están diseñados solo para disparadores manuales**. Para flujos de trabajo con otros disparadores (Registro Creado, Actualizado, etc.), los formularios solo son accesibles a través de la interfaz de ejecución de flujos de trabajo, lo cual no es la experiencia de usuario esperada. Un centro de notificaciones se lanzará en 2026 para soportar adecuadamente los formularios en flujos de trabajo automatizados.
+**Los formularios están diseñados solo para disparadores manuales**. Para flujos de trabajo con otros disparadores (Registro Creado, Actualizado, etc.), los formularios solo son accesibles a través de la interfaz de ejecución de flujos de trabajo, lo cual no es la experiencia de usuario esperada. En 2026 se lanzará un centro de notificación para soportar adecuadamente los formularios en flujos de trabajo automatizados.
 </Warning>
 
 **Configuración**:
 
 * Configure los campos que se pedirá a los usuarios que completen. Para cada campo, elija
-  * un tipo entre texto, número, fecha, un registro dado, un campo de selección. Los campos de selección de todos los objetos están disponibles.
+  * un tipo entre texto, número, fecha, un registro dado, un campo de selección. Los campos de todos los objetos están disponibles para su selección.
   * una etiqueta
   * un valor predeterminado en `Placeholder` (opcional)
 * Edite el título del formulario
 
 **Salida**: Las respuestas del formulario están disponibles para su uso en pasos posteriores.
 
-**Ejemplo**: El flujo de trabajo "Quick Lead" está disponible de forma predeterminada en todos los espacios de trabajo, disponible en cualquier lugar en el Menú de comandos `Cmd + K`.
+**Ejemplo**: El flujo de trabajo "Quick Lead" está disponible por defecto en todos los espacios de trabajo, disponible en cualquier lugar del menú de comandos `Cmd+K`.
 
 **Cómo completar el formulario**:
 
-* Active su flujo de trabajo manual desde el menú de comandos `Cmd K`
+* Activa tu flujo de trabajo manual desde el menú de comandos `Cmd+K`
 * Complete el formulario que se muestra en el panel lateral y haga clic en `Submit`.
 
 <Note>

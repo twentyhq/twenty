@@ -37,6 +37,18 @@ describe('isGmailNetworkError', () => {
     expect(result).toBe(true);
   });
 
+  it('should return a MessageImportDriverException for EHOSTUNREACH', () => {
+    const result = isGmailNetworkError({ code: 'EHOSTUNREACH' });
+
+    expect(result).toBe(true);
+  });
+
+  it('should not treat ECONNREFUSED as a network error', () => {
+    const result = isGmailNetworkError({ code: 'ECONNREFUSED' });
+
+    expect(result).toBe(false);
+  });
+
   it('should return undefined for unknown error codes', () => {
     const error = { code: 'UNKNOWN_ERROR' } as any;
     const result = isGmailNetworkError(error);

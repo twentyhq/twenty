@@ -24,7 +24,7 @@ import { Avatar } from 'twenty-ui/data-display';
 import {
   IconArrowUpRight,
   IconChevronRight,
-  IconHierarchy2,
+  IconHierarchy,
   IconListDetails,
 } from 'twenty-ui/icon';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
@@ -201,7 +201,7 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                   }}
                 />
                 <MenuItem
-                  LeftIcon={IconHierarchy2}
+                  LeftIcon={IconHierarchy}
                   text={t`See data model settings`}
                   onClick={() => {
                     navigateSettings(SettingsPath.ObjectDetail, {
@@ -267,7 +267,7 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                     </StyledTextContainerWithEllipsis>
                     <AppTooltip
                       anchorSelect={`#hover-text-${workspaceMember.id}`}
-                      content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
+                      title={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
                       noArrow
                       place="top"
                       positionStrategy="fixed"

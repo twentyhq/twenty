@@ -22,11 +22,17 @@ export const useAddDraftViewForFieldRelationTableWidget = (
   const store = useStore();
 
   const addDraftViewForFieldRelationTableWidget = useCallback(
-    (
-      widgetId: string,
-      targetObjectMetadataId: string,
-      inverseFieldMetadataId: string,
-    ): string | undefined => {
+    ({
+      widgetId,
+      targetObjectMetadataId,
+      inverseFieldMetadataId,
+      relationTargetFieldMetadataId,
+    }: {
+      widgetId: string;
+      targetObjectMetadataId: string;
+      inverseFieldMetadataId: string;
+      relationTargetFieldMetadataId?: string | null;
+    }): string | undefined => {
       const targetObjectMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>
           objectMetadataItem.id === targetObjectMetadataId,
@@ -55,6 +61,8 @@ export const useAddDraftViewForFieldRelationTableWidget = (
             viewFilterGroupId: null,
             positionInViewFilterGroup: null,
             subFieldName: null,
+            relationTargetFieldMetadataId:
+              relationTargetFieldMetadataId ?? null,
           },
         ],
       };

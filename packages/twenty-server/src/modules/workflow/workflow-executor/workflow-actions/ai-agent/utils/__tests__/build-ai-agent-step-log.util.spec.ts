@@ -60,7 +60,7 @@ describe('buildAiAgentStepLog', () => {
       reasoningTokens: 10,
       cacheReadTokens: 20,
       cacheCreationTokens: 5,
-      totalTokens: 155,
+      totalTokens: 150,
     });
     expect(stepLog.details.cost).toEqual({
       totalCostInDollars: 0.012,

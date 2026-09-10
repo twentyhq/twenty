@@ -1,7 +1,4 @@
-import {
-  type ObjectRecordFilter,
-  type ObjectRecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type ObjectRecordProperties } from './object-record-properties.type';
 
@@ -30,7 +27,6 @@ export type FindRecordsInput = {
     recordFilterGroups?: any;
     // oxlint-disable-next-line typescript/no-explicit-any
     recordFilters?: any;
-    gqlOperationFilter?: Partial<ObjectRecordFilter>[];
   };
   orderBy?: {
     // oxlint-disable-next-line typescript/no-explicit-any

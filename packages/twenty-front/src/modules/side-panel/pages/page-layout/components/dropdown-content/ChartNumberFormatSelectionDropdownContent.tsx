@@ -1,3 +1,4 @@
+import { CHART_NUMBER_FORMAT_DEFAULT } from '@/page-layout/widgets/graph/constants/ChartNumberFormatDefault';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -11,6 +12,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { ChartNumberFormat } from '~/generated-metadata/graphql';
 
@@ -20,21 +22,32 @@ export const ChartNumberFormatSelectionDropdownContent = () => {
 
   const configuration = widgetInEditMode?.configuration;
 
-  if (
-    !isWidgetConfigurationOfType(configuration, 'AggregateChartConfiguration')
-  ) {
+  const isChartWithNumberFormat =
+    isWidgetConfigurationOfType(configuration, 'AggregateChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'LineChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'PieChartConfiguration');
+
+  if (!isChartWithNumberFormat) {
     throw new Error('Invalid configuration type');
   }
 
-  const currentNumberFormat = configuration.numberFormat;
+  const currentNumberFormat =
+    configuration.numberFormat ??
+    (configuration.__typename === 'AggregateChartConfiguration'
+      ? undefined
+      : CHART_NUMBER_FORMAT_DEFAULT);
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
   );
 
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    dropdownId,
+    scopedDropdownId,
   );
 
   const numberFormatOptions: ChartNumberFormat[] = [

@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 
 import { msg } from '@lingui/core/macro';
+import { type Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -11,6 +12,7 @@ import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-t
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
 
@@ -22,6 +24,7 @@ describe('JwtAuthStrategy', () => {
   let twentyConfigService: any;
   let workspaceCacheService: any;
   let coreEntityCacheService: any;
+  let workspaceRepository: { findOne: jest.Mock };
 
   const jwt = {
     sub: 'sub-default',
@@ -40,6 +43,9 @@ describe('JwtAuthStrategy', () => {
     apiKeyStore = {};
 
     userWorkspaceRepository = {
+      findOne: jest.fn(),
+    };
+    workspaceRepository = {
       findOne: jest.fn(),
     };
 
@@ -133,6 +139,7 @@ describe('JwtAuthStrategy', () => {
         permissionsService,
         twentyConfigService,
       ),
+      workspaceRepository as unknown as Repository<WorkspaceEntity>,
     );
 
   describe('API_KEY validation', () => {
@@ -402,6 +409,79 @@ describe('JwtAuthStrategy', () => {
   });
 
   describe('APPLICATION_ACCESS token validation', () => {
+    it('should allow a cleanup token when its exact workspace deletion is pending', async () => {
+      const applicationId = randomUUID();
+      const workspaceId = randomUUID();
+      const workspaceDeletedAt = new Date('2026-08-18T10:00:00.000Z');
+      const workspace = Object.assign(new WorkspaceEntity(), {
+        id: workspaceId,
+        createdAt: new Date('2026-08-01T10:00:00.000Z'),
+        updatedAt: new Date('2026-08-18T10:00:00.000Z'),
+        deletedAt: workspaceDeletedAt,
+      });
+      const application = { id: applicationId };
+
+      workspaceRepository.findOne.mockResolvedValue(workspace);
+      applicationStore[workspaceId] = { [applicationId]: application };
+
+      strategy = createStrategy();
+
+      await expect(
+        strategy.validate({
+          sub: applicationId,
+          type: JwtTokenTypeEnum.APPLICATION_ACCESS,
+          applicationId,
+          workspaceId,
+          workspaceDeletionRequestTimestamp: workspaceDeletedAt.toISOString(),
+        } as JwtPayload),
+      ).resolves.toMatchObject({
+        application,
+        workspace: {
+          id: workspaceId,
+          deletedAt: workspaceDeletedAt.toISOString(),
+        },
+        tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
+      });
+    });
+
+    it('should reject a cleanup token when it belongs to a different deletion request', async () => {
+      const applicationId = randomUUID();
+      const workspaceId = randomUUID();
+
+      workspaceStore[workspaceId] = Object.assign(new WorkspaceEntity(), {
+        id: workspaceId,
+        deletedAt: null,
+      });
+
+      workspaceRepository.findOne.mockResolvedValue(
+        Object.assign(new WorkspaceEntity(), {
+          id: workspaceId,
+          createdAt: new Date('2026-08-01T10:00:00.000Z'),
+          updatedAt: new Date('2026-08-18T10:00:00.000Z'),
+          deletedAt: new Date('2026-08-18T10:00:00.000Z'),
+        }),
+      );
+
+      strategy = createStrategy();
+
+      await expect(
+        strategy.validate({
+          sub: applicationId,
+          type: JwtTokenTypeEnum.APPLICATION_ACCESS,
+          applicationId,
+          workspaceId,
+          workspaceDeletionRequestTimestamp: '2026-08-17T10:00:00.000Z',
+        } as JwtPayload),
+      ).rejects.toMatchObject({
+        code: AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        message: 'Workspace deletion request not found',
+      });
+      expect(workspaceRepository.findOne).toHaveBeenCalledWith({
+        where: { id: workspaceId },
+        withDeleted: true,
+      });
+    });
+
     it('should throw AuthExceptionCode if type is APPLICATION_ACCESS, and application not found', async () => {
       const validApplicationId = randomUUID();
       const validWorkspaceId = randomUUID();
@@ -430,6 +510,182 @@ describe('JwtAuthStrategy', () => {
         await strategy.validate(payload as JwtPayload);
       } catch (e) {
         expect(e.code).toBe(AuthExceptionCode.APPLICATION_NOT_FOUND);
+      }
+    });
+
+    it('should reject an application token bound to a user that cannot be resolved', async () => {
+      const validApplicationId = randomUUID();
+      const validWorkspaceId = randomUUID();
+      const removedUserId = randomUUID();
+
+      const payload = {
+        sub: validApplicationId,
+        type: JwtTokenTypeEnum.APPLICATION_ACCESS,
+        applicationId: validApplicationId,
+        workspaceId: validWorkspaceId,
+        userId: removedUserId,
+        userWorkspaceId: randomUUID(),
+      };
+
+      const mockWorkspace = new WorkspaceEntity();
+
+      mockWorkspace.id = validWorkspaceId;
+      workspaceStore[validWorkspaceId] = mockWorkspace;
+      applicationStore[validWorkspaceId] = {
+        [validApplicationId]: { id: validApplicationId },
+      };
+
+      strategy = createStrategy();
+
+      try {
+        await strategy.validate(payload as JwtPayload);
+        throw new Error('Expected validate to reject');
+      } catch (e) {
+        expect(e.code).toBe(AuthExceptionCode.USER_NOT_FOUND);
+      }
+    });
+
+    it('should reject an application token whose user is no longer a workspace member', async () => {
+      const validApplicationId = randomUUID();
+      const validWorkspaceId = randomUUID();
+      const validUserId = randomUUID();
+      const validUserWorkspaceId = randomUUID();
+
+      const payload = {
+        sub: validApplicationId,
+        type: JwtTokenTypeEnum.APPLICATION_ACCESS,
+        applicationId: validApplicationId,
+        workspaceId: validWorkspaceId,
+        userId: validUserId,
+        userWorkspaceId: validUserWorkspaceId,
+      };
+
+      const mockWorkspace = new WorkspaceEntity();
+
+      mockWorkspace.id = validWorkspaceId;
+      mockWorkspace.activationStatus = WorkspaceActivationStatus.ACTIVE;
+      workspaceStore[validWorkspaceId] = mockWorkspace;
+      applicationStore[validWorkspaceId] = {
+        [validApplicationId]: { id: validApplicationId },
+      };
+      userStore[validUserId] = { id: validUserId };
+
+      coreEntityCacheService.get.mockImplementation(
+        async (keyName: string, entityId: string) => {
+          if (keyName === 'workspaceEntity') {
+            return workspaceStore[entityId] ?? null;
+          }
+
+          if (keyName === 'user') {
+            return userStore[entityId] ?? null;
+          }
+
+          if (keyName === 'userWorkspaceEntity') {
+            return {
+              id: validUserWorkspaceId,
+              workspaceId: validWorkspaceId,
+              user: { id: validUserId },
+              workspace: { id: validWorkspaceId },
+            };
+          }
+
+          return null;
+        },
+      );
+
+      strategy = createStrategy();
+
+      try {
+        await strategy.validate(payload as JwtPayload);
+        throw new Error('Expected validate to reject');
+      } catch (e) {
+        expect(e.code).toBe(AuthExceptionCode.FORBIDDEN_EXCEPTION);
+      }
+    });
+
+    it('should reject an application token whose workspace member is soft-deleted', async () => {
+      const validApplicationId = randomUUID();
+      const validWorkspaceId = randomUUID();
+      const validUserId = randomUUID();
+      const validUserWorkspaceId = randomUUID();
+      const validWorkspaceMemberId = randomUUID();
+
+      const payload = {
+        sub: validApplicationId,
+        type: JwtTokenTypeEnum.APPLICATION_ACCESS,
+        applicationId: validApplicationId,
+        workspaceId: validWorkspaceId,
+        userId: validUserId,
+        userWorkspaceId: validUserWorkspaceId,
+      };
+
+      const mockWorkspace = new WorkspaceEntity();
+
+      mockWorkspace.id = validWorkspaceId;
+      mockWorkspace.activationStatus = WorkspaceActivationStatus.ACTIVE;
+      workspaceStore[validWorkspaceId] = mockWorkspace;
+      applicationStore[validWorkspaceId] = {
+        [validApplicationId]: { id: validApplicationId },
+      };
+      userStore[validUserId] = { id: validUserId };
+
+      workspaceCacheService.getOrRecompute.mockImplementation(
+        async (workspaceId: string, cacheKeys: string[]) => {
+          const result: Record<string, any> = {};
+
+          if (cacheKeys.includes('flatWorkspaceMemberMaps')) {
+            result.flatWorkspaceMemberMaps = {
+              byId: {
+                [validWorkspaceMemberId]: {
+                  id: validWorkspaceMemberId,
+                  userId: validUserId,
+                  deletedAt: new Date(),
+                },
+              },
+              idByUserId: { [validUserId]: validWorkspaceMemberId },
+            };
+          }
+
+          if (cacheKeys.includes('flatApplicationMaps')) {
+            result.flatApplicationMaps = {
+              byId: applicationStore[workspaceId] ?? {},
+            };
+          }
+
+          return result;
+        },
+      );
+
+      coreEntityCacheService.get.mockImplementation(
+        async (keyName: string, entityId: string) => {
+          if (keyName === 'workspaceEntity') {
+            return workspaceStore[entityId] ?? null;
+          }
+
+          if (keyName === 'user') {
+            return userStore[entityId] ?? null;
+          }
+
+          if (keyName === 'userWorkspaceEntity') {
+            return {
+              id: validUserWorkspaceId,
+              workspaceId: validWorkspaceId,
+              user: { id: validUserId },
+              workspace: { id: validWorkspaceId },
+            };
+          }
+
+          return null;
+        },
+      );
+
+      strategy = createStrategy();
+
+      try {
+        await strategy.validate(payload as JwtPayload);
+        throw new Error('Expected validate to reject');
+      } catch (e) {
+        expect(e.code).toBe(AuthExceptionCode.FORBIDDEN_EXCEPTION);
       }
     });
   });

@@ -16,6 +16,13 @@ export class GmailMessagesImportErrorHandler {
   constructor() {}
 
   public handleError(error: unknown, messageExternalId: string): void {
+    if (
+      isGmailApiError(error) &&
+      (error.response?.status === 404 || error.response?.status === 410)
+    ) {
+      return;
+    }
+
     this.logger.error(
       `Gmail: Error importing message ${messageExternalId}: ${JSON.stringify(error)}`,
     );
@@ -25,13 +32,6 @@ export class GmailMessagesImportErrorHandler {
     }
 
     if (isGmailApiError(error)) {
-      const status = error.response?.status;
-
-      // 404/410 means message was deleted - skip silently
-      if (status === 404 || status === 410) {
-        return;
-      }
-
       throw parseGmailApiError(error);
     }
 

@@ -124,7 +124,6 @@ describe('Generate Column Definitions', () => {
         workspaceId,
       });
 
-      // Relations without join columns must return empty array
       expect(columns).toStrictEqual([]);
     });
 
@@ -192,7 +191,6 @@ describe('Generate Column Definitions', () => {
         'homeAddressAddressLng',
       ]);
 
-      // All composite columns must inherit parent nullable constraint
       columns.forEach((column) => {
         expect(column.isNullable).toBe(true);
         expect(column.isPrimary).toBe(false);

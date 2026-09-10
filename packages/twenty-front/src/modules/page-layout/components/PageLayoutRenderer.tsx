@@ -3,8 +3,10 @@ import { PageLayoutInitializationQueryEffect } from '@/page-layout/components/Pa
 import { PageLayoutRecordPageCustomizationSessionRegistrationEffect } from '@/page-layout/components/PageLayoutRecordPageCustomizationSessionRegistrationEffect';
 import { PageLayoutRendererContent } from '@/page-layout/components/PageLayoutRendererContent';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { RecordTableWidgetViewDraftsInitializationEffect } from '@/page-layout/widgets/record-table/components/RecordTableWidgetViewDraftsInitializationEffect';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -18,16 +20,21 @@ export const PageLayoutRenderer = ({
 }: PageLayoutRendererProps) => {
   const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
 
-  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
-    pageLayoutId,
-    layoutType,
-    targetRecordIdentifier,
-  });
+  const pageLayoutComponentInstanceId =
+    useWorkspaceSurfaceScopedComponentInstanceId(pageLayoutId);
+
+  const tabListInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
+    getTabListInstanceIdFromPageLayoutAndRecord({
+      pageLayoutId,
+      layoutType,
+      targetRecordIdentifier,
+    }),
+  );
 
   return (
     <PageLayoutComponentInstanceContext.Provider
       value={{
-        instanceId: pageLayoutId,
+        instanceId: pageLayoutComponentInstanceId,
       }}
     >
       <TabListComponentInstanceContext.Provider
@@ -41,6 +48,7 @@ export const PageLayoutRenderer = ({
         >
           <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
           <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
+          <RecordTableWidgetViewDraftsInitializationEffect />
           <PageLayoutRendererContent />
         </PageLayoutEditModeProvider>
       </TabListComponentInstanceContext.Provider>

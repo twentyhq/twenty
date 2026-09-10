@@ -24,10 +24,24 @@ Use these commands to validate an app after changes:
 ```bash
 yarn twenty dev:typecheck
 yarn lint
-yarn twenty dev --once
 ```
 
-`yarn twenty dev:typecheck` checks generated app types and TypeScript compatibility. `yarn lint` checks local lint rules. `yarn twenty dev --once` performs a bounded build/sync against the active remote.
+If the app is already installed on the active remote, preview and then apply
+the metadata changes:
+
+```bash
+yarn twenty plan
+yarn twenty apply
+```
+
+`yarn twenty dev:typecheck` checks generated app types and TypeScript compatibility. `yarn lint` checks local lint rules. `yarn twenty plan` previews metadata changes, and `yarn twenty apply` performs a bounded build/sync against the active remote.
+
+`yarn twenty plan` is read-only and requires the app to already be installed
+on the active remote. For a first sync, run `yarn twenty apply`; it registers
+the app before synchronizing it. `create-twenty-app` normally performs this
+initial sync, so a successfully scaffolded app does not need an extra apply.
+Use the first-sync path when the scaffold sync failed, or when the app was
+created or copied without being installed on this remote.
 
 If a validation command fails because of entity definitions, switch to `develop-app` for the fix. If it fails because of remotes, authentication, build tooling, sync, logs, deploys, or CI/CD, stay in `manage-app`.
 
@@ -58,20 +72,20 @@ When the user says "prod", "production", or "workspace de prod", identify the ta
 
 ## Development Sync
 
-Always use one-shot sync to synchronize app changes with the active remote:
+Use the bounded apply command to synchronize app changes with the active remote:
 
 ```bash
-yarn twenty dev --once
+yarn twenty apply
 ```
 
-Do not use bare `yarn twenty dev` (watch mode). Run `yarn twenty dev --once` each time changes need to be synced.
+Do not use bare `yarn twenty dev` (watch mode). Run `yarn twenty apply` each time changes need to be synced.
 
-One-shot sync requires an authenticated remote. If authentication fails, re-add or switch the remote before retrying.
+Apply requires an authenticated remote. If authentication fails, re-add or switch the remote before retrying.
 
-Use verbose one-shot sync for bounded troubleshooting:
+Use verbose apply for bounded troubleshooting:
 
 ```bash
-yarn twenty dev --once --verbose
+yarn twenty apply --verbose
 ```
 
 ## Troubleshooting
@@ -79,7 +93,7 @@ yarn twenty dev --once --verbose
 Start by identifying which layer is failing:
 
 - Remote/authentication.
-- Dev sync or one-shot sync.
+- Dev sync or apply.
 - Build/package generation.
 - Deploy/upload/install.
 - Runtime function execution.
@@ -91,7 +105,7 @@ Collect the minimum useful context before changing configuration:
 sed -n '1,220p' package.json
 sed -n '1,220p' src/application-config.ts
 yarn twenty remote:list
-yarn twenty dev --once --verbose
+yarn twenty apply --verbose
 ```
 
 For remote or authentication issues:
@@ -103,7 +117,7 @@ For remote or authentication issues:
 
 For sync issues:
 
-- Prefer `yarn twenty dev --once --verbose` to get a bounded failure.
+- Prefer `yarn twenty apply --verbose` to get a bounded failure.
 - Check generated type or schema errors before editing app entities.
 - If the app depends on a changed data model, use `develop-app` to fix the entity definitions.
 

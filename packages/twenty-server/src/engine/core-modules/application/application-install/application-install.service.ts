@@ -30,9 +30,12 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
+import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
@@ -103,8 +106,6 @@ export class ApplicationInstallService {
       return true;
     }
 
-    const lockKey = `app-install:${params.workspaceId}:${appRegistration.universalIdentifier}`;
-
     return this.cacheLockService.withLock(
       () =>
         this.doInstallApplication(appRegistration, {
@@ -113,8 +114,11 @@ export class ApplicationInstallService {
           skipWorkspaceCompatibilityCheck:
             params.skipWorkspaceCompatibilityCheck,
         }),
-      lockKey,
-      { ttl: 60_000, ms: 500, maxRetries: 120 },
+      buildApplicationLifecycleLockKey({
+        workspaceId: params.workspaceId,
+        universalIdentifier: appRegistration.universalIdentifier,
+      }),
+      APPLICATION_LIFECYCLE_LOCK_OPTIONS,
     );
   }
 
@@ -126,8 +130,8 @@ export class ApplicationInstallService {
       skipWorkspaceCompatibilityCheck?: boolean;
     },
   ): Promise<boolean> {
-    // Re-read inside the lock so the authorization below cannot act on stale
-    // listing or ownership state.
+    // Re-read inside the lock so a concurrent tarball upload cannot make us
+    // resolve a stale package.
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: preLockAppRegistration.id },
     });
@@ -136,21 +140,6 @@ export class ApplicationInstallService {
       throw new ApplicationException(
         `Application registration with id ${preLockAppRegistration.id} not found`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
-
-    // Tarball registrations that are neither listed nor pre-installed are
-    // only installable by their owner workspace.
-    if (
-      appRegistration.sourceType ===
-        ApplicationRegistrationSourceType.TARBALL &&
-      !appRegistration.isListed &&
-      !appRegistration.isPreInstalled &&
-      appRegistration.ownerWorkspaceId !== params.workspaceId
-    ) {
-      throw new ApplicationException(
-        `Application registration ${appRegistration.universalIdentifier} is not available for this workspace`,
-        ApplicationExceptionCode.FORBIDDEN,
       );
     }
 
@@ -283,6 +272,9 @@ export class ApplicationInstallService {
 
     const isVersionUpgrade = isDefined(existingApplication);
 
+    const hasNeverCompletedInstall =
+      isVersionUpgrade && !isDefined(existingApplication.version);
+
     const previousVersion = existingApplication?.version ?? undefined;
 
     const newVersion = resolvedPackage.packageJson.version;
@@ -298,7 +290,10 @@ export class ApplicationInstallService {
       existingApplication,
       universalIdentifier,
       name: resolvedPackage.manifest.application.displayName,
-      logo: resolvedPackage.manifest.application.logoUrl ?? null,
+      logo:
+        resolvedPackage.manifest.application.logo ??
+        resolvedPackage.manifest.application.logoUrl ??
+        null,
       workspaceId: params.workspaceId,
       applicationRegistrationId: appRegistration.id,
       sourceType: appRegistration.sourceType,
@@ -307,8 +302,8 @@ export class ApplicationInstallService {
     const incomingVersion = resolvedPackage.packageJson.version;
 
     // Rollback is scoped to the work after the application row exists: reaching
-    // this catch means creation succeeded, so a fresh install (not an upgrade)
-    // is the only case that needs uninstalling.
+    // this catch means creation succeeded, so only an application that never
+    // finished installing needs uninstalling.
     try {
       if (
         isVersionUpgrade &&
@@ -369,7 +364,21 @@ export class ApplicationInstallService {
         manifest: resolvedPackage.manifest,
         applicationRegistrationId: appRegistration.id,
         application,
+        forceSdkClientGeneration: true,
+        persistVersion: false,
       });
+
+      const isPostInstallHookSynchronous =
+        resolvedPackage.manifest.application.postInstallLogicFunction
+          ?.shouldRunSynchronously === true;
+
+      if (!isPostInstallHookSynchronous) {
+        await this.markInstallCompleted({
+          applicationId: application.id,
+          version: newVersion,
+          workspaceId: params.workspaceId,
+        });
+      }
 
       await this.runPostInstallHook({
         manifest: resolvedPackage.manifest,
@@ -379,6 +388,14 @@ export class ApplicationInstallService {
         isVersionUpgrade,
         universalIdentifier,
       });
+
+      if (isPostInstallHookSynchronous) {
+        await this.markInstallCompleted({
+          applicationId: application.id,
+          version: newVersion,
+          workspaceId: params.workspaceId,
+        });
+      }
 
       await this.applicationManifestApplyService.refreshRegistrationFromManifest(
         {
@@ -399,10 +416,13 @@ export class ApplicationInstallService {
         `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
       );
 
-      if (!isVersionUpgrade) {
+      if (!isVersionUpgrade || hasNeverCompletedInstall) {
+        // Rollback of a failed fresh install: the app never finished
+        // installing, so the uninstall hook must not run.
         await this.applicationSyncService.uninstallApplication({
           applicationUniversalIdentifier: universalIdentifier,
           workspaceId: params.workspaceId,
+          shouldRunUninstallHook: false,
         });
       }
 
@@ -497,6 +517,21 @@ export class ApplicationInstallService {
     }
   }
 
+  private async markInstallCompleted({
+    applicationId,
+    version,
+    workspaceId,
+  }: {
+    applicationId: string;
+    version: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.applicationService.update(applicationId, {
+      version,
+      workspaceId,
+    });
+  }
+
   private async runPostInstallHook(params: {
     manifest: Manifest;
     workspaceId: string;
@@ -557,17 +592,19 @@ export class ApplicationInstallService {
     );
 
     if (!shouldRunSynchronously) {
-      await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+      await this.messageQueueService.add<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
-        [
-          {
-            logicFunctionId: flatLogicFunction.id,
-            workspaceId,
-            payload,
-          },
-        ],
-        { retryLimit: 3 },
+        {
+          logicFunctionId: flatLogicFunction.id,
+          workspaceId,
+          payload,
+        },
+        {
+          retryLimit: 3,
+          backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+        },
       );
+
       return;
     }
 

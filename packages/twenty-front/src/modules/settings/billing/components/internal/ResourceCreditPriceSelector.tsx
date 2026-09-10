@@ -14,7 +14,12 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ChangeEvent, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconArrowUp, IconCircleX, IconCreditCard } from 'twenty-ui/icon';
+import {
+  IconAdjustments,
+  IconArrowUp,
+  IconCircleX,
+  IconCreditCard,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -316,7 +321,7 @@ export const ResourceCreditPriceSelector = ({
   const PrimaryActionIcon =
     shouldRedirectToUpdatePayment || shouldRedirectToManageBilling
       ? IconCreditCard
-      : IconArrowUp;
+      : IconAdjustments;
   const handlePrimaryActionClick = () => {
     if (redirectToRequiredBillingAction()) {
       return;
@@ -373,7 +378,7 @@ export const ResourceCreditPriceSelector = ({
                 ? t`Update payment`
                 : shouldRedirectToManageBilling
                   ? t`Manage billing`
-                  : t`Increase`
+                  : t`Manage`
             }
             variant="primary"
             accent="green"

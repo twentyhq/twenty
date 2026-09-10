@@ -65,6 +65,12 @@ const buildExecutionBlocks = (
     {
       kind: 'signatureField',
       text: '',
+      label: `EU Affiliate — ${values.EU_AFFILIATE_ENTITY}`,
+      value: `Signed on behalf of ${values.EU_AFFILIATE_ENTITY} (pre-signed by Twenty)\nName: ${TWENTY_PRESIGNED_SIGNATORY.name}\nTitle: ${TWENTY_PRESIGNED_SIGNATORY.title}`,
+    },
+    {
+      kind: 'signatureField',
+      text: '',
       label: 'Customer (Controller)',
       value: `Legal entity: ${context.customerLegalEntityName ?? ''}\nName: ${context.signatory?.name ?? ''}\nTitle: ${context.signatory?.title ?? ''}`,
     },

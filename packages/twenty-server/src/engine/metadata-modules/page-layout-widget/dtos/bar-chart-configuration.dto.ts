@@ -28,6 +28,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
+import { ChartNumberFormat } from 'src/engine/metadata-modules/page-layout-widget/enums/chart-number-format.enum';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -134,6 +135,11 @@ export class BarChartConfigurationDTO implements BarChartConfiguration {
   @IsBoolean()
   @IsOptional()
   displayLegend?: boolean;
+
+  @Field(() => ChartNumberFormat, { nullable: true })
+  @IsEnum(ChartNumberFormat)
+  @IsOptional()
+  numberFormat?: ChartNumberFormat;
 
   @Field(() => Number, { nullable: true })
   @IsNumber()

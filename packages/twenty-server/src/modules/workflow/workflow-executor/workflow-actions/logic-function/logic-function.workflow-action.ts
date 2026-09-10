@@ -5,6 +5,8 @@ import { isDefined, resolveInput } from 'twenty-shared/utils';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { getUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-user-from-auth-context.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
@@ -21,6 +23,7 @@ import { WorkflowLogicFunctionActionInput } from 'src/modules/workflow/workflow-
 export class LogicFunctionWorkflowAction implements WorkflowAction {
   constructor(
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -76,10 +79,14 @@ export class LogicFunctionWorkflowAction implements WorkflowAction {
       );
     }
 
+    const { authContext } =
+      await this.workflowExecutionContextService.getExecutionContext(runInfo);
+
     const result = await this.logicFunctionExecutorService.execute({
       logicFunctionId: workflowActionInput.logicFunctionId,
       workspaceId,
       payload: workflowActionInput.logicFunctionInput,
+      ...getUserFromAuthContext(authContext),
     });
 
     if (result.error) {

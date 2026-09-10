@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
-import { IconKey, IconRobot, IconUsers } from 'twenty-ui/icon';
+import { IconKey, IconLego, IconUsers } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -60,7 +60,7 @@ export const SettingsRoleApplicability = ({
     {
       key: 'canBeAssignedToAgents' as const,
       label: t`Assignable to Agents`,
-      Icon: IconRobot,
+      Icon: IconLego,
     },
     {
       key: 'canBeAssignedToApiKeys' as const,

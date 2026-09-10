@@ -132,6 +132,7 @@ export const buildEmailStepLog = ({
       bodyBytes: body.bodyBytes,
       bodyTruncated: body.bodyTruncated,
       connectedAccountId,
+      fromHandle: input.fromHandle,
       attachmentCount,
       inReplyTo: input.inReplyTo,
       error: output.error,

@@ -121,6 +121,49 @@ export class KeyValuePairService<
     });
   }
 
+  // Returns false when a row already exists, so callers can use this as a
+  // single-winner claim between concurrent requests.
+  async setIfNotExists<K extends keyof KeyValueTypesMap>(
+    {
+      userId,
+      workspaceId,
+      applicationId,
+      key,
+      value,
+      type,
+    }: {
+      userId?: string | null;
+      workspaceId?: string | null;
+      applicationId?: string | null;
+      key: Extract<K, string>;
+      value: KeyValueTypesMap[K];
+      type: KeyValuePairType;
+    },
+    queryRunner?: QueryRunner,
+  ): Promise<boolean> {
+    const keyValuePairRepository = queryRunner
+      ? queryRunner.manager.getRepository(KeyValuePairEntity)
+      : this.keyValuePairRepository;
+
+    const insertResult = await keyValuePairRepository
+      .createQueryBuilder()
+      .insert()
+      .into(KeyValuePairEntity)
+      .values({
+        userId: userId ?? null,
+        workspaceId: workspaceId ?? null,
+        applicationId: applicationId ?? null,
+        key,
+        value,
+        type,
+      })
+      .orIgnore()
+      .returning('id')
+      .execute();
+
+    return insertResult.raw.length > 0;
+  }
+
   async delete(
     {
       userId,

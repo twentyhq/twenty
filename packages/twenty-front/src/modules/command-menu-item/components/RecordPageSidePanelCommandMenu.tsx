@@ -1,3 +1,4 @@
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { RecordPageSidePanelCommandMenuDropdown } from '@/command-menu-item/components/RecordPageSidePanelCommandMenuDropdown';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -12,9 +13,10 @@ export const RecordPageSidePanelCommandMenu = () => {
     <>
       {contextStoreCurrentObjectMetadataItemId && (
         <CommandMenuContextProvider
-          isInSidePanel={true}
           displayType="dropdownItem"
-          containerType="command-menu-show-page-dropdown"
+          containerType={
+            CommandMenuItemContainerType.CommandMenuShowPageDropdown
+          }
         >
           <RecordPageSidePanelCommandMenuDropdown />
         </CommandMenuContextProvider>

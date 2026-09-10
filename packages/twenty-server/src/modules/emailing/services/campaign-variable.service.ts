@@ -1,0 +1,243 @@
+import { Injectable } from '@nestjs/common';
+
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
+import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  type CampaignVariableDefinition,
+  isDefined,
+  listCampaignVariablesForFields,
+} from 'twenty-shared/utils';
+
+import {
+  EmailingDomainException,
+  EmailingDomainExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-maps.type';
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-maps.type';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+
+export type PersonCampaignVariables = {
+  definitions: CampaignVariableDefinition[];
+  knownVariableNames: Set<string>;
+};
+
+type PersonVariableSchema = PersonCampaignVariables & {
+  fieldsByName: Map<string, FlatFieldMetadata>;
+};
+
+const COMPUTED_VARIABLE_NAMES = ['fullName', 'personId'];
+
+const MAX_VARIABLES_IN_ERROR_MESSAGE = 40;
+
+const PERSON_FIELD_CACHE_KEYS = [
+  'flatObjectMetadataMaps',
+  'flatFieldMetadataMaps',
+] as const;
+
+const MAX_CACHED_WORKSPACE_SCHEMAS = 100;
+
+@Injectable()
+export class CampaignVariableService {
+  private readonly schemaByWorkspaceId = new Map<
+    string,
+    { hash: string; schema: PersonVariableSchema }
+  >();
+
+  constructor(
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+  ) {}
+
+  async getPersonCampaignVariables(
+    workspaceId: string,
+  ): Promise<PersonCampaignVariables> {
+    return this.getPersonVariableSchema(workspaceId);
+  }
+
+  private async getPersonVariableSchema(
+    workspaceId: string,
+  ): Promise<PersonVariableSchema> {
+    const { data, hashes } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMapsWithHashes(
+        { workspaceId, flatMapsKeys: [...PERSON_FIELD_CACHE_KEYS] },
+      );
+
+    const hash = PERSON_FIELD_CACHE_KEYS.map(
+      (cacheKey) => hashes[cacheKey] ?? '',
+    ).join(':');
+
+    const cached = this.schemaByWorkspaceId.get(workspaceId);
+
+    if (cached?.hash === hash) {
+      this.schemaByWorkspaceId.delete(workspaceId);
+      this.schemaByWorkspaceId.set(workspaceId, cached);
+
+      return cached.schema;
+    }
+
+    const fields = this.extractPersonFields(data);
+    const definitions = listCampaignVariablesForFields(fields);
+    const schema: PersonVariableSchema = {
+      definitions,
+      knownVariableNames: new Set<string>([
+        ...definitions.map((definition) => definition.name),
+        ...COMPUTED_VARIABLE_NAMES,
+      ]),
+      fieldsByName: new Map(fields.map((field) => [field.name, field])),
+    };
+
+    this.schemaByWorkspaceId.set(workspaceId, { hash, schema });
+    this.evictLeastRecentlyUsedSchemas();
+
+    return schema;
+  }
+
+  private evictLeastRecentlyUsedSchemas(): void {
+    while (this.schemaByWorkspaceId.size > MAX_CACHED_WORKSPACE_SCHEMAS) {
+      const leastRecentlyUsedWorkspaceId = this.schemaByWorkspaceId
+        .keys()
+        .next().value;
+
+      if (!isDefined(leastRecentlyUsedWorkspaceId)) {
+        return;
+      }
+
+      this.schemaByWorkspaceId.delete(leastRecentlyUsedWorkspaceId);
+    }
+  }
+
+  async assertKnownVariables(
+    workspaceId: string,
+    usedVariableNames: Iterable<string>,
+  ): Promise<void> {
+    const { definitions, knownVariableNames } =
+      await this.getPersonCampaignVariables(workspaceId);
+
+    const unknownVariables = [...usedVariableNames].filter(
+      (variableName) => !knownVariableNames.has(variableName),
+    );
+
+    if (unknownVariables.length === 0) {
+      return;
+    }
+
+    const availableList = [
+      ...COMPUTED_VARIABLE_NAMES,
+      ...definitions.map((definition) => definition.name),
+    ]
+      .slice(0, MAX_VARIABLES_IN_ERROR_MESSAGE)
+      .join(', ');
+
+    throw new EmailingDomainException(
+      `Unknown campaign variables: ${unknownVariables.join(', ')}. ` +
+        `Available variables: ${availableList}`,
+      EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+    );
+  }
+
+  async buildVariablesForPerson(
+    workspaceId: string,
+    person: PersonWorkspaceEntity | null,
+  ): Promise<Record<string, string>> {
+    const { definitions, fieldsByName } =
+      await this.getPersonVariableSchema(workspaceId);
+
+    const variables: Record<string, string> = {};
+
+    for (const definition of definitions) {
+      variables[definition.name] = this.formatValue(
+        this.resolveValue(person, definition.name),
+        definition,
+        fieldsByName.get(definition.fieldName),
+      );
+    }
+
+    variables.personId = this.stringify(this.resolveValue(person, 'id'));
+    variables.fullName = [
+      this.stringify(this.resolveValue(person, 'name.firstName')),
+      this.stringify(this.resolveValue(person, 'name.lastName')),
+    ]
+      .filter(Boolean)
+      .join(' ');
+
+    return variables;
+  }
+
+  private extractPersonFields({
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  }: {
+    flatObjectMetadataMaps: FlatObjectMetadataMaps;
+    flatFieldMetadataMaps: FlatFieldMetadataMaps;
+  }): FlatFieldMetadata[] {
+    const personFlatObject =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person
+      ];
+
+    if (!isDefined(personFlatObject)) {
+      return [];
+    }
+
+    return getFlatFieldsFromFlatObjectMetadata(
+      personFlatObject,
+      flatFieldMetadataMaps,
+    );
+  }
+
+  private resolveValue(
+    person: PersonWorkspaceEntity | null,
+    path: string,
+  ): unknown {
+    if (!isDefined(person)) {
+      return null;
+    }
+
+    return path
+      .split('.')
+      .reduce<unknown>(
+        (value, segment) =>
+          typeof value === 'object' && value !== null
+            ? (value as Record<string, unknown>)[segment]
+            : null,
+        person,
+      );
+  }
+
+  private formatValue(
+    value: unknown,
+    definition: CampaignVariableDefinition,
+    field: FlatFieldMetadata | undefined,
+  ): string {
+    if (!isDefined(value) || value === '') {
+      return '';
+    }
+
+    switch (definition.fieldType) {
+      case FieldMetadataType.DATE:
+      case FieldMetadataType.DATE_TIME: {
+        const date = new Date(value as string);
+
+        return Number.isNaN(date.getTime())
+          ? this.stringify(value)
+          : date.toISOString().slice(0, 10);
+      }
+      case FieldMetadataType.SELECT:
+      case FieldMetadataType.RATING: {
+        const option = field?.options?.find(
+          (fieldOption) => fieldOption.value === value,
+        );
+
+        return option?.label ?? this.stringify(value);
+      }
+      default:
+        return this.stringify(value);
+    }
+  }
+
+  private stringify(value: unknown): string {
+    return isDefined(value) ? String(value) : '';
+  }
+}

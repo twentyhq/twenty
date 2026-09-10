@@ -3,11 +3,20 @@ export interface MessageQueueJob<T = any> {
   id: string;
   name: string;
   data: T;
+  retryLimit: number;
+  updateData(data: T): Promise<void>;
   abortSignal?: AbortSignal;
 }
 
 export interface MessageQueueJobContext {
   abortSignal?: AbortSignal;
+}
+
+export interface MessageQueueJobRetryContext<
+  T = MessageQueueJobData,
+> extends MessageQueueJobContext {
+  retryLimit: number;
+  updateData(data: T): Promise<void>;
 }
 
 export interface MessageQueueCronJobData<

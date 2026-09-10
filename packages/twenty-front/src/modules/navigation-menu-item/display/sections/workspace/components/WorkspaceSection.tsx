@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
+import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
 import {
   IconColumnInsertRight,
   IconLink,
@@ -11,6 +12,7 @@ import {
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -27,15 +29,17 @@ import { WorkspaceSectionContainer } from '@/navigation-menu-item/display/sectio
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
+import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
-import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
+
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledRightIconsContainer = styled.div`
   align-items: center;
@@ -44,6 +48,7 @@ const StyledRightIconsContainer = styled.div`
 `;
 
 export const WorkspaceSection = () => {
+  const isMobile = useIsMobile();
   const items = useNavigationMenuItemSectionItems();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
@@ -52,6 +57,7 @@ export const WorkspaceSection = () => {
     lastVisitedViewPerObjectMetadataItemState,
   );
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
+  const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -152,6 +158,14 @@ export const WorkspaceSection = () => {
           pageIcon: IconLink,
         });
         break;
+      case NavigationMenuItemType.PAGE_LAYOUT:
+        openNavigationMenuItemInSidePanel({
+          pageTitle:
+            getNavigationMenuItemLabel(item, objectMetadataItems, views) ||
+            t`Edit page`,
+          pageIcon: getIcon(item.icon),
+        });
+        break;
       default:
         openViewOrRecordEditPanelAndNavigate(item, objectMetadataItem);
     }
@@ -161,7 +175,9 @@ export const WorkspaceSection = () => {
     objectMetadataItem: EnrichedObjectMetadataItem,
     navigationMenuItemId: string,
   ) => {
-    enterLayoutCustomizationMode();
+    if (!enterLayoutCustomizationMode()) {
+      return;
+    }
     setSelectedNavigationMenuItemIdInEditMode(navigationMenuItemId);
     openNavigationMenuItemInSidePanel({
       pageTitle: objectMetadataItem.labelSingular,
@@ -184,25 +200,31 @@ export const WorkspaceSection = () => {
       sectionTitle={t`Workspace`}
       items={items}
       rightIcon={
-        <StyledRightIconsContainer>
-          {isLayoutCustomizationModeEnabled ? (
-            <LightIconButton
-              Icon={IconPlus}
-              accent="tertiary"
-              size="small"
-              onClick={handleAddMenuItem}
-            />
-          ) : (
-            <div onMouseEnter={preloadNavigationMenuItemDndKit}>
+        // Customising the menu is a desktop job, so mobile shows neither the
+        // entry point nor the add button it turns into.
+        isMobile ? undefined : (
+          <StyledRightIconsContainer>
+            {isLayoutCustomizationModeEnabled ? (
               <LightIconButton
-                Icon={IconTool}
+                Icon={IconPlus}
                 accent="tertiary"
                 size="small"
-                onClick={handleEditClick}
+                onClick={handleAddMenuItem}
               />
-            </div>
-          )}
-        </StyledRightIconsContainer>
+            ) : (
+              hasLayoutsPermission && (
+                <div onMouseEnter={preloadNavigationMenuItemDndKit}>
+                  <LightIconButton
+                    Icon={IconTool}
+                    accent="tertiary"
+                    size="small"
+                    onClick={handleEditClick}
+                  />
+                </div>
+              )
+            )}
+          </StyledRightIconsContainer>
+        )
       }
       selectedNavigationMenuItemId={selectedNavigationMenuItemIdInEditMode}
       onNavigationMenuItemClick={

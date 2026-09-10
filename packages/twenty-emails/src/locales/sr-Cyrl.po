@@ -41,12 +41,12 @@ msgstr "Прихвати позив"
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Add a payment method"
-msgstr "Додај начин плаћања"
+msgstr "Додајте начин плаћања"
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "After that, the workspace and all of its data will be permanently deleted — and we won't be able to bring it back."
-msgstr "Након тога, радни простор и сви његови подаци биће трајно обрисани — и нећемо моћи да их вратимо."
+msgstr "Након тога, радни простор и сви његови подаци биће трајно обрисани — и нећемо моћи да га вратимо."
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -135,7 +135,7 @@ msgstr "Ако не предузмете ништа, паузираћемо ва
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
-msgstr "Ако икада пожелите да Twenty дате још једну шансу, можете покренути нови радни простор за неколико минута — радо бисмо вам пожелели добродошлицу назад."
+msgstr "Ако икада пожелите да Twenty дате још једну шансу, можете за неколико минута покренути нови радни простор — радо бисмо вас поново видели."
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
@@ -155,13 +155,13 @@ msgstr "Придружите се свом тиму на Twenty"
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Just so it's never a surprise, here's a heads up about your annual plan."
-msgstr "Како никада не би било изненађења, ево најаве у вези са вашим годишњим пакетом."
+msgstr "Како никада не би било изненађења, ево најаве у вези са вашим годишњим планом."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 #: src/emails/billing-trial-converting.email.tsx
 msgid "Manage subscription"
-msgstr "Управљај претплатом"
+msgstr "Управљајте претплатом"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -176,12 +176,12 @@ msgstr "Шифра је освежена"
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Reactivate it within the next {remainingDays} {dayOrDays} and you'll pick up exactly where you left off, with every record, view and setting right where you left it."
-msgstr "Поново га активирајте у наредних {remainingDays} {dayOrDays} и наставићете тачно тамо где сте стали, са сваком евиденцијом, прегледом и подешавањем на свом месту."
+msgstr "Поново га активирајте у наредних {remainingDays} {dayOrDays} и наставићете тачно тамо где сте стали, са свим записима, приказима и подешавањима на месту где сте их оставили."
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Reactivate workspace"
-msgstr "Поново активирај радни простор"
+msgstr "Поново активирајте радни простор"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -206,7 +206,7 @@ msgstr "Сан Франциско / Париз"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
-msgstr "Приступ администратора сервера је измењен"
+msgstr "Промењен је приступ администратора сервера"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -241,7 +241,7 @@ msgstr "Подесите своју лозинку 🗝"
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Start a new workspace"
-msgstr "Покрени нови радни простор"
+msgstr "Покрените нови радни простор"
 
 #. js-lingui-explicit-id
 #: src/emails/test.email.tsx
@@ -261,7 +261,7 @@ msgstr "Овај линк је валидан само следећих {duratio
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
-msgstr "Да бисте задржали свој радни простор и све што сте направили, додајте начин плаћања и изаберите пакет."
+msgstr "Да бисте задржали свој радни простор и све што сте направили, додајте начин плаћања и изаберите план."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -317,7 +317,7 @@ msgstr "Шта је Twenty?"
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
-msgstr "Ваш годишњи пакет за <0>{workspaceDisplayName}</0> биће обновљен {formattedDate}."
+msgstr "Ваш годишњи план за <0>{workspaceDisplayName}</0> биће обновљен {formattedDate}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
@@ -327,17 +327,17 @@ msgstr "Ваш бесплатни пробни период за <0>{workspaceDi
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
-msgstr "Ваш бесплатни пробни период за <0>{workspaceDisplayName}</0> истиче {formattedDate}. Уколико до тада не откажете, картица коју имамо у евиденцији биће терећена за ваш годишњи пакет."
+msgstr "Ваш бесплатни пробни период за <0>{workspaceDisplayName}</0> истиче {formattedDate}. Уколико до тада не откажете, картица коју имамо у евиденцији биће терећена за ваш годишњи план."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
-msgstr "Ваш бесплатни пробни период за <0>{workspaceDisplayName}</0> истиче {formattedDate}. Уколико до тада не откажете, картица коју имамо у евиденцији биће терећена за ваш месечни пакет."
+msgstr "Ваш бесплатни пробни период за <0>{workspaceDisplayName}</0> истиче {formattedDate}. Уколико до тада не откажете, картица коју имамо у евиденцији биће терећена за ваш месечни план."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
-msgstr "Ваш пакет ће ускоро бити обновљен"
+msgstr "Ваш план ће ускоро бити обновљен"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx

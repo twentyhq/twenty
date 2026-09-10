@@ -18,6 +18,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { type EncryptedImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
@@ -27,6 +28,7 @@ export type ConnectedAccountVisibility = 'user' | 'workspace';
 @Entity({ name: 'connectedAccount', schema: 'core' })
 @Index('IDX_CONNECTED_ACCOUNT_CONNECTION_PROVIDER_ID', ['connectionProviderId'])
 @Index('IDX_CONNECTED_ACCOUNT_APPLICATION_ID', ['applicationId'])
+@Index('IDX_CONNECTED_ACCOUNT_HANDLE_PROVIDER', ['handle', 'provider'])
 @Check(
   'CHK_connectedAccount_accessToken_encrypted',
   `"accessToken" IS NULL OR "accessToken" LIKE 'enc:v2:%'`,
@@ -64,6 +66,13 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
 
   @Column({ type: 'timestamptz', nullable: true })
   authFailedAt: Date | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.40.0_AddAuthFailedReasonToConnectedAccountFastInstanceCommand_1788781233982',
+  })
+  authFailedReason: string | null;
 
   @Column({ type: 'timestamptz', nullable: true })
   archivedAt: Date | null;

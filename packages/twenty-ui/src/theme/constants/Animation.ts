@@ -1,3 +1,5 @@
+// Generated from design-tokens by scripts/generateThemeTokens.ts.
+// Do not edit manually. Regenerate with: npx nx generateTokens twenty-ui.
 export const ANIMATION = {
   duration: {
     instant: 0.075,
@@ -6,5 +8,3 @@ export const ANIMATION = {
     slow: 1.5,
   },
 };
-
-export type AnimationDuration = keyof typeof ANIMATION.duration;

@@ -1,5 +1,6 @@
 import { SCROLL_RESTORATION_TOP_THRESHOLD_PX } from '@/ui/utilities/scroll/constants/ScrollRestorationTopThreshold';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -7,12 +8,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useScrollRestoration = (componentInstanceId: string) => {
   const location = useLocation();
-  const storageKey = `scroll-${location.pathname}`;
+  const scopedComponentInstanceId =
+    useWorkspaceSurfaceScopedComponentInstanceId(componentInstanceId);
+  const storageKey = `scroll-${location.pathname}-${scopedComponentInstanceId}`;
   const [isRestoring, setIsRestoring] = useState(false);
 
   const scrollWrapperScrollTop = useAtomComponentStateValue(
     scrollWrapperScrollTopComponentState,
-    componentInstanceId,
+    scopedComponentInstanceId,
   );
 
   const restoreScrollPosition = useCallback(
@@ -56,7 +59,7 @@ export const useScrollRestoration = (componentInstanceId: string) => {
 
   useEffect(() => {
     const savedPosition = sessionStorage.getItem(storageKey);
-    const expectedElementId = `scroll-wrapper-${componentInstanceId}`;
+    const expectedElementId = `scroll-wrapper-${scopedComponentInstanceId}`;
 
     if (!isDefined(savedPosition)) {
       return;
@@ -73,7 +76,7 @@ export const useScrollRestoration = (componentInstanceId: string) => {
   }, [
     location.pathname,
     storageKey,
-    componentInstanceId,
+    scopedComponentInstanceId,
     restoreScrollPosition,
   ]);
 };

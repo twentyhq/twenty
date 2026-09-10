@@ -35,7 +35,6 @@ type Assertions = [
     >
   >,
 
-  // When filtered by SyncableEntity target, only syncable relations are included
   Expect<
     Equal<
       FieldMetadataOneToManySyncableRelations,

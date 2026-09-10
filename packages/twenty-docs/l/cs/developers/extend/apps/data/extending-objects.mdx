@@ -43,6 +43,8 @@ export default defineField({
 
 * Umístění souboru je na vás. Konvence je `src/fields/\<name>.field.ts`, ale SDK rozpozná pole kdekoli v `src/`.
 
+* `writability` lze také nastavit pro jednotlivá pole: `MetadataWritability.APPLICATION` omezuje zápisy na logické funkce vaší vlastní aplikace, `MetadataWritability.SYSTEM` je vyhrazeno pro data spravovaná platformou. Zapisovatelnost pole může být pouze přísnější než úroveň jeho objektu a čtení tím nejsou ovlivněna. Úplný popis sémantiky najdete v [Objects](/l/cs/developers/extend/apps/data/objects).
+
 * Chcete-li přidat kartu ke standardnímu rozvržení stránky (např. na detailní stránku Task nebo Company), použijte [`definePageLayoutTab`](/l/cs/developers/extend/apps/layout/page-layouts#definepagelayouttab) s `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` z `twenty-sdk/define`.
 
 ## Přidání relace k existujícímu objektu

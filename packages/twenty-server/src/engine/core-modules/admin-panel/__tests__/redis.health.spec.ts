@@ -68,7 +68,6 @@ describe('RedisHealthIndicator', () => {
   });
 
   it('should return up status with details when redis responds', async () => {
-    // ai generated mock
     mockRedis.info
       .mockResolvedValueOnce('redis_version:7.0.0\r\n')
       .mockResolvedValueOnce(
@@ -127,7 +126,6 @@ describe('RedisHealthIndicator', () => {
   });
 
   it('should maintain state history across health checks', async () => {
-    // First check - healthy state
     mockRedis.info
       .mockResolvedValueOnce('redis_version:7.0.0\r\n')
       .mockResolvedValueOnce(
@@ -140,7 +138,6 @@ describe('RedisHealthIndicator', () => {
 
     await service.isHealthy();
 
-    // Second check - error state
     mockRedis.info.mockRejectedValueOnce(
       new Error(HEALTH_ERROR_MESSAGES.REDIS_CONNECTION_FAILED),
     );

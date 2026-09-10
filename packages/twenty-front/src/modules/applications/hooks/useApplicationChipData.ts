@@ -14,7 +14,7 @@ import StandardLogo from '~/pages/settings/applications/assets/standard-illustra
 type UseApplicationChipDataArgs = {
   applicationId?: string | null;
   fallbackApplicationData?: {
-    logo?: string | null;
+    logoUrl?: string | null;
     name?: string | null;
   };
 };
@@ -46,7 +46,7 @@ export const useApplicationChipData = ({
     return {
       applicationChipData: {
         name: fallbackApplicationData?.name ?? '',
-        logo: fallbackApplicationData?.logo ?? '',
+        logo: fallbackApplicationData?.logoUrl ?? '',
         seed: fallbackApplicationData?.name ?? '',
       },
     };

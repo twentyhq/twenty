@@ -2,7 +2,8 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
-import { formatCompactCount, type CommunityStats } from '@/platform/community';
+import { formatCompactCount } from '@/platform/community/format-compact-count';
+import { type CommunityStats } from '@/platform/community';
 import { useLocale } from '@/platform/i18n';
 import {
   color,

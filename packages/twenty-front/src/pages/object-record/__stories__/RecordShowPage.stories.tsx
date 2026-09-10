@@ -69,17 +69,3 @@ export type Story = StoryObj<typeof RecordShowPage>;
 //   decorators: [PageDecorator, ContextStoreDecorator],
 //   play: async ({ canvasElement }) => {
 //     const canvas = within(canvasElement);
-
-//     // await canvas.findAllByText(peopleMock[0].name.firstName);
-//     expect(
-//       await canvas.findByText('Twenty', undefined, {
-//         timeout: 5000,
-//       }),
-//     ).toBeInTheDocument();
-//     expect(
-//       await canvas.findByText('No activity yet', undefined, {
-//         timeout: 5000,
-//       }),
-//     ).toBeInTheDocument();
-//   },
-// };

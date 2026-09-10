@@ -6,6 +6,10 @@ import {
 } from 'twenty-shared/metadata';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { WORKSPACE_MIGRATION_ACTION_COUNT_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-action-count-bucket-boundaries.constant';
+import { WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-duration-ms-bucket-boundaries.constant';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
@@ -71,6 +75,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     private readonly workspaceMigrationFlatEntityMapsService: WorkspaceMigrationFlatEntityMapsService,
     private readonly metadataEventEmitter: MetadataEventEmitter,
     private readonly metadataSideEffectEngineService: MetadataSideEffectEngineService,
+    private readonly metricsService: MetricsService,
     private readonly logger: LoggerService,
     twentyConfigService: TwentyConfigService,
   ) {
@@ -98,6 +103,14 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       await this.workspaceMigrationBuildOrchestratorService
         .buildWorkspaceMigration(buildArgs)
         .catch((error) => {
+          this.metricsService.recordHistogram({
+            key: MetricsKeys.WorkspaceMigrationBuildDurationMs,
+            value: performance.now() - buildStart,
+            unit: 'ms',
+            attributes: { status: 'error' },
+            bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+          });
+
           this.logger.error(
             error,
             WorkspaceMigrationValidateBuildAndRunService.name,
@@ -109,6 +122,14 @@ export class WorkspaceMigrationValidateBuildAndRunService {
           );
         });
     const buildMs = performance.now() - buildStart;
+
+    this.metricsService.recordHistogram({
+      key: MetricsKeys.WorkspaceMigrationBuildDurationMs,
+      value: buildMs,
+      unit: 'ms',
+      attributes: { status: validateAndBuildResult.status },
+      bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+    });
 
     this.logger.perf(
       `[install-perf] buildWorkspaceMigration took ${buildMs.toFixed(1)}ms (status=${validateAndBuildResult.status})`,
@@ -153,6 +174,12 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       `[install-perf] validateBuildAndRunWorkspaceMigrationFromTo running ${workspaceMigration.actions.length} actions: ${JSON.stringify(actionCountsByTypeAndMetadataName)}`,
       WorkspaceMigrationValidateBuildAndRunService.name,
     );
+
+    this.metricsService.recordHistogram({
+      key: MetricsKeys.WorkspaceMigrationActionCount,
+      value: workspaceMigration.actions.length,
+      bucketBoundaries: WORKSPACE_MIGRATION_ACTION_COUNT_BUCKET_BOUNDARIES,
+    });
 
     const runStart = performance.now();
     const { hasSchemaMetadataChanged, metadataEvents } =

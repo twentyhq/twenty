@@ -6,7 +6,7 @@ import { createOnePageLayout } from 'test/integration/metadata/suites/page-layou
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
 
 describe('Page layout widget deletion should succeed', () => {
   let testPageLayoutId: string;
@@ -52,7 +52,8 @@ describe('Page layout widget deletion should succeed', () => {
         configuration: {
           configurationType: WidgetConfigurationType.IFRAME,
         },
-        gridPosition: {
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
           row: 0,
           column: 0,
           rowSpan: 1,

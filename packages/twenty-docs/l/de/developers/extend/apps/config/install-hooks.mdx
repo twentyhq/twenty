@@ -1,12 +1,12 @@
 ---
 title: Installations-Hooks
-description: Führen Sie Logik vor oder nach der Installation aus – befüllen Sie Daten, sichern Sie Datensätze und validieren Sie das Upgrade.
+description: Führen Sie Logik während des Installations-, Upgrade- oder Deinstallations-Lebenszyklus aus – initialisieren Sie Daten, sichern Sie Datensätze, validieren Sie das Upgrade, bereinigen Sie externe Ressourcen.
 icon: wrench
 ---
 
-Installations-Hooks sind spezielle Logikfunktionen, die während des Installations- oder Upgrade-Lebenszyklus ausgeführt werden. Sie verwenden dieselbe Handler-Laufzeit wie reguläre [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions) und erhalten ein `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` ist bei einer Neuinstallation `undefined`), werden jedoch mit eigenen Define-Funktionen deklariert und befinden sich außerhalb des normalen Trigger-Modells (HTTP, Cron, Datenbankereignisse).
+Installations-Hooks sind spezielle Logikfunktionen, die während des Installations-, Upgrade- oder Deinstallations-Lebenszyklus ausgeführt werden. Sie verwenden dieselbe Handler-Laufzeit wie reguläre [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions), werden jedoch mit eigenen Define-Funktionen deklariert und sind vom normalen Trigger-Modell (HTTP, Cron, Datenbankereignisse) getrennt. Installations-Hooks erhalten ein `InstallPayload` (`{ previousVersion?: string; newVersion: string }` – `previousVersion` ist bei einer Neuinstallation `undefined`); der Deinstallations-Hook erhält ein `UninstallPayload` (`{ version?: string }` – die entfernte Version).
 
-Jede App darf **höchstens eine Pre-Install-Funktion** und **höchstens eine Post-Install-Funktion** definieren. Der Manifest-Build schlägt fehl, wenn mehr als eine von beiden erkannt wird.
+Jede App darf **höchstens einen** Hook jeder Art definieren (Pre-Install, Post-Install, Uninstall). Der Manifest-Build schlägt fehl, wenn mehr als ein Hook eines Typs erkannt wird.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -142,3 +142,47 @@ export default definePreInstallLogicFunction({
 
 </Accordion>
 </AccordionGroup>
+
+## Deinstallations-Hook
+
+`defineUninstallLogicFunction` deklariert einen Hook, der ausgeführt wird, wenn ein Benutzer Ihre App deinstalliert. Er wird **ausgeführt, bevor** die Metadaten, Daten und der Code der App entfernt werden – sobald die Löschmigration ausgeführt wurde, bleibt nichts mehr zum Ausführen übrig – sodass Ihr Handler weiterhin die Objekte und Datensätze der App abfragen kann. Verwenden Sie ihn zur Bereinigung externer Ressourcen: Stellen Sie API-Ressourcen außer Betrieb, löschen Sie verbleibende Bots, widerrufen Sie Webhooks.
+
+Notizen:
+
+* Der Hook ist Best-Effort: Er wird synchron ausgeführt, aber ein Fehler wird protokolliert und **blockiert die Deinstallation niemals** – die Bereinigung darf es nicht unmöglich machen, eine App zu entfernen.
+* Er erhält `UninstallPayload` (`{ version?: string }` – die entfernte Version).
+* Er wird **nicht** ausgeführt, wenn eine fehlgeschlagene Neuinstallation zurückgerollt wird – die App wurde nie vollständig installiert.
+* Der Hook kann nicht ausgeführt werden, nachdem die App entfernt wurde, daher gehört externe Bereinigung, die von App-Daten abhängt (z. B. in Datensätzen gespeicherte Bot-IDs), hierher und nicht in einen externen geplanten Job.
+* Wie die Installations-Hooks wird er **nicht im Dev-Modus ausgeführt** – lösen Sie ihn stattdessen manuell aus:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --uninstall
+```
+
+```ts src/logic-functions/uninstall.ts
+import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (_payload: UninstallPayload): Promise<void> => {
+  const client = new CoreApiClient();
+  const { meetingBots } = await client.query({
+    meetingBots: { edges: { node: { id: true, externalBotId: true } } },
+  });
+
+  // Delete the provider-side bots so nothing keeps recording after uninstall.
+  for (const { node } of meetingBots.edges) {
+    await fetch(`https://api.recorder.example/bots/${node.externalBotId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${process.env.RECORDER_API_KEY}` },
+    });
+  }
+};
+
+export default defineUninstallLogicFunction({
+  universalIdentifier: 'b2c3d4e5-6789-01bc-def0-234567890abc',
+  name: 'uninstall',
+  description: 'Deletes remaining recorder bots when the app is uninstalled.',
+  timeoutSeconds: 300,
+  handler,
+});
+```

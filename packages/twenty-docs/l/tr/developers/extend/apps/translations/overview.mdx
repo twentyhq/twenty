@@ -51,8 +51,7 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 
 ### Ne zaman hangisi kullanılmalı
 
-* **`<Trans>…</Trans>`** — JSX içindeki statik metin. Değişkelerin (`<Trans message="Hi {name}" values={{ name }} />`) yerleştirilmesi için `message` ve `values`
-  prop'larını kullanın;
+* **`Trans`** — JSX içindeki statik metin. Değişkelerin yerleştirilmesi için `message` ve `values` prop'larını kullanın (`Trans message="Hi {name}" values={{ name }}`);
   çocukların içine doğrudan yerleştirme statik olarak çıkarılamaz.
 * **`useTranslate().t`** — bir bileşen içindeki dinamik dizeler. Kullanıcı dili değiştirdiğinde
   yeniden render edilir. Render içinde bunu tercih edin.
@@ -70,6 +69,8 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+Bağlamsal dizeler, yerel ayar kataloglarında bağlamlarına göre anahtarlanmış bir grup olarak görünür: `"\<context>": { "\<message>": "\<translation>" }`. Manifest etiketleri, tasarım gereği bağlamsaldır — her biri, oynadığı meta veri rolünü taşır (`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …); dolayısıyla aynı kelime, bir nesne adı olarak ve bir görünüm adı olarak farklı şekilde çevrilebilir.
+
 ## Çıkarma ve çeviri
 
 extract komutunu uygulama dizininizden çalıştırın:
@@ -79,7 +80,7 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-Çıkarma işlemi, manifest etiketlerinizi ve ön bileşen kaynaklarınızdan gelen `t()`/`msg()`/`\<Trans>`
+Çıkarma işlemi, manifest etiketlerinizi ve ön bileşen kaynaklarınızdan gelen `t()`/`msg()`/`Trans`
 dizelerini, kaynak dizeyi anahtar olarak kullanarak `locales/\<locale>.json` içine toplar. Çevirileri doldurun:
 
 ```json
@@ -87,9 +88,17 @@ dizelerini, kaynak dizeyi anahtar olarak kullanarak `locales/\<locale>.json` iç
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+Bağlamdan bağımsız dizeler düz girdilerdir; bağlamsal dizeler — her bir manifest etiketi de dahil olmak üzere — bağlam anahtarlarının altında iç içe yerleştirilir.
 
 `{name}` gibi yer tutucular çalışma zamanında değiştirilir — bunları çeviride koruyun. Boş bırakılan herhangi bir dize, kaynak metne geri döner.
 
@@ -99,15 +108,21 @@ dizelerini, kaynak dizeyi anahtar olarak kullanarak `locales/\<locale>.json` iç
 manifest etiketleri sunucu tarafında çözülür ve ön bileşen
 katalogları her bileşen paketine gömülür. Çalışma zamanında bir bileşen, yereli yürütme bağlamından (ana makinenin geçerli dili) okur
 ve her dizeyi kataloğuna göre çözer; bir çeviri eksik olduğunda
-kaynak metne geri döner. Ana makinede dilin değiştirilmesi, `\<Trans>` ve
+kaynak metne geri döner. Ana makinede dilin değiştirilmesi, `Trans` ve
 `useTranslate().t` dizelerini canlı olarak yeniden render eder.
 
-Kataloglar build zamanında derlendiği için, bir çeviriyi güncellemek
-`twenty dev:build`'i yeniden çalıştırmayı (ve yeniden dağıtmayı) gerektirir; bu, diğer herhangi bir değişiklikle aynıdır.
+Manifest etiketleri, her senkronizasyonda — `twenty dev:build`, `twenty apply`
+ve sürekli `twenty dev` izleme işlemi de dahil olmak üzere — derlenir; bu nedenle bir yerel ayar dosyasını düzenleyip
+senkronize etmek, yeni metni görmek için yeterlidir. Ön uç bileşen katalogları, derleme sırasında
+her bileşen paketine dahil edilir; dolayısıyla bunlardan birini değiştirmek yine de
+`twenty dev:build`'in yeniden çalıştırılması (ve yeniden dağıtım) anlamına gelir.
 
-<Note>
-Çeviriler `twenty dev:build` (ve `twenty apply`) tarafından derlenir. Sürekli
-`twenty dev` izlemesi kaynak dizeleri gösterir, bu yüzden yerelleştirilmiş çıktıyı tek seferlik bir build ile test edin.
-</Note>
+`Trans` metin alt öğeleri birden fazla satıra yayılabilir — boşluklar, JSX'in boşlukları daraltma biçimiyle aynı şekilde daraltılır; bu nedenle her ikisi de `Welcome back` anahtarına dönüştürülür:
 
-`<Trans>` metin alt öğeleri birden fazla satıra yayılabilir — boşluklar, JSX'in boşlukları daraltma biçimiyle aynı şekilde daraltılır; bu nedenle hem `<Trans>Welcome\n  back</Trans>` hem de çıkarılan anahtar `Welcome back` olur.
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

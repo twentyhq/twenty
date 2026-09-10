@@ -63,7 +63,7 @@ export class MarketplaceAppDetailDTO {
   @IsOptional()
   @IsString()
   @Field({ nullable: true })
-  logo?: string;
+  logoUrl?: string;
 
   @IsOptional()
   @IsString()
@@ -74,6 +74,11 @@ export class MarketplaceAppDetailDTO {
   @IsString()
   @Field({ nullable: true })
   aboutDescription?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  pricingDescription?: string;
 
   @IsOptional()
   @IsString()

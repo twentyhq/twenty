@@ -72,8 +72,9 @@ import { Button } from 'twenty-ui/input';
 npx nx build twenty-ui                 # Build the library (dual ESM/CJS + types)
 npx nx storybook:serve:dev twenty-ui   # Run Storybook
 npx nx test twenty-ui                  # Run unit tests
+npx vitest run --root packages/twenty-ui --project unit <file>   # Run a single test file
 ```
 
 # License
 
-twenty-ui is released under the [AGPL-3.0](https://github.com/twentyhq/twenty/blob/main/packages/twenty-ui/LICENSE) license.
+twenty-ui is released under the [MIT](https://github.com/twentyhq/twenty/blob/main/packages/twenty-ui/LICENSE) license.

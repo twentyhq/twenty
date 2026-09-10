@@ -1,4 +1,4 @@
-import { type PageLayoutType } from 'twenty-shared/types';
+import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export const getPageLayoutBaseFile = ({
@@ -8,7 +8,16 @@ export const getPageLayoutBaseFile = ({
   name: string;
   type: PageLayoutType;
 }) => {
-  return `import { definePageLayout, PageLayoutType } from 'twenty-sdk/define';
+  const layoutMode =
+    type === PageLayoutType.DASHBOARD
+      ? PageLayoutTabLayoutMode.GRID
+      : PageLayoutTabLayoutMode.VERTICAL_LIST;
+
+  return `import {
+  definePageLayout,
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+} from 'twenty-sdk/define';
 
 export default definePageLayout({
   universalIdentifier: '${uuidv4()}',
@@ -18,6 +27,8 @@ export default definePageLayout({
     {
       universalIdentifier: '${uuidv4()}',
       title: 'Overview',
+      position: 0,
+      layoutMode: PageLayoutTabLayoutMode.${layoutMode},
       widgets: [],
     },
   ],

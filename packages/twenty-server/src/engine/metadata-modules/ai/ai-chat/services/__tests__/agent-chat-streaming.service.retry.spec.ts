@@ -33,7 +33,11 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
 
   const buildService = ({
     thread = failedThread,
-    lastUserMessage = { id: 'user-message-id', turnId: 'turn-id' },
+    lastUserMessage = { id: 'user-message-id', turnId: 'turn-id' } as {
+      id: string;
+      turnId: string;
+      processedAt?: Date;
+    },
     threadMessages = [userMessageEntity],
   } = {}) => {
     const threadRepository = {
@@ -155,5 +159,48 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     );
     expect(result.messageId).toBe('user-message-id');
     expect(result.turnId).toBe('turn-id');
+  });
+
+  it('should retry the hidden kickoff turn when the thread only contains the kickoff message', async () => {
+    const hiddenKickoffMessageEntity = {
+      id: 'kickoff-message-id',
+      role: AgentMessageRole.USER,
+      status: AgentMessageStatus.SENT,
+      isHidden: true,
+      parts: [{ type: 'text', textContent: 'kickoff prompt', orderIndex: 0 }],
+    } as unknown as AgentMessageEntity;
+    const { service, threadRepository, messageQueueService, agentChatService } =
+      buildService({
+        lastUserMessage: {
+          id: 'kickoff-message-id',
+          turnId: 'kickoff-turn-id',
+          processedAt: new Date('2026-01-01T00:00:01.000Z'),
+        },
+        threadMessages: [hiddenKickoffMessageEntity],
+      });
+
+    const result = await service.retryLastFailedTurn(retryArguments);
+
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      'workspace-id',
+      expect.objectContaining({ id: 'thread-id' }),
+      { activeStreamId: result.streamId, lastStreamError: null },
+    );
+    expect(
+      agentChatService.deleteAssistantMessagesForTurn,
+    ).toHaveBeenCalledWith({
+      turnId: 'kickoff-turn-id',
+      workspaceId: 'workspace-id',
+    });
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        existingTurnId: 'kickoff-turn-id',
+        lastUserMessageText: 'kickoff prompt',
+        hasTitle: true,
+      }),
+    );
+    expect(result.messageId).toBe('kickoff-message-id');
+    expect(result.turnId).toBe('kickoff-turn-id');
   });
 });

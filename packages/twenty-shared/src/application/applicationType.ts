@@ -1,5 +1,9 @@
 import { type PostInstallLogicFunctionApplicationManifest } from '@/application/postInstallLogicFunctionApplicationType';
 import { type PreInstallLogicFunctionApplicationManifest } from '@/application/preInstallLogicFunctionApplicationType';
+import { type SettingsFrontComponentApplicationManifest } from '@/application/settingsFrontComponentApplicationType';
+import { type UninstallLogicFunctionApplicationManifest } from '@/application/uninstallLogicFunctionApplicationType';
+import { type FrontComponentSharedDependenciesManifest } from '@/application/frontComponentSharedDependenciesManifestType';
+import { type ApplicationBilling } from './applicationBillingType';
 import { type ApplicationCategory } from './applicationCategoryType';
 import { type ApplicationVariables } from './applicationVariablesType';
 import { type ServerVariables } from './server-variables.type';
@@ -10,6 +14,7 @@ export type ApplicationManifest = SyncableEntityOptions & {
   displayName: string;
   description: string;
   applicationVariables?: ApplicationVariables;
+  billing?: ApplicationBilling;
   serverVariables?: ServerVariables;
   author?: string;
   category?: ApplicationCategory;
@@ -30,10 +35,12 @@ export type ApplicationManifest = SyncableEntityOptions & {
   issueReportUrl?: string;
   postInstallLogicFunction?: PostInstallLogicFunctionApplicationManifest;
   preInstallLogicFunction?: PreInstallLogicFunctionApplicationManifest;
+  uninstallLogicFunction?: UninstallLogicFunctionApplicationManifest;
+  settingsFrontComponent?: SettingsFrontComponentApplicationManifest;
+  frontComponentSharedDependencies?: FrontComponentSharedDependenciesManifest;
   /**
-   * @deprecated Custom settings tabs are no longer supported. This property is
-   * kept for backward compatibility with older manifests but is now ignored.
-   * Use typed `applicationVariables` / `serverVariables` instead.
+   * @deprecated Use `defineSettingsFrontComponent()` (exposed on the manifest
+   * as `settingsFrontComponent`) instead. This property is ignored.
    */
   settingsCustomTabFrontComponentUniversalIdentifier?: string;
   packageJsonChecksum: string | null;

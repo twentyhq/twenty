@@ -2,10 +2,15 @@ import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  WidgetType,
+} from 'twenty-shared/types';
 
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
   TAB_PROPS,
+  VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import {
@@ -39,6 +44,44 @@ const CALL_RECORDING_PAGE_TABS = {
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage
             .tabs.timeline.widgets.timeline.universalIdentifier,
         ...WIDGET_PROPS.timeline,
+      },
+    },
+  },
+  summary: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
+        .summary.universalIdentifier,
+    title: 'Summary',
+    position: 30,
+    icon: 'IconFileText',
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    widgets: {
+      summary: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage
+            .tabs.summary.widgets.summary.universalIdentifier,
+        title: 'Summary',
+        type: WidgetType.CALL_RECORDING_SUMMARY,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
+      },
+    },
+  },
+  callRecording: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
+        .callRecording.universalIdentifier,
+    title: 'Call Recording',
+    position: 40,
+    icon: 'IconVideo',
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    widgets: {
+      transcript: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage
+            .tabs.callRecording.widgets.transcript.universalIdentifier,
+        title: 'Transcript',
+        type: WidgetType.CALL_RECORDING_TRANSCRIPT,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
       },
     },
   },

@@ -1,10 +1,10 @@
-import { type DropResult } from '@hello-pangea/dnd';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
+import { type RecordDragDropResult } from '@/object-record/record-drag/types/RecordDragDropResult';
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
 import { processGroupDrop } from '@/object-record/record-drag/utils/processGroupDrop';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
@@ -61,7 +61,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
   );
 
   const processTableWithGroupRecordDrop = useCallback(
-    (result: DropResult) => {
+    (result: RecordDragDropResult) => {
       if (!result.destination) return;
 
       const destinationRecordGroupId = result.destination.droppableId;
