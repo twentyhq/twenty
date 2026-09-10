@@ -14,7 +14,6 @@ import {
 } from 'typeorm';
 import {
   AggregateOperations,
-  type SerializedRelation,
   ViewCalendarLayout,
   ViewKey,
   ViewOpenRecordIn,
@@ -36,25 +35,9 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+import { type MetadataEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-entity-overrides.type';
 
-export type ViewOverrides = {
-  name?: string;
-  type?: ViewType;
-  icon?: string;
-  position?: number;
-  isCompact?: boolean;
-  openRecordIn?: ViewOpenRecordIn;
-  kanbanAggregateOperation?: AggregateOperations | null;
-  kanbanAggregateOperationFieldMetadataId?: SerializedRelation | null;
-  anyFieldFilterValue?: string | null;
-  calendarLayout?: ViewCalendarLayout | null;
-  calendarFieldMetadataId?: SerializedRelation | null;
-  calendarEndFieldMetadataId?: SerializedRelation | null;
-  visibility?: ViewVisibility;
-  mainGroupByFieldMetadataId?: SerializedRelation | null;
-  shouldHideEmptyGroups?: boolean;
-  kanbanColumnWidth?: number | null;
-};
+export type ViewOverrides = MetadataEntityOverrides<'view'>;
 
 // We could refactor this type to be dynamic to view type
 @Entity({ name: 'view', schema: 'core' })

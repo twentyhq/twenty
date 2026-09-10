@@ -20,12 +20,9 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+import { type MetadataEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-entity-overrides.type';
 
-export type PageLayoutTabOverrides = {
-  title?: string;
-  position?: number;
-  icon?: string | null;
-};
+export type PageLayoutTabOverrides = MetadataEntityOverrides<'pageLayoutTab'>;
 
 @Entity({ name: 'pageLayoutTab', schema: 'core' })
 @ObjectType('PageLayoutTab')

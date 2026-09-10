@@ -4,7 +4,6 @@ import {
   type GridPosition,
   PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetPosition,
-  type SerializedRelation,
   WidgetType,
 } from 'twenty-shared/types';
 import {
@@ -29,14 +28,10 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { PageLayoutWidgetConfigurationTypeSettings } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configuration.type';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+import { type MetadataEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-entity-overrides.type';
 
-export type PageLayoutWidgetOverrides = {
-  title?: string;
-  position?: PageLayoutWidgetPosition | null;
-  conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
-  conditionalAvailabilityExpression?: string | null;
-  pageLayoutTabId?: SerializedRelation;
-};
+export type PageLayoutWidgetOverrides =
+  MetadataEntityOverrides<'pageLayoutWidget'>;
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })
 @ObjectType('PageLayoutWidget')

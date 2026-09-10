@@ -3,6 +3,7 @@ import {
   type TranslatablePropertyName,
 } from 'twenty-shared/i18n';
 import { type AllMetadataName } from 'twenty-shared/metadata';
+import { type Expect } from 'twenty-shared/testing';
 
 import { type UnwrapWasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
@@ -245,7 +246,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     labelIdentifierFieldMetadataId: {
       toCompare: true,
       toStringify: false,
-      // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
       universalProperty: 'labelIdentifierFieldMetadataUniversalIdentifier',
     },
     overrides: {
@@ -306,7 +306,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     imageIdentifierFieldMetadataId: {
       toCompare: true,
       toStringify: false,
-      // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
       universalProperty: 'imageIdentifierFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },
@@ -1995,9 +1994,72 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
   },
-} as const satisfies {
+} as const;
+
+type AllEntityPropertiesConfigurationByMetadataName = {
   [P in AllMetadataName]: MetadataEntityPropertyConfiguration<P>;
 };
+
+// Both object metadata foreign keys carry a universal property without being
+// declared as many-to-one relations.
+// TODO remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
+type KnownDeviationsFromConfiguration = {
+  objectMetadata:
+    | 'labelIdentifierFieldMetadataId'
+    | 'imageIdentifierFieldMetadataId';
+};
+
+type WithoutKnownDeviations<
+  TConfiguration,
+  TMetadataName extends AllMetadataName,
+> = Omit<
+  TConfiguration,
+  TMetadataName extends keyof KnownDeviationsFromConfiguration
+    ? KnownDeviationsFromConfiguration[TMetadataName]
+    : never
+>;
+
+type MetadataNamesNotSatisfyingConfiguration = {
+  [P in AllMetadataName]: WithoutKnownDeviations<
+    (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[P],
+    P
+  > extends WithoutKnownDeviations<
+    AllEntityPropertiesConfigurationByMetadataName[P],
+    P
+  >
+    ? never
+    : P;
+}[AllMetadataName];
+
+type ExcessConfigurationKeys = {
+  [P in AllMetadataName]: {
+    [K in keyof (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[P]]: K extends keyof AllEntityPropertiesConfigurationByMetadataName[P]
+      ? Exclude<
+          keyof (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[P][K],
+          keyof NonNullable<
+            AllEntityPropertiesConfigurationByMetadataName[P][K]
+          >
+        >
+      : K;
+  }[keyof (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[P]];
+}[AllMetadataName];
+
+// The registry cannot `satisfies` its shape inline: the shape walks every
+// entity property type, and an overridable entity types its overrides column
+// from this registry, so `typeof` the registry would depend on the entity
+// that depends on it. Checked after the fact instead; a failing entry
+// surfaces as the offending metadata name or property key.
+// oxlint-disable-next-line unused-imports/no-unused-vars
+type Assertions = [
+  Expect<
+    [MetadataNamesNotSatisfyingConfiguration] extends [never]
+      ? true
+      : MetadataNamesNotSatisfyingConfiguration
+  >,
+  Expect<
+    [ExcessConfigurationKeys] extends [never] ? true : ExcessConfigurationKeys
+  >,
+];
 
 export type MetadataEntityPropertyName<T extends AllMetadataName> =
   keyof (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T];

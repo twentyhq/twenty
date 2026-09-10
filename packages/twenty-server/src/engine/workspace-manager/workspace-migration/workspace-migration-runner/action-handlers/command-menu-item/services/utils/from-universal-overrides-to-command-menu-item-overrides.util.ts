@@ -1,20 +1,16 @@
-import { type FormatRecordSerializedRelationProperties } from 'twenty-shared/types';
-
 import { type CommandMenuItemOverrides } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
-
-type UniversalCommandMenuItemOverrides =
-  FormatRecordSerializedRelationProperties<CommandMenuItemOverrides>;
+import { type MetadataUniversalEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-universal-entity-overrides.type';
 
 export const fromUniversalOverridesToCommandMenuItemOverrides = ({
   universalOverrides,
   flatObjectMetadataMaps,
   flatPageLayoutMaps,
 }: {
-  universalOverrides: UniversalCommandMenuItemOverrides;
+  universalOverrides: MetadataUniversalEntityOverrides<'commandMenuItem'>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatPageLayoutMaps: FlatEntityMaps<FlatPageLayout>;
 }): CommandMenuItemOverrides => {

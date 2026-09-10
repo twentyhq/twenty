@@ -1,4 +1,3 @@
-import { type FormatRecordSerializedRelationProperties } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -6,9 +5,7 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type ViewOverrides } from 'src/engine/metadata-modules/view/entities/view.entity';
-
-type UniversalViewOverrides =
-  FormatRecordSerializedRelationProperties<ViewOverrides>;
+import { type MetadataUniversalEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-universal-entity-overrides.type';
 
 const VIEW_OVERRIDES_FIELD_METADATA_FOREIGN_KEYS = [
   'kanbanAggregateOperationFieldMetadataId',
@@ -26,7 +23,7 @@ const toUniversalIdentifierProperty = (
   foreignKey.replace(
     /Id$/,
     'UniversalIdentifier',
-  ) as keyof UniversalViewOverrides;
+  ) as keyof MetadataUniversalEntityOverrides<'view'>;
 
 export const fromViewOverridesToUniversalOverrides = ({
   overrides,
@@ -36,7 +33,7 @@ export const fromViewOverridesToUniversalOverrides = ({
   overrides: ViewOverrides;
   fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
-}): UniversalViewOverrides => {
+}): MetadataUniversalEntityOverrides<'view'> => {
   const {
     kanbanAggregateOperationFieldMetadataId: _kanban,
     calendarFieldMetadataId: _calendar,
@@ -45,37 +42,36 @@ export const fromViewOverridesToUniversalOverrides = ({
     ...scalarOverrides
   } = overrides;
 
-  return VIEW_OVERRIDES_FIELD_METADATA_FOREIGN_KEYS.reduce<UniversalViewOverrides>(
-    (acc, foreignKey) => {
-      const foreignKeyValue = overrides[foreignKey];
+  return VIEW_OVERRIDES_FIELD_METADATA_FOREIGN_KEYS.reduce<
+    MetadataUniversalEntityOverrides<'view'>
+  >((acc, foreignKey) => {
+    const foreignKeyValue = overrides[foreignKey];
 
-      if (foreignKeyValue === undefined) {
-        return acc;
+    if (foreignKeyValue === undefined) {
+      return acc;
+    }
+
+    const universalIdentifierProperty =
+      toUniversalIdentifierProperty(foreignKey);
+
+    if (foreignKeyValue === null) {
+      return { ...acc, [universalIdentifierProperty]: null };
+    }
+
+    const universalIdentifier =
+      fieldMetadataUniversalIdentifierById[foreignKeyValue];
+
+    if (!isDefined(universalIdentifier)) {
+      if (shouldThrowOnMissingIdentifier) {
+        throw new FlatEntityMapsException(
+          `FieldMetadata universal identifier not found for id: ${foreignKeyValue}`,
+          FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
+        );
       }
 
-      const universalIdentifierProperty =
-        toUniversalIdentifierProperty(foreignKey);
+      return { ...acc, [universalIdentifierProperty]: null };
+    }
 
-      if (foreignKeyValue === null) {
-        return { ...acc, [universalIdentifierProperty]: null };
-      }
-
-      const universalIdentifier =
-        fieldMetadataUniversalIdentifierById[foreignKeyValue];
-
-      if (!isDefined(universalIdentifier)) {
-        if (shouldThrowOnMissingIdentifier) {
-          throw new FlatEntityMapsException(
-            `FieldMetadata universal identifier not found for id: ${foreignKeyValue}`,
-            FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
-          );
-        }
-
-        return { ...acc, [universalIdentifierProperty]: null };
-      }
-
-      return { ...acc, [universalIdentifierProperty]: universalIdentifier };
-    },
-    scalarOverrides,
-  );
+    return { ...acc, [universalIdentifierProperty]: universalIdentifier };
+  }, scalarOverrides);
 };

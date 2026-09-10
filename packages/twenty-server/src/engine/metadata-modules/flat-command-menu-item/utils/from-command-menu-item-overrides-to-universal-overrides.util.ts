@@ -1,4 +1,3 @@
-import { type FormatRecordSerializedRelationProperties } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CommandMenuItemOverrides } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
@@ -6,9 +5,7 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
-
-type UniversalCommandMenuItemOverrides =
-  FormatRecordSerializedRelationProperties<CommandMenuItemOverrides>;
+import { type MetadataUniversalEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-universal-entity-overrides.type';
 
 const COMMAND_MENU_ITEM_OVERRIDES_FOREIGN_KEYS = [
   {
@@ -33,7 +30,7 @@ export const fromCommandMenuItemOverridesToUniversalOverrides = ({
   objectMetadataUniversalIdentifierById: Partial<Record<string, string>>;
   pageLayoutUniversalIdentifierById: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
-}): UniversalCommandMenuItemOverrides => {
+}): MetadataUniversalEntityOverrides<'commandMenuItem'> => {
   const {
     availabilityObjectMetadataId: _availabilityObjectMetadataId,
     pageLayoutId: _pageLayoutId,
@@ -45,34 +42,33 @@ export const fromCommandMenuItemOverridesToUniversalOverrides = ({
     pageLayout: pageLayoutUniversalIdentifierById,
   };
 
-  return COMMAND_MENU_ITEM_OVERRIDES_FOREIGN_KEYS.reduce<UniversalCommandMenuItemOverrides>(
-    (acc, { foreignKey, universalProperty, mapName }) => {
-      const foreignKeyValue = overrides[foreignKey];
+  return COMMAND_MENU_ITEM_OVERRIDES_FOREIGN_KEYS.reduce<
+    MetadataUniversalEntityOverrides<'commandMenuItem'>
+  >((acc, { foreignKey, universalProperty, mapName }) => {
+    const foreignKeyValue = overrides[foreignKey];
 
-      if (foreignKeyValue === undefined) {
-        return acc;
+    if (foreignKeyValue === undefined) {
+      return acc;
+    }
+
+    if (foreignKeyValue === null) {
+      return { ...acc, [universalProperty]: null };
+    }
+
+    const universalIdentifier =
+      universalIdentifierByIdByMapName[mapName][foreignKeyValue];
+
+    if (!isDefined(universalIdentifier)) {
+      if (shouldThrowOnMissingIdentifier) {
+        throw new FlatEntityMapsException(
+          `${mapName} universal identifier not found for id: ${foreignKeyValue}`,
+          FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
+        );
       }
 
-      if (foreignKeyValue === null) {
-        return { ...acc, [universalProperty]: null };
-      }
+      return { ...acc, [universalProperty]: null };
+    }
 
-      const universalIdentifier =
-        universalIdentifierByIdByMapName[mapName][foreignKeyValue];
-
-      if (!isDefined(universalIdentifier)) {
-        if (shouldThrowOnMissingIdentifier) {
-          throw new FlatEntityMapsException(
-            `${mapName} universal identifier not found for id: ${foreignKeyValue}`,
-            FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
-          );
-        }
-
-        return { ...acc, [universalProperty]: null };
-      }
-
-      return { ...acc, [universalProperty]: universalIdentifier };
-    },
-    scalarOverrides,
-  );
+    return { ...acc, [universalProperty]: universalIdentifier };
+  }, scalarOverrides);
 };

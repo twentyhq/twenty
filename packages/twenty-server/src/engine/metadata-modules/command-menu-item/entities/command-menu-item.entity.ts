@@ -1,7 +1,4 @@
-import {
-  CommandMenuItemAvailabilityType,
-  type SerializedRelation,
-} from 'twenty-shared/types';
+import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import {
   Check,
   Column,
@@ -25,19 +22,10 @@ import { FrontComponentEntity } from 'src/engine/metadata-modules/front-componen
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+import { type MetadataEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-entity-overrides.type';
 
-export type CommandMenuItemOverrides = {
-  label?: string;
-  icon?: string | null;
-  shortLabel?: string | null;
-  position?: number;
-  isPinned?: boolean;
-  hotKeys?: string[] | null;
-  availabilityType?: CommandMenuItemAvailabilityType;
-  availabilityObjectMetadataId?: SerializedRelation | null;
-  engineComponentKey?: EngineComponentKey;
-  pageLayoutId?: SerializedRelation | null;
-};
+export type CommandMenuItemOverrides =
+  MetadataEntityOverrides<'commandMenuItem'>;
 
 @Entity({ name: 'commandMenuItem', schema: 'core' })
 @Index('IDX_COMMAND_MENU_ITEM_WORKFLOW_VERSION_ID_WORKSPACE_ID', [

@@ -1,5 +1,4 @@
 import { type TimelineActivityAction } from 'twenty-shared/timeline';
-import { type APP_LOCALES } from 'twenty-shared/translations';
 import {
   Column,
   CreateDateColumn,
@@ -22,14 +21,10 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+import { type MetadataEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-entity-overrides.type';
 
-export type TimelineActivityTypeOverrides = {
-  label?: string;
-  icon?: string | null;
-  translations?: Partial<
-    Record<keyof typeof APP_LOCALES, { label?: string | null }>
-  > | null;
-};
+export type TimelineActivityTypeOverrides =
+  MetadataEntityOverrides<'timelineActivityType'>;
 
 @Entity({ name: 'timelineActivityType', schema: 'core' })
 @Unique('IDX_TIMELINE_ACTIVITY_TYPE_NAME_APPLICATION_WORKSPACE_UNIQUE', [

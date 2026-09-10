@@ -1,12 +1,8 @@
-import { type FormatRecordSerializedRelationProperties } from 'twenty-shared/types';
-
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type ViewOverrides } from 'src/engine/metadata-modules/view/entities/view.entity';
-
-type UniversalViewOverrides =
-  FormatRecordSerializedRelationProperties<ViewOverrides>;
+import { type MetadataUniversalEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-universal-entity-overrides.type';
 
 const VIEW_OVERRIDES_UNIVERSAL_FIELD_METADATA_PROPERTIES = [
   'kanbanAggregateOperationFieldMetadataUniversalIdentifier',
@@ -30,7 +26,7 @@ export const fromUniversalOverridesToViewOverrides = ({
   universalOverrides,
   flatFieldMetadataMaps,
 }: {
-  universalOverrides: UniversalViewOverrides;
+  universalOverrides: MetadataUniversalEntityOverrides<'view'>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): ViewOverrides => {
   const {

@@ -17,12 +17,9 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+import { type MetadataEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-entity-overrides.type';
 
-export type ViewFieldGroupOverrides = {
-  name?: string;
-  position?: number;
-  isVisible?: boolean;
-};
+export type ViewFieldGroupOverrides = MetadataEntityOverrides<'viewFieldGroup'>;
 
 @Entity({ name: 'viewFieldGroup', schema: 'core' })
 @Index('IDX_VIEW_FIELD_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])

@@ -1,4 +1,3 @@
-import { type FormatRecordSerializedRelationProperties } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -6,9 +5,7 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type PageLayoutWidgetOverrides } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
-
-type UniversalPageLayoutWidgetOverrides =
-  FormatRecordSerializedRelationProperties<PageLayoutWidgetOverrides>;
+import { type MetadataUniversalEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-universal-entity-overrides.type';
 
 export const fromPageLayoutWidgetOverridesToUniversalOverrides = ({
   overrides,
@@ -18,7 +15,7 @@ export const fromPageLayoutWidgetOverridesToUniversalOverrides = ({
   overrides: PageLayoutWidgetOverrides;
   pageLayoutTabUniversalIdentifierById: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
-}): UniversalPageLayoutWidgetOverrides => {
+}): MetadataUniversalEntityOverrides<'pageLayoutWidget'> => {
   const { pageLayoutTabId, ...scalarOverrides } = overrides;
 
   if (!isDefined(pageLayoutTabId)) {

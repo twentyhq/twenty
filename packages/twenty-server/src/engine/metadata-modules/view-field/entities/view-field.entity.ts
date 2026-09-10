@@ -10,10 +10,7 @@ import {
   type Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import {
-  AggregateOperations,
-  type SerializedRelation,
-} from 'twenty-shared/types';
+import { AggregateOperations } from 'twenty-shared/types';
 
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -21,14 +18,9 @@ import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/com
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+import { type MetadataEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-entity-overrides.type';
 
-export type ViewFieldOverrides = {
-  isVisible?: boolean;
-  size?: number;
-  position?: number;
-  aggregateOperation?: AggregateOperations | null;
-  viewFieldGroupId?: SerializedRelation | null;
-};
+export type ViewFieldOverrides = MetadataEntityOverrides<'viewField'>;
 
 @Entity({ name: 'viewField', schema: 'core' })
 @Index('IDX_VIEW_FIELD_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
