@@ -1,6 +1,7 @@
 import {
   FIELD_ENUM_BINDINGS,
   INDEX_ENUM_BINDINGS,
+  NAVIGATION_MENU_ITEM_ENUM_BINDINGS,
   OBJECT_ENUM_BINDINGS,
   PAGE_LAYOUT_ENUM_BINDINGS,
   PAGE_LAYOUT_TAB_ENUM_BINDINGS,
@@ -12,6 +13,7 @@ import {
   buildIndexFileBaseName,
   buildViewFieldFileBaseName,
   type FieldLocation,
+  isUsableFileNameSegment,
   toFileBaseName,
 } from '@/cli/utilities/pull/pull-file-base-name';
 import { stripGraphqlTypename } from '@/cli/utilities/pull/strip-graphql-typename';
@@ -20,7 +22,10 @@ import {
   type ApplicationManifest,
   getSystemRecordFormPageLayoutUniversalIdentifier,
   getSystemRecordPageLayoutUniversalIdentifier,
+  getSystemViewUniversalIdentifier,
   type Manifest,
+  type NavigationMenuItemManifest,
+  SYSTEM_VIEW_KEYS,
 } from 'twenty-shared/application';
 import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
@@ -37,6 +42,7 @@ export const PULL_ENTITY_KINDS = [
   'viewField',
   'pageLayout',
   'pageLayoutTab',
+  'navigationMenuItem',
 ] as const;
 
 export type PullEntityKind = (typeof PULL_ENTITY_KINDS)[number];
@@ -186,6 +192,89 @@ const getPageLayoutName = ({
   }
 
   return null;
+};
+
+const getViewName = ({
+  viewUniversalIdentifier,
+  manifest,
+}: {
+  viewUniversalIdentifier: string;
+  manifest: Manifest;
+}): string | null => {
+  const viewManifest = manifest.views?.find(
+    (candidate) => candidate.universalIdentifier === viewUniversalIdentifier,
+  );
+
+  if (isDefined(viewManifest)) {
+    return viewManifest.name;
+  }
+
+  const objectMetadataApplicationUniversalIdentifier =
+    manifest.application.universalIdentifier;
+
+  for (const objectManifest of manifest.objects) {
+    if (
+      getSystemViewUniversalIdentifier({
+        objectMetadataApplicationUniversalIdentifier,
+        objectUniversalIdentifier: objectManifest.universalIdentifier,
+        viewKey: SYSTEM_VIEW_KEYS.INDEX,
+      }) === viewUniversalIdentifier
+    ) {
+      return `${objectManifest.nameSingular}IndexView`;
+    }
+  }
+
+  return null;
+};
+
+const getNavigationMenuItemName = ({
+  navigationMenuItemManifest,
+  manifest,
+}: {
+  navigationMenuItemManifest: NavigationMenuItemManifest;
+  manifest: Manifest;
+}): string | null => {
+  const {
+    name,
+    targetObjectUniversalIdentifier,
+    viewUniversalIdentifier,
+    pageLayoutUniversalIdentifier,
+  } = navigationMenuItemManifest;
+
+  if (isUsableFileNameSegment(name)) {
+    return name;
+  }
+
+  if (isDefined(targetObjectUniversalIdentifier)) {
+    return getObjectName({
+      objectUniversalIdentifier: targetObjectUniversalIdentifier,
+      manifest,
+    });
+  }
+
+  if (isDefined(viewUniversalIdentifier)) {
+    return getViewName({ viewUniversalIdentifier, manifest });
+  }
+
+  if (isDefined(pageLayoutUniversalIdentifier)) {
+    return getPageLayoutName({ pageLayoutUniversalIdentifier, manifest });
+  }
+
+  return null;
+};
+
+const getNavigationMenuItemFolderName = ({
+  folderUniversalIdentifier,
+  manifest,
+}: {
+  folderUniversalIdentifier: string;
+  manifest: Manifest;
+}): string | null => {
+  const folderName = manifest.navigationMenuItems?.find(
+    (candidate) => candidate.universalIdentifier === folderUniversalIdentifier,
+  )?.name;
+
+  return isUsableFileNameSegment(folderName) ? folderName : null;
 };
 
 export const buildPullEntities = (
@@ -385,6 +474,32 @@ export const buildPullEntities = (
         pageLayoutUniversalIdentifier,
         manifest,
       }),
+    });
+  }
+
+  for (const navigationMenuItemManifest of manifest.navigationMenuItems ?? []) {
+    const { folderUniversalIdentifier } = navigationMenuItemManifest;
+
+    entities.push({
+      kind: 'navigationMenuItem',
+      universalIdentifier: navigationMenuItemManifest.universalIdentifier,
+      definer: 'defineNavigationMenuItem',
+      config: navigationMenuItemManifest,
+      enumBindings: NAVIGATION_MENU_ITEM_ENUM_BINDINGS,
+      defaultFolder: 'src/navigation-menu-items',
+      fileSuffix: '.navigation-menu-item.ts',
+      fileBaseName: toFileBaseName({
+        segments: [
+          getNavigationMenuItemName({ navigationMenuItemManifest, manifest }),
+        ],
+        universalIdentifier: navigationMenuItemManifest.universalIdentifier,
+      }),
+      parentName: isDefined(folderUniversalIdentifier)
+        ? getNavigationMenuItemFolderName({
+            folderUniversalIdentifier,
+            manifest,
+          })
+        : null,
     });
   }
 
