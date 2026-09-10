@@ -107,7 +107,7 @@ A plan only previews **metadata** changes. It also works for an app that was nev
 yarn twenty pull -u <universalIdentifier>
 ```
 
-Pull needs an existing project — scaffold one with `npx create-twenty-app@latest` first, then pull into it. Without `-u`, pull targets the application your local `defineApplication()` file declares. If `-u` names a different application than the one your project declares, pull refuses rather than leaving two applications in one tree: pull that one into its own directory. Add `-v` to expand the coverage sections of the report, which then name up to 20 identifiers per metadata type instead of only the totals.
+Pull needs an existing project — scaffold one with `npx create-twenty-app@latest` first, then pull into it. Without `-u`, pull targets the application your local `defineApplication()` file declares. If `-u` names a different application than the one your project declares, pull refuses rather than leaving two applications in one tree: pull that one into its own directory. If the project has an application file whose identifier cannot be read, usually because dependencies are not installed, pull refuses too and asks you to run `yarn install` first. Add `-v` to expand the coverage sections of the report, which then name up to 20 identifiers per metadata type instead of only the totals.
 
 **What it writes:**
 
