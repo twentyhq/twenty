@@ -1,6 +1,6 @@
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useMarkSessionActive } from '@/auth/hooks/useMarkSessionActive';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
@@ -11,7 +11,6 @@ import { useToast } from 'twenty-ui/feedback';
 import { GetAuthTokensFromSsoExchangeTokenDocument } from '~/generated-metadata/graphql';
 
 export const useRedeemSsoExchangeToken = () => {
-  const { enqueueErrorToast } = useErrorToast();
   const { enqueueToast } = useToast();
   const markSessionActive = useMarkSessionActive();
   const setIsAppEffectRedirectEnabled = useSetAtomState(
@@ -39,7 +38,7 @@ export const useRedeemSsoExchangeToken = () => {
         markSessionActive();
       } catch (error: unknown) {
         if (CombinedGraphQLErrors.is(error)) {
-          enqueueErrorToast(error);
+          enqueueToast(getToastOptionsFromError({ error }));
         } else {
           enqueueToast({
             variant: 'error',
@@ -56,7 +55,6 @@ export const useRedeemSsoExchangeToken = () => {
       getAuthTokensFromSsoExchangeToken,
       markSessionActive,
       setIsAppEffectRedirectEnabled,
-      enqueueErrorToast,
       enqueueToast,
     ],
   );

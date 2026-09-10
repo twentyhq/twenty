@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { useCallback, useEffect } from 'react';
 
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
 import {
   CombinedGraphQLErrors,
@@ -31,14 +31,13 @@ const hasErrorCode = (
 };
 
 export const PromiseRejectionEffect = () => {
-  const { enqueueErrorToast } = useErrorToast();
   const { enqueueToast } = useToast();
 
   const handlePromiseRejection = useCallback(
     async (event: PromiseRejectionEvent) => {
       const error = event.reason;
       if (isApolloError(error)) {
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
         return; // already handled by apolloLink
       }
 
@@ -73,7 +72,7 @@ export const PromiseRejectionEffect = () => {
         console.error('Failed to capture exception with Sentry:', sentryError);
       }
     },
-    [enqueueErrorToast, enqueueToast],
+    [enqueueToast],
   );
 
   useEffect(() => {

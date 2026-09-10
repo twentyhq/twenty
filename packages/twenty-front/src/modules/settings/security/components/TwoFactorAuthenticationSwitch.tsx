@@ -1,16 +1,17 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { useToast } from 'twenty-ui/feedback';
 import { IconLifebuoy } from 'twenty-ui/icon';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 export const TwoFactorAuthenticationSwitch = () => {
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
@@ -42,9 +43,12 @@ export const TwoFactorAuthenticationSwitch = () => {
         ...currentWorkspace,
         isTwoFactorAuthenticationEnforced: !newEnforceValue,
       });
-      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined, {
-        children: err?.message,
-      });
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(err) ? err : undefined,
+          children: err?.message,
+        }),
+      );
     }
   };
 

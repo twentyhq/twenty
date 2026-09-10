@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useToast } from 'twenty-ui/feedback';
 
 import { useQuery } from '@apollo/client/react';
@@ -15,7 +15,6 @@ import { GetWorkspaceFromInviteHashDocument } from '~/generated-metadata/graphql
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useWorkspaceFromInviteHash = () => {
-  const { enqueueErrorToast } = useErrorToast();
   const { enqueueToast } = useToast();
   const navigate = useNavigateApp();
   const workspaceInviteHash = useParams().workspaceInviteHash;
@@ -34,10 +33,10 @@ export const useWorkspaceFromInviteHash = () => {
 
   useEffect(() => {
     if (error) {
-      enqueueErrorToast(error);
+      enqueueToast(getToastOptionsFromError({ error }));
       navigate(AppPath.Index);
     }
-  }, [error, enqueueErrorToast, navigate]);
+  }, [error, enqueueToast, navigate]);
 
   // TODO: Rework this useEffect - Charles will refactor as part of auth rework
   useEffect(() => {

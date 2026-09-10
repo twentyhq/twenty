@@ -6,7 +6,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { Separator } from '@/settings/components/Separator';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
@@ -26,6 +26,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
+import { useToast } from 'twenty-ui/feedback';
 import {
   IconClockHour8,
   IconHistory,
@@ -56,7 +57,7 @@ const StyledSectionContainer = styled.div`
 
 export const SettingsSecuritySettings = () => {
   const { t } = useLingui();
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
 
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
@@ -79,7 +80,11 @@ export const SettingsSecuritySettings = () => {
         },
       });
     } catch (err) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(err) ? err : undefined,
+        }),
+      );
     }
   }, 500);
 
@@ -93,7 +98,11 @@ export const SettingsSecuritySettings = () => {
         },
       });
     } catch (err) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(err) ? err : undefined,
+        }),
+      );
     }
   }, 500);
 
@@ -135,7 +144,11 @@ export const SettingsSecuritySettings = () => {
         },
       },
     }).catch((err) => {
-      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(err) ? err : undefined,
+        }),
+      );
     });
   };
 

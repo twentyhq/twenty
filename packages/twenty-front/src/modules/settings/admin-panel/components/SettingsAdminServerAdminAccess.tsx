@@ -1,4 +1,4 @@
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { TwoFactorAuthenticationVerificationCodeDash } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeDash';
 import { TwoFactorAuthenticationVerificationCodeSlot } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeSlot';
@@ -81,7 +81,6 @@ export const SettingsAdminServerAdminAccess = ({
   const { openModal } = useModal();
   const { closeDropdown } = useCloseDropdown();
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
 
   const [pendingChange, setPendingChange] =
     useState<PendingServerAdminChange | null>(null);
@@ -135,7 +134,7 @@ export const SettingsAdminServerAdminAccess = ({
       });
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
       } else {
         enqueueToast({
           variant: 'error',

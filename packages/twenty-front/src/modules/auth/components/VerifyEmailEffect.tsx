@@ -4,7 +4,7 @@ import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -29,7 +29,6 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
   } = useAuth();
 
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
 
   const [searchParams] = useSearchParams();
 
@@ -98,9 +97,12 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
         await verifyLoginToken(loginToken.token);
       } catch (error) {
         if (CombinedGraphQLErrors.is(error)) {
-          enqueueErrorToast(error, {
-            dedupeKey: 'email-verification-error-dedupe-key',
-          });
+          enqueueToast(
+            getToastOptionsFromError({
+              error,
+              dedupeKey: 'email-verification-error-dedupe-key',
+            }),
+          );
         } else {
           enqueueToast({
             variant: 'error',

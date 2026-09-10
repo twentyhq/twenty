@@ -1,4 +1,4 @@
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -23,7 +23,6 @@ export const SettingsSecurityApprovedAccessDomain = () => {
   const { t } = useLingui();
 
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
 
   const [createApprovedAccessDomain] = useMutation(
     CreateApprovedAccessDomainDocument,
@@ -72,13 +71,19 @@ export const SettingsSecurityApprovedAccessDomain = () => {
           navigate(SettingsPath.WorkspaceMembersPage);
         },
         onError: (error) => {
-          enqueueErrorToast(
-            CombinedGraphQLErrors.is(error) ? error : undefined,
+          enqueueToast(
+            getToastOptionsFromError({
+              error: CombinedGraphQLErrors.is(error) ? error : undefined,
+            }),
           );
         },
       });
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     }
   };
 

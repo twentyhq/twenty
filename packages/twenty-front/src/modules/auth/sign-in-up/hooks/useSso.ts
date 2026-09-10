@@ -1,18 +1,19 @@
 /* @license Enterprise */
 
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 
 import { useApolloClient } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
 
+import { useToast } from 'twenty-ui/feedback';
 import { GetAuthorizationUrlForSsoDocument } from '~/generated-metadata/graphql';
 
 export const useSso = () => {
   const apolloClient = useApolloClient();
   const workspaceInviteHash = useParams().workspaceInviteHash;
 
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
   const { redirect } = useRedirect();
   const redirectToSsoLoginPage = async (identityProviderId: string) => {
     let authorizationUrlForSsoResult;
@@ -27,7 +28,7 @@ export const useSso = () => {
         },
       });
     } catch (error: unknown) {
-      return enqueueErrorToast(error);
+      return enqueueToast(getToastOptionsFromError({ error }));
     }
 
     const authorizationURL =

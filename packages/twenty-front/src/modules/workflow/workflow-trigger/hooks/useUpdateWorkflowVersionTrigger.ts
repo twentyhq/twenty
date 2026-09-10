@@ -1,4 +1,4 @@
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -18,6 +18,7 @@ import { useMutation } from '@apollo/client/react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import { useToast } from 'twenty-ui/feedback';
 import {
   type UpdateWorkflowVersionTriggerMutation,
   type UpdateWorkflowVersionTriggerMutationVariables,
@@ -27,7 +28,7 @@ export const useUpdateWorkflowVersionTrigger = (instanceId?: string) => {
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
 
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow(instanceId);
@@ -61,7 +62,7 @@ export const useUpdateWorkflowVersionTrigger = (instanceId?: string) => {
         },
       },
       onError: (error) => {
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
       },
     });
 

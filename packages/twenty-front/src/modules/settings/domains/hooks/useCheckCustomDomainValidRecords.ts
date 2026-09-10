@@ -1,16 +1,17 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { customDomainRecordsState } from '@/settings/domains/states/customDomainRecordsState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { CheckCustomDomainValidRecordsDocument } from '~/generated-metadata/graphql';
 
 export const useCheckCustomDomainValidRecords = () => {
   const [checkCustomDomainValidRecords] = useMutation(
     CheckCustomDomainValidRecordsDocument,
   );
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
@@ -55,7 +56,7 @@ export const useCheckCustomDomainValidRecords = () => {
         }
       },
       onError: (error) => {
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
         setCustomDomainRecords((currentState) => ({
           ...currentState,
           isLoading: false,

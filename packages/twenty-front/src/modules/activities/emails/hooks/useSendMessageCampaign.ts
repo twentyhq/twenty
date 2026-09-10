@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client/react';
 import { SEND_MESSAGE_CAMPAIGN } from '@/activities/emails/graphql/mutations/sendMessageCampaign';
 import { buildExcludedRecipientReasons } from '@/activities/emails/utils/buildExcludedRecipientReasons';
 import { formatCampaignSendTime } from '@/activities/emails/utils/formatCampaignSendTime';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -31,7 +31,6 @@ export const useSendMessageCampaign = () => {
   >(SEND_MESSAGE_CAMPAIGN);
 
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { formatNumber } = useNumberFormat();
   const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
@@ -116,7 +115,7 @@ export const useSendMessageCampaign = () => {
 
       return true;
     } catch (error) {
-      enqueueErrorToast(error);
+      enqueueToast(getToastOptionsFromError({ error }));
 
       return false;
     }

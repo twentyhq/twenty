@@ -1,5 +1,5 @@
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard';
 import { SettingsMessageFoldersSkeletonLoader } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersSkeletonLoader';
 import { SettingsMessageFoldersTreeItem } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem';
@@ -16,6 +16,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
+import { useToast } from 'twenty-ui/feedback';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -63,7 +64,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
   const { t } = useLingui();
   const [search, setSearch] = useState('');
 
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
 
   const settingsAccountsSelectedMessageChannel = useAtomStateValue(
     settingsAccountsSelectedMessageChannelState,
@@ -100,7 +101,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
         isSynced: targetSyncState,
       });
     } catch (error) {
-      enqueueErrorToast(error);
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 
@@ -113,7 +114,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
         isSynced,
       });
     } catch (error) {
-      enqueueErrorToast(error);
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 

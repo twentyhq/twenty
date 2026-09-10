@@ -1,13 +1,14 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useCallback, useState } from 'react';
 
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { BookCallBookingSuccessEffect } from '@/onboarding/effect-components/BookCallBookingSuccessEffect';
 import { useCompleteBookCallOnboardingStep } from '@/onboarding/hooks/useCompleteBookCallOnboardingStep';
+import { useToast } from 'twenty-ui/feedback';
 
 export const BookCallOnboardingStepActions = () => {
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
   const completeBookCallOnboardingStep = useCompleteBookCallOnboardingStep();
   const [isCompleting, setIsCompleting] = useState(false);
 
@@ -22,10 +23,14 @@ export const BookCallOnboardingStepActions = () => {
       } catch (error) {
         setIsCompleting(false);
 
-        enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+        enqueueToast(
+          getToastOptionsFromError({
+            error: CombinedGraphQLErrors.is(error) ? error : undefined,
+          }),
+        );
       }
     },
-    [completeBookCallOnboardingStep, enqueueErrorToast],
+    [completeBookCallOnboardingStep, enqueueToast],
   );
 
   const completeStepAfterBooking = useCallback(() => {

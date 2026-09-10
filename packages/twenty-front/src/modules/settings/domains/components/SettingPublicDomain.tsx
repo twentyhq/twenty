@@ -1,4 +1,4 @@
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -63,7 +63,6 @@ export const SettingPublicDomain = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
 
   const [createPublicDomain, { loading }] = useMutation(
     CreatePublicDomainDocument,
@@ -101,7 +100,7 @@ export const SettingPublicDomain = () => {
         navigate(SettingsPath.Applications);
         refetchPublicDomains();
       },
-      onError: (error) => enqueueErrorToast(error),
+      onError: (error) => enqueueToast(getToastOptionsFromError({ error })),
     });
   };
 
@@ -138,7 +137,7 @@ export const SettingPublicDomain = () => {
       },
       onError: (error) => {
         setNewPublicDomainError(error.message);
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
       },
     });
   };

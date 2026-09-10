@@ -1,10 +1,11 @@
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { DELETE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/deleteWorkflowVersionStep';
 import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
 import { useMutation } from '@apollo/client/react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/feedback';
 import {
   type DeleteWorkflowVersionStepInput,
   type DeleteWorkflowVersionStepMutation,
@@ -16,7 +17,7 @@ export const useDeleteWorkflowVersionStep = () => {
 
   const { applyWorkflowVersionStepChanges } =
     useApplyWorkflowVersionStepChanges();
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
 
   const { findOneRecordQuery: findOneWorkflowVersionQuery } =
     useFindOneRecordQuery({
@@ -43,7 +44,7 @@ export const useDeleteWorkflowVersionStep = () => {
         },
       ],
       onError: (error) => {
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
       },
     });
 

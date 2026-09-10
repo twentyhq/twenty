@@ -1,9 +1,10 @@
 import { type ErrorLike } from '@apollo/client';
 
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useCallback } from 'react';
 
+import { useToast } from 'twenty-ui/feedback';
 import { logError } from '~/utils/logError';
 
 export const useHandleFindManyRecordsError = ({
@@ -13,7 +14,7 @@ export const useHandleFindManyRecordsError = ({
   objectMetadataItem: EnrichedObjectMetadataItem;
   handleError?: (error?: Error) => void;
 }) => {
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
 
   const handleFindManyRecordsError = useCallback(
     (error: ErrorLike) => {
@@ -21,10 +22,10 @@ export const useHandleFindManyRecordsError = ({
         `useFindManyRecords for "${objectMetadataItem.namePlural}" error : ` +
           error,
       );
-      enqueueErrorToast(error);
+      enqueueToast(getToastOptionsFromError({ error }));
       handleError?.(error as Error);
     },
-    [enqueueErrorToast, handleError, objectMetadataItem.namePlural],
+    [enqueueToast, handleError, objectMetadataItem.namePlural],
   );
 
   return {

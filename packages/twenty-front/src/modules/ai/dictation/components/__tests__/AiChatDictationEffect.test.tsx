@@ -11,14 +11,10 @@ type SpeechRecognitionTestWindow = {
 };
 
 const mockEnqueueToast = jest.fn();
-const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
-}));
-jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 
 const renderEffect = () =>

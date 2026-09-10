@@ -17,7 +17,7 @@ import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { useBuildSearchParamsFromUrlSyncedStates } from '@/domain-manager/hooks/useBuildSearchParamsFromUrlSyncedStates';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -31,7 +31,6 @@ import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const { t } = useLingui();
 
   const [signInUpStep, setSignInUpStep] = useAtomState(signInUpStepState);
@@ -93,7 +92,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       });
 
       if (isDefined(error)) {
-        return enqueueErrorToast(error);
+        return enqueueToast(getToastOptionsFromError({ error }));
       }
 
       setSignInUpMode(
@@ -110,7 +109,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     form,
     isCaptchaReady,
     enqueueToast,
-    enqueueErrorToast,
     t,
     checkUserExistsQuery,
     setSignInUpMode,
@@ -185,7 +183,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           verifyEmailRedirectPath,
         });
       } catch (error: unknown) {
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
       }
     },
     [
@@ -200,7 +198,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       workspaceInviteHash,
       workspacePersonalInviteToken,
       enqueueToast,
-      enqueueErrorToast,
       buildSearchParamsFromUrlSyncedStates,
       isOnAWorkspace,
       workspacePublicData,

@@ -1,5 +1,5 @@
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { START_SUBSCRIPTION_AFTER_PAYMENT_METHOD_QUERY_PARAM } from '@/settings/billing/constants/StartSubscriptionAfterPaymentMethodQueryParam';
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
 import { useStripePromise } from '@/settings/billing/hooks/useStripePromise';
@@ -45,7 +45,6 @@ const AddPaymentMethodFormContent = ({
   const stripe = useStripe();
   const elements = useElements();
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const location = useLocation();
 
@@ -128,7 +127,7 @@ const AddPaymentMethodFormContent = ({
       }
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
       } else {
         enqueueToast({
           variant: 'error',

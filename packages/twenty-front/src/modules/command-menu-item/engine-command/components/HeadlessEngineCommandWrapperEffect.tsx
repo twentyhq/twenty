@@ -1,9 +1,10 @@
 import { useIsHeadlessEngineCommandEffectInitialized } from '@/command-menu-item/engine-command/hooks/useIsHeadlessEngineCommandEffectInitialized';
 import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useEffect } from 'react';
+import { useToast } from 'twenty-ui/feedback';
 
 export type HeadlessEngineCommandWrapperEffectProps = {
   execute: () => void | Promise<unknown>;
@@ -23,7 +24,7 @@ export const HeadlessEngineCommandWrapperEffect = ({
 
   const unmountCommand = useUnmountCommand();
 
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
 
   useEffect(() => {
     if (isInitializedRef.current || !ready) {
@@ -36,7 +37,7 @@ export const HeadlessEngineCommandWrapperEffect = ({
       try {
         await execute();
       } catch (error) {
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
       } finally {
         // Unmount even on failure, otherwise the headless command stays mounted
         // and can never be triggered again.
@@ -52,7 +53,7 @@ export const HeadlessEngineCommandWrapperEffect = ({
     setIsInitialized,
     commandMenuItemId,
     unmountCommand,
-    enqueueErrorToast,
+    enqueueToast,
   ]);
 
   return null;

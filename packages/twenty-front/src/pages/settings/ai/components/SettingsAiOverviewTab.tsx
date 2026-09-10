@@ -1,7 +1,7 @@
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsStatsGrid } from '@/settings/components/SettingsStatsGrid';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -34,7 +34,6 @@ const MCP_DEEP_LINK = `${getSettingsPath(SettingsPath.ApiWebhooks)}#mcp`;
 
 export const SettingsAiOverviewTab = () => {
   const { theme } = useContext(ThemeContext);
-  const { enqueueErrorToast } = useErrorToast();
   const { enqueueToast } = useToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -69,7 +68,7 @@ export const SettingsAiOverviewTab = () => {
         aiAdditionalInstructions: originalInstructions || null,
       });
       if (CombinedGraphQLErrors.is(error)) {
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
       } else {
         enqueueToast({
           variant: 'error',

@@ -1,5 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -9,6 +9,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { useToast } from 'twenty-ui/feedback';
 import {
   type IconComponent,
   IconMoon,
@@ -21,7 +22,7 @@ export const useColorScheme = () => {
   const store = useStore();
 
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
 
   const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
 
@@ -69,10 +70,10 @@ export const useColorScheme = () => {
           );
         }
 
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
       }
     },
-    [store, updateWorkspaceMemberSettings, enqueueErrorToast],
+    [store, updateWorkspaceMemberSettings, enqueueToast],
   );
 
   const colorSchemeList: Array<{

@@ -29,6 +29,22 @@ it('rejects a limit that is not a positive integer', () => {
   expect(() => createToastStore({ limit: 1.5 })).toThrow();
 });
 
+it('ignores undefined options without publishing or evicting a toast', () => {
+  const store = createToastStore({ limit: 1 });
+  const listener = vi.fn();
+  const onClose = vi.fn();
+  store.subscribe(listener);
+  store.enqueueToast({ children: 'Saved', onClose });
+  const snapshot = store.getSnapshot();
+  listener.mockClear();
+
+  expect(store.enqueueToast(undefined)).toBeUndefined();
+
+  expect(store.getSnapshot()).toBe(snapshot);
+  expect(listener).not.toHaveBeenCalled();
+  expect(onClose).not.toHaveBeenCalled();
+});
+
 it('retains a dismissed toast until its exit finishes and calls onClose once', () => {
   const store = createToastStore();
   const listener = vi.fn();

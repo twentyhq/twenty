@@ -11,16 +11,17 @@ import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { DeleteChatThreadDocument } from '~/generated-metadata/graphql';
 
 export const useDeleteChatThread = () => {
   const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const setAgentChatInput = useSetAtomState(agentChatInputState);
   const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
@@ -68,7 +69,11 @@ export const useDeleteChatThread = () => {
         );
       }
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     }
   };
 

@@ -1,4 +1,4 @@
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -24,7 +24,6 @@ export const SettingPublicDomainRowDropdownMenu = ({
   const { t } = useLingui();
 
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -44,7 +43,7 @@ export const SettingPublicDomainRowDropdownMenu = ({
           variant: 'success',
           children: t`Custom domain successfully deleted`,
         }),
-      onError: (error) => enqueueErrorToast(error),
+      onError: (error) => enqueueToast(getToastOptionsFromError({ error })),
     });
   };
 

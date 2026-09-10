@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useToast } from 'twenty-ui/feedback';
 
 import { useMutation } from '@apollo/client/react';
@@ -82,7 +82,6 @@ export const useImapSmtpCaldavConnectionForm = ({
 
   const { handleSubmit, formState, watch, reset } = formMethods;
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const { isSubmitting } = formState;
 
   const { connectedAccount, loading: accountLoading } =
@@ -194,7 +193,11 @@ export const useImapSmtpCaldavConnectionForm = ({
           connectedAccountId: returnedConnectedAccountId,
         });
       } catch (error) {
-        enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+        enqueueToast(
+          getToastOptionsFromError({
+            error: CombinedGraphQLErrors.is(error) ? error : undefined,
+          }),
+        );
       }
     },
     [
@@ -204,7 +207,6 @@ export const useImapSmtpCaldavConnectionForm = ({
       connectedAccountId,
       enqueueToast,
       navigate,
-      enqueueErrorToast,
     ],
   );
 

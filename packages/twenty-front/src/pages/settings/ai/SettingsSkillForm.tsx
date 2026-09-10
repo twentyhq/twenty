@@ -5,7 +5,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
@@ -101,7 +101,6 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isReadonlyMode, setIsReadonlyMode] = useState(false);
   const [originalFormValues, setOriginalFormValues] =
@@ -165,12 +164,16 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
   useEffect(() => {
     if (skillQueryError) {
-      enqueueErrorToast(
-        CombinedGraphQLErrors.is(skillQueryError) ? skillQueryError : undefined,
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(skillQueryError)
+            ? skillQueryError
+            : undefined,
+        }),
       );
       navigateApp(AppPath.NotFound);
     }
-  }, [skillQueryError, enqueueErrorToast, navigateApp]);
+  }, [skillQueryError, enqueueToast, navigateApp]);
 
   const [createSkill] = useMutation(CreateSkillDocument);
   const [updateSkill] = useMutation(UpdateSkillDocument);
@@ -243,7 +246,11 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
       setOriginalFormValues({ ...formValues });
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -310,7 +317,11 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
       navigate(SettingsPath.AI);
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -327,7 +338,11 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       closeModal(DELETE_SKILL_MODAL_ID);
       navigate(SettingsPath.AI);
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -343,7 +358,11 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       });
       navigate(SettingsPath.AI);
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -359,7 +378,11 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       });
       navigate(SettingsPath.AI);
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     } finally {
       setIsSubmitting(false);
     }

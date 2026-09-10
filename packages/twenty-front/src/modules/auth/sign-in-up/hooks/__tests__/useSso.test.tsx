@@ -2,20 +2,15 @@ import { GET_AUTHORIZATION_URL_FOR_SSO } from '@/auth/graphql/mutations/getAutho
 import { useSso } from '@/auth/sign-in-up/hooks/useSso';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { renderHook } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 const mockEnqueueToast = jest.fn();
-const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
-}));
-jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 jest.mock('@/domain-manager/hooks/useRedirect');
 jest.mock('~/generated/graphql');
@@ -88,10 +83,9 @@ describe('useSso', () => {
 
     await result.current.redirectToSsoLoginPage(identityProviderId);
 
-    expect(mockEnqueueErrorToast).toHaveBeenCalledWith(
-      new CombinedGraphQLErrors({
-        errors: [{ message: 'Error message' }],
-      }),
-    );
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'An error occurred.',
+    });
   });
 });

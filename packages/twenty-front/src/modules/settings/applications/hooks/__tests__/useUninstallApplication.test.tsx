@@ -17,14 +17,10 @@ const UNIVERSAL_IDENTIFIER = 'application-universal-identifier';
 const JOB_ID = `uninstall-application.workspace-id.${UNIVERSAL_IDENTIFIER}-5c98b035-5b09-4550-a4fb-b52056c494d1`;
 
 const mockEnqueueToast = jest.fn();
-const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
-}));
-jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 
 const triggerUninstallMock = {

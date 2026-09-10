@@ -11,7 +11,7 @@ import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -85,7 +85,6 @@ const StyledMainButtonContainer = styled.div`
 export const PasswordReset = () => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-  const { enqueueErrorToast } = useErrorToast();
   const { enqueueToast } = useToast();
 
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
@@ -122,10 +121,10 @@ export const PasswordReset = () => {
 
   useEffect(() => {
     if (tokenValidationError) {
-      enqueueErrorToast(tokenValidationError);
+      enqueueToast(getToastOptionsFromError({ error: tokenValidationError }));
       navigate(AppPath.Index);
     }
-  }, [tokenValidationError, enqueueErrorToast, navigate]);
+  }, [tokenValidationError, enqueueToast, navigate]);
 
   useEffect(() => {
     if (tokenValidationData) {
@@ -204,7 +203,11 @@ export const PasswordReset = () => {
       redirect(AppPath.Index);
     } catch (err) {
       logError(err);
-      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(err) ? err : undefined,
+        }),
+      );
     }
   };
 

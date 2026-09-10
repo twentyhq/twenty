@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import SettingsSsoIdentitiesProvidersForm from '@/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm';
@@ -15,12 +15,13 @@ import { Trans } from '@lingui/react/macro';
 import { FormProvider, useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsSecuritySsoIdentifyProvider = () => {
   const navigate = useNavigateSettings();
 
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
   const { createSsoIdentityProvider } = useCreateSsoIdentityProvider();
 
   const form = useForm<SettingSecurityNewSsoIdentityFormValues>({
@@ -51,7 +52,11 @@ export const SettingsSecuritySsoIdentifyProvider = () => {
 
       navigate(SettingsPath.Security);
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     }
   };
 

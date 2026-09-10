@@ -19,14 +19,10 @@ jest.mock('~/hooks/useNavigateSettings', () => ({
 }));
 
 const mockEnqueueToast = jest.fn();
-const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
-}));
-jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 
 const createMockWebhookData = (overrides = {}) => ({
@@ -221,7 +217,10 @@ describe('useWebhookForm', () => {
         await result.current.handleSave(formData);
       });
 
-      expect(mockEnqueueErrorToast).toHaveBeenCalledWith(expect.any(Error));
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
+        variant: 'error',
+        children: 'An error occurred.',
+      });
     });
 
     it('should clean and format operations correctly', async () => {
@@ -369,7 +368,10 @@ describe('useWebhookForm', () => {
         await result.current.handleSave(formData);
       });
 
-      expect(mockEnqueueErrorToast).toHaveBeenCalledWith(expect.any(Error));
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
+        variant: 'error',
+        children: 'An error occurred.',
+      });
     });
   });
 
@@ -495,7 +497,10 @@ describe('useWebhookForm', () => {
         await result.current.handleDelete();
       });
 
-      expect(mockEnqueueErrorToast).toHaveBeenCalledWith(expect.any(Error));
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
+        variant: 'error',
+        children: 'An error occurred.',
+      });
     });
   });
 

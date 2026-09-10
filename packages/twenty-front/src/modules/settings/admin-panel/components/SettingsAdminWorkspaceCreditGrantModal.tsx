@@ -9,7 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
 import { v4 } from 'uuid';
 
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { CREDIT_GRANT_EXPIRY_OPTIONS } from '@/settings/admin-panel/constants/CreditGrantExpiryOptions';
 import { CREDIT_GRANT_TYPE_LABELS } from '@/settings/admin-panel/constants/CreditGrantTypeLabels';
@@ -59,7 +59,6 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
   const { t } = useLingui();
   const { closeModal } = useModal();
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const apolloAdminClient = useApolloAdminClient();
 
   const [amount, setAmount] = useState('');
@@ -138,7 +137,11 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
       });
       handleClose();
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     }
   };
 

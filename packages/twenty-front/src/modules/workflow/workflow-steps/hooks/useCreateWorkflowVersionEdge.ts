@@ -1,8 +1,9 @@
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CREATE_WORKFLOW_VERSION_EDGE } from '@/workflow/graphql/mutations/createWorkflowVersionEdge';
 import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
 import { useMutation } from '@apollo/client/react';
+import { useToast } from 'twenty-ui/feedback';
 import {
   type CreateWorkflowVersionEdgeInput,
   type CreateWorkflowVersionEdgeMutation,
@@ -14,7 +15,7 @@ export const useCreateWorkflowVersionEdge = () => {
 
   const { applyWorkflowVersionStepChanges } =
     useApplyWorkflowVersionStepChanges();
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
 
   const [mutate] = useMutation<
     CreateWorkflowVersionEdgeMutation,
@@ -27,7 +28,7 @@ export const useCreateWorkflowVersionEdge = () => {
     const result = await mutate({
       variables: { input },
       onError: (error) => {
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
       },
     });
 

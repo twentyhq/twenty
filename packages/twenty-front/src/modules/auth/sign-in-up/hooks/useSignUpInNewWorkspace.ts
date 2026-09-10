@@ -1,7 +1,7 @@
 import { useAuth } from '@/auth/hooks/useAuth';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
@@ -21,7 +21,6 @@ export const useSignUpInNewWorkspace = () => {
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
-  const { enqueueErrorToast } = useErrorToast();
   const { enqueueToast } = useToast();
   const { t } = useLingui();
 
@@ -56,7 +55,7 @@ export const useSignUpInNewWorkspace = () => {
           });
         } catch (logoUploadError) {
           if (CombinedGraphQLErrors.is(logoUploadError)) {
-            enqueueErrorToast(logoUploadError);
+            enqueueToast(getToastOptionsFromError({ error: logoUploadError }));
           } else {
             enqueueToast({
               variant: 'error',
@@ -86,7 +85,7 @@ export const useSignUpInNewWorkspace = () => {
       return true;
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
       } else {
         enqueueToast({
           variant: 'error',

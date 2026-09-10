@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -10,7 +10,6 @@ import { ResendEmailVerificationTokenDocument } from '~/generated-metadata/graph
 
 export const useHandleResendEmailVerificationToken = () => {
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const [resendEmailVerificationToken, { loading }] = useMutation(
     ResendEmailVerificationTokenDocument,
   );
@@ -42,7 +41,7 @@ export const useHandleResendEmailVerificationToken = () => {
           }
         } catch (error) {
           if (CombinedGraphQLErrors.is(error)) {
-            enqueueErrorToast(error);
+            enqueueToast(getToastOptionsFromError({ error }));
           } else {
             enqueueToast({
               variant: 'error',
@@ -54,7 +53,7 @@ export const useHandleResendEmailVerificationToken = () => {
         }
       };
     },
-    [enqueueToast, enqueueErrorToast, resendEmailVerificationToken, origin],
+    [enqueueToast, resendEmailVerificationToken, origin],
   );
 
   return { handleResendEmailVerificationToken, loading };

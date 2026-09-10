@@ -10,7 +10,7 @@ import { ToastProvider, useToast } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 
 type WrapperProps = { children: ReactNode; i18nInstance?: I18n };
@@ -83,7 +83,7 @@ describe('AppToaster', () => {
   });
 
   it('should keep record-conflict links inside the frontend router', () => {
-    const { result } = renderHook(() => useErrorToast(), { wrapper: Wrapper });
+    const { result } = renderHook(() => useToast(), { wrapper: Wrapper });
     const apolloError = new CombinedGraphQLErrors({
       errors: [
         {
@@ -97,7 +97,9 @@ describe('AppToaster', () => {
     });
 
     act(() => {
-      result.current.enqueueErrorToast(apolloError, { progress: 100 });
+      result.current.enqueueToast(
+        getToastOptionsFromError({ error: apolloError, progress: 100 }),
+      );
     });
 
     expect(screen.getByRole('status')).toHaveTextContent('An error occurred.');
@@ -179,21 +181,25 @@ describe('AppToaster', () => {
     },
     { error: undefined, message: 'An error occurred.' },
   ])('should display $message for a caught error', ({ error, message }) => {
-    const { result } = renderHook(() => useErrorToast(), { wrapper: Wrapper });
+    const { result } = renderHook(() => useToast(), { wrapper: Wrapper });
 
     act(() => {
-      result.current.enqueueErrorToast(error, { progress: 100 });
+      result.current.enqueueToast(
+        getToastOptionsFromError({ error, progress: 100 }),
+      );
     });
 
     expect(screen.getByRole('status')).toHaveTextContent(message);
   });
 
   it('should ignore aborted requests', () => {
-    const { result } = renderHook(() => useErrorToast(), { wrapper: Wrapper });
+    const { result } = renderHook(() => useToast(), { wrapper: Wrapper });
 
     act(() => {
-      result.current.enqueueErrorToast(
-        new DOMException('Request aborted', 'AbortError'),
+      result.current.enqueueToast(
+        getToastOptionsFromError({
+          error: new DOMException('Request aborted', 'AbortError'),
+        }),
       );
     });
 

@@ -4,7 +4,7 @@ import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { v4 } from 'uuid';
 
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
@@ -38,7 +38,6 @@ export const useCreateJunctionRecordWithNestedTarget = ({
   const [loading, setLoading] = useState(false);
   const { objectMetadataItems } = useObjectMetadataItems();
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const { buildRecordInputFromRLSPredicates } =
     useBuildRecordInputFromRLSPredicates();
   const { createOneRecord: createJunctionRecord } = useCreateOneRecord({
@@ -141,7 +140,7 @@ export const useCreateJunctionRecordWithNestedTarget = ({
         };
       } catch (error) {
         if (CombinedGraphQLErrors.is(error)) {
-          enqueueErrorToast(error);
+          enqueueToast(getToastOptionsFromError({ error }));
         } else if (error instanceof Error) {
           enqueueToast({ variant: 'error', children: error.message });
         } else {
@@ -156,7 +155,6 @@ export const useCreateJunctionRecordWithNestedTarget = ({
       buildRecordInputFromRLSPredicates,
       createJunctionRecord,
       enqueueToast,
-      enqueueErrorToast,
       junctionConfig,
       objectMetadataItems,
       sourceObjectMetadataItem,

@@ -1,7 +1,7 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { OnboardingProfilePictureUploader } from '@/onboarding/components/OnboardingProfilePictureUploader';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
@@ -27,6 +27,7 @@ import { useCallback, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
@@ -84,7 +85,7 @@ export const CreateProfile = () => {
 
   usePrefetchInviteSuggestions();
 
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const setCurrentUser = useSetAtomState(currentUserState);
   const setCurrentWorkspaceMembers = useSetAtomState(
@@ -161,13 +162,17 @@ export const CreateProfile = () => {
         setIsNavigating(true);
       } catch (error: any) {
         setIsNavigating(false);
-        enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+        enqueueToast(
+          getToastOptionsFromError({
+            error: CombinedGraphQLErrors.is(error) ? error : undefined,
+          }),
+        );
       }
     },
     [
       currentWorkspaceMember?.id,
       setNextOnboardingStatus,
-      enqueueErrorToast,
+      enqueueToast,
       setCurrentWorkspaceMembers,
       setCurrentUser,
       updateWorkspaceMemberSettings,

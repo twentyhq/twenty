@@ -21,14 +21,10 @@ jest.mock('../useAuth', () => ({
 }));
 
 const mockEnqueueToast = jest.fn();
-const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
-}));
-jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 
 jest.mock('~/hooks/useNavigateApp', () => ({
@@ -88,9 +84,17 @@ describe('useVerifyLogin', () => {
     expect(mockNavigate).toHaveBeenCalledWith(AppPath.SignInUp);
   });
 
-  it('should preserve a GraphQL verification error for the toast', async () => {
+  it('should display the user-friendly GraphQL verification message', async () => {
     const error = new CombinedGraphQLErrors({
-      errors: [{ message: 'Session could not be created' }],
+      errors: [
+        {
+          message: 'Session could not be created',
+          extensions: {
+            userFriendlyMessage:
+              'Your session has expired. Please sign in again.',
+          },
+        },
+      ],
     });
     mockGetAuthTokensFromLoginToken.mockRejectedValueOnce(error);
 
@@ -98,7 +102,10 @@ describe('useVerifyLogin', () => {
 
     await result.current.verifyLoginToken('test-token');
 
-    expect(mockEnqueueErrorToast).toHaveBeenCalledWith(error);
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'Your session has expired. Please sign in again.',
+    });
     expect(mockNavigate).toHaveBeenCalledWith(AppPath.SignInUp);
   });
 });

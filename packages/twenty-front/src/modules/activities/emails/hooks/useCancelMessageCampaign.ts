@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client/react';
 
 import { CANCEL_MESSAGE_CAMPAIGN } from '@/activities/emails/graphql/mutations/cancelMessageCampaign';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { plural, t } from '@lingui/core/macro';
 import { MessageCampaignStatus } from 'twenty-shared/types';
@@ -19,7 +19,6 @@ export const useCancelMessageCampaign = () => {
   >(CANCEL_MESSAGE_CAMPAIGN);
 
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const cancelMessageCampaign = async ({
@@ -79,7 +78,7 @@ export const useCancelMessageCampaign = () => {
 
       return true;
     } catch (error) {
-      enqueueErrorToast(error);
+      enqueueToast(getToastOptionsFromError({ error }));
 
       return false;
     }

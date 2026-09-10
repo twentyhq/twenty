@@ -1,5 +1,6 @@
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useMutation } from '@apollo/client/react';
+import { useToast } from 'twenty-ui/feedback';
 import {
   type SendInvitationsMutationVariables,
   GetWorkspaceInvitationsDocument,
@@ -9,7 +10,7 @@ import {
 export const useCreateWorkspaceInvitation = () => {
   const [sendInvitationsMutation] = useMutation(SendInvitationsDocument);
 
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
 
   const sendInvitation = async (
     variables: SendInvitationsMutationVariables,
@@ -18,7 +19,7 @@ export const useCreateWorkspaceInvitation = () => {
       variables,
       refetchQueries: [GetWorkspaceInvitationsDocument],
       onError: (error) => {
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
       },
     });
   };

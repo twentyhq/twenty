@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { type ErrorLike } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
 
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { buildCoreWorkflowFilterInput } from '@/object-core/workflows/utils/buildCoreWorkflowFilterInput';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -13,6 +13,7 @@ import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFi
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useToast } from 'twenty-ui/feedback';
 import {
   CoreWorkflowOrderByDirection,
   CoreWorkflowOrderByField,
@@ -84,7 +85,7 @@ export const useCoreWorkflows = ({
   );
   const connection = (data ?? previousData)?.coreWorkflows;
 
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
 
   const fetchNextPage = async () => {
     if (connection?.pageInfo.hasNextPage !== true || isFetchingMore) {
@@ -109,7 +110,9 @@ export const useCoreWorkflows = ({
       });
     } catch (fetchMoreError) {
       logError(`useCoreWorkflows fetchMore error : ${fetchMoreError}`);
-      enqueueErrorToast(fetchMoreError as ErrorLike);
+      enqueueToast(
+        getToastOptionsFromError({ error: fetchMoreError as ErrorLike }),
+      );
     } finally {
       setIsFetchingMore(false);
     }

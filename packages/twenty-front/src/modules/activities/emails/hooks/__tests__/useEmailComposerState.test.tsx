@@ -6,14 +6,10 @@ import { SEND_EMAIL } from '@/activities/emails/graphql/mutations/sendEmail';
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
 
 const mockEnqueueToast = jest.fn();
-const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
-}));
-jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
@@ -123,7 +119,6 @@ describe('useEmailComposerState', () => {
     expect(mockEnqueueToast).not.toHaveBeenCalledWith(
       expect.objectContaining({ variant: 'error' }),
     );
-    expect(mockEnqueueErrorToast).not.toHaveBeenCalled();
   });
 
   it('drops a picked alias when the reply moves to another account', () => {

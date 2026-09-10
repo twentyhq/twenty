@@ -22,7 +22,7 @@ import { markQuestionAnswered } from '@/ai/utils/markQuestionAnswered';
 import { markQuestionPending } from '@/ai/utils/markQuestionPending';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import { useToast } from 'twenty-ui/feedback';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
@@ -31,7 +31,6 @@ export const useSubmitQuestionAnswer = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const { modelIdForRequest } = useAgentChatModelId();
 
   const submitAnswer = useCallback(
@@ -135,10 +134,14 @@ export const useSubmitQuestionAnswer = () => {
           );
         }
 
-        enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+        enqueueToast(
+          getToastOptionsFromError({
+            error: CombinedGraphQLErrors.is(error) ? error : undefined,
+          }),
+        );
       }
     },
-    [apolloClient, store, enqueueErrorToast, enqueueToast, modelIdForRequest],
+    [apolloClient, store, enqueueToast, modelIdForRequest],
   );
 
   return { submitAnswer };

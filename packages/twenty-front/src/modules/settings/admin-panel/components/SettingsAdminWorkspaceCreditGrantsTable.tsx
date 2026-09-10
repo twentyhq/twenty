@@ -9,7 +9,7 @@ import { Tag } from 'twenty-ui/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
 
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceCreditGrantRowDropdownMenu } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu';
@@ -70,7 +70,6 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const apolloAdminClient = useApolloAdminClient();
   const { openModal } = useModal();
 
@@ -109,7 +108,11 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
 
       enqueueToast({ variant: 'success', children: t`Credit grant revoked.` });
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     } finally {
       setIsRevoking(false);
       setGrantPendingRevocation(null);

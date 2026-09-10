@@ -1,5 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { EDITABLE_PROFILE_FIELDS_DROPDOWN_ID } from '@/settings/security/constants/EditableProfileFields.constants';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -39,7 +39,6 @@ type ProfileFieldOption = {
 export const SettingsSecurityEditableProfileFields = () => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -110,7 +109,11 @@ export const SettingsSecurityEditableProfileFields = () => {
       setCurrentWorkspace((prev) =>
         prev ? { ...prev, editableProfileFields: previousFields } : prev,
       );
-      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(err) ? err : undefined,
+        }),
+      );
     });
   };
 

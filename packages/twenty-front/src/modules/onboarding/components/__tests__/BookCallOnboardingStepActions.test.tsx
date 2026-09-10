@@ -19,14 +19,10 @@ jest.mock('@/onboarding/hooks/useCompleteBookCallOnboardingStep', () => ({
 }));
 
 const mockEnqueueToast = jest.fn();
-const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
-}));
-jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 
 dynamicActivate(SOURCE_LOCALE);
@@ -116,7 +112,10 @@ describe('BookCallOnboardingStepActions', () => {
     });
 
     expect(skipButton).not.toBeDisabled();
-    expect(mockEnqueueErrorToast).toHaveBeenCalled();
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'An error occurred.',
+    });
   });
 
   it('should complete the step once even when the embed emits repeatedly', async () => {

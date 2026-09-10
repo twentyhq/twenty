@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { GET_MY_CALENDAR_CHANNELS } from '@/settings/accounts/graphql/queries/getMyCalendarChannels';
 import { GET_MY_MESSAGE_CHANNELS } from '@/settings/accounts/graphql/queries/getMyMessageChannels';
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -28,7 +28,6 @@ export const SettingsAccountsConfiguration = () => {
   }>();
   const navigate = useNavigate();
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const [startChannelSyncMutation, { loading: isSubmitting }] = useMutation(
     StartChannelSyncDocument,
   );
@@ -79,7 +78,7 @@ export const SettingsAccountsConfiguration = () => {
         navigate(getSettingsPath(SettingsPath.Accounts));
       },
       onError: (error) => {
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
       },
     });
   };

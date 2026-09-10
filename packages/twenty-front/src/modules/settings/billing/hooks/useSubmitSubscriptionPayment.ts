@@ -1,4 +1,4 @@
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -25,7 +25,6 @@ export const useSubmitSubscriptionPayment = ({
   const stripe = useStripe();
   const elements = useElements();
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [createSubscriptionPaymentIntent] = useMutation(
@@ -98,7 +97,7 @@ export const useSubmitSubscriptionPayment = ({
       }
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
       } else {
         enqueueToast({
           variant: 'error',

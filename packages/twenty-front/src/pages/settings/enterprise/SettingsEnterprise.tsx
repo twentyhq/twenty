@@ -2,7 +2,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useState } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { GET_DATABASE_CONFIG_VARIABLE } from '@/settings/admin-panel/config-variables/graphql/queries/getDatabaseConfigVariable';
 import { useConfigVariableActions } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableActions';
@@ -137,7 +137,6 @@ export const SettingsEnterprise = ({
   const [isBoundToAnotherServer, setIsBoundToAnotherServer] = useState(false);
   const { openModal } = useModal();
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const { loadCurrentUser } = useLoadCurrentUser();
 
   const apolloAdminClient = useApolloAdminClient();
@@ -292,11 +291,11 @@ export const SettingsEnterprise = ({
           isGraphqlErrorOfType(error, 'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER'),
         );
         await loadCurrentUser();
-        enqueueErrorToast(error, { duration: 10000 });
+        enqueueToast(getToastOptionsFromError({ error, duration: 10000 }));
       } else if (
         isGraphqlErrorOfType(error, 'CONFIG_VARIABLES_IN_DB_DISABLED')
       ) {
-        enqueueErrorToast(error, { duration: 10000 });
+        enqueueToast(getToastOptionsFromError({ error, duration: 10000 }));
       } else {
         enqueueToast({
           variant: 'error',
@@ -310,7 +309,6 @@ export const SettingsEnterprise = ({
     enterpriseKey,
     setEnterpriseKeyMutation,
     enqueueToast,
-    enqueueErrorToast,
     fetchSubscriptionStatus,
     loadCurrentUser,
     t,
@@ -373,7 +371,7 @@ export const SettingsEnterprise = ({
       ) {
         setIsBoundToAnotherServer(true);
         await loadCurrentUser();
-        enqueueErrorToast(error, { duration: 10000 });
+        enqueueToast(getToastOptionsFromError({ error, duration: 10000 }));
       } else if (
         isGraphqlErrorOfType(error, 'ENTERPRISE_MISSING_SERVER_ID') ||
         isGraphqlErrorOfType(
@@ -383,7 +381,7 @@ export const SettingsEnterprise = ({
         isGraphqlErrorOfType(error, 'ENTERPRISE_DEV_SLOT_IN_USE') ||
         isGraphqlErrorOfType(error, 'ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED')
       ) {
-        enqueueErrorToast(error, { duration: 10000 });
+        enqueueToast(getToastOptionsFromError({ error, duration: 10000 }));
       } else {
         enqueueToast({
           variant: 'error',
@@ -393,13 +391,7 @@ export const SettingsEnterprise = ({
     } finally {
       setIsRefreshingToken(false);
     }
-  }, [
-    refreshValidityTokenMutation,
-    enqueueToast,
-    enqueueErrorToast,
-    loadCurrentUser,
-    t,
-  ]);
+  }, [refreshValidityTokenMutation, enqueueToast, loadCurrentUser, t]);
 
   const handleReleaseBinding = useCallback(async () => {
     setIsReleasing(true);

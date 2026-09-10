@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { addEmptyOperationIfNecessary } from '@/settings/developers/utils/addEmptyOperationIfNecessary';
 import {
@@ -44,7 +44,6 @@ const DEFAULT_FORM_VALUES: WebhookFormValues = {
 export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
   const navigate = useNavigateSettings();
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
 
   const isCreationMode = mode === WebhookFormMode.Create;
 
@@ -120,7 +119,11 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
           : SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
       );
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     }
   };
 
@@ -151,7 +154,11 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         children: t`Webhook ${targetUrl} updated successfully`,
       });
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     }
   };
 
@@ -214,7 +221,11 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
       );
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     }
   };
 

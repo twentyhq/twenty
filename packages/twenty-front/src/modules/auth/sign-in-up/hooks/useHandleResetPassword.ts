@@ -4,7 +4,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
@@ -14,7 +14,6 @@ import { EmailPasswordResetLinkDocument } from '~/generated-metadata/graphql';
 
 export const useHandleResetPassword = () => {
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const [emailPasswordResetLink] = useMutation(EmailPasswordResetLinkDocument);
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const currentUser = useAtomStateValue(currentUserState);
@@ -58,7 +57,7 @@ export const useHandleResetPassword = () => {
           }
         } catch (error) {
           if (CombinedGraphQLErrors.is(error)) {
-            enqueueErrorToast(error);
+            enqueueToast(getToastOptionsFromError({ error }));
           } else {
             enqueueToast({
               variant: 'error',
@@ -74,7 +73,6 @@ export const useHandleResetPassword = () => {
       currentUser?.email,
       workspacePublicData?.id,
       enqueueToast,
-      enqueueErrorToast,
       t,
       emailPasswordResetLink,
       isCaptchaReady,

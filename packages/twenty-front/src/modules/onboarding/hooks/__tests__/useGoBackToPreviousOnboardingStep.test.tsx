@@ -19,14 +19,10 @@ import {
 import { mockedUserData } from '~/testing/mock-data/users';
 
 const mockEnqueueToast = jest.fn();
-const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
-}));
-jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 
 const buildGoBackMock = ({
@@ -174,7 +170,7 @@ describe('useGoBackToPreviousOnboardingStep', () => {
     expect(jotaiStore.get(currentUserState.atom)?.onboardingStatus).toBe(
       OnboardingStatus.PROFILE_CREATION,
     );
-    expect(mockEnqueueErrorToast).not.toHaveBeenCalled();
+    expect(mockEnqueueToast).not.toHaveBeenCalled();
   });
 
   it('should surface a toast when the failure is not a stale back target', async () => {
@@ -189,6 +185,9 @@ describe('useGoBackToPreviousOnboardingStep', () => {
       await result.current.goBackToPreviousOnboardingStep();
     });
 
-    expect(mockEnqueueErrorToast).toHaveBeenCalled();
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'An error occurred.',
+    });
   });
 });

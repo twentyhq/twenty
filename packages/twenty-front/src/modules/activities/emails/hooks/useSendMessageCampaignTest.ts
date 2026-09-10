@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client/react';
 
 import { SEND_MESSAGE_CAMPAIGN_TEST } from '@/activities/emails/graphql/mutations/sendMessageCampaignTest';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { t } from '@lingui/core/macro';
 import { useToast } from 'twenty-ui/feedback';
 import {
@@ -24,7 +24,6 @@ export const useSendMessageCampaignTest = () => {
   >(SEND_MESSAGE_CAMPAIGN_TEST);
 
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
 
   const sendMessageCampaignTest = async (
     params: SendMessageCampaignTestParams,
@@ -50,7 +49,7 @@ export const useSendMessageCampaignTest = () => {
 
       return true;
     } catch (error) {
-      enqueueErrorToast(error);
+      enqueueToast(getToastOptionsFromError({ error }));
 
       return false;
     }

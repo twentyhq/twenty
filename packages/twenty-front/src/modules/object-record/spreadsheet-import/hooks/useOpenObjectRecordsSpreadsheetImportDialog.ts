@@ -1,4 +1,4 @@
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
@@ -12,6 +12,7 @@ import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOp
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useToast } from 'twenty-ui/feedback';
 
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
@@ -20,7 +21,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   const { openSpreadsheetImportDialog } = useOpenSpreadsheetImportDialog();
   const { buildSpreadsheetImportFields } = useBuildSpreadsheetImportFields();
 
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -86,7 +87,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
             },
           });
         } catch (error: any) {
-          enqueueErrorToast(error);
+          enqueueToast(getToastOptionsFromError({ error }));
         }
       },
       spreadsheetImportFields,

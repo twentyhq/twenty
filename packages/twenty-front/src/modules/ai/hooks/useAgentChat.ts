@@ -39,7 +39,7 @@ import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaust
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
@@ -57,7 +57,6 @@ export const useAgentChat = (
   const { applyOptimisticUnarchive } = useOptimisticallyUnarchiveOnSend();
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
   const store = useStore();
@@ -306,9 +305,13 @@ export const useAgentChat = (
         variables: { threadId },
       });
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     }
-  }, [store, apolloClient, enqueueErrorToast]);
+  }, [store, apolloClient, enqueueToast]);
 
   useListenToBrowserEvent({
     eventName: AGENT_CHAT_STOP_EVENT_NAME,

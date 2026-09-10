@@ -1,6 +1,6 @@
 /* @license Enterprise */
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useCheckCustomDomainValidRecords } from '@/settings/domains/hooks/useCheckCustomDomainValidRecords';
 import { getDomainValidationSchema } from '@/settings/domains/utils/getDomainValidationSchema';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -17,7 +17,6 @@ export const useSettingsCustomDomain = () => {
   const domainSchema = getDomainValidationSchema();
 
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
   const { checkCustomDomainRecords } = useCheckCustomDomainValidRecords();
 
@@ -82,7 +81,7 @@ export const useSettingsCustomDomain = () => {
 
           return;
         }
-        enqueueErrorToast(mutationError);
+        enqueueToast(getToastOptionsFromError({ error: mutationError }));
         setIsSubmitting(false);
       },
     });

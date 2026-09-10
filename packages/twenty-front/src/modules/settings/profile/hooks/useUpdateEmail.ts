@@ -3,7 +3,7 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { useToast } from 'twenty-ui/feedback';
@@ -11,7 +11,6 @@ import { UpdateUserEmailDocument } from '~/generated-metadata/graphql';
 
 export const useUpdateEmail = () => {
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
 
   const currentUser = useAtomStateValue(currentUserState);
 
@@ -35,7 +34,7 @@ export const useUpdateEmail = () => {
       });
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
       }
     }
   };

@@ -2,7 +2,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { ssoIdentitiesProvidersState } from '@/settings/security/states/ssoIdentitiesProvidersState';
@@ -43,7 +43,6 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
   const { t } = useLingui();
 
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const ssoIdentitiesProviders = useAtomStateValue(ssoIdentitiesProvidersState);
   const authProviders = useAtomStateValue(authProvidersState);
   const isMultiWorkspaceEnabled = useAtomStateValue(
@@ -111,7 +110,11 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         ...currentWorkspace,
         [key]: !currentWorkspace[key],
       });
-      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(err) ? err : undefined,
+        }),
+      );
     });
   };
 
@@ -132,7 +135,11 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         isPublicInviteLinkEnabled: value,
       });
     } catch (err: any) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(err) ? err : undefined,
+        }),
+      );
     }
   };
 
@@ -191,7 +198,11 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
             }
           : currentWorkspaceValue,
       );
-      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(err) ? err : undefined,
+        }),
+      );
     });
   };
 

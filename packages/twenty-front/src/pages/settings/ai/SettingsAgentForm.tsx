@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useParams } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -64,7 +64,6 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
   const { enqueueToast } = useToast();
-  const { enqueueErrorToast } = useErrorToast();
   const [isReadonlyMode, setIsReadonlyMode] = useState(false);
   const [originalFormValues, setOriginalFormValues] = useState<
     ReturnType<typeof useSettingsAgentFormState>['formValues'] | null
@@ -129,10 +128,10 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
   useEffect(() => {
     if (agentQueryError) {
-      enqueueErrorToast(agentQueryError);
+      enqueueToast(getToastOptionsFromError({ error: agentQueryError }));
       navigateApp(AppPath.NotFound);
     }
-  }, [agentQueryError, enqueueErrorToast, navigateApp]);
+  }, [agentQueryError, enqueueToast, navigateApp]);
 
   const [createAgent] = useMutation(CreateOneAgentDocument);
   const [updateAgent] = useMutation(UpdateOneAgentDocument);
@@ -187,7 +186,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           await saveDraftRoleToDB();
         } catch (error) {
           if (CombinedGraphQLErrors.is(error)) {
-            enqueueErrorToast(error);
+            enqueueToast(getToastOptionsFromError({ error }));
           } else {
             const errorMessage =
               error instanceof Error ? error.message : String(error);
@@ -221,7 +220,11 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
       setOriginalFormValues({ ...formValues });
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -292,7 +295,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           await saveDraftRoleToDB();
         } catch (error) {
           if (CombinedGraphQLErrors.is(error)) {
-            enqueueErrorToast(error);
+            enqueueToast(getToastOptionsFromError({ error }));
           } else {
             const errorMessage =
               error instanceof Error ? error.message : String(error);
@@ -351,7 +354,11 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
       navigate(SettingsPath.AI);
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     } finally {
       setIsSubmitting(false);
     }

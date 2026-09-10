@@ -1,6 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { getSubdomainValidationSchema } from '@/settings/domains/utils/getSubdomainValidationSchema';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -19,7 +19,6 @@ export const useSettingsSubdomain = () => {
   const { t } = useLingui();
   const subdomainSchema = getSubdomainValidationSchema();
 
-  const { enqueueErrorToast } = useErrorToast();
   const { enqueueToast } = useToast();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
@@ -71,7 +70,7 @@ export const useSettingsSubdomain = () => {
 
           return;
         }
-        enqueueErrorToast(mutationError);
+        enqueueToast(getToastOptionsFromError({ error: mutationError }));
         setIsSubmitting(false);
       },
       onCompleted: async () => {

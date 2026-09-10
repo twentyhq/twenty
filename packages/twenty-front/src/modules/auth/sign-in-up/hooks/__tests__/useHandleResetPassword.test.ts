@@ -16,14 +16,10 @@ import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 const mockEnqueueToast = jest.fn();
-const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
-}));
-jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 jest.mock('@apollo/client/react');
 jest.mock('@/captcha/hooks/useReadCaptchaToken');

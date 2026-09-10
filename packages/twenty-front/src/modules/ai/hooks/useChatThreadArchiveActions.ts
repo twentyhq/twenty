@@ -2,7 +2,8 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useToast } from 'twenty-ui/feedback';
 import {
   ArchiveChatThreadDocument,
   UnarchiveChatThreadDocument,
@@ -10,7 +11,7 @@ import {
 
 export const useChatThreadArchiveActions = () => {
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
 
   const [archiveMutation] = useMutation(ArchiveChatThreadDocument);
   const [unarchiveMutation] = useMutation(UnarchiveChatThreadDocument);
@@ -27,7 +28,11 @@ export const useChatThreadArchiveActions = () => {
         });
       }
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     }
   };
 
@@ -43,7 +48,11 @@ export const useChatThreadArchiveActions = () => {
         });
       }
     } catch (error) {
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     }
   };
 

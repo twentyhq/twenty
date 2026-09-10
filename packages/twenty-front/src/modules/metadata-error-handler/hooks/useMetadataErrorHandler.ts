@@ -1,7 +1,7 @@
 import { type CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { classifyMetadataError } from '@/metadata-error-handler/utils/classifyMetadataError';
 import {
   type AllMetadataName,
@@ -11,7 +11,6 @@ import { CrudOperationType } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/feedback';
 
 export const useMetadataErrorHandler = () => {
-  const { enqueueErrorToast } = useErrorToast();
   const { enqueueToast } = useToast();
 
   const TRANSLATED_OPERATION_TYPE = {
@@ -74,7 +73,7 @@ export const useMetadataErrorHandler = () => {
 
     switch (classification.type) {
       case 'v1':
-        enqueueErrorToast(classification.error);
+        enqueueToast(getToastOptionsFromError({ error: classification.error }));
         break;
 
       case 'v2-validation': {

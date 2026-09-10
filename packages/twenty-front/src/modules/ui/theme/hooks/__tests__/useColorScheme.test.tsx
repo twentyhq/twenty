@@ -16,14 +16,10 @@ jest.mock('@apollo/client/react', () => ({
 }));
 
 const mockEnqueueToast = jest.fn();
-const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
-}));
-jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 
 const workspaceMember: CurrentWorkspaceMember = {
@@ -122,7 +118,10 @@ describe('useColorScheme', () => {
         'System',
       );
       expect(store.get(persistedColorSchemeState.atom)).toBe('Light');
-      expect(mockEnqueueErrorToast).toHaveBeenCalledWith(error);
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
+        variant: 'error',
+        children: 'You do not have permission to update this workspace member.',
+      });
     },
   );
 
@@ -190,7 +189,10 @@ describe('useColorScheme', () => {
     });
 
     expect(result.current.colorScheme).toBe('System');
-    expect(mockEnqueueErrorToast).toHaveBeenCalledWith(undefined);
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'An error occurred.',
+    });
   });
 
   it('should not save a theme without a workspace member', async () => {

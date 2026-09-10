@@ -7,7 +7,7 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { onboardingActivationFailedState } from '@/onboarding/states/onboardingActivationFailedState';
@@ -20,6 +20,7 @@ import { useMutation } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
@@ -41,7 +42,7 @@ const StyledButtonContainer = styled.div`
 
 export const WorkspaceActivation = () => {
   const { t } = useLingui();
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { loadCurrentUser } = useLoadCurrentUser();
   const [activateWorkspace, { loading: isActivating }] = useMutation(
@@ -84,11 +85,15 @@ export const WorkspaceActivation = () => {
       setIsCreatingWorkspace(false);
       setOnboardingActivationFailed(true);
 
-      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueToast(
+        getToastOptionsFromError({
+          error: CombinedGraphQLErrors.is(error) ? error : undefined,
+        }),
+      );
     }
   }, [
     activateWorkspace,
-    enqueueErrorToast,
+    enqueueToast,
     loadCurrentUser,
     setOnboardingActivationFailed,
     setIsAppEffectRedirectEnabled,

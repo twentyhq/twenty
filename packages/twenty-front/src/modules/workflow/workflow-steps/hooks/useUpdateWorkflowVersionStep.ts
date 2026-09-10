@@ -1,4 +1,4 @@
-import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -16,6 +16,7 @@ import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useSte
 import { useMutation } from '@apollo/client/react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import {
   type UpdateWorkflowVersionStepInput,
   type UpdateWorkflowVersionStepMutation,
@@ -26,7 +27,7 @@ export const useUpdateWorkflowVersionStep = (instanceId?: string) => {
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
   const { markStepForRecomputation } = useStepsOutputSchema();
   const setFlow = useSetAtomComponentState(flowComponentState, instanceId);
 
@@ -49,7 +50,7 @@ export const useUpdateWorkflowVersionStep = (instanceId?: string) => {
     const result = await mutate({
       variables: { input },
       onError: (error) => {
-        enqueueErrorToast(error);
+        enqueueToast(getToastOptionsFromError({ error }));
       },
     });
     const updatedStep = result?.data?.updateWorkflowVersionStep;
