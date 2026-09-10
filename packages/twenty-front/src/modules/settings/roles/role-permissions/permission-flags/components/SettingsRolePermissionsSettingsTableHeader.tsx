@@ -59,7 +59,7 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
           }
           disabled={!isEditable}
           aria-label={t`Toggle all settings permissions`}
-          onChange={() => {
+          onCheckedChange={() => {
             const newValue = !allSettingsPermissionsEnabled;
 
             setSettingsDraftRole({

@@ -258,6 +258,7 @@ export class InboxRouterService {
         args.workspaceId,
         { id: existingItem.id },
         {
+          // The type tracks the latest event, so a pending question surfaces on the folded item and clears again once answered.
           inboxItemTypeId: inboxItemType.id,
           priority: args.priority ?? inboxItemType.defaultPriority,
           ...(isDefined(args.title) ? { title: args.title } : {}),

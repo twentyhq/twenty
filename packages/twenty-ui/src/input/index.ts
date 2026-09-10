@@ -7,7 +7,6 @@
  *                              |___/
  */
 
-export { AdvancedSettingsToggle } from './AdvancedSettingsToggle/AdvancedSettingsToggle';
 export type { AnimatedButtonProps } from './AnimatedButton/AnimatedButton';
 export { AnimatedButton } from './AnimatedButton/AnimatedButton';
 export type { AnimatedLightIconButtonProps } from './AnimatedLightIconButton/AnimatedLightIconButton';
@@ -24,13 +23,12 @@ export { baseTransitionTiming } from './Button/constant';
 export type { ButtonGroupProps } from './ButtonGroup/ButtonGroup';
 export { ButtonGroup } from './ButtonGroup/ButtonGroup';
 export { CardPicker } from './CardPicker/CardPicker';
-export {
-  CheckboxVariant,
-  CheckboxShape,
-  CheckboxSize,
-  CheckboxAccent,
-  Checkbox,
-} from './Checkbox/Checkbox';
+export { Checkbox } from './Checkbox/Checkbox';
+export type { CheckboxColor } from './Checkbox/types/CheckboxColor';
+export type { CheckboxProps } from './Checkbox/types/CheckboxProps';
+export type { CheckboxShape } from './Checkbox/types/CheckboxShape';
+export type { CheckboxSize } from './Checkbox/types/CheckboxSize';
+export type { CheckboxVariant } from './Checkbox/types/CheckboxVariant';
 export { CodeEditor } from './CodeEditor/CodeEditor';
 export { BASE_CODE_EDITOR_THEME_ID } from './CodeEditor/constants/BaseCodeEditorThemeId';
 export { getBaseCodeEditorTheme } from './CodeEditor/utils/getBaseCodeEditorTheme';
@@ -118,8 +116,17 @@ export type { SelectRootProps } from './Select/types/SelectRootProps';
 export type { SelectSeparatorProps } from './Select/types/SelectSeparatorProps';
 export type { SelectTriggerProps } from './Select/types/SelectTriggerProps';
 export type { SelectValueProps } from './Select/types/SelectValueProps';
-export type { SliderColor, SliderProps } from './Slider/Slider';
 export { Slider } from './Slider/Slider';
+export type { SliderControlProps } from './Slider/types/SliderControlProps';
+export type { SliderIndicatorProps } from './Slider/types/SliderIndicatorProps';
+export type { SliderLabelProps } from './Slider/types/SliderLabelProps';
+export type { SliderRootProps } from './Slider/types/SliderRootProps';
+export type { SliderThumbProps } from './Slider/types/SliderThumbProps';
+export type { SliderTrackProps } from './Slider/types/SliderTrackProps';
+export type { SliderValueProps } from './Slider/types/SliderValueProps';
+export { Switch } from './Switch/Switch';
+export type { SwitchProps } from './Switch/types/SwitchProps';
+export type { SwitchSize } from './Switch/types/SwitchSize';
 export type { TabContentProps } from './TabButton/TabButton';
 export {
   StyledTabContainer,
@@ -128,8 +135,6 @@ export {
 } from './TabButton/TabButton';
 export { Textarea } from './Textarea/Textarea';
 export type { TextareaProps } from './Textarea/types/TextareaProps';
-export type { ToggleSize, ToggleProps } from './Toggle/Toggle';
-export { Toggle } from './Toggle/Toggle';
 export type { ColorScheme } from './types/ColorScheme';
 export type { InputSize } from './types/InputSize';
 export type { SelectOption } from './types/SelectOption';

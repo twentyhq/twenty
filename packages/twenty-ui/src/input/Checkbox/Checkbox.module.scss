@@ -1,90 +1,101 @@
 .root {
-  --checkbox-box-size: 12px;
-  --checkbox-icon-size: 14px;
-  --checkbox-border-width: 1px;
-  --checkbox-bg: transparent;
-  --checkbox-border-color: var(--t-border-color-secondary-inverted);
-  --checkbox-box-radius: var(--t-border-radius-sm-round);
+  @include focus-ring;
+
+  --tw-checkbox-box-size: 12px;
+  --tw-checkbox-icon-size: 14px;
+  --tw-checkbox-border-width: 1px;
+  --tw-checkbox-bg: transparent;
+  --tw-checkbox-border-color: var(--t-border-color-secondary-inverted);
+  --tw-checkbox-box-radius: var(--t-border-radius-sm-round);
 
   align-items: center;
   border-radius: var(--t-border-radius-md-round);
   corner-shape: round;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
+  flex-shrink: 0;
   padding: 0;
   position: relative;
 }
 
-.primary {
-  --checkbox-border-color: var(--t-border-color-inverted);
+.solid {
+  --tw-checkbox-border-color: var(--t-border-color-inverted);
 }
 
-.secondary {
-  --checkbox-border-color: var(--t-border-color-secondary-inverted);
+.outline {
+  --tw-checkbox-border-color: var(--t-border-color-secondary-inverted);
 }
 
-.tertiary {
-  --checkbox-border-color: var(--t-border-color-medium);
-  --checkbox-border-width: 1.43px;
+.soft {
+  --tw-checkbox-border-color: var(--t-border-color-medium);
+  --tw-checkbox-border-width: 1.43px;
 }
 
-.small {
-  --checkbox-box-size: 12px;
-  --checkbox-icon-size: 14px;
+.sm {
+  --tw-checkbox-box-size: 12px;
+  --tw-checkbox-icon-size: 14px;
 }
 
-.large {
-  --checkbox-box-size: 18px;
-  --checkbox-icon-size: 20px;
-  --checkbox-border-width: 1.43px;
+.md {
+  --tw-checkbox-box-size: 18px;
+  --tw-checkbox-icon-size: 20px;
+  --tw-checkbox-border-width: 1.43px;
 }
 
-.squared {
-  --checkbox-box-radius: var(--t-border-radius-sm-round);
+.square {
+  --tw-checkbox-box-radius: var(--t-border-radius-sm-round);
 
   border-radius: var(--t-border-radius-md-round);
 }
 
-.rounded {
-  --checkbox-box-radius: var(--t-border-radius-rounded);
+.round {
+  --tw-checkbox-box-radius: var(--t-border-radius-rounded);
 
   border-radius: var(--t-border-radius-rounded);
 
   corner-shape: round;
 }
 
-.blue {
-  --checkbox-accent: var(--t-color-blue);
-  --checkbox-accent-disabled: var(--t-color-blue7);
-  --checkbox-accent-hover: var(--t-background-transparent-blue);
+.accent {
+  --tw-checkbox-accent: var(--t-color-blue);
+  --tw-checkbox-accent-disabled: var(--t-color-blue7);
+  --tw-checkbox-accent-hover: var(--t-background-transparent-blue);
 }
 
-.orange {
-  --checkbox-accent: var(--t-color-orange);
-  --checkbox-accent-disabled: var(--t-color-orange7);
-  --checkbox-accent-hover: var(--t-background-transparent-orange);
+.success {
+  --tw-checkbox-accent: var(--t-color-green);
+  --tw-checkbox-accent-disabled: var(--t-color-green7);
+  --tw-checkbox-accent-hover: var(--t-background-transparent-green);
+}
+
+.warning {
+  --tw-checkbox-accent: var(--t-color-orange);
+  --tw-checkbox-accent-disabled: var(--t-color-orange7);
+  --tw-checkbox-accent-hover: var(--t-background-transparent-orange);
 }
 
 .hoverable {
   padding: 5px;
 }
 
-.hoverable.large {
+.hoverable.md {
   padding: 6px;
 }
 
-.hoverable:hover {
-  background-color: var(--t-background-transparent-light);
-}
+@include hover-capable {
+  .hoverable:hover {
+    background-color: var(--t-background-transparent-light);
+  }
 
-.hoverable[data-checked]:hover,
-.hoverable[data-indeterminate]:hover {
-  background-color: var(--checkbox-accent-hover);
+  .hoverable[data-checked]:hover,
+  .hoverable[data-indeterminate]:hover {
+    background-color: var(--tw-checkbox-accent-hover);
+  }
 }
 
 // Disabled border falls back to the strong border color unless checked (see below).
 .root[data-disabled] {
-  --checkbox-border-color: var(--t-border-color-strong);
+  --tw-checkbox-border-color: var(--t-border-color-strong);
 
   cursor: not-allowed;
 }
@@ -92,14 +103,14 @@
 // Checked/indeterminate accent wins over the variant and disabled border colors.
 .root[data-checked],
 .root[data-indeterminate] {
-  --checkbox-bg: var(--checkbox-accent);
-  --checkbox-border-color: var(--checkbox-accent);
+  --tw-checkbox-bg: var(--tw-checkbox-accent);
+  --tw-checkbox-border-color: var(--tw-checkbox-accent);
 }
 
 .root[data-disabled][data-checked],
 .root[data-disabled][data-indeterminate] {
-  --checkbox-bg: var(--checkbox-accent-disabled);
-  --checkbox-border-color: var(--checkbox-accent-disabled);
+  --tw-checkbox-bg: var(--tw-checkbox-accent-disabled);
+  --tw-checkbox-border-color: var(--tw-checkbox-accent-disabled);
 }
 
 .hoverable[data-disabled]:hover {
@@ -107,39 +118,44 @@
 }
 
 .box {
-  height: calc(var(--checkbox-box-size) + 2px);
+  block-size: calc(var(--tw-checkbox-box-size) + 2px);
   padding: 0;
   position: relative;
-  width: calc(var(--checkbox-box-size) + 2px);
+  inline-size: calc(var(--tw-checkbox-box-size) + 2px);
 }
 
 .box::before {
-  background: var(--checkbox-bg);
-  border-color: var(--checkbox-border-color);
-  border-radius: var(--checkbox-box-radius);
+  background: var(--tw-checkbox-bg);
+  border-color: var(--tw-checkbox-border-color);
+  border-radius: var(--tw-checkbox-box-radius);
   corner-shape: round;
   border-style: solid;
-  border-width: var(--checkbox-border-width);
+  border-width: var(--tw-checkbox-border-width);
   // The border sits outside the declared box size, so size against the content box.
   box-sizing: content-box;
   content: '';
   display: inline-block;
-  height: var(--checkbox-box-size);
-  width: var(--checkbox-box-size);
+  block-size: var(--tw-checkbox-box-size);
+  inline-size: var(--tw-checkbox-box-size);
 }
 
 .indicator {
   display: block;
-  height: var(--checkbox-icon-size);
-  left: 0;
+  block-size: var(--tw-checkbox-icon-size);
+  inset-inline-start: 0;
   position: absolute;
-  top: 0;
-  width: var(--checkbox-icon-size);
+  inset-block-start: 0;
+  inline-size: var(--tw-checkbox-icon-size);
 }
 
 .indicator svg {
   display: block;
-  height: 100%;
+  block-size: 100%;
   stroke: var(--t-font-color-inverted);
-  width: 100%;
+  inline-size: 100%;
+}
+
+.indicator[data-indeterminate] .check,
+.indicator:not([data-indeterminate]) .minus {
+  display: none;
 }
