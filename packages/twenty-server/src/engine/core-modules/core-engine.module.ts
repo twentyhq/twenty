@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_FILTER, HttpAdapterHost } from '@nestjs/core';
 import { EventEmitter2, EventEmitterModule } from '@nestjs/event-emitter';
 
+import { WorkspaceResolverNameMapCacheModule } from 'src/engine/api/graphql/direct-execution/workspace-resolver-name-map-cache.module';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
@@ -133,6 +134,8 @@ import { FileModule } from './file/file.module';
     RoleModule,
     RedisClientModule,
     WorkspaceQueryRunnerModule,
+    // Workers run metadata migrations too, and the runner recomputes this cache key after each one
+    WorkspaceResolverNameMapCacheModule,
     GeoMapModule,
     SubscriptionsModule,
     ImapSmtpCaldavModule,
