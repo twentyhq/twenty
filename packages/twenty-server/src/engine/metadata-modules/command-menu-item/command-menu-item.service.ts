@@ -31,7 +31,7 @@ import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
-import { dispatchIsActiveToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-to-authored-override.util';
+import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
 import { resetAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/reset-authored-overrides.util';
 
 @Injectable()
@@ -367,7 +367,7 @@ export class CommandMenuItemService {
     });
 
     const deactivatedFlatCommandMenuItem = {
-      ...dispatchIsActiveToAuthoredOverride({
+      ...dispatchIsActiveUpdateToAuthoredOverride({
         flatEntity: flatCommandMenuItemToDelete,
         isActive: false,
         authorUniversalIdentifier:

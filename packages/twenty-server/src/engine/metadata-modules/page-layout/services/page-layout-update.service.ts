@@ -43,7 +43,7 @@ import { ViewService } from 'src/engine/metadata-modules/view/services/view.serv
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
-import { dispatchIsActiveToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-to-authored-override.util';
+import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 type UpdatePageLayoutWithTabsParams = {
@@ -415,7 +415,7 @@ export class PageLayoutUpdateService {
           });
 
         return {
-          ...dispatchIsActiveToAuthoredOverride({
+          ...dispatchIsActiveUpdateToAuthoredOverride({
             flatEntity: {
               ...existingTab,
               ...updatedEditableProperties,
@@ -659,7 +659,7 @@ export class PageLayoutUpdateService {
 
     const widgetsToRestoreAndUpdate: FlatPageLayoutWidget[] =
       entitiesToRestoreAndUpdate.map((widgetInput) =>
-        dispatchIsActiveToAuthoredOverride({
+        dispatchIsActiveUpdateToAuthoredOverride({
           flatEntity: this.buildUpdatedFlatPageLayoutWidget({
             widgetInput,
             flatPageLayoutWidgetMaps,
