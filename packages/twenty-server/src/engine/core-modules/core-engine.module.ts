@@ -66,7 +66,6 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
-import { QueueStatusModule } from 'src/engine/core-modules/queue-status/queue-status.module';
 import { WorkflowApiModule } from 'src/engine/core-modules/workflow/workflow-api.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
@@ -129,7 +128,6 @@ import { FileModule } from './file/file.module';
     CloudflareModule,
     DnsManagerModule,
     WorkflowApiModule,
-    QueueStatusModule,
     WorkspaceEventEmitterModule,
     ActorModule,
     TelemetryModule,

@@ -53,6 +53,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { WorkerQueueStatusResolver } from 'src/engine/core-modules/admin-panel/worker-queue-status.resolver';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 @Module({
   imports: [
@@ -94,6 +95,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AdminPanelResolver,
     AdminPanelAiProviderResolver,
     AdminPanelApplicationRegistrationResolver,
+    WorkerQueueStatusResolver,
     AdminPanelAiProviderService,
     AdminPanelUserLookupService,
     AdminPanelServerAdminService,
@@ -124,7 +126,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AdminPanelConfigService,
     AdminPanelVersionService,
     MaintenanceModeService,
-    WorkerHealthIndicator,
   ],
 })
 export class AdminPanelModule {}
