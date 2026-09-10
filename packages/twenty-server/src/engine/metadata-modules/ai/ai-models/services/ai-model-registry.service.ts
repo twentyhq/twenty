@@ -207,8 +207,9 @@ export class AiModelRegistryService {
         modelId: variantId,
         label: `${baseConfig.label} (${effort})`,
         effort,
-        // A benchmark describes the effort it was measured at, not this one.
-        benchmark: undefined,
+        // A reading describes the effort it was taken at, so the variant gets
+        // the one taken at its effort or none, never the base model's ceiling.
+        benchmark: baseConfig.benchmarkByEffort?.[effort],
       });
 
       const baseModelDef = this.providerModelDefCache.get(baseConfig.modelId);
@@ -388,6 +389,7 @@ export class AiModelRegistryService {
       supportsReasoning: modelDef.supportsReasoning,
       efforts: modelDef.efforts,
       benchmark: modelDef.benchmark,
+      benchmarkByEffort: modelDef.benchmarkByEffort,
       isDeprecated: modelDef.isDeprecated,
     };
   }
