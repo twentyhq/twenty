@@ -56,7 +56,7 @@ const OBJECTS_TO_UPDATE = [
   },
 ];
 
-@RegisteredWorkspaceCommand('2.40.0', 1788894400000)
+@RegisteredWorkspaceCommand('2.40.0', 1788957500000)
 @Command({
   name: 'upgrade:2-40:make-messaging-and-calendar-private',
   description:
