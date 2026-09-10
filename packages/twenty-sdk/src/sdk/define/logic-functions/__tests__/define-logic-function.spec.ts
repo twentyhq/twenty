@@ -52,6 +52,44 @@ describe('defineLogicFunction', () => {
     expect(result.config.databaseEventTriggerSettings?.eventName).toBeDefined();
   });
 
+  it.each([0, -1, 1.5])(
+    'should reject a databaseEventTriggerSettings batchSize of %p',
+    (batchSize) => {
+      const config = {
+        universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+        name: 'On Contact Created',
+        handler: mockHandler,
+        databaseEventTriggerSettings: {
+          eventName: 'contact.created',
+          batchSize,
+        },
+      };
+
+      const result = defineLogicFunction(config as any);
+
+      expect(result.errors).toContain(
+        'Database event trigger batchSize must be an integer greater than or equal to 1',
+      );
+    },
+  );
+
+  it('should accept a valid databaseEventTriggerSettings batchSize', () => {
+    const config = {
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Contact Created',
+      handler: mockHandler,
+      databaseEventTriggerSettings: {
+        eventName: 'contact.created',
+        batchSize: 100,
+      },
+    };
+
+    const result = defineLogicFunction(config as any);
+
+    expect(result.errors).toEqual([]);
+    expect(result.config.databaseEventTriggerSettings?.batchSize).toBe(100);
+  });
+
   it('should pass through optional fields', () => {
     const config = {
       ...validRouteConfig,

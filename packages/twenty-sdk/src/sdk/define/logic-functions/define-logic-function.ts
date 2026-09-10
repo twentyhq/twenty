@@ -1,4 +1,5 @@
 import { HTTPMethod } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
@@ -50,6 +51,17 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
   if (config.databaseEventTriggerSettings) {
     if (!config.databaseEventTriggerSettings.eventName) {
       errors.push('Database event trigger must have an eventName');
+    }
+
+    const batchSize = config.databaseEventTriggerSettings.batchSize;
+
+    if (
+      isDefined(batchSize) &&
+      (!Number.isInteger(batchSize) || batchSize < 1)
+    ) {
+      errors.push(
+        'Database event trigger batchSize must be an integer greater than or equal to 1',
+      );
     }
   }
 

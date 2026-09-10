@@ -46,3 +46,8 @@ type DatabaseEventMetadata = {
 
 export type DatabaseEventPayload<T = ObjectRecordEvent> =
   DatabaseEventMetadata & T;
+
+export type DatabaseEventBatchPayload<T = ObjectRecordEvent> =
+  DatabaseEventMetadata & {
+    events: T[];
+  };

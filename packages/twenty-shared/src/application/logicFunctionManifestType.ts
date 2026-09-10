@@ -27,6 +27,8 @@ export type CronTriggerSettings = {
 export type DatabaseEventTriggerSettings = {
   eventName: string;
   updatedFields?: string[];
+  // When set, the handler receives one job per chunk of events instead of one job per event
+  batchSize?: number;
 };
 
 export type HttpRouteTriggerSettings = {
