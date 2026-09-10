@@ -43,10 +43,8 @@ export class WorkflowCoreSyncService {
 
     const applicationId = await this.getCustomApplicationIdOrThrow(workspaceId);
 
-    const linkedCoreWorkflowIds = await this.resolveOwnedCoreWorkflowIds(
-      workspaceId,
-      liveWorkflows,
-    );
+    const workspaceWorkflowIdByOwnedCoreWorkflowId =
+      await this.resolveOwnedCoreWorkflowIds(workspaceId, liveWorkflows);
 
     const coreWorkflowIdByWorkspaceRecordId = new Map<string, string>();
 
@@ -55,7 +53,7 @@ export class WorkflowCoreSyncService {
 
       const linkedCoreWorkflowId =
         isNonEmptyString(candidateCoreWorkflowId) &&
-        linkedCoreWorkflowIds.has(candidateCoreWorkflowId)
+        workspaceWorkflowIdByOwnedCoreWorkflowId.has(candidateCoreWorkflowId)
           ? candidateCoreWorkflowId
           : null;
 
@@ -65,10 +63,16 @@ export class WorkflowCoreSyncService {
         coreWorkflowIdByWorkspaceRecordId.set(workflow.id, coreWorkflowId);
       }
 
+      const storedWorkspaceWorkflowId = isDefined(linkedCoreWorkflowId)
+        ? workspaceWorkflowIdByOwnedCoreWorkflowId.get(linkedCoreWorkflowId)
+        : null;
+
       return {
         id: coreWorkflowId,
         name: workflow.name ?? null,
-        workspaceWorkflowId: workflow.id,
+        workspaceWorkflowId: isNonEmptyString(storedWorkspaceWorkflowId)
+          ? [storedWorkspaceWorkflowId, workflow.id].sort()[0]
+          : workflow.id,
         lastPublishedVersionId: isNonEmptyString(
           workflow.lastPublishedVersionId,
         )
@@ -92,21 +96,23 @@ export class WorkflowCoreSyncService {
   private async resolveOwnedCoreWorkflowIds(
     workspaceId: string,
     workflows: WorkflowWorkspaceEntity[],
-  ): Promise<Set<string>> {
+  ): Promise<Map<string, string | null>> {
     const candidateIds = workflows
       .map((workflow) => workflow.coreWorkflowId)
       .filter(isNonEmptyString);
 
     if (candidateIds.length === 0) {
-      return new Set();
+      return new Map();
     }
 
     const ownedRows = await this.coreWorkflowRepository.find(workspaceId, {
       where: { id: In(candidateIds) },
-      select: { id: true },
+      select: { id: true, workspaceWorkflowId: true },
     });
 
-    return new Set(ownedRows.map((row) => row.id));
+    return new Map(
+      ownedRows.map((row) => [row.id, row.workspaceWorkflowId ?? null]),
+    );
   }
 
   async deleteFromCore(
