@@ -1,5 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { useLabPublicFeatureFlags } from '@/settings/lab/hooks/useLabPublicFeatureFlags';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -64,13 +64,13 @@ export const SettingsLabContent = () => {
                 onError={() => handleImageError(flag.key)}
               />
             )}
-            <SettingsOptionCardContentToggle
+            <SettingsOptionCardContentSwitch
               Icon={getIcon(flag.metadata.icon)}
               title={flag.metadata.label}
               description={flag.metadata.description}
               checked={flag.value}
               onChange={(value) => handleToggle(flag.key, value)}
-              toggleCentered={false}
+              switchCentered={false}
             />
           </Card>
         ))}
@@ -81,14 +81,14 @@ export const SettingsLabContent = () => {
             backgroundColor={themeCssVariables.background.secondary}
           >
             {labPublicFeatureFlagsWithoutImage.map((flag, index) => (
-              <SettingsOptionCardContentToggle
+              <SettingsOptionCardContentSwitch
                 key={flag.key}
                 Icon={getIcon(flag.metadata.icon)}
                 title={flag.metadata.label}
                 description={flag.metadata.description}
                 checked={flag.value}
                 onChange={(value) => handleToggle(flag.key, value)}
-                toggleCentered={false}
+                switchCentered={false}
                 divider={index < labPublicFeatureFlagsWithoutImage.length - 1}
               />
             ))}

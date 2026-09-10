@@ -30,6 +30,7 @@ const USAGE_UNIT_BY_OPERATION_TYPE: Record<
   [UsageOperationType.CALL_RECORDING]: UsageUnit.MINUTE,
   [UsageOperationType.EMAIL_SEND]: UsageUnit.INVOCATION,
   [UsageOperationType.API_REQUEST]: UsageUnit.REQUEST,
+  [UsageOperationType.WEBHOOK_CALL]: UsageUnit.REQUEST,
   // Platform-raised only; ApplicationRecurringChargeService sets its own unit.
   [UsageOperationType.SUBSCRIPTION]: UsageUnit.CREDIT,
 };

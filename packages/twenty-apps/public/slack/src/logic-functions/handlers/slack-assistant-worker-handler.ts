@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
@@ -7,11 +8,13 @@ import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/consta
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { claimSlackAssistantRequest } from 'src/logic-functions/data/claim-slack-assistant-request';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
-import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
+import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
 import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build-slack-assistant-answer-blocks';
 import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-slack-assistant-messages';
+import { buildSlackAnswerDeliveryFailureMessage } from 'src/logic-functions/utils/build-slack-answer-delivery-failure-message';
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
+import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-slack-message-delivery';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
@@ -19,6 +22,7 @@ import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/util
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
 import { runSlackAssistantAgentWithDeadline } from 'src/logic-functions/utils/run-slack-assistant-agent-with-deadline';
+import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
 import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
@@ -149,7 +153,7 @@ export const slackAssistantWorkerHandler = async (
       });
     }
 
-    const deliveryResult = await slackPostMessageHandler({
+    const answerMessage: SlackPostMessageInput = {
       slackChannelId,
       messageText: responseText,
       parentMessageTimestamp,
@@ -161,20 +165,35 @@ export const slackAssistantWorkerHandler = async (
         requestId: record.id,
         workspaceBaseUrl: workspaceBaseUrls[0],
       }),
+    };
+
+    const deliveryResult = await sendSlackMessage(answerMessage, {
+      waitOutRateLimit: false,
     });
 
-    if (!deliveryResult.success) {
+    const deferredRetryAfterSeconds = deliveryResult.success
+      ? undefined
+      : deliveryResult.retryAfterSeconds;
+
+    if (!deliveryResult.success && !isDefined(deferredRetryAfterSeconds)) {
       return await finishSlackAssistantRequestWithFailure({
         ...failureContext,
-        errorMessage: `Could not deliver Slack answer: ${deliveryResult.error ?? deliveryResult.message}`,
+        errorMessage: buildSlackAnswerDeliveryFailureMessage(deliveryResult),
       });
     }
 
-    await updateSlackAssistantRequest(client, {
-      id: record.id,
-      status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
-      responseText,
-    });
+    if (isDefined(deferredRetryAfterSeconds)) {
+      await enqueueSlackMessageDelivery({
+        payload: { ...answerMessage, slackAssistantRequestId: record.id },
+        retryAfterSeconds: deferredRetryAfterSeconds,
+      });
+    } else {
+      await updateSlackAssistantRequest(client, {
+        id: record.id,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        responseText,
+      });
+    }
 
     if (isDirectMessage) {
       if (isThreadStartingMessage) {
@@ -191,7 +210,9 @@ export const slackAssistantWorkerHandler = async (
       }).catch(() => undefined);
     }
 
-    return { done: true };
+    return isDefined(deferredRetryAfterSeconds)
+      ? { deferred: true }
+      : { done: true };
   } catch (error) {
     await stopStatusUpdates();
 

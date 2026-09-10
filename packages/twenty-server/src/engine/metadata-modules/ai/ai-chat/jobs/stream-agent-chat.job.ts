@@ -2,7 +2,11 @@ import { Logger, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { createUIMessageStream, readUIMessageStream } from 'ai';
+import {
+  createUIMessageStream,
+  readUIMessageStream,
+  toUIMessageStream,
+} from 'ai';
 import type {
   CodeExecutionData,
   ExtendedUIMessage,
@@ -405,7 +409,7 @@ export class StreamAgentChatJob {
         return persistChain;
       };
 
-      // onFinish fires before the uiStream is fully drained. We use this
+      // onEnd fires before the uiStream is fully drained. We use this
       // promise to coordinate: the IIFE waits for DB persist to complete
       // before publishing message-persisted (after all chunks).
       let resolveStreamFinished: () => void;
@@ -478,7 +482,8 @@ export class StreamAgentChatJob {
           });
 
           writer.merge(
-            stream.toUIMessageStream({
+            toUIMessageStream({
+              stream: stream.stream,
               onError: (error) => {
                 streamError = error;
 
@@ -503,7 +508,7 @@ export class StreamAgentChatJob {
                   },
                 });
               },
-              onFinish: async ({ responseMessage, isAborted }) => {
+              onEnd: async ({ responseMessage, isAborted }) => {
                 // Rejecting here would race chunks still draining.
                 try {
                   isFinalizingPersist = true;
@@ -536,7 +541,7 @@ export class StreamAgentChatJob {
             }),
           );
         },
-        // Errors thrown before the model stream merges never reach onFinish.
+        // Errors thrown before the model stream merges never reach onEnd.
         onError: (error) => {
           streamError = error;
           resolveStreamFinished();
