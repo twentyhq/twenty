@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { expect, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { AdvancedSettingsSwitch } from '@/ui/input/components/AdvancedSettingsSwitch';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -34,7 +35,6 @@ import {
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/icon';
-import { AdvancedSettingsToggle } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
@@ -182,7 +182,7 @@ export const Settings: Story = {
         </NavigationDrawerSection>
 
         <NavigationDrawerFixedContent>
-          <AdvancedSettingsToggle
+          <AdvancedSettingsSwitch
             isAdvancedModeEnabled={false}
             setIsAdvancedModeEnabled={() => {}}
             label="Advanced:"

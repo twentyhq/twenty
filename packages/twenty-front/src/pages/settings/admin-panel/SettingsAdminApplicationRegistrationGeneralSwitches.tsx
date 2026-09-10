@@ -1,6 +1,6 @@
 import { Section } from 'twenty-ui/layout';
 import { Card } from 'twenty-ui/surfaces';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { IconArrowBarToDown, IconPinned, IconShield } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
@@ -11,13 +11,13 @@ import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 
-const StyledToggleContainer = styled.div`
+const StyledSwitchContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-export const SettingsAdminApplicationRegistrationGeneralToggles = ({
+export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
   registration,
 }: {
   registration: ApplicationRegistration;
@@ -33,9 +33,9 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
   return (
     <Section>
       <H2Title title={t`Installation`} />
-      <StyledToggleContainer>
+      <StyledSwitchContainer>
         <Card rounded fullWidth>
-          <SettingsOptionCardContentToggle
+          <SettingsOptionCardContentSwitch
             Icon={IconArrowBarToDown}
             title={t`Allow installation`}
             description={t`Display this app in the NPM packages list`}
@@ -53,7 +53,7 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
           />
         </Card>
         <Card rounded fullWidth>
-          <SettingsOptionCardContentToggle
+          <SettingsOptionCardContentSwitch
             Icon={IconShield}
             title={t`Vetted`}
             description={t`Mark this app as reviewed and approved`}
@@ -71,7 +71,7 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
           />
         </Card>
         <Card rounded fullWidth>
-          <SettingsOptionCardContentToggle
+          <SettingsOptionCardContentSwitch
             Icon={IconPinned}
             title={t`Pre-install on new workspaces`}
             description={t`Automatically install this app on every newly created workspace`}
@@ -88,7 +88,7 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
             }
           />
         </Card>
-      </StyledToggleContainer>
+      </StyledSwitchContainer>
     </Section>
   );
 };

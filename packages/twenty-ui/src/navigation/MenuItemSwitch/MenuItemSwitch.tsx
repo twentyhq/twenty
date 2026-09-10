@@ -1,39 +1,39 @@
 import { type IconComponent } from '@ui/icon';
-import { Toggle, type ToggleSize } from '@ui/input';
+import { Switch, type SwitchSize } from '@ui/input';
 import { MenuItemLeftContent } from '@ui/navigation/MenuItem/parts/MenuItemLeftContent';
 import {
   StyledMenuItemBase,
   StyledMenuItemRightContent,
 } from '@ui/navigation/MenuItem/parts/StyledMenuItemBase';
 
-import styles from './MenuItemToggle.module.scss';
+import styles from './MenuItemSwitch.module.scss';
 
-export type MenuItemToggleProps = {
+export type MenuItemSwitchProps = {
   focused?: boolean;
   LeftIcon?: IconComponent;
   withIconContainer?: boolean;
-  toggled: boolean;
+  checked: boolean;
   text: string;
   className?: string;
-  onToggleChange?: (toggled: boolean) => void;
-  toggleSize?: ToggleSize;
+  onCheckedChange?: (checked: boolean) => void;
+  size?: SwitchSize;
   disabled?: boolean;
 };
 
-export const MenuItemToggle = ({
+export const MenuItemSwitch = ({
   focused,
   LeftIcon,
   withIconContainer = false,
   text,
-  toggled,
+  checked,
   className,
-  onToggleChange,
-  toggleSize,
+  onCheckedChange,
+  size = 'md',
   disabled = false,
-}: MenuItemToggleProps) => {
+}: MenuItemSwitchProps) => {
   const handleClick = () => {
     if (!disabled) {
-      onToggleChange?.(!toggled);
+      onCheckedChange?.(!checked);
     }
   };
 
@@ -44,7 +44,7 @@ export const MenuItemToggle = ({
       disabled={disabled}
       onClick={handleClick}
     >
-      <div className={styles.toggleContainer}>
+      <div className={styles.switchContainer}>
         <MenuItemLeftContent
           LeftIcon={LeftIcon}
           text={text}
@@ -52,10 +52,10 @@ export const MenuItemToggle = ({
           disabled={disabled}
         />
         <StyledMenuItemRightContent onClick={(e) => e.stopPropagation()}>
-          <Toggle
-            value={toggled}
-            onChange={disabled ? undefined : onToggleChange}
-            toggleSize={toggleSize}
+          <Switch
+            checked={checked}
+            onCheckedChange={disabled ? undefined : onCheckedChange}
+            size={size}
             disabled={disabled}
             aria-label={text}
           />

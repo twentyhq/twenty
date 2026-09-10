@@ -25,7 +25,7 @@ import { getDataResidencyDisplay } from '@/settings/ai/utils/getDataResidencyDis
 import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -125,7 +125,7 @@ export const SettingsAiModelsTab = () => {
               selectSizeVariant="small"
             />
           </SettingsOptionCardContentSelect>
-          <SettingsOptionCardContentToggle
+          <SettingsOptionCardContentSwitch
             Icon={IconRefresh}
             title={t`Choose automatically`}
             description={t`Twenty fills each level with the best model that meets your requirements`}

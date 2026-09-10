@@ -1,10 +1,10 @@
-import { FormBooleanFieldToggleInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldToggleInput';
+import { FormBooleanFieldSwitchInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldSwitchInput';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
-const meta: Meta<typeof FormBooleanFieldToggleInput> = {
-  title: 'UI/Data/Field/Form/Input/FormBooleanFieldToggleInput',
-  component: FormBooleanFieldToggleInput,
+const meta: Meta<typeof FormBooleanFieldSwitchInput> = {
+  title: 'UI/Data/Field/Form/Input/FormBooleanFieldSwitchInput',
+  component: FormBooleanFieldSwitchInput,
   args: {
     description: 'Continue on iteration failure',
     value: false,
@@ -15,7 +15,7 @@ const meta: Meta<typeof FormBooleanFieldToggleInput> = {
 
 export default meta;
 
-type Story = StoryObj<typeof FormBooleanFieldToggleInput>;
+type Story = StoryObj<typeof FormBooleanFieldSwitchInput>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
@@ -23,9 +23,9 @@ export const Default: Story = {
 
     await canvas.findByText('Continue on iteration failure');
 
-    const toggle = canvas.getByRole('switch');
+    const control = canvas.getByRole('switch');
 
-    expect(toggle).not.toBeChecked();
+    expect(control).not.toBeChecked();
   },
 };
 
@@ -38,6 +38,9 @@ export const WithLabel: Story = {
 
     await canvas.findByText('Settings');
     await canvas.findByText('Continue on iteration failure');
+    expect(
+      canvas.getByRole('switch', { name: 'Continue on iteration failure' }),
+    ).not.toBeChecked();
   },
 };
 
@@ -54,20 +57,20 @@ export const WithHint: Story = {
   },
 };
 
-export const ToggledOn: Story = {
+export const Checked: Story = {
   args: {
     value: true,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const toggle = canvas.getByRole('switch');
+    const control = canvas.getByRole('switch');
 
-    expect(toggle).toBeChecked();
+    expect(control).toBeChecked();
   },
 };
 
-export const TogglesValue: Story = {
+export const ChangesValue: Story = {
   args: {
     value: false,
     onChange: fn(),
@@ -75,9 +78,9 @@ export const TogglesValue: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    const toggle = canvas.getByRole('switch');
+    const control = canvas.getByRole('switch');
 
-    await userEvent.click(toggle);
+    await userEvent.click(control);
 
     await waitFor(() => {
       expect(args.onChange).toHaveBeenCalledWith(true);

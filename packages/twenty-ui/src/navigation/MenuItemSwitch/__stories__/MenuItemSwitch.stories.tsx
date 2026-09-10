@@ -9,16 +9,16 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { MenuItemToggle } from '@ui/navigation/MenuItemToggle/MenuItemToggle';
+import { MenuItemSwitch } from '@ui/navigation/MenuItemSwitch/MenuItemSwitch';
 
-const meta: Meta<typeof MenuItemToggle> = {
-  title: 'UI/Navigation/Menu/MenuItem/MenuItemToggle',
-  component: MenuItemToggle,
+const meta: Meta<typeof MenuItemSwitch> = {
+  title: 'UI/Navigation/Menu/MenuItem/MenuItemSwitch',
+  component: MenuItemSwitch,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof MenuItemToggle>;
+type Story = StoryObj<typeof MenuItemSwitch>;
 
 export const Default: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
@@ -28,7 +28,7 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: CatalogStory<Story, typeof MenuItemToggle> = {
+export const Catalog: CatalogStory<Story, typeof MenuItemSwitch> = {
   args: { LeftIcon: IconBell, text: 'Menu item' },
   argTypes: {
     className: { control: false },
@@ -57,10 +57,10 @@ export const Catalog: CatalogStory<Story, typeof MenuItemToggle> = {
               : 'Without icon container',
         },
         {
-          name: 'toggled',
+          name: 'checked',
           values: [true, false],
-          props: (toggled: boolean) => ({ toggled }),
-          labels: (toggled: boolean) => (toggled ? 'Toggled' : 'Not toggled'),
+          props: (checked: boolean) => ({ checked }),
+          labels: (checked: boolean) => (checked ? 'Checked' : 'Unchecked'),
         },
         {
           name: 'states',
