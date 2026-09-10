@@ -3,7 +3,7 @@ import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadat
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 // isUnique is derived from IndexMetadata rather than stored on the field
-// entity; callers that need an accurate value (e.g. the REST controller)
+// entity; callers that need an accurate value (e.g. the GraphQL resolver)
 // pass the precomputed Set<fieldMetadataId>. Callers in pure-entity
 // contexts that don't care about uniqueness can omit it.
 export const fromFieldMetadataEntityToFieldMetadataDto = (

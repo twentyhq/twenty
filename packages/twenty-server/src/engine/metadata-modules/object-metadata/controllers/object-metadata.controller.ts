@@ -14,42 +14,42 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { ApiPath, FeatureFlagKey } from 'twenty-shared/types';
-import { In, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
-import { type RestCursorPageInfo } from 'src/engine/api/rest/metadata/types/rest-cursor-page-info.type';
-import { paginateByIdCursor } from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
+import { type MetadataRestListResponse } from 'src/engine/api/rest/metadata/types/metadata-rest-list-response.type';
+import { paginateMetadataRestItemsById } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items-by-id.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { DerivedFieldMetadataIdsService } from 'src/engine/metadata-modules/derived-field-metadata-ids/services/derived-field-metadata-ids.service';
-import { type DerivedFieldMetadataIds } from 'src/engine/metadata-modules/derived-field-metadata-ids/types/derived-field-metadata-ids.type';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { type ObjectMetadataWithFieldsDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata-with-fields.dto';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { ObjectMetadataRestApiExceptionFilter } from 'src/engine/metadata-modules/object-metadata/filters/object-metadata-rest-api-exception.filter';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/object-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
-import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
-import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
-import { type APP_LOCALES } from 'twenty-shared/translations';
 import {
   toLegacyObjectMetadataCreateResponse,
   toLegacyObjectMetadataDeleteResponse,
@@ -74,13 +74,9 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
 @UsePipes(new ValidationPipe())
 export class ObjectMetadataController {
   constructor(
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly derivedFieldMetadataIdsService: DerivedFieldMetadataIdsService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
@@ -90,33 +86,26 @@ export class ObjectMetadataController {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ) {
-    const { items, pageInfo, totalCount } = await paginateByIdCursor({
-      repository: this.objectMetadataRepository,
-      workspaceId,
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.getFlatObjectAndFieldMetadataMaps(workspaceId);
+
+    const { data, pageInfo, totalCount } = paginateMetadataRestItemsById({
+      items: Object.values(flatObjectMetadataMaps.byUniversalIdentifier).filter(
+        isDefined,
+      ),
       request,
     });
 
-    const [fields, derivedFieldMetadataIds] = await Promise.all([
-      this.findFieldsForObjectIds(
+    const result: MetadataRestListResponse<ObjectMetadataWithFieldsDTO> = {
+      data: await this.toObjectWithFieldsDtos({
+        flatObjectMetadatas: data,
+        flatFieldMetadataMaps,
+        locale,
         workspaceId,
-        items.map((object) => object.id),
-      ),
-      this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId),
-    ]);
-
-    const data = await this.toObjectWithFieldsDtos({
-      objects: items,
-      fieldsByObjectId: fields,
-      derivedFieldMetadataIds,
-      locale,
-      workspaceId,
-    });
-
-    const result: {
-      data: ObjectMetadataWithFieldsDTO[];
-      pageInfo: RestCursorPageInfo;
-      totalCount: number;
-    } = { data, pageInfo, totalCount };
+      }),
+      pageInfo,
+      totalCount,
+    };
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result
@@ -129,28 +118,24 @@ export class ObjectMetadataController {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ) {
-    const object = await this.objectMetadataRepository.findOne({
-      where: { id, workspaceId },
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.getFlatObjectAndFieldMetadataMaps(workspaceId);
+
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatObjectMetadataMaps,
     });
 
-    if (!object) {
+    if (!isDefined(flatObjectMetadata)) {
       throw new ObjectMetadataException(
         'Object metadata not found',
         ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
     }
 
-    const [fields, derivedFieldMetadataIds] = await Promise.all([
-      this.fieldMetadataRepository.find({
-        where: { objectMetadataId: object.id, workspaceId },
-      }),
-      this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId),
-    ]);
-
     const [result] = await this.toObjectWithFieldsDtos({
-      objects: [object],
-      fieldsByObjectId: new Map([[object.id, fields]]),
-      derivedFieldMetadataIds,
+      flatObjectMetadatas: [flatObjectMetadata],
+      flatFieldMetadataMaps,
       locale,
       workspaceId,
     });
@@ -165,27 +150,17 @@ export class ObjectMetadataController {
     @Body() input: CreateObjectInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    const flatObject = await this.objectMetadataService.createOneObject({
-      createObjectInput: input,
+    const flatObjectMetadata = await this.objectMetadataService.createOneObject(
+      {
+        createObjectInput: input,
+        workspaceId,
+      },
+    );
+
+    const result = await this.toObjectWithFieldsDto({
+      flatObjectMetadata,
       workspaceId,
     });
-
-    const [fields, derivedFieldMetadataIds] = await Promise.all([
-      this.fieldMetadataRepository.find({
-        where: { objectMetadataId: flatObject.id, workspaceId },
-      }),
-      this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId),
-    ]);
-
-    const result: ObjectMetadataWithFieldsDTO = {
-      ...fromFlatObjectMetadataToObjectMetadataDto(flatObject),
-      fields: fields.map((field) =>
-        fromFieldMetadataEntityToFieldMetadataDto(
-          field,
-          derivedFieldMetadataIds,
-        ),
-      ),
-    };
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result
@@ -236,27 +211,17 @@ export class ObjectMetadataController {
     update: UpdateObjectPayload;
     workspaceId: string;
   }) {
-    const flatObject = await this.objectMetadataService.updateOneObject({
-      updateObjectInput: { id, update },
+    const flatObjectMetadata = await this.objectMetadataService.updateOneObject(
+      {
+        updateObjectInput: { id, update },
+        workspaceId,
+      },
+    );
+
+    const result = await this.toObjectWithFieldsDto({
+      flatObjectMetadata,
       workspaceId,
     });
-
-    const [fields, derivedFieldMetadataIds] = await Promise.all([
-      this.fieldMetadataRepository.find({
-        where: { objectMetadataId: flatObject.id, workspaceId },
-      }),
-      this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId),
-    ]);
-
-    const result: ObjectMetadataWithFieldsDTO = {
-      ...fromFlatObjectMetadataToObjectMetadataDto(flatObject),
-      fields: fields.map((field) =>
-        fromFieldMetadataEntityToFieldMetadataDto(
-          field,
-          derivedFieldMetadataIds,
-        ),
-      ),
-    };
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result
@@ -270,31 +235,37 @@ export class ObjectMetadataController {
     );
   }
 
-  private async findFieldsForObjectIds(
-    workspaceId: string,
-    objectIds: string[],
-  ): Promise<Map<string, FieldMetadataEntity[]>> {
-    const grouped = new Map<string, FieldMetadataEntity[]>();
+  private async getFlatObjectAndFieldMetadataMaps(workspaceId: string) {
+    return this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+      },
+    );
+  }
 
-    if (objectIds.length === 0) {
-      return grouped;
-    }
+  private async toObjectWithFieldsDto({
+    flatObjectMetadata,
+    workspaceId,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+    workspaceId: string;
+  }): Promise<ObjectMetadataWithFieldsDTO> {
+    const { flatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps'],
+        },
+      );
 
-    const fields = await this.fieldMetadataRepository.find({
-      where: { workspaceId, objectMetadataId: In(objectIds) },
-    });
-
-    for (const field of fields) {
-      const list = grouped.get(field.objectMetadataId);
-
-      if (list) {
-        list.push(field);
-      } else {
-        grouped.set(field.objectMetadataId, [field]);
-      }
-    }
-
-    return grouped;
+    return {
+      ...fromFlatObjectMetadataToObjectMetadataDto(flatObjectMetadata),
+      fields: findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: flatObjectMetadata.fieldIds,
+        flatEntityMaps: flatFieldMetadataMaps,
+      }).map(fromFlatFieldMetadataToFieldMetadataDto),
+    };
   }
 
   // REST returns the same labels the app renders: resolved for the caller's
@@ -302,56 +273,66 @@ export class ObjectMetadataController {
   // every field across them resolve in one call each, so a page costs a fixed
   // number of catalog reads rather than one per row.
   private async toObjectWithFieldsDtos({
-    objects,
-    fieldsByObjectId,
-    derivedFieldMetadataIds,
+    flatObjectMetadatas,
+    flatFieldMetadataMaps,
     locale,
     workspaceId,
   }: {
-    objects: ObjectMetadataEntity[];
-    fieldsByObjectId: Map<string, FieldMetadataEntity[]>;
-    derivedFieldMetadataIds: DerivedFieldMetadataIds;
+    flatObjectMetadatas: FlatObjectMetadata[];
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     locale: keyof typeof APP_LOCALES | undefined;
     workspaceId: string;
   }): Promise<ObjectMetadataWithFieldsDTO[]> {
-    const [resolvedObjects, resolvedFields] = await Promise.all([
-      this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
-        {
-          metadataName: 'objectMetadata',
-          entities: objects,
-          locale,
-          workspaceId,
-        },
-      ),
-      this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
-        {
-          metadataName: 'fieldMetadata',
-          entities: objects.flatMap(
-            (object) => fieldsByObjectId.get(object.id) ?? [],
-          ),
-          locale,
-          workspaceId,
-        },
-      ),
-    ]);
-    const resolvedFieldsByObjectId = new Map<string, FieldMetadataEntity[]>();
+    const [resolvedFlatObjectMetadatas, resolvedFlatFieldMetadatas] =
+      await Promise.all([
+        this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
+          {
+            metadataName: 'objectMetadata',
+            entities: flatObjectMetadatas,
+            locale,
+            workspaceId,
+          },
+        ),
+        this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
+          {
+            metadataName: 'fieldMetadata',
+            entities: flatObjectMetadatas.flatMap((flatObjectMetadata) =>
+              findManyFlatEntityByIdInFlatEntityMaps({
+                flatEntityIds: flatObjectMetadata.fieldIds,
+                flatEntityMaps: flatFieldMetadataMaps,
+              }),
+            ),
+            locale,
+            workspaceId,
+          },
+        ),
+      ]);
 
-    for (const field of resolvedFields) {
-      const fieldsForObject =
-        resolvedFieldsByObjectId.get(field.objectMetadataId) ?? [];
+    const resolvedFlatFieldMetadatasByObjectMetadataId = new Map<
+      string,
+      FlatFieldMetadata[]
+    >();
 
-      fieldsForObject.push(field);
-      resolvedFieldsByObjectId.set(field.objectMetadataId, fieldsForObject);
+    for (const flatFieldMetadata of resolvedFlatFieldMetadatas) {
+      const flatFieldMetadatasForObject =
+        resolvedFlatFieldMetadatasByObjectMetadataId.get(
+          flatFieldMetadata.objectMetadataId,
+        ) ?? [];
+
+      flatFieldMetadatasForObject.push(flatFieldMetadata);
+      resolvedFlatFieldMetadatasByObjectMetadataId.set(
+        flatFieldMetadata.objectMetadataId,
+        flatFieldMetadatasForObject,
+      );
     }
 
-    return resolvedObjects.map((object) => ({
-      ...fromObjectMetadataEntityToObjectMetadataDto(object),
-      fields: (resolvedFieldsByObjectId.get(object.id) ?? []).map((field) =>
-        fromFieldMetadataEntityToFieldMetadataDto(
-          field,
-          derivedFieldMetadataIds,
-        ),
-      ),
+    return resolvedFlatObjectMetadatas.map((flatObjectMetadata) => ({
+      ...fromFlatObjectMetadataToObjectMetadataDto(flatObjectMetadata),
+      fields: (
+        resolvedFlatFieldMetadatasByObjectMetadataId.get(
+          flatObjectMetadata.id,
+        ) ?? []
+      ).map(fromFlatFieldMetadataToFieldMetadataDto),
     }));
   }
 }
