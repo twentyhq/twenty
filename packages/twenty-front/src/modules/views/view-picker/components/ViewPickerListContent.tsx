@@ -22,11 +22,12 @@ import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPicke
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { computeViewPickerVisibleViews } from '@/views/view-picker/utils/computeViewPickerVisibleViews';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ViewVisibility } from '~/generated-metadata/graphql';
+import { FeatureFlagKey, ViewVisibility } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 const StyledBoldDropdownMenuItemsContainerWrapper = styled.div`
@@ -45,9 +46,14 @@ export const ViewPickerListContent = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
+  const isSeededDefaultViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+  );
+
   const visibleViews = computeViewPickerVisibleViews({
     views: viewsOnCurrentObject,
     currentViewId: currentView?.id,
+    isSeededDefaultViewEnabled,
   });
 
   const workspaceViews = visibleViews.filter(

@@ -20,8 +20,12 @@ import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  type NavigationMenuItem,
+} from '~/generated-metadata/graphql';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const computeInsertionPosition = (
   selectedItem: { id: string; folderId?: string | null },
@@ -69,6 +73,9 @@ export const useNavigationMenuItemEditOrganizeActions =
     const views = useAtomStateValue(viewsSelector);
     const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
       lastVisitedViewPerObjectMetadataItemState,
+    );
+    const isSeededDefaultViewEnabled = useIsFeatureEnabled(
+      FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
     );
 
     const selectedItem = selectedNavigationMenuItemIdInEditMode
@@ -126,6 +133,7 @@ export const useNavigationMenuItemEditOrganizeActions =
           objectMetadataItems,
           views,
           lastVisitedViewPerObjectMetadataItem,
+          isSeededDefaultViewEnabled,
         });
         if (isNonEmptyString(link)) {
           navigateToNavigationMenuItemLink(link);

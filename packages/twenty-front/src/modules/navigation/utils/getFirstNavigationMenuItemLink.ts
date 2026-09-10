@@ -11,10 +11,11 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 type GetFirstNavigationMenuItemLinkArgs = {
   navigationMenuItemsInDisplayOrder: NavigationMenuItem[];
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  views: Pick<View, 'id' | 'objectMetadataId' | 'key'>[];
+  views: Pick<View, 'id' | 'objectMetadataId' | 'key' | 'type'>[];
   objectPermissionsByObjectMetadataId: Parameters<
     typeof getObjectPermissionsForObject
   >[0];
+  isSeededDefaultViewEnabled?: boolean;
 };
 
 const OBJECT_BACKED_NAVIGATION_MENU_ITEM_TYPES = [
@@ -28,6 +29,7 @@ export const getFirstNavigationMenuItemLink = ({
   objectMetadataItems,
   views,
   objectPermissionsByObjectMetadataId,
+  isSeededDefaultViewEnabled = false,
 }: GetFirstNavigationMenuItemLinkArgs): string | null => {
   for (const item of navigationMenuItemsInDisplayOrder) {
     if (
@@ -60,6 +62,7 @@ export const getFirstNavigationMenuItemLink = ({
       item,
       objectMetadataItems,
       views,
+      isSeededDefaultViewEnabled,
     });
 
     if (isNonEmptyString(link)) {

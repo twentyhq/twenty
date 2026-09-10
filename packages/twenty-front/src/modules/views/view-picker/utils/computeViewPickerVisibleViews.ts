@@ -7,13 +7,21 @@ export const computeViewPickerVisibleViews = <
 >({
   views,
   currentViewId,
+  isSeededDefaultViewEnabled,
 }: {
   views: TView[];
   currentViewId?: string;
+  isSeededDefaultViewEnabled: boolean;
 }): TView[] => {
-  const hasDefaultView = views.some((view) => view.key === ViewKey.DEFAULT);
+  if (!isSeededDefaultViewEnabled) {
+    return views;
+  }
 
-  if (!hasDefaultView) {
+  const viewsWithoutIndexView = views.filter(
+    (view) => view.key !== ViewKey.INDEX,
+  );
+
+  if (viewsWithoutIndexView.length === 0) {
     return views;
   }
 

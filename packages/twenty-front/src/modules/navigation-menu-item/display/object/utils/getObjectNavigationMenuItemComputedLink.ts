@@ -3,13 +3,17 @@ import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import {
+  type NavigationMenuItem,
+  ViewType,
+} from '~/generated-metadata/graphql';
 
 export const getObjectNavigationMenuItemComputedLink = (
   item: Pick<NavigationMenuItem, 'targetObjectMetadataId'>,
   objectMetadataItems: Pick<EnrichedObjectMetadataItem, 'id' | 'namePlural'>[],
-  views: Pick<View, 'id' | 'objectMetadataId' | 'key'>[],
+  views: Pick<View, 'id' | 'objectMetadataId' | 'key' | 'type'>[],
   lastVisitedViewId?: string,
+  isSeededDefaultViewEnabled = false,
 ): string => {
   const objectMetadataItem = objectMetadataItems.find(
     (meta) => meta.id === item.targetObjectMetadataId,
@@ -18,11 +22,14 @@ export const getObjectNavigationMenuItemComputedLink = (
     return '';
   }
 
-  const defaultViewId = views.find(
-    (view) =>
-      view.objectMetadataId === objectMetadataItem.id &&
-      view.key === ViewKey.DEFAULT,
-  )?.id;
+  const seededDefaultViewId = isSeededDefaultViewEnabled
+    ? views.find(
+        (view) =>
+          view.objectMetadataId === objectMetadataItem.id &&
+          view.type !== ViewType.FIELDS_WIDGET &&
+          view.key !== ViewKey.INDEX,
+      )?.id
+    : undefined;
 
   const indexViewId = views.find(
     (view) =>
@@ -30,7 +37,7 @@ export const getObjectNavigationMenuItemComputedLink = (
       view.key === ViewKey.INDEX,
   )?.id;
 
-  const targetViewId = lastVisitedViewId ?? defaultViewId ?? indexViewId;
+  const targetViewId = lastVisitedViewId ?? seededDefaultViewId ?? indexViewId;
 
   return getAppPath(
     AppPath.RecordIndexPage,

@@ -1,7 +1,7 @@
 import { getObjectNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemComputedLink';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
-import { ViewKey } from '~/generated-metadata/graphql';
+import { ViewKey, ViewType } from '~/generated-metadata/graphql';
 
 const mockObjectMetadataItems: Pick<
   EnrichedObjectMetadataItem,
@@ -13,8 +13,26 @@ const mockObjectMetadataItems: Pick<
   },
 ];
 
-const mockViews: Pick<View, 'id' | 'objectMetadataId' | 'key'>[] = [
-  { id: 'view-index', objectMetadataId: 'metadata-1', key: ViewKey.INDEX },
+const mockViews: Pick<View, 'id' | 'objectMetadataId' | 'key' | 'type'>[] = [
+  {
+    id: 'view-index',
+    objectMetadataId: 'metadata-1',
+    key: ViewKey.INDEX,
+    type: ViewType.TABLE,
+  },
+];
+
+const mockViewsWithSeededView: Pick<
+  View,
+  'id' | 'objectMetadataId' | 'key' | 'type'
+>[] = [
+  ...mockViews,
+  {
+    id: 'view-seeded',
+    objectMetadataId: 'metadata-1',
+    key: null,
+    type: ViewType.TABLE,
+  },
 ];
 
 describe('getObjectNavigationMenuItemComputedLink', () => {
@@ -58,5 +76,61 @@ describe('getObjectNavigationMenuItemComputedLink', () => {
     );
 
     expect(result).toBe('');
+  });
+
+  it('should keep linking to the index view when the seeded default view flag is off', () => {
+    const result = getObjectNavigationMenuItemComputedLink(
+      { targetObjectMetadataId: 'metadata-1' },
+      mockObjectMetadataItems,
+      mockViewsWithSeededView,
+      undefined,
+      false,
+    );
+
+    expect(result).toBe('/objects/people?viewId=view-index');
+  });
+
+  it('should link to the seeded view instead of the index view when the flag is on', () => {
+    const result = getObjectNavigationMenuItemComputedLink(
+      { targetObjectMetadataId: 'metadata-1' },
+      mockObjectMetadataItems,
+      mockViewsWithSeededView,
+      undefined,
+      true,
+    );
+
+    expect(result).toBe('/objects/people?viewId=view-seeded');
+  });
+
+  it('should fall back to the index view when the flag is on and no seeded view exists', () => {
+    const result = getObjectNavigationMenuItemComputedLink(
+      { targetObjectMetadataId: 'metadata-1' },
+      mockObjectMetadataItems,
+      mockViews,
+      undefined,
+      true,
+    );
+
+    expect(result).toBe('/objects/people?viewId=view-index');
+  });
+
+  it('should never target a fields widget view when the flag is on', () => {
+    const result = getObjectNavigationMenuItemComputedLink(
+      { targetObjectMetadataId: 'metadata-1' },
+      mockObjectMetadataItems,
+      [
+        ...mockViews,
+        {
+          id: 'view-widget',
+          objectMetadataId: 'metadata-1',
+          key: null,
+          type: ViewType.FIELDS_WIDGET,
+        },
+      ],
+      undefined,
+      true,
+    );
+
+    expect(result).toBe('/objects/people?viewId=view-index');
   });
 });

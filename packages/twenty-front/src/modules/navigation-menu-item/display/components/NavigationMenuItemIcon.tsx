@@ -7,7 +7,10 @@ import {
 } from 'twenty-ui/data-display';
 import { IconLink, IconWorld, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  type NavigationMenuItem,
+} from '~/generated-metadata/graphql';
 
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
@@ -20,6 +23,7 @@ import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandard
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const NavigationMenuItemIcon = ({
@@ -30,6 +34,9 @@ export const NavigationMenuItemIcon = ({
   const { getIcon } = useIcons();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
+  const isSeededDefaultViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+  );
 
   const objectNameSingular =
     getNavigationMenuItemObjectNameSingular(
@@ -101,6 +108,7 @@ export const NavigationMenuItemIcon = ({
       item: navigationMenuItem,
       objectMetadataItems,
       views,
+      isSeededDefaultViewEnabled,
     });
     return (
       <LinkIconWithLinkOverlay

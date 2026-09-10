@@ -38,8 +38,12 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const StyledRightIconsContainer = styled.div`
   align-items: center;
@@ -55,6 +59,9 @@ export const WorkspaceSection = () => {
   const views = useAtomStateValue(viewsSelector);
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
+  );
+  const isSeededDefaultViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
   );
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
@@ -100,6 +107,7 @@ export const WorkspaceSection = () => {
         objectMetadataItems,
         views,
         lastVisitedViewPerObjectMetadataItem,
+        isSeededDefaultViewEnabled,
       });
       return isNonEmptyString(link);
     });
@@ -109,6 +117,7 @@ export const WorkspaceSection = () => {
         objectMetadataItems,
         views,
         lastVisitedViewPerObjectMetadataItem,
+        isSeededDefaultViewEnabled,
       });
       if (isNonEmptyString(link)) {
         navigate(link);
@@ -136,6 +145,7 @@ export const WorkspaceSection = () => {
       objectMetadataItems,
       views,
       lastVisitedViewPerObjectMetadataItem,
+      isSeededDefaultViewEnabled,
     });
     if (isNonEmptyString(link)) {
       navigate(link);

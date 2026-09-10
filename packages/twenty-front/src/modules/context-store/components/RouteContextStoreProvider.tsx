@@ -10,7 +10,12 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { matchRoutes, useLocation, useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewKey, ViewType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  ViewKey,
+  ViewType,
+} from '~/generated-metadata/graphql';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 const getViewId = ({
@@ -18,13 +23,13 @@ const getViewId = ({
   indexViewId,
   lastVisitedViewId,
   firstAvailableViewId,
-  defaultViewId,
+  seededDefaultViewId,
 }: {
   viewIdFromQueryParams: string | null;
   indexViewId?: string;
   lastVisitedViewId?: string;
   firstAvailableViewId?: string;
-  defaultViewId?: string;
+  seededDefaultViewId?: string;
 }) => {
   if (isDefined(viewIdFromQueryParams)) {
     return viewIdFromQueryParams;
@@ -34,8 +39,8 @@ const getViewId = ({
     return lastVisitedViewId;
   }
 
-  if (isDefined(defaultViewId)) {
-    return defaultViewId;
+  if (isDefined(seededDefaultViewId)) {
+    return seededDefaultViewId;
   }
 
   if (isDefined(indexViewId)) {
@@ -106,11 +111,18 @@ export const RouteContextStoreProvider = () => {
       ? lastVisitedViewIdRaw
       : undefined;
 
-  const defaultViewId = views.find(
-    (view) =>
-      view.objectMetadataId === objectMetadataItem?.id &&
-      view.key === ViewKey.DEFAULT,
-  )?.id;
+  const isSeededDefaultViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+  );
+
+  const seededDefaultViewId = isSeededDefaultViewEnabled
+    ? views.find(
+        (view) =>
+          view.objectMetadataId === objectMetadataItem?.id &&
+          view.type !== ViewType.FIELDS_WIDGET &&
+          view.key !== ViewKey.INDEX,
+      )?.id
+    : undefined;
 
   const indexViewId = views.find(
     (view) =>
@@ -129,7 +141,7 @@ export const RouteContextStoreProvider = () => {
     indexViewId,
     lastVisitedViewId,
     firstAvailableViewId,
-    defaultViewId,
+    seededDefaultViewId,
   });
 
   const shouldComputeContextStore =
