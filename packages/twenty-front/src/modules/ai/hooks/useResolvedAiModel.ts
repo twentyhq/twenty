@@ -7,8 +7,6 @@ import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
 
-// The concrete model an agent modelId runs on, whether it names a model, a
-// tier, or the workspace default.
 export const useResolvedAiModel = (
   modelId: string | null | undefined,
 ): ClientAiModelConfig | undefined => {
