@@ -4,14 +4,18 @@ import {
   type PullEntity,
   type PullEntityKind,
 } from '@/cli/utilities/pull/build-pull-entities';
-import { type ScannedDefineFile } from '@/cli/utilities/pull/scan-project-define-files';
+import { capFileBaseName } from '@/cli/utilities/pull/pull-file-base-name';
+import { type ScannedSourceFile } from '@/cli/utilities/pull/scan-project-source-files';
 import { writeDefineFile } from '@/cli/utilities/pull/write-define-file';
+import { kebabCase } from '@/cli/utilities/string/kebab-case';
 import { dirname, posix } from 'node:path';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+export type PullWriteKind = PullEntityKind | 'translation';
+
 export type PullWrite = {
-  kind: PullEntityKind;
+  kind: PullWriteKind;
   universalIdentifier: string;
   relativePath: string;
   content: string;
@@ -38,6 +42,11 @@ const ENTITY_KEY_BY_KIND: Record<PullEntityKind, ManifestEntityKey> = {
   object: ManifestEntityKey.Objects,
   field: ManifestEntityKey.Fields,
   index: ManifestEntityKey.Indexes,
+  view: ManifestEntityKey.Views,
+  viewField: ManifestEntityKey.ViewFields,
+  pageLayout: ManifestEntityKey.PageLayouts,
+  pageLayoutTab: ManifestEntityKey.PageLayoutTabs,
+  navigationMenuItem: ManifestEntityKey.NavigationMenuItems,
 };
 
 const toPosixPath = (value: string): string => value.split('\\').join('/');
@@ -46,7 +55,7 @@ const findExistingFolderForKind = ({
   scannedFiles,
   entityKey,
 }: {
-  scannedFiles: ScannedDefineFile[];
+  scannedFiles: ScannedSourceFile[];
   entityKey: ManifestEntityKey;
 }): string | null => {
   const folderCounts = new Map<string, number>();
@@ -92,18 +101,25 @@ const resolveFileBaseNames = (entities: PullEntity[]): Map<string, string> => {
 
     const qualifiedNames = collidingEntities.map((entity) =>
       isDefined(entity.parentName)
-        ? `${entity.parentName}-${entity.fileBaseName}`
+        ? capFileBaseName(
+            `${kebabCase(entity.parentName)}-${entity.fileBaseName}`,
+          )
         : entity.fileBaseName,
     );
-    const hasUniqueQualifiedNames =
-      new Set(qualifiedNames).size === qualifiedNames.length;
 
     collidingEntities.forEach((entity, index) => {
+      const qualifiedName = qualifiedNames[index];
+      const isQualifiedNameUnique =
+        qualifiedNames.indexOf(qualifiedName) ===
+        qualifiedNames.lastIndexOf(qualifiedName);
+
       fileBaseNameByUniversalIdentifier.set(
         entity.universalIdentifier,
-        hasUniqueQualifiedNames
-          ? qualifiedNames[index]
-          : `${entity.universalIdentifier.slice(0, 8)}-${entity.fileBaseName}`,
+        isQualifiedNameUnique
+          ? qualifiedName
+          : capFileBaseName(
+              `${entity.universalIdentifier.slice(0, 8)}-${qualifiedName}`,
+            ),
       );
     });
   }
@@ -153,7 +169,7 @@ const findExistingPath = ({
   pathByUniversalIdentifier,
 }: {
   entity: PullEntity;
-  applicationFile: ScannedDefineFile | undefined;
+  applicationFile: ScannedSourceFile | undefined;
   pathByUniversalIdentifier: Map<string, string>;
 }): string | undefined => {
   if (entity.kind !== 'application') {
@@ -187,7 +203,7 @@ export const planPullWrites = ({
 }: {
   manifest: Manifest;
   baseManifest: Manifest | null;
-  scannedFiles: ScannedDefineFile[];
+  scannedFiles: ScannedSourceFile[];
 }): PullWritePlan & {
   skipped: ReturnType<typeof buildPullEntities>['skipped'];
 } => {

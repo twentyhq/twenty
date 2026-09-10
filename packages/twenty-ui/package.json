@@ -1,6 +1,6 @@
 {
   "name": "twenty-ui",
-  "version": "1.0.0-alpha.1",
+  "version": "2.40.0",
   "description": "Twenty's shared React UI component library.",
   "license": "MIT",
   "repository": {
@@ -68,7 +68,7 @@
     "vitest": "^4.1.0"
   },
   "dependencies": {
-    "@base-ui/react": "^1.5.0",
+    "@base-ui/react": "^1.8.0",
     "@monaco-editor/react": "^4.7.0",
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
@@ -88,6 +88,7 @@
   },
   "files": [
     "dist",
+    "LICENSE",
     "!dist/individual",
     "!dist/individual/**",
     "!dist/**/*.map"

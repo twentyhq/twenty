@@ -845,12 +845,11 @@ type Workspace {
   isInternalMessagesImportEnabled: Boolean!
   editableProfileFields: [String!]
   defaultRole: Role
-  fastModel: String!
-  smartModel: String!
+  aiChatModelTier: AiModelTier!
+  aiAgentModelTier: AiModelTier!
+  isAutoModelSelectionEnabled: Boolean!
+  aiModelIdByTier: JSON!
   aiAdditionalInstructions: String
-  enabledAiModelIds: [String!]
-  useRecommendedModels: Boolean!
-  routerModel: String!
   workspaceCustomApplication: Application
   featureFlags: [FeatureFlag!]
   billingSubscriptions: [BillingSubscription!]!
@@ -877,6 +876,14 @@ enum WorkspaceActivationStatus {
   ACTIVE
   INACTIVE
   SUSPENDED
+}
+
+enum AiModelTier {
+  extraFast
+  fast
+  balanced
+  smart
+  extraSmart
 }
 
 type User {
@@ -1415,6 +1422,7 @@ type BillingProductMetadata {
   planKey: BillingPlanKey!
   priceUsageBased: BillingUsageType!
   productKey: BillingProductKey!
+  isLegacy: String
 }
 
 """The different billing plans available"""
@@ -1440,6 +1448,7 @@ type BillingPriceLicensed {
   stripePriceId: String!
   priceUsageType: BillingUsageType!
   creditAmount: Float
+  isSellable: Boolean!
 }
 
 enum SubscriptionInterval {
@@ -1488,6 +1497,8 @@ type BillingSubscriptionItem {
   hasReachedCurrentPeriodCap: Boolean!
   quantity: Float
   stripePriceId: String!
+  unitAmount: Float
+  creditAmount: Float
   billingProduct: BillingProductDTO!
 }
 
@@ -1800,6 +1811,7 @@ enum UsageResourceType {
   API
   LOGIC_FUNCTION
   EMAIL
+  WEBHOOK
 }
 
 enum UsageOperationType {
@@ -1812,6 +1824,7 @@ enum UsageOperationType {
   CALL_RECORDING
   EMAIL_SEND
   API_REQUEST
+  WEBHOOK_CALL
   SUBSCRIPTION
 }
 
@@ -1899,6 +1912,28 @@ type ConnectedAccountPublicDTO {
   connectionParameters: PublicImapSmtpCaldavConnectionParameters
 }
 
+type ApplicationConnectedAccountDTO {
+  id: UUID!
+  handle: String!
+  provider: String!
+  lastCredentialsRefreshedAt: DateTime
+  authFailedAt: DateTime
+  authFailedReason: String
+  archivedAt: DateTime
+  handleAliases: [String!]
+  scopes: [String!]
+  lastSignedInAt: DateTime
+  userWorkspaceId: UUID!
+  connectionProviderId: UUID
+  applicationId: UUID
+  name: String
+  visibility: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  connectionParameters: PublicImapSmtpCaldavConnectionParameters
+  isOwnedByCurrentUser: Boolean!
+}
+
 type FeatureFlag {
   key: FeatureFlagKey!
   value: Boolean!
@@ -1919,6 +1954,7 @@ enum FeatureFlagKey {
   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_SHARING_ENABLED
+  IS_WEBHOOK_RATE_LIMIT_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2021,12 +2057,17 @@ type ClientAiModelConfig {
   outputCostPerMillionTokens: Float
   nativeCapabilities: NativeModelCapabilities
   isDeprecated: Boolean
-  isRecommended: Boolean
   providerName: String
   providerLabel: String
   contextWindowTokens: Float
   maxOutputTokens: Float
   dataResidency: String
+  intelligenceIndex: Float
+  outputTokensPerSecond: Float
+  costPerTask: Float
+  efforts: [String!]
+  effort: String
+  isBenchmarkInherited: Boolean
 }
 
 enum ModelFamily {
@@ -2035,6 +2076,11 @@ enum ModelFamily {
   GEMINI
   MISTRAL
   GROK
+}
+
+type ClientAiModelTierConfig {
+  tier: AiModelTier!
+  modelId: String!
 }
 
 type Billing {
@@ -2098,6 +2144,7 @@ type ClientConfig {
   authProviders: AuthProviders!
   billing: Billing!
   aiModels: [ClientAiModelConfig!]!
+  aiModelTiers: [ClientAiModelTierConfig!]!
   signInPrefilled: Boolean!
   isMultiWorkspaceEnabled: Boolean!
   isEmailVerificationRequired: Boolean!
@@ -2358,6 +2405,7 @@ type Field {
   isNullable: Boolean
   isUnique: Boolean
   isSearchable: Boolean
+  isAuditLogged: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -3542,6 +3590,7 @@ type Query {
   apiKey(input: GetApiKeyInput!): ApiKey
   currentUserSessions: [UserSession!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
+  applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
   listPlans: [BillingPlan!]!
@@ -4739,12 +4788,12 @@ input UpdateWorkspaceInput {
   isTwoFactorAuthenticationEnforced: Boolean
   trashRetentionDays: Float
   eventLogRetentionDays: Float
-  fastModel: String
-  smartModel: String
+  aiChatModelTier: AiModelTier
+  aiAgentModelTier: AiModelTier
+  isAutoModelSelectionEnabled: Boolean
+  aiModelIdByTier: JSON
   aiAdditionalInstructions: String
   editableProfileFields: [String!]
-  enabledAiModelIds: [String!]
-  useRecommendedModels: Boolean
   isInternalMessagesImportEnabled: Boolean
 }
 
@@ -4818,6 +4867,7 @@ input CreateFieldInput {
   isNullable: Boolean
   isUnique: Boolean
   isSearchable: Boolean
+  isAuditLogged: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -4849,6 +4899,7 @@ input UpdateFieldInput {
   isNullable: Boolean
   isUnique: Boolean
   isSearchable: Boolean
+  isAuditLogged: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -5005,6 +5056,7 @@ input SendEmailViaDomainInput {
 
 input SendMessageCampaignInput {
   campaignId: String!
+  scheduledAt: DateTime
 }
 
 input CancelMessageCampaignInput {

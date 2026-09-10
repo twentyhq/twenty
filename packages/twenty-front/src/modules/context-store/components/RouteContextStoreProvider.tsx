@@ -1,3 +1,4 @@
+import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { RouteContextStoreProviderEffect } from '@/context-store/components/RouteContextStoreProviderEffect';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
@@ -6,7 +7,7 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { useLocation, useParams, useSearchParams } from 'react-router-dom';
+import { matchRoutes, useLocation, useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewKey, ViewType } from '~/generated-metadata/graphql';
@@ -39,6 +40,7 @@ const getViewId = (
 
 export const RouteContextStoreProvider = () => {
   const location = useLocation();
+  const routeObjects = useWorkspaceRouteObjects();
   const isRecordIndexPage = isMatchingLocation(
     location,
     AppPath.RecordIndexPage,
@@ -48,8 +50,9 @@ export const RouteContextStoreProvider = () => {
   const isAiChatPage = isMatchingLocation(location, AppPath.AiChat);
   const isSettingsPage = useIsSettingsPage();
 
-  const objectNamePlural = useParams().objectNamePlural ?? '';
-  const objectNameSingular = useParams().objectNameSingular ?? '';
+  const routeParams = matchRoutes(routeObjects, location)?.at(-1)?.params;
+  const objectNamePlural = routeParams?.objectNamePlural;
+  const objectNameSingular = routeParams?.objectNameSingular;
 
   const [searchParams] = useSearchParams();
   const viewIdQueryParamRaw = searchParams.get('viewId');

@@ -68,30 +68,25 @@ jest.mock('@/object-core/workflows/hooks/useCoreWorkflows', () => ({
   CORE_WORKFLOWS_INITIAL_SORT: [],
   CORE_WORKFLOWS_TABLE_ID: 'workflow-table',
   useCoreWorkflows: () => ({
-    coreWorkflows: [],
+    coreWorkflows: [{ id: 'workflow-1' }],
     hasNextPage: false,
     loading: false,
+    error: undefined,
     fetchNextPage: jest.fn(),
+  }),
+}));
+
+jest.mock('@/object-core/workflows/hooks/useCreateCoreWorkflow', () => ({
+  useCreateCoreWorkflow: () => ({
+    createCoreWorkflow: jest.fn(),
+    canCreateCoreWorkflow: false,
+    isCreatingCoreWorkflow: false,
   }),
 }));
 
 jest.mock('react-intersection-observer', () => ({
   useInView: () => ({ ref: jest.fn(), inView: false }),
 }));
-
-jest.mock(
-  '@/object-core/workflows/hooks/useHydrateSelectedWorkflowRecords',
-  () => ({
-    useHydrateSelectedWorkflowRecords: () => undefined,
-  }),
-);
-
-jest.mock(
-  '@/object-core/workflows/components/CoreWorkflowsSelectionToContextStoreEffect',
-  () => ({
-    CoreWorkflowsSelectionToContextStoreEffect: () => null,
-  }),
-);
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
   useAtomStateValue: () => ({}),

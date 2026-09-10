@@ -18,7 +18,7 @@ import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/com
 import { SettingsAccountsMessageFolderCard } from '@/settings/accounts/components/SettingsAccountsMessageFolderCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
 import { UPDATE_MESSAGE_CHANNEL } from '@/settings/accounts/graphql/mutations/updateMessageChannel';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { type MessageChannelVisibility } from '~/generated/graphql';
 
 type SettingsAccountsMessageChannelDetailsProps = {
@@ -106,7 +106,7 @@ export const SettingsAccountsMessageChannelDetails = ({
       {!isGroupMailbox && (
         <Section>
           <Card rounded>
-            <SettingsOptionCardContentToggle
+            <SettingsOptionCardContentSwitch
               Icon={IconUsers}
               title={t`Exclude group emails`}
               description={t`Don't sync emails from team@ support@ noreply@...`}
@@ -142,7 +142,7 @@ export const SettingsAccountsMessageChannelDetails = ({
       </Section>
       <Section>
         <Card rounded>
-          <SettingsOptionCardContentToggle
+          <SettingsOptionCardContentSwitch
             Icon={IconBriefcase}
             title={t`Exclude non-professional emails`}
             description={t`Don't create contacts from/to Gmail, Outlook emails`}
