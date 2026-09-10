@@ -10,7 +10,11 @@ import {
   within,
 } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
-import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
+import {
+  CatalogDecorator,
+  type CatalogStory,
+  ComponentDecorator,
+} from 'twenty-ui/testing';
 import { MOCK_CALL_RECORDING_AUDIO_DATA_URI } from './mockCallRecordingAudio';
 
 const meta: Meta<typeof CallRecordingAudioPlayer> = {
@@ -20,6 +24,11 @@ const meta: Meta<typeof CallRecordingAudioPlayer> = {
     src: MOCK_CALL_RECORDING_AUDIO_DATA_URI,
     onRetry: fn(async () => {}),
   },
+  render: (args) => (
+    <div style={{ width: 320 }}>
+      <CallRecordingAudioPlayer {...args} />
+    </div>
+  ),
 };
 
 export default meta;
@@ -56,6 +65,7 @@ export const Catalog: CatalogStory<Story, typeof CallRecordingAudioPlayer> = {
 };
 
 export const MediaStates: Story = {
+  decorators: [ComponentDecorator],
   tags: ['!dev', '!autodocs'],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -103,6 +113,7 @@ export const MediaStates: Story = {
 };
 
 export const KeyboardSeeking: Story = {
+  decorators: [ComponentDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const audioElement = canvasElement.querySelector('audio');
@@ -127,6 +138,7 @@ export const KeyboardSeeking: Story = {
 };
 
 export const DragSeeking: Story = {
+  decorators: [ComponentDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const audioElement = canvasElement.querySelector('audio');
