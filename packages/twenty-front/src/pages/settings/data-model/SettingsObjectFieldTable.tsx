@@ -27,7 +27,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { IconArchive, IconCircleDashed, IconSettings } from 'twenty-ui/icon';
 import { SearchInput } from 'twenty-ui/input';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { MenuItemSwitch } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMostlyEmptyFieldMetadataIds } from '@/settings/data-model/object-details/hooks/useMostlyEmptyFieldMetadataIds';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
@@ -183,34 +183,34 @@ export const SettingsObjectFieldTable = ({
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemToggle
+                    <MenuItemSwitch
                       LeftIcon={IconArchive}
-                      onToggleChange={() => setShowInactive(!showInactive)}
-                      toggled={showInactive}
+                      onCheckedChange={() => setShowInactive(!showInactive)}
+                      checked={showInactive}
                       text={t`Inactive`}
-                      toggleSize="small"
+                      size="sm"
                     />
                     {(mostlyEmptyFieldMetadataIds.size > 0 ||
                       showOnlyMostlyEmpty) && (
-                      <MenuItemToggle
+                      <MenuItemSwitch
                         LeftIcon={IconCircleDashed}
-                        onToggleChange={() =>
+                        onCheckedChange={() =>
                           setShowOnlyMostlyEmpty(!showOnlyMostlyEmpty)
                         }
-                        toggled={showOnlyMostlyEmpty}
+                        checked={showOnlyMostlyEmpty}
                         text={t`Mostly empty`}
-                        toggleSize="small"
+                        size="sm"
                       />
                     )}
                     {isAdvancedModeEnabled && (
-                      <MenuItemToggle
+                      <MenuItemSwitch
                         LeftIcon={IconSettings}
-                        onToggleChange={() =>
+                        onCheckedChange={() =>
                           setShowSystemFields(!showSystemFields)
                         }
-                        toggled={showSystemFields}
+                        checked={showSystemFields}
                         text={t`System fields`}
-                        toggleSize="small"
+                        size="sm"
                       />
                     )}
                   </DropdownMenuItemsContainer>

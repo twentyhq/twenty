@@ -11,7 +11,7 @@ import { type AiModelPreferences } from 'src/engine/metadata-modules/ai/ai-model
 export const DEFAULT_FAST_MODELS = [
   'openai/gpt-5.6-luna',
   'anthropic/claude-sonnet-5',
-  'google/gemini-3.7-flash',
+  'google/gemini-3.8-flash',
   'xai/grok-4.3',
   'mistral/mistral-large-latest',
 ];
@@ -19,7 +19,7 @@ export const DEFAULT_FAST_MODELS = [
 export const DEFAULT_SMART_MODELS = [
   'openai/gpt-5.6-sol',
   'anthropic/claude-opus-5',
-  'google/gemini-3.1-pro-preview',
+  'google/gemini-3.8-flash',
   'xai/grok-4.6',
   'mistral/mistral-large-latest',
 ];
@@ -29,7 +29,7 @@ export const DEFAULT_RECOMMENDED_MODELS = [
   'openai/gpt-5.6-sol',
   'anthropic/claude-sonnet-5',
   'anthropic/claude-opus-5',
-  'google/gemini-3.1-pro-preview',
+  'google/gemini-3.8-flash',
   'xai/grok-4.6',
   'mistral/mistral-large-latest',
 ];
