@@ -3,6 +3,7 @@ import {
   DEFAULT_AI_AGENT_MODEL_TIER,
   getAiModelTierFromModelId,
 } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -24,7 +25,7 @@ export const useResolvedAiModel = (
       ? (currentWorkspace?.aiAgentModelTier ?? DEFAULT_AI_AGENT_MODEL_TIER)
       : getAiModelTierFromModelId(modelId);
 
-  if (tier !== undefined) {
+  if (isDefined(tier)) {
     return tiers.find((resolvedTier) => resolvedTier.tier === tier)?.model;
   }
 

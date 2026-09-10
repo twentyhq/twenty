@@ -1,5 +1,6 @@
 import { AUTO_SELECT_MODEL_ID_BY_TIER, isAiModelTier } from 'twenty-shared/ai';
 import { AUTO_SELECT_FAST_MODEL_ID } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
@@ -25,10 +26,9 @@ export const useAgentChatModelId = () => {
     ? AUTO_SELECT_FAST_MODEL_ID
     : undefined;
 
-  const modelIdForRequest =
-    selectedTier !== null
-      ? AUTO_SELECT_MODEL_ID_BY_TIER[selectedTier]
-      : workspaceSetupModelId;
+  const modelIdForRequest = isDefined(selectedTier)
+    ? AUTO_SELECT_MODEL_ID_BY_TIER[selectedTier]
+    : workspaceSetupModelId;
 
   return { selectedTier, modelIdForRequest };
 };
