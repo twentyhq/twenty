@@ -8,7 +8,7 @@ import { SettingsApplicationRegistrationGeneralInfo } from '~/pages/settings/app
 import { SettingsAdminApplicationRegistrationClaims } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims';
 import { SettingsAdminApplicationRegistrationDangerZone } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone';
 import { SettingsApplicationRegistrationGeneralStats } from '~/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats';
-import { SettingsAdminApplicationRegistrationGeneralToggles } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles';
+import { SettingsAdminApplicationRegistrationGeneralSwitches } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches';
 
 export const SettingsApplicationRegistrationGeneralTab = ({
   registration,
@@ -39,7 +39,7 @@ export const SettingsApplicationRegistrationGeneralTab = ({
       )}
       <SettingsApplicationRegistrationGeneralInfo registration={registration} />
       {fromAdmin && (
-        <SettingsAdminApplicationRegistrationGeneralToggles
+        <SettingsAdminApplicationRegistrationGeneralSwitches
           registration={registration}
         />
       )}

@@ -1979,6 +1979,7 @@ export enum FeatureFlagKey {
   IS_RECORD_SHARING_ENABLED = 'IS_RECORD_SHARING_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
+  IS_WEBHOOK_RATE_LIMIT_ENABLED = 'IS_WEBHOOK_RATE_LIMIT_ENABLED',
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED = 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED'
 }
 
@@ -5825,6 +5826,7 @@ export type SendInvitations = {
 
 export type SendMessageCampaignInput = {
   campaignId: Scalars['String']['input'];
+  scheduledAt?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 export type SendMessageCampaignOutputDto = {
@@ -6805,6 +6807,7 @@ export enum UsageOperationType {
   CODE_EXECUTION = 'CODE_EXECUTION',
   EMAIL_SEND = 'EMAIL_SEND',
   SUBSCRIPTION = 'SUBSCRIPTION',
+  WEBHOOK_CALL = 'WEBHOOK_CALL',
   WEB_SEARCH = 'WEB_SEARCH',
   WORKFLOW_EXECUTION = 'WORKFLOW_EXECUTION'
 }
@@ -6816,6 +6819,7 @@ export enum UsageResourceType {
   EMAIL = 'EMAIL',
   LOGIC_FUNCTION = 'LOGIC_FUNCTION',
   STORAGE = 'STORAGE',
+  WEBHOOK = 'WEBHOOK',
   WORKFLOW = 'WORKFLOW'
 }
 

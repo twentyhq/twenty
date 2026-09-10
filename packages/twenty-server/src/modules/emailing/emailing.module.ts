@@ -44,6 +44,7 @@ import { CampaignSendSlotService } from 'src/modules/emailing/services/campaign-
 import { MessageCampaignDeliveryService } from 'src/modules/emailing/services/message-campaign-delivery.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignMaterializationService } from 'src/modules/emailing/services/message-campaign-materialization.service';
+import { MessageCampaignScheduleService } from 'src/modules/emailing/services/message-campaign-schedule.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { MessageListDuplicationService } from 'src/modules/emailing/services/message-list-duplication.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
@@ -82,6 +83,7 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
     CampaignVariableService,
     EmailBillingService,
     MessageCampaignService,
+    MessageCampaignScheduleService,
     MessageCampaignAudienceService,
     CampaignSendSlotService,
     MessageCampaignDeliveryService,
@@ -114,6 +116,7 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
     EmailingDomainSenderService,
     EmailBillingService,
     MessageCampaignService,
+    MessageCampaignScheduleService,
     CampaignSendSlotService,
     MessageCampaignDeliveryService,
     MessageCampaignBatchDeliveryService,
