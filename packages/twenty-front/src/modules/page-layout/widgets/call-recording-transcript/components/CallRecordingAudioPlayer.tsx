@@ -200,38 +200,40 @@ export const CallRecordingAudioPlayer = ({
           </IconButton>
           <StyledTrack>
             {isDurationKnown ? (
-              <Slider
-                aria-label={t`Seek`}
-                aria-valuetext={t`${spokenMinutes} ${spokenSeconds}`}
+              <Slider.Root
                 max={durationSeconds}
                 step={0.1}
                 value={currentTimeSeconds}
-                onPointerDown={(event) => {
-                  event.currentTarget.setPointerCapture(event.pointerId);
-                  setIsSeeking(true);
-                }}
-                onChange={(event) => {
-                  const value = event.currentTarget.valueAsNumber;
+                onValueChange={(value, details) => {
                   setCurrentTimeSeconds(value);
-                  if (!isSeeking) {
-                    handleCommitSeek(value);
-                  }
+                  setIsSeeking(
+                    details.reason === 'track-press' ||
+                      details.reason === 'drag',
+                  );
                 }}
-                onPointerUp={(event) =>
-                  handleCommitSeek(event.currentTarget.valueAsNumber)
-                }
+                onValueCommitted={handleCommitSeek}
                 onPointerCancel={() => {
                   setIsSeeking(false);
                   setCurrentTimeSeconds(
                     audioElementRef.current?.currentTime ?? 0,
                   );
                 }}
-                onBlur={(event) => {
-                  if (isSeeking) {
-                    handleCommitSeek(event.currentTarget.valueAsNumber);
-                  }
-                }}
-              />
+              >
+                <Slider.Control>
+                  <Slider.Track>
+                    <Slider.Indicator />
+                    <Slider.Thumb
+                      aria-label={t`Seek`}
+                      aria-valuetext={t`${spokenMinutes} ${spokenSeconds}`}
+                      onBlur={(event) => {
+                        if (isSeeking) {
+                          handleCommitSeek(event.currentTarget.valueAsNumber);
+                        }
+                      }}
+                    />
+                  </Slider.Track>
+                </Slider.Control>
+              </Slider.Root>
             ) : (
               <StyledLoadingTrack />
             )}

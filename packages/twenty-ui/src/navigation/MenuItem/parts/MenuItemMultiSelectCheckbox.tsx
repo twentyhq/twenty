@@ -13,9 +13,7 @@ export const MenuItemMultiSelectCheckbox = ({
   onSelectChange,
   ariaLabel,
 }: MenuItemMultiSelectCheckboxProps) => {
-  // The checkbox handles its own toggle via onCheckedChange. Base UI
-  // re-dispatches a bubbling click on its hidden input, so we stop propagation
-  // here to keep the surrounding row's onClick from toggling twice.
+  // The surrounding row also toggles selection on click.
   return (
     // oxlint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
     <div
@@ -24,7 +22,7 @@ export const MenuItemMultiSelectCheckbox = ({
     >
       <Checkbox
         checked={selected}
-        onCheckedChange={onSelectChange}
+        onCheckedChange={(checked) => onSelectChange?.(checked)}
         aria-label={ariaLabel}
       />
     </div>

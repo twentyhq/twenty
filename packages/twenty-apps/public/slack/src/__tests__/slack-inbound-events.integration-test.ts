@@ -10,7 +10,7 @@ import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-
 import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test.util';
 import {
   SLACK_CHANNEL_WELCOME_UNIVERSAL_IDENTIFIER,
-  SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
+  SLACK_ASSISTANT_REQUEST_UNIVERSAL_IDENTIFIER,
   SLACK_HOME_OPENED_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { SLACK_ASSISTANT_EMPTY_REQUEST_TEXT } from 'src/logic-functions/constants/slack-assistant-empty-request-text';
@@ -177,7 +177,7 @@ describe('Slack inbound events', () => {
         expect.objectContaining({
           workspaceId,
           targetLogicFunctionUniversalIdentifier:
-            SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
+            SLACK_ASSISTANT_REQUEST_UNIVERSAL_IDENTIFIER,
         }),
       );
     });
@@ -251,7 +251,10 @@ describe('Slack inbound events', () => {
         }),
       );
 
-      expect(result).toEqual({ ok: true });
+      expect(result).toEqual({
+        ok: true,
+        request: expect.objectContaining({ id: expect.any(String) }),
+      });
 
       const request = await findRequestByMessageTimestamp(
         slackMessageTimestamp,
@@ -270,7 +273,7 @@ describe('Slack inbound events', () => {
       );
     });
 
-    it('should ignore a redelivery of the same Slack message', async () => {
+    it('should hand a redelivery of an unanswered Slack message back to the same request', async () => {
       const slackMessageTimestamp = nextMessageTimestamp();
       const eventBody = buildSlackAppMentionEventBody({
         channelId: CHANNEL_ID,
@@ -279,12 +282,12 @@ describe('Slack inbound events', () => {
         botUserId: slack.botUserId,
       });
 
-      await enqueueSlackAssistantRequest(eventBody);
+      const firstResult = await enqueueSlackAssistantRequest(eventBody);
       const redeliveryResult = await enqueueSlackAssistantRequest(eventBody);
 
       expect(redeliveryResult).toEqual({
         ok: true,
-        skipped: 'Slack message is already queued',
+        request: expect.objectContaining({ id: firstResult.request?.id }),
       });
       await expect(
         findRequestByMessageTimestamp(slackMessageTimestamp),
@@ -400,7 +403,10 @@ describe('Slack inbound events', () => {
         }),
       );
 
-      expect(result).toEqual({ ok: true });
+      expect(result).toEqual({
+        ok: true,
+        request: expect.objectContaining({ id: expect.any(String) }),
+      });
 
       const request = await findRequestByMessageTimestamp(
         slackMessageTimestamp,
