@@ -43,22 +43,34 @@ export class MinimalMetadataService {
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
-  async getMinimalMetadata(
-    workspaceId: string,
-    userWorkspaceId?: string,
-    locale?: string,
-  ): Promise<MinimalMetadataDTO> {
-    const [{ flatObjectMetadataMaps, flatViewMaps }, cacheHashes] =
-      await Promise.all([
-        this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatViewMaps'],
-        }),
-        this.workspaceCacheService.getCacheHashes(
-          workspaceId,
-          ALL_FLAT_ENTITY_MAPS_PROPERTIES as WorkspaceCacheKeyName[],
-        ),
-      ]);
+  async getMinimalMetadata({
+    workspaceId,
+    workspaceCustomApplicationId,
+    userWorkspaceId,
+    locale,
+  }: {
+    workspaceId: string;
+    workspaceCustomApplicationId: string;
+    userWorkspaceId?: string;
+    locale?: string;
+  }): Promise<MinimalMetadataDTO> {
+    const [
+      { flatObjectMetadataMaps, flatViewMaps },
+      cacheHashes,
+      { workspaceCustomApplicationUniversalIdentifier },
+    ] = await Promise.all([
+      this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatObjectMetadataMaps', 'flatViewMaps'],
+      }),
+      this.workspaceCacheService.getCacheHashes(
+        workspaceId,
+        ALL_FLAT_ENTITY_MAPS_PROPERTIES as WorkspaceCacheKeyName[],
+      ),
+      this.applicationTranslationCatalogService.getApplicationAuthorIdentifiers(
+        { workspaceId, workspaceCustomApplicationId },
+      ),
+    ]);
 
     const collectionHashes: CollectionHashDTO[] = Object.entries(cacheHashes)
       .map(([cacheKey, hash]) => {
@@ -74,10 +86,6 @@ export class MinimalMetadataService {
 
     const safeLocale = (locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE;
     const i18nInstance = this.i18nService.getI18nInstance(safeLocale);
-    const { workspaceCustomApplicationUniversalIdentifier } =
-      await this.applicationTranslationCatalogService.getApplicationAuthorIdentifiers(
-        { workspaceId },
-      );
 
     const objectMetadataItems: MinimalObjectMetadataDTO[] = Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
