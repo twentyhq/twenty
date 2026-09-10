@@ -168,10 +168,10 @@ describe('Slack assistant worker', () => {
     const promptedRequest = agentMessages[agentMessages.length - 1]?.content;
 
     expect(promptedRequest).toContain(
-      'create a follow-up task for @Bob Lee (no Twenty workspace member) and tell @unknown Slack user U0GHOST in #general',
+      'create a follow-up task for @Bob Lee (membership not confirmed) and tell @unknown Slack user U0GHOST in #general',
     );
     expect(promptedRequest).toContain(
-      'Slack mentions in this request and in the replayed history',
+      'Slack mentions in this request',
     );
     expect(promptedRequest).not.toContain('<@U0');
   });

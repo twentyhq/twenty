@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { findSlackUserLinksBySlackUserIds } from 'src/logic-functions/data/find-slack-user-links-by-slack-user-ids';
 
 const SLACK_TEAM_ID = 'T0INSTALLED';
+const EXTERNAL_SLACK_TEAM_ID = 'T0EXTERNAL';
 
 const queryMock = vi.fn();
 
@@ -16,16 +17,19 @@ const buildQueryResult = (nodes: Record<string, unknown>[]) => ({
 const buildNode = (overrides: Record<string, unknown> = {}) => ({
   id: 'link-1',
   slackUserId: 'U04ABC',
+  slackTeamId: SLACK_TEAM_ID,
   name: 'alice.m',
   workspaceMemberId: 'member-1',
+  source: 'MANUAL',
   consentState: 'ACTIVE',
   ...overrides,
 });
 
-const find = (slackUserIds: string[]) =>
+const find = (slackUserIdsBySlackTeamId: Record<string, string[]>) =>
   findSlackUserLinksBySlackUserIds(client, {
-    slackTeamId: SLACK_TEAM_ID,
-    slackUserIds,
+    slackUserIdsBySlackTeamId: new Map(
+      Object.entries(slackUserIdsBySlackTeamId),
+    ),
   });
 
 describe('findSlackUserLinksBySlackUserIds', () => {
@@ -35,29 +39,86 @@ describe('findSlackUserLinksBySlackUserIds', () => {
   });
 
   it('should not query when no Slack user is given', async () => {
-    expect(await find([])).toEqual(new Map());
+    expect(await find({})).toEqual(new Map());
+    expect(await find({ [SLACK_TEAM_ID]: [] })).toEqual(new Map());
     expect(queryMock).not.toHaveBeenCalled();
   });
 
-  it('should query the given Slack users of the installed team in one call', async () => {
-    await find(['U04ABC', 'U05DEF']);
+  it('should query the given Slack users of one team in one call', async () => {
+    await find({ [SLACK_TEAM_ID]: ['U04ABC', 'U05DEF'] });
 
     expect(queryMock).toHaveBeenCalledTimes(1);
     expect(queryMock.mock.calls[0][0].slackUserLinks.__args.filter).toEqual({
-      slackTeamId: { eq: SLACK_TEAM_ID },
-      slackUserId: { in: ['U04ABC', 'U05DEF'] },
+      or: [
+        {
+          and: [
+            { slackTeamId: { eq: SLACK_TEAM_ID } },
+            { slackUserId: { in: ['U04ABC', 'U05DEF'] } },
+          ],
+        },
+      ],
     });
   });
 
+  // A Slack Connect or Enterprise Grid member's link is stored under their own
+  // team, so querying only the installed team would never find it.
+  it('should query every team a mentioned user belongs to in one call', async () => {
+    await find({
+      [SLACK_TEAM_ID]: ['U04ABC'],
+      [EXTERNAL_SLACK_TEAM_ID]: ['U0GUEST'],
+    });
+
+    expect(queryMock).toHaveBeenCalledTimes(1);
+    expect(queryMock.mock.calls[0][0].slackUserLinks.__args.filter).toEqual({
+      or: [
+        {
+          and: [
+            { slackTeamId: { eq: SLACK_TEAM_ID } },
+            { slackUserId: { in: ['U04ABC'] } },
+          ],
+        },
+        {
+          and: [
+            { slackTeamId: { eq: EXTERNAL_SLACK_TEAM_ID } },
+            { slackUserId: { in: ['U0GUEST'] } },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('should return the link of a user linked under an external team', async () => {
+    queryMock.mockResolvedValue(
+      buildQueryResult([
+        buildNode({
+          slackUserId: 'U0GUEST',
+          slackTeamId: EXTERNAL_SLACK_TEAM_ID,
+        }),
+      ]),
+    );
+
+    expect(
+      (await find({ [EXTERNAL_SLACK_TEAM_ID]: ['U0GUEST'] })).get('U0GUEST'),
+    ).toEqual(
+      expect.objectContaining({
+        slackUserId: 'U0GUEST',
+        slackTeamId: EXTERNAL_SLACK_TEAM_ID,
+        workspaceMemberId: 'member-1',
+      }),
+    );
+  });
+
   it('should key the stored links by Slack user id', async () => {
-    expect(await find(['U04ABC'])).toEqual(
+    expect(await find({ [SLACK_TEAM_ID]: ['U04ABC'] })).toEqual(
       new Map([
         [
           'U04ABC',
           {
             slackUserId: 'U04ABC',
+            slackTeamId: SLACK_TEAM_ID,
             name: 'alice.m',
             workspaceMemberId: 'member-1',
+            source: 'MANUAL',
             consentState: 'ACTIVE',
           },
         ],
@@ -68,16 +129,25 @@ describe('findSlackUserLinksBySlackUserIds', () => {
   it('should read empty name and member as absent', async () => {
     queryMock.mockResolvedValue(
       buildQueryResult([
-        buildNode({ name: '', workspaceMemberId: null, consentState: null }),
+        buildNode({
+          name: '',
+          workspaceMemberId: null,
+          source: null,
+          consentState: null,
+        }),
       ]),
     );
 
-    expect((await find(['U04ABC'])).get('U04ABC')).toEqual({
-      slackUserId: 'U04ABC',
-      name: undefined,
-      workspaceMemberId: undefined,
-      consentState: undefined,
-    });
+    expect((await find({ [SLACK_TEAM_ID]: ['U04ABC'] })).get('U04ABC')).toEqual(
+      {
+        slackUserId: 'U04ABC',
+        slackTeamId: SLACK_TEAM_ID,
+        name: undefined,
+        workspaceMemberId: undefined,
+        source: undefined,
+        consentState: undefined,
+      },
+    );
   });
 
   it('should refuse a consent state it cannot interpret rather than reading it as absent', async () => {
@@ -85,8 +155,18 @@ describe('findSlackUserLinksBySlackUserIds', () => {
       buildQueryResult([buildNode({ consentState: 'REVOKED' })]),
     );
 
-    await expect(find(['U04ABC'])).rejects.toThrow(
+    await expect(find({ [SLACK_TEAM_ID]: ['U04ABC'] })).rejects.toThrow(
       'Slack user link link-1 has an unsupported consentState "REVOKED"',
+    );
+  });
+
+  it('should refuse a source it cannot interpret rather than reading it as absent', async () => {
+    queryMock.mockResolvedValue(
+      buildQueryResult([buildNode({ source: 'IMPORTED' })]),
+    );
+
+    await expect(find({ [SLACK_TEAM_ID]: ['U04ABC'] })).rejects.toThrow(
+      'Slack user link link-1 has an unsupported source "IMPORTED"',
     );
   });
 });
