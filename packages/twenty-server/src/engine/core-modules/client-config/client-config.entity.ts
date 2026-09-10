@@ -5,7 +5,7 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 
-import { type AiSdkPackage } from 'twenty-shared/ai';
+import { type AiModelTier, type AiSdkPackage } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
@@ -13,7 +13,7 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
-import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
+import { AiModelTier as AiModelTierEnum } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 
@@ -23,10 +23,6 @@ registerEnumType(FeatureFlagKey, {
 
 registerEnumType(ModelFamily, {
   name: 'ModelFamily',
-});
-
-registerEnumType(AiModelRole, {
-  name: 'AiModelRole',
 });
 
 @ObjectType()
@@ -68,9 +64,6 @@ export class ClientAiModelConfig {
   @Field(() => Boolean, { nullable: true })
   isDeprecated?: boolean;
 
-  @Field(() => Boolean, { nullable: true })
-  isRecommended?: boolean;
-
   @Field(() => String, { nullable: true })
   providerName?: string;
 
@@ -85,6 +78,25 @@ export class ClientAiModelConfig {
 
   @Field(() => String, { nullable: true })
   dataResidency?: string;
+
+  @Field(() => Number, { nullable: true })
+  intelligenceIndex?: number;
+
+  @Field(() => Number, { nullable: true })
+  outputTokensPerSecond?: number;
+
+  @Field(() => Number, { nullable: true })
+  costPerTask?: number;
+}
+
+@ObjectType()
+export class ClientAiModelTierConfig {
+  @Field(() => AiModelTierEnum)
+  tier: AiModelTier;
+
+  // The model this instance resolves the tier to when a workspace has no pin.
+  @Field(() => String)
+  modelId: ModelId;
 }
 
 @ObjectType()
@@ -114,9 +126,6 @@ export class AdminAiModelConfig {
   @Field(() => Boolean, { nullable: true })
   isDeprecated?: boolean;
 
-  @Field(() => Boolean, { nullable: true })
-  isRecommended?: boolean;
-
   @Field(() => Number, { nullable: true })
   contextWindowTokens?: number;
 
@@ -143,18 +152,23 @@ export class AdminAiModelConfig {
   dataResidency?: string;
 }
 
+@ObjectType()
+export class AdminAiModelTierDefault {
+  @Field(() => AiModelTierEnum)
+  tier: AiModelTier;
+
+  // Head of the tier's preference chain; unset when the chain is empty.
+  @Field(() => String, { nullable: true })
+  modelId?: string;
+}
+
 @ObjectType('AdminAiModels')
 export class AdminAiModelsDTO {
   @Field(() => [AdminAiModelConfig])
   models: AdminAiModelConfig[];
 
-  @Field(() => String, { nullable: true })
-  // Composite model id for the default “smart” role (`provider/modelName`).
-  defaultSmartModelId?: string;
-
-  @Field(() => String, { nullable: true })
-  // Composite model id for the default “fast” role (`provider/modelName`).
-  defaultFastModelId?: string;
+  @Field(() => [AdminAiModelTierDefault])
+  defaultModelByTier: AdminAiModelTierDefault[];
 }
 
 @ObjectType()
@@ -270,6 +284,9 @@ export class ClientConfig {
 
   @Field(() => [ClientAiModelConfig])
   aiModels: ClientAiModelConfig[];
+
+  @Field(() => [ClientAiModelTierConfig])
+  aiModelTiers: ClientAiModelTierConfig[];
 
   @Field(() => Boolean)
   signInPrefilled: boolean;

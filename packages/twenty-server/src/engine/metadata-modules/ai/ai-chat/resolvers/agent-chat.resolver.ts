@@ -9,6 +9,7 @@ import {
 } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
+import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -179,12 +180,10 @@ export class AgentChatResolver {
       );
     }
 
-    const resolvedModelId = modelId ?? workspace.smartModel;
+    const resolvedModelId =
+      modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER[workspace.aiChatModelTier];
 
-    this.aiModelRegistryService.validateModelAvailability(
-      resolvedModelId,
-      workspace,
-    );
+    this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
 
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId: workspace.id,
@@ -297,8 +296,7 @@ export class AgentChatResolver {
     }
 
     this.aiModelRegistryService.validateModelAvailability(
-      modelId ?? workspace.smartModel,
-      workspace,
+      modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER[workspace.aiChatModelTier],
     );
 
     await this.aiBillingService.assertAiExecutionAllowed({
@@ -351,12 +349,10 @@ export class AgentChatResolver {
       );
     }
 
-    const resolvedModelId = modelId ?? workspace.smartModel;
+    const resolvedModelId =
+      modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER[workspace.aiChatModelTier];
 
-    this.aiModelRegistryService.validateModelAvailability(
-      resolvedModelId,
-      workspace,
-    );
+    this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
 
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId: workspace.id,

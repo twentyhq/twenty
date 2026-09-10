@@ -7,10 +7,11 @@ import {
   readUIMessageStream,
   toUIMessageStream,
 } from 'ai';
-import type {
-  CodeExecutionData,
-  ExtendedUIMessage,
-  ExtendedUIMessagePart,
+import {
+  AUTO_SELECT_MODEL_ID_BY_TIER,
+  type CodeExecutionData,
+  type ExtendedUIMessage,
+  type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -255,15 +256,21 @@ export class StreamAgentChatJob {
     requestedModelId: string | undefined,
     workspace: WorkspaceEntity | null,
   ): string {
-    const modelId = requestedModelId ?? workspace?.smartModel;
+    const modelId =
+      requestedModelId ??
+      (isDefined(workspace)
+        ? AUTO_SELECT_MODEL_ID_BY_TIER[workspace.aiChatModelTier]
+        : undefined);
 
     if (!isNonEmptyString(modelId)) {
       return 'unknown';
     }
 
     try {
-      return this.aiModelRegistryService.getEffectiveModelConfig(modelId)
-        .modelId;
+      return this.aiModelRegistryService.getEffectiveModelConfig(
+        modelId,
+        workspace ?? undefined,
+      ).modelId;
     } catch {
       return modelId;
     }

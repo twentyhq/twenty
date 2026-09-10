@@ -1,11 +1,24 @@
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { type AiModelTier } from 'twenty-shared/ai';
 
-import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import {
+  currentWorkspaceState,
+  type CurrentWorkspace,
+} from '@/auth/states/currentWorkspaceState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
+import {
+  UpdateWorkspaceDocument,
+  type UpdateWorkspaceInput,
+} from '~/generated-metadata/graphql';
+
+type WorkspaceAiModelSettings = {
+  aiChatModelTier: AiModelTier;
+  aiAgentModelTier: AiModelTier;
+  isAutoModelSelectionEnabled: boolean;
+  aiModelIdByTier: Partial<Record<AiModelTier, string>>;
+};
 
 export const useSettingsAiModelsActions = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -13,125 +26,56 @@ export const useSettingsAiModelsActions = () => {
     currentWorkspaceState,
   );
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
-  const { realModels } = useWorkspaceAiModelAvailability();
 
-  const handleModelFieldChange = async (
-    field: 'smartModel' | 'fastModel',
-    value: string,
+  const updateAiModelSettings = async (
+    changes: Partial<WorkspaceAiModelSettings>,
   ) => {
     if (!currentWorkspace?.id) return;
 
-    const previousValue = currentWorkspace[field];
-    try {
-      setCurrentWorkspace({ ...currentWorkspace, [field]: value });
-      await updateWorkspace({ variables: { input: { [field]: value } } });
-    } catch {
-      setCurrentWorkspace({ ...currentWorkspace, [field]: previousValue });
-      enqueueErrorSnackBar({ message: t`Failed to update model` });
-    }
-  };
-
-  const handleUseRecommendedToggle = async (checked: boolean) => {
-    if (!currentWorkspace?.id) return;
-
-    const previousValue = currentWorkspace.useRecommendedModels;
-    let newEnabledIds = currentWorkspace.enabledAiModelIds ?? [];
-
-    if (!checked && previousValue) {
-      newEnabledIds = realModels
-        .filter((model) => model.isRecommended)
-        .map((model) => model.modelId);
-    }
+    const previousWorkspace = currentWorkspace;
 
     try {
+      // The generated tier enum carries the twenty-shared literals as values,
+      // so the same object satisfies both sides once its type says so.
       setCurrentWorkspace({
         ...currentWorkspace,
-        useRecommendedModels: checked,
-        enabledAiModelIds: newEnabledIds,
+        ...(changes as Partial<CurrentWorkspace>),
       });
       await updateWorkspace({
-        variables: {
-          input: {
-            useRecommendedModels: checked,
-            enabledAiModelIds: newEnabledIds,
-          },
-        },
+        variables: { input: changes as UpdateWorkspaceInput },
       });
     } catch {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        useRecommendedModels: previousValue,
-      });
-      enqueueErrorSnackBar({
-        message: t`Failed to update model selection mode`,
-      });
+      setCurrentWorkspace(previousWorkspace);
+      enqueueErrorSnackBar({ message: t`Failed to update model settings` });
     }
   };
 
-  const handleModelToggle = async (
-    modelId: string,
-    isCurrentlyEnabled: boolean,
+  const handleChatTierChange = (tier: AiModelTier) =>
+    updateAiModelSettings({ aiChatModelTier: tier });
+
+  const handleAgentTierChange = (tier: AiModelTier) =>
+    updateAiModelSettings({ aiAgentModelTier: tier });
+
+  const handleAutoModelSelectionToggle = (isEnabled: boolean) =>
+    updateAiModelSettings({ isAutoModelSelectionEnabled: isEnabled });
+
+  const handlePinnedModelChange = (
+    tier: AiModelTier,
+    modelId: string | null,
   ) => {
-    if (!currentWorkspace?.id) return;
+    const { [tier]: _previousPin, ...otherPins } =
+      currentWorkspace?.aiModelIdByTier ?? {};
 
-    const previousEnabled = currentWorkspace.enabledAiModelIds ?? [];
-    const newEnabledIds = isCurrentlyEnabled
-      ? previousEnabled.filter((id) => id !== modelId)
-      : [...previousEnabled, modelId];
-
-    try {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        enabledAiModelIds: newEnabledIds,
-      });
-      await updateWorkspace({
-        variables: { input: { enabledAiModelIds: newEnabledIds } },
-      });
-    } catch {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        enabledAiModelIds: previousEnabled,
-      });
-      enqueueErrorSnackBar({
-        message: t`Failed to update model availability`,
-      });
-    }
-  };
-
-  const handleToggleAllVisibleModels = async (
-    shouldCheckAll: boolean,
-    visibleModelIds: Set<string>,
-  ) => {
-    if (!currentWorkspace?.id) return;
-
-    const previousIds = currentWorkspace.enabledAiModelIds ?? [];
-    const newEnabledIds = shouldCheckAll
-      ? [...new Set([...previousIds, ...visibleModelIds])]
-      : previousIds.filter((id) => !visibleModelIds.has(id));
-
-    try {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        enabledAiModelIds: newEnabledIds,
-      });
-      await updateWorkspace({
-        variables: { input: { enabledAiModelIds: newEnabledIds } },
-      });
-    } catch {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        enabledAiModelIds: previousIds,
-      });
-      enqueueErrorSnackBar({
-        message: t`Failed to update model availability`,
-      });
-    }
+    return updateAiModelSettings({
+      aiModelIdByTier:
+        modelId === null ? otherPins : { ...otherPins, [tier]: modelId },
+    });
   };
 
   return {
-    handleModelFieldChange,
-    handleUseRecommendedToggle,
-    handleModelToggle,
-    handleToggleAllVisibleModels,
+    handleChatTierChange,
+    handleAgentTierChange,
+    handleAutoModelSelectionToggle,
+    handlePinnedModelChange,
   };
 };

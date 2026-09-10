@@ -33,7 +33,8 @@ export class AgentTitleGenerationService {
       spenders: { userWorkspaceId },
     });
 
-    const defaultModel = this.aiModelRegistryService.getDefaultSpeedModel();
+    const defaultModel =
+      this.aiModelRegistryService.getDefaultModelForTier('fast');
 
     if (!defaultModel) {
       this.logger.warn('No default AI model available for title generation');

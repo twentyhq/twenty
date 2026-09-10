@@ -18,11 +18,8 @@ import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/dr
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
-import {
-  AUTO_SELECT_FAST_MODEL_ID,
-  AUTO_SELECT_SMART_MODEL_ID,
-  ENTERPRISE_INSTANCE_TYPE,
-} from 'twenty-shared/constants';
+import { AI_MODEL_TIERS } from 'twenty-shared/ai';
+import { ENTERPRISE_INSTANCE_TYPE } from 'twenty-shared/constants';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -64,8 +61,6 @@ export class ClientConfigService {
 
     const availableModels =
       this.aiModelRegistryService.getAdminFilteredModels();
-    const recommendedModelIds =
-      this.aiModelRegistryService.getRecommendedModelIds();
     const resolvedProviders =
       this.aiModelRegistryService.getResolvedProvidersForAdmin();
 
@@ -101,71 +96,24 @@ export class ClientConfigService {
           contextWindowTokens: modelConfig?.contextWindowTokens,
           maxOutputTokens: modelConfig?.maxOutputTokens,
           isDeprecated: modelConfig?.isDeprecated,
-          isRecommended: recommendedModelIds.has(registeredModel.modelId),
           dataResidency: modelConfig?.dataResidency,
+          intelligenceIndex: modelConfig?.benchmark?.intelligenceIndex,
+          outputTokensPerSecond: modelConfig?.benchmark?.outputTokensPerSecond,
+          costPerTask: modelConfig?.benchmark?.costPerTask,
         };
       },
     );
 
-    if (aiModels.length > 0) {
-      const defaultSpeedModel =
-        this.aiModelRegistryService.getDefaultSpeedModel();
-      const defaultSpeedModelConfig =
-        this.aiModelRegistryService.getModelConfig(defaultSpeedModel?.modelId);
-
-      const defaultPerformanceModel =
-        this.aiModelRegistryService.getDefaultPerformanceModel();
-      const defaultPerformanceModelConfig =
-        this.aiModelRegistryService.getModelConfig(
-          defaultPerformanceModel?.modelId,
-        );
-
-      aiModels.unshift(
-        {
-          modelId: AUTO_SELECT_SMART_MODEL_ID,
-          label:
-            defaultPerformanceModelConfig?.label ||
-            defaultPerformanceModel?.modelId ||
-            'Default',
-          modelFamily: defaultPerformanceModelConfig?.modelFamily,
-          providerName: defaultPerformanceModel?.providerName,
-          providerLabel: getProviderLabel(
-            defaultPerformanceModel?.providerName,
-          ),
-          sdkPackage: defaultPerformanceModel?.sdkPackage ?? null,
-          nativeCapabilities: getNativeModelCapabilities(
-            defaultPerformanceModel?.sdkPackage,
-          ),
-          inputCostPerMillionTokens:
-            defaultPerformanceModelConfig?.inputCostPerMillionTokens,
-          outputCostPerMillionTokens:
-            defaultPerformanceModelConfig?.outputCostPerMillionTokens,
-          contextWindowTokens:
-            defaultPerformanceModelConfig?.contextWindowTokens,
-          maxOutputTokens: defaultPerformanceModelConfig?.maxOutputTokens,
-        },
-        {
-          modelId: AUTO_SELECT_FAST_MODEL_ID,
-          label:
-            defaultSpeedModelConfig?.label ||
-            defaultSpeedModel?.modelId ||
-            'Default',
-          modelFamily: defaultSpeedModelConfig?.modelFamily,
-          providerName: defaultSpeedModel?.providerName,
-          providerLabel: getProviderLabel(defaultSpeedModel?.providerName),
-          sdkPackage: defaultSpeedModel?.sdkPackage ?? null,
-          nativeCapabilities: getNativeModelCapabilities(
-            defaultSpeedModel?.sdkPackage,
-          ),
-          inputCostPerMillionTokens:
-            defaultSpeedModelConfig?.inputCostPerMillionTokens,
-          outputCostPerMillionTokens:
-            defaultSpeedModelConfig?.outputCostPerMillionTokens,
-          contextWindowTokens: defaultSpeedModelConfig?.contextWindowTokens,
-          maxOutputTokens: defaultSpeedModelConfig?.maxOutputTokens,
-        },
-      );
-    }
+    // No model at all means no tier resolves; the client shows its
+    // "configure a provider" state from the empty list rather than an error.
+    const aiModelTiers =
+      aiModels.length > 0
+        ? AI_MODEL_TIERS.map((tier) => ({
+            tier,
+            modelId:
+              this.aiModelRegistryService.getDefaultModelForTier(tier).modelId,
+          }))
+        : [];
 
     const clientConfig: ClientConfig = {
       appVersion: this.twentyConfigService.get('APP_VERSION'),
@@ -191,6 +139,7 @@ export class ClientConfigService {
         ],
       },
       aiModels,
+      aiModelTiers,
       authProviders: {
         google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
         magicLink: false,

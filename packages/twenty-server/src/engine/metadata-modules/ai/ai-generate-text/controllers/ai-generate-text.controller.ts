@@ -1,7 +1,10 @@
 import { Body, Controller, Post, UseFilters, UseGuards } from '@nestjs/common';
 
 import { generateText } from 'ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  AUTO_SELECT_FAST_MODEL_ID,
+  PermissionFlagType,
+} from 'twenty-shared/constants';
 import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
@@ -61,17 +64,15 @@ export class AiGenerateTextController {
       spenders: { userWorkspaceId },
     });
 
-    const resolvedModelId = body.modelId ?? workspace.fastModel;
+    const resolvedModelId = body.modelId ?? AUTO_SELECT_FAST_MODEL_ID;
 
-    this.aiModelRegistryService.validateModelAvailability(
-      resolvedModelId,
-      workspace,
-    );
+    this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
 
     const registeredModel =
-      await this.aiModelRegistryService.resolveModelForAgent({
-        modelId: resolvedModelId,
-      });
+      await this.aiModelRegistryService.resolveModelForAgent(
+        { modelId: resolvedModelId },
+        workspace,
+      );
 
     let result: Awaited<ReturnType<typeof generateText>> | undefined;
 

@@ -1,6 +1,6 @@
-import { AUTO_SELECT_FAST_MODEL_ID } from '../constants/AutoSelectFastModelId';
-import { AUTO_SELECT_SMART_MODEL_ID } from '../constants/AutoSelectSmartModelId';
+import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from '../ai/constants/auto-select-workspace-default-model-id.const';
+import { getAiModelTierFromModelId } from '../ai/utils/get-ai-model-tier-from-model-id.util';
 
 export const isAutoSelectModelId = (modelId: string): boolean =>
-  modelId === AUTO_SELECT_FAST_MODEL_ID ||
-  modelId === AUTO_SELECT_SMART_MODEL_ID;
+  modelId === AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID ||
+  getAiModelTierFromModelId(modelId) !== undefined;

@@ -1,7 +1,8 @@
-// Preference lists use composite model ids (`provider/modelName`), aligned with the registry.
+import { type AiModelTier } from 'twenty-shared/ai';
+
+// Instance-level preferences. Model ids are composite (`provider/modelName`),
+// optionally pinned to an effort as `provider/modelName@effort`.
 export type AiModelPreferences = {
-  disabledModels?: string[];
-  recommendedModels?: string[];
-  defaultFastModels?: string[];
-  defaultSmartModels?: string[];
+  disabledModels: string[];
+  defaultModelsByTier: Record<AiModelTier, string[]>;
 };

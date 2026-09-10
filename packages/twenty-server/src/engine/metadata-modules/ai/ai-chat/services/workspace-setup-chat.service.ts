@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
+import { AUTO_SELECT_FAST_MODEL_ID } from 'twenty-shared/constants';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -174,7 +175,7 @@ export class WorkspaceSetupChatService {
           },
           locale,
         }),
-        modelId: workspace.fastModel,
+        modelId: AUTO_SELECT_FAST_MODEL_ID,
       });
 
     if (!isDefined(kickoffResult)) {

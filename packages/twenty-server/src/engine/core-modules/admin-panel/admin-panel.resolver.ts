@@ -3,6 +3,7 @@ import { Args, Int, Mutation, Query } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import GraphQLJSON from 'graphql-type-json';
+import { AI_MODEL_TIERS } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
@@ -97,9 +98,8 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
-import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
+import { AiModelTier } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
 
 import { AdminPanelHealthServiceDataDTO } from './dtos/admin-panel-health-service-data.dto';
 import { MaintenanceModeDTO } from './dtos/maintenance-mode.dto';
@@ -138,7 +138,6 @@ export class AdminPanelResolver {
     private featureFlagService: FeatureFlagService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly aiModelPreferencesService: AiModelPreferencesService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
     private readonly maintenanceModeService: MaintenanceModeService,
     private readonly upgradeStatusService: UpgradeStatusService,
@@ -285,14 +284,7 @@ export class AdminPanelResolver {
     const models = this.aiModelRegistryService
       .getAllModelsWithStatus()
       .map(
-        ({
-          modelConfig,
-          isAvailable,
-          isAdminEnabled,
-          isRecommended,
-          providerName,
-          name,
-        }) => ({
+        ({ modelConfig, isAvailable, isAdminEnabled, providerName, name }) => ({
           modelId: modelConfig.modelId,
           label: modelConfig.label,
           modelFamily: modelConfig.modelFamily,
@@ -303,7 +295,6 @@ export class AdminPanelResolver {
           isAvailable,
           isAdminEnabled,
           isDeprecated: modelConfig.isDeprecated ?? false,
-          isRecommended,
           contextWindowTokens: modelConfig.contextWindowTokens,
           maxOutputTokens: modelConfig.maxOutputTokens,
           inputCostPerMillionTokens: modelConfig.inputCostPerMillionTokens,
@@ -317,12 +308,19 @@ export class AdminPanelResolver {
         }),
       );
 
-    const prefs = this.aiModelPreferencesService.getPreferences();
+    // The model the tier actually runs on here, not the head of the chain: a
+    // chain can start with a provider this instance holds no key for.
+    const hasAvailableModel =
+      this.aiModelRegistryService.getAvailableModels().length > 0;
 
     return {
       models,
-      defaultSmartModelId: prefs.defaultSmartModels?.[0],
-      defaultFastModelId: prefs.defaultFastModels?.[0],
+      defaultModelByTier: AI_MODEL_TIERS.map((tier) => ({
+        tier,
+        modelId: hasAvailableModel
+          ? this.aiModelRegistryService.getDefaultModelForTier(tier).modelId
+          : undefined,
+      })),
     };
   }
 
@@ -350,36 +348,11 @@ export class AdminPanelResolver {
 
   @UseGuards(AdminPanelGuard)
   @Mutation(() => Boolean)
-  async setAdminAiModelRecommended(
-    @Args('modelId', { type: () => String }) modelId: string,
-    @Args('recommended', { type: () => Boolean }) recommended: boolean,
-  ): Promise<boolean> {
-    await this.aiModelRegistryService.setModelRecommended(modelId, recommended);
-
-    return true;
-  }
-
-  @UseGuards(AdminPanelGuard)
-  @Mutation(() => Boolean)
-  async setAdminAiModelsRecommended(
-    @Args('modelIds', { type: () => [String] }) modelIds: string[],
-    @Args('recommended', { type: () => Boolean }) recommended: boolean,
-  ): Promise<boolean> {
-    await this.aiModelRegistryService.setModelsRecommended(
-      modelIds,
-      recommended,
-    );
-
-    return true;
-  }
-
-  @UseGuards(AdminPanelGuard)
-  @Mutation(() => Boolean)
   async setAdminDefaultAiModel(
-    @Args('role', { type: () => AiModelRole }) role: AiModelRole,
+    @Args('tier', { type: () => AiModelTier }) tier: AiModelTier,
     @Args('modelId', { type: () => String }) modelId: string,
   ): Promise<boolean> {
-    await this.aiModelRegistryService.setDefaultModel(role, modelId);
+    await this.aiModelRegistryService.setDefaultModel(tier, modelId);
 
     return true;
   }

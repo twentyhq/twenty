@@ -251,8 +251,6 @@ const DetailsTab = ({ debug, copyToClipboard }: DetailsTabProps) => {
       id: debug.selectedAgentId,
       label: debug.selectedAgentLabel,
     },
-    fastModel: debug.fastModel,
-    smartModel: debug.smartModel,
     agentModel: debug.agentModel,
     availableAgents: debug.availableAgents,
   };

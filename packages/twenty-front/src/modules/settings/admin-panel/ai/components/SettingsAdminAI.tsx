@@ -4,7 +4,8 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconBolt, IconMessage, IconRobot } from 'twenty-ui/icon';
+import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
+import { IconMessage } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { H2Title } from 'twenty-ui/typography';
@@ -15,13 +16,11 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
-import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
+import { getAiModelTierLabel } from '@/ai/utils/getAiModelTierLabel';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminAiProviderListCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard';
 import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
 import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
-import { SET_ADMIN_AI_MODEL_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelRecommended';
-import { SET_ADMIN_AI_MODELS_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelsRecommended';
 import { SET_ADMIN_DEFAULT_AI_MODEL } from '@/settings/admin-panel/ai/graphql/mutations/setAdminDefaultAiModel';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_ADMIN_AI_USAGE_BY_WORKSPACE } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiUsageByWorkspace';
@@ -45,8 +44,9 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import {
-  AiModelRole,
   type AdminAiModelConfig,
+  type AdminAiModelTierDefault,
+  type AiModelTier as GraphqlAiModelTier,
 } from '~/generated-admin/graphql';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
@@ -78,24 +78,13 @@ export const SettingsAdminAI = () => {
   const periodOptions = getPeriodOptions();
   const usageDates = getPeriodDates(usagePeriod);
 
-  const {
-    data,
-    loading: isLoadingModels,
-    refetch: refetchModels,
-  } = useQuery<{
+  const { data, loading: isLoadingModels } = useQuery<{
     getAdminAiModels: {
-      defaultSmartModelId?: string | null;
-      defaultFastModelId?: string | null;
+      defaultModelByTier: AdminAiModelTierDefault[];
       models: AdminAiModelConfig[];
     };
   }>(GET_ADMIN_AI_MODELS, { client: apolloAdminClient });
 
-  const [setModelRecommended] = useMutation(SET_ADMIN_AI_MODEL_RECOMMENDED, {
-    client: apolloAdminClient,
-  });
-  const [setModelsRecommended] = useMutation(SET_ADMIN_AI_MODELS_RECOMMENDED, {
-    client: apolloAdminClient,
-  });
   const [setDefaultModel] = useMutation(SET_ADMIN_DEFAULT_AI_MODEL, {
     client: apolloAdminClient,
   });
@@ -142,25 +131,7 @@ export const SettingsAdminAI = () => {
     return <SettingsSectionSkeletonLoader />;
   }
 
-  const handleRecommendedToggle = async (
-    modelId: string,
-    isCurrentlyRecommended: boolean,
-  ) => {
-    try {
-      await setModelRecommended({
-        variables: { modelId, recommended: !isCurrentlyRecommended },
-        refetchQueries: [{ query: GET_ADMIN_AI_MODELS }],
-      });
-      await refetchClientConfig();
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to update model recommendation`,
-      });
-    }
-  };
-
-  const defaultSmartModelId = data?.getAdminAiModels?.defaultSmartModelId;
-  const defaultFastModelId = data?.getAdminAiModels?.defaultFastModelId;
+  const defaultModelByTier = data?.getAdminAiModels?.defaultModelByTier ?? [];
 
   const enabledModels = models.filter(
     (model) => model.isAvailable && model.isAdminEnabled && !model.isDeprecated,
@@ -173,12 +144,12 @@ export const SettingsAdminAI = () => {
   }));
 
   const handleDefaultModelChange = async (
-    role: AiModelRole,
+    tier: AiModelTier,
     modelId: string,
   ) => {
     try {
       await setDefaultModel({
-        variables: { role, modelId },
+        variables: { tier: tier as GraphqlAiModelTier, modelId },
         refetchQueries: [{ query: GET_ADMIN_AI_MODELS }],
       });
       await refetchClientConfig();
@@ -232,85 +203,34 @@ export const SettingsAdminAI = () => {
         <Section>
           <H2Title
             title={t`Default Models`}
-            description={t`Configure the default AI models for all workspaces`}
+            description={t`The model behind each tier for every workspace. Workspaces can pin their own.`}
           />
 
           <Card rounded>
-            <SettingsOptionCardContentSelect
-              Icon={IconRobot}
-              title={t`Smart Model`}
-              description={t`Default model for chats and complex reasoning`}
-              divider
-            >
-              <Select
-                dropdownId="admin-smart-model-select"
-                value={defaultSmartModelId ?? undefined}
-                onChange={(value: string) =>
-                  handleDefaultModelChange(AiModelRole.SMART, value)
-                }
-                options={availableModelOptions}
-                selectSizeVariant="small"
-                dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-              />
-            </SettingsOptionCardContentSelect>
-            <SettingsOptionCardContentSelect
-              Icon={IconBolt}
-              title={t`Fast Model`}
-              description={t`Default model for lightweight tasks`}
-            >
-              <Select
-                dropdownId="admin-fast-model-select"
-                value={defaultFastModelId ?? undefined}
-                onChange={(value: string) =>
-                  handleDefaultModelChange(AiModelRole.FAST, value)
-                }
-                options={availableModelOptions}
-                selectSizeVariant="small"
-                dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-              />
-            </SettingsOptionCardContentSelect>
+            {AI_MODEL_TIERS.map((tier, index) => (
+              <SettingsOptionCardContentSelect
+                key={tier}
+                title={getAiModelTierLabel(tier)}
+                divider={index < AI_MODEL_TIERS.length - 1}
+              >
+                <Select
+                  dropdownId={`admin-default-model-select-${tier}`}
+                  value={
+                    defaultModelByTier.find(
+                      (defaultModel) => defaultModel.tier === tier,
+                    )?.modelId ?? undefined
+                  }
+                  onChange={(value: string) =>
+                    handleDefaultModelChange(tier, value)
+                  }
+                  options={availableModelOptions}
+                  withSearchInput
+                  selectSizeVariant="small"
+                  dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+                />
+              </SettingsOptionCardContentSelect>
+            ))}
           </Card>
-        </Section>
-      )}
-
-      {enabledModels.length > 0 && (
-        <Section>
-          <H2Title
-            title={t`Recommended Models`}
-            description={t`Select which models appear as recommended in the workspace model picker`}
-          />
-
-          <SettingsAiModelsTable
-            models={enabledModels}
-            isChecked={(model) => model.isRecommended === true}
-            onToggle={handleRecommendedToggle}
-            onToggleAll={async (shouldCheckAll) => {
-              const modelIds = enabledModels
-                .filter(
-                  (model) => (model.isRecommended === true) !== shouldCheckAll,
-                )
-                .map((model) => model.modelId);
-
-              if (modelIds.length === 0) return;
-
-              try {
-                await setModelsRecommended({
-                  variables: {
-                    modelIds,
-                    recommended: shouldCheckAll,
-                  },
-                });
-              } catch {
-                enqueueErrorSnackBar({
-                  message: t`Failed to update model recommendations`,
-                });
-              } finally {
-                await refetchModels();
-                await refetchClientConfig();
-              }
-            }}
-            anchorPrefix="recommended-model-row"
-          />
         </Section>
       )}
 
