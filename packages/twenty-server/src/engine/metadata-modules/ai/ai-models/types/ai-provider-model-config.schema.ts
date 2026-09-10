@@ -33,6 +33,11 @@ export const aiProviderModelConfigSchema = z
     dataResidency: z.enum(DATA_RESIDENCY_KEYS).optional(),
     zeroDataRetention: z.boolean().optional(),
     benchmark: aiModelBenchmarkSchema.optional(),
+    // Keyed by effort so a pinned variant carries the reading taken at its own
+    // effort instead of the base model's ceiling.
+    benchmarkByEffort: z
+      .partialRecord(z.enum(AI_MODEL_EFFORTS), aiModelBenchmarkSchema)
+      .optional(),
     isDeprecated: z.boolean().optional(),
   })
   .refine(

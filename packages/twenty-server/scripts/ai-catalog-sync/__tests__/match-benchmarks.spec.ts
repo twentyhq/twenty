@@ -217,4 +217,104 @@ describe('matchBenchmarks', () => {
       'mistralai/mistral-large-2512',
     ]);
   });
+
+  it('reads each declared effort from the row taken at that effort', () => {
+    const result = matchBenchmarks({
+      modelName: 'mistral-large-2512',
+      siblingModels: MISTRAL_MODELS,
+      benchmarkIndex: indexOf({
+        mistrallarge2512: {
+          intelligenceIndex: 41,
+          effort: 'high',
+          aliases: ['Mistral Large 3 (high)'],
+        },
+        'mistrallarge2512@high': {
+          intelligenceIndex: 41,
+          effort: 'high',
+          aliases: ['Mistral Large 3 (high)'],
+        },
+        'mistrallarge2512@none': {
+          intelligenceIndex: 22,
+          costPerTask: 0.1,
+          effort: 'none',
+          aliases: ['Mistral Large 3 (Non-reasoning)'],
+        },
+      }),
+      measuredAt: MEASURED_AT,
+      efforts: ['none', 'high'],
+    });
+
+    expect(result?.benchmark.effort).toBe('high');
+    expect(result?.benchmarkByEffort?.none).toEqual({
+      intelligenceIndex: 22,
+      costPerTask: 0.1,
+      effort: 'none',
+      measuredAt: MEASURED_AT,
+      aliases: ['Mistral Large 3 (Non-reasoning)'],
+    });
+    expect(result?.benchmarkByEffort?.high?.intelligenceIndex).toBe(41);
+  });
+
+  it('leaves a declared effort without its own row blank rather than lending it the ceiling', () => {
+    const result = matchBenchmarks({
+      modelName: 'mistral-large-2512',
+      siblingModels: MISTRAL_MODELS,
+      benchmarkIndex: indexOf({
+        mistrallarge2512: {
+          intelligenceIndex: 41,
+          effort: 'high',
+          aliases: [],
+        },
+        'mistrallarge2512@high': {
+          intelligenceIndex: 41,
+          effort: 'high',
+          aliases: [],
+        },
+      }),
+      measuredAt: MEASURED_AT,
+      efforts: ['none', 'high'],
+    });
+
+    expect(result?.benchmarkByEffort?.none).toBeUndefined();
+    expect(result?.benchmarkByEffort?.high?.intelligenceIndex).toBe(41);
+  });
+
+  it('carries no effort map at all when no declared effort has a row', () => {
+    const result = matchBenchmarks({
+      modelName: 'mistral-large-2512',
+      siblingModels: MISTRAL_MODELS,
+      benchmarkIndex: indexOf({
+        mistrallarge2512: { intelligenceIndex: 41, aliases: [] },
+      }),
+      measuredAt: MEASURED_AT,
+      efforts: ['none', 'high'],
+    });
+
+    expect(result?.benchmark.intelligenceIndex).toBe(41);
+    expect(result?.benchmarkByEffort).toBeUndefined();
+  });
+
+  it('resolves a rolling alias to its release for per-effort rows too', () => {
+    const result = matchBenchmarks({
+      modelName: 'mistral-large-latest',
+      siblingModels: MISTRAL_MODELS,
+      benchmarkIndex: indexOf({
+        mistrallarge2512: { intelligenceIndex: 41, aliases: [] },
+        'mistrallarge2512@high': {
+          intelligenceIndex: 41,
+          effort: 'high',
+          aliases: [],
+        },
+        'mistrallarge@high': {
+          intelligenceIndex: 20,
+          effort: 'high',
+          aliases: [],
+        },
+      }),
+      measuredAt: MEASURED_AT,
+      efforts: ['high'],
+    });
+
+    expect(result?.benchmarkByEffort?.high?.intelligenceIndex).toBe(41);
+  });
 });

@@ -65,4 +65,60 @@ describe('readCommittedBenchmarks', () => {
 
     expect(result?.benchmark.measuredAt).toBe('2026-09-01');
   });
+
+  it('recovers per-effort readings under their effort keys, dated when they were taken', () => {
+    const index = readCommittedBenchmarks(
+      writeOverlay({
+        ...PUBLISHED,
+        models: {
+          'claude-sonnet-5': {
+            ...PUBLISHED.models['claude-sonnet-5'],
+            effort: 'max',
+            benchmarkByEffort: {
+              low: {
+                intelligenceIndex: 20.1,
+                measuredAt: '2026-09-01',
+                aliases: ['Claude Sonnet 5 (low)'],
+              },
+            },
+          },
+        },
+      }),
+    );
+
+    expect(index.get('claudesonnet5')?.effort).toBe('max');
+    expect(index.get('claudesonnet5@low')?.intelligenceIndex).toBe(20.1);
+    expect(index.get('claudesonnet5@low')?.effort).toBe('low');
+    expect(index.get('claudesonnet5@low')?.measuredAt).toBe('2026-09-01');
+    expect(index.get('claudesonnet5@max')).toBeUndefined();
+
+    const result = matchBenchmarks({
+      modelName: 'claude-sonnet-5',
+      siblingModels: {},
+      benchmarkIndex: index,
+      measuredAt: '2026-09-09',
+      efforts: ['low', 'max'],
+    });
+
+    expect(result?.benchmarkByEffort?.low?.measuredAt).toBe('2026-09-01');
+    expect(result?.benchmarkByEffort?.max).toBeUndefined();
+  });
+
+  it('ignores a per-effort key it does not recognise', () => {
+    const index = readCommittedBenchmarks(
+      writeOverlay({
+        ...PUBLISHED,
+        models: {
+          'claude-sonnet-5': {
+            ...PUBLISHED.models['claude-sonnet-5'],
+            benchmarkByEffort: {
+              turbo: { intelligenceIndex: 99, aliases: [] },
+            },
+          },
+        },
+      }),
+    );
+
+    expect([...index.keys()].some((key) => key.includes('@'))).toBe(false);
+  });
 });
