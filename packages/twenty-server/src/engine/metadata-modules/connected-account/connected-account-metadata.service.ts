@@ -45,7 +45,7 @@ export class ConnectedAccountMetadataService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
-  async findUsableByCaller({
+  async findUsableByCallerWithoutCredentials({
     workspaceId,
     userWorkspaceId,
   }: {
@@ -77,16 +77,30 @@ export class ConnectedAccountMetadataService {
     );
   }
 
-  async findByUserWorkspaceId({
+  async findUsableByCaller({
     userWorkspaceId,
     workspaceId,
   }: {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<ConnectedAccountEntity[]> {
-    return this.repository.find({
+    const ownedAccounts = await this.repository.find({
       where: { userWorkspaceId, workspaceId },
+      order: { createdAt: 'ASC', id: 'ASC' },
     });
+
+    const sharedAccounts = await this.repository.find({
+      where: { workspaceId, visibility: 'workspace' },
+      order: { createdAt: 'ASC', id: 'ASC' },
+    });
+
+    const ownedAccountIds = new Set(ownedAccounts.map((account) => account.id));
+
+    const sharedAccountsOwnedByOthers = sharedAccounts.filter(
+      (account) => !ownedAccountIds.has(account.id),
+    );
+
+    return [...ownedAccounts, ...sharedAccountsOwnedByOthers];
   }
 
   async findApplicationConnectedAccountsUsableByCaller({

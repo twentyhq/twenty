@@ -36,7 +36,7 @@ export class ConnectedAccountResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ConnectedAccountPublicDTO[]> {
     const accounts =
-      await this.connectedAccountMetadataService.findByUserWorkspaceId({
+      await this.connectedAccountMetadataService.findUsableByCaller({
         userWorkspaceId,
         workspaceId: workspace.id,
       });

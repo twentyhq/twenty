@@ -6,7 +6,7 @@ import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/de
 
 describe('connectedAccountResolver (e2e)', () => {
   describe('myConnectedAccounts', () => {
-    it('should return only the current user connected accounts', async () => {
+    it('should not return another user private connected account', async () => {
       const response = await makeMetadataAPIRequest({
         query: gql`
           query MyConnectedAccounts {
@@ -27,6 +27,55 @@ describe('connectedAccountResolver (e2e)', () => {
 
       expect(accountIds).toContain(CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE);
       expect(accountIds).not.toContain(CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY);
+    });
+
+    it('should return a workspace-shared account owned by someone else', async () => {
+      const response = await makeMetadataAPIRequestWithMemberRole({
+        query: gql`
+          query MyConnectedAccounts {
+            myConnectedAccounts {
+              id
+              handle
+            }
+          }
+        `,
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors).toBeUndefined();
+
+      const accountIds = response.body.data.myConnectedAccounts.map(
+        (account: { id: string }) => account.id,
+      );
+
+      expect(accountIds).toContain(
+        CONNECTED_ACCOUNT_DATA_SEED_IDS.SUPPORT_GROUP,
+      );
+    });
+
+    it('should list the caller own accounts before workspace-shared ones', async () => {
+      const response = await makeMetadataAPIRequestWithMemberRole({
+        query: gql`
+          query MyConnectedAccounts {
+            myConnectedAccounts {
+              id
+            }
+          }
+        `,
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors).toBeUndefined();
+
+      const accountIds = response.body.data.myConnectedAccounts.map(
+        (account: { id: string }) => account.id,
+      );
+
+      expect(
+        accountIds.indexOf(CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY),
+      ).toBeLessThan(
+        accountIds.indexOf(CONNECTED_ACCOUNT_DATA_SEED_IDS.SUPPORT_GROUP),
+      );
     });
 
     it('should not return sensitive fields', async () => {

@@ -25,10 +25,12 @@ export class FindConnectedAccountsTool implements Tool {
     { workspaceId, userWorkspaceId }: ToolExecutionContext,
   ): Promise<ToolOutput> {
     const usableAccounts =
-      await this.connectedAccountMetadataService.findUsableByCaller({
-        workspaceId,
-        userWorkspaceId,
-      });
+      await this.connectedAccountMetadataService.findUsableByCallerWithoutCredentials(
+        {
+          workspaceId,
+          userWorkspaceId,
+        },
+      );
 
     const matchingAccounts = isNonEmptyString(handle)
       ? filterConnectedAccountsByHandle({
