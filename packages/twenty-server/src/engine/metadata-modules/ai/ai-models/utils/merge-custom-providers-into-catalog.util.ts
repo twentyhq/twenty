@@ -6,10 +6,13 @@ import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models
 
 // A custom reading completes the catalog's rather than replacing it, so one
 // effort or one metric set by hand keeps the others the sync measured.
-const mergeDefined = <TValue extends Record<string, unknown>>(
-  catalogValue: TValue | undefined,
-  customValue: TValue | undefined,
-): TValue | undefined =>
+const mergeDefined = <TValue extends Record<string, unknown>>({
+  catalogValue,
+  customValue,
+}: {
+  catalogValue: TValue | undefined;
+  customValue: TValue | undefined;
+}): TValue | undefined =>
   isDefined(catalogValue) && isDefined(customValue)
     ? { ...catalogValue, ...customValue }
     : (customValue ?? catalogValue);
@@ -42,11 +45,14 @@ const withCatalogReadings = ({
 }): AiProviderModelConfig => ({
   ...customModel,
   efforts: customModel.efforts ?? catalogModel.efforts,
-  benchmark: mergeDefined(catalogModel.benchmark, customModel.benchmark),
-  benchmarkByEffort: mergeDefined(
-    catalogModel.benchmarkByEffort,
-    customModel.benchmarkByEffort,
-  ),
+  benchmark: mergeDefined({
+    catalogValue: catalogModel.benchmark,
+    customValue: customModel.benchmark,
+  }),
+  benchmarkByEffort: mergeDefined({
+    catalogValue: catalogModel.benchmarkByEffort,
+    customValue: customModel.benchmarkByEffort,
+  }),
 });
 
 const mergeModels = ({
