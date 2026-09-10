@@ -29,6 +29,7 @@ import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slac
 import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { resolveSlackAssistantMentions } from 'src/logic-functions/utils/resolve-slack-assistant-mentions';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
 import { runSlackAssistantAgentWithDeadline } from 'src/logic-functions/utils/run-slack-assistant-agent-with-deadline';
 import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
@@ -132,6 +133,14 @@ export const slackAssistantWorkerHandler = async (
       }).catch(() => undefined);
     }
 
+    const resolvedMentions = await resolveSlackAssistantMentions({
+      requestText,
+      conversationMessages,
+      client,
+      slackClient,
+      assistantBotUserId,
+    });
+
     const agentBudgetRemainingSeconds = Math.max(
       Math.ceil((agentDeadlineAtMs - Date.now()) / 1000),
       0,
@@ -141,12 +150,13 @@ export const slackAssistantWorkerHandler = async (
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
       runAsWorkspaceMemberId,
       messages: buildSlackAssistantMessages({
-        requestText,
+        requestText: resolvedMentions.requestText,
         requesterName,
-        conversationMessages,
+        conversationMessages: resolvedMentions.conversationMessages,
         runAsWorkspaceMemberId,
         timeoutSeconds: agentBudgetRemainingSeconds,
         workspaceBaseUrl: workspaceBaseUrls[0],
+        hasMentionedUsers: resolvedMentions.hasMentionedUsers,
       }),
       deadlineAtMs: agentDeadlineAtMs,
     }).finally(() => stopStatusUpdates());
