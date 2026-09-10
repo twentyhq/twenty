@@ -92,7 +92,7 @@ export class InboxTransitionService {
       },
     );
 
-    if (updateResult.affected === 0) {
+    if ((updateResult.affected ?? 0) === 0) {
       throw new InboxException(
         `Inbox item ${inboxItemId} changed since it was read`,
         InboxExceptionCode.INBOX_ITEM_CHANGED,
