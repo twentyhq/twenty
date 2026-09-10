@@ -38,6 +38,16 @@
       {
         "patterns": [
           {
+            "group": [
+              "twenty-ui",
+              "twenty-ui/input",
+              "@ui/input",
+              "@ui/input/Slider/*"
+            ],
+            "importNames": ["SliderProps", "SliderColor"],
+            "message": "Use the Slider compound and its part props (SliderRootProps, SliderThumbProps, etc.)."
+          },
+          {
             "group": ["../*"],
             "message": "Relative parent imports are not allowed. Use @/ alias instead."
           },

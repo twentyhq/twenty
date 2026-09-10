@@ -1,6 +1,14 @@
 import { CallRecordingAudioPlayer } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fireEvent, fn, spyOn, waitFor, within } from 'storybook/test';
+import {
+  expect,
+  fireEvent,
+  fn,
+  spyOn,
+  userEvent,
+  waitFor,
+  within,
+} from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { MOCK_CALL_RECORDING_AUDIO_DATA_URI } from './mockCallRecordingAudio';
@@ -21,6 +29,9 @@ export const Catalog: CatalogStory<Story, typeof CallRecordingAudioPlayer> = {
   decorators: [CatalogDecorator],
   parameters: {
     catalog: {
+      options: {
+        elementContainer: { style: { width: 320, display: 'block' } },
+      },
       dimensions: [
         {
           name: 'state',
@@ -88,5 +99,73 @@ export const MediaStates: Story = {
       expect(playButton.querySelector('circle')).not.toBeInTheDocument();
       expect(canvas.queryByText('Playback failed')).not.toBeInTheDocument();
     });
+  },
+};
+
+export const KeyboardSeeking: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const audioElement = canvasElement.querySelector('audio');
+
+    if (!isDefined(audioElement)) {
+      throw new Error('Audio player was not rendered');
+    }
+
+    const slider = await canvas.findByRole('slider', { name: 'Seek' });
+
+    slider.focus();
+    await userEvent.keyboard('{ArrowRight}');
+
+    await waitFor(() => expect(audioElement.currentTime).toBeCloseTo(0.1));
+    await expect(slider).toHaveValue('0.1');
+
+    await userEvent.keyboard('{End}');
+    await waitFor(() =>
+      expect(audioElement.currentTime).toBeCloseTo(audioElement.duration),
+    );
+  },
+};
+
+export const DragSeeking: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const audioElement = canvasElement.querySelector('audio');
+
+    if (!isDefined(audioElement)) {
+      throw new Error('Audio player was not rendered');
+    }
+
+    const slider = await canvas.findByRole<HTMLInputElement>('slider', {
+      name: 'Seek',
+    });
+    const pointer = userEvent.setup();
+    const bounds = slider.getBoundingClientRect();
+    const y = bounds.top + bounds.height / 2;
+
+    await pointer.pointer({
+      target: slider,
+      keys: '[MouseLeft>]',
+      coords: { x: bounds.left, y },
+    });
+    await pointer.pointer({
+      target: slider,
+      coords: { x: bounds.left + 50, y },
+    });
+
+    const previewTime = slider.valueAsNumber;
+
+    await expect(previewTime).toBeGreaterThan(0);
+    await expect(audioElement.currentTime).toBe(0);
+    fireEvent.timeUpdate(audioElement);
+    await expect(slider).toHaveValue(String(previewTime));
+
+    await pointer.pointer({ target: slider, keys: '[/MouseLeft]' });
+    await waitFor(() =>
+      expect(audioElement.currentTime).toBeCloseTo(previewTime),
+    );
+
+    audioElement.currentTime = 1;
+    fireEvent.timeUpdate(audioElement);
+    await waitFor(() => expect(slider).toHaveValue('1'));
   },
 };

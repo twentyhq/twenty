@@ -118,8 +118,14 @@ export type { SelectRootProps } from './Select/types/SelectRootProps';
 export type { SelectSeparatorProps } from './Select/types/SelectSeparatorProps';
 export type { SelectTriggerProps } from './Select/types/SelectTriggerProps';
 export type { SelectValueProps } from './Select/types/SelectValueProps';
-export type { SliderColor, SliderProps } from './Slider/Slider';
 export { Slider } from './Slider/Slider';
+export type { SliderControlProps } from './Slider/types/SliderControlProps';
+export type { SliderIndicatorProps } from './Slider/types/SliderIndicatorProps';
+export type { SliderLabelProps } from './Slider/types/SliderLabelProps';
+export type { SliderRootProps } from './Slider/types/SliderRootProps';
+export type { SliderThumbProps } from './Slider/types/SliderThumbProps';
+export type { SliderTrackProps } from './Slider/types/SliderTrackProps';
+export type { SliderValueProps } from './Slider/types/SliderValueProps';
 export type { TabContentProps } from './TabButton/TabButton';
 export {
   StyledTabContainer,
