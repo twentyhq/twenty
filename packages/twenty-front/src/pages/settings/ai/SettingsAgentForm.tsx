@@ -17,8 +17,6 @@ import { SettingsAgentDetailSkeletonLoader } from '~/pages/settings/ai/component
 import { SettingsAgentFormContent } from '~/pages/settings/ai/components/SettingsAgentFormContent';
 import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
 
-// Loads the agent and mounts the form only once it is there, so the form
-// starts from the agent's values instead of copying them in afterwards.
 export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();

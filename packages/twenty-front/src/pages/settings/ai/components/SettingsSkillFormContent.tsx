@@ -6,15 +6,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconArchive,
-  IconArchiveOff,
-  IconInfoCircle,
-  IconRefresh,
-  IconTrash,
-  useIcons,
-} from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { IconInfoCircle, IconRefresh, useIcons } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -32,17 +24,13 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import {
-  ActivateSkillDocument,
   CreateSkillDocument,
-  DeactivateSkillDocument,
-  DeleteSkillDocument,
   type FindOneSkillQuery,
   UpdateSkillDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { SettingsSkillDangerZone } from '~/pages/settings/ai/components/SettingsSkillDangerZone';
 import { type SettingsSkillFormValues } from '~/pages/settings/ai/types/SettingsSkillFormValues';
 import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
 import { getSettingsSkillInitialFormValues } from '~/pages/settings/ai/utils/getSettingsSkillInitialFormValues';
@@ -76,13 +64,6 @@ const StyledAdvancedSettingsContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDangerButtonsContainer = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const DELETE_SKILL_MODAL_ID = 'delete-skill-modal';
-
 type SettingsSkillFormContentProps = {
   skill?: NonNullable<FindOneSkillQuery['skill']>;
 };
@@ -94,7 +75,6 @@ export const SettingsSkillFormContent = ({
   const { getIcon } = useIcons();
   const navigate = useNavigateSettings();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { openModal, closeModal } = useModal();
 
   const isCreateMode = !isDefined(skill);
   const isEditMode = isDefined(skill);
@@ -110,9 +90,6 @@ export const SettingsSkillFormContent = ({
 
   const [createSkill] = useMutation(CreateSkillDocument);
   const [updateSkill] = useMutation(UpdateSkillDocument);
-  const [deleteSkill] = useMutation(DeleteSkillDocument);
-  const [activateSkill] = useMutation(ActivateSkillDocument);
-  const [deactivateSkill] = useMutation(DeactivateSkillDocument);
 
   const handleFieldChange = <TField extends keyof SettingsSkillFormValues>(
     fieldName: TField,
@@ -228,51 +205,6 @@ export const SettingsSkillFormContent = ({
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const runSkillMutation = async (mutation: () => Promise<unknown>) => {
-    setIsSubmitting(true);
-    try {
-      await mutation();
-      navigate(SettingsPath.AI);
-    } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!isDefined(skill)) {
-      return;
-    }
-
-    await runSkillMutation(async () => {
-      await deleteSkill({ variables: { id: skill.id } });
-      closeModal(DELETE_SKILL_MODAL_ID);
-    });
-  };
-
-  const handleDeactivate = async () => {
-    if (!isDefined(skill)) {
-      return;
-    }
-
-    await runSkillMutation(() =>
-      deactivateSkill({ variables: { id: skill.id } }),
-    );
-  };
-
-  const handleActivate = async () => {
-    if (!isDefined(skill)) {
-      return;
-    }
-
-    await runSkillMutation(() =>
-      activateSkill({ variables: { id: skill.id } }),
-    );
   };
 
   const handleCancel = () => {
@@ -430,42 +362,8 @@ export const SettingsSkillFormContent = ({
           </StyledFormContainer>
         </Section>
 
-        {isDefined(skill) && (
-          <Section>
-            <H2Title
-              title={t`Danger zone`}
-              description={t`Deactivate or delete this skill`}
-            />
-            <StyledDangerButtonsContainer>
-              <Button
-                Icon={skill.isActive ? IconArchive : IconArchiveOff}
-                title={skill.isActive ? t`Deactivate` : t`Activate`}
-                size="small"
-                onClick={skill.isActive ? handleDeactivate : handleActivate}
-              />
-              {skill.isCustom && (
-                <Button
-                  Icon={IconTrash}
-                  title={t`Delete`}
-                  size="small"
-                  accent="danger"
-                  variant="secondary"
-                  onClick={() => openModal(DELETE_SKILL_MODAL_ID)}
-                />
-              )}
-            </StyledDangerButtonsContainer>
-          </Section>
-        )}
+        {isDefined(skill) && <SettingsSkillDangerZone skill={skill} />}
       </SettingsPageContainer>
-
-      <ConfirmationModal
-        modalInstanceId={DELETE_SKILL_MODAL_ID}
-        title={t`Delete Skill`}
-        subtitle={t`Are you sure you want to delete this skill? This action cannot be undone.`}
-        onConfirmClick={handleDelete}
-        confirmButtonText={t`Delete`}
-        loading={isSubmitting}
-      />
     </SettingsPageLayout>
   );
 };

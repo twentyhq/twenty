@@ -17,8 +17,6 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SettingsSkillFormContent } from '~/pages/settings/ai/components/SettingsSkillFormContent';
 import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
 
-// Loads the skill and mounts the form only once it is there, so the form
-// starts from the skill's values instead of copying them in afterwards.
 export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
