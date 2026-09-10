@@ -31,13 +31,13 @@ For other email and calendar providers:
 4. Test the connection
 
 <Note>
-**Self-hosting on an air-gapped or internal network**: By default, Twenty refuses outbound connections to private/internal IP addresses (SSRF protection). If your mail or calendar server runs on a local/private IP (e.g. an on-premise server on a LAN), connections to it will be blocked. To allow them, set the following environment variable on the server:
+**Self-hosting on an internal network**: By default, Twenty refuses outbound connections to private/internal IP addresses (SSRF protection). If your mail, calendar or identity provider server runs on a local/private IP (e.g. an on-premise server on a LAN), connections to it will be blocked. To allow them, list the hosts in the following environment variable on the server, exactly as you enter them in the connection settings:
 
 ```
-OUTBOUND_HTTP_SAFE_MODE_ENABLED=false
+OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS=mail.internal,192.168.1.10
 ```
 
-This disables safe mode for **all** outbound requests (HTTP workflow actions, webhooks, and IMAP/SMTP/CalDAV connections), so only set it on trusted, isolated networks where the SSRF protection is not needed.
+Every other outbound request (HTTP workflow actions, webhooks, SSO and IMAP/SMTP/CalDAV connections) stays protected. Set it to `*` to disable the protection entirely, which is only appropriate on trusted, isolated networks.
 </Note>
 
 ### Multiple Mailboxes

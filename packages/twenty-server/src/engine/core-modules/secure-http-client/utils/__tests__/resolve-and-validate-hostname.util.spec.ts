@@ -11,7 +11,7 @@ describe('resolveAndValidateHostname', () => {
   it('should resolve a plain hostname and pass it to DNS lookup', async () => {
     mockDnsLookup.mockResolvedValue({ address: '93.184.216.34', family: 4 });
 
-    await resolveAndValidateHostname('imap.fastmail.com', mockDnsLookup);
+    await resolveAndValidateHostname('imap.fastmail.com', [], mockDnsLookup);
 
     expect(mockDnsLookup).toHaveBeenCalledWith('imap.fastmail.com');
   });
@@ -21,6 +21,7 @@ describe('resolveAndValidateHostname', () => {
 
     await resolveAndValidateHostname(
       'https://caldav.example.com:8443/dav/principals',
+      [],
       mockDnsLookup,
     );
 
@@ -31,7 +32,7 @@ describe('resolveAndValidateHostname', () => {
     mockDnsLookup.mockResolvedValue({ address: '10.0.0.1', family: 4 });
 
     await expect(
-      resolveAndValidateHostname('evil.example.com', mockDnsLookup),
+      resolveAndValidateHostname('evil.example.com', [], mockDnsLookup),
     ).rejects.toThrow(
       'Connection to internal IP address 10.0.0.1 is not allowed.',
     );
@@ -42,10 +43,33 @@ describe('resolveAndValidateHostname', () => {
 
     const result = await resolveAndValidateHostname(
       'mail.example.com',
+      [],
       mockDnsLookup,
     );
 
     expect(result).toBe('93.184.216.34');
+  });
+
+  it('should return an allowed internal host without resolving it', async () => {
+    const result = await resolveAndValidateHostname(
+      'Mail.Internal',
+      ['mail.internal'],
+      mockDnsLookup,
+    );
+
+    expect(result).toBe('Mail.Internal');
+    expect(mockDnsLookup).not.toHaveBeenCalled();
+  });
+
+  it('should return any host without resolving it when all internal hosts are allowed', async () => {
+    const result = await resolveAndValidateHostname(
+      'https://caldav.internal/dav',
+      ['*'],
+      mockDnsLookup,
+    );
+
+    expect(result).toBe('https://caldav.internal/dav');
+    expect(mockDnsLookup).not.toHaveBeenCalled();
   });
 
   it('should propagate DNS resolution failures', async () => {
@@ -54,7 +78,7 @@ describe('resolveAndValidateHostname', () => {
     );
 
     await expect(
-      resolveAndValidateHostname('bogus.invalid', mockDnsLookup),
+      resolveAndValidateHostname('bogus.invalid', [], mockDnsLookup),
     ).rejects.toThrow('getaddrinfo ENOTFOUND bogus.invalid');
   });
 });

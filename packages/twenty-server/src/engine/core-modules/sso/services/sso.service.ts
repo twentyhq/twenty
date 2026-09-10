@@ -3,7 +3,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Issuer } from 'openid-client';
+import { msg } from '@lingui/core/macro';
+import { custom, Issuer } from 'openid-client';
 import { Repository } from 'typeorm';
 
 import {
@@ -14,6 +15,7 @@ import {
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import {
   SsoException,
   SsoExceptionCode,
@@ -28,13 +30,24 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 @Injectable()
 export class SsoService {
   private readonly featureLookUpKey = BillingEntitlementKey.SSO;
+
+  // openid-client resolves this hook on whichever object issues the request:
+  // the Issuer class for discovery, the issuer instance for JWKS and the
+  // client instance for token and userinfo calls, so it is set on all three.
+  private readonly oidcHttpOptions = (url: URL) => ({
+    agent: this.secureHttpClientService.getSsrfSafeAgent(url),
+  });
+
   constructor(
     @InjectRepository(WorkspaceSsoIdentityProviderEntity)
     private readonly workspaceSsoIdentityProviderRepository: Repository<WorkspaceSsoIdentityProviderEntity>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly billingService: BillingService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-  ) {}
+    private readonly secureHttpClientService: SecureHttpClientService,
+  ) {
+    Issuer[custom.http_options] = this.oidcHttpOptions;
+  }
 
   private async isSsoEnabled(workspaceId: string) {
     const isSsoBillingEnabled = await this.billingService.hasEntitlement(
@@ -53,10 +66,15 @@ export class SsoService {
   private async getIssuerForOidc(issuerUrl: string) {
     try {
       return await Issuer.discover(issuerUrl);
-    } catch {
+    } catch (error) {
+      // Surfaced so a blocked private-network issuer is diagnosable at setup;
+      // at login the failure would only show as a redirect.
+      const reason = error instanceof Error ? error.message : String(error);
+
       throw new SsoException(
-        'Invalid issuer',
+        `Invalid issuer: ${reason}`,
         SsoExceptionCode.INVALID_ISSUER_URL,
+        { userFriendlyMessage: msg`Invalid issuer URL: ${reason}` },
       );
     }
   }
@@ -194,12 +212,18 @@ export class SsoService {
       );
     }
 
-    return new issuer.Client({
+    issuer[custom.http_options] = this.oidcHttpOptions;
+
+    const client = new issuer.Client({
       client_id: identityProvider.clientID,
       client_secret: identityProvider.clientSecret,
       redirect_uris: [this.buildCallbackUrl(identityProvider)],
       response_types: [OidcResponseType.CODE],
     });
+
+    client[custom.http_options] = this.oidcHttpOptions;
+
+    return client;
   }
 
   async getAuthorizationUrlForSSO(

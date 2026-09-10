@@ -3,6 +3,7 @@ import * as https from 'https';
 import { type Socket } from 'net';
 import { type Duplex } from 'stream';
 
+import { isAllowedInternalHost } from 'src/engine/core-modules/secure-http-client/utils/is-allowed-internal-host.util';
 import { isPrivateIp } from 'src/engine/core-modules/secure-http-client/utils/is-private-ip.util';
 
 // Checks whether a hostname is a private IP literal.
@@ -59,10 +60,21 @@ const attachLookupValidation = (duplex: Duplex): Socket => {
 // which means every connection is checked — including those created
 // by automatic redirect following.
 class SsrfSafeHttpAgent extends http.Agent {
+  constructor(private readonly allowedInternalHosts: string[]) {
+    super();
+  }
+
   createConnection(
     options: http.ClientRequestArgs,
     callback?: (err: Error, stream: Duplex) => void,
   ): Duplex {
+    if (
+      options.host &&
+      isAllowedInternalHost(options.host, this.allowedInternalHosts)
+    ) {
+      return super.createConnection(options, callback);
+    }
+
     validateHost(options.host ?? undefined);
 
     return attachLookupValidation(super.createConnection(options, callback));
@@ -70,18 +82,32 @@ class SsrfSafeHttpAgent extends http.Agent {
 }
 
 class SsrfSafeHttpsAgent extends https.Agent {
+  constructor(private readonly allowedInternalHosts: string[]) {
+    super();
+  }
+
   createConnection(
     options: http.ClientRequestArgs,
     callback?: (err: Error, stream: Duplex) => void,
   ): Duplex {
+    if (
+      options.host &&
+      isAllowedInternalHost(options.host, this.allowedInternalHosts)
+    ) {
+      return super.createConnection(options, callback);
+    }
+
     validateHost(options.host ?? undefined);
 
     return attachLookupValidation(super.createConnection(options, callback));
   }
 }
 
-export const createSsrfSafeAgent = (protocol: 'http' | 'https'): http.Agent => {
+export const createSsrfSafeAgent = (
+  protocol: 'http' | 'https',
+  allowedInternalHosts: string[] = [],
+): http.Agent => {
   return protocol === 'https'
-    ? new SsrfSafeHttpsAgent()
-    : new SsrfSafeHttpAgent();
+    ? new SsrfSafeHttpsAgent(allowedInternalHosts)
+    : new SsrfSafeHttpAgent(allowedInternalHosts);
 };

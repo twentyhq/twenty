@@ -215,6 +215,45 @@ describe('createSsrfSafeAgent', () => {
     });
   });
 
+  describe('allowed internal hosts', () => {
+    it('should allow an allowed private IP literal', () => {
+      const agent = createSsrfSafeAgent('http', ['192.168.1.10']);
+
+      agent.createConnection({ host: '192.168.1.10' } as any, jest.fn() as any);
+
+      expect(createConnectionSpy).toHaveBeenCalled();
+    });
+
+    it('should skip DNS validation for an allowed hostname', () => {
+      const agent = createSsrfSafeAgent('http', ['keycloak']);
+
+      agent.createConnection({ host: 'Keycloak' } as any, jest.fn() as any);
+
+      mockSocket.emit('lookup', null, '172.18.0.5', 4, 'Keycloak');
+
+      expect(mockSocket.destroy).not.toHaveBeenCalled();
+    });
+
+    it('should still block private IPs for hosts that are not allowed', () => {
+      const agent = createSsrfSafeAgent('http', ['keycloak']);
+
+      expect(() => {
+        agent.createConnection({ host: '10.0.0.1' } as any, jest.fn() as any);
+      }).toThrow('Request to internal IP address 10.0.0.1 is not allowed.');
+    });
+
+    it('should allow every host when the wildcard is set', () => {
+      const agent = createSsrfSafeAgent('http', ['*']);
+
+      agent.createConnection(
+        { host: '169.254.169.254' } as any,
+        jest.fn() as any,
+      );
+
+      expect(createConnectionSpy).toHaveBeenCalled();
+    });
+  });
+
   describe('HTTPS agent', () => {
     it('should block private IPs for HTTPS connections', () => {
       const agent = createSsrfSafeAgent('https');
