@@ -68,6 +68,7 @@ export class WorkflowCoreSyncService {
       return {
         id: coreWorkflowId,
         name: workflow.name ?? null,
+        workspaceWorkflowId: workflow.id,
         lastPublishedVersionId: isNonEmptyString(
           workflow.lastPublishedVersionId,
         )

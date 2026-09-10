@@ -115,6 +115,12 @@ export class CoreWorkflowMutationWorkspaceService {
           ).id;
         }, authContext);
 
+      await this.coreWorkflowRepository.update(
+        workspaceId,
+        { id: coreWorkflow.id },
+        { workspaceWorkflowId },
+      );
+
       await this.workflowVersionCoreSyncService.createInitialDraftVersionForWorkflow(
         workspaceId,
         workspaceWorkflowId,

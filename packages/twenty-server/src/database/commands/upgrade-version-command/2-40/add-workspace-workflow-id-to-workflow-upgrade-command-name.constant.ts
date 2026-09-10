@@ -1,0 +1,2 @@
+export const ADD_WORKSPACE_WORKFLOW_ID_TO_WORKFLOW_UPGRADE_COMMAND_NAME =
+  '2.40.0_AddWorkspaceWorkflowIdToWorkflowFastInstanceCommand_1789036819009';
