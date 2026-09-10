@@ -1,7 +1,7 @@
 # Twenty UI renderer coverage
 
-`TwentyUiGallery.stories.tsx` covers the original component catalog.
-`TwentyUiMigrations.stories.tsx` backfills components added or migrated by
+`TwentyUiGallery.stories.tsx` contains the component catalogs and focused
+component stories, including coverage for components added or migrated by
 PRs #24277, #24278, #24279, #25584, #25596, #25607, #25610, #25612,
 #25625, #25663, #25665, and #25678. Each fixture has React and Preact stories.
 
@@ -29,8 +29,7 @@ These are compatibility regression stories, not assertions that the components
 work fully in the sandbox. The failing scenarios require specific errors and reject unrelated errors,
 following the existing gallery convention. Known precursor errors are optional
 because the host can coalesce worker errors into a single state update. A fix
-must change the corresponding
-story to assert successful behavior; do not keep or broaden an obsolete error
+must change the corresponding story to assert successful behavior; do not keep or broaden an obsolete error
 expectation. No stories are skipped or marked as expected-to-fail by the runner.
 
 | Component | Current limitation |
@@ -54,5 +53,5 @@ From the repository root, build the fixture dependencies and sandbox with
 Then, from `packages/twenty-front-component-renderer`, run:
 
 ```sh
-npx vitest run --config vitest.storybook.config.ts TwentyUiMigrations.stories.tsx
+npx vitest run --config vitest.storybook.config.ts TwentyUiGallery.stories.tsx
 ```
