@@ -10,7 +10,7 @@ import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-
 import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test.util';
 import {
   SLACK_CHANNEL_WELCOME_UNIVERSAL_IDENTIFIER,
-  SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
+  SLACK_ASSISTANT_REQUEST_UNIVERSAL_IDENTIFIER,
   SLACK_HOME_OPENED_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { SLACK_ASSISTANT_EMPTY_REQUEST_TEXT } from 'src/logic-functions/constants/slack-assistant-empty-request-text';
@@ -177,7 +177,7 @@ describe('Slack inbound events', () => {
         expect.objectContaining({
           workspaceId,
           targetLogicFunctionUniversalIdentifier:
-            SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
+            SLACK_ASSISTANT_REQUEST_UNIVERSAL_IDENTIFIER,
         }),
       );
     });
@@ -251,7 +251,10 @@ describe('Slack inbound events', () => {
         }),
       );
 
-      expect(result).toEqual({ ok: true });
+      expect(result).toEqual({
+        ok: true,
+        request: expect.objectContaining({ id: expect.any(String) }),
+      });
 
       const request = await findRequestByMessageTimestamp(
         slackMessageTimestamp,
@@ -270,7 +273,7 @@ describe('Slack inbound events', () => {
       );
     });
 
-    it('should ignore a redelivery of the same Slack message', async () => {
+    it('should hand a redelivery of an unanswered Slack message back to the same request', async () => {
       const slackMessageTimestamp = nextMessageTimestamp();
       const eventBody = buildSlackAppMentionEventBody({
         channelId: CHANNEL_ID,
@@ -279,12 +282,12 @@ describe('Slack inbound events', () => {
         botUserId: slack.botUserId,
       });
 
-      await enqueueSlackAssistantRequest(eventBody);
+      const firstResult = await enqueueSlackAssistantRequest(eventBody);
       const redeliveryResult = await enqueueSlackAssistantRequest(eventBody);
 
       expect(redeliveryResult).toEqual({
         ok: true,
-        skipped: 'Slack message is already queued',
+        request: expect.objectContaining({ id: firstResult.request?.id }),
       });
       await expect(
         findRequestByMessageTimestamp(slackMessageTimestamp),
@@ -335,6 +338,56 @@ describe('Slack inbound events', () => {
       await expect(
         findRequestByMessageTimestamp(slackMessageTimestamp),
       ).resolves.toBeUndefined();
+    });
+
+    it('should name the attachment when a mention carries a file and no caption', async () => {
+      slack.addChannel({ id: CHANNEL_ID, name: 'integration' });
+      const slackMessageTimestamp = nextMessageTimestamp();
+
+      const result = await enqueueSlackAssistantRequest(
+        buildSlackAppMentionEventBody({
+          channelId: CHANNEL_ID,
+          text: `<@${slack.botUserId}>`,
+          messageTimestamp: slackMessageTimestamp,
+          botUserId: slack.botUserId,
+          files: [{ id: 'F0PROPOSAL', name: 'proposal.pdf' }],
+        }),
+      );
+
+      expect(result).toEqual({ ok: true });
+      expect(slack.messagesIn(CHANNEL_ID)).toEqual([
+        expect.objectContaining({
+          markdownText: expect.stringContaining('proposal.pdf'),
+          threadTimestamp: slackMessageTimestamp,
+        }),
+      ]);
+      await expect(
+        findRequestByMessageTimestamp(slackMessageTimestamp),
+      ).resolves.toBeUndefined();
+    });
+
+    it('should queue a direct message uploaded with the file_share subtype', async () => {
+      const slackMessageTimestamp = nextMessageTimestamp();
+
+      const result = await enqueueSlackAssistantRequest(
+        buildSlackMessageEventBody({
+          channelId: DIRECT_MESSAGE_CHANNEL_ID,
+          text: 'what do you make of this?',
+          messageTimestamp: slackMessageTimestamp,
+          subtype: 'file_share',
+          files: [{ id: 'F0PROPOSAL', name: 'proposal.pdf' }],
+        }),
+      );
+
+      expect(result).toEqual({
+        ok: true,
+        request: expect.objectContaining({ id: expect.any(String) }),
+      });
+      await expect(
+        findRequestByMessageTimestamp(slackMessageTimestamp),
+      ).resolves.toEqual(
+        expect.objectContaining({ requestText: 'what do you make of this?' }),
+      );
     });
 
     it('should answer an empty mention only once', async () => {
@@ -400,7 +453,10 @@ describe('Slack inbound events', () => {
         }),
       );
 
-      expect(result).toEqual({ ok: true });
+      expect(result).toEqual({
+        ok: true,
+        request: expect.objectContaining({ id: expect.any(String) }),
+      });
 
       const request = await findRequestByMessageTimestamp(
         slackMessageTimestamp,

@@ -1,14 +1,10 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
-import {
-  useAiModelLabel,
-  useAiModelOptions,
-} from '@/ai/hooks/useAiModelOptions';
+import { AiModelPicker } from '@/ai/components/AiModelPicker';
 import { SettingsAgentModelCapabilities } from '@/ai/components/SettingsAgentModelCapabilities';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { IconPicker } from '@/ui/input/components/IconPicker';
-import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -69,23 +65,7 @@ export const SettingsAgentSettingsTab = ({
   const { openModal } = useModal();
 
   const aiModels = useAtomStateValue(aiModelsState);
-  const { options: activeModelOptions } = useAiModelOptions();
-  const currentModelLabel = useAiModelLabel(formValues.modelId);
-
-  const currentModel = aiModels.find((m) => m.modelId === formValues.modelId);
-  const isCurrentModelDeprecated = currentModel?.isDeprecated === true;
-
-  const modelOptions = isCurrentModelDeprecated
-    ? [
-        {
-          value: formValues.modelId,
-          label: `${currentModelLabel} (deprecated)`,
-        },
-        ...activeModelOptions,
-      ]
-    : activeModelOptions;
-
-  const noModelsAvailable = modelOptions.length === 0;
+  const noModelsAvailable = aiModels.length === 0;
 
   const fillNameFromLabel = (label: string) => {
     if (isDefined(label)) {
@@ -133,16 +113,13 @@ export const SettingsAgentSettingsTab = ({
       <StyledFormContainer>
         {noModelsAvailable ? (
           <StyledErrorMessage>
-            {t`No models available. Please configure AI models in your workspace settings.`}
+            {t`No AI provider is configured on this instance.`}
           </StyledErrorMessage>
         ) : (
-          <Select
-            dropdownId="ai-model-select"
-            label={t`AI Model`}
-            value={formValues.modelId}
-            onChange={(value) => onFieldChange('modelId', value)}
-            options={modelOptions}
-            disabled={noModelsAvailable || disabled}
+          <AiModelPicker
+            modelId={formValues.modelId}
+            onModelIdChange={(value) => onFieldChange('modelId', value)}
+            disabled={disabled}
           />
         )}
       </StyledFormContainer>
