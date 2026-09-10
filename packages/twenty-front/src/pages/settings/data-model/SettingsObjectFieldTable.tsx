@@ -185,32 +185,32 @@ export const SettingsObjectFieldTable = ({
                   <DropdownMenuItemsContainer>
                     <MenuItemSwitch
                       LeftIcon={IconArchive}
-                      onToggleChange={() => setShowInactive(!showInactive)}
-                      toggled={showInactive}
+                      onCheckedChange={() => setShowInactive(!showInactive)}
+                      checked={showInactive}
                       text={t`Inactive`}
-                      toggleSize="small"
+                      size="sm"
                     />
                     {(mostlyEmptyFieldMetadataIds.size > 0 ||
                       showOnlyMostlyEmpty) && (
                       <MenuItemSwitch
                         LeftIcon={IconCircleDashed}
-                        onToggleChange={() =>
+                        onCheckedChange={() =>
                           setShowOnlyMostlyEmpty(!showOnlyMostlyEmpty)
                         }
-                        toggled={showOnlyMostlyEmpty}
+                        checked={showOnlyMostlyEmpty}
                         text={t`Mostly empty`}
-                        toggleSize="small"
+                        size="sm"
                       />
                     )}
                     {isAdvancedModeEnabled && (
                       <MenuItemSwitch
                         LeftIcon={IconSettings}
-                        onToggleChange={() =>
+                        onCheckedChange={() =>
                           setShowSystemFields(!showSystemFields)
                         }
-                        toggled={showSystemFields}
+                        checked={showSystemFields}
                         text={t`System fields`}
-                        toggleSize="small"
+                        size="sm"
                       />
                     )}
                   </DropdownMenuItemsContainer>

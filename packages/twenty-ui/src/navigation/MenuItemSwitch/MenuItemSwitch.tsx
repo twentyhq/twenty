@@ -1,5 +1,5 @@
 import { type IconComponent } from '@ui/icon';
-import { Switch } from '@ui/input';
+import { Switch, type SwitchSize } from '@ui/input';
 import { MenuItemLeftContent } from '@ui/navigation/MenuItem/parts/MenuItemLeftContent';
 import {
   StyledMenuItemBase,
@@ -12,11 +12,11 @@ export type MenuItemSwitchProps = {
   focused?: boolean;
   LeftIcon?: IconComponent;
   withIconContainer?: boolean;
-  toggled: boolean;
+  checked: boolean;
   text: string;
   className?: string;
-  onToggleChange?: (toggled: boolean) => void;
-  toggleSize?: 'small' | 'medium';
+  onCheckedChange?: (checked: boolean) => void;
+  size?: SwitchSize;
   disabled?: boolean;
 };
 
@@ -25,15 +25,15 @@ export const MenuItemSwitch = ({
   LeftIcon,
   withIconContainer = false,
   text,
-  toggled,
+  checked,
   className,
-  onToggleChange,
-  toggleSize,
+  onCheckedChange,
+  size = 'md',
   disabled = false,
 }: MenuItemSwitchProps) => {
   const handleClick = () => {
     if (!disabled) {
-      onToggleChange?.(!toggled);
+      onCheckedChange?.(!checked);
     }
   };
 
@@ -53,9 +53,9 @@ export const MenuItemSwitch = ({
         />
         <StyledMenuItemRightContent onClick={(e) => e.stopPropagation()}>
           <Switch
-            checked={toggled}
-            onCheckedChange={disabled ? undefined : onToggleChange}
-            size={toggleSize === 'small' ? 'sm' : 'md'}
+            checked={checked}
+            onCheckedChange={disabled ? undefined : onCheckedChange}
+            size={size}
             disabled={disabled}
             aria-label={text}
           />

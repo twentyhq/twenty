@@ -175,12 +175,12 @@ export const SettingsObjectIndexesSection = ({
                 <DropdownMenuItemsContainer>
                   <MenuItemSwitch
                     LeftIcon={IconEyeOff}
-                    onToggleChange={() =>
+                    onCheckedChange={() =>
                       setHideSystemIndexes(!hideSystemIndexes)
                     }
-                    toggled={hideSystemIndexes}
+                    checked={hideSystemIndexes}
                     text={t`Hide system indexes`}
-                    toggleSize="small"
+                    size="sm"
                   />
                 </DropdownMenuItemsContainer>
               </DropdownContent>

@@ -113,17 +113,17 @@ export const SettingsRolesList = () => {
               <DropdownMenuItemsContainer>
                 <MenuItemSwitch
                   LeftIcon={IconLego}
-                  onToggleChange={() => setShowAgentRoles(!showAgentRoles)}
-                  toggled={showAgentRoles}
+                  onCheckedChange={() => setShowAgentRoles(!showAgentRoles)}
+                  checked={showAgentRoles}
                   text={t`Agent roles`}
-                  toggleSize="small"
+                  size="sm"
                 />
                 <MenuItemSwitch
                   LeftIcon={IconKey}
-                  onToggleChange={() => setShowApiKeyRoles(!showApiKeyRoles)}
-                  toggled={showApiKeyRoles}
+                  onCheckedChange={() => setShowApiKeyRoles(!showApiKeyRoles)}
+                  checked={showApiKeyRoles}
                   text={t`API key roles`}
-                  toggleSize="small"
+                  size="sm"
                 />
               </DropdownMenuItemsContainer>
             </DropdownContent>

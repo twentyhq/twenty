@@ -78,7 +78,7 @@ export const AdvancedMode: Story = {
 export const WithoutIcon: Story = {
   args: {
     title: 'Simple Switch',
-    description: 'A basic toggle without an icon',
+    description: 'A basic switch without an icon',
     checked: true,
   },
 };

@@ -59,7 +59,7 @@ export const ChartSettingItem = ({
   const { updateChartSettingTextInput } =
     useUpdateChartSettingTextInput(pageLayoutId);
 
-  const handleToggleChange = () => {
+  const handleCheckedChange = () => {
     setSelectedItemId(item.id);
     updateChartSettingToggle(item.id);
   };
@@ -160,14 +160,14 @@ export const ChartSettingItem = ({
       <SelectableListItem
         key={item.id}
         itemId={item.id}
-        onEnter={handleToggleChange}
+        onEnter={handleCheckedChange}
       >
         <CommandMenuItemSwitch
           LeftIcon={item.Icon}
           text={t(item.label)}
           id={item.id}
-          toggled={getChartSettingsValues(item.id) as boolean}
-          onToggleChange={handleToggleChange}
+          checked={getChartSettingsValues(item.id) as boolean}
+          onCheckedChange={handleCheckedChange}
         />
       </SelectableListItem>
     );

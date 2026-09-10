@@ -133,12 +133,12 @@ export const SidePanelObjectFilterDropdownContent = ({
       <DropdownMenuItemsContainer>
         <MenuItemSwitch
           LeftIcon={IconCube}
-          onToggleChange={() =>
+          onCheckedChange={() =>
             setSidePanelShowHiddenObjects(!sidePanelShowHiddenObjects)
           }
-          toggled={sidePanelShowHiddenObjects}
+          checked={sidePanelShowHiddenObjects}
           text={t`Show hidden objects`}
-          toggleSize="small"
+          size="sm"
         />
       </DropdownMenuItemsContainer>
     </DropdownContent>

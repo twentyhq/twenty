@@ -311,15 +311,15 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   <MenuItemSwitch
                     focused={selectedItemId === 'Compact view'}
                     LeftIcon={IconBaselineDensitySmall}
-                    onToggleChange={() =>
+                    onCheckedChange={() =>
                       setAndPersistIsCompactModeActive(
                         !isCompactModeActive,
                         currentView,
                       )
                     }
-                    toggled={isCompactModeActive}
+                    checked={isCompactModeActive}
                     text={t`Compact view`}
-                    toggleSize="small"
+                    size="sm"
                   />
                 </SelectableListItem>
               )}

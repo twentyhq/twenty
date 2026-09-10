@@ -93,24 +93,24 @@ export const SettingsAgentToolsTab = () => {
                   <DropdownMenuItemsContainer>
                     <MenuItemSwitch
                       LeftIcon={IconTool}
-                      onToggleChange={setShowCustomTools}
-                      toggled={showCustomTools}
+                      onCheckedChange={setShowCustomTools}
+                      checked={showCustomTools}
                       text={t`Custom`}
-                      toggleSize="small"
+                      size="sm"
                     />
                     <MenuItemSwitch
                       LeftIcon={IconLock}
-                      onToggleChange={setShowManagedTools}
-                      toggled={showManagedTools}
+                      onCheckedChange={setShowManagedTools}
+                      checked={showManagedTools}
                       text={t`Managed`}
-                      toggleSize="small"
+                      size="sm"
                     />
                     <MenuItemSwitch
                       LeftIcon={IconPuzzle}
-                      onToggleChange={setShowStandardTools}
-                      toggled={showStandardTools}
+                      onCheckedChange={setShowStandardTools}
+                      checked={showStandardTools}
                       text={t`Standard`}
-                      toggleSize="small"
+                      size="sm"
                     />
                   </DropdownMenuItemsContainer>
                 </DropdownContent>

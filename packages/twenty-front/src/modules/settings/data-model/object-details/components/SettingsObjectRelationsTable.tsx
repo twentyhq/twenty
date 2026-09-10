@@ -219,10 +219,10 @@ export const SettingsObjectRelationsTable = ({
               <DropdownMenuItemsContainer>
                 <MenuItemSwitch
                   LeftIcon={IconArchive}
-                  onToggleChange={() => setShowInactive(!showInactive)}
-                  toggled={showInactive}
+                  onCheckedChange={() => setShowInactive(!showInactive)}
+                  checked={showInactive}
                   text={t`Inactive`}
-                  toggleSize="small"
+                  size="sm"
                 />
               </DropdownMenuItemsContainer>
             </DropdownContent>

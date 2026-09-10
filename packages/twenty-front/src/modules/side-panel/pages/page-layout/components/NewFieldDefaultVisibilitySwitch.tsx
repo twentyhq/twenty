@@ -25,21 +25,21 @@ export const NewFieldDefaultVisibilitySwitch = ({
       widgetId,
     });
 
-  const handleToggle = () => {
+  const handleCheckedChange = () => {
     updateNewFieldDefaultVisibility(!newFieldDefaultVisibility);
   };
 
   return (
     <SelectableListItem
       itemId="new-field-default-visibility"
-      onEnter={handleToggle}
+      onEnter={handleCheckedChange}
     >
       <CommandMenuItemSwitch
         LeftIcon={IconEye}
         text={t`Set fields created in the future as "visible"`}
         id="new-field-default-visibility"
-        toggled={newFieldDefaultVisibility}
-        onToggleChange={handleToggle}
+        checked={newFieldDefaultVisibility}
+        onCheckedChange={handleCheckedChange}
       />
     </SelectableListItem>
   );

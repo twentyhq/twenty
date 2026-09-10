@@ -58,7 +58,7 @@ type SettingsOptionCardContentSwitchProps = {
   divider?: boolean;
   disabled?: boolean;
   advancedMode?: boolean;
-  toggleCentered?: boolean;
+  switchCentered?: boolean;
   checked: boolean;
   onChange: (checked: boolean) => void;
 };
@@ -70,7 +70,7 @@ export const SettingsOptionCardContentSwitch = ({
   divider,
   disabled = false,
   advancedMode = false,
-  toggleCentered = true,
+  switchCentered = true,
   checked,
   onChange,
 }: SettingsOptionCardContentSwitchProps) => {
@@ -105,7 +105,7 @@ export const SettingsOptionCardContentSwitch = ({
             disabled={disabled}
             size="sm"
             data-advanced-mode={advancedMode || undefined}
-            data-centered={toggleCentered || undefined}
+            data-centered={switchCentered || undefined}
           />
         </StyledSettingsCardSwitchButtonContainer>
       </StyledSettingsCardSwitchContent>

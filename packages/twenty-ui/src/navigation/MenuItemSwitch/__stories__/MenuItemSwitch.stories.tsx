@@ -57,10 +57,10 @@ export const Catalog: CatalogStory<Story, typeof MenuItemSwitch> = {
               : 'Without icon container',
         },
         {
-          name: 'toggled',
+          name: 'checked',
           values: [true, false],
-          props: (toggled: boolean) => ({ toggled }),
-          labels: (toggled: boolean) => (toggled ? 'Toggled' : 'Not toggled'),
+          props: (checked: boolean) => ({ checked }),
+          labels: (checked: boolean) => (checked ? 'Checked' : 'Unchecked'),
         },
         {
           name: 'states',

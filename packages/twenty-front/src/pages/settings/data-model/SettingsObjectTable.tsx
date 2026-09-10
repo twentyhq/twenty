@@ -178,22 +178,22 @@ export const SettingsObjectTable = ({
                     <DropdownMenuItemsContainer>
                       <MenuItemSwitch
                         LeftIcon={IconArchive}
-                        onToggleChange={() =>
+                        onCheckedChange={() =>
                           setShowDeactivated(!showDeactivated)
                         }
-                        toggled={showDeactivated}
+                        checked={showDeactivated}
                         text={t`Deactivated`}
-                        toggleSize="small"
+                        size="sm"
                       />
                       {isAdvancedModeEnabled && (
                         <MenuItemSwitch
                           LeftIcon={IconSettings}
-                          onToggleChange={() =>
+                          onCheckedChange={() =>
                             setShowSystemObjects(!showSystemObjects)
                           }
-                          toggled={showSystemObjects}
+                          checked={showSystemObjects}
                           text={t`System objects`}
-                          toggleSize="small"
+                          size="sm"
                         />
                       )}
                     </DropdownMenuItemsContainer>

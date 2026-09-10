@@ -185,7 +185,7 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'MenuItemSwitch',
     node: (
-      <MenuItemSwitch text="Switch" toggled={true} onToggleChange={() => {}} />
+      <MenuItemSwitch text="Switch" checked={true} onCheckedChange={() => {}} />
     ),
   },
   {

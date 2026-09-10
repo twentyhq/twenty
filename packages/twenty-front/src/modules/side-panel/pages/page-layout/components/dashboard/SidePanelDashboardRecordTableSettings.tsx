@@ -421,8 +421,8 @@ export const SidePanelDashboardRecordTableSettings = () => {
                         LeftIcon={IconEyeOff}
                         text={t`Hide empty groups`}
                         id="record-table-hide-empty-groups"
-                        toggled={shouldHideEmptyGroups}
-                        onToggleChange={handleShouldHideEmptyGroupsChange}
+                        checked={shouldHideEmptyGroups}
+                        onCheckedChange={handleShouldHideEmptyGroupsChange}
                       />
                     </SelectableListItem>
                   )}
@@ -444,8 +444,8 @@ export const SidePanelDashboardRecordTableSettings = () => {
                         LeftIcon={IconPencil}
                         text={t`Allow editing`}
                         id="record-table-allow-editing"
-                        toggled={isUIEditable}
-                        onToggleChange={handleIsUIEditableChange}
+                        checked={isUIEditable}
+                        onCheckedChange={handleIsUIEditableChange}
                       />
                     </SelectableListItem>
                   )}

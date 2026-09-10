@@ -120,8 +120,8 @@ export const SidePanelRecordPageFieldsSettings = () => {
                 LeftIcon={IconChevronDown}
                 text={t`Display "More fields" button`}
                 id="display-more-fields-button"
-                toggled={isShouldAllowUserToSeeHiddenFieldsToggled}
-                onToggleChange={handleToggleShouldAllowUserToSeeHiddenFields}
+                checked={isShouldAllowUserToSeeHiddenFieldsToggled}
+                onCheckedChange={handleToggleShouldAllowUserToSeeHiddenFields}
               />
             </SelectableListItem>
             <NewFieldDefaultVisibilitySwitch

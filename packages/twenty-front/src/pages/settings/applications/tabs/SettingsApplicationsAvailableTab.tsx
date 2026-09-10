@@ -108,10 +108,10 @@ export const SettingsApplicationsAvailableTab = () => {
                   <DropdownMenuItemsContainer>
                     <MenuItemSwitch
                       LeftIcon={IconSparkles}
-                      onToggleChange={() => setShowVettedOnly(!showVettedOnly)}
-                      toggled={showVettedOnly}
+                      onCheckedChange={() => setShowVettedOnly(!showVettedOnly)}
+                      checked={showVettedOnly}
                       text={t`Vetted only`}
-                      toggleSize="small"
+                      size="sm"
                     />
                   </DropdownMenuItemsContainer>
                 </DropdownContent>

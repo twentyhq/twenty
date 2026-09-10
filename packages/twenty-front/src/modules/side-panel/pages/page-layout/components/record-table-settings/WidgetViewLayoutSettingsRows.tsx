@@ -209,8 +209,8 @@ export const WidgetViewLayoutSettingsRows = ({
             LeftIcon={IconEyeOff}
             text={t`Hide empty groups`}
             id="record-table-hide-empty-groups"
-            toggled={shouldHideEmptyGroups}
-            onToggleChange={handleShouldHideEmptyGroupsChange}
+            checked={shouldHideEmptyGroups}
+            onCheckedChange={handleShouldHideEmptyGroupsChange}
           />
         </SelectableListItem>
       )}

@@ -220,66 +220,66 @@ export const SettingsAdminApps = () => {
                   <DropdownMenuItemsContainer>
                     <MenuItemSwitch
                       LeftIcon={IconPinned}
-                      onToggleChange={() =>
+                      onCheckedChange={() =>
                         setShowPreInstalledOnly(!showPreInstalledOnly)
                       }
-                      toggled={showPreInstalledOnly}
+                      checked={showPreInstalledOnly}
                       text={t`Pre-installed only`}
-                      toggleSize="small"
+                      size="sm"
                     />
                     <DropdownMenuSectionLabel label={t`Source`} />
                     {SOURCE_TYPE_FILTER_OPTIONS.map(({ sourceType, label }) => (
                       <MenuItemSwitch
                         key={sourceType}
-                        onToggleChange={() =>
+                        onCheckedChange={() =>
                           toggleSourceTypeFilter(sourceType)
                         }
-                        toggled={sourceTypeFilters.includes(sourceType)}
+                        checked={sourceTypeFilters.includes(sourceType)}
                         text={label}
-                        toggleSize="small"
+                        size="sm"
                       />
                     ))}
                     <DropdownMenuSectionLabel label={t`Listed`} />
                     <MenuItemSwitch
-                      onToggleChange={() =>
+                      onCheckedChange={() =>
                         setIsListedFilter(
                           isListedFilter === true ? undefined : true,
                         )
                       }
-                      toggled={isListedFilter === true}
+                      checked={isListedFilter === true}
                       text={t`Listed`}
-                      toggleSize="small"
+                      size="sm"
                     />
                     <MenuItemSwitch
-                      onToggleChange={() =>
+                      onCheckedChange={() =>
                         setIsListedFilter(
                           isListedFilter === false ? undefined : false,
                         )
                       }
-                      toggled={isListedFilter === false}
+                      checked={isListedFilter === false}
                       text={t`Not listed`}
-                      toggleSize="small"
+                      size="sm"
                     />
                     <DropdownMenuSectionLabel label={t`Configured`} />
                     <MenuItemSwitch
-                      onToggleChange={() =>
+                      onCheckedChange={() =>
                         setIsConfiguredFilter(
                           isConfiguredFilter === true ? undefined : true,
                         )
                       }
-                      toggled={isConfiguredFilter === true}
+                      checked={isConfiguredFilter === true}
                       text={t`Configured`}
-                      toggleSize="small"
+                      size="sm"
                     />
                     <MenuItemSwitch
-                      onToggleChange={() =>
+                      onCheckedChange={() =>
                         setIsConfiguredFilter(
                           isConfiguredFilter === false ? undefined : false,
                         )
                       }
-                      toggled={isConfiguredFilter === false}
+                      checked={isConfiguredFilter === false}
                       text={t`Not configured`}
-                      toggleSize="small"
+                      size="sm"
                     />
                   </DropdownMenuItemsContainer>
                 </DropdownContent>

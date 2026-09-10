@@ -23,9 +23,9 @@ export const Default: Story = {
 
     await canvas.findByText('Continue on iteration failure');
 
-    const toggle = canvas.getByRole('switch');
+    const control = canvas.getByRole('switch');
 
-    expect(toggle).not.toBeChecked();
+    expect(control).not.toBeChecked();
   },
 };
 
@@ -57,20 +57,20 @@ export const WithHint: Story = {
   },
 };
 
-export const ToggledOn: Story = {
+export const Checked: Story = {
   args: {
     value: true,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const toggle = canvas.getByRole('switch');
+    const control = canvas.getByRole('switch');
 
-    expect(toggle).toBeChecked();
+    expect(control).toBeChecked();
   },
 };
 
-export const TogglesValue: Story = {
+export const ChangesValue: Story = {
   args: {
     value: false,
     onChange: fn(),
@@ -78,9 +78,9 @@ export const TogglesValue: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    const toggle = canvas.getByRole('switch');
+    const control = canvas.getByRole('switch');
 
-    await userEvent.click(toggle);
+    await userEvent.click(control);
 
     await waitFor(() => {
       expect(args.onChange).toHaveBeenCalledWith(true);

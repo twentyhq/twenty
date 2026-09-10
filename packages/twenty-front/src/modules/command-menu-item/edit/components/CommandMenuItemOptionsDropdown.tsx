@@ -43,9 +43,9 @@ export const CommandMenuItemOptionsDropdown = ({
   const isLabelHidden =
     normalizedShortLabel === null && isDefined(normalizedServerShortLabel);
 
-  const handleToggleHideLabel = (toggled: boolean) => {
+  const handleHiddenLabelChange = (checked: boolean) => {
     updateCommandMenuItemInDraft(itemId, {
-      shortLabel: toggled ? null : normalizedServerShortLabel,
+      shortLabel: checked ? null : normalizedServerShortLabel,
     });
   };
 
@@ -65,9 +65,9 @@ export const CommandMenuItemOptionsDropdown = ({
             <MenuItemSwitch
               LeftIcon={IconTag}
               text={t`Hide label`}
-              toggled={isLabelHidden || hasNoShortLabel}
-              onToggleChange={handleToggleHideLabel}
-              toggleSize="small"
+              checked={isLabelHidden || hasNoShortLabel}
+              onCheckedChange={handleHiddenLabelChange}
+              size="sm"
               disabled={hasNoShortLabel}
             />
             <MenuItem

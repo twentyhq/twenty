@@ -14,17 +14,17 @@ const meta: Meta<typeof MenuItemSwitch> = {
 export default meta;
 type Story = StoryObj<typeof MenuItemSwitch>;
 
-type MenuSwitchProps = { onToggleChange?: (checked: boolean) => void };
+type MenuSwitchProps = { onCheckedChange?: (checked: boolean) => void };
 
-const MenuSwitch = ({ onToggleChange }: MenuSwitchProps) => {
+const MenuSwitch = ({ onCheckedChange }: MenuSwitchProps) => {
   const [checked, setChecked] = useState(false);
   return (
     <MenuItemSwitch
       text="Notifications"
-      toggled={checked}
-      onToggleChange={(nextChecked) => {
+      checked={checked}
+      onCheckedChange={(nextChecked) => {
         setChecked(nextChecked);
-        onToggleChange?.(nextChecked);
+        onCheckedChange?.(nextChecked);
       }}
     />
   );
@@ -32,16 +32,16 @@ const MenuSwitch = ({ onToggleChange }: MenuSwitchProps) => {
 
 export const MenuItem: Story = {
   decorators: [ComponentDecorator],
-  args: { onToggleChange: fn() },
+  args: { onCheckedChange: fn() },
   render: (args) => <MenuSwitch {...args} />,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const control = canvas.getByRole('switch', { name: 'Notifications' });
     await userEvent.click(control);
     await expect(control).toBeChecked();
-    await expect(args.onToggleChange).toHaveBeenCalledTimes(1);
+    await expect(args.onCheckedChange).toHaveBeenCalledTimes(1);
     await userEvent.click(canvas.getByText('Notifications'));
     await expect(control).not.toBeChecked();
-    await expect(args.onToggleChange).toHaveBeenCalledTimes(2);
+    await expect(args.onCheckedChange).toHaveBeenCalledTimes(2);
   },
 };

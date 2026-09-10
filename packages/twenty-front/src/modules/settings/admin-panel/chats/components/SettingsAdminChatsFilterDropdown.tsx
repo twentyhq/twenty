@@ -31,39 +31,39 @@ export const SettingsAdminChatsFilterDropdown = ({
           <DropdownMenuItemsContainer>
             <MenuItemSwitch
               LeftIcon={IconSparkles}
-              onToggleChange={() =>
+              onCheckedChange={() =>
                 onFiltersChange({
                   ...filters,
                   onboardingOnly: !filters.onboardingOnly,
                 })
               }
-              toggled={filters.onboardingOnly}
+              checked={filters.onboardingOnly}
               text={t`Onboarding only`}
-              toggleSize="small"
+              size="sm"
             />
             <MenuItemSwitch
               LeftIcon={IconAlertTriangle}
-              onToggleChange={() =>
+              onCheckedChange={() =>
                 onFiltersChange({
                   ...filters,
                   hasErrorOnly: !filters.hasErrorOnly,
                 })
               }
-              toggled={filters.hasErrorOnly}
+              checked={filters.hasErrorOnly}
               text={t`Has error`}
-              toggleSize="small"
+              size="sm"
             />
             <MenuItemSwitch
               LeftIcon={IconMessage}
-              onToggleChange={() =>
+              onCheckedChange={() =>
                 onFiltersChange({
                   ...filters,
                   userNeverEngagedOnly: !filters.userNeverEngagedOnly,
                 })
               }
-              toggled={filters.userNeverEngagedOnly}
+              checked={filters.userNeverEngagedOnly}
               text={t`No user reply`}
-              toggleSize="small"
+              size="sm"
             />
           </DropdownMenuItemsContainer>
         </DropdownContent>

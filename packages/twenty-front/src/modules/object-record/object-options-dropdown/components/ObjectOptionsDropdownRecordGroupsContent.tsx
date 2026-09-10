@@ -180,10 +180,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
             <MenuItemSwitch
               focused={selectedItemId === 'HideEmptyGroups'}
               LeftIcon={IconCircleOff}
-              onToggleChange={handleHideEmptyRecordGroupChange}
-              toggled={shouldHideEmptyGroups}
+              onCheckedChange={handleHideEmptyRecordGroupChange}
+              checked={shouldHideEmptyGroups}
               text={t`Hide empty groups`}
-              toggleSize="small"
+              size="sm"
             />
           </SelectableListItem>
         </SelectableList>

@@ -275,8 +275,8 @@ export const SidePanelRecordPageFieldSettings = () => {
                   LeftIcon={IconPencil}
                   text={t`Allow editing`}
                   id="field-allow-editing"
-                  toggled={isUIEditable}
-                  onToggleChange={handleIsUIEditableChange}
+                  checked={isUIEditable}
+                  onCheckedChange={handleIsUIEditableChange}
                 />
               </SelectableListItem>
             )}
