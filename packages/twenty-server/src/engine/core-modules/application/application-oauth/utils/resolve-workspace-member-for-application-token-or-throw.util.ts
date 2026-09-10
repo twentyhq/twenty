@@ -13,7 +13,7 @@ type ActableWorkspaceMember = Pick<
 
 // Mirrors the agent run-as rules: a token already bound to a person may only
 // re-issue itself for that person, and only a live member can be acted as.
-export const resolveWorkspaceMemberForApplicationToken = ({
+export const resolveWorkspaceMemberForApplicationTokenOrThrow = ({
   workspaceMemberId,
   requestUserWorkspaceId,
   requestWorkspaceMemberId,

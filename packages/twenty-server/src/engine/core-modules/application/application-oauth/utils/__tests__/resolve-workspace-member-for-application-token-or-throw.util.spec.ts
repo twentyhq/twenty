@@ -1,5 +1,5 @@
 import { ApplicationExceptionCode } from 'src/engine/core-modules/application/application.exception';
-import { resolveWorkspaceMemberForApplicationToken } from 'src/engine/core-modules/application/application-oauth/utils/resolve-workspace-member-for-application-token.util';
+import { resolveWorkspaceMemberForApplicationTokenOrThrow } from 'src/engine/core-modules/application/application-oauth/utils/resolve-workspace-member-for-application-token-or-throw.util';
 
 const WORKSPACE_MEMBER_ID = 'member-id';
 const OTHER_WORKSPACE_MEMBER_ID = 'other-member-id';
@@ -30,7 +30,7 @@ const resolve = ({
   requestUserWorkspaceId?: string | null;
   requestWorkspaceMemberId?: string | null;
 } = {}) =>
-  resolveWorkspaceMemberForApplicationToken({
+  resolveWorkspaceMemberForApplicationTokenOrThrow({
     workspaceMemberId,
     requestUserWorkspaceId,
     requestWorkspaceMemberId,
@@ -39,7 +39,7 @@ const resolve = ({
     },
   });
 
-describe('resolveWorkspaceMemberForApplicationToken', () => {
+describe('resolveWorkspaceMemberForApplicationTokenOrThrow', () => {
   it('should return the member for a token not bound to a person', () => {
     expect(resolve()).toMatchObject({ id: WORKSPACE_MEMBER_ID });
   });

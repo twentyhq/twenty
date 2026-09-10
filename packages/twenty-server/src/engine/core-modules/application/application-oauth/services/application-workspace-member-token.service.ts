@@ -9,7 +9,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { type ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
-import { resolveWorkspaceMemberForApplicationToken } from 'src/engine/core-modules/application/application-oauth/utils/resolve-workspace-member-for-application-token.util';
+import { resolveWorkspaceMemberForApplicationTokenOrThrow } from 'src/engine/core-modules/application/application-oauth/utils/resolve-workspace-member-for-application-token-or-throw.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -45,7 +45,7 @@ export class ApplicationWorkspaceMemberTokenService {
         'flatWorkspaceMemberMaps',
       ]);
 
-    const workspaceMember = resolveWorkspaceMemberForApplicationToken({
+    const workspaceMember = resolveWorkspaceMemberForApplicationTokenOrThrow({
       workspaceMemberId,
       requestUserWorkspaceId,
       requestWorkspaceMemberId,
