@@ -130,26 +130,26 @@ describe('evictLeastRecentlyUsed', () => {
     expect(map.size).toBe(0);
   });
 
-  it('applies minEvict identically in ranked and unranked mode', () => {
-    const unranked = mapOf('a', 'b', 'c', 'd', 'e');
-    const ranked = new Map(
+  it('omitting recencyOf matches supplying one that follows insertion order', () => {
+    const implied = mapOf('a', 'b', 'c', 'd', 'e');
+    const explicit = new Map(
       ['a', 'b', 'c', 'd', 'e'].map((key, index) => [key, { at: index }]),
     );
 
-    const unrankedEvicted = evictLeastRecentlyUsed({
-      map: unranked,
+    const impliedEvicted = evictLeastRecentlyUsed({
+      map: implied,
       maxEntries: 4,
       minEvict: 3,
     });
-    const rankedEvicted = evictLeastRecentlyUsed({
-      map: ranked,
+    const explicitEvicted = evictLeastRecentlyUsed({
+      map: explicit,
       maxEntries: 4,
       minEvict: 3,
       recencyOf: (value) => value.at,
     });
 
-    expect(unrankedEvicted).toBe(rankedEvicted);
-    expect([...unranked.keys()]).toEqual([...ranked.keys()]);
+    expect(impliedEvicted).toBe(explicitEvicted);
+    expect([...implied.keys()]).toEqual([...explicit.keys()]);
   });
 
   // CoreEntityCacheService.evictLRUEntriesIfNeeded is not migrated yet; this

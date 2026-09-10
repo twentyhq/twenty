@@ -35,39 +35,13 @@ export const evictLeastRecentlyUsed = <Key, Value>({
   // instead of trimming one entry per call. Defaults to the exact overflow.
   minEvict?: number;
   // Higher = more recently used. Omit when recency is the map's own insertion
-  // order, which readLruEntry and writeLruEntry maintain by re-inserting.
+  // order, which readLruEntry and writeLruEntry maintain by re-inserting: with
+  // no sort, candidates stay in map order and the oldest are evicted first.
   recencyOf?: (value: Value) => number;
   // Restricts the cap to a subset: non-matching entries neither count towards
   // maxEntries nor get evicted. Omit to apply to the whole map.
   matches?: (key: Key) => boolean;
 }): number => {
-  const evictCountFor = (candidateCount: number): number =>
-    Math.min(candidateCount, Math.max(minEvict, candidateCount - maxEntries));
-
-  // Unranked: the map's iteration order already is the ranking, so evict from
-  // the front without materialising the candidates. writeLruEntry runs on every
-  // cache write and a saturated cache is always over cap, so allocating here
-  // would put an array on every write.
-  if (!isDefined(recencyOf) && !isDefined(matches)) {
-    if (map.size <= maxEntries) {
-      return 0;
-    }
-
-    const evictCount = evictCountFor(map.size);
-    let evicted = 0;
-
-    for (const key of map.keys()) {
-      if (evicted >= evictCount) {
-        break;
-      }
-
-      map.delete(key);
-      evicted += 1;
-    }
-
-    return evicted;
-  }
-
   const candidates: [Key, Value][] = [];
 
   for (const keyEntry of map) {
@@ -84,7 +58,10 @@ export const evictLeastRecentlyUsed = <Key, Value>({
     candidates.sort((a, b) => recencyOf(a[1]) - recencyOf(b[1]));
   }
 
-  const evictCount = evictCountFor(candidates.length);
+  const evictCount = Math.min(
+    candidates.length,
+    Math.max(minEvict, candidates.length - maxEntries),
+  );
 
   for (let index = 0; index < evictCount; index += 1) {
     map.delete(candidates[index][0]);
