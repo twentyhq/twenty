@@ -44,9 +44,7 @@ export const SelectHeaderStep = ({
   onBack,
   currentStepState,
 }: SelectHeaderStepProps) => {
-  const [selectedRowIndexes, setSelectedRowIndexes] = useState<
-    ReadonlySet<number>
-  >(new Set([0]));
+  const [selectedRowIndex, setSelectedRowIndex] = useState(0);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -89,7 +87,6 @@ export const SelectHeaderStep = ({
   );
 
   const handleOnContinue = useCallback(async () => {
-    const [selectedRowIndex] = Array.from(new Set(selectedRowIndexes));
     // We consider data above header to be redundant
     const trimmedData = importedRows.slice(selectedRowIndex + 1);
 
@@ -98,7 +95,7 @@ export const SelectHeaderStep = ({
     await handleContinue(importedRows[selectedRowIndex], trimmedData);
 
     setIsLoading(false);
-  }, [handleContinue, importedRows, selectedRowIndexes]);
+  }, [handleContinue, importedRows, selectedRowIndex]);
 
   const { t } = useLingui();
 
@@ -111,8 +108,8 @@ export const SelectHeaderStep = ({
         <StyledTableContainer>
           <SelectHeaderTable
             importedRows={importedRows}
-            selectedRowIndexes={selectedRowIndexes}
-            setSelectedRowIndexes={setSelectedRowIndexes}
+            selectedRowIndex={selectedRowIndex}
+            onSelectedRowChange={setSelectedRowIndex}
           />
         </StyledTableContainer>
       </ModalContent>
