@@ -2,16 +2,14 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_MESSAGE_DELIVERY_MAX_ATTEMPTS } from 'src/logic-functions/constants/slack-message-delivery-max-attempts';
-import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { type SlackDeliverMessagePayload } from 'src/logic-functions/types/slack-deliver-message-payload.type';
 import { type SlackDeliverMessageResult } from 'src/logic-functions/types/slack-deliver-message-result.type';
 import { buildSlackAnswerDeliveryFailureMessage } from 'src/logic-functions/utils/build-slack-answer-delivery-failure-message';
 import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-slack-message-delivery';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
+import { markSlackAssistantRequestDone } from 'src/logic-functions/utils/mark-slack-assistant-request-done';
 import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
-import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const slackDeliverMessageHandler = async (
   payload: SlackDeliverMessagePayload,
@@ -22,26 +20,17 @@ export const slackDeliverMessageHandler = async (
     waitOutRateLimit: false,
   });
 
+  if (result.success && !isNonEmptyString(slackAssistantRequestId)) {
+    return { delivered: true, attempt, statusRecorded: true };
+  }
+
   if (result.success) {
-    if (!isNonEmptyString(slackAssistantRequestId)) {
-      return { delivered: true, attempt };
-    }
+    const statusRecorded = await markSlackAssistantRequestDone({
+      requestId: slackAssistantRequestId,
+      responseText: message.messageText,
+    });
 
-    try {
-      await updateSlackAssistantRequest(new CoreApiClient(), {
-        id: slackAssistantRequestId,
-        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
-        responseText: message.messageText,
-      });
-    } catch (error) {
-      console.warn(
-        `[slack] delivered request ${slackAssistantRequestId} but could not mark it done: ${toErrorMessage(error)}`,
-      );
-
-      return { delivered: true, attempt, statusRecorded: false };
-    }
-
-    return { delivered: true, attempt };
+    return { delivered: true, attempt, statusRecorded };
   }
 
   if (

@@ -59,7 +59,11 @@ describe('slackDeliverMessageHandler', () => {
 
     const result = await slackDeliverMessageHandler(ANSWER_PAYLOAD);
 
-    expect(result).toEqual({ delivered: true, attempt: 1 });
+    expect(result).toEqual({
+      delivered: true,
+      attempt: 1,
+      statusRecorded: true,
+    });
     expect(sendSlackMessageMock).toHaveBeenCalledWith(expect.anything(), {
       waitOutRateLimit: false,
     });
@@ -107,7 +111,12 @@ describe('slackDeliverMessageHandler', () => {
       attempt: SLACK_MESSAGE_DELIVERY_MAX_ATTEMPTS,
     });
 
-    expect(result.rescheduled).toBe(false);
+    expect(result).toEqual({
+      delivered: false,
+      attempt: SLACK_MESSAGE_DELIVERY_MAX_ATTEMPTS,
+      rescheduled: false,
+      error: 'Could not deliver Slack answer: A rate limit was exceeded',
+    });
     expect(enqueueDeliveryMock).not.toHaveBeenCalled();
     expect(finishWithFailureMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -134,6 +143,7 @@ describe('slackDeliverMessageHandler', () => {
     expect(updateRequestMock).not.toHaveBeenCalled();
     expect(finishWithFailureMock).not.toHaveBeenCalled();
   });
+
   it('should keep the job successful when the status write fails after posting', async () => {
     sendSlackMessageMock.mockResolvedValue({
       success: true,

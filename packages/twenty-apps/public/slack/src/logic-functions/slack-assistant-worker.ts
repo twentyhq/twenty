@@ -17,6 +17,7 @@ import { SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS } from 'src/logic-functions/cons
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
+import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
 import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build-slack-assistant-answer-blocks';
 import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-slack-assistant-messages';
 import { buildSlackAnswerDeliveryFailureMessage } from 'src/logic-functions/utils/build-slack-answer-delivery-failure-message';
@@ -163,11 +164,11 @@ export const slackAssistantWorkerHandler = async (
       });
     }
 
-    const answerMessage = {
+    const answerMessage: SlackPostMessageInput = {
       slackChannelId,
       messageText: responseText,
       parentMessageTimestamp,
-      messageFormat: 'markdown' as const,
+      messageFormat: 'markdown',
       unfurlLinks: false,
       unfurlMedia: false,
       messageBlocks:
