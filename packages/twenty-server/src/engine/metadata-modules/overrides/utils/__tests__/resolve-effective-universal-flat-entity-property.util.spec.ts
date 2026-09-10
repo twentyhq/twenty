@@ -16,41 +16,50 @@ const universalFlatViewField = {
 describe('resolveEffectiveUniversalFlatEntityProperty', () => {
   it('reads universalOverrides, not overrides', () => {
     expect(
-      resolveEffectiveUniversalFlatEntityProperty(
-        universalFlatViewField,
-        'viewFieldGroupUniversalIdentifier',
-      ),
+      resolveEffectiveUniversalFlatEntityProperty({
+        metadataName: 'viewField',
+        universalFlatEntity: universalFlatViewField,
+        property: 'viewFieldGroupUniversalIdentifier',
+      }),
     ).toBe('group-b');
     expect(
-      resolveEffectiveUniversalFlatEntityProperty(
-        universalFlatViewField,
-        'isActive',
-      ),
+      resolveEffectiveUniversalFlatEntityProperty({
+        metadataName: 'viewField',
+        universalFlatEntity: universalFlatViewField,
+        property: 'isActive',
+      }),
     ).toBe(false);
   });
 
   it('falls back to the column without a matching entry', () => {
     expect(
-      resolveEffectiveUniversalFlatEntityProperty(
-        { ...universalFlatViewField, universalOverrides: null },
-        'isActive',
-      ),
+      resolveEffectiveUniversalFlatEntityProperty({
+        metadataName: 'viewField',
+        universalFlatEntity: {
+          ...universalFlatViewField,
+          universalOverrides: null,
+        },
+        property: 'isActive',
+      }),
     ).toBe(true);
   });
 
   it('ranks the custom entry before the owner entry with an explicit context', () => {
     expect(
-      resolveEffectiveUniversalFlatEntityProperty(
-        {
+      resolveEffectiveUniversalFlatEntityProperty({
+        metadataName: 'viewField',
+        universalFlatEntity: {
           ...universalFlatViewField,
           universalOverrides: {
             [OWNER]: { isActive: false },
             [CUSTOM]: { isActive: true },
           },
         },
-        'isActive',
-        { workspaceCustomApplicationUniversalIdentifier: CUSTOM },
-      ),
+        property: 'isActive',
+        authorContext: {
+          workspaceCustomApplicationUniversalIdentifier: CUSTOM,
+        },
+      }),
     ).toBe(true);
   });
 });

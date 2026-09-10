@@ -103,6 +103,7 @@ export class TimelineActivityTypeService {
     return this.persistUpdate({
       flatTimelineActivityTypeToUpdate: {
         ...resetAuthoredOverrides({
+          metadataName: 'timelineActivityType',
           flatEntity: existingFlatTimelineActivityType,
           authorUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,

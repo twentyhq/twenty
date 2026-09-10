@@ -1,3 +1,5 @@
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
 import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
 
 type EntityWithApplicationIdentifier = {
@@ -10,10 +12,12 @@ type EntityWithApplicationIdentifier = {
 export const splitEntitiesByRemovalStrategy = <
   T extends EntityWithApplicationIdentifier,
 >({
+  metadataName,
   entitiesToRemove,
   workspaceCustomApplicationUniversalIdentifier,
   now,
 }: {
+  metadataName: AllMetadataName;
   entitiesToRemove: T[];
   workspaceCustomApplicationUniversalIdentifier: string;
   now: string;
@@ -34,6 +38,7 @@ export const splitEntitiesByRemovalStrategy = <
     } else {
       toDeactivate.push({
         ...dispatchIsActiveUpdateToAuthoredOverride({
+          metadataName,
           flatEntity: entity,
           isActive: false,
           authorUniversalIdentifier:

@@ -44,6 +44,7 @@ export const resolveMetadataEventRecord = ({
     }
 
     const overrideValue = readAuthoredOverrideProperty({
+      metadataName: metadataName as AllMetadataName,
       overrides,
       path: [property],
       authorContext: i18nContext,

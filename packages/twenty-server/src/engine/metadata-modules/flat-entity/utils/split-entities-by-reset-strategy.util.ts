@@ -1,3 +1,5 @@
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
 import { resetAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/reset-authored-overrides.util';
 
 type EntityWithApplicationIdentifierAndOverrides = {
@@ -10,10 +12,12 @@ type EntityWithApplicationIdentifierAndOverrides = {
 export const splitEntitiesByResetStrategy = <
   T extends EntityWithApplicationIdentifierAndOverrides,
 >({
+  metadataName,
   entities,
   workspaceCustomApplicationUniversalIdentifier,
   now,
 }: {
+  metadataName: AllMetadataName;
   entities: T[];
   workspaceCustomApplicationUniversalIdentifier: string;
   now: string;
@@ -34,6 +38,7 @@ export const splitEntitiesByResetStrategy = <
     } else {
       toReset.push({
         ...resetAuthoredOverrides({
+          metadataName,
           flatEntity: entity,
           authorUniversalIdentifier:
             workspaceCustomApplicationUniversalIdentifier,

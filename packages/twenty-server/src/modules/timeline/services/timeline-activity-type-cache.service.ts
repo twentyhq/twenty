@@ -63,7 +63,11 @@ export class TimelineActivityTypeCacheService {
 
     if (
       !isDefined(timelineActivityType) ||
-      !resolveEffectiveFlatEntityProperty(timelineActivityType, 'isActive')
+      !resolveEffectiveFlatEntityProperty({
+        metadataName: 'timelineActivityType',
+        flatEntity: timelineActivityType,
+        property: 'isActive',
+      })
     ) {
       throw new TimelineException(
         `Active timeline activity type ${timelineActivityTypeId} was not found in workspace ${workspaceId}`,

@@ -14,6 +14,7 @@ describe('resetAuthoredOverrides', () => {
   it('drops the caller entry on both blobs and keeps the others', () => {
     expect(
       resetAuthoredOverrides({
+        metadataName: 'view',
         flatEntity: {
           ...view,
           overrides: {
@@ -35,6 +36,7 @@ describe('resetAuthoredOverrides', () => {
   it('leaves the column alone', () => {
     expect(
       resetAuthoredOverrides({
+        metadataName: 'view',
         flatEntity: { ...view, isActive: false },
         authorUniversalIdentifier: CUSTOM,
         workspaceCustomApplicationUniversalIdentifier: CUSTOM,
@@ -47,6 +49,7 @@ describe('resetAuthoredOverrides', () => {
 
     expect(
       resetAuthoredOverrides({
+        metadataName: 'view',
         flatEntity: tab,
         authorUniversalIdentifier: CUSTOM,
         workspaceCustomApplicationUniversalIdentifier: CUSTOM,

@@ -41,7 +41,11 @@ export const fromFlatFieldMetadataToFieldMetadataDto = (
     type,
     workspaceId,
     defaultValue,
-    isActive: resolveEffectiveFlatEntityProperty(flatFieldMetadata, 'isActive'),
+    isActive: resolveEffectiveFlatEntityProperty({
+      metadataName: 'fieldMetadata',
+      flatEntity: flatFieldMetadata,
+      property: 'isActive',
+    }),
     isLabelSyncedWithName,
     isSystem,
     isUIEditable,

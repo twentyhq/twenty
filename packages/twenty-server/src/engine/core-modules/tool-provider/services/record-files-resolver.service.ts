@@ -55,7 +55,11 @@ export class RecordFilesResolverService {
       (metadata): metadata is FlatObjectMetadata =>
         isDefined(metadata) &&
         metadata.nameSingular === objectNameSingular &&
-        resolveEffectiveFlatEntityProperty(metadata, 'isActive'),
+        resolveEffectiveFlatEntityProperty({
+          metadataName: 'objectMetadata',
+          flatEntity: metadata,
+          property: 'isActive',
+        }),
     );
 
     if (!isDefined(flatObjectMetadata)) {

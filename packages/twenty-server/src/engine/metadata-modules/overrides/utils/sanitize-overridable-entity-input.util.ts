@@ -1,6 +1,5 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/overrides/constants/all-overridable-properties-by-metadata-name.constant';
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { dispatchUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-update-to-authored-override.util';
 
@@ -43,9 +42,7 @@ export const sanitizeOverridableEntityInput = <
     TProperties,
     TEntry
   >({
-    overridableProperties: ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME[
-      metadataName
-    ] as string[],
+    metadataName,
     updatedProperties: updatedEditableProperties,
     existingEntity: existingFlatEntity,
     existingOverrides: existingFlatEntity.overrides,

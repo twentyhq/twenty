@@ -16,7 +16,11 @@ export type FlatPageLayoutWithTabsAndWidgets = FlatPageLayout & {
 };
 
 const getResolvedPageLayoutTabId = (widget: FlatPageLayoutWidget): string =>
-  resolveEffectiveFlatEntityProperty(widget, 'pageLayoutTabId');
+  resolveEffectiveFlatEntityProperty({
+    metadataName: 'pageLayoutWidget',
+    flatEntity: widget,
+    property: 'pageLayoutTabId',
+  });
 
 export const reconstructFlatPageLayoutWithTabsAndWidgets = ({
   layout,

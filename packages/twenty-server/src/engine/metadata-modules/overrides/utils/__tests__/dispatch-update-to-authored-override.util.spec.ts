@@ -26,7 +26,7 @@ const compute = ({
   authorUniversalIdentifier?: string;
 }) =>
   dispatchUpdateToAuthoredOverride({
-    overridableProperties: ['label', 'icon', 'isActive'],
+    metadataName: 'fieldMetadata',
     updatedProperties,
     existingEntity,
     existingOverrides,

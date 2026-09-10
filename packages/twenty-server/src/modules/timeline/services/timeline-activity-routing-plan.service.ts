@@ -148,7 +148,11 @@ export class TimelineActivityRoutingPlanService {
 
     const activeTimelineActivityTypes = effectiveTimelineActivityTypes.filter(
       (timelineActivityType) =>
-        resolveEffectiveFlatEntityProperty(timelineActivityType, 'isActive'),
+        resolveEffectiveFlatEntityProperty({
+          metadataName: 'timelineActivityType',
+          flatEntity: timelineActivityType,
+          property: 'isActive',
+        }),
     );
     const throughRules = activeTimelineActivityTypes
       .map((timelineActivityType): TimelineActivityRule | undefined => {

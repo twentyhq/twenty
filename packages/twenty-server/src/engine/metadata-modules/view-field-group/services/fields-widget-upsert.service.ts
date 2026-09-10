@@ -147,8 +147,11 @@ export class FieldsWidgetUpsertService {
       .filter(isDefined)
       .filter(
         (group) =>
-          resolveEffectiveFlatEntityProperty(group, 'isActive') &&
-          group.viewId === viewId,
+          resolveEffectiveFlatEntityProperty({
+            metadataName: 'viewFieldGroup',
+            flatEntity: group,
+            property: 'isActive',
+          }) && group.viewId === viewId,
       );
 
     const existingViewFields = Object.values(
@@ -157,8 +160,11 @@ export class FieldsWidgetUpsertService {
       .filter(isDefined)
       .filter(
         (field) =>
-          resolveEffectiveFlatEntityProperty(field, 'isActive') &&
-          field.viewId === viewId,
+          resolveEffectiveFlatEntityProperty({
+            metadataName: 'viewField',
+            flatEntity: field,
+            property: 'isActive',
+          }) && field.viewId === viewId,
       );
 
     if (hasGroups) {
@@ -559,6 +565,7 @@ export class FieldsWidgetUpsertService {
       toHardDelete: customGroupsToDelete,
       toDeactivate: deactivatedGroupUpdates,
     } = splitEntitiesByRemovalStrategy({
+      metadataName: 'viewFieldGroup',
       entitiesToRemove: groupsToDeactivate,
       workspaceCustomApplicationUniversalIdentifier:
         applicationUniversalIdentifier,
@@ -820,6 +827,7 @@ export class FieldsWidgetUpsertService {
       toHardDelete: customGroupsToDelete,
       toDeactivate: deactivatedGroupUpdates,
     } = splitEntitiesByRemovalStrategy({
+      metadataName: 'viewFieldGroup',
       entitiesToRemove: groupsToDeactivate,
       workspaceCustomApplicationUniversalIdentifier:
         applicationUniversalIdentifier,

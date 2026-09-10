@@ -287,6 +287,7 @@ export class CommandMenuItemService {
 
     const flatCommandMenuItemToUpdate: FlatCommandMenuItem = {
       ...resetAuthoredOverrides({
+        metadataName: 'commandMenuItem',
         flatEntity: existingFlatCommandMenuItem,
         authorUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
@@ -368,6 +369,7 @@ export class CommandMenuItemService {
 
     const deactivatedFlatCommandMenuItem = {
       ...dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'commandMenuItem',
         flatEntity: flatCommandMenuItemToDelete,
         isActive: false,
         authorUniversalIdentifier:

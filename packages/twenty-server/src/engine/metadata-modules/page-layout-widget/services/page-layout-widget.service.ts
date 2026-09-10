@@ -171,8 +171,11 @@ export class PageLayoutWidgetService {
       .filter(isDefined)
       .filter(
         (widget) =>
-          resolveEffectiveFlatEntityProperty(widget, 'pageLayoutTabId') ===
-            pageLayoutTabId && !isDefined(widget.deletedAt),
+          resolveEffectiveFlatEntityProperty({
+            metadataName: 'pageLayoutWidget',
+            flatEntity: widget,
+            property: 'pageLayoutTabId',
+          }) === pageLayoutTabId && !isDefined(widget.deletedAt),
       )
       .sort((widgetA, widgetB) => {
         const createdAtComparison =

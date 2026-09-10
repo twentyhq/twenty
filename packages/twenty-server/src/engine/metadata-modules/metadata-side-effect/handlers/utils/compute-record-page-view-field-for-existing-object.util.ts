@@ -43,7 +43,11 @@ export const computeRecordPageViewFieldForExistingObject = ({
     .filter(isDefined)
     .find(
       (widget) =>
-        resolveEffectiveUniversalFlatEntityProperty(widget, 'isActive') &&
+        resolveEffectiveUniversalFlatEntityProperty({
+          metadataName: 'pageLayoutWidget',
+          universalFlatEntity: widget,
+          property: 'isActive',
+        }) &&
         !isDefined(widget.deletedAt) &&
         widget.universalConfiguration?.configurationType ===
           WidgetConfigurationType.FIELDS &&
@@ -76,8 +80,11 @@ export const computeRecordPageViewFieldForExistingObject = ({
       .filter(isDefined)
       .filter(
         (group) =>
-          resolveEffectiveFlatEntityProperty(group, 'isActive') &&
-          !isDefined(group.deletedAt),
+          resolveEffectiveFlatEntityProperty({
+            metadataName: 'viewFieldGroup',
+            flatEntity: group,
+            property: 'isActive',
+          }) && !isDefined(group.deletedAt),
       );
 
   const lastFlatViewFieldGroup =
@@ -99,10 +106,11 @@ export const computeRecordPageViewFieldForExistingObject = ({
       .filter(isDefined)
       .filter(
         (flatViewField) =>
-          resolveEffectiveUniversalFlatEntityProperty(
-            flatViewField,
-            'isActive',
-          ) &&
+          resolveEffectiveUniversalFlatEntityProperty({
+            metadataName: 'viewField',
+            universalFlatEntity: flatViewField,
+            property: 'isActive',
+          }) &&
           !isDefined(flatViewField.deletedAt) &&
           flatViewField.viewFieldGroupUniversalIdentifier ===
             targetSystemViewFieldGroupUniversalIdentifier,

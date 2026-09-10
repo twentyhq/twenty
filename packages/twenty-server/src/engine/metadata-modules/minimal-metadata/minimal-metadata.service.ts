@@ -85,8 +85,13 @@ export class MinimalMetadataService {
       .filter(isDefined)
       .filter(
         (flatObjectMetadata) =>
-          resolveEffectiveFlatEntityProperty(flatObjectMetadata, 'isActive', {
-            workspaceCustomApplicationUniversalIdentifier,
+          resolveEffectiveFlatEntityProperty({
+            metadataName: 'objectMetadata',
+            flatEntity: flatObjectMetadata,
+            property: 'isActive',
+            authorContext: {
+              workspaceCustomApplicationUniversalIdentifier,
+            },
           }) === true,
       )
       .map((flatObjectMetadata) => {

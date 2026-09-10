@@ -20,7 +20,10 @@ export const getDatabaseCrudToolFlatObjects = <
     .filter(isDefined)
     .filter(
       (obj) =>
-        resolveEffectiveFlatEntityProperty(obj, 'isActive') &&
-        !isWorkflowRelatedObject(obj),
+        resolveEffectiveFlatEntityProperty({
+          metadataName: 'objectMetadata',
+          flatEntity: obj,
+          property: 'isActive',
+        }) && !isWorkflowRelatedObject(obj),
     );
 };

@@ -1,5 +1,7 @@
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 
 export type WorkspaceLocalStateProperties = {
@@ -9,11 +11,15 @@ export type WorkspaceLocalStateProperties = {
 };
 
 export const getWorkspaceLocalStateReason = ({
+  metadataName,
   isActive = true,
   overrides = null,
   applicationUniversalIdentifier,
-}: Partial<WorkspaceLocalStateProperties>): string | undefined => {
+}: Partial<WorkspaceLocalStateProperties> & {
+  metadataName: AllMetadataName;
+}): string | undefined => {
   const overriddenIsActive = readAuthoredOverrideProperty({
+    metadataName,
     overrides,
     path: ['isActive'],
     authorContext: {

@@ -279,7 +279,11 @@ export class NavigateAppTool implements Tool {
       (metadata): metadata is FlatObjectMetadata =>
         isDefined(metadata) &&
         metadata.nameSingular === objectNameSingular &&
-        resolveEffectiveFlatEntityProperty(metadata, 'isActive'),
+        resolveEffectiveFlatEntityProperty({
+          metadataName: 'objectMetadata',
+          flatEntity: metadata,
+          property: 'isActive',
+        }),
     );
 
     if (!isDefined(flatObjectMetadata)) {
@@ -289,7 +293,11 @@ export class NavigateAppTool implements Tool {
         .filter(
           (metadata): metadata is FlatObjectMetadata =>
             isDefined(metadata) &&
-            resolveEffectiveFlatEntityProperty(metadata, 'isActive'),
+            resolveEffectiveFlatEntityProperty({
+              metadataName: 'objectMetadata',
+              flatEntity: metadata,
+              property: 'isActive',
+            }),
         )
         .map((metadata) => metadata.nameSingular)
         .join(', ');

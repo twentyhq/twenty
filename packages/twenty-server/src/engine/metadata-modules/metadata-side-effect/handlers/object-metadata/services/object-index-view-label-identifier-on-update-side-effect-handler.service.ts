@@ -95,10 +95,11 @@ export class ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService exte
       .filter(isDefined)
       .filter(
         (flatViewField) =>
-          resolveEffectiveUniversalFlatEntityProperty(
-            flatViewField,
-            'isActive',
-          ) && !isDefined(flatViewField.deletedAt),
+          resolveEffectiveUniversalFlatEntityProperty({
+            metadataName: 'viewField',
+            universalFlatEntity: flatViewField,
+            property: 'isActive',
+          }) && !isDefined(flatViewField.deletedAt),
       ) as UniversalFlatViewField[];
 
     const labelIdentifierFlatViewField = indexFlatViewFields.find(

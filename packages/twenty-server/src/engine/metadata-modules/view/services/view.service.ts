@@ -335,6 +335,7 @@ export class ViewService {
     const now = new Date().toISOString();
     const deactivatedFlatView = {
       ...dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'view',
         flatEntity: existingFlatView,
         isActive: false,
         authorUniversalIdentifier:

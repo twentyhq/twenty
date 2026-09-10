@@ -10,7 +10,11 @@ export const fromFlatTimelineActivityTypeToTimelineActivityTypeDto = (
   id: flatTimelineActivityType.id,
   universalIdentifier: flatTimelineActivityType.universalIdentifier,
   name: flatTimelineActivityType.name,
-  label: resolveEffectiveFlatEntityProperty(flatTimelineActivityType, 'label'),
+  label: resolveEffectiveFlatEntityProperty({
+    metadataName: 'timelineActivityType',
+    flatEntity: flatTimelineActivityType,
+    property: 'label',
+  }),
   emit: isDefined(flatTimelineActivityType.action)
     ? {
         on: flatTimelineActivityType.action,
@@ -31,16 +35,21 @@ export const fromFlatTimelineActivityTypeToTimelineActivityTypeDto = (
       }
     : null,
   action: flatTimelineActivityType.action,
-  icon: resolveEffectiveFlatEntityProperty(flatTimelineActivityType, 'icon'),
+  icon: resolveEffectiveFlatEntityProperty({
+    metadataName: 'timelineActivityType',
+    flatEntity: flatTimelineActivityType,
+    property: 'icon',
+  }),
   frontComponentUniversalIdentifier:
     flatTimelineActivityType.frontComponentUniversalIdentifier,
   objectUniversalIdentifier: flatTimelineActivityType.objectUniversalIdentifier,
   replacesTimelineActivityTypeUniversalIdentifier:
     flatTimelineActivityType.replacesTimelineActivityTypeUniversalIdentifier,
-  isActive: resolveEffectiveFlatEntityProperty(
-    flatTimelineActivityType,
-    'isActive',
-  ),
+  isActive: resolveEffectiveFlatEntityProperty({
+    metadataName: 'timelineActivityType',
+    flatEntity: flatTimelineActivityType,
+    property: 'isActive',
+  }),
   workspaceId: flatTimelineActivityType.workspaceId,
   applicationId: flatTimelineActivityType.applicationId,
   overrides: flatTimelineActivityType.overrides,

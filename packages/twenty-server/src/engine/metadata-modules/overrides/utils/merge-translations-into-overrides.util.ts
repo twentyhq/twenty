@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { normalizeAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/normalize-authored-overrides.util';
@@ -22,11 +23,13 @@ const isSafeObjectKey = (key: string): boolean =>
 export const mergeTranslationsIntoOverrides = <
   TEntry = Record<string, unknown>,
 >({
+  metadataName,
   existingOverrides,
   translationEntries,
   authorUniversalIdentifier,
   authorContext,
 }: {
+  metadataName: AllMetadataName;
   existingOverrides: unknown;
   translationEntries: TranslationOverrideEntry[];
   authorUniversalIdentifier: string;
@@ -34,6 +37,7 @@ export const mergeTranslationsIntoOverrides = <
 }): AuthoredOverrides<TEntry> | null => {
   const authoredOverrides =
     normalizeAuthoredOverrides<EntryWithTranslations>({
+      metadataName,
       overrides: existingOverrides,
       workspaceCustomApplicationUniversalIdentifier:
         authorContext.workspaceCustomApplicationUniversalIdentifier,

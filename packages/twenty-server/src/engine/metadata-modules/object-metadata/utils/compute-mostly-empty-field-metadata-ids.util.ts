@@ -28,7 +28,11 @@ export const computeMostlyEmptyFieldMetadataIds = ({
   return fieldMetadatas
     .filter((fieldMetadata) => {
       if (
-        !resolveEffectiveFlatEntityProperty(fieldMetadata, 'isActive') ||
+        !resolveEffectiveFlatEntityProperty({
+          metadataName: 'fieldMetadata',
+          flatEntity: fieldMetadata,
+          property: 'isActive',
+        }) ||
         fieldMetadata.isSystem
       ) {
         return false;

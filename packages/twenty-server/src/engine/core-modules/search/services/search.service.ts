@@ -165,7 +165,13 @@ export class SearchService {
     return flatObjectMetadatas.filter((flatObjectMetadata) => {
       const { nameSingular, isSearchable } = flatObjectMetadata;
 
-      if (!resolveEffectiveFlatEntityProperty(flatObjectMetadata, 'isActive')) {
+      if (
+        !resolveEffectiveFlatEntityProperty({
+          metadataName: 'objectMetadata',
+          flatEntity: flatObjectMetadata,
+          property: 'isActive',
+        })
+      ) {
         return false;
       }
 

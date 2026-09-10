@@ -26,40 +26,51 @@ const buildEntity = (
 describe('resolveEffectiveFlatEntityProperty', () => {
   it('should return the override value when an entry carries the property', () => {
     expect(
-      resolveEffectiveFlatEntityProperty(
-        buildEntity({ [CUSTOM]: { title: 'Overridden Title' } }),
-        'title',
-      ),
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'pageLayoutTab',
+        flatEntity: buildEntity({ [CUSTOM]: { title: 'Overridden Title' } }),
+        property: 'title',
+      }),
     ).toBe('Overridden Title');
   });
 
   it('should return base value when overrides is null', () => {
-    expect(resolveEffectiveFlatEntityProperty(buildEntity(null), 'title')).toBe(
-      'Base Title',
-    );
+    expect(
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'pageLayoutTab',
+        flatEntity: buildEntity(null),
+        property: 'title',
+      }),
+    ).toBe('Base Title');
   });
 
   it('should return base value when no entry carries the requested property', () => {
     expect(
-      resolveEffectiveFlatEntityProperty(
-        buildEntity({ [CUSTOM]: { position: 5 } }),
-        'title',
-      ),
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'pageLayoutTab',
+        flatEntity: buildEntity({ [CUSTOM]: { position: 5 } }),
+        property: 'title',
+      }),
     ).toBe('Base Title');
   });
 
   it('should return base value when overrides is undefined', () => {
     expect(
-      resolveEffectiveFlatEntityProperty(buildEntity(undefined), 'title'),
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'pageLayoutTab',
+        flatEntity: buildEntity(undefined),
+        property: 'title',
+      }),
     ).toBe('Base Title');
   });
 
   it('should return null when an entry explicitly sets a nullable property to null', () => {
     expect(
-      resolveEffectiveFlatEntityProperty(
-        buildEntity({ [CUSTOM]: { icon: null } }, 'IconStar'),
-        'icon',
-      ),
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'pageLayoutTab',
+        flatEntity: buildEntity({ [CUSTOM]: { icon: null } }, 'IconStar'),
+        property: 'icon',
+      }),
     ).toBeNull();
   });
 
@@ -69,13 +80,28 @@ describe('resolveEffectiveFlatEntityProperty', () => {
       [CUSTOM]: { title: 'Custom Title' },
     });
 
-    expect(resolveEffectiveFlatEntityProperty(entity, 'title')).toBe(
-      'Custom Title',
-    );
-    expect(resolveEffectiveFlatEntityProperty(entity, 'position')).toBe(3);
     expect(
-      resolveEffectiveFlatEntityProperty(entity, 'title', {
-        workspaceCustomApplicationUniversalIdentifier: CUSTOM,
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'pageLayoutTab',
+        flatEntity: entity,
+        property: 'title',
+      }),
+    ).toBe('Custom Title');
+    expect(
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'pageLayoutTab',
+        flatEntity: entity,
+        property: 'position',
+      }),
+    ).toBe(3);
+    expect(
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'pageLayoutTab',
+        flatEntity: entity,
+        property: 'title',
+        authorContext: {
+          workspaceCustomApplicationUniversalIdentifier: CUSTOM,
+        },
       }),
     ).toBe('Custom Title');
   });
@@ -83,12 +109,21 @@ describe('resolveEffectiveFlatEntityProperty', () => {
   it('should read a flat blob as the workspace custom application entry', () => {
     const entity = buildEntity({ title: 'Legacy Title' } as never);
 
-    expect(resolveEffectiveFlatEntityProperty(entity, 'title')).toBe(
-      'Legacy Title',
-    );
     expect(
-      resolveEffectiveFlatEntityProperty(entity, 'title', {
-        workspaceCustomApplicationUniversalIdentifier: CUSTOM,
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'pageLayoutTab',
+        flatEntity: entity,
+        property: 'title',
+      }),
+    ).toBe('Legacy Title');
+    expect(
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'pageLayoutTab',
+        flatEntity: entity,
+        property: 'title',
+        authorContext: {
+          workspaceCustomApplicationUniversalIdentifier: CUSTOM,
+        },
       }),
     ).toBe('Legacy Title');
   });

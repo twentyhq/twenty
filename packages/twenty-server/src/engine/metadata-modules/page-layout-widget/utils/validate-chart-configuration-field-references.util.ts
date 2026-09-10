@@ -129,7 +129,11 @@ export const validateChartConfigurationFieldReferencesOrThrow = ({
 
   if (
     !isDefined(objectMetadata) ||
-    !resolveEffectiveFlatEntityProperty(objectMetadata, 'isActive')
+    !resolveEffectiveFlatEntityProperty({
+      metadataName: 'objectMetadata',
+      flatEntity: objectMetadata,
+      property: 'isActive',
+    })
   ) {
     throw buildChartFieldValidationException(
       `objectMetadataId "${widgetObjectMetadataId}" not found.`,
@@ -139,7 +143,13 @@ export const validateChartConfigurationFieldReferencesOrThrow = ({
 
   const allFields = Object.values(flatFieldMetadataMaps.byUniversalIdentifier)
     .filter(isDefined)
-    .filter((field) => resolveEffectiveFlatEntityProperty(field, 'isActive'));
+    .filter((field) =>
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'fieldMetadata',
+        flatEntity: field,
+        property: 'isActive',
+      }),
+    );
 
   const fieldsByObjectId = new Map<string, FlatFieldMetadata[]>();
 

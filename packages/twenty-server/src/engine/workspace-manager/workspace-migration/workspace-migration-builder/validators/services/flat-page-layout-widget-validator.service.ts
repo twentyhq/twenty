@@ -241,10 +241,11 @@ export class FlatPageLayoutWidgetValidatorService {
       | 'universalOverrides'
     >,
   ): string {
-    return resolveEffectiveUniversalFlatEntityProperty(
-      widget,
-      'pageLayoutTabUniversalIdentifier',
-    );
+    return resolveEffectiveUniversalFlatEntityProperty({
+      metadataName: 'pageLayoutWidget',
+      universalFlatEntity: widget,
+      property: 'pageLayoutTabUniversalIdentifier',
+    });
   }
 
   private validatePosition({

@@ -566,10 +566,11 @@ export class DataloaderService {
           .filter(
             (flatViewFieldGroup) =>
               flatViewFieldGroup.deletedAt === null &&
-              resolveEffectiveFlatEntityProperty(
-                flatViewFieldGroup,
-                'isActive',
-              ),
+              resolveEffectiveFlatEntityProperty({
+                metadataName: 'viewFieldGroup',
+                flatEntity: flatViewFieldGroup,
+                property: 'isActive',
+              }),
           )
           .map(fromFlatViewFieldGroupToViewFieldGroupDto);
       });
@@ -602,15 +603,20 @@ export class DataloaderService {
         if (
           !isDefined(flatViewField) ||
           flatViewField.deletedAt !== null ||
-          !resolveEffectiveFlatEntityProperty(flatViewField, 'isActive')
+          !resolveEffectiveFlatEntityProperty({
+            metadataName: 'viewField',
+            flatEntity: flatViewField,
+            property: 'isActive',
+          })
         ) {
           continue;
         }
 
-        const resolvedGroupId = resolveEffectiveFlatEntityProperty(
-          flatViewField,
-          'viewFieldGroupId',
-        );
+        const resolvedGroupId = resolveEffectiveFlatEntityProperty({
+          metadataName: 'viewField',
+          flatEntity: flatViewField,
+          property: 'viewFieldGroupId',
+        });
 
         if (!isDefined(resolvedGroupId)) {
           continue;
@@ -672,7 +678,11 @@ export class DataloaderService {
           .filter(
             (flatViewField) =>
               flatViewField.deletedAt === null &&
-              resolveEffectiveFlatEntityProperty(flatViewField, 'isActive'),
+              resolveEffectiveFlatEntityProperty({
+                metadataName: 'viewField',
+                flatEntity: flatViewField,
+                property: 'isActive',
+              }),
           )
           .map(fromFlatViewFieldToViewFieldDto);
       });
