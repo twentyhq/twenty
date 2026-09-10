@@ -55,10 +55,13 @@ const probeSlackAuth = async (
 
 // Best-effort: the platform report only mirrors what this probe already tells
 // the settings tab, so a platform hiccup must not downgrade the health report.
-const reportSlackTokenRejected = async (
-  connectionId: string,
-  slackErrorCode: string | undefined,
-): Promise<void> => {
+const reportSlackTokenRejected = async ({
+  connectionId,
+  slackErrorCode,
+}: {
+  connectionId: string;
+  slackErrorCode: string | undefined;
+}): Promise<void> => {
   try {
     await reportConnectionAuthFailure({
       connectionId,
@@ -91,7 +94,10 @@ export const resolveSlackConnectionHealth = async ({
 
   if (!authProbe.isAuthenticated) {
     if (authProbe.isTokenRejected) {
-      await reportSlackTokenRejected(connectionId, authProbe.slackErrorCode);
+      await reportSlackTokenRejected({
+        connectionId,
+        slackErrorCode: authProbe.slackErrorCode,
+      });
 
       return {
         connectionHealth: SLACK_CONNECTION_HEALTH.TOKEN_REJECTED,
