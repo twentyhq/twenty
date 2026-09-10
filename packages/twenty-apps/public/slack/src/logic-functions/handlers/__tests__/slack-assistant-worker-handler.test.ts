@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
+import { SLACK_ASSISTANT_REQUEST_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-request-timeout-seconds';
 import { slackAssistantWorkerHandler } from 'src/logic-functions/handlers/slack-assistant-worker-handler';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
 
@@ -241,6 +242,33 @@ describe('slackAssistantWorkerHandler', () => {
     });
     expect(callLog).toEqual([]);
     expect(fetchSlackAssistantContextMock).not.toHaveBeenCalled();
+  });
+
+  it('should take over a request whose execution died mid-answer', async () => {
+    const result = await slackAssistantWorkerHandler({
+      ...REQUEST_RECORD,
+      status: SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING,
+      updatedAt: new Date(
+        Date.now() - (SLACK_ASSISTANT_REQUEST_TIMEOUT_SECONDS + 1) * 1000,
+      ).toISOString(),
+    });
+
+    expect(result).toEqual({ done: true });
+    expect(claimSlackAssistantRequestMock).toHaveBeenCalledExactlyOnceWith(
+      expect.anything(),
+      { id: REQUEST_RECORD.id },
+    );
+  });
+
+  it('should leave a request whose execution can still be alive alone', async () => {
+    const result = await slackAssistantWorkerHandler({
+      ...REQUEST_RECORD,
+      status: SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING,
+      updatedAt: new Date().toISOString(),
+    });
+
+    expect(result).toEqual({ skipped: true, reason: 'Request is not pending' });
+    expect(claimSlackAssistantRequestMock).not.toHaveBeenCalled();
   });
 
   it('should not start the status for a request that is no longer pending', async () => {

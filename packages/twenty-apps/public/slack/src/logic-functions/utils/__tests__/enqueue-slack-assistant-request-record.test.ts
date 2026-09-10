@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
+import { SLACK_ASSISTANT_REQUEST_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-request-timeout-seconds';
 import { enqueueSlackAssistantRequestRecord } from 'src/logic-functions/utils/enqueue-slack-assistant-request-record';
 
 const {
@@ -89,6 +90,7 @@ describe('enqueueSlackAssistantRequestRecord', () => {
     findSlackAssistantRequestBySlackMessageMock.mockResolvedValue({
       id: 'request-1',
       status: SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING,
+      updatedAt: new Date().toISOString(),
       ...REQUEST_DRAFT,
     });
 
@@ -98,5 +100,44 @@ describe('enqueueSlackAssistantRequestRecord', () => {
       ok: true,
       skipped: 'Slack message is already queued',
     });
+  });
+
+  it('should hand back a request whose execution died mid-answer', async () => {
+    const staleRequest = {
+      id: 'request-1',
+      status: SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING,
+      updatedAt: new Date(
+        Date.now() - (SLACK_ASSISTANT_REQUEST_TIMEOUT_SECONDS + 1) * 1000,
+      ).toISOString(),
+      ...REQUEST_DRAFT,
+    };
+
+    findSlackAssistantRequestBySlackMessageMock.mockResolvedValue(staleRequest);
+
+    const result = await enqueueSlackAssistantRequestRecord(REQUEST_DRAFT);
+
+    expect(result).toEqual({ ok: true, request: staleRequest });
+  });
+
+  it('should hand back the winning record when losing the create race', async () => {
+    const pendingRequest = {
+      id: 'request-1',
+      status: SLACK_ASSISTANT_REQUEST_STATUS.PENDING,
+      ...REQUEST_DRAFT,
+    };
+
+    findSlackAssistantRequestBySlackMessageMock
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(pendingRequest);
+    createSlackAssistantRequestMock.mockRejectedValue(
+      new Error('duplicate key value violates unique constraint'),
+    );
+
+    const result = await enqueueSlackAssistantRequestRecord(REQUEST_DRAFT);
+
+    expect(result).toEqual({ ok: true, request: pendingRequest });
+    expect(findSlackAssistantRequestBySlackMessageMock).toHaveBeenCalledTimes(
+      2,
+    );
   });
 });

@@ -18,6 +18,7 @@ import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-s
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
+import { isSlackAssistantRequestResumable } from 'src/logic-functions/utils/is-slack-assistant-request-resumable';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
@@ -30,10 +31,11 @@ import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-
 export const slackAssistantWorkerHandler = async (
   record: SlackAssistantRequestRecord,
   {
-    agentDeadlineAtMs = Date.now() + SLACK_ASSISTANT_AGENT_BUDGET_SECONDS * 1000,
+    agentDeadlineAtMs = Date.now() +
+      SLACK_ASSISTANT_AGENT_BUDGET_SECONDS * 1000,
   }: { agentDeadlineAtMs?: number } = {},
 ): Promise<object> => {
-  if (record.status !== SLACK_ASSISTANT_REQUEST_STATUS.PENDING) {
+  if (!isSlackAssistantRequestResumable(record)) {
     return { skipped: true, reason: 'Request is not pending' };
   }
 
@@ -223,4 +225,3 @@ export const slackAssistantWorkerHandler = async (
     });
   }
 };
-

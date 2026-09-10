@@ -28,6 +28,7 @@ export const findSlackAssistantRequestBySlackMessage = async (
           slackMessageTimestamp: true,
           slackUserId: true,
           requestText: true,
+          updatedAt: true,
         },
       },
     },
