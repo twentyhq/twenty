@@ -5,7 +5,7 @@ import { STANDARD_OBJECT_FIELDS } from 'twenty-shared/metadata';
 import { MetadataReadability } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
-import { type MakeStandardChildObjectsInheritedCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788894200001-make-standard-child-objects-inherited.command';
+import { type MakeStandardChildObjectsInheritedCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788957300001-make-standard-child-objects-inherited.command';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -96,7 +96,7 @@ const EXPECTED_LEGACY_STATE: Record<string, ReadabilityState> =
     ]),
   );
 
-describe('2-40 workspace command 1788894200001 - MakeStandardChildObjectsInheritedCommand (integration)', () => {
+describe('2-40 workspace command 1788957300001 - MakeStandardChildObjectsInheritedCommand (integration)', () => {
   let command: MakeStandardChildObjectsInheritedCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
   let objectMetadataIds: string[];

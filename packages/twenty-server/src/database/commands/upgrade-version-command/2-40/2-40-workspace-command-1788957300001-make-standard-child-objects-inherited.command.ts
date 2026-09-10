@@ -62,7 +62,7 @@ export const STANDARD_CHILD_OBJECTS_TO_MAKE_INHERITED = [
   },
 ] as const;
 
-@RegisteredWorkspaceCommand('2.40.0', 1788894200001)
+@RegisteredWorkspaceCommand('2.40.0', 1788957300001)
 @Command({
   name: 'upgrade:2-40:make-standard-child-objects-inherited',
   description:
