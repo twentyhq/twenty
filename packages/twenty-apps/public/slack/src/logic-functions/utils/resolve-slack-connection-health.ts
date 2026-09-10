@@ -53,8 +53,11 @@ const probeSlackAuth = async (
   }
 };
 
+const REPORT_SLACK_TOKEN_REJECTED_TIMEOUT_MS = 5_000;
+
 // Best-effort: the platform report only mirrors what this probe already tells
-// the settings tab, so a platform hiccup must not downgrade the health report.
+// the settings tab, so a platform hiccup must not downgrade the health report
+// and a slow platform must not stall the probe past its route budget.
 const reportSlackTokenRejected = async ({
   connectionId,
   slackErrorCode,
@@ -62,13 +65,21 @@ const reportSlackTokenRejected = async ({
   connectionId: string;
   slackErrorCode: string | undefined;
 }): Promise<void> => {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  const reportPromise = reportConnectionAuthFailure({
+    connectionId,
+    reason: `Slack rejected the stored bot token (${slackErrorCode ?? 'auth error'}). Reconnect to restore the integration.`,
+  }).catch(() => undefined);
+
+  const timeoutPromise = new Promise<void>((resolve) => {
+    timeoutId = setTimeout(resolve, REPORT_SLACK_TOKEN_REJECTED_TIMEOUT_MS);
+  });
+
   try {
-    await reportConnectionAuthFailure({
-      connectionId,
-      reason: `Slack rejected the stored bot token (${slackErrorCode ?? 'auth error'}). Reconnect to restore the integration.`,
-    });
-  } catch {
-    return;
+    await Promise.race([reportPromise, timeoutPromise]);
+  } finally {
+    clearTimeout(timeoutId);
   }
 };
 

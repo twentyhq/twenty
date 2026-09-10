@@ -70,6 +70,7 @@ describe('resolveSlackConnectionHealth', () => {
 
     await resolveHealth();
 
+    expect(reportConnectionAuthFailureMock).toHaveBeenCalledTimes(1);
     expect(reportConnectionAuthFailureMock).toHaveBeenCalledWith({
       connectionId: CONNECTION_ID,
       reason: expect.stringContaining('token_revoked'),
@@ -90,6 +91,36 @@ describe('resolveSlackConnectionHealth', () => {
       connectionHealth: 'token_rejected',
       installedSlackTeamId: undefined,
     });
+
+    expect(reportConnectionAuthFailureMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not let a stalled platform report hold up the health result', async () => {
+    vi.useFakeTimers();
+
+    try {
+      authTest.mockRejectedValue(
+        Object.assign(new Error('An API error occurred: invalid_auth'), {
+          data: { ok: false, error: 'invalid_auth' },
+        }),
+      );
+      reportConnectionAuthFailureMock.mockReturnValue(
+        new Promise(() => undefined),
+      );
+
+      const healthPromise = resolveHealth();
+
+      await vi.advanceTimersByTimeAsync(5_000);
+
+      await expect(healthPromise).resolves.toEqual({
+        connectionHealth: 'token_rejected',
+        installedSlackTeamId: undefined,
+      });
+
+      expect(reportConnectionAuthFailureMock).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('should not raise an alarm on a transient auth.test failure', async () => {
