@@ -112,6 +112,7 @@ export const FormDateFieldInput = ({
   const { refs, floatingStyles } = useFloating({
     open: displayDatePicker,
     placement: 'bottom-start',
+    strategy: 'fixed',
     middleware: [offset(4), flip()],
     whileElementsMounted: autoUpdate,
   });
@@ -302,6 +303,7 @@ export const FormDateFieldInput = ({
         !readonly ? (
           <FloatingPortal>
             <div
+              data-floating-ui-viewport
               ref={refs.setFloating}
               style={floatingStyles}
               data-click-outside-id={FORM_DATE_FIELD_PICKER_CLICK_OUTSIDE_ID}

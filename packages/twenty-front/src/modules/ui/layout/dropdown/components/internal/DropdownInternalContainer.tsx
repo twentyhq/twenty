@@ -33,11 +33,6 @@ export const StyledDropdownContentContainer = styled.div<{
     isDropdownInModal
       ? RootStackingContextZIndices.DropdownPortalAboveModal
       : RootStackingContextZIndices.DropdownPortalBelowModal};
-  zoom: calc(1 / var(--t-zoom, 1));
-
-  > * {
-    zoom: var(--t-zoom, 1);
-  }
 `;
 
 const StyledDropdownInsideContainer = styled.div`
@@ -161,6 +156,7 @@ export const DropdownInternalContainer = ({
 
       <FloatingPortal>
         <StyledDropdownContentContainer
+          data-floating-ui-viewport
           ref={floatingUiRefs.setFloating}
           style={dropdownMenuStyles}
           role="listbox"

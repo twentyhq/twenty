@@ -5,12 +5,14 @@ import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/r
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
+import { StyledDropdownContentContainer } from '@/ui/layout/dropdown/components/internal/DropdownInternalContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
 import {
+  FloatingPortal,
   autoUpdate,
   flip,
   offset,
@@ -75,11 +77,19 @@ export const RecordTableCellEditMode = ({
 
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
+    strategy: 'fixed',
     middleware: [
       flip(),
-      offset({
-        mainAxis: -33,
-        crossAxis: -3,
+      offset(({ rects, elements }) => {
+        const referenceScale =
+          elements.reference instanceof HTMLElement
+            ? rects.reference.width / elements.reference.offsetWidth
+            : 1;
+
+        return {
+          mainAxis: -33 * referenceScale,
+          crossAxis: -3 * referenceScale,
+        };
       }),
       setFieldInputLayoutDirectionMiddleware,
     ],
@@ -108,14 +118,20 @@ export const RecordTableCellEditMode = ({
           {children}
         </StyledInputModeOnlyContainer>
       ) : (
-        <OverlayContainer
-          ref={refs.setFloating}
-          style={floatingStyles}
-          borderRadius="sm"
-          hasDangerBorder={recordFieldInputIsFieldInError}
-        >
-          {children}
-        </OverlayContainer>
+        <FloatingPortal>
+          <StyledDropdownContentContainer
+            data-floating-ui-viewport
+            ref={refs.setFloating}
+            style={floatingStyles}
+          >
+            <OverlayContainer
+              borderRadius="sm"
+              hasDangerBorder={recordFieldInputIsFieldInError}
+            >
+              {children}
+            </OverlayContainer>
+          </StyledDropdownContentContainer>
+        </FloatingPortal>
       )}
     </StyledEditableCellEditModeContainer>
   );
