@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext, useState } from 'react';
+import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { SearchInput } from 'twenty-ui/input';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
@@ -19,6 +20,7 @@ import { SettingsNameCellSecondaryLabel } from '@/settings/components/SettingsNa
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { ProgressRing } from '@/ui/feedback/progress-ring/components/ProgressRing';
 import { type UsageResourceType } from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const GRID_AUTO_COLUMNS = '1.2fr 1fr 120px 96px';
 
@@ -173,6 +175,7 @@ export const SettingsBillingLimitsTable = ({
   quotas,
 }: SettingsBillingLimitsTableProps) => {
   const { t } = useLingui();
+  const navigate = useNavigateSettings();
 
   const [searchText, setSearchText] = useState('');
   const [resourceType, setResourceType] = useState<UsageResourceType | null>(
@@ -242,6 +245,10 @@ export const SettingsBillingLimitsTable = ({
           { label: t`Used`, align: 'right', Cell: UsedCell },
         ]}
         gridAutoColumns={GRID_AUTO_COLUMNS}
+        showRowChevron
+        onRowClick={(row) =>
+          navigate(SettingsPath.BillingLimitEdit, { usageLimitId: row.id })
+        }
       />
       {filteredRows.length === 0 && (
         <SettingsEmptyPlaceholder>
