@@ -3,7 +3,7 @@ import * as https from 'https';
 import { type Socket } from 'net';
 import { type Duplex } from 'stream';
 
-import { getIsBlockedIp } from 'src/engine/core-modules/secure-http-client/utils/is-allowed-internal-host.util';
+import { getIsBlockedIp } from 'src/engine/core-modules/secure-http-client/utils/get-is-blocked-ip.util';
 
 type IsBlockedIp = ReturnType<typeof getIsBlockedIp>;
 

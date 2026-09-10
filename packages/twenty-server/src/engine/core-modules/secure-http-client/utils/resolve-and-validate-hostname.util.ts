@@ -1,6 +1,6 @@
 import * as dns from 'dns/promises';
 
-import { getIsBlockedIp } from 'src/engine/core-modules/secure-http-client/utils/is-allowed-internal-host.util';
+import { getIsBlockedIp } from 'src/engine/core-modules/secure-http-client/utils/get-is-blocked-ip.util';
 
 export const resolveAndValidateHostname = async (
   hostnameOrUrl: string,

@@ -10,10 +10,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { buildAxiosFetch } from '@lifeomic/axios-fetch';
 
 import { createSsrfSafeAgent } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-agent.util';
-import {
-  ALLOW_ALL_INTERNAL_HOSTS,
-  normalizeAllowedInternalHost,
-} from 'src/engine/core-modules/secure-http-client/utils/is-allowed-internal-host.util';
+import { ALLOW_ALL_INTERNAL_HOSTS } from 'src/engine/core-modules/secure-http-client/constants/allow-all-internal-hosts.constant';
+import { normalizeAllowedInternalHost } from 'src/engine/core-modules/secure-http-client/utils/normalize-allowed-internal-host.util';
 import { resolveAndValidateHostname } from 'src/engine/core-modules/secure-http-client/utils/resolve-and-validate-hostname.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
