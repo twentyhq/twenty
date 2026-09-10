@@ -184,6 +184,8 @@ import { ConvertLiveCreditGrantsToNoExpirySlowInstanceCommand } from 'src/databa
 import { AddIsAuditLoggedToFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788885873410-add-is-audit-logged-to-field-metadata';
 import { BackfillIsAuditLoggedOnPositionFieldMetadataSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1788885873411-backfill-is-audit-logged-on-position-field-metadata';
 import { AddCoreWorkflowIdToWorkflowVersionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788960408161-add-core-workflow-id-to-workflow-version';
+import { AddAiModelTiersToWorkspaceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1789000000000-add-ai-model-tiers-to-workspace';
+import { MigrateWorkspaceModelsToTiersSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1789000000001-migrate-workspace-models-to-tiers';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -370,4 +372,6 @@ export const INSTANCE_COMMANDS = [
   AddIsAuditLoggedToFieldMetadataFastInstanceCommand,
   BackfillIsAuditLoggedOnPositionFieldMetadataSlowInstanceCommand,
   AddCoreWorkflowIdToWorkflowVersionFastInstanceCommand,
+  AddAiModelTiersToWorkspaceFastInstanceCommand,
+  MigrateWorkspaceModelsToTiersSlowInstanceCommand,
 ];

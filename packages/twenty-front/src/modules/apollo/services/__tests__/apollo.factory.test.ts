@@ -8,10 +8,7 @@ import { getSessionGeneration } from '@/auth/utils/getSessionGeneration';
 import { rotateSessionGeneration } from '@/auth/utils/rotateSessionGeneration';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import {
-  AUTO_SELECT_FAST_MODEL_ID,
-  AUTO_SELECT_SMART_MODEL_ID,
-} from 'twenty-shared/constants';
-import {
+  AiModelTier,
   WorkspaceActivationStatus,
   WorkspaceDiscoverability,
 } from '~/generated-metadata/graphql';
@@ -83,11 +80,10 @@ const mockWorkspace = {
   isTwoFactorAuthenticationEnforced: false,
   trashRetentionDays: 14,
   eventLogRetentionDays: 365 * 3,
-  fastModel: AUTO_SELECT_FAST_MODEL_ID,
-  smartModel: AUTO_SELECT_SMART_MODEL_ID,
-  routerModel: 'auto',
-  enabledAiModelIds: [],
-  useRecommendedModels: true,
+  aiChatModelTier: AiModelTier.fast,
+  aiAgentModelTier: AiModelTier.fast,
+  isAutoModelSelectionEnabled: true,
+  aiModelIdByTier: {},
   isInternalMessagesImportEnabled: false,
   workspaceCustomApplication: CUSTOM_WORKSPACE_APPLICATION_MOCK,
   workspaceCustomApplicationId: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
