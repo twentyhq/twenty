@@ -239,6 +239,24 @@ exports[`Application export - data model exports the whole application as a stab
       "universalIdentifier": "<TICKET_TITLE_INDEX>",
     },
     {
+      "metadataName": "navigationMenuItem",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKETS_INDEX_VIEW_NAVIGATION_ITEM>",
+    },
+    {
+      "metadataName": "navigationMenuItem",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
+    },
+    {
+      "metadataName": "navigationMenuItem",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKETS_NAVIGATION_ITEM>",
+    },
+    {
       "metadataName": "objectMetadata",
       "reason": null,
       "status": "EXPORTED",
@@ -261,6 +279,18 @@ exports[`Application export - data model exports the whole application as a stab
       "reason": null,
       "status": "ENGINE_DERIVED",
       "universalIdentifier": "<PROJECT_RECORD_PAGE_LAYOUT>",
+    },
+    {
+      "metadataName": "pageLayout",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKET_BOARD_LAYOUT>",
+    },
+    {
+      "metadataName": "pageLayout",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKET_PAGE_LAYOUT>",
     },
     {
       "metadataName": "pageLayout",
@@ -313,8 +343,32 @@ exports[`Application export - data model exports the whole application as a stab
     {
       "metadataName": "pageLayoutTab",
       "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<STANDARD_COMPANY_RECORD_PAGE_TAGLINE_TAB>",
+    },
+    {
+      "metadataName": "pageLayoutTab",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKET_BOARD_TAB>",
+    },
+    {
+      "metadataName": "pageLayoutTab",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKET_PAGE_OVERVIEW_TAB>",
+    },
+    {
+      "metadataName": "pageLayoutTab",
+      "reason": null,
       "status": "ENGINE_DERIVED",
       "universalIdentifier": "<TICKET_RECORD_FORM_TAB>",
+    },
+    {
+      "metadataName": "pageLayoutTab",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKET_RECORD_PAGE_EXTRA_TAB>",
     },
     {
       "metadataName": "pageLayoutTab",
@@ -385,6 +439,18 @@ exports[`Application export - data model exports the whole application as a stab
     {
       "metadataName": "pageLayoutWidget",
       "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKET_BOARD_DOCS_WIDGET>",
+    },
+    {
+      "metadataName": "pageLayoutWidget",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKET_PAGE_FIELDS_WIDGET>",
+    },
+    {
+      "metadataName": "pageLayoutWidget",
+      "reason": null,
       "status": "ENGINE_DERIVED",
       "universalIdentifier": "<TICKET_RECORD_FORM_WIDGET_project>",
     },
@@ -393,6 +459,18 @@ exports[`Application export - data model exports the whole application as a stab
       "reason": null,
       "status": "ENGINE_DERIVED",
       "universalIdentifier": "<TICKET_RECORD_FORM_WIDGET_title>",
+    },
+    {
+      "metadataName": "pageLayoutWidget",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKET_RECORD_PAGE_EXTRA_NOTES_WIDGET>",
+    },
+    {
+      "metadataName": "pageLayoutWidget",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TICKET_RECORD_PAGE_HOME_DOCS_WIDGET>",
     },
     {
       "metadataName": "pageLayoutWidget",
@@ -686,6 +764,7 @@ exports[`Application export - data model exports the whole application as a stab
   "fields": [
     {
       "defaultValue": null,
+      "isAuditLogged": true,
       "isLabelSyncedWithName": false,
       "isNullable": true,
       "isSearchable": false,
@@ -717,7 +796,31 @@ exports[`Application export - data model exports the whole application as a stab
     },
   ],
   "logicFunctions": [],
-  "navigationMenuItems": [],
+  "navigationMenuItems": [
+    {
+      "name": "Support",
+      "position": 40,
+      "type": "FOLDER",
+      "universalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
+    },
+    {
+      "folderUniversalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
+      "icon": "IconTicket",
+      "position": 41,
+      "targetObjectUniversalIdentifier": "<TICKET_OBJECT>",
+      "type": "OBJECT",
+      "universalIdentifier": "<TICKETS_NAVIGATION_ITEM>",
+    },
+    {
+      "folderUniversalIdentifier": "<TICKETS_NAVIGATION_FOLDER>",
+      "icon": "IconList",
+      "name": "All tickets",
+      "position": 42,
+      "type": "VIEW",
+      "universalIdentifier": "<TICKETS_INDEX_VIEW_NAVIGATION_ITEM>",
+      "viewUniversalIdentifier": "<TICKET_INDEX_ENGINE_VIEW>",
+    },
+  ],
   "objects": [
     {
       "color": "blue",
@@ -725,6 +828,7 @@ exports[`Application export - data model exports the whole application as a stab
       "fields": [
         {
           "defaultValue": null,
+          "isAuditLogged": true,
           "isLabelSyncedWithName": true,
           "isNullable": true,
           "isSearchable": false,
@@ -740,6 +844,7 @@ exports[`Application export - data model exports the whole application as a stab
         },
         {
           "defaultValue": null,
+          "isAuditLogged": true,
           "isLabelSyncedWithName": false,
           "isNullable": true,
           "isSearchable": false,
@@ -782,6 +887,7 @@ exports[`Application export - data model exports the whole application as a stab
       "fields": [
         {
           "defaultValue": null,
+          "isAuditLogged": true,
           "isLabelSyncedWithName": false,
           "isNullable": true,
           "isSearchable": false,
@@ -817,8 +923,119 @@ exports[`Application export - data model exports the whole application as a stab
       "writability": "OPEN",
     },
   ],
-  "pageLayoutTabs": [],
-  "pageLayouts": [],
+  "pageLayoutTabs": [
+    {
+      "layoutMode": "VERTICAL_LIST",
+      "pageLayoutUniversalIdentifier": "<TICKET_RECORD_PAGE_LAYOUT>",
+      "position": 60,
+      "title": "Extra",
+      "universalIdentifier": "<TICKET_RECORD_PAGE_EXTRA_TAB>",
+      "widgets": [
+        {
+          "configuration": {
+            "configurationType": "NOTES",
+          },
+          "objectUniversalIdentifier": "<TICKET_OBJECT>",
+          "position": {
+            "index": 0,
+            "layoutMode": "VERTICAL_LIST",
+          },
+          "title": "Notes",
+          "type": "NOTES",
+          "universalIdentifier": "<TICKET_RECORD_PAGE_EXTRA_NOTES_WIDGET>",
+        },
+      ],
+    },
+    {
+      "layoutMode": "VERTICAL_LIST",
+      "pageLayoutUniversalIdentifier": "<STANDARD_COMPANY_RECORD_PAGE_LAYOUT>",
+      "position": 60,
+      "title": "Tagline",
+      "universalIdentifier": "<STANDARD_COMPANY_RECORD_PAGE_TAGLINE_TAB>",
+    },
+  ],
+  "pageLayoutWidgets": [
+    {
+      "configuration": {
+        "configurationType": "IFRAME",
+        "url": "https://example.com/tickets/docs",
+      },
+      "pageLayoutTabUniversalIdentifier": "<TICKET_RECORD_PAGE_TAB_Home>",
+      "position": {
+        "index": 1,
+        "layoutMode": "VERTICAL_LIST",
+      },
+      "title": "Docs",
+      "type": "IFRAME",
+      "universalIdentifier": "<TICKET_RECORD_PAGE_HOME_DOCS_WIDGET>",
+    },
+  ],
+  "pageLayouts": [
+    {
+      "defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier": "<TICKET_PAGE_OVERVIEW_TAB>",
+      "name": "Ticket page",
+      "objectUniversalIdentifier": "<TICKET_OBJECT>",
+      "tabs": [
+        {
+          "icon": "IconHome",
+          "layoutMode": "VERTICAL_LIST",
+          "position": 0,
+          "title": "Overview",
+          "universalIdentifier": "<TICKET_PAGE_OVERVIEW_TAB>",
+          "widgets": [
+            {
+              "configuration": {
+                "configurationType": "FIELDS",
+                "newFieldDefaultVisibility": true,
+                "viewUniversalIdentifier": "<OPEN_TICKETS_VIEW>",
+              },
+              "objectUniversalIdentifier": "<TICKET_OBJECT>",
+              "position": {
+                "index": 0,
+                "layoutMode": "VERTICAL_LIST",
+              },
+              "title": "Fields",
+              "type": "FIELDS",
+              "universalIdentifier": "<TICKET_PAGE_FIELDS_WIDGET>",
+            },
+          ],
+        },
+      ],
+      "type": "RECORD_PAGE",
+      "universalIdentifier": "<TICKET_PAGE_LAYOUT>",
+    },
+    {
+      "name": "Ticket board",
+      "tabs": [
+        {
+          "layoutMode": "GRID",
+          "position": 0,
+          "title": "Board",
+          "universalIdentifier": "<TICKET_BOARD_TAB>",
+          "widgets": [
+            {
+              "configuration": {
+                "configurationType": "IFRAME",
+                "url": "https://example.com/tickets",
+              },
+              "position": {
+                "column": 0,
+                "columnSpan": 6,
+                "layoutMode": "GRID",
+                "row": 0,
+                "rowSpan": 4,
+              },
+              "title": "Docs",
+              "type": "IFRAME",
+              "universalIdentifier": "<TICKET_BOARD_DOCS_WIDGET>",
+            },
+          ],
+        },
+      ],
+      "type": "STANDALONE_PAGE",
+      "universalIdentifier": "<TICKET_BOARD_LAYOUT>",
+    },
+  ],
   "permissionFlags": [],
   "publicAssets": [],
   "roles": [],

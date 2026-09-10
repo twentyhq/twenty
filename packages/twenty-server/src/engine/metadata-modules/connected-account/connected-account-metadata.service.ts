@@ -18,6 +18,7 @@ import {
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
+import { type ConnectedAccountWithoutCredentials } from 'src/engine/metadata-modules/connected-account/types/connected-account-without-credentials.type';
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
@@ -40,6 +41,38 @@ export class ConnectedAccountMetadataService {
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
+
+  async findUsableByCaller({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<ConnectedAccountWithoutCredentials[]> {
+    const connectedAccounts = await this.repository.find({
+      where: { workspaceId, archivedAt: IsNull() },
+      order: { createdAt: 'ASC', id: 'ASC' },
+      select: {
+        id: true,
+        handle: true,
+        handleAliases: true,
+        provider: true,
+        name: true,
+        visibility: true,
+        userWorkspaceId: true,
+      },
+    });
+
+    if (!isDefined(userWorkspaceId)) {
+      return connectedAccounts.filter(
+        (connectedAccount) => connectedAccount.visibility === 'workspace',
+      );
+    }
+
+    return connectedAccounts.filter((connectedAccount) =>
+      isConnectedAccountUsableByCaller({ connectedAccount, userWorkspaceId }),
+    );
+  }
 
   async findByUserWorkspaceId({
     userWorkspaceId,

@@ -2771,6 +2771,9 @@ export default {
             "productKey": [
                 133
             ],
+            "isLegacy": [
+                1
+            ],
             "__typename": [
                 1
             ]
@@ -2793,6 +2796,9 @@ export default {
             ],
             "creditAmount": [
                 15
+            ],
+            "isSellable": [
+                8
             ],
             "__typename": [
                 1
@@ -2899,6 +2905,12 @@ export default {
             ],
             "stripePriceId": [
                 1
+            ],
+            "unitAmount": [
+                15
+            ],
+            "creditAmount": [
+                15
             ],
             "billingProduct": [
                 0
@@ -4736,6 +4748,9 @@ export default {
                 8
             ],
             "isSearchable": [
+                8
+            ],
+            "isAuditLogged": [
                 8
             ],
             "defaultValue": [
@@ -12356,6 +12371,9 @@ export default {
             "isSearchable": [
                 8
             ],
+            "isAuditLogged": [
+                8
+            ],
             "defaultValue": [
                 9
             ],
@@ -12430,6 +12448,9 @@ export default {
                 8
             ],
             "isSearchable": [
+                8
+            ],
+            "isAuditLogged": [
                 8
             ],
             "defaultValue": [
@@ -12799,6 +12820,9 @@ export default {
         "SendMessageCampaignInput": {
             "campaignId": [
                 1
+            ],
+            "scheduledAt": [
+                4
             ],
             "__typename": [
                 1

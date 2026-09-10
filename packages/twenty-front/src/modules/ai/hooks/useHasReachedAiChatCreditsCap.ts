@@ -1,12 +1,11 @@
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
-import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { hasReachedCurrentBillingPeriodCapSelector } from '@/workspace/states/hasReachedCurrentBillingPeriodCapSelector';
 import { isResourceCreditSubscriptionItem } from '@/workspace/utils/isResourceCreditSubscriptionItem';
-import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 // The credits exhausted error renders nothing on its own, so the banner must
 // mount whenever the workspace is refused for lack of credits. The resource
@@ -41,8 +40,5 @@ export const useHasReachedAiChatCreditsCap = () => {
     return false;
   }
 
-  return isGraphqlErrorOfType(
-    agentChatError,
-    AiChatErrorCode.BILLING_CREDITS_EXHAUSTED,
-  );
+  return isAiChatCreditsExhaustedError(agentChatError);
 };
