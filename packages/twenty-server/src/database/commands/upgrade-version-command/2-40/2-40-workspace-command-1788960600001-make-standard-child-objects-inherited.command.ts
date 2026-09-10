@@ -1,8 +1,5 @@
 import { Command } from 'nest-commander';
-import {
-  STANDARD_OBJECT_FIELDS,
-  STANDARD_OBJECTS,
-} from 'twenty-shared/metadata';
+import { STANDARD_OBJECT_FIELDS, STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -16,53 +13,62 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const OBJECTS_TO_UPDATE = [
+export const STANDARD_CHILD_OBJECTS_TO_MAKE_INHERITED = [
   {
-    nameSingular: 'message',
-    universalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
-    readability: MetadataReadability.PRIVATE,
-    readabilityParentFieldUniversalIdentifiers: null,
-  },
-  {
-    nameSingular: 'messageThread',
-    universalIdentifier: STANDARD_OBJECTS.messageThread.universalIdentifier,
-    readability: MetadataReadability.PRIVATE,
-    readabilityParentFieldUniversalIdentifiers: null,
-  },
-  {
-    nameSingular: 'calendarEvent',
-    universalIdentifier: STANDARD_OBJECTS.calendarEvent.universalIdentifier,
-    readability: MetadataReadability.PRIVATE,
-    readabilityParentFieldUniversalIdentifiers: null,
-  },
-  {
-    nameSingular: 'messageParticipant',
-    universalIdentifier:
-      STANDARD_OBJECTS.messageParticipant.universalIdentifier,
-    readability: MetadataReadability.INHERITED,
+    nameSingular: 'attachment',
+    universalIdentifier: STANDARD_OBJECTS.attachment.universalIdentifier,
     readabilityParentFieldUniversalIdentifiers: [
-      STANDARD_OBJECT_FIELDS.messageParticipant.message.universalIdentifier,
+      STANDARD_OBJECT_FIELDS.attachment.targetNote.universalIdentifier,
     ],
   },
   {
-    nameSingular: 'calendarEventParticipant',
-    universalIdentifier:
-      STANDARD_OBJECTS.calendarEventParticipant.universalIdentifier,
-    readability: MetadataReadability.INHERITED,
+    nameSingular: 'timelineActivity',
+    universalIdentifier: STANDARD_OBJECTS.timelineActivity.universalIdentifier,
     readabilityParentFieldUniversalIdentifiers: [
-      STANDARD_OBJECT_FIELDS.calendarEventParticipant.calendarEvent
+      STANDARD_OBJECT_FIELDS.timelineActivity.targetPerson.universalIdentifier,
+    ],
+  },
+  {
+    nameSingular: 'noteTarget',
+    universalIdentifier: STANDARD_OBJECTS.noteTarget.universalIdentifier,
+    readabilityParentFieldUniversalIdentifiers: [
+      STANDARD_OBJECT_FIELDS.noteTarget.note.universalIdentifier,
+    ],
+  },
+  {
+    nameSingular: 'taskTarget',
+    universalIdentifier: STANDARD_OBJECTS.taskTarget.universalIdentifier,
+    readabilityParentFieldUniversalIdentifiers: [
+      STANDARD_OBJECT_FIELDS.taskTarget.task.universalIdentifier,
+    ],
+  },
+  {
+    nameSingular: 'messageThreadTarget',
+    universalIdentifier:
+      STANDARD_OBJECTS.messageThreadTarget.universalIdentifier,
+    readabilityParentFieldUniversalIdentifiers: [
+      STANDARD_OBJECT_FIELDS.messageThreadTarget.messageThread
         .universalIdentifier,
     ],
   },
-];
+  {
+    nameSingular: 'calendarEventTarget',
+    universalIdentifier:
+      STANDARD_OBJECTS.calendarEventTarget.universalIdentifier,
+    readabilityParentFieldUniversalIdentifiers: [
+      STANDARD_OBJECT_FIELDS.calendarEventTarget.calendarEvent
+        .universalIdentifier,
+    ],
+  },
+] as const;
 
-@RegisteredWorkspaceCommand('2.40.0', 1788957500000)
+@RegisteredWorkspaceCommand('2.40.0', 1788960600001)
 @Command({
-  name: 'upgrade:2-40:make-messaging-and-calendar-private',
+  name: 'upgrade:2-40:make-standard-child-objects-inherited',
   description:
-    'Set the readability of the existing message, messageThread and calendarEvent standard objects to PRIVATE and of messageParticipant and calendarEventParticipant to INHERITED from them, as the standard application now declares them; workspaces created after the change already have it',
+    'Set the readability of the existing attachment, timelineActivity, noteTarget, taskTarget, messageThreadTarget and calendarEventTarget standard objects to INHERITED with their parent fields, as the standard application now declares them; workspaces created after the change already have it',
 })
-export class MakeMessagingAndCalendarPrivateCommand extends ProvisionedWorkspaceCommandRunner {
+export class MakeStandardChildObjectsInheritedCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -88,9 +94,8 @@ export class MakeMessagingAndCalendarPrivateCommand extends ProvisionedWorkspace
     for (const {
       nameSingular,
       universalIdentifier,
-      readability,
       readabilityParentFieldUniversalIdentifiers,
-    } of OBJECTS_TO_UPDATE) {
+    } of STANDARD_CHILD_OBJECTS_TO_MAKE_INHERITED) {
       const flatObjectMetadata =
         findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
           flatEntityMaps: flatObjectMetadataMaps,
@@ -105,21 +110,23 @@ export class MakeMessagingAndCalendarPrivateCommand extends ProvisionedWorkspace
         continue;
       }
 
-      if (flatObjectMetadata.readability === readability) {
+      if (flatObjectMetadata.readability === MetadataReadability.INHERITED) {
         continue;
       }
 
       flatObjectMetadatasToUpdate.push({
         ...flatObjectMetadata,
-        readability,
-        readabilityParentFieldUniversalIdentifiers,
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldUniversalIdentifiers: [
+          ...readabilityParentFieldUniversalIdentifiers,
+        ],
         updatedAt: new Date().toISOString(),
       });
     }
 
     if (flatObjectMetadatasToUpdate.length === 0) {
       this.logger.log(
-        `Messaging and calendar objects already carry their readability for workspace ${workspaceId}, skipping`,
+        `Standard child objects are already INHERITED for workspace ${workspaceId}, skipping`,
       );
 
       return;
@@ -130,7 +137,7 @@ export class MakeMessagingAndCalendarPrivateCommand extends ProvisionedWorkspace
       .join(', ');
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Updating the readability of ${objectNames} for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Making ${objectNames} INHERITED for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
@@ -161,7 +168,7 @@ export class MakeMessagingAndCalendarPrivateCommand extends ProvisionedWorkspace
 
     if (validateAndBuildResult.status === 'fail') {
       throw new Error(
-        `Failed to update the readability of ${objectNames} for workspace ${workspaceId}: ${JSON.stringify(
+        `Failed to make ${objectNames} INHERITED for workspace ${workspaceId}: ${JSON.stringify(
           validateAndBuildResult,
           null,
           2,
@@ -170,7 +177,7 @@ export class MakeMessagingAndCalendarPrivateCommand extends ProvisionedWorkspace
     }
 
     this.logger.log(
-      `Updated the readability of ${objectNames} for workspace ${workspaceId}`,
+      `Made ${objectNames} INHERITED for workspace ${workspaceId}`,
     );
   }
 }
