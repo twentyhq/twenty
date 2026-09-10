@@ -4,6 +4,7 @@ import { useState } from 'react';
 import {
   AUTO_SELECT_MODEL_ID_BY_TIER,
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+  DEFAULT_AI_AGENT_MODEL_TIER,
   getAiModelTierFromModelId,
   type AiModelTier,
 } from 'twenty-shared/ai';
@@ -77,7 +78,7 @@ export const AiModelPicker = ({
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(hasPinnedModel);
 
   const selectedTier: AiModelTier = isWorkspaceDefault
-    ? (currentWorkspace?.aiAgentModelTier ?? 'fast')
+    ? (currentWorkspace?.aiAgentModelTier ?? DEFAULT_AI_AGENT_MODEL_TIER)
     : (explicitTier ?? getNearestAiModelTier(pinnedModel, tiers));
 
   const pinnedModelOptions = aiModels

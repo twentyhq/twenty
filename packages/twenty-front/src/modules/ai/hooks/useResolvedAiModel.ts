@@ -1,5 +1,6 @@
 import {
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+  DEFAULT_AI_AGENT_MODEL_TIER,
   getAiModelTierFromModelId,
 } from 'twenty-shared/ai';
 
@@ -20,7 +21,7 @@ export const useResolvedAiModel = (
 
   const tier =
     modelId === AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID
-      ? currentWorkspace?.aiAgentModelTier
+      ? (currentWorkspace?.aiAgentModelTier ?? DEFAULT_AI_AGENT_MODEL_TIER)
       : getAiModelTierFromModelId(modelId);
 
   if (tier !== undefined) {

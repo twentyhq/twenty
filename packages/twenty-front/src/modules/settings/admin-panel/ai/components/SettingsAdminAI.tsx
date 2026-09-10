@@ -46,7 +46,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import {
   type AdminAiModelConfig,
   type AdminAiModelTierDefault,
-  type AiModelTier as GraphqlAiModelTier,
+  AiModelTier as GraphqlAiModelTier,
 } from '~/generated-admin/graphql';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
@@ -149,7 +149,7 @@ export const SettingsAdminAI = () => {
   ) => {
     try {
       await setDefaultModel({
-        variables: { tier: tier as GraphqlAiModelTier, modelId },
+        variables: { tier: GraphqlAiModelTier[tier], modelId },
         refetchQueries: [{ query: GET_ADMIN_AI_MODELS }],
       });
       await refetchClientConfig();

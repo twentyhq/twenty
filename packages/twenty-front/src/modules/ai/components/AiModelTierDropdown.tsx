@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type AiModelTier } from 'twenty-shared/ai';
+import { DEFAULT_AI_CHAT_MODEL_TIER, type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -43,7 +43,7 @@ export const AiModelTierDropdown = ({
   // setting says, so the control shows what will actually answer.
   const workspaceTier: AiModelTier = isWorkspaceSetupChat
     ? 'fast'
-    : (currentWorkspace?.aiChatModelTier ?? 'fast');
+    : (currentWorkspace?.aiChatModelTier ?? DEFAULT_AI_CHAT_MODEL_TIER);
 
   const selectedTier = agentChatUserSelectedModelTier ?? workspaceTier;
   const selectedResolvedTier = tiers.find((tier) => tier.tier === selectedTier);

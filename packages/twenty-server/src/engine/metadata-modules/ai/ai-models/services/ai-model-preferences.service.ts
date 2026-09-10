@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
+import { type AiModelTier } from 'twenty-shared/ai';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AI_MODELS_DEFAULT_CONFIG_KEY_BY_TIER } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models-default-config-key-by-tier.const';
@@ -15,12 +15,13 @@ export class AiModelPreferencesService {
       disabledModels: this.twentyConfigService.get(
         'AI_MODELS_DEFAULT_DISABLED',
       ),
-      defaultModelsByTier: Object.fromEntries(
-        AI_MODEL_TIERS.map((tier) => [
-          tier,
-          this.getDefaultModelIdsForTier(tier),
-        ]),
-      ) as Record<AiModelTier, string[]>,
+      defaultModelsByTier: {
+        extraFast: this.getDefaultModelIdsForTier('extraFast'),
+        fast: this.getDefaultModelIdsForTier('fast'),
+        balanced: this.getDefaultModelIdsForTier('balanced'),
+        smart: this.getDefaultModelIdsForTier('smart'),
+        extraSmart: this.getDefaultModelIdsForTier('extraSmart'),
+      },
     };
   }
 

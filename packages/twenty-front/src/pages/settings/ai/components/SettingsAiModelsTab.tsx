@@ -2,7 +2,12 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
+import {
+  AI_MODEL_TIERS,
+  DEFAULT_AI_AGENT_MODEL_TIER,
+  DEFAULT_AI_CHAT_MODEL_TIER,
+  type AiModelTier,
+} from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -105,7 +110,9 @@ export const SettingsAiModelsTab = () => {
           >
             <Select
               dropdownId="models-tab-chat-tier-select"
-              value={currentWorkspace?.aiChatModelTier ?? 'fast'}
+              value={
+                currentWorkspace?.aiChatModelTier ?? DEFAULT_AI_CHAT_MODEL_TIER
+              }
               onChange={handleChatTierChange}
               options={tierOptions}
               selectSizeVariant="small"
@@ -119,7 +126,10 @@ export const SettingsAiModelsTab = () => {
           >
             <Select
               dropdownId="models-tab-agent-tier-select"
-              value={currentWorkspace?.aiAgentModelTier ?? 'fast'}
+              value={
+                currentWorkspace?.aiAgentModelTier ??
+                DEFAULT_AI_AGENT_MODEL_TIER
+              }
               onChange={handleAgentTierChange}
               options={tierOptions}
               selectSizeVariant="small"

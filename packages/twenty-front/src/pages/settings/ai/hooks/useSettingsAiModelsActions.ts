@@ -9,16 +9,22 @@ import {
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import {
+  AiModelTier as GraphqlAiModelTier,
   UpdateWorkspaceDocument,
-  type UpdateWorkspaceInput,
 } from '~/generated-metadata/graphql';
 
-type WorkspaceAiModelSettings = {
-  aiChatModelTier: AiModelTier;
-  aiAgentModelTier: AiModelTier;
-  isAutoModelSelectionEnabled: boolean;
-  aiModelIdByTier: Partial<Record<AiModelTier, string>>;
-};
+// Typed with the generated enum so the same object is both the optimistic
+// workspace patch and the mutation input; the enum's keys are the shared tier
+// literals, which is what makes the lookup below total.
+type WorkspaceAiModelSettingsChanges = Partial<
+  Pick<
+    CurrentWorkspace,
+    | 'aiChatModelTier'
+    | 'aiAgentModelTier'
+    | 'isAutoModelSelectionEnabled'
+    | 'aiModelIdByTier'
+  >
+>;
 
 export const useSettingsAiModelsActions = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -28,22 +34,15 @@ export const useSettingsAiModelsActions = () => {
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
   const updateAiModelSettings = async (
-    changes: Partial<WorkspaceAiModelSettings>,
+    changes: WorkspaceAiModelSettingsChanges,
   ) => {
     if (!currentWorkspace?.id) return;
 
     const previousWorkspace = currentWorkspace;
 
     try {
-      // The generated tier enum carries the twenty-shared literals as values,
-      // so the same object satisfies both sides once its type says so.
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        ...(changes as Partial<CurrentWorkspace>),
-      });
-      await updateWorkspace({
-        variables: { input: changes as UpdateWorkspaceInput },
-      });
+      setCurrentWorkspace({ ...currentWorkspace, ...changes });
+      await updateWorkspace({ variables: { input: changes } });
     } catch {
       setCurrentWorkspace(previousWorkspace);
       enqueueErrorSnackBar({ message: t`Failed to update model settings` });
@@ -51,10 +50,10 @@ export const useSettingsAiModelsActions = () => {
   };
 
   const handleChatTierChange = (tier: AiModelTier) =>
-    updateAiModelSettings({ aiChatModelTier: tier });
+    updateAiModelSettings({ aiChatModelTier: GraphqlAiModelTier[tier] });
 
   const handleAgentTierChange = (tier: AiModelTier) =>
-    updateAiModelSettings({ aiAgentModelTier: tier });
+    updateAiModelSettings({ aiAgentModelTier: GraphqlAiModelTier[tier] });
 
   const handleAutoModelSelectionToggle = (isEnabled: boolean) =>
     updateAiModelSettings({ isAutoModelSelectionEnabled: isEnabled });
@@ -63,7 +62,10 @@ export const useSettingsAiModelsActions = () => {
     tier: AiModelTier,
     modelId: string | null,
   ) => {
-    const { [tier]: _previousPin, ...otherPins } =
+    const {
+      [tier]: _previousPin,
+      ...otherPins
+    }: Partial<Record<AiModelTier, string>> =
       currentWorkspace?.aiModelIdByTier ?? {};
 
     return updateAiModelSettings({
