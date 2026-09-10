@@ -1,9 +1,9 @@
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
-import { sendableDraftCampaignSchema } from 'src/modules/emailing/zod-schemas/sendable-draft-campaign.zod-schema';
+import { sendableCampaignSchema } from 'src/modules/emailing/zod-schemas/sendable-campaign.zod-schema';
 
-describe('sendableDraftCampaignSchema', () => {
-  const sendableDraftCampaign = {
+describe('sendableCampaignSchema', () => {
+  const sendableCampaign = {
     status: MessageCampaignStatus.DRAFT,
     subject: 'Monthly newsletter',
     bodyTemplate: JSON.stringify({
@@ -18,15 +18,45 @@ describe('sendableDraftCampaignSchema', () => {
   };
 
   it('should accept a draft campaign with a subject, body, from address and list', () => {
+    expect(sendableCampaignSchema.safeParse(sendableCampaign).success).toBe(
+      true,
+    );
+  });
+
+  it('should accept a scheduled campaign so its send can revalidate it', () => {
     expect(
-      sendableDraftCampaignSchema.safeParse(sendableDraftCampaign).success,
+      sendableCampaignSchema.safeParse({
+        ...sendableCampaign,
+        status: MessageCampaignStatus.SCHEDULED,
+      }).success,
     ).toBe(true);
   });
 
-  it('should reject a campaign that already left DRAFT', () => {
+  it('should keep an unscheduled campaign scheduledAt null rather than coercing it to the epoch', () => {
+    const parsed = sendableCampaignSchema.safeParse({
+      ...sendableCampaign,
+      scheduledAt: null,
+    });
+
+    expect(parsed.data?.scheduledAt).toBeNull();
+  });
+
+  it('should parse the time a scheduled campaign is holding', () => {
+    const parsed = sendableCampaignSchema.safeParse({
+      ...sendableCampaign,
+      status: MessageCampaignStatus.SCHEDULED,
+      scheduledAt: '2026-09-07T16:00:00.000Z',
+    });
+
+    expect(parsed.data?.scheduledAt).toEqual(
+      new Date('2026-09-07T16:00:00.000Z'),
+    );
+  });
+
+  it('should reject a campaign that already went out', () => {
     expect(
-      sendableDraftCampaignSchema.safeParse({
-        ...sendableDraftCampaign,
+      sendableCampaignSchema.safeParse({
+        ...sendableCampaign,
         status: MessageCampaignStatus.SENT,
       }).success,
     ).toBe(false);
@@ -34,8 +64,8 @@ describe('sendableDraftCampaignSchema', () => {
 
   it('should reject a draft without a subject', () => {
     expect(
-      sendableDraftCampaignSchema.safeParse({
-        ...sendableDraftCampaign,
+      sendableCampaignSchema.safeParse({
+        ...sendableCampaign,
         subject: '',
       }).success,
     ).toBe(false);
@@ -43,8 +73,8 @@ describe('sendableDraftCampaignSchema', () => {
 
   it('should reject a draft without a body', () => {
     expect(
-      sendableDraftCampaignSchema.safeParse({
-        ...sendableDraftCampaign,
+      sendableCampaignSchema.safeParse({
+        ...sendableCampaign,
         bodyTemplate: '',
       }).success,
     ).toBe(false);
@@ -52,8 +82,8 @@ describe('sendableDraftCampaignSchema', () => {
 
   it('should reject a draft with a malformed from address', () => {
     expect(
-      sendableDraftCampaignSchema.safeParse({
-        ...sendableDraftCampaign,
+      sendableCampaignSchema.safeParse({
+        ...sendableCampaign,
         fromAddress: { primaryEmail: 'not-an-email' },
       }).success,
     ).toBe(false);
@@ -61,8 +91,8 @@ describe('sendableDraftCampaignSchema', () => {
 
   it('should reject a draft without a from address', () => {
     expect(
-      sendableDraftCampaignSchema.safeParse({
-        ...sendableDraftCampaign,
+      sendableCampaignSchema.safeParse({
+        ...sendableCampaign,
         fromAddress: null,
       }).success,
     ).toBe(false);
@@ -70,8 +100,8 @@ describe('sendableDraftCampaignSchema', () => {
 
   it('should reject a draft without a recipient list', () => {
     expect(
-      sendableDraftCampaignSchema.safeParse({
-        ...sendableDraftCampaign,
+      sendableCampaignSchema.safeParse({
+        ...sendableCampaign,
         listId: null,
       }).success,
     ).toBe(false);
@@ -79,8 +109,8 @@ describe('sendableDraftCampaignSchema', () => {
 
   it('should accept a body holding a canonical TipTap document', () => {
     expect(
-      sendableDraftCampaignSchema.safeParse({
-        ...sendableDraftCampaign,
+      sendableCampaignSchema.safeParse({
+        ...sendableCampaign,
         bodyTemplate: JSON.stringify({
           type: 'doc',
           attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
@@ -97,8 +127,8 @@ describe('sendableDraftCampaignSchema', () => {
 
   it('should reject a versionless TipTap document', () => {
     expect(
-      sendableDraftCampaignSchema.safeParse({
-        ...sendableDraftCampaign,
+      sendableCampaignSchema.safeParse({
+        ...sendableCampaign,
         bodyTemplate: JSON.stringify({
           type: 'doc',
           content: [
@@ -114,8 +144,8 @@ describe('sendableDraftCampaignSchema', () => {
 
   it('should reject a body that is not an email document', () => {
     expect(
-      sendableDraftCampaignSchema.safeParse({
-        ...sendableDraftCampaign,
+      sendableCampaignSchema.safeParse({
+        ...sendableCampaign,
         bodyTemplate: '<p>Hello {{firstName}}</p>',
       }).success,
     ).toBe(false);
@@ -123,8 +153,8 @@ describe('sendableDraftCampaignSchema', () => {
 
   it('should reject a body holding JSON that is not a document', () => {
     expect(
-      sendableDraftCampaignSchema.safeParse({
-        ...sendableDraftCampaign,
+      sendableCampaignSchema.safeParse({
+        ...sendableCampaign,
         bodyTemplate: JSON.stringify({ type: 'paragraph' }),
       }).success,
     ).toBe(false);
@@ -132,8 +162,8 @@ describe('sendableDraftCampaignSchema', () => {
 
   it('should reject a document with a malformed nested node', () => {
     expect(
-      sendableDraftCampaignSchema.safeParse({
-        ...sendableDraftCampaign,
+      sendableCampaignSchema.safeParse({
+        ...sendableCampaign,
         bodyTemplate: JSON.stringify({
           type: 'doc',
           attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
@@ -145,8 +175,8 @@ describe('sendableDraftCampaignSchema', () => {
 
   it('should accept a document using email blocks', () => {
     expect(
-      sendableDraftCampaignSchema.safeParse({
-        ...sendableDraftCampaign,
+      sendableCampaignSchema.safeParse({
+        ...sendableCampaign,
         bodyTemplate: JSON.stringify({
           type: 'doc',
           attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
@@ -174,8 +204,8 @@ describe('sendableDraftCampaignSchema', () => {
 
   it('should reject a document holding an unknown block type', () => {
     expect(
-      sendableDraftCampaignSchema.safeParse({
-        ...sendableDraftCampaign,
+      sendableCampaignSchema.safeParse({
+        ...sendableCampaign,
         bodyTemplate: JSON.stringify({
           type: 'doc',
           attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
@@ -187,8 +217,8 @@ describe('sendableDraftCampaignSchema', () => {
 
   it('should reject a document from a future schema version', () => {
     expect(
-      sendableDraftCampaignSchema.safeParse({
-        ...sendableDraftCampaign,
+      sendableCampaignSchema.safeParse({
+        ...sendableCampaign,
         bodyTemplate: JSON.stringify({
           type: 'doc',
           attrs: { schemaVersion: 999 },
