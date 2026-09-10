@@ -7,23 +7,6 @@
   },
   "ignorePatterns": ["node_modules", "generated", "**/*.module.scss.d.ts"],
   "rules": {
-    "no-restricted-imports": [
-      "error",
-      {
-        "patterns": [
-          {
-            "group": [
-              "twenty-ui",
-              "twenty-ui/input",
-              "@ui/input",
-              "@ui/input/Slider/*"
-            ],
-            "importNames": ["SliderProps", "SliderColor"],
-            "message": "Use the Slider compound and its part props (SliderRootProps, SliderThumbProps, etc.)."
-          }
-        ]
-      }
-    ],
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "no-console": [
       "warn",
