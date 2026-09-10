@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { SERVICEABLE_WORKSPACE_ACTIVATION_STATUSES } from 'src/modules/connected-account/webhook-subscription-manager/constants/serviceable-workspace-activation-statuses.constant';
 
 @Injectable()
 export class WorkspaceActivationService {
@@ -16,11 +16,11 @@ export class WorkspaceActivationService {
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
-  async isWorkspaceSuspended(workspaceId: string): Promise<boolean> {
+  async isWorkspaceServiceable(workspaceId: string): Promise<boolean> {
     const workspace = await this.workspaceRepository.findOne({
       where: {
         id: workspaceId,
-        activationStatus: WorkspaceActivationStatus.SUSPENDED,
+        activationStatus: In(SERVICEABLE_WORKSPACE_ACTIVATION_STATUSES),
       },
       select: { id: true },
     });
@@ -28,7 +28,7 @@ export class WorkspaceActivationService {
     return isDefined(workspace);
   }
 
-  async isWorkspaceSuspendedFromCache(workspaceId: string): Promise<boolean> {
+  async isWorkspaceServiceableFromCache(workspaceId: string): Promise<boolean> {
     const workspace = await this.coreEntityCacheService.get(
       'workspaceEntity',
       workspaceId,
@@ -36,7 +36,10 @@ export class WorkspaceActivationService {
 
     return (
       isDefined(workspace) &&
-      workspace.activationStatus === WorkspaceActivationStatus.SUSPENDED
+      !isDefined(workspace.deletedAt) &&
+      SERVICEABLE_WORKSPACE_ACTIVATION_STATUSES.includes(
+        workspace.activationStatus,
+      )
     );
   }
 }

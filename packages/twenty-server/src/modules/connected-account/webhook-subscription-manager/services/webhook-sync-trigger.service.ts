@@ -36,12 +36,12 @@ export class WebhookSyncTriggerService {
     messageChannelId: string,
     workspaceId: string,
   ): Promise<void> {
-    const isWorkspaceSuspended =
-      await this.workspaceActivationService.isWorkspaceSuspendedFromCache(
+    const isWorkspaceServiceable =
+      await this.workspaceActivationService.isWorkspaceServiceableFromCache(
         workspaceId,
       );
 
-    if (isWorkspaceSuspended) {
+    if (!isWorkspaceServiceable) {
       return;
     }
 
@@ -91,12 +91,12 @@ export class WebhookSyncTriggerService {
     calendarChannelId: string,
     workspaceId: string,
   ): Promise<void> {
-    const isWorkspaceSuspended =
-      await this.workspaceActivationService.isWorkspaceSuspendedFromCache(
+    const isWorkspaceServiceable =
+      await this.workspaceActivationService.isWorkspaceServiceableFromCache(
         workspaceId,
       );
 
-    if (isWorkspaceSuspended) {
+    if (!isWorkspaceServiceable) {
       return;
     }
 

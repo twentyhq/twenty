@@ -43,10 +43,10 @@ export class CalendarWebhookSubscriptionService {
     calendarChannelId: string,
     workspaceId: string,
   ): Promise<void> {
-    const isWorkspaceSuspended =
-      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId);
+    const isWorkspaceServiceable =
+      await this.workspaceActivationService.isWorkspaceServiceable(workspaceId);
 
-    if (isWorkspaceSuspended) {
+    if (!isWorkspaceServiceable) {
       return;
     }
 
@@ -196,10 +196,10 @@ export class CalendarWebhookSubscriptionService {
     calendarChannelId: string;
     workspaceId: string;
   }): Promise<void> {
-    const isWorkspaceSuspended =
-      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId);
+    const isWorkspaceServiceable =
+      await this.workspaceActivationService.isWorkspaceServiceable(workspaceId);
 
-    if (isWorkspaceSuspended) {
+    if (!isWorkspaceServiceable) {
       return;
     }
 
@@ -329,10 +329,10 @@ export class CalendarWebhookSubscriptionService {
     calendarChannelId: string;
     workspaceId: string;
   }): Promise<void> {
-    const isWorkspaceSuspended =
-      await this.workspaceActivationService.isWorkspaceSuspended(workspaceId);
+    const isWorkspaceServiceable =
+      await this.workspaceActivationService.isWorkspaceServiceable(workspaceId);
 
-    if (!isWorkspaceSuspended) {
+    if (isWorkspaceServiceable) {
       return;
     }
 
