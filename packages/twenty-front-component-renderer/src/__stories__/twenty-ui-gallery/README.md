@@ -1,9 +1,7 @@
 # Twenty UI renderer coverage
 
 `TwentyUiGallery.stories.tsx` contains the component catalogs and focused
-component stories, including coverage for components added or migrated by
-PRs #24277, #24278, #24279, #25584, #25596, #25607, #25610, #25612,
-#25625, #25663, #25665, and #25678. Each fixture has React and Preact stories.
+component stories. Each fixture has React and Preact stories.
 
 | Fixture | Components |
 | --- | --- |
