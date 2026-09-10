@@ -3,11 +3,15 @@ import { Logger } from '@nestjs/common';
 import { resolveInput as resolveWorkflowInput } from 'twenty-shared/utils';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
+import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { type WorkflowAction as WorkflowActionContract } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
-import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
+import {
+  type WorkflowActionInput,
+  type WorkflowRunInfo,
+} from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -60,6 +64,15 @@ export abstract class ToolBackedWorkflowAction<
     args: BuildStepLogArgs<TInput>,
   ): WorkflowRunStepLog;
 
+  // Tool calls default to the workspace identity; subclasses that touch
+  // caller-scoped resources (email account fallback) override this to add the
+  // run caller's userWorkspaceId, bcs the tools read it from the context.
+  protected buildToolExecutionContext(
+    runInfo: WorkflowRunInfo,
+  ): Promise<ToolExecutionContext> {
+    return Promise.resolve({ workspaceId: runInfo.workspaceId });
+  }
+
   async execute({
     currentStepId,
     steps,
@@ -78,9 +91,10 @@ export abstract class ToolBackedWorkflowAction<
     );
 
     const startedAt = Date.now();
-    const toolOutput = await this.getTool().execute(resolvedInput, {
-      workspaceId: runInfo.workspaceId,
-    });
+    const toolOutput = await this.getTool().execute(
+      resolvedInput,
+      await this.buildToolExecutionContext(runInfo),
+    );
     const durationMs = Date.now() - startedAt;
 
     await this.persistStepLog({
