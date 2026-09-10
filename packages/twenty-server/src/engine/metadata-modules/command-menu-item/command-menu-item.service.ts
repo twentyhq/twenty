@@ -294,6 +294,7 @@ export class CommandMenuItemService {
         workspaceCustomApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
       }),
+      isActive: true,
       updatedAt: new Date().toISOString(),
     };
 

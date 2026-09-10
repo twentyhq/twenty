@@ -44,15 +44,39 @@ describe('dispatchIsActiveUpdateToAuthoredOverride', () => {
   });
 
   it('writes the column when the author owns the entity', () => {
+    const ownedView = { ...view, applicationUniversalIdentifier: CUSTOM };
+
     expect(
       dispatchIsActiveUpdateToAuthoredOverride({
         metadataName: 'view',
-        flatEntity: view,
+        flatEntity: ownedView,
         isActive: false,
-        authorUniversalIdentifier: OWNER,
+        authorUniversalIdentifier: CUSTOM,
         workspaceCustomApplicationUniversalIdentifier: CUSTOM,
       }),
-    ).toEqual({ ...view, isActive: false });
+    ).toEqual({ ...ownedView, isActive: false });
+  });
+
+  it('writes the entry when the author owns an engine-managed entity', () => {
+    const engineManagedView = {
+      ...view,
+      applicationUniversalIdentifier: CUSTOM,
+      isSystemSideEffect: true,
+    };
+
+    expect(
+      dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'view',
+        flatEntity: engineManagedView,
+        isActive: false,
+        authorUniversalIdentifier: CUSTOM,
+        workspaceCustomApplicationUniversalIdentifier: CUSTOM,
+      }),
+    ).toEqual({
+      ...engineManagedView,
+      overrides: { [CUSTOM]: { name: 'Mine', isActive: false } },
+      universalOverrides: { [CUSTOM]: { name: 'Mine', isActive: false } },
+    });
   });
 
   it('writes the column for kinds without an overrides column', () => {
