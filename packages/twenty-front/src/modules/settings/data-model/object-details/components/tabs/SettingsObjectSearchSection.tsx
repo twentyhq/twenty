@@ -113,7 +113,7 @@ export const SettingsObjectSearchSection = ({
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
   const { closeDropdown } = useCloseDropdown();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const isConfigurableSearchFieldsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED,
@@ -175,7 +175,7 @@ export const SettingsObjectSearchSection = ({
     });
 
     if (result.status === 'successful') {
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: value
           ? t`Field added to search`

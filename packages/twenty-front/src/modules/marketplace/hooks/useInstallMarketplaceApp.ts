@@ -28,7 +28,7 @@ export const useInstallMarketplaceApp = ({
   universalIdentifier,
   onCompleted,
 }: UseInstallMarketplaceAppArgs = {}) => {
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [triggerInstallApplicationJob, { loading: isTriggeringInstall }] =
     useMutation(TriggerInstallApplicationJobDocument);
   const [findInstalledApplication] = useLazyQuery(
@@ -55,7 +55,7 @@ export const useInstallMarketplaceApp = ({
   const handleInstallJobSettled = useCallback(
     async (jobStatus: TrackedJobStatus, trackedUniversalIdentifier: string) => {
       if (jobStatus.state === JobState.FAILED) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: isNonEmptyString(jobStatus.failedReason)
             ? jobStatus.failedReason
@@ -75,7 +75,7 @@ export const useInstallMarketplaceApp = ({
 
         installedApplication = result.data?.findOneApplication;
       } catch {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Failed to load the application.`,
         });
@@ -83,7 +83,7 @@ export const useInstallMarketplaceApp = ({
       }
 
       if (!isDefined(installedApplication)) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Failed to load the application.`,
         });
@@ -104,13 +104,13 @@ export const useInstallMarketplaceApp = ({
           : currentWorkspace,
       );
 
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Application installed successfully.`,
       });
       onCompleted?.(installedApplication);
     },
-    [addToast, findInstalledApplication, onCompleted, setCurrentWorkspace],
+    [enqueueToast, findInstalledApplication, onCompleted, setCurrentWorkspace],
   );
 
   const { activeJobId, trackJob } = useTrackedQueueJob({
@@ -139,7 +139,7 @@ export const useInstallMarketplaceApp = ({
     } catch (error) {
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: graphqlMessage ?? t`Failed to install the application.`,
       });

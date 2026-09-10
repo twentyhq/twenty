@@ -10,8 +10,8 @@ import { useToast } from 'twenty-ui/feedback';
 import { UpdateUserEmailDocument } from '~/generated-metadata/graphql';
 
 export const useUpdateEmail = () => {
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const currentUser = useAtomStateValue(currentUserState);
 
@@ -29,13 +29,13 @@ export const useUpdateEmail = () => {
         },
       });
 
-      addToast({
+      enqueueToast({
         variant: 'info',
         children: t`Check your inbox to verify your new email address.`,
       });
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       }
     }
   };

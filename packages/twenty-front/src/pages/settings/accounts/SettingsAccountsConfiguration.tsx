@@ -27,8 +27,8 @@ export const SettingsAccountsConfiguration = () => {
     connectedAccountId: string;
   }>();
   const navigate = useNavigate();
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const [startChannelSyncMutation, { loading: isSubmitting }] = useMutation(
     StartChannelSyncDocument,
   );
@@ -72,14 +72,14 @@ export const SettingsAccountsConfiguration = () => {
         connectedAccountId,
       },
       onCompleted: () => {
-        addToast({
+        enqueueToast({
           variant: 'success',
           children: t`Account added successfully. Sync started.`,
         });
         navigate(getSettingsPath(SettingsPath.Accounts));
       },
       onError: (error) => {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       },
     });
   };

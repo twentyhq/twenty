@@ -37,8 +37,8 @@ export const useCreateJunctionRecordWithNestedTarget = ({
   const store = useStore();
   const [loading, setLoading] = useState(false);
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const { buildRecordInputFromRLSPredicates } =
     useBuildRecordInputFromRLSPredicates();
   const { createOneRecord: createJunctionRecord } = useCreateOneRecord({
@@ -77,7 +77,7 @@ export const useCreateJunctionRecordWithNestedTarget = ({
         !isDefined(targetFieldInfo) ||
         !isDefined(sourceJoinColumnName)
       ) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`The relation configuration could not be resolved.`,
         });
@@ -141,11 +141,11 @@ export const useCreateJunctionRecordWithNestedTarget = ({
         };
       } catch (error) {
         if (CombinedGraphQLErrors.is(error)) {
-          addErrorToast(error);
+          enqueueErrorToast(error);
         } else if (error instanceof Error) {
-          addToast({ variant: 'error', children: error.message });
+          enqueueToast({ variant: 'error', children: error.message });
         } else {
-          addToast({ variant: 'error', children: t`An error occurred.` });
+          enqueueToast({ variant: 'error', children: t`An error occurred.` });
         }
         return undefined;
       } finally {
@@ -155,8 +155,8 @@ export const useCreateJunctionRecordWithNestedTarget = ({
     [
       buildRecordInputFromRLSPredicates,
       createJunctionRecord,
-      addToast,
-      addErrorToast,
+      enqueueToast,
+      enqueueErrorToast,
       junctionConfig,
       objectMetadataItems,
       sourceObjectMetadataItem,

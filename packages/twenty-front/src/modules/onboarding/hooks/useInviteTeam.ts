@@ -29,7 +29,7 @@ type InviteTeamFormInput = z.infer<typeof validationSchema>;
 
 export const useInviteTeam = () => {
   const { t } = useLingui();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { sendInvitation } = useCreateWorkspaceInvitation();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
@@ -169,7 +169,7 @@ export const useInviteTeam = () => {
         }));
 
         if (emails.length > 0) {
-          addToast({
+          enqueueToast({
             variant: 'success',
             children: t`Invite link sent to email addresses`,
             duration: 2000,
@@ -191,7 +191,7 @@ export const useInviteTeam = () => {
       }
     },
     [
-      addToast,
+      enqueueToast,
       isBookCallOnboardingStepEnabled,
       isCompanyEnrichmentEnabled,
       onboardingConfig?.inviteTeamCreditsRewardPerUser,

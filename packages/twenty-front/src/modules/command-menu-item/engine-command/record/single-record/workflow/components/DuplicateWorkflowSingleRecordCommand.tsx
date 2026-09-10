@@ -16,7 +16,7 @@ export const DuplicateWorkflowSingleRecordCommand = () => {
   const workflow = useWorkflowWithCurrentVersion(recordId ?? '');
   const { duplicateWorkflow } = useDuplicateWorkflow();
   const navigate = useNavigateApp();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { t } = useLingui();
 
   if (!isDefined(recordId)) {
@@ -34,7 +34,7 @@ export const DuplicateWorkflowSingleRecordCommand = () => {
     });
 
     if (isDefined(result) && isNonEmptyString(result.workflowId)) {
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Workflow duplicated successfully`,
       });
@@ -44,7 +44,10 @@ export const DuplicateWorkflowSingleRecordCommand = () => {
         objectRecordId: result.workflowId,
       });
     } else {
-      addToast({ variant: 'error', children: t`Failed to duplicate workflow` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to duplicate workflow`,
+      });
     }
   };
 

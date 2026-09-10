@@ -10,7 +10,7 @@ import { useToast } from 'twenty-ui/feedback';
 
 export const useCreateTool = () => {
   const navigate = useNavigate();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { createLogicFunction } = usePersistLogicFunction();
   const [isCreatingTool, setIsCreatingTool] = useState(false);
 
@@ -32,7 +32,7 @@ export const useCreateTool = () => {
       }
 
       const newLogicFunction = result.response.data.createOneLogicFunction;
-      addToast({ variant: 'success', children: t`Tool created` });
+      enqueueToast({ variant: 'success', children: t`Tool created` });
 
       const applicationId = newLogicFunction.applicationId;
       if (isDefined(applicationId)) {

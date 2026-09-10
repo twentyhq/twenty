@@ -16,8 +16,8 @@ export const useSettingsCustomDomain = () => {
   const { t } = useLingui();
   const domainSchema = getDomainValidationSchema();
 
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
   const { checkCustomDomainRecords } = useCheckCustomDomainValidRecords();
 
@@ -65,7 +65,10 @@ export const useSettingsCustomDomain = () => {
           ...currentWorkspace,
           customDomain: domainValue,
         });
-        addToast({ variant: 'success', children: t`Custom domain updated` });
+        enqueueToast({
+          variant: 'success',
+          children: t`Custom domain updated`,
+        });
         setIsSubmitting(false);
         checkCustomDomainRecords(domainValue);
       },
@@ -79,7 +82,7 @@ export const useSettingsCustomDomain = () => {
 
           return;
         }
-        addErrorToast(mutationError);
+        enqueueErrorToast(mutationError);
         setIsSubmitting(false);
       },
     });

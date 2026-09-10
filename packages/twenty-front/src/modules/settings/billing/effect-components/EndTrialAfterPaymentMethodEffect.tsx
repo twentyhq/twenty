@@ -19,7 +19,7 @@ export const EndTrialAfterPaymentMethodEffect = () => {
   const subscriptionStatus = useSubscriptionStatus();
   const { endTrialPeriod } = useEndSubscriptionTrialPeriod();
   const { openAskAiThread } = useOpenAskAiThread();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const searchParams = new URLSearchParams(location.search);
   const askAiThreadId = searchParams.get(ASK_AI_THREAD_ID_QUERY_PARAM);
@@ -59,7 +59,7 @@ export const EndTrialAfterPaymentMethodEffect = () => {
           openAskAiThread(askAiThreadId);
         }
       } else if (hasPaymentMethod === false) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`No payment method found. Please update your billing details.`,
         });
@@ -72,7 +72,7 @@ export const EndTrialAfterPaymentMethodEffect = () => {
     askAiThreadId,
     cleanUpQueryParams,
     endTrialPeriod,
-    addToast,
+    enqueueToast,
     openAskAiThread,
     subscriptionStatus,
   ]);

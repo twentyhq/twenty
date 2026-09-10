@@ -52,7 +52,7 @@ export const OnboardingProfilePictureUploader = ({
 }: OnboardingProfilePictureUploaderProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const setCurrentWorkspaceMember = useSetAtomState(
     currentWorkspaceMemberState,
@@ -85,7 +85,7 @@ export const OnboardingProfilePictureUploader = ({
           : previous,
       );
     } catch (error) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children:
           error instanceof Error ? error.message : t`Failed to upload picture`,

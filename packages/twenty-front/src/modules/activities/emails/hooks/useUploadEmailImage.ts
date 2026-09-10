@@ -11,7 +11,7 @@ import { logError } from '~/utils/logError';
 
 export const useUploadEmailImage = () => {
   const { uploadFile } = useDirectFileUpload();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const uploadEmailImage = async (file: File): Promise<UploadedImage> => {
     if (
@@ -19,7 +19,7 @@ export const useUploadEmailImage = () => {
         file.type as (typeof EMAIL_IMAGE_MIME_TYPES)[number],
       )
     ) {
-      addToast({ variant: 'error', children: t`Unsupported image format` });
+      enqueueToast({ variant: 'error', children: t`Unsupported image format` });
 
       throw new Error(`Unsupported email image MIME type: ${file.type}`);
     }
@@ -28,7 +28,7 @@ export const useUploadEmailImage = () => {
       const fileName = file.name;
       const maxUploadSize = formatFileSize(MAX_ATTACHMENT_SIZE);
 
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Image "${fileName}" exceeds ${maxUploadSize}`,
       });
@@ -46,7 +46,7 @@ export const useUploadEmailImage = () => {
       const fileName = file.name;
 
       logError(`Failed to upload email image "${fileName}": ${error}`);
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to upload "${fileName}"`,
       });

@@ -24,7 +24,7 @@ const PAGE_SIZE = 25;
 
 export const useAdminChatThreads = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [adminChatsSearchQuery, setAdminChatsSearchQuery] = useAtomState(
     adminChatsSearchQueryState,
   );
@@ -103,7 +103,10 @@ export const useAdminChatThreads = () => {
         },
       });
     } catch {
-      addToast({ variant: 'error', children: t`Failed to load more chats.` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to load more chats.`,
+      });
     }
   };
 

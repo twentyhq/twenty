@@ -7,7 +7,7 @@ import { RenameChatThreadDocument } from '~/generated-metadata/graphql';
 
 export const useRenameChatThread = () => {
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const [renameChatThreadMutation] = useMutation(RenameChatThreadDocument);
 
@@ -32,7 +32,7 @@ export const useRenameChatThread = () => {
 
       return true;
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
 
       return false;
     }

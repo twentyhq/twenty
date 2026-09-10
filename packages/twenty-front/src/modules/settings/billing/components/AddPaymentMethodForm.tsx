@@ -44,8 +44,8 @@ const AddPaymentMethodFormContent = ({
 }: AddPaymentMethodFormContentProps) => {
   const stripe = useStripe();
   const elements = useElements();
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const location = useLocation();
 
@@ -82,7 +82,7 @@ const AddPaymentMethodFormContent = ({
     try {
       const { error: submitError } = await elements.submit();
       if (isDefined(submitError)) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children:
             submitError.message ??
@@ -97,7 +97,7 @@ const AddPaymentMethodFormContent = ({
       const clientSecret =
         data?.createBillingPaymentMethodSetupIntent?.clientSecret;
       if (!isDefined(clientSecret)) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Subscription error. Please retry or contact Twenty team`,
         });
@@ -113,7 +113,7 @@ const AddPaymentMethodFormContent = ({
       });
 
       if (isDefined(error)) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children:
             error.message ??
@@ -128,9 +128,9 @@ const AddPaymentMethodFormContent = ({
       }
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       } else {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Subscription error. Please retry or contact Twenty team`,
         });

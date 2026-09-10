@@ -22,7 +22,7 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
     useCoreWorkflowVersions(workflowId);
   const { createDraftFromWorkflowVersion } =
     useCreateDraftFromWorkflowVersion();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const navigate = useNavigateApp();
 
   const hasExistingDraft = coreWorkflowVersions.some(
@@ -44,7 +44,7 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
       });
 
       if (!isDefined(draftWorkflowVersionId)) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Could not restore this version as draft.`,
         });
@@ -57,7 +57,7 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
         objectRecordId: workflowId,
       });
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Could not restore this version as draft.`,
       });

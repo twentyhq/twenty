@@ -84,7 +84,7 @@ export const CreateProfile = () => {
 
   usePrefetchInviteSuggestions();
 
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const setCurrentUser = useSetAtomState(currentUserState);
   const setCurrentWorkspaceMembers = useSetAtomState(
@@ -161,13 +161,13 @@ export const CreateProfile = () => {
         setIsNavigating(true);
       } catch (error: any) {
         setIsNavigating(false);
-        addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+        enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
       }
     },
     [
       currentWorkspaceMember?.id,
       setNextOnboardingStatus,
-      addErrorToast,
+      enqueueErrorToast,
       setCurrentWorkspaceMembers,
       setCurrentUser,
       updateWorkspaceMemberSettings,

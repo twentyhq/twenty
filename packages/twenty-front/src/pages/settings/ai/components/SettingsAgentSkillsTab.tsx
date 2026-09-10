@@ -29,7 +29,7 @@ const StyledSearchContainer = styled.div`
 
 export const SettingsAgentSkillsTab = () => {
   const { t } = useLingui();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const { data, loading, refetch } = useQuery(FindManySkillsDocument);
   const [activateSkill] = useMutation(ActivateSkillDocument);
@@ -66,20 +66,20 @@ export const SettingsAgentSkillsTab = () => {
   const handleActivate = async (skillId: string) => {
     try {
       await activateSkill({ variables: { id: skillId } });
-      addToast({ variant: 'success', children: t`Skill activated` });
+      enqueueToast({ variant: 'success', children: t`Skill activated` });
       refetch();
     } catch {
-      addToast({ variant: 'error', children: t`Failed to activate skill` });
+      enqueueToast({ variant: 'error', children: t`Failed to activate skill` });
     }
   };
 
   const handleDelete = async (skillId: string) => {
     try {
       await deleteSkill({ variables: { id: skillId } });
-      addToast({ variant: 'success', children: t`Skill deleted` });
+      enqueueToast({ variant: 'success', children: t`Skill deleted` });
       refetch();
     } catch {
-      addToast({ variant: 'error', children: t`Failed to delete skill` });
+      enqueueToast({ variant: 'error', children: t`Failed to delete skill` });
     }
   };
 

@@ -37,13 +37,13 @@ export const SpreadsheetImportStepper = ({
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const handleError = useCallback(
     (description: string) => {
-      addToast({ variant: 'error', children: description });
+      enqueueToast({ variant: 'error', children: description });
     },
-    [addToast],
+    [enqueueToast],
   );
 
   const handleBack = useCallback(() => {

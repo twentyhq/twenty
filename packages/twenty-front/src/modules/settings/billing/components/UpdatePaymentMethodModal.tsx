@@ -34,7 +34,7 @@ export const UpdatePaymentMethodModal = ({
 }: UpdatePaymentMethodModalProps) => {
   const { t } = useLingui();
   const { closeModal } = useModal();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const subscriptionStatus = useSubscriptionStatus();
   const { markBillingPaymentMethodAsAdded } =
     useMarkBillingPaymentMethodAsAdded();
@@ -45,12 +45,12 @@ export const UpdatePaymentMethodModal = ({
     markBillingPaymentMethodAsAdded();
 
     if (!isSubscriptionPaymentOverdue(subscriptionStatus)) {
-      addToast({ variant: 'success', children: t`Payment method added.` });
+      enqueueToast({ variant: 'success', children: t`Payment method added.` });
 
       return;
     }
 
-    addToast({
+    enqueueToast({
       variant: 'info',
       children: t`Payment method added. Retrying your payment...`,
     });

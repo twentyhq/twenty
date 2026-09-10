@@ -23,7 +23,7 @@ import { NotFound } from '~/pages/not-found/NotFound';
 export const SettingsWorkspaceNewUnsubscribeTopic = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { createUnsubscribeTopic, loading } = useCreateUnsubscribeTopic();
   const isEmailGroupEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
@@ -66,7 +66,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
         navigateToTopics();
       }
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to create unsubscribe topic.`,
       });
@@ -78,7 +78,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
     isPublic,
     navigate,
     navigateToTopics,
-    addToast,
+    enqueueToast,
     t,
   ]);
 

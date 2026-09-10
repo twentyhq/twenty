@@ -84,7 +84,7 @@ export const FormMultiRecordPicker = ({
   const variablesDropdownId = `form-multi-record-picker-${componentId}-variables`;
 
   const { closeDropdown } = useCloseDropdown();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { openFormMultiRecordPicker } = useOpenFormMultiRecordPicker({
     objectNameSingular,
   });
@@ -138,7 +138,7 @@ export const FormMultiRecordPicker = ({
       ).length;
 
       if (selectedRecordCount >= QUERY_MAX_RECORDS) {
-        addToast({
+        enqueueToast({
           variant: 'warning',
           children: t`You can select at most ${QUERY_MAX_RECORDS} records.`,
         });

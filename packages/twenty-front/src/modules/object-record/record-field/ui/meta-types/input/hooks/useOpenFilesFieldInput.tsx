@@ -18,7 +18,7 @@ export const useOpenFilesFieldInput = () => {
   const { openFileUpload } = useFileUpload();
   const { uploadFile } = useUploadFilesFieldFile();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { t } = useLingui();
   const store = useStore();
 
@@ -88,7 +88,7 @@ export const useOpenFilesFieldInput = () => {
         multiple: true,
         onUpload: async (selectedFiles: File[]) => {
           if (selectedFiles.length + currentFileCount > maxNumberOfValues) {
-            addToast({
+            enqueueToast({
               variant: 'error',
               children: t`Cannot upload more than ${maxNumberOfValues} files`,
             });
@@ -138,7 +138,14 @@ export const useOpenFilesFieldInput = () => {
         },
       });
     },
-    [openFileUpload, uploadFile, pushFocusItemToFocusStack, addToast, t, store],
+    [
+      openFileUpload,
+      uploadFile,
+      pushFocusItemToFocusStack,
+      enqueueToast,
+      t,
+      store,
+    ],
   );
 
   return { openFilesFieldInput };

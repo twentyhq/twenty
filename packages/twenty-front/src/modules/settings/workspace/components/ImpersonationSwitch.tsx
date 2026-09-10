@@ -11,7 +11,7 @@ import { Card } from 'twenty-ui/surfaces';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 export const ImpersonationSwitch = () => {
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -36,7 +36,7 @@ export const ImpersonationSwitch = () => {
         allowImpersonation: value,
       });
     } catch (err: any) {
-      addErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
     }
   };
 

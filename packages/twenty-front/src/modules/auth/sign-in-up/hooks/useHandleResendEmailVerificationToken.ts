@@ -9,8 +9,8 @@ import { useToast } from 'twenty-ui/feedback';
 import { ResendEmailVerificationTokenDocument } from '~/generated-metadata/graphql';
 
 export const useHandleResendEmailVerificationToken = () => {
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const [resendEmailVerificationToken, { loading }] = useMutation(
     ResendEmailVerificationTokenDocument,
   );
@@ -20,7 +20,7 @@ export const useHandleResendEmailVerificationToken = () => {
     (email: string | null) => {
       return async () => {
         if (!email) {
-          addToast({ variant: 'error', children: t`Invalid email` });
+          enqueueToast({ variant: 'error', children: t`Invalid email` });
           return;
         }
 
@@ -33,18 +33,18 @@ export const useHandleResendEmailVerificationToken = () => {
           });
 
           if (data?.resendEmailVerificationToken?.success === true) {
-            addToast({
+            enqueueToast({
               variant: 'success',
               children: t`Email verification link resent!`,
             });
           } else {
-            addToast({ variant: 'error', children: t`An error occurred.` });
+            enqueueToast({ variant: 'error', children: t`An error occurred.` });
           }
         } catch (error) {
           if (CombinedGraphQLErrors.is(error)) {
-            addErrorToast(error);
+            enqueueErrorToast(error);
           } else {
-            addToast({
+            enqueueToast({
               variant: 'error',
               children:
                 (error instanceof Error ? error.message : undefined) ??
@@ -54,7 +54,7 @@ export const useHandleResendEmailVerificationToken = () => {
         }
       };
     },
-    [addToast, addErrorToast, resendEmailVerificationToken, origin],
+    [enqueueToast, enqueueErrorToast, resendEmailVerificationToken, origin],
   );
 
   return { handleResendEmailVerificationToken, loading };

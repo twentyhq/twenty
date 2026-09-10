@@ -20,7 +20,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   const { openSpreadsheetImportDialog } = useOpenSpreadsheetImportDialog();
   const { buildSpreadsheetImportFields } = useBuildSpreadsheetImportFields();
 
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -86,7 +86,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
             },
           });
         } catch (error: any) {
-          addErrorToast(error);
+          enqueueErrorToast(error);
         }
       },
       spreadsheetImportFields,

@@ -43,8 +43,8 @@ const DEFAULT_FORM_VALUES: WebhookFormValues = {
 
 export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
   const navigate = useNavigateSettings();
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const isCreationMode = mode === WebhookFormMode.Create;
 
@@ -105,7 +105,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         ? `${createdWebhook?.targetUrl}`
         : '';
 
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Webhook ${targetUrl} created successfully`,
       });
@@ -120,13 +120,13 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
           : SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
       );
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
   };
 
   const handleUpdate = async (formValues: WebhookFormValues) => {
     if (!webhookId) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Webhook ID is required for updates`,
       });
@@ -146,12 +146,12 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         ? `${updatedWebhook.targetUrl}`
         : '';
 
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Webhook ${targetUrl} updated successfully`,
       });
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
   };
 
@@ -190,7 +190,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
   const handleDelete = async () => {
     if (!webhookId) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Webhook ID is required for deletion`,
       });
@@ -201,7 +201,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       await deleteWebhook({
         variables: { id: webhookId },
       });
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Webhook deleted successfully`,
       });
@@ -214,7 +214,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
       );
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
   };
 

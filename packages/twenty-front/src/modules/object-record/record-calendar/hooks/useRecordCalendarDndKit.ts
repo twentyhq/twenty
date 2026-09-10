@@ -45,7 +45,7 @@ export const useRecordCalendarDndKit = (): {
 
   const { userTimezone } = useUserTimezone();
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const { startRecordDrag } = useStartRecordDrag();
   const { endRecordDrag } = useEndRecordDrag();
@@ -172,7 +172,7 @@ export const useRecordCalendarDndKit = (): {
       selectedRecordIds: originalDragSelection,
     }).catch((error) => {
       logError(error);
-      addToast({ variant: 'error', children: t`Failed to move record` });
+      enqueueToast({ variant: 'error', children: t`Failed to move record` });
     });
 
     clearDragState();

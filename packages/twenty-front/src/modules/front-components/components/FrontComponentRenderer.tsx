@@ -89,7 +89,7 @@ const FrontComponentRendererContent = ({
   loadingFallback,
 }: FrontComponentRendererContentProps) => {
   const { colorScheme } = useContext(ThemeContext);
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { functionsBaseUrl } = useGetLogicFunctionHttpUrl();
 
   const {
@@ -120,12 +120,12 @@ const FrontComponentRendererContent = ({
         return;
       }
 
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to load front component: ${error.message}`,
       });
     },
-    [addToast],
+    [enqueueToast],
   );
 
   const applicationTokenPair = frontComponent.applicationTokenPair ?? null;

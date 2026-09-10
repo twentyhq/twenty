@@ -39,7 +39,7 @@ const StyledAddNewRow = styled.button`
 export const RecordListAddNew = () => {
   const { theme } = useContext(ThemeContext);
   const { objectMetadataItem } = useRecordListContextOrThrow();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem,
@@ -93,7 +93,7 @@ export const RecordListAddNew = () => {
       });
     } catch (error) {
       logError(error);
-      addToast({ variant: 'error', children: t`Failed to create record` });
+      enqueueToast({ variant: 'error', children: t`Failed to create record` });
     }
   };
 

@@ -80,8 +80,8 @@ export const SettingsAdminServerAdminAccess = ({
   const apolloAdminClient = useApolloAdminClient();
   const { openModal } = useModal();
   const { closeDropdown } = useCloseDropdown();
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const [pendingChange, setPendingChange] =
     useState<PendingServerAdminChange | null>(null);
@@ -129,15 +129,15 @@ export const SettingsAdminServerAdminAccess = ({
         },
       });
       await refetch();
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Server administrator access updated.`,
       });
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       } else {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Failed to update server administrator access.`,
         });

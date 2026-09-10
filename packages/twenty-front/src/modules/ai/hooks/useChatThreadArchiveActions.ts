@@ -10,7 +10,7 @@ import {
 
 export const useChatThreadArchiveActions = () => {
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const [archiveMutation] = useMutation(ArchiveChatThreadDocument);
   const [unarchiveMutation] = useMutation(UnarchiveChatThreadDocument);
@@ -27,7 +27,7 @@ export const useChatThreadArchiveActions = () => {
         });
       }
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
   };
 
@@ -43,7 +43,7 @@ export const useChatThreadArchiveActions = () => {
         });
       }
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
   };
 

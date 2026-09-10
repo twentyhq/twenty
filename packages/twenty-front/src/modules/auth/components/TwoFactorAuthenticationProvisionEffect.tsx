@@ -14,7 +14,7 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 export const TwoFactorAuthenticationSetupEffect = () => {
   const { initiateCurrentUserWorkspaceOtpProvisioning } =
     useCurrentUserWorkspaceTwoFactorAuthentication();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const navigate = useNavigateApp();
   const { origin } = useOrigin();
@@ -32,7 +32,7 @@ export const TwoFactorAuthenticationSetupEffect = () => {
     const handleTwoFactorAuthenticationProvisioningInitiation = async () => {
       try {
         if (!loginToken) {
-          addToast({
+          enqueueToast({
             variant: 'error',
             children: t`Login token missing. Two Factor Authentication setup can not be initiated.`,
             dedupeKey: 'invalid-session-dedupe-key',
@@ -55,7 +55,7 @@ export const TwoFactorAuthenticationSetupEffect = () => {
           initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri,
         );
       } catch {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Two factor authentication provisioning failed.`,
           dedupeKey: 'two-factor-authentication-provisioning-initiation-failed',

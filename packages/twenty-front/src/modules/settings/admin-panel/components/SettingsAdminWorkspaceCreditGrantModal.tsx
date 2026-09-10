@@ -58,8 +58,8 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
 }: SettingsAdminWorkspaceCreditGrantModalProps) => {
   const { t } = useLingui();
   const { closeModal } = useModal();
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const apolloAdminClient = useApolloAdminClient();
 
   const [amount, setAmount] = useState('');
@@ -132,13 +132,13 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
         },
       });
 
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Granted ${parsedAmount} credits to this workspace.`,
       });
       handleClose();
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
   };
 

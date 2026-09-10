@@ -57,7 +57,7 @@ const REGENERATE_API_KEY_MODAL_ID = 'regenerate-api-key-modal';
 
 export const SettingsDevelopersApiKeyDetail = () => {
   const { t } = useLingui();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { openModal } = useModal();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -123,10 +123,13 @@ export const SettingsDevelopersApiKeyDetail = () => {
           roleId,
         },
       });
-      addToast({ variant: 'success', children: t`Role updated successfully` });
+      enqueueToast({
+        variant: 'success',
+        children: t`Role updated successfully`,
+      });
       setSelectedRoleId(roleId);
     } catch {
-      addToast({ variant: 'error', children: t`Error updating role` });
+      enqueueToast({ variant: 'error', children: t`Error updating role` });
     } finally {
       setIsLoading(false);
     }
@@ -153,7 +156,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         );
       }
     } catch {
-      addToast({ variant: 'error', children: t`Error deleting api key.` });
+      enqueueToast({ variant: 'error', children: t`Error deleting api key.` });
     } finally {
       setIsLoading(false);
     }
@@ -166,7 +169,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
     const roleIdToUse = selectedRoleId;
 
     if (!roleIdToUse) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`A role must be selected for the API key`,
       });
@@ -210,7 +213,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
     try {
       if (isDefined(apiKey)) {
         if (!isNonEmptyString(apiKeyName)) {
-          addToast({
+          enqueueToast({
             variant: 'error',
             children: t`API key name cannot be empty`,
           });
@@ -231,7 +234,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
         }
       }
     } catch {
-      addToast({ variant: 'error', children: t`Error regenerating api key.` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Error regenerating api key.`,
+      });
     } finally {
       setIsLoading(false);
     }

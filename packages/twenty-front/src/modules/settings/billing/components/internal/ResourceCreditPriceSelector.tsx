@@ -87,7 +87,7 @@ export const ResourceCreditPriceSelector = ({
 
   const [selectedPriceId, setSelectedPriceId] = useState<string | undefined>();
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const [setResourceCreditPrice, { loading: isUpdating }] = useMutation(
     SetResourceCreditSubscriptionPriceDocument,
@@ -309,10 +309,13 @@ export const ResourceCreditPriceSelector = ({
           onBillingUpdateApplied: refetchResourceCreditUsage,
         },
       );
-      addToast({ variant: 'success', children: t`Resource credits updated.` });
+      enqueueToast({
+        variant: 'success',
+        children: t`Resource credits updated.`,
+      });
       setSelectedPriceId(undefined);
     } catch (error) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to update resource credits.`,
       });

@@ -10,16 +10,16 @@ type FrontComponentLoadErrorToastEffectProps = {
 export const FrontComponentLoadErrorToastEffect = ({
   errorMessage,
 }: FrontComponentLoadErrorToastEffectProps) => {
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   useEffect(() => {
     if (isDefined(errorMessage)) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to load front component: ${errorMessage}`,
       });
     }
-  }, [errorMessage, addToast]);
+  }, [errorMessage, enqueueToast]);
 
   return null;
 };

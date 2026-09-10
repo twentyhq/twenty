@@ -16,7 +16,7 @@ export const useDuplicateMessageList = () => {
   const [mutate] = useMutation(DuplicateMessageListDocument);
 
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const duplicateMessageList = async (messageListId: string) => {
     try {
@@ -44,7 +44,10 @@ export const useDuplicateMessageList = () => {
           operationType: CrudOperationType.CREATE,
         });
       } else {
-        addToast({ variant: 'error', children: t`Failed to duplicate list` });
+        enqueueToast({
+          variant: 'error',
+          children: t`Failed to duplicate list`,
+        });
       }
 
       return undefined;

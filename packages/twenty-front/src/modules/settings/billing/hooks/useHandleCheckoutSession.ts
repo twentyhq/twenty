@@ -22,7 +22,7 @@ export const useHandleCheckoutSession = ({
 }) => {
   const { redirect } = useRedirect();
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const [checkoutSession] = useMutation(CheckoutSessionDocument);
 
@@ -40,7 +40,7 @@ export const useHandleCheckoutSession = ({
         },
       });
       if (!data?.checkoutSession.url) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Checkout session error. Please retry or contact Twenty team`,
         });
@@ -48,7 +48,7 @@ export const useHandleCheckoutSession = ({
       }
       redirect(data.checkoutSession.url);
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Checkout session error. Please retry or contact Twenty team`,
       });

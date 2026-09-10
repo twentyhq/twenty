@@ -24,7 +24,7 @@ export const SettingsAgentDeleteConfirmationModal = ({
   const { t } = useLingui();
   const { closeModal } = useModal();
   const navigate = useNavigateSettings();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
   const [deleteAgent] = useMutation(DeleteOneAgentDocument);
 
   const handleDelete = async () => {
@@ -37,7 +37,7 @@ export const SettingsAgentDeleteConfirmationModal = ({
       closeModal(DELETE_AGENT_MODAL_ID);
       navigate(SettingsPath.AI);
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
   };
 

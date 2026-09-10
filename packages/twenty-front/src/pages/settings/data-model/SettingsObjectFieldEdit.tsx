@@ -60,7 +60,7 @@ export const SettingsObjectFieldEdit = () => {
   const { t } = useLingui();
 
   const { openModal, closeModal } = useModal();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -313,7 +313,7 @@ export const SettingsObjectFieldEdit = () => {
     });
 
     if (deleteResult.status === 'successful') {
-      addToast({ variant: 'success', children: t`Field deleted` });
+      enqueueToast({ variant: 'success', children: t`Field deleted` });
       closeModal(DELETE_FIELD_MODAL_ID);
       navigateSettings(SettingsPath.ObjectDetail, {
         objectNamePlural,

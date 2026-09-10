@@ -15,8 +15,8 @@ export const SettingsEmailingDomainVerifyButton = ({
   emailingDomainId,
 }: SettingsEmailingDomainVerifyButtonProps) => {
   const { t } = useLingui();
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const [verifyEmailingDomain, { loading }] = useMutation(
     VerifyEmailingDomainDocument,
   );
@@ -24,12 +24,12 @@ export const SettingsEmailingDomainVerifyButton = ({
   const handleVerify = async () => {
     try {
       await verifyEmailingDomain({ variables: { id: emailingDomainId } });
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Started verification process`,
       });
     } catch (error) {
-      addErrorToast(error);
+      enqueueErrorToast(error);
     }
   };
 

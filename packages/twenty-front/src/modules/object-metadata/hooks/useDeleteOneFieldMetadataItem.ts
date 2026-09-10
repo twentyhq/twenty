@@ -21,7 +21,7 @@ export const useDeleteOneFieldMetadataItem = () => {
   );
 
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const setRecordIndexGroupAggregateOperation = useSetAtomComponentState(
@@ -82,7 +82,7 @@ export const useDeleteOneFieldMetadataItem = () => {
           operationType: CrudOperationType.DELETE,
         });
       } else {
-        addToast({ variant: 'error', children: t`An error occurred.` });
+        enqueueToast({ variant: 'error', children: t`An error occurred.` });
       }
 
       return {

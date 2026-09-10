@@ -84,7 +84,7 @@ export const useCoreWorkflows = ({
   );
   const connection = (data ?? previousData)?.coreWorkflows;
 
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const fetchNextPage = async () => {
     if (connection?.pageInfo.hasNextPage !== true || isFetchingMore) {
@@ -109,7 +109,7 @@ export const useCoreWorkflows = ({
       });
     } catch (fetchMoreError) {
       logError(`useCoreWorkflows fetchMore error : ${fetchMoreError}`);
-      addErrorToast(fetchMoreError as ErrorLike);
+      enqueueErrorToast(fetchMoreError as ErrorLike);
     } finally {
       setIsFetchingMore(false);
     }

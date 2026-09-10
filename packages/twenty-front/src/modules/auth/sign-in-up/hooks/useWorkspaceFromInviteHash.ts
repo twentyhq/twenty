@@ -15,8 +15,8 @@ import { GetWorkspaceFromInviteHashDocument } from '~/generated-metadata/graphql
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useWorkspaceFromInviteHash = () => {
-  const { addErrorToast } = useErrorToast();
-  const { add: addToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
   const navigate = useNavigateApp();
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -34,10 +34,10 @@ export const useWorkspaceFromInviteHash = () => {
 
   useEffect(() => {
     if (error) {
-      addErrorToast(error);
+      enqueueErrorToast(error);
       navigate(AppPath.Index);
     }
-  }, [error, addErrorToast, navigate]);
+  }, [error, enqueueErrorToast, navigate]);
 
   // TODO: Rework this useEffect - Charles will refactor as part of auth rework
   useEffect(() => {
@@ -53,7 +53,7 @@ export const useWorkspaceFromInviteHash = () => {
       setHasRedirected(true);
       const workspaceDisplayName = inviteWorkspace.displayName;
       initiallyLoggedIn &&
-        addToast({
+        enqueueToast({
           variant: 'info',
           children: workspaceDisplayName
             ? t`You already belong to the workspace ${workspaceDisplayName}`
@@ -66,7 +66,7 @@ export const useWorkspaceFromInviteHash = () => {
     currentWorkspace,
     hasRedirected,
     initiallyLoggedIn,
-    addToast,
+    enqueueToast,
     navigate,
   ]);
   return {

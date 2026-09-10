@@ -26,7 +26,7 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 export const useEnterLayoutCustomizationMode = () => {
   const store = useStore();
   const { navigateSidePanel } = useNavigateSidePanel();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
 
   const enterLayoutCustomizationMode = useCallback((): boolean => {
@@ -54,7 +54,7 @@ export const useEnterLayoutCustomizationMode = () => {
       );
 
       if (isDashboardInEditMode) {
-        addToast({
+        enqueueToast({
           variant: 'warning',
           children: t`Save or cancel dashboard changes before editing the layout.`,
         });
@@ -95,7 +95,7 @@ export const useEnterLayoutCustomizationMode = () => {
     }
 
     return true;
-  }, [addToast, hasLayoutsPermission, navigateSidePanel, store]);
+  }, [enqueueToast, hasLayoutsPermission, navigateSidePanel, store]);
 
   return { enterLayoutCustomizationMode };
 };

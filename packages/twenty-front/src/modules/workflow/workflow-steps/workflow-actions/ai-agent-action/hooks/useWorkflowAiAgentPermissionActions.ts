@@ -36,7 +36,7 @@ export const useWorkflowAiAgentPermissionActions = ({
   permissionFlagKeys,
   refetchAgentAndRoles,
 }: UseWorkflowAiAgentPermissionActionsParams) => {
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
     useAtomState(workflowAiAgentActionAgentState);
   const { activeObjectMetadataItems: objectMetadataItems } =
@@ -294,7 +294,7 @@ export const useWorkflowAiAgentPermissionActions = ({
     )?.label(objectMetadata.labelPlural);
 
     if (isDefined(permissionLabel)) {
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`${permissionLabel} Permission removed`,
       });
@@ -354,7 +354,7 @@ export const useWorkflowAiAgentPermissionActions = ({
     const permissionLabel = permissionFlagLabelMap[permissionFlagKey];
 
     if (isDefined(permissionLabel)) {
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`${permissionLabel} permission removed`,
       });

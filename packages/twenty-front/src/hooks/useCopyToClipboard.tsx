@@ -6,7 +6,7 @@ import { IconCopy, IconExclamationCircle } from 'twenty-ui/icon';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 export const useCopyToClipboard = () => {
   const { theme } = useContext(ThemeContext);
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { t } = useLingui();
 
   const writeToClipboard = async (
@@ -14,7 +14,7 @@ export const useCopyToClipboard = () => {
     successMessage: string | null,
   ) => {
     if (!window.isSecureContext) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Clipboard requires a secure connection (HTTPS). Please access this app over HTTPS to enable copying.`,
         icon: <IconExclamationCircle size={16} color="red" />,
@@ -31,14 +31,14 @@ export const useCopyToClipboard = () => {
         return;
       }
 
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: successMessage,
         icon: <IconCopy size={theme.icon.size.md} />,
         duration: 2000,
       });
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Couldn't copy to clipboard`,
         icon: <IconExclamationCircle size={16} color="red" />,

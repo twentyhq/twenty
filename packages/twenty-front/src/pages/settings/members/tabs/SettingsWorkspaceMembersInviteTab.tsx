@@ -71,7 +71,7 @@ const StyledTableRows = styled.div`
 export const SettingsWorkspaceMembersInviteTab = () => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const roles = useSettingsAllRoles();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
@@ -96,7 +96,7 @@ export const SettingsWorkspaceMembersInviteTab = () => {
   const handleRemoveWorkspaceInvitation = async (appTokenId: string) => {
     const result = await deleteWorkspaceInvitation({ appTokenId });
     if (isDefined(result.error)) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Error deleting invitation`,
         duration: 2000,
@@ -107,7 +107,7 @@ export const SettingsWorkspaceMembersInviteTab = () => {
   const handleResendWorkspaceInvitation = async (appTokenId: string) => {
     const result = await resendInvitation({ appTokenId });
     if (isDefined(result.error)) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Error resending invitation`,
         duration: 2000,

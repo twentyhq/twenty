@@ -23,8 +23,8 @@ export const useSendMessageCampaignTest = () => {
     SendMessageCampaignTestMutationVariables
   >(SEND_MESSAGE_CAMPAIGN_TEST);
 
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const sendMessageCampaignTest = async (
     params: SendMessageCampaignTestParams,
@@ -35,19 +35,22 @@ export const useSendMessageCampaignTest = () => {
       });
 
       if (!result.data?.sendMessageCampaignTest) {
-        addToast({ variant: 'error', children: t`Failed to send test email` });
+        enqueueToast({
+          variant: 'error',
+          children: t`Failed to send test email`,
+        });
 
         return false;
       }
 
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Test email sent to ${params.toAddress}`,
       });
 
       return true;
     } catch (error) {
-      addErrorToast(error);
+      enqueueErrorToast(error);
 
       return false;
     }

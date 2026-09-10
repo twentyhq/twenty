@@ -7,7 +7,7 @@ import { BookCallBookingSuccessEffect } from '@/onboarding/effect-components/Boo
 import { useCompleteBookCallOnboardingStep } from '@/onboarding/hooks/useCompleteBookCallOnboardingStep';
 
 export const BookCallOnboardingStepActions = () => {
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
   const completeBookCallOnboardingStep = useCompleteBookCallOnboardingStep();
   const [isCompleting, setIsCompleting] = useState(false);
 
@@ -22,10 +22,10 @@ export const BookCallOnboardingStepActions = () => {
       } catch (error) {
         setIsCompleting(false);
 
-        addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+        enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
       }
     },
-    [completeBookCallOnboardingStep, addErrorToast],
+    [completeBookCallOnboardingStep, enqueueErrorToast],
   );
 
   const completeStepAfterBooking = useCallback(() => {

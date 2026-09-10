@@ -21,8 +21,8 @@ export const useSignUpInNewWorkspace = () => {
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
-  const { addErrorToast } = useErrorToast();
-  const { add: addToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
   const { t } = useLingui();
 
   const [signUpInNewWorkspaceMutation] = useMutation(
@@ -56,9 +56,9 @@ export const useSignUpInNewWorkspace = () => {
           });
         } catch (logoUploadError) {
           if (CombinedGraphQLErrors.is(logoUploadError)) {
-            addErrorToast(logoUploadError);
+            enqueueErrorToast(logoUploadError);
           } else {
-            addToast({
+            enqueueToast({
               variant: 'error',
               children:
                 logoUploadError instanceof Error
@@ -86,9 +86,9 @@ export const useSignUpInNewWorkspace = () => {
       return true;
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       } else {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children:
             error instanceof Error

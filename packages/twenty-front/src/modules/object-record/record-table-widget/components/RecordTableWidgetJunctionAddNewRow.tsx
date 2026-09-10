@@ -25,7 +25,7 @@ export const RecordTableWidgetJunctionAddNewRow = ({
   targetRecordsFilter = junctionCreateThrough.targetRecordsFilter,
 }: RecordTableWidgetJunctionAddNewRowProps) => {
   const { closeDropdown } = useCloseDropdown();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const { objectMetadataItem: junctionObjectMetadataItem } =
     useObjectMetadataItemById({
@@ -55,7 +55,7 @@ export const RecordTableWidgetJunctionAddNewRow = ({
     closeDropdown(dropdownId);
     createJunctionRecord(targetRecordId).catch((error) => {
       logError(error);
-      addToast({ variant: 'error', children: t`Failed to add record` });
+      enqueueToast({ variant: 'error', children: t`Failed to add record` });
     });
   };
 

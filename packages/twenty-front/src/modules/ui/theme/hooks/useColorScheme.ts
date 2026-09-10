@@ -21,7 +21,7 @@ export const useColorScheme = () => {
   const store = useStore();
 
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
 
@@ -69,10 +69,10 @@ export const useColorScheme = () => {
           );
         }
 
-        addErrorToast(error);
+        enqueueErrorToast(error);
       }
     },
-    [store, updateWorkspaceMemberSettings, addErrorToast],
+    [store, updateWorkspaceMemberSettings, enqueueErrorToast],
   );
 
   const colorSchemeList: Array<{

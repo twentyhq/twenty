@@ -12,12 +12,12 @@ export type ToasterExampleProps = {
 };
 
 export const ToastControls = ({ onClose }: ToasterExampleProps) => {
-  const { add, close } = useToast();
+  const { enqueueToast, close } = useToast();
   const [count, setCount] = useState(1);
   const [toastId, setToastId] = useState('');
 
-  const addToast = (options: ToastOptions) => {
-    const id = add({
+  const enqueueExampleToast = (options: ToastOptions) => {
+    const id = enqueueToast({
       progress: 100,
       ...options,
       onClose: () => {
@@ -33,7 +33,7 @@ export const ToastControls = ({ onClose }: ToasterExampleProps) => {
       <button
         type="button"
         onClick={() => {
-          addToast({ children: `Notification ${count}` });
+          enqueueExampleToast({ children: `Notification ${count}` });
           setCount(count + 1);
         }}
       >
@@ -42,7 +42,7 @@ export const ToastControls = ({ onClose }: ToasterExampleProps) => {
       <button
         type="button"
         onClick={() =>
-          addToast({ children: 'Already saved', dedupeKey: 'saved' })
+          enqueueExampleToast({ children: 'Already saved', dedupeKey: 'saved' })
         }
       >
         Add duplicate
@@ -50,7 +50,7 @@ export const ToastControls = ({ onClose }: ToasterExampleProps) => {
       <button
         type="button"
         onClick={() =>
-          addToast({
+          enqueueExampleToast({
             children: 'Timed notification',
             progress: undefined,
             duration: 800,
@@ -68,7 +68,10 @@ export const ToastControls = ({ onClose }: ToasterExampleProps) => {
       <button
         type="button"
         onClick={() =>
-          addToast({ id: toastId, children: 'Restored notification' })
+          enqueueExampleToast({
+            id: toastId,
+            children: 'Restored notification',
+          })
         }
       >
         Restore last notification

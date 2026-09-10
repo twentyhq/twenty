@@ -27,7 +27,7 @@ export const FilesFieldInput = () => {
   const { openFileUpload } = useFileUpload();
   const { t } = useLingui();
   const [isUploading, setIsUploading] = useState(false);
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const setFilePreview = useSetAtomState(filePreviewState);
   const isAttachmentPreviewEnabled = useAtomStateValue(
     isAttachmentPreviewEnabledState,
@@ -85,7 +85,7 @@ export const FilesFieldInput = () => {
           selectedFiles.length > maxNumberOfValues - files.length &&
           files.length > 0
         ) {
-          addToast({
+          enqueueToast({
             variant: 'error',
             children: t`Cannot upload more than ${maxNumberOfValues} files`,
           });
@@ -116,7 +116,7 @@ export const FilesFieldInput = () => {
     openFileUpload,
     files,
     maxNumberOfValues,
-    addToast,
+    enqueueToast,
     t,
     uploadFile,
     handleChange,

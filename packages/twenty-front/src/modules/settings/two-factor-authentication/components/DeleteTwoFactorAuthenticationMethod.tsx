@@ -23,7 +23,7 @@ export const DeleteTwoFactorAuthentication = () => {
   const { t } = useLingui();
   const { openModal } = useModal();
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { signOut } = useAuth();
   const { loadCurrentUser } = useLoadCurrentUser();
   const [deleteTwoFactorAuthenticationMethod] = useMutation(
@@ -50,7 +50,7 @@ export const DeleteTwoFactorAuthentication = () => {
         ]?.twoFactorAuthenticationMethodId,
       )
     ) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Invalid 2FA information.`,
         dedupeKey: '2fa-dedupe-key',
@@ -67,7 +67,7 @@ export const DeleteTwoFactorAuthentication = () => {
       },
     });
 
-    addToast({
+    enqueueToast({
       variant: 'success',
       children: t`2FA Method has been deleted successfully.`,
       dedupeKey: '2fa-dedupe-key',

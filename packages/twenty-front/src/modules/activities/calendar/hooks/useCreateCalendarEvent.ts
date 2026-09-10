@@ -12,7 +12,7 @@ import {
 
 export const useCreateCalendarEvent = () => {
   const { refetchTimelineCalendarEvents } = useRefetchTimelineCalendarEvents();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const [createCalendarEventMutation, { loading }] = useMutation<
     { createCalendarEvent: CreateCalendarEventOutput },
@@ -27,7 +27,7 @@ export const useCreateCalendarEvent = () => {
         });
 
         if (!result.data?.createCalendarEvent.success) {
-          addToast({
+          enqueueToast({
             variant: 'error',
             children:
               result.data?.createCalendarEvent.error ??
@@ -37,7 +37,7 @@ export const useCreateCalendarEvent = () => {
           return { success: false };
         }
 
-        addToast({
+        enqueueToast({
           variant: 'success',
           children: t`Calendar event created successfully`,
         });
@@ -50,7 +50,7 @@ export const useCreateCalendarEvent = () => {
             result.data.createCalendarEvent.calendarEventId ?? undefined,
         };
       } catch {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Failed to create calendar event`,
         });
@@ -58,7 +58,7 @@ export const useCreateCalendarEvent = () => {
         return { success: false };
       }
     },
-    [refetchTimelineCalendarEvents, createCalendarEventMutation, addToast],
+    [refetchTimelineCalendarEvents, createCalendarEventMutation, enqueueToast],
   );
 
   return { createCalendarEvent, loading };

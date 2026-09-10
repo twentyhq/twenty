@@ -17,7 +17,7 @@ import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 export const useHandleImpersonate = () => {
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { startImpersonating } = useImpersonationSession();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const [impersonate] = useMutation(ImpersonateDocument);
@@ -27,7 +27,7 @@ export const useHandleImpersonate = () => {
 
   const handleImpersonate = async (userId: string, workspaceId: string) => {
     if (!isDefined(currentUser?.id) || userId === currentUser.id) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`You cannot impersonate your own account`,
       });
@@ -57,7 +57,7 @@ export const useHandleImpersonate = () => {
         );
       },
       onError: (error) => {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: `Failed to impersonate user. ${error.message}`,
         });

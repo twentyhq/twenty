@@ -17,7 +17,7 @@ export const useDeleteOneObjectMetadataItem = () => {
   );
 
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const { invalidateMetadataStore } = useInvalidateMetadataStore();
   const { cleanMorphRelations } =
@@ -54,7 +54,7 @@ export const useDeleteOneObjectMetadataItem = () => {
           operationType: CrudOperationType.DELETE,
         });
       } else {
-        addToast({ variant: 'error', children: t`An error occurred.` });
+        enqueueToast({ variant: 'error', children: t`An error occurred.` });
       }
 
       return {

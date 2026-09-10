@@ -15,14 +15,14 @@ export const CommandMenuItemErrorBoundary = ({
   shouldReportToSentry = false,
   onError,
 }: CommandMenuItemErrorBoundaryProps) => {
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const commandMenuItemId = useAvailableComponentInstanceIdOrThrow(
     CommandComponentInstanceContext,
   );
 
   const handleError = async (error: Error) => {
-    addToast({ variant: 'error', children: error.message });
+    enqueueToast({ variant: 'error', children: error.message });
 
     if (shouldReportToSentry) {
       try {

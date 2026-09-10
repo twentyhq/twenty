@@ -11,8 +11,8 @@ import { useToast } from 'twenty-ui/feedback';
 import { GetAuthTokensFromSsoExchangeTokenDocument } from '~/generated-metadata/graphql';
 
 export const useRedeemSsoExchangeToken = () => {
-  const { addErrorToast } = useErrorToast();
-  const { add: addToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
   const markSessionActive = useMarkSessionActive();
   const setIsAppEffectRedirectEnabled = useSetAtomState(
     isAppEffectRedirectEnabledState,
@@ -39,9 +39,9 @@ export const useRedeemSsoExchangeToken = () => {
         markSessionActive();
       } catch (error: unknown) {
         if (CombinedGraphQLErrors.is(error)) {
-          addErrorToast(error);
+          enqueueErrorToast(error);
         } else {
-          addToast({
+          enqueueToast({
             variant: 'error',
             children:
               (error instanceof Error ? error.message : undefined) ??
@@ -56,8 +56,8 @@ export const useRedeemSsoExchangeToken = () => {
       getAuthTokensFromSsoExchangeToken,
       markSessionActive,
       setIsAppEffectRedirectEnabled,
-      addErrorToast,
-      addToast,
+      enqueueErrorToast,
+      enqueueToast,
     ],
   );
 

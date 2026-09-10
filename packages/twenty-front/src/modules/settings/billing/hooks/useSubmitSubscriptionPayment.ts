@@ -24,8 +24,8 @@ export const useSubmitSubscriptionPayment = ({
 }: UseSubmitSubscriptionPaymentParams) => {
   const stripe = useStripe();
   const elements = useElements();
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [createSubscriptionPaymentIntent] = useMutation(
@@ -44,7 +44,7 @@ export const useSubmitSubscriptionPayment = ({
     try {
       const { error: submitError } = await elements.submit();
       if (isDefined(submitError)) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children:
             submitError.message ??
@@ -61,7 +61,7 @@ export const useSubmitSubscriptionPayment = ({
 
       const paymentIntent = data?.createSubscriptionPaymentIntent;
       if (!isDefined(paymentIntent?.clientSecret)) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Subscription error. Please retry or contact Twenty team`,
         });
@@ -88,7 +88,7 @@ export const useSubmitSubscriptionPayment = ({
             });
 
       if (isDefined(error)) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children:
             error.message ??
@@ -98,9 +98,9 @@ export const useSubmitSubscriptionPayment = ({
       }
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       } else {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Subscription error. Please retry or contact Twenty team`,
         });

@@ -15,15 +15,15 @@ jest.mock('@apollo/client/react', () => ({
   useMutation: () => [mockUpdateWorkspaceMemberSettings],
 }));
 
-const mockAddToast = jest.fn();
-const mockAddErrorToast = jest.fn();
+const mockEnqueueToast = jest.fn();
+const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
-  useToast: () => ({ add: mockAddToast }),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
+  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 
 const workspaceMember: CurrentWorkspaceMember = {
@@ -81,7 +81,7 @@ describe('useColorScheme', () => {
         },
       },
     });
-    expect(mockAddToast).not.toHaveBeenCalled();
+    expect(mockEnqueueToast).not.toHaveBeenCalled();
   });
 
   it.each([false, true])(
@@ -122,7 +122,7 @@ describe('useColorScheme', () => {
         'System',
       );
       expect(store.get(persistedColorSchemeState.atom)).toBe('Light');
-      expect(mockAddErrorToast).toHaveBeenCalledWith(error);
+      expect(mockEnqueueErrorToast).toHaveBeenCalledWith(error);
     },
   );
 
@@ -190,7 +190,7 @@ describe('useColorScheme', () => {
     });
 
     expect(result.current.colorScheme).toBe('System');
-    expect(mockAddErrorToast).toHaveBeenCalledWith(undefined);
+    expect(mockEnqueueErrorToast).toHaveBeenCalledWith(undefined);
   });
 
   it('should not save a theme without a workspace member', async () => {

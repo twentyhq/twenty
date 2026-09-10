@@ -47,7 +47,7 @@ export const SettingsAdminMaintenanceMode = () => {
   const setMaintenanceMode = useSetAtomState(maintenanceModeState);
 
   const { userTimezone } = useUserTimezone();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const [setMaintenanceModeMutation] = useMutation(SET_MAINTENANCE_MODE, {
     client: apolloAdminClient,
@@ -99,7 +99,7 @@ export const SettingsAdminMaintenanceMode = () => {
           link,
         });
       } catch (error: unknown) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children:
             error instanceof Error
@@ -108,7 +108,7 @@ export const SettingsAdminMaintenanceMode = () => {
         });
       }
     },
-    [setMaintenanceModeMutation, setMaintenanceMode, addToast],
+    [setMaintenanceModeMutation, setMaintenanceMode, enqueueToast],
   );
 
   const handleToggle = useCallback(

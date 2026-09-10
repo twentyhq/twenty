@@ -22,8 +22,8 @@ export const SettingsSecurityApprovedAccessDomain = () => {
 
   const { t } = useLingui();
 
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const [createApprovedAccessDomain] = useMutation(
     CreateApprovedAccessDomainDocument,
@@ -65,18 +65,20 @@ export const SettingsSecurityApprovedAccessDomain = () => {
           },
         },
         onCompleted: () => {
-          addToast({
+          enqueueToast({
             variant: 'success',
             children: t`Please check your email for a verification link.`,
           });
           navigate(SettingsPath.WorkspaceMembersPage);
         },
         onError: (error) => {
-          addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+          enqueueErrorToast(
+            CombinedGraphQLErrors.is(error) ? error : undefined,
+          );
         },
       });
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
   };
 

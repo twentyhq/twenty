@@ -55,7 +55,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
 }) => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { openModal, closeModal } = useModal();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -126,9 +126,12 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         );
       }
 
-      addToast({ variant: 'success', children: t`App deleted successfully` });
+      enqueueToast({
+        variant: 'success',
+        children: t`App deleted successfully`,
+      });
     } catch {
-      addToast({ variant: 'error', children: t`Error deleting app` });
+      enqueueToast({ variant: 'error', children: t`Error deleting app` });
     } finally {
       setIsLoading(false);
     }
@@ -149,14 +152,14 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
           targetWorkspaceSubdomain: trimmed,
         },
       });
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Ownership transferred successfully`,
       });
       setTransferSubdomain('');
       navigate(SettingsPath.Applications);
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to transfer ownership. Check that the subdomain is correct.`,
       });
@@ -171,13 +174,16 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
       await claimOwnership({
         variables: { applicationRegistrationId },
       });
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Ownership claimed successfully`,
       });
       closeModal(CLAIM_OWNERSHIP_MODAL_ID);
     } catch {
-      addToast({ variant: 'error', children: t`Failed to claim ownership.` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to claim ownership.`,
+      });
     } finally {
       setIsClaiming(false);
     }

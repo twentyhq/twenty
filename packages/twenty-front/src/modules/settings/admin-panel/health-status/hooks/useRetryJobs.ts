@@ -10,7 +10,7 @@ import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-a
 
 export const useRetryJobs = (queueName: string, onSuccess?: () => void) => {
   const apolloAdminClient = useApolloAdminClient();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [isRetrying, setIsRetrying] = useState(false);
   const [retryJobsMutation] = useMutation(RetryJobsDocument, {
     client: apolloAdminClient,
@@ -34,20 +34,20 @@ export const useRetryJobs = (queueName: string, onSuccess?: () => void) => {
         const failedResults = results.filter((r) => !r.success);
 
         if (retriedCount === -1) {
-          addToast({
+          enqueueToast({
             variant: 'success',
             children: t`All failed jobs have been retried`,
           });
         } else if (retriedCount > 0) {
           if (failedResults.length > 0) {
-            addToast({
+            enqueueToast({
               variant: 'success',
               children: plural(retriedCount, {
                 one: `Successfully retried ${retriedCount} job`,
                 other: `Successfully retried ${retriedCount} jobs`,
               }),
             });
-            addToast({
+            enqueueToast({
               variant: 'error',
               children: plural(failedResults.length, {
                 one: `${failedResults.length} job could not be retried`,
@@ -55,7 +55,7 @@ export const useRetryJobs = (queueName: string, onSuccess?: () => void) => {
               }),
             });
           } else {
-            addToast({
+            enqueueToast({
               variant: 'success',
               children: plural(retriedCount, {
                 one: `Successfully retried ${retriedCount} job`,
@@ -70,7 +70,7 @@ export const useRetryJobs = (queueName: string, onSuccess?: () => void) => {
           const errorDetails =
             errorMessages.length > 0 ? `: ${errorMessages[0]}` : '';
 
-          addToast({
+          enqueueToast({
             variant: 'error',
             children: t`No jobs were retried${errorDetails}`,
           });
@@ -79,7 +79,7 @@ export const useRetryJobs = (queueName: string, onSuccess?: () => void) => {
         onSuccess?.();
       }
     } catch (error) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: CombinedGraphQLErrors.is(error)
           ? getErrorMessageFromApolloError(error)

@@ -85,8 +85,8 @@ const StyledMainButtonContainer = styled.div`
 export const PasswordReset = () => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-  const { addErrorToast } = useErrorToast();
-  const { add: addToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
 
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const setCurrentUser = useSetAtomState(currentUserState);
@@ -122,10 +122,10 @@ export const PasswordReset = () => {
 
   useEffect(() => {
     if (tokenValidationError) {
-      addErrorToast(tokenValidationError);
+      enqueueErrorToast(tokenValidationError);
       navigate(AppPath.Index);
     }
-  }, [tokenValidationError, addErrorToast, navigate]);
+  }, [tokenValidationError, enqueueErrorToast, navigate]);
 
   useEffect(() => {
     if (tokenValidationData) {
@@ -159,7 +159,7 @@ export const PasswordReset = () => {
       });
 
       if (!data?.updatePasswordViaResetToken.success) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`There was an error while updating password.`,
         });
@@ -176,13 +176,13 @@ export const PasswordReset = () => {
       );
 
       if (isLogged) {
-        addToast({ variant: 'success', children: successMessage });
+        enqueueToast({ variant: 'success', children: successMessage });
         navigate(AppPath.Index);
         return;
       }
 
       if (!isCaptchaReady) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Captcha (anti-bot check) is still loading, try again`,
         });
@@ -204,7 +204,7 @@ export const PasswordReset = () => {
       redirect(AppPath.Index);
     } catch (err) {
       logError(err);
-      addErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
     }
   };
 

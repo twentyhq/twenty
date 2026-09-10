@@ -15,7 +15,7 @@ export const DuplicateMessageListSingleRecordCommand = () => {
   const recordId = selectedRecords[0]?.id;
   const { duplicateMessageList } = useDuplicateMessageList();
   const navigate = useNavigateApp();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { t } = useLingui();
 
   if (!isDefined(recordId)) {
@@ -28,7 +28,7 @@ export const DuplicateMessageListSingleRecordCommand = () => {
     if (isDefined(result) && isNonEmptyString(result.id)) {
       const memberCount = result.memberCount;
 
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`List duplicated with ${plural(memberCount, {
           one: '# member',

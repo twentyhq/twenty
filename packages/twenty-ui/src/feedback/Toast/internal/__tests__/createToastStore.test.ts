@@ -5,8 +5,8 @@ import { createToastStore } from '../createToastStore';
 it('generates distinct ids for notifications added without one', () => {
   const store = createToastStore();
 
-  const firstId = store.add({ children: 'First notification' });
-  const secondId = store.add({ children: 'Second notification' });
+  const firstId = store.enqueueToast({ children: 'First notification' });
+  const secondId = store.enqueueToast({ children: 'Second notification' });
 
   expect(firstId).toBeTruthy();
   expect(secondId).not.toBe(firstId);
@@ -34,7 +34,7 @@ it('retains a dismissed toast until its exit finishes and calls onClose once', (
   const listener = vi.fn();
   const onClose = vi.fn();
   store.subscribe(listener);
-  const id = store.add({ children: 'Saved', onClose });
+  const id = store.enqueueToast({ children: 'Saved', onClose });
 
   store.close(id);
   const [closingToast] = store.getSnapshot();
@@ -56,11 +56,15 @@ it('deduplicates visible notifications without updating their content', () => {
   const store = createToastStore();
   const listener = vi.fn();
   store.subscribe(listener);
-  store.add({ id: 'saved', dedupeKey: 'record', children: 'Saved' });
+  store.enqueueToast({ id: 'saved', dedupeKey: 'record', children: 'Saved' });
   const snapshot = store.getSnapshot();
 
-  expect(store.add({ id: 'saved', children: 'Changed' })).toBe('saved');
-  expect(store.add({ dedupeKey: 'record', children: 'Changed' })).toBe('saved');
+  expect(store.enqueueToast({ id: 'saved', children: 'Changed' })).toBe(
+    'saved',
+  );
+  expect(store.enqueueToast({ dedupeKey: 'record', children: 'Changed' })).toBe(
+    'saved',
+  );
   expect(store.getSnapshot()).toBe(snapshot);
   expect(listener).toHaveBeenCalledOnce();
 });
@@ -70,13 +74,13 @@ it('counts only visible toasts toward the limit and evicts the oldest', () => {
   store.subscribe(vi.fn());
   const onFirstClose = vi.fn();
   const onSecondClose = vi.fn();
-  store.add({ id: 'first', onClose: onFirstClose });
-  store.add({ id: 'second', onClose: onSecondClose });
+  store.enqueueToast({ id: 'first', onClose: onFirstClose });
+  store.enqueueToast({ id: 'second', onClose: onSecondClose });
   store.close('first');
-  store.add({ id: 'third' });
+  store.enqueueToast({ id: 'third' });
   expect(onSecondClose).not.toHaveBeenCalled();
 
-  store.add({ id: 'fourth' });
+  store.enqueueToast({ id: 'fourth' });
   expect(
     store
       .getSnapshot()
@@ -95,12 +99,17 @@ it('appends a restored toast under a new render key and ignores completion from 
   const store = createToastStore();
   store.subscribe(vi.fn());
   const onClose = vi.fn();
-  store.add({ id: 'first', dedupeKey: 'saved', onClose });
-  store.add({ id: 'second' });
+  store.enqueueToast({ id: 'first', dedupeKey: 'saved', onClose });
+  store.enqueueToast({ id: 'second' });
   store.close('first');
   const [firstExit] = store.getSnapshot();
 
-  store.add({ id: 'first', dedupeKey: 'saved', children: 'Restored', onClose });
+  store.enqueueToast({
+    id: 'first',
+    dedupeKey: 'saved',
+    children: 'Restored',
+    onClose,
+  });
   const restoredToasts = store.getSnapshot();
   expect(restoredToasts.map(({ notification }) => notification.id)).toEqual([
     'second',
@@ -125,9 +134,9 @@ it('can restore a notification from its close callback', () => {
   const store = createToastStore();
   store.subscribe(vi.fn());
   const onClose = vi.fn(() => {
-    store.add({ id: 'saved', children: 'Restored' });
+    store.enqueueToast({ id: 'saved', children: 'Restored' });
   });
-  store.add({ id: 'saved', onClose });
+  store.enqueueToast({ id: 'saved', onClose });
 
   store.close();
 
@@ -144,8 +153,8 @@ it('can restore a notification from its close callback', () => {
 it('removes dismissed notifications immediately without a viewport', () => {
   const store = createToastStore({ limit: 1 });
   const onClose = vi.fn();
-  store.add({ id: 'first', onClose });
-  store.add({ id: 'second', onClose });
+  store.enqueueToast({ id: 'first', onClose });
+  store.enqueueToast({ id: 'second', onClose });
   expect(
     store.getSnapshot().map(({ notification }) => notification.id),
   ).toEqual(['second']);
@@ -161,8 +170,8 @@ it('discards unfinished exits when the last viewport unmounts and keeps visible 
   const unsubscribeFirst = store.subscribe(vi.fn());
   const unsubscribeSecond = store.subscribe(vi.fn());
   const onClose = vi.fn();
-  store.add({ id: 'first', onClose });
-  store.add({ id: 'second' });
+  store.enqueueToast({ id: 'first', onClose });
+  store.enqueueToast({ id: 'second' });
   store.close('first');
   const closingSnapshot = store.getSnapshot();
 
@@ -181,7 +190,7 @@ it('ignores unknown dismissals and completion for visible notifications', () => 
   const store = createToastStore();
   const listener = vi.fn();
   store.subscribe(listener);
-  store.add({ id: 'saved' });
+  store.enqueueToast({ id: 'saved' });
   const snapshot = store.getSnapshot();
 
   store.close('unknown');

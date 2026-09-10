@@ -13,8 +13,8 @@ import { useToast } from 'twenty-ui/feedback';
 import { EmailPasswordResetLinkDocument } from '~/generated-metadata/graphql';
 
 export const useHandleResetPassword = () => {
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const [emailPasswordResetLink] = useMutation(EmailPasswordResetLinkDocument);
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const currentUser = useAtomStateValue(currentUserState);
@@ -27,12 +27,12 @@ export const useHandleResetPassword = () => {
     (email = currentUser?.email) => {
       return async () => {
         if (!email) {
-          addToast({ variant: 'error', children: t`Invalid email` });
+          enqueueToast({ variant: 'error', children: t`Invalid email` });
           return;
         }
 
         if (!isCaptchaReady) {
-          addToast({
+          enqueueToast({
             variant: 'error',
             children: t`Captcha (anti-bot check) is still loading, try again`,
           });
@@ -49,18 +49,18 @@ export const useHandleResetPassword = () => {
           });
 
           if (data?.emailPasswordResetLink?.success === true) {
-            addToast({
+            enqueueToast({
               variant: 'success',
               children: t`If this email is registered, a password reset link has been sent`,
             });
           } else {
-            addToast({ variant: 'error', children: t`An error occurred.` });
+            enqueueToast({ variant: 'error', children: t`An error occurred.` });
           }
         } catch (error) {
           if (CombinedGraphQLErrors.is(error)) {
-            addErrorToast(error);
+            enqueueErrorToast(error);
           } else {
-            addToast({
+            enqueueToast({
               variant: 'error',
               children:
                 (error instanceof Error ? error.message : undefined) ??
@@ -73,8 +73,8 @@ export const useHandleResetPassword = () => {
     [
       currentUser?.email,
       workspacePublicData?.id,
-      addToast,
-      addErrorToast,
+      enqueueToast,
+      enqueueErrorToast,
       t,
       emailPasswordResetLink,
       isCaptchaReady,

@@ -60,7 +60,7 @@ type UsageBreakdownItem = {
 
 export const SettingsAdminAI = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { refetch: refetchClientConfig } = useClientConfig();
   const { formatUsageValue } = useUsageValueFormatter();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -153,7 +153,7 @@ export const SettingsAdminAI = () => {
       });
       await refetchClientConfig();
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to update model recommendation`,
       });
@@ -184,7 +184,7 @@ export const SettingsAdminAI = () => {
       });
       await refetchClientConfig();
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to update default model`,
       });
@@ -303,7 +303,7 @@ export const SettingsAdminAI = () => {
                   },
                 });
               } catch {
-                addToast({
+                enqueueToast({
                   variant: 'error',
                   children: t`Failed to update model recommendations`,
                 });

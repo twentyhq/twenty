@@ -35,7 +35,7 @@ export const SettingsApplicationRegistrationOAuthTab = ({
   registration: ApplicationRegistrationData;
 }) => {
   const { t } = useLingui();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { openModal } = useModal();
 
   const applicationRegistrationId = registration.id;
@@ -73,10 +73,13 @@ export const SettingsApplicationRegistrationOAuthTab = ({
           },
         },
       });
-      addToast({ variant: 'success', children: t`Redirect URIs updated` });
+      enqueueToast({ variant: 'success', children: t`Redirect URIs updated` });
       setFormRedirectUris(newFormRedirectUris);
     } catch {
-      addToast({ variant: 'error', children: t`Error updating redirect URIs` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Error updating redirect URIs`,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -93,13 +96,16 @@ export const SettingsApplicationRegistrationOAuthTab = ({
 
       if (isNonEmptyString(secret)) {
         setRotatedSecret(secret);
-        addToast({
+        enqueueToast({
           variant: 'success',
           children: t`Client secret rotated. Copy it now — it won't be shown again.`,
         });
       }
     } catch {
-      addToast({ variant: 'error', children: t`Error rotating client secret` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Error rotating client secret`,
+      });
     } finally {
       setIsLoading(false);
     }

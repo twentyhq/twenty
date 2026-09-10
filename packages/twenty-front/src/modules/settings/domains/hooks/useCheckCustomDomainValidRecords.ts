@@ -10,7 +10,7 @@ export const useCheckCustomDomainValidRecords = () => {
   const [checkCustomDomainValidRecords] = useMutation(
     CheckCustomDomainValidRecordsDocument,
   );
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
@@ -55,7 +55,7 @@ export const useCheckCustomDomainValidRecords = () => {
         }
       },
       onError: (error) => {
-        addErrorToast(error);
+        enqueueErrorToast(error);
         setCustomDomainRecords((currentState) => ({
           ...currentState,
           isLoading: false,

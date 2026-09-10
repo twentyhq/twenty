@@ -16,7 +16,7 @@ export const useDuplicateDashboard = () => {
   const [mutate] = useMutation(DuplicateDashboardDocument);
 
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const duplicateDashboard = async (dashboardId: string) => {
     try {
@@ -39,7 +39,7 @@ export const useDuplicateDashboard = () => {
           operationType: CrudOperationType.CREATE,
         });
       } else {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Failed to duplicate dashboard`,
         });

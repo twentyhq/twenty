@@ -34,8 +34,8 @@ const MCP_DEEP_LINK = `${getSettingsPath(SettingsPath.ApiWebhooks)}#mcp`;
 
 export const SettingsAiOverviewTab = () => {
   const { theme } = useContext(ThemeContext);
-  const { addErrorToast } = useErrorToast();
-  const { add: addToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
@@ -69,9 +69,9 @@ export const SettingsAiOverviewTab = () => {
         aiAdditionalInstructions: originalInstructions || null,
       });
       if (CombinedGraphQLErrors.is(error)) {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       } else {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Failed to save workspace instructions`,
         });

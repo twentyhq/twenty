@@ -31,7 +31,7 @@ const StyledDangerActions = styled.div`
 export const DeleteAccount = () => {
   const { t } = useLingui();
   const { openModal } = useModal();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const [deleteUserAccount] = useMutation(DeleteUserAccountDocument);
   const [deleteUserFromWorkspace] = useMutation(DeleteUserWorkspaceDocument);
@@ -53,7 +53,7 @@ export const DeleteAccount = () => {
 
   const leaveWorkspace = async () => {
     if (!isDefined(currentWorkspaceMemberId)) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Current workspace member not found.`,
       });

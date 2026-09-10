@@ -41,7 +41,7 @@ export const useBatchCreateManyRecords = <
 
   const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { formatNumber } = useNumberFormat();
 
   const batchCreateManyRecords = async ({
@@ -86,7 +86,7 @@ export const useBatchCreateManyRecords = <
         error.message.includes('aborted')
       ) {
         const formattedCreatedRecordsCount = formatNumber(createdRecordsCount);
-        addToast({
+        enqueueToast({
           variant: 'warning',
           children: t`Record creation stopped. ${formattedCreatedRecordsCount} records created.`,
           duration: 5000,

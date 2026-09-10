@@ -41,7 +41,7 @@ const StyledButtonContainer = styled.div`
 
 export const WorkspaceActivation = () => {
   const { t } = useLingui();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { loadCurrentUser } = useLoadCurrentUser();
   const [activateWorkspace, { loading: isActivating }] = useMutation(
@@ -84,11 +84,11 @@ export const WorkspaceActivation = () => {
       setIsCreatingWorkspace(false);
       setOnboardingActivationFailed(true);
 
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
   }, [
     activateWorkspace,
-    addErrorToast,
+    enqueueErrorToast,
     loadCurrentUser,
     setOnboardingActivationFailed,
     setIsAppEffectRedirectEnabled,

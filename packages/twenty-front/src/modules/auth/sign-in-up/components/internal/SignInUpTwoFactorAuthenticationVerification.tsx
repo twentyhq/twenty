@@ -170,7 +170,7 @@ export const SignInUpTOTPVerification = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { getAuthTokensFromOTP } = useAuth();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const navigate = useNavigateApp();
   const { readCaptchaToken } = useReadCaptchaToken();
@@ -185,7 +185,7 @@ export const SignInUpTOTPVerification = () => {
     setIsLoading(true);
     try {
       if (!isCaptchaReady) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Captcha (anti-bot check) is still loading, try again`,
         });
@@ -203,7 +203,7 @@ export const SignInUpTOTPVerification = () => {
     } catch {
       form.setValue('otp', '');
 
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Invalid verification code. Please try again.`,
         dedupeKey: 'invalid-otp-dedupe-key',

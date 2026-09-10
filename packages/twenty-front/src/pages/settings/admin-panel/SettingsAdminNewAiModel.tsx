@@ -97,7 +97,7 @@ export const SettingsAdminNewAiModel = () => {
   const apolloAdminClient = useApolloAdminClient();
   const navigate = useNavigate();
   const { t } = useLingui();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCustomModelId, setIsCustomModelId] = useState(false);
   const {
@@ -307,13 +307,13 @@ export const SettingsAdminNewAiModel = () => {
         ],
       });
 
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Model "${values.label.trim()}" added`,
       });
       navigate(providerDetailPath);
     } catch {
-      addToast({ variant: 'error', children: t`Failed to add model` });
+      enqueueToast({ variant: 'error', children: t`Failed to add model` });
     } finally {
       setIsSubmitting(false);
     }

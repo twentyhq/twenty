@@ -81,8 +81,8 @@ export const useImapSmtpCaldavConnectionForm = ({
   });
 
   const { handleSubmit, formState, watch, reset } = formMethods;
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const { isSubmitting } = formState;
 
   const { connectedAccount, loading: accountLoading } =
@@ -185,7 +185,7 @@ export const useImapSmtpCaldavConnectionForm = ({
           ? t`Connection successfully updated`
           : t`Connection successfully created`;
 
-        addToast({ variant: 'success', children: successMessage });
+        enqueueToast({ variant: 'success', children: successMessage });
 
         const { connectedAccountId: returnedConnectedAccountId } =
           data?.saveImapSmtpCaldavAccount ?? {};
@@ -194,7 +194,7 @@ export const useImapSmtpCaldavConnectionForm = ({
           connectedAccountId: returnedConnectedAccountId,
         });
       } catch (error) {
-        addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+        enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
       }
     },
     [
@@ -202,9 +202,9 @@ export const useImapSmtpCaldavConnectionForm = ({
       saveConnection,
       isEditing,
       connectedAccountId,
-      addToast,
+      enqueueToast,
       navigate,
-      addErrorToast,
+      enqueueErrorToast,
     ],
   );
 

@@ -41,7 +41,7 @@ export const useCalendarEventComposer = ({
   const { createCalendarEvent, loading: isCreating } = useCreateCalendarEvent();
   const { refetchTimelineCalendarEvents } = useRefetchTimelineCalendarEvents();
   const { createCalendarEventTargets } = useCreateCalendarEventTargets();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const store = useStore();
   const isCalendarEventComposerCreating = useAtomStateValue(
     isCalendarEventComposerCreatingState,
@@ -280,7 +280,7 @@ export const useCalendarEventComposer = ({
           // links existed, so an event related only through them stays invisible.
           await refetchTimelineCalendarEvents();
         } else {
-          addToast({
+          enqueueToast({
             variant: 'error',
             children: t`Failed to link the related records to this event`,
           });
@@ -301,7 +301,7 @@ export const useCalendarEventComposer = ({
     dates.endsAt,
     dates.startsAt,
     description,
-    addToast,
+    enqueueToast,
     isFullDay,
     location,
     onCreated,

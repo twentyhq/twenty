@@ -20,7 +20,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 export const SettingsSecuritySsoIdentifyProvider = () => {
   const navigate = useNavigateSettings();
 
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
   const { createSsoIdentityProvider } = useCreateSsoIdentityProvider();
 
   const form = useForm<SettingSecurityNewSsoIdentityFormValues>({
@@ -51,7 +51,7 @@ export const SettingsSecuritySsoIdentifyProvider = () => {
 
       navigate(SettingsPath.Security);
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
   };
 

@@ -28,7 +28,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 export const SettingsLegalDpaNew = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   // DPA operations live on the core (/graphql) schema, not the default /metadata client.
   const apolloCoreClient = useApolloCoreClient();
 
@@ -96,13 +96,13 @@ export const SettingsLegalDpaNew = () => {
         `Twenty-DPA-${result.agreement.templateVersion}-${safeLegalEntityName}.pdf`,
       );
 
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Signed DPA generated and downloaded`,
       });
       navigateSettings(SettingsPath.LegalDpa);
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Could not generate the signed DPA. Please try again.`,
       });

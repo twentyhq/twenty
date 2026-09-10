@@ -10,7 +10,7 @@ import { logError } from '~/utils/logError';
 
 export const useUploadEmailAttachment = () => {
   const { uploadFile: directUploadFile } = useDirectFileUpload();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { t } = useLingui();
 
   const uploadEmailAttachment = async (
@@ -21,7 +21,7 @@ export const useUploadEmailAttachment = () => {
         const fileName = file.name;
         const maxUploadSize = formatFileSize(MAX_ATTACHMENT_SIZE);
 
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`File "${fileName}" exceeds ${maxUploadSize}`,
         });
@@ -40,7 +40,7 @@ export const useUploadEmailAttachment = () => {
 
       const fileName = file.name;
 
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`File "${fileName}" uploaded successfully`,
       });
@@ -51,7 +51,7 @@ export const useUploadEmailAttachment = () => {
 
       const fileNameForError = file.name;
 
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to upload "${fileNameForError}"`,
       });

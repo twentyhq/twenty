@@ -23,7 +23,7 @@ export const useUpdateOneObjectMetadataItem = () => {
 
   const client = useApolloClient();
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { updateInDraft, replaceDraft, applyChanges } =
     useUpdateMetadataStoreDraft();
 
@@ -79,7 +79,7 @@ export const useUpdateOneObjectMetadataItem = () => {
           operationType: CrudOperationType.UPDATE,
         });
       } else {
-        addToast({ variant: 'error', children: t`An error occurred.` });
+        enqueueToast({ variant: 'error', children: t`An error occurred.` });
       }
 
       return {

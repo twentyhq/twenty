@@ -9,9 +9,9 @@ import { getConflictingRecordFromApolloError } from '~/utils/get-conflicting-rec
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 export const useErrorToast = () => {
-  const { add } = useToast();
+  const { enqueueToast } = useToast();
 
-  const addErrorToast = useCallback(
+  const enqueueErrorToast = useCallback(
     (error: unknown, options?: Omit<ToastOptions, 'variant'>) => {
       if (isErrorLike(error) && error.name === 'AbortError') {
         return;
@@ -21,7 +21,7 @@ export const useErrorToast = () => {
         ? getConflictingRecordFromApolloError(error)
         : null;
 
-      return add({
+      return enqueueToast({
         children: isErrorLike(error)
           ? getErrorMessageFromApolloError(error)
           : t`An error occurred.`,
@@ -42,8 +42,8 @@ export const useErrorToast = () => {
         variant: 'error',
       });
     },
-    [add],
+    [enqueueToast],
   );
 
-  return { addErrorToast };
+  return { enqueueErrorToast };
 };

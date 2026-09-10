@@ -37,7 +37,7 @@ export const useCreateCoreWorkflow = () => {
 
   const navigate = useNavigateApp();
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const canCreateCoreWorkflow = canCreateRecordsForObjectMetadataItem({
     objectPermissions,
@@ -61,7 +61,10 @@ export const useCreateCoreWorkflow = () => {
       workspaceWorkflowId = data?.createCoreWorkflow.workspaceWorkflowId;
     } catch (error) {
       logError(error);
-      addToast({ variant: 'error', children: t`Failed to create workflow` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to create workflow`,
+      });
 
       return;
     } finally {
@@ -69,7 +72,10 @@ export const useCreateCoreWorkflow = () => {
     }
 
     if (!isDefined(workspaceWorkflowId)) {
-      addToast({ variant: 'error', children: t`Failed to create workflow` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to create workflow`,
+      });
 
       return;
     }
@@ -78,7 +84,12 @@ export const useCreateCoreWorkflow = () => {
       objectNameSingular: CoreObjectNameSingular.Workflow,
       objectRecordId: workspaceWorkflowId,
     });
-  }, [createCoreWorkflowMutation, navigate, addToast, isCreatingCoreWorkflow]);
+  }, [
+    createCoreWorkflowMutation,
+    navigate,
+    enqueueToast,
+    isCreatingCoreWorkflow,
+  ]);
 
   return { createCoreWorkflow, canCreateCoreWorkflow, isCreatingCoreWorkflow };
 };

@@ -16,7 +16,7 @@ export const SettingsApplicationGeneralSection = ({
   applicationId: string;
   autoUpgrade: boolean;
 }) => {
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const [updateApplication] = useMutation(UpdateApplicationDocument);
 
@@ -29,7 +29,7 @@ export const SettingsApplicationGeneralSection = ({
         },
       });
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to update auto-upgrade setting.`,
       });

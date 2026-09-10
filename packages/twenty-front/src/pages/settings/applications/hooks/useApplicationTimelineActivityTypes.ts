@@ -13,7 +13,7 @@ export const useApplicationTimelineActivityTypes = ({
 }: {
   isInstalledApplication: boolean;
 }) => {
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [mutatingTimelineActivityTypeIds, setMutatingTimelineActivityTypeIds] =
     useState<ReadonlySet<string>>(new Set());
   const { installedTimelineActivityTypes, loading } =
@@ -42,7 +42,7 @@ export const useApplicationTimelineActivityTypes = ({
     try {
       await mutation();
     } catch {
-      addToast({ variant: 'error', children: errorMessage });
+      enqueueToast({ variant: 'error', children: errorMessage });
     } finally {
       setMutatingTimelineActivityTypeIds((currentIds) => {
         const nextIds = new Set(currentIds);

@@ -54,7 +54,7 @@ export const SettingsObjectNewIndex = () => {
   const navigate = useNavigateSettings();
   const workspaceSurface = useWorkspaceSurface();
   const { objectNamePlural = '' } = useParams();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
@@ -116,7 +116,7 @@ export const SettingsObjectNewIndex = () => {
     });
 
     if (result.status === 'successful') {
-      addToast({ variant: 'success', children: t`Index created` });
+      enqueueToast({ variant: 'success', children: t`Index created` });
       navigate(SettingsPath.ObjectDetail, { objectNamePlural });
     }
   };

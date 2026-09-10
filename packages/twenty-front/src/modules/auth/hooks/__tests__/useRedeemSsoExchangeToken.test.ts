@@ -19,15 +19,15 @@ jest.mock('@apollo/client/react', () => ({
   useMutation: () => [mockGetAuthTokensFromSsoExchangeToken],
 }));
 
-const mockAddToast = jest.fn();
-const mockAddErrorToast = jest.fn();
+const mockEnqueueToast = jest.fn();
+const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
-  useToast: () => ({ add: mockAddToast }),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
+  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 
 const renderHooks = () => {
@@ -117,7 +117,7 @@ describe('useRedeemSsoExchangeToken', () => {
 
     await result.current.redeemSsoExchangeToken('sso-exchange-token');
 
-    expect(mockAddToast).toHaveBeenCalledWith({
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
       variant: 'error',
       children: 'Invalid SSO exchange token',
     });

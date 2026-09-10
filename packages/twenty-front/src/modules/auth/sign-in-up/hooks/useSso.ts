@@ -12,7 +12,7 @@ export const useSso = () => {
   const apolloClient = useApolloClient();
   const workspaceInviteHash = useParams().workspaceInviteHash;
 
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
   const { redirect } = useRedirect();
   const redirectToSsoLoginPage = async (identityProviderId: string) => {
     let authorizationUrlForSsoResult;
@@ -27,7 +27,7 @@ export const useSso = () => {
         },
       });
     } catch (error: unknown) {
-      return addErrorToast(error);
+      return enqueueErrorToast(error);
     }
 
     const authorizationURL =

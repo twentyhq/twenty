@@ -19,8 +19,8 @@ export const useSettingsSubdomain = () => {
   const { t } = useLingui();
   const subdomainSchema = getSubdomainValidationSchema();
 
-  const { addErrorToast } = useErrorToast();
-  const { add: addToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { openModal, closeModal } = useModal();
@@ -71,7 +71,7 @@ export const useSettingsSubdomain = () => {
 
           return;
         }
-        addErrorToast(mutationError);
+        enqueueErrorToast(mutationError);
         setIsSubmitting(false);
       },
       onCompleted: async () => {
@@ -82,7 +82,7 @@ export const useSettingsSubdomain = () => {
         ).hostname.replace(currentWorkspace.subdomain, subdomain);
 
         setCurrentWorkspace({ ...currentWorkspace, subdomain });
-        addToast({ variant: 'success', children: t`Subdomain updated` });
+        enqueueToast({ variant: 'success', children: t`Subdomain updated` });
         setIsSubmitting(false);
 
         await redirectToWorkspaceDomain(currentUrl.toString());

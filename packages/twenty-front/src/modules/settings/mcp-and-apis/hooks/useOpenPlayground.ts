@@ -23,12 +23,12 @@ export const useOpenPlayground = () => {
   const [playgroundApiKey, setPlaygroundApiKey] = useAtomState(
     playgroundApiKeyState,
   );
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [generatePlaygroundToken] = useMutation(
     GeneratePlaygroundTokenDocument,
     {
       onError: () => {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Could not open the API playground`,
         });

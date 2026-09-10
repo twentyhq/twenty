@@ -14,7 +14,7 @@ export const DuplicateDashboardSingleRecordCommand = () => {
   const recordId = selectedRecords[0]?.id;
   const { duplicateDashboard } = useDuplicateDashboard();
   const navigate = useNavigateApp();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { t } = useLingui();
 
   if (!isDefined(recordId)) {
@@ -25,7 +25,7 @@ export const DuplicateDashboardSingleRecordCommand = () => {
     const result = await duplicateDashboard(recordId);
 
     if (isDefined(result) && isNonEmptyString(result.id)) {
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Dashboard duplicated successfully`,
       });

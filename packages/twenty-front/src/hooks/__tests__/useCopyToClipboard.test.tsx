@@ -4,15 +4,15 @@ import { act, renderHook } from '@testing-library/react';
 
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
-const mockAddToast = jest.fn();
-const mockAddErrorToast = jest.fn();
+const mockEnqueueToast = jest.fn();
+const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
-  useToast: () => ({ add: mockAddToast }),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
+  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 
 const mockWriteText = jest.fn();
@@ -50,7 +50,7 @@ describe('useCopyToClipboard', () => {
       });
 
       expect(mockWriteText).toHaveBeenCalledWith('hello clipboard');
-      expect(mockAddToast).toHaveBeenCalledWith(
+      expect(mockEnqueueToast).toHaveBeenCalledWith(
         expect.objectContaining({
           variant: 'success',
           children: 'Copied to clipboard',
@@ -65,7 +65,7 @@ describe('useCopyToClipboard', () => {
         await result.current.copyToClipboard('hello', 'Email copied');
       });
 
-      expect(mockAddToast).toHaveBeenCalledWith(
+      expect(mockEnqueueToast).toHaveBeenCalledWith(
         expect.objectContaining({
           variant: 'success',
           children: 'Email copied',
@@ -85,7 +85,7 @@ describe('useCopyToClipboard', () => {
       });
 
       expect(mockWriteText).toHaveBeenCalledWith('hello clipboard');
-      expect(mockAddToast).not.toHaveBeenCalled();
+      expect(mockEnqueueToast).not.toHaveBeenCalled();
     });
 
     it('should enqueue an error toast when the write fails', async () => {
@@ -97,7 +97,7 @@ describe('useCopyToClipboard', () => {
         await result.current.copyToClipboardWithoutSuccessToast('hello');
       });
 
-      expect(mockAddToast).toHaveBeenCalledWith(
+      expect(mockEnqueueToast).toHaveBeenCalledWith(
         expect.objectContaining({
           variant: 'error',
           children: "Couldn't copy to clipboard",
@@ -115,7 +115,7 @@ describe('useCopyToClipboard', () => {
       });
 
       expect(mockWriteText).not.toHaveBeenCalled();
-      expect(mockAddToast).toHaveBeenCalledWith(
+      expect(mockEnqueueToast).toHaveBeenCalledWith(
         expect.objectContaining({ variant: 'error' }),
       );
     });

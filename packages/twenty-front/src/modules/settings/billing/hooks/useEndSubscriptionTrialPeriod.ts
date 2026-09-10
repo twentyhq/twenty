@@ -16,7 +16,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useEndSubscriptionTrialPeriod = () => {
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [endSubscriptionTrialPeriod] = useMutation(
     EndSubscriptionTrialPeriodDocument,
     {
@@ -65,7 +65,7 @@ export const useEndSubscriptionTrialPeriod = () => {
       }
     }
 
-    addToast({
+    enqueueToast({
       variant: 'error',
       children: t`No payment method found. Please update your billing details.`,
     });
@@ -79,7 +79,10 @@ export const useEndSubscriptionTrialPeriod = () => {
       setIsLoading(true);
 
       if (options?.skipPaymentMethodRedirect === true) {
-        addToast({ variant: 'info', children: t`Activating subscription...` });
+        enqueueToast({
+          variant: 'info',
+          children: t`Activating subscription...`,
+        });
       }
 
       const finalRedirectPath =
@@ -150,11 +153,14 @@ export const useEndSubscriptionTrialPeriod = () => {
           : previousWorkspace,
       );
 
-      addToast({ variant: 'success', children: t`Subscription activated.` });
+      enqueueToast({
+        variant: 'success',
+        children: t`Subscription activated.`,
+      });
 
       return { success: true, hasPaymentMethod: true };
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Error while ending trial period. Please contact Twenty team.`,
       });

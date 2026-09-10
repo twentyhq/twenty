@@ -31,14 +31,14 @@ const hasErrorCode = (
 };
 
 export const PromiseRejectionEffect = () => {
-  const { addErrorToast } = useErrorToast();
-  const { add: addToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
 
   const handlePromiseRejection = useCallback(
     async (event: PromiseRejectionEvent) => {
       const error = event.reason;
       if (isApolloError(error)) {
-        addErrorToast(error);
+        enqueueErrorToast(error);
         return; // already handled by apolloLink
       }
 
@@ -52,9 +52,9 @@ export const PromiseRejectionEffect = () => {
 
       if (!isAbortError && !isViteStaleChunkLazyLoadingError) {
         if (error instanceof Error) {
-          addToast({ variant: 'error', children: error.message });
+          enqueueToast({ variant: 'error', children: error.message });
         } else {
-          addToast({ variant: 'error', children: t`An error occurred.` });
+          enqueueToast({ variant: 'error', children: t`An error occurred.` });
         }
       }
 
@@ -73,7 +73,7 @@ export const PromiseRejectionEffect = () => {
         console.error('Failed to capture exception with Sentry:', sentryError);
       }
     },
-    [addErrorToast, addToast],
+    [enqueueErrorToast, enqueueToast],
   );
 
   useEffect(() => {

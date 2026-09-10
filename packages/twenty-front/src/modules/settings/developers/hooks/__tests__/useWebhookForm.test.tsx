@@ -18,15 +18,15 @@ jest.mock('~/hooks/useNavigateSettings', () => ({
   useNavigateSettings: () => mockNavigateSettings,
 }));
 
-const mockAddToast = jest.fn();
-const mockAddErrorToast = jest.fn();
+const mockEnqueueToast = jest.fn();
+const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
-  useToast: () => ({ add: mockAddToast }),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
+  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 
 const createMockWebhookData = (overrides = {}) => ({
@@ -175,7 +175,7 @@ describe('useWebhookForm', () => {
         await result.current.handleSave(formData);
       });
 
-      expect(mockAddToast).toHaveBeenCalledWith({
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
         variant: 'success',
         children: 'Webhook https://test.com/webhook created successfully',
       });
@@ -221,7 +221,7 @@ describe('useWebhookForm', () => {
         await result.current.handleSave(formData);
       });
 
-      expect(mockAddErrorToast).toHaveBeenCalledWith(expect.any(Error));
+      expect(mockEnqueueErrorToast).toHaveBeenCalledWith(expect.any(Error));
     });
 
     it('should clean and format operations correctly', async () => {
@@ -256,7 +256,7 @@ describe('useWebhookForm', () => {
         await result.current.handleSave(formData);
       });
 
-      expect(mockAddToast).toHaveBeenCalledWith({
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
         variant: 'success',
         children: 'Webhook https://test.com/webhook created successfully',
       });
@@ -315,7 +315,7 @@ describe('useWebhookForm', () => {
         await result.current.handleSave(formData);
       });
 
-      expect(mockAddToast).toHaveBeenCalledWith({
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
         variant: 'success',
         children: 'Webhook https://updated.com/webhook updated successfully',
       });
@@ -369,7 +369,7 @@ describe('useWebhookForm', () => {
         await result.current.handleSave(formData);
       });
 
-      expect(mockAddErrorToast).toHaveBeenCalledWith(expect.any(Error));
+      expect(mockEnqueueErrorToast).toHaveBeenCalledWith(expect.any(Error));
     });
   });
 
@@ -441,7 +441,7 @@ describe('useWebhookForm', () => {
         await result.current.handleDelete();
       });
 
-      expect(mockAddToast).toHaveBeenCalledWith({
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
         variant: 'success',
         children: 'Webhook deleted successfully',
       });
@@ -457,7 +457,7 @@ describe('useWebhookForm', () => {
         await result.current.handleDelete();
       });
 
-      expect(mockAddToast).toHaveBeenCalledWith({
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
         variant: 'error',
         children: 'Webhook ID is required for deletion',
       });
@@ -495,7 +495,7 @@ describe('useWebhookForm', () => {
         await result.current.handleDelete();
       });
 
-      expect(mockAddErrorToast).toHaveBeenCalledWith(expect.any(Error));
+      expect(mockEnqueueErrorToast).toHaveBeenCalledWith(expect.any(Error));
     });
   });
 

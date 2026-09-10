@@ -45,7 +45,7 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
   const locationRef = useRef(location);
   locationRef.current = location;
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const apolloClient = useMemo(() => {
     apolloRef.current = new ApolloFactory({
@@ -88,14 +88,14 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
         }
       },
       onAppVersionMismatch: (message) => {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: message,
           dedupeKey: 'app-version-mismatch',
         });
       },
       onPayloadTooLarge: (message) => {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: message,
           dedupeKey: 'payload-too-large',
@@ -113,7 +113,7 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
     setCurrentWorkspaceMember,
     setCurrentWorkspace,
     setReturnToPath,
-    addToast,
+    enqueueToast,
   ]);
 
   useUpdateEffect(() => {

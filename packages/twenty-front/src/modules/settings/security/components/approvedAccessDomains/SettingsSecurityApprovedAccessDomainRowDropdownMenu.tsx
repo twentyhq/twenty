@@ -27,7 +27,7 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
 
   const setApprovedAccessDomains = useSetAtomState(approvedAccessDomainsState);
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -51,7 +51,7 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
       },
     });
     if (isDefined(result.error)) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Could not delete approved access domain`,
         duration: 2000,

@@ -27,7 +27,7 @@ export const useUpdateWorkflowVersionTrigger = (instanceId?: string) => {
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow(instanceId);
@@ -61,7 +61,7 @@ export const useUpdateWorkflowVersionTrigger = (instanceId?: string) => {
         },
       },
       onError: (error) => {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       },
     });
 

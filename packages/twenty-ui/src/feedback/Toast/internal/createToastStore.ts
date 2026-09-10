@@ -58,7 +58,7 @@ export const createToastStore = ({
     },
     getSnapshot: () => toasts,
     getServerSnapshot: () => emptyToasts,
-    add: (options: ToastOptions) => {
+    enqueueToast: (options: ToastOptions) => {
       const visibleToasts = toasts.filter(isVisibleToast);
       const existingToast = visibleToasts.find(
         ({ notification }) =>

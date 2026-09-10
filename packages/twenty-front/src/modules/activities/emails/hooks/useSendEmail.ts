@@ -38,7 +38,7 @@ export const useSendEmail = () => {
     SendEmailMutationVariables
   >(SEND_EMAIL);
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const sendEmail = useCallback(
     async (params: SendEmailParams): Promise<SendEmailResult> => {
@@ -61,7 +61,7 @@ export const useSendEmail = () => {
         });
 
         if (result.data?.sendEmail.success) {
-          addToast({
+          enqueueToast({
             variant: 'success',
             children: t`Email sent successfully`,
           });
@@ -81,19 +81,19 @@ export const useSendEmail = () => {
           };
         }
 
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: result.data?.sendEmail.error ?? t`Failed to send email`,
         });
 
         return { success: false, messageThreadId: null };
       } catch {
-        addToast({ variant: 'error', children: t`Failed to send email` });
+        enqueueToast({ variant: 'error', children: t`Failed to send email` });
 
         return { success: false, messageThreadId: null };
       }
     },
-    [sendEmailMutation, addToast, apolloCoreClient],
+    [sendEmailMutation, enqueueToast, apolloCoreClient],
   );
 
   return { sendEmail, loading };

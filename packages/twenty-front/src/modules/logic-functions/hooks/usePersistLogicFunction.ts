@@ -24,7 +24,7 @@ import { getOperationName } from '~/utils/getOperationName';
 
 export const usePersistLogicFunction = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const [createLogicFunctionMutation] = useMutation<
     CreateOneLogicFunctionMutation,
@@ -67,7 +67,7 @@ export const usePersistLogicFunction = () => {
             operationType: CrudOperationType.CREATE,
           });
         } else {
-          addToast({ variant: 'error', children: t`An error occurred.` });
+          enqueueToast({ variant: 'error', children: t`An error occurred.` });
         }
 
         return {
@@ -76,7 +76,7 @@ export const usePersistLogicFunction = () => {
         };
       }
     },
-    [createLogicFunctionMutation, handleMetadataError, addToast],
+    [createLogicFunctionMutation, handleMetadataError, enqueueToast],
   );
 
   const updateLogicFunction = useCallback(
@@ -103,7 +103,7 @@ export const usePersistLogicFunction = () => {
             operationType: CrudOperationType.UPDATE,
           });
         } else {
-          addToast({ variant: 'error', children: t`An error occurred.` });
+          enqueueToast({ variant: 'error', children: t`An error occurred.` });
         }
 
         return {
@@ -112,7 +112,7 @@ export const usePersistLogicFunction = () => {
         };
       }
     },
-    [updateLogicFunctionSourceMutation, handleMetadataError, addToast],
+    [updateLogicFunctionSourceMutation, handleMetadataError, enqueueToast],
   );
 
   const deleteLogicFunction = useCallback(
@@ -143,7 +143,7 @@ export const usePersistLogicFunction = () => {
             operationType: CrudOperationType.DELETE,
           });
         } else {
-          addToast({ variant: 'error', children: t`An error occurred.` });
+          enqueueToast({ variant: 'error', children: t`An error occurred.` });
         }
 
         return {
@@ -152,7 +152,7 @@ export const usePersistLogicFunction = () => {
         };
       }
     },
-    [deleteLogicFunctionMutation, handleMetadataError, addToast],
+    [deleteLogicFunctionMutation, handleMetadataError, enqueueToast],
   );
 
   return {

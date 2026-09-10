@@ -6,7 +6,7 @@ import { useToast } from 'twenty-ui/feedback';
 import { UpgradeApplicationDocument } from '~/generated-metadata/graphql';
 
 export const useUpgradeApplication = () => {
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [upgradeApplicationMutation] = useMutation(UpgradeApplicationDocument);
   const [isUpgrading, setIsUpgrading] = useState(false);
 
@@ -22,7 +22,7 @@ export const useUpgradeApplication = () => {
       });
 
       if (isDefined(result.data)) {
-        addToast({
+        enqueueToast({
           variant: 'success',
           children: t`Application upgraded successfully.`,
         });
@@ -34,7 +34,7 @@ export const useUpgradeApplication = () => {
     } catch (error) {
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: graphqlMessage ?? t`Failed to upgrade the application.`,
       });

@@ -14,7 +14,7 @@ import {
 export const useCreditUpgradeAction = () => {
   const nextPrice = useGetNextResourceCreditPrice();
   const { formatNumber } = useNumberFormat();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const { applyCurrentWorkspaceBillingUpdate } =
     useApplyCurrentWorkspaceBillingUpdate();
@@ -45,7 +45,7 @@ export const useCreditUpgradeAction = () => {
     }
 
     try {
-      addToast({ variant: 'info', children: t`Upgrading subscription...` });
+      enqueueToast({ variant: 'info', children: t`Upgrading subscription...` });
 
       const { data } = await setResourceCreditSubscriptionPrice({
         variables: { priceId: nextPrice.stripePriceId },
@@ -69,9 +69,9 @@ export const useCreditUpgradeAction = () => {
         },
       );
 
-      addToast({ variant: 'success', children: t`Credit plan upgraded.` });
+      enqueueToast({ variant: 'success', children: t`Credit plan upgraded.` });
     } catch (error) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to upgrade credit plan.`,
       });

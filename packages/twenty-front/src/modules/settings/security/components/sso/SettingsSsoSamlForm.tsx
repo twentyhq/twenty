@@ -51,7 +51,7 @@ const StyledButtonCopy = styled.div`
 
 export const SettingsSsoSamlForm = () => {
   const { theme } = useContext(ThemeContext);
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { setValue, getValues, watch, trigger } = useFormContext();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
@@ -62,7 +62,7 @@ export const SettingsSsoSamlForm = () => {
       const samlMetadataParsed = parseSamlMetadataFromXmlFile(text);
       e.target.value = '';
       if (!samlMetadataParsed.success) {
-        return addToast({
+        return enqueueToast({
           variant: 'error',
           children: t`Invalid file: ${samlMetadataParsed.reason}`,
           duration: 5000,
@@ -99,7 +99,7 @@ export const SettingsSsoSamlForm = () => {
       `${REACT_APP_SERVER_BASE_URL}/auth/saml/metadata/${getValues('id')}`,
     );
     if (!response.ok) {
-      return addToast({
+      return enqueueToast({
         variant: 'error',
         children: t`Metadata file generation failed`,
         duration: 2000,

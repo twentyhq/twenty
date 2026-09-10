@@ -36,7 +36,7 @@ export const EmailRecipientChipMenuContent = ({
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
   const { copyToClipboard } = useCopyToClipboard();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const { createOneRecord: createPerson } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Person,
@@ -65,7 +65,7 @@ export const EmailRecipientChipMenuContent = ({
     });
 
     if (isDefined(createdPerson)) {
-      addToast({ variant: 'success', children: t`Person created` });
+      enqueueToast({ variant: 'success', children: t`Person created` });
     }
   };
 

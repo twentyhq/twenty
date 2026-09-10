@@ -41,7 +41,7 @@ export const usePerformViewEntityApiPersistOperation = (
     useUpdateMetadataStoreDraft();
 
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const handlePersistError = useCallback(
     (error: unknown, operationType: CrudOperationType) => {
@@ -51,10 +51,10 @@ export const usePerformViewEntityApiPersistOperation = (
           operationType,
         });
       } else {
-        addToast({ variant: 'error', children: t`An error occurred.` });
+        enqueueToast({ variant: 'error', children: t`An error occurred.` });
       }
     },
-    [handleMetadataError, addToast, metadataName],
+    [handleMetadataError, enqueueToast, metadataName],
   );
 
   const performViewEntityApiPersistOperation = useCallback(

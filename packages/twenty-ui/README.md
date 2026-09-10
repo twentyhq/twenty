@@ -68,10 +68,10 @@ Wrap notification producers in `ToastProvider` and mount one `Toaster` inside it
 import { ToastProvider, Toaster, useToast } from 'twenty-ui/feedback';
 
 export const SaveButton = () => {
-  const { add } = useToast();
+  const { enqueueToast } = useToast();
 
   return (
-    <button onClick={() => add({ children: 'Saved', variant: 'success' })}>
+    <button onClick={() => enqueueToast({ children: 'Saved', variant: 'success' })}>
       Save
     </button>
   );
@@ -85,7 +85,7 @@ export const App = () => (
 );
 ```
 
-`add` accepts the card's `ToastProps` plus an optional `dedupeKey` and returns the toast ID. A matching ID or deduplication key on a visible toast returns the existing ID without adding another toast; toasts that are animating out do not count, and adding an ID that is still animating out replaces that card with a fresh one. Use `close(id)` to dismiss one notification or `close()` to dismiss all. `onClose` runs once when a toast is dismissed, expires, or is evicted.
+`enqueueToast` accepts the card's `ToastProps` plus an optional `dedupeKey` and returns the toast ID. A matching ID or deduplication key on a visible toast returns the existing ID without adding another toast; toasts that are animating out do not count, and adding an ID that is still animating out replaces that card with a fresh one. Use `close(id)` to dismiss one notification or `close()` to dismiss all. `onClose` runs once when a toast is dismissed, expires, or is evicted.
 
 The provider keeps the newest three notifications by default; pass a positive integer `limit` to change the capacity. The value is read once when the provider mounts. Keep the provider above route-specific renderers to preserve the queue when a `Toaster` remounts. The card's countdown starts when rendered and restarts on remount, including when a toast is restored. Each provider owns an independent queue.
 

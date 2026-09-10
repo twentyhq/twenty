@@ -30,8 +30,8 @@ export const useSendMessageCampaign = () => {
     SendMessageCampaignMutationVariables
   >(SEND_MESSAGE_CAMPAIGN);
 
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { formatNumber } = useNumberFormat();
   const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
@@ -50,7 +50,10 @@ export const useSendMessageCampaign = () => {
       const queued = result.data?.sendMessageCampaign;
 
       if (!queued) {
-        addToast({ variant: 'error', children: t`Failed to send campaign` });
+        enqueueToast({
+          variant: 'error',
+          children: t`Failed to send campaign`,
+        });
 
         return false;
       }
@@ -85,14 +88,14 @@ export const useSendMessageCampaign = () => {
           localeCatalog,
         });
 
-        addToast({
+        enqueueToast({
           variant: 'success',
           children: wasAlreadyScheduled
             ? t`Campaign moved to ${sendTime}`
             : t`Campaign scheduled for ${sendTime}`,
         });
       } else if (queuedCount === 0) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`No recipients to send to (${skipReasons})`,
         });
@@ -102,7 +105,7 @@ export const useSendMessageCampaign = () => {
           other: `Campaign queued to ${formatNumber(queuedCount)} recipients`,
         });
 
-        addToast({
+        enqueueToast({
           variant: 'success',
           children:
             skipReasons.length > 0
@@ -113,7 +116,7 @@ export const useSendMessageCampaign = () => {
 
       return true;
     } catch (error) {
-      addErrorToast(error);
+      enqueueErrorToast(error);
 
       return false;
     }

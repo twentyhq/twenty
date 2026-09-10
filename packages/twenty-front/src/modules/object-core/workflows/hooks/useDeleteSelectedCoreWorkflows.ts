@@ -42,7 +42,7 @@ export const useDeleteSelectedCoreWorkflows = () => {
   const { removeNavigationMenuItemsByTargetRecordIds } =
     useRemoveNavigationMenuItemByTargetRecordId();
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const [deleteCoreWorkflowsMutation] = useMutation<
     DeleteCoreWorkflowsMutation,
@@ -71,13 +71,19 @@ export const useDeleteSelectedCoreWorkflows = () => {
       );
     } catch (error) {
       logError(error);
-      addToast({ variant: 'error', children: t`Failed to delete workflows` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to delete workflows`,
+      });
 
       return;
     }
 
     if (!isNonEmptyArray(deletedWorkspaceWorkflowIds)) {
-      addToast({ variant: 'error', children: t`No workflows were deleted` });
+      enqueueToast({
+        variant: 'error',
+        children: t`No workflows were deleted`,
+      });
 
       return;
     }

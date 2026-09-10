@@ -146,7 +146,7 @@ export const useFrontComponentExecutionContext = ({
   const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
   const { getIcon } = useIcons();
   const unmountEngineCommand = useUnmountCommand();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { copyToClipboardWithoutSuccessToast } = useCopyToClipboard();
   const { uploadFile: uploadFileToFilesField } = useDirectFileUpload();
@@ -401,7 +401,7 @@ export const useFrontComponentExecutionContext = ({
       detailedMessage,
       dedupeKey,
     }: EnqueueSnackbarParams) => {
-      addToast({
+      enqueueToast({
         children: message,
         variant,
         duration,

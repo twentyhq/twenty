@@ -10,7 +10,7 @@ import { useToast } from 'twenty-ui/feedback';
 import { InitiateOtpProvisioningForAuthenticatedUserDocument } from '~/generated-metadata/graphql';
 
 export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [qrCode, setQrCode] = useAtomState(qrCodeState);
   const currentUser = useAtomStateValue(currentUserState);
 
@@ -42,7 +42,7 @@ export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
             .initiateOTPProvisioningForAuthenticatedUser.uri,
         );
       } catch {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Two factor authentication provisioning failed.`,
           dedupeKey: 'two-factor-authentication-provisioning-initiation-failed',
@@ -52,7 +52,7 @@ export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
 
     handleTwoFactorAuthenticationProvisioningInitiation();
   }, [
-    addToast,
+    enqueueToast,
     initiateOTPProvisioningForAuthenticatedUser,
     t,
     setQrCode,

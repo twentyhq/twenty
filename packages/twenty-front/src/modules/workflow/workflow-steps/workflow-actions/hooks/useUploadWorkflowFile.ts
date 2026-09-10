@@ -10,7 +10,7 @@ import { logError } from '~/utils/logError';
 
 export const useUploadWorkflowFile = () => {
   const { uploadFile: directUploadFile } = useDirectFileUpload();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const uploadWorkflowFile = async (
     file: File,
@@ -19,7 +19,7 @@ export const useUploadWorkflowFile = () => {
       if (file.size > MAX_ATTACHMENT_SIZE) {
         const fileName = file.name;
         const maxUploadSize = formatFileSize(MAX_ATTACHMENT_SIZE);
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`File "${fileName}" exceeds ${maxUploadSize}`,
         });
@@ -38,7 +38,7 @@ export const useUploadWorkflowFile = () => {
       };
 
       const fileName = file.name;
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`File "${fileName}" uploaded successfully`,
       });
@@ -48,7 +48,7 @@ export const useUploadWorkflowFile = () => {
       logError(`Failed to upload workflow file "${file.name}": ${error}`);
 
       const fileNameForError = file.name;
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to upload "${fileNameForError}"`,
       });

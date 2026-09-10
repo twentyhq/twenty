@@ -48,7 +48,7 @@ export const SettingsAdminNewAiProvider = () => {
   const apolloAdminClient = useApolloAdminClient();
   const navigate = useNavigate();
   const { t } = useLingui();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedModelsDevId, setSelectedModelsDevId] = useState<string | null>(
     null,
@@ -223,13 +223,13 @@ export const SettingsAdminNewAiProvider = () => {
         ],
       });
 
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Provider "${values.label.trim()}" added`,
       });
       navigate(AI_ADMIN_PATH);
     } catch {
-      addToast({ variant: 'error', children: t`Failed to add provider` });
+      enqueueToast({ variant: 'error', children: t`Failed to add provider` });
     } finally {
       setIsSubmitting(false);
     }

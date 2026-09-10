@@ -56,8 +56,8 @@ export const useAgentChat = (
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticUnarchive } = useOptimisticallyUnarchiveOnSend();
   const apolloClient = useApolloClient();
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
   const store = useStore();
@@ -86,7 +86,7 @@ export const useAgentChat = (
     }
 
     if (enabledModels.length === 0) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`No AI models are enabled in this workspace.`,
       });
@@ -274,7 +274,7 @@ export const useAgentChat = (
     setAgentChatDraftsByThreadId,
     modelIdForRequest,
     enabledModels,
-    addToast,
+    enqueueToast,
     setCurrentAiChatThread,
     apolloClient,
     applyOptimisticUnarchive,
@@ -306,9 +306,9 @@ export const useAgentChat = (
         variables: { threadId },
       });
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
-  }, [store, apolloClient, addErrorToast]);
+  }, [store, apolloClient, enqueueErrorToast]);
 
   useListenToBrowserEvent({
     eventName: AGENT_CHAT_STOP_EVENT_NAME,

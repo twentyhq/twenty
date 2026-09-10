@@ -44,7 +44,7 @@ const StyledCommandValue = styled.span`
 
 export const SettingsAdminInstanceStatus = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
@@ -80,9 +80,12 @@ export const SettingsAdminInstanceStatus = () => {
     try {
       await refreshUpgradeStatus();
       await refetch();
-      addToast({ variant: 'success', children: t`Upgrade status refreshed` });
+      enqueueToast({
+        variant: 'success',
+        children: t`Upgrade status refreshed`,
+      });
     } catch (error) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children:
           error instanceof Error

@@ -136,8 +136,8 @@ export const SettingsEnterprise = ({
   const [isReleasing, setIsReleasing] = useState(false);
   const [isBoundToAnotherServer, setIsBoundToAnotherServer] = useState(false);
   const { openModal } = useModal();
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const { loadCurrentUser } = useLoadCurrentUser();
 
   const apolloAdminClient = useApolloAdminClient();
@@ -262,7 +262,7 @@ export const SettingsEnterprise = ({
       });
 
       if (result.data?.setEnterpriseKey.isValid === true) {
-        addToast({
+        enqueueToast({
           variant: 'success',
           children: t`Enterprise license activated successfully`,
         });
@@ -272,7 +272,7 @@ export const SettingsEnterprise = ({
         setSubscriptionStatus(statusData?.enterpriseSubscriptionStatus ?? null);
         await loadCurrentUser();
       } else {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Failed to activate enterprise license. Please check your key or contact support.`,
         });
@@ -292,13 +292,13 @@ export const SettingsEnterprise = ({
           isGraphqlErrorOfType(error, 'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER'),
         );
         await loadCurrentUser();
-        addErrorToast(error, { duration: 10000 });
+        enqueueErrorToast(error, { duration: 10000 });
       } else if (
         isGraphqlErrorOfType(error, 'CONFIG_VARIABLES_IN_DB_DISABLED')
       ) {
-        addErrorToast(error, { duration: 10000 });
+        enqueueErrorToast(error, { duration: 10000 });
       } else {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Error activating enterprise license`,
         });
@@ -309,8 +309,8 @@ export const SettingsEnterprise = ({
   }, [
     enterpriseKey,
     setEnterpriseKeyMutation,
-    addToast,
-    addErrorToast,
+    enqueueToast,
+    enqueueErrorToast,
     fetchSubscriptionStatus,
     loadCurrentUser,
     t,
@@ -331,15 +331,18 @@ export const SettingsEnterprise = ({
       if (portalUrl !== null && portalUrl !== undefined) {
         window.open(portalUrl, '_blank', 'noopener');
       } else {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Could not open billing portal. Please check your enterprise key is present, or contact support.`,
         });
       }
     } catch {
-      addToast({ variant: 'error', children: t`Error opening billing portal` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Error opening billing portal`,
+      });
     }
-  }, [fetchPortalSession, addToast, t, returnUrlPath]);
+  }, [fetchPortalSession, enqueueToast, t, returnUrlPath]);
 
   const openCheckoutModal = useCallback(() => {
     openModal(ENTERPRISE_PLAN_MODAL_ID);
@@ -353,13 +356,13 @@ export const SettingsEnterprise = ({
 
       if (data?.refreshEnterpriseValidityToken === true) {
         setIsBoundToAnotherServer(false);
-        addToast({
+        enqueueToast({
           variant: 'success',
           children: t`Validity token refreshed successfully`,
         });
         await loadCurrentUser();
       } else {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Could not refresh validity token. Please contact support.`,
         });
@@ -370,7 +373,7 @@ export const SettingsEnterprise = ({
       ) {
         setIsBoundToAnotherServer(true);
         await loadCurrentUser();
-        addErrorToast(error, { duration: 10000 });
+        enqueueErrorToast(error, { duration: 10000 });
       } else if (
         isGraphqlErrorOfType(error, 'ENTERPRISE_MISSING_SERVER_ID') ||
         isGraphqlErrorOfType(
@@ -380,9 +383,9 @@ export const SettingsEnterprise = ({
         isGraphqlErrorOfType(error, 'ENTERPRISE_DEV_SLOT_IN_USE') ||
         isGraphqlErrorOfType(error, 'ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED')
       ) {
-        addErrorToast(error, { duration: 10000 });
+        enqueueErrorToast(error, { duration: 10000 });
       } else {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Error refreshing validity token. Please contact support.`,
         });
@@ -392,8 +395,8 @@ export const SettingsEnterprise = ({
     }
   }, [
     refreshValidityTokenMutation,
-    addToast,
-    addErrorToast,
+    enqueueToast,
+    enqueueErrorToast,
     loadCurrentUser,
     t,
   ]);
@@ -406,7 +409,7 @@ export const SettingsEnterprise = ({
 
       if (result.data?.releaseEnterpriseServerBinding.isValid === true) {
         setIsBoundToAnotherServer(false);
-        addToast({
+        enqueueToast({
           variant: 'success',
           children: t`Enterprise key transferred to this server`,
         });
@@ -415,19 +418,19 @@ export const SettingsEnterprise = ({
         setSubscriptionStatus(statusData?.enterpriseSubscriptionStatus ?? null);
         await loadCurrentUser();
       } else {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Could not transfer the enterprise key. Please contact support.`,
         });
       }
     } catch (error) {
       if (isGraphqlErrorOfType(error, 'ENTERPRISE_RELEASE_RATE_LIMITED')) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later or contact support.`,
         });
       } else {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Error transferring the enterprise key`,
         });
@@ -437,7 +440,7 @@ export const SettingsEnterprise = ({
     }
   }, [
     releaseServerBindingMutation,
-    addToast,
+    enqueueToast,
     fetchSubscriptionStatus,
     loadCurrentUser,
     t,
@@ -461,7 +464,7 @@ export const SettingsEnterprise = ({
         setIsInstanceTypeFromDb(true);
         await loadCurrentUser();
 
-        addToast({
+        enqueueToast({
           variant: 'success',
           children:
             nextInstanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT
@@ -473,7 +476,7 @@ export const SettingsEnterprise = ({
         tokenRefreshSuccess = true;
       } catch {
         if (!instanceUpdateSuccess) {
-          addToast({
+          enqueueToast({
             variant: 'error',
             children: t`Could not update the instance type`,
           });
@@ -489,12 +492,12 @@ export const SettingsEnterprise = ({
             setInstanceType(previousInstanceType);
             setIsInstanceTypeFromDb(previousIsInstanceTypeFromDb);
             await loadCurrentUser();
-            addToast({
+            enqueueToast({
               variant: 'error',
               children: t`Could not refresh validity token - reverted the instance type change.`,
             });
           } catch {
-            addToast({
+            enqueueToast({
               variant: 'error',
               children: t`Could not refresh validity token and could not revert the instance type change.`,
             });
@@ -510,7 +513,7 @@ export const SettingsEnterprise = ({
       isInstanceTypeFromDb,
       refreshValidityTokenMutation,
       loadCurrentUser,
-      addToast,
+      enqueueToast,
       t,
     ],
   );

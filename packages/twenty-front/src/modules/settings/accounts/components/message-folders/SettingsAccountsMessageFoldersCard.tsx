@@ -64,7 +64,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
   const { t } = useLingui();
   const [search, setSearch] = useState('');
 
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const settingsAccountsSelectedMessageChannel = useAtomStateValue(
     settingsAccountsSelectedMessageChannelState,
@@ -101,7 +101,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
         isSynced: targetSyncState,
       });
     } catch (error) {
-      addErrorToast(error);
+      enqueueErrorToast(error);
     }
   };
 
@@ -114,7 +114,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
         isSynced,
       });
     } catch (error) {
-      addErrorToast(error);
+      enqueueErrorToast(error);
     }
   };
 

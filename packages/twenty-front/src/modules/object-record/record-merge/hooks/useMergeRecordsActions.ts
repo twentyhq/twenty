@@ -29,7 +29,7 @@ export const useMergeRecordsActions = ({
   const setIsMergeInProgress = useSetAtomState(isMergeInProgressState);
 
   const { t } = useLingui();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
   const navigate = useNavigateApp();
@@ -48,7 +48,7 @@ export const useMergeRecordsActions = ({
 
       const recordCount = selectedRecords.length;
 
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Successfully merged ${recordCount} records`,
       });
@@ -59,7 +59,7 @@ export const useMergeRecordsActions = ({
         objectRecordId: mergedRecord.id,
       });
     } catch (error) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children:
           error instanceof Error

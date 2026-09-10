@@ -40,7 +40,7 @@ const StyledButtonContainer = styled.div`
 export const SettingsProfileDevicesSection = () => {
   const { t } = useLingui();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const { data, loading, error, refetch } = useQuery(
     CurrentUserSessionsDocument,
@@ -66,13 +66,13 @@ export const SettingsProfileDevicesSection = () => {
   const handleRevokeAllOtherSessions = async () => {
     try {
       await revokeAllOtherUserSessions();
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Logged out all other devices`,
       });
       await refetch();
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to log out other devices`,
       });

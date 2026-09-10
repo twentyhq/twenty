@@ -32,7 +32,7 @@ export const usePerformMergePreview = ({
   const { selectedRecords } = useMergeRecordsSelectedRecords();
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   useEffect(() => {
     const fetchPreview = async () => {
@@ -65,7 +65,7 @@ export const usePerformMergePreview = ({
         upsertRecordsInStore({ partialRecords: [transformPreviewRecord] });
       } catch (error) {
         setMergePreviewRecord(null);
-        addErrorToast(error as ErrorLike);
+        enqueueErrorToast(error as ErrorLike);
       } finally {
         setIsGeneratingPreview(false);
         setIsInitialized(true);
@@ -83,7 +83,7 @@ export const usePerformMergePreview = ({
     mergeManyRecords,
     upsertRecordsInStore,
     isInitialized,
-    addErrorToast,
+    enqueueErrorToast,
   ]);
 
   return {

@@ -20,7 +20,7 @@ export const usePersistedCampaignDraft = <TDraft extends object>({
   toUpdateOneRecordInput,
 }: UsePersistedCampaignDraftArgs<TDraft>) => {
   const { updateOneRecord } = useUpdateOneRecord();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const { draft, updateDraft, flush, draftResyncKey } = useRecordSeededDraft({
     upstreamDraft: initialDraft(),
@@ -30,7 +30,7 @@ export const usePersistedCampaignDraft = <TDraft extends object>({
         idToUpdate: campaignId,
         updateOneRecordInput: toUpdateOneRecordInput(nextDraft),
       }).catch(() =>
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Failed to save the campaign`,
         }),

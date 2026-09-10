@@ -5,15 +5,15 @@ import { type ReactNode } from 'react';
 import { SEND_EMAIL } from '@/activities/emails/graphql/mutations/sendEmail';
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
 
-const mockAddToast = jest.fn();
-const mockAddErrorToast = jest.fn();
+const mockEnqueueToast = jest.fn();
+const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
-  useToast: () => ({ add: mockAddToast }),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
+  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
@@ -120,10 +120,10 @@ describe('useEmailComposerState', () => {
     });
 
     expect(onSent).toHaveBeenCalledWith('message-thread-1');
-    expect(mockAddToast).not.toHaveBeenCalledWith(
+    expect(mockEnqueueToast).not.toHaveBeenCalledWith(
       expect.objectContaining({ variant: 'error' }),
     );
-    expect(mockAddErrorToast).not.toHaveBeenCalled();
+    expect(mockEnqueueErrorToast).not.toHaveBeenCalled();
   });
 
   it('drops a picked alias when the reply moves to another account', () => {

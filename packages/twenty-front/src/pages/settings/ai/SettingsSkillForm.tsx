@@ -100,8 +100,8 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const { skillId = '' } = useParams<{ skillId: string }>();
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isReadonlyMode, setIsReadonlyMode] = useState(false);
   const [originalFormValues, setOriginalFormValues] =
@@ -157,20 +157,20 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         setFormValues(initialValues);
         setOriginalFormValues(initialValues);
       } else {
-        addToast({ variant: 'error', children: t`Skill not found` });
+        enqueueToast({ variant: 'error', children: t`Skill not found` });
         navigateApp(AppPath.NotFound);
       }
     }
-  }, [data, addToast, initializedSkillId, navigateApp]);
+  }, [data, enqueueToast, initializedSkillId, navigateApp]);
 
   useEffect(() => {
     if (skillQueryError) {
-      addErrorToast(
+      enqueueErrorToast(
         CombinedGraphQLErrors.is(skillQueryError) ? skillQueryError : undefined,
       );
       navigateApp(AppPath.NotFound);
     }
-  }, [skillQueryError, addErrorToast, navigateApp]);
+  }, [skillQueryError, enqueueErrorToast, navigateApp]);
 
   const [createSkill] = useMutation(CreateSkillDocument);
   const [updateSkill] = useMutation(UpdateSkillDocument);
@@ -243,7 +243,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
       setOriginalFormValues({ ...formValues });
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     } finally {
       setIsSubmitting(false);
     }
@@ -310,7 +310,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
       navigate(SettingsPath.AI);
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     } finally {
       setIsSubmitting(false);
     }
@@ -327,7 +327,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       closeModal(DELETE_SKILL_MODAL_ID);
       navigate(SettingsPath.AI);
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     } finally {
       setIsSubmitting(false);
     }
@@ -343,7 +343,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       });
       navigate(SettingsPath.AI);
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     } finally {
       setIsSubmitting(false);
     }
@@ -359,7 +359,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       });
       navigate(SettingsPath.AI);
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     } finally {
       setIsSubmitting(false);
     }

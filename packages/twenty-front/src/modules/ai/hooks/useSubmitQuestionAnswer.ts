@@ -30,8 +30,8 @@ import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 export const useSubmitQuestionAnswer = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const { modelIdForRequest } = useAgentChatModelId();
 
   const submitAnswer = useCallback(
@@ -55,7 +55,7 @@ export const useSubmitQuestionAnswer = () => {
       );
 
       if (isNonEmptyArray(agentChatSelectedFiles)) {
-        addToast({
+        enqueueToast({
           variant: 'info',
           children: t`Wait for files to finish uploading before answering.`,
         });
@@ -135,10 +135,10 @@ export const useSubmitQuestionAnswer = () => {
           );
         }
 
-        addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+        enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
       }
     },
-    [apolloClient, store, addErrorToast, addToast, modelIdForRequest],
+    [apolloClient, store, enqueueErrorToast, enqueueToast, modelIdForRequest],
   );
 
   return { submitAnswer };

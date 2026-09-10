@@ -16,7 +16,7 @@ export const useDeleteWorkflowVersionStep = () => {
 
   const { applyWorkflowVersionStepChanges } =
     useApplyWorkflowVersionStepChanges();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const { findOneRecordQuery: findOneWorkflowVersionQuery } =
     useFindOneRecordQuery({
@@ -43,7 +43,7 @@ export const useDeleteWorkflowVersionStep = () => {
         },
       ],
       onError: (error) => {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       },
     });
 

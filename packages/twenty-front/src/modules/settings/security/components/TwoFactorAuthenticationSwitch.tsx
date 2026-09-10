@@ -10,7 +10,7 @@ import { IconLifebuoy } from 'twenty-ui/icon';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 export const TwoFactorAuthenticationSwitch = () => {
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
@@ -42,7 +42,7 @@ export const TwoFactorAuthenticationSwitch = () => {
         ...currentWorkspace,
         isTwoFactorAuthenticationEnforced: !newEnforceValue,
       });
-      addErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined, {
+      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined, {
         children: err?.message,
       });
     }

@@ -21,7 +21,7 @@ export const useCreateOneIndexMetadataItem = () => {
   );
 
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const createOneIndexMetadataItem = async (
@@ -75,7 +75,7 @@ export const useCreateOneIndexMetadataItem = () => {
           operationType: CrudOperationType.CREATE,
         });
       } else {
-        addToast({ variant: 'error', children: t`An error occurred.` });
+        enqueueToast({ variant: 'error', children: t`An error occurred.` });
       }
 
       return {

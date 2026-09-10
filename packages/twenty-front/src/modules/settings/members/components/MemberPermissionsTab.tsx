@@ -54,7 +54,7 @@ export const MemberPermissionsTab = ({
   const primaryRole = roles?.[0];
   const { getIcon } = useIcons();
   const navigateSettings = useNavigateSettings();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { openModal } = useModal();
   const [pendingRole, setPendingRole] = useState<RoleWithPartialMembers | null>(
     null,
@@ -92,9 +92,12 @@ export const MemberPermissionsTab = ({
         },
         refetchQueries: ['GetRoles'],
       });
-      addToast({ variant: 'success', children: t`Role updated successfully` });
+      enqueueToast({
+        variant: 'success',
+        children: t`Role updated successfully`,
+      });
     } catch (error) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children:
           error instanceof Error ? error.message : t`Failed to update role`,

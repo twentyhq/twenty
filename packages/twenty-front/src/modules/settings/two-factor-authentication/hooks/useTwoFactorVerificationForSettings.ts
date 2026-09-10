@@ -10,7 +10,7 @@ import { useToast } from 'twenty-ui/feedback';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useTwoFactorVerificationForSettings = () => {
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const navigate = useNavigateSettings();
   const { t } = useLingui();
   const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +32,7 @@ export const useTwoFactorVerificationForSettings = () => {
   const canSave = !isSubmitting && otpValue?.length === 6;
 
   const handleVerificationSuccess = async () => {
-    addToast({
+    enqueueToast({
       variant: 'success',
       children: t`Two-factor authentication setup completed successfully!`,
     });
@@ -54,7 +54,7 @@ export const useTwoFactorVerificationForSettings = () => {
 
       await handleVerificationSuccess();
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Invalid verification code. Please try again.`,
       });

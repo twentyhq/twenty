@@ -34,7 +34,7 @@ export const useSaveLayoutCustomization = () => {
   const { saveDraft } = useSaveNavigationMenuItemsDraft();
   const { saveCommandMenuItemsDraft } = useSaveCommandMenuItemsDraft();
   const { isDirty: isCommandMenuItemsDirty } = useCommandMenuItemsDraftState();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { updatePageLayoutWithTabsAndWidgets } =
     useUpdatePageLayoutWithTabsAndWidgets();
   const { createPendingFieldsWidgetViews } =
@@ -135,7 +135,7 @@ export const useSaveLayoutCustomization = () => {
       }
 
       if (hasAnyFailure) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Some layout changes could not be saved`,
         });
@@ -145,7 +145,7 @@ export const useSaveLayoutCustomization = () => {
       exitLayoutCustomizationMode();
     } catch (error) {
       logError(error);
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to save layout customization`,
       });
@@ -161,7 +161,7 @@ export const useSaveLayoutCustomization = () => {
     updatePageLayoutWithTabsAndWidgets,
     savePageLayoutWidgetsData,
     exitLayoutCustomizationMode,
-    addToast,
+    enqueueToast,
     store,
     t,
   ]);

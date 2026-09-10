@@ -89,7 +89,7 @@ const StyledIntervalSubtitle = styled.div`
 export const EnterprisePlanModal = () => {
   const { t } = useLingui();
   const { closeModal } = useModal();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [selectedInterval, setSelectedInterval] =
     useState<BillingInterval>('monthly');
   const [isLoading, setIsLoading] = useState(false);
@@ -126,13 +126,13 @@ export const EnterprisePlanModal = () => {
         window.open(checkoutUrl, '_blank', 'noopener');
         closeModal(ENTERPRISE_PLAN_MODAL_ID);
       } else {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Could not open Stripe. Please contact support.`,
         });
       }
     } catch {
-      addToast({ variant: 'error', children: t`Error opening Stripe` });
+      enqueueToast({ variant: 'error', children: t`Error opening Stripe` });
     } finally {
       setIsLoading(false);
     }

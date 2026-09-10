@@ -10,7 +10,7 @@ import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-a
 
 export const useRevokeSigningKey = (onSuccess?: () => void) => {
   const apolloAdminClient = useApolloAdminClient();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [isRevoking, setIsRevoking] = useState(false);
   const [revokeSigningKeyMutation] = useMutation(RevokeSigningKeyDocument, {
     client: apolloAdminClient,
@@ -26,10 +26,10 @@ export const useRevokeSigningKey = (onSuccess?: () => void) => {
         awaitRefetchQueries: true,
       });
 
-      addToast({ variant: 'success', children: t`Signing key revoked` });
+      enqueueToast({ variant: 'success', children: t`Signing key revoked` });
       onSuccess?.();
     } catch (error) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: CombinedGraphQLErrors.is(error)
           ? getErrorMessageFromApolloError(error)

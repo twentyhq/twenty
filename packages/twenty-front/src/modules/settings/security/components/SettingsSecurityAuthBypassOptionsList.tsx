@@ -27,7 +27,7 @@ const StyledSettingsSecurityOptionsList = styled.div`
 export const SettingsSecurityAuthBypassOptionsList = () => {
   const { t } = useLingui();
 
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
   const authProviders = useAtomStateValue(authProvidersState);
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
@@ -72,7 +72,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
         ...currentWorkspace,
         [key]: currentWorkspace[key],
       });
-      addErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
     });
   };
 

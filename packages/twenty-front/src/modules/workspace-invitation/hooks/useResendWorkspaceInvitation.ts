@@ -11,7 +11,7 @@ export const useResendWorkspaceInvitation = () => {
     ResendWorkspaceInvitationDocument,
   );
 
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const resendInvitation = async ({
     appTokenId,
@@ -22,7 +22,7 @@ export const useResendWorkspaceInvitation = () => {
       },
       refetchQueries: [GetWorkspaceInvitationsDocument],
       onError: (error) => {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       },
     });
   };

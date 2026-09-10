@@ -82,7 +82,7 @@ const StyledCalloutContainer = styled.div`
 
 export const SettingsClaimApplicationSection = () => {
   const { t } = useLingui();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const [searchParams] = useSearchParams();
@@ -149,7 +149,7 @@ export const SettingsClaimApplicationSection = () => {
         setNotFound(true);
       }
     } catch (error) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children:
           error instanceof Error ? error.message : t`Could not run the lookup`,
@@ -175,7 +175,7 @@ export const SettingsClaimApplicationSection = () => {
 
       window.location.href = authorizationUrl;
     } catch (error) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children:
           error instanceof Error
@@ -188,12 +188,12 @@ export const SettingsClaimApplicationSection = () => {
   const handleSync = async () => {
     try {
       await syncCatalog();
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Catalog sync started. Try your lookup again in a moment.`,
       });
     } catch (error) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children:
           error instanceof Error

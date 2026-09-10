@@ -23,7 +23,7 @@ export const HeadlessEngineCommandWrapperEffect = ({
 
   const unmountCommand = useUnmountCommand();
 
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   useEffect(() => {
     if (isInitializedRef.current || !ready) {
@@ -36,7 +36,7 @@ export const HeadlessEngineCommandWrapperEffect = ({
       try {
         await execute();
       } catch (error) {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       } finally {
         // Unmount even on failure, otherwise the headless command stays mounted
         // and can never be triggered again.
@@ -52,7 +52,7 @@ export const HeadlessEngineCommandWrapperEffect = ({
     setIsInitialized,
     commandMenuItemId,
     unmountCommand,
-    addErrorToast,
+    enqueueErrorToast,
   ]);
 
   return null;

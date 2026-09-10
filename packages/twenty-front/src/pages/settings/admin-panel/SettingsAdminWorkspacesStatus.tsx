@@ -33,7 +33,7 @@ const StyledAccordionCardsContainer = styled.div`
 
 export const SettingsAdminWorkspacesStatus = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const {
     data,
@@ -56,9 +56,12 @@ export const SettingsAdminWorkspacesStatus = () => {
     try {
       await refreshUpgradeStatus();
       await refetch();
-      addToast({ variant: 'success', children: t`Upgrade status refreshed` });
+      enqueueToast({
+        variant: 'success',
+        children: t`Upgrade status refreshed`,
+      });
     } catch (error) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children:
           error instanceof Error

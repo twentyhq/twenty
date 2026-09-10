@@ -24,7 +24,7 @@ export const useResetCommandMenuItemToDefault = () => {
   >(RESET_COMMAND_MENU_ITEM);
   const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const resetCommandMenuItemToDefault = useCallback(
     async (id: string) => {
@@ -57,7 +57,7 @@ export const useResetCommandMenuItemToDefault = () => {
             operationType: CrudOperationType.UPDATE,
           });
         } else {
-          addToast({ variant: 'error', children: t`An error occurred.` });
+          enqueueToast({ variant: 'error', children: t`An error occurred.` });
         }
       }
     },
@@ -67,7 +67,7 @@ export const useResetCommandMenuItemToDefault = () => {
       applyChanges,
       store,
       handleMetadataError,
-      addToast,
+      enqueueToast,
     ],
   );
 

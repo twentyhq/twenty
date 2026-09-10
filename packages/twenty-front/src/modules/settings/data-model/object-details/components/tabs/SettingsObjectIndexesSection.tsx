@@ -52,7 +52,7 @@ export const SettingsObjectIndexesSection = ({
 }: SettingsObjectIndexesSectionProps) => {
   const { t } = useLingui();
   const { openModal, closeModal } = useModal();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { deleteOneIndexMetadataItem } = useDeleteOneIndexMetadataItem();
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -153,7 +153,7 @@ export const SettingsObjectIndexesSection = ({
     closeModal(DELETE_INDEX_MODAL_ID);
 
     if (result.status === 'successful') {
-      addToast({ variant: 'success', children: t`Index deleted` });
+      enqueueToast({ variant: 'success', children: t`Index deleted` });
       setPendingDelete(null);
     }
   };

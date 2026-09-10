@@ -66,7 +66,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const { loadCurrentUser } = useLoadCurrentUser();
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const { saveDraftRoleToDB } = useSaveDraftRoleToDB({
     isCreateMode,
@@ -120,7 +120,10 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     );
 
     if (isDefined(dirtyFields.label) && dirtyFields.label === '') {
-      addToast({ variant: 'error', children: t`Role name cannot be empty` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Role name cannot be empty`,
+      });
       return;
     }
 

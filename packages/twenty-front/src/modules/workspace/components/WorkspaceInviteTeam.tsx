@@ -102,7 +102,7 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { sendInvitation } = useCreateWorkspaceInvitation();
 
   const roleOptions: Array<{
@@ -147,7 +147,7 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
 
     if (data.sendInvitations.result.length > 0) {
       const invitationCount = data.sendInvitations.result.length;
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`${invitationCount} invitations sent`,
         duration: 2000,
@@ -157,7 +157,7 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
     }
 
     if (!data.sendInvitations.success) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: data.sendInvitations.errors.join(', '),
         duration: 5000,

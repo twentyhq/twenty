@@ -33,7 +33,7 @@ export const useUpdateWorkflowRunStep = () => {
   const getRecordFromCache = useGetRecordFromCache({
     objectNameSingular: CoreObjectNameSingular.WorkflowRun,
   });
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const updateWorkflowRunStep = async (input: UpdateWorkflowRunStepInput) => {
     const result = await mutate({
@@ -41,7 +41,7 @@ export const useUpdateWorkflowRunStep = () => {
         input: { workflowRunId: input.workflowRunId, step: input.step },
       },
       onError: (error) => {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       },
     });
     const updatedStep = result?.data?.updateWorkflowRunStep;

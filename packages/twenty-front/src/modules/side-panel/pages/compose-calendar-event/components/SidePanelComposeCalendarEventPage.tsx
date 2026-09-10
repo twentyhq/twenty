@@ -32,7 +32,7 @@ export const SidePanelComposeCalendarEventPage = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
   const navigateSettings = useNavigateSettings();
   const { triggerApisOAuth } = useTriggerApisOAuth();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const composerState = useCalendarEventComposer({
     initialValues: composeCalendarEventInitialValues,
@@ -69,7 +69,7 @@ export const SidePanelComposeCalendarEventPage = () => {
         loginHint: selectedAccount.handle,
       });
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to reconnect calendar account`,
       });

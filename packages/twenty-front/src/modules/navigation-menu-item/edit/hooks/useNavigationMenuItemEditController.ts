@@ -40,7 +40,7 @@ type CreateItemOptions = {
 // surfaced here and the rejection is swallowed — callers fire-and-forget.
 export const useNavigationMenuItemEditController = () => {
   const { t } = useLingui();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const navigationMenuItemEditSection = useAtomStateValue(
     navigationMenuItemEditSectionState,
   );
@@ -118,10 +118,16 @@ export const useNavigationMenuItemEditController = () => {
           userWorkspaceId: targetUserWorkspaceId,
         },
       ]).catch(() =>
-        addToast({ variant: 'error', children: t`Couldn't add to favorites` }),
+        enqueueToast({
+          variant: 'error',
+          children: t`Couldn't add to favorites`,
+        }),
       );
     } else {
-      addToast({ variant: 'error', children: t`Couldn't add to favorites` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Couldn't add to favorites`,
+      });
     }
 
     return id;
@@ -145,7 +151,7 @@ export const useNavigationMenuItemEditController = () => {
     try {
       await updateManyNavigationMenuItems([{ id, update }]);
     } catch {
-      addToast({ variant: 'error', children: t`Couldn't update favorite` });
+      enqueueToast({ variant: 'error', children: t`Couldn't update favorite` });
     }
   };
 
@@ -162,7 +168,7 @@ export const useNavigationMenuItemEditController = () => {
     try {
       await deleteManyNavigationMenuItems(ids);
     } catch {
-      addToast({ variant: 'error', children: t`Couldn't remove favorite` });
+      enqueueToast({ variant: 'error', children: t`Couldn't remove favorite` });
     }
   };
 

@@ -69,8 +69,8 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
 }: SettingsAdminWorkspaceCreditGrantsTableProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const apolloAdminClient = useApolloAdminClient();
   const { openModal } = useModal();
 
@@ -107,9 +107,9 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
         variables: { workspaceId, creditGrantId },
       });
 
-      addToast({ variant: 'success', children: t`Credit grant revoked.` });
+      enqueueToast({ variant: 'success', children: t`Credit grant revoked.` });
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     } finally {
       setIsRevoking(false);
       setGrantPendingRevocation(null);

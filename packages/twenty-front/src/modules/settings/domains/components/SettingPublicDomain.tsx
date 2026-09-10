@@ -62,8 +62,8 @@ export const SettingPublicDomain = () => {
   );
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const [createPublicDomain, { loading }] = useMutation(
     CreatePublicDomainDocument,
@@ -94,14 +94,14 @@ export const SettingPublicDomain = () => {
     await deletePublicDomain({
       variables: { domain: selectedPublicDomain.domain },
       onCompleted: () => {
-        addToast({
+        enqueueToast({
           variant: 'success',
           children: t`Custom domain successfully deleted`,
         });
         navigate(SettingsPath.Applications);
         refetchPublicDomains();
       },
-      onError: (error) => addErrorToast(error),
+      onError: (error) => enqueueErrorToast(error),
     });
   };
 
@@ -131,14 +131,14 @@ export const SettingPublicDomain = () => {
       },
       onCompleted: (data) => {
         setSelectedPublicDomain(data.createPublicDomain);
-        addToast({
+        enqueueToast({
           variant: 'success',
           children: t`Custom domain successfully created`,
         });
       },
       onError: (error) => {
         setNewPublicDomainError(error.message);
-        addErrorToast(error);
+        enqueueErrorToast(error);
       },
     });
   };

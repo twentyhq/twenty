@@ -56,7 +56,7 @@ export const UpdateMultipleRecordsContainer = ({
   const hasSelectedRecords = contextStoreNumberOfSelectedRecords > 0;
 
   const { t } = useLingui();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { openModal } = useModal();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -73,7 +73,7 @@ export const UpdateMultipleRecordsContainer = ({
       await updateRecords(fieldUpdates);
       closeSidePanelMenu();
     } catch (error) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children:
           error instanceof Error

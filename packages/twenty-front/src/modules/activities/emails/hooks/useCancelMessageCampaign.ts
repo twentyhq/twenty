@@ -18,8 +18,8 @@ export const useCancelMessageCampaign = () => {
     CancelMessageCampaignMutationVariables
   >(CANCEL_MESSAGE_CAMPAIGN);
 
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const cancelMessageCampaign = async ({
@@ -39,7 +39,10 @@ export const useCancelMessageCampaign = () => {
       const canceled = result.data?.cancelMessageCampaign;
 
       if (!isDefined(canceled)) {
-        addToast({ variant: 'error', children: t`Failed to cancel campaign` });
+        enqueueToast({
+          variant: 'error',
+          children: t`Failed to cancel campaign`,
+        });
 
         return false;
       }
@@ -58,7 +61,7 @@ export const useCancelMessageCampaign = () => {
       });
 
       if (wasScheduled) {
-        addToast({
+        enqueueToast({
           variant: 'success',
           children: t`Campaign unscheduled and back in your drafts`,
         });
@@ -66,7 +69,7 @@ export const useCancelMessageCampaign = () => {
         return true;
       }
 
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: plural(canceled.canceledMessageCount, {
           one: `Campaign canceled, ${canceled.canceledMessageCount} pending email stopped`,
@@ -76,7 +79,7 @@ export const useCancelMessageCampaign = () => {
 
       return true;
     } catch (error) {
-      addErrorToast(error);
+      enqueueErrorToast(error);
 
       return false;
     }

@@ -9,7 +9,7 @@ import {
 export const useCreateWorkspaceInvitation = () => {
   const [sendInvitationsMutation] = useMutation(SendInvitationsDocument);
 
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const sendInvitation = async (
     variables: SendInvitationsMutationVariables,
@@ -18,7 +18,7 @@ export const useCreateWorkspaceInvitation = () => {
       variables,
       refetchQueries: [GetWorkspaceInvitationsDocument],
       onError: (error) => {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       },
     });
   };

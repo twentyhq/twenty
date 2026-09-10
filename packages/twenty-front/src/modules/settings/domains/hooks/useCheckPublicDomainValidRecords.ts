@@ -9,7 +9,7 @@ export const useCheckPublicDomainValidRecords = () => {
   const [checkPublicDomainValidRecords] = useMutation(
     CheckPublicDomainValidRecordsDocument,
   );
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const [{ isLoading, publicDomainRecords }, setPublicDomainRecords] =
     useAtomState(publicDomainRecordsState);
@@ -36,7 +36,7 @@ export const useCheckPublicDomainValidRecords = () => {
         }));
       },
       onError: (error) => {
-        addErrorToast(error);
+        enqueueErrorToast(error);
         setPublicDomainRecords((currentState) => ({
           ...currentState,
           isLoading: false,

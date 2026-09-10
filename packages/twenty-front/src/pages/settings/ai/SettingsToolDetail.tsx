@@ -38,7 +38,7 @@ export const SettingsToolDetail = () => {
   const { toolIdentifier } = useParams();
   const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { updateLogicFunction, deleteLogicFunction } =
     usePersistLogicFunction();
   const { openModal } = useModal();
@@ -163,10 +163,10 @@ export const SettingsToolDetail = () => {
     });
 
     if (result.status === 'successful') {
-      addToast({ variant: 'success', children: t`Tool deleted` });
+      enqueueToast({ variant: 'success', children: t`Tool deleted` });
       navigate(getSettingsPath(SettingsPath.AI, undefined, undefined, 'tools'));
     } else {
-      addToast({ variant: 'error', children: t`Failed to delete tool` });
+      enqueueToast({ variant: 'error', children: t`Failed to delete tool` });
     }
 
     setIsDeleting(false);

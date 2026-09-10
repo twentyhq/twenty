@@ -6,15 +6,15 @@ jest.mock('@sentry/react', () => ({
   captureException: jest.fn(),
 }));
 
-const mockAddToast = jest.fn();
-const mockAddErrorToast = jest.fn();
+const mockEnqueueToast = jest.fn();
+const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
-  useToast: () => ({ add: mockAddToast }),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
+  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 
 const { captureException } = jest.requireMock('@sentry/react');
@@ -39,13 +39,13 @@ describe('PromiseRejectionEffect', () => {
       expect(captureException).toHaveBeenCalledTimes(1);
     });
 
-    expect(mockAddToast).not.toHaveBeenCalled();
+    expect(mockEnqueueToast).not.toHaveBeenCalled();
   });
 
   it('should still toast an unrelated error', async () => {
     dispatchUnhandledRejection(new Error('Some unrelated error'));
 
-    expect(mockAddToast).toHaveBeenCalledWith({
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
       variant: 'error',
       children: 'Some unrelated error',
     });
@@ -62,13 +62,13 @@ describe('PromiseRejectionEffect', () => {
       expect(captureException).toHaveBeenCalledTimes(1);
     });
 
-    expect(mockAddToast).not.toHaveBeenCalled();
+    expect(mockEnqueueToast).not.toHaveBeenCalled();
   });
 
   it('should toast a generic message when the reason is not an Error', async () => {
     dispatchUnhandledRejection('something went wrong');
 
-    expect(mockAddToast).toHaveBeenCalledWith({
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
       variant: 'error',
       children: 'An error occurred.',
     });

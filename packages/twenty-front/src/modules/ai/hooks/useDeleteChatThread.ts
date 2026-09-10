@@ -20,7 +20,7 @@ import { DeleteChatThreadDocument } from '~/generated-metadata/graphql';
 
 export const useDeleteChatThread = () => {
   const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const setAgentChatInput = useSetAtomState(agentChatInputState);
   const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
@@ -68,7 +68,7 @@ export const useDeleteChatThread = () => {
         );
       }
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
   };
 

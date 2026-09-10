@@ -24,7 +24,7 @@ export const useUninstallApplication = ({
   universalIdentifier,
   onCompleted,
 }: UseUninstallApplicationArgs = {}) => {
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [triggerUninstallApplicationJob, { loading: isTriggeringUninstall }] =
     useMutation(TriggerUninstallApplicationJobDocument);
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
@@ -47,7 +47,7 @@ export const useUninstallApplication = ({
   const handleUninstallJobSettled = useCallback(
     (jobStatus: TrackedJobStatus, trackedUninstallIdentifier: string) => {
       if (jobStatus.state === JobState.FAILED) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: isNonEmptyString(jobStatus.failedReason)
             ? jobStatus.failedReason
@@ -70,13 +70,13 @@ export const useUninstallApplication = ({
           : currentWorkspace,
       );
 
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Application successfully uninstalled.`,
       });
       onCompleted?.();
     },
-    [addToast, onCompleted, setCurrentWorkspace],
+    [enqueueToast, onCompleted, setCurrentWorkspace],
   );
 
   const { activeJobId, trackJob } = useTrackedQueueJob({
@@ -105,7 +105,7 @@ export const useUninstallApplication = ({
     } catch (error) {
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: graphqlMessage ?? t`Error uninstalling application.`,
       });

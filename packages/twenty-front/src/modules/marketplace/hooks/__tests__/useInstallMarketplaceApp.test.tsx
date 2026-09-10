@@ -16,15 +16,15 @@ import {
 const UNIVERSAL_IDENTIFIER = 'application-universal-identifier';
 const JOB_ID = `install-application.workspace-id.${UNIVERSAL_IDENTIFIER}`;
 
-const mockAddToast = jest.fn();
-const mockAddErrorToast = jest.fn();
+const mockEnqueueToast = jest.fn();
+const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
-  useToast: () => ({ add: mockAddToast }),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
+  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 
 const triggerInstallMock = {
@@ -86,7 +86,7 @@ describe('useInstallMarketplaceApp', () => {
     });
 
     await waitFor(() => expect(result.current.isInstalling).toBe(false));
-    expect(mockAddToast).toHaveBeenCalledWith({
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
       variant: 'error',
       children: 'Manifest validation failed',
     });

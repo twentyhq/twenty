@@ -9,8 +9,8 @@ import { useToast } from 'twenty-ui/feedback';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useVerifyLogin = () => {
-  const { addErrorToast } = useErrorToast();
-  const { add: addToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
   const navigate = useNavigateApp();
   const setIsAppEffectRedirectEnabled = useSetAtomState(
     isAppEffectRedirectEnabledState,
@@ -25,9 +25,9 @@ export const useVerifyLogin = () => {
       await getAuthTokensFromLoginToken(loginToken);
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       } else {
-        addToast({ variant: 'error', children: t`Authentication failed` });
+        enqueueToast({ variant: 'error', children: t`Authentication failed` });
       }
       navigate(AppPath.SignInUp);
     } finally {

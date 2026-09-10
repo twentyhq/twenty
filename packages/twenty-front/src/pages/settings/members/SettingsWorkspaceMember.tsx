@@ -48,7 +48,7 @@ const DELETE_MEMBER_MODAL_ID = 'workspace-member-delete-modal';
 export const SettingsWorkspaceMember = () => {
   const { workspaceMemberId = '' } = useParams();
   const navigateSettings = useNavigateSettings();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { openModal, closeModal } = useModal();
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -106,7 +106,7 @@ export const SettingsWorkspaceMember = () => {
           },
         });
       } catch (error) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children:
             error instanceof Error
@@ -124,14 +124,14 @@ export const SettingsWorkspaceMember = () => {
       await deleteUserFromWorkspace({
         variables: { workspaceMemberIdToDelete: member.id },
       });
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Member removed from workspace`,
       });
       closeModal(DELETE_MEMBER_MODAL_ID);
       navigateSettings(SettingsPath.WorkspaceMembersPage);
     } catch (error) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children:
           error instanceof Error
@@ -143,7 +143,7 @@ export const SettingsWorkspaceMember = () => {
 
   const handleImpersonate = async () => {
     if (!member?.userId || !currentWorkspace?.id) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Cannot impersonate selected user`,
         duration: 2000,
@@ -152,7 +152,7 @@ export const SettingsWorkspaceMember = () => {
     }
 
     if (!isDefined(currentUser?.id) || member.userId === currentUser.id) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`You cannot impersonate your own account`,
         duration: 2000,
@@ -172,7 +172,7 @@ export const SettingsWorkspaceMember = () => {
         await startImpersonating(loginToken.token);
       },
       onError: () => {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Cannot impersonate selected user`,
           duration: 2000,

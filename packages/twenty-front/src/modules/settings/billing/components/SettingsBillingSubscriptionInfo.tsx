@@ -66,7 +66,7 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const { openModal } = useModal();
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const { applyCurrentWorkspaceBillingUpdate } =
     useApplyCurrentWorkspaceBillingUpdate();
@@ -374,9 +374,9 @@ export const SettingsBillingSubscriptionInfo = ({
     try {
       await action();
 
-      addToast({ variant: 'success', children: getSuccessMessage() });
+      enqueueToast({ variant: 'success', children: getSuccessMessage() });
     } catch (error) {
-      addToast({ variant: 'error', children: getErrorMessage() });
+      enqueueToast({ variant: 'error', children: getErrorMessage() });
 
       if (!CombinedGraphQLErrors.is(error)) {
         throw error;

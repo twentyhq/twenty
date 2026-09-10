@@ -23,7 +23,7 @@ export const SettingsDeviceSessionRowDropdownMenu = ({
 }: SettingsDeviceSessionRowDropdownMenuProps) => {
   const dropdownId = `settings-device-session-row-${userSessionId}`;
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { closeDropdown } = useCloseDropdown();
 
   const [revokeUserSession] = useMutation(RevokeUserSessionDocument, {
@@ -35,9 +35,9 @@ export const SettingsDeviceSessionRowDropdownMenu = ({
 
     try {
       await revokeUserSession({ variables: { userSessionId } });
-      addToast({ variant: 'success', children: t`Device logged out` });
+      enqueueToast({ variant: 'success', children: t`Device logged out` });
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to log out this device`,
       });

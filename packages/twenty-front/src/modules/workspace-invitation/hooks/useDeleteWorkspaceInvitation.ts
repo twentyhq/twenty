@@ -11,7 +11,7 @@ export const useDeleteWorkspaceInvitation = () => {
     DeleteWorkspaceInvitationDocument,
   );
 
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const deleteWorkspaceInvitation = async ({
     appTokenId,
@@ -22,7 +22,7 @@ export const useDeleteWorkspaceInvitation = () => {
       },
       refetchQueries: [GetWorkspaceInvitationsDocument],
       onError: (error) => {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       },
     });
   };

@@ -15,7 +15,7 @@ import {
 export const useSwitchBillingPlan = () => {
   const { t } = useLingui();
   const subscriptionStatus = useSubscriptionStatus();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { applyCurrentWorkspaceBillingUpdate } =
     useApplyCurrentWorkspaceBillingUpdate();
   const { getBeautifiedRenewDate } = useBillingWording();
@@ -46,19 +46,19 @@ export const useSwitchBillingPlan = () => {
       );
 
       if (!isBillingUpdateApplied) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Error while switching subscription.`,
         });
         return;
       }
 
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: getSuccessMessage(targetPlanKey),
       });
     } catch (error) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Error while switching subscription.`,
       });

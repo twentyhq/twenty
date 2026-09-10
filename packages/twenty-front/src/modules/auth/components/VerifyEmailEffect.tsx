@@ -28,8 +28,8 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
     verifyEmailAndGetWorkspaceAgnosticToken,
   } = useAuth();
 
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const [searchParams] = useSearchParams();
 
@@ -51,7 +51,7 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
   useEffect(() => {
     const verifyEmailToken = async () => {
       if (!email || !emailVerificationToken) {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Invalid email verification link.`,
           dedupeKey: 'email-verification-link-dedupe-key',
@@ -72,7 +72,7 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
             email,
           );
 
-          addToast(successToastOptions);
+          enqueueToast(successToastOptions);
 
           return navigate(AppPath.SignInUp);
         }
@@ -82,7 +82,7 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
           email,
         );
 
-        addToast(successToastOptions);
+        enqueueToast(successToastOptions);
 
         const workspaceUrl = getWorkspaceUrl(workspaceUrls);
         if (workspaceUrl.slice(0, -1) !== window.location.origin) {
@@ -98,11 +98,11 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
         await verifyLoginToken(loginToken.token);
       } catch (error) {
         if (CombinedGraphQLErrors.is(error)) {
-          addErrorToast(error, {
+          enqueueErrorToast(error, {
             dedupeKey: 'email-verification-error-dedupe-key',
           });
         } else {
-          addToast({
+          enqueueToast({
             variant: 'error',
             children: t`Email verification failed`,
             dedupeKey: 'email-verification-error-dedupe-key',

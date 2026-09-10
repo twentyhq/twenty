@@ -25,7 +25,7 @@ export const PaymentSuccess = () => {
   const { loadCurrentUser } = useLoadCurrentUser();
   const showWelcomeAnimationAfterOnboardingCheckout =
     useShowWelcomeAnimationAfterOnboardingCheckout();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [hasTimedOut, setHasTimedOut] = useState(false);
   const [confirmationRunIndex, setConfirmationRunIndex] = useState(0);
 
@@ -59,7 +59,7 @@ export const PaymentSuccess = () => {
 
       if (attempts >= SUBSCRIPTION_CONFIRMATION_MAX_ATTEMPTS) {
         setHasTimedOut(true);
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`We're still waiting for a confirmation from our payment provider (Stripe). Please refresh in a few seconds.`,
         });

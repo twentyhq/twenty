@@ -35,7 +35,7 @@ describe('AppToaster', () => {
     const { result } = renderHook(() => useToast(), { wrapper: Wrapper });
 
     act(() => {
-      result.current.add({
+      result.current.enqueueToast({
         variant: 'success',
         children: 'Record saved',
         description: 'Your changes are available',
@@ -68,7 +68,7 @@ describe('AppToaster', () => {
     const { result } = renderHook(() => useToast(), { wrapper: Wrapper });
 
     act(() => {
-      result.current.add({
+      result.current.enqueueToast({
         children: <strong>Record saved</strong>,
         description: <a href="/records">View records</a>,
         progress: 100,
@@ -97,7 +97,7 @@ describe('AppToaster', () => {
     });
 
     act(() => {
-      result.current.addErrorToast(apolloError, { progress: 100 });
+      result.current.enqueueErrorToast(apolloError, { progress: 100 });
     });
 
     expect(screen.getByRole('status')).toHaveTextContent('An error occurred.');
@@ -128,7 +128,7 @@ describe('AppToaster', () => {
     });
 
     act(() => {
-      result.current.add({
+      result.current.enqueueToast({
         variant: 'success',
         children: 'Record saved',
         onClose,
@@ -182,7 +182,7 @@ describe('AppToaster', () => {
     const { result } = renderHook(() => useErrorToast(), { wrapper: Wrapper });
 
     act(() => {
-      result.current.addErrorToast(error, { progress: 100 });
+      result.current.enqueueErrorToast(error, { progress: 100 });
     });
 
     expect(screen.getByRole('status')).toHaveTextContent(message);
@@ -192,7 +192,7 @@ describe('AppToaster', () => {
     const { result } = renderHook(() => useErrorToast(), { wrapper: Wrapper });
 
     act(() => {
-      result.current.addErrorToast(
+      result.current.enqueueErrorToast(
         new DOMException('Request aborted', 'AbortError'),
       );
     });

@@ -28,7 +28,7 @@ export const WorkspaceMemberPictureUploader = ({
   onAvatarUpdated,
   disabled = false,
 }: WorkspaceMemberPictureUploaderProps) => {
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [uploadController, setUploadController] =
@@ -101,7 +101,7 @@ export const WorkspaceMemberPictureUploader = ({
       const message =
         error instanceof Error ? error.message : t`Failed to upload picture`;
       setErrorMessage(t`An error occurred while uploading the picture.`);
-      addToast({ variant: 'error', children: message });
+      enqueueToast({ variant: 'error', children: message });
     } finally {
       setIsUploading(false);
     }
@@ -130,7 +130,7 @@ export const WorkspaceMemberPictureUploader = ({
       const message =
         error instanceof Error ? error.message : t`Failed to remove picture`;
       setErrorMessage(t`An error occurred while removing the picture.`);
-      addToast({ variant: 'error', children: message });
+      enqueueToast({ variant: 'error', children: message });
     } finally {
       setIsUploading(false);
     }

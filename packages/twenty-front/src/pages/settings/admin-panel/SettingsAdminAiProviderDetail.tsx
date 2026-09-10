@@ -53,7 +53,7 @@ export const SettingsAdminAiProviderDetail = () => {
   const { providerName } = useParams<{ providerName: string }>();
   const apolloAdminClient = useApolloAdminClient();
   const navigate = useNavigate();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { refetch: refetchClientConfig } = useClientConfig();
   const { openModal } = useModal();
   const [searchQuery, setSearchQuery] = useState('');
@@ -104,13 +104,16 @@ export const SettingsAdminAiProviderDetail = () => {
           { query: GET_ADMIN_AI_MODELS },
         ],
       });
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Provider "${provider?.label ?? providerName}" removed`,
       });
       navigate(AI_ADMIN_PATH);
     } catch {
-      addToast({ variant: 'error', children: t`Failed to remove provider` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to remove provider`,
+      });
     }
   };
 
@@ -131,13 +134,13 @@ export const SettingsAdminAiProviderDetail = () => {
         ],
       });
       await refetchClientConfig();
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Model "${modelToRemove.label}" removed`,
       });
       setModelToRemove(null);
     } catch {
-      addToast({ variant: 'error', children: t`Failed to remove model` });
+      enqueueToast({ variant: 'error', children: t`Failed to remove model` });
     }
   };
 
@@ -185,7 +188,7 @@ export const SettingsAdminAiProviderDetail = () => {
       });
       await refetchClientConfig();
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to update model availability`,
       });
@@ -380,7 +383,7 @@ export const SettingsAdminAiProviderDetail = () => {
                     },
                   });
                 } catch {
-                  addToast({
+                  enqueueToast({
                     variant: 'error',
                     children: t`Failed to update model availability`,
                   });

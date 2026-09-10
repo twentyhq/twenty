@@ -13,7 +13,7 @@ import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useGoBackToPreviousOnboardingStep = () => {
   const store = useStore();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
   const [goBackToPreviousOnboardingStepMutation, { loading }] = useMutation(
     GoBackToPreviousOnboardingStepDocument,
   );
@@ -56,9 +56,9 @@ export const useGoBackToPreviousOnboardingStep = () => {
         return;
       }
 
-      addErrorToast(error);
+      enqueueErrorToast(error);
     }
-  }, [goBackToPreviousOnboardingStepMutation, addErrorToast, store]);
+  }, [goBackToPreviousOnboardingStepMutation, enqueueErrorToast, store]);
 
   return {
     goBackToPreviousOnboardingStep,

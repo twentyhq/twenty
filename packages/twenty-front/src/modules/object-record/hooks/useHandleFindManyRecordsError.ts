@@ -13,7 +13,7 @@ export const useHandleFindManyRecordsError = ({
   objectMetadataItem: EnrichedObjectMetadataItem;
   handleError?: (error?: Error) => void;
 }) => {
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const handleFindManyRecordsError = useCallback(
     (error: ErrorLike) => {
@@ -21,10 +21,10 @@ export const useHandleFindManyRecordsError = ({
         `useFindManyRecords for "${objectMetadataItem.namePlural}" error : ` +
           error,
       );
-      addErrorToast(error);
+      enqueueErrorToast(error);
       handleError?.(error as Error);
     },
-    [addErrorToast, handleError, objectMetadataItem.namePlural],
+    [enqueueErrorToast, handleError, objectMetadataItem.namePlural],
   );
 
   return {

@@ -8,7 +8,7 @@ import { useToast } from 'twenty-ui/feedback';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 export const useSettingsAiModelsActions = () => {
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
@@ -27,7 +27,7 @@ export const useSettingsAiModelsActions = () => {
       await updateWorkspace({ variables: { input: { [field]: value } } });
     } catch {
       setCurrentWorkspace({ ...currentWorkspace, [field]: previousValue });
-      addToast({ variant: 'error', children: t`Failed to update model` });
+      enqueueToast({ variant: 'error', children: t`Failed to update model` });
     }
   };
 
@@ -62,7 +62,7 @@ export const useSettingsAiModelsActions = () => {
         ...currentWorkspace,
         useRecommendedModels: previousValue,
       });
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to update model selection mode`,
       });
@@ -93,7 +93,7 @@ export const useSettingsAiModelsActions = () => {
         ...currentWorkspace,
         enabledAiModelIds: previousEnabled,
       });
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to update model availability`,
       });
@@ -124,7 +124,7 @@ export const useSettingsAiModelsActions = () => {
         ...currentWorkspace,
         enabledAiModelIds: previousIds,
       });
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to update model availability`,
       });

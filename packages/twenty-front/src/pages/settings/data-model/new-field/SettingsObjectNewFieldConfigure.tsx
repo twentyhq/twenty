@@ -53,7 +53,7 @@ export const SettingsObjectNewFieldConfigure = () => {
   const fieldType =
     (searchParams.get('fieldType') as FieldMetadataType) ||
     FieldMetadataType.TEXT;
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
@@ -178,7 +178,7 @@ export const SettingsObjectNewFieldConfigure = () => {
         return createCleanUp(creationResult);
       }
       default: {
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`Please select at least one destination object for this relation.`,
         });

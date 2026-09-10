@@ -69,7 +69,7 @@ const SOURCE_TYPE_FILTER_OPTIONS: {
 
 export const SettingsAdminApps = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
   const [showPreInstalledOnly, setShowPreInstalledOnly] = useState(false);
@@ -121,12 +121,12 @@ export const SettingsAdminApps = () => {
   const handleSyncCatalog = async () => {
     try {
       await syncMarketplaceCatalog();
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`Marketplace catalog synchronization started.`,
       });
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to synchronize the marketplace catalog.`,
       });

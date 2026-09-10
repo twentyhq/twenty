@@ -63,8 +63,8 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const { agentId = '' } = useParams<{ agentId: string }>();
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const [isReadonlyMode, setIsReadonlyMode] = useState(false);
   const [originalFormValues, setOriginalFormValues] = useState<
     ReturnType<typeof useSettingsAgentFormState>['formValues'] | null
@@ -121,18 +121,18 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         resetForm(initialValues);
         setOriginalFormValues(initialValues);
       } else {
-        addToast({ variant: 'error', children: t`Agent not found` });
+        enqueueToast({ variant: 'error', children: t`Agent not found` });
         navigateApp(AppPath.NotFound);
       }
     }
-  }, [data, resetForm, addToast, navigateApp]);
+  }, [data, resetForm, enqueueToast, navigateApp]);
 
   useEffect(() => {
     if (agentQueryError) {
-      addErrorToast(agentQueryError);
+      enqueueErrorToast(agentQueryError);
       navigateApp(AppPath.NotFound);
     }
-  }, [agentQueryError, addErrorToast, navigateApp]);
+  }, [agentQueryError, enqueueErrorToast, navigateApp]);
 
   const [createAgent] = useMutation(CreateOneAgentDocument);
   const [updateAgent] = useMutation(UpdateOneAgentDocument);
@@ -187,11 +187,11 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           await saveDraftRoleToDB();
         } catch (error) {
           if (CombinedGraphQLErrors.is(error)) {
-            addErrorToast(error);
+            enqueueErrorToast(error);
           } else {
             const errorMessage =
               error instanceof Error ? error.message : String(error);
-            addToast({
+            enqueueToast({
               variant: 'error',
               children: t`Failed to save role permissions: ${errorMessage}`,
             });
@@ -221,7 +221,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
       setOriginalFormValues({ ...formValues });
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     } finally {
       setIsSubmitting(false);
     }
@@ -292,11 +292,11 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           await saveDraftRoleToDB();
         } catch (error) {
           if (CombinedGraphQLErrors.is(error)) {
-            addErrorToast(error);
+            enqueueErrorToast(error);
           } else {
             const errorMessage =
               error instanceof Error ? error.message : String(error);
-            addToast({
+            enqueueToast({
               variant: 'error',
               children: t`Failed to save role permissions: ${errorMessage}`,
             });
@@ -351,7 +351,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
       navigate(SettingsPath.AI);
     } catch (error) {
-      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     } finally {
       setIsSubmitting(false);
     }

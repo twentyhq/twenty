@@ -11,7 +11,7 @@ export const useBillingPortalSession = (returnUrlPath: string) => {
   const { t } = useLingui();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { redirect } = useRedirect();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const hasSubscriptions =
     (currentWorkspace?.billingSubscriptions.length ?? 0) > 0;
@@ -24,7 +24,7 @@ export const useBillingPortalSession = (returnUrlPath: string) => {
   );
 
   const showBillingPortalSessionError = () => {
-    addToast({
+    enqueueToast({
       variant: 'error',
       children: t`Billing portal session error. Please retry or contact Twenty team`,
     });

@@ -62,7 +62,7 @@ export const ConfigVariableEdit = ({
 
   const { openModal } = useModal();
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -70,9 +70,12 @@ export const ConfigVariableEdit = ({
     try {
       setIsSubmitting(true);
       await onSave?.();
-      addToast({ variant: 'success', children: t`Variable ${title} updated` });
+      enqueueToast({
+        variant: 'success',
+        children: t`Variable ${title} updated`,
+      });
     } catch {
-      addToast({ variant: 'error', children: t`Error updating variable` });
+      enqueueToast({ variant: 'error', children: t`Error updating variable` });
     } finally {
       setIsSubmitting(false);
       setIsEditing(false);
@@ -83,9 +86,12 @@ export const ConfigVariableEdit = ({
     try {
       setIsSubmitting(true);
       await onConfirmReset?.();
-      addToast({ variant: 'success', children: t`Variable ${title} reset` });
+      enqueueToast({
+        variant: 'success',
+        children: t`Variable ${title} reset`,
+      });
     } catch {
-      addToast({ variant: 'error', children: t`Error resetting variable` });
+      enqueueToast({ variant: 'error', children: t`Error resetting variable` });
     } finally {
       setIsSubmitting(false);
       setIsEditing(false);

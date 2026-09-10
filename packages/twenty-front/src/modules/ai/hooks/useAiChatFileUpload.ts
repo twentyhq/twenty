@@ -12,7 +12,7 @@ import { FileFolder } from '~/generated-metadata/graphql';
 export const useAiChatFileUpload = () => {
   const { uploadFile: directUploadFile } = useDirectFileUpload();
   const { t } = useLingui();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const setAgentChatSelectedFiles = useSetAtomState(
     agentChatSelectedFilesState,
   );
@@ -35,7 +35,7 @@ export const useAiChatFileUpload = () => {
       };
     } catch {
       const fileName = file.name;
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to upload file: ${fileName}`,
       });
@@ -75,7 +75,7 @@ export const useAiChatFileUpload = () => {
       (result) => result.status === 'rejected',
     ).length;
     if (failedCount > 0) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`${failedCount} file(s) failed to upload`,
       });

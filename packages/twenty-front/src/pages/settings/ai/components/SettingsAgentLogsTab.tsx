@@ -42,7 +42,7 @@ type SettingsAgentLogsTabProps = {
 export const SettingsAgentLogsTab = ({
   agentId,
 }: SettingsAgentLogsTabProps) => {
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [evaluatingTurnIds, setEvaluatingTurnIds] = useState<Set<string>>(
     new Set(),
   );
@@ -108,7 +108,7 @@ export const SettingsAgentLogsTab = ({
             return next;
           });
         }
-        addToast({
+        enqueueToast({
           variant: 'success',
           children: t`Turn evaluated successfully`,
         });
@@ -125,7 +125,7 @@ export const SettingsAgentLogsTab = ({
         next.delete(turnId);
         return next;
       });
-      addToast({ variant: 'error', children: t`Failed to evaluate turn` });
+      enqueueToast({ variant: 'error', children: t`Failed to evaluate turn` });
     });
   };
 

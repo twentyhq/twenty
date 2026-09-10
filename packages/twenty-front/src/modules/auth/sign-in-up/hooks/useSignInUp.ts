@@ -30,8 +30,8 @@ import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const { t } = useLingui();
 
   const [signInUpStep, setSignInUpStep] = useAtomState(signInUpStepState);
@@ -74,10 +74,10 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const errorMsgUserAlreadyExist = t`An error occurred while checking user existence`;
   const continueWithCredentials = useCallback(async () => {
     if (!form.getValues('email')) {
-      return addToast({ variant: 'error', children: t`Email is required` });
+      return enqueueToast({ variant: 'error', children: t`Email is required` });
     }
     if (!isCaptchaReady) {
-      return addToast({
+      return enqueueToast({
         variant: 'error',
         children: t`Captcha (anti-bot check) is still loading, try again`,
       });
@@ -93,7 +93,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       });
 
       if (isDefined(error)) {
-        return addErrorToast(error);
+        return enqueueErrorToast(error);
       }
 
       setSignInUpMode(
@@ -103,14 +103,14 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       );
       setSignInUpStep(SignInUpStep.Password);
     } catch {
-      addToast({ variant: 'error', children: errorMsgUserAlreadyExist });
+      enqueueToast({ variant: 'error', children: errorMsgUserAlreadyExist });
     }
   }, [
     readCaptchaToken,
     form,
     isCaptchaReady,
-    addToast,
-    addErrorToast,
+    enqueueToast,
+    enqueueErrorToast,
     t,
     checkUserExistsQuery,
     setSignInUpMode,
@@ -125,7 +125,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       }
 
       if (!isCaptchaReady) {
-        return addToast({
+        return enqueueToast({
           variant: 'error',
           children: t`Captcha (anti-bot check) is still loading, try again`,
         });
@@ -185,7 +185,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           verifyEmailRedirectPath,
         });
       } catch (error: unknown) {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       }
     },
     [
@@ -199,8 +199,8 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       signUpWithCredentialsInWorkspace,
       workspaceInviteHash,
       workspacePersonalInviteToken,
-      addToast,
-      addErrorToast,
+      enqueueToast,
+      enqueueErrorToast,
       buildSearchParamsFromUrlSyncedStates,
       isOnAWorkspace,
       workspacePublicData,

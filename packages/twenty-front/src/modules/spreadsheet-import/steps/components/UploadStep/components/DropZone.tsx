@@ -117,7 +117,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
 
   const [loading, setLoading] = useState(false);
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const { downloadSample } = useDownloadFakeRecords();
 
@@ -137,7 +137,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
       setLoading(false);
       fileRejections.forEach((fileRejection) => {
         const fileName = fileRejection.file.name;
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: t`${fileName} upload rejected`,
           description: fileRejection.errors[0].message,

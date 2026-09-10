@@ -24,7 +24,7 @@ export const useUpdateOneFieldMetadataItem = () => {
 
   const { handleMetadataError } = useMetadataErrorHandler();
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const setLastFieldMetadataItemUpdate = useSetAtomState(
@@ -97,7 +97,7 @@ export const useUpdateOneFieldMetadataItem = () => {
           operationType: CrudOperationType.UPDATE,
         });
       } else {
-        addToast({ variant: 'error', children: t`An error occurred.` });
+        enqueueToast({ variant: 'error', children: t`An error occurred.` });
       }
 
       return {

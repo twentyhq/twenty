@@ -17,7 +17,7 @@ export const useUpdatePageLayoutWithTabsAndWidgets = () => {
   );
 
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const updatePageLayoutWithTabsAndWidgets = async (
     id: string,
@@ -47,7 +47,7 @@ export const useUpdatePageLayoutWithTabsAndWidgets = () => {
           operationType: CrudOperationType.UPDATE,
         });
       } else {
-        addToast({ variant: 'error', children: t`An error occurred.` });
+        enqueueToast({ variant: 'error', children: t`An error occurred.` });
       }
 
       return {

@@ -14,7 +14,7 @@ export const useCreateWorkflowVersionEdge = () => {
 
   const { applyWorkflowVersionStepChanges } =
     useApplyWorkflowVersionStepChanges();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const [mutate] = useMutation<
     CreateWorkflowVersionEdgeMutation,
@@ -27,7 +27,7 @@ export const useCreateWorkflowVersionEdge = () => {
     const result = await mutate({
       variables: { input },
       onError: (error) => {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       },
     });
 

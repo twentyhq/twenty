@@ -71,7 +71,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const { channels, loading } = useMyMessageChannels();
   const { copyToClipboard } = useCopyToClipboard();
   const { openModal } = useModal();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { deleteEmailGroupChannel, loading: deleting } =
     useDeleteEmailGroupChannel();
   const { updateEmailGroupChannel, loading: updatingDisplayName } =
@@ -133,7 +133,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
         isNonEmptyString(nextDisplayName) ? nextDisplayName : null,
       );
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to update sender name.`,
       });
@@ -147,7 +147,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
       await deleteEmailGroupChannel(channel.id);
       navigateSettings(SettingsPath.WorkspaceCommunications);
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to delete email channel.`,
       });

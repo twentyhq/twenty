@@ -15,7 +15,7 @@ import { useToast } from 'twenty-ui/feedback';
 export const useResetPageLayoutToDefault = () => {
   const [resetMutation] = useMutation(RESET_PAGE_LAYOUT_TO_DEFAULT);
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { invalidateMetadataStore } = useInvalidateMetadataStore();
   const store = useStore();
 
@@ -41,7 +41,7 @@ export const useResetPageLayoutToDefault = () => {
             operationType: CrudOperationType.UPDATE,
           });
         } else {
-          addToast({ variant: 'error', children: t`An error occurred.` });
+          enqueueToast({ variant: 'error', children: t`An error occurred.` });
         }
       }
     },
@@ -50,7 +50,7 @@ export const useResetPageLayoutToDefault = () => {
       store,
       invalidateMetadataStore,
       handleMetadataError,
-      addToast,
+      enqueueToast,
     ],
   );
 

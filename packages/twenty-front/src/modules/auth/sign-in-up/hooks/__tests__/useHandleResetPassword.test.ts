@@ -15,15 +15,15 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
-const mockAddToast = jest.fn();
-const mockAddErrorToast = jest.fn();
+const mockEnqueueToast = jest.fn();
+const mockEnqueueErrorToast = jest.fn();
 
 jest.mock('twenty-ui/feedback', () => ({
   ...jest.requireActual('twenty-ui/feedback'),
-  useToast: () => ({ add: mockAddToast }),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 jest.mock('@/error-handler/hooks/useErrorToast', () => ({
-  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
+  useErrorToast: () => ({ enqueueErrorToast: mockEnqueueErrorToast }),
 }));
 jest.mock('@apollo/client/react');
 jest.mock('@/captcha/hooks/useReadCaptchaToken');
@@ -80,7 +80,7 @@ describe('useHandleResetPassword', () => {
     const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('')());
 
-    expect(mockAddToast).toHaveBeenCalledWith({
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
       variant: 'error',
       children: 'Invalid email',
     });
@@ -101,7 +101,7 @@ describe('useHandleResetPassword', () => {
         captchaToken: 'mock-captcha-token',
       },
     });
-    expect(mockAddToast).toHaveBeenCalledWith({
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
       variant: 'success',
       children:
         'If this email is registered, a password reset link has been sent',
@@ -122,7 +122,7 @@ describe('useHandleResetPassword', () => {
         captchaToken: 'mock-captcha-token',
       },
     });
-    expect(mockAddToast).toHaveBeenCalledWith({
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
       variant: 'success',
       children:
         'If this email is registered, a password reset link has been sent',
@@ -135,7 +135,7 @@ describe('useHandleResetPassword', () => {
     const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('test@example.com')());
 
-    expect(mockAddToast).toHaveBeenCalledWith({
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
       variant: 'error',
       children: 'Captcha (anti-bot check) is still loading, try again',
     });
@@ -150,7 +150,7 @@ describe('useHandleResetPassword', () => {
     const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('test@example.com')());
 
-    expect(mockAddToast).toHaveBeenCalledWith({
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
       variant: 'error',
       children: 'An error occurred.',
     });
@@ -163,7 +163,7 @@ describe('useHandleResetPassword', () => {
     const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('test@example.com')());
 
-    expect(mockAddToast).toHaveBeenCalledWith({
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
       variant: 'error',
       children: errorMessage,
     });

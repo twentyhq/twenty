@@ -12,7 +12,7 @@ export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
   const [validateApprovedAccessDomainMutation] = useMutation(
     ValidateApprovedAccessDomainDocument,
   );
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [searchParams] = useSearchParams();
   const approvedAccessDomainId = searchParams.get('wtdId');
   const validationToken = searchParams.get('validationToken');
@@ -37,14 +37,14 @@ export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
                   : approvedAccessDomain.isValidated,
             })),
           );
-          addToast({
+          enqueueToast({
             variant: 'success',
             children: t`Approved access domain validated`,
             dedupeKey: 'approved-access-domain-validation-dedupe-key',
           });
         },
         onError: (error) => {
-          addToast({
+          enqueueToast({
             variant: 'error',
             children: error?.message
               ? error.message

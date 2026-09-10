@@ -8,7 +8,7 @@ const DEFAULT_VALUE_BEFORE_SERVER_RESPONSE =
 
 export const useUploadFilesFieldFile = () => {
   const { uploadFile: directUploadFile } = useDirectFileUpload();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { t } = useLingui();
 
   const uploadFile = async (file: File, fieldMetadataId: string) => {
@@ -19,7 +19,7 @@ export const useUploadFilesFieldFile = () => {
       });
 
       const fileName = file.name;
-      addToast({
+      enqueueToast({
         variant: 'success',
         children: t`File "${fileName}" uploaded successfully`,
       });
@@ -33,7 +33,7 @@ export const useUploadFilesFieldFile = () => {
     } catch (error) {
       const fileNameForError = file.name;
       const errorMessage = String(error);
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to upload "${fileNameForError}"`,
       });

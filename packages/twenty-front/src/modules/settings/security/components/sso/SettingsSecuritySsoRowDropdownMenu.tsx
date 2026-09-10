@@ -22,7 +22,7 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
 }: SettingsSecuritySsoRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${ssoIdp.id}`;
 
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -38,7 +38,7 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
       identityProviderId,
     });
     if (isDefined(result.error)) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Error deleting SSO Identity Provider`,
         duration: 2000,
@@ -57,7 +57,7 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
           : SsoIdentityProviderStatus.Active,
     });
     if (isDefined(result.error)) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Error editing SSO Identity Provider`,
         duration: 2000,

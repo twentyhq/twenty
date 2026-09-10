@@ -83,7 +83,7 @@ export const SettingsAdminWorkspaceDetail = () => {
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { updateFeatureFlagState } = useAdminUpdateFeatureFlag();
   const { handleImpersonate, impersonatingUserId } = useHandleImpersonate();
   const [updateFeatureFlag] = useMutation(UpdateWorkspaceFeatureFlagDocument, {
@@ -149,7 +149,7 @@ export const SettingsAdminWorkspaceDetail = () => {
         if (isDefined(previousValue)) {
           updateFeatureFlagState(workspaceId, featureFlag, previousValue);
         }
-        addToast({
+        enqueueToast({
           variant: 'error',
           children: `Failed to update feature flag. ${error.message}`,
         });

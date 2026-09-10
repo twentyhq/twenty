@@ -26,7 +26,7 @@ export const SettingsDpaAgreementsTable = ({
   agreements,
 }: SettingsDpaAgreementsTableProps) => {
   const { t } = useLingui();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const handleDownload = async (agreement: DpaAgreement) => {
     if (!agreement.downloadUrl) {
@@ -39,7 +39,7 @@ export const SettingsDpaAgreementsTable = ({
         `Twenty-DPA-${agreement.templateVersion}-${agreement.customerLegalEntityName ?? 'copy'}.pdf`,
       );
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Could not download the document.`,
       });

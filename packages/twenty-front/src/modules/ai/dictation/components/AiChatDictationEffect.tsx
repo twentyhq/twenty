@@ -35,7 +35,7 @@ export const AiChatDictationEffect = ({
   const setHasWebSpeechProvenSilent = useSetAtomState(
     hasWebSpeechProvenSilentState,
   );
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const { isIOS } = useMemo(() => readDictationSurface(), []);
 
@@ -93,7 +93,7 @@ export const AiChatDictationEffect = ({
           if (event.reason === 'engine-silent' && isIOS) {
             setHasWebSpeechProvenSilent(true);
           }
-          addToast({
+          enqueueToast({
             variant: 'error',
             children: getDictationFailureMessage(event.reason),
           });
@@ -107,7 +107,7 @@ export const AiChatDictationEffect = ({
     onFinalText,
     setIsDictationRecording,
     setHasWebSpeechProvenSilent,
-    addToast,
+    enqueueToast,
   ]);
 
   // Both send paths dispatch this, so dictation does not have to be lifted into

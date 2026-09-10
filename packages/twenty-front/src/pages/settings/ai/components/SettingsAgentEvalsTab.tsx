@@ -67,7 +67,7 @@ export const SettingsAgentEvalsTab = ({
   const [inputToDelete, setInputToDelete] = useState<string | null>(null);
   const { openModal } = useModal();
   const { closeDropdown } = useCloseDropdown();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const navigate = useNavigate();
 
   const tabListComponentId = `${SETTINGS_AGENT_DETAIL_TABS.COMPONENT_INSTANCE_ID}-${agentId}`;
@@ -83,7 +83,7 @@ export const SettingsAgentEvalsTab = ({
       navigate(`#${logsTabId}`);
     },
     onError: () => {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to execute evaluation input`,
       });

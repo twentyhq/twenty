@@ -8,13 +8,13 @@ export const useToastOnQueryError = (
   error: ErrorLike | undefined,
   message?: string,
 ) => {
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   useEffect(() => {
     if (!isDefined(error)) {
       return;
     }
 
-    addErrorToast(error, message ? { children: message } : undefined);
-  }, [error, addErrorToast, message]);
+    enqueueErrorToast(error, message ? { children: message } : undefined);
+  }, [error, enqueueErrorToast, message]);
 };

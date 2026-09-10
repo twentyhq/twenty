@@ -21,7 +21,7 @@ export const useWaitForPaymentRecovery = () => {
     useApplyCurrentWorkspaceBillingUpdate();
   const { markBillingPaymentMethodAsAdded } =
     useMarkBillingPaymentMethodAsAdded();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
 
   const fetchWorkspaceBilling = async () => {
     const { data } = await client.query({
@@ -45,7 +45,7 @@ export const useWaitForPaymentRecovery = () => {
     });
 
     if (recovery.outcome !== 'recovered') {
-      addToast({
+      enqueueToast({
         variant: 'warning',
         children: t`Your card was saved, but the payment still needs attention.`,
         action: (
@@ -79,7 +79,7 @@ export const useWaitForPaymentRecovery = () => {
     // The payment method webhook can still be in flight
     markBillingPaymentMethodAsAdded();
 
-    addToast({ variant: 'success', children: t`Payment successful.` });
+    enqueueToast({ variant: 'success', children: t`Payment successful.` });
   };
 
   return { waitForPaymentRecovery };

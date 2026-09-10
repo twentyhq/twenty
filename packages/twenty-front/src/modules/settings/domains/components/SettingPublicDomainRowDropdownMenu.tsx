@@ -23,8 +23,8 @@ export const SettingPublicDomainRowDropdownMenu = ({
   const dropdownId = `settings-public-domain-row-${publicDomain.id}`;
   const { t } = useLingui();
 
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -40,11 +40,11 @@ export const SettingPublicDomainRowDropdownMenu = ({
         domain: publicDomain.domain,
       },
       onCompleted: () =>
-        addToast({
+        enqueueToast({
           variant: 'success',
           children: t`Custom domain successfully deleted`,
         }),
-      onError: (error) => addErrorToast(error),
+      onError: (error) => enqueueErrorToast(error),
     });
   };
 

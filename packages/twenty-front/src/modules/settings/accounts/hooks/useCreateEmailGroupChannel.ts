@@ -35,7 +35,7 @@ type CreateEmailGroupChannelVariables = {
 };
 
 export const useCreateEmailGroupChannel = () => {
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const [mutate, { loading, error }] = useMutation<
     CreateEmailGroupChannelResult,
@@ -52,7 +52,7 @@ export const useCreateEmailGroupChannel = () => {
     mutate({
       variables: { input: { handle, displayName } },
       onError: (mutationError) => {
-        addErrorToast(mutationError);
+        enqueueErrorToast(mutationError);
       },
     });
 

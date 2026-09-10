@@ -56,7 +56,7 @@ const StyledSectionContainer = styled.div`
 
 export const SettingsSecuritySettings = () => {
   const { t } = useLingui();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
@@ -79,7 +79,7 @@ export const SettingsSecuritySettings = () => {
         },
       });
     } catch (err) {
-      addErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
     }
   }, 500);
 
@@ -93,7 +93,7 @@ export const SettingsSecuritySettings = () => {
         },
       });
     } catch (err) {
-      addErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
     }
   }, 500);
 
@@ -135,7 +135,7 @@ export const SettingsSecuritySettings = () => {
         },
       },
     }).catch((err) => {
-      addErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
     });
   };
 

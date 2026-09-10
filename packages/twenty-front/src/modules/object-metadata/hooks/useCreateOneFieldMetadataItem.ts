@@ -20,7 +20,7 @@ export const useCreateOneFieldMetadataItem = () => {
   );
 
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const createOneFieldMetadataItem = async (
@@ -67,7 +67,7 @@ export const useCreateOneFieldMetadataItem = () => {
           operationType: CrudOperationType.CREATE,
         });
       } else {
-        addToast({ variant: 'error', children: t`An error occurred.` });
+        enqueueToast({ variant: 'error', children: t`An error occurred.` });
       }
 
       return {

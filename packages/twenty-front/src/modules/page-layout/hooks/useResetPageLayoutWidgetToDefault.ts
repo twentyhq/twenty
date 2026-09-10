@@ -14,7 +14,7 @@ export const useResetPageLayoutWidgetToDefault = (
 ) => {
   const [resetMutation] = useMutation(ResetPageLayoutWidgetToDefaultDocument);
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { refreshPageLayoutAfterReset } = useRefreshPageLayoutAfterReset(
     pageLayoutIdFromProps,
   );
@@ -31,11 +31,16 @@ export const useResetPageLayoutWidgetToDefault = (
             operationType: CrudOperationType.UPDATE,
           });
         } else {
-          addToast({ variant: 'error', children: t`An error occurred.` });
+          enqueueToast({ variant: 'error', children: t`An error occurred.` });
         }
       }
     },
-    [resetMutation, refreshPageLayoutAfterReset, handleMetadataError, addToast],
+    [
+      resetMutation,
+      refreshPageLayoutAfterReset,
+      handleMetadataError,
+      enqueueToast,
+    ],
   );
 
   return { resetPageLayoutWidgetToDefault };

@@ -5,5 +5,8 @@ import { useToastContext } from '../internal/useToastContext';
 export const useToast = () => {
   const store = useToastContext();
 
-  return useMemo(() => ({ add: store.add, close: store.close }), [store]);
+  return useMemo(
+    () => ({ enqueueToast: store.enqueueToast, close: store.close }),
+    [store],
+  );
 };

@@ -26,7 +26,7 @@ export const useUpdateWorkflowVersionStep = (instanceId?: string) => {
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueErrorToast } = useErrorToast();
   const { markStepForRecomputation } = useStepsOutputSchema();
   const setFlow = useSetAtomComponentState(flowComponentState, instanceId);
 
@@ -49,7 +49,7 @@ export const useUpdateWorkflowVersionStep = (instanceId?: string) => {
     const result = await mutate({
       variables: { input },
       onError: (error) => {
-        addErrorToast(error);
+        enqueueErrorToast(error);
       },
     });
     const updatedStep = result?.data?.updateWorkflowVersionStep;

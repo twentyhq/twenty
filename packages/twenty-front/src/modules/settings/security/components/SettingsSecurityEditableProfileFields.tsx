@@ -38,8 +38,8 @@ type ProfileFieldOption = {
 
 export const SettingsSecurityEditableProfileFields = () => {
   const { t } = useLingui();
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -82,7 +82,7 @@ export const SettingsSecurityEditableProfileFields = () => {
 
   const toggleField = (field: string) => {
     if (!currentWorkspace?.id) {
-      addToast({ variant: 'error', children: t`User is not logged in` });
+      enqueueToast({ variant: 'error', children: t`User is not logged in` });
       return;
     }
 
@@ -110,7 +110,7 @@ export const SettingsSecurityEditableProfileFields = () => {
       setCurrentWorkspace((prev) =>
         prev ? { ...prev, editableProfileFields: previousFields } : prev,
       );
-      addErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
     });
   };
 

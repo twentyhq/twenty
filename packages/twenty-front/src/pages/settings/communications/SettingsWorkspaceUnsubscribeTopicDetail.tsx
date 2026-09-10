@@ -35,7 +35,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
   const { unsubscribeTopicId } = useParams<{ unsubscribeTopicId: string }>();
   const { unsubscribeTopics, loading } = useUnsubscribeTopics();
   const { openModal } = useModal();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { updateUnsubscribeTopic } = useUpdateUnsubscribeTopic();
   const { deleteUnsubscribeTopic, loading: deleting } =
     useDeleteUnsubscribeTopic();
@@ -76,7 +76,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
     try {
       await updateUnsubscribeTopic(input);
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to update unsubscribe topic.`,
       });
@@ -115,7 +115,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
         SETTINGS_UNSUBSCRIBE_TAB_IDS.TOPICS,
       );
     } catch {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: t`Failed to delete unsubscribe topic.`,
       });

@@ -10,7 +10,7 @@ import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-a
 
 export const useDeleteJobs = (queueName: string, onSuccess?: () => void) => {
   const apolloAdminClient = useApolloAdminClient();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteJobsMutation] = useMutation(DeleteJobsDocument, {
     client: apolloAdminClient,
@@ -35,14 +35,14 @@ export const useDeleteJobs = (queueName: string, onSuccess?: () => void) => {
 
         if (deletedCount > 0) {
           if (failedResults.length > 0) {
-            addToast({
+            enqueueToast({
               variant: 'success',
               children: plural(deletedCount, {
                 one: `Successfully deleted ${deletedCount} job`,
                 other: `Successfully deleted ${deletedCount} jobs`,
               }),
             });
-            addToast({
+            enqueueToast({
               variant: 'error',
               children: plural(failedResults.length, {
                 one: `${failedResults.length} job could not be deleted`,
@@ -50,7 +50,7 @@ export const useDeleteJobs = (queueName: string, onSuccess?: () => void) => {
               }),
             });
           } else {
-            addToast({
+            enqueueToast({
               variant: 'success',
               children: plural(deletedCount, {
                 one: `Successfully deleted ${deletedCount} job`,
@@ -67,14 +67,14 @@ export const useDeleteJobs = (queueName: string, onSuccess?: () => void) => {
           const errorDetails =
             errorMessages.length > 0 ? `: ${errorMessages[0]}` : '';
 
-          addToast({
+          enqueueToast({
             variant: 'error',
             children: t`No jobs were deleted${errorDetails}`,
           });
         }
       }
     } catch (error) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: CombinedGraphQLErrors.is(error)
           ? getErrorMessageFromApolloError(error)

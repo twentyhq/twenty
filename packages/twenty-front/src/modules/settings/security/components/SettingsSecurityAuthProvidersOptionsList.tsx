@@ -42,8 +42,8 @@ const StyledSettingsSecurityOptionsList = styled.div`
 export const SettingsSecurityAuthProvidersOptionsList = () => {
   const { t } = useLingui();
 
-  const { add: addToast } = useToast();
-  const { addErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
   const ssoIdentitiesProviders = useAtomStateValue(ssoIdentitiesProvidersState);
   const authProviders = useAtomStateValue(authProvidersState);
   const isMultiWorkspaceEnabled = useAtomStateValue(
@@ -89,7 +89,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
       allAuthProvidersEnabled.filter((isAuthEnabled) => isAuthEnabled).length <=
         1
     ) {
-      return addToast({
+      return enqueueToast({
         variant: 'error',
         children: t`At least one authentication method must be enabled`,
       });
@@ -111,7 +111,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         ...currentWorkspace,
         [key]: !currentWorkspace[key],
       });
-      addErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
     });
   };
 
@@ -132,7 +132,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         isPublicInviteLinkEnabled: value,
       });
     } catch (err: any) {
-      addErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
     }
   };
 
@@ -191,7 +191,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
             }
           : currentWorkspaceValue,
       );
-      addErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
+      enqueueErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
     });
   };
 

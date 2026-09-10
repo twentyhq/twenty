@@ -60,7 +60,7 @@ export const ObjectSettings = ({
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const { openModal, closeModal } = useModal();
 
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
@@ -88,7 +88,7 @@ export const ObjectSettings = ({
     const result = await deleteOneObjectMetadataItem(objectMetadataItem.id);
 
     if (result.status === 'successful') {
-      addToast({ variant: 'success', children: t`Object deleted` });
+      enqueueToast({ variant: 'success', children: t`Object deleted` });
       closeModal(DELETE_OBJECT_MODAL_ID);
       navigate(SettingsPath.Objects);
       return;

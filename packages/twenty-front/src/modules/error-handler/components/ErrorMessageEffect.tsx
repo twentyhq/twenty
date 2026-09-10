@@ -5,13 +5,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/feedback';
 
 export const ErrorMessageEffect = () => {
-  const { add: addToast } = useToast();
+  const { enqueueToast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const errorMessage = searchParams.get('errorMessage');
 
   useEffect(() => {
     if (isDefined(errorMessage)) {
-      addToast({
+      enqueueToast({
         variant: 'error',
         children: errorMessage,
         dedupeKey: 'error-message-dedupe-key',
@@ -20,7 +20,7 @@ export const ErrorMessageEffect = () => {
       newSearchParams.delete('errorMessage');
       setSearchParams(newSearchParams);
     }
-  }, [addToast, errorMessage, searchParams, setSearchParams]);
+  }, [enqueueToast, errorMessage, searchParams, setSearchParams]);
 
   return <></>;
 };

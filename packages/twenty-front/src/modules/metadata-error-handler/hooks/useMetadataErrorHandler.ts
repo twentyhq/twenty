@@ -11,8 +11,8 @@ import { CrudOperationType } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/feedback';
 
 export const useMetadataErrorHandler = () => {
-  const { addErrorToast } = useErrorToast();
-  const { add: addToast } = useToast();
+  const { enqueueErrorToast } = useErrorToast();
+  const { enqueueToast } = useToast();
 
   const TRANSLATED_OPERATION_TYPE = {
     [CrudOperationType.CREATE]: t`create`,
@@ -74,7 +74,7 @@ export const useMetadataErrorHandler = () => {
 
     switch (classification.type) {
       case 'v1':
-        addErrorToast(classification.error);
+        enqueueErrorToast(classification.error);
         break;
 
       case 'v2-validation': {
@@ -85,7 +85,7 @@ export const useMetadataErrorHandler = () => {
         if (targetErrors.length > 0) {
           targetErrors.forEach((entityError) => {
             entityError.errors.forEach((validationError) =>
-              addToast({
+              enqueueToast({
                 variant: 'error',
                 children:
                   validationError.userFriendlyMessage ??
@@ -106,7 +106,7 @@ export const useMetadataErrorHandler = () => {
             .map((metadataName) => TRANSLATED_METADATA_NAME[metadataName])
             .join(', ');
 
-          addToast({
+          enqueueToast({
             variant: 'error',
             children: t`Failed to ${translatedOperationType} ${translatedMetadataName}. Related ${relatedEntityNames} validation failed. Please check your configuration and try again.`,
           });
@@ -116,7 +116,7 @@ export const useMetadataErrorHandler = () => {
           targetErrors.length === 0 &&
           relatedFailingMetadataNames.length === 0
         ) {
-          addToast({
+          enqueueToast({
             variant: 'error',
             children: t`Failed to ${translatedOperationType} ${translatedMetadataName}. Please try again.`,
           });
@@ -132,7 +132,7 @@ export const useMetadataErrorHandler = () => {
             ? t`An internal error occurred while validating your changes. Please contact support.`
             : t`An internal error occurred while applying your changes. Please contact support and try again later.`;
 
-        addToast({ variant: 'error', children: errorMessage });
+        enqueueToast({ variant: 'error', children: errorMessage });
         break;
       }
     }
