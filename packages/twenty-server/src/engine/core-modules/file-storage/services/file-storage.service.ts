@@ -59,6 +59,7 @@ export class FileStorageService {
   }): Promise<string | undefined> {
     const existingFile = await fileRepository.findOne(workspaceId, {
       where: { path: filePath, applicationId },
+      withDeleted: true,
     });
 
     return existingFile?.id ?? fileId;
