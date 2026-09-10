@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
+import bytes from 'bytes';
 
 import { ApiPath, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { settings } from 'src/engine/constants/settings';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
@@ -59,6 +61,8 @@ export class FileUploadTargetService {
     contentType: string;
     size: number;
   }): Promise<FileUploadTargetDTO> {
+    this.assertUploadSizeAllowedOrThrow(size);
+
     const pendingResourcePath = buildPendingUploadResourcePath({
       fileId,
       resourcePath,
@@ -133,6 +137,10 @@ export class FileUploadTargetService {
     return Promise.all(
       requests.map(async (request) => {
         try {
+          // Checked before the pending row is created: buildUploadTarget would
+          // reject it too, but only after leaving a row for the cron to reap.
+          this.assertUploadSizeAllowedOrThrow(request.size);
+
           const pendingFile = await this.fileStorageService.createPendingFile({
             fileFolder: request.fileFolder,
             applicationUniversalIdentifier:
@@ -163,5 +171,19 @@ export class FileUploadTargetService {
         }
       }),
     );
+  }
+
+  private assertUploadSizeAllowedOrThrow(size: number): void {
+    const maxFileSize = bytes(settings.storage.maxDirectUploadFileSize) ?? 0;
+
+    if (!Number.isInteger(size) || size <= 0 || size > maxFileSize) {
+      throw new FileUploadException(
+        `Invalid file size ${size} (max ${maxFileSize} bytes)`,
+        FileUploadExceptionCode.FILE_TOO_LARGE,
+        {
+          userFriendlyMessage: msg`The file is empty or exceeds the maximum allowed size.`,
+        },
+      );
+    }
   }
 }

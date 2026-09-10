@@ -17,7 +17,6 @@ import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dt
 import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
 import { FileUploadTargetService } from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -39,7 +38,6 @@ export class ApplicationTarballUploadService {
     private readonly fileStorageService: FileStorageService,
     private readonly fileUploadTargetService: FileUploadTargetService,
     private readonly fileUploadCompletionService: FileUploadCompletionService,
-    private readonly twentyConfigService: TwentyConfigService,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
   ) {}
@@ -51,17 +49,6 @@ export class ApplicationTarballUploadService {
     workspaceId: string;
     size: number;
   }): Promise<FileUploadTargetDTO> {
-    const maxSize = this.twentyConfigService.get(
-      'MAX_TARBALL_UPLOAD_SIZE_BYTES',
-    );
-
-    if (!Number.isInteger(size) || size <= 0 || size > maxSize) {
-      throw new ApplicationRegistrationException(
-        `Tarball size ${size} is invalid or exceeds the maximum of ${maxSize} bytes`,
-        ApplicationRegistrationExceptionCode.INVALID_INPUT,
-      );
-    }
-
     const applicationUniversalIdentifier =
       await this.getWorkspaceApplicationUniversalIdentifier(workspaceId);
 
