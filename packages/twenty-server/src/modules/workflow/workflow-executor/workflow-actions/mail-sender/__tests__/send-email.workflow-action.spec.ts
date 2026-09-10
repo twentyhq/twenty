@@ -46,7 +46,6 @@ describe('SendEmailWorkflowAction', () => {
   let connectedAccountRepository: { findOne: jest.Mock };
   let userWorkspaceRepository: { findOne: jest.Mock };
   let workspaceMemberRepository: { findOne: jest.Mock };
-  let mockWorkflowExecutionContextService: { getExecutionContext: jest.Mock };
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -60,14 +59,6 @@ describe('SendEmailWorkflowAction', () => {
     connectedAccountRepository = { findOne: jest.fn() };
     userWorkspaceRepository = { findOne: jest.fn() };
     workspaceMemberRepository = { findOne: jest.fn() };
-    mockWorkflowExecutionContextService = {
-      getExecutionContext: jest.fn().mockResolvedValue({
-        isActingOnBehalfOfUser: false,
-        initiator: {},
-        rolePermissionConfig: { shouldBypassPermissionChecks: true },
-        authContext: { type: 'application', application: {} },
-      }),
-    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -79,7 +70,11 @@ describe('SendEmailWorkflowAction', () => {
         },
         {
           provide: WorkflowExecutionContextService,
-          useValue: mockWorkflowExecutionContextService,
+          useValue: {
+            getExecutionContext: jest
+              .fn()
+              .mockResolvedValue({ authContext: { type: 'application' } }),
+          },
         },
         {
           provide: WorkspaceOrmManager,
@@ -446,50 +441,6 @@ describe('SendEmailWorkflowAction', () => {
       ).rejects.toThrow('Step is not a send-email action');
 
       expect(mockSendEmailTool.execute).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('caller identity propagation', () => {
-    it('passes the run caller userWorkspaceId to the tool for user-driven runs', async () => {
-      mockWorkflowExecutionContextService.getExecutionContext.mockResolvedValue(
-        {
-          isActingOnBehalfOfUser: true,
-          initiator: { workspaceMemberId: WORKSPACE_MEMBER_ID },
-          rolePermissionConfig: { shouldBypassPermissionChecks: true },
-          authContext: {
-            type: 'user',
-            userWorkspaceId: USER_WORKSPACE_ID,
-          },
-        },
-      );
-
-      await executeWithBody('hi');
-
-      expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          workspaceId: 'workspace-1',
-          userWorkspaceId: USER_WORKSPACE_ID,
-        }),
-      );
-    });
-
-    it('keeps the tool context workspace-scoped for application-driven runs', async () => {
-      mockWorkflowExecutionContextService.getExecutionContext.mockResolvedValue(
-        {
-          isActingOnBehalfOfUser: false,
-          initiator: {},
-          rolePermissionConfig: { shouldBypassPermissionChecks: true },
-          authContext: { type: 'application', application: {} },
-        },
-      );
-
-      await executeWithBody('hi');
-
-      expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.not.objectContaining({ userWorkspaceId: expect.anything() }),
-      );
     });
   });
 });

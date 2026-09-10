@@ -19,6 +19,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
+import { getUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-user-from-auth-context.util';
 import { type WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
 import {
   buildEmailStepLog,
@@ -72,25 +73,15 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     };
   }
 
-  // The email tools fall back to the first connected account of the whole
-  // workspace when the context carries no userWorkspaceId, so user-driven runs
-  // must hand the run caller's identity down (workflow runs resolve it the
-  // same way for their permission checks).
   protected override async buildToolExecutionContext(
     runInfo: WorkflowRunInfo,
   ): Promise<ToolExecutionContext> {
-    const executionContext =
+    const { authContext } =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
-
-    const userWorkspaceId =
-      executionContext.isActingOnBehalfOfUser &&
-      executionContext.authContext.type === 'user'
-        ? executionContext.authContext.userWorkspaceId
-        : undefined;
 
     return {
       workspaceId: runInfo.workspaceId,
-      ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
+      ...getUserFromAuthContext(authContext),
     };
   }
 

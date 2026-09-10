@@ -64,9 +64,6 @@ export abstract class ToolBackedWorkflowAction<
     args: BuildStepLogArgs<TInput>,
   ): WorkflowRunStepLog;
 
-  // Tool calls default to the workspace identity; subclasses that touch
-  // caller-scoped resources (email account fallback) override this to add the
-  // run caller's userWorkspaceId, bcs the tools read it from the context.
   protected buildToolExecutionContext(
     runInfo: WorkflowRunInfo,
   ): Promise<ToolExecutionContext> {

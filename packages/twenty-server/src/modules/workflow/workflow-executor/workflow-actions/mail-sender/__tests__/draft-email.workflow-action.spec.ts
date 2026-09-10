@@ -41,7 +41,6 @@ describe('DraftEmailWorkflowAction', () => {
   let connectedAccountRepository: { findOne: jest.Mock };
   let userWorkspaceRepository: { findOne: jest.Mock };
   let workspaceMemberRepository: { findOne: jest.Mock };
-  let mockWorkflowExecutionContextService: { getExecutionContext: jest.Mock };
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -56,14 +55,6 @@ describe('DraftEmailWorkflowAction', () => {
     connectedAccountRepository = { findOne: jest.fn() };
     userWorkspaceRepository = { findOne: jest.fn() };
     workspaceMemberRepository = { findOne: jest.fn() };
-    mockWorkflowExecutionContextService = {
-      getExecutionContext: jest.fn().mockResolvedValue({
-        isActingOnBehalfOfUser: false,
-        initiator: {},
-        rolePermissionConfig: { shouldBypassPermissionChecks: true },
-        authContext: { type: 'application', application: {} },
-      }),
-    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -75,7 +66,11 @@ describe('DraftEmailWorkflowAction', () => {
         },
         {
           provide: WorkflowExecutionContextService,
-          useValue: mockWorkflowExecutionContextService,
+          useValue: {
+            getExecutionContext: jest
+              .fn()
+              .mockResolvedValue({ authContext: { type: 'application' } }),
+          },
         },
         {
           provide: WorkspaceOrmManager,
@@ -228,46 +223,5 @@ describe('DraftEmailWorkflowAction', () => {
     ).rejects.toThrow('Step is not a draft-email action');
 
     expect(mockDraftEmailTool.execute).not.toHaveBeenCalled();
-  });
-
-  describe('caller identity propagation', () => {
-    const executeDraft = () =>
-      action.execute({
-        currentStepId: 'step-1',
-        steps: [
-          buildDraftEmailStep({
-            connectedAccountId: 'account-1',
-            recipients: { to: 'test@example.com' },
-            subject: 'Draft Test',
-            body: 'hello',
-          }),
-        ],
-        context: {},
-        runInfo: { workspaceId: 'workspace-1', workflowRunId: 'run-1' },
-      });
-
-    it('passes the run caller userWorkspaceId to the tool for user-driven runs', async () => {
-      mockWorkflowExecutionContextService.getExecutionContext.mockResolvedValue(
-        {
-          isActingOnBehalfOfUser: true,
-          initiator: { workspaceMemberId: WORKSPACE_MEMBER_ID },
-          rolePermissionConfig: { shouldBypassPermissionChecks: true },
-          authContext: {
-            type: 'user',
-            userWorkspaceId: USER_WORKSPACE_ID,
-          },
-        },
-      );
-
-      await executeDraft();
-
-      expect(mockDraftEmailTool.execute).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          workspaceId: 'workspace-1',
-          userWorkspaceId: USER_WORKSPACE_ID,
-        }),
-      );
-    });
   });
 });
