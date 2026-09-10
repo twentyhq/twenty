@@ -116,11 +116,13 @@ export const RouteContextStoreProvider = () => {
       ? lastVisitedViewIdRaw
       : undefined;
 
-  const selectableViewsOnObject = views.filter(
-    (view) =>
-      view.objectMetadataId === objectMetadataItem?.id &&
-      view.type !== ViewType.FIELDS_WIDGET,
-  );
+  const selectableViewsOnObject = views
+    .filter(
+      (view) =>
+        view.objectMetadataId === objectMetadataItem?.id &&
+        view.type !== ViewType.FIELDS_WIDGET,
+    )
+    .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
 
   const seededDefaultViewId = isSeededDefaultViewEnabled
     ? selectableViewsOnObject.find((view) => view.key !== ViewKey.INDEX)?.id

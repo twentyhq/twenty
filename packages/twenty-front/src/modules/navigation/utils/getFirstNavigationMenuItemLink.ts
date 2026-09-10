@@ -11,7 +11,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 type GetFirstNavigationMenuItemLinkArgs = {
   navigationMenuItemsInDisplayOrder: NavigationMenuItem[];
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  views: Pick<View, 'id' | 'objectMetadataId' | 'key' | 'type'>[];
+  views: Pick<View, 'id' | 'objectMetadataId' | 'key' | 'type' | 'position'>[];
   objectPermissionsByObjectMetadataId: Parameters<
     typeof getObjectPermissionsForObject
   >[0];

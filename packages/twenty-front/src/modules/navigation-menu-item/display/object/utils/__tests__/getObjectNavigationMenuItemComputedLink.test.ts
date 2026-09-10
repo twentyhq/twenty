@@ -13,18 +13,22 @@ const mockObjectMetadataItems: Pick<
   },
 ];
 
-const mockViews: Pick<View, 'id' | 'objectMetadataId' | 'key' | 'type'>[] = [
+const mockViews: Pick<
+  View,
+  'id' | 'objectMetadataId' | 'key' | 'type' | 'position'
+>[] = [
   {
     id: 'view-index',
     objectMetadataId: 'metadata-1',
     key: ViewKey.INDEX,
     type: ViewType.TABLE,
+    position: 0,
   },
 ];
 
 const mockViewsWithSeededView: Pick<
   View,
-  'id' | 'objectMetadataId' | 'key' | 'type'
+  'id' | 'objectMetadataId' | 'key' | 'type' | 'position'
 >[] = [
   ...mockViews,
   {
@@ -32,6 +36,7 @@ const mockViewsWithSeededView: Pick<
     objectMetadataId: 'metadata-1',
     key: null,
     type: ViewType.TABLE,
+    position: 1,
   },
 ];
 
@@ -122,6 +127,7 @@ describe('getObjectNavigationMenuItemComputedLink', () => {
           objectMetadataId: 'metadata-1',
           key: null,
           type: ViewType.FIELDS_WIDGET,
+          position: 2,
         },
       ],
       isSeededDefaultViewEnabled: true,
@@ -164,5 +170,25 @@ describe('getObjectNavigationMenuItemComputedLink', () => {
     });
 
     expect(result).toBe('/objects/people?viewId=view-index');
+  });
+
+  it('should target the lowest-positioned non-index view regardless of array order', () => {
+    const result = getObjectNavigationMenuItemComputedLink({
+      item: { targetObjectMetadataId: 'metadata-1' },
+      objectMetadataItems: mockObjectMetadataItems,
+      views: [
+        {
+          id: 'view-user-created',
+          objectMetadataId: 'metadata-1',
+          key: null,
+          type: ViewType.TABLE,
+          position: 7,
+        },
+        ...mockViewsWithSeededView,
+      ],
+      isSeededDefaultViewEnabled: true,
+    });
+
+    expect(result).toBe('/objects/people?viewId=view-seeded');
   });
 });

@@ -18,7 +18,7 @@ export const getNavigationMenuItemComputedLink = ({
 }: {
   item: NavigationMenuItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  views: Pick<View, 'id' | 'objectMetadataId' | 'key' | 'type'>[];
+  views: Pick<View, 'id' | 'objectMetadataId' | 'key' | 'type' | 'position'>[];
   lastVisitedViewPerObjectMetadataItem?: Record<string, string> | null;
   isSeededDefaultViewEnabled?: boolean;
 }): string => {
