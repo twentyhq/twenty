@@ -59,6 +59,56 @@ describe('mergeCustomProvidersIntoCatalog', () => {
     });
   });
 
+  it('completes a custom reading with the catalog readings it does not set', () => {
+    const catalogWithReadings = {
+      openai: {
+        ...catalog.openai,
+        models: [
+          {
+            name: 'gpt-5.6-luna',
+            label: 'GPT-5.6 Luna',
+            efforts: ['low', 'high'],
+            benchmark: { intelligenceIndex: 37.5, outputTokensPerSecond: 120 },
+            benchmarkByEffort: {
+              low: { intelligenceIndex: 21.8 },
+              high: { intelligenceIndex: 32.9 },
+            },
+          },
+        ],
+      },
+    } as unknown as AiProvidersConfig;
+
+    const merged = mergeCustomProvidersIntoCatalog({
+      catalog: catalogWithReadings,
+      custom: {
+        openai: {
+          ...catalog.openai,
+          models: [
+            {
+              name: 'gpt-5.6-luna',
+              label: 'GPT-5.6 Luna',
+              benchmark: { costPerTask: 0.1 },
+              benchmarkByEffort: { high: { intelligenceIndex: 33 } },
+            },
+          ],
+        },
+      } as unknown as AiProvidersConfig,
+    });
+
+    expect(merged.openai.models?.[0]).toMatchObject({
+      efforts: ['low', 'high'],
+      benchmark: {
+        intelligenceIndex: 37.5,
+        outputTokensPerSecond: 120,
+        costPerTask: 0.1,
+      },
+      benchmarkByEffort: {
+        low: { intelligenceIndex: 21.8 },
+        high: { intelligenceIndex: 33 },
+      },
+    });
+  });
+
   it('leaves a model the catalog does not know untouched', () => {
     const merged = mergeCustomProvidersIntoCatalog({
       catalog,
