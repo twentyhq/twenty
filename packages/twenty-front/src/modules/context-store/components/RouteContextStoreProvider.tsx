@@ -13,13 +13,19 @@ import { isDefined } from 'twenty-shared/utils';
 import { ViewKey, ViewType } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
-const getViewId = (
-  viewIdFromQueryParams: string | null,
-  indexViewId?: string,
-  lastVisitedViewId?: string,
-  firstAvailableViewId?: string,
-  defaultViewId?: string,
-) => {
+const getViewId = ({
+  viewIdFromQueryParams,
+  indexViewId,
+  lastVisitedViewId,
+  firstAvailableViewId,
+  defaultViewId,
+}: {
+  viewIdFromQueryParams: string | null;
+  indexViewId?: string;
+  lastVisitedViewId?: string;
+  firstAvailableViewId?: string;
+  defaultViewId?: string;
+}) => {
   if (isDefined(viewIdFromQueryParams)) {
     return viewIdFromQueryParams;
   }
@@ -118,13 +124,13 @@ export const RouteContextStoreProvider = () => {
       view.type !== ViewType.FIELDS_WIDGET,
   )?.id;
 
-  const viewId = getViewId(
-    viewIdQueryParam,
+  const viewId = getViewId({
+    viewIdFromQueryParams: viewIdQueryParam,
     indexViewId,
     lastVisitedViewId,
     firstAvailableViewId,
     defaultViewId,
-  );
+  });
 
   const shouldComputeContextStore =
     (isRecordIndexPage ||
