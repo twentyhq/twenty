@@ -39,12 +39,13 @@ export const isTlsCertificateError = (error: unknown): boolean => {
     return true;
   }
 
+  const message = 'message' in error ? error.message : undefined;
+
   return (
     error.code === 'ESOCKET' &&
-    'message' in error &&
-    typeof error.message === 'string' &&
+    typeof message === 'string' &&
     TLS_CERTIFICATE_ERROR_MESSAGE_PATTERNS.some((pattern) =>
-      pattern.test(error.message),
+      pattern.test(message),
     )
   );
 };
