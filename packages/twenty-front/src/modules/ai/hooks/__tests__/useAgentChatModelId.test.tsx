@@ -39,6 +39,18 @@ describe('useAgentChatModelId', () => {
     expect(result.current.modelIdForRequest).toBeUndefined();
   });
 
+  it('ignores a persisted tier name it does not know', () => {
+    window.localStorage.setItem(
+      'ai/agentChatUserSelectedModelTier',
+      JSON.stringify('turbo'),
+    );
+
+    const { result } = renderHooks();
+
+    expect(result.current.selectedTier).toBeNull();
+    expect(result.current.modelIdForRequest).toBeUndefined();
+  });
+
   it('sends the auto-select id of the tier the user picked', () => {
     const { result } = renderHooks();
 

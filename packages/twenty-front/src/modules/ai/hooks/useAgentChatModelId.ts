@@ -1,6 +1,5 @@
-import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
+import { AUTO_SELECT_MODEL_ID_BY_TIER, isAiModelTier } from 'twenty-shared/ai';
 import { AUTO_SELECT_FAST_MODEL_ID } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
@@ -12,6 +11,11 @@ export const useAgentChatModelId = () => {
   const agentChatUserSelectedModelTier = useAtomStateValue(
     agentChatUserSelectedModelTierState,
   );
+  // The value comes from localStorage, so a stale tier name must not reach
+  // the request.
+  const selectedTier = isAiModelTier(agentChatUserSelectedModelTier)
+    ? agentChatUserSelectedModelTier
+    : null;
   // The shared sender mounts above the chat surface providers.
   const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
     shouldOpenAiChatAfterOnboardingState,
@@ -21,9 +25,10 @@ export const useAgentChatModelId = () => {
     ? AUTO_SELECT_FAST_MODEL_ID
     : undefined;
 
-  const modelIdForRequest = isDefined(agentChatUserSelectedModelTier)
-    ? AUTO_SELECT_MODEL_ID_BY_TIER[agentChatUserSelectedModelTier]
-    : workspaceSetupModelId;
+  const modelIdForRequest =
+    selectedTier !== null
+      ? AUTO_SELECT_MODEL_ID_BY_TIER[selectedTier]
+      : workspaceSetupModelId;
 
-  return { selectedTier: agentChatUserSelectedModelTier, modelIdForRequest };
+  return { selectedTier, modelIdForRequest };
 };

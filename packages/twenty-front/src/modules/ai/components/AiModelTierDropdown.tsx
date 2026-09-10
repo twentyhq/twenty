@@ -1,7 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { DEFAULT_AI_CHAT_MODEL_TIER, type AiModelTier } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  AI_MODEL_TIERS,
+  DEFAULT_AI_CHAT_MODEL_TIER,
+  isAiModelTier,
+  type AiModelTier,
+} from 'twenty-shared/ai';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiModelTierSlider } from '@/ai/components/AiModelTierSlider';
@@ -45,16 +49,15 @@ export const AiModelTierDropdown = ({
     ? 'fast'
     : (currentWorkspace?.aiChatModelTier ?? DEFAULT_AI_CHAT_MODEL_TIER);
 
-  const selectedTier = agentChatUserSelectedModelTier ?? workspaceTier;
-  const selectedResolvedTier = tiers.find((tier) => tier.tier === selectedTier);
+  // The persisted value comes from localStorage, so it is not trusted blindly.
+  const selectedTier = isAiModelTier(agentChatUserSelectedModelTier)
+    ? agentChatUserSelectedModelTier
+    : workspaceTier;
+  const selectedResolvedTier = tiers[AI_MODEL_TIERS.indexOf(selectedTier)];
 
   const handleTierChange = (tier: AiModelTier) => {
     setAgentChatUserSelectedModelTier(tier === workspaceTier ? null : tier);
   };
-
-  if (!isDefined(selectedResolvedTier)) {
-    return null;
-  }
 
   return (
     <Dropdown
