@@ -1696,6 +1696,24 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description:
+      'Time-to-live for the outbound webhook call rate limiting window, in milliseconds',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WEBHOOK_CALL_RATE_LIMITING_TTL_IN_MS = 60_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum number of outbound webhook calls a single workspace may make in the rate limiting window. Calls above it are never enqueued and are recorded as a failed webhook response',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WEBHOOK_CALL_RATE_LIMITING_LIMIT = 60;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
       'Time-to-live for application job enqueue rate limiting in milliseconds',
     type: ConfigVariableType.NUMBER,
   })
