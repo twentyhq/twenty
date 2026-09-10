@@ -33,8 +33,6 @@ export const slackDeliverMessageHandler = async (
         responseText: message.messageText,
       });
     } catch (error) {
-      // the message is already posted, so failing the job here would risk
-      // delivering it twice on any future retry
       console.warn(
         `[slack] delivered request ${slackAssistantRequestId} but could not mark it done: ${error instanceof Error ? error.message : 'unknown error'}`,
       );

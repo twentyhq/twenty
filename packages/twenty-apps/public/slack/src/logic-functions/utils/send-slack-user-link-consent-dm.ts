@@ -58,8 +58,6 @@ export const sendSlackUserLinkConsentDm = async (
         throw error;
       }
 
-      // the admin already committed to sending this, so a rate limit defers the
-      // DM instead of asking them to trigger it again
       await enqueueSlackMessageDelivery({
         payload: {
           slackChannelId: channelId,

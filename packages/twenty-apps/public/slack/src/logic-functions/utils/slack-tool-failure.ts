@@ -8,7 +8,6 @@ export const slackToolFailure = (
   success: false,
   message,
   error: error instanceof Error ? error.message : 'Slack request failed',
-  // callers defer delivery on this rather than waiting out the window inline
   ...(isSlackRateLimitedError(error)
     ? { retryAfterSeconds: error.retryAfter }
     : {}),

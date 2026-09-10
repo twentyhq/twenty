@@ -195,8 +195,6 @@ export const slackAssistantWorkerHandler = async (
     }
 
     if (isDefined(deferredRetryAfterSeconds)) {
-      // the answer is already paid for, so a rate limit hands delivery to a
-      // delayed job rather than spending what is left of the worker budget
       await enqueueSlackMessageDelivery({
         payload: { ...answerMessage, slackAssistantRequestId: record.id },
         retryAfterSeconds: deferredRetryAfterSeconds,

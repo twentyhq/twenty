@@ -14,8 +14,6 @@ import { sendSlackMessageWithBodyFallbacks } from 'src/logic-functions/utils/sen
 export const postSlackMessage = async (
   client: WebClient,
   parameters: SlackPostMessageInput,
-  // deferrable senders reschedule a 429 instead, so waiting here would only
-  // spend their budget twice over
   { waitOutRateLimit = true }: SlackPostMessageOptions = {},
 ): Promise<SlackToolResult> => {
   const parentTimestamp = normalizeSlackParentMessageTimestamp(
