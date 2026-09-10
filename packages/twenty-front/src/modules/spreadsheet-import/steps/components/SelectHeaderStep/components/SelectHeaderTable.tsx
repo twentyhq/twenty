@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { t } from '@lingui/core/macro';
 
-import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
+import { SpreadsheetImportSingleSelectTable } from '@/spreadsheet-import/components/SpreadsheetImportSingleSelectTable';
 import { type ImportedRow } from '@/spreadsheet-import/types';
 
 type SelectHeaderTableProps = {
@@ -33,11 +33,10 @@ export const SelectHeaderTable = ({
   }, [importedRows]);
 
   return (
-    <SpreadsheetImportTable
+    <SpreadsheetImportSingleSelectTable
       rowKeyGetter={rowKeyGetter}
       rows={importedRows}
       columns={columns}
-      selectionMode="single"
       selectionLabel={t`Select header row`}
       selectedRowKey={selectedRowIndex}
       onSelectedRowChange={onSelectedRowChange}

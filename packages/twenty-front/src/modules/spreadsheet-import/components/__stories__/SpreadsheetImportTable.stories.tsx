@@ -1,4 +1,5 @@
 import { RsiContext } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
+import { SpreadsheetImportSingleSelectTable } from '@/spreadsheet-import/components/SpreadsheetImportSingleSelectTable';
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
@@ -33,11 +34,10 @@ const SingleSelectionExample = ({
   return (
     <>
       <button onClick={() => setRows([...rows].reverse())}>Reverse rows</button>
-      <SpreadsheetImportTable
+      <SpreadsheetImportSingleSelectTable
         columns={COLUMNS}
         rows={rows}
         rowKeyGetter={rowKeyGetter}
-        selectionMode="single"
         selectionLabel="Select a contact"
         selectedRowKey={selectedRowKey}
         onSelectedRowChange={(rowKey) => {

@@ -6,30 +6,15 @@ export type SpreadsheetImportTableProps<
   TRowKey extends Key = Key,
 > = Pick<
   DataGridProps<TData, unknown, TRowKey>,
+  | 'className'
   | 'columns'
   | 'headerRowHeight'
   | 'rows'
+  | 'rowKeyGetter'
   | 'onCellClick'
+  | 'onSelectedCellChange'
   | 'renderers'
   | 'onRowsChange'
-> & {
-  className?: string;
-  rowHeight?: number;
-  hiddenHeader?: boolean;
-} & (
-    | {
-        selectionMode: 'single';
-        selectionLabel: string;
-        rowKeyGetter: (row: TData) => TRowKey;
-        selectedRowKey: TRowKey;
-        onSelectedRowChange: (rowKey: TRowKey) => void;
-        selectedRows?: never;
-        onSelectedRowsChange?: never;
-      }
-    | (Pick<
-        DataGridProps<TData, unknown, TRowKey>,
-        'rowKeyGetter' | 'selectedRows' | 'onSelectedRowsChange'
-      > & {
-        selectionMode?: 'multiple';
-      })
-  );
+  | 'selectedRows'
+  | 'onSelectedRowsChange'
+>;
