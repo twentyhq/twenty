@@ -80,22 +80,3 @@ npx vitest run --root packages/twenty-ui --project unit <file>   # Run a single 
 # License
 
 twenty-ui is released under the [MIT](https://github.com/twentyhq/twenty/blob/main/packages/twenty-ui/LICENSE) license.
-
-# Checkbox migration
-
-Checkbox forwards Base UI's native props, refs, `render`, `checked` / `defaultChecked`, and `onCheckedChange(checked, eventDetails)`. Labels can wrap the control or use `Field.Label`; the control no longer supplies a hardcoded form name or test ID. Use controlled state with the form's `onReset` handler for native form resets.
-
-| Previous API | Replacement |
-| --- | --- |
-| `onChange(event)` | `onCheckedChange(checked, eventDetails)` |
-| `CheckboxSize.Small` / `.Large` | `size="sm"` / `"md"` |
-| `CheckboxVariant.Primary` / `.Secondary` | `variant="solid"` / `"outline"` |
-| `CheckboxVariant.Tertiary` | `variant="outline"` plus consumer border styling where needed |
-| `CheckboxShape.Squared` / `.Rounded` | `shape="square"` / `"round"` |
-| `CheckboxAccent.Blue` / `.Orange` | `color="accent"` / `"warning"` |
-
-`color="success"` adds the green semantic color. `CheckboxSize`, `CheckboxShape`, and `CheckboxVariant` remain exported as union types; their old enum values and `CheckboxAccent` are removed. `hoverable` still controls the padded hover target and defaults to `true`. Dimensions and the existing blue/orange colors are preserved.
-
-Run `node --import tsx tools/codemods/checkbox-api.ts` from the repository root to migrate enum values and callbacks that take no arguments. The script reports event handlers, spread props, conflicting props, and tertiary borders for manual migration before writing any files. It skips the Checkbox implementation and its own stories, and leaves a repeated run unchanged.
-
-Use the boolean argument instead of `event.target.checked`. Read modifier keys from `eventDetails.event`. In a clickable row, stop the original click with `onClick={(event) => event.stopPropagation()}` when the checkbox has its own selection handler. Keep legacy wrapper callbacks boolean-only with `onCheckedChange={(checked) => onChange(checked)}`.
