@@ -1,16 +1,17 @@
-import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { createStore, Provider as JotaiProvider } from 'jotai';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { act, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
+
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
-import { i18n } from '@lingui/core';
-import { I18nProvider } from '@lingui/react';
-import { act, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
 
 jest.mock('@/navigation/hooks/useActiveNavigationDrawerMode');
 jest.mock('@/navigation/hooks/useIsNavigationDrawerContentExpanded');
@@ -110,11 +111,13 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       const { store } = renderModeSwitcher(true);
       const settingsButton = screen.getByRole('button', { name: 'Settings' });
 
-      expect(settingsButton).toBeDisabled();
+      expect(settingsButton).toHaveAttribute('aria-disabled', 'true');
       expect(screen.getByRole('button', { name: 'Home' })).toBeEnabled();
       expect(screen.getByRole('button', { name: 'AI' })).toBeEnabled();
 
       await userEvent.click(settingsButton);
+      expect(settingsButton).toHaveFocus();
+      await userEvent.keyboard('{Enter} ');
 
       expect(mockSwitchNavigationDrawerMode).not.toHaveBeenCalled();
 
@@ -122,9 +125,10 @@ describe('MainNavigationDrawerModeSwitcher', () => {
         store.set(isLayoutCustomizationModeEnabledState.atom, false);
       });
 
-      expect(settingsButton).toBeEnabled();
+      expect(settingsButton).toHaveAttribute('aria-disabled', 'false');
       await userEvent.click(settingsButton);
 
+      expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledTimes(1);
       expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(
         NAVIGATION_DRAWER_TABS.SETTINGS,
       );

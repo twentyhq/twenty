@@ -68,12 +68,12 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   width: ${({ isExpanded }) =>
     isExpanded ? 'auto' : themeCssVariables.spacing[6]};
 
-  &:disabled {
+  &[aria-disabled='true'] {
     color: ${themeCssVariables.font.color.quaternary};
     cursor: not-allowed;
   }
 
-  &:hover:not(:disabled) {
+  &:hover:not([aria-disabled='true']) {
     background: ${({ isActive }) =>
       isActive
         ? themeCssVariables.background.transparent.light
@@ -129,6 +129,9 @@ export const MainNavigationDrawerModeSwitcher = () => {
       >
         {modes.map(({ Icon, label, mode }) => {
           const isActive = mode === activeNavigationDrawerMode;
+          const isDisabled =
+            mode === NAVIGATION_DRAWER_TABS.SETTINGS &&
+            isLayoutCustomizationModeEnabled;
 
           return (
             <StyledMode
@@ -139,11 +142,14 @@ export const MainNavigationDrawerModeSwitcher = () => {
               isExpanded={isExpanded}
               aria-label={label}
               aria-current={isActive}
-              disabled={
-                mode === NAVIGATION_DRAWER_TABS.SETTINGS &&
-                isLayoutCustomizationModeEnabled
-              }
-              onClick={() => switchNavigationDrawerMode(mode)}
+              aria-disabled={isDisabled}
+              onClick={() => {
+                if (isDisabled) {
+                  return;
+                }
+
+                switchNavigationDrawerMode(mode);
+              }}
             >
               <StyledModeIcon>
                 <Icon size={theme.icon.size.md} />
