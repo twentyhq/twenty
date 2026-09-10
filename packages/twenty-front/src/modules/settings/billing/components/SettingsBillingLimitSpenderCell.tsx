@@ -59,7 +59,7 @@ export const SettingsBillingLimitSpenderCell = ({
             currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
           )}
           type="squared"
-          size="md"
+          size="sm"
         />
       );
     }
@@ -70,7 +70,7 @@ export const SettingsBillingLimitSpenderCell = ({
           placeholder={name}
           avatarUrl={row.spenderAvatarUrl}
           type="rounded"
-          size="md"
+          size="sm"
         />
       );
     }
@@ -81,7 +81,7 @@ export const SettingsBillingLimitSpenderCell = ({
           placeholder={name}
           avatarUrl={row.spenderAvatarUrl}
           type="squared"
-          size="md"
+          size="sm"
         />
       );
     }
@@ -90,7 +90,7 @@ export const SettingsBillingLimitSpenderCell = ({
       <StyledIcon>
         {SpenderIcon && (
           <SpenderIcon
-            size={theme.icon.size.md}
+            size={theme.icon.size.sm}
             stroke={theme.icon.stroke.sm}
           />
         )}

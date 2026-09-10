@@ -7,6 +7,7 @@ import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsBillingLimitSpenderCell } from '@/settings/billing/components/SettingsBillingLimitSpenderCell';
+import { SettingsBillingLimitAmount } from '@/settings/billing/components/internal/SettingsBillingLimitAmount';
 import { SettingsBillingLimitsFilterDropdown } from '@/settings/billing/components/SettingsBillingLimitsFilterDropdown';
 import { useUsageLimitRows } from '@/settings/billing/hooks/useUsageLimitRows';
 import { type UsageLimitRow } from '@/settings/billing/types/UsageLimitRow';
@@ -18,7 +19,9 @@ import { SettingsTableListSection } from '@/settings/components/SettingsTableLis
 import { ProgressRing } from '@/ui/feedback/progress-ring/components/ProgressRing';
 import { type UsageResourceType } from '~/generated-metadata/graphql';
 
-const GRID_AUTO_COLUMNS = '1.2fr 1fr 96px 120px';
+const GRID_AUTO_COLUMNS = '1.2fr 1fr 120px 96px';
+
+const USED_RING_SIZE = 14;
 
 const StyledCell = styled.div`
   align-items: center;
@@ -27,16 +30,17 @@ const StyledCell = styled.div`
   min-width: 0;
 `;
 
-const StyledIcon = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  flex-shrink: 0;
-`;
-
 const StyledName = styled.span`
+  color: ${themeCssVariables.font.color.primary};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const StyledNameIcon = styled.div`
+  color: ${themeCssVariables.font.color.primary};
+  display: flex;
+  flex-shrink: 0;
 `;
 
 const StyledUsed = styled.div`
@@ -46,12 +50,24 @@ const StyledUsed = styled.div`
   justify-content: flex-end;
 `;
 
-const StyledRingAnchor = styled.span`
-  display: flex;
-`;
-
 const StyledEmptyValue = styled.span`
   color: ${themeCssVariables.font.color.light};
+`;
+
+const StyledToolbar = styled.div`
+  padding-bottom: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledTooltipRows = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledTooltipRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const NameCell = ({ item }: { item: UsageLimitRow }) => {
@@ -59,12 +75,12 @@ const NameCell = ({ item }: { item: UsageLimitRow }) => {
 
   return (
     <StyledCell>
-      <StyledIcon>
+      <StyledNameIcon>
         <item.NameIcon
           size={theme.icon.size.md}
           stroke={theme.icon.stroke.sm}
         />
-      </StyledIcon>
+      </StyledNameIcon>
       <StyledName>{item.name}</StyledName>
     </StyledCell>
   );
@@ -80,25 +96,39 @@ const UsedCell = ({ item }: { item: UsageLimitRow }) => {
   const anchorId = `usage-limit-ring-${item.id}`;
 
   return (
-    <StyledUsed>
+    <StyledUsed id={anchorId}>
       <span>{item.consumedPercentage}%</span>
-      <StyledRingAnchor id={anchorId}>
-        <ProgressRing
-          value={item.consumedPercentage}
-          barColor={getUsageLimitRingColor({
-            consumedPercentage: item.consumedPercentage,
-            isExhausted: item.isExhausted,
-          })}
-        />
-      </StyledRingAnchor>
+      <ProgressRing
+        size={USED_RING_SIZE}
+        value={item.consumedPercentage}
+        barColor={getUsageLimitRingColor({
+          consumedPercentage: item.consumedPercentage,
+          isExhausted: item.isExhausted,
+        })}
+      />
       <AppTooltip
         anchorSelect={`#${anchorId}`}
-        title={t`${item.consumedText} used`}
-        description={t`Limit: ${item.limitText}`}
         place="top"
         delay={TooltipDelay.shortDelay}
         positionStrategy="fixed"
-      />
+      >
+        <StyledTooltipRows>
+          <StyledTooltipRow>
+            {t`Used`}
+            <SettingsBillingLimitAmount
+              text={item.consumedText}
+              isCreditsMeter={item.isCreditsMeter}
+            />
+          </StyledTooltipRow>
+          <StyledTooltipRow>
+            {t`Limit`}
+            <SettingsBillingLimitAmount
+              text={item.limitText}
+              isCreditsMeter={item.isCreditsMeter}
+            />
+          </StyledTooltipRow>
+        </StyledTooltipRows>
+      </AppTooltip>
     </StyledUsed>
   );
 };
@@ -151,23 +181,25 @@ export const SettingsBillingLimitsTable = ({
         title={t`Limits`}
         description={t`Caps on what your workspace can spend and who they apply to`}
         toolbar={
-          <SearchInput
-            placeholder={t`Search a limit`}
-            value={searchText}
-            onChange={setSearchText}
-            filterButtonAriaLabel={t`Filter limits`}
-            filterDropdown={(filterButton: ReactNode) => (
-              <SettingsBillingLimitsFilterDropdown
-                filterButton={filterButton}
-                resourceTypes={resourceTypes}
-                spenderTypes={spenderTypes}
-                selectedResourceType={resourceType}
-                selectedSpenderType={spenderType}
-                onSelectResourceType={setResourceType}
-                onSelectSpenderType={setSpenderType}
-              />
-            )}
-          />
+          <StyledToolbar>
+            <SearchInput
+              placeholder={t`Search a limit`}
+              value={searchText}
+              onChange={setSearchText}
+              filterButtonAriaLabel={t`Filter limits`}
+              filterDropdown={(filterButton: ReactNode) => (
+                <SettingsBillingLimitsFilterDropdown
+                  filterButton={filterButton}
+                  resourceTypes={resourceTypes}
+                  spenderTypes={spenderTypes}
+                  selectedResourceType={resourceType}
+                  selectedSpenderType={spenderType}
+                  onSelectResourceType={setResourceType}
+                  onSelectSpenderType={setSpenderType}
+                />
+              )}
+            />
+          </StyledToolbar>
         }
         items={filteredRows}
         columns={[
@@ -176,12 +208,12 @@ export const SettingsBillingLimitsTable = ({
             label: t`Applies to`,
             Cell: ({ item }) => <SettingsBillingLimitSpenderCell row={item} />,
           },
-          { label: t`Used`, align: 'right', Cell: UsedCell },
           {
             label: t`Period`,
             align: 'right',
             Cell: ({ item }) => <>{item.periodName}</>,
           },
+          { label: t`Used`, align: 'right', Cell: UsedCell },
         ]}
         gridAutoColumns={GRID_AUTO_COLUMNS}
       />

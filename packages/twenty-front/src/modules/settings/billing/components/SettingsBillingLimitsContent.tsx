@@ -7,7 +7,6 @@ import { SettingsBillingLimitsTable } from '@/settings/billing/components/Settin
 import { useUsageQuotasWithConsumption } from '@/settings/billing/hooks/useUsageQuotasWithConsumption';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 
 export const SettingsBillingLimitsContent = () => {
   const { t } = useLingui();
@@ -15,7 +14,7 @@ export const SettingsBillingLimitsContent = () => {
     useUsageQuotasWithConsumption();
 
   if (loading) {
-    return <UsageSectionSkeleton />;
+    return null;
   }
 
   if (isDefined(error)) {

@@ -15,6 +15,7 @@ const buildRow = (overrides: Partial<UsageLimitRow> = {}): UsageLimitRow => ({
   consumedPercentage: 60,
   consumedText: '60 credits',
   limitText: '100 credits',
+  isCreditsMeter: true,
   isExhausted: false,
   periodName: 'Monthly',
   ...overrides,

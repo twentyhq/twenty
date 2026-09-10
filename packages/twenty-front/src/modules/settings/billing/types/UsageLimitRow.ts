@@ -13,6 +13,7 @@ export type UsageLimitRow = {
   consumedPercentage: number | null;
   consumedText: string | null;
   limitText: string;
+  isCreditsMeter: boolean;
   isExhausted: boolean;
   periodName: string;
 };

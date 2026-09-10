@@ -11,7 +11,7 @@ import { type UsageOperationType } from '~/generated-metadata/graphql';
 export const useUsageLimitFormatter = () => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
-  const { formatUsageValue } = useUsageValueFormatter();
+  const { formatUsageAmount } = useUsageValueFormatter();
 
   const formatLimitValue = ({
     value,
@@ -23,7 +23,7 @@ export const useUsageLimitFormatter = () => {
     operationType: UsageOperationType;
   }): string => {
     if (meter === 'creditsUsedMicro') {
-      return formatUsageValue(value / INTERNAL_CREDITS_PER_DISPLAY_CREDIT, {
+      return formatUsageAmount(value / INTERNAL_CREDITS_PER_DISPLAY_CREDIT, {
         abbreviate: true,
       });
     }

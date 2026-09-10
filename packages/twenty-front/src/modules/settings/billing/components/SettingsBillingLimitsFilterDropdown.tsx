@@ -1,7 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, IconTrash } from 'twenty-ui/icon';
+import {
+  IconChevronLeft,
+  IconCoins,
+  IconList,
+  IconTrash,
+  IconUsers,
+} from 'twenty-ui/icon';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 
 import { USAGE_LIMIT_RESOURCE_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitResourceTypeIcons';
@@ -77,7 +83,8 @@ export const SettingsBillingLimitsFilterDropdown = ({
       {renderBackHeader(t`Usage`)}
       <DropdownMenuItemsContainer>
         <MenuItemSelect
-          text={t`All resources`}
+          LeftIcon={IconList}
+          text={t`All`}
           selected={!isDefined(selectedResourceType)}
           onClick={() => onSelectResourceType(null)}
         />
@@ -99,7 +106,8 @@ export const SettingsBillingLimitsFilterDropdown = ({
       {renderBackHeader(t`Spender`)}
       <DropdownMenuItemsContainer>
         <MenuItemSelect
-          text={t`All spenders`}
+          LeftIcon={IconList}
+          text={t`All`}
           selected={!isDefined(selectedSpenderType)}
           onClick={() => onSelectSpenderType(null)}
         />
@@ -124,22 +132,24 @@ export const SettingsBillingLimitsFilterDropdown = ({
     <DropdownContent>
       <DropdownMenuItemsContainer>
         <MenuItem
+          LeftIcon={IconCoins}
           text={t`Usage`}
           contextualText={
             isDefined(selectedResourceType)
               ? t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[selectedResourceType])
-              : t`All resources`
+              : t`All`
           }
           contextualTextPosition="right"
           hasSubMenu
           onClick={() => setContentId('usage')}
         />
         <MenuItem
+          LeftIcon={IconUsers}
           text={t`Spender`}
           contextualText={
             isDefined(selectedSpenderType)
               ? getSpenderTypeLabel(selectedSpenderType)
-              : t`All spenders`
+              : t`All`
           }
           contextualTextPosition="right"
           hasSubMenu

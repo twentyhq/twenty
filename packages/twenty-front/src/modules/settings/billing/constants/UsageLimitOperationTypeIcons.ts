@@ -1,11 +1,11 @@
 import {
   IconApi,
   IconCode,
-  IconCoins,
   type IconComponent,
   IconMail,
   IconMessageCircle,
   IconPhone,
+  IconPlayerPlay,
   IconRepeat,
   IconRobot,
   IconSearch,
@@ -19,7 +19,7 @@ export const USAGE_LIMIT_OPERATION_TYPE_ICONS: Record<
   UsageOperationType,
   IconComponent
 > = {
-  [UsageOperationType.ALL]: IconCoins,
+  [UsageOperationType.ALL]: IconPlayerPlay,
   [UsageOperationType.AI_CHAT_TOKEN]: IconMessageCircle,
   [UsageOperationType.AI_WORKFLOW_TOKEN]: IconRobot,
   [UsageOperationType.WORKFLOW_EXECUTION]: IconSettingsAutomation,

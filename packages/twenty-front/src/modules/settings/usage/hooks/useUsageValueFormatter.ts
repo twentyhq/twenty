@@ -27,7 +27,16 @@ export const useUsageValueFormatter = () => {
     return `$${formatNumber(value, { decimals: 2, abbreviate })}`;
   };
 
+  const formatUsageAmount = (
+    value: number,
+    { abbreviate = false }: { abbreviate?: boolean } = {},
+  ): string =>
+    formatNumber(value, {
+      decimals: isBillingEnabled ? getDecimalsNeeded(value) : 2,
+      abbreviate,
+    });
+
   const unitLabel = isBillingEnabled ? 'credits' : '$';
 
-  return { formatUsageValue, isBillingEnabled, unitLabel };
+  return { formatUsageValue, formatUsageAmount, isBillingEnabled, unitLabel };
 };

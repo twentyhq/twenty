@@ -98,6 +98,7 @@ export const useUsageLimitRows = (
         meter: quota.meter,
         operationType: quota.operationType,
       }),
+      isCreditsMeter: quota.meter === 'creditsUsedMicro',
       isExhausted: progress?.remainingValue === 0,
       periodName: getPeriodName(quota.periodUnit),
     };
