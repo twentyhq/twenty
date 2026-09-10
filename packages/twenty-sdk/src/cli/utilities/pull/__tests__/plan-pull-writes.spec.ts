@@ -232,6 +232,7 @@ describe('planPullWrites', () => {
     const plan = planPullWrites({
       manifest: MANIFEST,
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -254,6 +255,7 @@ describe('planPullWrites', () => {
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: MANIFEST,
       baseManifest: null,
       scannedFiles,
@@ -283,6 +285,7 @@ describe('planPullWrites', () => {
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: MANIFEST,
       baseManifest: MANIFEST,
       scannedFiles,
@@ -309,6 +312,7 @@ describe('planPullWrites', () => {
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: buildManifest([
         buildObject({
           universalIdentifier: PET_UID,
@@ -339,6 +343,7 @@ describe('planPullWrites', () => {
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: MANIFEST,
       baseManifest: buildManifest([
         buildObject({
@@ -375,6 +380,7 @@ describe('planPullWrites', () => {
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: MANIFEST,
       baseManifest: null,
       scannedFiles,
@@ -384,6 +390,28 @@ describe('planPullWrites', () => {
       'src/objects/unpushed.object.ts',
     ]);
     expect(plan.deletions).toEqual([]);
+  });
+
+  it('should not report a local file as local-only when the export reported its entity', () => {
+    const scannedFiles: ScannedSourceFile[] = [
+      {
+        relativePath: 'src/roles/guest.role.ts',
+        entityKey: ManifestEntityKey.Roles,
+        universalIdentifier: 'a-role-the-writer-cannot-write',
+        isReadable: true,
+      },
+    ];
+
+    const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set([
+        'a-role-the-writer-cannot-write',
+      ]),
+      manifest: MANIFEST,
+      baseManifest: null,
+      scannedFiles,
+    });
+
+    expect(plan.localOnlyRelativePaths).toEqual([]);
   });
 
   it('should place a new entity beside existing files of its kind', () => {
@@ -397,6 +425,7 @@ describe('planPullWrites', () => {
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: MANIFEST,
       baseManifest: null,
       scannedFiles,
@@ -442,6 +471,7 @@ describe('planPullWrites', () => {
         ],
       } as unknown as Manifest,
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -460,6 +490,7 @@ describe('planPullWrites', () => {
     const plan = planPullWrites({
       manifest: MANIFEST,
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [
         {
           relativePath: 'src/objects/pet.object.ts',
@@ -482,6 +513,7 @@ describe('planPullWrites', () => {
     const plan = planPullWrites({
       manifest: MANIFEST,
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [
         {
           relativePath: 'src/objects/Pet.object.ts',
@@ -503,6 +535,7 @@ describe('planPullWrites', () => {
     const plan = planPullWrites({
       manifest: MANIFEST,
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [
         {
           relativePath: 'src/objects/pet.object.ts',
@@ -531,6 +564,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [
         {
           relativePath: 'app/screens/overview.view.ts',
@@ -574,6 +608,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [
         {
           relativePath: 'app/screens/overview.view.ts',
@@ -626,6 +661,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -650,6 +686,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -690,6 +727,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -732,6 +770,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -775,6 +814,7 @@ describe('planPullWrites', () => {
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: buildManifestWithFilteredView('Max'),
       baseManifest: buildManifestWithFilteredView('Rex'),
       scannedFiles,
@@ -804,6 +844,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [
         {
           relativePath: 'app/screens/overview.page-layout.ts',
@@ -837,6 +878,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [
         {
           relativePath: 'app/screens/tabs/extra.page-layout-tab.ts',
@@ -883,6 +925,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -912,6 +955,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -936,6 +980,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -985,6 +1030,7 @@ describe('planPullWrites', () => {
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: buildManifestWithDocsPageLayout('https://example.com/new'),
       baseManifest: buildManifestWithDocsPageLayout('https://example.com/old'),
       scannedFiles,
@@ -1024,6 +1070,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [
         {
           relativePath: 'app/navigation/pet-care.navigation-menu-item.ts',
@@ -1072,6 +1119,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -1119,6 +1167,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -1163,6 +1212,7 @@ describe('planPullWrites', () => {
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: buildManifestWithNavigationMenu('https://example.com/new'),
       baseManifest: buildManifestWithNavigationMenu('https://example.com/old'),
       scannedFiles,

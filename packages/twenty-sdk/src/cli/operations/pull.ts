@@ -180,7 +180,16 @@ const innerAppPull = async (
     applicationUniversalIdentifier: manifest.application.universalIdentifier,
   });
 
-  const plan = planPullWrites({ manifest, baseManifest, scannedFiles });
+  const plan = planPullWrites({
+    manifest,
+    baseManifest,
+    scannedFiles,
+    workspaceUniversalIdentifiers: new Set(
+      applicationExport.coverage.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ),
+    ),
+  });
   const translationPlan = await planTranslationWrites({
     appPath,
     manifest,

@@ -200,10 +200,12 @@ export const planPullWrites = ({
   manifest,
   baseManifest,
   scannedFiles,
+  workspaceUniversalIdentifiers,
 }: {
   manifest: Manifest;
   baseManifest: Manifest | null;
   scannedFiles: ScannedSourceFile[];
+  workspaceUniversalIdentifiers: ReadonlySet<string>;
 }): PullWritePlan & {
   skipped: ReturnType<typeof buildPullEntities>['skipped'];
 } => {
@@ -317,6 +319,7 @@ export const planPullWrites = ({
         isDefined(scannedFile.universalIdentifier) &&
         !exportedUniversalIdentifiers.has(scannedFile.universalIdentifier) &&
         !baseConfigByUniversalIdentifier.has(scannedFile.universalIdentifier) &&
+        !workspaceUniversalIdentifiers.has(scannedFile.universalIdentifier) &&
         !usedRelativePaths.has(toPosixPath(scannedFile.relativePath)),
     )
     .map((scannedFile) => toPosixPath(scannedFile.relativePath));
