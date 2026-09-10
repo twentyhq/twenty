@@ -56,7 +56,6 @@ export type DropdownProps = {
   dropdownId: string;
   dropdownPlacement?: Placement;
   dropdownOffset?: DropdownOffset;
-  dropdownStrategy?: 'fixed' | 'absolute';
   onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
@@ -78,7 +77,6 @@ export const Dropdown = ({
   dropdownId,
   globalHotkeysConfig,
   dropdownPlacement = 'bottom-end',
-  dropdownStrategy = 'absolute',
   dropdownOffset,
   onClickOutside,
   onClose,
@@ -173,7 +171,8 @@ export const Dropdown = ({
       }),
     ],
     whileElementsMounted: autoUpdate,
-    strategy: dropdownStrategy,
+    // Portaled dropdowns use viewport coordinates, including under root zoom.
+    strategy: 'fixed',
   });
 
   const handleClickableComponentClick = useCallback(

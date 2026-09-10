@@ -28,6 +28,7 @@ export const ExpandedListDropdown = ({
 }: ExpandedListDropdownProps) => {
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
+    strategy: 'fixed',
     middleware: [offset({ mainAxis: -9, crossAxis: -7 }), shift()],
     elements: { reference: anchorElement },
   });

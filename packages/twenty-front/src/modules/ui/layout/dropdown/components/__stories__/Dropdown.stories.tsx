@@ -114,7 +114,9 @@ export const InterfaceScale: Story = {
     clickableComponent: <span>Open Dropdown</span>,
     dropdownPlacement: 'bottom-start',
     dropdownOffset: { x: 0, y: 0 },
-    dropdownComponents: <DropdownContent>Scaled dropdown</DropdownContent>,
+    dropdownComponents: (
+      <div style={{ width: 200, height: 100 }}>Scaled dropdown</div>
+    ),
   },
   render: (args) => (
     <div style={{ paddingLeft: 200, paddingTop: 100 }}>
@@ -141,6 +143,12 @@ export const InterfaceScale: Story = {
           const anchorBounds = button.getBoundingClientRect();
           const menuBounds = menu.getBoundingClientRect();
 
+          const contentBounds = canvas
+            .getByText('Scaled dropdown')
+            .getBoundingClientRect();
+          expect(Math.abs(contentBounds.width - 200 * scale)).toBeLessThan(1);
+          expect(Math.abs(contentBounds.height - 100 * scale)).toBeLessThan(1);
+
           expect(Math.abs(menuBounds.left - anchorBounds.left)).toBeLessThan(1);
           expect(Math.abs(menuBounds.top - anchorBounds.bottom)).toBeLessThan(
             1,
@@ -154,11 +162,6 @@ export const InterfaceScale: Story = {
       rootStyle.setProperty('--t-zoom', previousScale);
     }
   },
-};
-
-export const InterfaceScaleFixed: Story = {
-  ...InterfaceScale,
-  args: { ...InterfaceScale.args, dropdownStrategy: 'fixed' },
 };
 
 const avatarUrl =
