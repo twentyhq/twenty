@@ -29,7 +29,6 @@ export const StyledDropdownContentContainer = styled.div<{
   isDropdownInModal?: boolean;
 }>`
   display: flex;
-  // Floating UI returns viewport pixels, which root zoom would scale again.
   zoom: calc(1 / var(--t-zoom, 1));
 
   > * {

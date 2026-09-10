@@ -171,7 +171,6 @@ export const Dropdown = ({
       }),
     ],
     whileElementsMounted: autoUpdate,
-    // Portaled dropdowns use viewport coordinates, including under root zoom.
     strategy: 'fixed',
   });
 
