@@ -43,8 +43,8 @@ export const useDeleteJobs = (queueName: string, onSuccess?: () => void) => {
             });
             enqueueErrorSnackBar({
               message: plural(failedResults.length, {
-                one: `${failedResults.length} job could not be deleted`,
-                other: `${failedResults.length} jobs could not be deleted`,
+                one: `# job could not be deleted`,
+                other: `# jobs could not be deleted`,
               }),
             });
           } else {

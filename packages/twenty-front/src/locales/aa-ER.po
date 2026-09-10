@@ -158,21 +158,17 @@ msgstr "crwdns65830:0{selectedIconKey}crwdne65830:0"
 msgid "[empty string]"
 msgstr "crwdns5584:0crwdne5584:0"
 
-#. js-lingui-id: Z2fCN4
+#. js-lingui-id: XHO5F1
 #. placeholder {0}: failedResults.length
-#. placeholder {1}: failedResults.length
-#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
-msgid "{0, plural, one {{1} job could not be deleted} other {{2} jobs could not be deleted}}"
-msgstr "crwdns8628:00={0}crwdnd8628:01={1}crwdnd8628:02={2}crwdne8628:0"
+msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
+msgstr ""
 
-#. js-lingui-id: VjPlMz
+#. js-lingui-id: AHhuJj
 #. placeholder {0}: failedResults.length
-#. placeholder {1}: failedResults.length
-#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
-msgid "{0, plural, one {{1} job could not be retried} other {{2} jobs could not be retried}}"
-msgstr "crwdns8630:00={0}crwdnd8630:01={1}crwdnd8630:02={2}crwdne8630:0"
+msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
+msgstr ""
 
 #. js-lingui-id: 0LMb5P
 #. placeholder {0}: Math.abs(days)
@@ -370,14 +366,10 @@ msgstr "crwdns137631:0{browser}crwdnd137631:0{operatingSystem}crwdne137631:0"
 msgid "{cachedPercent}% cached"
 msgstr "crwdns108078:0{cachedPercent}crwdne108078:0"
 
-#. js-lingui-id: 8SynPU
-#. placeholder {0}: (type === 'percentage' ? 99 : 1000).toFixed(count)
-#. placeholder {1}: type === 'percentage' ? '%' : ''
-#. placeholder {2}: (type === 'percentage' ? 99 : 1000).toFixed(count)
-#. placeholder {3}: type === 'percentage' ? '%' : ''
+#. js-lingui-id: M9lDqR
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
-msgstr "crwdns8644:0count={count}crwdnd8644:00={0}crwdnd8644:01={1}crwdnd8644:0count={count}crwdnd8644:02={2}crwdnd8644:03={3}crwdnd8644:0count={count}crwdne8644:0"
+msgid "{count, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
+msgstr ""
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -389,12 +381,10 @@ msgstr "crwdns132887:0{currentCreditAmountDisplay}crwdne132887:0"
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "crwdns8646:0days={days}crwdnd8646:0days={days}crwdnd8646:0days={days}crwdne8646:0"
 
-#. js-lingui-id: 0KwX9P
-#. placeholder {0}: (1000).toFixed(decimals)
-#. placeholder {1}: (1000).toFixed(decimals)
+#. js-lingui-id: 7o03+8
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
-msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
-msgstr "crwdns105200:0decimals={decimals}crwdnd105200:00={0}crwdnd105200:0decimals={decimals}crwdnd105200:01={1}crwdnd105200:0decimals={decimals}crwdne105200:0"
+msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
+msgstr ""
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -10724,10 +10714,10 @@ msgstr "crwdns8086:0crwdne8086:0"
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "crwdns66168:0{errorMessage}crwdne66168:0"
 
-#. js-lingui-id: jhbsV/
+#. js-lingui-id: CGivIJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
-msgstr "crwdns66170:0{newDay}crwdne66170:0"
+msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
+msgstr ""
 
 #. js-lingui-id: u3hwhx
 #: src/modules/settings/domains/utils/getDomainValidationSchema.ts
@@ -10766,26 +10756,26 @@ msgstr "crwdns4931:0crwdne4931:0"
 msgid "Invalid file: {0}"
 msgstr "crwdns127595:0{0}crwdne127595:0"
 
-#. js-lingui-id: 04zLGG
+#. js-lingui-id: 1ccYjl
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
-msgstr "crwdns8088:0{newHour}crwdne8088:0"
+msgid "Invalid hour value \"{newHour}\". Should be integer between 0 and 23"
+msgstr ""
 
-#. js-lingui-id: fLMLtY
+#. js-lingui-id: e3cT9e
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value '{newHour}'. Should be integer greater than 1"
-msgstr "crwdns8090:0{newHour}crwdne8090:0"
+msgid "Invalid hour value \"{newHour}\". Should be integer greater than 1"
+msgstr ""
 
-#. js-lingui-id: +Yi3bs
+#. js-lingui-id: jw4O7y
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
-msgstr "crwdns8092:0{newMinute}crwdne8092:0"
+msgid "Invalid minute value \"{newMinute}\". Should be integer between 0 and 59"
+msgstr ""
 
-#. js-lingui-id: 942L1w
+#. js-lingui-id: SfvOlw
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
-msgstr "crwdns8094:0{newMinute}crwdne8094:0"
+msgid "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
+msgstr ""
 
 #. js-lingui-id: WY8amq
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx

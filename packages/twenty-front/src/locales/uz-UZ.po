@@ -158,21 +158,17 @@ msgstr "(tanlangan: {selectedIconKey})"
 msgid "[empty string]"
 msgstr "[boʻsh satr]"
 
-#. js-lingui-id: Z2fCN4
+#. js-lingui-id: XHO5F1
 #. placeholder {0}: failedResults.length
-#. placeholder {1}: failedResults.length
-#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
-msgid "{0, plural, one {{1} job could not be deleted} other {{2} jobs could not be deleted}}"
-msgstr "{0, plural, one {{1} ta ishni o‘chirishning imkoni bo‘lmadi} other {{2} ta ishni o‘chirishning imkoni bo‘lmadi}}"
+msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
+msgstr "{0, plural, one {# ta ishni o‘chirishning imkoni bo‘lmadi} other {# ta ishni o‘chirishning imkoni bo‘lmadi}}"
 
-#. js-lingui-id: VjPlMz
+#. js-lingui-id: AHhuJj
 #. placeholder {0}: failedResults.length
-#. placeholder {1}: failedResults.length
-#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
-msgid "{0, plural, one {{1} job could not be retried} other {{2} jobs could not be retried}}"
-msgstr "{0, plural, one {{1} ta ishni qayta ishga tushirib bo‘lmadi} other {{2} ta ishni qayta ishga tushirib bo‘lmadi}}"
+msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
+msgstr "{0, plural, one {# ta ishni qayta ishga tushirib bo‘lmadi} other {# ta ishni qayta ishga tushirib bo‘lmadi}}"
 
 #. js-lingui-id: 0LMb5P
 #. placeholder {0}: Math.abs(days)
@@ -370,14 +366,10 @@ msgstr "{operatingSystem} operatsion tizimidagi {browser}"
 msgid "{cachedPercent}% cached"
 msgstr "{cachedPercent}% keshga olingan"
 
-#. js-lingui-id: 8SynPU
-#. placeholder {0}: (type === 'percentage' ? 99 : 1000).toFixed(count)
-#. placeholder {1}: type === 'percentage' ? '%' : ''
-#. placeholder {2}: (type === 'percentage' ? 99 : 1000).toFixed(count)
-#. placeholder {3}: type === 'percentage' ? '%' : ''
+#. js-lingui-id: M9lDqR
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
-msgstr "{count, plural, one {Masalan, {count} o‘nlik uchun {0}{1}} other {Masalan, {count} o‘nliklar uchun {2}{3}}}"
+msgid "{count, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
+msgstr "{count, plural, one {Masalan, # o‘nlik uchun {example}} other {Masalan, # o‘nliklar uchun {example}}}"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -389,12 +381,10 @@ msgstr "{currentCreditAmountDisplay} kredit "
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} kun} other {{days} kun}}"
 
-#. js-lingui-id: 0KwX9P
-#. placeholder {0}: (1000).toFixed(decimals)
-#. placeholder {1}: (1000).toFixed(decimals)
+#. js-lingui-id: 7o03+8
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
-msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
-msgstr "{decimals, plural, one {Masalan, {decimals} raqamli kasr uchun {0}} other {Masalan, {decimals} raqamli kasrlar uchun {1}}}"
+msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
+msgstr "{decimals, plural, one {Masalan, # raqamli kasr uchun {example}} other {Masalan, # raqamli kasrlar uchun {example}}}"
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -10738,10 +10728,10 @@ msgstr "Noto‘g‘ri cron ifodasi"
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "Yaroqsiz cron andozasi: {errorMessage}"
 
-#. js-lingui-id: jhbsV/
+#. js-lingui-id: CGivIJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
-msgstr "Kun qiymati yaroqsiz '{newDay}'. 1 dan katta butun son boʻlishi kerak"
+msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
+msgstr "Kun qiymati yaroqsiz \"{newDay}\". 1 dan katta butun son boʻlishi kerak"
 
 #. js-lingui-id: u3hwhx
 #: src/modules/settings/domains/utils/getDomainValidationSchema.ts
@@ -10780,25 +10770,25 @@ msgstr "Elektron pochtani tasdiqlash havolasi yaroqsiz."
 msgid "Invalid file: {0}"
 msgstr "Yaroqsiz fayl: {0}"
 
-#. js-lingui-id: 04zLGG
+#. js-lingui-id: 1ccYjl
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
+msgid "Invalid hour value \"{newHour}\". Should be integer between 0 and 23"
 msgstr "\"{newHour}\" soat qiymati noto‘g‘ri. 0 dan 23 gacha bo‘lgan butun son bo‘lishi kerak"
 
-#. js-lingui-id: fLMLtY
+#. js-lingui-id: e3cT9e
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value '{newHour}'. Should be integer greater than 1"
+msgid "Invalid hour value \"{newHour}\". Should be integer greater than 1"
 msgstr "\"{newHour}\" soat qiymati noto‘g‘ri. 1 dan katta butun son bo‘lishi kerak"
 
-#. js-lingui-id: +Yi3bs
+#. js-lingui-id: jw4O7y
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
+msgid "Invalid minute value \"{newMinute}\". Should be integer between 0 and 59"
 msgstr "\"{newMinute}\" daqiqa qiymati noto‘g‘ri. 0 dan 59 gacha bo‘lgan butun son bo‘lishi kerak"
 
-#. js-lingui-id: 942L1w
+#. js-lingui-id: SfvOlw
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
+msgid "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
 msgstr "\"{newMinute}\" daqiqa qiymati noto‘g‘ri. 1 dan katta butun son bo‘lishi kerak"
 
 #. js-lingui-id: WY8amq
