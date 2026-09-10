@@ -88,7 +88,10 @@ export class ApplicationDevelopmentResolver {
     });
   }
 
-  @Mutation(() => FileDTO)
+  @Mutation(() => FileDTO, {
+    deprecationReason:
+      'Use createApplicationFileUploads and completeApplicationFileUploads instead.',
+  })
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
   async uploadApplicationFile(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

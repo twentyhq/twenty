@@ -2,6 +2,7 @@ import fs from 'fs';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import { putFileToUploadUrl } from '@/cli/utilities/file/put-file-to-upload-url';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 
@@ -30,28 +31,48 @@ const innerAppDeploy = async (
 
   onProgress?.(`Uploading ${tarballPath}...`);
 
-  const tarballBuffer = fs.readFileSync(tarballPath);
-
   const apiService = new ApiService({
     serverUrl: options.serverUrl,
     token: options.token,
   });
 
-  const uploadResult = await apiService.uploadAppTarball({ tarballBuffer });
+  const createResult = await apiService.createUploadApplicationTarball({
+    size: fs.statSync(tarballPath).size,
+  });
 
-  if (!uploadResult.success) {
+  if (!createResult.success) {
     return {
       success: false,
       error: {
         code: APP_ERROR_CODES.DEPLOY_FAILED,
-        message: `Upload failed: ${uploadResult.error}`,
+        message: `Upload failed: ${createResult.error}`,
+      },
+    };
+  }
+
+  await putFileToUploadUrl({
+    absolutePath: tarballPath,
+    uploadUrl: createResult.data.uploadUrl,
+    contentType: createResult.data.contentType,
+  });
+
+  const completeResult = await apiService.completeUploadApplicationTarball({
+    fileId: createResult.data.fileId,
+  });
+
+  if (!completeResult.success) {
+    return {
+      success: false,
+      error: {
+        code: APP_ERROR_CODES.DEPLOY_FAILED,
+        message: `Upload failed: ${completeResult.error}`,
       },
     };
   }
 
   return {
     success: true,
-    data: uploadResult.data,
+    data: completeResult.data,
   };
 };
 

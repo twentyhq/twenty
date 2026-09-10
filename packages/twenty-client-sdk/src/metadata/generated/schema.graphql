@@ -3787,7 +3787,7 @@ type Mutation {
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
   uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl!
-  uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl!
+  uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl! @deprecated(reason: "Use createFileUpload and completeFileUpload instead.")
   upsertUsageLimit(input: UpsertUsageLimitInput!): UsageLimit!
   deleteUsageLimit(usageLimitId: UUID!): Boolean!
   createViewFilterGroup(input: CreateViewFilterGroupInput!): ViewFilterGroup!
@@ -3891,7 +3891,9 @@ type Mutation {
   createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   deleteApplicationRegistrationVariable(id: String!): Boolean!
-  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration!
+  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration! @deprecated(reason: "Use createUploadApplicationTarball and completeUploadApplicationTarball instead.")
+  createUploadApplicationTarball(size: Int!): FileUploadTarget!
+  completeUploadApplicationTarball(fileId: String!, universalIdentifier: String): ApplicationRegistration!
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
@@ -4017,7 +4019,7 @@ type Mutation {
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
   syncApplication(manifest: JSON!, dryRun: Boolean, inferDeletionFromMissingEntities: Boolean): WorkspaceMigration!
-  uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
+  uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File! @deprecated(reason: "Use createApplicationFileUploads and completeApplicationFileUploads instead.")
   createApplicationFileUploads(applicationUniversalIdentifier: String!, files: [ApplicationFileUploadRequestInput!]!): CreateApplicationFileUploadsResult!
   completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
   revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!

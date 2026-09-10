@@ -29,7 +29,25 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
+import {
+  type FileUploadStorageLocation,
+  FileUploadCompletionService,
+} from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
+import { FileUploadTargetService } from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
+import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import type { ApplicationManifest, Manifest } from 'twenty-shared/application';
+
+const TARBALL_RESOURCE_FILENAME = 'app.tar.gz';
+const TARBALL_UPLOAD_CONTENT_TYPE = 'application/octet-stream';
+const TARBALL_FILE_SETTINGS = {
+  isTemporaryFile: false,
+  toDelete: false,
+} as const;
 
 @Injectable()
 export class ApplicationTarballService {
@@ -43,12 +61,110 @@ export class ApplicationTarballService {
     private readonly applicationService: ApplicationService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly fileUploadTargetService: FileUploadTargetService,
+    private readonly fileUploadCompletionService: FileUploadCompletionService,
+    @InjectWorkspaceScopedRepository(FileEntity)
+    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
   ) {}
+
+  async createTarballUpload({
+    workspaceId,
+    size,
+  }: {
+    workspaceId: string;
+    size: number;
+  }): Promise<FileUploadTargetDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const fileId = v4();
+    const resourcePath = `${fileId}/${TARBALL_RESOURCE_FILENAME}`;
+
+    await this.fileStorageService.createPendingFile({
+      fileFolder: FileFolder.AppTarball,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+      workspaceId,
+      resourcePath,
+      fileId,
+      size,
+      mimeType: TARBALL_UPLOAD_CONTENT_TYPE,
+      settings: TARBALL_FILE_SETTINGS,
+    });
+
+    return this.fileUploadTargetService.buildUploadTarget({
+      workspaceId,
+      fileId,
+      fileFolder: FileFolder.AppTarball,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+      resourcePath,
+      contentType: TARBALL_UPLOAD_CONTENT_TYPE,
+      size,
+    });
+  }
+
+  async completeTarballUpload({
+    workspaceId,
+    fileId,
+    universalIdentifier,
+  }: {
+    workspaceId: string;
+    fileId: string;
+    universalIdentifier?: string;
+  }): Promise<ApplicationRegistrationEntity> {
+    const file = await this.fileRepository.findOne(workspaceId, {
+      where: { id: fileId },
+    });
+
+    if (
+      !isDefined(file) ||
+      !file.path.startsWith(`${FileFolder.AppTarball}/`)
+    ) {
+      throw new ApplicationRegistrationException(
+        `Tarball upload not found: ${fileId}`,
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const storageLocation: FileUploadStorageLocation = {
+      fileFolder: FileFolder.AppTarball,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+      workspaceId,
+      resourcePath: removeFileFolderFromFileEntityPath(file.path),
+    };
+
+    await this.fileUploadCompletionService.completeUploadedFile({
+      workspaceId,
+      file,
+      storageLocation,
+    });
+
+    const tarballBuffer = await streamToBuffer(
+      await this.fileStorageService.readFile(storageLocation),
+    );
+
+    return this.uploadTarball({
+      tarballBuffer,
+      universalIdentifier,
+      ownerWorkspaceId: workspaceId,
+      tarballFileId: file.id,
+    });
+  }
 
   async uploadTarball(params: {
     tarballBuffer: Buffer;
     universalIdentifier?: string;
     ownerWorkspaceId: string;
+    tarballFileId?: string;
   }): Promise<ApplicationRegistrationEntity> {
     const tempDir = join(tmpdir(), 'twenty-tarball-upload', v4());
 
@@ -94,11 +210,15 @@ export class ApplicationTarballService {
             ownerWorkspaceId: params.ownerWorkspaceId,
           });
 
-      const savedFile = await this.storeTarballFile({
-        appRegistration,
-        tarballBuffer: params.tarballBuffer,
-        ownerWorkspaceId: params.ownerWorkspaceId,
-      });
+      const tarballFileId =
+        params.tarballFileId ??
+        (
+          await this.storeTarballFile({
+            appRegistration,
+            tarballBuffer: params.tarballBuffer,
+            ownerWorkspaceId: params.ownerWorkspaceId,
+          })
+        ).id;
 
       await this.applicationRegistrationService.updateFromManifest({
         applicationRegistrationId: appRegistration.id,
@@ -106,7 +226,7 @@ export class ApplicationTarballService {
         sourceType: ApplicationRegistrationSourceType.TARBALL,
         latestAvailableVersion: packageJson?.version ?? null,
         additionalFields: {
-          tarballFileId: savedFile.id,
+          tarballFileId,
           isListed: false,
           isVetted: false,
           ownerWorkspaceId: params.ownerWorkspaceId,

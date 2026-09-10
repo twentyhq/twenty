@@ -80,6 +80,19 @@ export type ApplicationFileCompletionError = {
   message: string;
 };
 
+export type ApplicationTarballUploadTarget = {
+  fileId: string;
+  uploadUrl: string;
+  contentType: string;
+  expiresAt: string;
+};
+
+export type ApplicationTarballRegistration = {
+  id: string;
+  universalIdentifier: string;
+  name: string;
+};
+
 export type CompleteApplicationFileUploadsResult = {
   files: { id: string; path: string }[];
   errors: ApplicationFileCompletionError[];
@@ -90,91 +103,53 @@ export class FileApi {
 
   // TODO: Migrate to MetadataClient once available
   // (see https://github.com/twentyhq/core-team-issues/issues/2289)
-  async uploadAppTarball({
-    tarballBuffer,
+  async createUploadApplicationTarball({
+    size,
+  }: {
+    size: number;
+  }): Promise<ApiResponse<ApplicationTarballUploadTarget>> {
+    const mutation = `
+      mutation CreateUploadApplicationTarball($size: Int!) {
+        createUploadApplicationTarball(size: $size) {
+          fileId
+          uploadUrl
+          contentType
+          expiresAt
+        }
+      }
+    `;
+
+    return this.runMetadataMutation<ApplicationTarballUploadTarget>({
+      mutation,
+      variables: { size },
+      resultKey: 'createUploadApplicationTarball',
+      defaultErrorMessage: 'Failed to create tarball upload',
+    });
+  }
+
+  async completeUploadApplicationTarball({
+    fileId,
     universalIdentifier,
   }: {
-    tarballBuffer: Buffer;
+    fileId: string;
     universalIdentifier?: string;
-  }): Promise<
-    ApiResponse<{
-      id: string;
-      universalIdentifier: string;
-      name: string;
-    }>
-  > {
-    try {
-      const mutation = `
-        mutation UploadAppTarball($file: Upload!, $universalIdentifier: String) {
-          uploadAppTarball(file: $file, universalIdentifier: $universalIdentifier) {
-            id
-            universalIdentifier
-            name
-          }
+  }): Promise<ApiResponse<ApplicationTarballRegistration>> {
+    const mutation = `
+      mutation CompleteUploadApplicationTarball($fileId: String!, $universalIdentifier: String) {
+        completeUploadApplicationTarball(fileId: $fileId, universalIdentifier: $universalIdentifier) {
+          id
+          universalIdentifier
+          name
         }
-      `;
-
-      const operations = JSON.stringify({
-        query: mutation,
-        variables: {
-          file: null,
-          universalIdentifier: universalIdentifier ?? null,
-        },
-      });
-
-      const map = JSON.stringify({
-        '0': ['variables.file'],
-      });
-
-      const formData = new FormData();
-
-      formData.append('operations', operations);
-      formData.append('map', map);
-      formData.append(
-        '0',
-        new Blob([new Uint8Array(tarballBuffer)], {
-          type: 'application/gzip',
-        }),
-        'app.tar.gz',
-      );
-
-      const response: AxiosResponse = await this.client.post(
-        '/metadata',
-        formData,
-      );
-
-      if (response.data.errors) {
-        return {
-          success: false,
-          error: response.data.errors[0]?.message || 'Failed to upload tarball',
-        };
       }
+    `;
 
-      return {
-        success: true,
-        data: response.data.data.uploadAppTarball,
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        if (error.response.status === 401) {
-          return {
-            success: false,
-            error: error.response.data?.errors?.[0]?.message || error.message,
-            isAuthError: true,
-          };
-        }
-
-        return {
-          success: false,
-          error: error.response.data?.errors?.[0]?.message || error.message,
-        };
-      }
-
-      return {
-        success: false,
-        error,
-      };
-    }
+    return this.runMetadataMutation<ApplicationTarballRegistration>({
+      mutation,
+      variables: { fileId, universalIdentifier: universalIdentifier ?? null },
+      resultKey: 'completeUploadApplicationTarball',
+      defaultErrorMessage: 'Failed to upload tarball',
+    });
   }
 
   async installTarballApp({

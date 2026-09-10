@@ -3227,6 +3227,7 @@ export interface Mutation {
     setEnterpriseKey: EnterpriseLicenseInfoDTO
     uploadWorkspaceLogo: FileWithSignedUrl
     uploadWorkspaceMemberProfilePicture: FileWithSignedUrl
+    /** @deprecated Use createFileUpload and completeFileUpload instead. */
     uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl
     upsertUsageLimit: UsageLimit
     deleteUsageLimit: Scalars['Boolean']
@@ -3331,7 +3332,10 @@ export interface Mutation {
     createApplicationRegistrationVariable: ApplicationRegistrationVariable
     updateApplicationRegistrationVariable: ApplicationRegistrationVariable
     deleteApplicationRegistrationVariable: Scalars['Boolean']
+    /** @deprecated Use createUploadApplicationTarball and completeUploadApplicationTarball instead. */
     uploadAppTarball: ApplicationRegistration
+    createUploadApplicationTarball: FileUploadTarget
+    completeUploadApplicationTarball: ApplicationRegistration
     claimApplicationRegistrationOwnership: ApplicationRegistration
     transferApplicationRegistrationOwnership: ApplicationRegistration
     /** @deprecated Use installApplication instead */
@@ -3459,6 +3463,7 @@ export interface Mutation {
     checkPublicDomainValidRecords?: DomainValidRecords
     createDevelopmentApplication: DevelopmentApplication
     syncApplication: WorkspaceMigration
+    /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads instead. */
     uploadApplicationFile: File
     createApplicationFileUploads: CreateApplicationFileUploadsResult
     completeApplicationFileUploads: CompleteApplicationFileUploadsResult
@@ -6879,6 +6884,7 @@ export interface MutationGenqlSelection{
     setEnterpriseKey?: (EnterpriseLicenseInfoDTOGenqlSelection & { __args: {enterpriseKey: Scalars['String']} })
     uploadWorkspaceLogo?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     uploadWorkspaceMemberProfilePicture?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
+    /** @deprecated Use createFileUpload and completeFileUpload instead. */
     uploadFilesFieldFileByUniversalIdentifier?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload'], fieldMetadataUniversalIdentifier: Scalars['String']} })
     upsertUsageLimit?: (UsageLimitGenqlSelection & { __args: {input: UpsertUsageLimitInput} })
     deleteUsageLimit?: { __args: {usageLimitId: Scalars['UUID']} }
@@ -6983,7 +6989,10 @@ export interface MutationGenqlSelection{
     createApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: CreateApplicationRegistrationVariableInput} })
     updateApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: UpdateApplicationRegistrationVariableInput} })
     deleteApplicationRegistrationVariable?: { __args: {id: Scalars['String']} }
+    /** @deprecated Use createUploadApplicationTarball and completeUploadApplicationTarball instead. */
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
+    createUploadApplicationTarball?: (FileUploadTargetGenqlSelection & { __args: {size: Scalars['Int']} })
+    completeUploadApplicationTarball?: (ApplicationRegistrationGenqlSelection & { __args: {fileId: Scalars['String'], universalIdentifier?: (Scalars['String'] | null)} })
     claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
     /** @deprecated Use installApplication instead */
@@ -7111,6 +7120,7 @@ export interface MutationGenqlSelection{
     checkPublicDomainValidRecords?: (DomainValidRecordsGenqlSelection & { __args: {domain: Scalars['String']} })
     createDevelopmentApplication?: (DevelopmentApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], name: Scalars['String']} })
     syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null), inferDeletionFromMissingEntities?: (Scalars['Boolean'] | null)} })
+    /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads instead. */
     uploadApplicationFile?: (FileGenqlSelection & { __args: {file: Scalars['Upload'], applicationUniversalIdentifier: Scalars['String'], fileFolder: FileFolder, filePath: Scalars['String']} })
     createApplicationFileUploads?: (CreateApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], files: ApplicationFileUploadRequestInput[]} })
     completeApplicationFileUploads?: (CompleteApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], fileIds: Scalars['UUID'][]} })

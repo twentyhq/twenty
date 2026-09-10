@@ -9104,6 +9104,27 @@ export default {
                     ]
                 }
             ],
+            "createUploadApplicationTarball": [
+                150,
+                {
+                    "size": [
+                        28,
+                        "Int!"
+                    ]
+                }
+            ],
+            "completeUploadApplicationTarball": [
+                75,
+                {
+                    "fileId": [
+                        1,
+                        "String!"
+                    ],
+                    "universalIdentifier": [
+                        1
+                    ]
+                }
+            ],
             "claimApplicationRegistrationOwnership": [
                 75,
                 {

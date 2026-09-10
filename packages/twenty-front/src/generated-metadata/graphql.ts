@@ -2846,6 +2846,7 @@ export type Mutation = {
   completeApplicationFileUploads: CompleteApplicationFileUploadsResult;
   completeBookCallOnboardingStep: OnboardingStepSuccess;
   completeFileUpload: FileWithSignedUrl;
+  completeUploadApplicationTarball: ApplicationRegistration;
   createApiKey: ApiKey;
   createApplicationFileUploads: CreateApplicationFileUploadsResult;
   createApplicationRegistration: CreateApplicationRegistration;
@@ -2882,6 +2883,7 @@ export type Mutation = {
   createSkill: Skill;
   createSubscriptionPaymentIntent: BillingPaymentIntent;
   createUnsubscribeTopic: UnsubscribeTopic;
+  createUploadApplicationTarball: FileUploadTarget;
   createView: View;
   createViewField: ViewField;
   createViewFieldGroup: ViewFieldGroup;
@@ -3062,8 +3064,11 @@ export type Mutation = {
   updateWorkspaceMemberRole: WorkspaceMember;
   updateWorkspaceMemberSettings: Scalars['Boolean']['output'];
   upgradeApplication: Scalars['Boolean']['output'];
+  /** @deprecated Use createUploadApplicationTarball and completeUploadApplicationTarball instead. */
   uploadAppTarball: ApplicationRegistration;
+  /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads instead. */
   uploadApplicationFile: File;
+  /** @deprecated Use createFileUpload and completeFileUpload instead. */
   uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl;
   uploadNewWorkspaceLogo: FileWithSignedUrl;
   uploadWorkspaceLogo: FileWithSignedUrl;
@@ -3171,6 +3176,12 @@ export type MutationCompleteBookCallOnboardingStepArgs = {
 
 export type MutationCompleteFileUploadArgs = {
   fileId: Scalars['String']['input'];
+};
+
+
+export type MutationCompleteUploadApplicationTarballArgs = {
+  fileId: Scalars['String']['input'];
+  universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -3355,6 +3366,11 @@ export type MutationCreateSubscriptionPaymentIntentArgs = {
 
 export type MutationCreateUnsubscribeTopicArgs = {
   input: CreateUnsubscribeTopicInput;
+};
+
+
+export type MutationCreateUploadApplicationTarballArgs = {
+  size: Scalars['Int']['input'];
 };
 
 
