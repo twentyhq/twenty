@@ -36,7 +36,7 @@ export class BackfillWorkspaceWorkflowIdOnWorkflowsCommand extends ProvisionedWo
 
     const schema = getWorkspaceSchemaName(workspaceId);
 
-    const mappedWorkspaceWorkflowId = `
+    const lowestWorkspaceWorkflowIdSubquery = `
       SELECT w.id
       FROM "${schema}"."workflow" w
       WHERE w."coreWorkflowId" = cw.id
@@ -58,7 +58,7 @@ export class BackfillWorkspaceWorkflowIdOnWorkflowsCommand extends ProvisionedWo
          FROM core."workflow" cw
          WHERE cw."workspaceId" = $1
            AND cw."workspaceWorkflowId" IS NULL
-           AND EXISTS (${mappedWorkspaceWorkflowId})`,
+           AND EXISTS (${lowestWorkspaceWorkflowIdSubquery})`,
         [workspaceId],
       );
 
@@ -76,10 +76,10 @@ export class BackfillWorkspaceWorkflowIdOnWorkflowsCommand extends ProvisionedWo
 
       await queryRunner.query(
         `UPDATE core."workflow" cw
-         SET "workspaceWorkflowId" = (${mappedWorkspaceWorkflowId})
+         SET "workspaceWorkflowId" = (${lowestWorkspaceWorkflowIdSubquery})
          WHERE cw."workspaceId" = $1
            AND cw."workspaceWorkflowId" IS NULL
-           AND EXISTS (${mappedWorkspaceWorkflowId})`,
+           AND EXISTS (${lowestWorkspaceWorkflowIdSubquery})`,
         [workspaceId],
       );
 
