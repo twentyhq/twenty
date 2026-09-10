@@ -18,6 +18,7 @@ import {
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
+import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -52,8 +53,6 @@ export class ConnectedAccountMetadataService {
     });
   }
 
-  // Mirrors isConnectedAccountUsableByCaller: workspace-shared connections
-  // plus the caller's own personal ones.
   async findApplicationConnectedAccountsUsableByCaller({
     applicationId,
     workspaceId,
@@ -64,22 +63,15 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId: string;
   }): Promise<ConnectedAccountEntity[]> {
     return this.repository.find({
-      where: [
-        {
+      where: buildConnectedAccountUsableByCallerWhere({
+        baseWhere: {
           applicationId,
           workspaceId,
           provider: ConnectedAccountProvider.APP,
-          visibility: 'workspace',
           archivedAt: IsNull(),
         },
-        {
-          applicationId,
-          workspaceId,
-          provider: ConnectedAccountProvider.APP,
-          userWorkspaceId,
-          archivedAt: IsNull(),
-        },
-      ],
+        userWorkspaceId,
+      }),
       order: { createdAt: 'ASC' },
     });
   }
