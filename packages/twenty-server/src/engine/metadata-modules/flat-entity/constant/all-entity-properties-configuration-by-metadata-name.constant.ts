@@ -3,6 +3,7 @@ import {
   type TranslatablePropertyName,
 } from 'twenty-shared/i18n';
 import { type AllMetadataName } from 'twenty-shared/metadata';
+import { type Expect } from 'twenty-shared/testing';
 
 import { type UnwrapWasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
@@ -245,7 +246,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     labelIdentifierFieldMetadataId: {
       toCompare: true,
       toStringify: false,
-      // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
       universalProperty: 'labelIdentifierFieldMetadataUniversalIdentifier',
     },
     overrides: {
@@ -306,7 +306,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     imageIdentifierFieldMetadataId: {
       toCompare: true,
       toStringify: false,
-      // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
       universalProperty: 'imageIdentifierFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },
@@ -1995,9 +1994,40 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
   },
-} as const satisfies {
-  [P in AllMetadataName]: MetadataEntityPropertyConfiguration<P>;
-};
+} as const;
+
+// TODO remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
+type ObjectMetadataPropertiesDeviatingFromConfiguration =
+  | 'labelIdentifierFieldMetadataId'
+  | 'imageIdentifierFieldMetadataId';
+
+type MetadataNameNotSatisfyingConfiguration = {
+  [P in AllMetadataName]: Omit<
+    (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[P],
+    P extends 'objectMetadata'
+      ? ObjectMetadataPropertiesDeviatingFromConfiguration
+      : never
+  > extends Omit<
+    MetadataEntityPropertyConfiguration<P>,
+    P extends 'objectMetadata'
+      ? ObjectMetadataPropertiesDeviatingFromConfiguration
+      : never
+  >
+    ? never
+    : P;
+}[AllMetadataName];
+
+// Checked after the declaration: an inline satisfies would run while typeof
+// the registry is computed, and overridable entities type their overrides
+// column from it.
+// oxlint-disable-next-line unused-imports/no-unused-vars
+type Assertions = [
+  Expect<
+    [MetadataNameNotSatisfyingConfiguration] extends [never]
+      ? true
+      : MetadataNameNotSatisfyingConfiguration
+  >,
+];
 
 export type MetadataEntityPropertyName<T extends AllMetadataName> =
   keyof (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T];
