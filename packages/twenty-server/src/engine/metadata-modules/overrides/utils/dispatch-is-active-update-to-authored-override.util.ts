@@ -1,16 +1,18 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { dispatchUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-update-to-authored-override.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 
 type FlatEntityWithIsActive = {
   applicationUniversalIdentifier: string;
   isActive?: boolean;
   overrides?: unknown;
   universalOverrides?: unknown;
+  isSystemSideEffect?: boolean;
 };
 
-// The owner writes the column, as for any of its properties; another author
-// writes its entry and readers resolve the effective value from there.
+// An overriding author, including the owner of an engine-managed row, writes
+// its entry so a reset can drop it; any other author writes the column.
 // isActive carries no foreign key, so universalOverrides takes the same entry
 // change without a converter.
 export const dispatchIsActiveUpdateToAuthoredOverride = <
@@ -28,12 +30,17 @@ export const dispatchIsActiveUpdateToAuthoredOverride = <
   authorUniversalIdentifier: string;
   workspaceCustomApplicationUniversalIdentifier: string;
 }): T => {
+  const isAuthorOverridingEntity = isCallerOverridingEntity({
+    callerApplicationUniversalIdentifier: authorUniversalIdentifier,
+    entityApplicationUniversalIdentifier:
+      flatEntity.applicationUniversalIdentifier,
+    workspaceCustomApplicationUniversalIdentifier,
+    isSystemSideEffect: flatEntity.isSystemSideEffect ?? false,
+  });
+
   // Kinds without an overrides column, such as view filters, only carry the
   // column.
-  if (
-    authorUniversalIdentifier === flatEntity.applicationUniversalIdentifier ||
-    !('overrides' in flatEntity)
-  ) {
+  if (!isAuthorOverridingEntity || !('overrides' in flatEntity)) {
     return { ...flatEntity, isActive };
   }
 

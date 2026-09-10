@@ -110,6 +110,7 @@ export class TimelineActivityTypeService {
           workspaceCustomApplicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
         }),
+        isActive: true,
         updatedAt: new Date().toISOString(),
       },
       workspaceId,
