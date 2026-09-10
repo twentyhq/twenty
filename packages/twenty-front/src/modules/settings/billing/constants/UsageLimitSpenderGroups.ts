@@ -14,8 +14,7 @@ export type UsageLimitSpenderGroup = {
   id: string;
   label: MessageDescriptor;
   Icon: IconComponent;
-  spenderType: UsageLimitSpenderType | null;
-  subSpenderTypes: UsageLimitSpenderType[];
+  spenderType: UsageLimitSpenderType;
 };
 
 export const USAGE_LIMIT_SPENDER_GROUPS: UsageLimitSpenderGroup[] = [
@@ -24,27 +23,23 @@ export const USAGE_LIMIT_SPENDER_GROUPS: UsageLimitSpenderGroup[] = [
     label: msg`Workspace`,
     Icon: IconSettings,
     spenderType: 'workspace',
-    subSpenderTypes: [],
   },
   {
     id: 'user',
     label: msg`User`,
     Icon: IconUsers,
     spenderType: 'userWorkspace',
-    subSpenderTypes: [],
   },
   {
     id: 'application',
     label: msg`Application`,
     Icon: IconApps,
     spenderType: 'application',
-    subSpenderTypes: ['agent', 'workflow', 'logicFunction'],
   },
   {
     id: 'apiKey',
     label: msg`API key`,
     Icon: IconKey,
     spenderType: 'apiKey',
-    subSpenderTypes: [],
   },
 ];

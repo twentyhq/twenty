@@ -8,7 +8,6 @@ import { MenuItemSelect, MenuItemSelectAvatar } from 'twenty-ui/navigation';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingLimitNestedSelect } from '@/settings/billing/components/internal/SettingsBillingLimitNestedSelect';
 import { AVATAR_SPENDER_TYPES } from '@/settings/billing/constants/AvatarSpenderTypes';
-import { type UsageLimitSpenderGroup } from '@/settings/billing/constants/UsageLimitSpenderGroups';
 import { USAGE_LIMIT_SPENDER_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitSpenderTypeIcons';
 import { USAGE_LIMIT_SPENDER_TYPE_LABELS } from '@/settings/billing/constants/UsageLimitSpenderTypeLabels';
 import { USAGE_LIMIT_SPENDER_TYPE_POOL_LABELS } from '@/settings/billing/constants/UsageLimitSpenderTypePoolLabels';
@@ -54,14 +53,12 @@ export const SettingsBillingLimitSpenderSelect = ({
   const { closeDropdown } = useCloseDropdown();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const [browsedGroupId, setBrowsedGroupId] = useState<string | null>(null);
   const [browsedSpenderType, setBrowsedSpenderType] =
     useState<UsageLimitSpenderType | null>(null);
 
   const groups = getUsageLimitSpenderGroups(allowedSpenderTypes);
-  const browsedGroup = groups.find((group) => group.id === browsedGroupId);
 
-  const listedSpenderType = browsedSpenderType ?? browsedGroup?.spenderType;
+  const listedSpenderType = browsedSpenderType ?? undefined;
   const { spenderOptionsByType, loading } = useUsageLimitSpenderOptions(
     [listedSpenderType, spenderType].filter(isDefined),
   );
@@ -78,10 +75,7 @@ export const SettingsBillingLimitSpenderSelect = ({
     currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
   );
 
-  const resetNavigation = () => {
-    setBrowsedGroupId(null);
-    setBrowsedSpenderType(null);
-  };
+  const resetNavigation = () => setBrowsedSpenderType(null);
 
   const handleSelect = (
     nextSpenderType: UsageLimitSpenderType,
@@ -220,32 +214,6 @@ export const SettingsBillingLimitSpenderSelect = ({
     </DropdownContent>
   );
 
-  const renderGroupContent = (group: UsageLimitSpenderGroup) => (
-    <DropdownContent>
-      {renderBackHeader(t(group.label), () => setBrowsedGroupId(null))}
-      <DropdownMenuItemsContainer>
-        {isDefined(group.spenderType) && renderOptionList(group.spenderType)}
-      </DropdownMenuItemsContainer>
-      {isDefined(group.spenderType) && group.subSpenderTypes.length > 0 && (
-        <DropdownMenuSeparator />
-      )}
-      {group.subSpenderTypes.length > 0 && (
-        <DropdownMenuItemsContainer>
-          {group.subSpenderTypes.map((kind) => (
-            <MenuItemSelect
-              key={kind}
-              LeftIcon={USAGE_LIMIT_SPENDER_TYPE_ICONS[kind]}
-              text={t(USAGE_LIMIT_SPENDER_TYPE_LABELS[kind])}
-              selected={spenderType === kind}
-              hasSubMenu
-              onClick={() => setBrowsedSpenderType(kind)}
-            />
-          ))}
-        </DropdownMenuItemsContainer>
-      )}
-    </DropdownContent>
-  );
-
   const workspaceGroup = groups.find((group) => group.id === 'workspace');
   const otherGroups = groups.filter((group) => group.id !== 'workspace');
 
@@ -255,6 +223,7 @@ export const SettingsBillingLimitSpenderSelect = ({
         <DropdownMenuItemsContainer>
           <MenuItemSelectAvatar
             text={workspaceName}
+            contextualText={t`Workspace`}
             selected={spenderType === 'workspace'}
             avatar={
               <Avatar
@@ -278,25 +247,14 @@ export const SettingsBillingLimitSpenderSelect = ({
               key={group.id}
               LeftIcon={group.Icon}
               text={t(group.label)}
-              selected={
-                spenderType === group.spenderType ||
-                group.subSpenderTypes.some((kind) => kind === spenderType)
-              }
+              selected={false}
               hasSubMenu
               disabled={!isIntraWorkspaceLimitEntitled}
               contextualText={
                 isIntraWorkspaceLimitEntitled ? undefined : t`Organization plan`
               }
               contextualTextPosition="right"
-              onClick={() => {
-                if (group.subSpenderTypes.length === 0) {
-                  setBrowsedSpenderType(group.spenderType);
-
-                  return;
-                }
-
-                setBrowsedGroupId(group.id);
-              }}
+              onClick={() => setBrowsedSpenderType(group.spenderType)}
             />
           ))}
         </DropdownMenuItemsContainer>
@@ -309,10 +267,6 @@ export const SettingsBillingLimitSpenderSelect = ({
       return renderSubSpenderContent(browsedSpenderType);
     }
 
-    if (isDefined(browsedGroup)) {
-      return renderGroupContent(browsedGroup);
-    }
-
     return renderRootContent();
   };
 
@@ -321,6 +275,9 @@ export const SettingsBillingLimitSpenderSelect = ({
       dropdownId={SPENDER_DROPDOWN_ID}
       label={t`Spender`}
       selectedLabel={getSelectedLabel()}
+      selectedContextualText={
+        spenderType === 'workspace' ? t`Workspace` : undefined
+      }
       SelectedIcon={
         isDefined(spenderType)
           ? USAGE_LIMIT_SPENDER_TYPE_ICONS[spenderType]

@@ -3,7 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { SettingsBillingLimitEditForm } from '@/settings/billing/components/SettingsBillingLimitEditForm';
 import { useUsageQuotasWithConsumption } from '@/settings/billing/hooks/useUsageQuotasWithConsumption';
-import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { NotFound } from '~/pages/not-found/NotFound';
 
 export const SettingsBillingLimitEdit = () => {
@@ -12,7 +11,7 @@ export const SettingsBillingLimitEdit = () => {
     useUsageQuotasWithConsumption();
 
   if (loading) {
-    return <UsageSectionSkeleton />;
+    return null;
   }
 
   const quota = usageQuotasWithConsumption.find(

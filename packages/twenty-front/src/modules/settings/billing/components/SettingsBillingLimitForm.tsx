@@ -8,9 +8,13 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
 import { SettingsBillingLimitUsageSelect } from '@/settings/billing/components/SettingsBillingLimitUsageSelect';
+import { SettingsBillingLimitAmount } from '@/settings/billing/components/internal/SettingsBillingLimitAmount';
 import { StyledSettingsBillingFieldLabel } from '@/settings/billing/components/internal/SettingsBillingFieldLabel';
 import { SettingsBillingLimitSpenderSelect } from '@/settings/billing/components/SettingsBillingLimitSpenderSelect';
+import { USAGE_LIMIT_METER_ICONS } from '@/settings/billing/constants/UsageLimitMeterIcons';
 import { USAGE_LIMIT_METER_LABELS } from '@/settings/billing/constants/UsageLimitMeterLabels';
+import { USAGE_LIMIT_PERIOD_ICONS } from '@/settings/billing/constants/UsageLimitPeriodIcons';
+import { USAGE_LIMIT_PERIOD_SPAN_LABELS } from '@/settings/billing/constants/UsageLimitPeriodSpanLabels';
 import { USAGE_LIMIT_PERIOD_UNIT_LABELS } from '@/settings/billing/constants/UsageLimitPeriodUnitLabels';
 import { type UsageLimitFormValues } from '@/settings/billing/types/UsageLimitFormValues';
 import { type UsageLimitMeter } from '@/settings/billing/types/UsageLimitMeter';
@@ -31,15 +35,22 @@ import {
 
 const RING_ANCHOR_ID = 'usage-limit-form-ring';
 
-const StyledFields = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-`;
-
 const StyledRow = styled.div`
   display: grid;
   gap: ${themeCssVariables.spacing[4]};
+  grid-template-columns: 1fr 1fr;
+`;
+
+const StyledTooltipRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  white-space: nowrap;
+`;
+
+const StyledMeterRow = styled.div`
+  display: grid;
+  gap: ${themeCssVariables.spacing[2]};
   grid-template-columns: 1fr 1fr;
 `;
 
@@ -52,18 +63,22 @@ const StyledAmountCell = styled.div`
 const StyledAmountField = styled.div`
   flex: 1;
   min-width: 0;
+
+  input[type='number'] {
+    appearance: textfield;
+  }
+
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    appearance: none;
+    margin: 0;
+  }
 `;
 
 const StyledRingCell = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
   height: ${themeCssVariables.spacing[8]};
-`;
-
-const StyledRingPercentage = styled.span`
-  color: ${themeCssVariables.font.color.secondary};
-  white-space: nowrap;
 `;
 
 type SettingsBillingLimitFormProps = {
@@ -140,20 +155,9 @@ export const SettingsBillingLimitForm = ({
         operationType: values.operationType ?? UsageOperationType.ALL,
       })
     : '';
-  const getUsedTooltipTitle = (): string => {
-    switch (values.periodUnit) {
-      case 'day':
-        return t`${consumedText} already used today`;
-      case 'week':
-        return t`${consumedText} already used this week`;
-      case 'month':
-        return t`${consumedText} already used this month`;
-      case 'allowancePeriod':
-        return t`${consumedText} already used this billing period`;
-      default:
-        return t`${consumedText} already used`;
-    }
-  };
+  const periodSpanLabel = isDefined(values.periodUnit)
+    ? t(USAGE_LIMIT_PERIOD_SPAN_LABELS[values.periodUnit])
+    : '';
 
   const hasResource = isDefined(values.resourceType);
 
@@ -162,7 +166,7 @@ export const SettingsBillingLimitForm = ({
     : { value: null, label: t`Choose a usage first` };
 
   return (
-    <StyledFields>
+    <>
       <Section>
         <H2Title
           title={t`Scope`}
@@ -210,7 +214,6 @@ export const SettingsBillingLimitForm = ({
               />
             </StyledAmountField>
             <StyledRingCell id={RING_ANCHOR_ID}>
-              <StyledRingPercentage>{consumedPercentage}%</StyledRingPercentage>
               <ProgressRing
                 value={consumedPercentage}
                 barColor={getUsageLimitRingColor({
@@ -220,18 +223,26 @@ export const SettingsBillingLimitForm = ({
               />
               <AppTooltip
                 anchorSelect={`#${RING_ANCHOR_ID}`}
-                title={
-                  isDefined(progress)
-                    ? getUsedTooltipTitle()
-                    : t`Nothing counted against this scope yet`
-                }
                 place="top"
                 delay={TooltipDelay.shortDelay}
                 positionStrategy="fixed"
-              />
+              >
+                {isDefined(progress) ? (
+                  <StyledTooltipRow>
+                    {t`Used`}
+                    <SettingsBillingLimitAmount
+                      text={consumedText}
+                      isCreditsMeter={isCreditsMeter}
+                    />
+                    {`· ${periodSpanLabel}`}
+                  </StyledTooltipRow>
+                ) : (
+                  t`Nothing counted against this scope yet`
+                )}
+              </AppTooltip>
             </StyledRingCell>
           </StyledAmountCell>
-          <StyledRow>
+          <StyledMeterRow>
             <Select
               dropdownId="usage-limit-meter"
               label={t`Meter`}
@@ -241,6 +252,7 @@ export const SettingsBillingLimitForm = ({
               options={options.meters.map((meter: UsageLimitMeter) => ({
                 value: meter,
                 label: t(USAGE_LIMIT_METER_LABELS[meter]),
+                Icon: USAGE_LIMIT_METER_ICONS[meter],
               }))}
               emptyOption={placeholderOption}
               onChange={(meter) =>
@@ -257,6 +269,7 @@ export const SettingsBillingLimitForm = ({
                 (periodUnit: UsageLimitPeriodUnit) => ({
                   value: periodUnit,
                   label: t(USAGE_LIMIT_PERIOD_UNIT_LABELS[periodUnit]),
+                  Icon: USAGE_LIMIT_PERIOD_ICONS[periodUnit],
                 }),
               )}
               emptyOption={placeholderOption}
@@ -264,9 +277,9 @@ export const SettingsBillingLimitForm = ({
                 isDefined(periodUnit) && onChange({ ...values, periodUnit })
               }
             />
-          </StyledRow>
+          </StyledMeterRow>
         </StyledRow>
       </Section>
-    </StyledFields>
+    </>
   );
 };

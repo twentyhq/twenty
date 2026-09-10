@@ -14,7 +14,6 @@ import { buildCreateUsageLimitInput } from '@/settings/billing/utils/buildCreate
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -82,9 +81,7 @@ export const SettingsBillingNewLimit = () => {
       }
     >
       <SettingsPageContainer>
-        {definitionsLoading || !isDefined(usageQuotaDefinitions) ? (
-          <UsageSectionSkeleton />
-        ) : (
+        {definitionsLoading || !isDefined(usageQuotaDefinitions) ? null : (
           <SettingsBillingLimitForm
             definitions={usageQuotaDefinitions}
             values={values}

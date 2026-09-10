@@ -123,7 +123,7 @@ export const SettingsBillingLimitUsageSelect = ({
                   text={t(
                     USAGE_LIMIT_RESOURCE_TYPE_LABELS[definition.resourceType],
                   )}
-                  selected={resourceType === definition.resourceType}
+                  selected={false}
                   hasSubMenu
                   onClick={() =>
                     setBrowsedResourceType(definition.resourceType)

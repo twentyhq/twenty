@@ -6,7 +6,7 @@ describe('getUsageLimitSpenderGroups', () => {
       'apiKey',
       'workspace',
       'userWorkspace',
-      'agent',
+      'application',
     ]);
 
     expect(groups.map((group) => group.id)).toEqual([
@@ -17,30 +17,10 @@ describe('getUsageLimitSpenderGroups', () => {
     ]);
   });
 
-  it('keeps only the allowed sub kinds inside a group', () => {
-    const groups = getUsageLimitSpenderGroups([
-      'workspace',
-      'application',
-      'agent',
-    ]);
-    const applicationGroup = groups.find((group) => group.id === 'application');
+  it('drops a group the resource does not accept', () => {
+    const groups = getUsageLimitSpenderGroups(['workspace', 'apiKey']);
 
-    expect(applicationGroup?.spenderType).toBe('application');
-    expect(applicationGroup?.subSpenderTypes).toEqual(['agent']);
-  });
-
-  it('keeps a group whose own kind is disallowed but still holds sub kinds', () => {
-    const groups = getUsageLimitSpenderGroups(['workspace', 'agent']);
-    const applicationGroup = groups.find((group) => group.id === 'application');
-
-    expect(applicationGroup?.spenderType).toBeNull();
-    expect(applicationGroup?.subSpenderTypes).toEqual(['agent']);
-  });
-
-  it('drops a group with neither its own kind nor sub kinds', () => {
-    const groups = getUsageLimitSpenderGroups(['workspace']);
-
-    expect(groups.map((group) => group.id)).toEqual(['workspace']);
+    expect(groups.map((group) => group.id)).toEqual(['workspace', 'apiKey']);
   });
 
   it('returns nothing when no spender is allowed', () => {

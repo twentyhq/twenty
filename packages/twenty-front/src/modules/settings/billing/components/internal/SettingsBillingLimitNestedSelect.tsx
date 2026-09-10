@@ -14,6 +14,7 @@ type SettingsBillingLimitNestedSelectProps = {
   dropdownId: string;
   label: string;
   selectedLabel: string;
+  selectedContextualText?: string;
   SelectedIcon?: IconComponent;
   SelectedAvatar?: ReactNode;
   isDisabled?: boolean;
@@ -25,6 +26,7 @@ export const SettingsBillingLimitNestedSelect = ({
   dropdownId,
   label,
   selectedLabel,
+  selectedContextualText,
   SelectedIcon,
   SelectedAvatar,
   isDisabled = false,
@@ -34,6 +36,7 @@ export const SettingsBillingLimitNestedSelect = ({
   const selectedOption = {
     value: selectedLabel,
     label: selectedLabel,
+    contextualText: selectedContextualText,
     Icon: SelectedIcon,
   };
 

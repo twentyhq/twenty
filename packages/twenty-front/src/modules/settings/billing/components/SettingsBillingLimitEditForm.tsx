@@ -20,7 +20,6 @@ import { buildUsageLimitFormValues } from '@/settings/billing/utils/buildUsageLi
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -117,9 +116,7 @@ export const SettingsBillingLimitEditForm = ({
       }
     >
       <SettingsPageContainer>
-        {definitionsLoading || !isDefined(usageQuotaDefinitions) ? (
-          <UsageSectionSkeleton />
-        ) : (
+        {definitionsLoading || !isDefined(usageQuotaDefinitions) ? null : (
           <>
             <SettingsBillingLimitForm
               definitions={usageQuotaDefinitions}
