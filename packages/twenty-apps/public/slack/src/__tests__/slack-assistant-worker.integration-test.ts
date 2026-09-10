@@ -457,7 +457,7 @@ describe('Slack assistant worker', () => {
     );
   });
 
-  it('should send a long answer as markdown text because Slack blocks cannot hold it', async () => {
+  it('should keep the feedback buttons on an answer too long for a markdown block', async () => {
     slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
     const slackMessageTimestamp = nextMessageTimestamp();
     const longResponse = 'a'.repeat(SLACK_MARKDOWN_BLOCK_MAX_LENGTH + 1);
@@ -485,9 +485,27 @@ describe('Slack assistant worker', () => {
 
     const channelMessages = slack.messagesIn(CHANNEL_ID);
     const postedAnswer = channelMessages[channelMessages.length - 1];
+    const [markdownBlock, feedbackBlock] = postedAnswer?.blocks ?? [];
 
-    expect(postedAnswer?.blocks).toBeUndefined();
-    expect(postedAnswer?.markdownText).toContain(longResponse);
+    expect(markdownBlock).toEqual({
+      type: 'markdown',
+      text: expect.stringContaining('_Shortened to fit Slack.'),
+    });
+    expect((markdownBlock as { text: string }).text.length).toBeLessThanOrEqual(
+      SLACK_MARKDOWN_BLOCK_MAX_LENGTH,
+    );
+    expect(feedbackBlock).toEqual(
+      expect.objectContaining({
+        type: 'context_actions',
+        block_id: request.id,
+      }),
+    );
+    await expect(readRequest(request.id)).resolves.toEqual(
+      expect.objectContaining({
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        responseText: longResponse,
+      }),
+    );
   });
 
   it('should skip a request that another worker already picked up', async () => {
