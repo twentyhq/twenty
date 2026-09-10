@@ -12983,6 +12983,9 @@ export default {
             "campaignId": [
                 1
             ],
+            "scheduledAt": [
+                4
+            ],
             "__typename": [
                 1
             ]

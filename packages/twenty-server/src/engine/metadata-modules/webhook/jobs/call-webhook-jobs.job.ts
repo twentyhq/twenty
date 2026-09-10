@@ -15,6 +15,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { getEffectiveReadability } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-readability.util';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
+import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
 import { computeWebhookOperationsToMatch } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-operations-to-match.util';
@@ -34,6 +35,7 @@ export class CallWebhookJobsJob {
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareService: RecordShareService,
+    private readonly webhookRateLimitService: WebhookRateLimitService,
   ) {}
 
   @Process(CallWebhookJobsJob.name)
@@ -113,7 +115,16 @@ export class CallWebhookJobsJob {
       recordShareGate,
     });
 
-    const webhookEventsChunks = chunk(webhookEvents, WEBHOOK_JOBS_CHUNK_SIZE);
+    const admittedWebhookEvents =
+      await this.webhookRateLimitService.admitWebhookEventsWithinRateLimit({
+        workspaceId: workspaceEventBatch.workspaceId,
+        webhookEvents,
+      });
+
+    const webhookEventsChunks = chunk(
+      admittedWebhookEvents,
+      WEBHOOK_JOBS_CHUNK_SIZE,
+    );
 
     for (const webhookEventsChunk of webhookEventsChunks) {
       await this.messageQueueService.add<CallWebhookJobData[]>(
