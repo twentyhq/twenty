@@ -10,6 +10,8 @@ import {
 } from 'twenty-shared/application';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { messages as frMessages } from '~/locales/generated/fr-FR';
 import { FindManySkillsDocument } from '~/generated-metadata/graphql';
 import { SettingsAgentSkillsTab } from '~/pages/settings/ai/components/SettingsAgentSkillsTab';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -19,6 +21,13 @@ const STANDARD_APPLICATION = {
   id: '20202020-1c25-4d02-bf25-6aeccf7ea419',
   name: TWENTY_STANDARD_APPLICATION_NAME,
   universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  logoUrl: null,
+};
+
+const WORKSPACE_CUSTOM_APPLICATION = {
+  id: '20202020-4b7c-4f6a-8d1e-2c3b4a5d6e77',
+  name: 'Custom',
+  universalIdentifier: '20202020-9e8d-4c7b-8a6f-5d4c3b2a1e09',
   logoUrl: null,
 };
 
@@ -68,20 +77,34 @@ const RESEARCH_SKILL = buildSkill({
   applicationId: ACME_APPLICATION.id,
 });
 
+const CUSTOM_SKILL = buildSkill({
+  id: '20202020-6c5d-4e3f-9a8b-7d6e5f4c3b21',
+  name: 'quarterly-report',
+  label: 'Quarterly Report',
+  applicationId: WORKSPACE_CUSTOM_APPLICATION.id,
+});
+
 const renderSkillsTab = () => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [
       {
         request: { query: FindManySkillsDocument },
         result: {
-          data: { skills: [WORD_DOCUMENTS_SKILL, RESEARCH_SKILL] },
+          data: {
+            skills: [WORD_DOCUMENTS_SKILL, RESEARCH_SKILL, CUSTOM_SKILL],
+          },
         },
       },
     ],
     onInitializeJotaiStore: (store) => {
       store.set(currentWorkspaceState.atom, {
         ...mockCurrentWorkspace,
-        installedApplications: [STANDARD_APPLICATION, ACME_APPLICATION],
+        workspaceCustomApplication: WORKSPACE_CUSTOM_APPLICATION,
+        installedApplications: [
+          STANDARD_APPLICATION,
+          WORKSPACE_CUSTOM_APPLICATION,
+          ACME_APPLICATION,
+        ],
       });
     },
   });
@@ -98,6 +121,10 @@ const renderSkillsTab = () => {
 };
 
 describe('SettingsAgentSkillsTab', () => {
+  beforeEach(() => {
+    i18n.activate(SOURCE_LOCALE);
+  });
+
   it('shows the application each skill belongs to', async () => {
     renderSkillsTab();
 
@@ -112,10 +139,29 @@ describe('SettingsAgentSkillsTab', () => {
 
     await screen.findByText('Research');
 
-    const [firstRow, secondRow] = screen.getAllByRole('link');
+    const [firstRow, secondRow, thirdRow] = screen.getAllByRole('link');
 
-    expect(within(firstRow).getByText('Research')).toBeInTheDocument();
-    expect(within(secondRow).getByText('Word Documents')).toBeInTheDocument();
+    expect(within(firstRow).getByText('Quarterly Report')).toBeInTheDocument();
+    expect(within(secondRow).getByText('Research')).toBeInTheDocument();
+    expect(within(thirdRow).getByText('Word Documents')).toBeInTheDocument();
+  });
+
+  it('filters skills by the application label shown in the current locale', async () => {
+    i18n.load({ 'fr-FR': frMessages });
+    i18n.activate('fr-FR');
+
+    renderSkillsTab();
+
+    // fr-FR translates the workspace custom application label
+    expect(await screen.findByText('Personnalisé')).toBeInTheDocument();
+
+    await userEvent.type(
+      screen.getByPlaceholderText('Rechercher une compétence...'),
+      'Personnalisé',
+    );
+
+    expect(screen.getByText('Quarterly Report')).toBeInTheDocument();
+    expect(screen.queryByText('Research')).not.toBeInTheDocument();
   });
 
   it('filters skills by application name', async () => {

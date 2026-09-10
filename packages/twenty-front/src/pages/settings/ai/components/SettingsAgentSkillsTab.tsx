@@ -1,3 +1,4 @@
+import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -15,6 +16,7 @@ import { MenuItemSwitch } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useMutation, useQuery } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
 import {
   ActivateSkillDocument,
@@ -44,20 +46,20 @@ export const SettingsAgentSkillsTab = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const installedApplications = currentWorkspace?.installedApplications;
 
-  const skillTableItems = useMemo(
-    () =>
-      (data?.skills ?? []).map(
-        (skill) =>
-          ({
-            ...skill,
-            applicationLabel:
-              installedApplications?.find(
-                (application) => application.id === skill.applicationId,
-              )?.name ?? '',
-          }) satisfies SettingsSkillTableItem,
-      ),
-    [data?.skills, installedApplications],
-  );
+  // not memoized: getApplicationDisplayName translates the standard and custom
+  // labels, so a cached label would survive a locale change
+  const skillTableItems = (data?.skills ?? []).map((skill) => {
+    const application = installedApplications?.find(
+      (installedApplication) => installedApplication.id === skill.applicationId,
+    );
+
+    return {
+      ...skill,
+      applicationLabel: isDefined(application)
+        ? getApplicationDisplayName({ application, currentWorkspace })
+        : '',
+    } satisfies SettingsSkillTableItem;
+  });
 
   const sortedSkills = useSortedArray(
     skillTableItems,
