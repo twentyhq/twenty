@@ -12,7 +12,7 @@ import { SLACK_ASSISTANT_FEEDBACK_ACTION_ID } from 'src/logic-functions/constant
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_INITIAL_STATUS } from 'src/logic-functions/constants/slack-assistant-status-steps';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
-import { slackAssistantWorkerHandler } from 'src/logic-functions/slack-assistant-worker';
+import { slackAssistantWorkerHandler } from 'src/logic-functions/handlers/slack-assistant-worker-handler';
 import { getSlackThreadKvKey } from 'src/logic-functions/utils/get-slack-thread-kv-key';
 
 const CHANNEL_ID = 'C0WORKERTEST';
@@ -30,18 +30,14 @@ type SlackAssistantRequestRecordFields = {
   errorMessage?: string | null;
 };
 
-type WorkerEvent = Parameters<typeof slackAssistantWorkerHandler>[0];
+type WorkerRecord = Parameters<typeof slackAssistantWorkerHandler>[0];
 
 describe('Slack assistant worker', () => {
-  const { slack, appRuntime, coreClient, workspaceId } =
-    setupSlackIntegrationTest();
+  const { slack, appRuntime, coreClient } = setupSlackIntegrationTest();
 
   const createdRequestIds: string[] = [];
   const nextMessageTimestamp = createSlackMessageTimestampSequence(1);
 
-  // Records are stored as PROCESSING so that the deployed worker on the test
-  // server leaves them alone; the handler under test gets its PENDING record
-  // from the database event payload, exactly like the real trigger does.
   const createRequestRecord = async (fields: {
     slackChannelId: string;
     slackMessageTimestamp: string;
@@ -54,7 +50,7 @@ describe('Slack assistant worker', () => {
         __args: {
           data: {
             name: fields.requestText,
-            status: SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING,
+            status: SLACK_ASSISTANT_REQUEST_STATUS.PENDING,
             slackChannelType: 'channel',
             slackThreadTimestamp: '',
             slackUserId: REQUESTER_USER_ID,
@@ -96,9 +92,7 @@ describe('Slack assistant worker', () => {
     );
   };
 
-  // The worker only reads `properties.after`; the surrounding database event
-  // metadata is irrelevant to its behavior.
-  const buildRequestCreatedEvent = (record: {
+  const buildPendingRequest = (record: {
     id: string;
     slackChannelId: string;
     slackMessageTimestamp: string;
@@ -106,20 +100,13 @@ describe('Slack assistant worker', () => {
     slackChannelType?: string;
     slackThreadTimestamp?: string;
     status?: SlackAssistantRequestStatus;
-  }): WorkerEvent =>
-    ({
-      name: 'slackAssistantRequest.created',
-      workspaceId,
-      properties: {
-        after: {
-          status: SLACK_ASSISTANT_REQUEST_STATUS.PENDING,
-          slackChannelType: 'channel',
-          slackThreadTimestamp: '',
-          slackUserId: REQUESTER_USER_ID,
-          ...record,
-        },
-      },
-    }) as unknown as WorkerEvent;
+  }): WorkerRecord => ({
+    status: SLACK_ASSISTANT_REQUEST_STATUS.PENDING,
+    slackChannelType: 'channel',
+    slackThreadTimestamp: '',
+    slackUserId: REQUESTER_USER_ID,
+    ...record,
+  });
 
   afterEach(async () => {
     for (const requestId of createdRequestIds) {
@@ -154,7 +141,7 @@ describe('Slack assistant worker', () => {
     });
 
     const result = await slackAssistantWorkerHandler(
-      buildRequestCreatedEvent({
+      buildPendingRequest({
         ...request,
         slackChannelId: CHANNEL_ID,
         slackMessageTimestamp,
@@ -170,9 +157,7 @@ describe('Slack assistant worker', () => {
     expect(promptedRequest).toContain(
       'create a follow-up task for @Bob Lee (membership not confirmed) and tell @unknown Slack user U0GHOST in #general',
     );
-    expect(promptedRequest).toContain(
-      'Slack mentions in this request',
-    );
+    expect(promptedRequest).toContain('Slack mentions in this request');
     expect(promptedRequest).not.toContain('<@U0');
   });
 
@@ -213,7 +198,7 @@ describe('Slack assistant worker', () => {
     });
 
     const result = await slackAssistantWorkerHandler(
-      buildRequestCreatedEvent({
+      buildPendingRequest({
         ...request,
         slackChannelId: CHANNEL_ID,
         slackMessageTimestamp,
@@ -318,7 +303,7 @@ describe('Slack assistant worker', () => {
     });
 
     await slackAssistantWorkerHandler(
-      buildRequestCreatedEvent({
+      buildPendingRequest({
         ...request,
         slackChannelId: DIRECT_MESSAGE_CHANNEL_ID,
         slackChannelType: 'im',
@@ -362,7 +347,7 @@ describe('Slack assistant worker', () => {
     });
 
     const result = await slackAssistantWorkerHandler(
-      buildRequestCreatedEvent({
+      buildPendingRequest({
         ...request,
         slackChannelId: CHANNEL_ID,
         slackMessageTimestamp,
@@ -405,7 +390,7 @@ describe('Slack assistant worker', () => {
     });
 
     const result = await slackAssistantWorkerHandler(
-      buildRequestCreatedEvent({
+      buildPendingRequest({
         ...request,
         slackChannelId: CHANNEL_ID,
         slackMessageTimestamp,
@@ -448,7 +433,7 @@ describe('Slack assistant worker', () => {
     });
 
     const result = await slackAssistantWorkerHandler(
-      buildRequestCreatedEvent({
+      buildPendingRequest({
         ...request,
         slackChannelId: CHANNEL_ID,
         slackMessageTimestamp,
@@ -486,7 +471,7 @@ describe('Slack assistant worker', () => {
     });
 
     const result = await slackAssistantWorkerHandler(
-      buildRequestCreatedEvent({
+      buildPendingRequest({
         ...request,
         slackChannelId: CHANNEL_ID,
         slackMessageTimestamp,
@@ -523,7 +508,7 @@ describe('Slack assistant worker', () => {
     });
 
     await slackAssistantWorkerHandler(
-      buildRequestCreatedEvent({
+      buildPendingRequest({
         ...request,
         slackChannelId: CHANNEL_ID,
         slackMessageTimestamp,
@@ -560,7 +545,7 @@ describe('Slack assistant worker', () => {
     const slackMessageTimestamp = nextMessageTimestamp();
 
     const result = await slackAssistantWorkerHandler(
-      buildRequestCreatedEvent({
+      buildPendingRequest({
         id: 'not-persisted',
         status: SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING,
         slackChannelId: CHANNEL_ID,
