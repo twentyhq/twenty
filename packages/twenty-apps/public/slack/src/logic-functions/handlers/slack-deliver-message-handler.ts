@@ -11,6 +11,7 @@ import { buildSlackAnswerDeliveryFailureMessage } from 'src/logic-functions/util
 import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-slack-message-delivery';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const slackDeliverMessageHandler = async (
   payload: SlackDeliverMessagePayload,
@@ -34,7 +35,7 @@ export const slackDeliverMessageHandler = async (
       });
     } catch (error) {
       console.warn(
-        `[slack] delivered request ${slackAssistantRequestId} but could not mark it done: ${error instanceof Error ? error.message : 'unknown error'}`,
+        `[slack] delivered request ${slackAssistantRequestId} but could not mark it done: ${toErrorMessage(error)}`,
       );
 
       return { delivered: true, attempt, statusRecorded: false };
