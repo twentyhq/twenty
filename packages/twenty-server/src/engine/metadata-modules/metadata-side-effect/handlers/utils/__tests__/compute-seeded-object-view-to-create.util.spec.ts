@@ -1,5 +1,5 @@
 import { getSeededObjectViewUniversalIdentifier } from 'twenty-shared/application';
-import { ViewKey, ViewType } from 'twenty-shared/types';
+import { ViewType } from 'twenty-shared/types';
 
 import { computeSeededObjectViewToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-seeded-object-view-to-create.util';
 
@@ -17,7 +17,7 @@ describe('computeSeededObjectViewToCreate', () => {
     });
 
     expect(seededView.isSystemSideEffect).toBe(false);
-    expect(seededView.key).toBe(ViewKey.DEFAULT);
+    expect(seededView.key).toBeNull();
   });
 
   it('should be a table view named after the object', () => {

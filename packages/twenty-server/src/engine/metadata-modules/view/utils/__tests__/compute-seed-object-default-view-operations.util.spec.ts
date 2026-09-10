@@ -164,7 +164,7 @@ describe('computeSeedObjectDefaultViewOperations', () => {
     expect(viewsToCreate[0]).toMatchObject({
       universalIdentifier: SEEDED_VIEW_UNIVERSAL_IDENTIFIER,
       name: 'All Pets',
-      key: ViewKey.DEFAULT,
+      key: null,
       isSystemSideEffect: false,
       applicationUniversalIdentifier:
         WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -210,7 +210,7 @@ describe('computeSeedObjectDefaultViewOperations', () => {
     const existingSeededView: ViewFixture = {
       universalIdentifier: SEEDED_VIEW_UNIVERSAL_IDENTIFIER,
       objectMetadataUniversalIdentifier: PET_OBJECT_UNIVERSAL_IDENTIFIER,
-      key: ViewKey.DEFAULT,
+      key: null,
       deletedAt: null,
       viewFieldUniversalIdentifiers: [seededNameViewFieldUniversalIdentifier],
     };
@@ -237,7 +237,7 @@ describe('computeSeedObjectDefaultViewOperations', () => {
     const existingSeededView: ViewFixture = {
       universalIdentifier: SEEDED_VIEW_UNIVERSAL_IDENTIFIER,
       objectMetadataUniversalIdentifier: PET_OBJECT_UNIVERSAL_IDENTIFIER,
-      key: ViewKey.DEFAULT,
+      key: null,
       deletedAt: null,
       viewFieldUniversalIdentifiers: [
         NAME_FIELD_UNIVERSAL_IDENTIFIER,

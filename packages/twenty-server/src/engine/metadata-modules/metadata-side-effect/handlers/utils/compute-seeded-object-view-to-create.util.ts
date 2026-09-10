@@ -1,6 +1,6 @@
 import { getSeededObjectViewUniversalIdentifier } from 'twenty-shared/application';
 import { VIEW_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
-import { ViewKey, ViewType } from 'twenty-shared/types';
+import { ViewType } from 'twenty-shared/types';
 
 import { buildBaseUniversalFlatView } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/build-base-universal-flat-view.util';
 import { SEEDED_OBJECT_VIEW_POSITION } from 'src/engine/metadata-modules/view/constants/seeded-object-view-position.constant';
@@ -28,7 +28,7 @@ export const computeSeededObjectViewToCreate = ({
       objectUniversalIdentifier: objectMetadata.universalIdentifier,
     }),
     name: `All ${objectMetadata.labelPlural}`,
-    key: ViewKey.DEFAULT,
+    key: null,
     icon: VIEW_TYPE_DEFAULT_ICONS[ViewType.TABLE],
     type: ViewType.TABLE,
     position: SEEDED_OBJECT_VIEW_POSITION,

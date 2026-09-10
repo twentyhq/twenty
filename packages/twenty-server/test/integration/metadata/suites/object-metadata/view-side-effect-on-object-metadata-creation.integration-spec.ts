@@ -108,7 +108,9 @@ describe('View side effect on object creation', () => {
       type: ViewType.TABLE,
     });
 
-    const seededView = createdViews.find((view) => view.key === 'DEFAULT');
+    const seededView = createdViews.find(
+      (view) => view.name === 'All Dishes I love' && view.id !== indexView.id,
+    );
 
     if (!isDefined(seededView)) {
       throw new Error('expected a seeded user-owned view to be provisioned');

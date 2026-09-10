@@ -1,7 +1,6 @@
 import { msg, t } from '@lingui/core/macro';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { getSeededObjectViewUniversalIdentifier } from 'twenty-shared/application';
-import { ViewKey, ViewType } from 'twenty-shared/types';
+import { ViewType } from 'twenty-shared/types';
 import { getViewLayoutFromViewType, isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -61,20 +60,7 @@ export const validateFlatViewCreation = ({
   const reservedViewKey = flatViewToValidate.key;
 
   if (isDefined(reservedViewKey)) {
-    const isSeededDefaultView =
-      reservedViewKey === ViewKey.DEFAULT &&
-      flatViewToValidate.universalIdentifier ===
-        getSeededObjectViewUniversalIdentifier({
-          objectMetadataApplicationUniversalIdentifier:
-            flatViewToValidate.applicationUniversalIdentifier,
-          objectUniversalIdentifier:
-            flatViewToValidate.objectMetadataUniversalIdentifier,
-        });
-
-    if (
-      !isSeededDefaultView &&
-      flatViewToValidate.isSystemSideEffect !== true
-    ) {
+    if (flatViewToValidate.isSystemSideEffect !== true) {
       validationResult.errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`The ${reservedViewKey} view key is reserved for the engine-owned default view; remove the key from the view definition`,
