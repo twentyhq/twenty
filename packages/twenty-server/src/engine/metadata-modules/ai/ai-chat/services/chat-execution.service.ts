@@ -55,6 +55,7 @@ import {
   extractCacheCreationTokens,
   extractCacheCreationTokensFromSteps,
 } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import { AI_CHAT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-excluded-tool-names.const';
 import { AI_CHAT_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-stream-function-id.constant';
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
 import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
@@ -165,11 +166,13 @@ export class ChatExecutionService {
       onCodeExecutionUpdate,
     };
 
-    const toolCatalog = await this.toolRegistry.buildToolIndex(
-      workspace.id,
-      roleId,
-      { userId, userWorkspaceId, locale },
-    );
+    const toolCatalog = (
+      await this.toolRegistry.buildToolIndex(workspace.id, roleId, {
+        userId,
+        userWorkspaceId,
+        locale,
+      })
+    ).filter((entry) => !AI_CHAT_EXCLUDED_TOOL_NAMES.has(entry.name));
 
     const skillCatalog = await this.skillService.findAllFlatSkills(
       workspace.id,
@@ -239,6 +242,9 @@ export class ChatExecutionService {
       ...(isWorkspaceSetupThread ? [COMPLETE_WORKSPACE_SETUP_TOOL_NAME] : []),
     ];
 
+    const isToolAllowed = (toolName: string) =>
+      !AI_CHAT_EXCLUDED_TOOL_NAMES.has(toolName);
+
     // ToolSet is constant for the entire conversation — no mutation.
     // learn_tools returns schemas as text; execute_tool dispatches via the registry.
     const activeTools: ToolSet = {
@@ -255,12 +261,19 @@ export class ChatExecutionService {
       [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
         this.toolRegistry,
         toolContext,
-        { spillLargeOutput: true },
+        {
+          spillLargeOutput: true,
+          isToolAllowed,
+        },
       ),
       [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(
         this.toolRegistry,
         toolContext,
-        { compactOutput: true, spillLargeOutput: true },
+        {
+          compactOutput: true,
+          spillLargeOutput: true,
+          isToolAllowed,
+        },
       ),
       [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool(
         (skillNames) =>

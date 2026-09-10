@@ -3,11 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, LessThan, Like, Not, Repository } from 'typeorm';
+import { IsNull, LessThan, Not, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { MCP_UPLOAD_FILE_PATH_PREFIX } from 'src/engine/core-modules/file/constants/mcp-upload-folder.constant';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import {
   PENDING_FILE_CLEANUP_BATCH_SIZE,
@@ -75,92 +74,6 @@ export class PendingFileCleanupService {
     }
 
     return deletedCount;
-  }
-
-  // Staging copies from upload_file land as UPLOADED temporary files, so the
-  // PENDING reaper never sees them. Postgres and object storage cannot share
-  // a transaction, so this is a short saga: soft-delete first so attach
-  // cannot see the row, then remove the blob, then hard-delete. A failed
-  // blob delete leaves the hidden row for the next tick (withDeleted).
-  //
-  // Two gaps we accept. An attach that already loaded the entity before the
-  // claim can still copy a missing object at the 24h boundary — we do not
-  // hold a row lock across the storage copy. A missing application cannot
-  // address the blob; we drop the row rather than pin it forever.
-  async cleanupStaleMcpUploadFiles(): Promise<number> {
-    const staleThreshold = new Date(Date.now() - PENDING_FILE_MAX_AGE_MS);
-
-    const staleFiles = await this.fileRepository.find({
-      where: {
-        status: FILE_STATUS.UPLOADED,
-        createdAt: LessThan(staleThreshold),
-        workspaceId: Not(IsNull()),
-        path: Like(`${MCP_UPLOAD_FILE_PATH_PREFIX}%`),
-      },
-      withDeleted: true,
-      take: PENDING_FILE_CLEANUP_BATCH_SIZE,
-    });
-
-    let deletedCount = 0;
-
-    for (const file of staleFiles) {
-      try {
-        if (!isDefined(file.deletedAt)) {
-          const { affected } = await this.fileRepository.softDelete({
-            id: file.id,
-            path: Like(`${MCP_UPLOAD_FILE_PATH_PREFIX}%`),
-          });
-
-          if (!isDefined(affected) || affected === 0) {
-            continue;
-          }
-        }
-
-        // Missing application: skip the blob (cannot build the storage key)
-        // and hard-delete the row below so we do not retry forever.
-        await this.deleteMcpUploadStorageObject(file);
-
-        const { affected } = await this.fileRepository.delete({
-          id: file.id,
-          path: Like(`${MCP_UPLOAD_FILE_PATH_PREFIX}%`),
-        });
-
-        if (!isDefined(affected) || affected === 0) {
-          continue;
-        }
-
-        deletedCount++;
-      } catch (error) {
-        this.logger.warn(
-          `Failed to clean up stale mcp upload file ${file.id} in workspace ${file.workspaceId}: ${error.message}`,
-        );
-      }
-    }
-
-    return deletedCount;
-  }
-
-  private async deleteMcpUploadStorageObject(file: FileEntity): Promise<void> {
-    if (!isDefined(file.workspaceId)) {
-      return;
-    }
-
-    const [fileFolder] = file.path.split('/');
-
-    const application = await this.applicationRepository.findOne({
-      where: { id: file.applicationId, workspaceId: file.workspaceId },
-    });
-
-    if (!isDefined(application)) {
-      return;
-    }
-
-    await this.fileStorageService.deleteFileObject({
-      workspaceId: file.workspaceId,
-      applicationUniversalIdentifier: application.universalIdentifier,
-      fileFolder: fileFolder as FileFolder,
-      resourcePath: removeFileFolderFromFileEntityPath(file.path),
-    });
   }
 
   // The row has already been removed, so this only tidies the (possibly

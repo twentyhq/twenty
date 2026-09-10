@@ -26,12 +26,13 @@ import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-int
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { FindConnectedAccountsTool } from 'src/engine/core-modules/tool/tools/email-tool/find-connected-accounts-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
+import { CompleteFileUploadTool } from 'src/engine/core-modules/tool/tools/file-upload-tool/complete-file-upload-tool';
+import { CreateFileUploadTool } from 'src/engine/core-modules/tool/tools/file-upload-tool/create-file-upload-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
 import { ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
 import { SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
-import { UploadFileTool } from 'src/engine/core-modules/tool/tools/upload-file-tool/upload-file-tool';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -50,7 +51,8 @@ export class ActionToolProvider implements ToolProvider {
     private readonly findConnectedAccountsTool: FindConnectedAccountsTool,
     private readonly createCalendarEventTool: CreateCalendarEventTool,
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
-    private readonly uploadFileTool: UploadFileTool,
+    private readonly createFileUploadTool: CreateFileUploadTool,
+    private readonly completeFileUploadTool: CompleteFileUploadTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
     private readonly navigateAppTool: NavigateAppTool,
     private readonly extractJsonPathsTool: ExtractJsonPathsTool,
@@ -67,7 +69,8 @@ export class ActionToolProvider implements ToolProvider {
       ['find_connected_accounts', this.findConnectedAccountsTool],
       ['create_calendar_event', this.createCalendarEventTool],
       ['search_help_center', this.searchHelpCenterTool],
-      ['upload_file', this.uploadFileTool],
+      ['create_file_upload', this.createFileUploadTool],
+      ['complete_file_upload', this.completeFileUploadTool],
       ['code_interpreter', this.codeInterpreterTool],
       ['navigate_app', this.navigateAppTool],
       ['extract_json_paths', this.extractJsonPathsTool],
@@ -165,8 +168,16 @@ export class ActionToolProvider implements ToolProvider {
     if (hasUploadFilePermission) {
       descriptors.push(
         this.buildDescriptor(
-          'upload_file',
-          this.uploadFileTool,
+          'create_file_upload',
+          this.createFileUploadTool,
+          includeSchemas,
+          context.locale,
+        ),
+      );
+      descriptors.push(
+        this.buildDescriptor(
+          'complete_file_upload',
+          this.completeFileUploadTool,
           includeSchemas,
           context.locale,
         ),

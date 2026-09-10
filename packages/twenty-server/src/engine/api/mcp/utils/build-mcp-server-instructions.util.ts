@@ -13,7 +13,7 @@ export const buildMcpServerInstructions = (
     'navigate_app',
     'code_interpreter',
     'search_help_center',
-    ...(canUploadFile ? ['upload_file'] : []),
+    ...(canUploadFile ? ['create_file_upload', 'complete_file_upload'] : []),
   ].join(' | ');
 
   return [
@@ -87,7 +87,7 @@ export const buildMcpServerInstructions = (
     `  http_request is ONLY for external third-party APIs, never for Twenty's own data.`,
     ...(canUploadFile
       ? [
-          `  To attach a file to a record: upload_file (base64, max ${settings.storage.maxFileSize}) then create_one_attachment with file: [{ fileId, label }] and the target*Id (e.g. targetCompanyId). For a FILES field, pass the same { fileId, label } on create_one_* / update_one_*.`,
+          `  To attach a file: create_file_upload ({ filename, size }), PUT the bytes to uploadUrl with Content-Type contentType (max ${settings.storage.maxDirectUploadFileSize}), then complete_file_upload ({ fileId }). Use that fileId in a FILES value (create_one_attachment file: [{ fileId, label }] and the target*Id, or a FILES field on create_one_* / update_one_*) or in code_interpreter.files. update_many does not copy FILES values; update_one replaces the whole FILES list.`,
         ]
       : []),
     ``,
