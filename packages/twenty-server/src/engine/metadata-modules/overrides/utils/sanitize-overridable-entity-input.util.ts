@@ -2,7 +2,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/overrides/constants/all-overridable-properties-by-metadata-name.constant';
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
-import { computeMetadataOverridesBlob } from 'src/engine/metadata-modules/overrides/utils/compute-metadata-overrides-blob.util';
+import { dispatchUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-update-to-authored-override.util';
 
 type FlatEntityWithOverrides<TEntry> = {
   [key: string]: unknown;
@@ -39,7 +39,7 @@ export const sanitizeOverridableEntityInput = <
     };
   }
 
-  const { overrides, remainingProperties } = computeMetadataOverridesBlob<
+  const { overrides, columnProperties } = dispatchUpdateToAuthoredOverride<
     TProperties,
     TEntry
   >({
@@ -57,5 +57,5 @@ export const sanitizeOverridableEntityInput = <
     },
   });
 
-  return { overrides, updatedEditableProperties: remainingProperties };
+  return { overrides, updatedEditableProperties: columnProperties };
 };

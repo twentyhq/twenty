@@ -9,7 +9,7 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
-import { computeMetadataOverridesBlob } from 'src/engine/metadata-modules/overrides/utils/compute-metadata-overrides-blob.util';
+import { dispatchUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-update-to-authored-override.util';
 import { findInvalidTranslationOverrideProperties } from 'src/engine/metadata-modules/overrides/utils/find-invalid-translation-override-properties.util';
 import { mergeTranslationsIntoOverrides } from 'src/engine/metadata-modules/overrides/utils/merge-translations-into-overrides.util';
 
@@ -85,7 +85,7 @@ export const sanitizeRawUpdateObjectInput = ({
     );
   }
 
-  const { overrides, remainingProperties } = computeMetadataOverridesBlob({
+  const { overrides, columnProperties } = dispatchUpdateToAuthoredOverride({
     overridableProperties:
       ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME.objectMetadata,
     updatedProperties: updatedEditableObjectProperties,
@@ -102,6 +102,6 @@ export const sanitizeRawUpdateObjectInput = ({
       authorUniversalIdentifier: workspaceCustomApplicationUniversalIdentifier,
       authorContext,
     }),
-    updatedEditableObjectProperties: remainingProperties,
+    updatedEditableObjectProperties: columnProperties,
   };
 };

@@ -1,4 +1,4 @@
-import { computeMetadataOverridesBlob } from 'src/engine/metadata-modules/overrides/utils/compute-metadata-overrides-blob.util';
+import { dispatchUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-update-to-authored-override.util';
 
 type FlatEntityWithIsActive = {
   applicationUniversalIdentifier: string;
@@ -11,7 +11,9 @@ type FlatEntityWithIsActive = {
 // writes its entry and readers resolve the effective value from there.
 // isActive carries no foreign key, so universalOverrides takes the same entry
 // change without a converter.
-export const applyAuthoredIsActive = <T extends FlatEntityWithIsActive>({
+export const dispatchIsActiveToAuthoredOverride = <
+  T extends FlatEntityWithIsActive,
+>({
   flatEntity,
   isActive,
   authorUniversalIdentifier,
@@ -36,8 +38,8 @@ export const applyAuthoredIsActive = <T extends FlatEntityWithIsActive>({
     ownerApplicationUniversalIdentifier:
       flatEntity.applicationUniversalIdentifier,
   };
-  const computeIsActiveOverrides = (existingOverrides: unknown) =>
-    computeMetadataOverridesBlob<{ isActive: boolean }>({
+  const dispatchIsActive = (existingOverrides: unknown) =>
+    dispatchUpdateToAuthoredOverride<{ isActive: boolean }>({
       overridableProperties: ['isActive'],
       updatedProperties: { isActive },
       existingEntity: flatEntity,
@@ -48,12 +50,10 @@ export const applyAuthoredIsActive = <T extends FlatEntityWithIsActive>({
 
   return {
     ...flatEntity,
-    overrides: computeIsActiveOverrides(flatEntity.overrides),
+    overrides: dispatchIsActive(flatEntity.overrides),
     ...('universalOverrides' in flatEntity
       ? {
-          universalOverrides: computeIsActiveOverrides(
-            flatEntity.universalOverrides,
-          ),
+          universalOverrides: dispatchIsActive(flatEntity.universalOverrides),
         }
       : {}),
   };

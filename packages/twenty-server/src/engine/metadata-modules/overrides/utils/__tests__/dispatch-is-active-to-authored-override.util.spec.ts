@@ -1,4 +1,4 @@
-import { applyAuthoredIsActive } from 'src/engine/metadata-modules/overrides/utils/apply-authored-is-active.util';
+import { dispatchIsActiveToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-to-authored-override.util';
 
 const CUSTOM = '20202020-aaaa-4aaa-8aaa-000000000001';
 const OWNER = '20202020-bbbb-4bbb-8bbb-000000000002';
@@ -10,10 +10,10 @@ const view = {
   universalOverrides: { [CUSTOM]: { name: 'Mine' } },
 };
 
-describe('applyAuthoredIsActive', () => {
+describe('dispatchIsActiveToAuthoredOverride', () => {
   it('writes a non-owner deactivation on both blobs and leaves the column', () => {
     expect(
-      applyAuthoredIsActive({
+      dispatchIsActiveToAuthoredOverride({
         flatEntity: view,
         isActive: false,
         authorUniversalIdentifier: CUSTOM,
@@ -28,7 +28,7 @@ describe('applyAuthoredIsActive', () => {
 
   it('drops the entry when the restore matches the column', () => {
     expect(
-      applyAuthoredIsActive({
+      dispatchIsActiveToAuthoredOverride({
         flatEntity: {
           ...view,
           overrides: { [CUSTOM]: { isActive: false } },
@@ -43,7 +43,7 @@ describe('applyAuthoredIsActive', () => {
 
   it('writes the column when the author owns the entity', () => {
     expect(
-      applyAuthoredIsActive({
+      dispatchIsActiveToAuthoredOverride({
         flatEntity: view,
         isActive: false,
         authorUniversalIdentifier: OWNER,
@@ -59,7 +59,7 @@ describe('applyAuthoredIsActive', () => {
     };
 
     expect(
-      applyAuthoredIsActive({
+      dispatchIsActiveToAuthoredOverride({
         flatEntity: viewFilter,
         isActive: false,
         authorUniversalIdentifier: CUSTOM,

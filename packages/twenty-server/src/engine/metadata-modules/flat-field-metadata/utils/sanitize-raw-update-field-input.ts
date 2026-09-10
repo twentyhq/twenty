@@ -19,7 +19,7 @@ import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-mo
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
-import { computeMetadataOverridesBlob } from 'src/engine/metadata-modules/overrides/utils/compute-metadata-overrides-blob.util';
+import { dispatchUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-update-to-authored-override.util';
 import { findInvalidTranslationOverrideProperties } from 'src/engine/metadata-modules/overrides/utils/find-invalid-translation-override-properties.util';
 import { mergeTranslationsIntoOverrides } from 'src/engine/metadata-modules/overrides/utils/merge-translations-into-overrides.util';
 
@@ -142,7 +142,7 @@ export const sanitizeRawUpdateFieldInput = ({
     );
   }
 
-  const { overrides, remainingProperties } = computeMetadataOverridesBlob({
+  const { overrides, columnProperties } = dispatchUpdateToAuthoredOverride({
     overridableProperties:
       ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME.fieldMetadata,
     updatedProperties: updatedEditableFieldProperties,
@@ -159,6 +159,6 @@ export const sanitizeRawUpdateFieldInput = ({
       authorUniversalIdentifier: workspaceCustomApplicationUniversalIdentifier,
       authorContext,
     }),
-    updatedEditableFieldProperties: remainingProperties,
+    updatedEditableFieldProperties: columnProperties,
   };
 };

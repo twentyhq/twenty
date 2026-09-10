@@ -35,7 +35,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { applyAuthoredIsActive } from 'src/engine/metadata-modules/overrides/utils/apply-authored-is-active.util';
+import { dispatchIsActiveToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-to-authored-override.util';
 
 @Injectable()
 export class ViewService {
@@ -334,7 +334,7 @@ export class ViewService {
 
     const now = new Date().toISOString();
     const deactivatedFlatView = {
-      ...applyAuthoredIsActive({
+      ...dispatchIsActiveToAuthoredOverride({
         flatEntity: existingFlatView,
         isActive: false,
         authorUniversalIdentifier:

@@ -1,4 +1,4 @@
-import { computeMetadataOverridesBlob } from 'src/engine/metadata-modules/overrides/utils/compute-metadata-overrides-blob.util';
+import { dispatchUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-update-to-authored-override.util';
 
 const CUSTOM = '20202020-aaaa-4aaa-8aaa-000000000001';
 const OWNER = '20202020-bbbb-4bbb-8bbb-000000000002';
@@ -25,7 +25,7 @@ const compute = ({
   existingOverrides?: unknown;
   authorUniversalIdentifier?: string;
 }) =>
-  computeMetadataOverridesBlob({
+  dispatchUpdateToAuthoredOverride({
     overridableProperties: ['label', 'icon', 'isActive'],
     updatedProperties,
     existingEntity,
@@ -34,13 +34,13 @@ const compute = ({
     authorContext,
   });
 
-describe('computeMetadataOverridesBlob', () => {
+describe('dispatchUpdateToAuthoredOverride', () => {
   it('moves overridable properties into the author entry and leaves the rest', () => {
     expect(
       compute({ updatedProperties: { label: 'Société', position: 3 } }),
     ).toEqual({
       overrides: { [CUSTOM]: { label: 'Société' } },
-      remainingProperties: { position: 3 },
+      columnProperties: { position: 3 },
     });
   });
 
@@ -58,7 +58,7 @@ describe('computeMetadataOverridesBlob', () => {
         [OWNER]: { icon: 'IconHome' },
         [CUSTOM]: { label: 'Société', icon: 'IconStar' },
       },
-      remainingProperties: {},
+      columnProperties: {},
     });
   });
 
@@ -107,7 +107,7 @@ describe('computeMetadataOverridesBlob', () => {
       }),
     ).toEqual({
       overrides: { [CUSTOM]: { label: 'Société' } },
-      remainingProperties: { label: undefined },
+      columnProperties: { label: undefined },
     });
   });
 
