@@ -52,8 +52,6 @@ type AiModelPickerProps = {
   disabled?: boolean;
 };
 
-// Agents follow the workspace tier by default, can name a tier of their own,
-// and, for whoever needs it, can pin one exact model behind the advanced link.
 export const AiModelPicker = ({
   modelId,
   onModelIdChange,
