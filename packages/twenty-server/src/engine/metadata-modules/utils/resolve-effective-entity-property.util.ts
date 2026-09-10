@@ -5,11 +5,9 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { translateStandardLabel } from 'src/engine/core-modules/i18n/utils/translate-standard-label.util';
-import {
-  type MetadataEntityOverridablePropertyName,
-  type MetadataEntityTranslatablePropertyName,
-} from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
+import { type MetadataEntityTranslatablePropertyName } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 import { ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-translatable-properties-by-metadata-name.constant';
+import { type MetadataEntityOverridablePropertyName } from 'src/engine/metadata-modules/flat-entity/constant/overridable-properties-by-metadata-name.constant';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 import { type MetadataEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-entity-overrides.type';
 

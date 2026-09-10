@@ -22,10 +22,12 @@ import { FrontComponentEntity } from 'src/engine/metadata-modules/front-componen
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
-import { type MetadataEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-entity-overrides.type';
+import { type EntityOverrides } from 'src/engine/metadata-modules/utils/entity-overrides.type';
 
-export type CommandMenuItemOverrides =
-  MetadataEntityOverrides<'commandMenuItem'>;
+export type CommandMenuItemOverrides = EntityOverrides<
+  CommandMenuItemEntity,
+  'commandMenuItem'
+>;
 
 @Entity({ name: 'commandMenuItem', schema: 'core' })
 @Index('IDX_COMMAND_MENU_ITEM_WORKFLOW_VERSION_ID_WORKSPACE_ID', [

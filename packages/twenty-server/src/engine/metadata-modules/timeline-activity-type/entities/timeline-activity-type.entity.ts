@@ -21,10 +21,12 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
-import { type MetadataEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-entity-overrides.type';
+import { type EntityOverrides } from 'src/engine/metadata-modules/utils/entity-overrides.type';
 
-export type TimelineActivityTypeOverrides =
-  MetadataEntityOverrides<'timelineActivityType'>;
+export type TimelineActivityTypeOverrides = EntityOverrides<
+  TimelineActivityTypeEntity,
+  'timelineActivityType'
+>;
 
 @Entity({ name: 'timelineActivityType', schema: 'core' })
 @Unique('IDX_TIMELINE_ACTIVITY_TYPE_NAME_APPLICATION_WORKSPACE_UNIQUE', [

@@ -1,9 +1,8 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
-import { type JSONB_PROPERTY_BRAND } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 export type MetadataEntityOverrides<T extends AllMetadataName> =
   MetadataEntity<T> extends { overrides: infer TOverrides }
-    ? Omit<NonNullable<TOverrides>, typeof JSONB_PROPERTY_BRAND>
+    ? NonNullable<TOverrides>
     : never;

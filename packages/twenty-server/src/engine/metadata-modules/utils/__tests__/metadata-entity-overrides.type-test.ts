@@ -39,7 +39,7 @@ type Assertions = [
   Expect<
     Equal<
       ObjectMetadataOverrides['imageIdentifierFieldMetadataId'],
-      SerializedRelation | null | undefined
+      string | null | undefined
     >
   >,
 

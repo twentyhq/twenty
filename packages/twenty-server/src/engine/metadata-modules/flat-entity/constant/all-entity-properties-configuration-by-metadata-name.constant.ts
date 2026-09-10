@@ -3,7 +3,6 @@ import {
   type TranslatablePropertyName,
 } from 'twenty-shared/i18n';
 import { type AllMetadataName } from 'twenty-shared/metadata';
-import { type Expect } from 'twenty-shared/testing';
 
 import { type UnwrapWasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
@@ -44,7 +43,6 @@ type MetadataEntityPropertyConfiguration<
             >
         : boolean;
     toCompare: boolean;
-    isOverridable?: boolean;
   };
 };
 
@@ -64,13 +62,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     icon: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     isActive: {
       toCompare: true,
@@ -107,7 +103,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     name: { toCompare: true, toStringify: false, universalProperty: undefined },
     options: {
@@ -191,25 +186,21 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     color: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     description: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     icon: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     isActive: {
       toCompare: true,
@@ -225,13 +216,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     labelSingular: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     namePlural: {
       toCompare: true,
@@ -246,6 +235,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     labelIdentifierFieldMetadataId: {
       toCompare: true,
       toStringify: false,
+      // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
       universalProperty: 'labelIdentifierFieldMetadataUniversalIdentifier',
     },
     overrides: {
@@ -306,8 +296,8 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     imageIdentifierFieldMetadataId: {
       toCompare: true,
       toStringify: false,
+      // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
       universalProperty: 'imageIdentifierFieldMetadataUniversalIdentifier',
-      isOverridable: true,
     },
     targetTableName: {
       toCompare: false,
@@ -346,104 +336,87 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     type: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     icon: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     position: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     isCompact: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     openRecordIn: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     kanbanAggregateOperation: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     kanbanAggregateOperationFieldMetadataId: {
       toCompare: true,
       toStringify: false,
       universalProperty:
         'kanbanAggregateOperationFieldMetadataUniversalIdentifier',
-      isOverridable: true,
     },
     anyFieldFilterValue: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     calendarLayout: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     calendarFieldMetadataId: {
       toCompare: true,
       toStringify: false,
       universalProperty: 'calendarFieldMetadataUniversalIdentifier',
-      isOverridable: true,
     },
     calendarEndFieldMetadataId: {
       toCompare: true,
       toStringify: false,
       universalProperty: 'calendarEndFieldMetadataUniversalIdentifier',
-      isOverridable: true,
     },
     visibility: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     mainGroupByFieldMetadataId: {
       toCompare: true,
       toStringify: false,
       universalProperty: 'mainGroupByFieldMetadataUniversalIdentifier',
-      isOverridable: true,
     },
     shouldHideEmptyGroups: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     kanbanColumnWidth: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     isActive: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: false,
     },
     overrides: {
       toCompare: true,
@@ -481,25 +454,21 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
       toCompare: true,
-      isOverridable: true,
     },
     position: {
       toStringify: false,
       universalProperty: undefined,
       toCompare: true,
-      isOverridable: true,
     },
     isVisible: {
       toStringify: false,
       universalProperty: undefined,
       toCompare: true,
-      isOverridable: true,
     },
     isActive: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: false,
     },
     deletedAt: {
       toStringify: false,
@@ -537,31 +506,26 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     size: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     position: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     aggregateOperation: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     viewFieldGroupId: {
       toStringify: false,
       universalProperty: 'viewFieldGroupUniversalIdentifier',
       toCompare: true,
-      isOverridable: true,
     },
     deletedAt: {
       toCompare: true,
@@ -592,7 +556,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: false,
     },
     overrides: {
       toCompare: true,
@@ -1040,7 +1003,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     type: { toCompare: true, toStringify: false, universalProperty: undefined },
     objectMetadataId: {
@@ -1057,7 +1019,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,
-      isOverridable: true,
     },
     configuration: {
       toCompare: true,
@@ -1083,25 +1044,21 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: 'pageLayoutTabUniversalIdentifier',
-      isOverridable: true,
     },
     conditionalDisplay: {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,
-      isOverridable: true,
     },
     conditionalAvailabilityExpression: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     isActive: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: false,
     },
     overrides: {
       toCompare: true,
@@ -1119,13 +1076,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     position: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     deletedAt: {
       toCompare: true,
@@ -1136,7 +1091,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     createdAt: {
       toCompare: false,
@@ -1162,7 +1116,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: false,
     },
     overrides: {
       toCompare: true,
@@ -1219,37 +1172,31 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     icon: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     shortLabel: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     position: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     isPinned: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     availabilityType: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     conditionalAvailabilityExpression: {
       toCompare: true,
@@ -1265,7 +1212,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: 'availabilityObjectMetadataUniversalIdentifier',
-      isOverridable: true,
     },
     navigationTargetObjectMetadataId: {
       toCompare: true,
@@ -1291,7 +1237,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     payload: {
       toCompare: true,
@@ -1302,7 +1247,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,
-      isOverridable: true,
     },
     workflowVersionId: {
       toCompare: false,
@@ -1313,13 +1257,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: 'pageLayoutUniversalIdentifier',
-      isOverridable: true,
     },
     isActive: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: false,
     },
     overrides: {
       toCompare: true,
@@ -1929,7 +1871,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     action: {
       toCompare: true,
@@ -1940,7 +1881,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: true,
     },
     frontComponentUniversalIdentifier: {
       toCompare: true,
@@ -1976,7 +1916,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: false,
     },
     overrides: {
       toCompare: true,
@@ -1994,40 +1933,9 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
   },
-} as const;
-
-// TODO remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
-type ObjectMetadataPropertiesDeviatingFromConfiguration =
-  | 'labelIdentifierFieldMetadataId'
-  | 'imageIdentifierFieldMetadataId';
-
-type MetadataNameNotSatisfyingConfiguration = {
-  [P in AllMetadataName]: Omit<
-    (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[P],
-    P extends 'objectMetadata'
-      ? ObjectMetadataPropertiesDeviatingFromConfiguration
-      : never
-  > extends Omit<
-    MetadataEntityPropertyConfiguration<P>,
-    P extends 'objectMetadata'
-      ? ObjectMetadataPropertiesDeviatingFromConfiguration
-      : never
-  >
-    ? never
-    : P;
-}[AllMetadataName];
-
-// Checked after the declaration: an inline satisfies would run while typeof
-// the registry is computed, and overridable entities type their overrides
-// column from it.
-// oxlint-disable-next-line unused-imports/no-unused-vars
-type Assertions = [
-  Expect<
-    [MetadataNameNotSatisfyingConfiguration] extends [never]
-      ? true
-      : MetadataNameNotSatisfyingConfiguration
-  >,
-];
+} as const satisfies {
+  [P in AllMetadataName]: MetadataEntityPropertyConfiguration<P>;
+};
 
 export type MetadataEntityPropertyName<T extends AllMetadataName> =
   keyof (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T];
@@ -2038,15 +1946,6 @@ type FilterComparableKeys<TConfig> = {
 
 export type MetadataEntityComparablePropertyName<T extends AllMetadataName> =
   FilterComparableKeys<
-    (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T]
-  >;
-
-type FilterOverridableKeys<TConfig> = {
-  [P in keyof TConfig]: TConfig[P] extends { isOverridable: true } ? P : never;
-}[keyof TConfig];
-
-export type MetadataEntityOverridablePropertyName<T extends AllMetadataName> =
-  FilterOverridableKeys<
     (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T]
   >;
 

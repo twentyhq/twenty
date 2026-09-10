@@ -18,9 +18,9 @@ import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/com
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
-import { type MetadataEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-entity-overrides.type';
+import { type EntityOverrides } from 'src/engine/metadata-modules/utils/entity-overrides.type';
 
-export type ViewFieldOverrides = MetadataEntityOverrides<'viewField'>;
+export type ViewFieldOverrides = EntityOverrides<ViewFieldEntity, 'viewField'>;
 
 @Entity({ name: 'viewField', schema: 'core' })
 @Index('IDX_VIEW_FIELD_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])

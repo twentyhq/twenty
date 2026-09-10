@@ -1,3 +1,7 @@
-import { type MetadataEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-entity-overrides.type';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type EntityOverrides } from 'src/engine/metadata-modules/utils/entity-overrides.type';
 
-export type FieldMetadataOverrides = MetadataEntityOverrides<'fieldMetadata'>;
+export type FieldMetadataOverrides = EntityOverrides<
+  FieldMetadataEntity,
+  'fieldMetadata'
+>;

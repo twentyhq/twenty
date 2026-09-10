@@ -35,9 +35,9 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
-import { type MetadataEntityOverrides } from 'src/engine/metadata-modules/utils/metadata-entity-overrides.type';
+import { type EntityOverrides } from 'src/engine/metadata-modules/utils/entity-overrides.type';
 
-export type ViewOverrides = MetadataEntityOverrides<'view'>;
+export type ViewOverrides = EntityOverrides<ViewEntity, 'view'>;
 
 // We could refactor this type to be dynamic to view type
 @Entity({ name: 'view', schema: 'core' })
