@@ -69,7 +69,7 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
     isExpanded ? 'auto' : themeCssVariables.spacing[6]};
 
   &[aria-disabled='true'] {
-    color: ${themeCssVariables.font.color.quaternary};
+    color: ${themeCssVariables.font.color.light};
     cursor: not-allowed;
   }
 
