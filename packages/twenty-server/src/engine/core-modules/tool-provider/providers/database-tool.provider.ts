@@ -1,3 +1,4 @@
+import { type I18n } from '@lingui/core';
 import { Injectable } from '@nestjs/common';
 
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -36,6 +37,9 @@ import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ToolCategory } from 'twenty-shared/ai';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
 export class DatabaseToolProvider implements ToolProvider {
@@ -133,10 +137,15 @@ export class DatabaseToolProvider implements ToolProvider {
       context.locale ?? SOURCE_LOCALE,
     );
 
-    const { workspaceCustomApplicationUniversalIdentifier } =
-      await this.applicationTranslationCatalogService.getApplicationAuthorIdentifiers(
-        { workspaceId: context.workspaceId },
-      );
+    // Only field descriptions resolve overrides, and only when schemas are
+    // included, so the author lookup is skipped otherwise.
+    const resolveFields = includeSchemas
+      ? await this.buildFieldsResolver({
+          context,
+          flatFieldMetadataMaps,
+          i18nInstance,
+        })
+      : () => [];
 
     for (const flatObject of allFlatObjects) {
       const permission = objectPermissions[flatObject.id];
@@ -171,20 +180,7 @@ export class DatabaseToolProvider implements ToolProvider {
         continue;
       }
 
-      const fields = includeSchemas
-        ? getFlatFieldsFromFlatObjectMetadata(
-            flatObject,
-            flatFieldMetadataMaps,
-          ).map((flatFieldMetadata) => ({
-            ...flatFieldMetadata,
-            description: resolveEffectiveFieldDescription({
-              flatFieldMetadata,
-              locale: context.locale,
-              i18nInstance,
-              workspaceCustomApplicationUniversalIdentifier,
-            }),
-          }))
-        : [];
+      const fields = resolveFields(flatObject);
 
       const objectMetadata = { ...flatObject, fields };
 
@@ -474,6 +470,39 @@ export class DatabaseToolProvider implements ToolProvider {
     }
 
     return descriptors;
+  }
+
+  private async buildFieldsResolver({
+    context,
+    flatFieldMetadataMaps,
+    i18nInstance,
+  }: {
+    context: ToolProviderContext;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    i18nInstance: I18n;
+  }): Promise<(flatObject: FlatObjectMetadata) => FlatFieldMetadata[]> {
+    const { workspaceCustomApplicationUniversalIdentifier } =
+      await this.applicationTranslationCatalogService.getApplicationAuthorIdentifiers(
+        {
+          workspaceId: context.workspaceId,
+          workspaceCustomApplicationId:
+            context.authContext?.workspace.workspaceCustomApplicationId,
+        },
+      );
+
+    return (flatObject) =>
+      getFlatFieldsFromFlatObjectMetadata(
+        flatObject,
+        flatFieldMetadataMaps,
+      ).map((flatFieldMetadata) => ({
+        ...flatFieldMetadata,
+        description: resolveEffectiveFieldDescription({
+          flatFieldMetadata,
+          locale: context.locale,
+          i18nInstance,
+          workspaceCustomApplicationUniversalIdentifier,
+        }),
+      }));
   }
 
   private hasMatchingTool(

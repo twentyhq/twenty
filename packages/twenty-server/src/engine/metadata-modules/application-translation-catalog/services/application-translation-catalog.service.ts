@@ -40,33 +40,30 @@ export class ApplicationTranslationCatalogService {
 
   // The workspace custom application is only reachable through the workspace
   // row; flat application maps carry no marker for it.
+  // The flat application maps do not mark the workspace custom application;
+  // only the workspace row does. A caller that already holds the row passes
+  // the id and skips the query.
   async getApplicationAuthorIdentifiers({
     workspaceId,
+    workspaceCustomApplicationId,
   }: {
     workspaceId: string;
+    workspaceCustomApplicationId?: string;
   }): Promise<ApplicationAuthorIdentifiers> {
-    const [flatApplicationMaps, workspace] = await Promise.all([
-      this.getFlatApplicationMaps({ workspaceId }),
-      this.workspaceRepository.findOne({
-        select: ['id', 'workspaceCustomApplicationId'],
-        where: { id: workspaceId },
-        withDeleted: true,
-      }),
-    ]);
-
-    if (!isDefined(workspace)) {
-      throw new ApplicationException(
-        `Could not find workspace ${workspaceId}`,
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
+    const [flatApplicationMaps, resolvedWorkspaceCustomApplicationId] =
+      await Promise.all([
+        this.getFlatApplicationMaps({ workspaceId }),
+        isDefined(workspaceCustomApplicationId)
+          ? workspaceCustomApplicationId
+          : this.findWorkspaceCustomApplicationIdOrThrow(workspaceId),
+      ]);
 
     return {
       standardApplicationId:
         getTwentyStandardApplicationIdOrThrow(flatApplicationMaps),
       workspaceCustomApplicationUniversalIdentifier:
         getWorkspaceCustomApplicationUniversalIdentifierOrThrow({
-          workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+          workspaceCustomApplicationId: resolvedWorkspaceCustomApplicationId,
           flatApplicationMaps,
         }),
       universalIdentifierByApplicationId: Object.fromEntries(
@@ -282,6 +279,25 @@ export class ApplicationTranslationCatalogService {
         i18nContext: getI18nContext(entity.applicationId ?? undefined),
       }),
     }));
+  }
+
+  private async findWorkspaceCustomApplicationIdOrThrow(
+    workspaceId: string,
+  ): Promise<string> {
+    const workspace = await this.workspaceRepository.findOne({
+      select: ['id', 'workspaceCustomApplicationId'],
+      where: { id: workspaceId },
+      withDeleted: true,
+    });
+
+    if (!isDefined(workspace)) {
+      throw new ApplicationException(
+        `Could not find workspace ${workspaceId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return workspace.workspaceCustomApplicationId;
   }
 
   private async getFlatApplicationMaps({
