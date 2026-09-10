@@ -1918,7 +1918,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Ordered list of fast model IDs to use as defaults. Managed via admin panel or env.',
+      'Ordered list of fast model IDs to use as defaults; an ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
     type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
@@ -1927,7 +1927,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Ordered list of smart model IDs to use as defaults. Managed via admin panel or env.',
+      'Ordered list of smart model IDs to use as defaults; an ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
     type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
@@ -1936,7 +1936,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'List of recommended model IDs shown to workspaces using curated model selection. Managed via admin panel or env.',
+      'List of recommended model IDs shown to workspaces using curated model selection; an ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
     type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
