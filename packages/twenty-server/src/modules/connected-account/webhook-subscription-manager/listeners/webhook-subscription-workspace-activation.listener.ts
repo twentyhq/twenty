@@ -6,8 +6,10 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WORKSPACE_REACTIVATED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-reactivated-event.constant';
+import { WORKSPACE_SOFT_DELETED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-soft-deleted-event.constant';
 import { WORKSPACE_SUSPENDED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-suspended-event.constant';
 import { type WorkspaceReactivatedEvent } from 'src/engine/core-modules/workspace/types/workspace-reactivated-event.type';
+import { type WorkspaceSoftDeletedEvent } from 'src/engine/core-modules/workspace/types/workspace-soft-deleted-event.type';
 import { type WorkspaceSuspendedEvent } from 'src/engine/core-modules/workspace/types/workspace-suspended-event.type';
 import { WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-job-retry-limit.constant';
 import { SyncWorkspaceWebhookSubscriptionsJob } from 'src/modules/connected-account/webhook-subscription-manager/jobs/sync-workspace-webhook-subscriptions.job';
@@ -26,6 +28,13 @@ export class WebhookSubscriptionWorkspaceActivationListener {
   async handleWorkspaceSuspended({
     workspaceId,
   }: WorkspaceSuspendedEvent): Promise<void> {
+    await this.enqueueSync(workspaceId, 'REVOKE');
+  }
+
+  @OnEvent(WORKSPACE_SOFT_DELETED_EVENT)
+  async handleWorkspaceSoftDeleted({
+    workspaceId,
+  }: WorkspaceSoftDeletedEvent): Promise<void> {
     await this.enqueueSync(workspaceId, 'REVOKE');
   }
 
