@@ -140,16 +140,16 @@ export class ApiService {
     return this.logicFunctionApi.subscribeToLogs(...args);
   }
 
-  createUploadApplicationTarball(
-    ...args: Parameters<FileApi['createUploadApplicationTarball']>
+  createApplicationTarballUpload(
+    ...args: Parameters<FileApi['createApplicationTarballUpload']>
   ) {
-    return this.fileApi.createUploadApplicationTarball(...args);
+    return this.fileApi.createApplicationTarballUpload(...args);
   }
 
-  completeUploadApplicationTarball(
-    ...args: Parameters<FileApi['completeUploadApplicationTarball']>
+  completeApplicationTarballUpload(
+    ...args: Parameters<FileApi['completeApplicationTarballUpload']>
   ) {
-    return this.fileApi.completeUploadApplicationTarball(...args);
+    return this.fileApi.completeApplicationTarballUpload(...args);
   }
 
   installTarballApp(...args: Parameters<FileApi['installTarballApp']>) {

@@ -103,14 +103,18 @@ export class FileApi {
 
   // TODO: Migrate to MetadataClient once available
   // (see https://github.com/twentyhq/core-team-issues/issues/2289)
-  async createUploadApplicationTarball({
+  async createApplicationTarballUpload({
+    manifest,
+    packageJson,
     size,
   }: {
+    manifest: Record<string, unknown>;
+    packageJson: Record<string, unknown>;
     size: number;
   }): Promise<ApiResponse<ApplicationTarballUploadTarget>> {
     const mutation = `
-      mutation CreateUploadApplicationTarball($size: Int!) {
-        createUploadApplicationTarball(size: $size) {
+      mutation CreateApplicationTarballUpload($manifest: JSON!, $packageJson: JSON!, $size: Int!) {
+        createApplicationTarballUpload(manifest: $manifest, packageJson: $packageJson, size: $size) {
           fileId
           uploadUrl
           contentType
@@ -121,22 +125,20 @@ export class FileApi {
 
     return this.runMetadataMutation<ApplicationTarballUploadTarget>({
       mutation,
-      variables: { size },
-      resultKey: 'createUploadApplicationTarball',
+      variables: { manifest, packageJson, size },
+      resultKey: 'createApplicationTarballUpload',
       defaultErrorMessage: 'Failed to create tarball upload',
     });
   }
 
-  async completeUploadApplicationTarball({
+  async completeApplicationTarballUpload({
     fileId,
-    universalIdentifier,
   }: {
     fileId: string;
-    universalIdentifier?: string;
   }): Promise<ApiResponse<ApplicationTarballRegistration>> {
     const mutation = `
-      mutation CompleteUploadApplicationTarball($fileId: String!, $universalIdentifier: String) {
-        completeUploadApplicationTarball(fileId: $fileId, universalIdentifier: $universalIdentifier) {
+      mutation CompleteApplicationTarballUpload($fileId: String!) {
+        completeApplicationTarballUpload(fileId: $fileId) {
           id
           universalIdentifier
           name
@@ -146,8 +148,8 @@ export class FileApi {
 
     return this.runMetadataMutation<ApplicationTarballRegistration>({
       mutation,
-      variables: { fileId, universalIdentifier: universalIdentifier ?? null },
-      resultKey: 'completeUploadApplicationTarball',
+      variables: { fileId },
+      resultKey: 'completeApplicationTarballUpload',
       defaultErrorMessage: 'Failed to upload tarball',
     });
   }

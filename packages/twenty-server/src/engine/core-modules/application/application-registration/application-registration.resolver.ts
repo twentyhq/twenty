@@ -2,7 +2,6 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import {
   Args,
   Context,
-  Int,
   Mutation,
   Parent,
   Query,
@@ -35,6 +34,7 @@ import { ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/app
 import { FindClaimableApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/find-claimable-application-registration.input';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
 import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
+import { CreateApplicationTarballUploadInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-tarball-upload.input';
 import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
 import { RotateClientSecretDTO } from 'src/engine/core-modules/application/application-registration/dtos/rotate-client-secret.dto';
 import { TransferApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/transfer-application-registration-ownership.input';
@@ -259,7 +259,7 @@ export class ApplicationRegistrationResolver {
   )
   @Mutation(() => ApplicationRegistrationEntity, {
     deprecationReason:
-      'Use createUploadApplicationTarball and completeUploadApplicationTarball instead.',
+      'Use createApplicationTarballUpload and completeApplicationTarballUpload instead.',
   })
   async uploadAppTarball(
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -298,12 +298,18 @@ export class ApplicationRegistrationResolver {
     SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
   )
   @Mutation(() => FileUploadTargetDTO)
-  async createUploadApplicationTarball(
-    @Args('size', { type: () => Int }) size: number,
+  async createApplicationTarballUpload(
+    @Args() {
+      manifest,
+      packageJson,
+      size,
+    }: CreateApplicationTarballUploadInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<FileUploadTargetDTO> {
     return this.applicationTarballService.createTarballUpload({
       workspaceId,
+      manifest,
+      packageJson,
       size,
     });
   }
@@ -313,16 +319,13 @@ export class ApplicationRegistrationResolver {
     SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
   )
   @Mutation(() => ApplicationRegistrationEntity)
-  async completeUploadApplicationTarball(
+  async completeApplicationTarballUpload(
     @Args('fileId', { type: () => String }) fileId: string,
-    @Args('universalIdentifier', { type: () => String, nullable: true })
-    universalIdentifier: string | undefined,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity> {
     return this.applicationTarballService.completeTarballUpload({
       workspaceId,
       fileId,
-      universalIdentifier,
     });
   }
 

@@ -31,8 +31,12 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
-import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
+import {
+  type FileUploadStorageLocation,
+  FileUploadCompletionService,
+} from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
 import { FileUploadTargetService } from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
+import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -41,6 +45,11 @@ import type { ApplicationManifest, Manifest } from 'twenty-shared/application';
 
 const TARBALL_RESOURCE_FILENAME = 'app.tar.gz';
 const TARBALL_UPLOAD_CONTENT_TYPE = 'application/octet-stream';
+export type TarballPackageJson = {
+  version?: string;
+  engines?: { twenty?: string };
+};
+
 const TARBALL_FILE_SETTINGS = {
   isTemporaryFile: false,
   toDelete: false,
@@ -66,18 +75,50 @@ export class ApplicationTarballService {
 
   async createTarballUpload({
     workspaceId,
+    manifest,
+    packageJson,
     size,
   }: {
     workspaceId: string;
+    manifest: Manifest;
+    packageJson: TarballPackageJson;
     size: number;
   }): Promise<FileUploadTargetDTO> {
+    const universalIdentifier = manifest.application?.universalIdentifier;
+
+    if (!isDefined(universalIdentifier)) {
+      throw new ApplicationRegistrationException(
+        'universalIdentifier is required in the manifest',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    await this.assertServerCompatibility(packageJson?.engines?.twenty);
+
+    const existingRegistration = await this.appRegistrationRepository.findOne({
+      where: { universalIdentifier, ownerWorkspaceId: workspaceId },
+    });
+
+    const appRegistration = isDefined(existingRegistration)
+      ? this.assertTarballCanReplaceRegistration({
+          registration: existingRegistration,
+          incomingVersion: packageJson?.version,
+          universalIdentifier,
+        })
+      : await this.createTarballRegistration({
+          universalIdentifier,
+          manifest,
+          packageJsonVersion: null,
+          ownerWorkspaceId: workspaceId,
+        });
+
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
 
     const fileId = v4();
-    const resourcePath = `${fileId}/${TARBALL_RESOURCE_FILENAME}`;
+    const resourcePath = `${appRegistration.id}/${fileId}/${TARBALL_RESOURCE_FILENAME}`;
 
     await this.fileStorageService.createPendingFile({
       fileFolder: FileFolder.AppTarball,
@@ -106,74 +147,63 @@ export class ApplicationTarballService {
   async completeTarballUpload({
     workspaceId,
     fileId,
-    universalIdentifier,
   }: {
     workspaceId: string;
     fileId: string;
-    universalIdentifier?: string;
   }): Promise<ApplicationRegistrationEntity> {
+    const file = await this.fileRepository.findOne(workspaceId, {
+      where: { id: fileId },
+    });
+
+    if (
+      !isDefined(file) ||
+      !file.path.startsWith(`${FileFolder.AppTarball}/`)
+    ) {
+      throw new ApplicationRegistrationException(
+        `Tarball upload not found: ${fileId}`,
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
 
-    const applicationUniversalIdentifier =
-      workspaceCustomFlatApplication.universalIdentifier;
-
-    const completedFile =
-      await this.fileUploadCompletionService.completeUploadedFileByIdWithinDeadline(
-        {
-          workspaceId,
-          applicationUniversalIdentifier,
-          fileFolder: FileFolder.AppTarball,
-          fileId,
-        },
-      );
-
     const storageLocation = {
       fileFolder: FileFolder.AppTarball,
-      applicationUniversalIdentifier,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
       workspaceId,
-      resourcePath: removeFileFolderFromFileEntityPath(completedFile.path),
+      resourcePath: removeFileFolderFromFileEntityPath(file.path),
     };
 
     const tarballBuffer = await streamToBuffer(
-      await this.fileStorageService.readFile(storageLocation),
-      completedFile.size,
+      await this.fileStorageService.readFile({
+        ...storageLocation,
+        resourcePath: buildPendingUploadResourcePath({
+          fileId,
+          resourcePath: storageLocation.resourcePath,
+        }),
+      }),
+      Number(file.size),
     );
 
-    try {
-      const appRegistration = await this.registerTarball({
-        tarballBuffer,
-        universalIdentifier,
-        ownerWorkspaceId: workspaceId,
-        tarballFileId: fileId,
-      });
-
-      await this.moveTarballToRegistrationFolder({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileId,
-        currentResourcePath: storageLocation.resourcePath,
-        applicationRegistrationId: appRegistration.id,
-      });
-
-      return appRegistration;
-    } catch (error) {
-      await this.deleteUnreferencedTarballFile({
-        workspaceId,
-        fileId,
-      });
-
-      throw error;
-    }
+    return this.registerTarball({
+      tarballBuffer,
+      ownerWorkspaceId: workspaceId,
+      uploadedTarball: { file, storageLocation },
+    });
   }
 
   async registerTarball(params: {
     tarballBuffer: Buffer;
     universalIdentifier?: string;
     ownerWorkspaceId: string;
-    tarballFileId?: string;
+    uploadedTarball?: {
+      file: FileEntity;
+      storageLocation: FileUploadStorageLocation;
+    };
   }): Promise<ApplicationRegistrationEntity> {
     const tempDir = join(tmpdir(), 'twenty-tarball-upload', v4());
 
@@ -221,15 +251,22 @@ export class ApplicationTarballService {
 
       const previousTarballFileId = appRegistration.tarballFileId;
 
-      const tarballFileId =
-        params.tarballFileId ??
-        (
-          await this.storeTarballFile({
-            appRegistration,
-            tarballBuffer: params.tarballBuffer,
-            ownerWorkspaceId: params.ownerWorkspaceId,
-          })
-        ).id;
+      const tarballFileId = isDefined(params.uploadedTarball)
+        ? (
+            await this.fileUploadCompletionService.completeUploadedFileWithinDeadline(
+              {
+                workspaceId: params.ownerWorkspaceId,
+                ...params.uploadedTarball,
+              },
+            )
+          ).id
+        : (
+            await this.storeTarballFile({
+              appRegistration,
+              tarballBuffer: params.tarballBuffer,
+              ownerWorkspaceId: params.ownerWorkspaceId,
+            })
+          ).id;
 
       await this.applicationRegistrationService.updateFromManifest({
         applicationRegistrationId: appRegistration.id,
@@ -248,7 +285,7 @@ export class ApplicationTarballService {
         isDefined(previousTarballFileId) &&
         previousTarballFileId !== tarballFileId
       ) {
-        await this.deleteUnreferencedTarballFile({
+        await this.deleteSupersededTarballFile({
           workspaceId: params.ownerWorkspaceId,
           fileId: previousTarballFileId,
         });
@@ -327,19 +364,7 @@ export class ApplicationTarballService {
       );
     }
 
-    const versionValidation =
-      await this.applicationVersionValidationService.validateServerCompatibility(
-        packageJson?.engines?.twenty,
-      );
-
-    if (!versionValidation.compatible) {
-      throw new ApplicationRegistrationException(
-        versionValidation.message,
-        VERSION_REASON_TO_APPLICATION_REGISTRATION_EXCEPTION_CODE[
-          versionValidation.reason
-        ],
-      );
-    }
+    await this.assertServerCompatibility(packageJson?.engines?.twenty);
 
     return { contentDir, manifest, packageJson };
   }
@@ -432,18 +457,17 @@ export class ApplicationTarballService {
         { workspaceId: ownerWorkspaceId },
       );
 
+    const fileId = appRegistration.tarballFileId ?? v4();
+
     return this.fileStorageService.writeFile({
       sourceFile: tarballBuffer,
-      resourcePath: `${appRegistration.id}/app.tar.gz`,
+      resourcePath: `${appRegistration.id}/${fileId}/${TARBALL_RESOURCE_FILENAME}`,
       fileFolder: FileFolder.AppTarball,
       applicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
       workspaceId: ownerWorkspaceId,
-      fileId: appRegistration.tarballFileId ?? v4(),
-      settings: {
-        isTemporaryFile: false,
-        toDelete: false,
-      },
+      fileId,
+      settings: TARBALL_FILE_SETTINGS,
     });
   }
 
@@ -469,21 +493,31 @@ export class ApplicationTarballService {
     return fs.readFile(absolutePath);
   }
 
-  private async deleteUnreferencedTarballFile({
+  private async assertServerCompatibility(
+    engineRange: string | undefined,
+  ): Promise<void> {
+    const versionValidation =
+      await this.applicationVersionValidationService.validateServerCompatibility(
+        engineRange,
+      );
+
+    if (!versionValidation.compatible) {
+      throw new ApplicationRegistrationException(
+        versionValidation.message,
+        VERSION_REASON_TO_APPLICATION_REGISTRATION_EXCEPTION_CODE[
+          versionValidation.reason
+        ],
+      );
+    }
+  }
+
+  private async deleteSupersededTarballFile({
     workspaceId,
     fileId,
   }: {
     workspaceId: string;
     fileId: string;
   }): Promise<void> {
-    const registration = await this.appRegistrationRepository.findOne({
-      where: { tarballFileId: fileId },
-    });
-
-    if (isDefined(registration)) {
-      return;
-    }
-
     try {
       await this.fileStorageService.deleteByFileId({
         fileId,
@@ -492,45 +526,8 @@ export class ApplicationTarballService {
       });
     } catch (error) {
       this.logger.warn(
-        `Could not delete unreferenced tarball file ${fileId}: ${error}`,
+        `Could not delete superseded tarball file ${fileId}: ${error}`,
       );
     }
-  }
-
-  private async moveTarballToRegistrationFolder({
-    workspaceId,
-    applicationUniversalIdentifier,
-    fileId,
-    currentResourcePath,
-    applicationRegistrationId,
-  }: {
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-    fileId: string;
-    currentResourcePath: string;
-    applicationRegistrationId: string;
-  }): Promise<void> {
-    const resourcePath = `${applicationRegistrationId}/${TARBALL_RESOURCE_FILENAME}`;
-
-    if (currentResourcePath === resourcePath) {
-      return;
-    }
-
-    const from = {
-      fileFolder: FileFolder.AppTarball,
-      applicationUniversalIdentifier,
-      workspaceId,
-      resourcePath: currentResourcePath,
-    };
-
-    await this.fileStorageService.copy({ from, to: { ...from, resourcePath } });
-
-    await this.fileRepository.update(
-      workspaceId,
-      { id: fileId },
-      { path: `${FileFolder.AppTarball}/${resourcePath}` },
-    );
-
-    await this.fileStorageService.deleteFileObject(from);
   }
 }

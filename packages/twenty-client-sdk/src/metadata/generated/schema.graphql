@@ -3891,9 +3891,9 @@ type Mutation {
   createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   deleteApplicationRegistrationVariable(id: String!): Boolean!
-  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration! @deprecated(reason: "Use createUploadApplicationTarball and completeUploadApplicationTarball instead.")
-  createUploadApplicationTarball(size: Int!): FileUploadTarget!
-  completeUploadApplicationTarball(fileId: String!, universalIdentifier: String): ApplicationRegistration!
+  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration! @deprecated(reason: "Use createApplicationTarballUpload and completeApplicationTarballUpload instead.")
+  createApplicationTarballUpload(manifest: JSON!, packageJson: JSON!, size: Int!): FileUploadTarget!
+  completeApplicationTarballUpload(fileId: String!): ApplicationRegistration!
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")

@@ -9104,24 +9104,29 @@ export default {
                     ]
                 }
             ],
-            "createUploadApplicationTarball": [
+            "createApplicationTarballUpload": [
                 150,
                 {
+                    "manifest": [
+                        9,
+                        "JSON!"
+                    ],
+                    "packageJson": [
+                        9,
+                        "JSON!"
+                    ],
                     "size": [
                         28,
                         "Int!"
                     ]
                 }
             ],
-            "completeUploadApplicationTarball": [
+            "completeApplicationTarballUpload": [
                 75,
                 {
                     "fileId": [
                         1,
                         "String!"
-                    ],
-                    "universalIdentifier": [
-                        1
                     ]
                 }
             ],

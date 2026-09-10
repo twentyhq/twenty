@@ -2844,13 +2844,14 @@ export type Mutation = {
   checkoutSession: BillingSession;
   claimApplicationRegistrationOwnership: ApplicationRegistration;
   completeApplicationFileUploads: CompleteApplicationFileUploadsResult;
+  completeApplicationTarballUpload: ApplicationRegistration;
   completeBookCallOnboardingStep: OnboardingStepSuccess;
   completeFileUpload: FileWithSignedUrl;
-  completeUploadApplicationTarball: ApplicationRegistration;
   createApiKey: ApiKey;
   createApplicationFileUploads: CreateApplicationFileUploadsResult;
   createApplicationRegistration: CreateApplicationRegistration;
   createApplicationRegistrationVariable: ApplicationRegistrationVariable;
+  createApplicationTarballUpload: FileUploadTarget;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent;
   createCalendarEvent: CreateCalendarEventOutput;
@@ -2883,7 +2884,6 @@ export type Mutation = {
   createSkill: Skill;
   createSubscriptionPaymentIntent: BillingPaymentIntent;
   createUnsubscribeTopic: UnsubscribeTopic;
-  createUploadApplicationTarball: FileUploadTarget;
   createView: View;
   createViewField: ViewField;
   createViewFieldGroup: ViewFieldGroup;
@@ -3064,7 +3064,7 @@ export type Mutation = {
   updateWorkspaceMemberRole: WorkspaceMember;
   updateWorkspaceMemberSettings: Scalars['Boolean']['output'];
   upgradeApplication: Scalars['Boolean']['output'];
-  /** @deprecated Use createUploadApplicationTarball and completeUploadApplicationTarball instead. */
+  /** @deprecated Use createApplicationTarballUpload and completeApplicationTarballUpload instead. */
   uploadAppTarball: ApplicationRegistration;
   /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads instead. */
   uploadApplicationFile: File;
@@ -3168,6 +3168,11 @@ export type MutationCompleteApplicationFileUploadsArgs = {
 };
 
 
+export type MutationCompleteApplicationTarballUploadArgs = {
+  fileId: Scalars['String']['input'];
+};
+
+
 export type MutationCompleteBookCallOnboardingStepArgs = {
   hasBookedCall?: Scalars['Boolean']['input'];
   isAutoSkipped?: Scalars['Boolean']['input'];
@@ -3176,12 +3181,6 @@ export type MutationCompleteBookCallOnboardingStepArgs = {
 
 export type MutationCompleteFileUploadArgs = {
   fileId: Scalars['String']['input'];
-};
-
-
-export type MutationCompleteUploadApplicationTarballArgs = {
-  fileId: Scalars['String']['input'];
-  universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -3203,6 +3202,13 @@ export type MutationCreateApplicationRegistrationArgs = {
 
 export type MutationCreateApplicationRegistrationVariableArgs = {
   input: CreateApplicationRegistrationVariableInput;
+};
+
+
+export type MutationCreateApplicationTarballUploadArgs = {
+  manifest: Scalars['JSON']['input'];
+  packageJson: Scalars['JSON']['input'];
+  size: Scalars['Int']['input'];
 };
 
 
@@ -3366,11 +3372,6 @@ export type MutationCreateSubscriptionPaymentIntentArgs = {
 
 export type MutationCreateUnsubscribeTopicArgs = {
   input: CreateUnsubscribeTopicInput;
-};
-
-
-export type MutationCreateUploadApplicationTarballArgs = {
-  size: Scalars['Int']['input'];
 };
 
 

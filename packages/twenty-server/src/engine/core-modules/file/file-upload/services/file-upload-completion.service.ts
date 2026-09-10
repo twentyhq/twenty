@@ -79,43 +79,6 @@ export class FileUploadCompletionService {
     );
   }
 
-  async completeUploadedFileByIdWithinDeadline({
-    workspaceId,
-    applicationUniversalIdentifier,
-    fileFolder,
-    fileId,
-  }: {
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-    fileFolder: FileFolder;
-    fileId: string;
-  }): Promise<CompletedUploadedFile> {
-    const file = await this.fileRepository.findOne(workspaceId, {
-      where: { id: fileId },
-    });
-
-    if (!isDefined(file) || !file.path.startsWith(`${fileFolder}/`)) {
-      throw new FileUploadException(
-        `File not found: ${fileId}`,
-        FileUploadExceptionCode.FILE_NOT_FOUND,
-        {
-          userFriendlyMessage: msg`File not found.`,
-        },
-      );
-    }
-
-    return this.completeUploadedFileWithinDeadline({
-      workspaceId,
-      file,
-      storageLocation: {
-        fileFolder,
-        applicationUniversalIdentifier,
-        workspaceId,
-        resourcePath: removeFileFolderFromFileEntityPath(file.path),
-      },
-    });
-  }
-
   async completeUploadedFileWithinDeadline(params: {
     workspaceId: string;
     file: FileEntity;

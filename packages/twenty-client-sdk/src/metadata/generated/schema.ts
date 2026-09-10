@@ -3332,10 +3332,10 @@ export interface Mutation {
     createApplicationRegistrationVariable: ApplicationRegistrationVariable
     updateApplicationRegistrationVariable: ApplicationRegistrationVariable
     deleteApplicationRegistrationVariable: Scalars['Boolean']
-    /** @deprecated Use createUploadApplicationTarball and completeUploadApplicationTarball instead. */
+    /** @deprecated Use createApplicationTarballUpload and completeApplicationTarballUpload instead. */
     uploadAppTarball: ApplicationRegistration
-    createUploadApplicationTarball: FileUploadTarget
-    completeUploadApplicationTarball: ApplicationRegistration
+    createApplicationTarballUpload: FileUploadTarget
+    completeApplicationTarballUpload: ApplicationRegistration
     claimApplicationRegistrationOwnership: ApplicationRegistration
     transferApplicationRegistrationOwnership: ApplicationRegistration
     /** @deprecated Use installApplication instead */
@@ -6989,10 +6989,10 @@ export interface MutationGenqlSelection{
     createApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: CreateApplicationRegistrationVariableInput} })
     updateApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: UpdateApplicationRegistrationVariableInput} })
     deleteApplicationRegistrationVariable?: { __args: {id: Scalars['String']} }
-    /** @deprecated Use createUploadApplicationTarball and completeUploadApplicationTarball instead. */
+    /** @deprecated Use createApplicationTarballUpload and completeApplicationTarballUpload instead. */
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
-    createUploadApplicationTarball?: (FileUploadTargetGenqlSelection & { __args: {size: Scalars['Int']} })
-    completeUploadApplicationTarball?: (ApplicationRegistrationGenqlSelection & { __args: {fileId: Scalars['String'], universalIdentifier?: (Scalars['String'] | null)} })
+    createApplicationTarballUpload?: (FileUploadTargetGenqlSelection & { __args: {manifest: Scalars['JSON'], packageJson: Scalars['JSON'], size: Scalars['Int']} })
+    completeApplicationTarballUpload?: (ApplicationRegistrationGenqlSelection & { __args: {fileId: Scalars['String']} })
     claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
     /** @deprecated Use installApplication instead */
