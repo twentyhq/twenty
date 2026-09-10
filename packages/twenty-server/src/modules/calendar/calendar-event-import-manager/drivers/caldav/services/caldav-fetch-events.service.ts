@@ -362,16 +362,18 @@ export class CalDavFetchEventsService {
 
     return responses.reduce<Record<string, string>>((map, response) => {
       const href = response.href;
-      const etag = response.props?.getetag;
 
       if (
         !isNonEmptyString(href) ||
-        !isNonEmptyString(etag) ||
         !isValidCalDavHref(href) ||
         isCalDavCollectionHref(href, calendarUrl)
       ) {
         return map;
       }
+
+      const etag = isNonEmptyString(response.props?.getetag)
+        ? response.props.getetag
+        : href;
 
       map[href] = etag;
 
