@@ -8,6 +8,7 @@ import {
   FieldMetadataType,
   IndexType,
   MetadataWritability,
+  NavigationMenuItemType,
   NumberDataType,
   ObjectOpenRecordIn,
   ObjectRecordGroupByDateGranularity,
@@ -163,6 +164,14 @@ const buildPageLayoutTabEnumBindings = (prefix: string[]): EnumBinding[] => [
 
 export const PAGE_LAYOUT_TAB_ENUM_BINDINGS: EnumBinding[] =
   buildPageLayoutTabEnumBindings([]);
+
+export const NAVIGATION_MENU_ITEM_ENUM_BINDINGS: EnumBinding[] = [
+  {
+    path: ['type'],
+    symbol: 'NavigationMenuItemType',
+    members: NavigationMenuItemType,
+  },
+];
 
 export const PAGE_LAYOUT_ENUM_BINDINGS: EnumBinding[] = [
   { path: ['type'], symbol: 'PageLayoutType', members: PageLayoutType },

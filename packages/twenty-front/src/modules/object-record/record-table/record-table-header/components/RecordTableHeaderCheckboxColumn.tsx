@@ -87,7 +87,7 @@ export const RecordTableHeaderCheckboxColumn = () => {
         <Checkbox
           hoverable
           checked={checked}
-          onChange={onChange}
+          onCheckedChange={() => onChange()}
           indeterminate={indeterminate}
           disabled={recordTableIsEmpty}
           aria-label={t`Select all rows`}

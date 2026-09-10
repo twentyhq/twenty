@@ -121,7 +121,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
         <Checkbox
           checked={isChecked}
           disabled={isDisabled}
-          onChange={(event) => handleChange(event.target.checked)}
+          onCheckedChange={(isChecked) => handleChange(isChecked)}
         />
       </TableCell>
     </TableRow>
