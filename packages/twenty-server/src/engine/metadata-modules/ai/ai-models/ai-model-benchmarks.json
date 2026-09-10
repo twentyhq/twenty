@@ -1,10 +1,10 @@
 {
   "source": "artificialanalysis.ai",
-  "measuredAt": "2026-09-09",
+  "measuredAt": "2026-09-10",
   "models": {
     "gpt-5-nano": {
       "intelligenceIndex": 13,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-5-nano",
         "e18e5e6a-5a31-4c0b-b80b-ac401392f446",
@@ -13,7 +13,7 @@
     },
     "gpt-4.1-nano": {
       "intelligenceIndex": 7.8,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-4.1-nano",
         "gpt-4-1-nano",
@@ -23,7 +23,7 @@
     },
     "gpt-4o-2024-05-13": {
       "intelligenceIndex": 7.3,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-4o-2024-05-13",
         "e98e911e-9fb2-4a9a-826e-3d681d0cdca8",
@@ -33,7 +33,7 @@
     "gpt-5.6-sol": {
       "intelligenceIndex": 47.1,
       "outputTokensPerSecond": 73.005,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-5.6-sol",
         "gpt-5-6-sol",
@@ -43,7 +43,7 @@
     },
     "gpt-4o-2024-08-06": {
       "intelligenceIndex": 7.7,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-4o-2024-08-06",
         "8c1be908-67b6-4cf4-ba08-83ddbe44fde3",
@@ -53,7 +53,7 @@
     "gpt-6-astra": {
       "intelligenceIndex": 52.8,
       "outputTokensPerSecond": 60.822,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-6-astra",
         "2f339a97-9a0d-499a-9cb5-e0db665bfa25",
@@ -62,7 +62,7 @@
     },
     "gpt-4.1-mini": {
       "intelligenceIndex": 10.2,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-4.1-mini",
         "gpt-4-1-mini",
@@ -72,7 +72,7 @@
     },
     "gpt-5.4": {
       "intelligenceIndex": 39,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-5.4",
         "gpt-5-4",
@@ -82,7 +82,7 @@
     },
     "gpt-4-turbo": {
       "intelligenceIndex": 7,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-4-turbo",
         "76aa6af5-fdc6-4739-a300-983f14e74a67",
@@ -91,7 +91,7 @@
     },
     "gpt-5.1": {
       "intelligenceIndex": 24.7,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-5.1",
         "gpt-5-1",
@@ -101,12 +101,12 @@
     },
     "o1": {
       "intelligenceIndex": 15.2,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": ["o1", "5ad2f60f-ee05-49fd-85a0-cef69aa7cb7b"]
     },
     "gpt-4o": {
       "intelligenceIndex": 9,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-4o",
         "gpt-4o-chatgpt-03-25",
@@ -117,7 +117,7 @@
     "gpt-5.6-luna": {
       "intelligenceIndex": 37.5,
       "outputTokensPerSecond": 123.243,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-5.6-luna",
         "gpt-5-6-luna",
@@ -128,7 +128,7 @@
     "gpt-5.3-codex": {
       "intelligenceIndex": 32.5,
       "outputTokensPerSecond": 143.044,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-5.3-codex",
         "gpt-5-3-codex",
@@ -138,7 +138,7 @@
     },
     "gpt-4o-mini": {
       "intelligenceIndex": 6.7,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-4o-mini",
         "b5c1c91a-7474-4409-9a9c-9c2ac45d9eb6",
@@ -147,12 +147,12 @@
     },
     "o1-pro": {
       "intelligenceIndex": 12.4,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": ["o1-pro", "e8d4100e-165b-4c5d-ac11-ac553590a334"]
     },
     "gpt-4.1": {
       "intelligenceIndex": 12.7,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-4.1",
         "gpt-4-1",
@@ -162,7 +162,7 @@
     },
     "gpt-5.4-nano": {
       "intelligenceIndex": 21.2,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-5.4-nano",
         "gpt-5-4-nano",
@@ -172,7 +172,7 @@
     },
     "gpt-5.4-mini": {
       "intelligenceIndex": 24.6,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-5.4-mini",
         "gpt-5-4-mini",
@@ -182,7 +182,7 @@
     },
     "gpt-5-mini": {
       "intelligenceIndex": 20.6,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-5-mini",
         "gpt-5-mini-medium",
@@ -193,7 +193,7 @@
     "gpt-5.6-terra": {
       "intelligenceIndex": 42.3,
       "outputTokensPerSecond": 124.121,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-5.6-terra",
         "gpt-5-6-terra",
@@ -203,12 +203,12 @@
     },
     "gpt-4": {
       "intelligenceIndex": 6.7,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": ["gpt-4", "6a7c0e25-1dcb-4b15-8495-a8536a9da051", "GPT-4"]
     },
     "gpt-5.2": {
       "intelligenceIndex": 30.4,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-5.2",
         "gpt-5-2",
@@ -218,7 +218,7 @@
     },
     "gpt-5": {
       "intelligenceIndex": 23,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-5",
         "48e50f00-1fd1-4acc-b337-61078aa341e6",
@@ -227,7 +227,7 @@
     },
     "o4-mini": {
       "intelligenceIndex": 16.7,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "o4-mini",
         "84b49308-6b93-47aa-a4f6-776ee1a1e8cd",
@@ -236,23 +236,23 @@
     },
     "o3-mini": {
       "intelligenceIndex": 12.5,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": ["o3-mini", "2dad8957-4c16-4e74-bf2d-8b21514e0ae9"]
     },
     "o3": {
       "intelligenceIndex": 20.2,
       "outputTokensPerSecond": 151.22,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": ["o3", "16c5b637-8bce-4252-81f2-1b87a36a4e4c"]
     },
     "o3-pro": {
       "intelligenceIndex": 21.9,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": ["o3-pro", "ca04852c-eaae-4881-a208-f9b2ca3b7cd6"]
     },
     "gpt-5.5": {
       "intelligenceIndex": 38.6,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-5.5",
         "gpt-5-5",
@@ -262,7 +262,7 @@
     },
     "gpt-4o-2024-11-20": {
       "intelligenceIndex": 9,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gpt-4o-2024-11-20",
         "gpt-4o-chatgpt-03-25",
@@ -272,7 +272,7 @@
     },
     "claude-sonnet-4-6": {
       "intelligenceIndex": 30.5,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "claude-sonnet-4-6",
         "claude-sonnet-4-6-adaptive",
@@ -283,7 +283,7 @@
     "claude-opus-5": {
       "intelligenceIndex": 50.7,
       "outputTokensPerSecond": 55.074,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "claude-opus-5",
         "b8fc61f7-5e9a-49e6-8547-6ac56db24627",
@@ -292,7 +292,7 @@
     },
     "claude-opus-4-5": {
       "intelligenceIndex": 29.1,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "claude-opus-4-5",
         "claude-opus-4-5-thinking",
@@ -303,7 +303,7 @@
     "claude-fable-5-1": {
       "intelligenceIndex": 53.4,
       "outputTokensPerSecond": 69.904,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "claude-fable-5-1",
         "3e87c73e-a257-495e-9730-367a66229811",
@@ -312,7 +312,7 @@
     },
     "claude-opus-4-6": {
       "intelligenceIndex": 31.9,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "claude-opus-4-6",
         "claude-opus-4-6-adaptive",
@@ -322,7 +322,7 @@
     },
     "claude-opus-4-7": {
       "intelligenceIndex": 40.7,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "claude-opus-4-7",
         "e9a09db3-8fd6-41dd-ba2f-20e0a2bff7f2",
@@ -332,7 +332,7 @@
     "claude-fable-5": {
       "intelligenceIndex": 49.7,
       "outputTokensPerSecond": 68.133,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "claude-fable-5",
         "cd55210d-358e-4df1-ba9c-9acb5f186cc9",
@@ -341,7 +341,7 @@
     },
     "claude-opus-4-8": {
       "intelligenceIndex": 42,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "claude-opus-4-8",
         "992b7b84-5069-4c6a-9295-834252553d50",
@@ -351,7 +351,7 @@
     "claude-sonnet-5": {
       "intelligenceIndex": 38.4,
       "outputTokensPerSecond": 83.464,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "claude-sonnet-5",
         "23c86e4a-c769-43c0-a056-79e3cd15834f",
@@ -360,7 +360,7 @@
     },
     "claude-opus-4-5-20251101": {
       "intelligenceIndex": 29.1,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "claude-opus-4-5-20251101",
         "claude-opus-4-5-thinking",
@@ -371,7 +371,7 @@
     "gemini-3.1-pro-preview": {
       "intelligenceIndex": 30.4,
       "outputTokensPerSecond": 127.691,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gemini-3.1-pro-preview",
         "gemini-3-1-pro-preview",
@@ -381,7 +381,7 @@
     },
     "gemini-2.5-flash-lite": {
       "intelligenceIndex": 8.5,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gemini-2.5-flash-lite",
         "gemini-2-5-flash-lite-reasoning",
@@ -392,7 +392,7 @@
     "gemini-3.6-flash": {
       "intelligenceIndex": 34.3,
       "outputTokensPerSecond": 184.677,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gemini-3.6-flash",
         "gemini-3-6-flash",
@@ -402,7 +402,7 @@
     },
     "gemini-3.1-flash-lite": {
       "intelligenceIndex": 16,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gemini-3.1-flash-lite",
         "gemini-3-1-flash-lite-preview",
@@ -413,7 +413,7 @@
     "gemini-3.5-flash": {
       "intelligenceIndex": 33.6,
       "outputTokensPerSecond": 239.733,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gemini-3.5-flash",
         "gemini-3-5-flash-medium",
@@ -423,7 +423,7 @@
     },
     "gemini-3.1-flash-lite-preview": {
       "intelligenceIndex": 16,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gemini-3.1-flash-lite-preview",
         "gemini-3-1-flash-lite-preview",
@@ -434,7 +434,7 @@
     "gemini-3.5-flash-lite": {
       "intelligenceIndex": 22.7,
       "outputTokensPerSecond": 365.348,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gemini-3.5-flash-lite",
         "gemini-3-5-flash-lite",
@@ -445,7 +445,7 @@
     "gemini-flash-lite-latest": {
       "intelligenceIndex": 22.7,
       "outputTokensPerSecond": 365.348,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gemini-flash-lite-latest",
         "gemini-3-5-flash-lite",
@@ -455,7 +455,7 @@
     },
     "gemini-3-flash-preview": {
       "intelligenceIndex": 26.3,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gemini-3-flash-preview",
         "gemini-3-flash-reasoning",
@@ -466,7 +466,7 @@
     "gemini-3.8-flash": {
       "intelligenceIndex": 41.2,
       "outputTokensPerSecond": 342.779,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gemini-3.8-flash",
         "gemini-3-8-flash",
@@ -477,7 +477,7 @@
     "gemini-3.7-flash": {
       "intelligenceIndex": 39.6,
       "outputTokensPerSecond": 329.345,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gemini-3.7-flash",
         "gemini-3-7-flash-medium",
@@ -487,7 +487,7 @@
     },
     "gemini-2.5-pro": {
       "intelligenceIndex": 16.7,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gemini-2.5-pro",
         "gemini-2-5-pro",
@@ -498,7 +498,7 @@
     "gemini-flash-latest": {
       "intelligenceIndex": 41.2,
       "outputTokensPerSecond": 342.779,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gemini-flash-latest",
         "gemini-3-8-flash",
@@ -508,7 +508,7 @@
     },
     "gemini-2.5-flash": {
       "intelligenceIndex": 13.1,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "gemini-2.5-flash",
         "gemini-2-5-flash-reasoning",
@@ -518,7 +518,7 @@
     },
     "magistral-small": {
       "intelligenceIndex": 8.2,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "magistral-small",
         "0fec07d5-a9b2-407a-b5f8-5bf10bd86b59",
@@ -527,7 +527,7 @@
     },
     "devstral-small-2505": {
       "intelligenceIndex": 8.7,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "devstral-small-2505",
         "cc1fa238-1a76-486d-a997-22309275eadd",
@@ -536,7 +536,7 @@
     },
     "magistral-medium-latest": {
       "intelligenceIndex": 9.1,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "magistral-medium-latest",
         "magistral-medium",
@@ -546,7 +546,7 @@
     },
     "pixtral-large-latest": {
       "intelligenceIndex": 7.1,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "pixtral-large-latest",
         "pixtral-large-2411",
@@ -556,7 +556,7 @@
     },
     "grok-4.3": {
       "intelligenceIndex": 25.4,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "grok-4.3",
         "grok-4-3",
@@ -567,7 +567,7 @@
     "grok-4.5": {
       "intelligenceIndex": 39.1,
       "outputTokensPerSecond": 52.947,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "grok-4.5",
         "grok-4-5",
@@ -578,7 +578,7 @@
     "grok-4.6": {
       "intelligenceIndex": 44.4,
       "outputTokensPerSecond": 62.454,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "grok-4.6",
         "grok-4-6",
@@ -588,7 +588,7 @@
     },
     "grok-4.20-0309-non-reasoning": {
       "intelligenceIndex": 14.6,
-      "measuredAt": "2026-09-09",
+      "measuredAt": "2026-09-10",
       "aliases": [
         "grok-4.20-0309-non-reasoning",
         "grok-4-20-0309-non-reasoning",
