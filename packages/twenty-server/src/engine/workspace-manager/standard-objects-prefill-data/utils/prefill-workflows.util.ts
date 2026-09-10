@@ -5,7 +5,6 @@ import { type EntityManager } from 'typeorm';
 import { v5 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { isCoreWorkflowIdColumnAvailable } from 'src/engine/core-modules/workflow/utils/is-core-workflow-id-column-available.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -876,8 +875,6 @@ export const prefillWorkflows = async (
     .returning('*')
     .execute();
 
-  const hasCoreWorkflowIdColumn = isCoreWorkflowIdColumnAvailable();
-
   await entityManager
     .createQueryBuilder()
     .insert()
@@ -890,7 +887,7 @@ export const prefillWorkflows = async (
       'steps',
       'status',
       'workflowId',
-      ...(hasCoreWorkflowIdColumn ? ['coreWorkflowId'] : []),
+      'coreWorkflowId',
     ])
     .orIgnore()
     .values([
@@ -903,9 +900,7 @@ export const prefillWorkflows = async (
         steps: JSON.parse(quickLeadSteps),
         status: 'ACTIVE',
         workflowId: quickLeadWorkflowId,
-        ...(hasCoreWorkflowIdColumn
-          ? { coreWorkflowId: coreQuickLeadWorkflowId }
-          : {}),
+        coreWorkflowId: coreQuickLeadWorkflowId,
       },
       {
         id: coreCreateCompanyWorkflowVersionId,
@@ -916,9 +911,7 @@ export const prefillWorkflows = async (
         steps: JSON.parse(createCompanySteps),
         status: 'ACTIVE',
         workflowId: createCompanyWorkflowId,
-        ...(hasCoreWorkflowIdColumn
-          ? { coreWorkflowId: coreCreateCompanyWorkflowId }
-          : {}),
+        coreWorkflowId: coreCreateCompanyWorkflowId,
       },
     ])
     .execute();

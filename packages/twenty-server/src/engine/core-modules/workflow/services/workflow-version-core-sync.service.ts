@@ -19,7 +19,6 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { isCoreWorkflowIdColumnAvailable } from 'src/engine/core-modules/workflow/utils/is-core-workflow-id-column-available.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
@@ -48,12 +47,11 @@ export class WorkflowVersionCoreSyncService {
 
     const applicationId = await this.getCustomApplicationIdOrThrow(workspaceId);
 
-    const coreWorkflowIdByWorkflowId = isCoreWorkflowIdColumnAvailable()
-      ? await this.resolveCoreWorkflowIdByWorkflowId(
-          workspaceId,
-          workflowVersions.map((workflowVersion) => workflowVersion.workflowId),
-        )
-      : new Map<string, string>();
+    const coreWorkflowIdByWorkflowId =
+      await this.resolveCoreWorkflowIdByWorkflowId(
+        workspaceId,
+        workflowVersions.map((workflowVersion) => workflowVersion.workflowId),
+      );
 
     const ownedCoreVersions = await this.resolveOwnedCoreVersions(
       workspaceId,
@@ -129,9 +127,7 @@ export class WorkflowVersionCoreSyncService {
       workspaceId,
       {
         where: { id: In(candidateIds) },
-        select: isCoreWorkflowIdColumnAvailable()
-          ? { id: true, coreWorkflowId: true }
-          : { id: true },
+        select: { id: true, coreWorkflowId: true },
       },
     );
 
@@ -201,37 +197,24 @@ export class WorkflowVersionCoreSyncService {
     const isNewLink = !isDefined(linkedCoreVersionId);
     const coreWorkflowVersionId = linkedCoreVersionId ?? uuidv4();
 
-    const hasCoreWorkflowIdColumn = isCoreWorkflowIdColumnAvailable();
-
-    const coreWorkflowId = hasCoreWorkflowIdColumn
-      ? await this.resolveCoreWorkflowIdInTransaction(
-          workflowVersion.workflowId,
-          transactionScope,
-        )
-      : null;
+    const coreWorkflowId = await this.resolveCoreWorkflowIdInTransaction(
+      workflowVersion.workflowId,
+      transactionScope,
+    );
 
     // The conflict target is the primary key alone, so without the workspaceId
     // predicate a core row owned by another workspace would have its triggers
     // and steps overwritten.
     await transactionScope.executeRawQuery(
-      hasCoreWorkflowIdColumn
-        ? `INSERT INTO core."workflowVersion"
-             ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId", "coreWorkflowId")
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-           ON CONFLICT ("id") DO UPDATE SET
-             "triggers" = EXCLUDED."triggers",
-             "steps" = EXCLUDED."steps",
-             "status" = EXCLUDED."status",
-             "coreWorkflowId" = COALESCE(EXCLUDED."coreWorkflowId", core."workflowVersion"."coreWorkflowId")
-           WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId"`
-        : `INSERT INTO core."workflowVersion"
-             ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId")
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-           ON CONFLICT ("id") DO UPDATE SET
-             "triggers" = EXCLUDED."triggers",
-             "steps" = EXCLUDED."steps",
-             "status" = EXCLUDED."status"
-           WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId"`,
+      `INSERT INTO core."workflowVersion"
+         ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId", "coreWorkflowId")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       ON CONFLICT ("id") DO UPDATE SET
+         "triggers" = EXCLUDED."triggers",
+         "steps" = EXCLUDED."steps",
+         "status" = EXCLUDED."status",
+         "coreWorkflowId" = COALESCE(EXCLUDED."coreWorkflowId", core."workflowVersion"."coreWorkflowId")
+       WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId"`,
       [
         coreWorkflowVersionId,
         workspaceId,
@@ -245,7 +228,7 @@ export class WorkflowVersionCoreSyncService {
         workflowVersion.status,
         uuidv4(),
         resolvedApplicationId,
-        ...(hasCoreWorkflowIdColumn ? [coreWorkflowId] : []),
+        coreWorkflowId,
       ],
     );
 
