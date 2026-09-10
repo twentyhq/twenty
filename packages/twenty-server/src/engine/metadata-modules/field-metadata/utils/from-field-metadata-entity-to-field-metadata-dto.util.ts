@@ -18,7 +18,7 @@ const resolveEffectiveEntityIsActive = (entity: {
 };
 
 // isUnique is derived from IndexMetadata rather than stored on the field
-// entity; callers that need an accurate value (e.g. the REST controller)
+// entity; callers that need an accurate value (e.g. the GraphQL resolver)
 // pass the precomputed Set<fieldMetadataId>. Callers in pure-entity
 // contexts that don't care about uniqueness can omit it.
 

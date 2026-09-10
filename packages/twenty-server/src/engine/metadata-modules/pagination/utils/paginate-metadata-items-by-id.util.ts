@@ -12,14 +12,18 @@ export const paginateMetadataItemsById = <TEntity extends { id: string }>({
   pagination: MetadataCursorPagination;
 }): MetadataCursorPage<TEntity> => {
   const isBackwardPagination = pagination.direction === 'backward';
+  // Cursors are accepted in any UUID casing, so they are compared against the
+  // canonical lowercase ids the way a uuid column comparison would.
+  const afterId = pagination.afterId?.toLowerCase();
+  const beforeId = pagination.beforeId?.toLowerCase();
   const fetchedItems = items
     .filter(({ id }) => {
-      if (isDefined(pagination.afterId)) {
-        return id < pagination.afterId;
+      if (isDefined(afterId)) {
+        return id < afterId;
       }
 
-      if (isDefined(pagination.beforeId)) {
-        return id > pagination.beforeId;
+      if (isDefined(beforeId)) {
+        return id > beforeId;
       }
 
       return true;
