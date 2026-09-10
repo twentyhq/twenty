@@ -45,7 +45,7 @@ const setup = ({
   const run = (dryRun = false) =>
     command.runOnWorkspace({
       workspaceId: WORKSPACE_ID,
-      dataSource: dataSource as never,
+      dataSource,
       options: { dryRun },
       index: 0,
       total: 1,
