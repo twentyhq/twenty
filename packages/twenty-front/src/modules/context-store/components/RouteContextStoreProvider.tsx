@@ -116,26 +116,21 @@ export const RouteContextStoreProvider = () => {
       ? lastVisitedViewIdRaw
       : undefined;
 
-  const seededDefaultViewId = isSeededDefaultViewEnabled
-    ? views.find(
-        (view) =>
-          view.objectMetadataId === objectMetadataItem?.id &&
-          view.type !== ViewType.FIELDS_WIDGET &&
-          view.key !== ViewKey.INDEX,
-      )?.id
-    : undefined;
-
-  const indexViewId = views.find(
-    (view) =>
-      view.objectMetadataId === objectMetadataItem?.id &&
-      view.key === ViewKey.INDEX,
-  )?.id;
-
-  const firstAvailableViewId = views.find(
+  const selectableViewsOnObject = views.filter(
     (view) =>
       view.objectMetadataId === objectMetadataItem?.id &&
       view.type !== ViewType.FIELDS_WIDGET,
+  );
+
+  const seededDefaultViewId = isSeededDefaultViewEnabled
+    ? selectableViewsOnObject.find((view) => view.key !== ViewKey.INDEX)?.id
+    : undefined;
+
+  const indexViewId = selectableViewsOnObject.find(
+    (view) => view.key === ViewKey.INDEX,
   )?.id;
+
+  const firstAvailableViewId = selectableViewsOnObject[0]?.id;
 
   const viewId = getViewId({
     viewIdFromQueryParams: viewIdQueryParam,

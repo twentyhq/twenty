@@ -28,13 +28,13 @@ export const getNavigationMenuItemComputedLink = ({
         ? lastVisitedViewPerObjectMetadataItem?.[item.targetObjectMetadataId]
         : undefined;
 
-      return getObjectNavigationMenuItemComputedLink(
+      return getObjectNavigationMenuItemComputedLink({
         item,
         objectMetadataItems,
         views,
         lastVisitedViewId,
         isSeededDefaultViewEnabled,
-      );
+      });
     }
     case NavigationMenuItemType.VIEW:
       return getViewNavigationMenuItemComputedLink(

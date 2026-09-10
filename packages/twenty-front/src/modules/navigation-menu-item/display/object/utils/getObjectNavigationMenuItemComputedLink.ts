@@ -8,13 +8,19 @@ import {
   ViewType,
 } from '~/generated-metadata/graphql';
 
-export const getObjectNavigationMenuItemComputedLink = (
-  item: Pick<NavigationMenuItem, 'targetObjectMetadataId'>,
-  objectMetadataItems: Pick<EnrichedObjectMetadataItem, 'id' | 'namePlural'>[],
-  views: Pick<View, 'id' | 'objectMetadataId' | 'key' | 'type'>[],
-  lastVisitedViewId?: string,
+export const getObjectNavigationMenuItemComputedLink = ({
+  item,
+  objectMetadataItems,
+  views,
+  lastVisitedViewId,
   isSeededDefaultViewEnabled = false,
-): string => {
+}: {
+  item: Pick<NavigationMenuItem, 'targetObjectMetadataId'>;
+  objectMetadataItems: Pick<EnrichedObjectMetadataItem, 'id' | 'namePlural'>[];
+  views: Pick<View, 'id' | 'objectMetadataId' | 'key' | 'type'>[];
+  lastVisitedViewId?: string;
+  isSeededDefaultViewEnabled?: boolean;
+}): string => {
   const objectMetadataItem = objectMetadataItems.find(
     (meta) => meta.id === item.targetObjectMetadataId,
   );
