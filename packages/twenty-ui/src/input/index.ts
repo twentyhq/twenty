@@ -7,7 +7,6 @@
  *                              |___/
  */
 
-export { AdvancedSettingsToggle } from './AdvancedSettingsToggle/AdvancedSettingsToggle';
 export type { AnimatedButtonProps } from './AnimatedButton/AnimatedButton';
 export { AnimatedButton } from './AnimatedButton/AnimatedButton';
 export type { AnimatedLightIconButtonProps } from './AnimatedLightIconButton/AnimatedLightIconButton';
@@ -126,6 +125,9 @@ export type { SliderRootProps } from './Slider/types/SliderRootProps';
 export type { SliderThumbProps } from './Slider/types/SliderThumbProps';
 export type { SliderTrackProps } from './Slider/types/SliderTrackProps';
 export type { SliderValueProps } from './Slider/types/SliderValueProps';
+export { Switch } from './Switch/Switch';
+export type { SwitchProps } from './Switch/types/SwitchProps';
+export type { SwitchSize } from './Switch/types/SwitchSize';
 export type { TabContentProps } from './TabButton/TabButton';
 export {
   StyledTabContainer,
@@ -134,8 +136,6 @@ export {
 } from './TabButton/TabButton';
 export { Textarea } from './Textarea/Textarea';
 export type { TextareaProps } from './Textarea/types/TextareaProps';
-export type { ToggleSize, ToggleProps } from './Toggle/Toggle';
-export { Toggle } from './Toggle/Toggle';
 export type { ColorScheme } from './types/ColorScheme';
 export type { InputSize } from './types/InputSize';
 export type { SelectOption } from './types/SelectOption';

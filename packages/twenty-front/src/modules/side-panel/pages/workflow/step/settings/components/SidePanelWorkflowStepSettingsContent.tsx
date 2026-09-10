@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { STEP_RETRY_DELAYS_MS } from 'twenty-shared/workflow';
 import { InputLabel } from 'twenty-ui/input';
 
-import { FormBooleanFieldToggleInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldToggleInput';
+import { FormBooleanFieldSwitchInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldSwitchInput';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { Select } from '@/ui/input/components/Select';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -60,7 +60,7 @@ const SidePanelWorkflowStepSettingsForm = ({
   return (
     <WorkflowStepBody>
       {step.type !== 'IF_ELSE' && (
-        <FormBooleanFieldToggleInput
+        <FormBooleanFieldSwitchInput
           description={t`Continue on failure`}
           value={errorHandlingOptions.continueOnFailure.value}
           onChange={(value) =>
