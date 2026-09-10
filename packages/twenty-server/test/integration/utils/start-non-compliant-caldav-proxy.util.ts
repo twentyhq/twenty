@@ -1,6 +1,7 @@
 import { once } from 'node:events';
 import { createServer, request, type IncomingMessage } from 'node:http';
 import { type AddressInfo } from 'node:net';
+import { brotliDecompressSync, gunzipSync, inflateSync } from 'node:zlib';
 
 const PROXY_HOST = '127.0.0.1';
 
@@ -21,6 +22,23 @@ export type NonCompliantCalDavProxy = {
     hideCollectionMembers: boolean;
   };
   stop: () => Promise<void>;
+};
+
+const decodeBody = (body: Buffer, contentEncoding: string): Buffer => {
+  if (body.length === 0) {
+    return body;
+  }
+
+  switch (contentEncoding) {
+    case 'gzip':
+      return gunzipSync(body);
+    case 'deflate':
+      return inflateSync(body);
+    case 'br':
+      return brotliDecompressSync(body);
+    default:
+      return body;
+  }
 };
 
 const readBody = async (message: IncomingMessage): Promise<Buffer> => {
@@ -73,16 +91,22 @@ export const startNonCompliantCalDavProxy = async ({
             headers: {
               ...incoming.headers,
               host: `${targetHost}:${targetPort}`,
+              'accept-encoding': 'identity',
             },
           },
           (upstreamResponse) => {
             void readBody(upstreamResponse)
               .then((responseBody) => {
                 const headers = { ...upstreamResponse.headers };
+                const contentEncoding = String(
+                  headers['content-encoding'] ?? '',
+                );
 
                 delete headers['content-length'];
                 delete headers['transfer-encoding'];
+                delete headers['content-encoding'];
 
+                const decodedBody = decodeBody(responseBody, contentEncoding);
                 const isXml = String(headers['content-type'] ?? '').includes(
                   'xml',
                 );
@@ -104,9 +128,9 @@ export const startNonCompliantCalDavProxy = async ({
                   isXml
                     ? rewrites.reduce(
                         (body, rewrite) => rewrite(body),
-                        responseBody.toString('utf8'),
+                        decodedBody.toString('utf8'),
                       )
-                    : responseBody,
+                    : decodedBody,
                 );
               })
               .catch(() => outgoing.destroy());
