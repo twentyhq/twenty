@@ -98,7 +98,9 @@ export const PointerDrag: Story = {
   decorators: [ComponentDecorator],
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const slider = canvas.getByRole('slider', { name: 'Volume' });
+    const slider = canvas.getByRole<HTMLInputElement>('slider', {
+      name: 'Volume',
+    });
     const control = canvas.getByTestId('slider-control');
     const pointer = userEvent.setup();
     const bounds = control.getBoundingClientRect();
@@ -109,22 +111,20 @@ export const PointerDrag: Story = {
       keys: '[MouseLeft>]',
       coords: { x: bounds.left + bounds.width / 4, y },
     });
-    await expect(Number((slider as HTMLInputElement).value)).toBeLessThan(40);
+    await expect(slider.valueAsNumber).toBeLessThan(40);
     await expect(args.onValueCommitted).not.toHaveBeenCalled();
 
     await pointer.pointer({
       target: control,
       coords: { x: bounds.left + (bounds.width * 3) / 4, y },
     });
-    await expect(Number((slider as HTMLInputElement).value)).toBeGreaterThan(
-      60,
-    );
+    await expect(slider.valueAsNumber).toBeGreaterThan(60);
     await expect(args.onValueCommitted).not.toHaveBeenCalled();
 
     await pointer.pointer({ target: control, keys: '[/MouseLeft]' });
     await expect(args.onValueCommitted).toHaveBeenCalledTimes(1);
     await expect(args.onValueCommitted).toHaveBeenLastCalledWith(
-      Number((slider as HTMLInputElement).value),
+      slider.valueAsNumber,
       expect.objectContaining({ reason: 'drag' }),
     );
   },
