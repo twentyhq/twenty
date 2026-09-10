@@ -327,11 +327,11 @@ export class FileApi {
     applicationUniversalIdentifier,
     files,
   }: {
-    applicationUniversalIdentifier?: string;
+    applicationUniversalIdentifier: string;
     files: ApplicationFileUploadRequest[];
   }): Promise<ApiResponse<CreateApplicationFileUploadsResult>> {
     const mutation = `
-      mutation CreateApplicationFileUploads($applicationUniversalIdentifier: String, $files: [ApplicationFileUploadRequestInput!]!) {
+      mutation CreateApplicationFileUploads($applicationUniversalIdentifier: String!, $files: [ApplicationFileUploadRequestInput!]!) {
         createApplicationFileUploads(applicationUniversalIdentifier: $applicationUniversalIdentifier, files: $files) {
           targets {
             fileId
@@ -352,7 +352,7 @@ export class FileApi {
     return this.runMetadataMutation<CreateApplicationFileUploadsResult>({
       mutation,
       variables: {
-        applicationUniversalIdentifier: applicationUniversalIdentifier ?? null,
+        applicationUniversalIdentifier,
         files: files.map(({ fileFolder, filePath, size }) => ({
           fileFolder: pascalCase(fileFolder),
           filePath,
@@ -368,11 +368,11 @@ export class FileApi {
     applicationUniversalIdentifier,
     fileIds,
   }: {
-    applicationUniversalIdentifier?: string;
+    applicationUniversalIdentifier: string;
     fileIds: string[];
   }): Promise<ApiResponse<CompleteApplicationFileUploadsResult>> {
     const mutation = `
-      mutation CompleteApplicationFileUploads($applicationUniversalIdentifier: String, $fileIds: [UUID!]!) {
+      mutation CompleteApplicationFileUploads($applicationUniversalIdentifier: String!, $fileIds: [UUID!]!) {
         completeApplicationFileUploads(applicationUniversalIdentifier: $applicationUniversalIdentifier, fileIds: $fileIds) {
           files {
             id
@@ -388,10 +388,7 @@ export class FileApi {
 
     return this.runMetadataMutation<CompleteApplicationFileUploadsResult>({
       mutation,
-      variables: {
-        applicationUniversalIdentifier: applicationUniversalIdentifier ?? null,
-        fileIds,
-      },
+      variables: { applicationUniversalIdentifier, fileIds },
       resultKey: 'completeApplicationFileUploads',
       defaultErrorMessage: 'Failed to complete application file uploads',
     });
