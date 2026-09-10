@@ -26,8 +26,28 @@ describe('fromViewFilterManifestToUniversalFlatViewFilter', () => {
     expect(result.operand).toBe(ViewFilterOperand.CONTAINS);
     expect(result.value).toBe('test');
     expect(result.subFieldName).toBeNull();
+    expect(result.relationTargetFieldMetadataUniversalIdentifier).toBeNull();
     expect(result.viewFilterGroupUniversalIdentifier).toBeNull();
     expect(result.positionInViewFilterGroup).toBeNull();
+  });
+
+  it('should copy an explicit relation target field metadata universal identifier', () => {
+    const result = fromViewFilterManifestToUniversalFlatViewFilter({
+      viewFilterManifest: {
+        universalIdentifier: 'vfilter-uuid-3',
+        fieldMetadataUniversalIdentifier: 'field-uuid-3',
+        operand: ViewFilterOperand.IS,
+        value: { selectedRecordIds: ['record-uuid-1'] },
+        relationTargetFieldMetadataUniversalIdentifier: 'target-field-uuid-1',
+      },
+      viewUniversalIdentifier,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.relationTargetFieldMetadataUniversalIdentifier).toBe(
+      'target-field-uuid-1',
+    );
   });
 
   it('should respect explicit optional values', () => {

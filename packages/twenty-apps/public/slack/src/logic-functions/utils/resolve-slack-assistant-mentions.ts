@@ -4,7 +4,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { SLACK_ASSISTANT_MENTION_LABEL } from 'src/logic-functions/constants/slack-assistant-mention-label';
 import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
 import { collectSlackMentionedUserIds } from 'src/logic-functions/utils/collect-slack-mentioned-user-ids';
-import { racePromiseAgainstTimeout } from 'src/logic-functions/utils/race-promise-against-timeout';
+import { runWithTimeout } from 'src/logic-functions/utils/run-with-timeout';
 import { resolveSlackMentionLabels } from 'src/logic-functions/utils/resolve-slack-mention-labels';
 import { rewriteSlackMentions } from 'src/logic-functions/utils/rewrite-slack-mentions';
 
@@ -36,8 +36,8 @@ export const resolveSlackAssistantMentions = async ({
 
   const slackUserIds = collectSlackMentionedUserIds(texts);
 
-  const userLabelBySlackUserId = await racePromiseAgainstTimeout({
-    promise: resolveSlackMentionLabels({
+  const userLabelBySlackUserId = await runWithTimeout({
+    operation: resolveSlackMentionLabels({
       slackUserIds,
       client,
       slackClient,
@@ -50,7 +50,7 @@ export const resolveSlackAssistantMentions = async ({
       return new Map<string, string>();
     }),
     timeoutMs: MENTION_RESOLUTION_TIMEOUT_MS,
-    timedOutResult: new Map<string, string>(),
+    buildTimeoutValue: () => new Map<string, string>(),
   });
 
   const rewrite = (text: string) =>

@@ -1,11 +1,14 @@
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { TWENTY_ICON_DICTIONARY } from '@ui/icon/constants/TwentyIconDictionary';
 import {
   escapeMarkdownTableCell,
   generateTwentyIconDictionaryMarkdown,
 } from '@ui/icon/internal/generateTwentyIconDictionaryMarkdown';
+
+const TEST_DIRECTORY = dirname(fileURLToPath(import.meta.url));
 
 describe('TwentyIconDictionary', () => {
   it('escapes Markdown table delimiters without losing backslashes', () => {
@@ -22,7 +25,7 @@ describe('TwentyIconDictionary', () => {
 
   it('references icons exported by twenty-ui/icon', () => {
     const publicIconBarrel = readFileSync(
-      resolve(__dirname, '../index.ts'),
+      resolve(TEST_DIRECTORY, '../index.ts'),
       'utf8',
     );
 
@@ -33,7 +36,7 @@ describe('TwentyIconDictionary', () => {
 
   it('references icons available to string-based icon resolution', () => {
     const dynamicIconCatalog = readFileSync(
-      resolve(__dirname, '../providers/internal/AllIcons.ts'),
+      resolve(TEST_DIRECTORY, '../providers/internal/AllIcons.ts'),
       'utf8',
     );
 
@@ -51,7 +54,7 @@ describe('TwentyIconDictionary', () => {
   });
 
   it('keeps the generated Markdown synchronized with the manifest', () => {
-    const markdownPath = resolve(__dirname, '../icon-dictionary.md');
+    const markdownPath = resolve(TEST_DIRECTORY, '../icon-dictionary.md');
 
     expect(readFileSync(markdownPath, 'utf8')).toBe(
       generateTwentyIconDictionaryMarkdown(),

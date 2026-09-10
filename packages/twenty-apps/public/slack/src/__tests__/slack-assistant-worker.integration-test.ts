@@ -3,6 +3,10 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-slack-message-timestamp-sequence.util';
 import { requireDefinedOrThrow } from 'src/__tests__/utils/require-defined-or-throw.util';
 import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test.util';
+import { SLACK_ASSISTANT_DEADLINE_ERROR } from 'src/logic-functions/constants/slack-assistant-deadline-error';
+import { SLACK_ASSISTANT_DEADLINE_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-deadline-failure-text';
+import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
+import { SLACK_ASSISTANT_EMPTY_RESPONSE_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-empty-response-failure-text';
 import { SLACK_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-failure-text';
 import { SLACK_ASSISTANT_FEEDBACK_ACTION_ID } from 'src/logic-functions/constants/slack-assistant-feedback-action-id';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
@@ -384,6 +388,92 @@ describe('Slack assistant worker', () => {
     );
   });
 
+  it('should tell the member to narrow the request when the answer deadline passes', async () => {
+    slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
+    const slackMessageTimestamp = nextMessageTimestamp();
+
+    appRuntime.setAgentResult({
+      success: false,
+      result: null,
+      error: SLACK_ASSISTANT_DEADLINE_ERROR,
+    });
+
+    const request = await createRequestRecord({
+      slackChannelId: CHANNEL_ID,
+      slackMessageTimestamp,
+      requestText: 'summarize every opportunity we opened this year',
+    });
+
+    const result = await slackAssistantWorkerHandler(
+      buildRequestCreatedEvent({
+        ...request,
+        slackChannelId: CHANNEL_ID,
+        slackMessageTimestamp,
+        requestText: 'summarize every opportunity we opened this year',
+      }),
+    );
+
+    expect(result).toEqual({
+      failed: true,
+      reason: SLACK_ASSISTANT_DEADLINE_ERROR,
+    });
+    expect(slack.messagesIn(CHANNEL_ID)).toEqual([
+      expect.objectContaining({
+        text: SLACK_ASSISTANT_DEADLINE_FAILURE_TEXT,
+        threadTimestamp: slackMessageTimestamp,
+      }),
+    ]);
+    await expect(readRequest(request.id)).resolves.toEqual(
+      expect.objectContaining({
+        status: SLACK_ASSISTANT_REQUEST_STATUS.FAILED,
+        errorMessage: SLACK_ASSISTANT_DEADLINE_ERROR,
+      }),
+    );
+  });
+
+  it('should invite the member to ask again when the agent answers with nothing', async () => {
+    slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
+    const slackMessageTimestamp = nextMessageTimestamp();
+
+    appRuntime.setAgentResult({
+      success: true,
+      result: null,
+      error: null,
+    });
+
+    const request = await createRequestRecord({
+      slackChannelId: CHANNEL_ID,
+      slackMessageTimestamp,
+      requestText: 'what changed on Acme this week?',
+    });
+
+    const result = await slackAssistantWorkerHandler(
+      buildRequestCreatedEvent({
+        ...request,
+        slackChannelId: CHANNEL_ID,
+        slackMessageTimestamp,
+        requestText: 'what changed on Acme this week?',
+      }),
+    );
+
+    expect(result).toEqual({
+      failed: true,
+      reason: SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR,
+    });
+    expect(slack.messagesIn(CHANNEL_ID)).toEqual([
+      expect.objectContaining({
+        text: SLACK_ASSISTANT_EMPTY_RESPONSE_FAILURE_TEXT,
+        threadTimestamp: slackMessageTimestamp,
+      }),
+    ]);
+    await expect(readRequest(request.id)).resolves.toEqual(
+      expect.objectContaining({
+        status: SLACK_ASSISTANT_REQUEST_STATUS.FAILED,
+        errorMessage: SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR,
+      }),
+    );
+  });
+
   it('should fail the request when Slack refuses to deliver the answer', async () => {
     slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
     slack.failNextCall('chat.postMessage', 'channel_not_found');
@@ -415,7 +505,7 @@ describe('Slack assistant worker', () => {
     );
   });
 
-  it('should send a long answer as markdown text because Slack blocks cannot hold it', async () => {
+  it('should keep the feedback buttons on an answer too long for a markdown block', async () => {
     slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
     const slackMessageTimestamp = nextMessageTimestamp();
     const longResponse = 'a'.repeat(SLACK_MARKDOWN_BLOCK_MAX_LENGTH + 1);
@@ -443,9 +533,27 @@ describe('Slack assistant worker', () => {
 
     const channelMessages = slack.messagesIn(CHANNEL_ID);
     const postedAnswer = channelMessages[channelMessages.length - 1];
+    const [markdownBlock, feedbackBlock] = postedAnswer?.blocks ?? [];
 
-    expect(postedAnswer?.blocks).toBeUndefined();
-    expect(postedAnswer?.markdownText).toContain(longResponse);
+    expect(markdownBlock).toEqual({
+      type: 'markdown',
+      text: expect.stringContaining('_Shortened to fit Slack.'),
+    });
+    expect((markdownBlock as { text: string }).text.length).toBeLessThanOrEqual(
+      SLACK_MARKDOWN_BLOCK_MAX_LENGTH,
+    );
+    expect(feedbackBlock).toEqual(
+      expect.objectContaining({
+        type: 'context_actions',
+        block_id: request.id,
+      }),
+    );
+    await expect(readRequest(request.id)).resolves.toEqual(
+      expect.objectContaining({
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        responseText: longResponse,
+      }),
+    );
   });
 
   it('should skip a request that another worker already picked up', async () => {

@@ -1,3 +1,4 @@
+import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { FieldType } from '@/sdk/define';
 import type { Manifest } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
@@ -74,6 +75,25 @@ export const EXPECTED_MANIFEST: Manifest = {
       ],
     },
   ],
+  pageLayoutWidgets: [
+    {
+      universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000013',
+      pageLayoutTabUniversalIdentifier:
+        STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.home
+          .universalIdentifier,
+      title: 'Extra Home Widget',
+      type: 'FRONT_COMPONENT',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 1000,
+      },
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          '370ae182-743f-4ecb-b625-7ac48e21f0e5',
+      },
+    },
+  ],
   publicAssets: [
     {
       checksum: '99496069dcc2a1488e1cae9f826d2707',
@@ -83,7 +103,6 @@ export const EXPECTED_MANIFEST: Manifest = {
     },
   ],
   skills: [],
-  translations: {},
   agents: [],
   application: {
     applicationVariables: {
@@ -257,7 +276,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     galleryImages: [],
     defaultRoleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
-    yarnLockChecksum: 'd41d8cd98f00b204e9800998ecf8427e',
+    yarnLockChecksum: '375f53c8fcdc373d081ba4523f7bb3b4',
     packageJsonChecksum: '2851d0e2c3621a57e1fd103a245b6fde',
     requiredServerVersionRange: null,
   },

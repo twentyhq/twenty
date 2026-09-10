@@ -3,11 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
 import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-state.constant';
 import { CAMPAIGN_FAILURE_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-failure-reason.constant';
+import { UNFINISHED_CAMPAIGN_DELIVERY_STATES } from 'src/engine/core-modules/emailing-domain/constants/unfinished-campaign-delivery-states.constant';
 import { CAMPAIGN_SKIP_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-skip-reason.constant';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-import { type FindOptionsWhere, In, LessThan } from 'typeorm';
+import { type FindOptionsWhere, In, IsNull, LessThan } from 'typeorm';
 
 import {
   EmailingDomainException,
@@ -28,6 +29,8 @@ type CampaignStatusTransition = {
   from: MessageCampaignStatus;
   to: MessageCampaignStatus;
   roleId?: string;
+  scheduledAt?: Date | null;
+  fromScheduledAt?: Date;
 };
 
 @Injectable()
@@ -46,7 +49,24 @@ export class MessageCampaignLifecycleService {
     from,
     to,
     roleId,
+    scheduledAt,
+    fromScheduledAt,
   }: CampaignStatusTransition): Promise<boolean> {
+    const update: Partial<MessageCampaignWorkspaceEntity> = { status: to };
+
+    if (scheduledAt !== undefined) {
+      update.scheduledAt = scheduledAt;
+    }
+
+    const criteria: FindOptionsWhere<MessageCampaignWorkspaceEntity> = {
+      id: campaignId,
+      status: from,
+    };
+
+    if (isDefined(fromScheduledAt)) {
+      criteria.scheduledAt = fromScheduledAt;
+    }
+
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const campaignRepository = this.workspaceOrmManager.getRepository(
@@ -56,15 +76,59 @@ export class MessageCampaignLifecycleService {
             : { shouldBypassPermissionChecks: true },
         );
 
-        const { affected } = await campaignRepository.update(
-          { id: campaignId, status: from },
-          { status: to },
-        );
+        const { affected } = await campaignRepository.update(criteria, update);
 
         return affected === 1;
       },
       isDefined(roleId) ? undefined : buildSystemAuthContext(workspaceId),
     );
+  }
+
+  async isCampaignScheduledFor({
+    workspaceId,
+    campaignId,
+    scheduledAt,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+    scheduledAt: Date;
+  }): Promise<boolean> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const campaignRepository = this.workspaceOrmManager.getRepository(
+        MessageCampaignWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
+
+      return campaignRepository.existsBy({
+        id: campaignId,
+        status: MessageCampaignStatus.SCHEDULED,
+        scheduledAt,
+      });
+    }, buildSystemAuthContext(workspaceId));
+  }
+
+  // Returns null once the campaign is gone or canceled, which is how the send
+  // paths stop working a campaign they already claimed rows for.
+  async findRunningCampaign(
+    campaignId: string,
+  ): Promise<MessageCampaignWorkspaceEntity | null> {
+    const campaignRepository = this.workspaceOrmManager.getRepository(
+      MessageCampaignWorkspaceEntity,
+      { shouldBypassPermissionChecks: true },
+    );
+
+    const campaign = await campaignRepository.findOne({
+      where: { id: campaignId },
+    });
+
+    if (
+      !isDefined(campaign) ||
+      campaign.status === MessageCampaignStatus.CANCELED
+    ) {
+      return null;
+    }
+
+    return campaign;
   }
 
   async cancelCampaignOrThrow({
@@ -81,6 +145,19 @@ export class MessageCampaignLifecycleService {
       userWorkspaceId,
     });
 
+    const unscheduled = await this.transitionCampaignStatus({
+      workspaceId,
+      campaignId,
+      roleId,
+      from: MessageCampaignStatus.SCHEDULED,
+      to: MessageCampaignStatus.DRAFT,
+      scheduledAt: null,
+    });
+
+    if (unscheduled) {
+      return { campaignId, canceledMessageCount: 0 };
+    }
+
     const canceled = await this.transitionCampaignStatus({
       workspaceId,
       campaignId,
@@ -91,7 +168,7 @@ export class MessageCampaignLifecycleService {
 
     if (!canceled) {
       throw new EmailingDomainException(
-        `Campaign ${campaignId} is not sending`,
+        `Campaign ${campaignId} is neither scheduled nor sending`,
         EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE,
       );
     }
@@ -114,6 +191,39 @@ export class MessageCampaignLifecycleService {
     });
 
     return { campaignId, canceledMessageCount };
+  }
+
+  // A campaign whose send jobs were lost keeps rows QUEUED forever, and QUEUED
+  // counts as unfinished, so the campaign would sit in SENDING with nothing
+  // left to move it. Failing them lets it terminalise and names why.
+  //
+  // untouchedSince separates an abandoned row from a live one: anything still
+  // being worked is claimed, deferred or settled, and each of those writes it.
+  async failOrphanedQueuedDeliveries({
+    workspaceId,
+    campaignId,
+    untouchedSince,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+    untouchedSince: Date;
+  }): Promise<number> {
+    return this.settleDeliveries({
+      workspaceId,
+      criteria: {
+        campaignId,
+        state: CAMPAIGN_DELIVERY_STATE.QUEUED,
+        sentAt: IsNull(),
+        providerMessageId: IsNull(),
+        updatedAt: LessThan(untouchedSince),
+      },
+      update: {
+        state: CAMPAIGN_DELIVERY_STATE.FAILED,
+        failureReason: CAMPAIGN_FAILURE_REASON.ORPHANED,
+        claimToken: null,
+        claimExpiresAt: null,
+      },
+    });
   }
 
   async failDeliveriesWithExpiredClaims({
@@ -179,10 +289,7 @@ export class MessageCampaignLifecycleService {
     const hasUnfinishedDelivery =
       await this.campaignDeliveryRepository.existsBy(workspaceId, {
         campaignId,
-        state: In([
-          CAMPAIGN_DELIVERY_STATE.QUEUED,
-          CAMPAIGN_DELIVERY_STATE.SENDING,
-        ]),
+        state: In(UNFINISHED_CAMPAIGN_DELIVERY_STATES),
       });
 
     if (hasUnfinishedDelivery) {

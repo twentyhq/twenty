@@ -70,6 +70,8 @@ export const fromFlatFieldMetadataToFieldManifest = ({
     writability: flatFieldMetadata.writability,
     isNullable: flatFieldMetadata.isNullable,
     isUnique: flatFieldMetadata.isUnique ?? false,
+    isSearchable: flatFieldMetadata.isSearchable,
+    isAuditLogged: flatFieldMetadata.isAuditLogged,
     isLabelSyncedWithName: flatFieldMetadata.isLabelSyncedWithName,
     objectUniversalIdentifier:
       flatFieldMetadata.objectMetadataUniversalIdentifier,

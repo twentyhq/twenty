@@ -23,6 +23,7 @@ import { EmailingDomainWorkspaceCleanupJob } from 'src/engine/core-modules/email
 import { EmailingDomainTenantStatusService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-tenant-status.service';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { UnsubscribeContentService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-content.service';
+import { DmarcRecordService } from 'src/engine/core-modules/emailing-domain/services/dmarc-record.service';
 import { UnsubscribeHostnameService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service';
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
@@ -60,6 +61,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     UnsubscribeTokenService,
     UnsubscribeContentService,
     UnsubscribeHostnameService,
+    DmarcRecordService,
     EmailingDomainResolver,
     EmailingDomainDriverFactory,
     EmailingDomainWorkspaceCleanupJob,
