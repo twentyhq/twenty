@@ -1,8 +1,11 @@
 import { createServer, request, type Server } from 'node:http';
 import { type AddressInfo } from 'node:net';
 
+// The self-closing form has to be matched on its own: sharing a branch with the
+// open tag lets a self-closing occurrence pair up with a later closing tag and
+// swallow every response in between.
 const COMPONENT_SET_ELEMENT =
-  /<(\w+:)?supported-calendar-component-set\b[^>]*(\/>|>[\s\S]*?<\/(\w+:)?supported-calendar-component-set>)/g;
+  /<(\w+:)?supported-calendar-component-set\b[^>]*\/>|<(\w+:)?supported-calendar-component-set\b[^>]*>[\s\S]*?<\/(\w+:)?supported-calendar-component-set>/g;
 
 export type CalDavProxy = {
   url: string;
@@ -44,10 +47,11 @@ export const startCalDavProxyOmittingComponentSet = async ({
               .toString('utf-8')
               .replace(COMPONENT_SET_ELEMENT, '');
 
-            const headers = { ...upstream.headers };
-
-            delete headers['content-length'];
-            delete headers['transfer-encoding'];
+            const {
+              'content-length': _staleContentLength,
+              'transfer-encoding': _staleTransferEncoding,
+              ...headers
+            } = upstream.headers;
 
             outgoing.writeHead(upstream.statusCode ?? 502, {
               ...headers,

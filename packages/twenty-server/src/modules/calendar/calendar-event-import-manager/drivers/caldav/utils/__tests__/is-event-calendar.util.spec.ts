@@ -2,11 +2,9 @@ import { type DAVCalendar } from 'tsdav';
 
 import { isEventCalendar } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-event-calendar.util';
 
-const calendar = (components?: string[]): DAVCalendar =>
-  ({
-    url: 'https://caldav.example.com/calendars/user/personal/',
-    components,
-  }) as DAVCalendar;
+const calendar = (
+  components?: DAVCalendar['components'],
+): Pick<DAVCalendar, 'components'> => ({ components });
 
 describe('isEventCalendar', () => {
   it('accepts a calendar declaring VEVENT', () => {
