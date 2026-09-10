@@ -1,10 +1,14 @@
 import { type CacheScript } from 'src/engine/core-modules/cache-storage/types/cache-script.type';
 
+export const TOKEN_BUCKETS_ALLOW_PARTIAL_ARG = '1';
+export const TOKEN_BUCKETS_DENY_PARTIAL_ARG = '0';
+
 export const TRY_CONSUME_TOKEN_BUCKETS_SCRIPT: CacheScript = {
   name: 'usage-limit:try-consume-token-buckets',
   source: `
-local cost = tonumber(ARGV[1])
+local requestedCost = tonumber(ARGV[1])
 local buckets = cjson.decode(ARGV[2])
+local allowPartial = ARGV[3] == '1'
 
 if #buckets ~= #KEYS then
   return redis.error_reply(
@@ -17,6 +21,7 @@ local nowMs = tonumber(now[1]) * 1000 + math.floor(tonumber(now[2]) / 1000)
 local available = {}
 local exhaustedIndex = 0
 local retryAfterMs = 0
+local admittedCost = requestedCost
 
 for i = 1, #KEYS do
   local bucket = buckets[i]
@@ -36,8 +41,12 @@ for i = 1, #KEYS do
   if refilled > bucket.burst then refilled = bucket.burst end
   available[i] = refilled
 
-  if refilled < cost then
-    local bucketRetryAfterMs = math.ceil((cost - refilled) * bucket.windowMs / bucket.refill)
+  local bucketAdmittedCost = math.floor(refilled)
+  if bucketAdmittedCost > requestedCost then bucketAdmittedCost = requestedCost end
+  if bucketAdmittedCost < admittedCost then admittedCost = bucketAdmittedCost end
+
+  if bucketAdmittedCost < requestedCost then
+    local bucketRetryAfterMs = math.ceil((requestedCost - refilled) * bucket.windowMs / bucket.refill)
 
     -- Buckets arrive narrowest first, so the first exhausted one names the
     -- scope, while the caller has to wait for the slowest of them to refill.
@@ -51,18 +60,22 @@ for i = 1, #KEYS do
   end
 end
 
-if exhaustedIndex > 0 then
+if not allowPartial and exhaustedIndex > 0 then
+  admittedCost = 0
+end
+
+if admittedCost <= 0 then
   return { 0, exhaustedIndex, retryAfterMs }
 end
 
 for i = 1, #KEYS do
   local bucket = buckets[i]
-  redis.call('HSET', KEYS[i], 't', tostring(available[i] - cost), 'ts', tostring(nowMs))
+  redis.call('HSET', KEYS[i], 't', tostring(available[i] - admittedCost), 'ts', tostring(nowMs))
   -- Never expire before an empty bucket would have refilled, or the key
   -- vanishing hands back a full burst the elapsed time had not yet earned.
   redis.call('PEXPIRE', KEYS[i], math.ceil(bucket.burst / bucket.refill * bucket.windowMs))
 end
 
-return { 1, 0, 0 }
+return { admittedCost, exhaustedIndex, retryAfterMs }
 `,
 };

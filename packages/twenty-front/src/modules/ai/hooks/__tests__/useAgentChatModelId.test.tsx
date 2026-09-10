@@ -1,13 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
-import { MemoryRouter } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
 
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
-import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
@@ -15,100 +10,68 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const getWrapper =
-  (pathname: string) =>
-  ({ children }: { children: React.ReactNode }) => (
-    <MemoryRouter initialEntries={[pathname]}>
-      <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
-    </MemoryRouter>
+const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+);
+
+const renderHooks = () =>
+  renderHook(
+    () => ({
+      setSelectedTier: useSetAtomState(agentChatUserSelectedModelTierState),
+      setShouldOpenAiChatAfterOnboarding: useSetAtomState(
+        shouldOpenAiChatAfterOnboardingState,
+      ),
+      ...useAgentChatModelId(),
+    }),
+    { wrapper: Wrapper },
   );
-
-const renderHooks = ({
-  pathname,
-  userSelectedModel = null,
-}: {
-  pathname: string;
-  userSelectedModel?: string | null;
-}) => {
-  const { result } = renderHook(
-    () => {
-      const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
-      const setAiModels = useSetAtomState(aiModelsState);
-      const setAgentChatUserSelectedModel = useSetAtomState(
-        agentChatUserSelectedModelState,
-      );
-
-      return {
-        setCurrentWorkspace,
-        setAiModels,
-        setAgentChatUserSelectedModel,
-        ...useAgentChatModelId(),
-      };
-    },
-    { wrapper: getWrapper(pathname) },
-  );
-
-  act(() => {
-    result.current.setCurrentWorkspace({
-      fastModel: 'openai/gpt-5-mini',
-      smartModel: 'openai/gpt-5.2',
-      useRecommendedModels: false,
-      enabledAiModelIds: ['openai/gpt-4.1'],
-    } as never);
-    result.current.setAiModels([
-      { modelId: 'openai/gpt-4.1', isDeprecated: false },
-    ] as never);
-    result.current.setAgentChatUserSelectedModel(userSelectedModel);
-  });
-
-  return result;
-};
-
-const onboardingChatPath = getAppPath(AppPath.AiChat, { threadId: null });
 
 describe('useAgentChatModelId', () => {
   beforeEach(() => {
-    sessionStorage.clear();
+    window.localStorage.clear();
     resetJotaiStore();
   });
 
-  it('should request the workspace fast model during the onboarding chat', () => {
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
-
-    const result = renderHooks({ pathname: onboardingChatPath });
-
-    expect(result.current.modelIdForRequest).toBe('openai/gpt-5-mini');
-  });
-
-  it('should request no model on a plain chat page', () => {
-    const result = renderHooks({ pathname: onboardingChatPath });
+  it('sends nothing so the server falls back to the workspace chat tier', () => {
+    const { result } = renderHooks();
 
     expect(result.current.modelIdForRequest).toBeUndefined();
   });
 
-  it('should request no model elsewhere so the server falls back to the smart model', () => {
-    const result = renderHooks({ pathname: '/objects/companies' });
+  it('ignores a persisted tier name it does not know', () => {
+    window.localStorage.setItem(
+      'ai/agentChatUserSelectedModelTier',
+      JSON.stringify('turbo'),
+    );
+
+    const { result } = renderHooks();
 
     expect(result.current.modelIdForRequest).toBeUndefined();
   });
 
-  it('should let a user selected model win during the onboarding chat', () => {
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+  it('sends the auto-select id of the tier the user picked', () => {
+    const { result } = renderHooks();
 
-    const result = renderHooks({
-      pathname: onboardingChatPath,
-      userSelectedModel: 'openai/gpt-4.1',
+    act(() => {
+      result.current.setSelectedTier('smart');
     });
 
-    expect(result.current.modelIdForRequest).toBe('openai/gpt-4.1');
+    expect(result.current.modelIdForRequest).toBe('default-smart-model');
   });
 
-  it('should keep an auto-select sentinel selection instead of discarding it', () => {
-    const result = renderHooks({
-      pathname: '/objects/companies',
-      userSelectedModel: 'default-fast-model',
+  it('runs the workspace setup chat on the fast tier unless the user picked one', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.setShouldOpenAiChatAfterOnboarding(true);
     });
 
     expect(result.current.modelIdForRequest).toBe('default-fast-model');
+
+    act(() => {
+      result.current.setSelectedTier('extraSmart');
+    });
+
+    expect(result.current.modelIdForRequest).toBe('default-extra-smart-model');
   });
 });

@@ -10,6 +10,9 @@ import { assertFlatApplicationIsExportable } from 'src/engine/core-modules/appli
 import { classifyApplicationFlatEntities } from 'src/engine/core-modules/application/application-manifest/utils/classify-application-flat-entities.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { reconstructDataModelManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-data-model-manifest.util';
+import { getResolvableReferenceUniversalIdentifiers } from 'src/engine/core-modules/application/application-manifest/utils/get-resolvable-reference-universal-identifiers.util';
+import { reconstructNavigationMenuItemsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-navigation-menu-items-manifest.util';
+import { reconstructPageLayoutsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-page-layouts-manifest.util';
 import { reconstructViewsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-views-manifest.util';
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import {
@@ -78,6 +81,9 @@ export class ApplicationManifestExportService {
       indexes,
       coverage: dataModelCoverage,
     } = reconstructDataModelManifest({ applicationAllFlatEntityMaps });
+    const exportedObjectUniversalIdentifiers = new Set(
+      objects.map(({ universalIdentifier }) => universalIdentifier),
+    );
     const {
       views,
       viewFields,
@@ -85,10 +91,34 @@ export class ApplicationManifestExportService {
     } = reconstructViewsManifest({
       applicationAllFlatEntityMaps,
       allFlatEntityMaps,
-      exportedObjectUniversalIdentifiers: new Set(
-        objects.map(({ universalIdentifier }) => universalIdentifier),
-      ),
+      exportedObjectUniversalIdentifiers,
     });
+    const {
+      pageLayouts,
+      pageLayoutTabs,
+      pageLayoutWidgets,
+      coverage: pageLayoutsCoverage,
+    } = reconstructPageLayoutsManifest({
+      applicationAllFlatEntityMaps,
+      allFlatEntityMaps,
+      exportedObjectUniversalIdentifiers,
+    });
+    const { navigationMenuItems, coverage: navigationMenuItemsCoverage } =
+      reconstructNavigationMenuItemsManifest({
+        applicationAllFlatEntityMaps,
+        allFlatEntityMaps,
+        exportedObjectUniversalIdentifiers,
+        resolvableViewUniversalIdentifiers:
+          getResolvableReferenceUniversalIdentifiers({
+            coverage: viewsCoverage,
+            metadataName: 'view',
+          }),
+        resolvablePageLayoutUniversalIdentifiers:
+          getResolvableReferenceUniversalIdentifiers({
+            coverage: pageLayoutsCoverage,
+            metadataName: 'pageLayout',
+          }),
+      });
     const translations = isDefined(flatApplication.applicationRegistrationId)
       ? await this.applicationTranslationCacheService.getCatalogsByLocale(
           flatApplication.applicationRegistrationId,
@@ -116,9 +146,10 @@ export class ApplicationManifestExportService {
       publicAssets: [],
       views,
       viewFields,
-      navigationMenuItems: [],
-      pageLayouts: [],
-      pageLayoutTabs: [],
+      navigationMenuItems,
+      pageLayouts,
+      pageLayoutWidgets,
+      pageLayoutTabs,
       commandMenuItems: [],
       timelineActivityTypes: [],
       ...(isDefined(translations) ? { translations } : {}),
@@ -135,7 +166,12 @@ export class ApplicationManifestExportService {
         flatApplication,
         applicationAllFlatEntityMaps,
         allFlatEntityMaps,
-        reconstructedCoverage: [...dataModelCoverage, ...viewsCoverage],
+        reconstructedCoverage: [
+          ...dataModelCoverage,
+          ...viewsCoverage,
+          ...pageLayoutsCoverage,
+          ...navigationMenuItemsCoverage,
+        ],
       }),
       files: [],
     };

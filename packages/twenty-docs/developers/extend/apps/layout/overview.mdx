@@ -33,7 +33,7 @@ A Twenty app's **layout layer** is everything the user sees: where the app surfa
     `defineNavigationMenuItem` — sidebar entries pointing at views or external URLs.
   </Card>
   <Card title="Page Layouts" icon="table-columns" href="/developers/extend/apps/layout/page-layouts">
-    `definePageLayout` and `definePageLayoutTab` — tabs and widgets on a record's detail page.
+    `definePageLayout`, `definePageLayoutTab` and `definePageLayoutWidget` — tabs and widgets on a record's detail page.
   </Card>
   <Card title="Front Components" icon="window-maximize" href="/developers/extend/apps/layout/front-components">
     `defineFrontComponent` — sandboxed React components that render inside Twenty.
@@ -49,7 +49,7 @@ A Twenty app's **layout layer** is everything the user sees: where the app surfa
 |---------|------------------|--------|
 | **Sidebar** | A custom entry linking to a saved view or external URL | `defineNavigationMenuItem` |
 | **Record list** | A saved configuration for an object — visible columns, order, filters, groups | `defineView` |
-| **Record detail page** | The tabs and widgets on a record page (your own object's, or a standard one) | `definePageLayout`, `definePageLayoutTab` |
+| **Record detail page** | The tabs and widgets on a record page (your own object's, or a standard one) | `definePageLayout`, `definePageLayoutTab`, `definePageLayoutWidget` |
 | **Inside any of the above** | A custom React widget — buttons, forms, dashboards, integrations | `defineFrontComponent` |
 | **App settings** | A custom configuration section inside the app's Settings tab, in place of the default variables UI | `defineSettingsFrontComponent` |
 | **Command menu (Cmd+K)** | A pinned quick action or hidden command | `defineCommandMenuItem` |

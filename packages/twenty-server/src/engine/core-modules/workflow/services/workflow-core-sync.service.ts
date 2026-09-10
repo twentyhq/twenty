@@ -170,9 +170,7 @@ export class WorkflowCoreSyncService {
     );
   }
 
-  private async getCustomApplicationIdOrThrow(
-    workspaceId: string,
-  ): Promise<string> {
+  async getCustomApplicationIdOrThrow(workspaceId: string): Promise<string> {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
       select: ['id', 'workspaceCustomApplicationId'],

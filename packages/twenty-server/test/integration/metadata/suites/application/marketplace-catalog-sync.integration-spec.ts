@@ -3,11 +3,18 @@ import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 
+import { gql } from 'graphql-tag';
 import request from 'supertest';
 import * as tar from 'tar';
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type DataSource } from 'typeorm';
 
+import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
+import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const TEST_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
@@ -188,6 +195,103 @@ describe('Marketplace Catalog Sync (integration)', () => {
     });
   });
 
+  describe.each([true, false])(
+    'catalog sync with manifest: %s',
+    (hasManifest) => {
+      it.each([true, false])(
+        'preserves the admin choice isVetted=%s',
+        async (isVetted) => {
+          const applicationRegistrationService =
+            getAppProviderByClassName<ApplicationRegistrationService>(
+              'ApplicationRegistrationService',
+            );
+          const universalIdentifier = isVetted
+            ? crypto.randomUUID()
+            : MARKETPLACE_VETTED_APPLICATIONS[0].universalIdentifier;
+          const catalogParams = {
+            universalIdentifier,
+            name: 'Vetted catalog sync test',
+            sourceType: ApplicationRegistrationSourceType.NPM,
+            sourcePackage: '@test/vetted-catalog-sync',
+            latestAvailableVersion: '1.0.0',
+            manifest: hasManifest
+              ? buildBaseManifest({
+                  appId: universalIdentifier,
+                  roleId: crypto.randomUUID(),
+                })
+              : null,
+          };
+
+          expect(
+            await applicationRegistrationService.findOneByUniversalIdentifierGlobal(
+              universalIdentifier,
+            ),
+          ).toBeNull();
+
+          try {
+            await applicationRegistrationService.upsertFromCatalog(
+              catalogParams,
+            );
+
+            const registration =
+              await applicationRegistrationService.findOneByUniversalIdentifierGlobal(
+                universalIdentifier,
+              );
+
+            expect(registration).toMatchObject({ isVetted: !isVetted });
+
+            const updateResponse = await makeAdminPanelAPIRequest({
+              query: gql`
+                mutation UpdateAdminApplicationRegistration(
+                  $input: UpdateApplicationRegistrationInput!
+                ) {
+                  updateAdminApplicationRegistration(input: $input) {
+                    id
+                    isVetted
+                  }
+                }
+              `,
+              variables: {
+                input: { id: registration?.id, update: { isVetted } },
+              },
+            });
+
+            expect(updateResponse.body.errors).toBeUndefined();
+            expect(
+              updateResponse.body.data.updateAdminApplicationRegistration,
+            ).toMatchObject({ isVetted });
+
+            await applicationRegistrationService.upsertFromCatalog(
+              catalogParams,
+            );
+
+            const refreshedResponse = await makeAdminPanelAPIRequest({
+              query: gql`
+                query FindOneAdminApplicationRegistration($id: String!) {
+                  findOneAdminApplicationRegistration(id: $id) {
+                    id
+                    isVetted
+                  }
+                }
+              `,
+              variables: { id: registration?.id },
+            });
+
+            expect(refreshedResponse.body.errors).toBeUndefined();
+            expect(
+              refreshedResponse.body.data.findOneAdminApplicationRegistration,
+            ).toMatchObject({ isVetted });
+          } finally {
+            await ds.query(
+              `DELETE FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
+              [universalIdentifier],
+            );
+          }
+        },
+      );
+    },
+  );
+
   describe('installApplication', () => {
     it('should fail if registration does not exist', async () => {
       const res = await gqlRequest(INSTALL_MUTATION, {
@@ -233,6 +337,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         navigationMenuItems: [],
         pageLayouts: [],
         pageLayoutTabs: [],
+        pageLayoutWidgets: [],
         commandMenuItems: [],
       });
 

@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getUnresolvableReferenceReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unresolvable-reference-reason.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 
@@ -13,26 +14,30 @@ const VIEW_FIELD_REFERENCE_PROPERTIES = [
 
 export const getUnsupportedViewReason = ({
   flatView,
-  applicationObjectUniversalIdentifiers,
-  exportedObjectUniversalIdentifiers,
+  applicationAllFlatEntityMaps,
   allFlatEntityMaps,
+  exportedObjectUniversalIdentifiers,
 }: {
   flatView: FlatView;
-  applicationObjectUniversalIdentifiers: ReadonlySet<string>;
-  exportedObjectUniversalIdentifiers: ReadonlySet<string>;
+  applicationAllFlatEntityMaps: AllFlatEntityMaps;
   allFlatEntityMaps: AllFlatEntityMaps;
+  exportedObjectUniversalIdentifiers: ReadonlySet<string>;
 }): string | undefined => {
   if (!isNonEmptyString(flatView.name)) {
     return 'view without a name';
   }
 
-  const objectUniversalIdentifier = flatView.objectMetadataUniversalIdentifier;
+  const unresolvableObjectReason = getUnresolvableReferenceReason({
+    metadataName: 'view',
+    referenceMetadataName: 'objectMetadata',
+    referenceUniversalIdentifier: flatView.objectMetadataUniversalIdentifier,
+    applicationAllFlatEntityMaps,
+    allFlatEntityMaps,
+    resolvableReferenceUniversalIdentifiers: exportedObjectUniversalIdentifiers,
+  });
 
-  if (
-    applicationObjectUniversalIdentifiers.has(objectUniversalIdentifier) &&
-    !exportedObjectUniversalIdentifiers.has(objectUniversalIdentifier)
-  ) {
-    return 'view on an unsupported object';
+  if (isDefined(unresolvableObjectReason)) {
+    return unresolvableObjectReason;
   }
 
   const referencesMissingField = VIEW_FIELD_REFERENCE_PROPERTIES.some(

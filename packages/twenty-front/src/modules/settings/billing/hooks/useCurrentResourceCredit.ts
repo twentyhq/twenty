@@ -44,6 +44,14 @@ export const useCurrentResourceCredit = () => {
   return {
     currentResourceCreditSubscriptionItem,
     currentResourceCreditBillingPrice,
+    // Read off the subscription rather than the catalog: an archived package is
+    // no longer in listPlans, and the workspace is still being billed for it.
+    currentResourceCreditUnitAmount:
+      currentResourceCreditSubscriptionItem?.unitAmount ??
+      currentResourceCreditBillingPrice?.unitAmount,
+    currentResourceCreditAmount:
+      currentResourceCreditSubscriptionItem?.creditAmount ??
+      currentResourceCreditBillingPrice?.creditAmount,
     getResourceCreditPricesByInterval,
   };
 };

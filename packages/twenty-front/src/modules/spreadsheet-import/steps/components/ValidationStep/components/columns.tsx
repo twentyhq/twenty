@@ -13,7 +13,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import camelCase from 'lodash.camelcase';
 import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
+import { Checkbox, Switch } from 'twenty-ui/input';
 import { type ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 
 const StyledHeaderContainer = styled.div`
@@ -41,10 +41,14 @@ const StyledCheckboxContainer = styled.div`
   width: 100%;
 `;
 
-const StyledToggleContainer = styled.div`
+const StyledSwitchContainer = styled.div`
   align-items: center;
   display: flex;
   height: 100%;
+`;
+
+const StyledSwitch = styled(Switch)`
+  align-self: center;
 `;
 
 const StyledInputContainer = styled.div`
@@ -95,12 +99,14 @@ export const generateColumns = (
           <Checkbox
             aria-label={t`Select`}
             checked={isRowSelected}
-            variant={CheckboxVariant.Tertiary}
-            onChange={(event) => {
+            variant={'soft'}
+            onCheckedChange={(isChecked, eventDetails) => {
               onRowSelectionChange({
                 row: props.row,
-                checked: event.target.checked,
-                isShiftClick: (event.nativeEvent as MouseEvent).shiftKey,
+                checked: isChecked,
+                isShiftClick:
+                  'shiftKey' in eventDetails.event &&
+                  eventDetails.event.shiftKey === true,
               });
             }}
           />
@@ -175,23 +181,23 @@ export const generateColumns = (
         switch (column.fieldType.type) {
           case 'checkbox':
             component = (
-              <StyledToggleContainer
+              <StyledSwitchContainer
                 id={formatSafeId(`${columnKey}-${row.__index}`)}
                 onClick={(event) => {
                   event.stopPropagation();
                 }}
               >
-                <Toggle
-                  centered
-                  value={row[columnKey] as boolean}
-                  onChange={() => {
+                <StyledSwitch
+                  aria-label={column.label}
+                  checked={row[columnKey] as boolean}
+                  onCheckedChange={() => {
                     onRowChange({
                       ...row,
                       [columnKey]: !row[columnKey],
                     });
                   }}
                 />
-              </StyledToggleContainer>
+              </StyledSwitchContainer>
             );
             break;
           case 'select':

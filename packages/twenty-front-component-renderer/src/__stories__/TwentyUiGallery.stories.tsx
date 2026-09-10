@@ -120,9 +120,15 @@ export const IconPreact: Story = createGalleryStory(
   'preact',
 );
 
-export const InputReact: Story = createGalleryStory('twenty-ui-input-gallery');
-export const InputPreact: Story = createGalleryStory(
+// KNOWN ISSUE (TDD): The sandbox DOM lacks Element.matches(':disabled') for
+// unselected radios and Node.compareDocumentPosition() for React radio groups.
+export const InputReact: Story = createKnownFailureGalleryStory(
   'twenty-ui-input-gallery',
+  ['Radio', 'RadioGroup'],
+);
+export const InputPreact: Story = createKnownFailureGalleryStory(
+  'twenty-ui-input-gallery',
+  ['Radio'],
   'preact',
 );
 

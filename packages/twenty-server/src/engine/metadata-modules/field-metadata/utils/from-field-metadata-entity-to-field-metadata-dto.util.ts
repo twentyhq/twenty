@@ -29,6 +29,7 @@ export const fromFieldMetadataEntityToFieldMetadataDto = (
     derivedFieldMetadataIds?.uniqueFieldMetadataIds.has(entity.id) ?? false,
   isSearchable:
     derivedFieldMetadataIds?.searchableFieldMetadataIds.has(entity.id) ?? false,
+  isAuditLogged: entity.isAuditLogged,
   defaultValue: entity.defaultValue ?? undefined,
   options: entity.options ?? undefined,
   settings: entity.settings ?? undefined,
