@@ -14,6 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type CalDavSyncCursor } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/types/caldav-sync-cursor';
 import { extractICalData } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/extract-ical-data.util';
 import { isCalDavCollectionHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-caldav-collection-href.util';
+import { isEventCalendar } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-event-calendar.util';
 import { isEventInTimeRange } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-event-in-time-range.util';
 import { isInvalidSyncTokenResponse } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-invalid-sync-token-response.util';
 import { isSameCalDavResource } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-same-caldav-resource.util';
@@ -42,9 +43,7 @@ export class CalDavFetchEventsService {
   async listEventCalendars(client: DAVClient): Promise<DAVCalendar[]> {
     const calendars = await client.fetchCalendars();
 
-    return calendars.filter((calendar) =>
-      calendar.components?.includes('VEVENT'),
-    );
+    return calendars.filter(isEventCalendar);
   }
 
   async fetchChangedEventHrefs(
