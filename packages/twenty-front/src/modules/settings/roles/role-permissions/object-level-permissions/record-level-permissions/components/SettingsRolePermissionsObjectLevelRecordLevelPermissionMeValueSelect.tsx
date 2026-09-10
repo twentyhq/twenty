@@ -24,6 +24,7 @@ import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/con
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
+import { getComparableWorkspaceMemberRelationFields } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/getComparableWorkspaceMemberRelationFields';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -110,48 +111,66 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
       }
     }
 
-    const compatibleWorkspaceMemberFields = !isDefined(
-      workspaceMemberMetadataItem,
-    )
-      ? []
-      : workspaceMemberMetadataItem.fields.filter((field) => {
-          if (
-            field.name === 'createdAt' ||
-            field.name === 'updatedAt' ||
-            field.name === 'deletedAt' ||
-            field.name === 'id'
-          ) {
-            return false;
-          }
+    const isRelationToWorkspaceMember =
+      selectedFieldMetadataItem?.type === FieldMetadataType.RELATION &&
+      selectedFieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
+        CoreObjectNameSingular.WorkspaceMember;
 
-          if (!targetFieldType) {
-            return true;
-          }
+    const getCompatibleWorkspaceMemberFields = () => {
+      if (!isDefined(workspaceMemberMetadataItem)) {
+        return [];
+      }
 
-          if (
-            !RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES.includes(
-              targetFieldType,
-            )
-          ) {
-            return false;
-          }
-
-          if (field.type === targetFieldType) {
-            return true;
-          }
-
-          if (isCompositeFieldType(field.type)) {
-            const fieldCompositeType = compositeTypeDefinitions.get(field.type);
-
-            if (isDefined(fieldCompositeType)) {
-              return fieldCompositeType.properties.some(
-                (property) => property.type === targetFieldType,
-              );
-            }
-          }
-
-          return false;
+      if (selectedFieldMetadataItem?.type === FieldMetadataType.RELATION) {
+        return getComparableWorkspaceMemberRelationFields({
+          workspaceMemberFieldMetadataItems: workspaceMemberMetadataItem.fields,
+          targetObjectMetadataId:
+            selectedFieldMetadataItem.relation?.targetObjectMetadata.id,
         });
+      }
+
+      return workspaceMemberMetadataItem.fields.filter((field) => {
+        if (
+          field.name === 'createdAt' ||
+          field.name === 'updatedAt' ||
+          field.name === 'deletedAt' ||
+          field.name === 'id'
+        ) {
+          return false;
+        }
+
+        if (!targetFieldType) {
+          return true;
+        }
+
+        if (
+          !RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES.includes(
+            targetFieldType,
+          )
+        ) {
+          return false;
+        }
+
+        if (field.type === targetFieldType) {
+          return true;
+        }
+
+        if (isCompositeFieldType(field.type)) {
+          const fieldCompositeType = compositeTypeDefinitions.get(field.type);
+
+          if (isDefined(fieldCompositeType)) {
+            return fieldCompositeType.properties.some(
+              (property) => property.type === targetFieldType,
+            );
+          }
+        }
+
+        return false;
+      });
+    };
+
+    const compatibleWorkspaceMemberFields =
+      getCompatibleWorkspaceMemberFields();
 
     const handleSelectField = (
       fieldMetadataId: string,
@@ -160,11 +179,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
       onSelect(fieldMetadataId, subFieldName);
       closeDropdown();
     };
-
-    const isRelationToWorkspaceMember =
-      selectedFieldMetadataItem?.type === FieldMetadataType.RELATION &&
-      selectedFieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
-        CoreObjectNameSingular.WorkspaceMember;
 
     const menuItems: Array<{
       id: string;

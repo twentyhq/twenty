@@ -3,12 +3,23 @@ import {
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { FlatRowLevelPermissionPredicateValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service';
 
 const PREDICATE_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-0000000000a1';
 const FIELD_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-0000000000b1';
 const OBJECT_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-0000000000c1';
 const ROLE_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-0000000000d1';
+const WORKSPACE_MEMBER_ID_FIELD_UNIVERSAL_IDENTIFIER =
+  '00000000-0000-4000-8000-0000000000b2';
+const WORKSPACE_MEMBER_RELATION_FIELD_UNIVERSAL_IDENTIFIER =
+  '00000000-0000-4000-8000-0000000000b3';
+const WORKSPACE_MEMBER_OTHER_RELATION_FIELD_UNIVERSAL_IDENTIFIER =
+  '00000000-0000-4000-8000-0000000000b4';
+const RELATION_TARGET_OBJECT_UNIVERSAL_IDENTIFIER =
+  '00000000-0000-4000-8000-0000000000c2';
+const OTHER_RELATION_TARGET_OBJECT_UNIVERSAL_IDENTIFIER =
+  '00000000-0000-4000-8000-0000000000c3';
 const RECORD_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
 const mapsFrom = (
@@ -45,7 +56,35 @@ const relatedMaps = (fieldType: FieldMetadataType) => ({
     {
       universalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
       type: fieldType,
+      name: 'accountOwner',
       label: 'Account Owner',
+      relationTargetObjectMetadataUniversalIdentifier:
+        RELATION_TARGET_OBJECT_UNIVERSAL_IDENTIFIER,
+    },
+    {
+      universalIdentifier: WORKSPACE_MEMBER_ID_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldMetadataType.UUID,
+      name: 'id',
+      label: 'Id',
+    },
+    {
+      universalIdentifier: WORKSPACE_MEMBER_RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldMetadataType.RELATION,
+      name: 'region',
+      label: 'Region',
+      universalSettings: { relationType: RelationType.MANY_TO_ONE },
+      relationTargetObjectMetadataUniversalIdentifier:
+        RELATION_TARGET_OBJECT_UNIVERSAL_IDENTIFIER,
+    },
+    {
+      universalIdentifier:
+        WORKSPACE_MEMBER_OTHER_RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldMetadataType.RELATION,
+      name: 'team',
+      label: 'Team',
+      universalSettings: { relationType: RelationType.MANY_TO_ONE },
+      relationTargetObjectMetadataUniversalIdentifier:
+        OTHER_RELATION_TARGET_OBJECT_UNIVERSAL_IDENTIFIER,
     },
   ]),
   flatObjectMetadataMaps: mapsFrom([
@@ -204,11 +243,57 @@ describe('FlatRowLevelPermissionPredicateValidatorService', () => {
           operand: RowLevelPermissionPredicateOperand.IS,
           value: null,
           workspaceMemberFieldMetadataUniversalIdentifier:
-            FIELD_UNIVERSAL_IDENTIFIER,
+            WORKSPACE_MEMBER_ID_FIELD_UNIVERSAL_IDENTIFIER,
         }),
       );
 
       expect(result.errors).toEqual([]);
+    });
+
+    it('should accept two relations pointing to the same object', () => {
+      const result = service.validateFlatRowLevelPermissionPredicateCreation(
+        buildCreationArgs({
+          fieldType: FieldMetadataType.RELATION,
+          operand: RowLevelPermissionPredicateOperand.IS,
+          value: null,
+          workspaceMemberFieldMetadataUniversalIdentifier:
+            WORKSPACE_MEMBER_RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+        }),
+      );
+
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should reject two relations pointing to different objects', () => {
+      const result = service.validateFlatRowLevelPermissionPredicateCreation(
+        buildCreationArgs({
+          fieldType: FieldMetadataType.RELATION,
+          operand: RowLevelPermissionPredicateOperand.IS,
+          value: null,
+          workspaceMemberFieldMetadataUniversalIdentifier:
+            WORKSPACE_MEMBER_OTHER_RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+        }),
+      );
+
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].message).toContain(
+        'must be relations pointing to the same object',
+      );
+    });
+
+    it('should reject an operand the relation query filter cannot express', () => {
+      const result = service.validateFlatRowLevelPermissionPredicateCreation(
+        buildCreationArgs({
+          fieldType: FieldMetadataType.RELATION,
+          operand: RowLevelPermissionPredicateOperand.CONTAINS,
+          value: null,
+          workspaceMemberFieldMetadataUniversalIdentifier:
+            WORKSPACE_MEMBER_RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+        }),
+      );
+
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].message).toContain('use IS or IS_NOT');
     });
   });
 

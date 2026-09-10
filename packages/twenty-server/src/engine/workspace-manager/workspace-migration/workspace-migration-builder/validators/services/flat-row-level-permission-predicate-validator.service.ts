@@ -6,8 +6,8 @@ import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import {
-  type FieldMetadataType,
-  type RowLevelPermissionPredicateOperand,
+  FieldMetadataType,
+  RowLevelPermissionPredicateOperand,
   type ViewFilterOperand,
 } from 'twenty-shared/types';
 import {
@@ -20,8 +20,12 @@ import {
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { RowLevelPermissionPredicateExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
+import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -90,6 +94,22 @@ export class FlatRowLevelPermissionPredicateValidatorService {
 
       if (isDefined(invalidValueError)) {
         validationResult.errors.push(invalidValueError);
+      }
+
+      const workspaceMemberFieldError = this.getWorkspaceMemberFieldError({
+        fieldMetadata,
+        operand: flatPredicateToValidate.operand,
+        workspaceMemberFieldMetadata: this.findWorkspaceMemberFieldMetadata({
+          workspaceMemberFieldMetadataUniversalIdentifier:
+            flatPredicateToValidate.workspaceMemberFieldMetadataUniversalIdentifier,
+          flatFieldMetadataMaps,
+        }),
+        workspaceMemberFieldMetadataUniversalIdentifier:
+          flatPredicateToValidate.workspaceMemberFieldMetadataUniversalIdentifier,
+      });
+
+      if (isDefined(workspaceMemberFieldError)) {
+        validationResult.errors.push(workspaceMemberFieldError);
       }
     }
 
@@ -286,6 +306,22 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       if (isDefined(invalidValueError)) {
         validationResult.errors.push(invalidValueError);
       }
+
+      const workspaceMemberFieldError = this.getWorkspaceMemberFieldError({
+        fieldMetadata,
+        operand: updatedPredicate.operand,
+        workspaceMemberFieldMetadata: this.findWorkspaceMemberFieldMetadata({
+          workspaceMemberFieldMetadataUniversalIdentifier:
+            updatedPredicate.workspaceMemberFieldMetadataUniversalIdentifier,
+          flatFieldMetadataMaps,
+        }),
+        workspaceMemberFieldMetadataUniversalIdentifier:
+          updatedPredicate.workspaceMemberFieldMetadataUniversalIdentifier,
+      });
+
+      if (isDefined(workspaceMemberFieldError)) {
+        validationResult.errors.push(workspaceMemberFieldError);
+      }
     }
 
     const objectMetadata = flatObjectMetadataMaps
@@ -378,6 +414,106 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       message: t`Value "${stringifiedValue}" resolves to no record for operand "${operand}", the current record is not available to a row level permission predicate`,
       userFriendlyMessage: msg`Predicate value is not valid for this operand`,
     };
+  }
+
+  private findWorkspaceMemberFieldMetadata({
+    workspaceMemberFieldMetadataUniversalIdentifier,
+    flatFieldMetadataMaps,
+  }: {
+    workspaceMemberFieldMetadataUniversalIdentifier: string | null | undefined;
+    flatFieldMetadataMaps:
+      | UniversalFlatEntityMaps<UniversalFlatFieldMetadata>
+      | undefined;
+  }): UniversalFlatFieldMetadata | undefined {
+    if (
+      !isDefined(workspaceMemberFieldMetadataUniversalIdentifier) ||
+      !isDefined(flatFieldMetadataMaps)
+    ) {
+      return undefined;
+    }
+
+    return findFlatEntityByUniversalIdentifier({
+      universalIdentifier: workspaceMemberFieldMetadataUniversalIdentifier,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+  }
+
+  private getWorkspaceMemberFieldError({
+    fieldMetadata,
+    operand,
+    workspaceMemberFieldMetadata,
+    workspaceMemberFieldMetadataUniversalIdentifier,
+  }: {
+    fieldMetadata: UniversalFlatFieldMetadata;
+    operand: RowLevelPermissionPredicateOperand;
+    workspaceMemberFieldMetadata: UniversalFlatFieldMetadata | undefined;
+    workspaceMemberFieldMetadataUniversalIdentifier: string | null | undefined;
+  }) {
+    if (!isDefined(workspaceMemberFieldMetadataUniversalIdentifier)) {
+      return undefined;
+    }
+
+    if (!isDefined(workspaceMemberFieldMetadata)) {
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.FIELD_METADATA_NOT_FOUND,
+        message: t`Workspace member field metadata not found`,
+        userFriendlyMessage: msg`Workspace member field metadata not found`,
+      };
+    }
+
+    if (
+      getFilterTypeFromFieldType(fieldMetadata.type) === 'RELATION' &&
+      operand !== RowLevelPermissionPredicateOperand.IS &&
+      operand !== RowLevelPermissionPredicateOperand.IS_NOT
+    ) {
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`Operand "${operand}" is not supported on a relation field, use IS or IS_NOT`,
+        userFriendlyMessage: msg`This operand is not supported on a relation field`,
+      };
+    }
+
+    if (
+      !isMorphOrRelationUniversalFlatFieldMetadata(
+        workspaceMemberFieldMetadata,
+      ) ||
+      workspaceMemberFieldMetadata.type !== FieldMetadataType.RELATION
+    ) {
+      return undefined;
+    }
+
+    if (
+      workspaceMemberFieldMetadata.universalSettings?.relationType !==
+      RelationType.MANY_TO_ONE
+    ) {
+      const workspaceMemberFieldName = workspaceMemberFieldMetadata.name;
+
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`Workspace member field "${workspaceMemberFieldName}" holds several records, only a many-to-one relation can be compared`,
+        userFriendlyMessage: msg`This workspace member field holds several records and cannot be compared`,
+      };
+    }
+
+    if (
+      fieldMetadata.type !== FieldMetadataType.RELATION ||
+      !isDefined(
+        workspaceMemberFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
+      ) ||
+      workspaceMemberFieldMetadata.relationTargetObjectMetadataUniversalIdentifier !==
+        fieldMetadata.relationTargetObjectMetadataUniversalIdentifier
+    ) {
+      const workspaceMemberFieldName = workspaceMemberFieldMetadata.name;
+      const fieldName = fieldMetadata.name;
+
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`Fields "${fieldName}" and "${workspaceMemberFieldName}" must be relations pointing to the same object to be compared`,
+        userFriendlyMessage: msg`These two relation fields do not point to the same object`,
+      };
+    }
+
+    return undefined;
   }
 
   private getInvalidValueError({
