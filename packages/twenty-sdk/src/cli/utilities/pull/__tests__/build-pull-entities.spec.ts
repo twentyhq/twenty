@@ -656,6 +656,19 @@ describe('buildPullEntities', () => {
     expect(navigationMenuItem?.fileBaseName).toBe('pet');
   });
 
+  it('should name a navigation menu item whose name is only whitespace after the object it targets', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({
+        navigationMenuItems: [buildNavigationMenuItemManifest({ name: '   ' })],
+      }),
+    );
+    const navigationMenuItem = entities.find(
+      (entity) => entity.kind === 'navigationMenuItem',
+    );
+
+    expect(navigationMenuItem?.fileBaseName).toBe('pet');
+  });
+
   it('should name a navigation menu item targeting a standard object after that object', () => {
     const { entities } = buildPullEntities(
       buildManifest({
@@ -791,6 +804,33 @@ describe('buildPullEntities', () => {
       universalIdentifier: NAVIGATION_FOLDER_UID,
       type: NavigationMenuItemType.FOLDER,
       name: '',
+      position: 0,
+    });
+    const { entities } = buildPullEntities(
+      buildManifest({
+        navigationMenuItems: [
+          folderManifest,
+          buildNavigationMenuItemManifest({
+            folderUniversalIdentifier: NAVIGATION_FOLDER_UID,
+          }),
+        ],
+      }),
+    );
+    const navigationMenuItem = entities.find(
+      (entity) => entity.universalIdentifier === NAVIGATION_MENU_ITEM_UID,
+    );
+
+    expect(navigationMenuItem?.parentName).toBeNull();
+  });
+
+  it('should give a navigation menu item sitting in a folder named only with punctuation no parent', () => {
+    const {
+      targetObjectUniversalIdentifier: _targetObjectUniversalIdentifier,
+      ...folderManifest
+    } = buildNavigationMenuItemManifest({
+      universalIdentifier: NAVIGATION_FOLDER_UID,
+      type: NavigationMenuItemType.FOLDER,
+      name: '///',
       position: 0,
     });
     const { entities } = buildPullEntities(

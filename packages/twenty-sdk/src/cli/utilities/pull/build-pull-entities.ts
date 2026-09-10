@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import {
   FIELD_ENUM_BINDINGS,
   INDEX_ENUM_BINDINGS,
@@ -14,6 +13,7 @@ import {
   buildIndexFileBaseName,
   buildViewFieldFileBaseName,
   type FieldLocation,
+  isUsableFileNameSegment,
   toFileBaseName,
 } from '@/cli/utilities/pull/pull-file-base-name';
 import { stripGraphqlTypename } from '@/cli/utilities/pull/strip-graphql-typename';
@@ -241,7 +241,7 @@ const getNavigationMenuItemName = ({
     pageLayoutUniversalIdentifier,
   } = navigationMenuItemManifest;
 
-  if (isNonEmptyString(name)) {
+  if (isUsableFileNameSegment(name)) {
     return name;
   }
 
@@ -274,7 +274,7 @@ const getNavigationMenuItemFolderName = ({
     (candidate) => candidate.universalIdentifier === folderUniversalIdentifier,
   )?.name;
 
-  return isNonEmptyString(folderName) ? folderName : null;
+  return isUsableFileNameSegment(folderName) ? folderName : null;
 };
 
 export const buildPullEntities = (
