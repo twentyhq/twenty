@@ -16,6 +16,7 @@ import { beautifyExactDate } from '~/utils/date-utils';
 import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
 
 export const useBillingWording = () => {
   const { t } = useLingui();
@@ -64,15 +65,15 @@ export const useBillingWording = () => {
     return capitalize(getIntervalLabel(isMonthlyPlan, true));
   };
 
-  const yearlyPrice =
-    formatPrices[
-      currentBillingSubscription.metadata['plan'] as BillingPlanKey
-    ]?.[SubscriptionInterval.Year];
+  const currentPlanKey = getSubscriptionPlanKey(currentBillingSubscription);
 
-  const monthlyPrice =
-    formatPrices[
-      currentBillingSubscription.metadata['plan'] as BillingPlanKey
-    ]?.[SubscriptionInterval.Month];
+  const yearlyPrice = isDefined(currentPlanKey)
+    ? formatPrices[currentPlanKey]?.[SubscriptionInterval.Year]
+    : undefined;
+
+  const monthlyPrice = isDefined(currentPlanKey)
+    ? formatPrices[currentPlanKey]?.[SubscriptionInterval.Month]
+    : undefined;
 
   const getYearlyDiscountPercent = () =>
     isDefined(monthlyPrice) && isDefined(yearlyPrice) && monthlyPrice > 0

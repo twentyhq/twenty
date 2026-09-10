@@ -30,7 +30,8 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
+import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
+import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -39,6 +40,12 @@ import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import {
+  WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME,
+  WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS,
+  type WarmUpApplicationLogicFunctionsJobData,
+} from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-application-logic-functions.job-constants';
+import { findLogicFunctionUniversalIdentifiersToWarmUp } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/utils/find-logic-function-universal-identifiers-to-warm-up.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -63,6 +70,8 @@ export class ApplicationInstallService {
     private readonly cacheLockService: CacheLockService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly workspaceQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metricsService: MetricsService,
   ) {}
@@ -105,8 +114,6 @@ export class ApplicationInstallService {
       return true;
     }
 
-    const lockKey = `app-install:${params.workspaceId}:${appRegistration.universalIdentifier}`;
-
     return this.cacheLockService.withLock(
       () =>
         this.doInstallApplication(appRegistration, {
@@ -115,8 +122,11 @@ export class ApplicationInstallService {
           skipWorkspaceCompatibilityCheck:
             params.skipWorkspaceCompatibilityCheck,
         }),
-      lockKey,
-      { ttl: 60_000, ms: 500, maxRetries: 120 },
+      buildApplicationLifecycleLockKey({
+        workspaceId: params.workspaceId,
+        universalIdentifier: appRegistration.universalIdentifier,
+      }),
+      APPLICATION_LIFECYCLE_LOCK_OPTIONS,
     );
   }
 
@@ -270,6 +280,9 @@ export class ApplicationInstallService {
 
     const isVersionUpgrade = isDefined(existingApplication);
 
+    const hasNeverCompletedInstall =
+      isVersionUpgrade && !isDefined(existingApplication.version);
+
     const previousVersion = existingApplication?.version ?? undefined;
 
     const newVersion = resolvedPackage.packageJson.version;
@@ -294,25 +307,12 @@ export class ApplicationInstallService {
       sourceType: appRegistration.sourceType,
     });
 
-    const isUpgradeOfInstalledApplication =
-      isVersionUpgrade && application.state === ApplicationState.INSTALLED;
-
-    const hasNeverCompletedInstall =
-      isVersionUpgrade && application.state === ApplicationState.INSTALLING;
-
     const incomingVersion = resolvedPackage.packageJson.version;
 
     // Rollback is scoped to the work after the application row exists: reaching
     // this catch means creation succeeded, so only an application that never
     // finished installing needs uninstalling.
     try {
-      if (isUpgradeOfInstalledApplication) {
-        await this.applicationService.update(application.id, {
-          state: ApplicationState.UPGRADING,
-          workspaceId: params.workspaceId,
-        });
-      }
-
       if (
         isVersionUpgrade &&
         isDefined(application.version) &&
@@ -367,13 +367,27 @@ export class ApplicationInstallService {
         universalIdentifier,
       });
 
-      await this.applicationManifestApplyService.applyManifestToWorkspace({
-        workspaceId: params.workspaceId,
-        manifest: resolvedPackage.manifest,
-        applicationRegistrationId: appRegistration.id,
-        application,
-        forceSdkClientGeneration: true,
-      });
+      const { workspaceMigration } =
+        await this.applicationManifestApplyService.applyManifestToWorkspace({
+          workspaceId: params.workspaceId,
+          manifest: resolvedPackage.manifest,
+          applicationRegistrationId: appRegistration.id,
+          application,
+          forceSdkClientGeneration: true,
+          persistVersion: false,
+        });
+
+      const isPostInstallHookSynchronous =
+        resolvedPackage.manifest.application.postInstallLogicFunction
+          ?.shouldRunSynchronously === true;
+
+      if (!isPostInstallHookSynchronous) {
+        await this.markInstallCompleted({
+          applicationId: application.id,
+          version: newVersion,
+          workspaceId: params.workspaceId,
+        });
+      }
 
       await this.runPostInstallHook({
         manifest: resolvedPackage.manifest,
@@ -384,6 +398,14 @@ export class ApplicationInstallService {
         universalIdentifier,
       });
 
+      if (isPostInstallHookSynchronous) {
+        await this.markInstallCompleted({
+          applicationId: application.id,
+          version: newVersion,
+          workspaceId: params.workspaceId,
+        });
+      }
+
       await this.applicationManifestApplyService.refreshRegistrationFromManifest(
         {
           applicationRegistrationId: appRegistration.id,
@@ -393,9 +415,11 @@ export class ApplicationInstallService {
         },
       );
 
-      await this.applicationService.update(application.id, {
-        state: ApplicationState.INSTALLED,
+      await this.enqueueLogicFunctionWarmUp({
         workspaceId: params.workspaceId,
+        applicationId: application.id,
+        logicFunctionUniversalIdentifiers:
+          findLogicFunctionUniversalIdentifiersToWarmUp(workspaceMigration),
       });
 
       this.logger.log(
@@ -407,14 +431,6 @@ export class ApplicationInstallService {
       this.logger.error(
         `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
       );
-
-      if (isUpgradeOfInstalledApplication) {
-        await this.applicationService.revertStateToInstalledBestEffort({
-          applicationId: application.id,
-          universalIdentifier,
-          workspaceId: params.workspaceId,
-        });
-      }
 
       if (!isVersionUpgrade || hasNeverCompletedInstall) {
         // Rollback of a failed fresh install: the app never finished
@@ -515,6 +531,43 @@ export class ApplicationInstallService {
         ApplicationExceptionCode.PRE_INSTALL_ERROR,
       );
     }
+  }
+
+  private async enqueueLogicFunctionWarmUp(
+    data: WarmUpApplicationLogicFunctionsJobData,
+  ): Promise<void> {
+    if (data.logicFunctionUniversalIdentifiers.length === 0) {
+      return;
+    }
+
+    try {
+      await this.workspaceQueueService.add<WarmUpApplicationLogicFunctionsJobData>(
+        WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME,
+        data,
+        WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to enqueue prebuilt warm-up for application ${data.applicationId} in workspace ${data.workspaceId}: ` +
+          `${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+    }
+  }
+
+  private async markInstallCompleted({
+    applicationId,
+    version,
+    workspaceId,
+  }: {
+    applicationId: string;
+    version: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.applicationService.update(applicationId, {
+      version,
+      workspaceId,
+    });
   }
 
   private async runPostInstallHook(params: {
@@ -753,7 +806,6 @@ export class ApplicationInstallService {
       sourceType: params.sourceType,
       applicationRegistrationId: params.applicationRegistrationId,
       workspaceId: params.workspaceId,
-      state: ApplicationState.INSTALLING,
     });
   }
 }

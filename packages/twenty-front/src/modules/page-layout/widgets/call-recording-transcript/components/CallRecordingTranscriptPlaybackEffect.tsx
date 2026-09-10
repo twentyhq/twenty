@@ -6,7 +6,7 @@ import { useEffect, useMemo } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 type CallRecordingTranscriptPlaybackEffectProps = {
-  videoElement: HTMLVideoElement | null;
+  mediaElement: HTMLMediaElement | null;
   timedItems: CallRecordingTranscriptTimedItem[] | undefined;
   onPlaybackPositionChange: (
     playbackPosition: CallRecordingTranscriptPlaybackPosition,
@@ -14,7 +14,7 @@ type CallRecordingTranscriptPlaybackEffectProps = {
 };
 
 export const CallRecordingTranscriptPlaybackEffect = ({
-  videoElement,
+  mediaElement,
   timedItems,
   onPlaybackPositionChange,
 }: CallRecordingTranscriptPlaybackEffectProps) => {
@@ -27,16 +27,16 @@ export const CallRecordingTranscriptPlaybackEffect = ({
   );
 
   useEffect(() => {
-    if (!isDefined(videoElement) || !isNonEmptyArray(timePoints)) {
+    if (!isDefined(mediaElement) || !isNonEmptyArray(timePoints)) {
       return;
     }
 
     return watchCallRecordingTranscriptPlayback({
-      videoElement,
+      videoElement: mediaElement,
       timePoints,
       onPlaybackPositionChange,
     });
-  }, [videoElement, timePoints, onPlaybackPositionChange]);
+  }, [mediaElement, timePoints, onPlaybackPositionChange]);
 
   return null;
 };

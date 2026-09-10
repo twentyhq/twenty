@@ -28,12 +28,18 @@ Install the latest stable version of Twenty with a single command:
 bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-To install a specific version or branch:
+To install a specific version:
 ```bash
-VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+VERSION=v2.38.1 bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
-- Replace x.y.z with the desired version number.
-- Replace branch-name with the name of the branch you want to install.
+- `VERSION` must be a full release tag published on [Docker Hub](https://hub.docker.com/r/twentycrm/twenty/tags), such as `v2.38.1`. Aliases such as `v2` or `latest` are not accepted.
+- The matching `docker-compose.yml` is fetched from the `twenty/<version>` git tag, so releases that predate these tags (v2.9.0 and older) can't be installed with the script.
+
+To fetch the configuration files from a branch instead, for example to test unreleased changes:
+```bash
+BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+- Replace branch-name with the branch to fetch `docker-compose.yml` and `.env.example` from. The image still defaults to the latest release unless `VERSION` is also set.
 
 ## Option 2: Manual steps
 Follow these steps for a manual setup.

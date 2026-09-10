@@ -51,6 +51,7 @@ import {
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
+import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
 
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,
@@ -115,6 +116,26 @@ const isNestedRelationFilter = (
   isObject(filterValue) &&
   Object.keys(filterValue).some((key) => !UUID_FILTER_OPERATOR_KEYS.has(key));
 
+// A record fetched through a relation often carries the related record
+// without its join column, like { list: { id } } and no listId.
+const getJoinColumnValue = ({
+  record,
+  joinColumnName,
+}: {
+  record: Record<string, any>;
+  joinColumnName: string;
+}) => {
+  if (record[joinColumnName] !== undefined) {
+    return record[joinColumnName];
+  }
+
+  const relationRecord = record[joinColumnName.slice(0, -'Id'.length)];
+
+  return isObject(relationRecord)
+    ? (relationRecord.id ?? null)
+    : relationRecord;
+};
+
 const isRecordMatchingNestedRelationFilter = ({
   relationRecord,
   nestedFilter,
@@ -136,7 +157,7 @@ const isRecordMatchingNestedRelationFilter = ({
     return false;
   }
 
-  if (!isObject(relationRecord) || Array.isArray(relationRecord)) {
+  if (!isObject(relationRecord)) {
     return isWithinNegatedFilter;
   }
 
@@ -150,13 +171,48 @@ const isRecordMatchingNestedRelationFilter = ({
     return isWithinNegatedFilter;
   }
 
-  return isRecordMatchingFilter({
-    record: relationRecord,
-    filter: nestedFilter,
-    objectMetadataItem: relationTargetObjectMetadataItem,
-    objectMetadataItems,
-    isWithinNegatedFilter,
-  });
+  const isRecordMatchingNestedFilter = (record: unknown) =>
+    isRecordMatchingFilter({
+      record,
+      filter: nestedFilter,
+      objectMetadataItem: relationTargetObjectMetadataItem,
+      objectMetadataItems,
+      isWithinNegatedFilter,
+    });
+
+  // A to-many relation matches when any of its loaded records does, the way
+  // the backend EXISTS does.
+  return getLoadedRelationRecords({
+    relationRecord,
+    relationTargetObjectNameSingular:
+      relationTargetObjectMetadataItem.nameSingular,
+  }).some(
+    (relatedRecord) =>
+      isObject(relatedRecord) && isRecordMatchingNestedFilter(relatedRecord),
+  );
+};
+
+// A relation value is a single record for a to-one relation, and for a to-many
+// relation either an array of records or a connection, depending on whether
+// the record comes from the store or from a GraphQL response.
+const getLoadedRelationRecords = ({
+  relationRecord,
+  relationTargetObjectNameSingular,
+}: {
+  relationRecord: object;
+  relationTargetObjectNameSingular: string;
+}): unknown[] => {
+  if (Array.isArray(relationRecord)) {
+    return relationRecord;
+  }
+
+  if (
+    isObjectRecordConnection(relationTargetObjectNameSingular, relationRecord)
+  ) {
+    return relationRecord.edges?.map((edge) => edge.node) ?? [];
+  }
+
+  return [relationRecord];
 };
 
 export const isRecordMatchingFilter = ({
@@ -511,7 +567,7 @@ export const isRecordMatchingFilter = ({
         if (isJoinColumn) {
           return isMatchingUUIDFilter({
             uuidFilter: filterValue as UUIDFilter,
-            value: record[filterKey],
+            value: getJoinColumnValue({ record, joinColumnName: filterKey }),
           });
         }
 
