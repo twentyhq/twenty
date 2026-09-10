@@ -1,5 +1,9 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { type Key, useContext, useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { RadioGroup } from 'twenty-ui/input';
+import { getSpreadsheetImportSingleSelectColumn } from '@/spreadsheet-import/components/internal/getSpreadsheetImportSingleSelectColumn';
+import { type SpreadsheetImportTableProps } from '@/spreadsheet-import/types/SpreadsheetImportTableProps';
 import { DataGrid, type DataGridProps } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -105,60 +109,107 @@ const StyledDataGridContainer = styled.div<{ headerRowHeight?: number }>`
   }
 `;
 
-type SpreadsheetImportTableProps<Data> = Pick<
-  DataGridProps<Data>,
-  | 'selectedRows'
-  | 'onSelectedRowsChange'
-  | 'columns'
-  | 'headerRowHeight'
-  | 'rowKeyGetter'
-  | 'rows'
-> &
-  Partial<
-    Pick<DataGridProps<Data>, 'onCellClick' | 'renderers' | 'onRowsChange'>
-  > & {
-    className?: string;
-    rowHeight?: number;
-    hiddenHeader?: boolean;
-  };
-
-export const SpreadsheetImportTable = <Data,>({
-  className,
-  columns,
-  renderers,
-  headerRowHeight,
-  rowKeyGetter,
-  rows,
-  onRowsChange,
-  onCellClick,
-  onSelectedRowsChange,
-  selectedRows,
-}: SpreadsheetImportTableProps<Data>) => {
+export const SpreadsheetImportTable = <TData, TRowKey extends Key = Key>(
+  props: SpreadsheetImportTableProps<TData, TRowKey>,
+) => {
+  const {
+    className,
+    columns,
+    renderers,
+    headerRowHeight,
+    rowKeyGetter,
+    rows,
+    onRowsChange,
+    onCellClick,
+  } = props;
   const { colorScheme } = useContext(ThemeContext);
-
   const { rtl } = useSpreadsheetImportInternal();
   const themeClassName = colorScheme === 'dark' ? 'rdg-dark' : 'rdg-light';
 
-  if (!rows?.length || !columns?.length) return null;
+  const singleSelectionRowKeyGetter =
+    props.selectionMode === 'single' ? props.rowKeyGetter : undefined;
+  const tableColumns = useMemo(
+    () =>
+      isDefined(singleSelectionRowKeyGetter)
+        ? [
+            getSpreadsheetImportSingleSelectColumn(singleSelectionRowKeyGetter),
+            ...columns,
+          ]
+        : columns,
+    [columns, singleSelectionRowKeyGetter],
+  );
+
+  const selectRow = (rowKey: TRowKey) => {
+    if (props.selectionMode === 'single' && rowKey !== props.selectedRowKey) {
+      props.onSelectedRowChange(rowKey);
+    }
+  };
+
+  const handleCellClick: DataGridProps<TData>['onCellClick'] = (
+    args,
+    event,
+  ) => {
+    onCellClick?.(args, event);
+    if (
+      props.selectionMode === 'single' &&
+      !event.defaultPrevented &&
+      !event.isGridDefaultPrevented()
+    ) {
+      selectRow(props.rowKeyGetter(args.row));
+    }
+  };
+
+  if (!rows?.length || !tableColumns.length) return null;
+
+  const table = (
+    <DataGrid
+      direction={rtl ? 'rtl' : 'ltr'}
+      rowHeight={40}
+      className={`${className || ''} ${themeClassName}`}
+      columns={tableColumns}
+      headerRowHeight={headerRowHeight}
+      rowKeyGetter={rowKeyGetter}
+      onRowsChange={onRowsChange}
+      rows={rows}
+      renderers={renderers}
+      onCellClick={handleCellClick}
+      selectedRows={props.selectedRows}
+      onSelectedRowsChange={props.onSelectedRowsChange}
+      onSelectedCellChange={
+        props.selectionMode === 'single'
+          ? ({ row }) => {
+              if (isDefined(row)) {
+                selectRow(props.rowKeyGetter(row));
+              }
+            }
+          : undefined
+      }
+    />
+  );
+
+  if (props.selectionMode === 'single') {
+    return (
+      <RadioGroup
+        render={
+          <StyledDataGridContainer
+            headerRowHeight={headerRowHeight ?? undefined}
+          />
+        }
+        aria-label={props.selectionLabel}
+        value={props.selectedRowKey}
+        onValueChange={selectRow}
+        // The grid owns keyboard navigation, including rows outside the viewport.
+        onKeyDownCapture={(event) => event.preventBaseUIHandler()}
+        onKeyDown={(event) => event.preventBaseUIHandler()}
+      >
+        {table}
+      </RadioGroup>
+    );
+  }
 
   return (
     <StyledDataGridContainer headerRowHeight={headerRowHeight ?? undefined}>
-      <DataGrid
-        direction={rtl ? 'rtl' : 'ltr'}
-        rowHeight={40}
-        {...{
-          className: `${className || ''} ${themeClassName}`,
-          columns,
-          headerRowHeight,
-          rowKeyGetter,
-          onRowsChange,
-          rows,
-          renderers,
-          onCellClick,
-          onSelectedRowsChange,
-          selectedRows,
-        }}
-      />
+      {table}
     </StyledDataGridContainer>
   );
 };

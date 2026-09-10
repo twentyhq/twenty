@@ -13,9 +13,7 @@ const StyledContainer = styled.div`
 `;
 
 const SelectHeaderTableExample = () => {
-  const [selectedRowIndexes, setSelectedRowIndexes] = useState<
-    ReadonlySet<number>
-  >(new Set([0]));
+  const [selectedRowIndex, setSelectedRowIndex] = useState(0);
 
   return (
     <RsiContext.Provider value={{ rtl: false }}>
@@ -26,8 +24,8 @@ const SelectHeaderTableExample = () => {
             ['Name', 'Email'],
             ['Ada', 'ada@example.com'],
           ]}
-          selectedRowIndexes={selectedRowIndexes}
-          setSelectedRowIndexes={setSelectedRowIndexes}
+          selectedRowIndex={selectedRowIndex}
+          onSelectedRowChange={setSelectedRowIndex}
         />
       </StyledContainer>
     </RsiContext.Provider>
