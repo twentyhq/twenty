@@ -29,16 +29,15 @@ export const StyledDropdownContentContainer = styled.div<{
   isDropdownInModal?: boolean;
 }>`
   display: flex;
+  z-index: ${({ isDropdownInModal }) =>
+    isDropdownInModal
+      ? RootStackingContextZIndices.DropdownPortalAboveModal
+      : RootStackingContextZIndices.DropdownPortalBelowModal};
   zoom: calc(1 / var(--t-zoom, 1));
 
   > * {
     zoom: var(--t-zoom, 1);
   }
-
-  z-index: ${({ isDropdownInModal }) =>
-    isDropdownInModal
-      ? RootStackingContextZIndices.DropdownPortalAboveModal
-      : RootStackingContextZIndices.DropdownPortalBelowModal};
 `;
 
 const StyledDropdownInsideContainer = styled.div`
