@@ -4,8 +4,9 @@ import { useId, useState } from 'react';
 import { t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { Status } from 'twenty-ui/data-display';
-import { IconKey } from 'twenty-ui/icon';
-import { Button, LightButton } from 'twenty-ui/input';
+import { Loader } from 'twenty-ui/feedback';
+import { IconKey, IconTrash } from 'twenty-ui/icon';
+import { Button, IconButton, LightButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
@@ -17,13 +18,36 @@ import { StyledSettingsError } from 'src/front-components/components/StyledSetti
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
 import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
 import { type GranolaConnectionStatus } from 'src/front-components/types/granola-connection-status.type';
-import { getGranolaKeyType } from 'src/front-components/utils/get-granola-key-type.util';
+import { isGranolaConnectionReady } from 'src/front-components/utils/is-granola-connection-ready.util';
 
 const StyledKeyForm = styled.form`
   display: flex;
   flex-direction: column;
   gap: ${() => themeCssVariables.spacing[3]};
 `;
+
+const StyledActions = styled.div`
+  display: flex;
+  gap: ${() => themeCssVariables.spacing[2]};
+  justify-content: flex-start;
+`;
+
+const StyledConnectButtonContainer = styled.div`
+  button {
+    gap: ${() => themeCssVariables.spacing[2]};
+    min-width: ${() => themeCssVariables.spacing[32]};
+    padding-inline: ${() => themeCssVariables.spacing[4]};
+  }
+`;
+
+const StyledConnectionHint = styled.div`
+  color: ${() => themeCssVariables.font.color.secondary};
+  font-family: ${() => themeCssVariables.font.family};
+  font-size: ${() => themeCssVariables.font.size.sm};
+`;
+
+// Button's isLoading animation clips the title; keep the loader in its icon slot.
+const ConnectionLoader = () => <Loader />;
 
 type GranolaConnectionSectionProps = {
   status: GranolaConnectionStatus;
@@ -34,20 +58,6 @@ type GranolaConnectionSectionProps = {
   onConnect: (apiKey: string) => Promise<boolean>;
   onRemove: () => Promise<void>;
   onRetry: () => void;
-};
-
-const getConnectionDescription = (status: GranolaConnectionStatus) => {
-  if (!status.isConnected) {
-    return status.error ?? t('Granola rejected the saved key.');
-  }
-
-  if (!isDefined(status.registration)) {
-    return t('Connected to Granola.');
-  }
-
-  return getGranolaKeyType(status.registration.scopes) === 'workspace'
-    ? t('Workspace key. Syncs public workspace notes and shared spaces.')
-    : t('Personal key. Syncs your notes and notes shared with you.');
 };
 
 export const GranolaConnectionSection = ({
@@ -64,11 +74,29 @@ export const GranolaConnectionSection = ({
   const [apiKeyDraft, setApiKeyDraft] = useState('');
 
   const trimmedApiKeyDraft = apiKeyDraft.trim();
-  const isKeyRejected =
-    status.isApiKeySet && !status.isConnected && status.isGranolaReachable;
+  const isConnected =
+    !isConnecting &&
+    isGranolaConnectionReady(status) &&
+    !isDefined(connectError);
+  const connectionError = isConnecting
+    ? undefined
+    : (connectError ??
+      (status.isApiKeySet && !isConnected
+        ? t('Could not connect to Granola. Try again.')
+        : undefined));
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (isConnecting || isRemoving) {
+      return;
+    }
+
+    if (status.isApiKeySet) {
+      onRetry();
+
+      return;
+    }
 
     if (!isNonEmptyString(trimmedApiKeyDraft)) {
       return;
@@ -90,25 +118,23 @@ export const GranolaConnectionSection = ({
         )}
       />
       <StyledSettingsSectionStack>
-        {status.isApiKeySet && (
+        {isConnected && (
           <StyledSettingsCard>
             <SettingsOptionCardContent
               Icon={IconKey}
               title={t('API key')}
-              description={getConnectionDescription(status)}
+              description={t(
+                'New and updated notes appear in Call Recordings automatically.',
+              )}
             >
-              {status.isConnected && (
-                <Status color="green" text={t('Connected')} />
-              )}
-              {isKeyRejected && <Status color="red" text={t('Rejected')} />}
-              {!status.isGranolaReachable && (
-                <>
-                  <Status color="orange" text={t('Unreachable')} />
-                  <LightButton title={t('Retry')} onClick={onRetry} />
-                </>
-              )}
-              <LightButton
-                title={isRemoving ? t('Removing…') : t('Remove')}
+              <Status color="green" text={t('Connected')} />
+              <IconButton
+                Icon={IconTrash}
+                variant="tertiary"
+                accent="danger"
+                ariaLabel={
+                  isRemoving ? t('Removing API key') : t('Remove API key')
+                }
                 disabled={isRemoving}
                 onClick={() => onRemove()}
               />
@@ -118,33 +144,52 @@ export const GranolaConnectionSection = ({
         {isDefined(removeError) && (
           <StyledSettingsError>{removeError}</StyledSettingsError>
         )}
-        {!status.isApiKeySet && (
+        {!isConnected && (
           <StyledKeyForm onSubmit={handleSubmit}>
             <LabelledSettingsField
               label={t('API key')}
               inputId={inputId}
-              errorMessage={connectError}
-              hint={t(
-                'Workspace keys sync notes shared with the whole workspace. Personal keys also sync your own notes. The key type is detected automatically.',
-              )}
+              errorMessage={connectionError}
             >
               <StyledSettingsTextInput
                 id={inputId}
                 type="password"
                 autoComplete="off"
-                placeholder="grn_…"
+                placeholder={status.isApiKeySet ? '••••••••' : 'grn_…'}
                 value={apiKeyDraft}
-                disabled={isConnecting}
+                disabled={isConnecting || isRemoving || status.isApiKeySet}
                 onChange={(event) => setApiKeyDraft(event.target.value)}
               />
             </LabelledSettingsField>
-            <Button
-              type="submit"
-              title={t('Connect')}
-              accent="blue"
-              isLoading={isConnecting}
-              disabled={isConnecting || !isNonEmptyString(trimmedApiKeyDraft)}
-            />
+            <StyledActions>
+              {status.isApiKeySet && isDefined(connectionError) && (
+                <LightButton
+                  title={t('Cancel')}
+                  disabled={isRemoving}
+                  onClick={() => onRemove()}
+                />
+              )}
+              <StyledConnectButtonContainer>
+                <Button
+                  type="submit"
+                  title={isConnecting ? t('Connecting') : t('Connect')}
+                  accent="blue"
+                  justify="center"
+                  Icon={isConnecting ? ConnectionLoader : undefined}
+                  disabled={
+                    isConnecting ||
+                    isRemoving ||
+                    (!status.isApiKeySet &&
+                      !isNonEmptyString(trimmedApiKeyDraft))
+                  }
+                />
+              </StyledConnectButtonContainer>
+            </StyledActions>
+            {isConnecting && (
+              <StyledConnectionHint role="status">
+                {t('Configuring your connection. This may take a few seconds.')}
+              </StyledConnectionHint>
+            )}
           </StyledKeyForm>
         )}
       </StyledSettingsSectionStack>

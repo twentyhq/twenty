@@ -33,9 +33,6 @@ export const granolaConnectionStatusHandler = async () => {
     throw error;
   }
   const canManage = await currentUserCanManageGranolaOrThrow();
-  if (!canManage) {
-    return { isConnected: true, isApiKeySet: true, canManage };
-  }
   try {
     const { webhook_endpoints: endpoints } =
       await client.listWebhookEndpoints();

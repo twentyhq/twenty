@@ -16,7 +16,6 @@ import {
 } from 'twenty-ui/theme-constants';
 
 import { GranolaConnectionSection } from 'src/front-components/components/GranolaConnectionSection';
-import { GranolaLiveSyncSection } from 'src/front-components/components/GranolaLiveSyncSection';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { type GranolaConnectionStatus } from 'src/front-components/types/granola-connection-status.type';
 import { fetchGranolaConnectionStatusOrThrow } from 'src/front-components/utils/fetch-granola-connection-status-or-throw.util';
@@ -30,6 +29,10 @@ const StyledContainer = styled.div`
   flex-direction: column;
   gap: ${() => themeCssVariables.spacing[8]};
   width: 100%;
+
+  button svg {
+    pointer-events: none;
+  }
 `;
 
 const StyledNotice = styled.div`
@@ -71,7 +74,10 @@ export const GranolaSettings = () => {
 
       return status;
     } catch {
-      setState({ step: 'unavailable' });
+      setRegistrationError(t('Could not connect to Granola. Try again.'));
+      setState((current) =>
+        current.step === 'ready' ? current : { step: 'unavailable' },
+      );
 
       return undefined;
     }
@@ -83,12 +89,8 @@ export const GranolaSettings = () => {
 
     try {
       await registerGranolaWebhookOrThrow();
-    } catch (error) {
-      setRegistrationError(
-        error instanceof Error
-          ? error.message
-          : t('Could not set up live sync. Try again.'),
-      );
+    } catch {
+      setRegistrationError(t('Could not connect to Granola. Try again.'));
     }
 
     await refreshConnectionStatus();
@@ -96,11 +98,14 @@ export const GranolaSettings = () => {
   };
 
   const loadConnectionStatus = async () => {
+    setIsRegistering(true);
+    setRegistrationError(undefined);
     const status = await refreshConnectionStatus();
 
     if (isDefined(status) && shouldSetUpLiveSync(status)) {
       await registerLiveSync();
     }
+    setIsRegistering(false);
   };
 
   const handleConnect = async (apiKey: string): Promise<boolean> => {
@@ -131,12 +136,10 @@ export const GranolaSettings = () => {
     try {
       await removeGranolaWebhookOrThrow();
       await setGranolaApiKeyOrThrow({ frontComponentId, apiKey: '' });
-    } catch (error) {
-      setRemoveError(
-        error instanceof Error
-          ? error.message
-          : t('Could not remove the API key. Try again.'),
-      );
+      setConnectError(undefined);
+      setRegistrationError(undefined);
+    } catch {
+      setRemoveError(t('Could not remove the API key. Try again.'));
     }
 
     await refreshConnectionStatus();
@@ -167,33 +170,20 @@ export const GranolaSettings = () => {
           </StyledNotice>
         )}
         {state.step === 'ready' && (
-          <>
-            <GranolaConnectionSection
-              status={state.status}
-              isConnecting={isConnecting}
-              isRemoving={isRemoving}
-              connectError={connectError}
-              removeError={removeError}
-              onConnect={handleConnect}
-              onRemove={handleRemove}
-              onRetry={refreshConnectionStatus}
-            />
-            {state.status.isConnected && !state.status.canManage && (
-              <StyledNotice>
-                {t(
-                  'Only members who can manage applications can change live sync, folders, and imports.',
-                )}
-              </StyledNotice>
-            )}
-            {state.status.isConnected && state.status.canManage && (
-              <GranolaLiveSyncSection
-                status={state.status}
-                isRegistering={isRegistering}
-                registrationError={registrationError}
-                onRegister={registerLiveSync}
-              />
-            )}
-          </>
+          <GranolaConnectionSection
+            status={state.status}
+            isConnecting={isConnecting || isRegistering}
+            isRemoving={isRemoving}
+            connectError={connectError ?? registrationError}
+            removeError={removeError}
+            onConnect={handleConnect}
+            onRemove={handleRemove}
+            onRetry={
+              state.status.isConnected && state.status.canManage
+                ? registerLiveSync
+                : loadConnectionStatus
+            }
+          />
         )}
       </StyledContainer>
     </ThemeContext.Provider>
