@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
 import { Status } from 'twenty-ui/data-display';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { Checkbox, CheckboxSize } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsMessageFoldersTreeItemProps = {
@@ -207,8 +207,8 @@ export const SettingsMessageFoldersTreeItem = ({
               <Checkbox
                 checked={folder.isSynced}
                 indeterminate={isIndeterminate}
-                onChange={() => onToggleFolder(folder)}
-                size={CheckboxSize.Small}
+                onCheckedChange={() => onToggleFolder(folder)}
+                size={'sm'}
               />
             </StyledCheckboxWrapper>
           </StyledRightSection>

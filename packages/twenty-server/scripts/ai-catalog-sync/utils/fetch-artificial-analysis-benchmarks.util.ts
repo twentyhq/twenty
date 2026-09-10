@@ -1,6 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { buildEffortLookupKey } from './build-effort-lookup-key.util';
 import { normalizeModelName } from './normalize-model-name.util';
+import { parseArtificialAnalysisEffort } from './parse-artificial-analysis-effort.util';
 import { type BenchmarkIndex } from '../types/benchmark-index.type';
 import { type BenchmarkRecord } from '../types/benchmark-record.type';
 
@@ -102,6 +104,14 @@ export const fetchArtificialAnalysisBenchmarks = async (
 
   const index: BenchmarkIndex = new Map();
 
+  const file = (key: string, record: BenchmarkRecord): void => {
+    const existing = index.get(key);
+
+    if (!isDefined(existing) || preferOver(record, existing)) {
+      index.set(key, record);
+    }
+  };
+
   for (const model of models) {
     // One malformed row must not cost us every measurement in the response.
     if (typeof model !== 'object' || model === null) {
@@ -127,6 +137,10 @@ export const fetchArtificialAnalysisBenchmarks = async (
         containerKey: 'cost_per_task',
         leafKey: 'total_cost',
       }),
+      effort:
+        typeof model.name === 'string'
+          ? parseArtificialAnalysisEffort(model.name)
+          : undefined,
       aliases,
     };
 
@@ -136,13 +150,17 @@ export const fetchArtificialAnalysisBenchmarks = async (
 
     for (const alias of aliases) {
       const key = normalizeModelName(alias);
-      const existing = index.get(key);
 
-      if (
-        key.length > 0 &&
-        (!isDefined(existing) || preferOver(record, existing))
-      ) {
-        index.set(key, record);
+      if (key.length === 0) {
+        continue;
+      }
+
+      // The bare key keeps the ceiling; the effort key lets a pinned variant
+      // read the figure taken at its own effort.
+      file(key, record);
+
+      if (isDefined(record.effort)) {
+        file(buildEffortLookupKey(key, record.effort), record);
       }
     }
   }
