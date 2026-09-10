@@ -5,10 +5,13 @@ import { useContext, useId } from 'react';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
+import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 // Expanded, the row is sized off the page card header beside it so the rules
@@ -65,7 +68,12 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   width: ${({ isExpanded }) =>
     isExpanded ? 'auto' : themeCssVariables.spacing[6]};
 
-  &:hover {
+  &:disabled {
+    color: ${themeCssVariables.font.color.quaternary};
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
     background: ${({ isActive }) =>
       isActive
         ? themeCssVariables.background.transparent.light
@@ -96,6 +104,9 @@ export const MainNavigationDrawerModeSwitcher = () => {
   const { theme } = useContext(ThemeContext);
   const tooltipId = useId();
 
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
   const isMobile = useIsMobile();
   const isExpanded = useIsNavigationDrawerContentExpanded();
   const modes = useNavigationDrawerModes();
@@ -128,6 +139,10 @@ export const MainNavigationDrawerModeSwitcher = () => {
               isExpanded={isExpanded}
               aria-label={label}
               aria-current={isActive}
+              disabled={
+                mode === NAVIGATION_DRAWER_TABS.SETTINGS &&
+                isLayoutCustomizationModeEnabled
+              }
               onClick={() => switchNavigationDrawerMode(mode)}
             >
               <StyledModeIcon>

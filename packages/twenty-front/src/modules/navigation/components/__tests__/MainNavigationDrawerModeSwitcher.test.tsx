@@ -1,3 +1,5 @@
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { createStore, Provider as JotaiProvider } from 'jotai';
 import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
@@ -6,7 +8,7 @@ import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavig
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
 
@@ -26,12 +28,24 @@ jest.mock('twenty-ui/surfaces', () => ({
 
 const mockSwitchNavigationDrawerMode = jest.fn();
 
-const renderModeSwitcher = () =>
+const renderModeSwitcher = (isLayoutCustomizationModeEnabled = false) => {
+  const store = createStore();
+
+  store.set(
+    isLayoutCustomizationModeEnabledState.atom,
+    isLayoutCustomizationModeEnabled,
+  );
+
   render(
     <I18nProvider i18n={i18n}>
-      <MainNavigationDrawerModeSwitcher />
+      <JotaiProvider store={store}>
+        <MainNavigationDrawerModeSwitcher />
+      </JotaiProvider>
     </I18nProvider>,
   );
+
+  return { store };
+};
 
 describe('MainNavigationDrawerModeSwitcher', () => {
   beforeEach(() => {
@@ -86,6 +100,36 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       NAVIGATION_DRAWER_TABS.SETTINGS,
     );
   });
+
+  it.each([true, false])(
+    'disables Settings while editing layout with expanded=%s and restores it afterward',
+    async (isExpanded) => {
+      jest
+        .mocked(useIsNavigationDrawerContentExpanded)
+        .mockReturnValue(isExpanded);
+      const { store } = renderModeSwitcher(true);
+      const settingsButton = screen.getByRole('button', { name: 'Settings' });
+
+      expect(settingsButton).toBeDisabled();
+      expect(screen.getByRole('button', { name: 'Home' })).toBeEnabled();
+      expect(screen.getByRole('button', { name: 'AI' })).toBeEnabled();
+
+      await userEvent.click(settingsButton);
+
+      expect(mockSwitchNavigationDrawerMode).not.toHaveBeenCalled();
+
+      act(() => {
+        store.set(isLayoutCustomizationModeEnabledState.atom, false);
+      });
+
+      expect(settingsButton).toBeEnabled();
+      await userEvent.click(settingsButton);
+
+      expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(
+        NAVIGATION_DRAWER_TABS.SETTINGS,
+      );
+    },
+  );
 
   it('renders nothing when no mode is available', () => {
     jest.mocked(useNavigationDrawerModes).mockReturnValue([]);
