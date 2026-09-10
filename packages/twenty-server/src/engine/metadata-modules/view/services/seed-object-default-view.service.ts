@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
@@ -7,12 +7,11 @@ import {
   computeSeedObjectDefaultViewOperations,
 } from 'src/engine/metadata-modules/view/utils/compute-seed-object-default-view-operations.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class SeedObjectDefaultViewService {
-  private readonly logger = new Logger(SeedObjectDefaultViewService.name);
-
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
@@ -110,12 +109,9 @@ export class SeedObjectDefaultViewService {
       );
 
     if (result.status === 'fail') {
-      this.logger.error(
-        `Failed to seed default view(s) for application ${applicationUniversalIdentifier} in workspace ${workspaceId}:\n${JSON.stringify(result, null, 2)}`,
-      );
-
-      throw new Error(
-        `Failed to seed default view(s) for workspace ${workspaceId}`,
+      throw new WorkspaceMigrationBuilderException(
+        result,
+        `Multiple validation errors occurred while seeding default views for workspace ${workspaceId}`,
       );
     }
   }
