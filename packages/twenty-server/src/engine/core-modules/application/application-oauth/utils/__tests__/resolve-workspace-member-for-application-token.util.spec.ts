@@ -1,19 +1,23 @@
 import { ApplicationExceptionCode } from 'src/engine/core-modules/application/application.exception';
 import { resolveWorkspaceMemberForApplicationToken } from 'src/engine/core-modules/application/application-oauth/utils/resolve-workspace-member-for-application-token.util';
-import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 
 const WORKSPACE_MEMBER_ID = 'member-id';
 const OTHER_WORKSPACE_MEMBER_ID = 'other-member-id';
 
+type TestWorkspaceMember = {
+  id: string;
+  userId: string;
+  deletedAt: string | null;
+};
+
 const buildMember = (
-  overrides: Partial<FlatWorkspaceMember> = {},
-): FlatWorkspaceMember =>
-  ({
-    id: WORKSPACE_MEMBER_ID,
-    userId: 'user-id',
-    deletedAt: null,
-    ...overrides,
-  }) as FlatWorkspaceMember;
+  overrides: Partial<TestWorkspaceMember> = {},
+): TestWorkspaceMember => ({
+  id: WORKSPACE_MEMBER_ID,
+  userId: 'user-id',
+  deletedAt: null,
+  ...overrides,
+});
 
 const resolve = ({
   member = buildMember(),
@@ -21,7 +25,7 @@ const resolve = ({
   requestUserWorkspaceId = null,
   requestWorkspaceMemberId = null,
 }: {
-  member?: FlatWorkspaceMember | undefined;
+  member?: TestWorkspaceMember | undefined;
   workspaceMemberId?: string;
   requestUserWorkspaceId?: string | null;
   requestWorkspaceMemberId?: string | null;

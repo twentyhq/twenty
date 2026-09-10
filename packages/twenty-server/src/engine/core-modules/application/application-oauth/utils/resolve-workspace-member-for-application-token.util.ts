@@ -5,7 +5,11 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
-import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
+
+type ActableWorkspaceMember = Pick<
+  FlatWorkspaceMember,
+  'id' | 'userId' | 'deletedAt'
+>;
 
 // Mirrors the agent run-as rules: a token already bound to a person may only
 // re-issue itself for that person, and only a live member can be acted as.
@@ -18,8 +22,10 @@ export const resolveWorkspaceMemberForApplicationToken = ({
   workspaceMemberId: string;
   requestUserWorkspaceId: string | null;
   requestWorkspaceMemberId: string | null;
-  flatWorkspaceMemberMaps: Pick<FlatWorkspaceMemberMaps, 'byId'>;
-}): FlatWorkspaceMember => {
+  flatWorkspaceMemberMaps: {
+    byId: Partial<Record<string, ActableWorkspaceMember>>;
+  };
+}): ActableWorkspaceMember => {
   if (
     isDefined(requestUserWorkspaceId) &&
     requestWorkspaceMemberId !== workspaceMemberId
