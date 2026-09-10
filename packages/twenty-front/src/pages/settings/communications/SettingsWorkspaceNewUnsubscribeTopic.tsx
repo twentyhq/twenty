@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useCreateUnsubscribeTopic } from '@/settings/unsubscribe-topics/hooks/useCreateUnsubscribeTopic';
@@ -155,7 +155,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
             description={t`Control whether recipients can find and manage this topic.`}
           />
           <Card rounded>
-            <SettingsOptionCardContentToggle
+            <SettingsOptionCardContentSwitch
               Icon={IconEye}
               title={t`Listed on the unsubscribe page`}
               description={t`Public topics appear on the recipient preferences page.`}

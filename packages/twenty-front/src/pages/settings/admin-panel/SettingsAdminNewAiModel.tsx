@@ -27,7 +27,7 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 
-import { Checkbox, Toggle } from 'twenty-ui/input';
+import { Checkbox, Switch } from 'twenty-ui/input';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 const StyledComboInputContainer = styled.div`
@@ -602,7 +602,11 @@ export const SettingsAdminNewAiModel = () => {
               name="supportsReasoning"
               control={form.control}
               render={({ field: { onChange, value } }) => (
-                <Toggle value={value} onChange={onChange} />
+                <Switch
+                  aria-label={t`Supports reasoning`}
+                  checked={value}
+                  onCheckedChange={onChange}
+                />
               )}
             />
           </Section>

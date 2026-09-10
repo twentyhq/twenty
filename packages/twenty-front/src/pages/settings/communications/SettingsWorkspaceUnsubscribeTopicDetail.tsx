@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useDeleteUnsubscribeTopic } from '@/settings/unsubscribe-topics/hooks/useDeleteUnsubscribeTopic';
 import { useUpdateUnsubscribeTopic } from '@/settings/unsubscribe-topics/hooks/useUpdateUnsubscribeTopic';
@@ -193,7 +194,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
             description={t`Control whether recipients can find and manage this topic.`}
           />
           <Card rounded>
-            <SettingsOptionCardContentToggle
+            <SettingsOptionCardContentSwitch
               Icon={IconEye}
               title={t`Listed on the unsubscribe page`}
               description={t`Public topics appear on the recipient preferences page.`}

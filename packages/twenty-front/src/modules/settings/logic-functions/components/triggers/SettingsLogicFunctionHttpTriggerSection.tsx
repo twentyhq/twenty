@@ -6,7 +6,6 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { type HttpRouteTriggerSettings } from 'twenty-shared/application';
 import { HTTPMethod } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,8 +18,8 @@ import {
   IconHttpPut,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { Toggle } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Switch } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -71,7 +70,6 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
   readonly,
 }: SettingsLogicFunctionHttpTriggerSectionProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const { copyToClipboard } = useCopyToClipboard();
   const { getLogicFunctionHttpUrl } = useGetLogicFunctionHttpUrl();
 
@@ -132,12 +130,14 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
             }
           />
           <StyledAuthRow>
-            <Toggle
-              value={value.isAuthRequired}
-              onChange={(checked) => updateField('isAuthRequired', checked)}
+            <Switch
+              aria-label={t`Require authentication`}
+              checked={value.isAuthRequired}
+              onCheckedChange={(checked) =>
+                updateField('isAuthRequired', checked)
+              }
               disabled={readonly}
-              toggleSize="small"
-              color={theme.color.blue}
+              size="sm"
             />
             <StyledAuthLabel>{t`Require authentication`}</StyledAuthLabel>
           </StyledAuthRow>

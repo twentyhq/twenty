@@ -2,9 +2,11 @@ import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdate
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SEARCH_VECTOR_FIELD_NAME } from '@/object-record/constants/SearchVectorFieldName';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { canBeSearchable } from '@/settings/data-model/fields/forms/utils/canBeSearchable';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
+
 import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
+import { canBeSearchable } from '@/settings/data-model/fields/forms/utils/canBeSearchable';
+
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -186,7 +188,7 @@ export const SettingsObjectSearchSection = ({
     <StyledSearchSectionContent>
       {!isReadOnly && (
         <Card rounded>
-          <SettingsOptionCardContentToggle
+          <SettingsOptionCardContentSwitch
             Icon={IconEye}
             title={t`Global search`}
             description={t`Show this object's records in the command menu (⌘K).`}

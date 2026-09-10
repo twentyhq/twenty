@@ -7,13 +7,23 @@ import {
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { styled } from '@linaria/react';
-import { useContext, useId } from 'react';
+import { useId } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { Toggle } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Switch } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledSettingsCardToggleContent = styled.div<{ disabled?: boolean }>`
+const StyledSwitch = styled(Switch)`
+  &[data-centered] {
+    align-self: center;
+  }
+
+  &[data-advanced-mode] {
+    color: ${themeCssVariables.color.yellow};
+  }
+`;
+
+const StyledSettingsCardSwitchContent = styled.div<{ disabled?: boolean }>`
   align-items: center;
   background-color: ${themeCssVariables.background.secondary};
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
@@ -28,48 +38,47 @@ const StyledSettingsCardToggleContent = styled.div<{ disabled?: boolean }>`
   }
 `;
 
-const StyledSettingsCardToggleButtonContainer = styled.span`
+const StyledSettingsCardSwitchButtonContainer = styled.span`
   align-items: center;
   display: flex;
   flex-shrink: 0;
   margin-left: auto;
 `;
 
-const StyledSettingsCardToggleCover = styled.span`
+const StyledSettingsCardSwitchCover = styled.span`
   cursor: pointer;
   inset: 0;
   position: absolute;
 `;
 
-type SettingsOptionCardContentToggleProps = {
+type SettingsOptionCardContentSwitchProps = {
   Icon?: IconComponent;
   title: React.ReactNode;
   description?: string;
   divider?: boolean;
   disabled?: boolean;
   advancedMode?: boolean;
-  toggleCentered?: boolean;
+  switchCentered?: boolean;
   checked: boolean;
   onChange: (checked: boolean) => void;
 };
 
-export const SettingsOptionCardContentToggle = ({
+export const SettingsOptionCardContentSwitch = ({
   Icon,
   title,
   description,
   divider,
   disabled = false,
   advancedMode = false,
-  toggleCentered = true,
+  switchCentered = true,
   checked,
   onChange,
-}: SettingsOptionCardContentToggleProps) => {
-  const { theme } = useContext(ThemeContext);
-  const toggleId = useId();
+}: SettingsOptionCardContentSwitchProps) => {
+  const switchId = useId();
 
   return (
     <>
-      <StyledSettingsCardToggleContent disabled={disabled}>
+      <StyledSettingsCardSwitchContent disabled={disabled}>
         {Icon && (
           <StyledSettingsCardIcon>
             <SettingsOptionIconCustomizer Icon={Icon} />
@@ -77,9 +86,9 @@ export const SettingsOptionCardContentToggle = ({
         )}
         <StyledSettingsCardTextContainer>
           <StyledSettingsCardTitle>
-            <label htmlFor={toggleId}>
+            <label htmlFor={switchId}>
               {title}
-              <StyledSettingsCardToggleCover />
+              <StyledSettingsCardSwitchCover />
             </label>
           </StyledSettingsCardTitle>
           {description && (
@@ -88,18 +97,18 @@ export const SettingsOptionCardContentToggle = ({
             </StyledSettingsCardDescription>
           )}
         </StyledSettingsCardTextContainer>
-        <StyledSettingsCardToggleButtonContainer>
-          <Toggle
-            id={toggleId}
-            value={checked}
-            onChange={onChange}
+        <StyledSettingsCardSwitchButtonContainer>
+          <StyledSwitch
+            id={switchId}
+            checked={checked}
+            onCheckedChange={onChange}
             disabled={disabled}
-            toggleSize="small"
-            color={advancedMode ? theme.color.yellow : theme.color.blue}
-            centered={toggleCentered}
+            size="sm"
+            data-advanced-mode={advancedMode || undefined}
+            data-centered={switchCentered || undefined}
           />
-        </StyledSettingsCardToggleButtonContainer>
-      </StyledSettingsCardToggleContent>
+        </StyledSettingsCardSwitchButtonContainer>
+      </StyledSettingsCardSwitchContent>
       {divider && <Separator />}
     </>
   );

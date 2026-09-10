@@ -17,14 +17,15 @@ import { CLEAR_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/mai
 import { SET_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/maintenance-mode/graphql/mutations/setMaintenanceMode';
 import { adminPanelMaintenanceModeState } from '@/settings/admin-panel/health-status/maintenance-mode/states/adminPanelMaintenanceModeState';
 import { SettingsDatePickerInput } from '@/settings/components/SettingsDatePickerInput';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
+
+import { InputHint } from 'twenty-ui/input';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useToast } from 'twenty-ui/feedback';
-import { InputHint } from 'twenty-ui/input';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -198,7 +199,7 @@ export const SettingsAdminMaintenanceMode = () => {
         description={t`Schedule a maintenance window and notify all users`}
       />
       <Card rounded>
-        <SettingsOptionCardContentToggle
+        <SettingsOptionCardContentSwitch
           Icon={IconTool}
           title={t`Maintenance mode`}
           description={toggleDescription}

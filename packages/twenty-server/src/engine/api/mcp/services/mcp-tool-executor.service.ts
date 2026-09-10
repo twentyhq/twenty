@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ToolSet } from 'ai';
+import { type ToolExecuteFunction, type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
@@ -83,9 +83,18 @@ export class McpToolExecutorService {
     const executionStartedAt = performance.now();
 
     try {
-      const result = await tool.execute(params.arguments, {
+      // ToolSet widens execute to a union no argument satisfies. The client's
+      // arguments arrive as raw JSON-RPC input and the output shape is checked by
+      // isToolOutputSuccessful, so both sides stay unknown here.
+      const execute = tool.execute as ToolExecuteFunction<
+        unknown,
+        unknown,
+        undefined
+      >;
+      const result = await execute(params.arguments, {
         toolCallId: '1',
         messages: [],
+        context: undefined,
       });
 
       this.metricsService.recordHistogram({

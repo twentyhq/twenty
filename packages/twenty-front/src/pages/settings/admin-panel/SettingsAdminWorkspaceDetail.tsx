@@ -42,11 +42,14 @@ import {
   IconSettings2,
   IconUsers,
 } from 'twenty-ui/icon';
-import { Button, Toggle } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button, Switch } from 'twenty-ui/input';
 import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
+
+import { Section } from 'twenty-ui/layout';
+
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
 import {
   type FeatureFlagKey,
   type GetAdminWorkspaceChatThreadsQuery,
@@ -360,9 +363,10 @@ export const SettingsAdminWorkspaceDetail = () => {
                         <TableCell>{flag.key}</TableCell>
                         <TableCell align="right">
                           {isDefined(flag.key) && (
-                            <Toggle
-                              value={displayedValue}
-                              onChange={(newValue) =>
+                            <Switch
+                              aria-label={flag.key}
+                              checked={displayedValue}
+                              onCheckedChange={(newValue) =>
                                 handleFeatureFlagUpdate(flag.key!, newValue)
                               }
                             />

@@ -1,9 +1,10 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -83,7 +84,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
     <StyledSettingsSecurityOptionsList>
       <Card rounded>
         {authProviders.google === true && (
-          <SettingsOptionCardContentToggle
+          <SettingsOptionCardContentSwitch
             Icon={IconGoogle}
             title={t`Google`}
             description={t`Allow Google-based login for users with SSO bypass permissions.`}
@@ -94,7 +95,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
           />
         )}
         {authProviders.microsoft === true && (
-          <SettingsOptionCardContentToggle
+          <SettingsOptionCardContentSwitch
             Icon={IconMicrosoft}
             title={t`Microsoft`}
             description={t`Allow Microsoft-based login for users with SSO bypass permissions.`}
@@ -105,7 +106,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
           />
         )}
         {authProviders.password && (
-          <SettingsOptionCardContentToggle
+          <SettingsOptionCardContentSwitch
             Icon={IconPassword}
             title={t`Password`}
             description={t`Allow email & password login for SSO bypass users.`}
