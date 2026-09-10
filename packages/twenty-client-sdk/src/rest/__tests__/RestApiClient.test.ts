@@ -412,6 +412,46 @@ describe('RestApiClient', () => {
       ).toBe('Bearer member-token');
     });
 
+    it('should exchange again when the cached member token is no longer accepted', async () => {
+      let exchangeCount = 0;
+      const fetchMock = vi
+        .fn()
+        .mockImplementation(async (url: string, requestInit: RequestInit) => {
+          if (url.endsWith('/metadata')) {
+            exchangeCount += 1;
+
+            return buildResponse(
+              JSON.stringify({
+                data: {
+                  generateApplicationTokenForWorkspaceMember: {
+                    token: `member-token-${exchangeCount}`,
+                  },
+                },
+              }),
+            );
+          }
+
+          const authorization = new Headers(requestInit.headers).get(
+            'Authorization',
+          );
+
+          return authorization === 'Bearer member-token-1'
+            ? buildResponse('', { status: 401, statusText: 'Unauthorized' })
+            : buildResponse('{}');
+        });
+
+      await new RestApiClient({
+        fetch: fetchMock,
+        runAs: { workspaceMemberId: WORKSPACE_MEMBER_ID },
+      }).get('/rest/people');
+
+      expect(exchangeCount).toBe(2);
+      expect(fetchMock).toHaveBeenCalledTimes(4);
+      expect(
+        (fetchMock.mock.calls[3][1].headers as Headers).get('Authorization'),
+      ).toBe('Bearer member-token-2');
+    });
+
     it('should surface the refusal when the server will not act as the member', async () => {
       const fetchMock = buildExchangeFetchMock({
         errors: [{ message: 'Workspace member not found' }],

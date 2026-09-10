@@ -108,6 +108,7 @@ export class RestApiClient {
   private authorizationToken: string | null;
   private runAs: TwentyClientRunAs | undefined;
   private workspaceMemberTokenPromise: Promise<string> | null = null;
+  private holdsExchangedWorkspaceMemberToken = false;
   private refreshAccessTokenPromise: Promise<string | null> | null = null;
 
   constructor(options?: RestApiClientOptions) {
@@ -229,6 +230,7 @@ export class RestApiClient {
       )
         .then((workspaceMemberAccessToken) => {
           this.authorizationToken = workspaceMemberAccessToken;
+          this.holdsExchangedWorkspaceMemberToken = true;
 
           return workspaceMemberAccessToken;
         })
@@ -269,6 +271,31 @@ export class RestApiClient {
       applicationAccessToken,
       workspaceMemberId,
     });
+  }
+
+  // A member token is short-lived; when the server stops accepting the cached
+  // one, the client exchanges again rather than keeping a dead credential.
+  private async requestReexchangedWorkspaceMemberToken(
+    requestOptions?: RestApiRequestOptions,
+  ): Promise<string | null> {
+    if (!this.holdsExchangedWorkspaceMemberToken) {
+      return null;
+    }
+
+    this.authorizationToken = null;
+    this.holdsExchangedWorkspaceMemberToken = false;
+    this.workspaceMemberTokenPromise = null;
+
+    try {
+      return await this.resolveAuthorizationToken(requestOptions);
+    } catch (exchangeError: unknown) {
+      console.error(
+        'Twenty REST client: workspace member token exchange failed',
+        exchangeError,
+      );
+
+      return null;
+    }
   }
 
   private resolveToken(): string {
@@ -442,7 +469,9 @@ export class RestApiClient {
     );
 
     if (response.status === 401) {
-      const refreshedAccessToken = await this.requestRefreshedAccessToken();
+      const refreshedAccessToken =
+        (await this.requestReexchangedWorkspaceMemberToken(requestOptions)) ??
+        (await this.requestRefreshedAccessToken());
 
       if (isDefined(refreshedAccessToken)) {
         response = await this.sendRequest(

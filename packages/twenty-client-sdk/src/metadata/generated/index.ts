@@ -209,6 +209,7 @@ export class MetadataApiClient {
   private authorizationToken: string | null;
   private runAsWorkspaceMemberId: string | null;
   private workspaceMemberTokenPromise: Promise<string> | null = null;
+  private holdsExchangedWorkspaceMemberToken = false;
   private refreshAccessTokenPromise: Promise<string | null> | null = null;
 
   constructor(options?: MetadataApiClientOptions) {
@@ -345,7 +346,9 @@ export class MetadataApiClient {
     });
 
     if (this.shouldRefreshToken(firstResponse)) {
-      const refreshedAccessToken = await this.requestRefreshedAccessToken();
+      const refreshedAccessToken =
+        (await this.requestReexchangedWorkspaceMemberToken()) ??
+        (await this.requestRefreshedAccessToken());
 
       if (refreshedAccessToken) {
         const retryResponse = await this.executeGraphqlRequest({
@@ -363,15 +366,13 @@ export class MetadataApiClient {
   }
 
   private async resolveAuthorizationToken(): Promise<string | null> {
-    if (
-      this.runAsWorkspaceMemberId === null ||
-      this.authorizationToken !== null
-    ) {
+    if (this.runAsWorkspaceMemberId === null) {
       return this.authorizationToken;
     }
 
-    // A headers callback is only known at request time; a credential it
-    // carries is the caller's own and wins over the member exchange.
+    // A headers callback is only known at request time and may change its
+    // answer; a credential it carries is the caller's own and wins over the
+    // member token, cached or not.
     const tokenFromResolvedHeaders = getTokenFromHeaders(
       await this.resolveHeaders(),
     );
@@ -380,12 +381,17 @@ export class MetadataApiClient {
       return tokenFromResolvedHeaders;
     }
 
+    if (this.authorizationToken !== null) {
+      return this.authorizationToken;
+    }
+
     if (!this.workspaceMemberTokenPromise) {
       this.workspaceMemberTokenPromise = this.requestWorkspaceMemberAccessToken(
         this.runAsWorkspaceMemberId,
       )
         .then((workspaceMemberAccessToken) => {
           this.authorizationToken = workspaceMemberAccessToken;
+          this.holdsExchangedWorkspaceMemberToken = true;
 
           return workspaceMemberAccessToken;
         })
@@ -397,6 +403,31 @@ export class MetadataApiClient {
     }
 
     return this.workspaceMemberTokenPromise;
+  }
+
+  // A member token is short-lived; when the server stops accepting the cached
+  // one, the client exchanges again rather than keeping a dead credential.
+  private async requestReexchangedWorkspaceMemberToken(): Promise<
+    string | null
+  > {
+    if (!this.holdsExchangedWorkspaceMemberToken) {
+      return null;
+    }
+
+    this.authorizationToken = null;
+    this.holdsExchangedWorkspaceMemberToken = false;
+    this.workspaceMemberTokenPromise = null;
+
+    try {
+      return await this.resolveAuthorizationToken();
+    } catch (exchangeError: unknown) {
+      console.error(
+        'Twenty client: workspace member token exchange failed',
+        exchangeError,
+      );
+
+      return null;
+    }
   }
 
   // Only a logic function run holds an application token, so acting as a

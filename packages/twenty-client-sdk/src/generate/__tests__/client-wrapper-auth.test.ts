@@ -685,6 +685,69 @@ describe('Generated client wrapper auth behavior', () => {
       ]);
     });
 
+    it('should exchange again when the cached member token is no longer accepted', async () => {
+      let exchangeCount = 0;
+      const calls: { url: string; authorization: string | null }[] = [];
+
+      const fetchMock = vi.fn(
+        async (url: string | URL | Request, requestInit?: RequestInit) => {
+          const call = {
+            url: String(url),
+            authorization: getAuthorizationHeaderValue(requestInit),
+          };
+
+          calls.push(call);
+
+          if (call.url.endsWith('/metadata')) {
+            exchangeCount += 1;
+
+            return createJsonResponse({
+              body: {
+                data: {
+                  generateApplicationTokenForWorkspaceMember: {
+                    token: `member-token-${exchangeCount}`,
+                  },
+                },
+              },
+            });
+          }
+
+          if (call.authorization === 'Bearer member-token-1') {
+            return createJsonResponse({
+              body: {
+                errors: [
+                  {
+                    extensions: { code: 'UNAUTHENTICATED' },
+                    message: 'Unauthorized',
+                  },
+                ],
+              },
+            });
+          }
+
+          return createJsonResponse({
+            body: { data: { record: { id: 'record-id' } } },
+          });
+        },
+      );
+
+      const twentyClient = new TwentyClass({
+        url: 'https://example.com/graphql',
+        fetch: fetchMock as unknown as typeof globalThis.fetch,
+        runAs: { workspaceMemberId: WORKSPACE_MEMBER_ID },
+      });
+
+      const result = await twentyClient.query({ record: { id: true } });
+
+      expect(result).toEqual({ data: { record: { id: 'record-id' } } });
+      expect(
+        calls
+          .filter((call) => call.url.endsWith('/graphql'))
+          .map((call) => call.authorization),
+      ).toEqual(['Bearer member-token-1', 'Bearer member-token-2']);
+      expect(exchangeCount).toBe(2);
+    });
+
     it('should surface the refusal when the server will not act as the member', async () => {
       const { fetchMock, calls } = buildMemberExchangeFetchMock({
         exchangeBody: {
