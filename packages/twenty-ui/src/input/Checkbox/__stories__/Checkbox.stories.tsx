@@ -128,3 +128,14 @@ export const CatalogDark: CatalogStory<Story, typeof Checkbox> = {
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
 };
+
+export const Soft: CatalogStory<Story, typeof Checkbox> = {
+  ...Catalog,
+  args: { variant: 'soft' },
+};
+
+export const SoftDark: CatalogStory<Story, typeof Checkbox> = {
+  ...Soft,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
+};

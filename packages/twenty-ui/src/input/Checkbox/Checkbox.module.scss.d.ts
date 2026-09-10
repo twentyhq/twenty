@@ -2,6 +2,7 @@ declare const classNames: {
   readonly root: 'root';
   readonly solid: 'solid';
   readonly outline: 'outline';
+  readonly soft: 'soft';
   readonly sm: 'sm';
   readonly md: 'md';
   readonly square: 'square';

@@ -1,1 +1,1 @@
-export type CheckboxVariant = 'solid' | 'outline';
+export type CheckboxVariant = 'solid' | 'outline' | 'soft';

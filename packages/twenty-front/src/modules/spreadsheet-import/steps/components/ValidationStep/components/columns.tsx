@@ -39,17 +39,6 @@ const StyledCheckboxContainer = styled.div`
   justify-content: center;
   line-height: 0;
   width: 100%;
-
-  [role='checkbox'] > span::before {
-    border-width: 1.43px;
-  }
-
-  [role='checkbox'][data-unchecked]:not([data-disabled]):not(
-      [data-indeterminate]
-    )
-    > span::before {
-    border-color: ${themeCssVariables.border.color.medium};
-  }
 `;
 
 const StyledToggleContainer = styled.div`
@@ -106,7 +95,7 @@ export const generateColumns = (
           <Checkbox
             aria-label={t`Select`}
             checked={isRowSelected}
-            variant={'outline'}
+            variant={'soft'}
             onCheckedChange={(isChecked, eventDetails) => {
               onRowSelectionChange({
                 row: props.row,

@@ -26,6 +26,11 @@
   --tw-checkbox-border-color: var(--t-border-color-secondary-inverted);
 }
 
+.soft {
+  --tw-checkbox-border-color: var(--t-border-color-medium);
+  --tw-checkbox-border-width: 1.43px;
+}
+
 .sm {
   --tw-checkbox-box-size: 12px;
   --tw-checkbox-icon-size: 14px;
