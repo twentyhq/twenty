@@ -6,7 +6,7 @@ import { normalizeAuthoredOverrides } from 'src/engine/metadata-modules/override
 import { type OverrideAuthorContext } from 'src/engine/metadata-modules/overrides/types/override-author-context.type';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 
-type ComputeMetadataOverridesBlobArgs<TProperties extends object> = {
+type DispatchUpdateToAuthoredOverrideArgs<TProperties extends object> = {
   overridableProperties: readonly string[];
   updatedProperties: TProperties;
   existingEntity: object;
@@ -18,10 +18,11 @@ type ComputeMetadataOverridesBlobArgs<TProperties extends object> = {
 const isEmptyRecord = (record: object): boolean =>
   Object.keys(record).length === 0;
 
-// Writes only the author's entry. A value that equals what the author would
-// see without its entry (the entries beneath it, then the base column) is a
-// revert, so the property leaves the entry instead of being stored again.
-export const computeMetadataOverridesBlob = <
+// Splits an update: overridable properties go to the author's entry, the rest
+// comes back as columnProperties for the caller to write. A value that equals
+// what the author would see without its entry (the entries beneath it, then
+// the base column) is a revert, so the property leaves the entry instead.
+export const dispatchUpdateToAuthoredOverride = <
   TProperties extends object,
   TEntry = Record<string, unknown>,
 >({
@@ -31,11 +32,11 @@ export const computeMetadataOverridesBlob = <
   existingOverrides,
   authorUniversalIdentifier,
   authorContext,
-}: ComputeMetadataOverridesBlobArgs<TProperties>): {
+}: DispatchUpdateToAuthoredOverrideArgs<TProperties>): {
   overrides: AuthoredOverrides<TEntry> | null;
-  remainingProperties: TProperties;
+  columnProperties: TProperties;
 } => {
-  const remainingRecord: Record<string, unknown> = {
+  const columnRecord: Record<string, unknown> = {
     ...(updatedProperties as unknown as Record<string, unknown>),
   };
   const existingRecord = existingEntity as Record<string, unknown>;
@@ -72,13 +73,13 @@ export const computeMetadataOverridesBlob = <
 
   const authorEntry = overridableProperties.reduce<Record<string, unknown>>(
     (entry, property) => {
-      if (remainingRecord[property] === undefined) {
+      if (columnRecord[property] === undefined) {
         return entry;
       }
 
-      const propertyValue = remainingRecord[property];
+      const propertyValue = columnRecord[property];
 
-      delete remainingRecord[property];
+      delete columnRecord[property];
 
       if (fastDeepEqual(propertyValue, readBeneathValue(property))) {
         const { [property]: _revertedProperty, ...restEntry } = entry;
@@ -102,6 +103,6 @@ export const computeMetadataOverridesBlob = <
 
   return {
     overrides,
-    remainingProperties: remainingRecord as unknown as TProperties,
+    columnProperties: columnRecord as unknown as TProperties,
   };
 };

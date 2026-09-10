@@ -14,7 +14,7 @@ type EntryWithTranslations = Record<string, unknown> & {
 const isSafeObjectKey = (key: string): boolean =>
   !['__proto__', 'constructor', 'prototype'].includes(key);
 
-// Mirrors computeMetadataOverridesBlob for the nested translations key of the
+// Mirrors dispatchUpdateToAuthoredOverride for the nested translations key of the
 // author's entry: an empty value deletes the translation, empty locale groups,
 // an empty entry and empty overrides collapse so a fully-reverted entity stores
 // no overrides at all. Custom entities call this too: their property edits
