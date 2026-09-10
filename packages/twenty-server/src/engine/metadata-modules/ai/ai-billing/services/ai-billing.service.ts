@@ -14,7 +14,6 @@ import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
-import { type WorkspaceAiModelSettings } from 'src/engine/metadata-modules/ai/ai-models/types/workspace-ai-model-settings.type';
 
 export type BillingUsageInput = {
   usage: LanguageModelUsage;
@@ -68,15 +67,8 @@ export class AiBillingService {
     });
   }
 
-  calculateCost(
-    modelId: ModelId,
-    billingInput: BillingUsageInput,
-    workspaceSettings?: WorkspaceAiModelSettings,
-  ): number {
-    const model = this.aiModelRegistryService.getEffectiveModelConfig(
-      modelId,
-      workspaceSettings,
-    );
+  calculateCost(modelId: ModelId, billingInput: BillingUsageInput): number {
+    const model = this.aiModelRegistryService.getEffectiveModelConfig(modelId);
     const { usage, cacheCreationTokens = 0 } = billingInput;
 
     const breakdown = computeCostBreakdown(model, {
