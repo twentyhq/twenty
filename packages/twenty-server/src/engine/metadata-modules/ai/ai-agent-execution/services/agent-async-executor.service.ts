@@ -288,9 +288,12 @@ export class AgentAsyncExecutorService {
     let nativeWebSearchCallCount = 0;
     let executionSteps: StepResult<ToolSet>[] = [];
     let resolvedModelId: string | undefined;
+    // Hoisted so the billing fallback below resolves the workspace's own tier
+    // when execution fails before a model is picked.
+    let workspace: WorkspaceEntity | null = null;
 
     try {
-      const workspace = isDefined(agent)
+      workspace = isDefined(agent)
         ? await this.workspaceRepository.findOneBy({ id: agent.workspaceId })
         : null;
 
@@ -578,10 +581,11 @@ export class AgentAsyncExecutorService {
         resolvedModelId ??
         agent?.modelId ??
         AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID;
-      const costInDollars = this.aiBillingService.calculateCost(modelId, {
-        usage: accumulatedUsage,
-        cacheCreationTokens,
-      });
+      const costInDollars = this.aiBillingService.calculateCost(
+        modelId,
+        { usage: accumulatedUsage, cacheCreationTokens },
+        workspace ?? undefined,
+      );
       const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
       const totalTokens =
         (accumulatedUsage.inputTokens ?? 0) +
