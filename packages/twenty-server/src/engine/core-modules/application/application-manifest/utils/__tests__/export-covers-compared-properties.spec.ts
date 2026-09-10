@@ -1,4 +1,5 @@
 import {
+  type NavigationMenuItemManifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
   type PageLayoutWidgetManifest,
@@ -16,6 +17,7 @@ import {
   FieldMetadataType,
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  NavigationMenuItemType,
   ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
@@ -27,10 +29,12 @@ import {
 
 import { fromFlatFieldMetadataToFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-metadata-to-field-manifest.util';
 import { fromFlatIndexMetadataToIndexManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-index-metadata-to-index-manifest.util';
+import { fromFlatNavigationMenuItemToNavigationMenuItemManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-navigation-menu-item-to-navigation-menu-item-manifest.util';
 import { fromFlatObjectMetadataToObjectManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-metadata-to-object-manifest.util';
 import { fromFlatPageLayoutTabToPageLayoutTabManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-tab-to-page-layout-tab-manifest.util';
 import { fromFlatPageLayoutToPageLayoutManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-to-page-layout-manifest.util';
 import { fromFlatPageLayoutWidgetToStandalonePageLayoutWidgetManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-widget-to-standalone-page-layout-widget-manifest.util';
+import { fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-navigation-menu-item-manifest-to-universal-flat-navigation-menu-item.util';
 import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-manifest-to-universal-flat-page-layout.util';
 import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-tab-manifest-to-universal-flat-page-layout-tab.util';
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
@@ -182,6 +186,20 @@ const PAGE_LAYOUT_MANIFEST: PageLayoutManifest = {
   objectUniversalIdentifier: OBJECT_UID,
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: PAGE_LAYOUT_TAB_UID,
   tabs: [PAGE_LAYOUT_TAB_MANIFEST],
+};
+
+const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
+  universalIdentifier: '77777777-7777-4777-8777-777777777777',
+  type: NavigationMenuItemType.VIEW,
+  name: 'All pets',
+  icon: 'IconPaw',
+  color: 'green',
+  position: 12,
+  link: 'https://example.com/pets',
+  folderUniversalIdentifier: '88888888-8888-4888-8888-888888888888',
+  viewUniversalIdentifier: VIEW_UID,
+  targetObjectUniversalIdentifier: OBJECT_UID,
+  pageLayoutUniversalIdentifier: '99999999-9999-4999-8999-999999999999',
 };
 
 const PAGE_LAYOUT_KIND_GAPS = {
@@ -386,6 +404,22 @@ const EXPORTED_KINDS: ExportedKind[] = [
     renamedProperties: {},
     workspaceLocalProperties: [],
     knownGaps: NESTED_VIEW_CHILD_GAPS,
+  },
+  {
+    metadataName: 'navigationMenuItem',
+    emittedProperties: Object.keys(
+      fromFlatNavigationMenuItemToNavigationMenuItemManifest({
+        flatNavigationMenuItem:
+          fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem({
+            navigationMenuItemManifest: NAVIGATION_MENU_ITEM_MANIFEST,
+            applicationUniversalIdentifier: APP_UID,
+            now: NOW,
+          }),
+      }),
+    ),
+    renamedProperties: {},
+    workspaceLocalProperties: [],
+    knownGaps: {},
   },
   {
     metadataName: 'pageLayout',

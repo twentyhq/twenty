@@ -2,16 +2,19 @@ import { type EntityMetadata, type WebClient } from '@slack/web-api';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
+import { type SlackPostMessageOptions } from 'src/logic-functions/types/slack-post-message-options.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { buildSlackRecordEntitiesForMessage } from 'src/logic-functions/utils/build-slack-record-entities-for-message';
 import { getSlackApiErrorCode } from 'src/logic-functions/utils/get-slack-api-error-code';
 import { isSlackMetadataError } from 'src/logic-functions/utils/is-slack-metadata-error';
 import { normalizeSlackParentMessageTimestamp } from 'src/logic-functions/utils/normalize-slack-parent-message-timestamp';
+import { retrySlackCallWhenRateLimited } from 'src/logic-functions/utils/retry-slack-call-when-rate-limited';
 import { sendSlackMessageWithBodyFallbacks } from 'src/logic-functions/utils/send-slack-message-with-body-fallbacks';
 
 export const postSlackMessage = async (
   client: WebClient,
   parameters: SlackPostMessageInput,
+  { waitOutRateLimit = true }: SlackPostMessageOptions = {},
 ): Promise<SlackToolResult> => {
   const parentTimestamp = normalizeSlackParentMessageTimestamp(
     parameters.parentMessageTimestamp,
@@ -32,8 +35,8 @@ export const postSlackMessage = async (
       },
       failureMessage: 'Failed to post Slack message',
       sendMessage: async (bodyFields) => {
-        try {
-          const data = await client.chat.postMessage({
+        const call = async () =>
+          client.chat.postMessage({
             channel: parameters.slackChannelId,
             thread_ts: parentTimestamp,
             ...(isDefined(parameters.unfurlLinks)
@@ -45,6 +48,11 @@ export const postSlackMessage = async (
             ...(entities.length > 0 ? { metadata: { entities } } : {}),
             ...bodyFields,
           });
+
+        try {
+          const data = await (waitOutRateLimit
+            ? retrySlackCallWhenRateLimited({ call })
+            : call());
 
           return {
             success: true,
