@@ -8,9 +8,9 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { type ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
 import { resolveWorkspaceMemberForApplicationTokenOrThrow } from 'src/engine/core-modules/application/application-oauth/utils/resolve-workspace-member-for-application-token-or-throw.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -26,8 +26,10 @@ export class ApplicationWorkspaceMemberTokenService {
 
   // The resulting token carries the member's role intersected with the
   // application's, so the application never gains access it does not already
-  // hold and never exceeds what the member could see themselves.
-  async generateTokenPairForWorkspaceMember({
+  // hold and never exceeds what the member could see themselves. Only a
+  // short-lived access token is issued: unlike an OAuth grant nobody consented
+  // to this credential, so nothing renewable must leave the server.
+  async generateAccessTokenForWorkspaceMember({
     workspaceId,
     application,
     workspaceMemberId,
@@ -39,7 +41,7 @@ export class ApplicationWorkspaceMemberTokenService {
     workspaceMemberId: string;
     requestUserWorkspaceId: string | null;
     requestWorkspaceMemberId: string | null;
-  }): Promise<ApplicationTokenPairDTO> {
+  }): Promise<AuthToken> {
     const { flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
@@ -63,7 +65,7 @@ export class ApplicationWorkspaceMemberTokenService {
       );
     }
 
-    return this.applicationTokenService.generateApplicationTokenPair({
+    return this.applicationTokenService.generateApplicationAccessToken({
       workspaceId,
       applicationId: application.id,
       userId: workspaceMember.userId,

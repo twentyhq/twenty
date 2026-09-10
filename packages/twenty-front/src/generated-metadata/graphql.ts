@@ -2951,7 +2951,7 @@ export type Mutation = {
   executeOneLogicFunction: LogicFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateApplicationToken: ApplicationTokenPair;
-  generateApplicationTokenForWorkspaceMember: ApplicationTokenPair;
+  generateApplicationTokenForWorkspaceMember: AuthToken;
   generatePlaygroundToken: AuthToken;
   generateTransientToken: TransientToken;
   getAuthTokensFromLoginToken: AuthTokens;

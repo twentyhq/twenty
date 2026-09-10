@@ -35,9 +35,7 @@ describe('createWorkspaceMemberCoreApiClient', () => {
   it('should exchange the application token for the member and build a client on it', async () => {
     restPostMock.mockResolvedValue({
       data: {
-        generateApplicationTokenForWorkspaceMember: {
-          applicationAccessToken: { token: 'member-token' },
-        },
+        generateApplicationTokenForWorkspaceMember: { token: 'member-token' },
       },
     });
 

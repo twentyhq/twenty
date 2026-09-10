@@ -4019,7 +4019,7 @@ type Mutation {
   completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
   revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
   generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
-  generateApplicationTokenForWorkspaceMember(workspaceMemberId: UUID!): ApplicationTokenPair!
+  generateApplicationTokenForWorkspaceMember(workspaceMemberId: UUID!): AuthToken!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
 }
 

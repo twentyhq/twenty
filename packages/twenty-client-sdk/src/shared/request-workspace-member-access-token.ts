@@ -4,17 +4,13 @@ import { isNonEmptyString } from './is-non-empty-string.util';
 // is injected into generated clients that cannot import from this package.
 export const GENERATE_APPLICATION_TOKEN_FOR_WORKSPACE_MEMBER_MUTATION = `mutation GenerateApplicationTokenForWorkspaceMember($workspaceMemberId: UUID!) {
   generateApplicationTokenForWorkspaceMember(workspaceMemberId: $workspaceMemberId) {
-    applicationAccessToken {
-      token
-    }
+    token
   }
 }`;
 
 type WorkspaceMemberTokenResponsePayload = {
   data?: {
-    generateApplicationTokenForWorkspaceMember?: {
-      applicationAccessToken?: { token?: string };
-    };
+    generateApplicationTokenForWorkspaceMember?: { token?: string };
   };
   errors?: { message?: string }[];
 };
@@ -56,8 +52,7 @@ export const requestWorkspaceMemberAccessToken = async ({
   }
 
   const token =
-    payload?.data?.generateApplicationTokenForWorkspaceMember
-      ?.applicationAccessToken?.token;
+    payload?.data?.generateApplicationTokenForWorkspaceMember?.token;
 
   if (isNonEmptyString(token)) {
     return token;

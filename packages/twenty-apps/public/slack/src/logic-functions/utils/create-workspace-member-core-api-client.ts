@@ -4,17 +4,13 @@ import { RestApiClient } from 'twenty-client-sdk/rest';
 
 const GENERATE_APPLICATION_TOKEN_FOR_WORKSPACE_MEMBER_MUTATION = `mutation GenerateApplicationTokenForWorkspaceMember($workspaceMemberId: UUID!) {
   generateApplicationTokenForWorkspaceMember(workspaceMemberId: $workspaceMemberId) {
-    applicationAccessToken {
-      token
-    }
+    token
   }
 }`;
 
 type WorkspaceMemberTokenResponse = {
   data?: {
-    generateApplicationTokenForWorkspaceMember?: {
-      applicationAccessToken?: { token?: string };
-    };
+    generateApplicationTokenForWorkspaceMember?: { token?: string };
   };
   errors?: { message?: string }[];
 };
@@ -46,8 +42,7 @@ export const createWorkspaceMemberCoreApiClient = async ({
   }
 
   const token =
-    response?.data?.generateApplicationTokenForWorkspaceMember
-      ?.applicationAccessToken?.token;
+    response?.data?.generateApplicationTokenForWorkspaceMember?.token;
 
   if (!isNonEmptyString(token)) {
     console.warn(

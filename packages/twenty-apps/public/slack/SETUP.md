@@ -323,13 +323,26 @@ attribution, and an app without one gets Slack's generic placeholder. Upload the
 Twenty logo (or your own) under **Basic Information → Display Information → App
 icon**; icons cannot be set from a manifest.
 
-Previews are rendered only when the person who posted the link maps to a
-workspace member, by the same matching described above. The card is visible to
-everyone in the channel, so it stays to a handful of headline fields. Expanding
-it opens a side panel with the full field set; anyone who can see the card can
-open it, external users in Slack Connect channels included, so the panel is
-likewise filled only for viewers who map to a workspace member, and everyone else
-gets a short notice instead.
+Previews respect Twenty permissions, with one deliberate limit that comes from
+how Slack works. The card is rendered once, when the link is posted, and Slack
+shows that same card to everyone in the channel, so the only person Twenty can
+check is the one who posted it: the card is fetched with the poster's own
+permissions (intersected with the app's role), is skipped when the poster does
+not map to a workspace member or may not read the record, and carries only a
+handful of headline fields because channel members who could not open the record
+themselves will still see it. Expanding the card opens a side panel with the
+full field set; that request names the person opening it, so the panel is
+fetched with the viewer's own permissions: a viewer who does not map to a
+workspace member gets a short notice, and a member who may not open the record in
+Twenty is told it could not be found. This poster-gated card plus viewer-gated
+panel is the intended posture; a card with no record payload was considered and
+rejected because Slack renders it as an empty box.
+
+To read as the poster or viewer, the app's role declares the **impersonate**
+permission alongside its read access on the five preview objects; the role is
+shown when the app is installed or upgraded. The exchange also needs a Twenty
+server that provides it (2.41 or later): on an older server the previews fail
+closed and render nothing, rather than falling back to the app's own access.
 
 Record links the bot itself posts (assistant answers, workflow message steps)
 carry the preview too. Slack never sends `link_shared` for an app's own messages,

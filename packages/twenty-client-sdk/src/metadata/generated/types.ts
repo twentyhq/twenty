@@ -10510,7 +10510,7 @@ export default {
                 }
             ],
             "generateApplicationTokenForWorkspaceMember": [
-                12,
+                11,
                 {
                     "workspaceMemberId": [
                         3,

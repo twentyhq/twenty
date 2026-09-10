@@ -591,9 +591,7 @@ describe('Generated client wrapper auth behavior', () => {
     const buildMemberExchangeFetchMock = ({
       exchangeBody = {
         data: {
-          generateApplicationTokenForWorkspaceMember: {
-            applicationAccessToken: { token: 'member-token' },
-          },
+          generateApplicationTokenForWorkspaceMember: { token: 'member-token' },
         },
       },
     }: { exchangeBody?: unknown } = {}) => {

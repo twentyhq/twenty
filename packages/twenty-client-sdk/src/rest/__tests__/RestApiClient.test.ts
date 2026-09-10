@@ -381,9 +381,7 @@ describe('RestApiClient', () => {
     it('should exchange the application token for the member, then reuse it', async () => {
       const fetchMock = buildExchangeFetchMock({
         data: {
-          generateApplicationTokenForWorkspaceMember: {
-            applicationAccessToken: { token: 'member-token' },
-          },
+          generateApplicationTokenForWorkspaceMember: { token: 'member-token' },
         },
       });
 

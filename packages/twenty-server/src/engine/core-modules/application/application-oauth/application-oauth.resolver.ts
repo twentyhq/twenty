@@ -13,6 +13,7 @@ import { GenerateApplicationTokenForWorkspaceMemberInput } from 'src/engine/core
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
 import { ApplicationWorkspaceMemberTokenService } from 'src/engine/core-modules/application/application-oauth/services/application-workspace-member-token.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -69,10 +70,12 @@ export class ApplicationOAuthResolver {
     });
   }
 
-  // Lets an application read and write as a given member, e.g. a logic
-  // function serving a request the platform cannot attribute to a person.
-  @Mutation(() => ApplicationTokenPairDTO)
-  @UseGuards(NoPermissionGuard)
+  // Lets an application act as a given member, e.g. a logic function serving
+  // a request the platform cannot attribute to a person. The application's
+  // declared role must carry the impersonate permission, so a workspace admin
+  // grants this explicitly at install time rather than by installing at all.
+  @Mutation(() => AuthToken)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.IMPERSONATE))
   async generateApplicationTokenForWorkspaceMember(
     @Args()
     { workspaceMemberId }: GenerateApplicationTokenForWorkspaceMemberInput,
@@ -82,7 +85,7 @@ export class ApplicationOAuthResolver {
     requestUserWorkspaceId: string | undefined,
     @AuthWorkspaceMemberId()
     requestWorkspaceMemberId: string | undefined,
-  ): Promise<ApplicationTokenPairDTO> {
+  ): Promise<AuthToken> {
     await this.throttlerService.tokenBucketThrottleOrThrow(
       `app-run-as:${workspaceId}:${application.id}`,
       1,
@@ -90,7 +93,7 @@ export class ApplicationOAuthResolver {
       APP_TOKEN_RATE_LIMIT_WINDOW_MS,
     );
 
-    return this.applicationWorkspaceMemberTokenService.generateTokenPairForWorkspaceMember(
+    return this.applicationWorkspaceMemberTokenService.generateAccessTokenForWorkspaceMember(
       {
         workspaceId,
         application,

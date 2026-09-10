@@ -82,9 +82,7 @@ const API_KEY_ENV_KEY = 'TWENTY_API_KEY';
 // template is injected into generated clients that cannot import the package.
 const GENERATE_APPLICATION_TOKEN_FOR_WORKSPACE_MEMBER_MUTATION = `mutation GenerateApplicationTokenForWorkspaceMember($workspaceMemberId: UUID!) {
   generateApplicationTokenForWorkspaceMember(workspaceMemberId: $workspaceMemberId) {
-    applicationAccessToken {
-      token
-    }
+    token
   }
 }`;
 
@@ -113,9 +111,7 @@ type GraphqlResponse = {
 
 type WorkspaceMemberTokenResponsePayload = {
   data?: {
-    generateApplicationTokenForWorkspaceMember?: {
-      applicationAccessToken?: { token?: string };
-    };
+    generateApplicationTokenForWorkspaceMember?: { token?: string };
   };
 };
 
@@ -437,8 +433,7 @@ export class MetadataApiClient {
 
     const token = (
       response.payload as WorkspaceMemberTokenResponsePayload | null
-    )?.data?.generateApplicationTokenForWorkspaceMember?.applicationAccessToken
-      ?.token;
+    )?.data?.generateApplicationTokenForWorkspaceMember?.token;
 
     if (isNonEmptyString(token)) {
       return token;
