@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/utils';
 import { IsNull, type Repository } from 'typeorm';
 
+import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -16,6 +17,9 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
+import { getUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-user-from-auth-context.util';
 import { type WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
 import {
   buildEmailStepLog,
@@ -34,6 +38,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {
     super(loggerName, workflowRunStepLogService);
   }
@@ -65,6 +70,18 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
         context,
       ) as typeof inputWithoutBody),
       body,
+    };
+  }
+
+  protected override async buildToolExecutionContext(
+    runInfo: WorkflowRunInfo,
+  ): Promise<ToolExecutionContext> {
+    const { authContext } =
+      await this.workflowExecutionContextService.getExecutionContext(runInfo);
+
+    return {
+      workspaceId: runInfo.workspaceId,
+      ...getUserFromAuthContext(authContext),
     };
   }
 
