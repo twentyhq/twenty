@@ -1,6 +1,9 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { filterUserFacingFieldMetadataItems } from '@/object-metadata/utils/filterUserFacingFieldMetadataItems';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 
+// Neither flag identifies system-managed fields on its own: position and
+// searchVector are hidden yet come back with isUIEditable true, while
+// createdAt and deletedAt are visible with isUIEditable false.
 export const isFieldRestrictable = (fieldMetadataItem: FieldMetadataItem) =>
-  filterUserFacingFieldMetadataItems(fieldMetadataItem) &&
+  !isHiddenSystemField(fieldMetadataItem) &&
   (fieldMetadataItem.isUIEditable ?? true);
