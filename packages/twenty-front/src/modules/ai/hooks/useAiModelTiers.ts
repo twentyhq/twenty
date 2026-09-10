@@ -8,9 +8,34 @@ import { getPercentDelta } from '@/ai/utils/getPercentDelta';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelTiersState } from '@/client-config/states/aiModelTiersState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { getAiModelBlendedCostPerMillionTokens } from '@/settings/ai/utils/getAiModelBlendedCostPerMillionTokens';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
 
 const REFERENCE_TIER: AiModelTier = 'balanced';
+
+// Both sides of a cost comparison must use the same basis: the publisher's
+// cost per task when both models have one, the catalog price otherwise.
+const getCostDeltaPercent = (
+  model: ClientAiModelConfig | undefined,
+  referenceModel: ClientAiModelConfig | undefined,
+) => {
+  if (!isDefined(model) || !isDefined(referenceModel)) {
+    return undefined;
+  }
+
+  const hasCostPerTask =
+    isDefined(model.costPerTask) && isDefined(referenceModel.costPerTask);
+
+  return getPercentDelta({
+    value: hasCostPerTask
+      ? model.costPerTask
+      : getAiModelBlendedCostPerMillionTokens(model),
+    reference: hasCostPerTask
+      ? referenceModel.costPerTask
+      : getAiModelBlendedCostPerMillionTokens(referenceModel),
+  });
+};
 
 // Mirrors the server rule: a pin counts only while automatic selection is off
 // and the pinned model is still served by the instance.
@@ -63,6 +88,7 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
         value: model?.intelligenceIndex,
         reference: referenceModel?.intelligenceIndex,
       }),
+      costDeltaPercent: getCostDeltaPercent(model, referenceModel),
     }));
   }, [aiModels, aiModelTiers, isAutoModelSelectionEnabled, aiModelIdByTier]);
 };

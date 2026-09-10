@@ -20,23 +20,51 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-const buildModel = (
-  modelId: string,
-  outputTokensPerSecond: number,
-  intelligenceIndex: number,
-): ClientAiModelConfig => ({
+const buildModel = ({
+  modelId,
+  outputTokensPerSecond,
+  intelligenceIndex,
+  inputCostPerMillionTokens,
+}: {
+  modelId: string;
+  outputTokensPerSecond: number;
+  intelligenceIndex: number;
+  inputCostPerMillionTokens: number;
+}): ClientAiModelConfig => ({
   modelId,
   label: modelId,
   sdkPackage: null,
   outputTokensPerSecond,
   intelligenceIndex,
+  inputCostPerMillionTokens,
+  outputCostPerMillionTokens: inputCostPerMillionTokens * 4,
 });
 
 const models = [
-  buildModel('openai/luna', 120, 36),
-  buildModel('openai/terra', 100, 40),
-  buildModel('openai/sol', 60, 48),
-  buildModel('anthropic/opus', 50, 50),
+  buildModel({
+    modelId: 'openai/luna',
+    outputTokensPerSecond: 120,
+    intelligenceIndex: 36,
+    inputCostPerMillionTokens: 0.5,
+  }),
+  buildModel({
+    modelId: 'openai/terra',
+    outputTokensPerSecond: 100,
+    intelligenceIndex: 40,
+    inputCostPerMillionTokens: 2,
+  }),
+  buildModel({
+    modelId: 'openai/sol',
+    outputTokensPerSecond: 60,
+    intelligenceIndex: 48,
+    inputCostPerMillionTokens: 4,
+  }),
+  buildModel({
+    modelId: 'anthropic/opus',
+    outputTokensPerSecond: 50,
+    intelligenceIndex: 50,
+    inputCostPerMillionTokens: 5,
+  }),
 ];
 
 const instanceTiers = [
@@ -87,6 +115,7 @@ describe('useAiModelTiers', () => {
     expect(fast?.model?.modelId).toBe('openai/luna');
     expect(fast?.speedDeltaPercent).toBe(20);
     expect(fast?.intelligenceDeltaPercent).toBe(-10);
+    expect(fast?.costDeltaPercent).toBe(-75);
     expect(extraSmart?.model).toBeUndefined();
     expect(extraSmart?.speedDeltaPercent).toBeUndefined();
   });

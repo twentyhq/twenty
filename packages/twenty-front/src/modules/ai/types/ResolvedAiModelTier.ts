@@ -10,4 +10,5 @@ export type ResolvedAiModelTier = {
   isPinned: boolean;
   speedDeltaPercent: number | undefined;
   intelligenceDeltaPercent: number | undefined;
+  costDeltaPercent: number | undefined;
 };

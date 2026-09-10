@@ -26,6 +26,7 @@ const tiers: ResolvedAiModelTier[] = tierModels.map((tier) => ({
   isPinned: false,
   speedDeltaPercent: undefined,
   intelligenceDeltaPercent: undefined,
+  costDeltaPercent: undefined,
 }));
 
 describe('getNearestAiModelTier', () => {

@@ -1,14 +1,15 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { AiModelTierBars } from '@/ai/components/AiModelTierBars';
 import { AiModelTierSlider } from '@/ai/components/AiModelTierSlider';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
-import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -52,14 +53,14 @@ export const AiModelTierDropdown = ({
       dropdownPlacement="top-end"
       dropdownOffset={{ x: 0, y: 8 }}
       clickableComponent={
-        <SelectControl
-          selectedOption={{
-            value: selectedTier,
-            label: selectedResolvedTier.label,
-            fullLabel: selectedResolvedTier.model?.label,
-          }}
-          isDisabled={disabled}
-          selectSizeVariant="small"
+        <AiModelTierBars
+          selectedTier={selectedTier}
+          label={
+            isDefined(selectedResolvedTier.model)
+              ? t`${selectedResolvedTier.label}: ${selectedResolvedTier.model.label}`
+              : selectedResolvedTier.label
+          }
+          disabled={disabled}
         />
       }
       dropdownComponents={

@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent, useContext, useId } from 'react';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBolt, IconBrain } from 'twenty-ui/icon';
+import { IconBolt, IconBrain, IconCoins } from 'twenty-ui/icon';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -17,6 +17,7 @@ const DOT_CENTER_INSET_PX = 18;
 const HANDLE_WIDTH_PX = 12;
 const HANDLE_HEIGHT_PX = 28;
 const LAST_STEP = AI_MODEL_TIERS.length - 1;
+const BALANCED_STEP = AI_MODEL_TIERS.indexOf('balanced');
 
 const StyledContainer = styled.div`
   display: flex;
@@ -160,13 +161,46 @@ export const AiModelTierSlider = ({
   const resolvedTier = tiers[selectedStep];
   const model = resolvedTier.model;
 
-  const speedAnchorId = `ai-model-tier-speed-${tooltipId}`;
-  const intelligenceAnchorId = `ai-model-tier-intelligence-${tooltipId}`;
   // The base model's reading stands in until the sync measures this effort.
   const isBenchmarkInherited = model?.isBenchmarkInherited === true;
   const inheritedNote = isBenchmarkInherited
     ? t` Not measured at this effort yet, so this is the base model's reading.`
     : '';
+
+  // Below Balanced the gain is speed, above it intelligence; cost moves with
+  // both, so each side shows the two figures that explain the trade.
+  const metrics = [
+    ...(selectedStep < BALANCED_STEP
+      ? [
+          {
+            key: 'speed',
+            Icon: IconBolt,
+            deltaPercent: resolvedTier.speedDeltaPercent,
+            description: t`${formatNumber(model?.outputTokensPerSecond ?? 0)} tokens per second`,
+          },
+        ]
+      : []),
+    ...(selectedStep !== BALANCED_STEP
+      ? [
+          {
+            key: 'cost',
+            Icon: IconCoins,
+            deltaPercent: resolvedTier.costDeltaPercent,
+            description: t`cost per task`,
+          },
+        ]
+      : []),
+    ...(selectedStep > BALANCED_STEP
+      ? [
+          {
+            key: 'intelligence',
+            Icon: IconBrain,
+            deltaPercent: resolvedTier.intelligenceDeltaPercent,
+            description: t`intelligence index ${formatNumber(model?.intelligenceIndex ?? 0)}`,
+          },
+        ]
+      : []),
+  ].filter((metric) => isDefined(metric.deltaPercent));
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const tier = AI_MODEL_TIERS[Number(event.target.value)];
@@ -183,21 +217,16 @@ export const AiModelTierSlider = ({
           {title ?? resolvedTier.label}
         </StyledTitle>
         <StyledMetrics>
-          {isDefined(resolvedTier.speedDeltaPercent) && (
-            <StyledMetric id={speedAnchorId} isInherited={isBenchmarkInherited}>
-              <IconBolt size={theme.icon.size.md} />
-              {formatPercentDelta(resolvedTier.speedDeltaPercent)}
-            </StyledMetric>
-          )}
-          {isDefined(resolvedTier.intelligenceDeltaPercent) && (
+          {metrics.map(({ key, Icon, deltaPercent }) => (
             <StyledMetric
-              id={intelligenceAnchorId}
+              key={key}
+              id={`ai-model-tier-${key}-${tooltipId}`}
               isInherited={isBenchmarkInherited}
             >
-              <IconBrain size={theme.icon.size.md} />
-              {formatPercentDelta(resolvedTier.intelligenceDeltaPercent)}
+              <Icon size={theme.icon.size.md} />
+              {formatPercentDelta(deltaPercent ?? 0)}
             </StyledMetric>
-          )}
+          ))}
         </StyledMetrics>
       </StyledHeader>
       <StyledTrack
@@ -224,22 +253,16 @@ export const AiModelTierSlider = ({
           aria-valuetext={resolvedTier.label}
         />
       </StyledTrack>
-      {isDefined(model) && (
-        <>
+      {isDefined(model) &&
+        metrics.map(({ key, description }) => (
           <AppTooltip
-            anchorSelect={`#${speedAnchorId}`}
-            title={`${t`${model.label}: ${formatNumber(model.outputTokensPerSecond ?? 0)} tokens per second, compared with the Balanced tier.`}${inheritedNote}`}
+            key={key}
+            anchorSelect={`#ai-model-tier-${key}-${tooltipId}`}
+            title={`${t`${model.label}: ${description}, compared with the Balanced tier.`}${inheritedNote}`}
             delay={TooltipDelay.shortDelay}
             place="bottom"
           />
-          <AppTooltip
-            anchorSelect={`#${intelligenceAnchorId}`}
-            title={`${t`${model.label}: intelligence index ${formatNumber(model.intelligenceIndex ?? 0)}, compared with the Balanced tier.`}${inheritedNote}`}
-            delay={TooltipDelay.shortDelay}
-            place="bottom"
-          />
-        </>
-      )}
+        ))}
     </StyledContainer>
   );
 };
