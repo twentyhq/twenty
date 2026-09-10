@@ -1,4 +1,4 @@
-const HEADER_FIELD_NAMES = [
+const PARTICIPANT_FIELD_NAMES = [
   'From',
   'Van',
   'De',
@@ -7,6 +7,32 @@ const HEADER_FIELD_NAMES = [
   'Från',
   'Da',
   'Od',
+  'Kimden',
+  'Gönderen',
+  'Lähettäjä',
+  'Feladó',
+  'Odesílatel',
+  'Expeditor',
+  'Nadawca',
+  'Απ[όο]',
+  'От',
+  'Від',
+  '差出人',
+  '送信者',
+  '发件人',
+  '寄件者',
+  '보낸\\s?사람',
+  'To',
+  'Cc',
+  'Кому',
+  '宛先',
+  '收件人',
+  '收件者',
+  '받는\\s?사람',
+];
+
+const SUPPORTING_FIELD_NAMES = [
+  'Subject',
   'Date',
   'Datum',
   'Sent',
@@ -18,39 +44,24 @@ const HEADER_FIELD_NAMES = [
   'Enviado',
   'Enviada em',
   'Inviato',
-  'Kimden',
-  'Gönderen',
   'Gönderilen',
-  'Lähettäjä',
   'Lähetetty',
-  'Feladó',
   'Elküldve',
-  'Odesílatel',
-  'Expeditor',
-  'Nadawca',
-  'Απ[όο]',
-  'От',
-  'Кому',
   'Тема',
   'Отправлено',
   'Дата',
-  'Від',
-  '差出人',
-  '送信者',
   '送信日時',
-  '宛先',
   '件名',
-  '发件人',
-  '收件人',
   '主题',
   '日期',
-  '寄件者',
-  '收件者',
   '主旨',
-  '보낸\\s?사람',
-  '받는\\s?사람',
   '제목',
   '보낸\\s?날짜',
+];
+
+const HEADER_FIELD_NAMES = [
+  ...PARTICIPANT_FIELD_NAMES,
+  ...SUPPORTING_FIELD_NAMES,
 ].join('|');
 
 const ORIGINAL_MESSAGE_TITLES = [
@@ -97,7 +108,6 @@ const WROTE_OPENERS = [
 
 const WROTE_VERBS = [
   'wrote',
-  'sent',
   'a écrit',
   'escribió',
   'scritto',
@@ -134,6 +144,10 @@ export const QUOTE_HEADER_PATTERNS = {
     `^\\s*[*]?(${HEADER_FIELD_NAMES})\\s?[:：][*]?(\\s|$)`,
     'i',
   ),
+  participantField: new RegExp(
+    `^\\s*[*]?(${PARTICIPANT_FIELD_NAMES.join('|')})\\s?[:：][*]?(\\s|$)`,
+    'i',
+  ),
   originalMessageBanner: new RegExp(
     `^\\s*-{2,}\\s*(${ORIGINAL_MESSAGE_TITLES})\\s*-{2,}`,
     'i',
@@ -149,7 +163,8 @@ export const QUOTE_HEADER_PATTERNS = {
     'i',
   ),
   localizedAttributionLines: LOCALIZED_ATTRIBUTION_LINES,
-  datePersonAttribution: /^\s*(\d+\/\d+\/\d+|\d+\.\d+\.\d+).*@/,
+  datePersonAttribution:
+    /^\s*(\d+\/\d+\/\d+|\d+\.\d+\.\d+)[^\n]*<[\w.+-]+@[\w-]+\.[\w.]{2,}>/,
   wrappedLink: /<(https?:\/\/[^>]*)>/,
   maskedLink: /@@(https?:\/\/[^>@]*)@@/,
 } as const;

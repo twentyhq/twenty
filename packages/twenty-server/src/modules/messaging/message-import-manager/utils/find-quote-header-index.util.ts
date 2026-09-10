@@ -31,7 +31,12 @@ const opensAHeaderBlock = (lines: string[], index: number): boolean => {
     return false;
   }
 
-  return windowFrom(lines, index).some((line) => SENDER_ADDRESS.test(line));
+  const window = windowFrom(lines, index);
+
+  return (
+    window.some((line) => QUOTE_HEADER_PATTERNS.participantField.test(line)) &&
+    window.some((line) => SENDER_ADDRESS.test(line))
+  );
 };
 
 const opensAForwardedMessage = (line: string): boolean =>
