@@ -1,10 +1,10 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
+import { CommandMenuItemSwitch } from '@/command-menu/components/CommandMenuItemSwitch';
 import { useFieldsWidgetGroups } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroups';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
-import { NewFieldDefaultVisibilityToggle } from '@/side-panel/pages/page-layout/components/NewFieldDefaultVisibilityToggle';
+import { NewFieldDefaultVisibilitySwitch } from '@/side-panel/pages/page-layout/components/NewFieldDefaultVisibilitySwitch';
 import { WidgetSettingsManageSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsManageSection';
 import { WidgetSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
@@ -116,15 +116,15 @@ export const SidePanelRecordPageFieldsSettings = () => {
               itemId="display-more-fields-button"
               onEnter={handleToggleShouldAllowUserToSeeHiddenFields}
             >
-              <CommandMenuItemToggle
+              <CommandMenuItemSwitch
                 LeftIcon={IconChevronDown}
                 text={t`Display "More fields" button`}
                 id="display-more-fields-button"
-                toggled={isShouldAllowUserToSeeHiddenFieldsToggled}
-                onToggleChange={handleToggleShouldAllowUserToSeeHiddenFields}
+                checked={isShouldAllowUserToSeeHiddenFieldsToggled}
+                onCheckedChange={handleToggleShouldAllowUserToSeeHiddenFields}
               />
             </SelectableListItem>
-            <NewFieldDefaultVisibilityToggle
+            <NewFieldDefaultVisibilitySwitch
               pageLayoutId={pageLayoutId}
               widgetId={widgetInEditMode.id}
             />

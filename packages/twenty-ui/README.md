@@ -49,7 +49,7 @@ import { Button } from 'twenty-ui/input';
 | `twenty-ui/data-display` | Avatars, chips, tags, and other display components |
 | `twenty-ui/feedback` | Progress bars, loaders, and status feedback |
 | `twenty-ui/icon` | Icon components and the icon provider |
-| `twenty-ui/input` | Buttons, toggles, and form inputs |
+| `twenty-ui/input` | Buttons, switches, and form inputs |
 | `twenty-ui/json-visualizer` | JSON tree viewer |
 | `twenty-ui/layout` | Layout primitives |
 | `twenty-ui/navigation` | Menus, links, and navigation components |

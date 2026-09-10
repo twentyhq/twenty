@@ -9,12 +9,14 @@ import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/typ
 
 import { assertPayloadIsUsable } from './utils/assert-payload-is-usable.util';
 import { buildCatalog } from './utils/build-catalog.util';
+import { carryOverCommittedFields } from './utils/carry-over-committed-fields.util';
 import { enrichCatalog } from './utils/enrich-catalog.util';
 import { fetchArtificialAnalysisBenchmarks } from './utils/fetch-artificial-analysis-benchmarks.util';
 import { readCommittedBenchmarks } from './utils/read-committed-benchmarks.util';
 import { buildCoverageReport } from './utils/build-coverage-report.util';
 import { renderCoverageReport } from './utils/render-coverage-report.util';
 import { type BenchmarkIndex } from './types/benchmark-index.type';
+import { type GeneratedCatalog } from './types/generated-catalog.type';
 
 const AI_MODELS_DIR = path.resolve(
   __dirname,
@@ -40,6 +42,11 @@ const readArgument = (flag: string): string | undefined => {
 
   return index === -1 ? undefined : process.argv[index + 1];
 };
+
+const readCommittedCatalog = (filePath: string): GeneratedCatalog =>
+  fs.existsSync(filePath)
+    ? (JSON.parse(fs.readFileSync(filePath, 'utf-8')) as GeneratedCatalog)
+    : {};
 
 const fetchModelsDev = async (): Promise<ModelsDevData> => {
   const response = await fetch(MODELS_DEV_API_URL, {
@@ -121,6 +128,11 @@ const main = async (): Promise<void> => {
   }
 
   const catalog = buildCatalog(modelsDevData);
+
+  carryOverCommittedFields({
+    catalog,
+    committedCatalog: readCommittedCatalog(CATALOG_PATH),
+  });
 
   const overlay = enrichCatalog({
     catalog,

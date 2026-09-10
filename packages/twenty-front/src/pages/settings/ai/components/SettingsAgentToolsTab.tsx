@@ -10,7 +10,7 @@ import { IconLock, IconPuzzle, IconTool } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { MenuItemSwitch } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsAgentToolsTable } from '~/pages/settings/ai/components/SettingsAgentToolsTable';
 import { useSettingsAgentToolsTable } from '~/pages/settings/ai/hooks/useSettingsAgentToolsTable';
@@ -91,26 +91,26 @@ export const SettingsAgentToolsTab = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemToggle
+                    <MenuItemSwitch
                       LeftIcon={IconTool}
-                      onToggleChange={setShowCustomTools}
-                      toggled={showCustomTools}
+                      onCheckedChange={setShowCustomTools}
+                      checked={showCustomTools}
                       text={t`Custom`}
-                      toggleSize="small"
+                      size="sm"
                     />
-                    <MenuItemToggle
+                    <MenuItemSwitch
                       LeftIcon={IconLock}
-                      onToggleChange={setShowManagedTools}
-                      toggled={showManagedTools}
+                      onCheckedChange={setShowManagedTools}
+                      checked={showManagedTools}
                       text={t`Managed`}
-                      toggleSize="small"
+                      size="sm"
                     />
-                    <MenuItemToggle
+                    <MenuItemSwitch
                       LeftIcon={IconPuzzle}
-                      onToggleChange={setShowStandardTools}
-                      toggled={showStandardTools}
+                      onCheckedChange={setShowStandardTools}
+                      checked={showStandardTools}
                       text={t`Standard`}
-                      toggleSize="small"
+                      size="sm"
                     />
                   </DropdownMenuItemsContainer>
                 </DropdownContent>

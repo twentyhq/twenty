@@ -4,6 +4,7 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { SyncRecordShareObjectCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788794677636-sync-record-share-object.command';
 import { MakeCallRecordingPrivateCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788894100000-make-call-recording-private.command';
 import { BackfillCallRecordingSharesCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788894100001-backfill-call-recording-shares.command';
+import { AddMessageCampaignScheduledAtCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788957151735-add-message-campaign-scheduled-at.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { RecordShareModule } from 'src/engine/record-share/record-share.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -25,6 +26,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     SyncRecordShareObjectCommand,
     MakeCallRecordingPrivateCommand,
     BackfillCallRecordingSharesCommand,
+    AddMessageCampaignScheduledAtCommand,
   ],
 })
 export class V2_40_UpgradeVersionCommandModule {}
