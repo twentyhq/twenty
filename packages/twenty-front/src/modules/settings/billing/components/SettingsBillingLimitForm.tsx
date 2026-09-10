@@ -133,13 +133,6 @@ export const SettingsBillingLimitForm = ({
   });
   const consumedPercentage = progress?.consumedPercentage ?? 0;
   const isExhausted = progress?.remainingValue === 0;
-  const remainingText = isDefined(progress)
-    ? formatLimitValue({
-        value: progress.remainingValue,
-        meter: values.meter ?? '',
-        operationType: values.operationType ?? UsageOperationType.ALL,
-      })
-    : '';
   const consumedText = isDefined(consumedValue)
     ? formatLimitValue({
         value: consumedValue,
@@ -147,6 +140,21 @@ export const SettingsBillingLimitForm = ({
         operationType: values.operationType ?? UsageOperationType.ALL,
       })
     : '';
+  const getUsedTooltipTitle = (): string => {
+    switch (values.periodUnit) {
+      case 'day':
+        return t`${consumedText} already used today`;
+      case 'week':
+        return t`${consumedText} already used this week`;
+      case 'month':
+        return t`${consumedText} already used this month`;
+      case 'allowancePeriod':
+        return t`${consumedText} already used this billing period`;
+      default:
+        return t`${consumedText} already used`;
+    }
+  };
+
   const hasResource = isDefined(values.resourceType);
 
   const placeholderOption = hasResource
@@ -214,13 +222,8 @@ export const SettingsBillingLimitForm = ({
                 anchorSelect={`#${RING_ANCHOR_ID}`}
                 title={
                   isDefined(progress)
-                    ? t`${consumedText} already used`
+                    ? getUsedTooltipTitle()
                     : t`Nothing counted against this scope yet`
-                }
-                description={
-                  isDefined(progress)
-                    ? t`${remainingText} would be left`
-                    : undefined
                 }
                 place="top"
                 delay={TooltipDelay.shortDelay}
