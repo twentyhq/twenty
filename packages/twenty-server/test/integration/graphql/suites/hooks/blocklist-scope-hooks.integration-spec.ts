@@ -7,6 +7,7 @@ import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delet
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
@@ -155,7 +156,7 @@ describe('blocklist scope hooks', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
     });
 
-    expect(errors).toBeDefined();
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
   it('refuses a workspace-scoped entry created without the workspace permission', async () => {
@@ -165,7 +166,7 @@ describe('blocklist scope hooks', () => {
       scope: BlocklistScope.WORKSPACE,
     });
 
-    expect(response.body.errors).toBeDefined();
+    expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
   });
 
   it('refuses a member-scoped entry targeting another workspace member', async () => {
@@ -176,7 +177,7 @@ describe('blocklist scope hooks', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
     });
 
-    expect(response.body.errors).toBeDefined();
+    expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
   });
 
   it('refuses a member-scoped entry with no workspace member', async () => {
@@ -186,7 +187,7 @@ describe('blocklist scope hooks', () => {
       scope: BlocklistScope.WORKSPACE_MEMBER,
     });
 
-    expect(response.body.errors).toBeDefined();
+    expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
   });
 
   it('refuses to overwrite a workspace-scoped entry through an upsert create', async () => {
@@ -205,7 +206,9 @@ describe('blocklist scope hooks', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     });
 
-    expect(hijackResponse.body.errors).toBeDefined();
+    expectOneNotInternalServerErrorSnapshot({
+      errors: hijackResponse.body.errors,
+    });
 
     const renamedHandle = uniqueDomainHandle();
 
@@ -251,7 +254,7 @@ describe('blocklist scope hooks', () => {
       }),
     );
 
-    expect(response.body.errors).toBeDefined();
+    expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
   });
 
   it('refuses to null out the workspace member of a member-scoped entry', async () => {
@@ -273,7 +276,7 @@ describe('blocklist scope hooks', () => {
       }),
     );
 
-    expect(response.body.errors).toBeDefined();
+    expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
   });
 
   it('refuses deletion and restoration of a workspace-scoped entry without the workspace permission', async () => {
@@ -293,7 +296,9 @@ describe('blocklist scope hooks', () => {
       }),
     );
 
-    expect(deleteAsMemberResponse.body.errors).toBeDefined();
+    expectOneNotInternalServerErrorSnapshot({
+      errors: deleteAsMemberResponse.body.errors,
+    });
 
     const deleteAsAdminResponse = await deleteAsAdmin(id);
 
@@ -307,7 +312,9 @@ describe('blocklist scope hooks', () => {
       makeGraphqlAPIRequestWithMemberRole,
     );
 
-    expect(restoreAsMemberResponse.body.errors).toBeDefined();
+    expectOneNotInternalServerErrorSnapshot({
+      errors: restoreAsMemberResponse.body.errors,
+    });
   });
 
   it('refuses to restore an entry whose handle was taken again while it was deleted', async () => {
@@ -390,7 +397,9 @@ describe('blocklist scope hooks', () => {
     ];
 
     for (const bulkResponse of bulkResponses) {
-      expect(bulkResponse.body.errors).toBeDefined();
+      expectOneNotInternalServerErrorSnapshot({
+        errors: bulkResponse.body.errors,
+      });
     }
   });
 
@@ -409,6 +418,6 @@ describe('blocklist scope hooks', () => {
       scope: BlocklistScope.WORKSPACE,
     });
 
-    expect(errors).toBeDefined();
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 });

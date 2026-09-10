@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { BlocklistScope } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import {
   type CreateManyResolverArgs,
@@ -203,28 +203,36 @@ export class BlocklistValidationService {
   }): void {
     const scope = item.scope ?? BlocklistScope.WORKSPACE_MEMBER;
 
-    if (scope === BlocklistScope.WORKSPACE) {
-      if (isDefined(item.workspaceMemberId)) {
-        throw new CommonQueryRunnerException(
-          'A workspace-scoped blocklist entry cannot target a workspace member',
-          CommonQueryRunnerExceptionCode.BAD_REQUEST,
-          {
-            userFriendlyMessage: msg`A workspace-wide blocklist entry cannot target a workspace member.`,
-          },
+    switch (scope) {
+      case BlocklistScope.WORKSPACE:
+        if (isDefined(item.workspaceMemberId)) {
+          throw new CommonQueryRunnerException(
+            'A workspace-scoped blocklist entry cannot target a workspace member',
+            CommonQueryRunnerExceptionCode.BAD_REQUEST,
+            {
+              userFriendlyMessage: msg`A workspace-wide blocklist entry cannot target a workspace member.`,
+            },
+          );
+        }
+
+        return;
+      case BlocklistScope.WORKSPACE_MEMBER:
+        if (item.workspaceMemberId !== context.workspaceMemberId) {
+          throw new CommonQueryRunnerException(
+            'A workspace-member-scoped blocklist entry must target its own workspace member',
+            CommonQueryRunnerExceptionCode.BAD_REQUEST,
+            {
+              userFriendlyMessage: msg`Cannot manage a blocklist entry of another workspace member.`,
+            },
+          );
+        }
+
+        return;
+      default:
+        return assertUnreachable(
+          scope,
+          `Blocklist scope ${scope} is not implemented`,
         );
-      }
-
-      return;
-    }
-
-    if (item.workspaceMemberId !== context.workspaceMemberId) {
-      throw new CommonQueryRunnerException(
-        'A workspace-member-scoped blocklist entry must target its own workspace member',
-        CommonQueryRunnerExceptionCode.BAD_REQUEST,
-        {
-          userFriendlyMessage: msg`Cannot manage a blocklist entry of another workspace member.`,
-        },
-      );
     }
   }
 
@@ -305,26 +313,34 @@ export class BlocklistValidationService {
     workspaceMemberId: string;
     context: BlocklistMutationContext;
   }): Promise<string[]> {
-    if (scope === BlocklistScope.WORKSPACE) {
-      const workspaceBlocklist =
-        await this.blocklistRepository.getWorkspaceScopedEntries(
-          context.workspaceId,
+    switch (scope) {
+      case BlocklistScope.WORKSPACE: {
+        const workspaceBlocklist =
+          await this.blocklistRepository.getWorkspaceScopedEntries(
+            context.workspaceId,
+          );
+
+        return workspaceBlocklist
+          .map((blocklistItem) => blocklistItem.handle)
+          .filter(isDefined);
+      }
+      case BlocklistScope.WORKSPACE_MEMBER: {
+        const memberBlocklist =
+          await this.blocklistRepository.getMemberScopedEntries({
+            workspaceMemberId,
+            workspaceId: context.workspaceId,
+          });
+
+        return memberBlocklist
+          .map((blocklistItem) => blocklistItem.handle)
+          .filter(isDefined);
+      }
+      default:
+        return assertUnreachable(
+          scope,
+          `Blocklist scope ${scope} is not implemented`,
         );
-
-      return workspaceBlocklist
-        .map((blocklistItem) => blocklistItem.handle)
-        .filter(isDefined);
     }
-
-    const memberBlocklist =
-      await this.blocklistRepository.getMemberScopedEntries({
-        workspaceMemberId,
-        workspaceId: context.workspaceId,
-      });
-
-    return memberBlocklist
-      .map((blocklistItem) => blocklistItem.handle)
-      .filter(isDefined);
   }
 
   private validateHandlesAreNew({
