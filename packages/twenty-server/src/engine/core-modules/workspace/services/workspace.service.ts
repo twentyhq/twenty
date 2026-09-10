@@ -329,6 +329,7 @@ export class WorkspaceService {
       updatedWorkspace = await this.workspaceRepository.save({
         ...workspace,
         ...payload,
+        ...(payload.logo === null ? { logoFileId: null } : {}),
       });
     } catch (error) {
       if (payload.customDomain && customDomainRegistered) {

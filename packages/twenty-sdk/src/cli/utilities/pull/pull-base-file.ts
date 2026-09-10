@@ -40,8 +40,17 @@ const isUsableBaseManifest = (manifest: unknown): manifest is Manifest => {
     return false;
   }
 
-  const { application, objects, fields, indexes, views, viewFields } =
-    manifest as Partial<Manifest>;
+  const {
+    application,
+    objects,
+    fields,
+    indexes,
+    views,
+    viewFields,
+    pageLayouts,
+    pageLayoutTabs,
+    navigationMenuItems,
+  } = manifest as Partial<Manifest>;
 
   return (
     hasUniversalIdentifier(application) &&
@@ -50,7 +59,10 @@ const isUsableBaseManifest = (manifest: unknown): manifest is Manifest => {
     fields.every(hasUniversalIdentifier) &&
     (!isDefined(indexes) || isEntityListWithFields(indexes)) &&
     (!isDefined(views) || isEntityList(views)) &&
-    (!isDefined(viewFields) || isEntityList(viewFields))
+    (!isDefined(viewFields) || isEntityList(viewFields)) &&
+    (!isDefined(pageLayouts) || isEntityList(pageLayouts)) &&
+    (!isDefined(pageLayoutTabs) || isEntityList(pageLayoutTabs)) &&
+    (!isDefined(navigationMenuItems) || isEntityList(navigationMenuItems))
   );
 };
 

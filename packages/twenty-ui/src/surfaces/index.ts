@@ -7,6 +7,17 @@
  *                              |___/
  */
 
+export { AlertDialog } from './AlertDialog/AlertDialog';
+export type { AlertDialogBodyProps } from './AlertDialog/types/AlertDialogBodyProps';
+export type { AlertDialogCloseProps } from './AlertDialog/types/AlertDialogCloseProps';
+export type { AlertDialogDescriptionProps } from './AlertDialog/types/AlertDialogDescriptionProps';
+export type { AlertDialogFooterProps } from './AlertDialog/types/AlertDialogFooterProps';
+export type { AlertDialogHeaderProps } from './AlertDialog/types/AlertDialogHeaderProps';
+export type { AlertDialogPopupProps } from './AlertDialog/types/AlertDialogPopupProps';
+export type { AlertDialogRootProps } from './AlertDialog/types/AlertDialogRootProps';
+export type { AlertDialogSize } from './AlertDialog/types/AlertDialogSize';
+export type { AlertDialogTitleProps } from './AlertDialog/types/AlertDialogTitleProps';
+export type { AlertDialogTriggerProps } from './AlertDialog/types/AlertDialogTriggerProps';
 export type { AppTooltipProps } from './AppTooltip/AppTooltip';
 export {
   TooltipPosition,

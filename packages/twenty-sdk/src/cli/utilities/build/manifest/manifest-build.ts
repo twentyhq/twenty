@@ -50,6 +50,7 @@ import {
   type UninstallLogicFunctionApplicationManifest,
   type RoleManifest,
   type SkillManifest,
+  type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
   type TimelineActivityTypeManifest,
   type ViewManifest,
@@ -118,6 +119,7 @@ export const buildManifest = async (
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
   const pageLayouts: PageLayoutManifest[] = [];
   const pageLayoutTabs: PageLayoutTabManifest[] = [];
+  const pageLayoutWidgets: StandalonePageLayoutWidgetManifest[] = [];
   const commandMenuItems: CommandMenuItemManifest[] = [];
   const timelineActivityTypes: TimelineActivityTypeManifest[] = [];
   const postInstallLogicFunctions: PostInstallLogicFunctionApplicationManifest[] =
@@ -145,6 +147,7 @@ export const buildManifest = async (
   const navigationMenuItemsFilePaths: string[] = [];
   const pageLayoutsFilePaths: string[] = [];
   const pageLayoutTabsFilePaths: string[] = [];
+  const pageLayoutWidgetsFilePaths: string[] = [];
   const commandMenuItemsFilePaths: string[] = [];
   const timelineActivityTypesFilePaths: string[] = [];
 
@@ -482,6 +485,19 @@ export const buildManifest = async (
         pageLayoutTabsFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.PageLayoutWidgets: {
+        const extract =
+          await extractManifestFromFile<StandalonePageLayoutWidgetManifest>({
+            appPath,
+            filePath,
+          });
+
+        pageLayoutWidgets.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        pageLayoutWidgetsFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.CommandMenuItems: {
         const extract = await extractManifestFromFile<CommandMenuItemConfig>({
           appPath,
@@ -686,6 +702,7 @@ export const buildManifest = async (
         navigationMenuItems: navigationMenuItems.sort(byId),
         pageLayouts: pageLayouts.sort(byId),
         pageLayoutTabs: pageLayoutTabs.sort(byId),
+        pageLayoutWidgets: pageLayoutWidgets.sort(byId),
         commandMenuItems: commandMenuItems.sort(byId),
         timelineActivityTypes: timelineActivityTypes.sort(byId),
       };
@@ -708,6 +725,7 @@ export const buildManifest = async (
     navigationMenuItems: navigationMenuItemsFilePaths,
     pageLayouts: pageLayoutsFilePaths,
     pageLayoutTabs: pageLayoutTabsFilePaths,
+    pageLayoutWidgets: pageLayoutWidgetsFilePaths,
     commandMenuItems: commandMenuItemsFilePaths,
     timelineActivityTypes: timelineActivityTypesFilePaths,
   };
