@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import {
   InboxException,
@@ -56,7 +56,9 @@ export class CreateInboxItemTool implements Tool {
         ...(isDefined(parameters.summary)
           ? { context: { summary: parameters.summary } }
           : {}),
-        ...(isDefined(parameters.toolCalls)
+        // An empty list from the model means it proposed nothing, not that the
+        // plan of an item this folds into should be wiped.
+        ...(isNonEmptyArray(parameters.toolCalls)
           ? { toolCalls: toInboxItemToolCallDrafts(parameters.toolCalls) }
           : {}),
         priority: parameters.priority,
