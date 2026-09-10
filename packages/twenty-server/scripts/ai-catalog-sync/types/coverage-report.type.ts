@@ -3,4 +3,7 @@ export type CoverageReport = {
   scoredGeneralPurposeModelCount: number;
   unscoredGeneralPurposeModelIds: string[];
   specializedModelCount: number;
+  declaredEffortVariantCount: number;
+  scoredEffortVariantCount: number;
+  unscoredEffortVariantIds: string[];
 };

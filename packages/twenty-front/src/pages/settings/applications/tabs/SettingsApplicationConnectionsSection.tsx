@@ -16,7 +16,7 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
-import { useMyAppConnectedAccounts } from '~/pages/settings/applications/hooks/useMyAppConnectedAccounts';
+import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -44,9 +44,10 @@ export const SettingsApplicationConnectionsSection = ({
   const { triggerAppOAuth } = useTriggerAppOAuth();
   const { connectionProviders, loading } =
     useFindApplicationConnectionProviders(applicationId);
-  const { accounts: connectedAccounts } = useMyAppConnectedAccounts();
+  const { accounts: connectedAccounts, loading: accountsLoading } =
+    useApplicationConnectedAccounts(applicationId);
 
-  if (loading || connectionProviders.length === 0) {
+  if (loading || accountsLoading || connectionProviders.length === 0) {
     return null;
   }
 

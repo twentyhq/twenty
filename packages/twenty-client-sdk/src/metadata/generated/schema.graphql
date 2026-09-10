@@ -1804,6 +1804,7 @@ enum UsageResourceType {
   API
   LOGIC_FUNCTION
   EMAIL
+  WEBHOOK
 }
 
 enum UsageOperationType {
@@ -1816,6 +1817,7 @@ enum UsageOperationType {
   CALL_RECORDING
   EMAIL_SEND
   API_REQUEST
+  WEBHOOK_CALL
   SUBSCRIPTION
 }
 
@@ -1903,6 +1905,28 @@ type ConnectedAccountPublicDTO {
   connectionParameters: PublicImapSmtpCaldavConnectionParameters
 }
 
+type ApplicationConnectedAccountDTO {
+  id: UUID!
+  handle: String!
+  provider: String!
+  lastCredentialsRefreshedAt: DateTime
+  authFailedAt: DateTime
+  authFailedReason: String
+  archivedAt: DateTime
+  handleAliases: [String!]
+  scopes: [String!]
+  lastSignedInAt: DateTime
+  userWorkspaceId: UUID!
+  connectionProviderId: UUID
+  applicationId: UUID
+  name: String
+  visibility: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  connectionParameters: PublicImapSmtpCaldavConnectionParameters
+  isOwnedByCurrentUser: Boolean!
+}
+
 type FeatureFlag {
   key: FeatureFlagKey!
   value: Boolean!
@@ -1923,6 +1947,7 @@ enum FeatureFlagKey {
   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_SHARING_ENABLED
+  IS_WEBHOOK_RATE_LIMIT_ENABLED
 }
 
 type WorkspaceUrls {
@@ -3547,6 +3572,7 @@ type Query {
   apiKey(input: GetApiKeyInput!): ApiKey
   currentUserSessions: [UserSession!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
+  applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
   listPlans: [BillingPlan!]!

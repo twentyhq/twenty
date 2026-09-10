@@ -44,7 +44,7 @@ import {
 } from 'twenty-ui/icon';
 import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
-import { Button, Toggle } from 'twenty-ui/input';
+import { Button, Switch } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -359,9 +359,10 @@ export const SettingsAdminWorkspaceDetail = () => {
                         <TableCell>{flag.key}</TableCell>
                         <TableCell align="right">
                           {isDefined(flag.key) && (
-                            <Toggle
-                              value={displayedValue}
-                              onChange={(newValue) =>
+                            <Switch
+                              aria-label={flag.key}
+                              checked={displayedValue}
+                              onCheckedChange={(newValue) =>
                                 handleFeatureFlagUpdate(flag.key!, newValue)
                               }
                             />
