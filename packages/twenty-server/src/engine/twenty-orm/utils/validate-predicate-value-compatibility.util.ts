@@ -3,17 +3,39 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 
-type ValidateEnumValueCompatibilityArgs = {
+type ValidatePredicateValueCompatibilityArgs = {
   workspaceMemberFieldMetadata: OrmFlatFieldMetadata;
   targetFieldMetadata: OrmFlatFieldMetadata;
   predicateValue: unknown;
 };
 
-export const validateEnumValueCompatibility = ({
+const validateRelationTargetCompatibility = ({
+  workspaceMemberFieldMetadata,
+  targetFieldMetadata,
+}: Omit<
+  ValidatePredicateValueCompatibilityArgs,
+  'predicateValue'
+>): boolean => {
+  if (workspaceMemberFieldMetadata.type !== FieldMetadataType.RELATION) {
+    return true;
+  }
+
+  const workspaceMemberRelationTargetObjectMetadataId =
+    workspaceMemberFieldMetadata.relationTargetObjectMetadataId;
+
+  return (
+    targetFieldMetadata.type === FieldMetadataType.RELATION &&
+    isDefined(workspaceMemberRelationTargetObjectMetadataId) &&
+    workspaceMemberRelationTargetObjectMetadataId ===
+      targetFieldMetadata.relationTargetObjectMetadataId
+  );
+};
+
+const validateEnumValueCompatibility = ({
   workspaceMemberFieldMetadata,
   targetFieldMetadata,
   predicateValue,
-}: ValidateEnumValueCompatibilityArgs): boolean => {
+}: ValidatePredicateValueCompatibilityArgs): boolean => {
   const isWorkspaceMemberFieldEnum =
     workspaceMemberFieldMetadata.type === FieldMetadataType.SELECT ||
     workspaceMemberFieldMetadata.type === FieldMetadataType.MULTI_SELECT;
@@ -45,3 +67,18 @@ export const validateEnumValueCompatibility = ({
 
   return allValuesAreValid;
 };
+
+export const validatePredicateValueCompatibility = ({
+  workspaceMemberFieldMetadata,
+  targetFieldMetadata,
+  predicateValue,
+}: ValidatePredicateValueCompatibilityArgs): boolean =>
+  validateRelationTargetCompatibility({
+    workspaceMemberFieldMetadata,
+    targetFieldMetadata,
+  }) &&
+  validateEnumValueCompatibility({
+    workspaceMemberFieldMetadata,
+    targetFieldMetadata,
+    predicateValue,
+  });
