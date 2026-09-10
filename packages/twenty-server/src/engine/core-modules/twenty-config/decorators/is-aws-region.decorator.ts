@@ -8,9 +8,9 @@ import {
 @ValidatorConstraint({ async: false })
 export class IsAWSRegionConstraint implements ValidatorConstraintInterface {
   validate(region: string) {
-    const regex = /^[a-z]{2}-[a-z]+-\d{1}$/;
+    const regex = /^[a-z]{2,4}(?:-[a-z]+){1,2}-\d+$/;
 
-    return regex.test(region); // Returns true if region matches regex
+    return regex.test(region);
   }
 }
 

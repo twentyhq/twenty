@@ -142,4 +142,66 @@ describe('fetchArtificialAnalysisBenchmarks', () => {
     expect(record?.intelligenceIndex).toBeUndefined();
     expect(record?.outputTokensPerSecond).toBe(92.1);
   });
+
+  it('files a row under its effort as well as under the bare model name', async () => {
+    respondWith([
+      {
+        slug: 'gpt-5-6-sol',
+        name: 'GPT-5.6 Sol (max)',
+        evaluations: { artificial_analysis_intelligence_index: 47.1 },
+      },
+      {
+        slug: 'gpt-5-6-sol',
+        name: 'GPT-5.6 Sol (low)',
+        evaluations: { artificial_analysis_intelligence_index: 30.2 },
+        cost_per_task: { total_cost: 0.08 },
+      },
+    ]);
+
+    const index = await fetchArtificialAnalysisBenchmarks('key');
+
+    // The bare key still carries the ceiling, so nothing a consumer reads today
+    // changes.
+    expect(index.get('gpt56sol')?.intelligenceIndex).toBe(47.1);
+    expect(index.get('gpt56sol')?.effort).toBe('max');
+    expect(index.get('gpt56sol@max')?.intelligenceIndex).toBe(47.1);
+    expect(index.get('gpt56sol@low')?.intelligenceIndex).toBe(30.2);
+    expect(index.get('gpt56sol@low')?.costPerTask).toBe(0.08);
+    expect(index.get('gpt56sol@low')?.effort).toBe('low');
+  });
+
+  it('keeps the better-measured row when two rows share an effort', async () => {
+    respondWith([
+      {
+        slug: 'grok-4-6',
+        name: 'Grok 4.6 (high)',
+        evaluations: { artificial_analysis_intelligence_index: 44.4 },
+      },
+      {
+        slug: 'grok-4-6',
+        name: 'Grok 4.6 (high)',
+        evaluations: { artificial_analysis_intelligence_index: 44.4 },
+        median_output_tokens_per_second: 71,
+      },
+    ]);
+
+    const index = await fetchArtificialAnalysisBenchmarks('key');
+
+    expect(index.get('grok46@high')?.outputTokensPerSecond).toBe(71);
+  });
+
+  it('files a row naming no effort under the bare name only', async () => {
+    respondWith([
+      {
+        slug: 'gemini-3-1-pro-preview',
+        name: 'Gemini 3.1 Pro Preview',
+        evaluations: { artificial_analysis_intelligence_index: 30.4 },
+      },
+    ]);
+
+    const index = await fetchArtificialAnalysisBenchmarks('key');
+
+    expect(index.get('gemini31propreview')?.effort).toBeUndefined();
+    expect([...index.keys()].some((key) => key.includes('@'))).toBe(false);
+  });
 });

@@ -132,12 +132,13 @@ export const SettingsAgentModelCapabilities = ({
               <span>{capability.label}</span>
             </StyledCheckboxLabel>
             <Checkbox
+              aria-label={capability.label}
               checked={capability.enabled}
-              onChange={(event) => {
-                event.stopPropagation();
-                handleCapabilityToggle(capability.key, event.target.checked);
+              onCheckedChange={(isChecked) => {
+                handleCapabilityToggle(capability.key, isChecked);
               }}
               disabled={disabled}
+              onClick={(event) => event.stopPropagation()}
             />
           </StyledCheckboxContainer>
         ))}
