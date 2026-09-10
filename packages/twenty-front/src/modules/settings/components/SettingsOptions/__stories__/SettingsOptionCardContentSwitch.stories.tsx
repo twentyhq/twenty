@@ -1,4 +1,4 @@
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
@@ -9,14 +9,14 @@ const StyledContainer = styled.div`
   width: 480px;
 `;
 
-const SettingsOptionCardContentToggleWrapper = (
-  args: React.ComponentProps<typeof SettingsOptionCardContentToggle>,
+const SettingsOptionCardContentSwitchWrapper = (
+  args: React.ComponentProps<typeof SettingsOptionCardContentSwitch>,
 ) => {
   const [checked, setChecked] = useState(args.checked);
 
   return (
     <StyledContainer>
-      <SettingsOptionCardContentToggle
+      <SettingsOptionCardContentSwitch
         checked={checked}
         onChange={setChecked}
         Icon={args.Icon}
@@ -30,9 +30,9 @@ const SettingsOptionCardContentToggleWrapper = (
   );
 };
 
-const meta: Meta<typeof SettingsOptionCardContentToggleWrapper> = {
-  title: 'Modules/Settings/SettingsOptionCardContentToggle',
-  component: SettingsOptionCardContentToggleWrapper,
+const meta: Meta<typeof SettingsOptionCardContentSwitchWrapper> = {
+  title: 'Modules/Settings/SettingsOptionCardContentSwitch',
+  component: SettingsOptionCardContentSwitchWrapper,
   decorators: [ComponentDecorator],
   parameters: {
     maxWidth: 800,
@@ -40,7 +40,7 @@ const meta: Meta<typeof SettingsOptionCardContentToggleWrapper> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SettingsOptionCardContentToggleWrapper>;
+type Story = StoryObj<typeof SettingsOptionCardContentSwitchWrapper>;
 
 export const Default: Story = {
   args: {
@@ -77,7 +77,7 @@ export const AdvancedMode: Story = {
 
 export const WithoutIcon: Story = {
   args: {
-    title: 'Simple Toggle',
+    title: 'Simple Switch',
     description: 'A basic toggle without an icon',
     checked: true,
   },

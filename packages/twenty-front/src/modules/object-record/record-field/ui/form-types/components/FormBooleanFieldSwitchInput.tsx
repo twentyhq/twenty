@@ -6,7 +6,7 @@ import { styled } from '@linaria/react';
 import { useId } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type FormBooleanFieldToggleInputProps = {
+type FormBooleanFieldSwitchInputProps = {
   label?: string;
   description: string;
   hint?: string;
@@ -26,7 +26,7 @@ const StyledDescription = styled.span`
   white-space: nowrap;
 `;
 
-const StyledToggleContainer = styled.div`
+const StyledSwitchContainer = styled.div`
   background-color: ${themeCssVariables.background.transparent.lighter};
   border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   border-bottom-right-radius: ${themeCssVariables.border.radius.md};
@@ -39,14 +39,14 @@ const StyledToggleContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-export const FormBooleanFieldToggleInput = ({
+export const FormBooleanFieldSwitchInput = ({
   label,
   description,
   hint,
   value,
   onChange,
   disabled,
-}: FormBooleanFieldToggleInputProps) => {
+}: FormBooleanFieldSwitchInputProps) => {
   const instanceId = useId();
   const descriptionId = `${instanceId}-description`;
 
@@ -65,7 +65,7 @@ export const FormBooleanFieldToggleInput = ({
           </StyledDescription>
         </FormFieldInputInnerContainer>
 
-        <StyledToggleContainer>
+        <StyledSwitchContainer>
           <Switch
             aria-labelledby={descriptionId}
             checked={value}
@@ -73,7 +73,7 @@ export const FormBooleanFieldToggleInput = ({
             disabled={disabled}
             size="sm"
           />
-        </StyledToggleContainer>
+        </StyledSwitchContainer>
       </FormFieldInputRowContainer>
 
       {hint && <Field.Description>{hint}</Field.Description>}

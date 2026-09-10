@@ -1,5 +1,5 @@
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
-import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
+import { CommandMenuItemSwitch } from '@/command-menu/components/CommandMenuItemSwitch';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
@@ -205,7 +205,7 @@ export const WidgetViewLayoutSettingsRows = ({
       )}
       {!isCalendarLayout && hasGroupBy && (
         <SelectableListItem itemId="record-table-hide-empty-groups">
-          <CommandMenuItemToggle
+          <CommandMenuItemSwitch
             LeftIcon={IconEyeOff}
             text={t`Hide empty groups`}
             id="record-table-hide-empty-groups"

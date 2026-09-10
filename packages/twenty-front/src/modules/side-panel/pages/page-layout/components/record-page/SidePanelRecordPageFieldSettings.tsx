@@ -1,6 +1,6 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
-import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
+import { CommandMenuItemSwitch } from '@/command-menu/components/CommandMenuItemSwitch';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
@@ -271,7 +271,7 @@ export const SidePanelRecordPageFieldSettings = () => {
             )}
             {isTableDisplayMode && isWidgetContentEditingSupported && (
               <SelectableListItem itemId="field-allow-editing">
-                <CommandMenuItemToggle
+                <CommandMenuItemSwitch
                   LeftIcon={IconPencil}
                   text={t`Allow editing`}
                   id="field-allow-editing"

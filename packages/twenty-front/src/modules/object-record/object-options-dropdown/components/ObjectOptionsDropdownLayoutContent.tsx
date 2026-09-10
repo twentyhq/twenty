@@ -36,7 +36,7 @@ import {
   IconTable,
 } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { MenuItem, MenuItemSelect, MenuItemToggle } from 'twenty-ui/navigation';
+import { MenuItem, MenuItemSelect, MenuItemSwitch } from 'twenty-ui/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
@@ -308,7 +308,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     );
                   }}
                 >
-                  <MenuItemToggle
+                  <MenuItemSwitch
                     focused={selectedItemId === 'Compact view'}
                     LeftIcon={IconBaselineDensitySmall}
                     onToggleChange={() =>

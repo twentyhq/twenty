@@ -1,10 +1,10 @@
-import { FormBooleanFieldToggleInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldToggleInput';
+import { FormBooleanFieldSwitchInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldSwitchInput';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
-const meta: Meta<typeof FormBooleanFieldToggleInput> = {
-  title: 'UI/Data/Field/Form/Input/FormBooleanFieldToggleInput',
-  component: FormBooleanFieldToggleInput,
+const meta: Meta<typeof FormBooleanFieldSwitchInput> = {
+  title: 'UI/Data/Field/Form/Input/FormBooleanFieldSwitchInput',
+  component: FormBooleanFieldSwitchInput,
   args: {
     description: 'Continue on iteration failure',
     value: false,
@@ -15,7 +15,7 @@ const meta: Meta<typeof FormBooleanFieldToggleInput> = {
 
 export default meta;
 
-type Story = StoryObj<typeof FormBooleanFieldToggleInput>;
+type Story = StoryObj<typeof FormBooleanFieldSwitchInput>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {

@@ -2,24 +2,24 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import { MenuItemToggle } from '@ui/navigation/MenuItemToggle/MenuItemToggle';
+import { MenuItemSwitch } from '@ui/navigation/MenuItemSwitch/MenuItemSwitch';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
-const meta: Meta<typeof MenuItemToggle> = {
+const meta: Meta<typeof MenuItemSwitch> = {
   title: 'UI/Input/Switch/Integrations',
-  component: MenuItemToggle,
+  component: MenuItemSwitch,
   parameters: { container: { width: 300 }, a11y: A11Y_DEFER_COLOR_CONTRAST },
 };
 
 export default meta;
-type Story = StoryObj<typeof MenuItemToggle>;
+type Story = StoryObj<typeof MenuItemSwitch>;
 
 type MenuSwitchProps = { onToggleChange?: (checked: boolean) => void };
 
 const MenuSwitch = ({ onToggleChange }: MenuSwitchProps) => {
   const [checked, setChecked] = useState(false);
   return (
-    <MenuItemToggle
+    <MenuItemSwitch
       text="Notifications"
       toggled={checked}
       onToggleChange={(nextChecked) => {

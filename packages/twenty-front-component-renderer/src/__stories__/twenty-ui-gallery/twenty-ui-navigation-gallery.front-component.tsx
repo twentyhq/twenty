@@ -19,7 +19,7 @@ import {
   MenuItemSelectColor,
   MenuItemSelectTag,
   MenuItemSuggestion,
-  MenuItemToggle,
+  MenuItemSwitch,
   MenuPicker,
   NavigationBar,
   NavigationBarItem,
@@ -183,9 +183,9 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
     node: <MenuItemSuggestion text="Suggestion" onClick={() => {}} />,
   },
   {
-    name: 'MenuItemToggle',
+    name: 'MenuItemSwitch',
     node: (
-      <MenuItemToggle text="Toggle" toggled={true} onToggleChange={() => {}} />
+      <MenuItemSwitch text="Switch" toggled={true} onToggleChange={() => {}} />
     ),
   },
   {

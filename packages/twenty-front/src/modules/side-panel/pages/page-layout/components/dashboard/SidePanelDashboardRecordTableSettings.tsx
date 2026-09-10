@@ -1,7 +1,7 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMenuItemNumberInput';
-import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
+import { CommandMenuItemSwitch } from '@/command-menu/components/CommandMenuItemSwitch';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { useRecordTableWidgetFieldCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldCallbacks';
@@ -417,7 +417,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                   )}
                   {!isCalendarLayout && hasGroupBy && (
                     <SelectableListItem itemId="record-table-hide-empty-groups">
-                      <CommandMenuItemToggle
+                      <CommandMenuItemSwitch
                         LeftIcon={IconEyeOff}
                         text={t`Hide empty groups`}
                         id="record-table-hide-empty-groups"
@@ -440,7 +440,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                   )}
                   {isWidgetContentEditingSupported && (
                     <SelectableListItem itemId="record-table-allow-editing">
-                      <CommandMenuItemToggle
+                      <CommandMenuItemSwitch
                         LeftIcon={IconPencil}
                         text={t`Allow editing`}
                         id="record-table-allow-editing"

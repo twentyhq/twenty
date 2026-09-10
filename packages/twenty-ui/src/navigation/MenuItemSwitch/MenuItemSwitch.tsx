@@ -6,9 +6,9 @@ import {
   StyledMenuItemRightContent,
 } from '@ui/navigation/MenuItem/parts/StyledMenuItemBase';
 
-import styles from './MenuItemToggle.module.scss';
+import styles from './MenuItemSwitch.module.scss';
 
-export type MenuItemToggleProps = {
+export type MenuItemSwitchProps = {
   focused?: boolean;
   LeftIcon?: IconComponent;
   withIconContainer?: boolean;
@@ -20,7 +20,7 @@ export type MenuItemToggleProps = {
   disabled?: boolean;
 };
 
-export const MenuItemToggle = ({
+export const MenuItemSwitch = ({
   focused,
   LeftIcon,
   withIconContainer = false,
@@ -30,7 +30,7 @@ export const MenuItemToggle = ({
   onToggleChange,
   toggleSize,
   disabled = false,
-}: MenuItemToggleProps) => {
+}: MenuItemSwitchProps) => {
   const handleClick = () => {
     if (!disabled) {
       onToggleChange?.(!toggled);
@@ -44,7 +44,7 @@ export const MenuItemToggle = ({
       disabled={disabled}
       onClick={handleClick}
     >
-      <div className={styles.toggleContainer}>
+      <div className={styles.switchContainer}>
         <MenuItemLeftContent
           LeftIcon={LeftIcon}
           text={text}

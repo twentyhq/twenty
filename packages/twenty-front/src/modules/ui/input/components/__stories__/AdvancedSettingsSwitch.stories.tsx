@@ -1,23 +1,23 @@
-import { AdvancedSettingsToggle } from '@/ui/input/components/AdvancedSettingsToggle';
+import { AdvancedSettingsSwitch } from '@/ui/input/components/AdvancedSettingsSwitch';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ComponentProps, useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
-type ControlledAdvancedSettingsToggleProps = ComponentProps<
-  typeof AdvancedSettingsToggle
+type ControlledAdvancedSettingsSwitchProps = ComponentProps<
+  typeof AdvancedSettingsSwitch
 >;
 
-const ControlledAdvancedSettingsToggle = ({
+const ControlledAdvancedSettingsSwitch = ({
   isAdvancedModeEnabled,
   setIsAdvancedModeEnabled,
   ...props
-}: ControlledAdvancedSettingsToggleProps) => {
+}: ControlledAdvancedSettingsSwitchProps) => {
   const [enabled, setEnabled] = useState(isAdvancedModeEnabled);
 
   return (
-    <AdvancedSettingsToggle
+    <AdvancedSettingsSwitch
       {...props}
       isAdvancedModeEnabled={enabled}
       setIsAdvancedModeEnabled={(nextEnabled) => {
@@ -28,20 +28,20 @@ const ControlledAdvancedSettingsToggle = ({
   );
 };
 
-const meta: Meta<typeof AdvancedSettingsToggle> = {
-  title: 'UI/Input/AdvancedSettingsToggle',
-  component: AdvancedSettingsToggle,
+const meta: Meta<typeof AdvancedSettingsSwitch> = {
+  title: 'UI/Input/AdvancedSettingsSwitch',
+  component: AdvancedSettingsSwitch,
   decorators: [ComponentDecorator],
   parameters: { container: { width: 300 } },
   args: {
     isAdvancedModeEnabled: false,
     setIsAdvancedModeEnabled: fn(),
   },
-  render: (args) => <ControlledAdvancedSettingsToggle {...args} />,
+  render: (args) => <ControlledAdvancedSettingsSwitch {...args} />,
 };
 
 export default meta;
-type Story = StoryObj<typeof AdvancedSettingsToggle>;
+type Story = StoryObj<typeof AdvancedSettingsSwitch>;
 
 export const Default: Story = {
   play: async ({ canvasElement, args }) => {

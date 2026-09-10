@@ -1,11 +1,11 @@
-import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
+import { CommandMenuItemSwitch } from '@/command-menu/components/CommandMenuItemSwitch';
 import { useGetNewFieldDefaultVisibility } from '@/page-layout/widgets/fields/hooks/useGetNewFieldDefaultVisibility';
 import { useUpdateNewFieldDefaultVisibility } from '@/page-layout/widgets/fields/hooks/useUpdateNewFieldDefaultVisibility';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useLingui } from '@lingui/react/macro';
 import { IconEye } from 'twenty-ui/icon';
 
-export const NewFieldDefaultVisibilityToggle = ({
+export const NewFieldDefaultVisibilitySwitch = ({
   pageLayoutId,
   widgetId,
 }: {
@@ -34,7 +34,7 @@ export const NewFieldDefaultVisibilityToggle = ({
       itemId="new-field-default-visibility"
       onEnter={handleToggle}
     >
-      <CommandMenuItemToggle
+      <CommandMenuItemSwitch
         LeftIcon={IconEye}
         text={t`Set fields created in the future as "visible"`}
         id="new-field-default-visibility"

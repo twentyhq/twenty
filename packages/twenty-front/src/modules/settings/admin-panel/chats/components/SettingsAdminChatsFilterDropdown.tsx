@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 
 import { IconAlertTriangle, IconMessage, IconSparkles } from 'twenty-ui/icon';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { MenuItemSwitch } from 'twenty-ui/navigation';
 
 import { type AdminChatsFilterState } from '@/settings/admin-panel/chats/types/AdminChatsFilterState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -29,7 +29,7 @@ export const SettingsAdminChatsFilterDropdown = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItemToggle
+            <MenuItemSwitch
               LeftIcon={IconSparkles}
               onToggleChange={() =>
                 onFiltersChange({
@@ -41,7 +41,7 @@ export const SettingsAdminChatsFilterDropdown = ({
               text={t`Onboarding only`}
               toggleSize="small"
             />
-            <MenuItemToggle
+            <MenuItemSwitch
               LeftIcon={IconAlertTriangle}
               onToggleChange={() =>
                 onFiltersChange({
@@ -53,7 +53,7 @@ export const SettingsAdminChatsFilterDropdown = ({
               text={t`Has error`}
               toggleSize="small"
             />
-            <MenuItemToggle
+            <MenuItemSwitch
               LeftIcon={IconMessage}
               onToggleChange={() =>
                 onFiltersChange({

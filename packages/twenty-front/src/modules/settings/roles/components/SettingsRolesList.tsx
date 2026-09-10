@@ -22,7 +22,7 @@ import {
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { MenuItemSwitch } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
@@ -111,14 +111,14 @@ export const SettingsRolesList = () => {
           dropdownComponents={
             <DropdownContent>
               <DropdownMenuItemsContainer>
-                <MenuItemToggle
+                <MenuItemSwitch
                   LeftIcon={IconLego}
                   onToggleChange={() => setShowAgentRoles(!showAgentRoles)}
                   toggled={showAgentRoles}
                   text={t`Agent roles`}
                   toggleSize="small"
                 />
-                <MenuItemToggle
+                <MenuItemSwitch
                   LeftIcon={IconKey}
                   onToggleChange={() => setShowApiKeyRoles(!showApiKeyRoles)}
                   toggled={showApiKeyRoles}

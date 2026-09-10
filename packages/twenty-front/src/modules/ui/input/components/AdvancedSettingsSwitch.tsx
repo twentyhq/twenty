@@ -27,19 +27,19 @@ const StyledSwitch = styled(Switch)`
   }
 `;
 
-type AdvancedSettingsToggleProps = {
+type AdvancedSettingsSwitchProps = {
   isAdvancedModeEnabled: boolean;
   setIsAdvancedModeEnabled: (enabled: boolean) => void;
   label?: string;
   className?: string;
 };
 
-export const AdvancedSettingsToggle = ({
+export const AdvancedSettingsSwitch = ({
   isAdvancedModeEnabled,
   setIsAdvancedModeEnabled,
   label,
   className,
-}: AdvancedSettingsToggleProps) => {
+}: AdvancedSettingsSwitchProps) => {
   const { t } = useLingui();
   const onChange = (newValue: boolean) => {
     setIsAdvancedModeEnabled(newValue);

@@ -1,6 +1,6 @@
 import { MOBILE_NAVIGATION_BAR_CLEARANCE } from '@/navigation/constants/MobileNavigationBarClearance';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
-import { AdvancedSettingsToggle } from '@/ui/input/components/AdvancedSettingsToggle';
+import { AdvancedSettingsSwitch } from '@/ui/input/components/AdvancedSettingsSwitch';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
@@ -11,7 +11,7 @@ import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-const StyledAdvancedToggleFixedContent = styled.div<{ isMobile: boolean }>`
+const StyledAdvancedSwitchFixedContent = styled.div<{ isMobile: boolean }>`
   flex-shrink: 0;
   margin-top: auto;
   padding-bottom: ${({ isMobile }) =>
@@ -22,7 +22,7 @@ const StyledAdvancedToggleFixedContent = styled.div<{ isMobile: boolean }>`
     isMobile ? themeCssVariables.spacing[5] : '0'};
 `;
 
-const advancedSettingsToggleClassName = css`
+const advancedSettingsSwitchClassName = css`
   padding-right: 0;
 `;
 
@@ -39,16 +39,16 @@ export const SettingsNavigationDrawerContent = () => {
         <SettingsNavigationDrawerItems />
       </NavigationDrawerScrollableContent>
 
-      <StyledAdvancedToggleFixedContent isMobile={isMobile}>
+      <StyledAdvancedSwitchFixedContent isMobile={isMobile}>
         <NavigationDrawerSection>
-          <AdvancedSettingsToggle
-            className={advancedSettingsToggleClassName}
+          <AdvancedSettingsSwitch
+            className={advancedSettingsSwitchClassName}
             isAdvancedModeEnabled={isAdvancedModeEnabled}
             setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
             label={t`Advanced`}
           />
         </NavigationDrawerSection>
-      </StyledAdvancedToggleFixedContent>
+      </StyledAdvancedSwitchFixedContent>
     </>
   );
 };

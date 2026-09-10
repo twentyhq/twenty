@@ -41,7 +41,7 @@ const StyledCheckboxContainer = styled.div`
   width: 100%;
 `;
 
-const StyledToggleContainer = styled.div`
+const StyledSwitchContainer = styled.div`
   align-items: center;
   display: flex;
   height: 100%;
@@ -179,7 +179,7 @@ export const generateColumns = (
         switch (column.fieldType.type) {
           case 'checkbox':
             component = (
-              <StyledToggleContainer
+              <StyledSwitchContainer
                 id={formatSafeId(`${columnKey}-${row.__index}`)}
                 onClick={(event) => {
                   event.stopPropagation();
@@ -195,7 +195,7 @@ export const generateColumns = (
                     });
                   }}
                 />
-              </StyledToggleContainer>
+              </StyledSwitchContainer>
             );
             break;
           case 'select':

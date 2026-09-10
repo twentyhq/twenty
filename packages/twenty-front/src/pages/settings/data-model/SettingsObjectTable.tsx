@@ -32,7 +32,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
 import { SearchInput } from 'twenty-ui/input';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { MenuItemSwitch } from 'twenty-ui/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -176,7 +176,7 @@ export const SettingsObjectTable = ({
                 dropdownComponents={
                   <DropdownContent>
                     <DropdownMenuItemsContainer>
-                      <MenuItemToggle
+                      <MenuItemSwitch
                         LeftIcon={IconArchive}
                         onToggleChange={() =>
                           setShowDeactivated(!showDeactivated)
@@ -186,7 +186,7 @@ export const SettingsObjectTable = ({
                         toggleSize="small"
                       />
                       {isAdvancedModeEnabled && (
-                        <MenuItemToggle
+                        <MenuItemSwitch
                           LeftIcon={IconSettings}
                           onToggleChange={() =>
                             setShowSystemObjects(!showSystemObjects)

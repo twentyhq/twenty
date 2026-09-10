@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { expect, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { AdvancedSettingsToggle } from '@/ui/input/components/AdvancedSettingsToggle';
+import { AdvancedSettingsSwitch } from '@/ui/input/components/AdvancedSettingsSwitch';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -182,7 +182,7 @@ export const Settings: Story = {
         </NavigationDrawerSection>
 
         <NavigationDrawerFixedContent>
-          <AdvancedSettingsToggle
+          <AdvancedSettingsSwitch
             isAdvancedModeEnabled={false}
             setIsAdvancedModeEnabled={() => {}}
             label="Advanced:"

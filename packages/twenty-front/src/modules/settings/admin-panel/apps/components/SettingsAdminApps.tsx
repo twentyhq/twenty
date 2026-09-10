@@ -32,7 +32,7 @@ import {
 import { H2Title } from 'twenty-ui/typography';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { MenuItemSwitch } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { Tag } from 'twenty-ui/data-display';
 import {
@@ -218,7 +218,7 @@ export const SettingsAdminApps = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemToggle
+                    <MenuItemSwitch
                       LeftIcon={IconPinned}
                       onToggleChange={() =>
                         setShowPreInstalledOnly(!showPreInstalledOnly)
@@ -229,7 +229,7 @@ export const SettingsAdminApps = () => {
                     />
                     <DropdownMenuSectionLabel label={t`Source`} />
                     {SOURCE_TYPE_FILTER_OPTIONS.map(({ sourceType, label }) => (
-                      <MenuItemToggle
+                      <MenuItemSwitch
                         key={sourceType}
                         onToggleChange={() =>
                           toggleSourceTypeFilter(sourceType)
@@ -240,7 +240,7 @@ export const SettingsAdminApps = () => {
                       />
                     ))}
                     <DropdownMenuSectionLabel label={t`Listed`} />
-                    <MenuItemToggle
+                    <MenuItemSwitch
                       onToggleChange={() =>
                         setIsListedFilter(
                           isListedFilter === true ? undefined : true,
@@ -250,7 +250,7 @@ export const SettingsAdminApps = () => {
                       text={t`Listed`}
                       toggleSize="small"
                     />
-                    <MenuItemToggle
+                    <MenuItemSwitch
                       onToggleChange={() =>
                         setIsListedFilter(
                           isListedFilter === false ? undefined : false,
@@ -261,7 +261,7 @@ export const SettingsAdminApps = () => {
                       toggleSize="small"
                     />
                     <DropdownMenuSectionLabel label={t`Configured`} />
-                    <MenuItemToggle
+                    <MenuItemSwitch
                       onToggleChange={() =>
                         setIsConfiguredFilter(
                           isConfiguredFilter === true ? undefined : true,
@@ -271,7 +271,7 @@ export const SettingsAdminApps = () => {
                       text={t`Configured`}
                       toggleSize="small"
                     />
-                    <MenuItemToggle
+                    <MenuItemSwitch
                       onToggleChange={() =>
                         setIsConfiguredFilter(
                           isConfiguredFilter === false ? undefined : false,
