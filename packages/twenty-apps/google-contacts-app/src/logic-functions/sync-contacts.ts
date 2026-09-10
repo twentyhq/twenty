@@ -1,10 +1,10 @@
-import { defineLogicFunction } from 'twenty-sdk/define';
+import { defineLogicFunction, RoutePayload } from 'twenty-sdk/define';
+import { ListConnectionsResponse, Person } from "src/logic-functions/types/google-response.type";
+import { prepareUrl } from "src/logic-functions/data/prepare-url.util";
 import { CoreApiClient } from "twenty-client-sdk/core";
 import axios from "axios";
-import { listConnections } from "twenty-sdk/logic-function";
-import { prepareUrl } from "src/logic-functions/data/prepare-url.util";
-import { ListConnectionsResponse, Person } from "src/logic-functions/types/google-response.type";
 import { parsePhoneNumberWithError } from "libphonenumber-js";
+import { getConnection } from "twenty-sdk/logic-function";
 
 const PAGE_SIZE = 200;
 
@@ -91,17 +91,13 @@ const chunk = <T>(items: T[], size: number): T[][] => {
   return chunks;
 };
 
-const handler = async () => {
-  const connections = await listConnections({ providerName: 'google-contacts' });
-  const connection = connections.find((c) => c.visibility === 'user')
-
-  if (!connection) {
-    return {
-      success: false,
-      error: 'Missing user connection',
-    }
+const handler = async (params: RoutePayload<{
+  connectionId: string;
+}>) => {
+  if (params.body?.connectionId === '' || params.body === null) {
+    return;
   }
-
+  const connection = await getConnection(params.body.connectionId);
   const client = new CoreApiClient();
   const axiosInstance = axios.create({
     baseURL: 'https://people.googleapis.com/v1/people/me',
@@ -110,13 +106,12 @@ const handler = async () => {
       'Authorization': `Bearer ${connection.accessToken}`,
     }
   });
-
   let after;
   try {
     do {
+      // TODO: add after cursor
       const googleResponse = await axiosInstance.get<ListConnectionsResponse>(prepareUrl());
-      console.log(googleResponse.data.connections[0]);
-      let peopleToCreate = [];
+      const peopleToCreate = [];
       for (const personChunk of chunk(googleResponse.data.connections, PAGE_SIZE)) {
         for (const person of personChunk) {
           const agg: PersonAgg = { emails: { primaryEmail: '', additionalEmails: [] } };
@@ -125,12 +120,7 @@ const handler = async () => {
         await client.mutation({
           createPeople: {
             __args: {
-              //data: peopleToCreate,
-              data: [{
-                emails: {
-                  primaryEmail: '', additionalEmails: []
-                }
-              }],
+              data: peopleToCreate,
               upsert: true,
             }
           }
@@ -147,12 +137,14 @@ const handler = async () => {
 };
 
 export default defineLogicFunction({
-  universalIdentifier: '8707786f-b1b1-4cf8-a614-63f498460c6d',
+  universalIdentifier: '27c18158-23b7-48bc-bd0f-64e4bbec4209',
   name: 'sync-contacts',
   description: 'Add a description for your logic function',
   timeoutSeconds: 900,
   handler,
-  cronTriggerSettings: {
-    pattern: '*/15 * * * *',
+  httpRouteTriggerSettings: {
+    path: '/sync-contacts',
+    httpMethod: 'POST',
+    isAuthRequired: true,
   },
 });

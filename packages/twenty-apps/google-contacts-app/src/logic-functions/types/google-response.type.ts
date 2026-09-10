@@ -12,7 +12,7 @@ type Organization = {
 }
 
 type PhoneNumber = {
-  /** Canonicalized ITU-T E.164 form. */
+  // Canonicalized ITU-T E.164 form.
   canonicalForm: string;
 }
 
@@ -26,9 +26,7 @@ type Url = {
 }
 
 type PersonMetadata = {
-  /** Output only. True only for connections.list / otherContacts.list sync responses. */
   deleted?: boolean;
-  /** Output only. Former resource names (populated on sync-token list requests). */
   previousResourceNames?: string[];
 }
 
