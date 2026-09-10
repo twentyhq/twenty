@@ -9,7 +9,6 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
-import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { SettingsRoleDefaultRole } from '@/settings/roles/components/SettingsRolesDefaultRole';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
@@ -248,17 +247,6 @@ export const SettingsSecuritySettings = () => {
               onChange={handleTrashRetentionDaysChange}
               minValue={0}
               showButtons={false}
-            />
-            <Separator />
-            <SettingsOptionCardContentSwitch
-              Icon={IconMail}
-              title={t`Sync Internal Emails`}
-              description={t`Include emails where all participants share the same domain.`}
-              checked={
-                currentWorkspace?.isInternalMessagesImportEnabled ?? false
-              }
-              onChange={handleSyncInternalEmailsChange}
-              advancedMode
             />
           </Card>
         </Section>

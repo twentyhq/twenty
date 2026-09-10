@@ -1,5 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -55,7 +55,7 @@ export const SettingsWorkspaceEmailSyncSection = () => {
         description={t`Control what the workspace imports from connected mailboxes and calendars`}
       />
       <Card rounded>
-        <SettingsOptionCardContentToggle
+        <SettingsOptionCardContentSwitch
           Icon={IconMail}
           title={t`Sync Internal Emails`}
           description={t`Include emails where all participants share the same domain.`}
