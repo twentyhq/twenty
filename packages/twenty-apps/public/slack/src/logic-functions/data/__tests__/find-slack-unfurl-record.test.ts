@@ -1,10 +1,9 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { findSlackUnfurlRecord } from 'src/logic-functions/data/find-slack-unfurl-record';
 
 const queryMock = vi.fn();
-const client = { query: queryMock } as unknown as CoreApiClient;
+const client = { query: queryMock };
 
 const RECORD_ID = '20202020-1111-4111-8111-111111111111';
 

@@ -101,7 +101,7 @@ export const findSlackUnfurlRecord = async ({
   recordId,
   includeDetails = false,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query'>;
   objectNameSingular: SlackUnfurlObjectName;
   recordId: string;
   includeDetails?: boolean;
