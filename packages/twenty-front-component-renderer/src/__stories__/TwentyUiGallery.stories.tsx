@@ -7,6 +7,10 @@ import {
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
+import {
+  MOUNT_TIMEOUT,
+  TYPING_DELAY,
+} from '@/__stories__/shared/test-utils/timeouts';
 import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 
@@ -23,26 +27,36 @@ const meta: Meta<typeof FrontComponentRenderer> = {
 export default meta;
 type Story = StoryObj<typeof FrontComponentRenderer>;
 
-// Every gallery fixture wraps each component in an error boundary and reports
-// the aggregated result on the gallery-status element, so a single play
-// function covers all submodules.
-const galleryTest: Story['play'] = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
+// Exact failure sets catch regressions and make fixes require updated assertions.
+const createGalleryTest =
+  (expectedFailedComponents: string[] = []): Story['play'] =>
+  async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const status = await canvas.findByTestId(
+      'gallery-status',
+      {},
+      { timeout: MOUNT_TIMEOUT },
+    );
 
-  const status = await canvas.findByTestId(
-    'gallery-status',
-    {},
-    { timeout: 30000 },
-  );
+    await waitFor(() => {
+      const failedComponents = (status.getAttribute('data-failed-names') ?? '')
+        .split(', ')
+        .filter((failedComponent) => failedComponent.length > 0)
+        .sort();
 
-  await waitFor(() => {
-    expect(status).toHaveAttribute('data-failed-messages', '');
-    expect(status).toHaveAttribute('data-failed-count', '0');
-  });
+      expect(failedComponents).toEqual([...expectedFailedComponents].sort());
+      expect(status).toHaveAttribute(
+        'data-failed-count',
+        String(expectedFailedComponents.length),
+      );
+      if (expectedFailedComponents.length === 0) {
+        expect(status).toHaveAttribute('data-failed-messages', '');
+      }
+    });
 
-  expect(Number(status.getAttribute('data-total-count'))).toBeGreaterThan(0);
-  expect(errorHandler).not.toHaveBeenCalled();
-};
+    expect(Number(status.getAttribute('data-total-count'))).toBeGreaterThan(0);
+    expect(errorHandler).not.toHaveBeenCalled();
+  };
 
 const createGalleryStory = (name: string, runtime?: 'preact'): Story => ({
   args: {
@@ -51,61 +65,86 @@ const createGalleryStory = (name: string, runtime?: 'preact'): Story => ({
       runtime,
     ),
   },
-  play: galleryTest,
+  play: createGalleryTest(),
 });
 
-// Golden known-failure test (TDD): PASSES while the documented sandbox gap
-// exists — the failing component set matches the expected set EXACTLY. It
-// FAILS on regression (an unexpected component starts failing), on fix
-// (nothing fails anymore) and on partial fix (only some expected components
-// still fail): when your fix lands, flip the story back to the strict
-// zero-failure `createGalleryStory` play.
-const createKnownFailureGalleryTest =
-  (expectedFailedComponents: string[]): Story['play'] =>
+const TABS_ORDER_ERROR =
+  /^(?:Uncaught TypeError: )?\w+\.compareDocumentPosition is not a function$/;
+const COMPOSED_PATH_ERROR =
+  "Uncaught TypeError: Cannot use 'in' operator to search for 'composedPath' in undefined";
+const VIEWPORT_WIDTH_ERROR =
+  "Uncaught TypeError: Cannot read properties of undefined (reading 'width')";
+const POINTER_TYPE_ERROR =
+  "Uncaught TypeError: Cannot read properties of undefined (reading 'pointerType')";
+
+// Worker errors may be coalesced by the host's error state; require the
+// triggering failure and reject errors outside the documented sandbox gaps.
+const expectSandboxErrors = async (
+  expectedErrors: (string | RegExp)[],
+  optionalErrors: (string | RegExp)[] = [],
+) => {
+  await waitFor(
+    () => {
+      const messages = errorHandler.mock.calls.map(([error]) => error?.message);
+      expect(messages).toEqual(
+        expect.arrayContaining(
+          expectedErrors.map((message) =>
+            message instanceof RegExp
+              ? expect.stringMatching(message)
+              : message,
+          ),
+        ),
+      );
+      expect(
+        messages.filter(
+          (message) =>
+            ![...expectedErrors, ...optionalErrors].some((pattern) =>
+              pattern instanceof RegExp
+                ? typeof message === 'string' && pattern.test(message)
+                : message === pattern,
+            ),
+        ),
+      ).toEqual([]);
+    },
+    { timeout: MOUNT_TIMEOUT },
+  );
+};
+
+type SandboxFailureTestOptions = {
+  trigger?: { role: 'button' | 'combobox' | 'switch' | 'tab'; name: string };
+  expectedErrors: (string | RegExp)[];
+  optionalErrors?: (string | RegExp)[];
+};
+
+const createSandboxFailureTest =
+  ({
+    trigger,
+    expectedErrors,
+    optionalErrors,
+  }: SandboxFailureTestOptions): Story['play'] =>
   async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const status = await canvas.findByTestId(
-      'gallery-status',
-      {},
-      { timeout: 30000 },
-    );
-
-    const expectedFailedComponentsSorted = [...expectedFailedComponents].sort();
-
-    // Failure reports arrive asynchronously: retry until the failed set
-    // matches the expected set exactly.
-    await waitFor(() => {
-      const failedComponents = (status.getAttribute('data-failed-names') ?? '')
-        .split(', ')
-        .filter((failedComponent) => failedComponent.length > 0)
-        .sort();
-
-      expect(failedComponents).toEqual(expectedFailedComponentsSorted);
-    });
-
-    expect(errorHandler).not.toHaveBeenCalled();
+    // Some failures prevent mounting; only interaction tests can await the card.
+    if (trigger) {
+      const canvas = within(canvasElement);
+      await expectFrontComponentMounted(canvas);
+      await userEvent.click(
+        canvas.getByRole(trigger.role, { name: trigger.name }),
+      );
+    }
+    await expectSandboxErrors(expectedErrors, optionalErrors);
   };
 
-const createKnownFailureGalleryStory = (
-  name: string,
-  expectedFailedComponents: string[],
-  runtime?: 'preact',
-): Story => ({
-  ...createGalleryStory(name, runtime),
-  play: createKnownFailureGalleryTest(expectedFailedComponents),
-});
+// LinkChip crashes without a router context in the sandbox.
+const dataDisplayTest = createGalleryTest(['LinkChip']);
 
-// KNOWN ISSUE (TDD): LinkChip crashes without a router context in the sandbox.
-export const DataDisplayReact: Story = createKnownFailureGalleryStory(
-  'twenty-ui-data-display-gallery',
-  ['LinkChip'],
-);
-export const DataDisplayPreact: Story = createKnownFailureGalleryStory(
-  'twenty-ui-data-display-gallery',
-  ['LinkChip'],
-  'preact',
-);
+export const DataDisplayReact: Story = {
+  ...createGalleryStory('twenty-ui-data-display-gallery'),
+  play: dataDisplayTest,
+};
+export const DataDisplayPreact: Story = {
+  ...createGalleryStory('twenty-ui-data-display-gallery', 'preact'),
+  play: dataDisplayTest,
+};
 
 export const FeedbackReact: Story = createGalleryStory(
   'twenty-ui-feedback-gallery',
@@ -121,17 +160,16 @@ export const IconPreact: Story = createGalleryStory(
   'preact',
 );
 
-// KNOWN ISSUE (TDD): Base UI 1.8 radios require Element.matches(':disabled'),
+// Base UI 1.8 radios require Element.matches(':disabled'),
 // which the sandbox DOM does not implement.
-export const InputReact: Story = createKnownFailureGalleryStory(
-  'twenty-ui-input-gallery',
-  ['CardPicker', 'Radio', 'RadioGroup'],
-);
-export const InputPreact: Story = createKnownFailureGalleryStory(
-  'twenty-ui-input-gallery',
-  ['CardPicker'],
-  'preact',
-);
+export const InputReact: Story = {
+  ...createGalleryStory('twenty-ui-input-gallery'),
+  play: createGalleryTest(['CardPicker', 'Radio', 'RadioGroup']),
+};
+export const InputPreact: Story = {
+  ...createGalleryStory('twenty-ui-input-gallery', 'preact'),
+  play: createGalleryTest(['CardPicker']),
+};
 
 export const JsonVisualizerReact: Story = createGalleryStory(
   'twenty-ui-json-visualizer-gallery',
@@ -149,17 +187,17 @@ export const LayoutPreact: Story = createGalleryStory(
   'preact',
 );
 
-// KNOWN ISSUE (TDD): react-router Links crash without a router context.
-const NAVIGATION_EXPECTED_FAILURES = ['RawLink', 'UndecoratedLink'];
-export const NavigationReact: Story = createKnownFailureGalleryStory(
-  'twenty-ui-navigation-gallery',
-  NAVIGATION_EXPECTED_FAILURES,
-);
-export const NavigationPreact: Story = createKnownFailureGalleryStory(
-  'twenty-ui-navigation-gallery',
-  NAVIGATION_EXPECTED_FAILURES,
-  'preact',
-);
+// react-router Links crash without a router context.
+const navigationTest = createGalleryTest(['RawLink', 'UndecoratedLink']);
+
+export const NavigationReact: Story = {
+  ...createGalleryStory('twenty-ui-navigation-gallery'),
+  play: navigationTest,
+};
+export const NavigationPreact: Story = {
+  ...createGalleryStory('twenty-ui-navigation-gallery', 'preact'),
+  play: navigationTest,
+};
 
 export const SurfacesReact: Story = createGalleryStory(
   'twenty-ui-surfaces-gallery',
@@ -169,10 +207,8 @@ export const SurfacesPreact: Story = createGalleryStory(
   'preact',
 );
 
-// KNOWN ISSUE (TDD) golden test: an open Modal (base-ui Dialog portal) hangs
-// the React-runtime render — the gallery status must never mount. Works under
-// Preact (see ModalOpenPreact). When fixed, flip this story to the strict
-// zero-failure play used by ModalOpenPreact.
+// An open Modal portal hangs the React render without an error, so the
+// missing gallery status is the only observable failure. Preact can mount it.
 const modalOpenHangTest: Story['play'] = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
 
@@ -181,43 +217,24 @@ const modalOpenHangTest: Story['play'] = async ({ canvasElement }) => {
   ).rejects.toThrow();
 };
 
-const modalOpenTest: Story['play'] = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
-
-  const status = await canvas.findByTestId(
-    'gallery-status',
-    {},
-    { timeout: 15000 },
-  );
-
-  await waitFor(() => {
-    expect(status).toHaveAttribute('data-failed-messages', '');
-    expect(status).toHaveAttribute('data-failed-count', '0');
-  });
-
-  expect(errorHandler).not.toHaveBeenCalled();
-};
-
 export const ModalOpenReact: Story = {
   ...createGalleryStory('twenty-ui-modal-open-gallery'),
   play: modalOpenHangTest,
 };
-export const ModalOpenPreact: Story = {
-  ...createGalleryStory('twenty-ui-modal-open-gallery', 'preact'),
-  play: modalOpenTest,
-};
+export const ModalOpenPreact: Story = createGalleryStory(
+  'twenty-ui-modal-open-gallery',
+  'preact',
+);
 
-// KNOWN ISSUE (TDD) golden test: monaco cannot load inside the sandbox worker
-// (no script loading in the polyfilled DOM, opaque-origin CSP): the CodeEditor
-// wrapper mounts but monaco's onMount never fires. If front components ever
-// get a supported code editor path, flip the assertion to 'mounted'.
+// Monaco cannot load scripts inside the sandbox worker, so the wrapper mounts
+// but the editor's onMount never fires.
 const codeEditorTest: Story['play'] = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
 
   const codeEditor = await canvas.findByTestId(
     'code-editor-component',
     {},
-    { timeout: 30000 },
+    { timeout: MOUNT_TIMEOUT },
   );
 
   await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -248,7 +265,7 @@ const themeTokenTest: Story['play'] = async ({ canvasElement }) => {
   const iconWrapper = await canvas.findByTestId(
     'theme-token-icon-wrapper',
     {},
-    { timeout: 30000 },
+    { timeout: MOUNT_TIMEOUT },
   );
 
   await waitFor(() => {
@@ -270,74 +287,12 @@ export const ThemeTokensPreact: Story = {
   play: themeTokenTest,
 };
 
-const createComponentStory = (
-  name: string,
-  play: NonNullable<Story['play']>,
-  runtime?: 'preact',
-  expectedErrors: (string | RegExp)[] = [],
-): Story => ({
-  args: {
-    componentUrl: getBuiltStoryComponentPathForRender(
-      `${name}.front-component`,
-      runtime,
-    ),
-    executionContext: {
-      frontComponentId: name,
-      userId: null,
-      recordId: null,
-      selectedRecordIds: [],
-      timelineActivityId: null,
-      colorScheme: 'light',
-    },
-  },
-  play: async (context) => {
-    await expectFrontComponentMounted(within(context.canvasElement));
-    await play(context);
-    await expectSandboxErrors(expectedErrors);
-  },
-});
-
-// Worker errors may be coalesced by the host's error state; require the
-// triggering failure and reject errors outside the documented sandbox gaps.
-const expectSandboxErrors = async (
-  expectedErrors: (string | RegExp)[],
-  optionalErrors: (string | RegExp)[] = [],
-) => {
-  await waitFor(
-    () => {
-      const messages = errorHandler.mock.calls.map(([error]) => error?.message);
-      if (expectedErrors.length === 0) {
-        expect(messages).toEqual([]);
-        return;
-      }
-      expect(messages).toEqual(
-        expect.arrayContaining(
-          expectedErrors.map((message) =>
-            message instanceof RegExp
-              ? expect.stringMatching(message)
-              : message,
-          ),
-        ),
-      );
-      expect(
-        messages.filter(
-          (message) =>
-            ![...expectedErrors, ...optionalErrors].some((pattern) =>
-              pattern instanceof RegExp
-                ? typeof message === 'string' && pattern.test(message)
-                : message === pattern,
-            ),
-        ),
-      ).toEqual([]);
-    },
-    { timeout: 30000 },
-  );
-};
-
 const fieldControlsTest =
   (runtime: 'react' | 'preact'): NonNullable<Story['play']> =>
   async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    await expectFrontComponentMounted(canvas);
+
     const email = canvas.getByRole('textbox', { name: 'Email' });
     const notes = canvas.getByRole('textbox', { name: 'Notes' });
 
@@ -358,8 +313,8 @@ const fieldControlsTest =
 
     await userEvent.click(canvas.getByText('Email', { exact: true }));
     await waitFor(() => expect(email).toHaveFocus());
-    await userEvent.type(email, 'alice', { delay: 30 });
-    await userEvent.type(notes, 'Follow up', { delay: 30 });
+    await userEvent.type(email, 'alice', { delay: TYPING_DELAY });
+    await userEvent.type(notes, 'Follow up', { delay: TYPING_DELAY });
     await userEvent.click(canvas.getByRole('button', { name: 'Read values' }));
     // Textarea's render element loses its change handler in the React runtime.
     await waitFor(() =>
@@ -369,27 +324,22 @@ const fieldControlsTest =
           : 'Email: alice; Notes: Follow up',
       ),
     );
+    await expectSandboxErrors([COMPOSED_PATH_ERROR]);
   };
 
-const FIELD_EVENT_ERRORS = [
-  "Uncaught TypeError: Cannot use 'in' operator to search for 'composedPath' in undefined",
-];
-
-export const FieldControlsReact = createComponentStory(
-  'twenty-ui-field-controls',
-  fieldControlsTest('react'),
-  undefined,
-  FIELD_EVENT_ERRORS,
-);
-export const FieldControlsPreact = createComponentStory(
-  'twenty-ui-field-controls',
-  fieldControlsTest('preact'),
-  'preact',
-  FIELD_EVENT_ERRORS,
-);
+export const FieldControlsReact: Story = {
+  ...createGalleryStory('twenty-ui-field-controls'),
+  play: fieldControlsTest('react'),
+};
+export const FieldControlsPreact: Story = {
+  ...createGalleryStory('twenty-ui-field-controls', 'preact'),
+  play: fieldControlsTest('preact'),
+};
 
 const displayHelpersTest: Story['play'] = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
+  await expectFrontComponentMounted(canvas);
+
   const truncatedText = canvas.getByText(
     'A long account name that should truncate',
   );
@@ -408,20 +358,22 @@ const displayHelpersTest: Story['play'] = async ({ canvasElement }) => {
   expect(canvas.getByText('{"active":true}')).toBeVisible();
   expect(canvas.getByText('Account description')).toBeVisible();
   expect(canvas.getByText('Qualified')).toBeVisible();
+  expect(errorHandler).not.toHaveBeenCalled();
 };
 
-export const DisplayHelpersReact = createComponentStory(
-  'twenty-ui-display-helpers',
-  displayHelpersTest,
-);
-export const DisplayHelpersPreact = createComponentStory(
-  'twenty-ui-display-helpers',
-  displayHelpersTest,
-  'preact',
-);
+export const DisplayHelpersReact: Story = {
+  ...createGalleryStory('twenty-ui-display-helpers'),
+  play: displayHelpersTest,
+};
+export const DisplayHelpersPreact: Story = {
+  ...createGalleryStory('twenty-ui-display-helpers', 'preact'),
+  play: displayHelpersTest,
+};
 
 const listItemTest: Story['play'] = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
+  await expectFrontComponentMounted(canvas);
+
   const digest = canvas.getByText('Weekly digest');
 
   await userEvent.click(digest);
@@ -434,114 +386,66 @@ const listItemTest: Story['play'] = async ({ canvasElement }) => {
   );
   await userEvent.click(canvas.getByText('Disabled preference'));
   expect(canvas.getByRole('status')).toHaveTextContent('Digest: disabled');
+  expect(errorHandler).not.toHaveBeenCalled();
 };
 
-export const ListItemReact = createComponentStory(
-  'twenty-ui-list-item',
-  listItemTest,
-);
-export const ListItemPreact = createComponentStory(
-  'twenty-ui-list-item',
-  listItemTest,
-  'preact',
-);
-
-type SandboxFailureStoryOptions = {
-  name: string;
-  runtime?: 'preact';
-  trigger?: { role: 'button' | 'combobox' | 'switch' | 'tab'; name: string };
-  expectedErrors: (string | RegExp)[];
-  optionalErrors?: (string | RegExp)[];
-  description: string;
+export const ListItemReact: Story = {
+  ...createGalleryStory('twenty-ui-list-item'),
+  play: listItemTest,
+};
+export const ListItemPreact: Story = {
+  ...createGalleryStory('twenty-ui-list-item', 'preact'),
+  play: listItemTest,
 };
 
-const createSandboxFailureStory = ({
-  name,
-  runtime,
-  trigger,
-  expectedErrors,
-  optionalErrors,
-  description,
-}: SandboxFailureStoryOptions): Story => ({
-  ...createComponentStory(name, async () => {}, runtime),
-  parameters: {
-    docs: {
-      description: {
-        story: `Known sandbox limitation: ${description} Replace the error assertions with successful interaction checks when fixed.`,
-      },
-    },
-  },
-  play: async ({ canvasElement }) => {
-    if (trigger) {
-      const canvas = within(canvasElement);
-      await expectFrontComponentMounted(canvas);
-      await userEvent.click(
-        canvas.getByRole(trigger.role, { name: trigger.name }),
-      );
-    }
-    await expectSandboxErrors(expectedErrors, optionalErrors);
-  },
-});
+// React cannot mount Tabs without compareDocumentPosition; Preact activation
+// expects nativeEvent.composedPath, which the forwarded event lacks.
+export const TabsReact: Story = {
+  ...createGalleryStory('twenty-ui-tabs'),
+  play: createSandboxFailureTest({ expectedErrors: [TABS_ORDER_ERROR] }),
+};
+export const TabsPreact: Story = {
+  ...createGalleryStory('twenty-ui-tabs', 'preact'),
+  play: createSandboxFailureTest({
+    trigger: { role: 'tab', name: 'Activity' },
+    expectedErrors: [COMPOSED_PATH_ERROR],
+    optionalErrors: [TABS_ORDER_ERROR],
+  }),
+};
 
-const TABS_ORDER_ERROR =
-  /^(?:Uncaught TypeError: )?\w+\.compareDocumentPosition is not a function$/;
-const COMPOSED_PATH_ERROR =
-  "Uncaught TypeError: Cannot use 'in' operator to search for 'composedPath' in undefined";
-const VIEWPORT_WIDTH_ERROR =
-  "Uncaught TypeError: Cannot read properties of undefined (reading 'width')";
-const POINTER_TYPE_ERROR =
-  "Uncaught TypeError: Cannot read properties of undefined (reading 'pointerType')";
-
-export const TabsReact = createSandboxFailureStory({
-  name: 'twenty-ui-tabs',
-  expectedErrors: [TABS_ORDER_ERROR],
-  description:
-    'Tabs cannot mount because the remote DOM lacks compareDocumentPosition.',
-});
-export const TabsPreact = createSandboxFailureStory({
-  name: 'twenty-ui-tabs',
-  runtime: 'preact',
-  trigger: { role: 'tab', name: 'Activity' },
-  expectedErrors: [COMPOSED_PATH_ERROR],
-  optionalErrors: [TABS_ORDER_ERROR],
-  description:
-    'Tab activation expects nativeEvent.composedPath, which the forwarded event lacks.',
-});
-
-export const PopoverReact = createSandboxFailureStory({
-  name: 'twenty-ui-popover',
+// Opening the popover requires viewport data absent from the sandbox.
+const popoverTest = createSandboxFailureTest({
   trigger: { role: 'button', name: 'Account details' },
   expectedErrors: [VIEWPORT_WIDTH_ERROR],
-  description:
-    'Opening the popover requires viewport data absent from the sandbox.',
-});
-export const PopoverPreact = createSandboxFailureStory({
-  name: 'twenty-ui-popover',
-  runtime: 'preact',
-  trigger: { role: 'button', name: 'Account details' },
-  expectedErrors: [VIEWPORT_WIDTH_ERROR],
-  description:
-    'Opening the popover requires viewport data absent from the sandbox.',
 });
 
-export const MenuReact = createSandboxFailureStory({
-  name: 'twenty-ui-menu',
+export const PopoverReact: Story = {
+  ...createGalleryStory('twenty-ui-popover'),
+  play: popoverTest,
+};
+export const PopoverPreact: Story = {
+  ...createGalleryStory('twenty-ui-popover', 'preact'),
+  play: popoverTest,
+};
+
+// Menu opening lacks viewport data and nativeEvent.pointerType.
+const menuTest = createSandboxFailureTest({
   trigger: { role: 'button', name: 'Account actions' },
   expectedErrors: [POINTER_TYPE_ERROR],
   optionalErrors: [VIEWPORT_WIDTH_ERROR],
-  description: 'Menu opening lacks viewport data and nativeEvent.pointerType.',
-});
-export const MenuPreact = createSandboxFailureStory({
-  name: 'twenty-ui-menu',
-  runtime: 'preact',
-  trigger: { role: 'button', name: 'Account actions' },
-  expectedErrors: [POINTER_TYPE_ERROR],
-  optionalErrors: [VIEWPORT_WIDTH_ERROR],
-  description: 'Menu opening lacks viewport data and nativeEvent.pointerType.',
 });
 
-export const SelectReact = createSandboxFailureStory({
-  name: 'twenty-ui-select',
+export const MenuReact: Story = {
+  ...createGalleryStory('twenty-ui-menu'),
+  play: menuTest,
+};
+export const MenuPreact: Story = {
+  ...createGalleryStory('twenty-ui-menu', 'preact'),
+  play: menuTest,
+};
+
+// Select opening lacks viewport data and nativeEvent.pointerType.
+const selectTest = createSandboxFailureTest({
   trigger: { role: 'combobox', name: 'Account stage' },
   expectedErrors: [POINTER_TYPE_ERROR],
   optionalErrors: [
@@ -550,26 +454,20 @@ export const SelectReact = createSandboxFailureStory({
     TABS_ORDER_ERROR,
     /^(?:Uncaught TypeError: )?\w+\.matches is not a function$/,
   ],
-  description:
-    'Select opening lacks viewport data and nativeEvent.pointerType.',
 });
-export const SelectPreact = createSandboxFailureStory({
-  name: 'twenty-ui-select',
-  runtime: 'preact',
-  trigger: { role: 'combobox', name: 'Account stage' },
-  expectedErrors: [POINTER_TYPE_ERROR],
-  optionalErrors: [
-    VIEWPORT_WIDTH_ERROR,
-    COMPOSED_PATH_ERROR,
-    TABS_ORDER_ERROR,
-    /^(?:Uncaught TypeError: )?\w+\.matches is not a function$/,
-  ],
-  description:
-    'Select activation expects nativeEvent.pointerType, which the forwarded event lacks.',
-});
+
+export const SelectReact: Story = {
+  ...createGalleryStory('twenty-ui-select'),
+  play: selectTest,
+};
+export const SelectPreact: Story = {
+  ...createGalleryStory('twenty-ui-select', 'preact'),
+  play: selectTest,
+};
 
 const toastTest: Story['play'] = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
+  await expectFrontComponentMounted(canvas);
 
   expect(canvas.getByRole('status')).toHaveTextContent('Account saved');
   expect(
@@ -596,46 +494,46 @@ const toastTest: Story['play'] = async ({ canvasElement }) => {
   expect(
     canvas.getByText('Notification: closed; Action: cancelled'),
   ).toBeVisible();
+  expect(errorHandler).not.toHaveBeenCalled();
 };
 
-export const ToastReact = createComponentStory('twenty-ui-toast', toastTest);
-export const ToastPreact = createComponentStory(
-  'twenty-ui-toast',
-  toastTest,
-  'preact',
-);
+export const ToastReact: Story = {
+  ...createGalleryStory('twenty-ui-toast'),
+  play: toastTest,
+};
+export const ToastPreact: Story = {
+  ...createGalleryStory('twenty-ui-toast', 'preact'),
+  play: toastTest,
+};
 
-export const AlertDialogReact = createSandboxFailureStory({
-  name: 'twenty-ui-alert-dialog',
+// Opening the alert dialog requires viewport data absent from the sandbox.
+const alertDialogTest = createSandboxFailureTest({
   trigger: { role: 'button', name: 'Delete account' },
   expectedErrors: [VIEWPORT_WIDTH_ERROR],
-  description:
-    'Opening the alert dialog requires viewport data absent from the sandbox.',
-});
-export const AlertDialogPreact = createSandboxFailureStory({
-  name: 'twenty-ui-alert-dialog',
-  runtime: 'preact',
-  trigger: { role: 'button', name: 'Delete account' },
-  expectedErrors: [VIEWPORT_WIDTH_ERROR],
-  description:
-    'Opening the alert dialog requires viewport data absent from the sandbox.',
 });
 
-const SWITCH_POINTER_ERROR =
-  /^Uncaught TypeError: .+\.PointerEvent is not a constructor$/;
+export const AlertDialogReact: Story = {
+  ...createGalleryStory('twenty-ui-alert-dialog'),
+  play: alertDialogTest,
+};
+export const AlertDialogPreact: Story = {
+  ...createGalleryStory('twenty-ui-alert-dialog', 'preact'),
+  play: alertDialogTest,
+};
 
-export const SwitchReact = createSandboxFailureStory({
-  name: 'twenty-ui-switch',
+// Switch activation constructs a PointerEvent, which the sandbox lacks.
+const switchTest = createSandboxFailureTest({
   trigger: { role: 'switch', name: 'Email notifications' },
-  expectedErrors: [SWITCH_POINTER_ERROR],
-  description:
-    'Switch activation constructs a PointerEvent, which the sandbox does not provide.',
+  expectedErrors: [
+    /^Uncaught TypeError: .+\.PointerEvent is not a constructor$/,
+  ],
 });
-export const SwitchPreact = createSandboxFailureStory({
-  name: 'twenty-ui-switch',
-  runtime: 'preact',
-  trigger: { role: 'switch', name: 'Email notifications' },
-  expectedErrors: [SWITCH_POINTER_ERROR],
-  description:
-    'Switch activation constructs a PointerEvent, which the sandbox does not provide.',
-});
+
+export const SwitchReact: Story = {
+  ...createGalleryStory('twenty-ui-switch'),
+  play: switchTest,
+};
+export const SwitchPreact: Story = {
+  ...createGalleryStory('twenty-ui-switch', 'preact'),
+  play: switchTest,
+};

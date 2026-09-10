@@ -1,36 +1,32 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import 'twenty-ui/style.css';
 import { Menu } from 'twenty-ui/surfaces';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
 
-import { FrontComponentCard } from '@/__stories__/shared/front-components/front-component-card';
+import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 
 const MenuExample = () => {
   const [action, setAction] = useState('none');
 
   return (
-    <ThemeProvider colorScheme="light">
-      <FrontComponentCard title="Menu">
-        <Menu.Root>
-          <Menu.Trigger>Account actions</Menu.Trigger>
-          <Menu.Popup>
-            <Menu.Group>
-              <Menu.GroupLabel>Record</Menu.GroupLabel>
-              <Menu.Item onClick={() => setAction('duplicated')}>
-                Duplicate
-              </Menu.Item>
-              <Menu.Item disabled onClick={() => setAction('archived')}>
-                Archive
-              </Menu.Item>
-            </Menu.Group>
-            <Menu.Separator />
-            <Menu.Item onClick={() => setAction('exported')}>Export</Menu.Item>
-          </Menu.Popup>
-        </Menu.Root>
-        <p role="status">Action: {action}</p>
-      </FrontComponentCard>
-    </ThemeProvider>
+    <TwentyUiGalleryCard title="Menu">
+      <Menu.Root>
+        <Menu.Trigger>Account actions</Menu.Trigger>
+        <Menu.Popup>
+          <Menu.Group>
+            <Menu.GroupLabel>Record</Menu.GroupLabel>
+            <Menu.Item onClick={() => setAction('duplicated')}>
+              Duplicate
+            </Menu.Item>
+            <Menu.Item disabled onClick={() => setAction('archived')}>
+              Archive
+            </Menu.Item>
+          </Menu.Group>
+          <Menu.Separator />
+          <Menu.Item onClick={() => setAction('exported')}>Export</Menu.Item>
+        </Menu.Popup>
+      </Menu.Root>
+      <p role="status">Action: {action}</p>
+    </TwentyUiGalleryCard>
   );
 };
 

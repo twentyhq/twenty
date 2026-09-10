@@ -1,7 +1,9 @@
 # Twenty UI renderer coverage
 
 `TwentyUiGallery.stories.tsx` contains the component catalogs and focused
-component stories. Each fixture has React and Preact stories.
+component stories. Each fixture has React and Preact stories built with
+`createGalleryStory`. Custom scenarios override `play` and share their checks
+between runtimes where behavior matches.
 
 | Fixture | Components |
 | --- | --- |
@@ -16,19 +18,21 @@ component stories. Each fixture has React and Preact stories.
 | `twenty-ui-alert-dialog` | AlertDialog |
 | `twenty-ui-switch` | Switch (interaction coverage in addition to the original input gallery) |
 
-Fixtures import the public twenty-ui entry points and `twenty-ui/style.css`.
+The focused fixtures import public twenty-ui entry points and use
+`TwentyUiGalleryCard` for the light theme, mount marker, and `twenty-ui/style.css`.
 The story builder resolves that stylesheet to the individual build's CSS so
-class names match the JavaScript used by the sandbox. Importing CSS in the
-fixture also exercises the SDK's CSS injection and the renderer's style bridge.
+class names match the JavaScript used by the sandbox. Importing CSS through the
+shared card also exercises the SDK's CSS injection and the renderer's style bridge.
 
 ## Known sandbox limitations
 
 These are compatibility regression stories, not assertions that the components
-work fully in the sandbox. The failing scenarios require specific errors and reject unrelated errors,
-following the existing gallery convention. Known precursor errors are optional
-because the host can coalesce worker errors into a single state update. A fix
-must change the corresponding story to assert successful behavior; do not keep or broaden an obsolete error
-expectation. No stories are skipped or marked as expected-to-fail by the runner.
+work fully in the sandbox. The failing scenarios require specific errors and
+reject unrelated errors, following the existing gallery convention. Known
+precursor errors are optional because the host can coalesce worker errors into
+a single state update. A fix must change the corresponding story to assert
+successful behavior; do not keep or broaden an obsolete error expectation.
+No stories are skipped or marked as expected-to-fail by the runner.
 
 | Component | Current limitation |
 | --- | --- |

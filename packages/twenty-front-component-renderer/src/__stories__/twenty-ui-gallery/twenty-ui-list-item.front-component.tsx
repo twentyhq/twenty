@@ -1,31 +1,27 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import 'twenty-ui/style.css';
 import { ListItem } from 'twenty-ui/navigation';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
 
-import { FrontComponentCard } from '@/__stories__/shared/front-components/front-component-card';
+import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 
 const ListItemExample = () => {
   const [selected, setSelected] = useState(false);
 
   return (
-    <ThemeProvider colorScheme="light">
-      <FrontComponentCard title="ListItem">
-        <ListItem
-          selected={selected}
-          indicator="check"
-          onClick={() => setSelected(!selected)}
-          description="Workspace preference"
-        >
-          Weekly digest
-        </ListItem>
-        <ListItem disabled role="button" onClick={() => setSelected(true)}>
-          Disabled preference
-        </ListItem>
-        <p role="status">Digest: {selected ? 'enabled' : 'disabled'}</p>
-      </FrontComponentCard>
-    </ThemeProvider>
+    <TwentyUiGalleryCard title="ListItem">
+      <ListItem
+        selected={selected}
+        indicator="check"
+        onClick={() => setSelected(!selected)}
+        description="Workspace preference"
+      >
+        Weekly digest
+      </ListItem>
+      <ListItem disabled role="button" onClick={() => setSelected(true)}>
+        Disabled preference
+      </ListItem>
+      <p role="status">Digest: {selected ? 'enabled' : 'disabled'}</p>
+    </TwentyUiGalleryCard>
   );
 };
 
