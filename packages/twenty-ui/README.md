@@ -77,33 +77,6 @@ npx nx test twenty-ui                  # Run unit tests
 npx vitest run --root packages/twenty-ui --project unit <file>   # Run a single test file
 ```
 
-# Slider
-
-`Slider` is a Base UI compound. Put `value` or `defaultValue` and
-`onValueChange(value, details)` on `Slider.Root`; use `onValueCommitted` for
-work that should run after a drag or keyboard change. Accessible names and
-`aria-valuetext` belong on `Slider.Thumb`, or use `Slider.Label` for a visible label.
-
-```tsx
-<Slider.Root defaultValue={40}>
-  <Slider.Label>Volume</Slider.Label>
-  <Slider.Value />
-  <Slider.Control>
-    <Slider.Track>
-      <Slider.Indicator />
-      <Slider.Thumb />
-    </Slider.Track>
-  </Slider.Control>
-</Slider.Root>
-```
-
-For a range, pass an array and render one thumb per value with an explicit
-`index` and accessible name. `orientation="vertical"` and `DirectionProvider`
-from Base UI support vertical and RTL sliders. Root colors are `accent` (blue)
-and `success` (green); use `style.color` for a custom color. Native props, refs,
-`render`, `className`, and `style` apply to each part's root element. Use
-`Slider.Thumb`'s `inputRef` to access its range input.
-
 # License
 
 twenty-ui is released under the [MIT](https://github.com/twentyhq/twenty/blob/main/packages/twenty-ui/LICENSE) license.
