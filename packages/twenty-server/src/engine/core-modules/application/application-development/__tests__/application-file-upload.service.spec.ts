@@ -185,23 +185,6 @@ describe('ApplicationFileUploadService', () => {
       ]);
     });
 
-    it('should collect a per-file error for a file larger than the direct upload limit', async () => {
-      const result = await service.createApplicationFileUploads({
-        workspaceId: WORKSPACE_ID,
-        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-        files: [
-          {
-            fileFolder: FileFolder.Source,
-            filePath: 'src/index.ts',
-            size: 2 * 1024 * 1024 * 1024,
-          },
-        ],
-      });
-
-      expect(result.targets).toEqual([]);
-      expect(result.errors[0].message).toContain('above the');
-    });
-
     it('should surface a batch-primitive failure as a per-file error', async () => {
       fileUploadTargetService.createUploadTargetsBatch.mockResolvedValueOnce([
         { success: false, error: 'storage exploded' },

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import bytes from 'bytes';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -13,7 +12,6 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { settings } from 'src/engine/constants/settings';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import {
@@ -53,8 +51,6 @@ export class ApplicationFileUploadService {
       applicationUniversalIdentifier,
     });
 
-    const maxFileSize = bytes(settings.storage.maxDirectUploadFileSize) ?? 0;
-
     const result: CreateApplicationFileUploadsResultDTO = {
       targets: [],
       errors: [],
@@ -63,7 +59,7 @@ export class ApplicationFileUploadService {
     const validFiles: ApplicationFileUploadRequestInput[] = [];
 
     for (const file of files) {
-      const validationError = this.getFileValidationError(file, maxFileSize);
+      const validationError = this.getFileValidationError(file);
 
       if (isDefined(validationError)) {
         result.errors.push({
@@ -169,7 +165,6 @@ export class ApplicationFileUploadService {
 
   private getFileValidationError(
     file: ApplicationFileUploadRequestInput,
-    maxFileSize: number,
   ): string | undefined {
     if (!ALLOWED_APPLICATION_FILE_FOLDERS.includes(file.fileFolder)) {
       return `Invalid fileFolder for application file upload. Allowed values: ${ALLOWED_APPLICATION_FILE_FOLDERS.join(', ')}`;
@@ -182,10 +177,6 @@ export class ApplicationFileUploadService {
 
     if (!pathValidationResult.isValid) {
       return pathValidationResult.error;
-    }
-
-    if (file.size > maxFileSize) {
-      return `File "${file.filePath}" is ${file.size} bytes, above the ${maxFileSize} bytes limit.`;
     }
 
     return undefined;
