@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
@@ -65,6 +66,12 @@ import {
   type WorkspaceDeletionApplicationUninstallJobData,
 } from 'src/engine/core-modules/workspace/jobs/workspace-deletion-application-uninstall.job';
 import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
+import { WORKSPACE_REACTIVATED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-reactivated-event.constant';
+import { WORKSPACE_SOFT_DELETED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-soft-deleted-event.constant';
+import { WORKSPACE_SUSPENDED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-suspended-event.constant';
+import { type WorkspaceReactivatedEvent } from 'src/engine/core-modules/workspace/types/workspace-reactivated-event.type';
+import { type WorkspaceSoftDeletedEvent } from 'src/engine/core-modules/workspace/types/workspace-soft-deleted-event.type';
+import { type WorkspaceSuspendedEvent } from 'src/engine/core-modules/workspace/types/workspace-suspended-event.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
@@ -140,6 +147,7 @@ export class WorkspaceService {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly eventEmitter: EventEmitter2,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -546,6 +554,10 @@ export class WorkspaceService {
     const hasBeenSuspended = isDefined(affected) && affected > 0;
 
     if (hasBeenSuspended) {
+      this.eventEmitter.emit(WORKSPACE_SUSPENDED_EVENT, {
+        workspaceId: id,
+      } satisfies WorkspaceSuspendedEvent);
+
       await this.coreEntityCacheService.invalidate('workspaceEntity', id);
     }
 
@@ -571,6 +583,10 @@ export class WorkspaceService {
     const hasBeenReactivated = isDefined(affected) && affected > 0;
 
     if (hasBeenReactivated) {
+      this.eventEmitter.emit(WORKSPACE_REACTIVATED_EVENT, {
+        workspaceId: id,
+      } satisfies WorkspaceReactivatedEvent);
+
       await this.coreEntityCacheService.invalidate('workspaceEntity', id);
     }
 
@@ -609,6 +625,11 @@ export class WorkspaceService {
 
     await this.workspaceRepository.softDelete({ id, deletedAt: IsNull() });
     await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+
+    this.eventEmitter.emit(WORKSPACE_SOFT_DELETED_EVENT, {
+      workspaceId: id,
+    } satisfies WorkspaceSoftDeletedEvent);
+
     await this.enqueueWorkspaceDeletionApplicationUninstall(id);
 
     this.logger.log(`workspace ${id} soft deleted`);
