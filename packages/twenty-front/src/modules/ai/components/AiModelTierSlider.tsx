@@ -48,9 +48,12 @@ const StyledMetrics = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledMetric = styled.span`
+const StyledMetric = styled.span<{ isInherited: boolean }>`
   align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
+  color: ${({ isInherited }) =>
+    isInherited
+      ? themeCssVariables.font.color.light
+      : themeCssVariables.font.color.tertiary};
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
@@ -159,6 +162,11 @@ export const AiModelTierSlider = ({
 
   const speedAnchorId = `ai-model-tier-speed-${tooltipId}`;
   const intelligenceAnchorId = `ai-model-tier-intelligence-${tooltipId}`;
+  // The base model's reading stands in until the sync measures this effort.
+  const isBenchmarkInherited = model?.isBenchmarkInherited === true;
+  const inheritedNote = isBenchmarkInherited
+    ? t` Not measured at this effort yet, so this is the base model's reading.`
+    : '';
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const tier = AI_MODEL_TIERS[Number(event.target.value)];
@@ -176,13 +184,16 @@ export const AiModelTierSlider = ({
         </StyledTitle>
         <StyledMetrics>
           {isDefined(resolvedTier.speedDeltaPercent) && (
-            <StyledMetric id={speedAnchorId}>
+            <StyledMetric id={speedAnchorId} isInherited={isBenchmarkInherited}>
               <IconBolt size={theme.icon.size.md} />
               {formatPercentDelta(resolvedTier.speedDeltaPercent)}
             </StyledMetric>
           )}
           {isDefined(resolvedTier.intelligenceDeltaPercent) && (
-            <StyledMetric id={intelligenceAnchorId}>
+            <StyledMetric
+              id={intelligenceAnchorId}
+              isInherited={isBenchmarkInherited}
+            >
               <IconBrain size={theme.icon.size.md} />
               {formatPercentDelta(resolvedTier.intelligenceDeltaPercent)}
             </StyledMetric>
@@ -217,13 +228,13 @@ export const AiModelTierSlider = ({
         <>
           <AppTooltip
             anchorSelect={`#${speedAnchorId}`}
-            title={t`${model.label}: ${formatNumber(model.outputTokensPerSecond ?? 0)} tokens per second, compared with the Balanced tier`}
+            title={`${t`${model.label}: ${formatNumber(model.outputTokensPerSecond ?? 0)} tokens per second, compared with the Balanced tier.`}${inheritedNote}`}
             delay={TooltipDelay.shortDelay}
             place="bottom"
           />
           <AppTooltip
             anchorSelect={`#${intelligenceAnchorId}`}
-            title={t`${model.label}: intelligence index ${formatNumber(model.intelligenceIndex ?? 0)}, compared with the Balanced tier`}
+            title={`${t`${model.label}: intelligence index ${formatNumber(model.intelligenceIndex ?? 0)}, compared with the Balanced tier.`}${inheritedNote}`}
             delay={TooltipDelay.shortDelay}
             place="bottom"
           />

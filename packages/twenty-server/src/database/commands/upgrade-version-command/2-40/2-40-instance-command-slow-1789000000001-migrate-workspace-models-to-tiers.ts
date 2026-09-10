@@ -23,10 +23,11 @@ const hasLegacyWorkspaceModelColumns = async (
 };
 
 // A workspace that had picked concrete models keeps them as pins in manual
-// mode; every other workspace moves to automatic selection with the new
-// defaults. Agents created with the old smart default follow the workspace
-// agent tier from now on. Guarded on the old columns so a re-run after the
-// schema step is a no-op.
+// mode, and one that picked its smart model stays on the Smart tier since chat
+// and default agents ran on it. Every other workspace moves to automatic
+// selection with the new defaults. Agents created with the old smart default
+// or the legacy 'auto' id follow the workspace agent tier from now on. Guarded
+// on the old columns so a re-run after the schema step is a no-op.
 @RegisteredInstanceCommand('2.40.0', 1789000000001, { type: 'slow' })
 export class MigrateWorkspaceModelsToTiersSlowInstanceCommand
   implements SlowInstanceCommand
@@ -45,11 +46,13 @@ export class MigrateWorkspaceModelsToTiersSlowInstanceCommand
            "aiModelIdByTier" = jsonb_strip_nulls(jsonb_build_object(
              'smart', CASE WHEN "smartModel" LIKE '%/%' THEN "smartModel" END,
              'fast', CASE WHEN "fastModel" LIKE '%/%' THEN "fastModel" END
-           ))
+           )),
+           "aiChatModelTier" = CASE WHEN "smartModel" LIKE '%/%' THEN 'smart' ELSE "aiChatModelTier" END,
+           "aiAgentModelTier" = CASE WHEN "smartModel" LIKE '%/%' THEN 'smart' ELSE "aiAgentModelTier" END
        WHERE "smartModel" LIKE '%/%' OR "fastModel" LIKE '%/%'`,
     );
     await dataSource.query(
-      `UPDATE "core"."agent" SET "modelId" = 'workspace-default-model' WHERE "modelId" = 'default-smart-model'`,
+      `UPDATE "core"."agent" SET "modelId" = 'workspace-default-model' WHERE "modelId" IN ('default-smart-model', 'auto')`,
     );
   }
 

@@ -100,7 +100,7 @@ export class AiGenerateTextController {
     } finally {
       if (result) {
         void this.aiBillingService.calculateAndBillUsage(
-          resolvedModelId,
+          registeredModel.modelId,
           {
             usage: result.usage,
             cacheCreationTokens:

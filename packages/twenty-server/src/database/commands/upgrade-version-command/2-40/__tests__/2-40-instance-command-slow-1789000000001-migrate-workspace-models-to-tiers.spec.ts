@@ -56,7 +56,26 @@ describe('MigrateWorkspaceModelsToTiersSlowInstanceCommand', () => {
     expect(workspaceUpdate).toContain(`"fastModel" LIKE '%/%'`);
   });
 
-  it('moves agents created with the old smart default onto the workspace tier', async () => {
+  it('keeps a workspace that picked its smart model on the Smart tier', async () => {
+    const { runner, queries } = buildFakeRunner({ hasLegacyColumns: true });
+
+    await new MigrateWorkspaceModelsToTiersSlowInstanceCommand().runDataMigration(
+      runner,
+    );
+
+    const workspaceUpdate = queries.find((sql) =>
+      sql.includes('UPDATE "core"."workspace"'),
+    );
+
+    expect(workspaceUpdate).toContain(
+      `"aiChatModelTier" = CASE WHEN "smartModel" LIKE '%/%' THEN 'smart'`,
+    );
+    expect(workspaceUpdate).toContain(
+      `"aiAgentModelTier" = CASE WHEN "smartModel" LIKE '%/%' THEN 'smart'`,
+    );
+  });
+
+  it('moves agents on the old smart default or the legacy auto id onto the workspace tier', async () => {
     const { runner, queries } = buildFakeRunner({ hasLegacyColumns: true });
 
     await new MigrateWorkspaceModelsToTiersSlowInstanceCommand().runDataMigration(
@@ -65,7 +84,7 @@ describe('MigrateWorkspaceModelsToTiersSlowInstanceCommand', () => {
 
     expect(queries).toContainEqual(
       expect.stringContaining(
-        `SET "modelId" = 'workspace-default-model' WHERE "modelId" = 'default-smart-model'`,
+        `SET "modelId" = 'workspace-default-model' WHERE "modelId" IN ('default-smart-model', 'auto')`,
       ),
     );
   });

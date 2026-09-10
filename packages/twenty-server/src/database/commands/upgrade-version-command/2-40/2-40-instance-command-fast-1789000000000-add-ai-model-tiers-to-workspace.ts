@@ -3,10 +3,9 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-// Opens the tier columns next to the model columns they replace. The paired
-// slow command carries the old values over and drops the old columns, so an
-// upgrade that skips --include-slow keeps every workspace's earlier choice
-// readable until it runs.
+// Opens the tier columns next to the model columns they replace. Until the
+// paired slow command copies each workspace's earlier picks into them and drops
+// the old columns, every workspace reads as automatic selection on Fast.
 @RegisteredInstanceCommand('2.40.0', 1789000000000)
 export class AddAiModelTiersToWorkspaceFastInstanceCommand
   implements FastInstanceCommand
