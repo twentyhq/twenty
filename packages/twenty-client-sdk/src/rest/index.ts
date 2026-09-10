@@ -6,6 +6,8 @@ import {
   DEFAULT_FUNCTIONS_URL_NAME,
 } from 'twenty-shared/application';
 
+import { getTokenFromHeaders } from '../shared/get-token-from-headers.util';
+import { isNonEmptyString } from '../shared/is-non-empty-string.util';
 import { requestWorkspaceMemberAccessToken } from '../shared/request-workspace-member-access-token';
 import { type TwentyClientRunAs } from '../shared/twenty-client-run-as.type';
 
@@ -204,7 +206,19 @@ export class RestApiClient {
     };
   }
 
-  private async resolveAuthorizationToken(): Promise<string> {
+  // An Authorization header set explicitly, per request or as a default,
+  // is the caller's own credential and wins over anything resolved here.
+  private async resolveAuthorizationToken(
+    requestOptions?: RestApiRequestOptions,
+  ): Promise<string> {
+    const explicitToken =
+      getTokenFromHeaders(requestOptions?.headers) ??
+      getTokenFromHeaders(this.defaultHeaders);
+
+    if (isNonEmptyString(explicitToken)) {
+      return explicitToken;
+    }
+
     if (typeof this.runAs !== 'object' || isDefined(this.authorizationToken)) {
       return this.resolveToken();
     }
@@ -243,10 +257,7 @@ export class RestApiClient {
     const applicationAccessToken =
       getProcessEnvironment()[DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME];
 
-    if (
-      !isDefined(applicationAccessToken) ||
-      applicationAccessToken.length === 0
-    ) {
+    if (!isNonEmptyString(applicationAccessToken)) {
       throw new RestApiClientError(
         `Acting as a workspace member needs the \`${DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME}\` environment variable, which only a logic function run provides.`,
       );
@@ -276,10 +287,7 @@ export class RestApiClient {
         null;
     }
 
-    if (
-      !isDefined(this.authorizationToken) ||
-      this.authorizationToken.length === 0
-    ) {
+    if (!isNonEmptyString(this.authorizationToken)) {
       throw new RestApiClientError(
         `Missing application access token. Set the \`${tokenEnvironmentKey}\` environment variable or pass \`token\` to \`RestApiClient\`.`,
       );
@@ -423,7 +431,7 @@ export class RestApiClient {
       target.path,
       requestOptions?.query,
     );
-    const token = await this.resolveAuthorizationToken();
+    const token = await this.resolveAuthorizationToken(requestOptions);
 
     let response = await this.sendRequest(
       url,

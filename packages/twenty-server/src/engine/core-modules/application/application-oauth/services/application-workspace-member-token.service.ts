@@ -9,6 +9,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { type ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
+import { resolveWorkspaceMemberForApplicationToken } from 'src/engine/core-modules/application/application-oauth/utils/resolve-workspace-member-for-application-token.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -39,29 +40,17 @@ export class ApplicationWorkspaceMemberTokenService {
     requestUserWorkspaceId: string | null;
     requestWorkspaceMemberId: string | null;
   }): Promise<ApplicationTokenPairDTO> {
-    if (
-      isDefined(requestUserWorkspaceId) &&
-      requestWorkspaceMemberId !== workspaceMemberId
-    ) {
-      throw new ApplicationException(
-        'An application token issued for a user can only act as that user',
-        ApplicationExceptionCode.FORBIDDEN,
-      );
-    }
-
     const { flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
       ]);
 
-    const workspaceMember = flatWorkspaceMemberMaps.byId[workspaceMemberId];
-
-    if (!isDefined(workspaceMember) || isDefined(workspaceMember.deletedAt)) {
-      throw new ApplicationException(
-        `Workspace member ${workspaceMemberId} not found`,
-        ApplicationExceptionCode.WORKSPACE_MEMBER_NOT_FOUND,
-      );
-    }
+    const workspaceMember = resolveWorkspaceMemberForApplicationToken({
+      workspaceMemberId,
+      requestUserWorkspaceId,
+      requestWorkspaceMemberId,
+      flatWorkspaceMemberMaps,
+    });
 
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: { userId: workspaceMember.userId, workspaceId },

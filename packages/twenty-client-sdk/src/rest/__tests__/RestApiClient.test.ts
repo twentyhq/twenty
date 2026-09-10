@@ -443,6 +443,37 @@ describe('RestApiClient', () => {
       expect(fetchMock).not.toHaveBeenCalled();
     });
 
+    it('should let a default Authorization header win over the member', async () => {
+      const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
+
+      await new RestApiClient({
+        fetch: fetchMock,
+        defaultHeaders: { Authorization: 'Bearer default-header-token' },
+        runAs: { workspaceMemberId: WORKSPACE_MEMBER_ID },
+      }).get('/rest/people');
+
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(
+        (fetchMock.mock.calls[0][1].headers as Headers).get('Authorization'),
+      ).toBe('Bearer default-header-token');
+    });
+
+    it('should let a per-request Authorization header win over the member', async () => {
+      const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
+
+      await new RestApiClient({
+        fetch: fetchMock,
+        runAs: { workspaceMemberId: WORKSPACE_MEMBER_ID },
+      }).get('/rest/people', {
+        headers: { Authorization: 'Bearer request-header-token' },
+      });
+
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(
+        (fetchMock.mock.calls[0][1].headers as Headers).get('Authorization'),
+      ).toBe('Bearer request-header-token');
+    });
+
     it('should let an explicit token win over the member', async () => {
       const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
 

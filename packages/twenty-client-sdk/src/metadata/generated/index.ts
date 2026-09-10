@@ -119,6 +119,9 @@ type WorkspaceMemberTokenResponsePayload = {
   };
 };
 
+const isNonEmptyString = (value: unknown): value is string =>
+  typeof value === 'string' && value.length > 0;
+
 const getProcessEnvironment = (): ProcessEnvironment => {
   const processObject = (
     globalThis as { process?: { env?: ProcessEnvironment } }
@@ -371,6 +374,16 @@ export class MetadataApiClient {
       return this.authorizationToken;
     }
 
+    // A headers callback is only known at request time; a credential it
+    // carries is the caller's own and wins over the member exchange.
+    const tokenFromResolvedHeaders = getTokenFromHeaders(
+      await this.resolveHeaders(),
+    );
+
+    if (isNonEmptyString(tokenFromResolvedHeaders)) {
+      return tokenFromResolvedHeaders;
+    }
+
     if (!this.workspaceMemberTokenPromise) {
       this.workspaceMemberTokenPromise = this.requestWorkspaceMemberAccessToken(
         this.runAsWorkspaceMemberId,
@@ -401,13 +414,13 @@ export class MetadataApiClient {
       processEnvironment[APP_APPLICATION_ACCESS_TOKEN_ENV_KEY];
     const apiUrl = processEnvironment[API_URL_ENV_KEY];
 
-    if (!applicationAccessToken) {
+    if (!isNonEmptyString(applicationAccessToken)) {
       throw new Error(
         `Acting as a workspace member needs the \`${APP_APPLICATION_ACCESS_TOKEN_ENV_KEY}\` environment variable, which only a logic function run provides.`,
       );
     }
 
-    if (!apiUrl) {
+    if (!isNonEmptyString(apiUrl)) {
       throw new Error(
         `Acting as a workspace member needs the \`${API_URL_ENV_KEY}\` environment variable.`,
       );
@@ -427,7 +440,7 @@ export class MetadataApiClient {
     )?.data?.generateApplicationTokenForWorkspaceMember?.applicationAccessToken
       ?.token;
 
-    if (typeof token === 'string' && token.length > 0) {
+    if (isNonEmptyString(token)) {
       return token;
     }
 

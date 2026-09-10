@@ -1,3 +1,5 @@
+import { isNonEmptyString } from './is-non-empty-string.util';
+
 // Mirrors the inline copy in generate/twenty-client-template.ts: the template
 // is injected into generated clients that cannot import from this package.
 export const GENERATE_APPLICATION_TOKEN_FOR_WORKSPACE_MEMBER_MUTATION = `mutation GenerateApplicationTokenForWorkspaceMember($workspaceMemberId: UUID!) {
@@ -57,7 +59,7 @@ export const requestWorkspaceMemberAccessToken = async ({
     payload?.data?.generateApplicationTokenForWorkspaceMember
       ?.applicationAccessToken?.token;
 
-  if (typeof token === 'string' && token.length > 0) {
+  if (isNonEmptyString(token)) {
     return token;
   }
 

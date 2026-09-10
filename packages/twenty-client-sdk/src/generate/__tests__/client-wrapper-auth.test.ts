@@ -25,7 +25,7 @@ const twentyClientTemplateSource = readFileSync(
 type TwentyClassType = new (options?: {
   url?: string;
   fetch?: typeof globalThis.fetch;
-  headers?: HeadersInit;
+  headers?: HeadersInit | (() => HeadersInit | Promise<HeadersInit>);
   runAs?: 'user' | 'application' | { workspaceMemberId: string };
 }) => {
   query: (request: Record<string, unknown>) => Promise<unknown>;
@@ -722,6 +722,23 @@ describe('Generated client wrapper auth behavior', () => {
         twentyClient.query({ record: { id: true } }),
       ).rejects.toThrow(/TWENTY_APP_APPLICATION_ACCESS_TOKEN/);
       expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('should let an Authorization header from a headers callback win over the member', async () => {
+      const { fetchMock, calls } = buildMemberExchangeFetchMock();
+
+      const twentyClient = new TwentyClass({
+        url: 'https://example.com/graphql',
+        fetch: fetchMock as unknown as typeof globalThis.fetch,
+        headers: async () => ({ Authorization: 'Bearer callback-token' }),
+        runAs: { workspaceMemberId: WORKSPACE_MEMBER_ID },
+      });
+
+      await twentyClient.query({ record: { id: true } });
+
+      expect(calls.map((call) => call.authorization)).toEqual([
+        'Bearer callback-token',
+      ]);
     });
 
     it('should let an explicit Authorization header win over the member', async () => {
