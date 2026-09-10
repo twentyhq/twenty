@@ -124,7 +124,9 @@ describe('evictLeastRecentlyUsed', () => {
   it('never deletes more entries than exist, and reports the true count', () => {
     const map = mapOf('a', 'b', 'c');
 
-    expect(evictLeastRecentlyUsed({ map, maxEntries: 1, minEvict: 99 })).toBe(3);
+    expect(evictLeastRecentlyUsed({ map, maxEntries: 1, minEvict: 99 })).toBe(
+      3,
+    );
     expect(map.size).toBe(0);
   });
 
