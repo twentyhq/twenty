@@ -58,13 +58,16 @@ describe('BackfillWorkspaceWorkflowIdOnWorkflowsCommand', () => {
   beforeEach(() => jest.clearAllMocks());
 
   it('backfills the workspaces that have rows left to fill', async () => {
-    const { run, query } = setup({ total: 3 });
+    const { run, query, queryRunner } = setup({ total: 3 });
 
     await run();
 
-    const updateCall = query.mock.calls.find((call) => isUpdate(call[0]));
+    const updateCalls = query.mock.calls.filter((call) => isUpdate(call[0]));
 
-    expect(updateCall?.[1]).toEqual([WORKSPACE_ID]);
+    expect(updateCalls).toHaveLength(1);
+    expect(updateCalls[0][1]).toEqual([WORKSPACE_ID]);
+    expect(queryRunner.connect).toHaveBeenCalledTimes(1);
+    expect(queryRunner.release).toHaveBeenCalledTimes(1);
   });
 
   it('skips a workspace whose workflow table has no coreWorkflowId column', async () => {
@@ -79,7 +82,8 @@ describe('BackfillWorkspaceWorkflowIdOnWorkflowsCommand', () => {
     expect(
       query.mock.calls.some((call) => String(call[0]).includes('count(*)')),
     ).toBe(false);
-    expect(queryRunner.release).toHaveBeenCalled();
+    expect(query).toHaveBeenCalledTimes(1);
+    expect(queryRunner.release).toHaveBeenCalledTimes(1);
   });
 
   it('does not update on a dry run', async () => {
@@ -116,6 +120,6 @@ describe('BackfillWorkspaceWorkflowIdOnWorkflowsCommand', () => {
 
     await expect(run()).rejects.toThrow('update failed');
 
-    expect(queryRunner.release).toHaveBeenCalled();
+    expect(queryRunner.release).toHaveBeenCalledTimes(1);
   });
 });
