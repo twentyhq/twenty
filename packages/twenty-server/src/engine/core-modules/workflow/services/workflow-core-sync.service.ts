@@ -71,7 +71,7 @@ export class WorkflowCoreSyncService {
         id: coreWorkflowId,
         name: workflow.name ?? null,
         workspaceWorkflowId: isNonEmptyString(storedWorkspaceWorkflowId)
-          ? [storedWorkspaceWorkflowId, workflow.id].sort()[0]
+          ? storedWorkspaceWorkflowId
           : workflow.id,
         lastPublishedVersionId: isNonEmptyString(
           workflow.lastPublishedVersionId,
