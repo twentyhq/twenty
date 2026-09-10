@@ -16,7 +16,7 @@ export class FieldSearchFieldMetadataOnDeleteSideEffectHandlerService extends Me
     metadataName: 'fieldMetadata',
     name: 'fieldSearchFieldMetadataOnDelete',
     description:
-      'When a field is deleted, cascade-delete every searchFieldMetadata row that indexes it. searchFieldMetadata is excluded from manifest deletion inference, so the cascade must be explicit here to cover both the API and manifest paths (the object-scoped cascade only fires on object deletion).',
+      'When a field is deleted, cascade-delete every searchFieldMetadata row that indexes it. searchFieldMetadata is excluded from manifest deletion inference, so the cascade must be explicit here to cover both the API and manifest paths (the object-scoped cascade only fires on object deletion). Only engine-owned (isSystemSideEffect) rows are deleted: caller-authored searchFieldMetadata rows are left alone.',
   },
 ) {
   buildSideEffects({
@@ -34,7 +34,10 @@ export class FieldSearchFieldMetadataOnDeleteSideEffectHandlerService extends Me
           searchFieldMetadataUniversalIdentifier
         ];
 
-      if (!isDefined(flatSearchFieldMetadata)) {
+      if (
+        !isDefined(flatSearchFieldMetadata) ||
+        flatSearchFieldMetadata.isSystemSideEffect !== true
+      ) {
         continue;
       }
 
