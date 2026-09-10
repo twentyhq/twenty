@@ -45,6 +45,43 @@ describe('fetchArtificialAnalysisBenchmarks', () => {
   });
 
   it.each([
+    ['best row first', true],
+    ['best row last', false],
+  ])(
+    'keeps the highest-scoring configuration whatever the order (%s)',
+    async (_label, bestFirst) => {
+      // The rows for one model are the same model at different reasoning
+      // efforts. Picking by how populated a row is scored Sonnet 4.6 at low
+      // effort against Sonnet 5 at max, and the gap read as capability.
+      const lowEffort = {
+        slug: 'claude-sonnet-4-6',
+        name: 'Claude Sonnet 4.6 (Non-reasoning, Low Effort)',
+        evaluations: { artificial_analysis_intelligence_index: 23.3 },
+        median_output_tokens_per_second: 120,
+        cost_per_task: { total_cost: 0.1 },
+      };
+      const maxEffort = {
+        slug: 'claude-sonnet-4-6',
+        name: 'Claude Sonnet 4.6 (Adaptive Reasoning, Max Effort)',
+        evaluations: { artificial_analysis_intelligence_index: 36.2 },
+        median_output_tokens_per_second: 80,
+      };
+
+      respondWith(bestFirst ? [maxEffort, lowEffort] : [lowEffort, maxEffort]);
+
+      const record = (await fetchArtificialAnalysisBenchmarks('key')).get(
+        'claudesonnet46',
+      );
+
+      expect(record?.intelligenceIndex).toBe(36.2);
+      // The whole row travels together, so speed and cost describe the same
+      // configuration the index was measured in.
+      expect(record?.outputTokensPerSecond).toBe(80);
+      expect(record?.costPerTask).toBeUndefined();
+    },
+  );
+
+  it.each([
     ['unmeasured row first', true],
     ['measured row first', false],
   ])(

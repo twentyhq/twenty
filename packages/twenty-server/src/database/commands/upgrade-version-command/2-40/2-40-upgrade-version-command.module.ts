@@ -4,11 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { SyncRecordShareObjectCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788794677636-sync-record-share-object.command';
 import { AddShareRecordCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788894600000-add-share-record-command-menu-item.command';
-import { MakeMessagingAndCalendarPrivateCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788894400000-make-messaging-and-calendar-private.command';
-import { BackfillChannelRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788894300000-backfill-channel-record-shares.command';
-import { MakeCallRecordingPrivateCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788894100000-make-call-recording-private.command';
-import { BackfillCallRecordingSharesCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788894100001-backfill-call-recording-shares.command';
-import { MakeStandardChildObjectsInheritedCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788894200001-make-standard-child-objects-inherited.command';
+import { AddMessageCampaignScheduledAtCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788957151735-add-message-campaign-scheduled-at.command';
+import { MakeCallRecordingPrivateCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788957200000-make-call-recording-private.command';
+import { BackfillCallRecordingSharesCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788957200001-backfill-call-recording-shares.command';
+import { MakeStandardChildObjectsInheritedCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788957300001-make-standard-child-objects-inherited.command';
+import { BackfillChannelRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788957400000-backfill-channel-record-shares.command';
+import { MakeMessagingAndCalendarPrivateCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788957500000-make-messaging-and-calendar-private.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -35,12 +36,13 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
   ],
   providers: [
     SyncRecordShareObjectCommand,
+    AddShareRecordCommandMenuItemCommand,
+    AddMessageCampaignScheduledAtCommand,
     MakeCallRecordingPrivateCommand,
     BackfillCallRecordingSharesCommand,
     MakeStandardChildObjectsInheritedCommand,
     BackfillChannelRecordSharesCommand,
     MakeMessagingAndCalendarPrivateCommand,
-    AddShareRecordCommandMenuItemCommand,
   ],
 })
 export class V2_40_UpgradeVersionCommandModule {}
