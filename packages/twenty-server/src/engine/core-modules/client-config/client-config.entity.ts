@@ -157,7 +157,8 @@ export class AdminAiModelTierDefault {
   @Field(() => AiModelTierEnum)
   tier: AiModelTier;
 
-  // Head of the tier's preference chain; unset when the chain is empty.
+  // The model the tier resolves to on this instance; unset when no model is
+  // available.
   @Field(() => String, { nullable: true })
   modelId?: string;
 }
