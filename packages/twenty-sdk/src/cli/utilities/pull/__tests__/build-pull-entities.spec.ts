@@ -868,6 +868,40 @@ describe('buildPullEntities', () => {
     expect(navigationMenuItem?.parentName).toBeNull();
   });
 
+  it('should report a standalone page layout widget as not written rather than dropping it', () => {
+    const { entities, skipped } = buildPullEntities(
+      buildManifest({
+        pageLayoutWidgets: [
+          {
+            universalIdentifier: WIDGET_UID,
+            pageLayoutTabUniversalIdentifier: PAGE_LAYOUT_TAB_UID,
+            title: 'Docs',
+            type: 'IFRAME',
+            position: {
+              layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+              index: 1000,
+            },
+            configuration: {
+              configurationType: 'IFRAME',
+              url: 'https://example.com/docs',
+            },
+          },
+        ],
+      } as Partial<Manifest>),
+    );
+
+    expect(
+      entities.some((entity) => entity.universalIdentifier === WIDGET_UID),
+    ).toBe(false);
+    expect(skipped).toEqual([
+      {
+        kind: 'pageLayoutWidget',
+        universalIdentifier: WIDGET_UID,
+        reason: 'has a source form this version does not write yet',
+      },
+    ]);
+  });
+
   it('should build a manifest that has no views, view fields, page layouts and page layout tabs properties without producing their entities', () => {
     const {
       views: _views,

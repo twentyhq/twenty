@@ -60,7 +60,7 @@ export type PullEntity = {
 };
 
 export type SkippedPullEntity = {
-  kind: PullEntityKind;
+  kind: PullEntityKind | 'pageLayoutWidget';
   universalIdentifier: string;
   reason: string;
 };
@@ -500,6 +500,14 @@ export const buildPullEntities = (
             manifest,
           })
         : null,
+    });
+  }
+
+  for (const pageLayoutWidgetManifest of manifest.pageLayoutWidgets ?? []) {
+    skipped.push({
+      kind: 'pageLayoutWidget',
+      universalIdentifier: pageLayoutWidgetManifest.universalIdentifier,
+      reason: 'has a source form this version does not write yet',
     });
   }
 
