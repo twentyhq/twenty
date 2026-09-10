@@ -12,7 +12,7 @@ const {
   fetchWorkspaceBaseUrlsMock,
   resolveSlackRunAsForRequestMock,
   runSlackAssistantAgentWithDeadlineMock,
-  slackPostMessageHandlerMock,
+  sendSlackMessageMock,
   startSlackAssistantStatusUpdatesMock,
   stopStatusUpdatesMock,
   finishSlackAssistantRequestWithFailureMock,
@@ -26,7 +26,7 @@ const {
   fetchWorkspaceBaseUrlsMock: vi.fn(),
   resolveSlackRunAsForRequestMock: vi.fn(),
   runSlackAssistantAgentWithDeadlineMock: vi.fn(),
-  slackPostMessageHandlerMock: vi.fn(),
+  sendSlackMessageMock: vi.fn(),
   startSlackAssistantStatusUpdatesMock: vi.fn(),
   stopStatusUpdatesMock: vi.fn(),
   finishSlackAssistantRequestWithFailureMock: vi.fn(),
@@ -61,8 +61,8 @@ vi.mock(
   }),
 );
 
-vi.mock('src/logic-functions/handlers/slack-post-message-handler', () => ({
-  slackPostMessageHandler: slackPostMessageHandlerMock,
+vi.mock('src/logic-functions/utils/send-slack-message', () => ({
+  sendSlackMessage: sendSlackMessageMock,
 }));
 
 vi.mock(
@@ -156,7 +156,7 @@ describe('slackAssistantWorkerHandler', () => {
 
       return { success: true, error: null, result: { response: 'Two.' } };
     });
-    slackPostMessageHandlerMock.mockImplementation(async () => {
+    sendSlackMessageMock.mockImplementation(async () => {
       callLog.push('reply:answer');
 
       return { success: true, slackTs: '1700000000.000200' };
@@ -180,12 +180,12 @@ describe('slackAssistantWorkerHandler', () => {
       'status:stop',
       'reply:answer',
     ]);
-    expect(startSlackAssistantStatusUpdatesMock).toHaveBeenCalledExactlyOnceWith(
-      {
-        slackChannelId: REQUEST_RECORD.slackChannelId,
-        threadTimestamp: REQUEST_RECORD.slackMessageTimestamp,
-      },
-    );
+    expect(
+      startSlackAssistantStatusUpdatesMock,
+    ).toHaveBeenCalledExactlyOnceWith({
+      slackChannelId: REQUEST_RECORD.slackChannelId,
+      threadTimestamp: REQUEST_RECORD.slackMessageTimestamp,
+    });
   });
 
   it('should stop the status before the failure reply when the context lookup throws', async () => {
