@@ -3,12 +3,13 @@ import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { v4 } from 'uuid';
 import { Button } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
+import { v4 } from 'uuid';
 
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { CREDIT_GRANT_EXPIRY_OPTIONS } from '@/settings/admin-panel/constants/CreditGrantExpiryOptions';
 import { CREDIT_GRANT_TYPE_LABELS } from '@/settings/admin-panel/constants/CreditGrantTypeLabels';
@@ -19,7 +20,7 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useToast } from 'twenty-ui/feedback';
 import { BillingCreditGrantType } from '~/generated-admin/graphql';
 
 type SettingsAdminWorkspaceCreditGrantModalProps = {
@@ -57,7 +58,8 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
 }: SettingsAdminWorkspaceCreditGrantModalProps) => {
   const { t } = useLingui();
   const { closeModal } = useModal();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
   const apolloAdminClient = useApolloAdminClient();
 
   const [amount, setAmount] = useState('');
@@ -130,14 +132,13 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
         },
       });
 
-      enqueueSuccessSnackBar({
-        message: t`Granted ${parsedAmount} credits to this workspace.`,
+      addToast({
+        variant: 'success',
+        children: t`Granted ${parsedAmount} credits to this workspace.`,
       });
       handleClose();
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
   };
 

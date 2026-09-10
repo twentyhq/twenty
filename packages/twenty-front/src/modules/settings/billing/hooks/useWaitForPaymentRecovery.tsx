@@ -3,12 +3,13 @@ import { PAYMENT_RECOVERY_POLLING_MAX_ATTEMPTS } from '@/settings/billing/consta
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useMarkBillingPaymentMethodAsAdded } from '@/settings/billing/hooks/useMarkBillingPaymentMethodAsAdded';
 import { waitForSubscriptionRecovery } from '@/settings/billing/utils/waitForSubscriptionRecovery';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useApolloClient } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
+import { Button } from 'twenty-ui/input';
 import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 import { sleep } from '~/utils/sleep';
@@ -20,7 +21,7 @@ export const useWaitForPaymentRecovery = () => {
     useApplyCurrentWorkspaceBillingUpdate();
   const { markBillingPaymentMethodAsAdded } =
     useMarkBillingPaymentMethodAsAdded();
-  const { enqueueSuccessSnackBar, enqueueWarningSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const fetchWorkspaceBilling = async () => {
     const { data } = await client.query({
@@ -44,12 +45,18 @@ export const useWaitForPaymentRecovery = () => {
     });
 
     if (recovery.outcome !== 'recovered') {
-      enqueueWarningSnackBar({
-        message: t`Your card was saved, but the payment still needs attention.`,
-        options: {
-          buttonLabel: t`Go to billing`,
-          buttonTo: getSettingsPath(SettingsPath.Billing),
-        },
+      addToast({
+        variant: 'warning',
+        children: t`Your card was saved, but the payment still needs attention.`,
+        action: (
+          <Button
+            title={t`Go to billing`}
+            ariaLabel={t`Go to billing`}
+            to={getSettingsPath(SettingsPath.Billing)}
+            variant="tertiary"
+            size="small"
+          />
+        ),
       });
 
       return;
@@ -72,7 +79,7 @@ export const useWaitForPaymentRecovery = () => {
     // The payment method webhook can still be in flight
     markBillingPaymentMethodAsAdded();
 
-    enqueueSuccessSnackBar({ message: t`Payment successful.` });
+    addToast({ variant: 'success', children: t`Payment successful.` });
   };
 
   return { waitForPaymentRecovery };

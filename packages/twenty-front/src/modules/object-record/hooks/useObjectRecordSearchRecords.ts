@@ -1,12 +1,12 @@
+import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useDoObjectMetadataItemsExist } from '@/object-metadata/hooks/useDoObjectMetadataItemsExist';
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WatchQueryFetchPolicy } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type ObjectRecordFilterInput,
@@ -50,7 +50,7 @@ export const useObjectRecordSearchRecords = ({
     client: apolloCoreClient,
   });
 
-  useSnackBarOnQueryError(error);
+  useToastOnQueryError(error);
 
   const effectiveData = loading ? previousData : data;
 

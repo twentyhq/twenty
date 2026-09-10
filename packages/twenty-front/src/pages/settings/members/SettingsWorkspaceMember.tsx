@@ -4,19 +4,19 @@ import { useDebouncedCallback } from 'use-debounce';
 import { useImpersonationSession } from '@/auth/hooks/useImpersonationSession';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
+import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { IconInfoCircle, IconLock } from 'twenty-ui/icon';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -48,7 +48,7 @@ const DELETE_MEMBER_MODAL_ID = 'workspace-member-delete-modal';
 export const SettingsWorkspaceMember = () => {
   const { workspaceMemberId = '' } = useParams();
   const navigateSettings = useNavigateSettings();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { openModal, closeModal } = useModal();
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -106,8 +106,9 @@ export const SettingsWorkspaceMember = () => {
           },
         });
       } catch (error) {
-        enqueueErrorSnackBar({
-          message:
+        addToast({
+          variant: 'error',
+          children:
             error instanceof Error
               ? error.message
               : t`Error while saving the name`,
@@ -123,12 +124,16 @@ export const SettingsWorkspaceMember = () => {
       await deleteUserFromWorkspace({
         variables: { workspaceMemberIdToDelete: member.id },
       });
-      enqueueSuccessSnackBar({ message: t`Member removed from workspace` });
+      addToast({
+        variant: 'success',
+        children: t`Member removed from workspace`,
+      });
       closeModal(DELETE_MEMBER_MODAL_ID);
       navigateSettings(SettingsPath.WorkspaceMembersPage);
     } catch (error) {
-      enqueueErrorSnackBar({
-        message:
+      addToast({
+        variant: 'error',
+        children:
           error instanceof Error
             ? error.message
             : t`Unable to delete member right now`,
@@ -138,17 +143,19 @@ export const SettingsWorkspaceMember = () => {
 
   const handleImpersonate = async () => {
     if (!member?.userId || !currentWorkspace?.id) {
-      enqueueErrorSnackBar({
-        message: t`Cannot impersonate selected user`,
-        options: { duration: 2000 },
+      addToast({
+        variant: 'error',
+        children: t`Cannot impersonate selected user`,
+        duration: 2000,
       });
       return;
     }
 
     if (!isDefined(currentUser?.id) || member.userId === currentUser.id) {
-      enqueueErrorSnackBar({
-        message: t`You cannot impersonate your own account`,
-        options: { duration: 2000 },
+      addToast({
+        variant: 'error',
+        children: t`You cannot impersonate your own account`,
+        duration: 2000,
       });
 
       return;
@@ -165,9 +172,10 @@ export const SettingsWorkspaceMember = () => {
         await startImpersonating(loginToken.token);
       },
       onError: () => {
-        enqueueErrorSnackBar({
-          message: t`Cannot impersonate selected user`,
-          options: { duration: 2000 },
+        addToast({
+          variant: 'error',
+          children: t`Cannot impersonate selected user`,
+          duration: 2000,
         });
       },
     });

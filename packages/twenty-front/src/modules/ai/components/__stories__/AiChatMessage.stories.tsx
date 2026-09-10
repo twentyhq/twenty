@@ -20,7 +20,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const StyledConversationContainer = styled.div`
   display: flex;
@@ -301,7 +301,7 @@ const meta: Meta<typeof AiChatMessage> = {
   decorators: [
     ComponentDecorator,
     RootDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     AgentChatInstanceDecorator,
   ],
   parameters: {

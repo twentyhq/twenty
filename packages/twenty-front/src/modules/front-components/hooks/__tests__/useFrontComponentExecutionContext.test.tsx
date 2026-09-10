@@ -2,8 +2,8 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
-import { AppPath, SidePanelPages } from 'twenty-shared/types';
 import { type AppLocale } from 'twenty-shared/translations';
+import { AppPath, SidePanelPages } from 'twenty-shared/types';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
@@ -41,13 +41,10 @@ const mockOpenFrontComponentInSidePanel = jest.fn();
 const mockSetSidePanelSearch = jest.fn();
 const mockGetIcon = jest.fn((name: string) => `icon-${name}`);
 const mockUnmountEngineCommand = jest.fn();
-const mockEnqueueSuccessSnackBar = jest.fn();
-const mockEnqueueErrorSnackBar = jest.fn();
-const mockEnqueueInfoSnackBar = jest.fn();
-const mockEnqueueWarningSnackBar = jest.fn();
+
 const mockCloseSidePanelMenu = jest.fn();
 const mockSetCommandMenuItemProgress = jest.fn();
-const mockCopyToClipboardWithoutSuccessSnackBar = jest.fn();
+const mockCopyToClipboardWithoutSuccessToast = jest.fn();
 const mockDirectUploadFile = jest.fn();
 const mockSetRecordPageActiveTabId = jest.fn();
 const mockStorageSet = jest.fn();
@@ -119,13 +116,15 @@ jest.mock(
   }),
 );
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({
-    enqueueSuccessSnackBar: mockEnqueueSuccessSnackBar,
-    enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
-    enqueueInfoSnackBar: mockEnqueueInfoSnackBar,
-    enqueueWarningSnackBar: mockEnqueueWarningSnackBar,
-  }),
+const mockAddToast = jest.fn();
+const mockAddErrorToast = jest.fn();
+
+jest.mock('twenty-ui/feedback', () => ({
+  ...jest.requireActual('twenty-ui/feedback'),
+  useToast: () => ({ add: mockAddToast }),
+}));
+jest.mock('@/error-handler/hooks/useErrorToast', () => ({
+  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
 }));
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
@@ -158,8 +157,7 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState', () => ({
 
 jest.mock('~/hooks/useCopyToClipboard', () => ({
   useCopyToClipboard: () => ({
-    copyToClipboardWithoutSuccessSnackBar:
-      mockCopyToClipboardWithoutSuccessSnackBar,
+    copyToClipboardWithoutSuccessToast: mockCopyToClipboardWithoutSuccessToast,
   }),
 }));
 
@@ -815,13 +813,13 @@ describe('useFrontComponentExecutionContext', () => {
 
   describe('enqueueSnackbar', () => {
     it.each([
-      { variant: 'success' as const, mock: () => mockEnqueueSuccessSnackBar },
-      { variant: 'error' as const, mock: () => mockEnqueueErrorSnackBar },
-      { variant: 'info' as const, mock: () => mockEnqueueInfoSnackBar },
-      { variant: 'warning' as const, mock: () => mockEnqueueWarningSnackBar },
+      'success' as const,
+      'error' as const,
+      'info' as const,
+      'warning' as const,
     ])(
-      'should route $variant snackbar to the correct handler',
-      async ({ variant, mock }) => {
+      'should forward the %s SDK notification to the toaster',
+      async (variant) => {
         const { result } = renderUseFrontComponentExecutionContext({
           frontComponentId: FRONT_COMPONENT_ID,
         });
@@ -838,13 +836,12 @@ describe('useFrontComponentExecutionContext', () => {
           );
         });
 
-        expect(mock()).toHaveBeenCalledWith({
-          message: `${variant} message`,
-          options: {
-            duration: 3000,
-            detailedMessage: 'details',
-            dedupeKey: 'key-1',
-          },
+        expect(mockAddToast).toHaveBeenCalledWith({
+          children: `${variant} message`,
+          variant,
+          duration: 3000,
+          description: 'details',
+          dedupeKey: 'key-1',
         });
       },
     );
@@ -1102,7 +1099,7 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenCalledWith(
+      expect(mockCopyToClipboardWithoutSuccessToast).toHaveBeenCalledWith(
         'hello clipboard',
       );
     });
@@ -1124,7 +1121,7 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboardWithoutSuccessSnackBar).not.toHaveBeenCalled();
+      expect(mockCopyToClipboardWithoutSuccessToast).not.toHaveBeenCalled();
     });
 
     it('should silently drop payloads exceeding the maximum length', async () => {
@@ -1140,7 +1137,7 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboardWithoutSuccessSnackBar).not.toHaveBeenCalled();
+      expect(mockCopyToClipboardWithoutSuccessToast).not.toHaveBeenCalled();
     });
 
     it('should rate-limit consecutive calls within one second', async () => {
@@ -1157,10 +1154,8 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenCalledTimes(
-        1,
-      );
-      expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenCalledWith(
+      expect(mockCopyToClipboardWithoutSuccessToast).toHaveBeenCalledTimes(1);
+      expect(mockCopyToClipboardWithoutSuccessToast).toHaveBeenCalledWith(
         'first',
       );
     });
@@ -1189,14 +1184,12 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenCalledTimes(
-        2,
-      );
-      expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenNthCalledWith(
+      expect(mockCopyToClipboardWithoutSuccessToast).toHaveBeenCalledTimes(2);
+      expect(mockCopyToClipboardWithoutSuccessToast).toHaveBeenNthCalledWith(
         1,
         'first',
       );
-      expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenNthCalledWith(
+      expect(mockCopyToClipboardWithoutSuccessToast).toHaveBeenNthCalledWith(
         2,
         'second',
       );

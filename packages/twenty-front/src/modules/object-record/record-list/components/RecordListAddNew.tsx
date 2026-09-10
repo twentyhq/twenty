@@ -6,13 +6,13 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { IconPlus } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { logError } from '~/utils/logError';
@@ -39,7 +39,7 @@ const StyledAddNewRow = styled.button`
 export const RecordListAddNew = () => {
   const { theme } = useContext(ThemeContext);
   const { objectMetadataItem } = useRecordListContextOrThrow();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem,
@@ -93,7 +93,7 @@ export const RecordListAddNew = () => {
       });
     } catch (error) {
       logError(error);
-      enqueueErrorSnackBar({ message: t`Failed to create record` });
+      addToast({ variant: 'error', children: t`Failed to create record` });
     }
   };
 

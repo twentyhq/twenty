@@ -1,9 +1,9 @@
 import { CREATE_CALENDAR_EVENT } from '@/activities/calendar/graphql/mutations/createCalendarEvent';
 import { useRefetchTimelineCalendarEvents } from '@/activities/calendar/hooks/useRefetchTimelineCalendarEvents';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
+import { useToast } from 'twenty-ui/feedback';
 import {
   type CreateCalendarEventInput,
   type CreateCalendarEventOutput,
@@ -12,7 +12,7 @@ import {
 
 export const useCreateCalendarEvent = () => {
   const { refetchTimelineCalendarEvents } = useRefetchTimelineCalendarEvents();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const [createCalendarEventMutation, { loading }] = useMutation<
     { createCalendarEvent: CreateCalendarEventOutput },
@@ -27,8 +27,9 @@ export const useCreateCalendarEvent = () => {
         });
 
         if (!result.data?.createCalendarEvent.success) {
-          enqueueErrorSnackBar({
-            message:
+          addToast({
+            variant: 'error',
+            children:
               result.data?.createCalendarEvent.error ??
               t`Failed to create calendar event`,
           });
@@ -36,8 +37,9 @@ export const useCreateCalendarEvent = () => {
           return { success: false };
         }
 
-        enqueueSuccessSnackBar({
-          message: t`Calendar event created successfully`,
+        addToast({
+          variant: 'success',
+          children: t`Calendar event created successfully`,
         });
 
         await refetchTimelineCalendarEvents();
@@ -48,19 +50,15 @@ export const useCreateCalendarEvent = () => {
             result.data.createCalendarEvent.calendarEventId ?? undefined,
         };
       } catch {
-        enqueueErrorSnackBar({
-          message: t`Failed to create calendar event`,
+        addToast({
+          variant: 'error',
+          children: t`Failed to create calendar event`,
         });
 
         return { success: false };
       }
     },
-    [
-      refetchTimelineCalendarEvents,
-      createCalendarEventMutation,
-      enqueueErrorSnackBar,
-      enqueueSuccessSnackBar,
-    ],
+    [refetchTimelineCalendarEvents, createCalendarEventMutation, addToast],
   );
 
   return { createCalendarEvent, loading };

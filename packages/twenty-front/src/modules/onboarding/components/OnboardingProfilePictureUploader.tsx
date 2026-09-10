@@ -1,6 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation } from '@apollo/client/react';
@@ -10,6 +9,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
 import { FileFolder } from 'twenty-shared/types';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { IconUserCircle } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -52,7 +52,7 @@ export const OnboardingProfilePictureUploader = ({
 }: OnboardingProfilePictureUploaderProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const setCurrentWorkspaceMember = useSetAtomState(
     currentWorkspaceMemberState,
@@ -85,8 +85,9 @@ export const OnboardingProfilePictureUploader = ({
           : previous,
       );
     } catch (error) {
-      enqueueErrorSnackBar({
-        message:
+      addToast({
+        variant: 'error',
+        children:
           error instanceof Error ? error.message : t`Failed to upload picture`,
       });
     }

@@ -6,19 +6,16 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconBolt, IconMessage, IconRobot } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { billingState } from '@/client-config/states/billingState';
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
-import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
-import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { billingState } from '@/client-config/states/billingState';
 import { SettingsAdminAiProviderListCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard';
-import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
 import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
 import { SET_ADMIN_AI_MODEL_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelRecommended';
 import { SET_ADMIN_AI_MODELS_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelsRecommended';
@@ -26,24 +23,27 @@ import { SET_ADMIN_DEFAULT_AI_MODEL } from '@/settings/admin-panel/ai/graphql/mu
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_ADMIN_AI_USAGE_BY_WORKSPACE } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiUsageByWorkspace';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
+import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
 import { parseProviderItems } from '@/settings/admin-panel/ai/utils/parseProviderItems';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
 import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
-import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { getPeriodDates } from '@/settings/usage/utils/getPeriodDates';
 import { getPeriodOptions } from '@/settings/usage/utils/getPeriodOptions';
 import { type PeriodPreset } from '@/settings/usage/utils/periodPreset';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useToast } from 'twenty-ui/feedback';
 import {
   AiModelRole,
   type AdminAiModelConfig,
@@ -60,7 +60,7 @@ type UsageBreakdownItem = {
 
 export const SettingsAdminAI = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { refetch: refetchClientConfig } = useClientConfig();
   const { formatUsageValue } = useUsageValueFormatter();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -153,8 +153,9 @@ export const SettingsAdminAI = () => {
       });
       await refetchClientConfig();
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to update model recommendation`,
+      addToast({
+        variant: 'error',
+        children: t`Failed to update model recommendation`,
       });
     }
   };
@@ -183,8 +184,9 @@ export const SettingsAdminAI = () => {
       });
       await refetchClientConfig();
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to update default model`,
+      addToast({
+        variant: 'error',
+        children: t`Failed to update default model`,
       });
     }
   };
@@ -301,8 +303,9 @@ export const SettingsAdminAI = () => {
                   },
                 });
               } catch {
-                enqueueErrorSnackBar({
-                  message: t`Failed to update model recommendations`,
+                addToast({
+                  variant: 'error',
+                  children: t`Failed to update model recommendations`,
                 });
               } finally {
                 await refetchModels();

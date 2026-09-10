@@ -1,15 +1,18 @@
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useMarkSessionActive } from '@/auth/hooks/useMarkSessionActive';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { GetAuthTokensFromSsoExchangeTokenDocument } from '~/generated-metadata/graphql';
 
 export const useRedeemSsoExchangeToken = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
+  const { add: addToast } = useToast();
   const markSessionActive = useMarkSessionActive();
   const setIsAppEffectRedirectEnabled = useSetAtomState(
     isAppEffectRedirectEnabledState,
@@ -35,11 +38,16 @@ export const useRedeemSsoExchangeToken = () => {
 
         markSessionActive();
       } catch (error: unknown) {
-        enqueueErrorSnackBar(
-          CombinedGraphQLErrors.is(error)
-            ? { apolloError: error }
-            : { message: error instanceof Error ? error.message : undefined },
-        );
+        if (CombinedGraphQLErrors.is(error)) {
+          addErrorToast(error);
+        } else {
+          addToast({
+            variant: 'error',
+            children:
+              (error instanceof Error ? error.message : undefined) ??
+              t`An error occurred.`,
+          });
+        }
       } finally {
         setIsAppEffectRedirectEnabled(true);
       }
@@ -48,7 +56,8 @@ export const useRedeemSsoExchangeToken = () => {
       getAuthTokensFromSsoExchangeToken,
       markSessionActive,
       setIsAppEffectRedirectEnabled,
-      enqueueErrorSnackBar,
+      addErrorToast,
+      addToast,
     ],
   );
 

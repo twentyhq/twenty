@@ -1,13 +1,13 @@
 /* @license Enterprise */
 
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import SettingsSsoIdentitiesProvidersForm from '@/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm';
 import { useCreateSsoIdentityProvider } from '@/settings/security/hooks/useCreateSsoIdentityProvider';
 import { type SettingSecurityNewSsoIdentityFormValues } from '@/settings/security/types/SsoIdentityProvider';
 import { ssoIdentityProviderDefaultValues } from '@/settings/security/utils/ssoIdentityProviderDefaultValues';
 import { ssoIdentitiesProvidersParamsSchema } from '@/settings/security/validation-schemas/ssoIdentityProviderSchema';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { t } from '@lingui/core/macro';
@@ -20,7 +20,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 export const SettingsSecuritySsoIdentifyProvider = () => {
   const navigate = useNavigateSettings();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
   const { createSsoIdentityProvider } = useCreateSsoIdentityProvider();
 
   const form = useForm<SettingSecurityNewSsoIdentityFormValues>({
@@ -51,9 +51,7 @@ export const SettingsSecuritySsoIdentifyProvider = () => {
 
       navigate(SettingsPath.Security);
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
   };
 

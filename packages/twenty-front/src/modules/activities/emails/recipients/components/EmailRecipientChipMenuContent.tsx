@@ -8,11 +8,11 @@ import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useToast } from 'twenty-ui/feedback';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -36,7 +36,7 @@ export const EmailRecipientChipMenuContent = ({
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
   const { copyToClipboard } = useCopyToClipboard();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const { createOneRecord: createPerson } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Person,
@@ -65,7 +65,7 @@ export const EmailRecipientChipMenuContent = ({
     });
 
     if (isDefined(createdPerson)) {
-      enqueueSuccessSnackBar({ message: t`Person created` });
+      addToast({ variant: 'success', children: t`Person created` });
     }
   };
 

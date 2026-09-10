@@ -1,16 +1,16 @@
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useMutation } from '@apollo/client/react';
+import { useToast } from 'twenty-ui/feedback';
 import { DeleteJobsDocument } from '~/generated-admin/graphql';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 export const useDeleteJobs = (queueName: string, onSuccess?: () => void) => {
   const apolloAdminClient = useApolloAdminClient();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteJobsMutation] = useMutation(DeleteJobsDocument, {
     client: apolloAdminClient,
@@ -35,21 +35,24 @@ export const useDeleteJobs = (queueName: string, onSuccess?: () => void) => {
 
         if (deletedCount > 0) {
           if (failedResults.length > 0) {
-            enqueueSuccessSnackBar({
-              message: plural(deletedCount, {
+            addToast({
+              variant: 'success',
+              children: plural(deletedCount, {
                 one: `Successfully deleted ${deletedCount} job`,
                 other: `Successfully deleted ${deletedCount} jobs`,
               }),
             });
-            enqueueErrorSnackBar({
-              message: plural(failedResults.length, {
+            addToast({
+              variant: 'error',
+              children: plural(failedResults.length, {
                 one: `${failedResults.length} job could not be deleted`,
                 other: `${failedResults.length} jobs could not be deleted`,
               }),
             });
           } else {
-            enqueueSuccessSnackBar({
-              message: plural(deletedCount, {
+            addToast({
+              variant: 'success',
+              children: plural(deletedCount, {
                 one: `Successfully deleted ${deletedCount} job`,
                 other: `Successfully deleted ${deletedCount} jobs`,
               }),
@@ -64,14 +67,16 @@ export const useDeleteJobs = (queueName: string, onSuccess?: () => void) => {
           const errorDetails =
             errorMessages.length > 0 ? `: ${errorMessages[0]}` : '';
 
-          enqueueErrorSnackBar({
-            message: t`No jobs were deleted${errorDetails}`,
+          addToast({
+            variant: 'error',
+            children: t`No jobs were deleted${errorDetails}`,
           });
         }
       }
     } catch (error) {
-      enqueueErrorSnackBar({
-        message: CombinedGraphQLErrors.is(error)
+      addToast({
+        variant: 'error',
+        children: CombinedGraphQLErrors.is(error)
           ? getErrorMessageFromApolloError(error)
           : t`Failed to delete jobs. Please try again later.`,
       });

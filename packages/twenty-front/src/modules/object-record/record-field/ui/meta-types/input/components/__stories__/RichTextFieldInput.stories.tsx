@@ -15,7 +15,7 @@ import {
 } from '@storybook/react-vite';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
 
 const targetableObjectId = 'test-id';
@@ -99,7 +99,7 @@ const meta: Meta = {
   },
   decorators: [
     clearMocksDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     ObjectMetadataItemsDecorator,
   ],
   parameters: {

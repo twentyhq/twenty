@@ -1,5 +1,7 @@
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { SettingsRoleAssignment } from '@/settings/roles/role-assignment/components/SettingsRoleAssignment';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { SettingsRoleSettings } from '@/settings/roles/role-settings/components/SettingsRoleSettings';
@@ -9,20 +11,18 @@ import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRo
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { IconLock, IconSettings, IconUserPlus } from 'twenty-ui/icon';
 
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -66,7 +66,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const { loadCurrentUser } = useLoadCurrentUser();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const { saveDraftRoleToDB } = useSaveDraftRoleToDB({
     isCreateMode,
@@ -120,9 +120,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     );
 
     if (isDefined(dirtyFields.label) && dirtyFields.label === '') {
-      enqueueErrorSnackBar({
-        message: t`Role name cannot be empty`,
-      });
+      addToast({ variant: 'error', children: t`Role name cannot be empty` });
       return;
     }
 

@@ -13,10 +13,10 @@ import {
 import { getSelectedCoreWorkflowRowIds } from '@/object-core/workflows/utils/getSelectedCoreWorkflowRowIds';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/feedback';
 import {
   type DeleteCoreWorkflowsMutation,
   type DeleteCoreWorkflowsMutationVariables,
@@ -42,7 +42,7 @@ export const useDeleteSelectedCoreWorkflows = () => {
   const { removeNavigationMenuItemsByTargetRecordIds } =
     useRemoveNavigationMenuItemByTargetRecordId();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const [deleteCoreWorkflowsMutation] = useMutation<
     DeleteCoreWorkflowsMutation,
@@ -71,13 +71,13 @@ export const useDeleteSelectedCoreWorkflows = () => {
       );
     } catch (error) {
       logError(error);
-      enqueueErrorSnackBar({ message: t`Failed to delete workflows` });
+      addToast({ variant: 'error', children: t`Failed to delete workflows` });
 
       return;
     }
 
     if (!isNonEmptyArray(deletedWorkspaceWorkflowIds)) {
-      enqueueErrorSnackBar({ message: t`No workflows were deleted` });
+      addToast({ variant: 'error', children: t`No workflows were deleted` });
 
       return;
     }

@@ -13,7 +13,7 @@ import { PromiseRejectionEffect } from '@/error-handler/components/PromiseReject
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
-import { SnackBarToaster } from '@/ui/feedback/snack-bar-manager/components/SnackBarToaster';
+import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
@@ -29,7 +29,7 @@ export const RootAppProviders = () => {
         <UserMetadataProviderInitialEffect />
         <WorkspaceProviderEffect />
         <AuthProvider>
-          <SnackBarToaster />
+          <AppToaster />
           <ErrorMessageEffect />
           <DialogComponentInstanceContext.Provider
             value={{ instanceId: 'dialog-manager' }}

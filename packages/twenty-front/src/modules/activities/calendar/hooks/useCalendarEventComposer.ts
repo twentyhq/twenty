@@ -1,8 +1,8 @@
 import { getMissingCreateCalendarEventScopes } from '@/accounts/utils/hasMissingCreateCalendarEventScopes';
 import { useCalendarEventTargetObjectMetadataItems } from '@/activities/calendar/hooks/useCalendarEventTargetObjectMetadataItems';
 import { useCreateCalendarEvent } from '@/activities/calendar/hooks/useCreateCalendarEvent';
-import { useRefetchTimelineCalendarEvents } from '@/activities/calendar/hooks/useRefetchTimelineCalendarEvents';
 import { useCreateCalendarEventTargets } from '@/activities/calendar/hooks/useCreateCalendarEventTargets';
+import { useRefetchTimelineCalendarEvents } from '@/activities/calendar/hooks/useRefetchTimelineCalendarEvents';
 import { isCalendarEventComposerCreatingState } from '@/activities/calendar/states/isCalendarEventComposerCreatingState';
 import { type CalendarEventComposerInitialValues } from '@/activities/calendar/types/CalendarEventComposerInitialValues';
 import { type CalendarEventComposerTarget } from '@/activities/calendar/types/CalendarEventComposerTarget';
@@ -18,17 +18,17 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
+import { Temporal } from 'temporal-polyfill';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { type SelectOption } from 'twenty-ui/input';
-import { Temporal } from 'temporal-polyfill';
 
 export const useCalendarEventComposer = ({
   initialValues,
@@ -41,7 +41,7 @@ export const useCalendarEventComposer = ({
   const { createCalendarEvent, loading: isCreating } = useCreateCalendarEvent();
   const { refetchTimelineCalendarEvents } = useRefetchTimelineCalendarEvents();
   const { createCalendarEventTargets } = useCreateCalendarEventTargets();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const store = useStore();
   const isCalendarEventComposerCreating = useAtomStateValue(
     isCalendarEventComposerCreatingState,
@@ -280,8 +280,9 @@ export const useCalendarEventComposer = ({
           // links existed, so an event related only through them stays invisible.
           await refetchTimelineCalendarEvents();
         } else {
-          enqueueErrorSnackBar({
-            message: t`Failed to link the related records to this event`,
+          addToast({
+            variant: 'error',
+            children: t`Failed to link the related records to this event`,
           });
         }
       }
@@ -300,7 +301,7 @@ export const useCalendarEventComposer = ({
     dates.endsAt,
     dates.startsAt,
     description,
-    enqueueErrorSnackBar,
+    addToast,
     isFullDay,
     location,
     onCreated,

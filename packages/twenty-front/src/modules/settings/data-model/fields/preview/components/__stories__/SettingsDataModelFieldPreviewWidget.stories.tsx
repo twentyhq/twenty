@@ -7,7 +7,7 @@ import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/field
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -28,7 +28,7 @@ const meta: Meta<typeof SettingsDataModelFieldPreviewWidget> = {
     MemoryRouterDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
   args: {
     objectNameSingular: mockedPersonObjectMetadataItem.nameSingular,

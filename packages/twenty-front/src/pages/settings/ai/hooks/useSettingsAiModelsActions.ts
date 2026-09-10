@@ -3,12 +3,12 @@ import { t } from '@lingui/core/macro';
 
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useToast } from 'twenty-ui/feedback';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 export const useSettingsAiModelsActions = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
@@ -27,7 +27,7 @@ export const useSettingsAiModelsActions = () => {
       await updateWorkspace({ variables: { input: { [field]: value } } });
     } catch {
       setCurrentWorkspace({ ...currentWorkspace, [field]: previousValue });
-      enqueueErrorSnackBar({ message: t`Failed to update model` });
+      addToast({ variant: 'error', children: t`Failed to update model` });
     }
   };
 
@@ -62,8 +62,9 @@ export const useSettingsAiModelsActions = () => {
         ...currentWorkspace,
         useRecommendedModels: previousValue,
       });
-      enqueueErrorSnackBar({
-        message: t`Failed to update model selection mode`,
+      addToast({
+        variant: 'error',
+        children: t`Failed to update model selection mode`,
       });
     }
   };
@@ -92,8 +93,9 @@ export const useSettingsAiModelsActions = () => {
         ...currentWorkspace,
         enabledAiModelIds: previousEnabled,
       });
-      enqueueErrorSnackBar({
-        message: t`Failed to update model availability`,
+      addToast({
+        variant: 'error',
+        children: t`Failed to update model availability`,
       });
     }
   };
@@ -122,8 +124,9 @@ export const useSettingsAiModelsActions = () => {
         ...currentWorkspace,
         enabledAiModelIds: previousIds,
       });
-      enqueueErrorSnackBar({
-        message: t`Failed to update model availability`,
+      addToast({
+        variant: 'error',
+        children: t`Failed to update model availability`,
       });
     }
   };

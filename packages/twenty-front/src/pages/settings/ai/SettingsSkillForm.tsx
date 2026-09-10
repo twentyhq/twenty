@@ -5,19 +5,21 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import {
   IconArchive,
   IconArchiveOff,
@@ -26,12 +28,11 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui/icon';
-import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { H2Title } from 'twenty-ui/typography';
 import {
   ActivateSkillDocument,
   CreateSkillDocument,
@@ -99,7 +100,8 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const { skillId = '' } = useParams<{ skillId: string }>();
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isReadonlyMode, setIsReadonlyMode] = useState(false);
   const [originalFormValues, setOriginalFormValues] =
@@ -155,24 +157,20 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         setFormValues(initialValues);
         setOriginalFormValues(initialValues);
       } else {
-        enqueueErrorSnackBar({
-          message: t`Skill not found`,
-        });
+        addToast({ variant: 'error', children: t`Skill not found` });
         navigateApp(AppPath.NotFound);
       }
     }
-  }, [data, enqueueErrorSnackBar, initializedSkillId, navigateApp]);
+  }, [data, addToast, initializedSkillId, navigateApp]);
 
   useEffect(() => {
     if (skillQueryError) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(skillQueryError)
-          ? skillQueryError
-          : undefined,
-      });
+      addErrorToast(
+        CombinedGraphQLErrors.is(skillQueryError) ? skillQueryError : undefined,
+      );
       navigateApp(AppPath.NotFound);
     }
-  }, [skillQueryError, enqueueErrorSnackBar, navigateApp]);
+  }, [skillQueryError, addErrorToast, navigateApp]);
 
   const [createSkill] = useMutation(CreateSkillDocument);
   const [updateSkill] = useMutation(UpdateSkillDocument);
@@ -245,9 +243,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
       setOriginalFormValues({ ...formValues });
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     } finally {
       setIsSubmitting(false);
     }
@@ -314,9 +310,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
       navigate(SettingsPath.AI);
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     } finally {
       setIsSubmitting(false);
     }
@@ -333,9 +327,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       closeModal(DELETE_SKILL_MODAL_ID);
       navigate(SettingsPath.AI);
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     } finally {
       setIsSubmitting(false);
     }
@@ -351,9 +343,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       });
       navigate(SettingsPath.AI);
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     } finally {
       setIsSubmitting(false);
     }
@@ -369,9 +359,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       });
       navigate(SettingsPath.AI);
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     } finally {
       setIsSubmitting(false);
     }

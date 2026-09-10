@@ -1,5 +1,4 @@
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormMultiRecordFieldChips } from '@/object-record/record-field/ui/form-types/components/FormMultiRecordFieldChips';
@@ -15,20 +14,21 @@ import {
 } from '@/object-record/record-field/ui/form-types/utils/getFormMultiRecordPickerDraftValue';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Field } from 'twenty-ui/input';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext, useId, useState } from 'react';
 import { isNonEmptyArray } from '@sniptt/guards';
+import { useContext, useId, useState } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
+import { useToast } from 'twenty-ui/feedback';
 import { IconChevronDown } from 'twenty-ui/icon';
+import { Field } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
@@ -84,7 +84,7 @@ export const FormMultiRecordPicker = ({
   const variablesDropdownId = `form-multi-record-picker-${componentId}-variables`;
 
   const { closeDropdown } = useCloseDropdown();
-  const { enqueueWarningSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { openFormMultiRecordPicker } = useOpenFormMultiRecordPicker({
     objectNameSingular,
   });
@@ -138,8 +138,9 @@ export const FormMultiRecordPicker = ({
       ).length;
 
       if (selectedRecordCount >= QUERY_MAX_RECORDS) {
-        enqueueWarningSnackBar({
-          message: t`You can select at most ${QUERY_MAX_RECORDS} records.`,
+        addToast({
+          variant: 'warning',
+          children: t`You can select at most ${QUERY_MAX_RECORDS} records.`,
         });
 
         return;

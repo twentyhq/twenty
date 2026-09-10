@@ -2,11 +2,11 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
-import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { useRedeemSsoExchangeToken } from '@/auth/hooks/useRedeemSsoExchangeToken';
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { clearSessionGeneration } from '@/auth/utils/clearSessionGeneration';
 import { getSessionGeneration } from '@/auth/utils/getSessionGeneration';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+
 import {
   jotaiStore,
   resetJotaiStore,
@@ -19,8 +19,15 @@ jest.mock('@apollo/client/react', () => ({
   useMutation: () => [mockGetAuthTokensFromSsoExchangeToken],
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: jest.fn(),
+const mockAddToast = jest.fn();
+const mockAddErrorToast = jest.fn();
+
+jest.mock('twenty-ui/feedback', () => ({
+  ...jest.requireActual('twenty-ui/feedback'),
+  useToast: () => ({ add: mockAddToast }),
+}));
+jest.mock('@/error-handler/hooks/useErrorToast', () => ({
+  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
 }));
 
 const renderHooks = () => {
@@ -43,17 +50,11 @@ const freshTokenPair = {
 };
 
 describe('useRedeemSsoExchangeToken', () => {
-  const mockEnqueueErrorSnackBar = jest.fn();
-
   beforeEach(() => {
     jest.clearAllMocks();
     localStorage.clear();
     clearSessionGeneration();
     resetJotaiStore();
-
-    (useSnackBar as jest.Mock).mockReturnValue({
-      enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
-    });
 
     mockGetAuthTokensFromSsoExchangeToken.mockResolvedValue({
       data: {
@@ -107,7 +108,7 @@ describe('useRedeemSsoExchangeToken', () => {
     expect(getSessionGeneration()).toBeNull();
   });
 
-  it('should snackbar when redemption fails', async () => {
+  it('should toast when redemption fails', async () => {
     mockGetAuthTokensFromSsoExchangeToken.mockRejectedValueOnce(
       new Error('Invalid SSO exchange token'),
     );
@@ -116,8 +117,9 @@ describe('useRedeemSsoExchangeToken', () => {
 
     await result.current.redeemSsoExchangeToken('sso-exchange-token');
 
-    expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-      message: 'Invalid SSO exchange token',
+    expect(mockAddToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'Invalid SSO exchange token',
     });
     expect(jotaiStore.get(isAppEffectRedirectEnabledState.atom)).toBe(true);
   });

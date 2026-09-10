@@ -7,19 +7,19 @@ import {
   FindManyViewsDocument,
 } from '~/generated-metadata/graphql';
 
-import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 
 export const useCreateOneObjectMetadataItem = () => {
   const [createOneObjectMetadataItemMutation] = useMutation(
@@ -28,7 +28,7 @@ export const useCreateOneObjectMetadataItem = () => {
 
   const client = useApolloClient();
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { addToDraft, replaceDraft, applyChanges } =
     useUpdateMetadataStoreDraft();
   const { invalidateMetadataStore } = useInvalidateMetadataStore();
@@ -140,7 +140,7 @@ export const useCreateOneObjectMetadataItem = () => {
           operationType: CrudOperationType.CREATE,
         });
       } else {
-        enqueueErrorSnackBar({ message: t`An error occurred.` });
+        addToast({ variant: 'error', children: t`An error occurred.` });
       }
 
       return {

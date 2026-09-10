@@ -2,17 +2,19 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { ssoIdentitiesProvidersState } from '@/settings/security/states/ssoIdentitiesProvidersState';
 import { Select } from '@/ui/input/components/Select';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import {
   IconGoogle,
   IconLink,
@@ -22,15 +24,14 @@ import {
 } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation } from '@apollo/client/react';
 import {
   type AuthProviders,
   UpdateWorkspaceDocument,
   WorkspaceDiscoverability,
 } from '~/generated-metadata/graphql';
 
-import { Toggle2FA } from './Toggle2FA';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { Toggle2FA } from './Toggle2FA';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
@@ -41,7 +42,8 @@ const StyledSettingsSecurityOptionsList = styled.div`
 export const SettingsSecurityAuthProvidersOptionsList = () => {
   const { t } = useLingui();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
   const ssoIdentitiesProviders = useAtomStateValue(ssoIdentitiesProvidersState);
   const authProviders = useAtomStateValue(authProvidersState);
   const isMultiWorkspaceEnabled = useAtomStateValue(
@@ -87,8 +89,9 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
       allAuthProvidersEnabled.filter((isAuthEnabled) => isAuthEnabled).length <=
         1
     ) {
-      return enqueueErrorSnackBar({
-        message: t`At least one authentication method must be enabled`,
+      return addToast({
+        variant: 'error',
+        children: t`At least one authentication method must be enabled`,
       });
     }
 
@@ -108,9 +111,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         ...currentWorkspace,
         [key]: !currentWorkspace[key],
       });
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
     });
   };
 
@@ -131,9 +132,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         isPublicInviteLinkEnabled: value,
       });
     } catch (err: any) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
     }
   };
 
@@ -192,9 +191,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
             }
           : currentWorkspaceValue,
       );
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
     });
   };
 

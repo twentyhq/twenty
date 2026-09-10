@@ -2,18 +2,18 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/typography';
+import { useToast } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation } from '@apollo/client/react';
+import { H2Title } from 'twenty-ui/typography';
 import {
   DeleteUserAccountDocument,
   DeleteUserWorkspaceDocument,
@@ -31,7 +31,7 @@ const StyledDangerActions = styled.div`
 export const DeleteAccount = () => {
   const { t } = useLingui();
   const { openModal } = useModal();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const [deleteUserAccount] = useMutation(DeleteUserAccountDocument);
   const [deleteUserFromWorkspace] = useMutation(DeleteUserWorkspaceDocument);
@@ -53,8 +53,9 @@ export const DeleteAccount = () => {
 
   const leaveWorkspace = async () => {
     if (!isDefined(currentWorkspaceMemberId)) {
-      enqueueErrorSnackBar({
-        message: t`Current workspace member not found.`,
+      addToast({
+        variant: 'error',
+        children: t`Current workspace member not found.`,
       });
       return;
     }

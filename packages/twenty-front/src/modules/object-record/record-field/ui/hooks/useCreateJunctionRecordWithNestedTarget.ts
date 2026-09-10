@@ -1,24 +1,25 @@
-import { useCallback, useState } from 'react';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
+import { useCallback, useState } from 'react';
 import { v4 } from 'uuid';
 
-import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { upsertJunctionRecordInSourceRecordStore } from '@/object-record/record-field/ui/utils/junction/upsertJunctionRecordInSourceRecordStore';
-import { type ValidJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidJunctionConfig';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
+import { type ValidJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidJunctionConfig';
+import { upsertJunctionRecordInSourceRecordStore } from '@/object-record/record-field/ui/utils/junction/upsertJunctionRecordInSourceRecordStore';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelPayload';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 
 type UseCreateJunctionRecordWithNestedTargetArgs = {
   sourceRecordId: string;
@@ -36,7 +37,8 @@ export const useCreateJunctionRecordWithNestedTarget = ({
   const store = useStore();
   const [loading, setLoading] = useState(false);
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
   const { buildRecordInputFromRLSPredicates } =
     useBuildRecordInputFromRLSPredicates();
   const { createOneRecord: createJunctionRecord } = useCreateOneRecord({
@@ -75,8 +77,9 @@ export const useCreateJunctionRecordWithNestedTarget = ({
         !isDefined(targetFieldInfo) ||
         !isDefined(sourceJoinColumnName)
       ) {
-        enqueueErrorSnackBar({
-          message: t`The relation configuration could not be resolved.`,
+        addToast({
+          variant: 'error',
+          children: t`The relation configuration could not be resolved.`,
         });
         return undefined;
       }
@@ -137,13 +140,13 @@ export const useCreateJunctionRecordWithNestedTarget = ({
           isMatchingSearchFilter: true,
         };
       } catch (error) {
-        enqueueErrorSnackBar(
-          CombinedGraphQLErrors.is(error)
-            ? { apolloError: error }
-            : error instanceof Error
-              ? { message: error.message }
-              : {},
-        );
+        if (CombinedGraphQLErrors.is(error)) {
+          addErrorToast(error);
+        } else if (error instanceof Error) {
+          addToast({ variant: 'error', children: error.message });
+        } else {
+          addToast({ variant: 'error', children: t`An error occurred.` });
+        }
         return undefined;
       } finally {
         setLoading(false);
@@ -152,7 +155,8 @@ export const useCreateJunctionRecordWithNestedTarget = ({
     [
       buildRecordInputFromRLSPredicates,
       createJunctionRecord,
-      enqueueErrorSnackBar,
+      addToast,
+      addErrorToast,
       junctionConfig,
       objectMetadataItems,
       sourceObjectMetadataItem,

@@ -1,8 +1,8 @@
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
@@ -10,18 +10,18 @@ import Skeleton from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/data-display';
-import { IconChevronRight } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
+  useToast,
 } from 'twenty-ui/feedback';
+import { IconChevronRight } from 'twenty-ui/icon';
+import { Button, LightIconButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation, useQuery } from '@apollo/client/react';
 import {
   EvaluateAgentTurnDocument,
   GetAgentTurnsDocument,
@@ -42,7 +42,7 @@ type SettingsAgentLogsTabProps = {
 export const SettingsAgentLogsTab = ({
   agentId,
 }: SettingsAgentLogsTabProps) => {
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const [evaluatingTurnIds, setEvaluatingTurnIds] = useState<Set<string>>(
     new Set(),
   );
@@ -108,8 +108,9 @@ export const SettingsAgentLogsTab = ({
             return next;
           });
         }
-        enqueueSuccessSnackBar({
-          message: t`Turn evaluated successfully`,
+        addToast({
+          variant: 'success',
+          children: t`Turn evaluated successfully`,
         });
         refetch();
       },
@@ -124,9 +125,7 @@ export const SettingsAgentLogsTab = ({
         next.delete(turnId);
         return next;
       });
-      enqueueErrorSnackBar({
-        message: t`Failed to evaluate turn`,
-      });
+      addToast({ variant: 'error', children: t`Failed to evaluate turn` });
     });
   };
 

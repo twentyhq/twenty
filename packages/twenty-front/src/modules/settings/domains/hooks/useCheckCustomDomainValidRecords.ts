@@ -1,16 +1,16 @@
-import { useMutation } from '@apollo/client/react';
-import { CheckCustomDomainValidRecordsDocument } from '~/generated-metadata/graphql';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { isDefined } from 'twenty-shared/utils';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { customDomainRecordsState } from '@/settings/domains/states/customDomainRecordsState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { customDomainRecordsState } from '@/settings/domains/states/customDomainRecordsState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useMutation } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
+import { CheckCustomDomainValidRecordsDocument } from '~/generated-metadata/graphql';
 
 export const useCheckCustomDomainValidRecords = () => {
   const [checkCustomDomainValidRecords] = useMutation(
     CheckCustomDomainValidRecordsDocument,
   );
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
@@ -55,7 +55,7 @@ export const useCheckCustomDomainValidRecords = () => {
         }
       },
       onError: (error) => {
-        enqueueErrorSnackBar({ apolloError: error });
+        addErrorToast(error);
         setCustomDomainRecords((currentState) => ({
           ...currentState,
           isLoading: false,

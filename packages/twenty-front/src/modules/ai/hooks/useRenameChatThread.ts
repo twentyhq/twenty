@@ -1,13 +1,13 @@
-import { useMutation } from '@apollo/client/react';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { RenameChatThreadDocument } from '~/generated-metadata/graphql';
 
 export const useRenameChatThread = () => {
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
 
   const [renameChatThreadMutation] = useMutation(RenameChatThreadDocument);
 
@@ -32,9 +32,7 @@ export const useRenameChatThread = () => {
 
       return true;
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
 
       return false;
     }

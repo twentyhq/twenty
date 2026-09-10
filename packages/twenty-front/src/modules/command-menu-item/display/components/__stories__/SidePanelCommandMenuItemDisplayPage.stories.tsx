@@ -6,22 +6,22 @@ import {
   type StoryObj,
 } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
-import { graphql, HttpResponse } from 'msw';
-import { type PropsWithChildren, useState } from 'react';
+import { HttpResponse, graphql } from 'msw';
+import { useState, type PropsWithChildren } from 'react';
 import { Context as ResponsiveContext } from 'react-responsive';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { commandMenuPinnedInlineLayoutFamilyState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutFamilyState';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
-import { SnackBarToaster } from '@/ui/feedback/snack-bar-manager/components/SnackBarToaster';
+import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
@@ -31,33 +31,33 @@ import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
-import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import {
   CommandMenuItemAvailabilityType,
   EngineComponentKey,
   type CommandMenuItemFieldsFragment,
 } from '~/generated-metadata/graphql';
+import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 const PINNED_ITEM_WIDTH = 100;
 
-// CI zeroes animation durations, which would immediately dismiss snackbars.
+// CI zeroes animation durations, which would immediately dismiss toasts.
 const StyledStoryContainer = styled.div`
   [role='status'] * {
     animation: none !important;
   }
 `;
 
-const SnackBarStoryContainer = ({ children }: PropsWithChildren) => {
+const ToastStoryContainer = ({ children }: PropsWithChildren) => {
   const [toastContainer, setToastContainer] = useState<HTMLDivElement | null>(
     null,
   );
 
   return (
     <StyledStoryContainer ref={setToastContainer}>
-      <SnackBarToaster container={toastContainer} />
+      <AppToaster container={toastContainer} />
       {children}
     </StyledStoryContainer>
   );
@@ -193,9 +193,9 @@ const createDecorator =
                 }}
               >
                 <BaseThemeProvider>
-                  <SnackBarStoryContainer>
+                  <ToastStoryContainer>
                     <Story />
-                  </SnackBarStoryContainer>
+                  </ToastStoryContainer>
                 </BaseThemeProvider>
               </CommandMenuContext.Provider>
             </CommandMenuComponentInstanceContext.Provider>
@@ -211,7 +211,7 @@ const meta: Meta<typeof SidePanelCommandMenuItemDisplayPage> = {
   decorators: [
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
 };
 

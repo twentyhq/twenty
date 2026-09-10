@@ -1,18 +1,18 @@
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { IconId } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
 import {
   GetInstanceAndAllWorkspacesUpgradeStatusDocument,
   RefreshUpgradeStatusDocument,
@@ -27,7 +27,7 @@ const StyledRefreshButtonContainer = styled.div`
 
 export const SettingsAdminInferredVersion = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const {
     data,
@@ -50,12 +50,11 @@ export const SettingsAdminInferredVersion = () => {
     try {
       await refreshUpgradeStatus();
       await refetch();
-      enqueueSuccessSnackBar({
-        message: t`Upgrade status refreshed`,
-      });
+      addToast({ variant: 'success', children: t`Upgrade status refreshed` });
     } catch (error) {
-      enqueueErrorSnackBar({
-        message:
+      addToast({
+        variant: 'error',
+        children:
           error instanceof Error
             ? error.message
             : t`Failed to refresh upgrade status`,

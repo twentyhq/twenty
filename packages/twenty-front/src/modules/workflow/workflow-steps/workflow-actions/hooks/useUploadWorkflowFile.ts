@@ -1,16 +1,16 @@
 import { MAX_ATTACHMENT_SIZE } from '@/advanced-text-editor/utils/maxAttachmentSize';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { formatFileSize } from '@/file/utils/formatFileSize';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { extractFolderPathFilenameAndTypeOrThrow } from 'twenty-shared/utils';
 import { type WorkflowAttachment } from 'twenty-shared/workflow';
+import { useToast } from 'twenty-ui/feedback';
 import { FileFolder } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
 export const useUploadWorkflowFile = () => {
   const { uploadFile: directUploadFile } = useDirectFileUpload();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const uploadWorkflowFile = async (
     file: File,
@@ -19,8 +19,9 @@ export const useUploadWorkflowFile = () => {
       if (file.size > MAX_ATTACHMENT_SIZE) {
         const fileName = file.name;
         const maxUploadSize = formatFileSize(MAX_ATTACHMENT_SIZE);
-        enqueueErrorSnackBar({
-          message: t`File "${fileName}" exceeds ${maxUploadSize}`,
+        addToast({
+          variant: 'error',
+          children: t`File "${fileName}" exceeds ${maxUploadSize}`,
         });
         return null;
       }
@@ -37,8 +38,9 @@ export const useUploadWorkflowFile = () => {
       };
 
       const fileName = file.name;
-      enqueueSuccessSnackBar({
-        message: t`File "${fileName}" uploaded successfully`,
+      addToast({
+        variant: 'success',
+        children: t`File "${fileName}" uploaded successfully`,
       });
 
       return workflowFile;
@@ -46,8 +48,9 @@ export const useUploadWorkflowFile = () => {
       logError(`Failed to upload workflow file "${file.name}": ${error}`);
 
       const fileNameForError = file.name;
-      enqueueErrorSnackBar({
-        message: t`Failed to upload "${fileNameForError}"`,
+      addToast({
+        variant: 'error',
+        children: t`Failed to upload "${fileNameForError}"`,
       });
 
       return null;

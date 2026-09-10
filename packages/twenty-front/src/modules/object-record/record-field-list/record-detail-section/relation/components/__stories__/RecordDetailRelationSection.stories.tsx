@@ -1,21 +1,21 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { RecordStoreDecorator } from '~/testing/decorators/RecordStoreDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { graphqlMocks } from '~/testing/graphqlMocks';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailRelationSection } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSection';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutType } from '~/generated-metadata/graphql';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { RecordStoreDecorator } from '~/testing/decorators/RecordStoreDecorator';
 import { SidePanelDecorator } from '~/testing/decorators/SidePanelDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
-import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
@@ -71,7 +71,7 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
     SidePanelDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     MemoryRouterDecorator,
   ],
   parameters: {

@@ -1,15 +1,15 @@
 import { useMutation } from '@apollo/client/react';
 import { DeleteOneObjectMetadataItemDocument } from '~/generated-metadata/graphql';
 
-import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
-import { useCleanMorphRelationsTargetingObjectMetadataId } from '@/metadata-store/hooks/useCleanMorphRelationsTargetingObjectMetadataId';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useCleanMorphRelationsTargetingObjectMetadataId } from '@/metadata-store/hooks/useCleanMorphRelationsTargetingObjectMetadataId';
+import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/feedback';
 
 export const useDeleteOneObjectMetadataItem = () => {
   const [deleteOneObjectMetadataItemMutation] = useMutation(
@@ -17,7 +17,7 @@ export const useDeleteOneObjectMetadataItem = () => {
   );
 
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const { invalidateMetadataStore } = useInvalidateMetadataStore();
   const { cleanMorphRelations } =
@@ -54,7 +54,7 @@ export const useDeleteOneObjectMetadataItem = () => {
           operationType: CrudOperationType.DELETE,
         });
       } else {
-        enqueueErrorSnackBar({ message: t`An error occurred.` });
+        addToast({ variant: 'error', children: t`An error occurred.` });
       }
 
       return {

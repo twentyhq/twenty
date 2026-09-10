@@ -2,14 +2,13 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionBenefit';
 import { ENTERPRISE_CHECKOUT_SESSION } from '@/settings/enterprise/graphql/queries/enterpriseCheckoutSession';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useApolloClient } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { Loader } from 'twenty-ui/feedback';
+import { Loader, useToast } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
 import { ModalContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -90,7 +89,7 @@ const StyledIntervalSubtitle = styled.div`
 export const EnterprisePlanModal = () => {
   const { t } = useLingui();
   const { closeModal } = useModal();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const [selectedInterval, setSelectedInterval] =
     useState<BillingInterval>('monthly');
   const [isLoading, setIsLoading] = useState(false);
@@ -127,14 +126,13 @@ export const EnterprisePlanModal = () => {
         window.open(checkoutUrl, '_blank', 'noopener');
         closeModal(ENTERPRISE_PLAN_MODAL_ID);
       } else {
-        enqueueErrorSnackBar({
-          message: t`Could not open Stripe. Please contact support.`,
+        addToast({
+          variant: 'error',
+          children: t`Could not open Stripe. Please contact support.`,
         });
       }
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Error opening Stripe`,
-      });
+      addToast({ variant: 'error', children: t`Error opening Stripe` });
     } finally {
       setIsLoading(false);
     }

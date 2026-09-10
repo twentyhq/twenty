@@ -1,19 +1,19 @@
 import { FrontComponentApplicationTokenPairEffect } from '@/front-components/components/FrontComponentApplicationTokenPairEffect';
-import { FrontComponentLoadErrorSnackBarEffect } from '@/front-components/components/FrontComponentLoadErrorSnackBarEffect';
+import { FrontComponentLoadErrorToastEffect } from '@/front-components/components/FrontComponentLoadErrorToastEffect';
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
-import { useFrontComponentMediaSession } from '@/front-components/media-session/hooks/useFrontComponentMediaSession';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
+import { useFrontComponentMediaSession } from '@/front-components/media-session/hooks/useFrontComponentMediaSession';
 import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
 import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useCallback, useContext, useMemo } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
@@ -63,7 +63,7 @@ export const FrontComponentRenderer = ({
 
   return (
     <>
-      <FrontComponentLoadErrorSnackBarEffect errorMessage={error?.message} />
+      <FrontComponentLoadErrorToastEffect errorMessage={error?.message} />
       {loading && loadingFallback}
       {!loading &&
         (!isDefined(frontComponent) || isDefined(error)) &&
@@ -89,7 +89,7 @@ const FrontComponentRendererContent = ({
   loadingFallback,
 }: FrontComponentRendererContentProps) => {
   const { colorScheme } = useContext(ThemeContext);
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { functionsBaseUrl } = useGetLogicFunctionHttpUrl();
 
   const {
@@ -120,11 +120,12 @@ const FrontComponentRendererContent = ({
         return;
       }
 
-      enqueueErrorSnackBar({
-        message: t`Failed to load front component: ${error.message}`,
+      addToast({
+        variant: 'error',
+        children: t`Failed to load front component: ${error.message}`,
       });
     },
-    [enqueueErrorSnackBar],
+    [addToast],
   );
 
   const applicationTokenPair = frontComponent.applicationTokenPair ?? null;

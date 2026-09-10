@@ -1,7 +1,7 @@
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { TwoFactorAuthenticationVerificationCodeDash } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeDash';
 import { TwoFactorAuthenticationVerificationCodeSlot } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeSlot';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -15,6 +15,7 @@ import { t } from '@lingui/core/macro';
 import { OTPInput } from 'input-otp';
 import { useState } from 'react';
 import { Status } from 'twenty-ui/data-display';
+import { useToast } from 'twenty-ui/feedback';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -79,7 +80,8 @@ export const SettingsAdminServerAdminAccess = ({
   const apolloAdminClient = useApolloAdminClient();
   const { openModal } = useModal();
   const { closeDropdown } = useCloseDropdown();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
 
   const [pendingChange, setPendingChange] =
     useState<PendingServerAdminChange | null>(null);
@@ -127,15 +129,19 @@ export const SettingsAdminServerAdminAccess = ({
         },
       });
       await refetch();
-      enqueueSuccessSnackBar({
-        message: t`Server administrator access updated.`,
+      addToast({
+        variant: 'success',
+        children: t`Server administrator access updated.`,
       });
     } catch (error) {
-      enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(error)
-          ? { apolloError: error }
-          : { message: t`Failed to update server administrator access.` }),
-      });
+      if (CombinedGraphQLErrors.is(error)) {
+        addErrorToast(error);
+      } else {
+        addToast({
+          variant: 'error',
+          children: t`Failed to update server administrator access.`,
+        });
+      }
     } finally {
       setOtp('');
       setPendingChange(null);

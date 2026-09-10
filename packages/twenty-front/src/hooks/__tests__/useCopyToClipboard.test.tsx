@@ -4,14 +4,15 @@ import { act, renderHook } from '@testing-library/react';
 
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
-const mockEnqueueSuccessSnackBar = jest.fn();
-const mockEnqueueErrorSnackBar = jest.fn();
+const mockAddToast = jest.fn();
+const mockAddErrorToast = jest.fn();
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({
-    enqueueSuccessSnackBar: mockEnqueueSuccessSnackBar,
-    enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
-  }),
+jest.mock('twenty-ui/feedback', () => ({
+  ...jest.requireActual('twenty-ui/feedback'),
+  useToast: () => ({ add: mockAddToast }),
+}));
+jest.mock('@/error-handler/hooks/useErrorToast', () => ({
+  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
 }));
 
 const mockWriteText = jest.fn();
@@ -41,7 +42,7 @@ describe('useCopyToClipboard', () => {
   });
 
   describe('copyToClipboard', () => {
-    it('should copy the text and enqueue the default success snack bar', async () => {
+    it('should copy the text and enqueue the default success toast', async () => {
       const { result } = renderUseCopyToClipboard();
 
       await act(async () => {
@@ -49,8 +50,11 @@ describe('useCopyToClipboard', () => {
       });
 
       expect(mockWriteText).toHaveBeenCalledWith('hello clipboard');
-      expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith(
-        expect.objectContaining({ message: 'Copied to clipboard' }),
+      expect(mockAddToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          variant: 'success',
+          children: 'Copied to clipboard',
+        }),
       );
     });
 
@@ -61,38 +65,43 @@ describe('useCopyToClipboard', () => {
         await result.current.copyToClipboard('hello', 'Email copied');
       });
 
-      expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith(
-        expect.objectContaining({ message: 'Email copied' }),
+      expect(mockAddToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          variant: 'success',
+          children: 'Email copied',
+        }),
       );
     });
   });
 
-  describe('copyToClipboardWithoutSuccessSnackBar', () => {
-    it('should copy the text without enqueuing any snack bar', async () => {
+  describe('copyToClipboardWithoutSuccessToast', () => {
+    it('should copy the text without enqueuing any toast', async () => {
       const { result } = renderUseCopyToClipboard();
 
       await act(async () => {
-        await result.current.copyToClipboardWithoutSuccessSnackBar(
+        await result.current.copyToClipboardWithoutSuccessToast(
           'hello clipboard',
         );
       });
 
       expect(mockWriteText).toHaveBeenCalledWith('hello clipboard');
-      expect(mockEnqueueSuccessSnackBar).not.toHaveBeenCalled();
-      expect(mockEnqueueErrorSnackBar).not.toHaveBeenCalled();
+      expect(mockAddToast).not.toHaveBeenCalled();
     });
 
-    it('should enqueue an error snack bar when the write fails', async () => {
+    it('should enqueue an error toast when the write fails', async () => {
       mockWriteText.mockRejectedValue(new Error('denied'));
 
       const { result } = renderUseCopyToClipboard();
 
       await act(async () => {
-        await result.current.copyToClipboardWithoutSuccessSnackBar('hello');
+        await result.current.copyToClipboardWithoutSuccessToast('hello');
       });
 
-      expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith(
-        expect.objectContaining({ message: "Couldn't copy to clipboard" }),
+      expect(mockAddToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          variant: 'error',
+          children: "Couldn't copy to clipboard",
+        }),
       );
     });
 
@@ -102,11 +111,13 @@ describe('useCopyToClipboard', () => {
       const { result } = renderUseCopyToClipboard();
 
       await act(async () => {
-        await result.current.copyToClipboardWithoutSuccessSnackBar('hello');
+        await result.current.copyToClipboardWithoutSuccessToast('hello');
       });
 
       expect(mockWriteText).not.toHaveBeenCalled();
-      expect(mockEnqueueErrorSnackBar).toHaveBeenCalled();
+      expect(mockAddToast).toHaveBeenCalledWith(
+        expect.objectContaining({ variant: 'error' }),
+      );
     });
   });
 });

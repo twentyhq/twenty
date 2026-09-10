@@ -9,11 +9,11 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { CrudOperationType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 
 // TODO: Slice the Apollo store synchronously in the update function instead of subscribing, so we can use update after read in the same function call
 export const useUpdateOneObjectMetadataItem = () => {
@@ -23,7 +23,7 @@ export const useUpdateOneObjectMetadataItem = () => {
 
   const client = useApolloClient();
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { updateInDraft, replaceDraft, applyChanges } =
     useUpdateMetadataStoreDraft();
 
@@ -79,7 +79,7 @@ export const useUpdateOneObjectMetadataItem = () => {
           operationType: CrudOperationType.UPDATE,
         });
       } else {
-        enqueueErrorSnackBar({ message: t`An error occurred.` });
+        addToast({ variant: 'error', children: t`An error occurred.` });
       }
 
       return {

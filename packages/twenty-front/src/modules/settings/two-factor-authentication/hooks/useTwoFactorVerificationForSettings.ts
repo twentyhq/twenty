@@ -1,16 +1,16 @@
 import { type OTPFormValues } from '@/auth/sign-in-up/hooks/useTwoFactorAuthenticationForm';
 import { VERIFY_TWO_FACTOR_AUTHENTICATION_METHOD_FOR_AUTHENTICATED_USER } from '@/settings/two-factor-authentication/graphql/mutations/verifyTwoFactorAuthenticationMethod';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/feedback';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useTwoFactorVerificationForSettings = () => {
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const navigate = useNavigateSettings();
   const { t } = useLingui();
   const [isLoading, setIsLoading] = useState(false);
@@ -32,8 +32,9 @@ export const useTwoFactorVerificationForSettings = () => {
   const canSave = !isSubmitting && otpValue?.length === 6;
 
   const handleVerificationSuccess = async () => {
-    enqueueSuccessSnackBar({
-      message: t`Two-factor authentication setup completed successfully!`,
+    addToast({
+      variant: 'success',
+      children: t`Two-factor authentication setup completed successfully!`,
     });
 
     await loadCurrentUser();
@@ -53,8 +54,9 @@ export const useTwoFactorVerificationForSettings = () => {
 
       await handleVerificationSuccess();
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Invalid verification code. Please try again.`,
+      addToast({
+        variant: 'error',
+        children: t`Invalid verification code. Please try again.`,
       });
     } finally {
       setIsLoading(false);

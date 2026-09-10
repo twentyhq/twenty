@@ -17,10 +17,10 @@ import gql from 'graphql-tag';
 import { useEffect } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const UPDATE_MANY_COMPANIES_MUTATION = gql`
   mutation UpdateManyCompanies(
@@ -93,7 +93,7 @@ const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
     SelectedRecordsSeedDecorator,
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     RootDecorator,
   ],
   args: {

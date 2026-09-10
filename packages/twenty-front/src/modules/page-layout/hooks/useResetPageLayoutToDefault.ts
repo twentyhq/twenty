@@ -6,16 +6,16 @@ import { useCallback } from 'react';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { RESET_PAGE_LAYOUT_TO_DEFAULT } from '@/page-layout/graphql/mutations/resetPageLayoutToDefault';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useToast } from 'twenty-ui/feedback';
 
 export const useResetPageLayoutToDefault = () => {
   const [resetMutation] = useMutation(RESET_PAGE_LAYOUT_TO_DEFAULT);
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { invalidateMetadataStore } = useInvalidateMetadataStore();
   const store = useStore();
 
@@ -41,7 +41,7 @@ export const useResetPageLayoutToDefault = () => {
             operationType: CrudOperationType.UPDATE,
           });
         } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
+          addToast({ variant: 'error', children: t`An error occurred.` });
         }
       }
     },
@@ -50,7 +50,7 @@ export const useResetPageLayoutToDefault = () => {
       store,
       invalidateMetadataStore,
       handleMetadataError,
-      enqueueErrorSnackBar,
+      addToast,
     ],
   );
 

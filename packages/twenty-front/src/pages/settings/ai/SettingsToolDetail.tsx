@@ -9,19 +9,19 @@ import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFu
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsLogicFunctionLabelContainer } from '@/settings/logic-functions/components/SettingsLogicFunctionLabelContainer';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined, isValidUuid } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/typography';
 
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
@@ -38,7 +38,7 @@ export const SettingsToolDetail = () => {
   const { toolIdentifier } = useParams();
   const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { updateLogicFunction, deleteLogicFunction } =
     usePersistLogicFunction();
   const { openModal } = useModal();
@@ -163,10 +163,10 @@ export const SettingsToolDetail = () => {
     });
 
     if (result.status === 'successful') {
-      enqueueSuccessSnackBar({ message: t`Tool deleted` });
+      addToast({ variant: 'success', children: t`Tool deleted` });
       navigate(getSettingsPath(SettingsPath.AI, undefined, undefined, 'tools'));
     } else {
-      enqueueErrorSnackBar({ message: t`Failed to delete tool` });
+      addToast({ variant: 'error', children: t`Failed to delete tool` });
     }
 
     setIsDeleting(false);

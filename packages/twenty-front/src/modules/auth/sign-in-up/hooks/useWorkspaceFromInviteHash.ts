@@ -4,17 +4,19 @@ import { useParams } from 'react-router-dom';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { useToast } from 'twenty-ui/feedback';
 
+import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useQuery } from '@apollo/client/react';
 import { GetWorkspaceFromInviteHashDocument } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useWorkspaceFromInviteHash = () => {
-  const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
+  const { add: addToast } = useToast();
   const navigate = useNavigateApp();
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -32,10 +34,10 @@ export const useWorkspaceFromInviteHash = () => {
 
   useEffect(() => {
     if (error) {
-      enqueueErrorSnackBar({ apolloError: error });
+      addErrorToast(error);
       navigate(AppPath.Index);
     }
-  }, [error, enqueueErrorSnackBar, navigate]);
+  }, [error, addErrorToast, navigate]);
 
   // TODO: Rework this useEffect - Charles will refactor as part of auth rework
   useEffect(() => {
@@ -51,8 +53,9 @@ export const useWorkspaceFromInviteHash = () => {
       setHasRedirected(true);
       const workspaceDisplayName = inviteWorkspace.displayName;
       initiallyLoggedIn &&
-        enqueueInfoSnackBar({
-          message: workspaceDisplayName
+        addToast({
+          variant: 'info',
+          children: workspaceDisplayName
             ? t`You already belong to the workspace ${workspaceDisplayName}`
             : t`You already belong to this workspace`,
         });
@@ -63,7 +66,7 @@ export const useWorkspaceFromInviteHash = () => {
     currentWorkspace,
     hasRedirected,
     initiallyLoggedIn,
-    enqueueInfoSnackBar,
+    addToast,
     navigate,
   ]);
   return {

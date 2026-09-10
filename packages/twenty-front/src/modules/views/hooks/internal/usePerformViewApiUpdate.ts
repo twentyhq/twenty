@@ -6,14 +6,14 @@ import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatView } from '@/metadata-store/types/FlatView';
 import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { computeViewGroupsReplacementForView } from '@/views/utils/computeViewGroupsReplacementForView';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useMutation } from '@apollo/client/react';
+import { useToast } from 'twenty-ui/feedback';
 import {
   type UpdateViewMutation,
   type UpdateViewMutationVariables,
@@ -27,7 +27,7 @@ export const usePerformViewApiUpdate = () => {
     useUpdateMetadataStoreDraft();
 
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const store = useStore();
 
@@ -114,7 +114,7 @@ export const usePerformViewApiUpdate = () => {
             operationType: CrudOperationType.UPDATE,
           });
         } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
+          addToast({ variant: 'error', children: t`An error occurred.` });
         }
 
         return {
@@ -126,7 +126,7 @@ export const usePerformViewApiUpdate = () => {
     [
       updateViewMutation,
       handleMetadataError,
-      enqueueErrorSnackBar,
+      addToast,
       updateInDraft,
       applyChanges,
       syncViewGroupsFromMutationResult,

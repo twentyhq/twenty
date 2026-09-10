@@ -5,20 +5,20 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { clearSessionGeneration } from '@/auth/utils/clearSessionGeneration';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { appVersionState } from '@/client-config/states/appVersionState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
@@ -45,7 +45,7 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
   const locationRef = useRef(location);
   locationRef.current = location;
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const apolloClient = useMemo(() => {
     apolloRef.current = new ApolloFactory({
@@ -88,19 +88,17 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
         }
       },
       onAppVersionMismatch: (message) => {
-        enqueueErrorSnackBar({
-          message,
-          options: {
-            dedupeKey: 'app-version-mismatch',
-          },
+        addToast({
+          variant: 'error',
+          children: message,
+          dedupeKey: 'app-version-mismatch',
         });
       },
       onPayloadTooLarge: (message) => {
-        enqueueErrorSnackBar({
-          message,
-          options: {
-            dedupeKey: 'payload-too-large',
-          },
+        addToast({
+          variant: 'error',
+          children: message,
+          dedupeKey: 'payload-too-large',
         });
       },
       extraLinks: [],
@@ -115,7 +113,7 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
     setCurrentWorkspaceMember,
     setCurrentWorkspace,
     setReturnToPath,
-    enqueueErrorSnackBar,
+    addToast,
   ]);
 
   useUpdateEffect(() => {

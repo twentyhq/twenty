@@ -1,15 +1,14 @@
-import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
-import { createElement, type ReactNode } from 'react';
 import { type WorkflowTrigger } from '@/workflow/types/Workflow';
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { act, renderHook } from '@testing-library/react';
+import { createElement, type ReactNode } from 'react';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 const mockMutate = jest.fn();
 const mockGetUpdatableWorkflowVersion = jest.fn();
 const mockGetRecordFromCache = jest.fn();
 const mockMarkStepForRecomputation = jest.fn();
-const mockEnqueueErrorSnackBar = jest.fn();
 
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => ({ cache: {} }),
@@ -27,8 +26,15 @@ jest.mock('@/object-record/hooks/useObjectPermissions', () => ({
   useObjectPermissions: () => ({ objectPermissionsByObjectMetadataId: {} }),
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({ enqueueErrorSnackBar: mockEnqueueErrorSnackBar }),
+const mockAddToast = jest.fn();
+const mockAddErrorToast = jest.fn();
+
+jest.mock('twenty-ui/feedback', () => ({
+  ...jest.requireActual('twenty-ui/feedback'),
+  useToast: () => ({ add: mockAddToast }),
+}));
+jest.mock('@/error-handler/hooks/useErrorToast', () => ({
+  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
 }));
 
 jest.mock('@/object-record/cache/hooks/useGetRecordFromCache', () => ({

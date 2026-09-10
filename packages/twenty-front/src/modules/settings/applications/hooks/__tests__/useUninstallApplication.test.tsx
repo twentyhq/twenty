@@ -15,14 +15,16 @@ import {
 
 const UNIVERSAL_IDENTIFIER = 'application-universal-identifier';
 const JOB_ID = `uninstall-application.workspace-id.${UNIVERSAL_IDENTIFIER}-5c98b035-5b09-4550-a4fb-b52056c494d1`;
-const mockEnqueueErrorSnackBar = jest.fn();
-const mockEnqueueSuccessSnackBar = jest.fn();
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({
-    enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
-    enqueueSuccessSnackBar: mockEnqueueSuccessSnackBar,
-  }),
+const mockAddToast = jest.fn();
+const mockAddErrorToast = jest.fn();
+
+jest.mock('twenty-ui/feedback', () => ({
+  ...jest.requireActual('twenty-ui/feedback'),
+  useToast: () => ({ add: mockAddToast }),
+}));
+jest.mock('@/error-handler/hooks/useErrorToast', () => ({
+  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
 }));
 
 const triggerUninstallMock = {
@@ -85,8 +87,9 @@ describe('useUninstallApplication', () => {
     });
 
     await waitFor(() => expect(result.current.isUninstalling).toBe(false));
-    expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith({
-      message: 'Application successfully uninstalled.',
+    expect(mockAddToast).toHaveBeenCalledWith({
+      variant: 'success',
+      children: 'Application successfully uninstalled.',
     });
     expect(onCompleted).toHaveBeenCalledTimes(1);
   });
@@ -117,8 +120,9 @@ describe('useUninstallApplication', () => {
     });
 
     await waitFor(() => expect(result.current.isUninstalling).toBe(false));
-    expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-      message: 'This application cannot be uninstalled.',
+    expect(mockAddToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'This application cannot be uninstalled.',
     });
   });
 

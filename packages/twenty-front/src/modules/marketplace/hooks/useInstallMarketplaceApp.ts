@@ -2,13 +2,13 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
 import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
 import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import {
   FindInstallApplicationJobStatusDocument,
   FindOneApplicationByUniversalIdentifierDocument,
@@ -28,7 +28,7 @@ export const useInstallMarketplaceApp = ({
   universalIdentifier,
   onCompleted,
 }: UseInstallMarketplaceAppArgs = {}) => {
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const [triggerInstallApplicationJob, { loading: isTriggeringInstall }] =
     useMutation(TriggerInstallApplicationJobDocument);
   const [findInstalledApplication] = useLazyQuery(
@@ -55,8 +55,9 @@ export const useInstallMarketplaceApp = ({
   const handleInstallJobSettled = useCallback(
     async (jobStatus: TrackedJobStatus, trackedUniversalIdentifier: string) => {
       if (jobStatus.state === JobState.FAILED) {
-        enqueueErrorSnackBar({
-          message: isNonEmptyString(jobStatus.failedReason)
+        addToast({
+          variant: 'error',
+          children: isNonEmptyString(jobStatus.failedReason)
             ? jobStatus.failedReason
             : t`Failed to install the application.`,
         });
@@ -74,12 +75,18 @@ export const useInstallMarketplaceApp = ({
 
         installedApplication = result.data?.findOneApplication;
       } catch {
-        enqueueErrorSnackBar({ message: t`Failed to load the application.` });
+        addToast({
+          variant: 'error',
+          children: t`Failed to load the application.`,
+        });
         return;
       }
 
       if (!isDefined(installedApplication)) {
-        enqueueErrorSnackBar({ message: t`Failed to load the application.` });
+        addToast({
+          variant: 'error',
+          children: t`Failed to load the application.`,
+        });
         return;
       }
 
@@ -97,18 +104,13 @@ export const useInstallMarketplaceApp = ({
           : currentWorkspace,
       );
 
-      enqueueSuccessSnackBar({
-        message: t`Application installed successfully.`,
+      addToast({
+        variant: 'success',
+        children: t`Application installed successfully.`,
       });
       onCompleted?.(installedApplication);
     },
-    [
-      enqueueErrorSnackBar,
-      enqueueSuccessSnackBar,
-      findInstalledApplication,
-      onCompleted,
-      setCurrentWorkspace,
-    ],
+    [addToast, findInstalledApplication, onCompleted, setCurrentWorkspace],
   );
 
   const { activeJobId, trackJob } = useTrackedQueueJob({
@@ -137,8 +139,9 @@ export const useInstallMarketplaceApp = ({
     } catch (error) {
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
-      enqueueErrorSnackBar({
-        message: graphqlMessage ?? t`Failed to install the application.`,
+      addToast({
+        variant: 'error',
+        children: graphqlMessage ?? t`Failed to install the application.`,
       });
     }
   };

@@ -2,25 +2,25 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 
+import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
-import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { DeleteChatThreadDocument } from '~/generated-metadata/graphql';
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
+import { DeleteChatThreadDocument } from '~/generated-metadata/graphql';
 
 export const useDeleteChatThread = () => {
   const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const setAgentChatInput = useSetAtomState(agentChatInputState);
   const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
@@ -68,9 +68,7 @@ export const useDeleteChatThread = () => {
         );
       }
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
   };
 

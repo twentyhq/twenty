@@ -1,16 +1,16 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { qrCodeState } from '@/auth/states/qrCode';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useToast } from 'twenty-ui/feedback';
 import { InitiateOtpProvisioningForAuthenticatedUserDocument } from '~/generated-metadata/graphql';
 
 export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const [qrCode, setQrCode] = useAtomState(qrCodeState);
   const currentUser = useAtomStateValue(currentUserState);
 
@@ -42,19 +42,17 @@ export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
             .initiateOTPProvisioningForAuthenticatedUser.uri,
         );
       } catch {
-        enqueueErrorSnackBar({
-          message: t`Two factor authentication provisioning failed.`,
-          options: {
-            dedupeKey:
-              'two-factor-authentication-provisioning-initiation-failed',
-          },
+        addToast({
+          variant: 'error',
+          children: t`Two factor authentication provisioning failed.`,
+          dedupeKey: 'two-factor-authentication-provisioning-initiation-failed',
         });
       }
     };
 
     handleTwoFactorAuthenticationProvisioningInitiation();
   }, [
-    enqueueErrorSnackBar,
+    addToast,
     initiateOTPProvisioningForAuthenticatedUser,
     t,
     setQrCode,

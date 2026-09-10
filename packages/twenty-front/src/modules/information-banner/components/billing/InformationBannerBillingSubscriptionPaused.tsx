@@ -1,14 +1,14 @@
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
+import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { useQuery } from '@apollo/client/react';
 import {
-  PermissionFlagType,
   BillingPortalSessionDocument,
+  PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
 export const InformationBannerBillingSubscriptionPaused = () => {
@@ -24,7 +24,7 @@ export const InformationBannerBillingSubscriptionPaused = () => {
     skip: !hasPermissionToUpdateBillingDetails,
   });
 
-  useSnackBarOnQueryError(error);
+  useToastOnQueryError(error);
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {

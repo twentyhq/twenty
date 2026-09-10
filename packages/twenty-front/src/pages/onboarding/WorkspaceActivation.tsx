@@ -7,11 +7,11 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { onboardingActivationFailedState } from '@/onboarding/states/onboardingActivationFailedState';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
@@ -41,7 +41,7 @@ const StyledButtonContainer = styled.div`
 
 export const WorkspaceActivation = () => {
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { loadCurrentUser } = useLoadCurrentUser();
   const [activateWorkspace, { loading: isActivating }] = useMutation(
@@ -84,13 +84,11 @@ export const WorkspaceActivation = () => {
       setIsCreatingWorkspace(false);
       setOnboardingActivationFailed(true);
 
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
   }, [
     activateWorkspace,
-    enqueueErrorSnackBar,
+    addErrorToast,
     loadCurrentUser,
     setOnboardingActivationFailed,
     setIsAppEffectRedirectEnabled,

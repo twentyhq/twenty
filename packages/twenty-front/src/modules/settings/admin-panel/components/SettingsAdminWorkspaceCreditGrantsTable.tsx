@@ -9,6 +9,8 @@ import { Tag } from 'twenty-ui/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
 
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceCreditGrantRowDropdownMenu } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu';
 import { CREDIT_GRANT_TYPE_COLORS } from '@/settings/admin-panel/constants/CreditGrantTypeColors';
@@ -20,12 +22,11 @@ import {
   type CollapsedCreditGrant,
 } from '@/settings/admin-panel/utils/collapseCreditGrantChains';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { beautifyExactDate } from '~/utils/date-utils';
+import { useToast } from 'twenty-ui/feedback';
 import { type WorkspaceBillingAdminPanelQuery } from '~/generated-admin/graphql';
+import { beautifyExactDate } from '~/utils/date-utils';
 
 type CreditGrant = NonNullable<
   WorkspaceBillingAdminPanelQuery['workspaceBillingAdminPanel']
@@ -68,7 +69,8 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
 }: SettingsAdminWorkspaceCreditGrantsTableProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
   const apolloAdminClient = useApolloAdminClient();
   const { openModal } = useModal();
 
@@ -105,11 +107,9 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
         variables: { workspaceId, creditGrantId },
       });
 
-      enqueueSuccessSnackBar({ message: t`Credit grant revoked.` });
+      addToast({ variant: 'success', children: t`Credit grant revoked.` });
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     } finally {
       setIsRevoking(false);
       setGrantPendingRevocation(null);

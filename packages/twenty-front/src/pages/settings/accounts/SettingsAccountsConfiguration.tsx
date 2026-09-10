@@ -4,12 +4,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
-import { SettingsPath } from 'twenty-shared/types';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { GET_MY_CALENDAR_CHANNELS } from '@/settings/accounts/graphql/queries/getMyCalendarChannels';
 import { GET_MY_MESSAGE_CHANNELS } from '@/settings/accounts/graphql/queries/getMyMessageChannels';
 import { useMutation, useQuery } from '@apollo/client/react';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { StartChannelSyncDocument } from '~/generated-metadata/graphql';
 import { SettingsAccountsConfigurationSelectedMessageChannelEffect } from '~/pages/settings/accounts/SettingsAccountsConfigurationSelectedMessageChannelEffect';
 import { SettingsAccountsConfigurationStepCalendar } from '~/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar';
@@ -26,7 +27,8 @@ export const SettingsAccountsConfiguration = () => {
     connectedAccountId: string;
   }>();
   const navigate = useNavigate();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
   const [startChannelSyncMutation, { loading: isSubmitting }] = useMutation(
     StartChannelSyncDocument,
   );
@@ -70,15 +72,14 @@ export const SettingsAccountsConfiguration = () => {
         connectedAccountId,
       },
       onCompleted: () => {
-        enqueueSuccessSnackBar({
-          message: t`Account added successfully. Sync started.`,
+        addToast({
+          variant: 'success',
+          children: t`Account added successfully. Sync started.`,
         });
         navigate(getSettingsPath(SettingsPath.Accounts));
       },
       onError: (error) => {
-        enqueueErrorSnackBar({
-          apolloError: error,
-        });
+        addErrorToast(error);
       },
     });
   };

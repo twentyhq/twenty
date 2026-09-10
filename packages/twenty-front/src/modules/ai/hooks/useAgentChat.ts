@@ -20,8 +20,8 @@ import { SEND_CHAT_MESSAGE } from '@/ai/graphql/mutations/sendChatMessage';
 import { STOP_AGENT_CHAT_STREAM } from '@/ai/graphql/mutations/stopAgentChatStream';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
-import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import { useOptimisticallyUnarchiveOnSend } from '@/ai/hooks/useOptimisticallyUnarchiveOnSend';
+import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
@@ -39,13 +39,14 @@ import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaust
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   markWorkspaceCreditsAvailable,
   markWorkspaceCreditsExhausted,
 } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
+import { useToast } from 'twenty-ui/feedback';
 
 export const useAgentChat = (
   ensureThreadIdForSend: () => Promise<string | null>,
@@ -55,7 +56,8 @@ export const useAgentChat = (
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticUnarchive } = useOptimisticallyUnarchiveOnSend();
   const apolloClient = useApolloClient();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
   const store = useStore();
@@ -84,8 +86,9 @@ export const useAgentChat = (
     }
 
     if (enabledModels.length === 0) {
-      enqueueErrorSnackBar({
-        message: t`No AI models are enabled in this workspace.`,
+      addToast({
+        variant: 'error',
+        children: t`No AI models are enabled in this workspace.`,
       });
 
       return;
@@ -271,7 +274,7 @@ export const useAgentChat = (
     setAgentChatDraftsByThreadId,
     modelIdForRequest,
     enabledModels,
-    enqueueErrorSnackBar,
+    addToast,
     setCurrentAiChatThread,
     apolloClient,
     applyOptimisticUnarchive,
@@ -303,11 +306,9 @@ export const useAgentChat = (
         variables: { threadId },
       });
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
-  }, [store, apolloClient, enqueueErrorSnackBar]);
+  }, [store, apolloClient, addErrorToast]);
 
   useListenToBrowserEvent({
     eventName: AGENT_CHAT_STOP_EVENT_NAME,

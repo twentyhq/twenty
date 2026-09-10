@@ -1,9 +1,9 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
-import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
@@ -11,18 +11,18 @@ import { SettingsObjectIndexesSection } from '@/settings/data-model/object-detai
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { SettingsTranslationsButton } from '@/settings/translations/components/SettingsTranslationsButton';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/feedback';
 import { IconArchive, IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type ObjectSettingsProps = {
@@ -60,7 +60,7 @@ export const ObjectSettings = ({
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { openModal, closeModal } = useModal();
 
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
@@ -88,9 +88,7 @@ export const ObjectSettings = ({
     const result = await deleteOneObjectMetadataItem(objectMetadataItem.id);
 
     if (result.status === 'successful') {
-      enqueueSuccessSnackBar({
-        message: t`Object deleted`,
-      });
+      addToast({ variant: 'success', children: t`Object deleted` });
       closeModal(DELETE_OBJECT_MODAL_ID);
       navigate(SettingsPath.Objects);
       return;

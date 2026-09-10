@@ -3,12 +3,12 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
+import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsDeviceSessionRowRightComponent } from '@/settings/profile/devices/components/SettingsDeviceSessionRowRightComponent';
 import { parseUserAgentDescription } from '@/settings/profile/devices/utils/parseUserAgentDescription';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useToast } from 'twenty-ui/feedback';
 import { IconDeviceDesktop, IconLogout } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -40,14 +40,14 @@ const StyledButtonContainer = styled.div`
 export const SettingsProfileDevicesSection = () => {
   const { t } = useLingui();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const { data, loading, error, refetch } = useQuery(
     CurrentUserSessionsDocument,
     { fetchPolicy: 'network-only' },
   );
 
-  useSnackBarOnQueryError(error);
+  useToastOnQueryError(error);
 
   const [revokeAllOtherUserSessions] = useMutation(
     RevokeAllOtherUserSessionsDocument,
@@ -66,10 +66,16 @@ export const SettingsProfileDevicesSection = () => {
   const handleRevokeAllOtherSessions = async () => {
     try {
       await revokeAllOtherUserSessions();
-      enqueueSuccessSnackBar({ message: t`Logged out all other devices` });
+      addToast({
+        variant: 'success',
+        children: t`Logged out all other devices`,
+      });
       await refetch();
     } catch {
-      enqueueErrorSnackBar({ message: t`Failed to log out other devices` });
+      addToast({
+        variant: 'error',
+        children: t`Failed to log out other devices`,
+      });
     }
   };
 

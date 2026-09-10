@@ -1,12 +1,12 @@
-import { useMutation } from '@apollo/client/react';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useToast } from 'twenty-ui/feedback';
 import { DeleteOneIndexMetadataItemDocument } from '~/generated-metadata/graphql';
 
 export const useDeleteOneIndexMetadataItem = () => {
@@ -15,7 +15,7 @@ export const useDeleteOneIndexMetadataItem = () => {
   );
 
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const deleteOneIndexMetadataItem = async ({
@@ -48,7 +48,7 @@ export const useDeleteOneIndexMetadataItem = () => {
           operationType: CrudOperationType.DELETE,
         });
       } else {
-        enqueueErrorSnackBar({ message: t`An error occurred.` });
+        addToast({ variant: 'error', children: t`An error occurred.` });
       }
 
       return {

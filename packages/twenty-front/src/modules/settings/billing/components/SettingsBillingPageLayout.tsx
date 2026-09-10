@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
+import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { SettingsBillingContentSkeleton } from '@/settings/billing/components/SettingsBillingContentSkeleton';
@@ -33,7 +33,7 @@ export const SettingsBillingPageLayout = ({
     refetch: refetchPlans,
   } = usePlans({ skip: !isBillingEnabled });
 
-  useSnackBarOnQueryError(plansError, t`Failed to load billing plans`);
+  useToastOnQueryError(plansError, t`Failed to load billing plans`);
 
   if (isBillingLoaded && !isBillingEnabled) {
     return <Navigate to={getSettingsPath(SettingsPath.General)} replace />;

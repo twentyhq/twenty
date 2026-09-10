@@ -1,7 +1,7 @@
-import { ToastProvider } from 'twenty-ui/feedback';
 import { type Decorator } from '@storybook/react-vite';
+import { ToastProvider } from 'twenty-ui/feedback';
 
-export const SnackBarDecorator: Decorator = (Story) => (
+export const ToastDecorator: Decorator = (Story) => (
   <ToastProvider>
     <Story />
   </ToastProvider>

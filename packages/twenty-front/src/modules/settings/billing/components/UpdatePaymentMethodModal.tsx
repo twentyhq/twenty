@@ -2,12 +2,12 @@ import { AddPaymentMethodForm } from '@/settings/billing/components/AddPaymentMe
 import { useMarkBillingPaymentMethodAsAdded } from '@/settings/billing/hooks/useMarkBillingPaymentMethodAsAdded';
 import { useWaitForPaymentRecovery } from '@/settings/billing/hooks/useWaitForPaymentRecovery';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useToast } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -34,7 +34,7 @@ export const UpdatePaymentMethodModal = ({
 }: UpdatePaymentMethodModalProps) => {
   const { t } = useLingui();
   const { closeModal } = useModal();
-  const { enqueueSuccessSnackBar, enqueueInfoSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const subscriptionStatus = useSubscriptionStatus();
   const { markBillingPaymentMethodAsAdded } =
     useMarkBillingPaymentMethodAsAdded();
@@ -45,13 +45,14 @@ export const UpdatePaymentMethodModal = ({
     markBillingPaymentMethodAsAdded();
 
     if (!isSubscriptionPaymentOverdue(subscriptionStatus)) {
-      enqueueSuccessSnackBar({ message: t`Payment method added.` });
+      addToast({ variant: 'success', children: t`Payment method added.` });
 
       return;
     }
 
-    enqueueInfoSnackBar({
-      message: t`Payment method added. Retrying your payment...`,
+    addToast({
+      variant: 'info',
+      children: t`Payment method added. Retrying your payment...`,
     });
 
     await waitForPaymentRecovery();

@@ -6,10 +6,10 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/data-display';
 import { IconLink, IconTool } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { Card, CardContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
 
 import { maintenanceModeState } from '@/client-config/states/maintenanceModeState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
@@ -18,13 +18,13 @@ import { SET_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/maint
 import { adminPanelMaintenanceModeState } from '@/settings/admin-panel/health-status/maintenance-mode/states/adminPanelMaintenanceModeState';
 import { SettingsDatePickerInput } from '@/settings/components/SettingsDatePickerInput';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { InputHint } from 'twenty-ui/input';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useToast } from 'twenty-ui/feedback';
+import { InputHint } from 'twenty-ui/input';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -46,7 +46,7 @@ export const SettingsAdminMaintenanceMode = () => {
   const setMaintenanceMode = useSetAtomState(maintenanceModeState);
 
   const { userTimezone } = useUserTimezone();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const [setMaintenanceModeMutation] = useMutation(SET_MAINTENANCE_MODE, {
     client: apolloAdminClient,
@@ -98,15 +98,16 @@ export const SettingsAdminMaintenanceMode = () => {
           link,
         });
       } catch (error: unknown) {
-        enqueueErrorSnackBar({
-          message:
+        addToast({
+          variant: 'error',
+          children:
             error instanceof Error
               ? error.message
               : t`Failed to set maintenance mode.`,
         });
       }
     },
-    [setMaintenanceModeMutation, setMaintenanceMode, enqueueErrorSnackBar],
+    [setMaintenanceModeMutation, setMaintenanceMode, addToast],
   );
 
   const handleToggle = useCallback(

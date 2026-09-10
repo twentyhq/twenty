@@ -1,6 +1,7 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { OnboardingProfilePictureUploader } from '@/onboarding/components/OnboardingProfilePictureUploader';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
@@ -12,7 +13,6 @@ import { usePrefetchInviteSuggestions } from '@/onboarding/hooks/usePrefetchInvi
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 import { PageFocusId } from '@/types/PageFocusId';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -84,7 +84,7 @@ export const CreateProfile = () => {
 
   usePrefetchInviteSuggestions();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const setCurrentUser = useSetAtomState(currentUserState);
   const setCurrentWorkspaceMembers = useSetAtomState(
@@ -161,15 +161,13 @@ export const CreateProfile = () => {
         setIsNavigating(true);
       } catch (error: any) {
         setIsNavigating(false);
-        enqueueErrorSnackBar({
-          apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-        });
+        addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
       }
     },
     [
       currentWorkspaceMember?.id,
       setNextOnboardingStatus,
-      enqueueErrorSnackBar,
+      addErrorToast,
       setCurrentWorkspaceMembers,
       setCurrentUser,
       updateWorkspaceMemberSettings,

@@ -1,21 +1,30 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
-import { type ReactNode, createElement } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
+import { type ReactNode, createElement } from 'react';
 
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { useMutation } from '@apollo/client/react';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar');
+const mockAddToast = jest.fn();
+const mockAddErrorToast = jest.fn();
+
+jest.mock('twenty-ui/feedback', () => ({
+  ...jest.requireActual('twenty-ui/feedback'),
+  useToast: () => ({ add: mockAddToast }),
+}));
+jest.mock('@/error-handler/hooks/useErrorToast', () => ({
+  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
+}));
 jest.mock('@apollo/client/react');
 jest.mock('@/captcha/hooks/useReadCaptchaToken');
 jest.mock('@/client-config/hooks/useCaptcha');
@@ -53,17 +62,11 @@ const renderHooksWithoutWorkspace = () => {
 };
 
 describe('useHandleResetPassword', () => {
-  const enqueueErrorSnackBarMock = jest.fn();
-  const enqueueSuccessSnackBarMock = jest.fn();
   const emailPasswordResetLinkMock = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    (useSnackBar as jest.Mock).mockReturnValue({
-      enqueueErrorSnackBar: enqueueErrorSnackBarMock,
-      enqueueSuccessSnackBar: enqueueSuccessSnackBarMock,
-    });
     (useMutation as unknown as jest.Mock).mockReturnValue([
       emailPasswordResetLinkMock,
     ]);
@@ -77,8 +80,9 @@ describe('useHandleResetPassword', () => {
     const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('')());
 
-    expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({
-      message: 'Invalid email',
+    expect(mockAddToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'Invalid email',
     });
   });
 
@@ -97,8 +101,9 @@ describe('useHandleResetPassword', () => {
         captchaToken: 'mock-captcha-token',
       },
     });
-    expect(enqueueSuccessSnackBarMock).toHaveBeenCalledWith({
-      message:
+    expect(mockAddToast).toHaveBeenCalledWith({
+      variant: 'success',
+      children:
         'If this email is registered, a password reset link has been sent',
     });
   });
@@ -117,8 +122,9 @@ describe('useHandleResetPassword', () => {
         captchaToken: 'mock-captcha-token',
       },
     });
-    expect(enqueueSuccessSnackBarMock).toHaveBeenCalledWith({
-      message:
+    expect(mockAddToast).toHaveBeenCalledWith({
+      variant: 'success',
+      children:
         'If this email is registered, a password reset link has been sent',
     });
   });
@@ -129,8 +135,9 @@ describe('useHandleResetPassword', () => {
     const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('test@example.com')());
 
-    expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({
-      message: 'Captcha (anti-bot check) is still loading, try again',
+    expect(mockAddToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'Captcha (anti-bot check) is still loading, try again',
     });
     expect(emailPasswordResetLinkMock).not.toHaveBeenCalled();
   });
@@ -143,7 +150,10 @@ describe('useHandleResetPassword', () => {
     const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('test@example.com')());
 
-    expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({});
+    expect(mockAddToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'An error occurred.',
+    });
   });
 
   it('should show error message in case of request error', async () => {
@@ -153,8 +163,9 @@ describe('useHandleResetPassword', () => {
     const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('test@example.com')());
 
-    expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({
-      message: errorMessage,
+    expect(mockAddToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: errorMessage,
     });
   });
 });

@@ -1,15 +1,15 @@
 import { useLingui } from '@lingui/react/macro';
 
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { AppPath } from 'twenty-shared/types';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isMergeInProgressState } from '@/object-record/record-merge/states/mergeInProgressState';
 import { mergeSettingsState } from '@/object-record/record-merge/states/mergeSettingsState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { AppPath } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/feedback';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type UseMergeRecordsActionsProps = {
   objectNameSingular: string;
@@ -29,7 +29,7 @@ export const useMergeRecordsActions = ({
   const setIsMergeInProgress = useSetAtomState(isMergeInProgressState);
 
   const { t } = useLingui();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
   const navigate = useNavigateApp();
@@ -48,8 +48,9 @@ export const useMergeRecordsActions = ({
 
       const recordCount = selectedRecords.length;
 
-      enqueueSuccessSnackBar({
-        message: t`Successfully merged ${recordCount} records`,
+      addToast({
+        variant: 'success',
+        children: t`Successfully merged ${recordCount} records`,
       });
       closeSidePanelMenu();
 
@@ -58,8 +59,9 @@ export const useMergeRecordsActions = ({
         objectRecordId: mergedRecord.id,
       });
     } catch (error) {
-      enqueueErrorSnackBar({
-        message:
+      addToast({
+        variant: 'error',
+        children:
           error instanceof Error
             ? error.message
             : t`Failed to merge records. Please try again.`,

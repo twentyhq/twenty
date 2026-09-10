@@ -1,11 +1,11 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { VerifyEmailingDomainDocument } from '~/generated-metadata/graphql';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { useToast } from 'twenty-ui/feedback';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
+import { VerifyEmailingDomainDocument } from '~/generated-metadata/graphql';
 
 type SettingsEmailingDomainVerifyButtonProps = {
   emailingDomainId: string;
@@ -15,7 +15,8 @@ export const SettingsEmailingDomainVerifyButton = ({
   emailingDomainId,
 }: SettingsEmailingDomainVerifyButtonProps) => {
   const { t } = useLingui();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
   const [verifyEmailingDomain, { loading }] = useMutation(
     VerifyEmailingDomainDocument,
   );
@@ -23,11 +24,12 @@ export const SettingsEmailingDomainVerifyButton = ({
   const handleVerify = async () => {
     try {
       await verifyEmailingDomain({ variables: { id: emailingDomainId } });
-      enqueueSuccessSnackBar({ message: t`Started verification process` });
-    } catch (error) {
-      enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
+      addToast({
+        variant: 'success',
+        children: t`Started verification process`,
       });
+    } catch (error) {
+      addErrorToast(error);
     }
   };
 

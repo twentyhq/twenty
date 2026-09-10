@@ -1,16 +1,16 @@
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import { useMutation } from '@apollo/client/react';
 import {
   type ApprovedAccessDomain,
   DeleteApprovedAccessDomainDocument,
@@ -27,7 +27,7 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
 
   const setApprovedAccessDomains = useSetAtomState(approvedAccessDomainsState);
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -51,11 +51,10 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
       },
     });
     if (isDefined(result.error)) {
-      enqueueErrorSnackBar({
-        message: t`Could not delete approved access domain`,
-        options: {
-          duration: 2000,
-        },
+      addToast({
+        variant: 'error',
+        children: t`Could not delete approved access domain`,
+        duration: 2000,
       });
     }
   };

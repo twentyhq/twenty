@@ -2,7 +2,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { useToast } from 'twenty-ui/feedback';
 
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -80,7 +81,8 @@ export const useImapSmtpCaldavConnectionForm = ({
   });
 
   const { handleSubmit, formState, watch, reset } = formMethods;
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
   const { isSubmitting } = formState;
 
   const { connectedAccount, loading: accountLoading } =
@@ -183,7 +185,7 @@ export const useImapSmtpCaldavConnectionForm = ({
           ? t`Connection successfully updated`
           : t`Connection successfully created`;
 
-        enqueueSuccessSnackBar({ message: successMessage });
+        addToast({ variant: 'success', children: successMessage });
 
         const { connectedAccountId: returnedConnectedAccountId } =
           data?.saveImapSmtpCaldavAccount ?? {};
@@ -192,9 +194,7 @@ export const useImapSmtpCaldavConnectionForm = ({
           connectedAccountId: returnedConnectedAccountId,
         });
       } catch (error) {
-        enqueueErrorSnackBar({
-          apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-        });
+        addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
       }
     },
     [
@@ -202,9 +202,9 @@ export const useImapSmtpCaldavConnectionForm = ({
       saveConnection,
       isEditing,
       connectedAccountId,
-      enqueueSuccessSnackBar,
+      addToast,
       navigate,
-      enqueueErrorSnackBar,
+      addErrorToast,
     ],
   );
 

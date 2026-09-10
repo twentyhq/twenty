@@ -1,11 +1,11 @@
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { useToast } from 'twenty-ui/feedback';
 import {
   BillingPlanKey,
   SubscriptionStatus,
@@ -15,7 +15,7 @@ import {
 export const useSwitchBillingPlan = () => {
   const { t } = useLingui();
   const subscriptionStatus = useSubscriptionStatus();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { applyCurrentWorkspaceBillingUpdate } =
     useApplyCurrentWorkspaceBillingUpdate();
   const { getBeautifiedRenewDate } = useBillingWording();
@@ -46,18 +46,21 @@ export const useSwitchBillingPlan = () => {
       );
 
       if (!isBillingUpdateApplied) {
-        enqueueErrorSnackBar({
-          message: t`Error while switching subscription.`,
+        addToast({
+          variant: 'error',
+          children: t`Error while switching subscription.`,
         });
         return;
       }
 
-      enqueueSuccessSnackBar({
-        message: getSuccessMessage(targetPlanKey),
+      addToast({
+        variant: 'success',
+        children: getSuccessMessage(targetPlanKey),
       });
     } catch (error) {
-      enqueueErrorSnackBar({
-        message: t`Error while switching subscription.`,
+      addToast({
+        variant: 'error',
+        children: t`Error while switching subscription.`,
       });
 
       if (!CombinedGraphQLErrors.is(error)) {

@@ -3,10 +3,9 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SEARCH_VECTOR_FIELD_NAME } from '@/object-record/constants/SearchVectorFieldName';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
 import { canBeSearchable } from '@/settings/data-model/fields/forms/utils/canBeSearchable';
+import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -20,6 +19,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo, useState } from 'react';
+import { useToast } from 'twenty-ui/feedback';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import {
@@ -111,7 +111,7 @@ export const SettingsObjectSearchSection = ({
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
   const { closeDropdown } = useCloseDropdown();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const isConfigurableSearchFieldsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED,
@@ -173,8 +173,9 @@ export const SettingsObjectSearchSection = ({
     });
 
     if (result.status === 'successful') {
-      enqueueSuccessSnackBar({
-        message: value
+      addToast({
+        variant: 'success',
+        children: value
           ? t`Field added to search`
           : t`Field removed from search`,
       });

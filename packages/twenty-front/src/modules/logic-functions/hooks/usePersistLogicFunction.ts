@@ -1,18 +1,17 @@
 import { useCallback } from 'react';
 
+import { CREATE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/createOneLogicFunction';
+import { DELETE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/deleteOneLogicFunction';
 import { UPDATE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/updateOneLogicFunction';
+import { FIND_MANY_LOGIC_FUNCTIONS } from '@/logic-functions/graphql/queries/findManyLogicFunctions';
 import { GET_LOGIC_FUNCTION_SOURCE_CODE } from '@/logic-functions/graphql/queries/getLogicFunctionSourceCode';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { CREATE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/createOneLogicFunction';
-import { DELETE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/deleteOneLogicFunction';
-import { FIND_MANY_LOGIC_FUNCTIONS } from '@/logic-functions/graphql/queries/findManyLogicFunctions';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useMutation } from '@apollo/client/react';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { getOperationName } from '~/utils/getOperationName';
+import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/feedback';
 import {
   type CreateOneLogicFunctionMutation,
   type CreateOneLogicFunctionMutationVariables,
@@ -21,10 +20,11 @@ import {
   type UpdateOneLogicFunctionMutation,
   type UpdateOneLogicFunctionMutationVariables,
 } from '~/generated-metadata/graphql';
+import { getOperationName } from '~/utils/getOperationName';
 
 export const usePersistLogicFunction = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const [createLogicFunctionMutation] = useMutation<
     CreateOneLogicFunctionMutation,
@@ -67,7 +67,7 @@ export const usePersistLogicFunction = () => {
             operationType: CrudOperationType.CREATE,
           });
         } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
+          addToast({ variant: 'error', children: t`An error occurred.` });
         }
 
         return {
@@ -76,7 +76,7 @@ export const usePersistLogicFunction = () => {
         };
       }
     },
-    [createLogicFunctionMutation, handleMetadataError, enqueueErrorSnackBar],
+    [createLogicFunctionMutation, handleMetadataError, addToast],
   );
 
   const updateLogicFunction = useCallback(
@@ -103,7 +103,7 @@ export const usePersistLogicFunction = () => {
             operationType: CrudOperationType.UPDATE,
           });
         } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
+          addToast({ variant: 'error', children: t`An error occurred.` });
         }
 
         return {
@@ -112,11 +112,7 @@ export const usePersistLogicFunction = () => {
         };
       }
     },
-    [
-      updateLogicFunctionSourceMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-    ],
+    [updateLogicFunctionSourceMutation, handleMetadataError, addToast],
   );
 
   const deleteLogicFunction = useCallback(
@@ -147,7 +143,7 @@ export const usePersistLogicFunction = () => {
             operationType: CrudOperationType.DELETE,
           });
         } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
+          addToast({ variant: 'error', children: t`An error occurred.` });
         }
 
         return {
@@ -156,7 +152,7 @@ export const usePersistLogicFunction = () => {
         };
       }
     },
-    [deleteLogicFunctionMutation, handleMetadataError, enqueueErrorSnackBar],
+    [deleteLogicFunctionMutation, handleMetadataError, addToast],
   );
 
   return {

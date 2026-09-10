@@ -1,15 +1,17 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { EDITABLE_PROFILE_FIELDS_DROPDOWN_ID } from '@/settings/security/constants/EditableProfileFields.constants';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import {
   IconMail,
   IconPhoto,
@@ -20,7 +22,6 @@ import {
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const StyledDropdownContainer = styled.div`
@@ -37,7 +38,8 @@ type ProfileFieldOption = {
 
 export const SettingsSecurityEditableProfileFields = () => {
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -80,7 +82,7 @@ export const SettingsSecurityEditableProfileFields = () => {
 
   const toggleField = (field: string) => {
     if (!currentWorkspace?.id) {
-      enqueueErrorSnackBar({ message: t`User is not logged in` });
+      addToast({ variant: 'error', children: t`User is not logged in` });
       return;
     }
 
@@ -108,9 +110,7 @@ export const SettingsSecurityEditableProfileFields = () => {
       setCurrentWorkspace((prev) =>
         prev ? { ...prev, editableProfileFields: previousFields } : prev,
       );
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
     });
   };
 

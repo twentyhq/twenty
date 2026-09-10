@@ -1,25 +1,25 @@
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isCompanyEnrichmentEnabledState } from '@/client-config/states/isCompanyEnrichmentEnabledState';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
 import { PageFocusId } from '@/types/PageFocusId';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
+import { useQuery } from '@apollo/client/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
-import { useQuery } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { GetInviteSuggestionsDocument } from '~/generated-metadata/graphql';
+import { useToast } from 'twenty-ui/feedback';
 import { z } from 'zod';
+import { GetInviteSuggestionsDocument } from '~/generated-metadata/graphql';
 
 const validationSchema = z.object({
   emails: z.array(z.object({ email: z.union([z.literal(''), z.email()]) })),
@@ -29,7 +29,7 @@ type InviteTeamFormInput = z.infer<typeof validationSchema>;
 
 export const useInviteTeam = () => {
   const { t } = useLingui();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { sendInvitation } = useCreateWorkspaceInvitation();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
@@ -169,11 +169,10 @@ export const useInviteTeam = () => {
         }));
 
         if (emails.length > 0) {
-          enqueueSuccessSnackBar({
-            message: t`Invite link sent to email addresses`,
-            options: {
-              duration: 2000,
-            },
+          addToast({
+            variant: 'success',
+            children: t`Invite link sent to email addresses`,
+            duration: 2000,
           });
         }
 
@@ -192,7 +191,7 @@ export const useInviteTeam = () => {
       }
     },
     [
-      enqueueSuccessSnackBar,
+      addToast,
       isBookCallOnboardingStepEnabled,
       isCompanyEnrichmentEnabled,
       onboardingConfig?.inviteTeamCreditsRewardPerUser,

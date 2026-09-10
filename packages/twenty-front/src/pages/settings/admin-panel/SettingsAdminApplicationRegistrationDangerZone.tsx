@@ -1,4 +1,3 @@
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -8,11 +7,14 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { IconShare, IconTrash, IconUserPlus } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { H1Title, H1TitleFontColor, H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H1Title, H1TitleFontColor, H2Title } from 'twenty-ui/typography';
 import {
   type ApplicationRegistration,
   ClaimApplicationRegistrationOwnershipDocument,
@@ -22,14 +24,12 @@ import {
   TransferApplicationRegistrationOwnershipDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   StyledAppModal,
   StyledAppModalButton,
   StyledAppModalSection,
   StyledAppModalTitle,
 } from '~/pages/settings/applications/components/SettingsAppModalLayout';
-import { isDefined } from 'twenty-shared/utils';
 
 const DELETE_REGISTRATION_MODAL_ID = 'delete-application-registration-modal';
 
@@ -55,7 +55,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
 }) => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { openModal, closeModal } = useModal();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -126,13 +126,9 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         );
       }
 
-      enqueueSuccessSnackBar({
-        message: t`App deleted successfully`,
-      });
+      addToast({ variant: 'success', children: t`App deleted successfully` });
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Error deleting app`,
-      });
+      addToast({ variant: 'error', children: t`Error deleting app` });
     } finally {
       setIsLoading(false);
     }
@@ -153,14 +149,16 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
           targetWorkspaceSubdomain: trimmed,
         },
       });
-      enqueueSuccessSnackBar({
-        message: t`Ownership transferred successfully`,
+      addToast({
+        variant: 'success',
+        children: t`Ownership transferred successfully`,
       });
       setTransferSubdomain('');
       navigate(SettingsPath.Applications);
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to transfer ownership. Check that the subdomain is correct.`,
+      addToast({
+        variant: 'error',
+        children: t`Failed to transfer ownership. Check that the subdomain is correct.`,
       });
     } finally {
       setIsTransferring(false);
@@ -173,14 +171,13 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
       await claimOwnership({
         variables: { applicationRegistrationId },
       });
-      enqueueSuccessSnackBar({
-        message: t`Ownership claimed successfully`,
+      addToast({
+        variant: 'success',
+        children: t`Ownership claimed successfully`,
       });
       closeModal(CLAIM_OWNERSHIP_MODAL_ID);
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to claim ownership.`,
-      });
+      addToast({ variant: 'error', children: t`Failed to claim ownership.` });
     } finally {
       setIsClaiming(false);
     }

@@ -5,8 +5,8 @@ import { type EmailAttachment } from 'twenty-shared/types';
 import { SEND_EMAIL } from '@/activities/emails/graphql/mutations/sendEmail';
 import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
+import { useToast } from 'twenty-ui/feedback';
 import {
   type SendEmailMutation,
   type SendEmailMutationVariables,
@@ -38,7 +38,7 @@ export const useSendEmail = () => {
     SendEmailMutationVariables
   >(SEND_EMAIL);
 
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const sendEmail = useCallback(
     async (params: SendEmailParams): Promise<SendEmailResult> => {
@@ -61,8 +61,9 @@ export const useSendEmail = () => {
         });
 
         if (result.data?.sendEmail.success) {
-          enqueueSuccessSnackBar({
-            message: t`Email sent successfully`,
+          addToast({
+            variant: 'success',
+            children: t`Email sent successfully`,
           });
 
           await apolloCoreClient.refetchQueries({
@@ -80,25 +81,19 @@ export const useSendEmail = () => {
           };
         }
 
-        enqueueErrorSnackBar({
-          message: result.data?.sendEmail.error ?? t`Failed to send email`,
+        addToast({
+          variant: 'error',
+          children: result.data?.sendEmail.error ?? t`Failed to send email`,
         });
 
         return { success: false, messageThreadId: null };
       } catch {
-        enqueueErrorSnackBar({
-          message: t`Failed to send email`,
-        });
+        addToast({ variant: 'error', children: t`Failed to send email` });
 
         return { success: false, messageThreadId: null };
       }
     },
-    [
-      sendEmailMutation,
-      enqueueSuccessSnackBar,
-      enqueueErrorSnackBar,
-      apolloCoreClient,
-    ],
+    [sendEmailMutation, addToast, apolloCoreClient],
   );
 
   return { sendEmail, loading };

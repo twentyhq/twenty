@@ -1,8 +1,8 @@
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { type ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import { useToast } from 'twenty-ui/feedback';
 
 type CommandMenuItemErrorBoundaryProps = {
   children: ReactNode;
@@ -15,14 +15,14 @@ export const CommandMenuItemErrorBoundary = ({
   shouldReportToSentry = false,
   onError,
 }: CommandMenuItemErrorBoundaryProps) => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const commandMenuItemId = useAvailableComponentInstanceIdOrThrow(
     CommandComponentInstanceContext,
   );
 
   const handleError = async (error: Error) => {
-    enqueueErrorSnackBar({ message: error.message });
+    addToast({ variant: 'error', children: error.message });
 
     if (shouldReportToSentry) {
       try {

@@ -1,11 +1,10 @@
-import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { styled } from '@linaria/react';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
@@ -14,6 +13,7 @@ import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import {
   IconLock,
   IconSend,
@@ -102,7 +102,7 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
 
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { sendInvitation } = useCreateWorkspaceInvitation();
 
   const roleOptions: Array<{
@@ -147,22 +147,20 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
 
     if (data.sendInvitations.result.length > 0) {
       const invitationCount = data.sendInvitations.result.length;
-      enqueueSuccessSnackBar({
-        message: t`${invitationCount} invitations sent`,
-        options: {
-          duration: 2000,
-        },
+      addToast({
+        variant: 'success',
+        children: t`${invitationCount} invitations sent`,
+        duration: 2000,
       });
 
       return;
     }
 
     if (!data.sendInvitations.success) {
-      enqueueErrorSnackBar({
-        message: data.sendInvitations.errors.join(', '),
-        options: {
-          duration: 5000,
-        },
+      addToast({
+        variant: 'error',
+        children: data.sendInvitations.errors.join(', '),
+        duration: 5000,
       });
     }
   });

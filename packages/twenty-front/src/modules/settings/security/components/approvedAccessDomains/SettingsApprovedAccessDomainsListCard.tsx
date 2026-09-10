@@ -2,21 +2,21 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { SettingsPath } from 'twenty-shared/types';
 
+import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { useGetAddedRelativeDateDescription } from '@/settings/hooks/useGetAddedRelativeDateDescription';
 import { SettingsSecurityApprovedAccessDomainRowDropdownMenu } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu';
 import { SettingsSecurityApprovedAccessDomainValidationEffect } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect';
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
-import { styled } from '@linaria/react';
-import { useEffect } from 'react';
-import { useLingui } from '@lingui/react/macro';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useQuery } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { useEffect } from 'react';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/data-display';
 import { IconAt, IconMailCog } from 'twenty-ui/icon';
-import { useQuery } from '@apollo/client/react';
 import { GetApprovedAccessDomainsDocument } from '~/generated-metadata/graphql';
 
 const StyledLinkContainer = styled.div`
@@ -49,7 +49,7 @@ export const SettingsApprovedAccessDomainsListCard = () => {
     }
   }, [domainsData, setApprovedAccessDomains]);
 
-  useSnackBarOnQueryError(domainsError);
+  useToastOnQueryError(domainsError);
 
   return loading || !approvedAccessDomains.length ? (
     <StyledLinkContainer>

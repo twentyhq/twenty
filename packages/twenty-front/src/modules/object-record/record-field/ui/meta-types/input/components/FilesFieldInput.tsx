@@ -10,15 +10,15 @@ import { uploadMultipleFiles } from '@/object-record/record-field/ui/meta-types/
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { filesFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/filesFieldValueSchema';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const FilesFieldInput = () => {
@@ -27,7 +27,7 @@ export const FilesFieldInput = () => {
   const { openFileUpload } = useFileUpload();
   const { t } = useLingui();
   const [isUploading, setIsUploading] = useState(false);
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const setFilePreview = useSetAtomState(filePreviewState);
   const isAttachmentPreviewEnabled = useAtomStateValue(
     isAttachmentPreviewEnabledState,
@@ -85,8 +85,9 @@ export const FilesFieldInput = () => {
           selectedFiles.length > maxNumberOfValues - files.length &&
           files.length > 0
         ) {
-          enqueueErrorSnackBar({
-            message: t`Cannot upload more than ${maxNumberOfValues} files`,
+          addToast({
+            variant: 'error',
+            children: t`Cannot upload more than ${maxNumberOfValues} files`,
           });
           return;
         }
@@ -115,7 +116,7 @@ export const FilesFieldInput = () => {
     openFileUpload,
     files,
     maxNumberOfValues,
-    enqueueErrorSnackBar,
+    addToast,
     t,
     uploadFile,
     handleChange,

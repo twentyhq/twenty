@@ -11,8 +11,8 @@ jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: jest.fn(() => ({})),
 }));
 
-jest.mock('@/apollo/hooks/useSnackBarOnQueryError', () => ({
-  useSnackBarOnQueryError: jest.fn(),
+jest.mock('@/apollo/hooks/useToastOnQueryError', () => ({
+  useToastOnQueryError: jest.fn(),
 }));
 
 const useQueryMock = jest.requireMock('@apollo/client/react').useQuery;

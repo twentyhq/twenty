@@ -6,7 +6,12 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/typography';
 
+import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { DpaDocumentPreview } from '@/settings/legal/components/DpaDocumentPreview';
 import { DpaNotice } from '@/settings/legal/components/DpaNotice';
 import { GENERATE_SIGNED_DPA } from '@/settings/legal/graphql/mutations/generateSignedDpa';
@@ -16,19 +21,14 @@ import {
   type DpaDocument,
   type GenerateSignedDpaResult,
 } from '@/settings/legal/types/Dpa';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { downloadFile } from '@/activities/files/utils/downloadFile';
+import { useToast } from 'twenty-ui/feedback';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsLegalDpaNew = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   // DPA operations live on the core (/graphql) schema, not the default /metadata client.
   const apolloCoreClient = useApolloCoreClient();
 
@@ -96,13 +96,15 @@ export const SettingsLegalDpaNew = () => {
         `Twenty-DPA-${result.agreement.templateVersion}-${safeLegalEntityName}.pdf`,
       );
 
-      enqueueSuccessSnackBar({
-        message: t`Signed DPA generated and downloaded`,
+      addToast({
+        variant: 'success',
+        children: t`Signed DPA generated and downloaded`,
       });
       navigateSettings(SettingsPath.LegalDpa);
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Could not generate the signed DPA. Please try again.`,
+      addToast({
+        variant: 'error',
+        children: t`Could not generate the signed DPA. Please try again.`,
       });
     } finally {
       setIsGenerating(false);

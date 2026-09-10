@@ -2,7 +2,6 @@ import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -16,25 +15,26 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useContext, useState } from 'react';
-import { useDebounce } from 'use-debounce';
+import { SettingsPath } from 'twenty-shared/types';
 import {
   assertUnreachable,
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
-import { SettingsPath } from 'twenty-shared/types';
+import { Tag } from 'twenty-ui/data-display';
+import { useToast } from 'twenty-ui/feedback';
 import {
   IconChevronRight,
   IconDotsVertical,
   IconPinned,
   IconRefresh,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { Tag } from 'twenty-ui/data-display';
+import { H2Title } from 'twenty-ui/typography';
+import { useDebounce } from 'use-debounce';
 import {
   type ApplicationRegistrationFragmentFragment,
   ApplicationRegistrationSourceType,
@@ -69,7 +69,7 @@ const SOURCE_TYPE_FILTER_OPTIONS: {
 
 export const SettingsAdminApps = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
   const [showPreInstalledOnly, setShowPreInstalledOnly] = useState(false);
@@ -121,12 +121,14 @@ export const SettingsAdminApps = () => {
   const handleSyncCatalog = async () => {
     try {
       await syncMarketplaceCatalog();
-      enqueueSuccessSnackBar({
-        message: t`Marketplace catalog synchronization started.`,
+      addToast({
+        variant: 'success',
+        children: t`Marketplace catalog synchronization started.`,
       });
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to synchronize the marketplace catalog.`,
+      addToast({
+        variant: 'error',
+        children: t`Failed to synchronize the marketplace catalog.`,
       });
     }
   };

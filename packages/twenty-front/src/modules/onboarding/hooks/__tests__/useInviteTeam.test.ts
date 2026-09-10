@@ -36,8 +36,15 @@ jest.mock('@apollo/client/react', () => ({
   useQuery: () => ({ data: undefined, loading: false }),
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({ enqueueSuccessSnackBar: jest.fn() }),
+const mockAddToast = jest.fn();
+const mockAddErrorToast = jest.fn();
+
+jest.mock('twenty-ui/feedback', () => ({
+  ...jest.requireActual('twenty-ui/feedback'),
+  useToast: () => ({ add: mockAddToast }),
+}));
+jest.mock('@/error-handler/hooks/useErrorToast', () => ({
+  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
 }));
 
 jest.mock('@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement', () => ({

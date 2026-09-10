@@ -12,33 +12,33 @@ import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTit
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
 import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
 
-import { SettingsEmailingDomainVerifyButton } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsEmailingDomainVerifyButton } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  EmailingDomainStatus,
-  GetEmailingDomainsDocument,
-} from '~/generated-metadata/graphql';
 import { Status } from 'twenty-ui/data-display';
+import { useToast } from 'twenty-ui/feedback';
 import { IconCopy, IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
+import {
+  EmailingDomainStatus,
+  GetEmailingDomainsDocument,
+} from '~/generated-metadata/graphql';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { getColorByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusColor';
 import { getTextByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusText';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const DELETE_EMAIL_GROUP_MODAL_ID = 'delete-email-group-channel-modal';
 
@@ -71,7 +71,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const { channels, loading } = useMyMessageChannels();
   const { copyToClipboard } = useCopyToClipboard();
   const { openModal } = useModal();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { deleteEmailGroupChannel, loading: deleting } =
     useDeleteEmailGroupChannel();
   const { updateEmailGroupChannel, loading: updatingDisplayName } =
@@ -133,8 +133,9 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
         isNonEmptyString(nextDisplayName) ? nextDisplayName : null,
       );
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to update sender name.`,
+      addToast({
+        variant: 'error',
+        children: t`Failed to update sender name.`,
       });
     } finally {
       setDisplayNameDraft(null);
@@ -146,8 +147,9 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
       await deleteEmailGroupChannel(channel.id);
       navigateSettings(SettingsPath.WorkspaceCommunications);
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to delete email channel.`,
+      addToast({
+        variant: 'error',
+        children: t`Failed to delete email channel.`,
       });
     }
   };

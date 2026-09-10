@@ -1,12 +1,12 @@
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useMutation } from '@apollo/client/react';
+import { useToast } from 'twenty-ui/feedback';
 import { UpgradeApplicationDocument } from '~/generated-metadata/graphql';
 
 export const useUpgradeApplication = () => {
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const [upgradeApplicationMutation] = useMutation(UpgradeApplicationDocument);
   const [isUpgrading, setIsUpgrading] = useState(false);
 
@@ -22,8 +22,9 @@ export const useUpgradeApplication = () => {
       });
 
       if (isDefined(result.data)) {
-        enqueueSuccessSnackBar({
-          message: t`Application upgraded successfully.`,
+        addToast({
+          variant: 'success',
+          children: t`Application upgraded successfully.`,
         });
 
         return true;
@@ -33,8 +34,9 @@ export const useUpgradeApplication = () => {
     } catch (error) {
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
-      enqueueErrorSnackBar({
-        message: graphqlMessage ?? t`Failed to upgrade the application.`,
+      addToast({
+        variant: 'error',
+        children: graphqlMessage ?? t`Failed to upgrade the application.`,
       });
 
       return false;

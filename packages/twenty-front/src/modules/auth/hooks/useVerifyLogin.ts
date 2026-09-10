@@ -1,14 +1,16 @@
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useAuth } from '@/auth/hooks/useAuth';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/feedback';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useVerifyLogin = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
+  const { add: addToast } = useToast();
   const navigate = useNavigateApp();
   const setIsAppEffectRedirectEnabled = useSetAtomState(
     isAppEffectRedirectEnabledState,
@@ -22,13 +24,11 @@ export const useVerifyLogin = () => {
     try {
       await getAuthTokensFromLoginToken(loginToken);
     } catch (error) {
-      enqueueErrorSnackBar(
-        CombinedGraphQLErrors.is(error)
-          ? { apolloError: error }
-          : {
-              message: t`Authentication failed`,
-            },
-      );
+      if (CombinedGraphQLErrors.is(error)) {
+        addErrorToast(error);
+      } else {
+        addToast({ variant: 'error', children: t`Authentication failed` });
+      }
       navigate(AppPath.SignInUp);
     } finally {
       setIsAppEffectRedirectEnabled(true);

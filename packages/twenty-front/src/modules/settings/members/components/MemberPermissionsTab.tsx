@@ -1,21 +1,21 @@
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { IconArrowUpRight, IconUser, useIcons } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation } from '@apollo/client/react';
+import { H2Title } from 'twenty-ui/typography';
 import { UpdateWorkspaceMemberRoleDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -54,7 +54,7 @@ export const MemberPermissionsTab = ({
   const primaryRole = roles?.[0];
   const { getIcon } = useIcons();
   const navigateSettings = useNavigateSettings();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { openModal } = useModal();
   const [pendingRole, setPendingRole] = useState<RoleWithPartialMembers | null>(
     null,
@@ -92,10 +92,11 @@ export const MemberPermissionsTab = ({
         },
         refetchQueries: ['GetRoles'],
       });
-      enqueueSuccessSnackBar({ message: t`Role updated successfully` });
+      addToast({ variant: 'success', children: t`Role updated successfully` });
     } catch (error) {
-      enqueueErrorSnackBar({
-        message:
+      addToast({
+        variant: 'error',
+        children:
           error instanceof Error ? error.message : t`Failed to update role`,
       });
     } finally {

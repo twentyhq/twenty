@@ -1,7 +1,7 @@
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { DUPLICATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/duplicateWorkflowVersionStep';
 import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client/react';
 import {
   type DuplicateWorkflowVersionStepInput,
@@ -15,7 +15,7 @@ export const useDuplicateWorkflowVersionStep = () => {
   const { applyWorkflowVersionStepChanges } =
     useApplyWorkflowVersionStepChanges();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
 
   const [mutate] = useMutation<
     DuplicateWorkflowVersionStepMutation,
@@ -30,7 +30,7 @@ export const useDuplicateWorkflowVersionStep = () => {
     const result = await mutate({
       variables: { input },
       onError: (error) => {
-        enqueueErrorSnackBar({ apolloError: error });
+        addErrorToast(error);
       },
     });
 

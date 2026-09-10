@@ -1,18 +1,18 @@
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
-import { useMutation } from '@apollo/client/react';
+import { useToast } from 'twenty-ui/feedback';
 import { ValidateApprovedAccessDomainDocument } from '~/generated-metadata/graphql';
 
 export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
   const [validateApprovedAccessDomainMutation] = useMutation(
     ValidateApprovedAccessDomainDocument,
   );
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const [searchParams] = useSearchParams();
   const approvedAccessDomainId = searchParams.get('wtdId');
   const validationToken = searchParams.get('validationToken');
@@ -37,21 +37,19 @@ export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
                   : approvedAccessDomain.isValidated,
             })),
           );
-          enqueueSuccessSnackBar({
-            message: t`Approved access domain validated`,
-            options: {
-              dedupeKey: 'approved-access-domain-validation-dedupe-key',
-            },
+          addToast({
+            variant: 'success',
+            children: t`Approved access domain validated`,
+            dedupeKey: 'approved-access-domain-validation-dedupe-key',
           });
         },
         onError: (error) => {
-          enqueueErrorSnackBar({
-            message: error?.message
+          addToast({
+            variant: 'error',
+            children: error?.message
               ? error.message
               : t`Error validating approved access domain`,
-            options: {
-              dedupeKey: 'approved-access-domain-validation-error-dedupe-key',
-            },
+            dedupeKey: 'approved-access-domain-validation-error-dedupe-key',
           });
         },
       });

@@ -19,28 +19,28 @@ import {
   IconTrash,
   IconWorld,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { RoundedLink, UndecoratedLink } from 'twenty-ui/navigation';
+import { H2Title } from 'twenty-ui/typography';
 
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
-import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
 import { REMOVE_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeAiProvider';
-import { SET_ADMIN_AI_MODELS_ENABLED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelsEnabled';
 import { REMOVE_MODEL_FROM_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeModelFromProvider';
+import { SET_ADMIN_AI_MODELS_ENABLED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelsEnabled';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
 import { getDataResidencyDisplay } from '@/settings/ai/utils/getDataResidencyDisplay';
-import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { useToast } from 'twenty-ui/feedback';
 import {
   type AdminAiModelConfig,
   SetAdminAiModelEnabledDocument,
@@ -53,7 +53,7 @@ export const SettingsAdminAiProviderDetail = () => {
   const { providerName } = useParams<{ providerName: string }>();
   const apolloAdminClient = useApolloAdminClient();
   const navigate = useNavigate();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { refetch: refetchClientConfig } = useClientConfig();
   const { openModal } = useModal();
   const [searchQuery, setSearchQuery] = useState('');
@@ -104,14 +104,13 @@ export const SettingsAdminAiProviderDetail = () => {
           { query: GET_ADMIN_AI_MODELS },
         ],
       });
-      enqueueSuccessSnackBar({
-        message: t`Provider "${provider?.label ?? providerName}" removed`,
+      addToast({
+        variant: 'success',
+        children: t`Provider "${provider?.label ?? providerName}" removed`,
       });
       navigate(AI_ADMIN_PATH);
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to remove provider`,
-      });
+      addToast({ variant: 'error', children: t`Failed to remove provider` });
     }
   };
 
@@ -132,14 +131,13 @@ export const SettingsAdminAiProviderDetail = () => {
         ],
       });
       await refetchClientConfig();
-      enqueueSuccessSnackBar({
-        message: t`Model "${modelToRemove.label}" removed`,
+      addToast({
+        variant: 'success',
+        children: t`Model "${modelToRemove.label}" removed`,
       });
       setModelToRemove(null);
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to remove model`,
-      });
+      addToast({ variant: 'error', children: t`Failed to remove model` });
     }
   };
 
@@ -187,8 +185,9 @@ export const SettingsAdminAiProviderDetail = () => {
       });
       await refetchClientConfig();
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to update model availability`,
+      addToast({
+        variant: 'error',
+        children: t`Failed to update model availability`,
       });
     }
   };
@@ -381,8 +380,9 @@ export const SettingsAdminAiProviderDetail = () => {
                     },
                   });
                 } catch {
-                  enqueueErrorSnackBar({
-                    message: t`Failed to update model availability`,
+                  addToast({
+                    variant: 'error',
+                    children: t`Failed to update model availability`,
                   });
                 } finally {
                   await refetchModels();

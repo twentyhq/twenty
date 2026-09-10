@@ -1,8 +1,8 @@
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { useMutation } from '@apollo/client/react';
+import { useToast } from 'twenty-ui/feedback';
 import {
   type BillingPlanKey,
   type SubscriptionInterval,
@@ -22,7 +22,7 @@ export const useHandleCheckoutSession = ({
 }) => {
   const { redirect } = useRedirect();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const [checkoutSession] = useMutation(CheckoutSessionDocument);
 
@@ -40,15 +40,17 @@ export const useHandleCheckoutSession = ({
         },
       });
       if (!data?.checkoutSession.url) {
-        enqueueErrorSnackBar({
-          message: t`Checkout session error. Please retry or contact Twenty team`,
+        addToast({
+          variant: 'error',
+          children: t`Checkout session error. Please retry or contact Twenty team`,
         });
         return;
       }
       redirect(data.checkoutSession.url);
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Checkout session error. Please retry or contact Twenty team`,
+      addToast({
+        variant: 'error',
+        children: t`Checkout session error. Please retry or contact Twenty team`,
       });
     } finally {
       setIsSubmitting(false);

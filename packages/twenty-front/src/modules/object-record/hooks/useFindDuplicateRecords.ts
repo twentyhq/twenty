@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/client/react';
-import { isDefined } from 'twenty-shared/utils';
 import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
+import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
@@ -49,7 +49,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
       },
     );
 
-  useSnackBarOnQueryError(error);
+  useToastOnQueryError(error);
 
   const objectResults = data?.[queryResponseField];
 

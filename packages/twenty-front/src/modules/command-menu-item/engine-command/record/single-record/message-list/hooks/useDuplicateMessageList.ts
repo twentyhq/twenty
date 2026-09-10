@@ -1,11 +1,11 @@
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useAddDuplicatedRecordToCache } from '@/object-record/cache/hooks/useAddDuplicatedRecordToCache';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular, CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { DuplicateMessageListDocument } from '~/generated-metadata/graphql';
 
 export const useDuplicateMessageList = () => {
@@ -16,7 +16,7 @@ export const useDuplicateMessageList = () => {
   const [mutate] = useMutation(DuplicateMessageListDocument);
 
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const duplicateMessageList = async (messageListId: string) => {
     try {
@@ -44,7 +44,7 @@ export const useDuplicateMessageList = () => {
           operationType: CrudOperationType.CREATE,
         });
       } else {
-        enqueueErrorSnackBar({ message: t`Failed to duplicate list` });
+        addToast({ variant: 'error', children: t`Failed to duplicate list` });
       }
 
       return undefined;

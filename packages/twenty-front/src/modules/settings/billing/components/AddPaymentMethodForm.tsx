@@ -1,8 +1,8 @@
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { START_SUBSCRIPTION_AFTER_PAYMENT_METHOD_QUERY_PARAM } from '@/settings/billing/constants/StartSubscriptionAfterPaymentMethodQueryParam';
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
 import { useStripePromise } from '@/settings/billing/hooks/useStripePromise';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
@@ -17,7 +17,7 @@ import {
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Info } from 'twenty-ui/feedback';
+import { Info, useToast } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { CreateBillingPaymentMethodSetupIntentDocument } from '~/generated-metadata/graphql';
@@ -44,7 +44,8 @@ const AddPaymentMethodFormContent = ({
 }: AddPaymentMethodFormContentProps) => {
   const stripe = useStripe();
   const elements = useElements();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const location = useLocation();
 
@@ -81,8 +82,9 @@ const AddPaymentMethodFormContent = ({
     try {
       const { error: submitError } = await elements.submit();
       if (isDefined(submitError)) {
-        enqueueErrorSnackBar({
-          message:
+        addToast({
+          variant: 'error',
+          children:
             submitError.message ??
             t`Your payment details are incomplete. Please review and retry.`,
         });
@@ -95,8 +97,9 @@ const AddPaymentMethodFormContent = ({
       const clientSecret =
         data?.createBillingPaymentMethodSetupIntent?.clientSecret;
       if (!isDefined(clientSecret)) {
-        enqueueErrorSnackBar({
-          message: t`Subscription error. Please retry or contact Twenty team`,
+        addToast({
+          variant: 'error',
+          children: t`Subscription error. Please retry or contact Twenty team`,
         });
         setIsSubmitting(false);
         return;
@@ -110,8 +113,9 @@ const AddPaymentMethodFormContent = ({
       });
 
       if (isDefined(error)) {
-        enqueueErrorSnackBar({
-          message:
+        addToast({
+          variant: 'error',
+          children:
             error.message ??
             t`We couldn't confirm your payment method. Please retry.`,
         });
@@ -124,10 +128,11 @@ const AddPaymentMethodFormContent = ({
       }
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        enqueueErrorSnackBar({ apolloError: error });
+        addErrorToast(error);
       } else {
-        enqueueErrorSnackBar({
-          message: t`Subscription error. Please retry or contact Twenty team`,
+        addToast({
+          variant: 'error',
+          children: t`Subscription error. Please retry or contact Twenty team`,
         });
       }
       setIsSubmitting(false);

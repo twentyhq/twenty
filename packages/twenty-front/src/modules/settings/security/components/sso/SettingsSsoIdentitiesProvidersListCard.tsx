@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { SettingsPath } from 'twenty-shared/types';
 
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
+import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsSsoIdentitiesProvidersListCardWrapper } from '@/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper';
@@ -51,7 +51,7 @@ export const SettingsSsoIdentitiesProvidersListCard = () => {
     }
   }, [ssoData, setSsoIdentitiesProviders]);
 
-  useSnackBarOnQueryError(ssoError);
+  useToastOnQueryError(ssoError);
 
   return loading || !ssoIdentitiesProviders.length ? (
     <StyledLinkContainer

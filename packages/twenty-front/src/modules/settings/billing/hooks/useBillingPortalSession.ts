@@ -1,17 +1,17 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLazyQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { BillingPortalSessionDocument } from '~/generated-metadata/graphql';
 
 export const useBillingPortalSession = (returnUrlPath: string) => {
   const { t } = useLingui();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { redirect } = useRedirect();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const hasSubscriptions =
     (currentWorkspace?.billingSubscriptions.length ?? 0) > 0;
@@ -24,8 +24,9 @@ export const useBillingPortalSession = (returnUrlPath: string) => {
   );
 
   const showBillingPortalSessionError = () => {
-    enqueueErrorSnackBar({
-      message: t`Billing portal session error. Please retry or contact Twenty team`,
+    addToast({
+      variant: 'error',
+      children: t`Billing portal session error. Please retry or contact Twenty team`,
     });
   };
 

@@ -7,7 +7,7 @@ import { useQuery } from '@apollo/client/react';
 import { useState } from 'react';
 
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
+import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 
 type CustomResolverQueryResult<
@@ -62,7 +62,7 @@ export const useCustomResolver = <
 
   const firstQueryLoading = loading && !data;
 
-  useSnackBarOnQueryError(error);
+  useToastOnQueryError(error);
 
   const fetchMoreRecords = async () => {
     if (page.hasNextPage && !isFetchingMore && !firstQueryLoading) {

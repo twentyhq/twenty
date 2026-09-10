@@ -2,7 +2,6 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { getUpgradeHealthStatusBadge } from '@/settings/admin-panel/utils/getUpgradeHealthStatusBadge';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
@@ -14,16 +13,17 @@ import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { formatUpgradeCommandName, getSettingsPath } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/data-display';
+import { useToast } from 'twenty-ui/feedback';
 import {
   IconAlertTriangle,
   IconCalendar,
   IconProgressCheck,
   IconStatusChange,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
 import {
   GetInstanceAndAllWorkspacesUpgradeStatusDocument,
   RefreshUpgradeStatusDocument,
@@ -44,7 +44,7 @@ const StyledCommandValue = styled.span`
 
 export const SettingsAdminInstanceStatus = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
@@ -80,12 +80,11 @@ export const SettingsAdminInstanceStatus = () => {
     try {
       await refreshUpgradeStatus();
       await refetch();
-      enqueueSuccessSnackBar({
-        message: t`Upgrade status refreshed`,
-      });
+      addToast({ variant: 'success', children: t`Upgrade status refreshed` });
     } catch (error) {
-      enqueueErrorSnackBar({
-        message:
+      addToast({
+        variant: 'error',
+        children:
           error instanceof Error
             ? error.message
             : t`Failed to refresh upgrade status`,

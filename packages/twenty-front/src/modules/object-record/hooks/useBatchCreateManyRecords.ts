@@ -1,3 +1,4 @@
+import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
@@ -7,10 +8,9 @@ import {
 } from '@/object-record/hooks/useCreateManyRecords';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
+import { useToast } from 'twenty-ui/feedback';
 
 export const useBatchCreateManyRecords = <
   CreatedObjectRecord extends ObjectRecord = ObjectRecord,
@@ -41,7 +41,7 @@ export const useBatchCreateManyRecords = <
 
   const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
-  const { enqueueWarningSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { formatNumber } = useNumberFormat();
 
   const batchCreateManyRecords = async ({
@@ -86,11 +86,10 @@ export const useBatchCreateManyRecords = <
         error.message.includes('aborted')
       ) {
         const formattedCreatedRecordsCount = formatNumber(createdRecordsCount);
-        enqueueWarningSnackBar({
-          message: t`Record creation stopped. ${formattedCreatedRecordsCount} records created.`,
-          options: {
-            duration: 5000,
-          },
+        addToast({
+          variant: 'warning',
+          children: t`Record creation stopped. ${formattedCreatedRecordsCount} records created.`,
+          duration: 5000,
         });
       } else {
         throw error;

@@ -1,11 +1,11 @@
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useAddDuplicatedRecordToCache } from '@/object-record/cache/hooks/useAddDuplicatedRecordToCache';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular, CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { DuplicateDashboardDocument } from '~/generated-metadata/graphql';
 
 export const useDuplicateDashboard = () => {
@@ -16,7 +16,7 @@ export const useDuplicateDashboard = () => {
   const [mutate] = useMutation(DuplicateDashboardDocument);
 
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const duplicateDashboard = async (dashboardId: string) => {
     try {
@@ -39,7 +39,10 @@ export const useDuplicateDashboard = () => {
           operationType: CrudOperationType.CREATE,
         });
       } else {
-        enqueueErrorSnackBar({ message: t`Failed to duplicate dashboard` });
+        addToast({
+          variant: 'error',
+          children: t`Failed to duplicate dashboard`,
+        });
       }
 
       return undefined;

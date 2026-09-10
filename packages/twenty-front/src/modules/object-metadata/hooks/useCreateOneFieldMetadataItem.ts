@@ -8,11 +8,11 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { CrudOperationType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 
 export const useCreateOneFieldMetadataItem = () => {
   const [createOneFieldMetadataItemMutation] = useMutation(
@@ -20,7 +20,7 @@ export const useCreateOneFieldMetadataItem = () => {
   );
 
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const createOneFieldMetadataItem = async (
@@ -67,7 +67,7 @@ export const useCreateOneFieldMetadataItem = () => {
           operationType: CrudOperationType.CREATE,
         });
       } else {
-        enqueueErrorSnackBar({ message: t`An error occurred.` });
+        addToast({ variant: 'error', children: t`An error occurred.` });
       }
 
       return {

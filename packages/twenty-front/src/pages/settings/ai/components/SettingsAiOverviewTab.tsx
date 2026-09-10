@@ -1,22 +1,23 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsStatsGrid } from '@/settings/components/SettingsStatsGrid';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Fragment, useContext, useState } from 'react';
-import { IconBook, IconMessage, IconSparkles, IconTool } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
+import { IconBook, IconMessage, IconSparkles, IconTool } from 'twenty-ui/icon';
+import { Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   FindWorkspaceAiStatsDocument,
@@ -33,7 +34,8 @@ const MCP_DEEP_LINK = `${getSettingsPath(SettingsPath.ApiWebhooks)}#mcp`;
 
 export const SettingsAiOverviewTab = () => {
   const { theme } = useContext(ThemeContext);
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
+  const { add: addToast } = useToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
@@ -67,10 +69,11 @@ export const SettingsAiOverviewTab = () => {
         aiAdditionalInstructions: originalInstructions || null,
       });
       if (CombinedGraphQLErrors.is(error)) {
-        enqueueErrorSnackBar({ apolloError: error });
+        addErrorToast(error);
       } else {
-        enqueueErrorSnackBar({
-          message: t`Failed to save workspace instructions`,
+        addToast({
+          variant: 'error',
+          children: t`Failed to save workspace instructions`,
         });
       }
     }

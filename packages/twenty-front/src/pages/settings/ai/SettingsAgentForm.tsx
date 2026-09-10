@@ -3,20 +3,22 @@ import { styled } from '@linaria/react';
 import { useParams } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
 
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRoleToDB';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import {
   IconListCheck,
   IconLock,
@@ -26,7 +28,6 @@ import {
 } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation, useQuery } from '@apollo/client/react';
 import {
   type CreateAgentInput,
   CreateOneAgentDocument,
@@ -62,7 +63,8 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const { agentId = '' } = useParams<{ agentId: string }>();
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
   const [isReadonlyMode, setIsReadonlyMode] = useState(false);
   const [originalFormValues, setOriginalFormValues] = useState<
     ReturnType<typeof useSettingsAgentFormState>['formValues'] | null
@@ -119,22 +121,18 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         resetForm(initialValues);
         setOriginalFormValues(initialValues);
       } else {
-        enqueueErrorSnackBar({
-          message: t`Agent not found`,
-        });
+        addToast({ variant: 'error', children: t`Agent not found` });
         navigateApp(AppPath.NotFound);
       }
     }
-  }, [data, resetForm, enqueueErrorSnackBar, navigateApp]);
+  }, [data, resetForm, addToast, navigateApp]);
 
   useEffect(() => {
     if (agentQueryError) {
-      enqueueErrorSnackBar({
-        apolloError: agentQueryError,
-      });
+      addErrorToast(agentQueryError);
       navigateApp(AppPath.NotFound);
     }
-  }, [agentQueryError, enqueueErrorSnackBar, navigateApp]);
+  }, [agentQueryError, addErrorToast, navigateApp]);
 
   const [createAgent] = useMutation(CreateOneAgentDocument);
   const [updateAgent] = useMutation(UpdateOneAgentDocument);
@@ -189,14 +187,13 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           await saveDraftRoleToDB();
         } catch (error) {
           if (CombinedGraphQLErrors.is(error)) {
-            enqueueErrorSnackBar({
-              apolloError: error,
-            });
+            addErrorToast(error);
           } else {
             const errorMessage =
               error instanceof Error ? error.message : String(error);
-            enqueueErrorSnackBar({
-              message: t`Failed to save role permissions: ${errorMessage}`,
+            addToast({
+              variant: 'error',
+              children: t`Failed to save role permissions: ${errorMessage}`,
             });
           }
           setIsSubmitting(false);
@@ -224,9 +221,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
       setOriginalFormValues({ ...formValues });
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     } finally {
       setIsSubmitting(false);
     }
@@ -297,14 +292,13 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           await saveDraftRoleToDB();
         } catch (error) {
           if (CombinedGraphQLErrors.is(error)) {
-            enqueueErrorSnackBar({
-              apolloError: error,
-            });
+            addErrorToast(error);
           } else {
             const errorMessage =
               error instanceof Error ? error.message : String(error);
-            enqueueErrorSnackBar({
-              message: t`Failed to save role permissions: ${errorMessage}`,
+            addToast({
+              variant: 'error',
+              children: t`Failed to save role permissions: ${errorMessage}`,
             });
           }
           setIsSubmitting(false);
@@ -357,9 +351,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
       navigate(SettingsPath.AI);
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     } finally {
       setIsSubmitting(false);
     }

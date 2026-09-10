@@ -5,15 +5,15 @@ import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type ChangeEvent, useMemo, useState } from 'react';
+import { useMemo, useState, type ChangeEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import {
   IconAdjustments,
   IconArrowUp,
@@ -87,7 +87,7 @@ export const ResourceCreditPriceSelector = ({
 
   const [selectedPriceId, setSelectedPriceId] = useState<string | undefined>();
 
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const [setResourceCreditPrice, { loading: isUpdating }] = useMutation(
     SetResourceCreditSubscriptionPriceDocument,
@@ -309,10 +309,13 @@ export const ResourceCreditPriceSelector = ({
           onBillingUpdateApplied: refetchResourceCreditUsage,
         },
       );
-      enqueueSuccessSnackBar({ message: t`Resource credits updated.` });
+      addToast({ variant: 'success', children: t`Resource credits updated.` });
       setSelectedPriceId(undefined);
     } catch (error) {
-      enqueueErrorSnackBar({ message: t`Failed to update resource credits.` });
+      addToast({
+        variant: 'error',
+        children: t`Failed to update resource credits.`,
+      });
 
       if (!CombinedGraphQLErrors.is(error)) {
         throw error;

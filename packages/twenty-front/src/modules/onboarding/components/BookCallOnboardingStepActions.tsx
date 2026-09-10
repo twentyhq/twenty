@@ -1,13 +1,13 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useCallback, useState } from 'react';
 
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { BookCallBookingSuccessEffect } from '@/onboarding/effect-components/BookCallBookingSuccessEffect';
 import { useCompleteBookCallOnboardingStep } from '@/onboarding/hooks/useCompleteBookCallOnboardingStep';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 export const BookCallOnboardingStepActions = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
   const completeBookCallOnboardingStep = useCompleteBookCallOnboardingStep();
   const [isCompleting, setIsCompleting] = useState(false);
 
@@ -22,12 +22,10 @@ export const BookCallOnboardingStepActions = () => {
       } catch (error) {
         setIsCompleting(false);
 
-        enqueueErrorSnackBar({
-          apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-        });
+        addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
       }
     },
-    [completeBookCallOnboardingStep, enqueueErrorSnackBar],
+    [completeBookCallOnboardingStep, addErrorToast],
   );
 
   const completeStepAfterBooking = useCallback(() => {

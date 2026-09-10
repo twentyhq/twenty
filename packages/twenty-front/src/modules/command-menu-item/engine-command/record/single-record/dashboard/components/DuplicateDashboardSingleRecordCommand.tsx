@@ -1,11 +1,11 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useDuplicateDashboard } from '@/dashboards/hooks/useDuplicateDashboard';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const DuplicateDashboardSingleRecordCommand = () => {
@@ -14,7 +14,7 @@ export const DuplicateDashboardSingleRecordCommand = () => {
   const recordId = selectedRecords[0]?.id;
   const { duplicateDashboard } = useDuplicateDashboard();
   const navigate = useNavigateApp();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { t } = useLingui();
 
   if (!isDefined(recordId)) {
@@ -25,8 +25,9 @@ export const DuplicateDashboardSingleRecordCommand = () => {
     const result = await duplicateDashboard(recordId);
 
     if (isDefined(result) && isNonEmptyString(result.id)) {
-      enqueueSuccessSnackBar({
-        message: t`Dashboard duplicated successfully`,
+      addToast({
+        variant: 'success',
+        children: t`Dashboard duplicated successfully`,
       });
 
       navigate(AppPath.RecordShowPage, {

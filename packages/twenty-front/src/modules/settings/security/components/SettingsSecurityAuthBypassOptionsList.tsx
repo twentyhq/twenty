@@ -1,21 +1,21 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { capitalize } from 'twenty-shared/utils';
 import { IconGoogle, IconMicrosoft, IconPassword } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation } from '@apollo/client/react';
 import {
   type AuthProviders,
   UpdateWorkspaceDocument,
 } from '~/generated-metadata/graphql';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
@@ -26,7 +26,7 @@ const StyledSettingsSecurityOptionsList = styled.div`
 export const SettingsSecurityAuthBypassOptionsList = () => {
   const { t } = useLingui();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
   const authProviders = useAtomStateValue(authProvidersState);
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
@@ -71,9 +71,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
         ...currentWorkspace,
         [key]: currentWorkspace[key],
       });
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(err) ? err : undefined);
     });
   };
 

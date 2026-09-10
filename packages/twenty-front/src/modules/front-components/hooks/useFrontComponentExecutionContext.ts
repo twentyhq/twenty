@@ -2,17 +2,18 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { resolveOpenRecordIn } from '@/object-record/record-index/utils/resolveOpenRecordIn';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
 import {
   buildFrontComponentStorageNamespace,
   clearFrontComponentStorage,
   deleteFrontComponentStorageItem,
+  setFrontComponentStorageItem,
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
-  setFrontComponentStorageItem,
 } from 'twenty-front-component-renderer';
+import { type AppLocale } from 'twenty-shared/translations';
 import {
   AppPath,
   FieldMetadataType,
@@ -21,7 +22,6 @@ import {
   SidePanelPages,
   type EnqueueSnackbarParams,
 } from 'twenty-shared/types';
-import { type AppLocale } from 'twenty-shared/translations';
 
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -31,32 +31,27 @@ import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/c
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
-import { getMediaFileExtension } from '@/front-components/media-session/utils/getMediaFileExtension';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
+import { getMediaFileExtension } from '@/front-components/media-session/utils/getMediaFileExtension';
+import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRichTextInSidePanel } from '@/side-panel/hooks/useOpenRichTextInSidePanel';
-import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
+import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useStore } from 'jotai';
-import {
-  assertUnreachable,
-  CustomError,
-  getAppPath,
-  isDefined,
-} from 'twenty-shared/utils';
+import { CustomError, getAppPath, isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { FileFolder } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { FileFolder } from '~/generated-metadata/graphql';
 
 const FRONT_COMPONENT_CLIPBOARD_MAX_LENGTH = 64 * 1024;
 const FRONT_COMPONENT_CLIPBOARD_RATE_LIMIT_MS = 1000;
@@ -151,14 +146,9 @@ export const useFrontComponentExecutionContext = ({
   const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
   const { getIcon } = useIcons();
   const unmountEngineCommand = useUnmountCommand();
-  const {
-    enqueueSuccessSnackBar,
-    enqueueErrorSnackBar,
-    enqueueInfoSnackBar,
-    enqueueWarningSnackBar,
-  } = useSnackBar();
+  const { add: addToast } = useToast();
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const { copyToClipboardWithoutSuccessSnackBar } = useCopyToClipboard();
+  const { copyToClipboardWithoutSuccessToast } = useCopyToClipboard();
   const { uploadFile: uploadFileToFilesField } = useDirectFileUpload();
   const { i18n } = useLingui();
   // oxlint-disable-next-line twenty/no-state-useref
@@ -411,28 +401,13 @@ export const useFrontComponentExecutionContext = ({
       detailedMessage,
       dedupeKey,
     }: EnqueueSnackbarParams) => {
-      const snackBarOptions = {
+      addToast({
+        children: message,
+        variant,
         duration,
-        detailedMessage,
+        description: detailedMessage,
         dedupeKey,
-      };
-
-      switch (variant) {
-        case 'error':
-          enqueueErrorSnackBar({ message, options: snackBarOptions });
-          break;
-        case 'info':
-          enqueueInfoSnackBar({ message, options: snackBarOptions });
-          break;
-        case 'warning':
-          enqueueWarningSnackBar({ message, options: snackBarOptions });
-          break;
-        case 'success':
-          enqueueSuccessSnackBar({ message, options: snackBarOptions });
-          break;
-        default:
-          assertUnreachable(variant);
-      }
+      });
     };
 
   const executionContext: FrontComponentExecutionContext = {
@@ -487,9 +462,9 @@ export const useFrontComponentExecutionContext = ({
       }
       lastCopyToClipboardCallAtRef.current = now;
 
-      // Front components notify their own users, so a host success snackbar
+      // Front components notify their own users, so a host success toast
       // would show up on top of theirs.
-      await copyToClipboardWithoutSuccessSnackBar(text);
+      await copyToClipboardWithoutSuccessToast(text);
     };
 
   const hostUploadFile: FrontComponentHostCommunicationApi['uploadFile'] =

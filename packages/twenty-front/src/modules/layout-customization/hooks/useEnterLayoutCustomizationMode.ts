@@ -19,14 +19,14 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useToast } from 'twenty-ui/feedback';
 
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const useEnterLayoutCustomizationMode = () => {
   const store = useStore();
   const { navigateSidePanel } = useNavigateSidePanel();
-  const { enqueueWarningSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
 
   const enterLayoutCustomizationMode = useCallback((): boolean => {
@@ -54,8 +54,9 @@ export const useEnterLayoutCustomizationMode = () => {
       );
 
       if (isDashboardInEditMode) {
-        enqueueWarningSnackBar({
-          message: t`Save or cancel dashboard changes before editing the layout.`,
+        addToast({
+          variant: 'warning',
+          children: t`Save or cancel dashboard changes before editing the layout.`,
         });
 
         return false;
@@ -94,7 +95,7 @@ export const useEnterLayoutCustomizationMode = () => {
     }
 
     return true;
-  }, [enqueueWarningSnackBar, hasLayoutsPermission, navigateSidePanel, store]);
+  }, [addToast, hasLayoutsPermission, navigateSidePanel, store]);
 
   return { enterLayoutCustomizationMode };
 };

@@ -1,15 +1,15 @@
-import { styled } from '@linaria/react';
-import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
-import { H3Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useLingui } from '@lingui/react/macro';
-import { Section } from 'twenty-ui/layout';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { type Dispatch, type SetStateAction, useState } from 'react';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { type Dispatch, type SetStateAction, useState } from 'react';
+import { useToast } from 'twenty-ui/feedback';
+import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H3Title } from 'twenty-ui/typography';
 
 const RESET_VARIABLE_MODAL_ID =
   'reset-application-registration-config-variable-modal';
@@ -62,7 +62,7 @@ export const ConfigVariableEdit = ({
 
   const { openModal } = useModal();
 
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -70,13 +70,9 @@ export const ConfigVariableEdit = ({
     try {
       setIsSubmitting(true);
       await onSave?.();
-      enqueueSuccessSnackBar({
-        message: t`Variable ${title} updated`,
-      });
+      addToast({ variant: 'success', children: t`Variable ${title} updated` });
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Error updating variable`,
-      });
+      addToast({ variant: 'error', children: t`Error updating variable` });
     } finally {
       setIsSubmitting(false);
       setIsEditing(false);
@@ -87,13 +83,9 @@ export const ConfigVariableEdit = ({
     try {
       setIsSubmitting(true);
       await onConfirmReset?.();
-      enqueueSuccessSnackBar({
-        message: t`Variable ${title} reset`,
-      });
+      addToast({ variant: 'success', children: t`Variable ${title} reset` });
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Error resetting variable`,
-      });
+      addToast({ variant: 'error', children: t`Error resetting variable` });
     } finally {
       setIsSubmitting(false);
       setIsEditing(false);

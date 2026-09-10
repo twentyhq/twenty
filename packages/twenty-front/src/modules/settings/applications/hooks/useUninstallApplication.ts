@@ -2,13 +2,13 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
 import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
 import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import {
   FindUninstallApplicationJobStatusDocument,
   JobState,
@@ -24,7 +24,7 @@ export const useUninstallApplication = ({
   universalIdentifier,
   onCompleted,
 }: UseUninstallApplicationArgs = {}) => {
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const [triggerUninstallApplicationJob, { loading: isTriggeringUninstall }] =
     useMutation(TriggerUninstallApplicationJobDocument);
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
@@ -47,8 +47,9 @@ export const useUninstallApplication = ({
   const handleUninstallJobSettled = useCallback(
     (jobStatus: TrackedJobStatus, trackedUninstallIdentifier: string) => {
       if (jobStatus.state === JobState.FAILED) {
-        enqueueErrorSnackBar({
-          message: isNonEmptyString(jobStatus.failedReason)
+        addToast({
+          variant: 'error',
+          children: isNonEmptyString(jobStatus.failedReason)
             ? jobStatus.failedReason
             : t`Error uninstalling application.`,
         });
@@ -69,17 +70,13 @@ export const useUninstallApplication = ({
           : currentWorkspace,
       );
 
-      enqueueSuccessSnackBar({
-        message: t`Application successfully uninstalled.`,
+      addToast({
+        variant: 'success',
+        children: t`Application successfully uninstalled.`,
       });
       onCompleted?.();
     },
-    [
-      enqueueErrorSnackBar,
-      enqueueSuccessSnackBar,
-      onCompleted,
-      setCurrentWorkspace,
-    ],
+    [addToast, onCompleted, setCurrentWorkspace],
   );
 
   const { activeJobId, trackJob } = useTrackedQueueJob({
@@ -108,8 +105,9 @@ export const useUninstallApplication = ({
     } catch (error) {
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
-      enqueueErrorSnackBar({
-        message: graphqlMessage ?? t`Error uninstalling application.`,
+      addToast({
+        variant: 'error',
+        children: graphqlMessage ?? t`Error uninstalling application.`,
       });
     }
   };

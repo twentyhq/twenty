@@ -4,7 +4,7 @@ import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast, type ToastOptions } from 'twenty-ui/feedback';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
@@ -27,7 +28,8 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
     verifyEmailAndGetWorkspaceAgnosticToken,
   } = useAuth();
 
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
 
   const [searchParams] = useSearchParams();
 
@@ -49,21 +51,19 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
   useEffect(() => {
     const verifyEmailToken = async () => {
       if (!email || !emailVerificationToken) {
-        enqueueErrorSnackBar({
-          message: t`Invalid email verification link.`,
-          options: {
-            dedupeKey: 'email-verification-link-dedupe-key',
-          },
+        addToast({
+          variant: 'error',
+          children: t`Invalid email verification link.`,
+          dedupeKey: 'email-verification-link-dedupe-key',
         });
         return navigate(AppPath.SignInUp);
       }
 
-      const successSnackbarParams = {
-        message: t`Email verified.`,
-        options: {
-          dedupeKey: 'email-verification-dedupe-key',
-        },
-      };
+      const successToastOptions = {
+        variant: 'success',
+        children: t`Email verified.`,
+        dedupeKey: 'email-verification-dedupe-key',
+      } satisfies ToastOptions;
 
       try {
         if (!isOnAWorkspace) {
@@ -72,7 +72,7 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
             email,
           );
 
-          enqueueSuccessSnackBar(successSnackbarParams);
+          addToast(successToastOptions);
 
           return navigate(AppPath.SignInUp);
         }
@@ -82,7 +82,7 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
           email,
         );
 
-        enqueueSuccessSnackBar(successSnackbarParams);
+        addToast(successToastOptions);
 
         const workspaceUrl = getWorkspaceUrl(workspaceUrls);
         if (workspaceUrl.slice(0, -1) !== window.location.origin) {
@@ -97,14 +97,17 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
 
         await verifyLoginToken(loginToken.token);
       } catch (error) {
-        enqueueErrorSnackBar({
-          ...(CombinedGraphQLErrors.is(error)
-            ? { apolloError: error }
-            : { message: t`Email verification failed` }),
-          options: {
+        if (CombinedGraphQLErrors.is(error)) {
+          addErrorToast(error, {
             dedupeKey: 'email-verification-error-dedupe-key',
-          },
-        });
+          });
+        } else {
+          addToast({
+            variant: 'error',
+            children: t`Email verification failed`,
+            dedupeKey: 'email-verification-error-dedupe-key',
+          });
+        }
         if (isGraphqlErrorOfType(error, 'EMAIL_ALREADY_VERIFIED')) {
           navigate(AppPath.SignInUp);
         }

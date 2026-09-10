@@ -1,15 +1,15 @@
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { useMutation } from '@apollo/client/react';
 import {
   type SendInvitationsMutationVariables,
-  SendInvitationsDocument,
   GetWorkspaceInvitationsDocument,
+  SendInvitationsDocument,
 } from '~/generated-metadata/graphql';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 export const useCreateWorkspaceInvitation = () => {
   const [sendInvitationsMutation] = useMutation(SendInvitationsDocument);
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
 
   const sendInvitation = async (
     variables: SendInvitationsMutationVariables,
@@ -18,7 +18,7 @@ export const useCreateWorkspaceInvitation = () => {
       variables,
       refetchQueries: [GetWorkspaceInvitationsDocument],
       onError: (error) => {
-        enqueueErrorSnackBar({ apolloError: error });
+        addErrorToast(error);
       },
     });
   };

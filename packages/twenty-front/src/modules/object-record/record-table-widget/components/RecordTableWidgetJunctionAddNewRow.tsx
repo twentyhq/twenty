@@ -1,15 +1,15 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
-import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
 import { RecordTableWidgetRelationPickerDropdownContent } from '@/object-record/record-table-widget/components/RecordTableWidgetRelationPickerDropdownContent';
 import { type RecordTableWidgetJunctionCreateThrough } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { useCreateJunctionRecordFromTableWidget } from '@/object-record/record-table-widget/hooks/useCreateJunctionRecordFromTableWidget';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/feedback';
 import { IconPlus } from 'twenty-ui/icon';
 import { logError } from '~/utils/logError';
 
@@ -25,7 +25,7 @@ export const RecordTableWidgetJunctionAddNewRow = ({
   targetRecordsFilter = junctionCreateThrough.targetRecordsFilter,
 }: RecordTableWidgetJunctionAddNewRowProps) => {
   const { closeDropdown } = useCloseDropdown();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const { objectMetadataItem: junctionObjectMetadataItem } =
     useObjectMetadataItemById({
@@ -55,7 +55,7 @@ export const RecordTableWidgetJunctionAddNewRow = ({
     closeDropdown(dropdownId);
     createJunctionRecord(targetRecordId).catch((error) => {
       logError(error);
-      enqueueErrorSnackBar({ message: t`Failed to add record` });
+      addToast({ variant: 'error', children: t`Failed to add record` });
     });
   };
 

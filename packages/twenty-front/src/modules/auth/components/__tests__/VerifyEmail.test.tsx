@@ -20,8 +20,6 @@ const verifyEmailAndGetWorkspaceAgnosticTokenMock = jest.fn();
 const verifyEmailAndGetLoginTokenMock = jest.fn();
 const verifyLoginTokenMock = jest.fn();
 const redirectToWorkspaceDomainMock = jest.fn();
-const enqueueSuccessSnackBarMock = jest.fn();
-const enqueueErrorSnackBarMock = jest.fn();
 
 let isOnAWorkspaceValue = false;
 
@@ -53,11 +51,15 @@ jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => navigateMock,
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({
-    enqueueSuccessSnackBar: enqueueSuccessSnackBarMock,
-    enqueueErrorSnackBar: enqueueErrorSnackBarMock,
-  }),
+const mockAddToast = jest.fn();
+const mockAddErrorToast = jest.fn();
+
+jest.mock('twenty-ui/feedback', () => ({
+  ...jest.requireActual('twenty-ui/feedback'),
+  useToast: () => ({ add: mockAddToast }),
+}));
+jest.mock('@/error-handler/hooks/useErrorToast', () => ({
+  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
 }));
 
 // Rendered by VerifyEmail in the error state; isolate it from Apollo.
@@ -121,7 +123,9 @@ describe('VerifyEmail', () => {
     await waitFor(() => {
       expect(navigateMock).toHaveBeenCalledWith(AppPath.SignInUp);
     });
-    expect(enqueueSuccessSnackBarMock).toHaveBeenCalled();
+    expect(mockAddToast).toHaveBeenCalledWith(
+      expect.objectContaining({ variant: 'success' }),
+    );
   });
 
   it('does not hand off to the SignInUp page when the verification fails', async () => {
@@ -132,7 +136,9 @@ describe('VerifyEmail', () => {
     renderVerifyEmail(VERIFY_EMAIL_URL);
 
     await waitFor(() => {
-      expect(enqueueErrorSnackBarMock).toHaveBeenCalled();
+      expect(mockAddToast).toHaveBeenCalledWith(
+        expect.objectContaining({ variant: 'error' }),
+      );
     });
     expect(navigateMock).not.toHaveBeenCalledWith(AppPath.SignInUp);
   });

@@ -4,7 +4,6 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -17,6 +16,7 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { IconEyeOff, IconPlus } from 'twenty-ui/icon';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle, UndecoratedLink } from 'twenty-ui/navigation';
@@ -52,7 +52,7 @@ export const SettingsObjectIndexesSection = ({
 }: SettingsObjectIndexesSectionProps) => {
   const { t } = useLingui();
   const { openModal, closeModal } = useModal();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { deleteOneIndexMetadataItem } = useDeleteOneIndexMetadataItem();
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -153,7 +153,7 @@ export const SettingsObjectIndexesSection = ({
     closeModal(DELETE_INDEX_MODAL_ID);
 
     if (result.status === 'successful') {
-      enqueueSuccessSnackBar({ message: t`Index deleted` });
+      addToast({ variant: 'success', children: t`Index deleted` });
       setPendingDelete(null);
     }
   };

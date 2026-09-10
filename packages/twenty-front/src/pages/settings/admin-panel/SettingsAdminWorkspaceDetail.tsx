@@ -14,14 +14,13 @@ import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceBillingContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
-import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { GET_ADMIN_WORKSPACE_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminWorkspaceChatThreads';
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
 import { useAdminUpdateFeatureFlag } from '@/settings/admin-panel/hooks/useAdminUpdateFeatureFlag';
 import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -34,6 +33,7 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Avatar } from 'twenty-ui/data-display';
+import { useToast } from 'twenty-ui/feedback';
 import {
   IconCreditCard,
   IconEyeShare,
@@ -42,12 +42,11 @@ import {
   IconSettings2,
   IconUsers,
 } from 'twenty-ui/icon';
-import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
 import { Button, Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { H2Title } from 'twenty-ui/typography';
 import {
   type FeatureFlagKey,
   type GetAdminWorkspaceChatThreadsQuery,
@@ -55,6 +54,7 @@ import {
   GetUpgradeStatusDocument,
   UpdateWorkspaceFeatureFlagDocument,
 } from '~/generated-admin/graphql';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const WORKSPACE_DETAIL_TABS_ID = 'settings-admin-workspace-detail-tabs';
 
@@ -80,7 +80,7 @@ export const SettingsAdminWorkspaceDetail = () => {
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { updateFeatureFlagState } = useAdminUpdateFeatureFlag();
   const { handleImpersonate, impersonatingUserId } = useHandleImpersonate();
   const [updateFeatureFlag] = useMutation(UpdateWorkspaceFeatureFlagDocument, {
@@ -146,8 +146,9 @@ export const SettingsAdminWorkspaceDetail = () => {
         if (isDefined(previousValue)) {
           updateFeatureFlagState(workspaceId, featureFlag, previousValue);
         }
-        enqueueErrorSnackBar({
-          message: `Failed to update feature flag. ${error.message}`,
+        addToast({
+          variant: 'error',
+          children: `Failed to update feature flag. ${error.message}`,
         });
       },
     });

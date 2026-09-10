@@ -1,21 +1,21 @@
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
+import { useCurrentWorkspaceTwoFactorAuthenticationPolicy } from '@/settings/two-factor-authentication/hooks/useWorkspaceTwoFactorAuthenticationPolicy';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
+import { useMutation } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/typography';
+import { useToast } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
-import { useMutation } from '@apollo/client/react';
+import { H2Title } from 'twenty-ui/typography';
 import { DeleteTwoFactorAuthenticationMethodDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
-import { useCurrentWorkspaceTwoFactorAuthenticationPolicy } from '@/settings/two-factor-authentication/hooks/useWorkspaceTwoFactorAuthenticationPolicy';
 
 const DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID =
   'delete-two-factor-authentication-modal';
@@ -23,7 +23,7 @@ export const DeleteTwoFactorAuthentication = () => {
   const { t } = useLingui();
   const { openModal } = useModal();
 
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { signOut } = useAuth();
   const { loadCurrentUser } = useLoadCurrentUser();
   const [deleteTwoFactorAuthenticationMethod] = useMutation(
@@ -50,11 +50,10 @@ export const DeleteTwoFactorAuthentication = () => {
         ]?.twoFactorAuthenticationMethodId,
       )
     ) {
-      enqueueErrorSnackBar({
-        message: t`Invalid 2FA information.`,
-        options: {
-          dedupeKey: '2fa-dedupe-key',
-        },
+      addToast({
+        variant: 'error',
+        children: t`Invalid 2FA information.`,
+        dedupeKey: '2fa-dedupe-key',
       });
       return navigate(SettingsPath.ProfilePage);
     }
@@ -68,11 +67,10 @@ export const DeleteTwoFactorAuthentication = () => {
       },
     });
 
-    enqueueSuccessSnackBar({
-      message: t`2FA Method has been deleted successfully.`,
-      options: {
-        dedupeKey: '2fa-dedupe-key',
-      },
+    addToast({
+      variant: 'success',
+      children: t`2FA Method has been deleted successfully.`,
+      dedupeKey: '2fa-dedupe-key',
     });
 
     if (isTwoFactorAuthenticationEnforced === true) {

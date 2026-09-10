@@ -13,9 +13,9 @@ import { getDictationLanguage } from '@/ai/dictation/utils/getDictationLanguage'
 import { readDictationSurface } from '@/ai/dictation/utils/readDictationSurface';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useToast } from 'twenty-ui/feedback';
 
 type AiChatDictationEffectProps = {
   onInterimText: (text: string) => void;
@@ -35,7 +35,7 @@ export const AiChatDictationEffect = ({
   const setHasWebSpeechProvenSilent = useSetAtomState(
     hasWebSpeechProvenSilentState,
   );
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const { isIOS } = useMemo(() => readDictationSurface(), []);
 
@@ -93,8 +93,9 @@ export const AiChatDictationEffect = ({
           if (event.reason === 'engine-silent' && isIOS) {
             setHasWebSpeechProvenSilent(true);
           }
-          enqueueErrorSnackBar({
-            message: getDictationFailureMessage(event.reason),
+          addToast({
+            variant: 'error',
+            children: getDictationFailureMessage(event.reason),
           });
           break;
       }
@@ -106,7 +107,7 @@ export const AiChatDictationEffect = ({
     onFinalText,
     setIsDictationRecording,
     setHasWebSpeechProvenSilent,
-    enqueueErrorSnackBar,
+    addToast,
   ]);
 
   // Both send paths dispatch this, so dictation does not have to be lifted into

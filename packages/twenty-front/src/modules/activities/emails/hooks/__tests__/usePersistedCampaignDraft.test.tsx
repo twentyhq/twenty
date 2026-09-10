@@ -3,14 +3,20 @@ import { act, renderHook } from '@testing-library/react';
 import { usePersistedCampaignDraft } from '@/activities/emails/hooks/usePersistedCampaignDraft';
 
 const mockUpdateOneRecord = jest.fn().mockResolvedValue({});
-const mockEnqueueErrorSnackBar = jest.fn();
 
 jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
   useUpdateOneRecord: () => ({ updateOneRecord: mockUpdateOneRecord }),
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({ enqueueErrorSnackBar: mockEnqueueErrorSnackBar }),
+const mockAddToast = jest.fn();
+const mockAddErrorToast = jest.fn();
+
+jest.mock('twenty-ui/feedback', () => ({
+  ...jest.requireActual('twenty-ui/feedback'),
+  useToast: () => ({ add: mockAddToast }),
+}));
+jest.mock('@/error-handler/hooks/useErrorToast', () => ({
+  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
 }));
 
 const campaignId = '20202020-0000-4000-8000-000000000001';

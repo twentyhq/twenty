@@ -20,7 +20,9 @@ export const getLocalizedToastProps = (toast: ToastProps, i18n: I18n) => {
 
   return {
     iconLabel,
-    title: toast.title ?? iconLabel,
+    title:
+      toast.title ??
+      (typeof toast.children === 'string' ? toast.children : iconLabel),
     cancelLabel: toast.cancelLabel ?? i18n._(msg`Cancel`),
     closeLabel: toast.closeLabel ?? i18n._(msg`Close`),
   };

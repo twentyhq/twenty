@@ -11,10 +11,10 @@ import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatCompon
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
-import { RootDecorator } from '~/testing/decorators/RootDecorator';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { RootDecorator } from '~/testing/decorators/RootDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const WorkspaceSetupChatStory = () => {
   const store = useStore();
@@ -50,7 +50,7 @@ const meta = {
   decorators: [
     ComponentDecorator,
     RootDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     MemoryRouterDecorator,
   ],
   parameters: { container: { width: 480, height: 700 } },

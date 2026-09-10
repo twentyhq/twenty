@@ -2,12 +2,12 @@ import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
-import { ApplicationsLoadEffect } from '@/applications/components/ApplicationsLoadEffect';
 import { TrackPageViewEffect } from '@/analytics/components/TrackPageViewEffect';
 import { SharedAppProviders } from '@/app/components/SharedAppProviders';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { InitializeQueryParamStateEffect } from '@/app/effect-components/InitializeQueryParamStateEffect';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
+import { ApplicationsLoadEffect } from '@/applications/components/ApplicationsLoadEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
 import { SignOutOnOtherTabSignOutEffect } from '@/auth/effect-components/SignOutOnOtherTabSignOutEffect';
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
@@ -31,7 +31,7 @@ import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
 import { SupportChatEffect } from '@/support/components/SupportChatEffect';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
-import { SnackBarToaster } from '@/ui/feedback/snack-bar-manager/components/SnackBarToaster';
+import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFilePreviewModal';
 import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
 import { UserUiScaleProviderEffect } from '@/ui/theme/components/UserUiScaleProviderEffect';
@@ -63,7 +63,7 @@ export const WorkspaceAppProviders = () => {
                   <ContextStoreComponentInstanceContext.Provider
                     value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
                   >
-                    <SnackBarToaster />
+                    <AppToaster />
                     <ErrorMessageEffect />
                     <AgentChatProvider>
                       <DialogComponentInstanceContext.Provider

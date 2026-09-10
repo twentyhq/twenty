@@ -3,12 +3,12 @@ import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { TerminalOutput } from '@/ai/components/TerminalOutput';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const meta: Meta<typeof TerminalOutput> = {
   title: 'Modules/AI/TerminalOutput',
   component: TerminalOutput,
-  decorators: [SnackBarDecorator, ComponentDecorator],
+  decorators: [ToastDecorator, ComponentDecorator],
   parameters: {
     container: { width: 500 },
   },

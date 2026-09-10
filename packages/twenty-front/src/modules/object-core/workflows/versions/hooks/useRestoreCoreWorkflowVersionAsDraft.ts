@@ -4,8 +4,8 @@ import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
+import { useToast } from 'twenty-ui/feedback';
 import { CoreWorkflowVersionStatus } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -22,7 +22,7 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
     useCoreWorkflowVersions(workflowId);
   const { createDraftFromWorkflowVersion } =
     useCreateDraftFromWorkflowVersion();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const navigate = useNavigateApp();
 
   const hasExistingDraft = coreWorkflowVersions.some(
@@ -44,8 +44,9 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
       });
 
       if (!isDefined(draftWorkflowVersionId)) {
-        enqueueErrorSnackBar({
-          message: t`Could not restore this version as draft.`,
+        addToast({
+          variant: 'error',
+          children: t`Could not restore this version as draft.`,
         });
 
         return;
@@ -56,8 +57,9 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
         objectRecordId: workflowId,
       });
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Could not restore this version as draft.`,
+      addToast({
+        variant: 'error',
+        children: t`Could not restore this version as draft.`,
       });
     } finally {
       setIsRestoring(false);

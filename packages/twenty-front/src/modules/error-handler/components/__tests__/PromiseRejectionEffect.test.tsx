@@ -6,10 +6,15 @@ jest.mock('@sentry/react', () => ({
   captureException: jest.fn(),
 }));
 
-const enqueueErrorSnackBar = jest.fn();
+const mockAddToast = jest.fn();
+const mockAddErrorToast = jest.fn();
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({ enqueueErrorSnackBar }),
+jest.mock('twenty-ui/feedback', () => ({
+  ...jest.requireActual('twenty-ui/feedback'),
+  useToast: () => ({ add: mockAddToast }),
+}));
+jest.mock('@/error-handler/hooks/useErrorToast', () => ({
+  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
 }));
 
 const { captureException } = jest.requireMock('@sentry/react');
@@ -27,21 +32,22 @@ describe('PromiseRejectionEffect', () => {
     render(<PromiseRejectionEffect />);
   });
 
-  it('should not snackbar a stale chunk error', async () => {
+  it('should not toast a stale chunk error', async () => {
     dispatchUnhandledRejection(new Error('Importing a module script failed.'));
 
     await waitFor(() => {
       expect(captureException).toHaveBeenCalledTimes(1);
     });
 
-    expect(enqueueErrorSnackBar).not.toHaveBeenCalled();
+    expect(mockAddToast).not.toHaveBeenCalled();
   });
 
-  it('should still snackbar an unrelated error', async () => {
+  it('should still toast an unrelated error', async () => {
     dispatchUnhandledRejection(new Error('Some unrelated error'));
 
-    expect(enqueueErrorSnackBar).toHaveBeenCalledWith({
-      message: 'Some unrelated error',
+    expect(mockAddToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'Some unrelated error',
     });
 
     await waitFor(() => {
@@ -49,20 +55,23 @@ describe('PromiseRejectionEffect', () => {
     });
   });
 
-  it('should not snackbar an abort error', async () => {
+  it('should not toast an abort error', async () => {
     dispatchUnhandledRejection({ name: 'AbortError' });
 
     await waitFor(() => {
       expect(captureException).toHaveBeenCalledTimes(1);
     });
 
-    expect(enqueueErrorSnackBar).not.toHaveBeenCalled();
+    expect(mockAddToast).not.toHaveBeenCalled();
   });
 
-  it('should snackbar a generic message when the reason is not an Error', async () => {
+  it('should toast a generic message when the reason is not an Error', async () => {
     dispatchUnhandledRejection('something went wrong');
 
-    expect(enqueueErrorSnackBar).toHaveBeenCalledWith({});
+    expect(mockAddToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'An error occurred.',
+    });
 
     await waitFor(() => {
       expect(captureException).toHaveBeenCalledTimes(1);

@@ -1,6 +1,7 @@
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
+import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -13,7 +14,6 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { formatDate } from '~/utils/date-utils';
-import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
 
 type SettingsBillingTrialNoPaymentMethodBannerProps = {
   currentBillingSubscription: NonNullable<
@@ -37,7 +37,7 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
     skip: !hasPermissionToManageBilling,
   });
 
-  useSnackBarOnQueryError(error);
+  useToastOnQueryError(error);
 
   const openPaymentMethodUpdate = () => {
     if (isDefined(data?.billingPortalSession.url)) {

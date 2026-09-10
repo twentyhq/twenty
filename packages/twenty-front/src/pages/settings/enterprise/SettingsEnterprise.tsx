@@ -2,6 +2,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useState } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { GET_DATABASE_CONFIG_VARIABLE } from '@/settings/admin-panel/config-variables/graphql/queries/getDatabaseConfigVariable';
 import { useConfigVariableActions } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableActions';
@@ -18,7 +19,6 @@ import { RELEASE_ENTERPRISE_SERVER_BINDING } from '@/settings/enterprise/graphql
 import { SET_ENTERPRISE_KEY } from '@/settings/enterprise/graphql/mutations/setEnterpriseKey';
 import { ENTERPRISE_PORTAL_SESSION } from '@/settings/enterprise/graphql/queries/enterprisePortalSession';
 import { ENTERPRISE_SUBSCRIPTION_STATUS } from '@/settings/enterprise/graphql/queries/enterpriseSubscriptionStatus';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -32,6 +32,7 @@ import {
 } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import {
   IconCalendarRepeat,
   IconCheck,
@@ -135,7 +136,8 @@ export const SettingsEnterprise = ({
   const [isReleasing, setIsReleasing] = useState(false);
   const [isBoundToAnotherServer, setIsBoundToAnotherServer] = useState(false);
   const { openModal } = useModal();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
   const { loadCurrentUser } = useLoadCurrentUser();
 
   const apolloAdminClient = useApolloAdminClient();
@@ -260,8 +262,9 @@ export const SettingsEnterprise = ({
       });
 
       if (result.data?.setEnterpriseKey.isValid === true) {
-        enqueueSuccessSnackBar({
-          message: t`Enterprise license activated successfully`,
+        addToast({
+          variant: 'success',
+          children: t`Enterprise license activated successfully`,
         });
         setEnterpriseKey('');
         const { data: statusData } = await fetchSubscriptionStatus();
@@ -269,8 +272,9 @@ export const SettingsEnterprise = ({
         setSubscriptionStatus(statusData?.enterpriseSubscriptionStatus ?? null);
         await loadCurrentUser();
       } else {
-        enqueueErrorSnackBar({
-          message: t`Failed to activate enterprise license. Please check your key or contact support.`,
+        addToast({
+          variant: 'error',
+          children: t`Failed to activate enterprise license. Please check your key or contact support.`,
         });
       }
     } catch (error) {
@@ -288,20 +292,15 @@ export const SettingsEnterprise = ({
           isGraphqlErrorOfType(error, 'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER'),
         );
         await loadCurrentUser();
-        enqueueErrorSnackBar({
-          apolloError: error,
-          options: { duration: 10000 },
-        });
+        addErrorToast(error, { duration: 10000 });
       } else if (
         isGraphqlErrorOfType(error, 'CONFIG_VARIABLES_IN_DB_DISABLED')
       ) {
-        enqueueErrorSnackBar({
-          apolloError: error,
-          options: { duration: 10000 },
-        });
+        addErrorToast(error, { duration: 10000 });
       } else {
-        enqueueErrorSnackBar({
-          message: t`Error activating enterprise license`,
+        addToast({
+          variant: 'error',
+          children: t`Error activating enterprise license`,
         });
       }
     } finally {
@@ -310,8 +309,8 @@ export const SettingsEnterprise = ({
   }, [
     enterpriseKey,
     setEnterpriseKeyMutation,
-    enqueueErrorSnackBar,
-    enqueueSuccessSnackBar,
+    addToast,
+    addErrorToast,
     fetchSubscriptionStatus,
     loadCurrentUser,
     t,
@@ -332,16 +331,15 @@ export const SettingsEnterprise = ({
       if (portalUrl !== null && portalUrl !== undefined) {
         window.open(portalUrl, '_blank', 'noopener');
       } else {
-        enqueueErrorSnackBar({
-          message: t`Could not open billing portal. Please check your enterprise key is present, or contact support.`,
+        addToast({
+          variant: 'error',
+          children: t`Could not open billing portal. Please check your enterprise key is present, or contact support.`,
         });
       }
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Error opening billing portal`,
-      });
+      addToast({ variant: 'error', children: t`Error opening billing portal` });
     }
-  }, [fetchPortalSession, enqueueErrorSnackBar, t, returnUrlPath]);
+  }, [fetchPortalSession, addToast, t, returnUrlPath]);
 
   const openCheckoutModal = useCallback(() => {
     openModal(ENTERPRISE_PLAN_MODAL_ID);
@@ -355,13 +353,15 @@ export const SettingsEnterprise = ({
 
       if (data?.refreshEnterpriseValidityToken === true) {
         setIsBoundToAnotherServer(false);
-        enqueueSuccessSnackBar({
-          message: t`Validity token refreshed successfully`,
+        addToast({
+          variant: 'success',
+          children: t`Validity token refreshed successfully`,
         });
         await loadCurrentUser();
       } else {
-        enqueueErrorSnackBar({
-          message: t`Could not refresh validity token. Please contact support.`,
+        addToast({
+          variant: 'error',
+          children: t`Could not refresh validity token. Please contact support.`,
         });
       }
     } catch (error) {
@@ -370,10 +370,7 @@ export const SettingsEnterprise = ({
       ) {
         setIsBoundToAnotherServer(true);
         await loadCurrentUser();
-        enqueueErrorSnackBar({
-          apolloError: error,
-          options: { duration: 10000 },
-        });
+        addErrorToast(error, { duration: 10000 });
       } else if (
         isGraphqlErrorOfType(error, 'ENTERPRISE_MISSING_SERVER_ID') ||
         isGraphqlErrorOfType(
@@ -383,13 +380,11 @@ export const SettingsEnterprise = ({
         isGraphqlErrorOfType(error, 'ENTERPRISE_DEV_SLOT_IN_USE') ||
         isGraphqlErrorOfType(error, 'ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED')
       ) {
-        enqueueErrorSnackBar({
-          apolloError: error,
-          options: { duration: 10000 },
-        });
+        addErrorToast(error, { duration: 10000 });
       } else {
-        enqueueErrorSnackBar({
-          message: t`Error refreshing validity token. Please contact support.`,
+        addToast({
+          variant: 'error',
+          children: t`Error refreshing validity token. Please contact support.`,
         });
       }
     } finally {
@@ -397,8 +392,8 @@ export const SettingsEnterprise = ({
     }
   }, [
     refreshValidityTokenMutation,
-    enqueueSuccessSnackBar,
-    enqueueErrorSnackBar,
+    addToast,
+    addErrorToast,
     loadCurrentUser,
     t,
   ]);
@@ -411,26 +406,30 @@ export const SettingsEnterprise = ({
 
       if (result.data?.releaseEnterpriseServerBinding.isValid === true) {
         setIsBoundToAnotherServer(false);
-        enqueueSuccessSnackBar({
-          message: t`Enterprise key transferred to this server`,
+        addToast({
+          variant: 'success',
+          children: t`Enterprise key transferred to this server`,
         });
         const { data: statusData } = await fetchSubscriptionStatus();
 
         setSubscriptionStatus(statusData?.enterpriseSubscriptionStatus ?? null);
         await loadCurrentUser();
       } else {
-        enqueueErrorSnackBar({
-          message: t`Could not transfer the enterprise key. Please contact support.`,
+        addToast({
+          variant: 'error',
+          children: t`Could not transfer the enterprise key. Please contact support.`,
         });
       }
     } catch (error) {
       if (isGraphqlErrorOfType(error, 'ENTERPRISE_RELEASE_RATE_LIMITED')) {
-        enqueueErrorSnackBar({
-          message: t`You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later or contact support.`,
+        addToast({
+          variant: 'error',
+          children: t`You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later or contact support.`,
         });
       } else {
-        enqueueErrorSnackBar({
-          message: t`Error transferring the enterprise key`,
+        addToast({
+          variant: 'error',
+          children: t`Error transferring the enterprise key`,
         });
       }
     } finally {
@@ -438,8 +437,7 @@ export const SettingsEnterprise = ({
     }
   }, [
     releaseServerBindingMutation,
-    enqueueSuccessSnackBar,
-    enqueueErrorSnackBar,
+    addToast,
     fetchSubscriptionStatus,
     loadCurrentUser,
     t,
@@ -463,8 +461,9 @@ export const SettingsEnterprise = ({
         setIsInstanceTypeFromDb(true);
         await loadCurrentUser();
 
-        enqueueSuccessSnackBar({
-          message:
+        addToast({
+          variant: 'success',
+          children:
             nextInstanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT
               ? t`Registered as a development instance. This instance will not be billed.`
               : t`Switched to a production instance.`,
@@ -474,8 +473,9 @@ export const SettingsEnterprise = ({
         tokenRefreshSuccess = true;
       } catch {
         if (!instanceUpdateSuccess) {
-          enqueueErrorSnackBar({
-            message: t`Could not update the instance type`,
+          addToast({
+            variant: 'error',
+            children: t`Could not update the instance type`,
           });
         }
       } finally {
@@ -489,12 +489,14 @@ export const SettingsEnterprise = ({
             setInstanceType(previousInstanceType);
             setIsInstanceTypeFromDb(previousIsInstanceTypeFromDb);
             await loadCurrentUser();
-            enqueueErrorSnackBar({
-              message: t`Could not refresh validity token - reverted the instance type change.`,
+            addToast({
+              variant: 'error',
+              children: t`Could not refresh validity token - reverted the instance type change.`,
             });
           } catch {
-            enqueueErrorSnackBar({
-              message: t`Could not refresh validity token and could not revert the instance type change.`,
+            addToast({
+              variant: 'error',
+              children: t`Could not refresh validity token and could not revert the instance type change.`,
             });
           }
         }
@@ -508,8 +510,7 @@ export const SettingsEnterprise = ({
       isInstanceTypeFromDb,
       refreshValidityTokenMutation,
       loadCurrentUser,
-      enqueueSuccessSnackBar,
-      enqueueErrorSnackBar,
+      addToast,
       t,
     ],
   );

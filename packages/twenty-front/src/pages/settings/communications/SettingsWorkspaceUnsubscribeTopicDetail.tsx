@@ -3,28 +3,28 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useDeleteUnsubscribeTopic } from '@/settings/unsubscribe-topics/hooks/useDeleteUnsubscribeTopic';
 import { useUpdateUnsubscribeTopic } from '@/settings/unsubscribe-topics/hooks/useUpdateUnsubscribeTopic';
 import { SETTINGS_UNSUBSCRIBE_TAB_IDS } from '@/settings/unsubscribers/constants/SettingsUnsubscribeTabIds';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
+import { useToast } from 'twenty-ui/feedback';
 import { IconEye, IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { Card } from 'twenty-ui/surfaces';
-import { NotFound } from '~/pages/not-found/NotFound';
+import { H2Title } from 'twenty-ui/typography';
+import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { NotFound } from '~/pages/not-found/NotFound';
 
 const DELETE_UNSUBSCRIBE_TOPIC_MODAL_ID = 'delete-unsubscribe-topic-modal';
 
@@ -34,7 +34,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
   const { unsubscribeTopicId } = useParams<{ unsubscribeTopicId: string }>();
   const { unsubscribeTopics, loading } = useUnsubscribeTopics();
   const { openModal } = useModal();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { updateUnsubscribeTopic } = useUpdateUnsubscribeTopic();
   const { deleteUnsubscribeTopic, loading: deleting } =
     useDeleteUnsubscribeTopic();
@@ -75,8 +75,9 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
     try {
       await updateUnsubscribeTopic(input);
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to update unsubscribe topic.`,
+      addToast({
+        variant: 'error',
+        children: t`Failed to update unsubscribe topic.`,
       });
     }
   };
@@ -113,8 +114,9 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
         SETTINGS_UNSUBSCRIBE_TAB_IDS.TOPICS,
       );
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to delete unsubscribe topic.`,
+      addToast({
+        variant: 'error',
+        children: t`Failed to delete unsubscribe topic.`,
       });
     }
   };

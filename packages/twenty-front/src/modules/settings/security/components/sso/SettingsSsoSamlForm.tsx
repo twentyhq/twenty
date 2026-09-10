@@ -1,18 +1,18 @@
 /* @license Enterprise */
 
 import { parseSamlMetadataFromXmlFile } from '@/settings/security/utils/parseSamlMetadataFromXmlFile';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { type ChangeEvent, useContext, useRef } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { type ChangeEvent, useContext, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { IconCheck, IconCopy, IconDownload, IconUpload } from 'twenty-ui/icon';
-import { HorizontalSeparator, Section } from 'twenty-ui/layout';
-import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
+import { HorizontalSeparator, Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -51,7 +51,7 @@ const StyledButtonCopy = styled.div`
 
 export const SettingsSsoSamlForm = () => {
   const { theme } = useContext(ThemeContext);
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { setValue, getValues, watch, trigger } = useFormContext();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
@@ -62,11 +62,10 @@ export const SettingsSsoSamlForm = () => {
       const samlMetadataParsed = parseSamlMetadataFromXmlFile(text);
       e.target.value = '';
       if (!samlMetadataParsed.success) {
-        return enqueueErrorSnackBar({
-          message: t`Invalid file: ${samlMetadataParsed.reason}`,
-          options: {
-            duration: 5000,
-          },
+        return addToast({
+          variant: 'error',
+          children: t`Invalid file: ${samlMetadataParsed.reason}`,
+          duration: 5000,
         });
       }
       setValue('ssoURL', samlMetadataParsed.data.ssoUrl);
@@ -100,11 +99,10 @@ export const SettingsSsoSamlForm = () => {
       `${REACT_APP_SERVER_BASE_URL}/auth/saml/metadata/${getValues('id')}`,
     );
     if (!response.ok) {
-      return enqueueErrorSnackBar({
-        message: t`Metadata file generation failed`,
-        options: {
-          duration: 2000,
-        },
+      return addToast({
+        variant: 'error',
+        children: t`Metadata file generation failed`,
+        duration: 2000,
       });
     }
     const text = await response.text();

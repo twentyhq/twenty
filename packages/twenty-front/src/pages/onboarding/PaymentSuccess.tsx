@@ -3,13 +3,13 @@ import { OnboardingAnimatedReveal } from '@/onboarding/components/OnboardingAnim
 import { OnboardingVerifyLayout } from '@/onboarding/components/OnboardingVerifyLayout';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
 import { useShowWelcomeAnimationAfterOnboardingCheckout } from '@/onboarding/hooks/useShowWelcomeAnimationAfterOnboardingCheckout';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -25,7 +25,7 @@ export const PaymentSuccess = () => {
   const { loadCurrentUser } = useLoadCurrentUser();
   const showWelcomeAnimationAfterOnboardingCheckout =
     useShowWelcomeAnimationAfterOnboardingCheckout();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const [hasTimedOut, setHasTimedOut] = useState(false);
   const [confirmationRunIndex, setConfirmationRunIndex] = useState(0);
 
@@ -59,8 +59,9 @@ export const PaymentSuccess = () => {
 
       if (attempts >= SUBSCRIPTION_CONFIRMATION_MAX_ATTEMPTS) {
         setHasTimedOut(true);
-        enqueueErrorSnackBar({
-          message: t`We're still waiting for a confirmation from our payment provider (Stripe). Please refresh in a few seconds.`,
+        addToast({
+          variant: 'error',
+          children: t`We're still waiting for a confirmation from our payment provider (Stripe). Please refresh in a few seconds.`,
         });
         return;
       }

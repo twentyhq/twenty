@@ -4,7 +4,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRecordSeededDraft } from '@/object-record/record-seeded-draft/hooks/useRecordSeededDraft';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useToast } from 'twenty-ui/feedback';
 
 type UsePersistedCampaignDraftArgs<TDraft extends object> = {
   campaignId: string;
@@ -20,7 +20,7 @@ export const usePersistedCampaignDraft = <TDraft extends object>({
   toUpdateOneRecordInput,
 }: UsePersistedCampaignDraftArgs<TDraft>) => {
   const { updateOneRecord } = useUpdateOneRecord();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const { draft, updateDraft, flush, draftResyncKey } = useRecordSeededDraft({
     upstreamDraft: initialDraft(),
@@ -30,7 +30,10 @@ export const usePersistedCampaignDraft = <TDraft extends object>({
         idToUpdate: campaignId,
         updateOneRecordInput: toUpdateOneRecordInput(nextDraft),
       }).catch(() =>
-        enqueueErrorSnackBar({ message: t`Failed to save the campaign` }),
+        addToast({
+          variant: 'error',
+          children: t`Failed to save the campaign`,
+        }),
       );
     },
   });

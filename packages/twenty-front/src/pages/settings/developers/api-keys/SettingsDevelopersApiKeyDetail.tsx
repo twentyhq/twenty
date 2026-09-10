@@ -6,27 +6,27 @@ import { useParams } from 'react-router-dom';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
 import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { IconRepeat, IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { H2Title } from 'twenty-ui/typography';
 import {
   AssignRoleToApiKeyDocument,
   CreateApiKeyDocument,
@@ -57,7 +57,7 @@ const REGENERATE_API_KEY_MODAL_ID = 'regenerate-api-key-modal';
 
 export const SettingsDevelopersApiKeyDetail = () => {
   const { t } = useLingui();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { openModal } = useModal();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -123,14 +123,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
           roleId,
         },
       });
-      enqueueSuccessSnackBar({
-        message: t`Role updated successfully`,
-      });
+      addToast({ variant: 'success', children: t`Role updated successfully` });
       setSelectedRoleId(roleId);
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Error updating role`,
-      });
+      addToast({ variant: 'error', children: t`Error updating role` });
     } finally {
       setIsLoading(false);
     }
@@ -157,7 +153,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         );
       }
     } catch {
-      enqueueErrorSnackBar({ message: t`Error deleting api key.` });
+      addToast({ variant: 'error', children: t`Error deleting api key.` });
     } finally {
       setIsLoading(false);
     }
@@ -170,8 +166,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
     const roleIdToUse = selectedRoleId;
 
     if (!roleIdToUse) {
-      enqueueErrorSnackBar({
-        message: t`A role must be selected for the API key`,
+      addToast({
+        variant: 'error',
+        children: t`A role must be selected for the API key`,
       });
       return;
     }
@@ -213,8 +210,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
     try {
       if (isDefined(apiKey)) {
         if (!isNonEmptyString(apiKeyName)) {
-          enqueueErrorSnackBar({
-            message: t`API key name cannot be empty`,
+          addToast({
+            variant: 'error',
+            children: t`API key name cannot be empty`,
           });
           return;
         }
@@ -233,9 +231,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         }
       }
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Error regenerating api key.`,
-      });
+      addToast({ variant: 'error', children: t`Error regenerating api key.` });
     } finally {
       setIsLoading(false);
     }

@@ -6,7 +6,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 // (since normal VerifyEmail has async logic that's hard to test in Storybook)
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
 import { ModalContent } from 'twenty-ui/surfaces';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const VerifyEmailErrorState = ({ email = 'user@example.com' }) => {
   return (
@@ -25,7 +25,7 @@ const meta: Meta<typeof VerifyEmailErrorState> = {
         <Story />
       </div>
     ),
-    SnackBarDecorator,
+    ToastDecorator,
   ],
   parameters: {
     codeSection: {
@@ -66,5 +66,5 @@ export const IntegratedExample: StoryObj<typeof VerifyEmail> = {
       },
     },
   },
-  decorators: [SnackBarDecorator],
+  decorators: [ToastDecorator],
 };

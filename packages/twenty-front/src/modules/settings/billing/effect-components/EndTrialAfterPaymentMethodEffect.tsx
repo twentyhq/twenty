@@ -3,14 +3,14 @@ import { useOpenAskAiThread } from '@/ai/hooks/useOpenAskAiThread';
 import { START_SUBSCRIPTION_AFTER_PAYMENT_METHOD_QUERY_PARAM } from '@/settings/billing/constants/StartSubscriptionAfterPaymentMethodQueryParam';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
 import { isEndingSubscriptionTrialPeriodState } from '@/settings/billing/states/isEndingSubscriptionTrialPeriodState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 export const EndTrialAfterPaymentMethodEffect = () => {
@@ -19,7 +19,7 @@ export const EndTrialAfterPaymentMethodEffect = () => {
   const subscriptionStatus = useSubscriptionStatus();
   const { endTrialPeriod } = useEndSubscriptionTrialPeriod();
   const { openAskAiThread } = useOpenAskAiThread();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const searchParams = new URLSearchParams(location.search);
   const askAiThreadId = searchParams.get(ASK_AI_THREAD_ID_QUERY_PARAM);
@@ -59,8 +59,9 @@ export const EndTrialAfterPaymentMethodEffect = () => {
           openAskAiThread(askAiThreadId);
         }
       } else if (hasPaymentMethod === false) {
-        enqueueErrorSnackBar({
-          message: t`No payment method found. Please update your billing details.`,
+        addToast({
+          variant: 'error',
+          children: t`No payment method found. Please update your billing details.`,
         });
       }
     } finally {
@@ -71,7 +72,7 @@ export const EndTrialAfterPaymentMethodEffect = () => {
     askAiThreadId,
     cleanUpQueryParams,
     endTrialPeriod,
-    enqueueErrorSnackBar,
+    addToast,
     openAskAiThread,
     subscriptionStatus,
   ]);

@@ -1,4 +1,4 @@
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -6,6 +6,7 @@ import { useElements, useStripe } from '@stripe/react-stripe-js';
 import { useState } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import {
   type BillingPlanKey,
   type SubscriptionInterval,
@@ -23,7 +24,8 @@ export const useSubmitSubscriptionPayment = ({
 }: UseSubmitSubscriptionPaymentParams) => {
   const stripe = useStripe();
   const elements = useElements();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [createSubscriptionPaymentIntent] = useMutation(
@@ -42,8 +44,9 @@ export const useSubmitSubscriptionPayment = ({
     try {
       const { error: submitError } = await elements.submit();
       if (isDefined(submitError)) {
-        enqueueErrorSnackBar({
-          message:
+        addToast({
+          variant: 'error',
+          children:
             submitError.message ??
             t`Your payment details are incomplete. Please review and retry.`,
         });
@@ -58,8 +61,9 @@ export const useSubmitSubscriptionPayment = ({
 
       const paymentIntent = data?.createSubscriptionPaymentIntent;
       if (!isDefined(paymentIntent?.clientSecret)) {
-        enqueueErrorSnackBar({
-          message: t`Subscription error. Please retry or contact Twenty team`,
+        addToast({
+          variant: 'error',
+          children: t`Subscription error. Please retry or contact Twenty team`,
         });
         setIsSubmitting(false);
         return;
@@ -84,8 +88,9 @@ export const useSubmitSubscriptionPayment = ({
             });
 
       if (isDefined(error)) {
-        enqueueErrorSnackBar({
-          message:
+        addToast({
+          variant: 'error',
+          children:
             error.message ??
             t`We couldn't confirm your payment method. Please retry.`,
         });
@@ -93,10 +98,11 @@ export const useSubmitSubscriptionPayment = ({
       }
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        enqueueErrorSnackBar({ apolloError: error });
+        addErrorToast(error);
       } else {
-        enqueueErrorSnackBar({
-          message: t`Subscription error. Please retry or contact Twenty team`,
+        addToast({
+          variant: 'error',
+          children: t`Subscription error. Please retry or contact Twenty team`,
         });
       }
       setIsSubmitting(false);

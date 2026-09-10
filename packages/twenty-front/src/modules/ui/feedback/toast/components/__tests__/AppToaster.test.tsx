@@ -6,11 +6,12 @@ import { act, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { ToastProvider } from 'twenty-ui/feedback';
+import { ToastProvider, useToast } from 'twenty-ui/feedback';
+import { Button } from 'twenty-ui/input';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
-import { SnackBarToaster } from '@/ui/feedback/snack-bar-manager/components/SnackBarToaster';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 
 type WrapperProps = { children: ReactNode; i18nInstance?: I18n };
 
@@ -20,29 +21,35 @@ const Wrapper = ({ children, i18nInstance = i18n }: WrapperProps) => (
       <MemoryRouter>
         <ToastProvider>
           {children}
-          <SnackBarToaster />
+          <AppToaster />
         </ToastProvider>
       </MemoryRouter>
     </ThemeProvider>
   </I18nProvider>
 );
 
-describe('useSnackBar', () => {
+describe('AppToaster', () => {
   it('should preserve actions and dismiss a notification through the shared toaster', async () => {
     const onAction = jest.fn();
     const onClose = jest.fn();
-    const { result } = renderHook(() => useSnackBar(), { wrapper: Wrapper });
+    const { result } = renderHook(() => useToast(), { wrapper: Wrapper });
 
     act(() => {
-      result.current.enqueueSuccessSnackBar({
-        message: 'Record saved',
-        options: {
-          detailedMessage: 'Your changes are available',
-          buttonLabel: 'Undo',
-          buttonOnClick: onAction,
-          onClose,
-          progress: 100,
-        },
+      result.current.add({
+        variant: 'success',
+        children: 'Record saved',
+        description: 'Your changes are available',
+        action: (
+          <Button
+            title="Undo"
+            ariaLabel="Undo"
+            onClick={onAction}
+            variant="tertiary"
+            size="small"
+          />
+        ),
+        onClose,
+        progress: 100,
       });
     });
 
@@ -57,26 +64,26 @@ describe('useSnackBar', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('should deduplicate notifications from the existing enqueue API', () => {
-    const { result } = renderHook(() => useSnackBar(), { wrapper: Wrapper });
+  it('should render rich notification content without converting it to text', () => {
+    const { result } = renderHook(() => useToast(), { wrapper: Wrapper });
 
     act(() => {
-      result.current.enqueueInfoSnackBar({
-        message: 'Import started',
-        options: { dedupeKey: 'import', progress: 100 },
-      });
-      result.current.enqueueInfoSnackBar({
-        message: 'Import started',
-        options: { dedupeKey: 'import', progress: 100 },
+      result.current.add({
+        children: <strong>Record saved</strong>,
+        description: <a href="/records">View records</a>,
+        progress: 100,
       });
     });
 
-    expect(screen.getAllByRole('status')).toHaveLength(1);
-    expect(screen.getByRole('status')).toHaveTextContent('Import started');
+    expect(screen.getByRole('status')).toHaveTextContent('Record saved');
+    expect(screen.getByRole('link', { name: 'View records' })).toHaveAttribute(
+      'href',
+      '/records',
+    );
   });
 
   it('should keep record-conflict links inside the frontend router', () => {
-    const { result } = renderHook(() => useSnackBar(), { wrapper: Wrapper });
+    const { result } = renderHook(() => useErrorToast(), { wrapper: Wrapper });
     const apolloError = new CombinedGraphQLErrors({
       errors: [
         {
@@ -90,10 +97,7 @@ describe('useSnackBar', () => {
     });
 
     act(() => {
-      result.current.enqueueErrorSnackBar({
-        apolloError,
-        options: { progress: 100 },
-      });
+      result.current.addErrorToast(apolloError, { progress: 100 });
     });
 
     expect(screen.getByRole('status')).toHaveTextContent('An error occurred.');
@@ -117,16 +121,19 @@ describe('useSnackBar', () => {
     });
     const onClose = jest.fn();
     const onCancel = jest.fn();
-    const { result } = renderHook(() => useSnackBar(), {
+    const { result } = renderHook(() => useToast(), {
       wrapper: ({ children }) => (
         <Wrapper i18nInstance={testI18n}>{children}</Wrapper>
       ),
     });
 
     act(() => {
-      result.current.enqueueSuccessSnackBar({
-        message: 'Record saved',
-        options: { onClose, onCancel, progress: 100 },
+      result.current.add({
+        variant: 'success',
+        children: 'Record saved',
+        onClose,
+        onCancel,
+        progress: 100,
       });
     });
     const toast = screen.getByRole('status');
@@ -146,13 +153,48 @@ describe('useSnackBar', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('should ignore aborted requests', () => {
-    const { result } = renderHook(() => useSnackBar(), { wrapper: Wrapper });
+  it.each([
+    { error: new Error('Connection lost'), message: 'Connection lost' },
+    {
+      error: new CombinedGraphQLErrors({
+        errors: [
+          {
+            message: 'Internal error',
+            extensions: { userFriendlyMessage: 'Permission denied' },
+          },
+        ],
+      }),
+      message: 'Permission denied',
+    },
+    {
+      error: new CombinedGraphQLErrors({
+        errors: [
+          {
+            message: 'Internal error',
+            extensions: { userFriendlyMessage: msg`An error occurred.` },
+          },
+        ],
+      }),
+      message: 'An error occurred.',
+    },
+    { error: undefined, message: 'An error occurred.' },
+  ])('should display $message for a caught error', ({ error, message }) => {
+    const { result } = renderHook(() => useErrorToast(), { wrapper: Wrapper });
 
     act(() => {
-      result.current.enqueueErrorSnackBar({
-        apolloError: new DOMException('Request aborted', 'AbortError'),
-      });
+      result.current.addErrorToast(error, { progress: 100 });
+    });
+
+    expect(screen.getByRole('status')).toHaveTextContent(message);
+  });
+
+  it('should ignore aborted requests', () => {
+    const { result } = renderHook(() => useErrorToast(), { wrapper: Wrapper });
+
+    act(() => {
+      result.current.addErrorToast(
+        new DOMException('Request aborted', 'AbortError'),
+      );
     });
 
     expect(screen.queryByRole('status')).not.toBeInTheDocument();

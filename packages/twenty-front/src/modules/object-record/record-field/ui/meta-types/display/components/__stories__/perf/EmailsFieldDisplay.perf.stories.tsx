@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { EmailsFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/EmailsFieldDisplay';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
@@ -16,7 +16,7 @@ const meta: Meta = {
       additionalEmails: ['toto@test.com'],
     }),
     ComponentDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
   component: EmailsFieldDisplay,
   args: {},

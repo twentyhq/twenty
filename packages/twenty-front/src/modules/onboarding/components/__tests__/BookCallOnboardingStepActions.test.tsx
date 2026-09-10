@@ -7,7 +7,7 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { BookCallOnboardingStepActions } from '@/onboarding/components/BookCallOnboardingStepActions';
 
 const mockCompleteBookCallOnboardingStep = jest.fn();
-const mockEnqueueErrorSnackBar = jest.fn();
+
 const mockCalApi = jest.fn();
 
 jest.mock('@calcom/embed-react', () => ({
@@ -18,8 +18,15 @@ jest.mock('@/onboarding/hooks/useCompleteBookCallOnboardingStep', () => ({
   useCompleteBookCallOnboardingStep: () => mockCompleteBookCallOnboardingStep,
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({ enqueueErrorSnackBar: mockEnqueueErrorSnackBar }),
+const mockAddToast = jest.fn();
+const mockAddErrorToast = jest.fn();
+
+jest.mock('twenty-ui/feedback', () => ({
+  ...jest.requireActual('twenty-ui/feedback'),
+  useToast: () => ({ add: mockAddToast }),
+}));
+jest.mock('@/error-handler/hooks/useErrorToast', () => ({
+  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
 }));
 
 dynamicActivate(SOURCE_LOCALE);
@@ -109,7 +116,7 @@ describe('BookCallOnboardingStepActions', () => {
     });
 
     expect(skipButton).not.toBeDisabled();
-    expect(mockEnqueueErrorSnackBar).toHaveBeenCalled();
+    expect(mockAddErrorToast).toHaveBeenCalled();
   });
 
   it('should complete the step once even when the embed emits repeatedly', async () => {

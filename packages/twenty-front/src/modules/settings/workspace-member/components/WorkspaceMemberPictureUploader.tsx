@@ -4,13 +4,13 @@ import { useState } from 'react';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ImageInput } from '@/ui/input/components/ImageInput';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation } from '@apollo/client/react';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { UploadWorkspaceMemberProfilePictureDocument } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -28,7 +28,7 @@ export const WorkspaceMemberPictureUploader = ({
   onAvatarUpdated,
   disabled = false,
 }: WorkspaceMemberPictureUploaderProps) => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [uploadController, setUploadController] =
@@ -101,7 +101,7 @@ export const WorkspaceMemberPictureUploader = ({
       const message =
         error instanceof Error ? error.message : t`Failed to upload picture`;
       setErrorMessage(t`An error occurred while uploading the picture.`);
-      enqueueErrorSnackBar({ message });
+      addToast({ variant: 'error', children: message });
     } finally {
       setIsUploading(false);
     }
@@ -130,7 +130,7 @@ export const WorkspaceMemberPictureUploader = ({
       const message =
         error instanceof Error ? error.message : t`Failed to remove picture`;
       setErrorMessage(t`An error occurred while removing the picture.`);
-      enqueueErrorSnackBar({ message });
+      addToast({ variant: 'error', children: message });
     } finally {
       setIsUploading(false);
     }

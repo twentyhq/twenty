@@ -1,18 +1,19 @@
 import { useAuth } from '@/auth/hooks/useAuth';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { AppPath } from 'twenty-shared/types';
 import { useMutation } from '@apollo/client/react';
+import { useLingui } from '@lingui/react/macro';
+import { AppPath } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 import {
   SignUpInNewWorkspaceDocument,
   UploadNewWorkspaceLogoDocument,
 } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { useLingui } from '@lingui/react/macro';
 
 export const useSignUpInNewWorkspace = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
@@ -20,7 +21,8 @@ export const useSignUpInNewWorkspace = () => {
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
+  const { add: addToast } = useToast();
   const { t } = useLingui();
 
   const [signUpInNewWorkspaceMutation] = useMutation(
@@ -53,16 +55,17 @@ export const useSignUpInNewWorkspace = () => {
             variables: { workspaceId, file: logo },
           });
         } catch (logoUploadError) {
-          enqueueErrorSnackBar(
-            CombinedGraphQLErrors.is(logoUploadError)
-              ? { apolloError: logoUploadError }
-              : {
-                  message:
-                    logoUploadError instanceof Error
-                      ? logoUploadError.message
-                      : t`Workspace logo upload failed`,
-                },
-          );
+          if (CombinedGraphQLErrors.is(logoUploadError)) {
+            addErrorToast(logoUploadError);
+          } else {
+            addToast({
+              variant: 'error',
+              children:
+                logoUploadError instanceof Error
+                  ? logoUploadError.message
+                  : t`Workspace logo upload failed`,
+            });
+          }
         }
       }
 
@@ -82,16 +85,17 @@ export const useSignUpInNewWorkspace = () => {
 
       return true;
     } catch (error) {
-      enqueueErrorSnackBar(
-        CombinedGraphQLErrors.is(error)
-          ? { apolloError: error }
-          : {
-              message:
-                error instanceof Error
-                  ? error.message
-                  : t`Workspace creation failed`,
-            },
-      );
+      if (CombinedGraphQLErrors.is(error)) {
+        addErrorToast(error);
+      } else {
+        addToast({
+          variant: 'error',
+          children:
+            error instanceof Error
+              ? error.message
+              : t`Workspace creation failed`,
+        });
+      }
 
       return false;
     }

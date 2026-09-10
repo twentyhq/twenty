@@ -1,16 +1,16 @@
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useMutation } from '@apollo/client/react';
+import { useToast } from 'twenty-ui/feedback';
 import { RetryJobsDocument } from '~/generated-admin/graphql';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 export const useRetryJobs = (queueName: string, onSuccess?: () => void) => {
   const apolloAdminClient = useApolloAdminClient();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const [isRetrying, setIsRetrying] = useState(false);
   const [retryJobsMutation] = useMutation(RetryJobsDocument, {
     client: apolloAdminClient,
@@ -34,26 +34,30 @@ export const useRetryJobs = (queueName: string, onSuccess?: () => void) => {
         const failedResults = results.filter((r) => !r.success);
 
         if (retriedCount === -1) {
-          enqueueSuccessSnackBar({
-            message: t`All failed jobs have been retried`,
+          addToast({
+            variant: 'success',
+            children: t`All failed jobs have been retried`,
           });
         } else if (retriedCount > 0) {
           if (failedResults.length > 0) {
-            enqueueSuccessSnackBar({
-              message: plural(retriedCount, {
+            addToast({
+              variant: 'success',
+              children: plural(retriedCount, {
                 one: `Successfully retried ${retriedCount} job`,
                 other: `Successfully retried ${retriedCount} jobs`,
               }),
             });
-            enqueueErrorSnackBar({
-              message: plural(failedResults.length, {
+            addToast({
+              variant: 'error',
+              children: plural(failedResults.length, {
                 one: `${failedResults.length} job could not be retried`,
                 other: `${failedResults.length} jobs could not be retried`,
               }),
             });
           } else {
-            enqueueSuccessSnackBar({
-              message: plural(retriedCount, {
+            addToast({
+              variant: 'success',
+              children: plural(retriedCount, {
                 one: `Successfully retried ${retriedCount} job`,
                 other: `Successfully retried ${retriedCount} jobs`,
               }),
@@ -66,16 +70,18 @@ export const useRetryJobs = (queueName: string, onSuccess?: () => void) => {
           const errorDetails =
             errorMessages.length > 0 ? `: ${errorMessages[0]}` : '';
 
-          enqueueErrorSnackBar({
-            message: t`No jobs were retried${errorDetails}`,
+          addToast({
+            variant: 'error',
+            children: t`No jobs were retried${errorDetails}`,
           });
         }
 
         onSuccess?.();
       }
     } catch (error) {
-      enqueueErrorSnackBar({
-        message: CombinedGraphQLErrors.is(error)
+      addToast({
+        variant: 'error',
+        children: CombinedGraphQLErrors.is(error)
           ? getErrorMessageFromApolloError(error)
           : t`Failed to retry jobs. Please try again later.`,
       });

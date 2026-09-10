@@ -1,18 +1,19 @@
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/typography';
+import { useToast } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/typography';
 import { z } from 'zod';
-import { useMutation } from '@apollo/client/react';
 import { CreateApprovedAccessDomainDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -21,7 +22,8 @@ export const SettingsSecurityApprovedAccessDomain = () => {
 
   const { t } = useLingui();
 
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
 
   const [createApprovedAccessDomain] = useMutation(
     CreateApprovedAccessDomainDocument,
@@ -63,21 +65,18 @@ export const SettingsSecurityApprovedAccessDomain = () => {
           },
         },
         onCompleted: () => {
-          enqueueSuccessSnackBar({
-            message: t`Please check your email for a verification link.`,
+          addToast({
+            variant: 'success',
+            children: t`Please check your email for a verification link.`,
           });
           navigate(SettingsPath.WorkspaceMembersPage);
         },
         onError: (error) => {
-          enqueueErrorSnackBar({
-            apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-          });
+          addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
         },
       });
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
     }
   };
 

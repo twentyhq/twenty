@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client/react';
-import { useCallback } from 'react';
 import { t } from '@lingui/core/macro';
+import { useCallback } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -10,10 +10,10 @@ import {
 } from '@/settings/mcp-and-apis/states/playgroundApiKeyState';
 import { type PlaygroundSchemas } from '@/settings/mcp-and-apis/types/PlaygroundSchemas';
 import { PlaygroundTypes } from '@/settings/mcp-and-apis/types/PlaygroundTypes';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { useToast } from 'twenty-ui/feedback';
 import { GeneratePlaygroundTokenDocument } from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 // Re-mint when less than this remains so the user never lands on a token about to expire.
 const TOKEN_FRESHNESS_BUFFER_MS = 5 * 60 * 1000;
@@ -23,13 +23,14 @@ export const useOpenPlayground = () => {
   const [playgroundApiKey, setPlaygroundApiKey] = useAtomState(
     playgroundApiKeyState,
   );
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const [generatePlaygroundToken] = useMutation(
     GeneratePlaygroundTokenDocument,
     {
       onError: () => {
-        enqueueErrorSnackBar({
-          message: t`Could not open the API playground`,
+        addToast({
+          variant: 'error',
+          children: t`Could not open the API playground`,
         });
       },
     },

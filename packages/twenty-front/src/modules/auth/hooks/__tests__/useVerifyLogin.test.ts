@@ -1,18 +1,17 @@
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { AppPath } from 'twenty-shared/types';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { AppPath } from 'twenty-shared/types';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
@@ -21,8 +20,15 @@ jest.mock('../useAuth', () => ({
   useAuth: jest.fn(),
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: jest.fn(),
+const mockAddToast = jest.fn();
+const mockAddErrorToast = jest.fn();
+
+jest.mock('twenty-ui/feedback', () => ({
+  ...jest.requireActual('twenty-ui/feedback'),
+  useToast: () => ({ add: mockAddToast }),
+}));
+jest.mock('@/error-handler/hooks/useErrorToast', () => ({
+  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
 }));
 
 jest.mock('~/hooks/useNavigateApp', () => ({
@@ -44,7 +50,7 @@ const renderHooks = () => {
 
 describe('useVerifyLogin', () => {
   const mockGetAuthTokensFromLoginToken = jest.fn();
-  const mockEnqueueErrorSnackBar = jest.fn();
+
   const mockNavigate = jest.fn();
 
   beforeEach(() => {
@@ -54,10 +60,6 @@ describe('useVerifyLogin', () => {
 
     (useAuth as jest.Mock).mockReturnValue({
       getAuthTokensFromLoginToken: mockGetAuthTokensFromLoginToken,
-    });
-
-    (useSnackBar as jest.Mock).mockReturnValue({
-      enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
     });
 
     (useNavigateApp as jest.Mock).mockReturnValue(mockNavigate);
@@ -79,13 +81,14 @@ describe('useVerifyLogin', () => {
 
     await result.current.verifyLoginToken('test-token');
 
-    expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-      message: 'Authentication failed',
+    expect(mockAddToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'Authentication failed',
     });
     expect(mockNavigate).toHaveBeenCalledWith(AppPath.SignInUp);
   });
 
-  it('should preserve a GraphQL verification error for the snackbar', async () => {
+  it('should preserve a GraphQL verification error for the toast', async () => {
     const error = new CombinedGraphQLErrors({
       errors: [{ message: 'Session could not be created' }],
     });
@@ -95,9 +98,7 @@ describe('useVerifyLogin', () => {
 
     await result.current.verifyLoginToken('test-token');
 
-    expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-      apolloError: error,
-    });
+    expect(mockAddErrorToast).toHaveBeenCalledWith(error);
     expect(mockNavigate).toHaveBeenCalledWith(AppPath.SignInUp);
   });
 });

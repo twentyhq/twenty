@@ -18,18 +18,20 @@ import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesS
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import { markQuestionAnswered } from '@/ai/utils/markQuestionAnswered';
 import { markQuestionPending } from '@/ai/utils/markQuestionPending';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
+import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
+import { useToast } from 'twenty-ui/feedback';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useSubmitQuestionAnswer = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
-  const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
+  const { addErrorToast } = useErrorToast();
   const { modelIdForRequest } = useAgentChatModelId();
 
   const submitAnswer = useCallback(
@@ -53,8 +55,9 @@ export const useSubmitQuestionAnswer = () => {
       );
 
       if (isNonEmptyArray(agentChatSelectedFiles)) {
-        enqueueInfoSnackBar({
-          message: t`Wait for files to finish uploading before answering.`,
+        addToast({
+          variant: 'info',
+          children: t`Wait for files to finish uploading before answering.`,
         });
 
         return;
@@ -132,18 +135,10 @@ export const useSubmitQuestionAnswer = () => {
           );
         }
 
-        enqueueErrorSnackBar({
-          apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-        });
+        addErrorToast(CombinedGraphQLErrors.is(error) ? error : undefined);
       }
     },
-    [
-      apolloClient,
-      store,
-      enqueueErrorSnackBar,
-      enqueueInfoSnackBar,
-      modelIdForRequest,
-    ],
+    [apolloClient, store, addErrorToast, addToast, modelIdForRequest],
   );
 
   return { submitAnswer };

@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { createStore, Provider as JotaiProvider } from 'jotai';
+import { Provider as JotaiProvider, createStore } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
@@ -13,10 +13,15 @@ jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
     navigateSidePanel: jest.fn(),
   }),
 }));
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({
-    enqueueWarningSnackBar: jest.fn(),
-  }),
+const mockAddToast = jest.fn();
+const mockAddErrorToast = jest.fn();
+
+jest.mock('twenty-ui/feedback', () => ({
+  ...jest.requireActual('twenty-ui/feedback'),
+  useToast: () => ({ add: mockAddToast }),
+}));
+jest.mock('@/error-handler/hooks/useErrorToast', () => ({
+  useErrorToast: () => ({ addErrorToast: mockAddErrorToast }),
 }));
 
 const mockUseHasPermissionFlag = useHasPermissionFlag as jest.Mock;

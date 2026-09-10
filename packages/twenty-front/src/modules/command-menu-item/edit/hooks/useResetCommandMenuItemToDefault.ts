@@ -10,7 +10,7 @@ import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/comm
 import { RESET_COMMAND_MENU_ITEM } from '@/command-menu-item/graphql/mutations/resetCommandMenuItem';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useToast } from 'twenty-ui/feedback';
 import {
   type ResetCommandMenuItemMutation,
   type ResetCommandMenuItemMutationVariables,
@@ -24,7 +24,7 @@ export const useResetCommandMenuItemToDefault = () => {
   >(RESET_COMMAND_MENU_ITEM);
   const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const resetCommandMenuItemToDefault = useCallback(
     async (id: string) => {
@@ -57,7 +57,7 @@ export const useResetCommandMenuItemToDefault = () => {
             operationType: CrudOperationType.UPDATE,
           });
         } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
+          addToast({ variant: 'error', children: t`An error occurred.` });
         }
       }
     },
@@ -67,7 +67,7 @@ export const useResetCommandMenuItemToDefault = () => {
       applyChanges,
       store,
       handleMetadataError,
-      enqueueErrorSnackBar,
+      addToast,
     ],
   );
 

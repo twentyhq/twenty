@@ -3,12 +3,12 @@ import { useCallback } from 'react';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 
 type MetadataStoreDraftUtils = Pick<
   ReturnType<typeof useUpdateMetadataStoreDraft>,
@@ -41,7 +41,7 @@ export const usePerformViewEntityApiPersistOperation = (
     useUpdateMetadataStoreDraft();
 
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
 
   const handlePersistError = useCallback(
     (error: unknown, operationType: CrudOperationType) => {
@@ -51,10 +51,10 @@ export const usePerformViewEntityApiPersistOperation = (
           operationType,
         });
       } else {
-        enqueueErrorSnackBar({ message: t`An error occurred.` });
+        addToast({ variant: 'error', children: t`An error occurred.` });
       }
     },
-    [handleMetadataError, enqueueErrorSnackBar, metadataName],
+    [handleMetadataError, addToast, metadataName],
   );
 
   const performViewEntityApiPersistOperation = useCallback(

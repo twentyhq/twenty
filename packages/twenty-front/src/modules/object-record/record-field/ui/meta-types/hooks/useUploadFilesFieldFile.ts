@@ -1,6 +1,6 @@
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
+import { useToast } from 'twenty-ui/feedback';
 import { FileFolder } from '~/generated-metadata/graphql';
 
 const DEFAULT_VALUE_BEFORE_SERVER_RESPONSE =
@@ -8,7 +8,7 @@ const DEFAULT_VALUE_BEFORE_SERVER_RESPONSE =
 
 export const useUploadFilesFieldFile = () => {
   const { uploadFile: directUploadFile } = useDirectFileUpload();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const { t } = useLingui();
 
   const uploadFile = async (file: File, fieldMetadataId: string) => {
@@ -19,8 +19,9 @@ export const useUploadFilesFieldFile = () => {
       });
 
       const fileName = file.name;
-      enqueueSuccessSnackBar({
-        message: t`File "${fileName}" uploaded successfully`,
+      addToast({
+        variant: 'success',
+        children: t`File "${fileName}" uploaded successfully`,
       });
 
       return {
@@ -32,8 +33,9 @@ export const useUploadFilesFieldFile = () => {
     } catch (error) {
       const fileNameForError = file.name;
       const errorMessage = String(error);
-      enqueueErrorSnackBar({
-        message: t`Failed to upload "${fileNameForError}"`,
+      addToast({
+        variant: 'error',
+        children: t`Failed to upload "${fileNameForError}"`,
       });
 
       throw new Error(

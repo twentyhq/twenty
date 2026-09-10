@@ -1,7 +1,8 @@
+import { t } from '@lingui/core/macro';
 import { useCallback, useEffect } from 'react';
 
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   CombinedGraphQLErrors,
   CombinedProtocolErrors,
@@ -12,6 +13,7 @@ import {
   UnconventionalError,
 } from '@apollo/client/errors';
 import { isDefined, type CustomError } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/feedback';
 
 const isApolloError = (error: unknown): boolean =>
   CombinedGraphQLErrors.is(error) ||
@@ -29,15 +31,14 @@ const hasErrorCode = (
 };
 
 export const PromiseRejectionEffect = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
+  const { add: addToast } = useToast();
 
   const handlePromiseRejection = useCallback(
     async (event: PromiseRejectionEvent) => {
       const error = event.reason;
       if (isApolloError(error)) {
-        enqueueErrorSnackBar({
-          apolloError: error,
-        });
+        addErrorToast(error);
         return; // already handled by apolloLink
       }
 
@@ -50,9 +51,11 @@ export const PromiseRejectionEffect = () => {
         checkIfItsAViteStaleChunkLazyLoadingError(error);
 
       if (!isAbortError && !isViteStaleChunkLazyLoadingError) {
-        enqueueErrorSnackBar(
-          error instanceof Error ? { message: error.message } : {},
-        );
+        if (error instanceof Error) {
+          addToast({ variant: 'error', children: error.message });
+        } else {
+          addToast({ variant: 'error', children: t`An error occurred.` });
+        }
       }
 
       try {
@@ -70,7 +73,7 @@ export const PromiseRejectionEffect = () => {
         console.error('Failed to capture exception with Sentry:', sentryError);
       }
     },
-    [enqueueErrorSnackBar],
+    [addErrorToast, addToast],
   );
 
   useEffect(() => {

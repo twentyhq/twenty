@@ -1,7 +1,6 @@
 import { RUN_EVALUATION_INPUT } from '@/ai/graphql/mutations/runEvaluationInput';
 import { GET_AGENT_TURNS } from '@/ai/graphql/queries/getAgentTurns';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -12,11 +11,11 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useMutation } from '@apollo/client/react';
-import { getOperationName } from '~/utils/getOperationName';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from 'twenty-ui/feedback';
 import {
   IconDotsVertical,
   IconMessage,
@@ -30,6 +29,7 @@ import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 as uuidv4 } from 'uuid';
 import { SETTINGS_AGENT_DETAIL_TABS } from '~/pages/settings/ai/constants/SettingsAgentDetailTabs';
+import { getOperationName } from '~/utils/getOperationName';
 
 const DELETE_EVAL_INPUT_MODAL_ID = 'delete-eval-input-modal';
 
@@ -67,7 +67,7 @@ export const SettingsAgentEvalsTab = ({
   const [inputToDelete, setInputToDelete] = useState<string | null>(null);
   const { openModal } = useModal();
   const { closeDropdown } = useCloseDropdown();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const navigate = useNavigate();
 
   const tabListComponentId = `${SETTINGS_AGENT_DETAIL_TABS.COMPONENT_INSTANCE_ID}-${agentId}`;
@@ -83,8 +83,9 @@ export const SettingsAgentEvalsTab = ({
       navigate(`#${logsTabId}`);
     },
     onError: () => {
-      enqueueErrorSnackBar({
-        message: t`Failed to execute evaluation input`,
+      addToast({
+        variant: 'error',
+        children: t`Failed to execute evaluation input`,
       });
     },
     refetchQueries: [getOperationName(GET_AGENT_TURNS) ?? ''],

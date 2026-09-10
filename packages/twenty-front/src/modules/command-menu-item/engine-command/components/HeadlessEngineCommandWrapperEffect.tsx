@@ -1,9 +1,7 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-
 import { useIsHeadlessEngineCommandEffectInitialized } from '@/command-menu-item/engine-command/hooks/useIsHeadlessEngineCommandEffectInitialized';
 import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useEffect } from 'react';
 
@@ -25,7 +23,7 @@ export const HeadlessEngineCommandWrapperEffect = ({
 
   const unmountCommand = useUnmountCommand();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
 
   useEffect(() => {
     if (isInitializedRef.current || !ready) {
@@ -38,9 +36,7 @@ export const HeadlessEngineCommandWrapperEffect = ({
       try {
         await execute();
       } catch (error) {
-        enqueueErrorSnackBar({
-          ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
-        });
+        addErrorToast(error);
       } finally {
         // Unmount even on failure, otherwise the headless command stays mounted
         // and can never be triggered again.
@@ -56,7 +52,7 @@ export const HeadlessEngineCommandWrapperEffect = ({
     setIsInitialized,
     commandMenuItemId,
     unmountCommand,
-    enqueueErrorSnackBar,
+    addErrorToast,
   ]);
 
   return null;

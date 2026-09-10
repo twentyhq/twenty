@@ -1,17 +1,19 @@
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useErrorToast } from '@/error-handler/hooks/useErrorToast';
 import { NO_PREVIOUS_ONBOARDING_STEP_ERROR_CODE } from '@/onboarding/constants/NoPreviousOnboardingStepErrorCode';
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client/react';
+
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+
 import { GoBackToPreviousOnboardingStepDocument } from '~/generated-metadata/graphql';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useGoBackToPreviousOnboardingStep = () => {
   const store = useStore();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { addErrorToast } = useErrorToast();
   const [goBackToPreviousOnboardingStepMutation, { loading }] = useMutation(
     GoBackToPreviousOnboardingStepDocument,
   );
@@ -54,11 +56,9 @@ export const useGoBackToPreviousOnboardingStep = () => {
         return;
       }
 
-      enqueueErrorSnackBar(
-        error instanceof Error ? { apolloError: error } : {},
-      );
+      addErrorToast(error);
     }
-  }, [goBackToPreviousOnboardingStepMutation, enqueueErrorSnackBar, store]);
+  }, [goBackToPreviousOnboardingStepMutation, addErrorToast, store]);
 
   return {
     goBackToPreviousOnboardingStep,

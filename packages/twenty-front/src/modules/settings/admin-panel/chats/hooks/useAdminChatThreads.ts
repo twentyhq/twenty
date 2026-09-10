@@ -10,10 +10,10 @@ import { adminChatsFilterState } from '@/settings/admin-panel/chats/states/admin
 import { adminChatsSearchQueryState } from '@/settings/admin-panel/chats/states/adminChatsSearchQueryState';
 import { getAdminChatsSortVariables } from '@/settings/admin-panel/chats/utils/getAdminChatsSortVariables';
 import { GET_ADMIN_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminChatThreads';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useToast } from 'twenty-ui/feedback';
 import {
   AdminChatThreadScope,
   type GetAdminChatThreadsQuery,
@@ -24,7 +24,7 @@ const PAGE_SIZE = 25;
 
 export const useAdminChatThreads = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { add: addToast } = useToast();
   const [adminChatsSearchQuery, setAdminChatsSearchQuery] = useAtomState(
     adminChatsSearchQueryState,
   );
@@ -103,7 +103,7 @@ export const useAdminChatThreads = () => {
         },
       });
     } catch {
-      enqueueErrorSnackBar({ message: t`Failed to load more chats.` });
+      addToast({ variant: 'error', children: t`Failed to load more chats.` });
     }
   };
 
