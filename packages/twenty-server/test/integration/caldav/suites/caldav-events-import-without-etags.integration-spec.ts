@@ -136,6 +136,11 @@ describe('CalDAV calendar events import without entity tags (integration)', () =
     await radicale?.stop().catch(() => undefined);
   });
 
+  afterEach(() => {
+    proxy.degradations.blankLastModified = false;
+    proxy.degradations.hideCollectionMembers = false;
+  });
+
   it('imports an event when the server never returns an entity tag', async () => {
     const summary = `CalDAV untagged event ${randomUUID()}`;
 
@@ -168,24 +173,38 @@ describe('CalDAV calendar events import without entity tags (integration)', () =
   }, 300000);
 
   it('re-imports the collection after a listing comes back with no members', async () => {
-    const summary = `CalDAV untagged event ${randomUUID()}`;
+    const importedSummary = `CalDAV untagged event ${randomUUID()}`;
+    const addedSummary = `CalDAV untagged event ${randomUUID()}`;
 
-    await putEvent({ uid: `caldav-event-${randomUUID()}`, summary });
+    await putEvent({
+      uid: `caldav-event-${randomUUID()}`,
+      summary: importedSummary,
+    });
     await syncCalendarChannel();
 
-    expect(await findImportedCalendarEventTitles([summary])).toEqual([summary]);
+    expect(await findImportedCalendarEventTitles([importedSummary])).toEqual([
+      importedSummary,
+    ]);
 
     proxy.degradations.hideCollectionMembers = true;
 
+    await putEvent({
+      uid: `caldav-event-${randomUUID()}`,
+      summary: addedSummary,
+    });
     await syncCalendarChannel();
 
-    expect(await findImportedCalendarEventTitles([summary])).toEqual([]);
+    expect(
+      await findImportedCalendarEventTitles([importedSummary, addedSummary]),
+    ).toEqual([]);
 
     proxy.degradations.hideCollectionMembers = false;
 
     await syncCalendarChannel();
 
-    expect(await findImportedCalendarEventTitles([summary])).toEqual([summary]);
+    expect(
+      await findImportedCalendarEventTitles([importedSummary, addedSummary]),
+    ).toEqual([importedSummary, addedSummary].sort());
   }, 300000);
 
   it('imports an edit when the server returns neither entity tag nor last modified date', async () => {
