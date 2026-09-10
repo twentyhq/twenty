@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { ViewType, ViewVisibility } from 'twenty-shared/types';
+import { FeatureFlagKey, ViewType, ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -30,6 +31,7 @@ import { DestroyViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/d
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { computeSeededObjectViewUniversalIdentifiers } from 'src/engine/metadata-modules/view/utils/compute-seeded-object-view-universal-identifiers.util';
 import { fromFlatViewToViewDto } from 'src/engine/metadata-modules/view/utils/from-flat-view-to-view-dto.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -44,6 +46,7 @@ export class ViewService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async createOne({
@@ -393,6 +396,39 @@ export class ViewService {
     );
   }
 
+  private async getHiddenSeededViewUniversalIdentifiers(
+    workspaceId: string,
+  ): Promise<Set<string>> {
+    const isSeededDefaultViewEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+        workspaceId,
+      );
+
+    if (isSeededDefaultViewEnabled) {
+      return new Set();
+    }
+
+    const { flatObjectMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
+
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    return computeSeededObjectViewUniversalIdentifiers({
+      flatObjectMetadataMaps,
+      seededViewApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+    });
+  }
+
   private async getFilteredFlatViews({
     workspaceId,
     objectMetadataId,
@@ -412,8 +448,17 @@ export class ViewService {
         },
       );
 
+    const hiddenSeededViewUniversalIdentifiers =
+      await this.getHiddenSeededViewUniversalIdentifiers(workspaceId);
+
     return Object.values(flatViewMaps.byUniversalIdentifier)
       .filter(isDefined)
+      .filter(
+        (flatView) =>
+          !hiddenSeededViewUniversalIdentifiers.has(
+            flatView.universalIdentifier,
+          ),
+      )
       .filter((flatView) => flatView.workspaceId === workspaceId)
       .filter(
         (flatView) =>

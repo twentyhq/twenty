@@ -6940,7 +6940,6 @@ export type ViewGroup = {
 };
 
 export enum ViewKey {
-  DEFAULT = 'DEFAULT',
   INDEX = 'INDEX'
 }
 
