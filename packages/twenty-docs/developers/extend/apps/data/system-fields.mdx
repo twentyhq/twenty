@@ -167,16 +167,6 @@ const rocketIndexViewId = getSystemViewUniversalIdentifier({
 - `objectUniversalIdentifier` is the object the view lists.
 - `viewKey` is the system view discriminator: `SYSTEM_VIEW_KEYS.INDEX` for the main list view, `SYSTEM_VIEW_KEYS.FIELDS_WIDGET` for the record-page fields widget view. It keys the derivation; only `INDEX` is also stored on the view row.
 
-<Note>
-  A workspace may also hold a regular table view stored with `ViewKey.DEFAULT`,
-  alongside the system `INDEX` view. It belongs to the workspace, not to the
-  engine: it is never reconciled, so users can rename, filter, group or delete
-  it. It is not part of an object's guaranteed system metadata — objects created
-  through your application's manifest do not get one — so never derive or target
-  it. Applications should keep targeting `SYSTEM_VIEW_KEYS.INDEX`, which always
-  exists and stays the stable, unfiltered view that deep links resolve against.
-</Note>
-
 The resolved id works anywhere a `viewUniversalIdentifier` is expected, such as a [`NavigationMenuItemType.VIEW`](/developers/extend/apps/layout/navigation-menu-items) sidebar entry. To simply open an object's main list, prefer `NavigationMenuItemType.OBJECT` with `targetObjectUniversalIdentifier`: it needs no derivation.
 
 `getSystemViewFieldUniversalIdentifier` resolves a single **column** on a system view, from the view and the field it displays:

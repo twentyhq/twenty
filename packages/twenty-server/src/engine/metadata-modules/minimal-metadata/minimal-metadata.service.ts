@@ -5,19 +5,17 @@ import {
   type AllMetadataName,
 } from 'twenty-shared/metadata';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { FeatureFlagKey, ViewVisibility } from 'twenty-shared/types';
+import { ViewVisibility } from 'twenty-shared/types';
 import { isDefined, uncapitalize } from 'twenty-shared/utils';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { HiddenSeededViewService } from 'src/engine/metadata-modules/view/services/hidden-seeded-view.service';
 import { type CollectionHashDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/collection-hash.dto';
 import { MinimalMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-metadata.dto';
 import { MinimalObjectMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-object-metadata.dto';
 import { MinimalViewDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-view.dto';
-import { computeSeededObjectViewUniversalIdentifiers } from 'src/engine/metadata-modules/view/utils/compute-seeded-object-view-universal-identifiers.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -41,42 +39,8 @@ export class MinimalMetadataService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly i18nService: I18nService,
-    private readonly applicationService: ApplicationService,
-    private readonly featureFlagService: FeatureFlagService,
+    private readonly hiddenSeededViewService: HiddenSeededViewService,
   ) {}
-
-  private async getHiddenSeededViewUniversalIdentifiers(
-    workspaceId: string,
-  ): Promise<Set<string>> {
-    const isSeededDefaultViewEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
-        workspaceId,
-      );
-
-    if (isSeededDefaultViewEnabled) {
-      return new Set();
-    }
-
-    const { flatObjectMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
-        },
-      );
-
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    return computeSeededObjectViewUniversalIdentifiers({
-      flatObjectMetadataMaps,
-      seededViewApplicationUniversalIdentifier:
-        workspaceCustomFlatApplication.universalIdentifier,
-    });
-  }
 
   async getMinimalMetadata(
     workspaceId: string,
@@ -151,7 +115,9 @@ export class MinimalMetadataService {
       });
 
     const hiddenSeededViewUniversalIdentifiers =
-      await this.getHiddenSeededViewUniversalIdentifiers(workspaceId);
+      await this.hiddenSeededViewService.getHiddenSeededViewUniversalIdentifiers(
+        workspaceId,
+      );
 
     const views: MinimalViewDTO[] = Object.values(
       flatViewMaps.byUniversalIdentifier,
