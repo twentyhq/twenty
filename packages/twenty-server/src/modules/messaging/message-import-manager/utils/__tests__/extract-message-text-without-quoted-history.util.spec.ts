@@ -1,8 +1,8 @@
 import { type Email as ParsedMail } from 'postal-mime';
 
-import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
+import { extractMessageTextWithoutQuotedHistory } from 'src/modules/messaging/message-import-manager/utils/extract-message-text-without-quoted-history.util';
 
-describe('extractMessageBodyText', () => {
+describe('extractMessageTextWithoutQuotedHistory', () => {
   it('should extract text from plain text emails with lot of reply quotations', () => {
     const parsed: ParsedMail = {
       text: `Hi John,
@@ -95,7 +95,7 @@ Developer Support
       headerLines: [],
     };
 
-    const result = extractMessageBodyText({
+    const result = extractMessageTextWithoutQuotedHistory({
       text: parsed.text,
       html: parsed.html,
     });
@@ -133,7 +133,7 @@ Developer Support`);
       headerLines: [],
     };
 
-    const result = extractMessageBodyText({
+    const result = extractMessageTextWithoutQuotedHistory({
       text: parsed.text,
       html: parsed.html,
     });
@@ -158,7 +158,7 @@ Developer Support`);
       headerLines: [],
     };
 
-    const result = extractMessageBodyText({
+    const result = extractMessageTextWithoutQuotedHistory({
       text: parsed.text,
       html: parsed.html,
     });
@@ -173,7 +173,7 @@ Developer Support`);
       headerLines: [],
     };
 
-    const result = extractMessageBodyText({
+    const result = extractMessageTextWithoutQuotedHistory({
       text: parsed.text,
       html: parsed.html,
     });
@@ -304,7 +304,7 @@ Developer Support`);
   </style></head><body><div id="inbox-html-wrapper"><div id="isPasted" fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Hi Sarah,</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">I wanted to quickly follow up regarding the Q3 marketing campaign results. &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">We’ve seen a 14% increase in engagement compared to last quarter, but conversions are still slightly below target. &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Let’s schedule a short call early next week to discuss adjustments before the Q4 push. &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Would Monday 10 AM work for you?</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Best regards, &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">John</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><img class="flm-open" width="0" height="0" style="border: 0px; width: 0px; height: 0px; max-width: 100vw;" data-open-tracking-src="{{track-read-receipt}}"></div></body></html>`,
     };
 
-    const result = extractMessageBodyText({
+    const result = extractMessageTextWithoutQuotedHistory({
       text: parsed.text,
       html: parsed.html,
     });
@@ -323,12 +323,162 @@ Developer Support`);
       headerLines: [],
     };
 
-    const result = extractMessageBodyText({
+    const result = extractMessageTextWithoutQuotedHistory({
       text: parsed.text,
       html: parsed.html,
     });
 
     expect(result).toBe('Plain text content');
+  });
+
+  it('should strip an Outlook for Mac quote container, which carries no text marker', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      html: '<div>My actual reply.</div><div id="OLK_SRC_BODY_SECTION"><div dir="ltr"><p>The older message body.</p></div></div>',
+    });
+
+    expect(result).toBe('My actual reply.');
+  });
+
+  it('should keep a forward whose whole body is an Outlook for Mac quote container', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      html: '<div id="OLK_SRC_BODY_SECTION"><div dir="ltr"><p>The entire forwarded body.</p></div></div>',
+    });
+
+    expect(result).toBe('The entire forwarded body.');
+  });
+
+  it('should keep a forward whose whole body is a blockquote', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      html: '<blockquote type="cite"><p>The entire forwarded body.</p></blockquote>',
+    });
+
+    expect(result).toBe('> The entire forwarded body.');
+  });
+
+  it('should keep a signature written after a gmail quote', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      html: '<div>Sounds good.</div><div class="gmail_quote"><div>On Mon Bob wrote:</div><div>can we move it?</div></div><div>Regards, me</div>',
+    });
+
+    expect(result).toBe('Sounds good.\n\nRegards, me');
+  });
+
+  it('should keep a disclaimer written after an Outlook for Mac quote', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      html: '<div>Sounds good.</div><div id="OLK_SRC_BODY_SECTION"><div>can we move it?</div></div><div>Confidentiality notice</div>',
+    });
+
+    expect(result).toBe('Sounds good.\n\nConfidentiality notice');
+  });
+
+  it('should strip space stuffed quoting, which RFC 3676 senders emit', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      text: 'Sounds good.\n\n > can we move it?\n > next week?',
+    });
+
+    expect(result).toBe('Sounds good.');
+  });
+
+  it('should strip a quote whose attribution is itself quoted', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      text: 'Sounds good.\n\n> On Mon, Aug 4, 2026 at 9:14 AM Bob <bob@example.com> wrote:\n> can we move it?\n\nRegards, me',
+    });
+
+    expect(result).toBe('Sounds good.\nRegards, me');
+  });
+
+  it('should strip a German attribution, which names the sender after the verb', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      text: 'Sounds good.\n\nAm 04.08.2026 um 09:14 schrieb Bob <bob@example.com>:\ncan we move it?\n\nRegards, me',
+    });
+
+    expect(result).toBe('Sounds good.');
+  });
+
+  it('should strip a bare blockquote quote that carries no header line', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      html: '<div>My actual reply.</div><blockquote type="cite"><p>The older message body.</p></blockquote>',
+    });
+
+    expect(result).toBe('My actual reply.');
+  });
+
+  it('should strip plain text quoting that carries no header line', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      text: 'My actual reply.\n\n> The older message body.\n> More of it.',
+    });
+
+    expect(result).toBe('My actual reply.');
+  });
+
+  it('should strip an Outlook desktop From block', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      html: '<p class="MsoNormal">My actual reply.</p><p class="MsoNormal">&nbsp;</p><p class="MsoNormal"><b>From:</b> Bob &lt;bob@example.com&gt;<br><b>Sent:</b> Monday, August 4, 2026 09:14<br><b>Subject:</b> RE: hi</p><p class="MsoNormal">&nbsp;</p><p class="MsoNormal">The older message body.</p>',
+    });
+
+    expect(result).toBe('My actual reply.');
+  });
+
+  it('should strip an Outlook Web From block separated by empty divs', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      html: '<div>My actual reply.</div><div><br></div><div>From: Bob &lt;bob@example.com&gt;</div><div>Sent: Monday, August 4, 2026</div><div><br></div><div>The older message body.</div>',
+    });
+
+    expect(result).toBe('My actual reply.');
+  });
+
+  it('should strip a From block that has no blank line before it', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      html: '<div>My actual reply.</div><div>From: Bob &lt;bob@example.com&gt;</div><div>Date: Monday, August 4, 2026</div><div>The older message body.</div>',
+    });
+
+    expect(result).toBe('My actual reply.');
+  });
+
+  it('should strip an Original Message splitter', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      html: '<p>My actual reply.</p><p>-----Original Message-----<br>From: Bob &lt;bob@example.com&gt;<br>Sent: Monday, August 4, 2026 09:14</p><p>The older message body.</p>',
+    });
+
+    expect(result).toBe('My actual reply.');
+  });
+
+  it('should keep prose that merely opens lines with a field label', () => {
+    const message = 'Trip details\nFrom: Paris\nTo: Berlin';
+
+    expect(extractMessageTextWithoutQuotedHistory({ text: message })).toBe(
+      message,
+    );
+  });
+
+  it('should keep a date label that carries no sender address', () => {
+    const message =
+      'Booking summary\nDate: 4 August\nVenue: the office\nSee you there.';
+
+    expect(extractMessageTextWithoutQuotedHistory({ text: message })).toBe(
+      message,
+    );
+  });
+
+  it('should still cut a header block that carries a sender address', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      text: 'Trip details\n\nFrom: Bob <bob@example.com>\nSent: Monday, August 4, 2026\n\nCan we move it?',
+    });
+
+    expect(result).toBe('Trip details');
+  });
+
+  it('should drop every level of a nested quote container', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      html:
+        '<div>My reply.</div>' +
+        '<div class="gmail_quote"><div>outer quote</div>' +
+        '<div class="gmail_quote"><div>inner quote</div></div>' +
+        '<div>outer tail</div></div>' +
+        '<div>Signature line.</div>',
+    });
+
+    expect(result).toBe('My reply.\n\nSignature line.');
   });
 
   it('should preserve percent sequences instead of URI-decoding the body', () => {
@@ -339,7 +489,7 @@ Developer Support`);
       headerLines: [],
     };
 
-    const result = extractMessageBodyText({
+    const result = extractMessageTextWithoutQuotedHistory({
       text: parsed.text,
       html: parsed.html,
     });
@@ -347,5 +497,14 @@ Developer Support`);
     expect(result).toBe(
       'See https://example.com/path%2Fto%2Ffile and a 100%20 budget cut',
     );
+  });
+  it('should remove inline image references in every bracketing form', () => {
+    const result = extractMessageTextWithoutQuotedHistory({
+      text: 'Logo <cid:image001.png@01D.4> and chart (cid:chart.png) and seal [cid:seal.png] and bare cid:bare.png done',
+    });
+
+    expect(result).not.toMatch(/cid:|<>|\(\)|\[\]/);
+    expect(result).toContain('Logo');
+    expect(result).toContain('done');
   });
 });
