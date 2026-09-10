@@ -14,6 +14,41 @@ const mergeDefined = <TValue extends Record<string, unknown>>(
     ? { ...catalogValue, ...customValue }
     : (customValue ?? catalogValue);
 
+// Publishers and routes spell one model differently (`claude-haiku-4-5`,
+// `claude_haiku_4.5`, `claude-haiku-4-5-v1:0`), so names are compared with
+// separators and a trailing deployment version dropped.
+const normalizeModelName = (modelName: string): string =>
+  modelName
+    .toLowerCase()
+    .replace(/-v\d+(?::\d+)?$/, '')
+    .replace(/[\s.\-_]/g, '');
+
+// Bedrock and Azure prefix a model with the region and vendor that serve it
+// (`eu.anthropic.claude-opus-4-7`). Dropping leading dot-separated segments
+// one at a time lets a route fall back to the model it serves, while a name
+// such as `gpt-4.1` still matches itself first.
+const routeCandidates = (modelName: string): string[] => {
+  const segments = modelName.split('.');
+
+  return segments.map((_, index) => segments.slice(index).join('.'));
+};
+
+const withCatalogReadings = ({
+  catalogModel,
+  customModel,
+}: {
+  catalogModel: AiProviderModelConfig;
+  customModel: AiProviderModelConfig;
+}): AiProviderModelConfig => ({
+  ...customModel,
+  efforts: customModel.efforts ?? catalogModel.efforts,
+  benchmark: mergeDefined(catalogModel.benchmark, customModel.benchmark),
+  benchmarkByEffort: mergeDefined(
+    catalogModel.benchmarkByEffort,
+    customModel.benchmarkByEffort,
+  ),
+});
+
 const mergeModels = ({
   catalogModels,
   customModels,
@@ -26,20 +61,45 @@ const mergeModels = ({
       (model) => model.name === customModel.name,
     );
 
-    if (!isDefined(catalogModel)) {
-      return customModel;
-    }
-
-    return {
-      ...catalogModel,
-      ...customModel,
-      benchmark: mergeDefined(catalogModel.benchmark, customModel.benchmark),
-      benchmarkByEffort: mergeDefined(
-        catalogModel.benchmarkByEffort,
-        customModel.benchmarkByEffort,
-      ),
-    };
+    return isDefined(catalogModel)
+      ? withCatalogReadings({
+          catalogModel,
+          customModel: { ...catalogModel, ...customModel },
+        })
+      : customModel;
   });
+
+// A provider the catalog does not know (a gateway, Bedrock, Azure) serves
+// models the catalog does know under another route. Its prices are its own,
+// so only what describes the model itself carries over: the efforts it takes
+// and the readings measured for it.
+const withReadingsFromAnyProvider = ({
+  catalog,
+  customModels,
+}: {
+  catalog: AiProvidersConfig;
+  customModels: AiProviderModelConfig[];
+}): AiProviderModelConfig[] => {
+  const catalogModelsByName = new Map<string, AiProviderModelConfig>();
+
+  for (const provider of Object.values(catalog)) {
+    for (const model of provider.models ?? []) {
+      catalogModelsByName.set(normalizeModelName(model.name), model);
+    }
+  }
+
+  return customModels.map((customModel) => {
+    const catalogModel = routeCandidates(customModel.name)
+      .map((candidate) =>
+        catalogModelsByName.get(normalizeModelName(candidate)),
+      )
+      .find(isDefined);
+
+    return isDefined(catalogModel)
+      ? withCatalogReadings({ catalogModel, customModel })
+      : customModel;
+  });
+};
 
 // A custom entry replaces the catalog provider of the same name, but an entry
 // written before the catalog carried efforts and benchmarks would then strip
@@ -58,16 +118,23 @@ export const mergeCustomProvidersIntoCatalog = ({
   for (const [providerName, customProvider] of Object.entries(custom)) {
     const catalogProvider: AiProviderConfig | undefined = catalog[providerName];
 
-    merged[providerName] =
-      isDefined(catalogProvider) && isDefined(customProvider.models)
-        ? {
-            ...customProvider,
-            models: mergeModels({
-              catalogModels: catalogProvider.models ?? [],
-              customModels: customProvider.models,
-            }),
-          }
-        : customProvider;
+    if (!isDefined(customProvider.models)) {
+      merged[providerName] = customProvider;
+      continue;
+    }
+
+    merged[providerName] = {
+      ...customProvider,
+      models: isDefined(catalogProvider)
+        ? mergeModels({
+            catalogModels: catalogProvider.models ?? [],
+            customModels: customProvider.models,
+          })
+        : withReadingsFromAnyProvider({
+            catalog,
+            customModels: customProvider.models,
+          }),
+    };
   }
 
   return merged;

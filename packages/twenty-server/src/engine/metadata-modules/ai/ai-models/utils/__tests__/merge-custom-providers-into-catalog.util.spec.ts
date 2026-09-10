@@ -125,20 +125,73 @@ describe('mergeCustomProvidersIntoCatalog', () => {
     expect(merged.openai.models).toEqual([{ name: 'gpt-7', label: 'GPT-7' }]);
   });
 
-  it('adds a provider the catalog does not have as is', () => {
-    const azure = {
-      npm: '@ai-sdk/azure',
-      label: 'Azure',
-      apiKey: 'key',
-      models: [{ name: 'gpt-5.4', label: 'GPT-5.4' }],
-    };
-
+  it('gives a route outside the catalog the readings of the model it serves, never its prices', () => {
     const merged = mergeCustomProvidersIntoCatalog({
       catalog,
-      custom: { 'azure-foundry': azure } as unknown as AiProvidersConfig,
+      custom: {
+        'amazon-bedrock': {
+          npm: '@ai-sdk/amazon-bedrock',
+          label: 'Bedrock',
+          models: [
+            {
+              name: 'eu.openai.gpt-5.6-luna-v1:0',
+              label: 'Luna on Bedrock',
+              inputCostPerMillionTokens: 0.25,
+              outputCostPerMillionTokens: 1.5,
+            },
+            { name: 'eu.mistral.pixtral-large', label: 'Pixtral' },
+          ],
+        },
+      } as unknown as AiProvidersConfig,
     });
 
-    expect(merged['azure-foundry']).toBe(azure);
+    expect(merged['amazon-bedrock'].models?.[0]).toEqual({
+      name: 'eu.openai.gpt-5.6-luna-v1:0',
+      label: 'Luna on Bedrock',
+      inputCostPerMillionTokens: 0.25,
+      outputCostPerMillionTokens: 1.5,
+      efforts: ['low', 'medium', 'high'],
+      benchmark: { intelligenceIndex: 37.5 },
+      benchmarkByEffort: undefined,
+    });
+    expect(merged['amazon-bedrock'].models?.[1]).toEqual({
+      name: 'eu.mistral.pixtral-large',
+      label: 'Pixtral',
+      efforts: undefined,
+      benchmark: undefined,
+      benchmarkByEffort: undefined,
+    });
     expect(merged.openai).toBe(catalog.openai);
+  });
+
+  it('matches a dotted model name to itself before stripping route segments', () => {
+    const catalogWithDottedName = {
+      openai: {
+        ...catalog.openai,
+        models: [
+          {
+            name: 'gpt-4.1',
+            label: 'GPT-4.1',
+            benchmark: { intelligenceIndex: 12.7 },
+          },
+          { name: '1', label: 'One', benchmark: { intelligenceIndex: 1 } },
+        ],
+      },
+    } as unknown as AiProvidersConfig;
+
+    const merged = mergeCustomProvidersIntoCatalog({
+      catalog: catalogWithDottedName,
+      custom: {
+        'azure-foundry': {
+          npm: '@ai-sdk/azure',
+          label: 'Azure',
+          models: [{ name: 'gpt-4.1', label: 'GPT-4.1 on Azure' }],
+        },
+      } as unknown as AiProvidersConfig,
+    });
+
+    expect(merged['azure-foundry'].models?.[0]?.benchmark).toEqual({
+      intelligenceIndex: 12.7,
+    });
   });
 });
