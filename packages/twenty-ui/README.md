@@ -68,6 +68,16 @@ import { Button } from 'twenty-ui/input';
 
 # Development
 
+## Internal state
+
+twenty-ui uses Jotai internally for notification state. Twenty already uses Jotai, so this keeps state management familiar to contributors and replaces subscription machinery we would otherwise maintain ourselves. Queue rules and rendering remain owned by twenty-ui. Consumers do not need to create atoms or configure a Jotai provider.
+
+Each notification provider creates a private store, passed explicitly to the internal Jotai hooks. This keeps notification state isolated without changing the consuming application's Jotai scope. See [Jotai's library isolation guidance](https://jotai.org/docs/extensions/scope#createisolation).
+
+The tradeoff is a runtime dependency and its lifecycle conventions in place of a small custom store. In a standalone production bundle measured on September 10, 2026, the Jotai 2.17.1 APIs used here contributed approximately 3.6 kB gzipped, excluding React. This is not a measurement of the application's incremental bundle size: the library build keeps Jotai external, and a consuming bundler can share a compatible existing copy. twenty-front and twenty-ui use the same Jotai version range.
+
+## Testing
+
 Component interaction and behavior tests belong in Storybook stories (`*.stories.tsx`) using `play` functions. Component unit tests are reserved for conformance (native props, refs, class names, rendering, and prop types). Keep non-interactive utility, hook, and token tests in the Vitest unit project; avoid duplicating story coverage there.
 
 ```bash
