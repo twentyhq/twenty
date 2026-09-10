@@ -1,5 +1,10 @@
-import { useSyncExternalStore } from 'react';
+import { useAtomValue, useSetAtom } from 'jotai';
 
+import {
+  closeToastAtom,
+  completeToastExitAtom,
+  toastStateAtom,
+} from '@ui/feedback/Toast/internal/toastAtoms';
 import { useToastContext } from '@ui/feedback/Toast/internal/useToastContext';
 
 import { type ToasterProps } from '../types/ToasterProps';
@@ -11,19 +16,17 @@ type ToasterItemsProps = {
 
 export const ToasterItems = ({ getToastProps }: ToasterItemsProps) => {
   const store = useToastContext();
-  const toasts = useSyncExternalStore(
-    store.subscribe,
-    store.getSnapshot,
-    store.getServerSnapshot,
-  );
+  const { toasts } = useAtomValue(toastStateAtom, { store });
+  const close = useSetAtom(closeToastAtom, { store });
+  const completeExit = useSetAtom(completeToastExitAtom, { store });
 
   return toasts.map((toast) => (
     <ToasterItem
       key={toast.renderKey}
       toastEntry={toast}
       getToastProps={getToastProps}
-      onClose={store.close}
-      onExitComplete={store.completeExit}
+      onClose={close}
+      onExitComplete={completeExit}
     />
   ));
 };

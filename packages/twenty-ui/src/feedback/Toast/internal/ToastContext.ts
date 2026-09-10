@@ -1,5 +1,4 @@
+import { type Store } from 'jotai/vanilla/store';
 import { createContext } from 'react';
 
-import { type ToastStore } from './ToastStore';
-
-export const ToastContext = createContext<ToastStore | undefined>(undefined);
+export const ToastContext = createContext<Store | undefined>(undefined);

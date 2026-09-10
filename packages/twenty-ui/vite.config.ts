@@ -92,10 +92,11 @@ export default defineConfig(({ command }) => {
       },
     },
     optimizeDeps: {
-      // Pre-bundle React up front so Vite's dep optimizer doesn't re-bundle it
+      // Pre-bundle React and Jotai so Vite's dep optimizer doesn't re-bundle them
       // mid-run during browser-mode Storybook tests — re-bundling rotates the
       // optimized chunk hash and 404s in-flight dynamic imports (vite 8 / rolldown).
       include: [
+        'jotai',
         'react',
         'react-dom',
         'react-dom/client',
