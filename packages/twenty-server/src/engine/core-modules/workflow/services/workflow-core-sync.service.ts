@@ -44,7 +44,10 @@ export class WorkflowCoreSyncService {
     const applicationId = await this.getCustomApplicationIdOrThrow(workspaceId);
 
     const workspaceWorkflowIdByOwnedCoreWorkflowId =
-      await this.resolveOwnedCoreWorkflowIds(workspaceId, liveWorkflows);
+      await this.resolveWorkspaceWorkflowIdByOwnedCoreWorkflowId(
+        workspaceId,
+        liveWorkflows,
+      );
 
     const coreWorkflowIdByWorkspaceRecordId = new Map<string, string>();
 
@@ -93,7 +96,7 @@ export class WorkflowCoreSyncService {
 
   // coreWorkflowId is a writable column on the workspace record, so a caller
   // can point it at a core row owned by another workspace.
-  private async resolveOwnedCoreWorkflowIds(
+  private async resolveWorkspaceWorkflowIdByOwnedCoreWorkflowId(
     workspaceId: string,
     workflows: WorkflowWorkspaceEntity[],
   ): Promise<Map<string, string | null>> {
