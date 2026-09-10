@@ -12,7 +12,7 @@ const {
   fetchWorkspaceBaseUrlsMock,
   resolveSlackRunAsForRequestMock,
   runSlackAssistantAgentWithDeadlineMock,
-  slackPostMessageHandlerMock,
+  sendSlackMessageMock,
   startSlackAssistantStatusUpdatesMock,
   stopStatusUpdatesMock,
   finishSlackAssistantRequestWithFailureMock,
@@ -26,7 +26,7 @@ const {
   fetchWorkspaceBaseUrlsMock: vi.fn(),
   resolveSlackRunAsForRequestMock: vi.fn(),
   runSlackAssistantAgentWithDeadlineMock: vi.fn(),
-  slackPostMessageHandlerMock: vi.fn(),
+  sendSlackMessageMock: vi.fn(),
   startSlackAssistantStatusUpdatesMock: vi.fn(),
   stopStatusUpdatesMock: vi.fn(),
   finishSlackAssistantRequestWithFailureMock: vi.fn(),
@@ -61,9 +61,8 @@ vi.mock(
   }),
 );
 
-vi.mock('src/logic-functions/handlers/slack-post-message-handler', () => ({
-  slackPostMessageHandler: slackPostMessageHandlerMock,
-  postSlackMessageWithPreviewScope: slackPostMessageHandlerMock,
+vi.mock('src/logic-functions/utils/send-slack-message', () => ({
+  sendSlackMessage: sendSlackMessageMock,
 }));
 
 vi.mock(
@@ -157,7 +156,7 @@ describe('slackAssistantWorkerHandler', () => {
 
       return { success: true, error: null, result: { response: 'Two.' } };
     });
-    slackPostMessageHandlerMock.mockImplementation(async () => {
+    sendSlackMessageMock.mockImplementation(async () => {
       callLog.push('reply:answer');
 
       return { success: true, slackTs: '1700000000.000200' };
@@ -226,6 +225,32 @@ describe('slackAssistantWorkerHandler', () => {
       'reply:failure',
     ]);
     expect(stopStatusUpdatesMock).toHaveBeenCalledOnce();
+  });
+
+  it('should fetch the answer previews as the requester the agent answered as', async () => {
+    resolveSlackRunAsForRequestMock.mockResolvedValue('member-1');
+
+    await slackAssistantWorkerHandler(buildEvent());
+
+    expect(sendSlackMessageMock).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ messageText: 'Two.' }),
+      {
+        waitOutRateLimit: false,
+        recordPreviewScope: {
+          kind: 'workspaceMember',
+          workspaceMemberId: 'member-1',
+        },
+      },
+    );
+  });
+
+  it('should drop the answer previews when the requester maps to nobody', async () => {
+    await slackAssistantWorkerHandler(buildEvent());
+
+    expect(sendSlackMessageMock).toHaveBeenCalledExactlyOnceWith(
+      expect.anything(),
+      { waitOutRateLimit: false, recordPreviewScope: { kind: 'none' } },
+    );
   });
 
   it('should not start the status for a request that is no longer pending', async () => {

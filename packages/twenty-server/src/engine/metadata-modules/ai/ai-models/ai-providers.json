@@ -17,7 +17,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 13,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -32,7 +32,7 @@
         "modalities": ["image"],
         "benchmark": {
           "intelligenceIndex": 7.8,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         },
         "isDeprecated": true
       },
@@ -47,7 +47,7 @@
         "modalities": ["image"],
         "benchmark": {
           "intelligenceIndex": 7.3,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         },
         "isDeprecated": true
       },
@@ -81,10 +81,11 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["none", "low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 47.1,
           "outputTokensPerSecond": 73.005,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -99,7 +100,7 @@
         "modalities": ["image"],
         "benchmark": {
           "intelligenceIndex": 7.7,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -121,10 +122,11 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["minimal", "low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 52.8,
           "outputTokensPerSecond": 60.822,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -162,7 +164,7 @@
         "modalities": ["image", "pdf"],
         "benchmark": {
           "intelligenceIndex": 10.2,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -182,9 +184,10 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["none", "low", "medium", "high", "xhigh"],
         "benchmark": {
           "intelligenceIndex": 39,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -198,7 +201,7 @@
         "modalities": ["image"],
         "benchmark": {
           "intelligenceIndex": 7,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         },
         "isDeprecated": true
       },
@@ -215,7 +218,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 24.7,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -231,7 +234,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 15.2,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         },
         "isDeprecated": true
       },
@@ -247,7 +250,7 @@
         "modalities": ["image", "pdf"],
         "benchmark": {
           "intelligenceIndex": 9,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -269,10 +272,11 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["none", "low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 37.5,
           "outputTokensPerSecond": 123.243,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -289,7 +293,7 @@
         "benchmark": {
           "intelligenceIndex": 32.5,
           "outputTokensPerSecond": 143.044,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -304,7 +308,7 @@
         "modalities": ["image", "pdf"],
         "benchmark": {
           "intelligenceIndex": 6.7,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -319,7 +323,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 12.4,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         },
         "isDeprecated": true
       },
@@ -335,7 +339,7 @@
         "modalities": ["image", "pdf"],
         "benchmark": {
           "intelligenceIndex": 12.7,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -351,7 +355,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 21.2,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -383,7 +387,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 24.6,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -419,7 +423,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 20.6,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -457,10 +461,11 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["none", "low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 42.3,
           "outputTokensPerSecond": 124.121,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -473,7 +478,7 @@
         "maxOutputTokens": 8192,
         "benchmark": {
           "intelligenceIndex": 6.7,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         },
         "isDeprecated": true
       },
@@ -490,7 +495,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 30.4,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -506,7 +511,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 23,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -535,7 +540,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 16.7,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         },
         "isDeprecated": true
       },
@@ -563,7 +568,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 12.5,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         },
         "isDeprecated": true
       },
@@ -581,7 +586,7 @@
         "benchmark": {
           "intelligenceIndex": 20.2,
           "outputTokensPerSecond": 151.22,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -596,7 +601,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 21.9,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -628,9 +633,10 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["none", "low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 38.6,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -645,7 +651,7 @@
         "modalities": ["image"],
         "benchmark": {
           "intelligenceIndex": 9,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       }
     ]
@@ -667,9 +673,10 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "max"],
         "benchmark": {
           "intelligenceIndex": 30.5,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -684,10 +691,11 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 50.7,
           "outputTokensPerSecond": 55.074,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -702,9 +710,10 @@
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 29.1,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -719,10 +728,11 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 53.4,
           "outputTokensPerSecond": 69.904,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -737,9 +747,10 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "max"],
         "benchmark": {
           "intelligenceIndex": 31.9,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -767,9 +778,10 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 40.7,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -797,10 +809,11 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 49.7,
           "outputTokensPerSecond": 68.133,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -841,9 +854,10 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 42,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -858,10 +872,11 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 38.4,
           "outputTokensPerSecond": 83.464,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -876,9 +891,10 @@
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 29.1,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       }
     ]
@@ -952,10 +968,11 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 30.4,
           "outputTokensPerSecond": 127.691,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -989,7 +1006,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 8.5,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -1019,10 +1036,11 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["minimal", "low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 34.3,
           "outputTokensPerSecond": 184.677,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -1038,7 +1056,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 16,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -1063,10 +1081,11 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["minimal", "low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 33.6,
           "outputTokensPerSecond": 239.733,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -1082,7 +1101,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 16,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         },
         "isDeprecated": true
       },
@@ -1097,10 +1116,11 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["minimal", "low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 22.7,
           "outputTokensPerSecond": 365.348,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -1117,7 +1137,7 @@
         "benchmark": {
           "intelligenceIndex": 22.7,
           "outputTokensPerSecond": 365.348,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -1131,9 +1151,10 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["minimal", "low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 26.3,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -1147,10 +1168,11 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 41.2,
           "outputTokensPerSecond": 342.779,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -1164,10 +1186,11 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 39.6,
           "outputTokensPerSecond": 329.345,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -1189,7 +1212,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 16.7,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -1206,7 +1229,7 @@
         "benchmark": {
           "intelligenceIndex": 41.2,
           "outputTokensPerSecond": 342.779,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -1222,7 +1245,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 13.1,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       }
     ]
@@ -1273,7 +1296,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 8.2,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -1296,7 +1319,7 @@
         "maxOutputTokens": 128000,
         "benchmark": {
           "intelligenceIndex": 8.7,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         },
         "isDeprecated": true
       },
@@ -1322,7 +1345,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 9.1,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -1441,7 +1464,8 @@
         "contextWindowTokens": 256000,
         "maxOutputTokens": 256000,
         "modalities": ["image"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "efforts": ["none", "high"]
       },
       {
         "name": "open-mistral-nemo",
@@ -1542,7 +1566,7 @@
         "modalities": ["image"],
         "benchmark": {
           "intelligenceIndex": 7.1,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       }
     ]
@@ -1571,7 +1595,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 25.4,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -1609,10 +1633,11 @@
         "maxOutputTokens": 500000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 39.1,
           "outputTokensPerSecond": 52.947,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -1650,10 +1675,11 @@
         "maxOutputTokens": 500000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh"],
         "benchmark": {
           "intelligenceIndex": 44.4,
           "outputTokensPerSecond": 62.454,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       },
       {
@@ -1674,7 +1700,7 @@
         "modalities": ["image", "pdf"],
         "benchmark": {
           "intelligenceIndex": 14.6,
-          "measuredAt": "2026-09-09"
+          "measuredAt": "2026-09-10"
         }
       }
     ]

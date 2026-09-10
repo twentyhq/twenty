@@ -81,7 +81,7 @@
     "@tiptap/react": "3.30.2",
     "@types/marked": "^6.0.0",
     "@xyflow/react": "^12.4.2",
-    "ai": "6.0.97",
+    "ai": "7.0.93",
     "apollo-link-rest": "^0.10.0-rc.2",
     "apollo-upload-client": "^19.0.0",
     "buffer": "^6.0.3",

@@ -7,7 +7,7 @@ import { canBeUnique } from '@/settings/data-model/fields/forms/utils/canBeUniqu
 import { t } from '@lingui/core/macro';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { IconKey } from 'twenty-ui/icon';
-import { Toggle } from 'twenty-ui/input';
+import { Switch } from 'twenty-ui/input';
 
 type SettingsDataModelFieldIsUniqueFormValues = {
   isUnique: boolean;
@@ -65,10 +65,11 @@ export const SettingsDataModelFieldIsUniqueForm = ({
               title={t`Unique`}
               description={t`Prevent from assigning the same value to different records`}
             >
-              <Toggle
-                toggleSize="small"
-                value={isUnique}
-                onChange={(value) => onChange(value)}
+              <Switch
+                aria-label={t`Unique`}
+                size="sm"
+                checked={isUnique}
+                onCheckedChange={(value) => onChange(value)}
                 disabled={disabled || hasStandardUniqueIndex}
               />
             </SettingsOptionCardContentSelect>

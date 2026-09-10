@@ -28,7 +28,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
-import { Checkbox, Toggle } from 'twenty-ui/input';
+import { Checkbox, Switch } from 'twenty-ui/input';
 
 const StyledComboInputContainer = styled.div`
   display: flex;
@@ -573,10 +573,10 @@ export const SettingsAdminNewAiModel = () => {
                         }}
                       >
                         <Checkbox
+                          aria-label={option.label}
                           checked={isChecked}
-                          onChange={(event) => {
-                            event.stopPropagation();
-                            const updated = event.target.checked
+                          onCheckedChange={(isChecked) => {
+                            const updated = isChecked
                               ? [...value, option.value]
                               : value.filter(
                                   (modality) => modality !== option.value,
@@ -584,6 +584,7 @@ export const SettingsAdminNewAiModel = () => {
 
                             onChange(updated);
                           }}
+                          onClick={(event) => event.stopPropagation()}
                         />
                         <span>{option.label}</span>
                       </StyledCheckboxRow>
@@ -603,7 +604,11 @@ export const SettingsAdminNewAiModel = () => {
               name="supportsReasoning"
               control={form.control}
               render={({ field: { onChange, value } }) => (
-                <Toggle value={value} onChange={onChange} />
+                <Switch
+                  aria-label={t`Supports reasoning`}
+                  checked={value}
+                  onCheckedChange={onChange}
+                />
               )}
             />
           </Section>

@@ -5,6 +5,7 @@ import {
   defineLogicFunction,
   type ObjectRecordCreateEvent,
 } from 'twenty-sdk/define';
+import { isDefined } from 'twenty-sdk/utils';
 
 import {
   SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
@@ -17,17 +18,21 @@ import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/sl
 import { SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-worker-timeout-seconds';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
+import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
+import { type SlackRecordPreviewScope } from 'src/logic-functions/types/slack-record-preview-scope.type';
 import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build-slack-assistant-answer-blocks';
 import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-slack-assistant-messages';
+import { buildSlackAnswerDeliveryFailureMessage } from 'src/logic-functions/utils/build-slack-answer-delivery-failure-message';
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
+import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-slack-message-delivery';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
-import { postSlackMessageWithPreviewScope } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
 import { runSlackAssistantAgentWithDeadline } from 'src/logic-functions/utils/run-slack-assistant-agent-with-deadline';
+import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
 import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
@@ -163,40 +168,61 @@ export const slackAssistantWorkerHandler = async (
       });
     }
 
+    const answerMessage: SlackPostMessageInput = {
+      slackChannelId,
+      messageText: responseText,
+      parentMessageTimestamp,
+      messageFormat: 'markdown',
+      unfurlLinks: false,
+      unfurlMedia: false,
+      messageBlocks: buildSlackAssistantAnswerBlocks({
+        responseText,
+        requestId: record.id,
+        workspaceBaseUrl: workspaceBaseUrls[0],
+      }),
+    };
+
     // The answer reaches the whole channel, so the record previews on it are
     // fetched as the requester the agent answered as, and dropped when the
     // requester is nobody Twenty knows.
-    const deliveryResult = await postSlackMessageWithPreviewScope({
-      parameters: {
-        slackChannelId,
-        messageText: responseText,
-        parentMessageTimestamp,
-        messageFormat: 'markdown',
-        unfurlLinks: false,
-        unfurlMedia: false,
-        messageBlocks: buildSlackAssistantAnswerBlocks({
-          responseText,
-          requestId: record.id,
-          workspaceBaseUrl: workspaceBaseUrls[0],
-        }),
-      },
-      recordPreviewScope: isNonEmptyString(runAsWorkspaceMemberId)
-        ? { kind: 'workspaceMember', workspaceMemberId: runAsWorkspaceMemberId }
-        : { kind: 'none' },
+    const recordPreviewScope: SlackRecordPreviewScope = isNonEmptyString(
+      runAsWorkspaceMemberId,
+    )
+      ? { kind: 'workspaceMember', workspaceMemberId: runAsWorkspaceMemberId }
+      : { kind: 'none' };
+
+    const deliveryResult = await sendSlackMessage(answerMessage, {
+      waitOutRateLimit: false,
+      recordPreviewScope,
     });
 
-    if (!deliveryResult.success) {
+    const deferredRetryAfterSeconds = deliveryResult.success
+      ? undefined
+      : deliveryResult.retryAfterSeconds;
+
+    if (!deliveryResult.success && !isDefined(deferredRetryAfterSeconds)) {
       return await finishSlackAssistantRequestWithFailure({
         ...failureContext,
-        errorMessage: `Could not deliver Slack answer: ${deliveryResult.error ?? deliveryResult.message}`,
+        errorMessage: buildSlackAnswerDeliveryFailureMessage(deliveryResult),
       });
     }
 
-    await updateSlackAssistantRequest(client, {
-      id: record.id,
-      status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
-      responseText,
-    });
+    if (isDefined(deferredRetryAfterSeconds)) {
+      await enqueueSlackMessageDelivery({
+        payload: {
+          ...answerMessage,
+          slackAssistantRequestId: record.id,
+          recordPreviewScope,
+        },
+        retryAfterSeconds: deferredRetryAfterSeconds,
+      });
+    } else {
+      await updateSlackAssistantRequest(client, {
+        id: record.id,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        responseText,
+      });
+    }
 
     if (isDirectMessage) {
       if (isThreadStartingMessage) {
@@ -213,7 +239,9 @@ export const slackAssistantWorkerHandler = async (
       }).catch(() => undefined);
     }
 
-    return { done: true };
+    return isDefined(deferredRetryAfterSeconds)
+      ? { deferred: true }
+      : { done: true };
   } catch (error) {
     await stopStatusUpdates();
 

@@ -84,4 +84,19 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
       ],
     },
   },
+  [UsageResourceType.WEBHOOK]: {
+    speed: {
+      allowedOperationTypes: [UsageOperationType.WEBHOOK_CALL],
+      allowedSpenderTypes: ['workspace'],
+      defaults: [
+        {
+          spenderType: 'workspace',
+          counterScope: 'perWorkspace',
+          limitValueConfigVariable: 'WEBHOOK_CALL_RATE_LIMITING_LIMIT',
+          windowMsConfigVariable: 'WEBHOOK_CALL_RATE_LIMITING_TTL_IN_MS',
+          isOverridable: true,
+        },
+      ],
+    },
+  },
 };
