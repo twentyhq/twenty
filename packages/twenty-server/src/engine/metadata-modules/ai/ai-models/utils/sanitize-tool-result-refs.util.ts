@@ -1,6 +1,6 @@
 import {
-  type LanguageModelV3Prompt,
-  type LanguageModelV3ToolResultPart,
+  type LanguageModelV4Prompt,
+  type LanguageModelV4ToolResultPart,
 } from '@ai-sdk/provider';
 import { isArray, isObject, isString } from '@sniptt/guards';
 
@@ -21,8 +21,8 @@ const containsJsonSchemaDefsRef = (value: unknown): boolean => {
 };
 
 const sanitizeToolResultPart = (
-  part: LanguageModelV3ToolResultPart,
-): LanguageModelV3ToolResultPart => {
+  part: LanguageModelV4ToolResultPart,
+): LanguageModelV4ToolResultPart => {
   if (
     (part.output.type !== 'json' && part.output.type !== 'error-json') ||
     !containsJsonSchemaDefsRef(part.output.value)
@@ -46,8 +46,8 @@ const sanitizeToolResultPart = (
 };
 
 export const sanitizeToolResultRefs = (
-  prompt: LanguageModelV3Prompt,
-): LanguageModelV3Prompt =>
+  prompt: LanguageModelV4Prompt,
+): LanguageModelV4Prompt =>
   prompt.map((message) =>
     message.role === 'tool'
       ? { ...message, content: message.content.map(sanitizeToolResultPart) }

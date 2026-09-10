@@ -58,6 +58,26 @@ const informationScore = (record: BenchmarkRecord): number =>
     record.costPerTask,
   ].filter(isDefined).length;
 
+// The rows for one model are the same model at different reasoning efforts, and
+// the publisher spells the effort only inside a display name. Taking the
+// best-scoring row gives every model its ceiling, measured the same way, which
+// is the whole reason for standing on one publisher. Picking by how populated a
+// row happened to be scored Sonnet 4.6 at low effort against Sonnet 5 at max,
+// and the gap read as a capability difference.
+const preferOver = (
+  candidate: BenchmarkRecord,
+  existing: BenchmarkRecord,
+): boolean => {
+  const candidateIndex = candidate.intelligenceIndex ?? -1;
+  const existingIndex = existing.intelligenceIndex ?? -1;
+
+  if (candidateIndex !== existingIndex) {
+    return candidateIndex > existingIndex;
+  }
+
+  return informationScore(candidate) > informationScore(existing);
+};
+
 export const fetchArtificialAnalysisBenchmarks = async (
   apiKey: string,
 ): Promise<BenchmarkIndex> => {
@@ -120,8 +140,7 @@ export const fetchArtificialAnalysisBenchmarks = async (
 
       if (
         key.length > 0 &&
-        (!isDefined(existing) ||
-          informationScore(record) > informationScore(existing))
+        (!isDefined(existing) || preferOver(record, existing))
       ) {
         index.set(key, record);
       }

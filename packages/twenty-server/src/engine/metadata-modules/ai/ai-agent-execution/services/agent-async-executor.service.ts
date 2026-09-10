@@ -7,7 +7,7 @@ import {
   type LanguageModelUsage,
   type ModelMessage,
   Output,
-  stepCountIs,
+  isStepCount,
   type StepResult,
   type ToolSet,
 } from 'ai';
@@ -307,9 +307,12 @@ export class AgentAsyncExecutorService {
 
       let tools: ToolSet = {};
       let toolCatalogSection = '';
-      let providerOptions = getCallLevelProviderOptions({
+      const providerOptions = getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,
-        providerOptions: undefined,
+        providerOptions:
+          this.aiModelConfigService.getReasoningProviderOptions(
+            registeredModel,
+          ),
         promptCacheKey: agent?.id,
       });
 
@@ -361,15 +364,6 @@ export class AgentAsyncExecutorService {
           ...registryTools,
           ...nativeTools,
         };
-
-        providerOptions = getCallLevelProviderOptions({
-          sdkPackage: registeredModel.sdkPackage,
-          providerOptions:
-            this.aiModelConfigService.getReasoningProviderOptions(
-              registeredModel,
-            ),
-          promptCacheKey: agent?.id,
-        });
       }
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
@@ -377,7 +371,7 @@ export class AgentAsyncExecutorService {
       let hasNoMoreAvailableCredits = false;
 
       const textResponse = await generateText({
-        system: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
+        instructions: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
         tools,
         model: registeredModel.model,
         messages: messages.map(
@@ -387,19 +381,19 @@ export class AgentAsyncExecutorService {
           }),
         ),
         stopWhen: (step) =>
-          stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
+          isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
           hasNoMoreAvailableCredits,
         providerOptions,
-        experimental_telemetry: buildAiTelemetry({
+        ...buildAiTelemetry({
           functionId: 'agent-execution',
           workspaceId,
           userWorkspaceId,
           agentId: agent?.id,
         }),
-        experimental_onToolCallFinish: (event) => {
+        onToolExecutionEnd: (event) => {
           this.metricsService.recordHistogram({
             key: MetricsKeys.WorkflowAgentToolExecutionDurationMs,
-            value: event.durationMs,
+            value: event.toolExecutionMs,
             unit: 'ms',
             attributes: {
               model: registeredModel.modelId,
@@ -408,7 +402,7 @@ export class AgentAsyncExecutorService {
             bucketBoundaries: TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES,
           });
         },
-        onStepFinish: async (step) => {
+        onStepEnd: async (step) => {
           const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
             await this.aiBillingService.decrementAndCheckAvailableCredits({
               modelId: registeredModel.modelId,
@@ -460,7 +454,7 @@ export class AgentAsyncExecutorService {
             });
           }
         },
-        experimental_repairToolCall: async ({
+        repairToolCall: async ({
           toolCall,
           tools: toolsForRepair,
           inputSchema,
@@ -494,7 +488,7 @@ export class AgentAsyncExecutorService {
 
       if (agentSchema) {
         const structuredResult = await generateText({
-          system: STRUCTURED_OUTPUT_SYSTEM_PROMPT,
+          instructions: STRUCTURED_OUTPUT_SYSTEM_PROMPT,
           model: registeredModel.model,
           prompt: `Based on the following execution results, generate the structured output according to the schema:
 
@@ -507,13 +501,13 @@ export class AgentAsyncExecutorService {
             providerOptions: undefined,
             promptCacheKey: agent?.id,
           }),
-          experimental_telemetry: buildAiTelemetry({
+          ...buildAiTelemetry({
             functionId: 'agent-structured-output',
             workspaceId,
             userWorkspaceId,
             agentId: agent?.id,
           }),
-          onStepFinish: async (step) => {
+          onStepEnd: async (step) => {
             const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
               await this.aiBillingService.decrementAndCheckAvailableCredits({
                 modelId: registeredModel.modelId,
