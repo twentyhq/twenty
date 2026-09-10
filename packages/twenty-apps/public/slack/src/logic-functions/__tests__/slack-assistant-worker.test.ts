@@ -63,6 +63,7 @@ vi.mock(
 
 vi.mock('src/logic-functions/handlers/slack-post-message-handler', () => ({
   slackPostMessageHandler: slackPostMessageHandlerMock,
+  postSlackMessageWithPreviewScope: slackPostMessageHandlerMock,
 }));
 
 vi.mock(
@@ -180,12 +181,12 @@ describe('slackAssistantWorkerHandler', () => {
       'status:stop',
       'reply:answer',
     ]);
-    expect(startSlackAssistantStatusUpdatesMock).toHaveBeenCalledExactlyOnceWith(
-      {
-        slackChannelId: REQUEST_RECORD.slackChannelId,
-        threadTimestamp: REQUEST_RECORD.slackMessageTimestamp,
-      },
-    );
+    expect(
+      startSlackAssistantStatusUpdatesMock,
+    ).toHaveBeenCalledExactlyOnceWith({
+      slackChannelId: REQUEST_RECORD.slackChannelId,
+      threadTimestamp: REQUEST_RECORD.slackMessageTimestamp,
+    });
   });
 
   it('should stop the status before the failure reply when the context lookup throws', async () => {

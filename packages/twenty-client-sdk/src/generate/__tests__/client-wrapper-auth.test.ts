@@ -739,6 +739,29 @@ describe('Generated client wrapper auth behavior', () => {
       ]);
     });
 
+    it('should keep honouring a headers callback that starts sending a credential after the exchange', async () => {
+      const { fetchMock, calls } = buildMemberExchangeFetchMock();
+      let callbackToken: string | undefined;
+
+      const twentyClient = new TwentyClass({
+        url: 'https://example.com/graphql',
+        fetch: fetchMock as unknown as typeof globalThis.fetch,
+        headers: async (): Promise<HeadersInit> =>
+          callbackToken ? { Authorization: `Bearer ${callbackToken}` } : {},
+        runAs: { workspaceMemberId: WORKSPACE_MEMBER_ID },
+      });
+
+      await twentyClient.query({ record: { id: true } });
+      callbackToken = 'callback-token';
+      await twentyClient.query({ record: { id: true } });
+
+      expect(
+        calls
+          .filter((call) => call.url.endsWith('/graphql'))
+          .map((call) => call.authorization),
+      ).toEqual(['Bearer member-token', 'Bearer callback-token']);
+    });
+
     it('should let an explicit Authorization header win over the member', async () => {
       const { fetchMock, calls } = buildMemberExchangeFetchMock();
 

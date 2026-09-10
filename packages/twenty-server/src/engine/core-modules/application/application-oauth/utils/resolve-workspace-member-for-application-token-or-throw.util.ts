@@ -15,17 +15,28 @@ type ActableWorkspaceMember = Pick<
 // re-issue itself for that person, and only a live member can be acted as.
 export const resolveWorkspaceMemberForApplicationTokenOrThrow = ({
   workspaceMemberId,
+  applicationDefaultRoleId,
   requestUserWorkspaceId,
   requestWorkspaceMemberId,
   flatWorkspaceMemberMaps,
 }: {
   workspaceMemberId: string;
+  applicationDefaultRoleId: string | null;
   requestUserWorkspaceId: string | null;
   requestWorkspaceMemberId: string | null;
   flatWorkspaceMemberMaps: {
     byId: Partial<Record<string, ActableWorkspaceMember>>;
   };
 }): ActableWorkspaceMember => {
+  // A token bound to a person is bounded by the application's role, so an
+  // application without one would otherwise inherit the member's whole role.
+  if (!isDefined(applicationDefaultRoleId)) {
+    throw new ApplicationException(
+      'An application needs a role of its own to act as a workspace member',
+      ApplicationExceptionCode.FORBIDDEN,
+    );
+  }
+
   if (
     isDefined(requestUserWorkspaceId) &&
     requestWorkspaceMemberId !== workspaceMemberId

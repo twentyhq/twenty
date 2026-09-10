@@ -22,16 +22,19 @@ const buildMember = (
 const resolve = ({
   member = buildMember(),
   workspaceMemberId = WORKSPACE_MEMBER_ID,
+  applicationDefaultRoleId = 'application-role-id',
   requestUserWorkspaceId = null,
   requestWorkspaceMemberId = null,
 }: {
   member?: TestWorkspaceMember | undefined;
   workspaceMemberId?: string;
+  applicationDefaultRoleId?: string | null;
   requestUserWorkspaceId?: string | null;
   requestWorkspaceMemberId?: string | null;
 } = {}) =>
   resolveWorkspaceMemberForApplicationTokenOrThrow({
     workspaceMemberId,
+    applicationDefaultRoleId,
     requestUserWorkspaceId,
     requestWorkspaceMemberId,
     flatWorkspaceMemberMaps: {
@@ -51,6 +54,12 @@ describe('resolveWorkspaceMemberForApplicationTokenOrThrow', () => {
         requestWorkspaceMemberId: WORKSPACE_MEMBER_ID,
       }),
     ).toMatchObject({ id: WORKSPACE_MEMBER_ID });
+  });
+
+  it('should refuse an application that has no role of its own', () => {
+    expect(() => resolve({ applicationDefaultRoleId: null })).toThrow(
+      expect.objectContaining({ code: ApplicationExceptionCode.FORBIDDEN }),
+    );
   });
 
   it('should refuse a token issued for a person asking for another member', () => {

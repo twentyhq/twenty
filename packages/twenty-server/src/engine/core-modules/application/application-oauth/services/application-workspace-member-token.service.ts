@@ -49,6 +49,7 @@ export class ApplicationWorkspaceMemberTokenService {
 
     const workspaceMember = resolveWorkspaceMemberForApplicationTokenOrThrow({
       workspaceMemberId,
+      applicationDefaultRoleId: application.defaultRoleId ?? null,
       requestUserWorkspaceId,
       requestWorkspaceMemberId,
       flatWorkspaceMemberMaps,

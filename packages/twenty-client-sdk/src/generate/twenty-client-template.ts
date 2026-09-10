@@ -327,21 +327,23 @@ export class TwentyGeneratedClient {
   }
 
   private async resolveAuthorizationToken(): Promise<string | null> {
-    if (
-      this.runAsWorkspaceMemberId === null ||
-      this.authorizationToken !== null
-    ) {
+    if (this.runAsWorkspaceMemberId === null) {
       return this.authorizationToken;
     }
 
-    // A headers callback is only known at request time; a credential it
-    // carries is the caller's own and wins over the member exchange.
+    // A headers callback is only known at request time and may change its
+    // answer; a credential it carries is the caller's own and wins over the
+    // member token, cached or not.
     const tokenFromResolvedHeaders = getTokenFromHeaders(
       await this.resolveHeaders(),
     );
 
     if (isNonEmptyString(tokenFromResolvedHeaders)) {
       return tokenFromResolvedHeaders;
+    }
+
+    if (this.authorizationToken !== null) {
+      return this.authorizationToken;
     }
 
     if (!this.workspaceMemberTokenPromise) {

@@ -346,10 +346,10 @@ closed and render nothing, rather than falling back to the app's own access.
 
 Record links the bot itself posts (assistant answers, workflow message steps)
 carry the preview too. Slack never sends `link_shared` for an app's own messages,
-so those previews are attached as the message is posted; the member gate does not
-apply there, since what the bot says is already decided upstream — the assistant
-runs with the requester's permissions, and workflow steps post what their author
-configured.
+so those previews are attached as the message is posted. An assistant answer's
+previews are fetched as the requester the agent answered as, and left off when
+the requester maps to no workspace member; a workflow message step's previews
+are fetched with the run's own access, which is the person who triggered it.
 
 ## Behaviour notes
 

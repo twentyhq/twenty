@@ -156,6 +156,7 @@ export const presentSlackRecordDetails = async (
     client: viewerClient,
     objectNameSingular: recordLink.objectNameSingular,
     recordId: recordLink.recordId,
+    includeDetails: true,
   }).catch((error) => {
     console.warn(
       `[slack] record fetch for the flexpane failed (${recordLink.objectNameSingular} ${recordLink.recordId}): ${error instanceof Error ? error.message : String(error)}`,

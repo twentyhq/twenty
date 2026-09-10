@@ -115,6 +115,7 @@ describe('presentSlackRecordDetails', () => {
       client: viewerClient,
       objectNameSingular: 'person',
       recordId: RECORD_ID,
+      includeDetails: true,
     });
     expect(presentDetailsMock).toHaveBeenCalledWith(
       expect.objectContaining({ trigger_id: 'Tr123' }),
