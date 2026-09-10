@@ -1,8 +1,8 @@
-import { parseModelVariantId } from 'src/engine/metadata-modules/ai/ai-models/utils/parse-model-variant-id.util';
+import { parseAiModelVariantId } from '../parse-ai-model-variant-id.util';
 
-describe('parseModelVariantId', () => {
+describe('parseAiModelVariantId', () => {
   it('splits a variant id into its model and effort', () => {
-    expect(parseModelVariantId('anthropic/claude-opus-5@xhigh')).toEqual({
+    expect(parseAiModelVariantId('anthropic/claude-opus-5@xhigh')).toEqual({
       modelId: 'anthropic/claude-opus-5',
       effort: 'xhigh',
     });
@@ -10,7 +10,7 @@ describe('parseModelVariantId', () => {
 
   it('keeps a Bedrock name that carries a colon intact', () => {
     expect(
-      parseModelVariantId('amazon-bedrock/us.deepseek.r1-v1:0@high'),
+      parseAiModelVariantId('amazon-bedrock/us.deepseek.r1-v1:0@high'),
     ).toEqual({
       modelId: 'amazon-bedrock/us.deepseek.r1-v1:0',
       effort: 'high',
@@ -18,13 +18,13 @@ describe('parseModelVariantId', () => {
   });
 
   it('returns a plain id without an effort', () => {
-    expect(parseModelVariantId('openai/gpt-5.6-sol')).toEqual({
+    expect(parseAiModelVariantId('openai/gpt-5.6-sol')).toEqual({
       modelId: 'openai/gpt-5.6-sol',
     });
   });
 
   it('treats a suffix that is not an effort as part of the id', () => {
-    expect(parseModelVariantId('custom/model@v2')).toEqual({
+    expect(parseAiModelVariantId('custom/model@v2')).toEqual({
       modelId: 'custom/model@v2',
     });
   });

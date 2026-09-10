@@ -63,9 +63,7 @@ import { type OnboardingEnrichmentCreditRewardTier } from 'src/engine/core-modul
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import {
   DEFAULT_DISABLED_MODELS,
-  DEFAULT_FAST_MODELS,
-  DEFAULT_RECOMMENDED_MODELS,
-  DEFAULT_SMART_MODELS,
+  DEFAULT_MODELS_BY_TIER,
 } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
 
 export class ConfigVariables {
@@ -1936,29 +1934,47 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Ordered list of fast model IDs to use as defaults; an ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
+      'Ordered list of model IDs backing the Extra Fast tier; the first available one is used. An ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
     type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_MODELS_DEFAULT_FAST: string[] = DEFAULT_FAST_MODELS;
+  AI_MODELS_DEFAULT_EXTRA_FAST: string[] = DEFAULT_MODELS_BY_TIER.extraFast;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Ordered list of smart model IDs to use as defaults; an ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
+      'Ordered list of model IDs backing the Fast tier; the first available one is used. An ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
     type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_MODELS_DEFAULT_SMART: string[] = DEFAULT_SMART_MODELS;
+  AI_MODELS_DEFAULT_FAST: string[] = DEFAULT_MODELS_BY_TIER.fast;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'List of recommended model IDs shown to workspaces using curated model selection; an ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
+      'Ordered list of model IDs backing the Balanced tier; the first available one is used. An ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
     type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_MODELS_DEFAULT_RECOMMENDED: string[] = DEFAULT_RECOMMENDED_MODELS;
+  AI_MODELS_DEFAULT_BALANCED: string[] = DEFAULT_MODELS_BY_TIER.balanced;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Ordered list of model IDs backing the Smart tier; the first available one is used. An ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_MODELS_DEFAULT_SMART: string[] = DEFAULT_MODELS_BY_TIER.smart;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Ordered list of model IDs backing the Extra Smart tier; the first available one is used. An ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_MODELS_DEFAULT_EXTRA_SMART: string[] = DEFAULT_MODELS_BY_TIER.extraSmart;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,

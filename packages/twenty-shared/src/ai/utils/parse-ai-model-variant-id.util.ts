@@ -1,10 +1,11 @@
-import { type AiModelEffort, isAiModelEffort } from 'twenty-shared/ai';
+import { type AiModelEffort } from '../constants/ai-model-effort.const';
+import { isAiModelEffort } from './is-ai-model-effort.util';
 
 const EFFORT_SEPARATOR = '@';
 
 // Catalog model names never contain `@` (Bedrock ids use `:`), so the last one
 // delimits the effort. Any other suffix is part of the id itself.
-export const parseModelVariantId = (
+export const parseAiModelVariantId = (
   modelId: string,
 ): { modelId: string; effort?: AiModelEffort } => {
   const separatorIndex = modelId.lastIndexOf(EFFORT_SEPARATOR);
