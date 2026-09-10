@@ -1,8 +1,7 @@
 declare const classNames: {
   readonly root: 'root';
-  readonly centered: 'centered';
-  readonly small: 'small';
-  readonly medium: 'medium';
+  readonly sm: 'sm';
+  readonly md: 'md';
   readonly thumb: 'thumb';
 };
 export default classNames;

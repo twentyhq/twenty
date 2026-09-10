@@ -1,6 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
@@ -9,7 +9,7 @@ import { Card } from 'twenty-ui/surfaces';
 import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
-export const ToggleImpersonate = () => {
+export const ImpersonationSwitch = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
@@ -43,7 +43,7 @@ export const ToggleImpersonate = () => {
 
   return (
     <Card rounded>
-      <SettingsOptionCardContentToggle
+      <SettingsOptionCardContentSwitch
         Icon={IconLifebuoy}
         title={t`Allow Support Team Access`}
         description={t`Grant access to your workspace so we can troubleshoot problems.`}
