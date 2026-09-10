@@ -118,6 +118,49 @@ describe('Slack assistant worker', () => {
     createdRequestIds.length = 0;
   });
 
+  it('should resolve mentions and channel references before the agent sees them', async () => {
+    slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
+    slack.addUser({ id: REQUESTER_USER_ID, displayName: 'Ada' });
+    slack.addUser({ id: 'U0UNLINKED', displayName: 'Bob Lee' });
+
+    const slackMessageTimestamp = nextMessageTimestamp();
+    const requestText =
+      'create a follow-up task for <@U0UNLINKED> and tell <@U0GHOST> in <#C0GEN|general>';
+
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      timestamp: slackMessageTimestamp,
+      userId: REQUESTER_USER_ID,
+      text: requestText,
+    });
+
+    const request = await createRequestRecord({
+      slackChannelId: CHANNEL_ID,
+      slackMessageTimestamp,
+      requestText,
+    });
+
+    const result = await slackAssistantWorkerHandler(
+      buildPendingRequest({
+        ...request,
+        slackChannelId: CHANNEL_ID,
+        slackMessageTimestamp,
+        requestText,
+      }),
+    );
+
+    expect(result).toEqual({ done: true });
+
+    const agentMessages = appRuntime.lastAgentMessages;
+    const promptedRequest = agentMessages[agentMessages.length - 1]?.content;
+
+    expect(promptedRequest).toContain(
+      'create a follow-up task for @Bob Lee (membership not confirmed) and tell @unknown Slack user U0GHOST in #general',
+    );
+    expect(promptedRequest).toContain('Slack mentions in this request');
+    expect(promptedRequest).not.toContain('<@U0');
+  });
+
   it('should answer a channel request in its thread, store the answer and subscribe the thread', async () => {
     slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
     slack.addUser({ id: REQUESTER_USER_ID, displayName: 'Ada' });
@@ -169,7 +212,10 @@ describe('Slack assistant worker', () => {
     // assistant turn without its footer, and the message that triggered this
     // run is left out of its own context.
     expect(appRuntime.lastAgentMessages).toEqual([
-      { role: 'user', content: '<@U0COLLEAGUE>: good question' },
+      {
+        role: 'user',
+        content: '@unknown Slack user U0COLLEAGUE: good question',
+      },
       { role: 'assistant', content: 'Acme has 2 open deals.' },
       {
         role: 'user',
