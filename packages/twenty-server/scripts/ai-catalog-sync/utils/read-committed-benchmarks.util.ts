@@ -28,7 +28,8 @@ const toRecord = ({
   intelligenceIndex: reading.intelligenceIndex,
   outputTokensPerSecond: reading.outputTokensPerSecond,
   costPerTask: reading.costPerTask,
-  effort: reading.effort ?? effort,
+  // The key a reading is filed under is the authority on its effort.
+  effort: effort ?? reading.effort,
   measuredAt: reading.measuredAt,
   aliases: reading.aliases ?? [modelName],
 });

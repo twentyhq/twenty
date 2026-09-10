@@ -317,4 +317,23 @@ describe('matchBenchmarks', () => {
 
     expect(result?.benchmarkByEffort?.high?.intelligenceIndex).toBe(41);
   });
+
+  it('labels a per-effort reading with the key it was filed under', () => {
+    const result = matchBenchmarks({
+      modelName: 'mistral-large-2512',
+      siblingModels: MISTRAL_MODELS,
+      benchmarkIndex: indexOf({
+        mistrallarge2512: { intelligenceIndex: 41, aliases: [] },
+        'mistrallarge2512@low': {
+          intelligenceIndex: 30,
+          effort: 'high',
+          aliases: [],
+        },
+      }),
+      measuredAt: MEASURED_AT,
+      efforts: ['low'],
+    });
+
+    expect(result?.benchmarkByEffort?.low?.effort).toBe('low');
+  });
 });

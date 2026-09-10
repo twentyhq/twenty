@@ -121,4 +121,22 @@ describe('readCommittedBenchmarks', () => {
 
     expect([...index.keys()].some((key) => key.includes('@'))).toBe(false);
   });
+
+  it('trusts the key over a nested reading that names another effort', () => {
+    const index = readCommittedBenchmarks(
+      writeOverlay({
+        ...PUBLISHED,
+        models: {
+          'claude-sonnet-5': {
+            ...PUBLISHED.models['claude-sonnet-5'],
+            benchmarkByEffort: {
+              low: { intelligenceIndex: 20.1, effort: 'high', aliases: [] },
+            },
+          },
+        },
+      }),
+    );
+
+    expect(index.get('claudesonnet5@low')?.effort).toBe('low');
+  });
 });

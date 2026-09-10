@@ -80,6 +80,7 @@ export const matchBenchmarks = ({
     if (isDefined(effortRecord) && hasMeasurement(effortRecord)) {
       benchmarkByEffort[effort] = {
         ...toBenchmark(effortRecord, measuredAt),
+        effort,
         aliases: [...new Set(effortRecord.aliases)],
       };
     }
