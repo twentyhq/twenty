@@ -1,7 +1,9 @@
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
@@ -15,6 +17,24 @@ import { formatNumber } from '~/utils/format/formatNumber';
 
 const GRID_TEMPLATE_COLUMNS = '1fr 1fr 1fr 1fr 1.4fr';
 const EMPTY_VALUE = '–';
+
+const StyledInheritedValue = styled.span`
+  color: ${themeCssVariables.font.color.light};
+`;
+
+const getInheritedAnchorClassName = (tier: ResolvedAiModelTier) =>
+  `ai-model-tier-inherited-benchmark-${tier.tier}`;
+
+// The reading belongs to the base model, so it is dimmed and explained rather
+// than passed off as a measurement at this effort.
+const renderBenchmarkValue = (tier: ResolvedAiModelTier, value: string) =>
+  tier.model?.isBenchmarkInherited === true && value !== EMPTY_VALUE ? (
+    <StyledInheritedValue className={getInheritedAnchorClassName(tier)}>
+      {value}
+    </StyledInheritedValue>
+  ) : (
+    value
+  );
 
 const formatSpeed = (tier: ResolvedAiModelTier) =>
   isDefined(tier.model?.outputTokensPerSecond)
@@ -35,7 +55,10 @@ const formatCost = (tier: ResolvedAiModelTier) => {
   }
 
   if (isDefined(tier.model.costPerTask)) {
-    return t`$${formatNumber(tier.model.costPerTask, { decimals: 2 })} / task`;
+    return renderBenchmarkValue(
+      tier,
+      t`$${formatNumber(tier.model.costPerTask, { decimals: 2 })} / task`,
+    );
   }
 
   const blendedCost = getAiModelBlendedCostPerMillionTokens(tier.model);
@@ -68,12 +91,26 @@ export const SettingsAiModelTiersPreview = () => {
               {tier.label}
             </TableCell>
             <TableCell>{tier.model?.label ?? EMPTY_VALUE}</TableCell>
-            <TableCell align="right">{formatSpeed(tier)}</TableCell>
-            <TableCell align="right">{formatIntelligence(tier)}</TableCell>
+            <TableCell align="right">
+              {renderBenchmarkValue(tier, formatSpeed(tier))}
+            </TableCell>
+            <TableCell align="right">
+              {renderBenchmarkValue(tier, formatIntelligence(tier))}
+            </TableCell>
             <TableCell align="right">{formatCost(tier)}</TableCell>
           </TableRow>
         ))}
       </Table>
+      {tiers
+        .filter((tier) => tier.model?.isBenchmarkInherited === true)
+        .map((tier) => (
+          <AppTooltip
+            key={tier.tier}
+            anchorSelect={`.${getInheritedAnchorClassName(tier)}`}
+            title={t`Not measured at this effort yet. Showing the base model's reading.`}
+            delay={TooltipDelay.shortDelay}
+          />
+        ))}
     </Section>
   );
 };

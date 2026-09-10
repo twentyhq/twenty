@@ -2043,6 +2043,7 @@ type ClientAiModelConfig {
   intelligenceIndex: Float
   outputTokensPerSecond: Float
   costPerTask: Float
+  isBenchmarkInherited: Boolean
 }
 
 enum ModelFamily {

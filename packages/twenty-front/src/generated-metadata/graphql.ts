@@ -1024,6 +1024,7 @@ export type ClientAiModelConfig = {
   dataResidency?: Maybe<Scalars['String']['output']>;
   inputCostPerMillionTokens?: Maybe<Scalars['Float']['output']>;
   intelligenceIndex?: Maybe<Scalars['Float']['output']>;
+  isBenchmarkInherited?: Maybe<Scalars['Boolean']['output']>;
   isDeprecated?: Maybe<Scalars['Boolean']['output']>;
   label: Scalars['String']['output'];
   maxOutputTokens?: Maybe<Scalars['Float']['output']>;

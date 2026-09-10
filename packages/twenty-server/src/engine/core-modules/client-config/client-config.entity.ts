@@ -87,6 +87,11 @@ export class ClientAiModelConfig {
 
   @Field(() => Number, { nullable: true })
   costPerTask?: number;
+
+  // A pinned effort without a reading of its own shows the base model's
+  // figures until the benchmark sync measures it.
+  @Field(() => Boolean, { nullable: true })
+  isBenchmarkInherited?: boolean;
 }
 
 @ObjectType()

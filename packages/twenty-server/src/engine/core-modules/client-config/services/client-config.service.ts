@@ -23,6 +23,8 @@ import { ENTERPRISE_INSTANCE_TYPE } from 'twenty-shared/constants';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type AiModelBenchmark } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmark.type';
+import { parseModelVariantId } from 'src/engine/metadata-modules/ai/ai-models/utils/parse-model-variant-id.util';
 
 @Injectable()
 export class ClientConfigService {
@@ -32,6 +34,27 @@ export class ClientConfigService {
     private aiModelRegistryService: AiModelRegistryService,
     private maintenanceModeService: MaintenanceModeService,
   ) {}
+
+  // A variant carries only the reading taken at its own effort, so until the
+  // sync measures it the base model's reading is shown, flagged as such.
+  private resolveBenchmark(modelId: string): {
+    benchmark?: AiModelBenchmark;
+    isInherited: boolean;
+  } {
+    const ownBenchmark =
+      this.aiModelRegistryService.getModelConfig(modelId)?.benchmark;
+
+    if (isDefined(ownBenchmark)) {
+      return { benchmark: ownBenchmark, isInherited: false };
+    }
+
+    const { modelId: baseModelId, effort } = parseModelVariantId(modelId);
+    const baseBenchmark = isDefined(effort)
+      ? this.aiModelRegistryService.getModelConfig(baseModelId)?.benchmark
+      : undefined;
+
+    return { benchmark: baseBenchmark, isInherited: isDefined(baseBenchmark) };
+  }
 
   private isCloudflareIntegrationEnabled(): boolean {
     return (
@@ -77,6 +100,9 @@ export class ClientConfigService {
 
         const modelFamily = modelConfig?.modelFamily;
         const providerName = registeredModel.providerName;
+        const { benchmark, isInherited } = this.resolveBenchmark(
+          registeredModel.modelId,
+        );
 
         return {
           modelId: registeredModel.modelId,
@@ -97,9 +123,10 @@ export class ClientConfigService {
           maxOutputTokens: modelConfig?.maxOutputTokens,
           isDeprecated: modelConfig?.isDeprecated,
           dataResidency: modelConfig?.dataResidency,
-          intelligenceIndex: modelConfig?.benchmark?.intelligenceIndex,
-          outputTokensPerSecond: modelConfig?.benchmark?.outputTokensPerSecond,
-          costPerTask: modelConfig?.benchmark?.costPerTask,
+          intelligenceIndex: benchmark?.intelligenceIndex,
+          outputTokensPerSecond: benchmark?.outputTokensPerSecond,
+          costPerTask: benchmark?.costPerTask,
+          isBenchmarkInherited: isInherited,
         };
       },
     );

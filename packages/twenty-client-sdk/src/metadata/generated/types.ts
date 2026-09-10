@@ -3916,6 +3916,9 @@ export default {
             "costPerTask": [
                 15
             ],
+            "isBenchmarkInherited": [
+                8
+            ],
             "__typename": [
                 1
             ]

@@ -10,38 +10,40 @@ import { type AiModelTier } from 'twenty-shared/ai';
 
 import { type AiModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-preferences.type';
 
+// Efforts are pinned so a tier runs at the effort its benchmark was measured
+// at, and so one model family can back neighbouring tiers at different speeds.
 export const DEFAULT_MODELS_BY_TIER: Record<AiModelTier, string[]> = {
   extraFast: [
-    'google/gemini-3.5-flash-lite',
-    'openai/gpt-5.4-nano',
-    'anthropic/claude-haiku-4-5',
-    'xai/grok-4.3',
-    'mistral/mistral-small-latest',
+    'openai/gpt-5.6-luna@none',
+    'google/gemini-3.8-flash@low',
+    'anthropic/claude-sonnet-5@low',
+    'xai/grok-4.5@low',
+    'mistral/mistral-small-latest@none',
   ],
   fast: [
-    'openai/gpt-5.6-luna',
-    'google/gemini-3.8-flash',
-    'anthropic/claude-sonnet-5',
-    'xai/grok-4.5',
+    'openai/gpt-5.6-luna@low',
+    'google/gemini-3.8-flash@medium',
+    'anthropic/claude-sonnet-5@medium',
+    'xai/grok-4.5@medium',
     'mistral/mistral-medium-latest',
   ],
   balanced: [
-    'openai/gpt-5.6-terra',
-    'anthropic/claude-sonnet-5',
-    'google/gemini-3.8-flash',
-    'xai/grok-4.6',
+    'openai/gpt-5.6-terra@medium',
+    'anthropic/claude-sonnet-5@high',
+    'google/gemini-3.8-flash@high',
+    'xai/grok-4.6@medium',
     'mistral/mistral-large-latest',
   ],
   smart: [
-    'openai/gpt-5.6-sol',
-    'anthropic/claude-opus-5',
-    'google/gemini-3.8-flash',
-    'xai/grok-4.6',
+    'openai/gpt-5.6-sol@high',
+    'anthropic/claude-opus-5@high',
+    'google/gemini-3.8-flash@high',
+    'xai/grok-4.6@high',
     'mistral/mistral-large-latest',
   ],
   extraSmart: [
-    'openai/gpt-6-astra',
-    'anthropic/claude-fable-5-1',
+    'openai/gpt-6-astra@xhigh',
+    'anthropic/claude-fable-5-1@xhigh',
     'google/gemini-3.8-flash@high',
     'xai/grok-4.6@xhigh',
     'mistral/mistral-large-latest',
