@@ -39,33 +39,6 @@ import { Button } from 'twenty-ui';
 import { Button } from 'twenty-ui/input';
 ```
 
-# Radio migration
-
-Put each set of choices inside one `RadioGroup`. Selection belongs to the group
-through `value` / `defaultValue` / `onValueChange`; each `Radio` takes a required
-`value` and uses `children` for its label. Groups support options nested inside
-layout components without cloning children.
-
-```tsx
-<RadioGroup name="billingInterval" defaultValue="monthly" aria-label="Billing interval">
-  <Radio value="monthly">Monthly</Radio>
-  <Radio value="yearly" size="md">Yearly</Radio>
-</RadioGroup>
-```
-
-- Replace `RadioSize.Small` / `Large` with `"sm"` / `"md"`.
-- Replace `label` with children. For a label before the control, use a wrapping
-  `<label>` with its text before `<Radio value="..." />`.
-- Replace `Radio.Group` with `RadioGroup`. Remove per-radio `checked`, `name`,
-  `onChange`, and `onCheckedChange`; handle selection with the group's
-  `onValueChange(value, details)`. `details.cancel()` cancels a change.
-- `CardPicker` also takes `value` inside a `RadioGroup`, replacing its `checked`
-  and `handleChange` props. Keep expanded forms outside the selectable card.
-- Native props, refs, `inputRef`, and Base UI `render`, function `className`, and
-  function `style` pass through. Use `aria-label` for radios without visible text.
-- For native form reset, use controlled group state and reset it in the form's
-  `onReset` handler. Base UI 1.8 does not reset its uncontrolled group state.
-
 # Entry points
 
 | Subpath | Contents |
