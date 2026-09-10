@@ -77,7 +77,7 @@ npx nx test twenty-ui                  # Run unit tests
 npx vitest run --root packages/twenty-ui --project unit <file>   # Run a single test file
 ```
 
-# Slider migration
+# Slider
 
 `Slider` is a Base UI compound. Put `value` or `defaultValue` and
 `onValueChange(value, details)` on `Slider.Root`; use `onValueCommitted` for
@@ -102,8 +102,7 @@ For a range, pass an array and render one thumb per value with an explicit
 from Base UI support vertical and RTL sliders. Root colors are `accent` (blue)
 and `success` (green); use `style.color` for a custom color. Native props, refs,
 `render`, `className`, and `style` apply to each part's root element. Use
-`Slider.Thumb`'s `inputRef` to access its range input. The old `SliderProps` and
-`SliderColor` types are replaced by part types such as `SliderRootProps`.
+`Slider.Thumb`'s `inputRef` to access its range input.
 
 # License
 
