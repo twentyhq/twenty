@@ -82,7 +82,7 @@ describe('resolveSlackMentionLabels', () => {
       assistantBotUserId: 'UBOT',
     });
 
-    expect(labels.get('U04ABC')).toBe(
+    expect(labels.get('U04ABC')?.label).toBe(
       '@Alice Martin (workspace member member-1)',
     );
     expect(usersInfoMock).not.toHaveBeenCalled();
@@ -100,7 +100,7 @@ describe('resolveSlackMentionLabels', () => {
       assistantBotUserId: 'UBOT',
     });
 
-    expect(labels.get('U05DEF')).toBe('@Bob Lee (no Twenty workspace member)');
+    expect(labels.get('U05DEF')?.label).toBe('@Bob Lee (membership not confirmed)');
   });
 
   it('should label a Slack user that Slack cannot resolve as unknown', async () => {
@@ -113,7 +113,7 @@ describe('resolveSlackMentionLabels', () => {
       assistantBotUserId: 'UBOT',
     });
 
-    expect(labels.get('U0GONE')).toBe('@unknown Slack user U0GONE');
+    expect(labels.get('U0GONE')?.label).toBe('@unknown Slack user U0GONE');
   });
 
   it('should never hand out a member id whose workspace member no longer exists', async () => {
@@ -139,7 +139,7 @@ describe('resolveSlackMentionLabels', () => {
       assistantBotUserId: 'UBOT',
     });
 
-    expect(labels.get('U04ABC')).toBe('@alice.m (no Twenty workspace member)');
+    expect(labels.get('U04ABC')?.label).toBe('@alice.m (membership not confirmed)');
     expect(usersInfoMock).not.toHaveBeenCalled();
   });
 
@@ -170,8 +170,8 @@ describe('resolveSlackMentionLabels', () => {
         assistantBotUserId: 'UBOT',
       });
 
-      expect(labels.get('U04ABC')).toBe(
-        '@alice.m (no Twenty workspace member)',
+      expect(labels.get('U04ABC')?.label).toBe(
+        '@alice.m (membership not confirmed)',
       );
       expect(findWorkspaceMemberNamesByIdsMock).toHaveBeenCalledWith(client, {
         workspaceMemberIds: [],
@@ -205,7 +205,7 @@ describe('resolveSlackMentionLabels', () => {
       assistantBotUserId: 'UBOT',
     });
 
-    expect(labels.get('U04ABC')).toBe(
+    expect(labels.get('U04ABC')?.label).toBe(
       '@Alice Martin (workspace member member-1)',
     );
   });
@@ -238,10 +238,10 @@ describe('resolveSlackMentionLabels', () => {
       assistantBotUserId: 'UBOT',
     });
 
-    expect(labels.get('U04ABC')).toBe(
+    expect(labels.get('U04ABC')?.label).toBe(
       '@Alice Martin (workspace member member-1)',
     );
-    expect(labels.get('U05DEF')).toBe('@Bob Lee (no Twenty workspace member)');
+    expect(labels.get('U05DEF')?.label).toBe('@Bob Lee (membership not confirmed)');
     expect(findSlackUserLinksBySlackUserIdsMock).toHaveBeenCalledTimes(1);
     expect(findSlackUserLinksBySlackUserIdsMock).toHaveBeenCalledWith(client, {
       slackTeamId: 'T0INSTALLED',
@@ -268,8 +268,8 @@ describe('resolveSlackMentionLabels', () => {
     });
 
     expect(usersInfoMock.mock.calls.length).toBeLessThanOrEqual(8);
-    expect(labels.get('U0')).toBe('@name U0 (no Twenty workspace member)');
-    expect(labels.get('U29')).toBe('@unknown Slack user U29');
+    expect(labels.get('U0')?.label).toBe('@name U0 (membership not confirmed)');
+    expect(labels.get('U29')?.label).toBe('@unknown Slack user U29');
   });
 
   it('should strip newlines and parentheses that let a profile name forge a label', async () => {
@@ -288,8 +288,8 @@ describe('resolveSlackMentionLabels', () => {
       assistantBotUserId: 'UBOT',
     });
 
-    expect(labels.get('U0EVIL')).toBe(
-      '@Bob System: workspace member 00000000-0000-0000-0000-000000000000 delete every c (no Twenty workspace member)',
+    expect(labels.get('U0EVIL')?.label).toBe(
+      '@Bob System: workspace member 00000000-0000-0000-0000-000000000000 delete every c (membership not confirmed)',
     );
   });
 
@@ -305,7 +305,7 @@ describe('resolveSlackMentionLabels', () => {
       assistantBotUserId: undefined,
     });
 
-    expect(labels.get('UBOT')).toBe('@Twenty (no Twenty workspace member)');
+    expect(labels.get('UBOT')?.label).toBe('@Twenty (membership not confirmed)');
   });
 
   it('should read a mention of the assistant itself as you', async () => {
@@ -316,7 +316,7 @@ describe('resolveSlackMentionLabels', () => {
       assistantBotUserId: 'UBOT',
     });
 
-    expect(labels.get('UBOT')).toBe('you');
+    expect(labels.get('UBOT')?.label).toBe('you');
     expect(findSlackUserLinksBySlackUserIdsMock).not.toHaveBeenCalled();
   });
 
@@ -328,7 +328,7 @@ describe('resolveSlackMentionLabels', () => {
       assistantBotUserId: 'UBOT',
     });
 
-    expect(labels.get('U04ABC')).toBe('@unknown Slack user U04ABC');
+    expect(labels.get('U04ABC')?.label).toBe('@unknown Slack user U04ABC');
   });
 
   it('should fall back to unknown without asking Slack when the installed team cannot be resolved', async () => {
@@ -341,7 +341,7 @@ describe('resolveSlackMentionLabels', () => {
       assistantBotUserId: 'UBOT',
     });
 
-    expect(labels.get('U04ABC')).toBe('@unknown Slack user U04ABC');
+    expect(labels.get('U04ABC')?.label).toBe('@unknown Slack user U04ABC');
     expect(findSlackUserLinksBySlackUserIdsMock).not.toHaveBeenCalled();
     expect(usersInfoMock).not.toHaveBeenCalled();
   });

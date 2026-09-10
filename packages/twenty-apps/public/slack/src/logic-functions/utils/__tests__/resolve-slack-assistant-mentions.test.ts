@@ -2,6 +2,7 @@ import { type WebClient } from '@slack/web-api';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { type SlackMentionLabel } from 'src/logic-functions/types/slack-mention-label.type';
 import { resolveSlackAssistantMentions } from 'src/logic-functions/utils/resolve-slack-assistant-mentions';
 
 const { resolveSlackMentionLabelsMock } = vi.hoisted(() => ({
@@ -14,6 +15,16 @@ vi.mock('src/logic-functions/utils/resolve-slack-mention-labels', () => ({
 
 const client = {} as CoreApiClient;
 const slackClient = {} as WebClient;
+
+const ALICE: SlackMentionLabel = {
+  label: '@Alice Martin (workspace member member-1)',
+  name: 'Alice Martin',
+};
+const BOB: SlackMentionLabel = {
+  label: '@Bob Lee (membership not confirmed)',
+  name: 'Bob Lee',
+};
+const ASSISTANT: SlackMentionLabel = { label: 'you', name: undefined };
 
 const resolve = (
   requestText: string,
@@ -39,8 +50,9 @@ describe('resolveSlackAssistantMentions', () => {
     vi.clearAllMocks();
     resolveSlackMentionLabelsMock.mockResolvedValue(
       new Map([
-        ['U04ABC', '@Alice Martin (workspace member member-1)'],
-        ['U05DEF', '@Bob Lee (no Twenty workspace member)'],
+        ['U04ABC', ALICE],
+        ['U05DEF', BOB],
+        ['UBOT', ASSISTANT],
       ]),
     );
   });
@@ -54,7 +66,7 @@ describe('resolveSlackAssistantMentions', () => {
     expect(resolved.hasMentionedUsers).toBe(true);
   });
 
-  it('should resolve the author prefix and the mentions of replayed history', async () => {
+  it('should name a history author without claiming anything about their membership', async () => {
     const resolved = await resolve('and who owns Acme?', [
       { role: 'user', content: '<@U04ABC>: ask <@U05DEF> about Acme' },
       { role: 'assistant', content: 'Acme is a company record.' },
@@ -64,13 +76,46 @@ describe('resolveSlackAssistantMentions', () => {
       {
         role: 'user',
         content:
-          '@Alice Martin (workspace member member-1): ask @Bob Lee (no Twenty workspace member) about Acme',
+          '@Alice Martin: ask @Bob Lee (membership not confirmed) about Acme',
       },
       { role: 'assistant', content: 'Acme is a company record.' },
     ]);
   });
 
-  it('should collect the ids of the request and the history in one lookup', async () => {
+  it('should name a history author the app could not resolve', async () => {
+    resolveSlackMentionLabelsMock.mockResolvedValue(new Map());
+
+    const resolved = await resolve('and who owns Acme?', [
+      { role: 'user', content: '<@U0GHOST>: I do' },
+    ]);
+
+    expect(resolved.conversationMessages[0].content).toBe(
+      '@unknown Slack user U0GHOST: I do',
+    );
+  });
+
+  it('should read a history turn the assistant itself wrote as you', async () => {
+    const resolved = await resolve('and who owns Acme?', [
+      { role: 'user', content: '<@UBOT>: Acme is owned by Alice' },
+    ]);
+
+    expect(resolved.conversationMessages[0].content).toBe(
+      'you: Acme is owned by Alice',
+    );
+  });
+
+  it('should not report mentioned users when only history authors were resolved', async () => {
+    const resolved = await resolve('how many open deals does Acme have?', [
+      { role: 'user', content: '<@U04ABC>: good question' },
+    ]);
+
+    expect(resolved.hasMentionedUsers).toBe(false);
+    expect(resolved.conversationMessages[0].content).toBe(
+      '@Alice Martin: good question',
+    );
+  });
+
+  it('should look up history authors and in-text mentions in one batch', async () => {
     await resolve('ask <@U04ABC>', [
       { role: 'user', content: '<@U05DEF>: on it' },
     ]);
@@ -85,8 +130,6 @@ describe('resolveSlackAssistantMentions', () => {
   });
 
   it('should not report mentioned users when only the assistant is mentioned', async () => {
-    resolveSlackMentionLabelsMock.mockResolvedValue(new Map([['UBOT', 'you']]));
-
     const resolved = await resolve('<@UBOT> what is up?');
 
     expect(resolved.requestText).toBe('you what is up?');

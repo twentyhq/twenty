@@ -5,7 +5,12 @@ import { rewriteSlackMentions } from 'src/logic-functions/utils/rewrite-slack-me
 const rewrite = (text: string, labels: Record<string, string> = {}) =>
   rewriteSlackMentions({
     text,
-    userLabelBySlackUserId: new Map(Object.entries(labels)),
+    userLabelBySlackUserId: new Map(
+      Object.entries(labels).map(([slackUserId, label]) => [
+        slackUserId,
+        { label, name: undefined },
+      ]),
+    ),
   });
 
 describe('rewriteSlackMentions', () => {
@@ -23,10 +28,10 @@ describe('rewriteSlackMentions', () => {
     expect(
       rewrite('is it <@U04ABC> or <@U05DEF> who owns Acme?', {
         U04ABC: '@Alice Martin (workspace member member-1)',
-        U05DEF: '@Bob Lee (no Twenty workspace member)',
+        U05DEF: '@Bob Lee (membership not confirmed)',
       }),
     ).toBe(
-      'is it @Alice Martin (workspace member member-1) or @Bob Lee (no Twenty workspace member) who owns Acme?',
+      'is it @Alice Martin (workspace member member-1) or @Bob Lee (membership not confirmed) who owns Acme?',
     );
   });
 

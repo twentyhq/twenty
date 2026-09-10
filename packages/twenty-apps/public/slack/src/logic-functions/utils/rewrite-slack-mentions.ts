@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { SLACK_USER_MENTION_PATTERN } from 'src/logic-functions/constants/slack-user-mention-pattern';
+import { type SlackMentionLabel } from 'src/logic-functions/types/slack-mention-label.type';
 
 const SLACK_CHANNEL_MENTION_PATTERN = /<#([A-Z0-9]+)(?:\|([^>]*))?>/g;
 const SLACK_USER_GROUP_MENTION_PATTERN =
@@ -13,13 +14,13 @@ export const rewriteSlackMentions = ({
   userLabelBySlackUserId,
 }: {
   text: string;
-  userLabelBySlackUserId: ReadonlyMap<string, string>;
+  userLabelBySlackUserId: ReadonlyMap<string, SlackMentionLabel>;
 }): string =>
   text
     .replace(
       SLACK_USER_MENTION_PATTERN,
       (rawMention, slackUserId: string) =>
-        userLabelBySlackUserId.get(slackUserId) ?? rawMention,
+        userLabelBySlackUserId.get(slackUserId)?.label ?? rawMention,
     )
     .replace(
       SLACK_CHANNEL_MENTION_PATTERN,

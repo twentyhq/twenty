@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { SLACK_ASSISTANT_MENTION_LABEL } from 'src/logic-functions/constants/slack-assistant-mention-label';
 import { findSlackUserLinksBySlackUserIds } from 'src/logic-functions/data/find-slack-user-links-by-slack-user-ids';
 import { findWorkspaceMemberNamesByIds } from 'src/logic-functions/data/find-workspace-member-names-by-ids';
+import { type SlackMentionLabel } from 'src/logic-functions/types/slack-mention-label.type';
 import { type SlackUserLinkSummary } from 'src/logic-functions/types/slack-user-link-summary.type';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
@@ -35,8 +36,8 @@ const formatWorkspaceMemberLabel = ({
   workspaceMemberId: string;
 }): string => `@${name} (workspace member ${workspaceMemberId})`;
 
-const formatSlackOnlyLabel = (name: string): string =>
-  `@${name} (no Twenty workspace member)`;
+const formatUnconfirmedLabel = (name: string): string =>
+  `@${name} (membership not confirmed)`;
 
 const formatUnknownLabel = (slackUserId: string): string =>
   `@unknown Slack user ${slackUserId}`;
@@ -55,7 +56,7 @@ const resolveWorkspaceMemberLabels = async ({
 }: {
   client: CoreApiClient;
   linkBySlackUserId: ReadonlyMap<string, SlackUserLinkSummary>;
-}): Promise<Map<string, string>> => {
+}): Promise<Map<string, SlackMentionLabel>> => {
   const consentedWorkspaceMemberIds = [
     ...new Set(
       [...linkBySlackUserId.values()]
@@ -68,7 +69,7 @@ const resolveWorkspaceMemberLabels = async ({
     workspaceMemberIds: consentedWorkspaceMemberIds,
   });
 
-  const labelBySlackUserId = new Map<string, string>();
+  const labelBySlackUserId = new Map<string, SlackMentionLabel>();
 
   for (const link of linkBySlackUserId.values()) {
     const workspaceMemberId = resolveConsentedWorkspaceMemberId(link);
@@ -86,10 +87,10 @@ const resolveWorkspaceMemberLabels = async ({
         .map(sanitizeMentionName)
         .find(isNonEmptyString) ?? `Slack user ${link.slackUserId}`;
 
-    labelBySlackUserId.set(
-      link.slackUserId,
-      formatWorkspaceMemberLabel({ name, workspaceMemberId }),
-    );
+    labelBySlackUserId.set(link.slackUserId, {
+      label: formatWorkspaceMemberLabel({ name, workspaceMemberId }),
+      name,
+    });
   }
 
   return labelBySlackUserId;
@@ -137,13 +138,16 @@ export const resolveSlackMentionLabels = async ({
   client: CoreApiClient;
   slackClient: WebClient | undefined;
   assistantBotUserId: string | undefined;
-}): Promise<Map<string, string>> => {
-  const labelBySlackUserId = new Map<string, string>();
+}): Promise<Map<string, SlackMentionLabel>> => {
+  const labelBySlackUserId = new Map<string, SlackMentionLabel>();
   const mentionedUserIds: string[] = [];
 
   for (const slackUserId of slackUserIds) {
     if (slackUserId === assistantBotUserId) {
-      labelBySlackUserId.set(slackUserId, SLACK_ASSISTANT_MENTION_LABEL);
+      labelBySlackUserId.set(slackUserId, {
+        label: SLACK_ASSISTANT_MENTION_LABEL,
+        name: undefined,
+      });
       continue;
     }
 
@@ -151,7 +155,10 @@ export const resolveSlackMentionLabels = async ({
       mentionedUserIds.push(slackUserId);
     }
 
-    labelBySlackUserId.set(slackUserId, formatUnknownLabel(slackUserId));
+    labelBySlackUserId.set(slackUserId, {
+      label: formatUnknownLabel(slackUserId),
+      name: undefined,
+    });
   }
 
   if (mentionedUserIds.length === 0 || !isDefined(slackClient)) {
@@ -190,7 +197,10 @@ export const resolveSlackMentionLabels = async ({
     );
 
     if (isNonEmptyString(linkName)) {
-      labelBySlackUserId.set(slackUserId, formatSlackOnlyLabel(linkName));
+      labelBySlackUserId.set(slackUserId, {
+        label: formatUnconfirmedLabel(linkName),
+        name: linkName,
+      });
       continue;
     }
 
@@ -203,7 +213,10 @@ export const resolveSlackMentionLabels = async ({
   });
 
   for (const [slackUserId, displayName] of displayNameBySlackUserId) {
-    labelBySlackUserId.set(slackUserId, formatSlackOnlyLabel(displayName));
+    labelBySlackUserId.set(slackUserId, {
+      label: formatUnconfirmedLabel(displayName),
+      name: displayName,
+    });
   }
 
   return labelBySlackUserId;
