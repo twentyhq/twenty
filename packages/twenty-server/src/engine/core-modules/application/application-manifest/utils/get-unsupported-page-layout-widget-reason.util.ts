@@ -2,7 +2,7 @@ import { WidgetType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MANIFEST_ENTITY_REGISTRY } from 'src/engine/core-modules/application/application-manifest/utils/find-manifest-entity-descriptor-by-universal-identifier.util';
-import { getUnresolvableObjectReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unresolvable-object-reason.util';
+import { getUnresolvableReferenceReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unresolvable-reference-reason.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -74,7 +74,7 @@ const getFlatEntityMaps = ({
   }
 };
 
-const getUnresolvableReferenceReason = ({
+const getUnresolvableConfigurationKeyReason = ({
   key,
   metadataName,
   universalIdentifier,
@@ -154,7 +154,7 @@ const findUnresolvableReferenceReason = ({
     }
 
     for (const universalIdentifier of Array.isArray(child) ? child : [child]) {
-      const reason = getUnresolvableReferenceReason({
+      const reason = getUnresolvableConfigurationKeyReason({
         key,
         metadataName,
         universalIdentifier,
@@ -202,13 +202,14 @@ export const getUnsupportedPageLayoutWidgetReason = ({
     return 'page layout widget with a conditional availability expression';
   }
 
-  const unresolvableObjectReason = getUnresolvableObjectReason({
+  const unresolvableObjectReason = getUnresolvableReferenceReason({
     metadataName: 'pageLayoutWidget',
-    objectUniversalIdentifier:
+    referenceMetadataName: 'objectMetadata',
+    referenceUniversalIdentifier:
       flatPageLayoutWidget.objectMetadataUniversalIdentifier,
     applicationAllFlatEntityMaps,
     allFlatEntityMaps,
-    exportedObjectUniversalIdentifiers,
+    resolvableReferenceUniversalIdentifiers: exportedObjectUniversalIdentifiers,
   });
 
   if (isDefined(unresolvableObjectReason)) {

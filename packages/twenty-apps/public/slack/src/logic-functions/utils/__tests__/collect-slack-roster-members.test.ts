@@ -1,5 +1,5 @@
-import { type WebClient } from '@slack/web-api';
-import { describe, expect, it, vi } from 'vitest';
+import { ErrorCode, type WebClient } from '@slack/web-api';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { type SlackRosterMember } from 'src/logic-functions/types/slack-roster-member.type';
 import { collectSlackRosterMembers } from 'src/logic-functions/utils/collect-slack-roster-members';
@@ -22,7 +22,49 @@ const buildSlackClient = (
   };
 };
 
+const buildRateLimitedError = (retryAfter: number): Error =>
+  Object.assign(new Error(`rate limited, retry in ${retryAfter} seconds`), {
+    code: ErrorCode.RateLimitedError,
+    retryAfter,
+  });
+
 describe('collectSlackRosterMembers', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('should wait out a rate limit when the caller passes a budget for it', async () => {
+    vi.useFakeTimers();
+
+    const usersListMock = vi
+      .fn()
+      .mockRejectedValueOnce(buildRateLimitedError(30))
+      .mockResolvedValue({ members: [{ id: 'U1' }], response_metadata: {} });
+
+    const membersPromise = collectSlackRosterMembers({
+      slackClient: { users: { list: usersListMock } } as unknown as WebClient,
+      rateLimitRetryBudgetMs: 60_000,
+    });
+
+    await vi.advanceTimersByTimeAsync(30_000);
+
+    expect((await membersPromise).members.map((member) => member.id)).toEqual([
+      'U1',
+    ]);
+    expect(usersListMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('should give up on a rate limit when the caller passes no budget', async () => {
+    const usersListMock = vi.fn().mockRejectedValue(buildRateLimitedError(30));
+
+    await expect(
+      collectSlackRosterMembers({
+        slackClient: { users: { list: usersListMock } } as unknown as WebClient,
+      }),
+    ).rejects.toThrow('rate limited, retry in 30 seconds');
+    expect(usersListMock).toHaveBeenCalledTimes(1);
+  });
+
   it('should collect only linkable members', async () => {
     const { slackClient } = buildSlackClient([
       {
