@@ -1,16 +1,38 @@
+import { execFileSync } from 'child_process';
 import fs from 'fs';
-import path from 'path';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { putFileToUploadUrl } from '@/cli/utilities/file/put-file-to-upload-url';
-import { readJson } from '@/cli/utilities/file/fs-utils';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 
+// The manifest the server registers has to describe the archive it is
+// registering, so it is read out of the tarball rather than from the build
+// output next to it.
+const readJsonFromTarball = (
+  tarballPath: string,
+  filename: string,
+): Record<string, unknown> => {
+  for (const entry of [`package/${filename}`, filename]) {
+    try {
+      const content = execFileSync('tar', ['-xzOf', tarballPath, entry], {
+        encoding: 'utf-8',
+      });
+
+      if (content.trim() !== '') {
+        return JSON.parse(content);
+      }
+    } catch {
+      continue;
+    }
+  }
+
+  throw new Error(`${filename} not found in ${tarballPath}`);
+};
+
 export type AppDeployOptions = {
   tarballPath: string;
-  outputDir: string;
   remote?: string;
   serverUrl?: string;
   token?: string;
@@ -26,7 +48,7 @@ export type AppDeployResult = {
 const innerAppDeploy = async (
   options: AppDeployOptions,
 ): Promise<CommandResult<AppDeployResult>> => {
-  const { tarballPath, outputDir, onProgress } = options;
+  const { tarballPath, onProgress } = options;
 
   if (options.remote) {
     ConfigService.setActiveRemote(options.remote);
@@ -34,12 +56,8 @@ const innerAppDeploy = async (
 
   onProgress?.(`Uploading ${tarballPath}...`);
 
-  const manifest = await readJson<Record<string, unknown>>(
-    path.join(outputDir, 'manifest.json'),
-  );
-  const packageJson = await readJson<Record<string, unknown>>(
-    path.join(outputDir, 'package.json'),
-  );
+  const manifest = readJsonFromTarball(tarballPath, 'manifest.json');
+  const packageJson = readJsonFromTarball(tarballPath, 'package.json');
 
   const apiService = new ApiService({
     serverUrl: options.serverUrl,

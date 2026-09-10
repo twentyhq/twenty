@@ -72,7 +72,6 @@ export class DeployCommand {
 
     const result = await appDeploy({
       tarballPath: buildResult.data.tarballPath!,
-      outputDir: buildResult.data.outputDir,
       remote: options.remote,
       onProgress,
     });
