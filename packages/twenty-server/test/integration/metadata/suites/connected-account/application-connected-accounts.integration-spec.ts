@@ -5,6 +5,7 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -155,6 +156,26 @@ describe('applicationConnectedAccounts resolver (e2e)', () => {
       expect.arrayContaining([
         { id: SHARED_BY_TIM_ID, isOwnedByCurrentUser: false },
         { id: PRIVATE_OF_JANE_ID, isOwnedByCurrentUser: true },
+      ]),
+    );
+  });
+
+  it('denies a member without the applications settings permission', async () => {
+    const response = await makeMetadataAPIRequestWithMemberRole({
+      query: APPLICATION_CONNECTED_ACCOUNTS_QUERY,
+      variables: { applicationId: applicationDbId },
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.body.data?.applicationConnectedAccounts ?? null).toBeNull();
+    expect(response.body.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          extensions: expect.objectContaining({
+            code: 'FORBIDDEN',
+            subCode: 'PERMISSION_DENIED',
+          }),
+        }),
       ]),
     );
   });

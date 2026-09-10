@@ -44,10 +44,10 @@ export const SettingsApplicationConnectionsSection = ({
   const { triggerAppOAuth } = useTriggerAppOAuth();
   const { connectionProviders, loading } =
     useFindApplicationConnectionProviders(applicationId);
-  const { accounts: connectedAccounts } =
+  const { accounts: connectedAccounts, loading: accountsLoading } =
     useApplicationConnectedAccounts(applicationId);
 
-  if (loading || connectionProviders.length === 0) {
+  if (loading || accountsLoading || connectionProviders.length === 0) {
     return null;
   }
 

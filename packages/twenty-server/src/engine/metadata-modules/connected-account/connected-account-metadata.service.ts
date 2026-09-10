@@ -106,6 +106,26 @@ export class ConnectedAccountMetadataService {
         userWorkspaceId,
       }),
       order: { createdAt: 'ASC', id: 'ASC' },
+      select: {
+        id: true,
+        handle: true,
+        provider: true,
+        lastCredentialsRefreshedAt: true,
+        authFailedAt: true,
+        authFailedReason: true,
+        archivedAt: true,
+        handleAliases: true,
+        scopes: true,
+        lastSignedInAt: true,
+        userWorkspaceId: true,
+        connectionProviderId: true,
+        applicationId: true,
+        workspaceId: true,
+        name: true,
+        visibility: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
   }
 
