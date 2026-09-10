@@ -392,7 +392,7 @@ For permanent deletes, use `.destroyed`.
 |----------|-------------|
 | `eventName` | Event to listen on, such as `person.updated`. Supports `*` for the object name, the operation, or both. |
 | `updatedFields` | Optional list of field names. On `.updated` events, only changes touching one of them trigger the function. |
-| `batchMode` | Optional boolean. When `true`, the handler is called once per batch of records instead of once per record. The server decides how many records a batch holds. |
+| `batchMode` | Optional boolean. When `true`, the handler is called once per batch of records instead of once per record. The server decides how many records a batch holds, up to 200. |
 
 Created event example:
 
@@ -491,7 +491,7 @@ const handler = async (batch: PeopleUpdatedBatch) => {
 ```
 
 <Note>
-Batch size is not something a handler can rely on. The server decides how many events a call carries, and a batch holds anything from a single event up to that maximum, depending on how many the originating write produced. Write the handler to loop over `events` whatever its length.
+Batch size is not something a handler can rely on. The server decides how many events a call carries, capped at 200, and a batch holds anything from a single event up to that ceiling depending on how many the originating write produced. Write the handler to loop over `events` whatever its length.
 </Note>
 
 Events are grouped by the user who caused them before being batched, so every call covers a single actor and `context.workspaceMemberId` stays meaningful. `updatedFields` filtering is applied before batching, so a batch only contains records you asked for.

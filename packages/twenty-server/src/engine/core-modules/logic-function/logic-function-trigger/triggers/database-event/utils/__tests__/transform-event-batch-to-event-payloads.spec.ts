@@ -554,9 +554,9 @@ describe('transformEventBatchToEventPayloads', () => {
       });
     });
 
-    it('should chunk by the configured maximum when it exactly divides the event count', () => {
+    it('should split into chunks of at most the ceiling, with a smaller remainder', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch({
-        events: createEvents(6),
+        events: createEvents(MAX_EVENTS_PER_TRIGGER_JOB * 2 + 1),
       });
 
       const result = transformEventBatchToEventPayloads({
@@ -569,91 +569,41 @@ describe('transformEventBatchToEventPayloads', () => {
             },
           }),
         ],
-        maxBatchSize: 2,
       });
 
       expect(result).toHaveLength(3);
       expect(
-        result.map((jobData) =>
+        result.map((jobData) => getBatchedEvents(jobData.payload).length),
+      ).toEqual([MAX_EVENTS_PER_TRIGGER_JOB, MAX_EVENTS_PER_TRIGGER_JOB, 1]);
+    });
+
+    it('should preserve event order across chunks', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch({
+        events: createEvents(MAX_EVENTS_PER_TRIGGER_JOB + 2),
+      });
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions: [
+          createMockLogicFunction({
+            databaseEventTriggerSettings: {
+              eventName: 'company.updated',
+              batchMode: true,
+            },
+          }),
+        ],
+      });
+
+      expect(
+        result.flatMap((jobData) =>
           getBatchedEvents(jobData.payload).map((event) => event.recordId),
         ),
-      ).toEqual([
-        ['record-1', 'record-2'],
-        ['record-3', 'record-4'],
-        ['record-5', 'record-6'],
-      ]);
-    });
-
-    it('should emit a smaller last job for the remainder', () => {
-      const workspaceEventBatch = createMockWorkspaceEventBatch({
-        events: createEvents(5),
-      });
-
-      const result = transformEventBatchToEventPayloads({
-        workspaceEventBatch,
-        logicFunctions: [
-          createMockLogicFunction({
-            databaseEventTriggerSettings: {
-              eventName: 'company.updated',
-              batchMode: true,
-            },
-          }),
-        ],
-        maxBatchSize: 2,
-      });
-
-      expect(result).toHaveLength(3);
-      expect(
-        result.map((jobData) => getBatchedEvents(jobData.payload).length),
-      ).toEqual([2, 2, 1]);
-    });
-
-    it('should never exceed the static ceiling even when the configured maximum is higher', () => {
-      const workspaceEventBatch = createMockWorkspaceEventBatch({
-        events: createEvents(MAX_EVENTS_PER_TRIGGER_JOB + 1),
-      });
-
-      const result = transformEventBatchToEventPayloads({
-        workspaceEventBatch,
-        logicFunctions: [
-          createMockLogicFunction({
-            databaseEventTriggerSettings: {
-              eventName: 'company.updated',
-              batchMode: true,
-            },
-          }),
-        ],
-        maxBatchSize: 100_000,
-      });
-
-      expect(result).toHaveLength(2);
-      expect(
-        result.map((jobData) => getBatchedEvents(jobData.payload).length),
-      ).toEqual([MAX_EVENTS_PER_TRIGGER_JOB, 1]);
-    });
-
-    it('should fall back to one event per job when the maximum is set to 1', () => {
-      const workspaceEventBatch = createMockWorkspaceEventBatch({
-        events: createEvents(3),
-      });
-
-      const result = transformEventBatchToEventPayloads({
-        workspaceEventBatch,
-        logicFunctions: [
-          createMockLogicFunction({
-            databaseEventTriggerSettings: {
-              eventName: 'company.updated',
-              batchMode: true,
-            },
-          }),
-        ],
-        maxBatchSize: 1,
-      });
-
-      expect(result).toHaveLength(3);
-      expect(
-        result.map((jobData) => getBatchedEvents(jobData.payload).length),
-      ).toEqual([1, 1, 1]);
+      ).toEqual(
+        Array.from(
+          { length: MAX_EVENTS_PER_TRIGGER_JOB + 2 },
+          (_, index) => `record-${index + 1}`,
+        ),
+      );
     });
 
     it('should never mix events triggered by different users in the same job', () => {
@@ -751,15 +701,12 @@ describe('transformEventBatchToEventPayloads', () => {
             },
           }),
         ],
-        maxBatchSize: 2,
       });
 
-      expect(result).toHaveLength(2);
+      expect(result).toHaveLength(1);
       expect(
-        result.map((jobData) =>
-          getBatchedEvents(jobData.payload).map((event) => event.recordId),
-        ),
-      ).toEqual([['record-1', 'record-3'], ['record-5']]);
+        getBatchedEvents(result[0].payload).map((event) => event.recordId),
+      ).toEqual(['record-1', 'record-3', 'record-5']);
     });
 
     it('should batch operations other than updated', () => {
@@ -778,13 +725,10 @@ describe('transformEventBatchToEventPayloads', () => {
             },
           }),
         ],
-        maxBatchSize: 2,
       });
 
-      expect(result).toHaveLength(2);
-      expect(
-        result.map((jobData) => getBatchedEvents(jobData.payload).length),
-      ).toEqual([2, 1]);
+      expect(result).toHaveLength(1);
+      expect(getBatchedEvents(result[0].payload)).toHaveLength(3);
     });
 
     it('should batch per logic function so an unbatched one keeps one job per event', () => {

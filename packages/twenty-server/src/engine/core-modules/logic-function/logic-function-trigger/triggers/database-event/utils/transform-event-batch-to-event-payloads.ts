@@ -12,14 +12,12 @@ import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/typ
 export const transformEventBatchToEventPayloads = ({
   workspaceEventBatch,
   logicFunctions,
-  maxBatchSize,
 }: {
   workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
   logicFunctions: Pick<
     LogicFunctionEntity,
     'id' | 'workspaceId' | 'databaseEventTriggerSettings'
   >[];
-  maxBatchSize?: number;
 }): LogicFunctionTriggerJobData[] => {
   const result: LogicFunctionTriggerJobData[] = [];
   const { events, ...batchEventInfo } = workspaceEventBatch;
@@ -47,13 +45,14 @@ export const transformEventBatchToEventPayloads = ({
       continue;
     }
 
-    const eventsPerJob = resolveEventsPerJob(maxBatchSize);
-
     // A job carries a single auth context, so events acted by different users can never share one
     for (const eventsSharingAuthContext of groupEventsByAuthContext(
       filteredEvents,
     )) {
-      for (const eventsChunk of chunk(eventsSharingAuthContext, eventsPerJob)) {
+      for (const eventsChunk of chunk(
+        eventsSharingAuthContext,
+        MAX_EVENTS_PER_TRIGGER_JOB,
+      )) {
         result.push({
           logicFunctionId: logicFunction.id,
           workspaceId: logicFunction.workspaceId,
@@ -66,17 +65,6 @@ export const transformEventBatchToEventPayloads = ({
 
   return result;
 };
-
-const resolveEventsPerJob = (maxBatchSize?: number): number =>
-  Math.max(
-    1,
-    Math.min(
-      isDefined(maxBatchSize)
-        ? Math.floor(maxBatchSize)
-        : MAX_EVENTS_PER_TRIGGER_JOB,
-      MAX_EVENTS_PER_TRIGGER_JOB,
-    ),
-  );
 
 const buildAuthContext = (event: ObjectRecordEvent) => ({
   ...(isDefined(event.userId) ? { userId: event.userId } : {}),

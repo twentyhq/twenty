@@ -1738,15 +1738,6 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   APPLICATION_REGISTRATION_JOB_ENQUEUE_RATE_LIMITING_LIMIT = 2000;
 
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Maximum number of database events delivered in a single job to a logic function trigger using batchMode. Set to 1 to disable batching for every application',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  LOGIC_FUNCTION_DATABASE_EVENT_MAX_BATCH_SIZE = 200;
-
   @CastToPositiveNumber()
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
