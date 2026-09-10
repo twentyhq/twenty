@@ -17,20 +17,17 @@ import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/over
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 
 export const readOverrideTranslation = ({
-  metadataName,
   overrides,
   locale,
   property,
   authorContext,
 }: {
-  metadataName: AllMetadataName;
   overrides: unknown;
   locale: string;
   property: string;
   authorContext: OverrideAuthorReadContext;
 }): string | undefined => {
   const translation = readAuthoredOverrideProperty({
-    metadataName,
     overrides,
     path: ['translations', locale, property],
     authorContext,
@@ -58,7 +55,6 @@ const resolveEffectiveProperty = ({
   const isTranslatable = translatableProperties.includes(property);
 
   const overrideValue = readAuthoredOverrideProperty({
-    metadataName,
     overrides,
     path: [property],
     authorContext: i18nContext,
@@ -74,7 +70,6 @@ const resolveEffectiveProperty = ({
   // translation even though it has no catalog to fall back to.
   if (isTranslatable) {
     const translation = readOverrideTranslation({
-      metadataName,
       overrides,
       locale: safeLocale,
       property,

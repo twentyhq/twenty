@@ -3,6 +3,8 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
 import { resolveMetadataEventRecord } from 'src/engine/subscriptions/metadata-event/utils/resolve-metadata-event-record.util';
 
+const CUSTOM = 'workspace-custom-application-universal-identifier';
+
 const buildI18nContext = (
   overrides: Partial<EffectiveEntityI18nContext> = {},
 ): EffectiveEntityI18nContext => ({
@@ -10,8 +12,7 @@ const buildI18nContext = (
   i18nInstance: { _: (messageId: string) => `translated:${messageId}` },
   isStandardApp: true,
   applicationCatalog: undefined,
-  workspaceCustomApplicationUniversalIdentifier:
-    'workspace-custom-application-universal-identifier',
+  workspaceCustomApplicationUniversalIdentifier: CUSTOM,
   ownerApplicationUniversalIdentifier: undefined,
   ...overrides,
 });
@@ -48,7 +49,10 @@ describe('resolveMetadataEventRecord', () => {
   it('should prefer an override over the translated base value', () => {
     const resolved = resolveMetadataEventRecord({
       metadataName: 'pageLayoutTab',
-      record: { title: 'Home', overrides: { title: 'Accueil maison' } },
+      record: {
+        title: 'Home',
+        overrides: { [CUSTOM]: { title: 'Accueil maison' } },
+      },
       i18nContext: buildI18nContext(),
     });
 
@@ -58,7 +62,10 @@ describe('resolveMetadataEventRecord', () => {
   it('should strip overrides from the delivered record', () => {
     const resolved = resolveMetadataEventRecord({
       metadataName: 'pageLayoutTab',
-      record: { title: 'Home', overrides: { title: 'Accueil maison' } },
+      record: {
+        title: 'Home',
+        overrides: { [CUSTOM]: { title: 'Accueil maison' } },
+      },
       i18nContext: buildI18nContext(),
     });
 
@@ -97,7 +104,7 @@ describe('resolveMetadataEventRecord', () => {
         title: 'Home',
         position: 0,
         icon: 'IconHome',
-        overrides: { position: 3, icon: 'IconStar' },
+        overrides: { [CUSTOM]: { position: 3, icon: 'IconStar' } },
       },
       i18nContext: buildI18nContext(),
     });
@@ -110,7 +117,10 @@ describe('resolveMetadataEventRecord', () => {
   it('should apply an override on a translatable property whose base value is empty', () => {
     const resolved = resolveMetadataEventRecord({
       metadataName: 'commandMenuItem',
-      record: { label: '', overrides: { label: 'Workspace label' } },
+      record: {
+        label: '',
+        overrides: { [CUSTOM]: { label: 'Workspace label' } },
+      },
       i18nContext: buildI18nContext(),
     });
 
@@ -122,7 +132,9 @@ describe('resolveMetadataEventRecord', () => {
       metadataName: 'objectMetadata',
       record: {
         labelSingular: 'Company',
-        overrides: { translations: { 'fr-FR': { labelSingular: 'Société' } } },
+        overrides: {
+          [CUSTOM]: { translations: { 'fr-FR': { labelSingular: 'Société' } } },
+        },
       },
       i18nContext: buildI18nContext({ locale: 'fr-FR' }),
     });
@@ -142,7 +154,7 @@ describe('resolveMetadataEventRecord', () => {
         isVisible: true,
         size: 120,
         position: 3,
-        overrides: { isVisible: false, size: 240 },
+        overrides: { [CUSTOM]: { isVisible: false, size: 240 } },
       },
       i18nContext: buildI18nContext(),
     });

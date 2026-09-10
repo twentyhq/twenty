@@ -105,26 +105,4 @@ describe('resolveEffectiveFlatEntityProperty', () => {
       }),
     ).toBe('Custom Title');
   });
-
-  it('should read a flat blob as the workspace custom application entry', () => {
-    const entity = buildEntity({ title: 'Legacy Title' } as never);
-
-    expect(
-      resolveEffectiveFlatEntityProperty({
-        metadataName: 'pageLayoutTab',
-        flatEntity: entity,
-        property: 'title',
-      }),
-    ).toBe('Legacy Title');
-    expect(
-      resolveEffectiveFlatEntityProperty({
-        metadataName: 'pageLayoutTab',
-        flatEntity: entity,
-        property: 'title',
-        authorContext: {
-          workspaceCustomApplicationUniversalIdentifier: CUSTOM,
-        },
-      }),
-    ).toBe('Legacy Title');
-  });
 });

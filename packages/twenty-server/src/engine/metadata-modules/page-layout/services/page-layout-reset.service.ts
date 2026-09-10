@@ -127,11 +127,8 @@ export class PageLayoutResetService {
 
     const widgetToUpdate: FlatPageLayoutWidget = {
       ...resetAuthoredOverrides({
-        metadataName: 'pageLayoutWidget',
         flatEntity: widget,
         authorUniversalIdentifier:
-          workspaceCustomFlatApplication.universalIdentifier,
-        workspaceCustomApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
       }),
       updatedAt: now,
@@ -276,11 +273,8 @@ export class PageLayoutResetService {
 
     const tabToUpdate: FlatPageLayoutTab = {
       ...resetAuthoredOverrides({
-        metadataName: 'pageLayoutTab',
         flatEntity: tab,
         authorUniversalIdentifier:
-          workspaceCustomFlatApplication.universalIdentifier,
-        workspaceCustomApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
       }),
       updatedAt: now,
@@ -444,7 +438,6 @@ export class PageLayoutResetService {
 
     const { toHardDelete: tabsToDelete, toReset: tabsToReset } =
       splitEntitiesByResetStrategy({
-        metadataName: 'pageLayoutTab',
         entities: existingTabs,
         workspaceCustomApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
@@ -619,7 +612,6 @@ export class PageLayoutResetService {
 
     const { toHardDelete: widgetsToDelete, toReset: widgetsToReset } =
       splitEntitiesByResetStrategy({
-        metadataName: 'pageLayoutWidget',
         entities: existingWidgets,
         workspaceCustomApplicationUniversalIdentifier,
         now,
@@ -770,7 +762,6 @@ export class PageLayoutResetService {
 
     const { toHardDelete: groupsToDelete, toReset: groupsToReset } =
       splitEntitiesByResetStrategy({
-        metadataName: 'viewFieldGroup',
         entities: existingGroups,
         workspaceCustomApplicationUniversalIdentifier,
         now,
@@ -778,7 +769,6 @@ export class PageLayoutResetService {
 
     const { toHardDelete: fieldsToDelete, toReset: fieldsToReset } =
       splitEntitiesByResetStrategy({
-        metadataName: 'viewField',
         entities: existingFields,
         workspaceCustomApplicationUniversalIdentifier,
         now,

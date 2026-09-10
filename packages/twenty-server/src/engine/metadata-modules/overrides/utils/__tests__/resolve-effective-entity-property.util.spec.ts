@@ -125,6 +125,13 @@ const frozenResolveFlat = (flatEntity: AnyOverrides): AnyOverrides => {
   };
 };
 
+const CUSTOM = 'workspace-custom-application-universal-identifier';
+
+// The frozen resolvers read the one flat entry of their era; the unified
+// resolver reads the same entry under the workspace custom application key.
+const keyUnderCustom = (overrides: AnyOverrides): AnyOverrides =>
+  isDefined(overrides) ? { [CUSTOM]: overrides } : overrides;
+
 const mockI18n = {
   _: (id: string) => `translated:${id}`,
 } as unknown as I18n;
@@ -221,15 +228,14 @@ describe('resolveEffectiveEntityProperty (parity with legacy resolvers)', () => 
               const actual = resolveEffectiveEntityProperty({
                 metadataName: 'objectMetadata',
                 baseValue: entity[key as keyof typeof entity] as string,
-                overrides: entity.overrides,
+                overrides: keyUnderCustom(entity.overrides),
                 property: key,
                 i18nContext: {
                   locale,
                   i18nInstance: mockI18n,
                   isStandardApp,
                   applicationCatalog,
-                  workspaceCustomApplicationUniversalIdentifier:
-                    'workspace-custom-application-universal-identifier',
+                  workspaceCustomApplicationUniversalIdentifier: CUSTOM,
                   ownerApplicationUniversalIdentifier: undefined,
                 },
               });
@@ -262,15 +268,14 @@ describe('resolveEffectiveEntityProperty (parity with legacy resolvers)', () => 
               const actual = resolveEffectiveEntityProperty({
                 metadataName: 'fieldMetadata',
                 baseValue: entity[key as keyof typeof entity] as string,
-                overrides: entity.overrides,
+                overrides: keyUnderCustom(entity.overrides),
                 property: key,
                 i18nContext: {
                   locale,
                   i18nInstance: mockI18n,
                   isStandardApp,
                   applicationCatalog,
-                  workspaceCustomApplicationUniversalIdentifier:
-                    'workspace-custom-application-universal-identifier',
+                  workspaceCustomApplicationUniversalIdentifier: CUSTOM,
                   ownerApplicationUniversalIdentifier: undefined,
                 },
               });
@@ -300,9 +305,23 @@ describe('resolveEffectiveFlatEntity (parity with legacy flat spread)', () => {
     ];
 
     for (const flatEntity of flatCorpus) {
+      const authoredFlatEntity = {
+        ...flatEntity,
+        overrides: keyUnderCustom(flatEntity.overrides),
+      };
+
       expect(
-        resolveEffectiveFlatEntity({ metadataName: 'view', flatEntity }),
-      ).toEqual(frozenResolveFlat(flatEntity));
+        resolveEffectiveFlatEntity({
+          metadataName: 'view',
+          flatEntity: authoredFlatEntity,
+          authorContext: {
+            workspaceCustomApplicationUniversalIdentifier: CUSTOM,
+          },
+        }),
+      ).toEqual({
+        ...frozenResolveFlat(flatEntity),
+        overrides: authoredFlatEntity.overrides,
+      });
     }
   });
 });
@@ -372,7 +391,7 @@ const expectParityFor = (
             applicationCatalog,
           );
 
-          const actual = resolve(base, overrides, {
+          const actual = resolve(base, keyUnderCustom(overrides), {
             locale,
             i18nInstance: mockI18n,
             isStandardApp,
@@ -444,7 +463,6 @@ describe('readOverrideTranslation', () => {
   it('reads the locale translation of the first author carrying it', () => {
     expect(
       readOverrideTranslation({
-        metadataName: 'fieldMetadata',
         overrides: {
           [OWNER]: { translations: { 'fr-FR': { label: 'Compte' } } },
           [CUSTOM]: { translations: { 'fr-FR': { label: 'Société' } } },
@@ -463,7 +481,6 @@ describe('readOverrideTranslation', () => {
 
     expect(
       readOverrideTranslation({
-        metadataName: 'fieldMetadata',
         overrides,
         locale: 'de-DE',
         property: 'label',
@@ -472,7 +489,6 @@ describe('readOverrideTranslation', () => {
     ).toBeUndefined();
     expect(
       readOverrideTranslation({
-        metadataName: 'fieldMetadata',
         overrides,
         locale: 'fr-FR',
         property: 'description',
@@ -484,7 +500,6 @@ describe('readOverrideTranslation', () => {
   it('ignores a non-string translation value', () => {
     expect(
       readOverrideTranslation({
-        metadataName: 'fieldMetadata',
         overrides: { [CUSTOM]: { translations: { 'fr-FR': { label: null } } } },
         locale: 'fr-FR',
         property: 'label',

@@ -87,15 +87,9 @@ export const fromUpdateTimelineActivityTypeInputToFlatTimelineActivityTypeToUpda
         update: updatedEditableProperties,
       }),
       overrides: mergeTranslationsIntoOverrides<TimelineActivityTypeOverrides>({
-        metadataName: 'timelineActivityType',
         existingOverrides: overrides,
         translationEntries: translations,
         authorUniversalIdentifier: callerApplicationUniversalIdentifier,
-        authorContext: {
-          workspaceCustomApplicationUniversalIdentifier,
-          ownerApplicationUniversalIdentifier:
-            existingFlatTimelineActivityType.applicationUniversalIdentifier,
-        },
       }),
       updatedAt: new Date().toISOString(),
     };

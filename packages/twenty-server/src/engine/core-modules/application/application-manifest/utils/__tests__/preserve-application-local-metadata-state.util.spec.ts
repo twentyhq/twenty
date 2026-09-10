@@ -1,7 +1,7 @@
 import { preserveApplicationLocalMetadataState } from 'src/engine/core-modules/application/application-manifest/utils/preserve-application-local-metadata-state.util';
 
 describe('preserveApplicationLocalMetadataState', () => {
-  it('keeps workspace overrides and activation while accepting app updates', () => {
+  it('keeps workspace overrides while accepting app updates', () => {
     expect(
       preserveApplicationLocalMetadataState({
         existingEntity: {
@@ -18,7 +18,7 @@ describe('preserveApplicationLocalMetadataState', () => {
     ).toEqual({
       label: 'New app label',
       overrides: { label: 'Workspace label' },
-      isActive: false,
+      isActive: true,
     });
   });
 
@@ -45,7 +45,7 @@ describe('preserveApplicationLocalMetadataState', () => {
       }),
     ).toEqual({
       universalOverrides: { pageLayoutUniversalIdentifier: 'layout-old' },
-      isActive: false,
+      isActive: true,
     });
   });
 });

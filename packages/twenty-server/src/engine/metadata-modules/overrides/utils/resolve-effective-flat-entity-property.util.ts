@@ -18,7 +18,8 @@ export const resolveEffectiveFlatEntityProperty = <
     string &
     keyof TFlatEntity,
 >({
-  metadataName,
+  // Only pins TMetadataName so the property is checked against the kind.
+  metadataName: _metadataName,
   flatEntity,
   property,
   authorContext,
@@ -32,7 +33,6 @@ export const resolveEffectiveFlatEntityProperty = <
   >;
 }): TFlatEntity[TProperty] => {
   const overrideValue = readAuthoredOverrideProperty({
-    metadataName,
     overrides: flatEntity.overrides,
     path: [property],
     authorContext: {

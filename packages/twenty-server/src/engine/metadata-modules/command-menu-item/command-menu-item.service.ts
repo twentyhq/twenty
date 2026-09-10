@@ -287,14 +287,10 @@ export class CommandMenuItemService {
 
     const flatCommandMenuItemToUpdate: FlatCommandMenuItem = {
       ...resetAuthoredOverrides({
-        metadataName: 'commandMenuItem',
         flatEntity: existingFlatCommandMenuItem,
         authorUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
-        workspaceCustomApplicationUniversalIdentifier:
-          workspaceCustomFlatApplication.universalIdentifier,
       }),
-      isActive: true,
       updatedAt: new Date().toISOString(),
     };
 

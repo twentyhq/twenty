@@ -111,15 +111,6 @@ describe('dispatchUpdateToAuthoredOverride', () => {
     });
   });
 
-  it('lifts a legacy non-authored override under the custom key first', () => {
-    expect(
-      compute({
-        updatedProperties: { icon: 'IconStar' },
-        existingOverrides: { label: 'Société' },
-      }).overrides,
-    ).toEqual({ [CUSTOM]: { label: 'Société', icon: 'IconStar' } });
-  });
-
   it('falls back to the column when the author is outside the order', () => {
     const OTHER = '20202020-cccc-4ccc-8ccc-000000000003';
 

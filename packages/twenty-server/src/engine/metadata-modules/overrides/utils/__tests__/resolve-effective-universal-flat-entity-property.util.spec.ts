@@ -17,14 +17,12 @@ describe('resolveEffectiveUniversalFlatEntityProperty', () => {
   it('reads universalOverrides, not overrides', () => {
     expect(
       resolveEffectiveUniversalFlatEntityProperty({
-        metadataName: 'viewField',
         universalFlatEntity: universalFlatViewField,
         property: 'viewFieldGroupUniversalIdentifier',
       }),
     ).toBe('group-b');
     expect(
       resolveEffectiveUniversalFlatEntityProperty({
-        metadataName: 'viewField',
         universalFlatEntity: universalFlatViewField,
         property: 'isActive',
       }),
@@ -34,7 +32,6 @@ describe('resolveEffectiveUniversalFlatEntityProperty', () => {
   it('falls back to the column without a matching entry', () => {
     expect(
       resolveEffectiveUniversalFlatEntityProperty({
-        metadataName: 'viewField',
         universalFlatEntity: {
           ...universalFlatViewField,
           universalOverrides: null,
@@ -47,7 +44,6 @@ describe('resolveEffectiveUniversalFlatEntityProperty', () => {
   it('ranks the custom entry before the owner entry with an explicit context', () => {
     expect(
       resolveEffectiveUniversalFlatEntityProperty({
-        metadataName: 'viewField',
         universalFlatEntity: {
           ...universalFlatViewField,
           universalOverrides: {

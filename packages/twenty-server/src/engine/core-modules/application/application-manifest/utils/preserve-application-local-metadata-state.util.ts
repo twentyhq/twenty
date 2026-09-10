@@ -1,7 +1,6 @@
 const APPLICATION_LOCAL_METADATA_PROPERTIES = [
   'overrides',
   'universalOverrides',
-  'isActive',
 ] as const;
 
 export const preserveApplicationLocalMetadataState = <TEntity extends object>({

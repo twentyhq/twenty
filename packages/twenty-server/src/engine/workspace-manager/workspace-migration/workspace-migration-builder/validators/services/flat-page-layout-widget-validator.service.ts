@@ -242,7 +242,6 @@ export class FlatPageLayoutWidgetValidatorService {
     >,
   ): string {
     return resolveEffectiveUniversalFlatEntityProperty({
-      metadataName: 'pageLayoutWidget',
       universalFlatEntity: widget,
       property: 'pageLayoutTabUniversalIdentifier',
     });

@@ -3,10 +3,6 @@ import { mergeTranslationsIntoOverrides } from 'src/engine/metadata-modules/over
 const AUTHOR = '20202020-aaaa-4aaa-8aaa-000000000001';
 const OWNER = '20202020-bbbb-4bbb-8bbb-000000000002';
 
-const authorContext = {
-  workspaceCustomApplicationUniversalIdentifier: AUTHOR,
-  ownerApplicationUniversalIdentifier: OWNER,
-};
 
 const merge = (
   existingOverrides: unknown,
@@ -15,11 +11,9 @@ const merge = (
   >[0]['translationEntries'],
 ) =>
   mergeTranslationsIntoOverrides({
-    metadataName: 'objectMetadata',
     existingOverrides,
     translationEntries,
     authorUniversalIdentifier: AUTHOR,
-    authorContext,
   });
 
 describe('mergeTranslationsIntoOverrides', () => {
@@ -50,19 +44,6 @@ describe('mergeTranslationsIntoOverrides', () => {
     ).toEqual({
       [OWNER]: { labelSingular: 'Account' },
       [AUTHOR]: {
-        translations: { 'fr-FR': { labelSingular: 'Entreprise' } },
-      },
-    });
-  });
-
-  it('lifts a flat blob under the workspace custom application before merging', () => {
-    expect(
-      merge({ labelSingular: 'Client' }, [
-        { locale: 'fr-FR', property: 'labelSingular', value: 'Entreprise' },
-      ]),
-    ).toEqual({
-      [AUTHOR]: {
-        labelSingular: 'Client',
         translations: { 'fr-FR': { labelSingular: 'Entreprise' } },
       },
     });

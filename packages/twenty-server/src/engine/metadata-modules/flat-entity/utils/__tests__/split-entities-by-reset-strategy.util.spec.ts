@@ -15,7 +15,6 @@ describe('splitEntitiesByResetStrategy', () => {
 
     expect(
       splitEntitiesByResetStrategy({
-        metadataName: 'viewField',
         entities: [customViewField],
         workspaceCustomApplicationUniversalIdentifier: CUSTOM,
         now: NOW,
@@ -23,45 +22,49 @@ describe('splitEntitiesByResetStrategy', () => {
     ).toEqual({ toHardDelete: [customViewField], toReset: [] });
   });
 
-  it('reactivates a row deactivated on the column', () => {
+  it('drops the custom entry of a row another application owns and leaves the column', () => {
     const deactivatedViewField = {
       applicationUniversalIdentifier: OWNER,
-      isActive: false,
+      isActive: true,
       isSystemSideEffect: false,
-      overrides: null,
+      overrides: { [CUSTOM]: { isActive: false }, [OWNER]: { size: 42 } },
     };
 
     expect(
       splitEntitiesByResetStrategy({
-        metadataName: 'viewField',
         entities: [deactivatedViewField],
         workspaceCustomApplicationUniversalIdentifier: CUSTOM,
         now: NOW,
       }),
     ).toEqual({
       toHardDelete: [],
-      toReset: [{ ...deactivatedViewField, isActive: true, updatedAt: NOW }],
+      toReset: [
+        {
+          ...deactivatedViewField,
+          overrides: { [OWNER]: { size: 42 } },
+          updatedAt: NOW,
+        },
+      ],
     });
   });
 
-  it('reactivates an engine-managed row the custom application owns', () => {
+  it('resets an engine-managed row the custom application owns', () => {
     const engineManagedViewField = {
       applicationUniversalIdentifier: CUSTOM,
-      isActive: false,
+      isActive: true,
       isSystemSideEffect: true,
-      overrides: null,
+      overrides: { [CUSTOM]: { isActive: false } },
     };
 
     expect(
       splitEntitiesByResetStrategy({
-        metadataName: 'viewField',
         entities: [engineManagedViewField],
         workspaceCustomApplicationUniversalIdentifier: CUSTOM,
         now: NOW,
       }),
     ).toEqual({
       toHardDelete: [],
-      toReset: [{ ...engineManagedViewField, isActive: true, updatedAt: NOW }],
+      toReset: [{ ...engineManagedViewField, overrides: null, updatedAt: NOW }],
     });
   });
 });

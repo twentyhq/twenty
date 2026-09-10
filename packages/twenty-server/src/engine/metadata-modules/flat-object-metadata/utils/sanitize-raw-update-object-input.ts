@@ -59,12 +59,10 @@ export const sanitizeRawUpdateObjectInput = ({
     return {
       updatedEditableObjectProperties,
       overrides: mergeTranslationsIntoOverrides({
-        metadataName: 'objectMetadata',
         existingOverrides: existingFlatObjectMetadata.overrides,
         translationEntries,
         authorUniversalIdentifier:
           workspaceCustomApplicationUniversalIdentifier,
-        authorContext,
       }),
     };
   }
@@ -96,11 +94,9 @@ export const sanitizeRawUpdateObjectInput = ({
 
   return {
     overrides: mergeTranslationsIntoOverrides({
-      metadataName: 'objectMetadata',
       existingOverrides: overrides,
       translationEntries,
       authorUniversalIdentifier: workspaceCustomApplicationUniversalIdentifier,
-      authorContext,
     }),
     updatedEditableObjectProperties: columnProperties,
   };

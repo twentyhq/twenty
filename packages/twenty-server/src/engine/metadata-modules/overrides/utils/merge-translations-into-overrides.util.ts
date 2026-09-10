@@ -1,9 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type AllMetadataName } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
-import { normalizeAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/normalize-authored-overrides.util';
-import { type OverrideAuthorContext } from 'src/engine/metadata-modules/overrides/types/override-author-context.type';
 import { type TranslationOverrideEntry } from 'src/engine/metadata-modules/overrides/types/translation-override-entry.type';
 
 type EntryWithTranslations = Record<string, unknown> & {
@@ -23,25 +21,18 @@ const isSafeObjectKey = (key: string): boolean =>
 export const mergeTranslationsIntoOverrides = <
   TEntry = Record<string, unknown>,
 >({
-  metadataName,
   existingOverrides,
   translationEntries,
   authorUniversalIdentifier,
-  authorContext,
 }: {
-  metadataName: AllMetadataName;
   existingOverrides: unknown;
   translationEntries: TranslationOverrideEntry[];
   authorUniversalIdentifier: string;
-  authorContext: OverrideAuthorContext;
 }): AuthoredOverrides<TEntry> | null => {
-  const authoredOverrides =
-    normalizeAuthoredOverrides<EntryWithTranslations>({
-      metadataName,
-      overrides: existingOverrides,
-      workspaceCustomApplicationUniversalIdentifier:
-        authorContext.workspaceCustomApplicationUniversalIdentifier,
-    }) ?? {};
+  const authoredOverrides: AuthoredOverrides<EntryWithTranslations> =
+    isDefined(existingOverrides) && typeof existingOverrides === 'object'
+      ? (existingOverrides as AuthoredOverrides<EntryWithTranslations>)
+      : {};
 
   const safeTranslationEntries = translationEntries.filter(
     ({ locale, property }) =>

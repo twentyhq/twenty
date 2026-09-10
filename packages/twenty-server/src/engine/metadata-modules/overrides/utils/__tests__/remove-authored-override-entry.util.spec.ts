@@ -7,13 +7,11 @@ describe('removeAuthoredOverrideEntry', () => {
   it('drops the author entry and keeps the others', () => {
     expect(
       removeAuthoredOverrideEntry({
-        metadataName: 'fieldMetadata',
         overrides: {
           [CUSTOM]: { label: 'Mine' },
           [OWNER]: { label: 'Theirs' },
         },
         authorUniversalIdentifier: CUSTOM,
-        workspaceCustomApplicationUniversalIdentifier: CUSTOM,
       }),
     ).toEqual({ [OWNER]: { label: 'Theirs' } });
   });
@@ -21,21 +19,8 @@ describe('removeAuthoredOverrideEntry', () => {
   it('returns null when the last entry goes', () => {
     expect(
       removeAuthoredOverrideEntry({
-        metadataName: 'fieldMetadata',
         overrides: { [CUSTOM]: { label: 'Mine' } },
         authorUniversalIdentifier: CUSTOM,
-        workspaceCustomApplicationUniversalIdentifier: CUSTOM,
-      }),
-    ).toBeNull();
-  });
-
-  it('lifts a legacy non-authored override before removing it', () => {
-    expect(
-      removeAuthoredOverrideEntry({
-        metadataName: 'fieldMetadata',
-        overrides: { label: 'Legacy' },
-        authorUniversalIdentifier: CUSTOM,
-        workspaceCustomApplicationUniversalIdentifier: CUSTOM,
       }),
     ).toBeNull();
   });
@@ -43,18 +28,14 @@ describe('removeAuthoredOverrideEntry', () => {
   it('returns null for absent overrides and leaves other authors untouched', () => {
     expect(
       removeAuthoredOverrideEntry({
-        metadataName: 'fieldMetadata',
         overrides: null,
         authorUniversalIdentifier: CUSTOM,
-        workspaceCustomApplicationUniversalIdentifier: CUSTOM,
       }),
     ).toBeNull();
     expect(
       removeAuthoredOverrideEntry({
-        metadataName: 'fieldMetadata',
         overrides: { [OWNER]: { label: 'Theirs' } },
         authorUniversalIdentifier: CUSTOM,
-        workspaceCustomApplicationUniversalIdentifier: CUSTOM,
       }),
     ).toEqual({ [OWNER]: { label: 'Theirs' } });
   });

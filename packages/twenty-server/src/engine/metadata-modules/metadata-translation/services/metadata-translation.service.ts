@@ -110,7 +110,6 @@ export class MetadataTranslationService {
       ] ?? []) {
         const sourceValue = readStringProperty(entity, property);
         const overrideValue = readAuthoredOverrideProperty({
-          metadataName,
           overrides,
           path: [property],
           authorContext: getI18nContext(applicationId),
@@ -142,7 +141,6 @@ export class MetadataTranslationService {
           value,
           provenance: resolveProvenance({
             workspaceTranslation: readOverrideTranslation({
-              metadataName,
               overrides,
               locale,
               property,

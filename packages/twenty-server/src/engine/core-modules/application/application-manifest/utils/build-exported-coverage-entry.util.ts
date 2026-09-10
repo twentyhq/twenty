@@ -17,7 +17,7 @@ export const buildExportedCoverageEntry = ({
     universalIdentifier: string;
   } & Partial<WorkspaceLocalStateProperties>;
 }): ApplicationExportCoverageEntry => {
-  const reason = getWorkspaceLocalStateReason({ metadataName, ...flatEntity });
+  const reason = getWorkspaceLocalStateReason(flatEntity);
 
   return {
     metadataName,

@@ -98,23 +98,6 @@ describe('sanitizeOverridableEntityInput', () => {
       expect(result.updatedEditableProperties).not.toHaveProperty('title');
     });
 
-    it('should lift a flat blob under the workspace custom application', () => {
-      const result = sanitizeOverridableEntityInput({
-        metadataName: 'pageLayoutTab',
-        existingFlatEntity: {
-          ...baseTab,
-          overrides: { position: 5 } as never,
-        },
-        updatedEditableProperties: { title: 'Overridden Title' },
-        shouldOverride: true,
-        ...authorArgs,
-      });
-
-      expect(result.overrides).toEqual({
-        [CALLER]: { position: 5, title: 'Overridden Title' },
-      });
-    });
-
     it('should not move non-overridable properties to overrides', () => {
       const result = sanitizeOverridableEntityInput({
         metadataName: 'pageLayoutTab',

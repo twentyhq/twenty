@@ -1,5 +1,3 @@
-import { type AllMetadataName } from 'twenty-shared/metadata';
-
 import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/overrides/types/override-author-context.type';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 
@@ -15,12 +13,10 @@ export const resolveEffectiveUniversalFlatEntityProperty = <
   TUniversalFlatEntity extends OverridableUniversalFlatEntity,
   TProperty extends string & keyof TUniversalFlatEntity,
 >({
-  metadataName,
   universalFlatEntity,
   property,
   authorContext,
 }: {
-  metadataName: AllMetadataName;
   universalFlatEntity: TUniversalFlatEntity;
   property: TProperty;
   authorContext?: Pick<
@@ -29,7 +25,6 @@ export const resolveEffectiveUniversalFlatEntityProperty = <
   >;
 }): TUniversalFlatEntity[TProperty] => {
   const overrideValue = readAuthoredOverrideProperty({
-    metadataName,
     overrides: universalFlatEntity.universalOverrides,
     path: [property],
     authorContext: {

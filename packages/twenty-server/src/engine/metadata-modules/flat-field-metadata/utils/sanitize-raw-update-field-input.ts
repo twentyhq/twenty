@@ -116,12 +116,10 @@ export const sanitizeRawUpdateFieldInput = ({
     return {
       updatedEditableFieldProperties,
       overrides: mergeTranslationsIntoOverrides({
-        metadataName: 'fieldMetadata',
         existingOverrides: existingFlatFieldMetadata.overrides,
         translationEntries,
         authorUniversalIdentifier:
           workspaceCustomApplicationUniversalIdentifier,
-        authorContext,
       }),
     };
   }
@@ -153,11 +151,9 @@ export const sanitizeRawUpdateFieldInput = ({
 
   return {
     overrides: mergeTranslationsIntoOverrides({
-      metadataName: 'fieldMetadata',
       existingOverrides: overrides,
       translationEntries,
       authorUniversalIdentifier: workspaceCustomApplicationUniversalIdentifier,
-      authorContext,
     }),
     updatedEditableFieldProperties: columnProperties,
   };

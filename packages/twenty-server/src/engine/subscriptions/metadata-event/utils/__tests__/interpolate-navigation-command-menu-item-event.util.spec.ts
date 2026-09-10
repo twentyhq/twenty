@@ -157,8 +157,10 @@ describe('interpolateNavigationCommandMenuItemEvent', () => {
       labelPlural: 'People',
       icon: 'IconUser',
       overrides: {
-        labelPlural: 'Contacts',
-        icon: 'IconContacts',
+        'workspace-custom-application-universal-identifier': {
+          labelPlural: 'Contacts',
+          icon: 'IconContacts',
+        },
       } as unknown as FlatObjectMetadata['overrides'],
     });
     const flatObjectMetadataMaps =

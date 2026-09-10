@@ -44,7 +44,6 @@ export const computeRecordPageViewFieldForExistingObject = ({
     .find(
       (widget) =>
         resolveEffectiveUniversalFlatEntityProperty({
-          metadataName: 'pageLayoutWidget',
           universalFlatEntity: widget,
           property: 'isActive',
         }) &&
@@ -107,7 +106,6 @@ export const computeRecordPageViewFieldForExistingObject = ({
       .filter(
         (flatViewField) =>
           resolveEffectiveUniversalFlatEntityProperty({
-            metadataName: 'viewField',
             universalFlatEntity: flatViewField,
             property: 'isActive',
           }) &&

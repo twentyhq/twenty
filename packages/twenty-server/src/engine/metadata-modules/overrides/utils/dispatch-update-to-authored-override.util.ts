@@ -1,11 +1,10 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
-import { fastDeepEqual } from 'twenty-shared/utils';
+import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
 import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/overrides/constants/all-overridable-properties-by-metadata-name.constant';
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { computeOverrideAuthorOrder } from 'src/engine/metadata-modules/overrides/utils/compute-override-author-order.util';
-import { normalizeAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/normalize-authored-overrides.util';
 import { type OverrideAuthorContext } from 'src/engine/metadata-modules/overrides/types/override-author-context.type';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 
@@ -46,13 +45,10 @@ export const dispatchUpdateToAuthoredOverride = <
   const overridableProperties: readonly string[] =
     ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME[metadataName];
 
-  const authoredOverrides =
-    normalizeAuthoredOverrides<Record<string, unknown>>({
-      metadataName,
-      overrides: existingOverrides,
-      workspaceCustomApplicationUniversalIdentifier:
-        authorContext.workspaceCustomApplicationUniversalIdentifier,
-    }) ?? {};
+  const authoredOverrides: AuthoredOverrides<Record<string, unknown>> =
+    isDefined(existingOverrides) && typeof existingOverrides === 'object'
+      ? (existingOverrides as AuthoredOverrides<Record<string, unknown>>)
+      : {};
 
   const authorOrder = computeOverrideAuthorOrder(authorContext);
   const authorIndex = authorOrder.indexOf(authorUniversalIdentifier);
@@ -65,7 +61,6 @@ export const dispatchUpdateToAuthoredOverride = <
 
   const readBeneathValue = (property: string): unknown => {
     const beneathValue = readAuthoredOverrideProperty({
-      metadataName,
       overrides: beneathOverrides,
       path: [property],
       authorContext,
