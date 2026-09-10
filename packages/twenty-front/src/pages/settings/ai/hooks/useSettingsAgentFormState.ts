@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { type z } from 'zod';
 import { settingsAiAgentFormSchema } from '~/pages/settings/ai/validation-schemas/settingsAiAgentFormSchema';
@@ -13,7 +14,7 @@ export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
     label: '',
     description: '',
     icon: 'IconLego',
-    modelId: mode === 'edit' ? '' : 'auto',
+    modelId: mode === 'edit' ? '' : AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
     role: null,
     prompt: '',
     isCustom: true,
@@ -52,7 +53,7 @@ export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
         label: '',
         description: '',
         icon: 'IconLego',
-        modelId: mode === 'edit' ? '' : 'auto',
+        modelId: mode === 'edit' ? '' : AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
         role: '',
         prompt: '',
         isCustom: true,

@@ -10,8 +10,6 @@
 export type { AccountType } from './AccountTypes';
 export { ACCOUNT_TYPES } from './AccountTypes';
 export { ALLOWED_FULL_NAME_SORT_SUBFIELDS } from './AllowedFullNameSortSubfields';
-export { AUTO_SELECT_FAST_MODEL_ID } from './AutoSelectFastModelId';
-export { AUTO_SELECT_SMART_MODEL_ID } from './AutoSelectSmartModelId';
 export { BACKEND_BATCH_REQUEST_MAX_COUNT } from './BackendBatchRequestMaxCount';
 export { CalendarStartDay } from './CalendarStartDay';
 export { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from './CommandMenuConfirmationModalResultBrowserEventName';

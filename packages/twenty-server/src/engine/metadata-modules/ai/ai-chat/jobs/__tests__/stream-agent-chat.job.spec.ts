@@ -133,7 +133,10 @@ const createFakeChatStream = ({
 describe('StreamAgentChatJob', () => {
   const workspace = {
     id: 'workspace-id',
-    smartModel: 'default-smart-model',
+    aiChatModelTier: 'smart',
+    aiAgentModelTier: 'smart',
+    isAutoModelSelectionEnabled: true,
+    aiModelIdByTier: {},
   } as WorkspaceEntity;
 
   const jobData: StreamAgentChatJobData = {
@@ -642,6 +645,7 @@ describe('StreamAgentChatJob', () => {
 
     expect(aiModelRegistryService.getEffectiveModelConfig).toHaveBeenCalledWith(
       'default-fast-model',
+      workspace,
     );
     expect(turnCounts('ai-chat/turn-started')).toEqual([
       expect.objectContaining({
@@ -650,13 +654,14 @@ describe('StreamAgentChatJob', () => {
     ]);
   });
 
-  it('falls back to the workspace default model when the turn did not pick one', async () => {
+  it('falls back to the workspace chat tier when the turn did not pick one', async () => {
     const { job, aiModelRegistryService } = buildJob();
 
     await job.handle(jobData);
 
     expect(aiModelRegistryService.getEffectiveModelConfig).toHaveBeenCalledWith(
       'default-smart-model',
+      workspace,
     );
   });
 
