@@ -174,15 +174,27 @@ export class ApplicationTarballService {
       resourcePath: removeFileFolderFromFileEntityPath(file.path),
     };
 
-    const tarballBuffer = await streamToBuffer(
-      await this.fileStorageService.readFile({
-        ...storageLocation,
-        resourcePath: buildPendingUploadResourcePath({
-          fileId,
-          resourcePath: storageLocation.resourcePath,
-        }),
+    const pendingLocation = {
+      ...storageLocation,
+      resourcePath: buildPendingUploadResourcePath({
+        fileId,
+        resourcePath: storageLocation.resourcePath,
       }),
-      Number(file.size),
+    };
+
+    const pendingMetadata =
+      await this.fileStorageService.getFileMetadata(pendingLocation);
+
+    if (!isDefined(pendingMetadata)) {
+      throw new ApplicationRegistrationException(
+        `Tarball upload has no uploaded content: ${fileId}`,
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const tarballBuffer = await streamToBuffer(
+      await this.fileStorageService.readFile(pendingLocation),
+      pendingMetadata.size,
     );
 
     return this.registerTarball({
