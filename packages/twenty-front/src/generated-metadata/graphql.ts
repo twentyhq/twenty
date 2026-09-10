@@ -5022,6 +5022,7 @@ export type QueryApplicationConnectedAccountsArgs = {
   applicationId: Scalars['UUID']['input'];
 };
 
+
 export type QueryApplicationConnectionProvidersArgs = {
   applicationId: Scalars['UUID']['input'];
 };
