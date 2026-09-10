@@ -5,7 +5,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const BAR_WIDTH_PX = 3;
 const BAR_HEIGHT_PX = 10;
 
-const StyledButton = styled.button<{ disabled: boolean }>`
+const StyledBars = styled.div<{ disabled: boolean }>`
   align-items: center;
   background: transparent;
   border: none;
@@ -43,7 +43,8 @@ type AiModelTierBarsProps = {
 };
 
 // One bar per tier, filled up to the selected one, so the composer shows the
-// level without spending the space a label would take.
+// level without spending the space a label would take. The dropdown trigger
+// that wraps it already carries the button role, so this stays a plain box.
 export const AiModelTierBars = ({
   selectedTier,
   label,
@@ -52,10 +53,10 @@ export const AiModelTierBars = ({
   const selectedStep = AI_MODEL_TIERS.indexOf(selectedTier);
 
   return (
-    <StyledButton type="button" aria-label={label} disabled={disabled}>
+    <StyledBars aria-label={label} disabled={disabled}>
       {AI_MODEL_TIERS.map((tier, index) => (
         <StyledBar key={tier} isReached={index <= selectedStep} />
       ))}
-    </StyledButton>
+    </StyledBars>
   );
 };

@@ -14,27 +14,26 @@ import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
 
 const REFERENCE_TIER: AiModelTier = 'balanced';
 
-// Both sides of a cost comparison must use the same basis: the publisher's
-// cost per task when both models have one, the catalog price otherwise.
+// Every tier's cost delta must use the same basis: the publisher's cost per
+// task when every tier has one, the catalog price otherwise.
 const getCostDeltaPercent = ({
   model,
   referenceModel,
+  hasCostPerTaskForEveryTier,
 }: {
   model: ClientAiModelConfig | undefined;
   referenceModel: ClientAiModelConfig | undefined;
+  hasCostPerTaskForEveryTier: boolean;
 }) => {
   if (!isDefined(model) || !isDefined(referenceModel)) {
     return undefined;
   }
 
-  const hasCostPerTask =
-    isDefined(model.costPerTask) && isDefined(referenceModel.costPerTask);
-
   return getPercentDelta({
-    value: hasCostPerTask
+    value: hasCostPerTaskForEveryTier
       ? model.costPerTask
       : getAiModelBlendedCostPerMillionTokens(model),
-    reference: hasCostPerTask
+    reference: hasCostPerTaskForEveryTier
       ? referenceModel.costPerTask
       : getAiModelBlendedCostPerMillionTokens(referenceModel),
   });
@@ -76,6 +75,9 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
     const referenceModel = resolvedModels.find(
       (resolved) => resolved.tier === REFERENCE_TIER,
     )?.model;
+    const hasCostPerTaskForEveryTier = resolvedModels.every(
+      ({ model }) => !isDefined(model) || isDefined(model.costPerTask),
+    );
 
     return resolvedModels.map(({ tier, model, isPinned }) => ({
       tier,
@@ -90,7 +92,11 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
         value: model?.intelligenceIndex,
         reference: referenceModel?.intelligenceIndex,
       }),
-      costDeltaPercent: getCostDeltaPercent({ model, referenceModel }),
+      costDeltaPercent: getCostDeltaPercent({
+        model,
+        referenceModel,
+        hasCostPerTaskForEveryTier,
+      }),
     }));
   }, [aiModels, aiModelTiers, isAutoModelSelectionEnabled, aiModelIdByTier]);
 };
