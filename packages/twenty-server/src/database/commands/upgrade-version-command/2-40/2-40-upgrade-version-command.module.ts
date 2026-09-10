@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { SyncRecordShareObjectCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788794677636-sync-record-share-object.command';
-import { SeedObjectDefaultViewCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788943436000-seed-object-default-view.command';
+import { AddMessageCampaignScheduledAtCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788957151735-add-message-campaign-scheduled-at.command';
+import { SeedObjectDefaultViewCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789026816000-seed-object-default-view.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { SeedObjectDefaultViewModule } from 'src/engine/metadata-modules/view/seed-object-default-view.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -20,6 +21,10 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     WorkspaceMigrationRunnerModule,
     WorkspaceSchemaMigrationRunnerActionHandlersModule,
   ],
-  providers: [SyncRecordShareObjectCommand, SeedObjectDefaultViewCommand],
+  providers: [
+    SyncRecordShareObjectCommand,
+    AddMessageCampaignScheduledAtCommand,
+    SeedObjectDefaultViewCommand,
+  ],
 })
 export class V2_40_UpgradeVersionCommandModule {}

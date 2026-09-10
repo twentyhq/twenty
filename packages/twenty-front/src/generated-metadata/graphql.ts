@@ -5718,6 +5718,7 @@ export type SendInvitations = {
 
 export type SendMessageCampaignInput = {
   campaignId: Scalars['String']['input'];
+  scheduledAt?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 export type SendMessageCampaignOutputDto = {
