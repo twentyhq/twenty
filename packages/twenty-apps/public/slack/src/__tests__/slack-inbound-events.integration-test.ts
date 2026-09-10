@@ -379,7 +379,10 @@ describe('Slack inbound events', () => {
         }),
       );
 
-      expect(result).toEqual({ ok: true });
+      expect(result).toEqual({
+        ok: true,
+        request: expect.objectContaining({ id: expect.any(String) }),
+      });
       await expect(
         findRequestByMessageTimestamp(slackMessageTimestamp),
       ).resolves.toEqual(
