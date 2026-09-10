@@ -124,6 +124,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AdminPanelConfigService,
     AdminPanelVersionService,
     MaintenanceModeService,
+    WorkerHealthIndicator,
   ],
 })
 export class AdminPanelModule {}
