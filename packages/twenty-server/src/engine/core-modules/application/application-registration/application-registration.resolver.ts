@@ -277,7 +277,7 @@ export class ApplicationRegistrationResolver {
     try {
       const tarballBuffer = await streamToBuffer(stream, maxSize);
 
-      return this.applicationTarballService.uploadTarball({
+      return this.applicationTarballService.registerTarball({
         tarballBuffer,
         universalIdentifier,
         ownerWorkspaceId: workspaceId,

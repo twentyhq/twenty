@@ -2,12 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 
-import bytes from 'bytes';
 import { ApiPath, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { settings } from 'src/engine/constants/settings';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
@@ -16,6 +14,7 @@ import {
   FileUploadExceptionCode,
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { type BatchFileResult } from 'src/engine/core-modules/file/file-upload/types/batch-file-result.type';
+import { assertSizeIsWithinDirectUploadLimit } from 'src/engine/core-modules/file/file-upload/utils/assert-size-is-within-direct-upload-limit.util';
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { toBatchErrorMessage } from 'src/engine/core-modules/file/file-upload/utils/to-batch-error-message.util';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
@@ -61,7 +60,7 @@ export class FileUploadTargetService {
     contentType: string;
     size: number;
   }): Promise<FileUploadTargetDTO> {
-    this.assertSizeIsWithinDirectUploadLimit(size);
+    assertSizeIsWithinDirectUploadLimit(size);
 
     const pendingResourcePath = buildPendingUploadResourcePath({
       fileId,
@@ -167,19 +166,5 @@ export class FileUploadTargetService {
         }
       }),
     );
-  }
-
-  private assertSizeIsWithinDirectUploadLimit(size: number): void {
-    const maxFileSize = bytes(settings.storage.maxDirectUploadFileSize) ?? 0;
-
-    if (!Number.isInteger(size) || size <= 0 || size > maxFileSize) {
-      throw new FileUploadException(
-        `Invalid file size ${size} (max ${maxFileSize} bytes)`,
-        FileUploadExceptionCode.FILE_TOO_LARGE,
-        {
-          userFriendlyMessage: msg`The file is empty or exceeds the maximum allowed size.`,
-        },
-      );
-    }
   }
 }
