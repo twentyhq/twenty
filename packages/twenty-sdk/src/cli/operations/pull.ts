@@ -22,6 +22,7 @@ import {
   writePullBaseManifest,
 } from '@/cli/utilities/pull/pull-base-file';
 import { getApplicationMismatchMessage } from '@/cli/utilities/pull/get-application-mismatch-message';
+import { isSdkResolvable } from '@/cli/utilities/pull/is-sdk-resolvable';
 import { scanProjectSourceFiles } from '@/cli/utilities/pull/scan-project-source-files';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { join } from 'node:path';
@@ -45,6 +46,7 @@ export type AppPullResult = {
   unreadableRelativePaths: string[];
   compiledTranslationEntryCountByLocale: Record<string, number>;
   hadBase: boolean;
+  isSdkResolvable: boolean;
 };
 
 const EXPORT_REFUSAL_SUB_CODES = [
@@ -228,6 +230,7 @@ const innerAppPull = async (
       compiledTranslationEntryCountByLocale:
         translationPlan.compiledEntryCountByLocale,
       hadBase: isDefined(baseManifest),
+      isSdkResolvable: isSdkResolvable(appPath),
     },
   };
 };
