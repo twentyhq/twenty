@@ -15,7 +15,9 @@ const readTag = (value: unknown): string | undefined => {
   return undefined;
 };
 
-export const resolveCalDavResourceVersion = (response: DAVResponse): string =>
+export const resolveCalDavResourceVersion = (
+  response: Pick<DAVResponse, 'props'>,
+): string =>
   readTag(response.props?.getetag) ??
   readTag(response.props?.getlastmodified) ??
   CALDAV_UNVERSIONED_RESOURCE;

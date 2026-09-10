@@ -46,7 +46,7 @@ const dropSyncCollectionReport = (body: string): string =>
 
 const dropMemberResponses = (body: string): string =>
   body.replace(RESPONSE_PATTERN, (response) =>
-    HREF_PATTERN.exec(response)?.[1].endsWith('/') === true ? response : '',
+    HREF_PATTERN.exec(response)?.[1].endsWith('/') ? response : '',
   );
 
 export const startNonCompliantCalDavProxy = async ({
