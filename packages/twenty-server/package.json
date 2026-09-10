@@ -166,7 +166,7 @@
     "tar": "^7.5.9",
     "temporal-polyfill": "^0.3.0",
     "tsconfig-paths": "^4.2.0",
-    "tsdav": "^2.2.0",
+    "tsdav": "^2.2.1",
     "tslib": "2.8.1",
     "type-fest": "4.10.1",
     "typeorm": "patch:typeorm@0.3.31#./patches/typeorm+0.3.31.patch",

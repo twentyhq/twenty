@@ -16,10 +16,10 @@ export const ListItemCheckboxIndicator = ({
     aria-hidden
     className={clsx(
       checkboxStyles.root,
-      checkboxStyles.primary,
-      checkboxStyles.small,
-      checkboxStyles.squared,
-      checkboxStyles.blue,
+      checkboxStyles.solid,
+      checkboxStyles.sm,
+      checkboxStyles.square,
+      checkboxStyles.accent,
     )}
     data-checked={checked || undefined}
     data-disabled={disabled || undefined}
