@@ -8,7 +8,11 @@ import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/
 const EXCLUDED_SYSTEM_FIELDS = ['searchVector', 'position'];
 
 const isActiveField = (field: FlatFieldMetadata) => {
-  return resolveEffectiveFlatEntityProperty(field, 'isActive');
+  return resolveEffectiveFlatEntityProperty({
+    metadataName: 'fieldMetadata',
+    flatEntity: field,
+    property: 'isActive',
+  });
 };
 
 const isExcludedSystemField = (field: FlatFieldMetadata) => {

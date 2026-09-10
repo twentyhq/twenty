@@ -106,10 +106,11 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
       }
 
       if (
-        !resolveEffectiveFlatEntityProperty(
-          imageIdentifierFlatFieldMetadata,
-          'isActive',
-        )
+        !resolveEffectiveFlatEntityProperty({
+          metadataName: 'fieldMetadata',
+          flatEntity: imageIdentifierFlatFieldMetadata,
+          property: 'isActive',
+        })
       ) {
         throw new ObjectMetadataException(
           'Field cannot be used as image identifier because it is deactivated',

@@ -134,10 +134,11 @@ export class FlatFieldMetadataValidatorService {
         flatFieldMetadataToValidate.universalIdentifier &&
       (isDefined(flatEntityUpdate.isActive) ||
         isDefined(flatEntityUpdate.overrides)) &&
-      resolveEffectiveFlatEntityProperty(
-        flatFieldMetadataToValidate,
-        'isActive',
-      ) === false
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'fieldMetadata',
+        flatEntity: flatFieldMetadataToValidate,
+        property: 'isActive',
+      }) === false
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,

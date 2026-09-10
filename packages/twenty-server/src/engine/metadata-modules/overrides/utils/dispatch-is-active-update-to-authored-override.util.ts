@@ -1,3 +1,5 @@
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
 import { dispatchUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-update-to-authored-override.util';
 
 type FlatEntityWithIsActive = {
@@ -14,11 +16,13 @@ type FlatEntityWithIsActive = {
 export const dispatchIsActiveUpdateToAuthoredOverride = <
   T extends FlatEntityWithIsActive,
 >({
+  metadataName,
   flatEntity,
   isActive,
   authorUniversalIdentifier,
   workspaceCustomApplicationUniversalIdentifier,
 }: {
+  metadataName: AllMetadataName;
   flatEntity: T;
   isActive: boolean;
   authorUniversalIdentifier: string;
@@ -40,7 +44,7 @@ export const dispatchIsActiveUpdateToAuthoredOverride = <
   };
   const dispatchIsActive = (existingOverrides: unknown) =>
     dispatchUpdateToAuthoredOverride<{ isActive: boolean }>({
-      overridableProperties: ['isActive'],
+      metadataName,
       updatedProperties: { isActive },
       existingEntity: flatEntity,
       existingOverrides,

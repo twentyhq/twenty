@@ -44,7 +44,11 @@ export const createGetDashboardTool = (
       )
         .filter(isDefined)
         .filter((field) =>
-          resolveEffectiveFlatEntityProperty(field, 'isActive'),
+          resolveEffectiveFlatEntityProperty({
+            metadataName: 'fieldMetadata',
+            flatEntity: field,
+            property: 'isActive',
+          }),
         );
 
       const fieldsByObjectId = new Map<string, FlatFieldMetadata[]>();

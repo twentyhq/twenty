@@ -1,6 +1,5 @@
 import { extractAndSanitizeObjectStringFields } from 'twenty-shared/utils';
 
-import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/overrides/constants/all-overridable-properties-by-metadata-name.constant';
 import { FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-editable-properties.constant';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
@@ -60,6 +59,7 @@ export const sanitizeRawUpdateObjectInput = ({
     return {
       updatedEditableObjectProperties,
       overrides: mergeTranslationsIntoOverrides({
+        metadataName: 'objectMetadata',
         existingOverrides: existingFlatObjectMetadata.overrides,
         translationEntries,
         authorUniversalIdentifier:
@@ -86,8 +86,7 @@ export const sanitizeRawUpdateObjectInput = ({
   }
 
   const { overrides, columnProperties } = dispatchUpdateToAuthoredOverride({
-    overridableProperties:
-      ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME.objectMetadata,
+    metadataName: 'objectMetadata',
     updatedProperties: updatedEditableObjectProperties,
     existingEntity: existingFlatObjectMetadata,
     existingOverrides: existingFlatObjectMetadata.overrides,
@@ -97,6 +96,7 @@ export const sanitizeRawUpdateObjectInput = ({
 
   return {
     overrides: mergeTranslationsIntoOverrides({
+      metadataName: 'objectMetadata',
       existingOverrides: overrides,
       translationEntries,
       authorUniversalIdentifier: workspaceCustomApplicationUniversalIdentifier,

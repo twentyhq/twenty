@@ -15,6 +15,7 @@ const merge = (
   >[0]['translationEntries'],
 ) =>
   mergeTranslationsIntoOverrides({
+    metadataName: 'objectMetadata',
     existingOverrides,
     translationEntries,
     authorUniversalIdentifier: AUTHOR,

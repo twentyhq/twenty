@@ -14,6 +14,7 @@ describe('dispatchIsActiveUpdateToAuthoredOverride', () => {
   it('writes a non-owner deactivation on both blobs and leaves the column', () => {
     expect(
       dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'view',
         flatEntity: view,
         isActive: false,
         authorUniversalIdentifier: CUSTOM,
@@ -29,6 +30,7 @@ describe('dispatchIsActiveUpdateToAuthoredOverride', () => {
   it('drops the entry when the restore matches the column', () => {
     expect(
       dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'view',
         flatEntity: {
           ...view,
           overrides: { [CUSTOM]: { isActive: false } },
@@ -44,6 +46,7 @@ describe('dispatchIsActiveUpdateToAuthoredOverride', () => {
   it('writes the column when the author owns the entity', () => {
     expect(
       dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'view',
         flatEntity: view,
         isActive: false,
         authorUniversalIdentifier: OWNER,
@@ -60,6 +63,7 @@ describe('dispatchIsActiveUpdateToAuthoredOverride', () => {
 
     expect(
       dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'viewFilter',
         flatEntity: viewFilter,
         isActive: false,
         authorUniversalIdentifier: CUSTOM,

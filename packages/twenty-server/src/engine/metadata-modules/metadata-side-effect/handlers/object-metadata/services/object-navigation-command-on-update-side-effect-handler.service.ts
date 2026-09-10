@@ -52,16 +52,18 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
       };
     }
 
-    const updatedIsActive = resolveEffectiveFlatEntityProperty(
-      updatedFlatObjectMetadata,
-      'isActive',
-    );
+    const updatedIsActive = resolveEffectiveFlatEntityProperty({
+      metadataName: 'objectMetadata',
+      flatEntity: updatedFlatObjectMetadata,
+      property: 'isActive',
+    });
     const isActiveChanged =
       updatedIsActive !==
-      resolveEffectiveFlatEntityProperty(
-        existingFlatObjectMetadata,
-        'isActive',
-      );
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'objectMetadata',
+        flatEntity: existingFlatObjectMetadata,
+        property: 'isActive',
+      });
     const nameSingularChanged =
       updatedFlatObjectMetadata.nameSingular !==
       existingFlatObjectMetadata.nameSingular;

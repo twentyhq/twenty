@@ -38,10 +38,11 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
   return {
     id,
     universalIdentifier,
-    isActive: resolveEffectiveFlatEntityProperty(
-      flatObjectMetadata,
-      'isActive',
-    ),
+    isActive: resolveEffectiveFlatEntityProperty({
+      metadataName: 'objectMetadata',
+      flatEntity: flatObjectMetadata,
+      property: 'isActive',
+    }),
     isLabelSyncedWithName,
     isRemote,
     isSearchable,

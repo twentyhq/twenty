@@ -69,10 +69,16 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
   );
 
   const isDeactivation =
-    resolveEffectiveFlatEntityProperty(fromFlatFieldMetadata, 'isActive') ===
-      true &&
-    resolveEffectiveFlatEntityProperty(toFlatFieldMetadata, 'isActive') ===
-      false;
+    resolveEffectiveFlatEntityProperty({
+      metadataName: 'fieldMetadata',
+      flatEntity: fromFlatFieldMetadata,
+      property: 'isActive',
+    }) === true &&
+    resolveEffectiveFlatEntityProperty({
+      metadataName: 'fieldMetadata',
+      flatEntity: toFlatFieldMetadata,
+      property: 'isActive',
+    }) === false;
 
   if (isDeactivation) {
     const {

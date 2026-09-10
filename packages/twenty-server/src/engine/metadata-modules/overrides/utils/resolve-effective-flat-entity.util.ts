@@ -30,11 +30,13 @@ export const resolveEffectiveFlatEntity = <
   return overridableProperties.reduce<TFlatEntity>(
     (effectiveFlatEntity, property) => ({
       ...effectiveFlatEntity,
-      [property]: resolveEffectiveFlatEntityProperty(
+      [property]: resolveEffectiveFlatEntityProperty({
+        metadataName,
         flatEntity,
-        property,
+        // The registry lists the kind's overridable names as strings.
+        property: property as never,
         authorContext,
-      ),
+      }),
     }),
     flatEntity,
   );

@@ -9,6 +9,7 @@ const resolveEffectiveEntityIsActive = (entity: {
   overrides: unknown;
 }): boolean => {
   const overrideValue = readAuthoredOverrideProperty({
+    metadataName: 'objectMetadata',
     overrides: entity.overrides,
     path: ['isActive'],
     authorContext: { ownerApplicationUniversalIdentifier: undefined },

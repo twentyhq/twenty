@@ -76,9 +76,17 @@ export const toResolvedTimelineActivityType = (
     id: timelineActivityType.id,
     universalIdentifier: timelineActivityType.universalIdentifier,
     name: timelineActivityType.name,
-    label: resolveEffectiveFlatEntityProperty(timelineActivityType, 'label'),
+    label: resolveEffectiveFlatEntityProperty({
+      metadataName: 'timelineActivityType',
+      flatEntity: timelineActivityType,
+      property: 'label',
+    }),
     action: timelineActivityType.action,
-    icon: resolveEffectiveFlatEntityProperty(timelineActivityType, 'icon'),
+    icon: resolveEffectiveFlatEntityProperty({
+      metadataName: 'timelineActivityType',
+      flatEntity: timelineActivityType,
+      property: 'icon',
+    }),
     objectUniversalIdentifier: timelineActivityType.objectUniversalIdentifier,
     frontComponentUniversalIdentifier:
       timelineActivityType.frontComponentUniversalIdentifier,
@@ -203,7 +211,11 @@ export const buildTimelineActivityTypeResolution = (
 
     if (!isDefined(objectUniversalIdentifier)) {
       if (
-        resolveEffectiveFlatEntityProperty(timelineActivityType, 'isActive')
+        resolveEffectiveFlatEntityProperty({
+          metadataName: 'timelineActivityType',
+          flatEntity: timelineActivityType,
+          property: 'isActive',
+        })
       ) {
         typeByAction.set(
           action,
@@ -216,7 +228,13 @@ export const buildTimelineActivityTypeResolution = (
 
     const key = `${objectUniversalIdentifier}|${action}`;
 
-    if (resolveEffectiveFlatEntityProperty(timelineActivityType, 'isActive')) {
+    if (
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'timelineActivityType',
+        flatEntity: timelineActivityType,
+        property: 'isActive',
+      })
+    ) {
       typeByObjectAndAction.set(
         key,
         toResolvedTimelineActivityType(timelineActivityType),

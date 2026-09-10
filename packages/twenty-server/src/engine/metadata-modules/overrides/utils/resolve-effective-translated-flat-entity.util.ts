@@ -42,7 +42,12 @@ export const resolveEffectiveTranslatedFlatEntity = <
             property,
             i18nContext,
           })
-        : resolveEffectiveFlatEntityProperty(flatEntity, property, i18nContext),
+        : resolveEffectiveFlatEntityProperty({
+            metadataName,
+            flatEntity,
+            property: property as never,
+            authorContext: i18nContext,
+          }),
     }),
     flatEntity,
   );

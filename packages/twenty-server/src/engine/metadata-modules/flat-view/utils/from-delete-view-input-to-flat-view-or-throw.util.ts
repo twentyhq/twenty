@@ -56,6 +56,7 @@ export const fromDeleteViewInputToFlatViewOrThrow = ({
   if (shouldDeactivate) {
     return {
       ...dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'view',
         flatEntity: existingFlatViewToDelete,
         isActive: false,
         authorUniversalIdentifier: callerApplicationUniversalIdentifier,

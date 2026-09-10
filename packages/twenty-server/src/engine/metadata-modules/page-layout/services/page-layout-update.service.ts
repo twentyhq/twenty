@@ -419,6 +419,7 @@ export class PageLayoutUpdateService {
 
         return {
           ...dispatchIsActiveUpdateToAuthoredOverride({
+            metadataName: 'pageLayoutTab',
             flatEntity: {
               ...existingTab,
               ...updatedEditableProperties,
@@ -443,6 +444,7 @@ export class PageLayoutUpdateService {
       .filter(isDefined);
 
     const { toHardDelete, toDeactivate } = splitEntitiesByRemovalStrategy({
+      metadataName: 'pageLayoutTab',
       entitiesToRemove: tabsToRemove,
       workspaceCustomApplicationUniversalIdentifier,
       now: now.toISOString(),
@@ -666,6 +668,7 @@ export class PageLayoutUpdateService {
     const widgetsToRestoreAndUpdate: FlatPageLayoutWidget[] =
       entitiesToRestoreAndUpdate.map((widgetInput) =>
         dispatchIsActiveUpdateToAuthoredOverride({
+          metadataName: 'pageLayoutWidget',
           flatEntity: this.buildUpdatedFlatPageLayoutWidget({
             widgetInput,
             flatPageLayoutWidgetMaps,
@@ -701,6 +704,7 @@ export class PageLayoutUpdateService {
       .filter(isDefined);
 
     const { toHardDelete, toDeactivate } = splitEntitiesByRemovalStrategy({
+      metadataName: 'pageLayoutWidget',
       entitiesToRemove: widgetsToRemove,
       workspaceCustomApplicationUniversalIdentifier,
       now: now.toISOString(),
@@ -941,14 +945,27 @@ export class PageLayoutUpdateService {
     }
 
     for (const widget of widgetsToUpdate) {
-      if (!resolveEffectiveFlatEntityProperty(widget, 'isActive')) {
+      if (
+        !resolveEffectiveFlatEntityProperty({
+          metadataName: 'pageLayoutWidget',
+          flatEntity: widget,
+          property: 'isActive',
+        })
+      ) {
         directlyRemovedWidgetIds.add(widget.id);
       }
     }
 
     const removedTabIds = new Set([
       ...tabsToUpdate
-        .filter((tab) => !resolveEffectiveFlatEntityProperty(tab, 'isActive'))
+        .filter(
+          (tab) =>
+            !resolveEffectiveFlatEntityProperty({
+              metadataName: 'pageLayoutTab',
+              flatEntity: tab,
+              property: 'isActive',
+            }),
+        )
         .map((tab) => tab.id),
       ...tabsToDelete.map((tab) => tab.id),
     ]);
@@ -959,7 +976,11 @@ export class PageLayoutUpdateService {
 
     for (const widget of allExistingWidgets) {
       if (
-        resolveEffectiveFlatEntityProperty(widget, 'isActive') &&
+        resolveEffectiveFlatEntityProperty({
+          metadataName: 'pageLayoutWidget',
+          flatEntity: widget,
+          property: 'isActive',
+        }) &&
         removedTabIds.has(widget.pageLayoutTabId)
       ) {
         const viewId = this.getViewIdFromFieldsWidget(widget);
@@ -972,7 +993,11 @@ export class PageLayoutUpdateService {
 
     for (const widget of allExistingWidgets) {
       if (
-        resolveEffectiveFlatEntityProperty(widget, 'isActive') &&
+        resolveEffectiveFlatEntityProperty({
+          metadataName: 'pageLayoutWidget',
+          flatEntity: widget,
+          property: 'isActive',
+        }) &&
         !directlyRemovedWidgetIds.has(widget.id) &&
         !removedTabIds.has(widget.pageLayoutTabId)
       ) {

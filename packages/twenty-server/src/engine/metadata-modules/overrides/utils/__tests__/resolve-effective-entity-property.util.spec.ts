@@ -444,6 +444,7 @@ describe('readOverrideTranslation', () => {
   it('reads the locale translation of the first author carrying it', () => {
     expect(
       readOverrideTranslation({
+        metadataName: 'fieldMetadata',
         overrides: {
           [OWNER]: { translations: { 'fr-FR': { label: 'Compte' } } },
           [CUSTOM]: { translations: { 'fr-FR': { label: 'Société' } } },
@@ -462,6 +463,7 @@ describe('readOverrideTranslation', () => {
 
     expect(
       readOverrideTranslation({
+        metadataName: 'fieldMetadata',
         overrides,
         locale: 'de-DE',
         property: 'label',
@@ -470,6 +472,7 @@ describe('readOverrideTranslation', () => {
     ).toBeUndefined();
     expect(
       readOverrideTranslation({
+        metadataName: 'fieldMetadata',
         overrides,
         locale: 'fr-FR',
         property: 'description',
@@ -481,6 +484,7 @@ describe('readOverrideTranslation', () => {
   it('ignores a non-string translation value', () => {
     expect(
       readOverrideTranslation({
+        metadataName: 'fieldMetadata',
         overrides: { [CUSTOM]: { translations: { 'fr-FR': { label: null } } } },
         locale: 'fr-FR',
         property: 'label',

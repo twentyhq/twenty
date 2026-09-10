@@ -166,10 +166,11 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
         .filter(isDefined)
         .filter(
           (existingFlatViewField) =>
-            resolveEffectiveUniversalFlatEntityProperty(
-              existingFlatViewField,
-              'isActive',
-            ) && !isDefined(existingFlatViewField.deletedAt),
+            resolveEffectiveUniversalFlatEntityProperty({
+              metadataName: 'viewField',
+              universalFlatEntity: existingFlatViewField,
+              property: 'isActive',
+            }) && !isDefined(existingFlatViewField.deletedAt),
         )
         .map((existingFlatViewField) => existingFlatViewField.position);
 

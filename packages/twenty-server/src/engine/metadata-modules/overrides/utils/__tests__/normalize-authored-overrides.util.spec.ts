@@ -7,6 +7,7 @@ describe('normalizeAuthoredOverrides', () => {
   it('returns null for an absent blob', () => {
     expect(
       normalizeAuthoredOverrides({
+        metadataName: 'fieldMetadata',
         overrides: null,
         workspaceCustomApplicationUniversalIdentifier: CUSTOM,
       }),
@@ -16,6 +17,7 @@ describe('normalizeAuthoredOverrides', () => {
   it('lifts a flat blob under the workspace custom application key', () => {
     expect(
       normalizeAuthoredOverrides({
+        metadataName: 'fieldMetadata',
         overrides: { label: 'Société', translations: { 'fr-FR': {} } },
         workspaceCustomApplicationUniversalIdentifier: CUSTOM,
       }),
@@ -27,6 +29,7 @@ describe('normalizeAuthoredOverrides', () => {
   it('lifts a flat universal blob too', () => {
     expect(
       normalizeAuthoredOverrides({
+        metadataName: 'viewField',
         overrides: { viewFieldGroupUniversalIdentifier: 'group' },
         workspaceCustomApplicationUniversalIdentifier: CUSTOM,
       }),
@@ -41,6 +44,7 @@ describe('normalizeAuthoredOverrides', () => {
 
     expect(
       normalizeAuthoredOverrides({
+        metadataName: 'fieldMetadata',
         overrides,
         workspaceCustomApplicationUniversalIdentifier: CUSTOM,
       }),

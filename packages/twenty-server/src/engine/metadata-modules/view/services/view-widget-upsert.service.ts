@@ -239,8 +239,11 @@ export class ViewWidgetUpsertService {
       .filter(isDefined)
       .filter(
         (field) =>
-          resolveEffectiveFlatEntityProperty(field, 'isActive') &&
-          field.viewId === viewId,
+          resolveEffectiveFlatEntityProperty({
+            metadataName: 'viewField',
+            flatEntity: field,
+            property: 'isActive',
+          }) && field.viewId === viewId,
       );
 
     const existingViewFilters = Object.values(
@@ -332,6 +335,7 @@ export class ViewWidgetUpsertService {
       toHardDelete: filterGroupsToDelete,
       toDeactivate: filterGroupsToDeactivate,
     } = splitEntitiesByRemovalStrategy({
+      metadataName: 'viewFilterGroup',
       entitiesToRemove: viewFilterGroupOperations.filterGroupsToRemove,
       workspaceCustomApplicationUniversalIdentifier:
         upsertContext.applicationUniversalIdentifier,
@@ -340,6 +344,7 @@ export class ViewWidgetUpsertService {
 
     const { toHardDelete: filtersToDelete, toDeactivate: filtersToDeactivate } =
       splitEntitiesByRemovalStrategy({
+        metadataName: 'viewFilter',
         entitiesToRemove: viewFilterOperations.filtersToRemove,
         workspaceCustomApplicationUniversalIdentifier:
           upsertContext.applicationUniversalIdentifier,
@@ -348,6 +353,7 @@ export class ViewWidgetUpsertService {
 
     const { toHardDelete: sortsToDelete, toDeactivate: sortsToDeactivate } =
       splitEntitiesByRemovalStrategy({
+        metadataName: 'viewSort',
         entitiesToRemove: viewSortOperations.sortsToRemove,
         workspaceCustomApplicationUniversalIdentifier:
           upsertContext.applicationUniversalIdentifier,

@@ -1,3 +1,4 @@
+import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
@@ -10,9 +11,11 @@ import { isLegacyNonAuthoredOverride } from 'src/engine/metadata-modules/overrid
 // confused. The backfill rewrites storage; until it has run, this keeps
 // in-memory overrides author-keyed.
 export const normalizeAuthoredOverrides = <TEntry>({
+  metadataName,
   overrides,
   workspaceCustomApplicationUniversalIdentifier,
 }: {
+  metadataName: AllMetadataName;
   overrides: unknown;
   workspaceCustomApplicationUniversalIdentifier: string;
 }): AuthoredOverrides<TEntry> | null => {
@@ -22,7 +25,9 @@ export const normalizeAuthoredOverrides = <TEntry>({
 
   const overridesRecord = overrides as Record<string, unknown>;
 
-  if (!isLegacyNonAuthoredOverride(overridesRecord)) {
+  if (
+    !isLegacyNonAuthoredOverride({ metadataName, overrides: overridesRecord })
+  ) {
     return overridesRecord as AuthoredOverrides<TEntry>;
   }
 

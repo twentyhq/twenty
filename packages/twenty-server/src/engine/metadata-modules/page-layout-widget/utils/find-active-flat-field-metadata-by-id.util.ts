@@ -18,7 +18,11 @@ export const findActiveFlatFieldMetadataById = (
 
   if (
     !isDefined(field) ||
-    !resolveEffectiveFlatEntityProperty(field, 'isActive')
+    !resolveEffectiveFlatEntityProperty({
+      metadataName: 'fieldMetadata',
+      flatEntity: field,
+      property: 'isActive',
+    })
   ) {
     return null;
   }

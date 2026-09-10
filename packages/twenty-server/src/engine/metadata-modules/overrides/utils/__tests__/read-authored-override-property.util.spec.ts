@@ -17,6 +17,7 @@ describe('readAuthoredOverrideProperty', () => {
 
     expect(
       readAuthoredOverrideProperty({
+        metadataName: 'fieldMetadata',
         overrides,
         path: ['label'],
         authorContext,
@@ -24,6 +25,7 @@ describe('readAuthoredOverrideProperty', () => {
     ).toBe('Société');
     expect(
       readAuthoredOverrideProperty({
+        metadataName: 'fieldMetadata',
         overrides,
         path: ['icon'],
         authorContext,
@@ -34,6 +36,7 @@ describe('readAuthoredOverrideProperty', () => {
   it('ranks non-owner entries first when only the owner is known', () => {
     expect(
       readAuthoredOverrideProperty({
+        metadataName: 'fieldMetadata',
         overrides,
         path: ['label'],
         authorContext: { ownerApplicationUniversalIdentifier: OWNER },
@@ -44,6 +47,7 @@ describe('readAuthoredOverrideProperty', () => {
   it('reads a legacy non-authored override as the one non-owner entry', () => {
     expect(
       readAuthoredOverrideProperty({
+        metadataName: 'fieldMetadata',
         overrides: { label: 'Legacy' },
         path: ['label'],
         authorContext: { ownerApplicationUniversalIdentifier: OWNER },
@@ -54,6 +58,7 @@ describe('readAuthoredOverrideProperty', () => {
   it('reads a nested translation path', () => {
     expect(
       readAuthoredOverrideProperty({
+        metadataName: 'fieldMetadata',
         overrides: { [CUSTOM]: { translations: { fr: { label: 'Société' } } } },
         path: ['translations', 'fr', 'label'],
         authorContext: { ownerApplicationUniversalIdentifier: OWNER },
@@ -64,6 +69,7 @@ describe('readAuthoredOverrideProperty', () => {
   it('keeps an explicit null and falls through an absent key', () => {
     expect(
       readAuthoredOverrideProperty({
+        metadataName: 'fieldMetadata',
         overrides: { [CUSTOM]: { icon: null }, [OWNER]: { icon: 'IconX' } },
         path: ['icon'],
         authorContext: {
@@ -74,6 +80,7 @@ describe('readAuthoredOverrideProperty', () => {
     ).toBeNull();
     expect(
       readAuthoredOverrideProperty({
+        metadataName: 'fieldMetadata',
         overrides,
         path: ['description'],
         authorContext: { ownerApplicationUniversalIdentifier: OWNER },
@@ -84,6 +91,7 @@ describe('readAuthoredOverrideProperty', () => {
   it('dedupes when the owner is the workspace custom application', () => {
     expect(
       readAuthoredOverrideProperty({
+        metadataName: 'fieldMetadata',
         overrides: { [CUSTOM]: { label: 'Mine' } },
         path: ['label'],
         authorContext: {
@@ -97,6 +105,7 @@ describe('readAuthoredOverrideProperty', () => {
   it('returns undefined for absent or non-object overrides', () => {
     expect(
       readAuthoredOverrideProperty({
+        metadataName: 'fieldMetadata',
         overrides: null,
         path: ['label'],
         authorContext: { ownerApplicationUniversalIdentifier: OWNER },
@@ -104,6 +113,7 @@ describe('readAuthoredOverrideProperty', () => {
     ).toBeUndefined();
     expect(
       readAuthoredOverrideProperty({
+        metadataName: 'fieldMetadata',
         overrides: { [CUSTOM]: { translations: 'broken' } },
         path: ['translations', 'fr', 'label'],
         authorContext: { ownerApplicationUniversalIdentifier: OWNER },

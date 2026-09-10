@@ -1,3 +1,4 @@
+import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { computeOverrideAuthorOrder } from 'src/engine/metadata-modules/overrides/utils/compute-override-author-order.util';
@@ -9,9 +10,11 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
   isDefined(value) && typeof value === 'object';
 
 const listAuthoredOverrideEntries = ({
+  metadataName,
   overrides,
   authorContext,
 }: {
+  metadataName: AllMetadataName;
   overrides: unknown;
   authorContext: OverrideAuthorReadContext;
 }): unknown[] => {
@@ -27,6 +30,7 @@ const listAuthoredOverrideEntries = ({
   if (isDefined(workspaceCustomApplicationUniversalIdentifier)) {
     const authoredOverrides =
       normalizeAuthoredOverrides<unknown>({
+        metadataName,
         overrides,
         workspaceCustomApplicationUniversalIdentifier,
       }) ?? {};
@@ -41,7 +45,7 @@ const listAuthoredOverrideEntries = ({
 
   // A legacy non-authored override predates author keys and was written by
   // the custom application, so it reads as the one non-owner entry.
-  if (isLegacyNonAuthoredOverride(overrides)) {
+  if (isLegacyNonAuthoredOverride({ metadataName, overrides })) {
     return [overrides];
   }
 
@@ -65,14 +69,16 @@ const readPath = (value: unknown, path: readonly string[]): unknown =>
 // override is an explicit value, only an absent key falls through. The path is
 // a property name, or ['translations', locale, property] for a translation.
 export const readAuthoredOverrideProperty = ({
+  metadataName,
   overrides,
   path,
   authorContext,
 }: {
+  metadataName: AllMetadataName;
   overrides: unknown;
   path: readonly string[];
   authorContext: OverrideAuthorReadContext;
 }): unknown =>
-  listAuthoredOverrideEntries({ overrides, authorContext })
+  listAuthoredOverrideEntries({ metadataName, overrides, authorContext })
     .map((entry) => readPath(entry, path))
     .find((value) => value !== undefined);

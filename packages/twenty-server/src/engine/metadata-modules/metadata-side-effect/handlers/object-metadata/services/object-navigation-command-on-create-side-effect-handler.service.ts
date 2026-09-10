@@ -58,10 +58,11 @@ export class ObjectNavigationCommandOnCreateSideEffectHandlerService extends Met
           universalIdentifier: sourceFlatObjectMetadata.universalIdentifier,
           nameSingular: sourceFlatObjectMetadata.nameSingular,
           shortcut: sourceFlatObjectMetadata.shortcut,
-          isActive: resolveEffectiveFlatEntityProperty(
-            sourceFlatObjectMetadata,
-            'isActive',
-          ),
+          isActive: resolveEffectiveFlatEntityProperty({
+            metadataName: 'objectMetadata',
+            flatEntity: sourceFlatObjectMetadata,
+            property: 'isActive',
+          }),
         },
         applicationUniversalIdentifier:
           sourceFlatObjectMetadata.applicationUniversalIdentifier,

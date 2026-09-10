@@ -32,7 +32,11 @@ export const isFlatFieldMetadataEligibleForRecordForm = (
   return isFieldMetadataEligibleForRecordForm({
     fieldName: flatFieldMetadata.name,
     fieldType: flatFieldMetadata.type,
-    isActive: resolveEffectiveFlatEntityProperty(flatFieldMetadata, 'isActive'),
+    isActive: resolveEffectiveFlatEntityProperty({
+      metadataName: 'fieldMetadata',
+      flatEntity: flatFieldMetadata,
+      property: 'isActive',
+    }),
     isSystem: flatFieldMetadata.isSystem,
     isUIEditable: flatFieldMetadata.isUIEditable,
     relationType:

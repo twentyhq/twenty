@@ -306,7 +306,11 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       if (
         !isMorphOrRelationFlatFieldMetadata(field) ||
         field.relationTargetObjectMetadataId !== flatObjectMetadata.id ||
-        !resolveEffectiveFlatEntityProperty(field, 'isActive')
+        !resolveEffectiveFlatEntityProperty({
+          metadataName: 'fieldMetadata',
+          flatEntity: field,
+          property: 'isActive',
+        })
       ) {
         continue;
       }

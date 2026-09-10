@@ -10,7 +10,6 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/overrides/constants/all-overridable-properties-by-metadata-name.constant';
 import {
   FLAT_FIELD_METADATA_EDITABLE_PROPERTIES,
   FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES,
@@ -117,6 +116,7 @@ export const sanitizeRawUpdateFieldInput = ({
     return {
       updatedEditableFieldProperties,
       overrides: mergeTranslationsIntoOverrides({
+        metadataName: 'fieldMetadata',
         existingOverrides: existingFlatFieldMetadata.overrides,
         translationEntries,
         authorUniversalIdentifier:
@@ -143,8 +143,7 @@ export const sanitizeRawUpdateFieldInput = ({
   }
 
   const { overrides, columnProperties } = dispatchUpdateToAuthoredOverride({
-    overridableProperties:
-      ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME.fieldMetadata,
+    metadataName: 'fieldMetadata',
     updatedProperties: updatedEditableFieldProperties,
     existingEntity: existingFlatFieldMetadata,
     existingOverrides: existingFlatFieldMetadata.overrides,
@@ -154,6 +153,7 @@ export const sanitizeRawUpdateFieldInput = ({
 
   return {
     overrides: mergeTranslationsIntoOverrides({
+      metadataName: 'fieldMetadata',
       existingOverrides: overrides,
       translationEntries,
       authorUniversalIdentifier: workspaceCustomApplicationUniversalIdentifier,

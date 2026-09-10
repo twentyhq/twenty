@@ -283,8 +283,11 @@ export class FlatPageLayoutWidgetValidatorService {
     widget: UniversalFlatPageLayoutWidget,
   ): EffectivePageLayoutWidget {
     return resolveEffectiveFlatEntity({
-      ...widget,
-      overrides: widget.universalOverrides,
+      metadataName: 'pageLayoutWidget',
+      flatEntity: {
+        ...widget,
+        overrides: widget.universalOverrides,
+      },
     });
   }
 
