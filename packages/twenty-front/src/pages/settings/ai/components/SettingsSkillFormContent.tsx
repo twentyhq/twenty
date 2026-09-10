@@ -2,7 +2,7 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -31,6 +31,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsSkillDangerZone } from '~/pages/settings/ai/components/SettingsSkillDangerZone';
+import { useAutoSaveOnChange } from '~/pages/settings/ai/hooks/useAutoSaveOnChange';
 import { type SettingsSkillFormValues } from '~/pages/settings/ai/types/SettingsSkillFormValues';
 import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
 import { getSettingsSkillInitialFormValues } from '~/pages/settings/ai/utils/getSettingsSkillInitialFormValues';
@@ -159,17 +160,11 @@ export const SettingsSkillFormContent = ({
     }
   }, 1_000);
 
-  useEffect(() => {
-    if (isEditMode) {
-      autoSave();
-    }
-  }, [formValues, isEditMode, autoSave]);
-
-  useEffect(() => {
-    return () => {
-      autoSave.flush();
-    };
-  }, [autoSave]);
+  useAutoSaveOnChange({
+    autoSave,
+    isEnabled: isEditMode,
+    watchedValue: formValues,
+  });
 
   const canSave = !isReadonlyMode && validateForm() && !isSubmitting;
 

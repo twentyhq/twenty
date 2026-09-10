@@ -2,7 +2,7 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -43,6 +43,7 @@ import { SettingsAgentLogsTab } from '~/pages/settings/ai/components/SettingsAge
 import { SettingsAgentRoleTab } from '~/pages/settings/ai/components/SettingsAgentRoleTab';
 import { SettingsAgentSettingsTab } from '~/pages/settings/ai/components/SettingsAgentSettingsTab';
 import { SETTINGS_AGENT_DETAIL_TABS } from '~/pages/settings/ai/constants/SettingsAgentDetailTabs';
+import { useAutoSaveOnChange } from '~/pages/settings/ai/hooks/useAutoSaveOnChange';
 import { useSettingsAgentFormState } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
 import { getSettingsAgentInitialFormValues } from '~/pages/settings/ai/utils/getSettingsAgentInitialFormValues';
 import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
@@ -201,17 +202,16 @@ export const SettingsAgentFormContent = ({
     }
   }, 1_000);
 
-  useEffect(() => {
-    if (isEditMode) {
-      autoSave();
-    }
-  }, [formValues, isRoleDirty, isEditMode, autoSave]);
-
-  useEffect(() => {
-    return () => {
-      autoSave.flush();
-    };
-  }, [autoSave]);
+  useAutoSaveOnChange({
+    autoSave,
+    isEnabled: isEditMode,
+    watchedValue: formValues,
+  });
+  useAutoSaveOnChange({
+    autoSave,
+    isEnabled: isEditMode,
+    watchedValue: isRoleDirty,
+  });
 
   const canSave = !isReadonlyMode && validateForm() && !isSubmitting;
 
