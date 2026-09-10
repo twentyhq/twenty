@@ -459,7 +459,8 @@ export class AiModelRegistryService {
     workspaceSettings?: WorkspaceAiModelSettings,
   ): RegisteredAiModel {
     const pinnedModelId =
-      workspaceSettings?.isAutoModelSelectionEnabled === false
+      isDefined(workspaceSettings) &&
+      !workspaceSettings.isAutoModelSelectionEnabled
         ? workspaceSettings.aiModelIdByTier[tier]
         : undefined;
 

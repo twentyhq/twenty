@@ -27,7 +27,7 @@ const INHERITED_BENCHMARK_CLASS_NAME = 'ai-model-tier-inherited-benchmark';
 // The reading belongs to the base model, so it is dimmed and explained rather
 // than passed off as a measurement at this effort.
 const renderBenchmarkValue = (tier: ResolvedAiModelTier, value: string) =>
-  tier.model?.isBenchmarkInherited === true && value !== EMPTY_VALUE ? (
+  (tier.model?.isBenchmarkInherited ?? false) && value !== EMPTY_VALUE ? (
     <StyledInheritedValue className={INHERITED_BENCHMARK_CLASS_NAME}>
       {value}
     </StyledInheritedValue>
@@ -97,7 +97,7 @@ export const SettingsAiModelTiersPreview = () => {
           </TableRow>
         ))}
       </Table>
-      {tiers.some((tier) => tier.model?.isBenchmarkInherited === true) && (
+      {tiers.some((tier) => tier.model?.isBenchmarkInherited ?? false) && (
         <AppTooltip
           anchorSelect={`.${INHERITED_BENCHMARK_CLASS_NAME}`}
           title={t`Not measured at this effort yet. Showing the base model's reading.`}

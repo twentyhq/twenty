@@ -47,7 +47,7 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
   const aiModelTiers = useAtomStateValue(aiModelTiersState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isAutoModelSelectionEnabled =
-    currentWorkspace?.isAutoModelSelectionEnabled;
+    currentWorkspace?.isAutoModelSelectionEnabled ?? true;
   const aiModelIdByTier = currentWorkspace?.aiModelIdByTier;
 
   return useMemo(() => {
@@ -55,10 +55,9 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
       aiModels.find((model) => model.modelId === modelId);
 
     const resolvedModels = AI_MODEL_TIERS.map((tier) => {
-      const pinnedModel =
-        isAutoModelSelectionEnabled === false
-          ? findModel(aiModelIdByTier?.[tier])
-          : undefined;
+      const pinnedModel = isAutoModelSelectionEnabled
+        ? undefined
+        : findModel(aiModelIdByTier?.[tier]);
 
       if (isDefined(pinnedModel)) {
         return { tier, model: pinnedModel, isPinned: true };
