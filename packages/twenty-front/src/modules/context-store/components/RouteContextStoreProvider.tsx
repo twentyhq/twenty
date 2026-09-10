@@ -7,6 +7,7 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
 import { matchRoutes, useLocation, useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -116,23 +117,12 @@ export const RouteContextStoreProvider = () => {
       ? lastVisitedViewIdRaw
       : undefined;
 
-  const selectableViewsOnObject = views
-    .filter(
-      (view) =>
-        view.objectMetadataId === objectMetadataItem?.id &&
-        view.type !== ViewType.FIELDS_WIDGET,
-    )
-    .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
-
-  const seededDefaultViewId = isSeededDefaultViewEnabled
-    ? selectableViewsOnObject.find((view) => view.key !== ViewKey.INDEX)?.id
-    : undefined;
-
-  const indexViewId = selectableViewsOnObject.find(
-    (view) => view.key === ViewKey.INDEX,
-  )?.id;
-
-  const firstAvailableViewId = selectableViewsOnObject[0]?.id;
+  const { seededDefaultViewId, indexViewId, firstAvailableViewId } =
+    computeObjectViewTargetIds({
+      views,
+      objectMetadataId: objectMetadataItem?.id,
+      isSeededDefaultViewEnabled,
+    });
 
   const viewId = getViewId({
     viewIdFromQueryParams: viewIdQueryParam,

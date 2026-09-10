@@ -1,12 +1,9 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
-import { ViewKey } from '@/views/types/ViewKey';
+import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import {
-  type NavigationMenuItem,
-  ViewType,
-} from '~/generated-metadata/graphql';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const getObjectNavigationMenuItemComputedLink = ({
   item,
@@ -28,21 +25,11 @@ export const getObjectNavigationMenuItemComputedLink = ({
     return '';
   }
 
-  const selectableViewsOnObject = views
-    .filter(
-      (view) =>
-        view.objectMetadataId === objectMetadataItem.id &&
-        view.type !== ViewType.FIELDS_WIDGET,
-    )
-    .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
-
-  const seededDefaultViewId = isSeededDefaultViewEnabled
-    ? selectableViewsOnObject.find((view) => view.key !== ViewKey.INDEX)?.id
-    : undefined;
-
-  const indexViewId = selectableViewsOnObject.find(
-    (view) => view.key === ViewKey.INDEX,
-  )?.id;
+  const { seededDefaultViewId, indexViewId } = computeObjectViewTargetIds({
+    views,
+    objectMetadataId: objectMetadataItem.id,
+    isSeededDefaultViewEnabled,
+  });
 
   const applicableLastVisitedViewId =
     isSeededDefaultViewEnabled && lastVisitedViewId === indexViewId
