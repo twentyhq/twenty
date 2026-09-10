@@ -152,12 +152,21 @@ export class ApplicationTarballService {
       await this.fileStorageService.readFile(storageLocation),
     );
 
-    return this.uploadTarball({
-      tarballBuffer,
-      universalIdentifier,
-      ownerWorkspaceId: workspaceId,
-      tarballFileId: file.id,
-    });
+    try {
+      return await this.uploadTarball({
+        tarballBuffer,
+        universalIdentifier,
+        ownerWorkspaceId: workspaceId,
+        tarballFileId: file.id,
+      });
+    } catch (error) {
+      await this.deleteUnreferencedTarballFile({
+        workspaceId,
+        fileId: file.id,
+      });
+
+      throw error;
+    }
   }
 
   async uploadTarball(params: {
@@ -210,6 +219,8 @@ export class ApplicationTarballService {
             ownerWorkspaceId: params.ownerWorkspaceId,
           });
 
+      const previousTarballFileId = appRegistration.tarballFileId;
+
       const tarballFileId =
         params.tarballFileId ??
         (
@@ -232,6 +243,16 @@ export class ApplicationTarballService {
           ownerWorkspaceId: params.ownerWorkspaceId,
         },
       });
+
+      if (
+        isDefined(previousTarballFileId) &&
+        previousTarballFileId !== tarballFileId
+      ) {
+        await this.deleteUnreferencedTarballFile({
+          workspaceId: params.ownerWorkspaceId,
+          fileId: previousTarballFileId,
+        });
+      }
 
       await this.applicationRegistrationAssetService.storeRegistrationAssets({
         applicationRegistrationId: appRegistration.id,
@@ -446,5 +467,33 @@ export class ApplicationTarballService {
     }
 
     return fs.readFile(absolutePath);
+  }
+
+  private async deleteUnreferencedTarballFile({
+    workspaceId,
+    fileId,
+  }: {
+    workspaceId: string;
+    fileId: string;
+  }): Promise<void> {
+    const registration = await this.appRegistrationRepository.findOne({
+      where: { tarballFileId: fileId },
+    });
+
+    if (isDefined(registration)) {
+      return;
+    }
+
+    try {
+      await this.fileStorageService.deleteByFileId({
+        fileId,
+        workspaceId,
+        fileFolder: FileFolder.AppTarball,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Could not delete unreferenced tarball file ${fileId}: ${error}`,
+      );
+    }
   }
 }
