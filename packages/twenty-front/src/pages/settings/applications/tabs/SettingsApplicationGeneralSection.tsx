@@ -1,4 +1,4 @@
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -38,7 +38,7 @@ export const SettingsApplicationGeneralSection = ({
     <Section>
       <H2Title title={t`General`} />
       <Card rounded fullWidth>
-        <SettingsOptionCardContentToggle
+        <SettingsOptionCardContentSwitch
           Icon={IconRefresh}
           title={t`Auto-upgrade`}
           description={t`Automatically upgrade this application when a new version is published`}

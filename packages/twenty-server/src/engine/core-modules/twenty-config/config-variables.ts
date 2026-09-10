@@ -1696,6 +1696,24 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description:
+      'Time-to-live for the outbound webhook call rate limiting window, in milliseconds',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WEBHOOK_CALL_RATE_LIMITING_TTL_IN_MS = 60_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum number of outbound webhook calls a single workspace may make in the rate limiting window. Calls above it are never enqueued and are recorded as a failed webhook response',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WEBHOOK_CALL_RATE_LIMITING_LIMIT = 60;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
       'Time-to-live for application job enqueue rate limiting in milliseconds',
     type: ConfigVariableType.NUMBER,
   })
@@ -1918,7 +1936,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Ordered list of fast model IDs to use as defaults. Managed via admin panel or env.',
+      'Ordered list of fast model IDs to use as defaults; an ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
     type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
@@ -1927,7 +1945,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Ordered list of smart model IDs to use as defaults. Managed via admin panel or env.',
+      'Ordered list of smart model IDs to use as defaults; an ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
     type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
@@ -1936,7 +1954,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'List of recommended model IDs shown to workspaces using curated model selection. Managed via admin panel or env.',
+      'List of recommended model IDs shown to workspaces using curated model selection; an ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
     type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
