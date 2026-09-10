@@ -1,6 +1,7 @@
+import { SLACK_ASSISTANT_MENTION_LABEL } from 'src/logic-functions/constants/slack-assistant-mention-label';
+
 const SLACK_USER_ID_PATTERN = /^[A-Z0-9]+$/;
 const PUNCTUATION_PATTERN = '[,.!?;:]';
-const MID_TEXT_MENTION_REPLACEMENT = 'you';
 
 export const stripSlackBotMention = ({
   text,
@@ -23,10 +24,10 @@ export const stripSlackBotMention = ({
     )
     .replace(
       new RegExp(`\\s*${mentionRunPattern}\\s*(${PUNCTUATION_PATTERN})`, 'g'),
-      ` ${MID_TEXT_MENTION_REPLACEMENT}$1`,
+      ` ${SLACK_ASSISTANT_MENTION_LABEL}$1`,
     )
     .replace(
       new RegExp(`\\s*${mentionRunPattern}\\s*`, 'g'),
-      ` ${MID_TEXT_MENTION_REPLACEMENT} `,
+      ` ${SLACK_ASSISTANT_MENTION_LABEL} `,
     );
 };
