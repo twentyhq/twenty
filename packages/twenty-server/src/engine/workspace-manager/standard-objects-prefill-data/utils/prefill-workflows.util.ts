@@ -5,6 +5,7 @@ import { type EntityManager } from 'typeorm';
 import { v5 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -232,14 +233,7 @@ export const prefillWorkflows = async (
   await entityManager
     .createQueryBuilder()
     .insert()
-    .into('core.workflow', [
-      'id',
-      'workspaceId',
-      'universalIdentifier',
-      'applicationId',
-      'name',
-      'lastPublishedVersionId',
-    ])
+    .into(WorkflowEntity)
     .orIgnore()
     .values([
       {
@@ -249,6 +243,7 @@ export const prefillWorkflows = async (
         applicationId,
         name: 'Quick Lead',
         lastPublishedVersionId: quickLeadWorkflowVersionId,
+        workspaceWorkflowId: quickLeadWorkflowId,
       },
       {
         id: coreCreateCompanyWorkflowId,
@@ -257,6 +252,7 @@ export const prefillWorkflows = async (
         applicationId,
         name: 'Create company when adding a new person',
         lastPublishedVersionId: createCompanyWorkflowVersionId,
+        workspaceWorkflowId: createCompanyWorkflowId,
       },
     ])
     .execute();

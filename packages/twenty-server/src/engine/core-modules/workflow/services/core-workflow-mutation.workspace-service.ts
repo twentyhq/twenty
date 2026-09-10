@@ -65,6 +65,8 @@ export class CoreWorkflowMutationWorkspaceService {
         });
       }, authContext);
 
+    const workspaceWorkflowId = uuidv4();
+
     const coreWorkflow = await this.coreWorkflowRepository.insertAndReturnOne(
       workspaceId,
       {
@@ -72,48 +74,41 @@ export class CoreWorkflowMutationWorkspaceService {
         name: name ?? null,
         universalIdentifier: uuidv4(),
         applicationId,
+        workspaceWorkflowId,
       },
     );
 
-    let workspaceWorkflowId: string | undefined;
-
     try {
-      workspaceWorkflowId =
-        await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-          const workflowRepository =
-            this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-              'workflow',
-              { shouldBypassPermissionChecks: true },
-            );
-
-          const position = await this.recordPositionService.buildRecordPosition(
-            {
-              value: 'first',
-              objectMetadata: {
-                isCustom: false,
-                nameSingular: 'workflow',
-              },
-              workspaceId,
-            },
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workflowRepository =
+          this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+            'workflow',
+            { shouldBypassPermissionChecks: true },
           );
 
-          const insertWorkflowResult = await workflowRepository.insert({
-            name: name ?? null,
-            position,
-            coreWorkflowId: coreWorkflow.id,
-            createdBy: buildCreatedByFromFullNameMetadata({
-              fullNameMetadata: {
-                firstName: workspaceMember.name.firstName,
-                lastName: workspaceMember.name.lastName,
-              },
-              workspaceMemberId: workspaceMember.id,
-            }),
-          });
+        const position = await this.recordPositionService.buildRecordPosition({
+          value: 'first',
+          objectMetadata: {
+            isCustom: false,
+            nameSingular: 'workflow',
+          },
+          workspaceId,
+        });
 
-          return (
-            insertWorkflowResult.generatedMaps[0] as WorkflowWorkspaceEntity
-          ).id;
-        }, authContext);
+        await workflowRepository.insert({
+          id: workspaceWorkflowId,
+          name: name ?? null,
+          position,
+          coreWorkflowId: coreWorkflow.id,
+          createdBy: buildCreatedByFromFullNameMetadata({
+            fullNameMetadata: {
+              firstName: workspaceMember.name.firstName,
+              lastName: workspaceMember.name.lastName,
+            },
+            workspaceMemberId: workspaceMember.id,
+          }),
+        });
+      }, authContext);
 
       await this.workflowVersionCoreSyncService.createInitialDraftVersionForWorkflow(
         workspaceId,
