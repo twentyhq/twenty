@@ -5,11 +5,49 @@ import {
 import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { buildSeededViewFieldFlatEntity } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/build-seeded-view-field-flat-entity.util';
 import { computeSeededObjectViewToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-seeded-object-view-to-create.util';
+import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
+
+type SeedInputFlatObjectMetadata = Pick<
+  UniversalFlatObjectMetadata,
+  'universalIdentifier' | 'labelPlural' | 'isRemote'
+>;
+
+type SeedInputFlatView = Pick<
+  UniversalFlatView,
+  | 'key'
+  | 'deletedAt'
+  | 'objectMetadataUniversalIdentifier'
+  | 'viewFieldUniversalIdentifiers'
+>;
+
+type SeedInputFlatViewField = Pick<
+  UniversalFlatViewField,
+  | 'fieldMetadataUniversalIdentifier'
+  | 'isVisible'
+  | 'size'
+  | 'position'
+  | 'aggregateOperation'
+  | 'isActive'
+>;
+
+type SeedInputFlatEntityMaps = {
+  flatObjectMetadataMaps: {
+    byUniversalIdentifier: Record<
+      string,
+      SeedInputFlatObjectMetadata | undefined
+    >;
+  };
+  flatViewMaps: {
+    byUniversalIdentifier: Record<string, SeedInputFlatView | undefined>;
+  };
+  flatViewFieldMaps: {
+    byUniversalIdentifier: Record<string, SeedInputFlatViewField | undefined>;
+  };
+};
 
 export type SeedOperations = {
   viewsToCreate: UniversalFlatView[];
@@ -21,10 +59,7 @@ export const computeSeedObjectDefaultViewOperations = ({
   flatViewMaps,
   flatViewFieldMaps,
   seededViewApplicationUniversalIdentifier,
-}: Pick<
-  AllFlatEntityMaps,
-  'flatObjectMetadataMaps' | 'flatViewMaps' | 'flatViewFieldMaps'
-> & {
+}: SeedInputFlatEntityMaps & {
   seededViewApplicationUniversalIdentifier: string;
 }): SeedOperations => {
   const seedOperations: SeedOperations = {
@@ -36,7 +71,7 @@ export const computeSeedObjectDefaultViewOperations = ({
 
   const flatIndexViewByObjectUniversalIdentifier = new Map<
     string,
-    UniversalFlatView
+    SeedInputFlatView
   >();
 
   for (const flatView of Object.values(flatViewMaps.byUniversalIdentifier)) {

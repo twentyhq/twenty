@@ -2,10 +2,9 @@ import {
   getSeededObjectViewUniversalIdentifier,
   getViewFieldUniversalIdentifier,
 } from 'twenty-shared/application';
-import { ViewKey } from 'twenty-shared/types';
+import { type AggregateOperations, ViewKey } from 'twenty-shared/types';
 
 import { computeSeedObjectDefaultViewOperations } from 'src/engine/metadata-modules/view/utils/compute-seed-object-default-view-operations.util';
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 
 const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
   '5f4a1c1e-0000-4000-8000-000000000001';
@@ -36,7 +35,7 @@ type ObjectFixture = {
 type ViewFixture = {
   universalIdentifier: string;
   objectMetadataUniversalIdentifier: string;
-  key: string | null;
+  key: ViewKey | null;
   deletedAt: string | null;
   viewFieldUniversalIdentifiers: string[];
 };
@@ -49,7 +48,7 @@ type ViewFieldFixture = {
   isVisible: boolean;
   size: number;
   position: number;
-  aggregateOperation: string | null;
+  aggregateOperation: AggregateOperations | null;
   isActive: boolean;
   isSystemSideEffect: boolean;
   universalOverrides: null;
@@ -110,30 +109,23 @@ const buildMaps = ({
   objects: ObjectFixture[];
   views: ViewFixture[];
   viewFields: ViewFieldFixture[];
-}) =>
-  ({
-    flatObjectMetadataMaps: {
-      byUniversalIdentifier: Object.fromEntries(
-        objects.map((object) => [object.universalIdentifier, object]),
-      ),
-    },
-    flatViewMaps: {
-      byUniversalIdentifier: Object.fromEntries(
-        views.map((view) => [view.universalIdentifier, view]),
-      ),
-    },
-    flatViewFieldMaps: {
-      byUniversalIdentifier: Object.fromEntries(
-        viewFields.map((viewField) => [
-          viewField.universalIdentifier,
-          viewField,
-        ]),
-      ),
-    },
-  }) as unknown as Pick<
-    AllFlatEntityMaps,
-    'flatObjectMetadataMaps' | 'flatViewMaps' | 'flatViewFieldMaps'
-  >;
+}) => ({
+  flatObjectMetadataMaps: {
+    byUniversalIdentifier: Object.fromEntries(
+      objects.map((object) => [object.universalIdentifier, object]),
+    ),
+  },
+  flatViewMaps: {
+    byUniversalIdentifier: Object.fromEntries(
+      views.map((view) => [view.universalIdentifier, view]),
+    ),
+  },
+  flatViewFieldMaps: {
+    byUniversalIdentifier: Object.fromEntries(
+      viewFields.map((viewField) => [viewField.universalIdentifier, viewField]),
+    ),
+  },
+});
 
 const NAME_INDEX_VIEW_FIELD = buildIndexViewFieldFixture({
   universalIdentifier: NAME_INDEX_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
