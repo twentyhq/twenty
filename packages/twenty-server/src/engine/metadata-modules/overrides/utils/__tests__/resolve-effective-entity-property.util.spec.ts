@@ -300,9 +300,9 @@ describe('resolveEffectiveFlatEntity (parity with legacy flat spread)', () => {
     ];
 
     for (const flatEntity of flatCorpus) {
-      expect(resolveEffectiveFlatEntity(flatEntity)).toEqual(
-        frozenResolveFlat(flatEntity),
-      );
+      expect(
+        resolveEffectiveFlatEntity({ metadataName: 'view', flatEntity }),
+      ).toEqual(frozenResolveFlat(flatEntity));
     }
   });
 });

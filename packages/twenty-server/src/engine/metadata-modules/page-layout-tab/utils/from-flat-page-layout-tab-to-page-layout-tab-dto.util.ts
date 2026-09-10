@@ -5,8 +5,10 @@ import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/override
 export const fromFlatPageLayoutTabToPageLayoutTabDto = (
   flatPageLayoutTab: FlatPageLayoutTab,
 ): Omit<PageLayoutTabDTO, 'widgets'> => {
-  const effectiveFlatPageLayoutTab =
-    resolveEffectiveFlatEntity(flatPageLayoutTab);
+  const effectiveFlatPageLayoutTab = resolveEffectiveFlatEntity({
+    metadataName: 'pageLayoutTab',
+    flatEntity: flatPageLayoutTab,
+  });
   const {
     createdAt,
     updatedAt,

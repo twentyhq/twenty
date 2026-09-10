@@ -6,8 +6,10 @@ import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/override
 export const fromFlatCommandMenuItemToCommandMenuItemDto = (
   flatCommandMenuItem: FlatCommandMenuItem,
 ): CommandMenuItemDTO => {
-  const effectiveFlatCommandMenuItem =
-    resolveEffectiveFlatEntity(flatCommandMenuItem);
+  const effectiveFlatCommandMenuItem = resolveEffectiveFlatEntity({
+    metadataName: 'commandMenuItem',
+    flatEntity: flatCommandMenuItem,
+  });
 
   return {
     id: effectiveFlatCommandMenuItem.id,

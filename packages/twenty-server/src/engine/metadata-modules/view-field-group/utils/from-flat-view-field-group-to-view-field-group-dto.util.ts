@@ -5,8 +5,10 @@ import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/override
 export const fromFlatViewFieldGroupToViewFieldGroupDto = (
   flatViewFieldGroup: FlatViewFieldGroup,
 ): ViewFieldGroupDTO => {
-  const effectiveFlatViewFieldGroup =
-    resolveEffectiveFlatEntity(flatViewFieldGroup);
+  const effectiveFlatViewFieldGroup = resolveEffectiveFlatEntity({
+    metadataName: 'viewFieldGroup',
+    flatEntity: flatViewFieldGroup,
+  });
   const { createdAt, updatedAt, deletedAt, ...rest } =
     effectiveFlatViewFieldGroup;
 

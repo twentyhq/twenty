@@ -288,7 +288,10 @@ export class PageLayoutUpdateService {
       .filter((tab) => tab.pageLayoutId === existingPageLayout.id);
 
     const resolvedExistingTabs = existingTabs.map((tab) =>
-      resolveEffectiveFlatEntity(tab),
+      resolveEffectiveFlatEntity({
+        metadataName: 'pageLayoutTab',
+        flatEntity: tab,
+      }),
     );
 
     const {
@@ -579,7 +582,10 @@ export class PageLayoutUpdateService {
     });
 
     const resolvedExistingWidgets = existingWidgets.map((widget) =>
-      resolveEffectiveFlatEntity(widget),
+      resolveEffectiveFlatEntity({
+        metadataName: 'pageLayoutWidget',
+        flatEntity: widget,
+      }),
     );
 
     const {

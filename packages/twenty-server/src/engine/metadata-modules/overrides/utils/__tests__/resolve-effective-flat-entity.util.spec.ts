@@ -14,7 +14,12 @@ const flatView = {
 
 describe('resolveEffectiveFlatEntity', () => {
   it('returns the entity as is without overrides', () => {
-    expect(resolveEffectiveFlatEntity(flatView)).toEqual(flatView);
+    expect(
+      resolveEffectiveFlatEntity({
+        metadataName: 'view',
+        flatEntity: flatView,
+      }),
+    ).toEqual(flatView);
   });
 
   it('resolves every overridable property across author entries', () => {
@@ -23,7 +28,12 @@ describe('resolveEffectiveFlatEntity', () => {
       [OWNER]: { name: 'Theirs', icon: 'IconStar', isActive: false },
     };
 
-    expect(resolveEffectiveFlatEntity({ ...flatView, overrides })).toEqual({
+    expect(
+      resolveEffectiveFlatEntity({
+        metadataName: 'view',
+        flatEntity: { ...flatView, overrides },
+      }),
+    ).toEqual({
       ...flatView,
       overrides,
       name: 'Mine',
@@ -32,27 +42,37 @@ describe('resolveEffectiveFlatEntity', () => {
     });
   });
 
-  it('ignores entry keys that are not overridable properties', () => {
-    const overrides = { [CUSTOM]: { unknownKey: 'x' } };
+  it('only walks the overridable properties of the given kind', () => {
+    const overrides = { [CUSTOM]: { labelSingular: 'Société', name: 'Mine' } };
 
-    expect(resolveEffectiveFlatEntity({ ...flatView, overrides })).toEqual({
+    expect(
+      resolveEffectiveFlatEntity({
+        metadataName: 'view',
+        flatEntity: { ...flatView, labelSingular: 'Company', overrides },
+      }),
+    ).toEqual({
       ...flatView,
+      labelSingular: 'Company',
       overrides,
+      name: 'Mine',
     });
   });
 
   it('honours the workspace custom application order when given', () => {
     expect(
-      resolveEffectiveFlatEntity(
-        {
+      resolveEffectiveFlatEntity({
+        metadataName: 'view',
+        flatEntity: {
           ...flatView,
           overrides: {
             [OWNER]: { name: 'Theirs' },
             [CUSTOM]: { name: 'Mine' },
           },
         },
-        { workspaceCustomApplicationUniversalIdentifier: CUSTOM },
-      ).name,
+        authorContext: {
+          workspaceCustomApplicationUniversalIdentifier: CUSTOM,
+        },
+      }).name,
     ).toBe('Mine');
   });
 });
