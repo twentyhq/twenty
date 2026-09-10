@@ -12,7 +12,7 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type ChangeEvent, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconAdjustments,
@@ -281,8 +281,8 @@ export const ResourceCreditPriceSelector = ({
     openModal(BILLING_MODAL_IDS.creditPackagePicker);
   };
 
-  const handleSliderChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const price = sortedResourceCreditPrices[Number(event.target.value)];
+  const handleSliderValueChange = (value: number) => {
+    const price = sortedResourceCreditPrices[value];
 
     if (isDefined(price)) {
       setSelectedPriceId(price.stripePriceId);
@@ -422,7 +422,7 @@ export const ResourceCreditPriceSelector = ({
         newRolloverLimitValue={newRolloverLimitValue}
         onCancel={() => closeModal(BILLING_MODAL_IDS.creditPackagePicker)}
         onConfirm={handleConfirmPackagePicker}
-        onSliderChange={handleSliderChange}
+        onSliderValueChange={handleSliderValueChange}
         priceCount={sortedResourceCreditPrices.length}
         selectedCreditAmountValue={selectedCreditAmountValue}
         selectedPriceAmountValue={selectedPriceAmountValue}
