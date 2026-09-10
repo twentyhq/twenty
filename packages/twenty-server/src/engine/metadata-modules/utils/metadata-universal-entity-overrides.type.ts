@@ -5,11 +5,9 @@ import {
   type ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME,
   type MetadataEntityOverridablePropertyName,
 } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
+import { type MetadataEntityOverridableForeignKeyName } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity-overridable-foreign-key-name.type';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
-import {
-  type MetadataEntityOverridableForeignKeyName,
-  type MetadataEntityOverridesTranslations,
-} from 'src/engine/metadata-modules/utils/metadata-entity-overrides.type';
+import { type MetadataEntityOverridesTranslations } from 'src/engine/metadata-modules/utils/metadata-entity-overrides-translations.type';
 
 type MetadataEntityUniversalPropertyName<
   T extends AllMetadataName,
