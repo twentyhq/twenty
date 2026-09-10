@@ -111,9 +111,11 @@ const innerAppPull = async (
   onProgress?.('Reading local source files...');
 
   const scannedFiles = await scanProjectSourceFiles(appPath);
-  const localApplicationUniversalIdentifier = scannedFiles.find(
+  const localApplicationFile = scannedFiles.find(
     (scannedFile) => scannedFile.entityKey === ManifestEntityKey.Application,
-  )?.universalIdentifier;
+  );
+  const localApplicationUniversalIdentifier =
+    localApplicationFile?.universalIdentifier;
 
   const universalIdentifier =
     options.universalIdentifier ?? localApplicationUniversalIdentifier;
@@ -134,6 +136,7 @@ const innerAppPull = async (
   const applicationMismatchMessage = getApplicationMismatchMessage({
     requestedUniversalIdentifier: options.universalIdentifier,
     localApplicationUniversalIdentifier,
+    hasLocalApplicationFile: isDefined(localApplicationFile),
   });
 
   if (isDefined(applicationMismatchMessage)) {

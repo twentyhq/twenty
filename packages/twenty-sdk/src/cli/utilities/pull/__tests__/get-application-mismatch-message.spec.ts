@@ -8,9 +8,21 @@ describe('getApplicationMismatchMessage', () => {
     const message = getApplicationMismatchMessage({
       requestedUniversalIdentifier: OTHER_UID,
       localApplicationUniversalIdentifier: LOCAL_UID,
+      hasLocalApplicationFile: true,
     });
 
     expect(message).toContain(LOCAL_UID);
+    expect(message).toContain(OTHER_UID);
+  });
+
+  it('should refuse a pull when the declaration exists but could not be read', () => {
+    const message = getApplicationMismatchMessage({
+      requestedUniversalIdentifier: OTHER_UID,
+      localApplicationUniversalIdentifier: null,
+      hasLocalApplicationFile: true,
+    });
+
+    expect(message).toContain('could not be read');
     expect(message).toContain(OTHER_UID);
   });
 
@@ -19,6 +31,7 @@ describe('getApplicationMismatchMessage', () => {
       getApplicationMismatchMessage({
         requestedUniversalIdentifier: LOCAL_UID,
         localApplicationUniversalIdentifier: LOCAL_UID,
+        hasLocalApplicationFile: true,
       }),
     ).toBeUndefined();
   });
@@ -28,6 +41,7 @@ describe('getApplicationMismatchMessage', () => {
       getApplicationMismatchMessage({
         requestedUniversalIdentifier: OTHER_UID,
         localApplicationUniversalIdentifier: null,
+        hasLocalApplicationFile: false,
       }),
     ).toBeUndefined();
   });
@@ -37,6 +51,7 @@ describe('getApplicationMismatchMessage', () => {
       getApplicationMismatchMessage({
         requestedUniversalIdentifier: undefined,
         localApplicationUniversalIdentifier: LOCAL_UID,
+        hasLocalApplicationFile: true,
       }),
     ).toBeUndefined();
   });
