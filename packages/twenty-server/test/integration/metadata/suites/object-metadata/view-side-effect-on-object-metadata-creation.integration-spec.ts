@@ -5,7 +5,8 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
 import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
-import { ViewType } from 'twenty-shared/types';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { FeatureFlagKey, ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -95,7 +96,6 @@ describe('View side effect on object creation', () => {
     });
 
     expect(createdViews).toBeDefined();
-    expect(createdViews.length).toBe(3);
 
     const indexView = createdViews.find((view) => view.key === 'INDEX');
 
@@ -108,19 +108,9 @@ describe('View side effect on object creation', () => {
       type: ViewType.TABLE,
     });
 
-    const seededView = createdViews.find(
-      (view) => view.name === 'All Dishes I love' && view.id !== indexView.id,
-    );
-
-    if (!isDefined(seededView)) {
-      throw new Error('expected a seeded user-owned view to be provisioned');
-    }
-
-    expect(seededView).toMatchObject<Partial<FlatView>>({
-      objectMetadataId: createdObjectMetadataId,
-      type: ViewType.TABLE,
-      name: 'All Dishes I love',
-    });
+    expect(
+      createdViews.find((view) => view.name === 'All Dishes I love'),
+    ).toBeUndefined();
 
     const {
       data: { getViewFields: indexViewFields },
@@ -130,15 +120,56 @@ describe('View side effect on object creation', () => {
     });
 
     expect(indexViewFields.length).toBe(5);
+  });
 
-    const {
-      data: { getViewFields: seededViewFields },
-    } = await findViewFields({
-      viewId: seededView.id,
+  it('should expose the seeded view and its view fields once the feature flag is enabled', async () => {
+    const createOneObject = await createDishesObject();
+
+    createdObjectMetadataId = createOneObject.id;
+
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+      value: true,
       expectToFail: false,
     });
 
-    expect(seededViewFields.length).toBe(5);
+    try {
+      const {
+        data: { getViews: createdViews },
+      } = await findViews({
+        objectMetadataId: createdObjectMetadataId,
+        expectToFail: false,
+      });
+
+      const seededView = createdViews.find(
+        (view) => view.name === 'All Dishes I love',
+      );
+
+      if (!isDefined(seededView)) {
+        throw new Error('expected a seeded user-owned view to be exposed');
+      }
+
+      expect(seededView).toMatchObject<Partial<FlatView>>({
+        objectMetadataId: createdObjectMetadataId,
+        type: ViewType.TABLE,
+        name: 'All Dishes I love',
+      });
+
+      const {
+        data: { getViewFields: seededViewFields },
+      } = await findViewFields({
+        viewId: seededView.id,
+        expectToFail: false,
+      });
+
+      expect(seededViewFields.length).toBe(5);
+    } finally {
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
+    }
   });
 
   it('should keep the same INDEX view when the object is renamed (lossless, deterministic identifier)', async () => {
