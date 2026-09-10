@@ -1,9 +1,6 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconInfoCircle, IconRefresh, useIcons } from 'twenty-ui/icon';
@@ -20,23 +17,17 @@ import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTit
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import {
-  CreateSkillDocument,
-  type FindOneSkillQuery,
-  UpdateSkillDocument,
-} from '~/generated-metadata/graphql';
+import { type FindOneSkillQuery } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsSkillDangerZone } from '~/pages/settings/ai/components/SettingsSkillDangerZone';
-import { useAutoSaveOnChange } from '~/pages/settings/ai/hooks/useAutoSaveOnChange';
+import { useSettingsSkillSave } from '~/pages/settings/ai/hooks/useSettingsSkillSave';
 import { type SettingsSkillFormValues } from '~/pages/settings/ai/types/SettingsSkillFormValues';
 import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
 import { getSettingsSkillInitialFormValues } from '~/pages/settings/ai/utils/getSettingsSkillInitialFormValues';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -75,22 +66,14 @@ export const SettingsSkillFormContent = ({
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const navigate = useNavigateSettings();
-  const { enqueueErrorSnackBar } = useSnackBar();
 
   const isCreateMode = !isDefined(skill);
-  const isEditMode = isDefined(skill);
   const isReadonlyMode = isDefined(skill) && !skill.isCustom;
 
   const [initialFormValues] = useState(() =>
     getSettingsSkillInitialFormValues(skill),
   );
   const [formValues, setFormValues] = useState(initialFormValues);
-  const [originalFormValues, setOriginalFormValues] =
-    useState(initialFormValues);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [createSkill] = useMutation(CreateSkillDocument);
-  const [updateSkill] = useMutation(UpdateSkillDocument);
 
   const handleFieldChange = <TField extends keyof SettingsSkillFormValues>(
     fieldName: TField,
@@ -119,88 +102,15 @@ export const SettingsSkillFormContent = ({
     );
   };
 
-  const buildInput = () => ({
-    name: formValues.name,
-    label: formValues.label,
-    description: formValues.description || undefined,
-    content: formValues.content,
-    icon: formValues.icon || undefined,
-  });
-
-  const autoSave = useDebouncedCallback(async () => {
-    if (
-      !isDefined(skill) ||
-      isReadonlyMode ||
-      !validateForm() ||
-      isSubmitting
-    ) {
-      return;
-    }
-
-    if (isDeeplyEqual(formValues, originalFormValues)) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      await updateSkill({
-        variables: {
-          input: { id: skill.id, ...buildInput() },
-        },
-      });
-
-      setOriginalFormValues({ ...formValues });
-    } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, 1_000);
-
-  useAutoSaveOnChange({
-    autoSave,
-    isEnabled: isEditMode,
-    watchedValue: formValues,
+  const { handleSave, isSubmitting } = useSettingsSkillSave({
+    skill,
+    formValues,
+    initialFormValues,
+    isReadonlyMode,
+    validateForm,
   });
 
   const canSave = !isReadonlyMode && validateForm() && !isSubmitting;
-
-  const handleSave = async () => {
-    if (isReadonlyMode || !validateForm()) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      if (!isDefined(skill)) {
-        await createSkill({
-          variables: {
-            input: buildInput(),
-          },
-        });
-        navigate(SettingsPath.AI);
-        return;
-      }
-
-      await updateSkill({
-        variables: {
-          input: { id: skill.id, ...buildInput() },
-        },
-      });
-
-      navigate(SettingsPath.AI);
-    } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const handleCancel = () => {
     setFormValues(initialFormValues);

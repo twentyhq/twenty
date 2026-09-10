@@ -9,8 +9,6 @@ export const useSettingsAgentFormState = (
 ) => {
   const [formValues, setFormValues] =
     useState<SettingsAiAgentFormValues>(initialValues);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const validateForm = (): boolean =>
     settingsAiAgentFormSchema.safeParse(formValues).success;
 
@@ -23,9 +21,7 @@ export const useSettingsAgentFormState = (
 
   return {
     formValues,
-    isSubmitting,
     handleFieldChange,
-    setIsSubmitting,
     validateForm,
   };
 };
