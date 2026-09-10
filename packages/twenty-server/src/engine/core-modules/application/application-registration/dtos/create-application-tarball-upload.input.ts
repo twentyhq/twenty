@@ -4,7 +4,7 @@ import { IsInt, Min } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 import { Manifest } from 'twenty-shared/application';
 
-import { type TarballPackageJson } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
+import { type TarballPackageJson } from 'src/engine/core-modules/application/application-registration/types/tarball-package-json.type';
 
 @ArgsType()
 export class CreateApplicationTarballUploadInput {

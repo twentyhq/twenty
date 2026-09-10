@@ -26,6 +26,7 @@ import {
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { type TarballPackageJson } from 'src/engine/core-modules/application/application-registration/types/tarball-package-json.type';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -45,11 +46,6 @@ import type { ApplicationManifest, Manifest } from 'twenty-shared/application';
 
 const TARBALL_RESOURCE_FILENAME = 'app.tar.gz';
 const TARBALL_UPLOAD_CONTENT_TYPE = 'application/octet-stream';
-export type TarballPackageJson = {
-  version?: string;
-  engines?: { twenty?: string };
-};
-
 const TARBALL_FILE_SETTINGS = {
   isTemporaryFile: false,
   toDelete: false,
