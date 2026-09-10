@@ -8,6 +8,16 @@ import {
 
 import { CalDavFetchEventsService } from './caldav-fetch-events.service';
 
+const davResponse = (
+  response: Pick<DAVResponse, 'href' | 'props'> &
+    Partial<Pick<DAVResponse, 'status'>>,
+): DAVResponse => ({
+  status: 200,
+  statusText: 'OK',
+  ok: true,
+  ...response,
+});
+
 describe('CalDavFetchEventsService', () => {
   let service: CalDavFetchEventsService;
 
@@ -33,26 +43,22 @@ describe('CalDavFetchEventsService', () => {
 
     it('falls back to href as pseudo-etag when getetag is missing or empty (e.g. SmarterMail)', async () => {
       const mockResponses: DAVResponse[] = [
-        {
+        davResponse({
           href: 'https://caldav.example.com/calendars/user/default/',
           props: {},
-          status: 200,
-        },
-        {
+        }),
+        davResponse({
           href: 'https://caldav.example.com/calendars/user/default/event-no-etag.ics',
           props: {},
-          status: 200,
-        },
-        {
+        }),
+        davResponse({
           href: 'https://caldav.example.com/calendars/user/default/event-empty-etag.ics',
           props: { getetag: '' },
-          status: 200,
-        },
-        {
+        }),
+        davResponse({
           href: 'https://caldav.example.com/calendars/user/default/event-with-etag.ics',
           props: { getetag: '"real-etag-123"' },
-          status: 200,
-        },
+        }),
       ];
 
       const mockClient = {
@@ -90,21 +96,18 @@ describe('CalDavFetchEventsService', () => {
 
     it('ignores collection href and non-caldav file extensions', async () => {
       const mockResponses: DAVResponse[] = [
-        {
+        davResponse({
           href: 'https://caldav.example.com/calendars/user/default/',
           props: {},
-          status: 200,
-        },
-        {
+        }),
+        davResponse({
           href: 'https://caldav.example.com/calendars/user/default/readme.txt',
           props: {},
-          status: 200,
-        },
-        {
+        }),
+        davResponse({
           href: 'https://caldav.example.com/calendars/user/default/valid-event.ics',
           props: {},
-          status: 200,
-        },
+        }),
       ];
 
       const mockClient = {
@@ -168,16 +171,14 @@ describe('CalDavFetchEventsService', () => {
       };
 
       const mockResponses: DAVResponse[] = [
-        {
+        davResponse({
           href: 'https://caldav.example.com/calendars/user/default/kept-event.ics',
           props: {},
-          status: 200,
-        },
-        {
+        }),
+        davResponse({
           href: 'https://caldav.example.com/calendars/user/default/new-event.ics',
           props: {},
-          status: 200,
-        },
+        }),
       ];
 
       const mockClient = {
@@ -220,19 +221,17 @@ describe('CalDavFetchEventsService', () => {
         propfind: jest.fn().mockImplementation(({ url }: { url: string }) => {
           if (url === cal1.url) {
             return [
-              {
+              davResponse({
                 href: 'https://caldav.example.com/cal1/event1.ics',
                 props: {},
-                status: 200,
-              },
+              }),
             ];
           }
           return [
-            {
+            davResponse({
               href: 'https://caldav.example.com/cal2/event2.ics',
               props: { getetag: '"cal2-etag"' },
-              status: 200,
-            },
+            }),
           ];
         }),
       } as unknown as DAVClient;
