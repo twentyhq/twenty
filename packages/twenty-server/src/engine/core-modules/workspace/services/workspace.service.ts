@@ -189,10 +189,13 @@ export class WorkspaceService {
   // Pins are stored as given, so a stale or mistyped id must be refused here
   // rather than silently falling back to the tier default at run time. A pin
   // that is already stored is left alone so the others stay editable.
-  private validateAiModelIdByTier(
-    aiModelIdByTier: Partial<Record<AiModelTier, string>>,
-    storedAiModelIdByTier: Partial<Record<AiModelTier, string>>,
-  ): void {
+  private validateAiModelIdByTier({
+    aiModelIdByTier,
+    storedAiModelIdByTier,
+  }: {
+    aiModelIdByTier: Partial<Record<AiModelTier, string>>;
+    storedAiModelIdByTier: Partial<Record<AiModelTier, string>>;
+  }): void {
     for (const [tier, modelId] of Object.entries(aiModelIdByTier)) {
       if (!isAiModelTier(tier)) {
         throw new WorkspaceException(
@@ -337,10 +340,10 @@ export class WorkspaceService {
     }
 
     if (isDefined(payload.aiModelIdByTier)) {
-      this.validateAiModelIdByTier(
-        payload.aiModelIdByTier,
-        workspace.aiModelIdByTier,
-      );
+      this.validateAiModelIdByTier({
+        aiModelIdByTier: payload.aiModelIdByTier,
+        storedAiModelIdByTier: workspace.aiModelIdByTier,
+      });
     }
 
     let updatedWorkspace: WorkspaceEntity;

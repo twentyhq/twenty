@@ -257,7 +257,7 @@ export class StreamAgentChatJob {
     workspace: WorkspaceEntity | null,
   ): string {
     const modelId = isDefined(workspace)
-      ? getChatModelId(requestedModelId, workspace)
+      ? getChatModelId({ requestedModelId, workspace })
       : requestedModelId;
 
     if (!isNonEmptyString(modelId)) {

@@ -180,7 +180,10 @@ export class AgentChatResolver {
       );
     }
 
-    const resolvedModelId = getChatModelId(modelId, workspace);
+    const resolvedModelId = getChatModelId({
+      requestedModelId: modelId,
+      workspace,
+    });
 
     this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
 
@@ -295,7 +298,7 @@ export class AgentChatResolver {
     }
 
     this.aiModelRegistryService.validateModelAvailability(
-      getChatModelId(modelId, workspace),
+      getChatModelId({ requestedModelId: modelId, workspace }),
     );
 
     await this.aiBillingService.assertAiExecutionAllowed({
@@ -348,7 +351,10 @@ export class AgentChatResolver {
       );
     }
 
-    const resolvedModelId = getChatModelId(modelId, workspace);
+    const resolvedModelId = getChatModelId({
+      requestedModelId: modelId,
+      workspace,
+    });
 
     this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
 

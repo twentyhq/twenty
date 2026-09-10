@@ -16,10 +16,13 @@ const REFERENCE_TIER: AiModelTier = 'balanced';
 
 // Both sides of a cost comparison must use the same basis: the publisher's
 // cost per task when both models have one, the catalog price otherwise.
-const getCostDeltaPercent = (
-  model: ClientAiModelConfig | undefined,
-  referenceModel: ClientAiModelConfig | undefined,
-) => {
+const getCostDeltaPercent = ({
+  model,
+  referenceModel,
+}: {
+  model: ClientAiModelConfig | undefined;
+  referenceModel: ClientAiModelConfig | undefined;
+}) => {
   if (!isDefined(model) || !isDefined(referenceModel)) {
     return undefined;
   }
@@ -88,7 +91,7 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
         value: model?.intelligenceIndex,
         reference: referenceModel?.intelligenceIndex,
       }),
-      costDeltaPercent: getCostDeltaPercent(model, referenceModel),
+      costDeltaPercent: getCostDeltaPercent({ model, referenceModel }),
     }));
   }, [aiModels, aiModelTiers, isAutoModelSelectionEnabled, aiModelIdByTier]);
 };

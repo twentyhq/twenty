@@ -188,7 +188,10 @@ export class ChatExecutionService {
       { compactOutput: true, spillLargeOutput: true },
     );
 
-    const resolvedModelId = getChatModelId(modelId, workspace);
+    const resolvedModelId = getChatModelId({
+      requestedModelId: modelId,
+      workspace,
+    });
 
     this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
 

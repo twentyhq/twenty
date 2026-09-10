@@ -23,7 +23,6 @@ import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
-import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
   LogicFunctionException,
@@ -78,7 +77,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly codeStepBuildService: CodeStepBuildService,
     private readonly agentService: AgentService,
-    private readonly aiModelRegistryService: AiModelRegistryService,
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectRepository(ObjectMetadataEntity)
