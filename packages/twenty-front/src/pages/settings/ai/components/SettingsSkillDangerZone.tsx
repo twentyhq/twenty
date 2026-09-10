@@ -17,6 +17,7 @@ import {
   ActivateSkillDocument,
   DeactivateSkillDocument,
   DeleteSkillDocument,
+  type FindOneSkillQuery,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -28,7 +29,10 @@ const StyledDangerButtonsContainer = styled.div`
 const DELETE_SKILL_MODAL_ID = 'delete-skill-modal';
 
 type SettingsSkillDangerZoneProps = {
-  skill: { id: string; isActive: boolean; isCustom: boolean };
+  skill: Pick<
+    NonNullable<FindOneSkillQuery['skill']>,
+    'id' | 'isActive' | 'isCustom'
+  >;
 };
 
 export const SettingsSkillDangerZone = ({
