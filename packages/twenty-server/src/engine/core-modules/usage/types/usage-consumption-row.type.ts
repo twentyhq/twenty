@@ -1,4 +1,4 @@
-export type QuotaConsumptionRow = {
+export type UsageConsumptionRow = {
   operationType: string;
   userWorkspaceId: string;
   apiKeyId: string;

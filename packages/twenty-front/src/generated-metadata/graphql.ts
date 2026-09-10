@@ -1436,6 +1436,19 @@ export type CreateUnsubscribeTopicInput = {
   visibility?: InputMaybe<UnsubscribeTopicVisibility>;
 };
 
+export type CreateUsageLimitInput = {
+  burstValue?: InputMaybe<Scalars['BigInt']['input']>;
+  limitKind: Scalars['String']['input'];
+  limitValue: Scalars['BigInt']['input'];
+  meter: Scalars['String']['input'];
+  operationType: UsageOperationType;
+  periodCount: Scalars['Int']['input'];
+  periodUnit: Scalars['String']['input'];
+  resourceType: UsageResourceType;
+  spenderId?: InputMaybe<Scalars['String']['input']>;
+  spenderType: Scalars['String']['input'];
+};
+
 export type CreateViewFieldGroupInput = {
   id?: InputMaybe<Scalars['UUID']['input']>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2882,6 +2895,7 @@ export type Mutation = {
   createSkill: Skill;
   createSubscriptionPaymentIntent: BillingPaymentIntent;
   createUnsubscribeTopic: UnsubscribeTopic;
+  createUsageLimit: UsageLimit;
   createView: View;
   createViewField: ViewField;
   createViewFieldGroup: ViewFieldGroup;
@@ -3049,6 +3063,7 @@ export type Mutation = {
   updateSkill: Skill;
   updateTimelineActivityType: TimelineActivityType;
   updateUnsubscribeTopic: UnsubscribeTopic;
+  updateUsageLimit: UsageLimit;
   updateUserEmail: Scalars['Boolean']['output'];
   updateView: View;
   updateViewField: ViewField;
@@ -3073,7 +3088,6 @@ export type Mutation = {
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertPermissionFlags: Array<RolePermissionFlag>;
   upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult;
-  upsertUsageLimit: UsageLimit;
   upsertViewWidget: View;
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
@@ -3355,6 +3369,11 @@ export type MutationCreateSubscriptionPaymentIntentArgs = {
 
 export type MutationCreateUnsubscribeTopicArgs = {
   input: CreateUnsubscribeTopicInput;
+};
+
+
+export type MutationCreateUsageLimitArgs = {
+  input: CreateUsageLimitInput;
 };
 
 
@@ -4168,6 +4187,11 @@ export type MutationUpdateUnsubscribeTopicArgs = {
 };
 
 
+export type MutationUpdateUsageLimitArgs = {
+  input: UpdateUsageLimitInput;
+};
+
+
 export type MutationUpdateUserEmailArgs = {
   newEmail: Scalars['String']['input'];
   verifyEmailRedirectPath?: InputMaybe<Scalars['String']['input']>;
@@ -4296,11 +4320,6 @@ export type MutationUpsertPermissionFlagsArgs = {
 
 export type MutationUpsertRowLevelPermissionPredicatesArgs = {
   input: UpsertRowLevelPermissionPredicatesInput;
-};
-
-
-export type MutationUpsertUsageLimitArgs = {
-  input: UpsertUsageLimitInput;
 };
 
 
@@ -4969,6 +4988,9 @@ export type Query = {
   timelineActivityTypes: Array<TimelineActivityType>;
   unsubscribeTopics: Array<UnsubscribeTopic>;
   usageLimits: Array<UsageLimit>;
+  usageQuotaDefinitions: UsageQuotaDefinitions;
+  usageQuotaScopeConsumption?: Maybe<UsageQuotaScopeConsumption>;
+  usageQuotasWithConsumption: Array<UsageQuotaWithConsumption>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
@@ -5415,6 +5437,11 @@ export type QueryPublicMarketplaceAppsArgs = {
 
 export type QuerySkillArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type QueryUsageQuotaScopeConsumptionArgs = {
+  input: UsageQuotaScopeInput;
 };
 
 
@@ -6323,6 +6350,11 @@ export type UpdateUnsubscribeTopicInput = {
   visibility?: InputMaybe<UnsubscribeTopicVisibility>;
 };
 
+export type UpdateUsageLimitInput = {
+  id: Scalars['UUID']['input'];
+  payload: CreateUsageLimitInput;
+};
+
 export type UpdateViewFieldGroupInput = {
   /** The id of the view field group to update */
   id: Scalars['UUID']['input'];
@@ -6525,19 +6557,6 @@ export type UpsertRowLevelPermissionPredicatesResult = {
   predicates: Array<RowLevelPermissionPredicate>;
 };
 
-export type UpsertUsageLimitInput = {
-  burstValue?: InputMaybe<Scalars['BigInt']['input']>;
-  limitKind: Scalars['String']['input'];
-  limitValue: Scalars['BigInt']['input'];
-  meter: Scalars['String']['input'];
-  operationType: UsageOperationType;
-  periodCount: Scalars['Int']['input'];
-  periodUnit: Scalars['String']['input'];
-  resourceType: UsageResourceType;
-  spenderId?: InputMaybe<Scalars['String']['input']>;
-  spenderType: Scalars['String']['input'];
-};
-
 export type UpsertViewWidgetInput = {
   /** View-level settings (layout type, group by, kanban and calendar settings) to apply to the widget view. */
   view?: InputMaybe<UpsertViewWidgetViewSettingsInput>;
@@ -6659,6 +6678,55 @@ export enum UsageOperationType {
   WEB_SEARCH = 'WEB_SEARCH',
   WORKFLOW_EXECUTION = 'WORKFLOW_EXECUTION'
 }
+
+export type UsageQuotaDefinition = {
+  __typename?: 'UsageQuotaDefinition';
+  allowedMeters: Array<Scalars['String']['output']>;
+  allowedOperationTypes: Array<UsageOperationType>;
+  allowedSpenderTypes: Array<Scalars['String']['output']>;
+  resourceType: UsageResourceType;
+};
+
+export type UsageQuotaDefinitions = {
+  __typename?: 'UsageQuotaDefinitions';
+  definitions: Array<UsageQuotaDefinition>;
+  hasAllowancePeriod: Scalars['Boolean']['output'];
+  isIntraWorkspaceLimitEntitled: Scalars['Boolean']['output'];
+};
+
+export type UsageQuotaScopeConsumption = {
+  __typename?: 'UsageQuotaScopeConsumption';
+  consumedValue?: Maybe<Scalars['BigInt']['output']>;
+  periodEnd: Scalars['DateTime']['output'];
+  periodStart: Scalars['DateTime']['output'];
+};
+
+export type UsageQuotaScopeInput = {
+  meter: Scalars['String']['input'];
+  operationType: UsageOperationType;
+  periodUnit: Scalars['String']['input'];
+  resourceType: UsageResourceType;
+  spenderId?: InputMaybe<Scalars['String']['input']>;
+  spenderType: Scalars['String']['input'];
+};
+
+export type UsageQuotaWithConsumption = {
+  __typename?: 'UsageQuotaWithConsumption';
+  consumedValue?: Maybe<Scalars['BigInt']['output']>;
+  id: Scalars['UUID']['output'];
+  isEnforced: Scalars['Boolean']['output'];
+  limitValue: Scalars['BigInt']['output'];
+  meter: Scalars['String']['output'];
+  operationType: UsageOperationType;
+  periodEnd?: Maybe<Scalars['DateTime']['output']>;
+  periodStart?: Maybe<Scalars['DateTime']['output']>;
+  periodUnit: Scalars['String']['output'];
+  remainingValue?: Maybe<Scalars['BigInt']['output']>;
+  resourceType: UsageResourceType;
+  spenderId?: Maybe<Scalars['String']['output']>;
+  spenderLabel?: Maybe<Scalars['String']['output']>;
+  spenderType: Scalars['String']['output'];
+};
 
 export enum UsageResourceType {
   AI = 'AI',
@@ -8975,6 +9043,20 @@ export type CreateSubscriptionPaymentIntentMutationVariables = Exact<{
 
 export type CreateSubscriptionPaymentIntentMutation = { __typename?: 'Mutation', createSubscriptionPaymentIntent: { __typename?: 'BillingPaymentIntent', clientSecret: string, paymentIntentType: string } };
 
+export type CreateUsageLimitMutationVariables = Exact<{
+  input: CreateUsageLimitInput;
+}>;
+
+
+export type CreateUsageLimitMutation = { __typename?: 'Mutation', createUsageLimit: { __typename?: 'UsageLimit', id: string } };
+
+export type DeleteUsageLimitMutationVariables = Exact<{
+  usageLimitId: Scalars['UUID']['input'];
+}>;
+
+
+export type DeleteUsageLimitMutation = { __typename?: 'Mutation', deleteUsageLimit: boolean };
+
 export type EndSubscriptionTrialPeriodMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -9009,6 +9091,13 @@ export type SwitchSubscriptionIntervalMutation = { __typename?: 'Mutation', swit
           | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType, isLegacy?: string | null } }
          }> | null }, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, cancelAt?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }> } };
 
+export type UpdateUsageLimitMutationVariables = Exact<{
+  input: UpdateUsageLimitInput;
+}>;
+
+
+export type UpdateUsageLimitMutation = { __typename?: 'Mutation', updateUsageLimit: { __typename?: 'UsageLimit', id: string } };
+
 export type BillingPortalSessionQueryVariables = Exact<{
   returnUrlPath?: InputMaybe<Scalars['String']['input']>;
   forPaymentMethodUpdate?: InputMaybe<Scalars['Boolean']['input']>;
@@ -9026,6 +9115,23 @@ export type ListPlansQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ListPlansQuery = { __typename?: 'Query', listPlans: Array<{ __typename?: 'BillingPlan', planKey: BillingPlanKey, baseProducts: Array<{ __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceLicensed', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType, creditAmount?: number | null, isSellable: boolean }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType, isLegacy?: string | null } }>, resourceCreditProducts: Array<{ __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceLicensed', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType, creditAmount?: number | null, isSellable: boolean }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType, isLegacy?: string | null } }>, meteredProducts: Array<{ __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceMetered', priceUsageType: BillingUsageType, recurringInterval: SubscriptionInterval, stripePriceId: string, tiers: Array<{ __typename?: 'BillingPriceTier', flatAmount?: number | null, unitAmount?: number | null, upTo?: number | null }> }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType, isLegacy?: string | null } }> }> };
+
+export type UsageQuotaDefinitionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UsageQuotaDefinitionsQuery = { __typename?: 'Query', usageQuotaDefinitions: { __typename?: 'UsageQuotaDefinitions', isIntraWorkspaceLimitEntitled: boolean, hasAllowancePeriod: boolean, definitions: Array<{ __typename?: 'UsageQuotaDefinition', resourceType: UsageResourceType, allowedOperationTypes: Array<UsageOperationType>, allowedSpenderTypes: Array<string>, allowedMeters: Array<string> }> } };
+
+export type UsageQuotaScopeConsumptionQueryVariables = Exact<{
+  input: UsageQuotaScopeInput;
+}>;
+
+
+export type UsageQuotaScopeConsumptionQuery = { __typename?: 'Query', usageQuotaScopeConsumption?: { __typename?: 'UsageQuotaScopeConsumption', consumedValue?: any | null, periodStart: string, periodEnd: string } | null };
+
+export type UsageQuotasWithConsumptionQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UsageQuotasWithConsumptionQuery = { __typename?: 'Query', usageQuotasWithConsumption: Array<{ __typename?: 'UsageQuotaWithConsumption', id: string, resourceType: UsageResourceType, operationType: UsageOperationType, spenderType: string, spenderId?: string | null, spenderLabel?: string | null, periodUnit: string, meter: string, limitValue: any, isEnforced: boolean, consumedValue?: any | null, remainingValue?: any | null, periodStart?: string | null, periodEnd?: string | null }> };
 
 export type ApiKeyFragmentFragment = { __typename?: 'ApiKey', id: string, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } };
 
@@ -9996,13 +10102,19 @@ export const CancelSwitchResourceCreditPriceDocument = {"kind":"Document","defin
 export const CheckoutSessionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CheckoutSession"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"recurringInterval"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SubscriptionInterval"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"successUrlPath"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"plan"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"BillingPlanKey"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"requirePaymentMethod"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"checkoutSession"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"recurringInterval"},"value":{"kind":"Variable","name":{"kind":"Name","value":"recurringInterval"}}},{"kind":"Argument","name":{"kind":"Name","value":"successUrlPath"},"value":{"kind":"Variable","name":{"kind":"Name","value":"successUrlPath"}}},{"kind":"Argument","name":{"kind":"Name","value":"plan"},"value":{"kind":"Variable","name":{"kind":"Name","value":"plan"}}},{"kind":"Argument","name":{"kind":"Name","value":"requirePaymentMethod"},"value":{"kind":"Variable","name":{"kind":"Name","value":"requirePaymentMethod"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<CheckoutSessionMutation, CheckoutSessionMutationVariables>;
 export const CreateBillingPaymentMethodSetupIntentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateBillingPaymentMethodSetupIntent"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createBillingPaymentMethodSetupIntent"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"clientSecret"}}]}}]}}]} as unknown as DocumentNode<CreateBillingPaymentMethodSetupIntentMutation, CreateBillingPaymentMethodSetupIntentMutationVariables>;
 export const CreateSubscriptionPaymentIntentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateSubscriptionPaymentIntent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"recurringInterval"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SubscriptionInterval"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"plan"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"BillingPlanKey"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"idempotencyKey"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createSubscriptionPaymentIntent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"recurringInterval"},"value":{"kind":"Variable","name":{"kind":"Name","value":"recurringInterval"}}},{"kind":"Argument","name":{"kind":"Name","value":"plan"},"value":{"kind":"Variable","name":{"kind":"Name","value":"plan"}}},{"kind":"Argument","name":{"kind":"Name","value":"idempotencyKey"},"value":{"kind":"Variable","name":{"kind":"Name","value":"idempotencyKey"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"clientSecret"}},{"kind":"Field","name":{"kind":"Name","value":"paymentIntentType"}}]}}]}}]} as unknown as DocumentNode<CreateSubscriptionPaymentIntentMutation, CreateSubscriptionPaymentIntentMutationVariables>;
+export const CreateUsageLimitDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUsageLimit"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateUsageLimitInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createUsageLimit"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateUsageLimitMutation, CreateUsageLimitMutationVariables>;
+export const DeleteUsageLimitDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteUsageLimit"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"usageLimitId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteUsageLimit"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"usageLimitId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"usageLimitId"}}}]}]}}]} as unknown as DocumentNode<DeleteUsageLimitMutation, DeleteUsageLimitMutationVariables>;
 export const EndSubscriptionTrialPeriodDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"EndSubscriptionTrialPeriod"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"endSubscriptionTrialPeriod"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"hasPaymentMethod"}},{"kind":"Field","name":{"kind":"Name","value":"billingPortalUrl"}},{"kind":"Field","name":{"kind":"Name","value":"currentBillingSubscription"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"CurrentBillingSubscriptionFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"billingSubscriptions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhase"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"CurrentBillingSubscriptionFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscription"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"interval"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}},{"kind":"Field","name":{"kind":"Name","value":"currentPeriodEnd"}},{"kind":"Field","name":{"kind":"Name","value":"cancelAt"}},{"kind":"Field","name":{"kind":"Name","value":"phases"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"billingSubscriptionItems"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"hasReachedCurrentPeriodCap"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"stripePriceId"}},{"kind":"Field","name":{"kind":"Name","value":"unitAmount"}},{"kind":"Field","name":{"kind":"Name","value":"creditAmount"}},{"kind":"Field","name":{"kind":"Name","value":"billingProduct"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"images"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"productKey"}},{"kind":"Field","name":{"kind":"Name","value":"planKey"}},{"kind":"Field","name":{"kind":"Name","value":"priceUsageBased"}},{"kind":"Field","name":{"kind":"Name","value":"isLegacy"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingSubscriptionFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscription"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}},{"kind":"Field","name":{"kind":"Name","value":"cancelAt"}},{"kind":"Field","name":{"kind":"Name","value":"phases"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseFragment"}}]}}]}}]} as unknown as DocumentNode<EndSubscriptionTrialPeriodMutation, EndSubscriptionTrialPeriodMutationVariables>;
 export const SetResourceCreditSubscriptionPriceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetResourceCreditSubscriptionPrice"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"priceId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setResourceCreditSubscriptionPrice"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"priceId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"priceId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currentBillingSubscription"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"CurrentBillingSubscriptionFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"billingSubscriptions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhase"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"CurrentBillingSubscriptionFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscription"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"interval"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}},{"kind":"Field","name":{"kind":"Name","value":"currentPeriodEnd"}},{"kind":"Field","name":{"kind":"Name","value":"cancelAt"}},{"kind":"Field","name":{"kind":"Name","value":"phases"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"billingSubscriptionItems"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"hasReachedCurrentPeriodCap"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"stripePriceId"}},{"kind":"Field","name":{"kind":"Name","value":"unitAmount"}},{"kind":"Field","name":{"kind":"Name","value":"creditAmount"}},{"kind":"Field","name":{"kind":"Name","value":"billingProduct"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"images"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"productKey"}},{"kind":"Field","name":{"kind":"Name","value":"planKey"}},{"kind":"Field","name":{"kind":"Name","value":"priceUsageBased"}},{"kind":"Field","name":{"kind":"Name","value":"isLegacy"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingSubscriptionFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscription"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}},{"kind":"Field","name":{"kind":"Name","value":"cancelAt"}},{"kind":"Field","name":{"kind":"Name","value":"phases"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseFragment"}}]}}]}}]} as unknown as DocumentNode<SetResourceCreditSubscriptionPriceMutation, SetResourceCreditSubscriptionPriceMutationVariables>;
 export const SwitchBillingPlanDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SwitchBillingPlan"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"switchBillingPlan"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currentBillingSubscription"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"CurrentBillingSubscriptionFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"billingSubscriptions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhase"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"CurrentBillingSubscriptionFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscription"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"interval"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}},{"kind":"Field","name":{"kind":"Name","value":"currentPeriodEnd"}},{"kind":"Field","name":{"kind":"Name","value":"cancelAt"}},{"kind":"Field","name":{"kind":"Name","value":"phases"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"billingSubscriptionItems"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"hasReachedCurrentPeriodCap"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"stripePriceId"}},{"kind":"Field","name":{"kind":"Name","value":"unitAmount"}},{"kind":"Field","name":{"kind":"Name","value":"creditAmount"}},{"kind":"Field","name":{"kind":"Name","value":"billingProduct"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"images"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"productKey"}},{"kind":"Field","name":{"kind":"Name","value":"planKey"}},{"kind":"Field","name":{"kind":"Name","value":"priceUsageBased"}},{"kind":"Field","name":{"kind":"Name","value":"isLegacy"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingSubscriptionFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscription"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}},{"kind":"Field","name":{"kind":"Name","value":"cancelAt"}},{"kind":"Field","name":{"kind":"Name","value":"phases"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseFragment"}}]}}]}}]} as unknown as DocumentNode<SwitchBillingPlanMutation, SwitchBillingPlanMutationVariables>;
 export const SwitchSubscriptionIntervalDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SwitchSubscriptionInterval"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"switchSubscriptionInterval"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currentBillingSubscription"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"CurrentBillingSubscriptionFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"billingSubscriptions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhase"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"CurrentBillingSubscriptionFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscription"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"interval"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}},{"kind":"Field","name":{"kind":"Name","value":"currentPeriodEnd"}},{"kind":"Field","name":{"kind":"Name","value":"cancelAt"}},{"kind":"Field","name":{"kind":"Name","value":"phases"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"billingSubscriptionItems"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"hasReachedCurrentPeriodCap"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"stripePriceId"}},{"kind":"Field","name":{"kind":"Name","value":"unitAmount"}},{"kind":"Field","name":{"kind":"Name","value":"creditAmount"}},{"kind":"Field","name":{"kind":"Name","value":"billingProduct"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"images"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"productKey"}},{"kind":"Field","name":{"kind":"Name","value":"planKey"}},{"kind":"Field","name":{"kind":"Name","value":"priceUsageBased"}},{"kind":"Field","name":{"kind":"Name","value":"isLegacy"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingSubscriptionFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscription"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}},{"kind":"Field","name":{"kind":"Name","value":"cancelAt"}},{"kind":"Field","name":{"kind":"Name","value":"phases"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseFragment"}}]}}]}}]} as unknown as DocumentNode<SwitchSubscriptionIntervalMutation, SwitchSubscriptionIntervalMutationVariables>;
+export const UpdateUsageLimitDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateUsageLimit"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateUsageLimitInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUsageLimit"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<UpdateUsageLimitMutation, UpdateUsageLimitMutationVariables>;
 export const BillingPortalSessionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"BillingPortalSession"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"returnUrlPath"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"forPaymentMethodUpdate"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"billingPortalSession"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"returnUrlPath"},"value":{"kind":"Variable","name":{"kind":"Name","value":"returnUrlPath"}}},{"kind":"Argument","name":{"kind":"Name","value":"forPaymentMethodUpdate"},"value":{"kind":"Variable","name":{"kind":"Name","value":"forPaymentMethodUpdate"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>;
 export const GetResourceCreditUsageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetResourceCreditUsage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getResourceCreditUsage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"productKey"}},{"kind":"Field","name":{"kind":"Name","value":"usedCredits"}},{"kind":"Field","name":{"kind":"Name","value":"grantedCredits"}},{"kind":"Field","name":{"kind":"Name","value":"rolloverCredits"}},{"kind":"Field","name":{"kind":"Name","value":"totalGrantedCredits"}},{"kind":"Field","name":{"kind":"Name","value":"unitPriceCents"}}]}}]}}]} as unknown as DocumentNode<GetResourceCreditUsageQuery, GetResourceCreditUsageQueryVariables>;
 export const ListPlansDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"listPlans"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listPlans"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"planKey"}},{"kind":"Field","name":{"kind":"Name","value":"baseProducts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"images"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"productKey"}},{"kind":"Field","name":{"kind":"Name","value":"planKey"}},{"kind":"Field","name":{"kind":"Name","value":"priceUsageBased"}},{"kind":"Field","name":{"kind":"Name","value":"isLegacy"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingLicensedProduct"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingPriceLicensedFragment"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"resourceCreditProducts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"images"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"productKey"}},{"kind":"Field","name":{"kind":"Name","value":"planKey"}},{"kind":"Field","name":{"kind":"Name","value":"priceUsageBased"}},{"kind":"Field","name":{"kind":"Name","value":"isLegacy"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingLicensedProduct"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingPriceLicensedFragment"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"meteredProducts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"images"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"productKey"}},{"kind":"Field","name":{"kind":"Name","value":"planKey"}},{"kind":"Field","name":{"kind":"Name","value":"priceUsageBased"}},{"kind":"Field","name":{"kind":"Name","value":"isLegacy"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingMeteredProduct"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingPriceMeteredFragment"}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingPriceLicensedFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingPriceLicensed"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"stripePriceId"}},{"kind":"Field","name":{"kind":"Name","value":"unitAmount"}},{"kind":"Field","name":{"kind":"Name","value":"recurringInterval"}},{"kind":"Field","name":{"kind":"Name","value":"priceUsageType"}},{"kind":"Field","name":{"kind":"Name","value":"creditAmount"}},{"kind":"Field","name":{"kind":"Name","value":"isSellable"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingPriceMeteredFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingPriceMetered"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"priceUsageType"}},{"kind":"Field","name":{"kind":"Name","value":"recurringInterval"}},{"kind":"Field","name":{"kind":"Name","value":"stripePriceId"}},{"kind":"Field","name":{"kind":"Name","value":"tiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"flatAmount"}},{"kind":"Field","name":{"kind":"Name","value":"unitAmount"}},{"kind":"Field","name":{"kind":"Name","value":"upTo"}}]}}]}}]} as unknown as DocumentNode<ListPlansQuery, ListPlansQueryVariables>;
+export const UsageQuotaDefinitionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UsageQuotaDefinitions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usageQuotaDefinitions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"definitions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resourceType"}},{"kind":"Field","name":{"kind":"Name","value":"allowedOperationTypes"}},{"kind":"Field","name":{"kind":"Name","value":"allowedSpenderTypes"}},{"kind":"Field","name":{"kind":"Name","value":"allowedMeters"}}]}},{"kind":"Field","name":{"kind":"Name","value":"isIntraWorkspaceLimitEntitled"}},{"kind":"Field","name":{"kind":"Name","value":"hasAllowancePeriod"}}]}}]}}]} as unknown as DocumentNode<UsageQuotaDefinitionsQuery, UsageQuotaDefinitionsQueryVariables>;
+export const UsageQuotaScopeConsumptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UsageQuotaScopeConsumption"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UsageQuotaScopeInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usageQuotaScopeConsumption"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"consumedValue"}},{"kind":"Field","name":{"kind":"Name","value":"periodStart"}},{"kind":"Field","name":{"kind":"Name","value":"periodEnd"}}]}}]}}]} as unknown as DocumentNode<UsageQuotaScopeConsumptionQuery, UsageQuotaScopeConsumptionQueryVariables>;
+export const UsageQuotasWithConsumptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UsageQuotasWithConsumption"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usageQuotasWithConsumption"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"resourceType"}},{"kind":"Field","name":{"kind":"Name","value":"operationType"}},{"kind":"Field","name":{"kind":"Name","value":"spenderType"}},{"kind":"Field","name":{"kind":"Name","value":"spenderId"}},{"kind":"Field","name":{"kind":"Name","value":"spenderLabel"}},{"kind":"Field","name":{"kind":"Name","value":"periodUnit"}},{"kind":"Field","name":{"kind":"Name","value":"meter"}},{"kind":"Field","name":{"kind":"Name","value":"limitValue"}},{"kind":"Field","name":{"kind":"Name","value":"isEnforced"}},{"kind":"Field","name":{"kind":"Name","value":"consumedValue"}},{"kind":"Field","name":{"kind":"Name","value":"remainingValue"}},{"kind":"Field","name":{"kind":"Name","value":"periodStart"}},{"kind":"Field","name":{"kind":"Name","value":"periodEnd"}}]}}]}}]} as unknown as DocumentNode<UsageQuotasWithConsumptionQuery, UsageQuotasWithConsumptionQueryVariables>;
 export const AssignRoleToApiKeyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AssignRoleToApiKey"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"apiKeyId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"assignRoleToApiKey"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"apiKeyId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"apiKeyId"}}},{"kind":"Argument","name":{"kind":"Name","value":"roleId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}}}]}]}}]} as unknown as DocumentNode<AssignRoleToApiKeyMutation, AssignRoleToApiKeyMutationVariables>;
 export const CreateApiKeyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateApiKey"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateApiKeyInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createApiKey"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ApiKeyFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApiKeyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApiKey"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"revokedAt"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]}}]} as unknown as DocumentNode<CreateApiKeyMutation, CreateApiKeyMutationVariables>;
 export const CreateWebhookDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateWebhook"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateWebhookInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createWebhook"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WebhookFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WebhookFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Webhook"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"targetUrl"}},{"kind":"Field","name":{"kind":"Name","value":"operations"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"secret"}}]}}]} as unknown as DocumentNode<CreateWebhookMutation, CreateWebhookMutationVariables>;

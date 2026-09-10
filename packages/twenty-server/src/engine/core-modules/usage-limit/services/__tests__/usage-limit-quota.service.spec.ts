@@ -1,7 +1,6 @@
 import { DiscoveryService } from '@nestjs/core';
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import {
   CacheLockException,
@@ -28,6 +27,7 @@ import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
+import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const MONTH_PERIOD = {
@@ -106,8 +106,9 @@ describe('UsageLimitQuotaService', () => {
     withLock: jest.fn((fn: () => Promise<unknown>) => fn()),
   };
 
-  const clickHouseService = {
-    selectOrThrow: jest.fn().mockResolvedValue([]),
+  const usageAnalyticsService = {
+    getConsumptionRows: jest.fn().mockResolvedValue([]),
+    getCreditsUsedMicroForBillingPeriod: jest.fn().mockResolvedValue(0),
   };
 
   const usagePeriodService = {
@@ -165,7 +166,10 @@ describe('UsageLimitQuotaService', () => {
     );
     cacheStorage.mget.mockResolvedValue([]);
     cacheStorage.runScript.mockResolvedValue([]);
-    clickHouseService.selectOrThrow.mockResolvedValue([]);
+    usageAnalyticsService.getConsumptionRows.mockResolvedValue([]);
+    usageAnalyticsService.getCreditsUsedMicroForBillingPeriod.mockResolvedValue(
+      0,
+    );
     periodByUnit = { month: MONTH_PERIOD, week: WEEK_PERIOD };
     usagePeriodService.findCurrentPeriod.mockImplementation(
       async ({ periodUnit }: { periodUnit: PeriodUnit }) =>
@@ -188,7 +192,7 @@ describe('UsageLimitQuotaService', () => {
         },
         { provide: WorkspaceCacheService, useValue: workspaceCacheService },
         { provide: CacheLockService, useValue: cacheLockService },
-        { provide: ClickHouseService, useValue: clickHouseService },
+        { provide: UsageAnalyticsService, useValue: usageAnalyticsService },
         { provide: UsagePeriodService, useValue: usagePeriodService },
         { provide: MetricsService, useValue: metricsService },
         {
@@ -213,7 +217,7 @@ describe('UsageLimitQuotaService', () => {
     cacheStorage.mget.mockResolvedValue([250]);
 
     await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
-    expect(clickHouseService.selectOrThrow).not.toHaveBeenCalled();
+    expect(usageAnalyticsService.getConsumptionRows).not.toHaveBeenCalled();
   });
 
   it('denies on an exhausted warm counter', async () => {
@@ -235,11 +239,11 @@ describe('UsageLimitQuotaService', () => {
     cacheStorage.mget.mockResolvedValue([undefined]);
 
     await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
-    expect(clickHouseService.selectOrThrow).toHaveBeenCalledWith(
-      expect.stringContaining(
-        "toStartOfDay(timestamp, 'UTC') >= {periodStart:DateTime64(3)}",
-      ),
-      expect.anything(),
+    expect(usageAnalyticsService.getConsumptionRows).toHaveBeenCalledWith(
+      expect.objectContaining({
+        periodAnchor: 'calendar',
+        periodStart: MONTH_PERIOD.periodStart,
+      }),
     );
   });
 
@@ -252,21 +256,25 @@ describe('UsageLimitQuotaService', () => {
 
     await assertQuotaNotExhausted();
 
-    expect(clickHouseService.selectOrThrow).toHaveBeenCalledTimes(2);
+    expect(usageAnalyticsService.getConsumptionRows).toHaveBeenCalledTimes(2);
   });
 
   it('warms a cold allowance counter from the live allowance minus the stamped consumption', async () => {
     setAllowance(100);
     cacheStorage.mget.mockResolvedValue([undefined]);
-    clickHouseService.selectOrThrow.mockResolvedValue([{ total: '150' }]);
+    usageAnalyticsService.getCreditsUsedMicroForBillingPeriod.mockResolvedValue(
+      150,
+    );
 
     await expect(assertQuotaNotExhausted()).rejects.toThrow(
       UsageLimitException,
     );
-    expect(clickHouseService.selectOrThrow).toHaveBeenCalledWith(
-      expect.stringContaining('periodStart = {periodStart:DateTime64(3)}'),
-      expect.anything(),
-    );
+    expect(
+      usageAnalyticsService.getCreditsUsedMicroForBillingPeriod,
+    ).toHaveBeenCalledWith({
+      workspaceId: 'workspace-1',
+      periodStart: ALLOWANCE_PERIOD.periodStart,
+    });
     expect(cacheStorage.mset).toHaveBeenCalledWith([
       expect.objectContaining({ value: -50 }),
     ]);
@@ -336,7 +344,7 @@ describe('UsageLimitQuotaService', () => {
       setAllowance(2_000);
       creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
       cacheStorage.mget.mockResolvedValue([undefined]);
-      clickHouseService.selectOrThrow.mockResolvedValue([
+      usageAnalyticsService.getConsumptionRows.mockResolvedValue([
         {
           operationType: UsageOperationType.AI_CHAT_TOKEN,
           userWorkspaceId: 'user-1',
@@ -352,19 +360,12 @@ describe('UsageLimitQuotaService', () => {
 
       await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
 
-      expect(clickHouseService.selectOrThrow).toHaveBeenCalledWith(
-        expect.stringContaining(
-          'AND periodStart = {periodStart:DateTime64(3)}',
-        ),
+      expect(usageAnalyticsService.getConsumptionRows).toHaveBeenCalledWith(
         expect.objectContaining({
-          periodStart: expect.stringContaining('2026-08-15'),
+          periodAnchor: 'billing',
+          periodStart: ALLOWANCE_PERIOD.periodStart,
+          periodEnd: ALLOWANCE_PERIOD.periodEnd,
         }),
-      );
-      expect(clickHouseService.selectOrThrow).toHaveBeenCalledWith(
-        expect.stringContaining(
-          'AND timestamp >= {periodStart:DateTime64(3)} - INTERVAL 1 DAY',
-        ),
-        expect.anything(),
       );
       expect(cacheStorage.mset).toHaveBeenCalledWith([
         expect.objectContaining({ value: 650 }),
@@ -413,7 +414,7 @@ describe('UsageLimitQuotaService', () => {
   it('admits when the warm query fails instead of granting a fresh budget', async () => {
     setLimits([buildLimit({})]);
     cacheStorage.mget.mockResolvedValue([undefined]);
-    clickHouseService.selectOrThrow.mockRejectedValue(
+    usageAnalyticsService.getConsumptionRows.mockRejectedValue(
       new Error('clickhouse unreachable'),
     );
 
