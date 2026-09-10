@@ -215,8 +215,9 @@ export default defineSharingRule({
 
 A `PRIVATE` object whose only readable path is one rule cannot lose it: if a sync would delete that
 rule, deactivate it, or give it criteria, and no other active criteria-free rule granting everyone or
-a role remains on the object, the sync fails with `INVALID_SHARING_RULE_INPUT`. Ship another such
-rule in the same sync, or move the object off `PRIVATE`.
+a role remains on the object, the sync fails, with `INVALID_SHARING_RULE_INPUT` when the rule is
+deleted or deactivated and `INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA` when it gains criteria. Ship
+another such rule in the same sync, or move the object off `PRIVATE`.
 
 Rules are materialized into `recordShare` rows by a background job rather than at read time, so
 they are eventually consistent: creating, updating or deleting a rule, changing a record's criteria
