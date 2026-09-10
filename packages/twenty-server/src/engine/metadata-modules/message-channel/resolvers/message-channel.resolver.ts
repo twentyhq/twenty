@@ -113,7 +113,7 @@ export class MessageChannelResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<MessageChannelDTO> {
     const messageChannel =
-      await this.messageChannelMetadataService.verifyOwnership({
+      await this.messageChannelMetadataService.verifyAdministrableByCaller({
         id: input.id,
         userWorkspaceId,
         workspaceId: workspace.id,

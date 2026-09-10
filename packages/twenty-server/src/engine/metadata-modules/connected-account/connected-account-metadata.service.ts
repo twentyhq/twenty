@@ -3,8 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, IsNull, Repository } from 'typeorm';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
@@ -24,6 +25,7 @@ import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/co
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
@@ -39,6 +41,7 @@ export class ConnectedAccountMetadataService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly appOAuthRevokeService: AppOAuthRevokeService,
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
+    private readonly permissionsService: PermissionsService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
@@ -153,7 +156,7 @@ export class ConnectedAccountMetadataService {
     });
   }
 
-  async verifyOwnership({
+  async verifyUsableByCaller({
     id,
     userWorkspaceId,
     workspaceId,
@@ -162,23 +165,88 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<ConnectedAccountEntity> {
-    const connectedAccount = await this.repository.findOne({
-      where: { id, workspaceId },
-    });
-
-    if (!connectedAccount) {
-      throw new ConnectedAccountException(
-        `Connected account ${id} not found`,
-        ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
-      );
-    }
+    const connectedAccount = await this.findByIdOrThrow({ id, workspaceId });
 
     if (
       !isConnectedAccountUsableByCaller({ connectedAccount, userWorkspaceId })
     ) {
       throw new ConnectedAccountException(
-        `Connected account ${id} does not belong to user workspace ${userWorkspaceId}`,
+        `Connected account ${id} is not usable by user workspace ${userWorkspaceId}`,
         ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_OWNERSHIP_VIOLATION,
+      );
+    }
+
+    return connectedAccount;
+  }
+
+  async isAdministrableByCaller({
+    connectedAccount,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    connectedAccount: Pick<
+      ConnectedAccountEntity,
+      'visibility' | 'userWorkspaceId'
+    >;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    switch (connectedAccount.visibility) {
+      case 'workspace':
+        return this.permissionsService.userHasWorkspaceSettingPermission({
+          userWorkspaceId,
+          workspaceId,
+          setting: PermissionFlagType.WORKSPACE,
+        });
+      case 'user':
+        return connectedAccount.userWorkspaceId === userWorkspaceId;
+      default:
+        return assertUnreachable(connectedAccount.visibility);
+    }
+  }
+
+  async verifyAdministrableByCaller({
+    id,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<ConnectedAccountEntity> {
+    const connectedAccount = await this.findByIdOrThrow({ id, workspaceId });
+
+    const isAdministrableByCaller = await this.isAdministrableByCaller({
+      connectedAccount,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    if (!isAdministrableByCaller) {
+      throw new ConnectedAccountException(
+        `Connected account ${id} cannot be administered by user workspace ${userWorkspaceId}`,
+        ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_OWNERSHIP_VIOLATION,
+      );
+    }
+
+    return connectedAccount;
+  }
+
+  private async findByIdOrThrow({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<ConnectedAccountEntity> {
+    const connectedAccount = await this.repository.findOne({
+      where: { id, workspaceId },
+    });
+
+    if (!isDefined(connectedAccount)) {
+      throw new ConnectedAccountException(
+        `Connected account ${id} not found`,
+        ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
       );
     }
 

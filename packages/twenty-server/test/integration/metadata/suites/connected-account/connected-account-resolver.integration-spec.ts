@@ -117,5 +117,62 @@ describe('connectedAccountResolver (e2e)', () => {
       expect(response.status).toBe(200);
       expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
+
+    it('should deny a member deleting a workspace-shared account', async () => {
+      const response = await makeMetadataAPIRequest(
+        {
+          query: gql`
+            mutation DeleteConnectedAccount($id: UUID!) {
+              deleteConnectedAccount(id: $id) {
+                id
+              }
+            }
+          `,
+          variables: { id: CONNECTED_ACCOUNT_DATA_SEED_IDS.SUPPORT_GROUP },
+        },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+    });
+
+    it('should keep the workspace-shared account reachable after a denied deletion', async () => {
+      const response = await makeMetadataAPIRequest({
+        query: gql`
+          query MyMessageChannels($connectedAccountId: UUID) {
+            myMessageChannels(connectedAccountId: $connectedAccountId) {
+              id
+            }
+          }
+        `,
+        variables: {
+          connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.SUPPORT_GROUP,
+        },
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.myMessageChannels.length).toBeGreaterThan(0);
+    });
+
+    it('should allow an admin deleting a workspace-shared account', async () => {
+      const response = await makeMetadataAPIRequest({
+        query: gql`
+          mutation DeleteConnectedAccount($id: UUID!) {
+            deleteConnectedAccount(id: $id) {
+              id
+            }
+          }
+        `,
+        variables: { id: CONNECTED_ACCOUNT_DATA_SEED_IDS.CONTACT_GROUP },
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.deleteConnectedAccount.id).toBe(
+        CONNECTED_ACCOUNT_DATA_SEED_IDS.CONTACT_GROUP,
+      );
+    });
   });
 });

@@ -8,6 +8,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -65,13 +66,13 @@ export class ConnectedAccountResolver {
   }
 
   @Mutation(() => ConnectedAccountPublicDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(CustomPermissionGuard)
   async deleteConnectedAccount(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ConnectedAccountPublicDTO> {
-    await this.connectedAccountMetadataService.verifyOwnership({
+    await this.connectedAccountMetadataService.verifyAdministrableByCaller({
       id,
       userWorkspaceId,
       workspaceId: workspace.id,

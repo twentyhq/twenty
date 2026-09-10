@@ -126,6 +126,7 @@ const seedConnectedAccounts = async ({
       handle: 'tim@apple.dev',
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.TIM,
+      visibility: 'user',
       workspaceId,
     },
     {
@@ -133,6 +134,7 @@ const seedConnectedAccounts = async ({
       handle: 'jony.ive@apple.dev',
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.JONY,
+      visibility: 'user',
       workspaceId,
     },
     {
@@ -140,6 +142,7 @@ const seedConnectedAccounts = async ({
       handle: 'phil.schiler@apple.dev',
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.PHIL,
+      visibility: 'user',
       workspaceId,
     },
     {
@@ -147,6 +150,7 @@ const seedConnectedAccounts = async ({
       handle: 'jane.austen@apple.dev',
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.JANE,
+      visibility: 'user',
       workspaceId,
     },
     {
@@ -154,6 +158,7 @@ const seedConnectedAccounts = async ({
       handle: 'jane-deletable@apple.dev',
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.JANE,
+      visibility: 'user',
       workspaceId,
     },
     {
@@ -161,6 +166,7 @@ const seedConnectedAccounts = async ({
       handle: `support@${emailGroupDomains.verified}`,
       provider: 'email_group',
       userWorkspaceId: ids.userWorkspaceIds.TIM,
+      visibility: 'workspace',
       workspaceId,
     },
     {
@@ -168,6 +174,7 @@ const seedConnectedAccounts = async ({
       handle: `contact@${emailGroupDomains.pending}`,
       provider: 'email_group',
       userWorkspaceId: ids.userWorkspaceIds.TIM,
+      visibility: 'workspace',
       workspaceId,
     },
   ];
@@ -180,6 +187,7 @@ const seedConnectedAccounts = async ({
       'handle',
       'provider',
       'userWorkspaceId',
+      'visibility',
       'workspaceId',
     ])
     .orIgnore()

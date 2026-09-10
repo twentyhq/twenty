@@ -137,5 +137,29 @@ describe('messageChannelResolver (e2e)', () => {
       expect(response.status).toBe(200);
       expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
+
+    it('should deny a member updating a workspace-shared group channel', async () => {
+      const response = await makeMetadataAPIRequest(
+        {
+          query: gql`
+            mutation UpdateMessageChannel($input: UpdateMessageChannelInput!) {
+              updateMessageChannel(input: $input) {
+                id
+              }
+            }
+          `,
+          variables: {
+            input: {
+              id: MESSAGE_CHANNEL_DATA_SEED_IDS.SUPPORT_GROUP,
+              update: { excludeGroupEmails: true },
+            },
+          },
+        },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+    });
   });
 });

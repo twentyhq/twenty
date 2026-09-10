@@ -50,7 +50,7 @@ export class SendEmailResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<SendEmailOutputDTO> {
     try {
-      await this.connectedAccountMetadataService.verifyOwnership({
+      await this.connectedAccountMetadataService.verifyUsableByCaller({
         id: input.connectedAccountId,
         userWorkspaceId,
         workspaceId: workspace.id,

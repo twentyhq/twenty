@@ -86,7 +86,7 @@ export class MessageChannelMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<MessageChannelDTO[]> {
-    await this.connectedAccountMetadataService.verifyOwnership({
+    await this.connectedAccountMetadataService.verifyUsableByCaller({
       id: connectedAccountId,
       userWorkspaceId,
       workspaceId,
@@ -133,7 +133,7 @@ export class MessageChannelMetadataService {
     return this.repository.findOne({ where: { id, workspaceId } });
   }
 
-  async verifyOwnership({
+  async verifyUsableByCaller({
     id,
     userWorkspaceId,
     workspaceId,
@@ -142,16 +142,27 @@ export class MessageChannelMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<MessageChannelEntity> {
-    const messageChannel = await this.repository.findOne({
-      where: { id, workspaceId },
+    const messageChannel = await this.findByIdOrThrow({ id, workspaceId });
+
+    await this.connectedAccountMetadataService.verifyUsableByCaller({
+      id: messageChannel.connectedAccountId,
+      userWorkspaceId,
+      workspaceId,
     });
 
-    if (!messageChannel) {
-      throw new MessageChannelException(
-        `Message channel ${id} not found`,
-        MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
-      );
-    }
+    return messageChannel;
+  }
+
+  async verifyAdministrableByCaller({
+    id,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<MessageChannelEntity> {
+    const messageChannel = await this.findByIdOrThrow({ id, workspaceId });
 
     const connectedAccount =
       await this.connectedAccountMetadataService.findById({
@@ -159,20 +170,39 @@ export class MessageChannelMetadataService {
         workspaceId,
       });
 
-    if (connectedAccount?.visibility === 'workspace') {
-      return messageChannel;
-    }
-
-    const userAccountIds =
-      await this.connectedAccountMetadataService.getUserConnectedAccountIds({
+    const isAdministrableByCaller =
+      isDefined(connectedAccount) &&
+      (await this.connectedAccountMetadataService.isAdministrableByCaller({
+        connectedAccount,
         userWorkspaceId,
         workspaceId,
-      });
+      }));
 
-    if (!userAccountIds.includes(messageChannel.connectedAccountId)) {
+    if (!isAdministrableByCaller) {
       throw new MessageChannelException(
-        `Message channel ${id} does not belong to user workspace ${userWorkspaceId}`,
+        `Message channel ${id} cannot be administered by user workspace ${userWorkspaceId}`,
         MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION,
+      );
+    }
+
+    return messageChannel;
+  }
+
+  private async findByIdOrThrow({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<MessageChannelEntity> {
+    const messageChannel = await this.repository.findOne({
+      where: { id, workspaceId },
+    });
+
+    if (!isDefined(messageChannel)) {
+      throw new MessageChannelException(
+        `Message channel ${id} not found`,
+        MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
       );
     }
 
@@ -365,7 +395,7 @@ export class MessageChannelMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<MessageChannelDTO> {
-    const messageChannel = await this.verifyOwnership({
+    const messageChannel = await this.verifyAdministrableByCaller({
       id,
       userWorkspaceId,
       workspaceId,
@@ -405,7 +435,7 @@ export class MessageChannelMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<MessageChannelDTO> {
-    const messageChannel = await this.verifyOwnership({
+    const messageChannel = await this.verifyAdministrableByCaller({
       id,
       userWorkspaceId,
       workspaceId,
