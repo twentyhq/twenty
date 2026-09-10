@@ -70,51 +70,24 @@ export class SeedObjectDefaultViewService {
       return 0;
     }
 
-    await this.runSeedMigrations({
+    await this.runSeedMigration({
       workspaceId,
-      seedOperations,
       applicationUniversalIdentifier,
+      allFlatEntityOperationByMetadataName: {
+        view: {
+          flatEntityToCreate: seedOperations.viewsToCreate,
+          flatEntityToDelete: [],
+          flatEntityToUpdate: [],
+        },
+        viewField: {
+          flatEntityToCreate: seedOperations.viewFieldsToCreate,
+          flatEntityToDelete: [],
+          flatEntityToUpdate: [],
+        },
+      },
     });
 
     return totalCreateCount;
-  }
-
-  private async runSeedMigrations({
-    workspaceId,
-    seedOperations,
-    applicationUniversalIdentifier,
-  }: {
-    workspaceId: string;
-    seedOperations: SeedOperations;
-    applicationUniversalIdentifier: string;
-  }): Promise<void> {
-    if (seedOperations.viewsToCreate.length > 0) {
-      await this.runSeedMigration({
-        workspaceId,
-        applicationUniversalIdentifier,
-        allFlatEntityOperationByMetadataName: {
-          view: {
-            flatEntityToCreate: seedOperations.viewsToCreate,
-            flatEntityToDelete: [],
-            flatEntityToUpdate: [],
-          },
-        },
-      });
-    }
-
-    if (seedOperations.viewFieldsToCreate.length > 0) {
-      await this.runSeedMigration({
-        workspaceId,
-        applicationUniversalIdentifier,
-        allFlatEntityOperationByMetadataName: {
-          viewField: {
-            flatEntityToCreate: seedOperations.viewFieldsToCreate,
-            flatEntityToDelete: [],
-            flatEntityToUpdate: [],
-          },
-        },
-      });
-    }
   }
 
   private async runSeedMigration({

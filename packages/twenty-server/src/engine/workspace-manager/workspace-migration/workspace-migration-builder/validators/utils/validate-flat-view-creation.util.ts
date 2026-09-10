@@ -1,5 +1,6 @@
 import { msg, t } from '@lingui/core/macro';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { getSeededObjectViewUniversalIdentifier } from 'twenty-shared/application';
 import { ViewKey, ViewType } from 'twenty-shared/types';
 import { getViewLayoutFromViewType, isDefined } from 'twenty-shared/utils';
 
@@ -60,8 +61,18 @@ export const validateFlatViewCreation = ({
   const reservedViewKey = flatViewToValidate.key;
 
   if (isDefined(reservedViewKey)) {
+    const isSeededDefaultView =
+      reservedViewKey === ViewKey.DEFAULT &&
+      flatViewToValidate.universalIdentifier ===
+        getSeededObjectViewUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier:
+            flatViewToValidate.applicationUniversalIdentifier,
+          objectUniversalIdentifier:
+            flatViewToValidate.objectMetadataUniversalIdentifier,
+        });
+
     if (
-      reservedViewKey !== ViewKey.DEFAULT &&
+      !isSeededDefaultView &&
       flatViewToValidate.isSystemSideEffect !== true
     ) {
       validationResult.errors.push({
