@@ -159,17 +159,13 @@ export const OnboardingPlanCard = ({
             <Radio
               value={value}
               aria-labelledby={titleId}
-              aria-describedby={hasNote ? noteId : undefined}
+              aria-describedby={noteId}
             />
           </StyledRadioContainer>
         ) : (
           <StyledHeaderRight>
             {isDefined(badge) && <StyledBadge>{badge}</StyledBadge>}
-            <Radio
-              value={value}
-              aria-labelledby={titleId}
-              aria-describedby={hasNote ? noteId : undefined}
-            />
+            <Radio value={value} aria-labelledby={titleId} />
           </StyledHeaderRight>
         )}
       </StyledHeader>
