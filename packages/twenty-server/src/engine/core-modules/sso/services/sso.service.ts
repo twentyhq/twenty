@@ -65,7 +65,7 @@ export class SsoService {
     }
   }
 
-  private async getIssuerForOidc(issuerUrl: string) {
+  async discoverOidcIssuer(issuerUrl: string) {
     try {
       return await Issuer.discover(issuerUrl);
     } catch (error) {
@@ -91,7 +91,7 @@ export class SsoService {
     try {
       await this.isSsoEnabled(workspaceId);
 
-      const issuer = await this.getIssuerForOidc(data.issuer);
+      const issuer = await this.discoverOidcIssuer(data.issuer);
 
       const identityProvider =
         await this.workspaceSsoIdentityProviderRepository.save({

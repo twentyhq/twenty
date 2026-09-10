@@ -1,4 +1,7 @@
-import { isPrivateIp } from 'src/engine/core-modules/secure-http-client/utils/is-private-ip.util';
+import {
+  isLinkLocalIp,
+  isPrivateIp,
+} from 'src/engine/core-modules/secure-http-client/utils/is-private-ip.util';
 
 describe('isPrivateIp', () => {
   describe('loopback addresses', () => {
@@ -255,5 +258,19 @@ describe('isPrivateIp', () => {
     it('should block metadata via dotted IPv4-mapped IPv6', () => {
       expect(isPrivateIp('::ffff:169.254.169.254')).toBe(true);
     });
+  });
+});
+
+describe('isLinkLocalIp', () => {
+  it('should detect the cloud metadata address', () => {
+    expect(isLinkLocalIp('169.254.169.254')).toBe(true);
+    expect(isLinkLocalIp('::ffff:a9fe:a9fe')).toBe(true);
+    expect(isLinkLocalIp('fe80::1')).toBe(true);
+  });
+
+  it('should not flag other private or loopback addresses', () => {
+    expect(isLinkLocalIp('10.0.0.1')).toBe(false);
+    expect(isLinkLocalIp('192.168.1.10')).toBe(false);
+    expect(isLinkLocalIp('127.0.0.1')).toBe(false);
   });
 });

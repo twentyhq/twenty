@@ -10,7 +10,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { buildAxiosFetch } from '@lifeomic/axios-fetch';
 
 import { createSsrfSafeAgent } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-agent.util';
-import { ALLOW_ALL_INTERNAL_HOSTS } from 'src/engine/core-modules/secure-http-client/utils/is-allowed-internal-host.util';
+import {
+  ALLOW_ALL_INTERNAL_HOSTS,
+  normalizeAllowedInternalHost,
+} from 'src/engine/core-modules/secure-http-client/utils/is-allowed-internal-host.util';
 import { resolveAndValidateHostname } from 'src/engine/core-modules/secure-http-client/utils/resolve-and-validate-hostname.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -27,6 +30,7 @@ type SecureHttpClientConfig = CreateAxiosDefaults & {
 @Injectable()
 export class SecureHttpClientService {
   private readonly logger = new Logger(SecureHttpClientService.name);
+  private hasWarnedAboutDeprecatedSafeModeFlag = false;
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
@@ -145,12 +149,19 @@ export class SecureHttpClientService {
     if (
       this.twentyConfigService.get('OUTBOUND_HTTP_SAFE_MODE_ENABLED') === false
     ) {
+      if (!this.hasWarnedAboutDeprecatedSafeModeFlag) {
+        this.hasWarnedAboutDeprecatedSafeModeFlag = true;
+        this.logger.warn(
+          'OUTBOUND_HTTP_SAFE_MODE_ENABLED=false is deprecated and overrides OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS: every private address is reachable. Remove it and list the internal hosts you need instead.',
+        );
+      }
+
       return [ALLOW_ALL_INTERNAL_HOSTS];
     }
 
     return this.twentyConfigService
       .get('OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS')
-      .map((host) => host.trim().toLowerCase())
+      .map(normalizeAllowedInternalHost)
       .filter(isNonEmptyString);
   }
 

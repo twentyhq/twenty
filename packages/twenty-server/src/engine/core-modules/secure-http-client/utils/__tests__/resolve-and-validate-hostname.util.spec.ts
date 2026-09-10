@@ -50,26 +50,33 @@ describe('resolveAndValidateHostname', () => {
     expect(result).toBe('93.184.216.34');
   });
 
-  it('should return an allowed internal host without resolving it', async () => {
+  it('should let an allowed internal host resolve to a private address', async () => {
+    mockDnsLookup.mockResolvedValue({ address: '172.18.0.5', family: 4 });
+
     const result = await resolveAndValidateHostname(
       'Mail.Internal',
       ['mail.internal'],
       mockDnsLookup,
     );
 
-    expect(result).toBe('Mail.Internal');
-    expect(mockDnsLookup).not.toHaveBeenCalled();
+    expect(result).toBe('172.18.0.5');
   });
 
-  it('should return any host without resolving it when all internal hosts are allowed', async () => {
-    const result = await resolveAndValidateHostname(
-      'https://caldav.internal/dav',
-      ['*'],
-      mockDnsLookup,
-    );
+  it('should still block an allowed internal host that resolves to the metadata service', async () => {
+    mockDnsLookup.mockResolvedValue({
+      address: '169.254.169.254',
+      family: 4,
+    });
 
-    expect(result).toBe('https://caldav.internal/dav');
-    expect(mockDnsLookup).not.toHaveBeenCalled();
+    await expect(
+      resolveAndValidateHostname(
+        'https://caldav.internal/dav',
+        ['caldav.internal'],
+        mockDnsLookup,
+      ),
+    ).rejects.toThrow(
+      'Connection to internal IP address 169.254.169.254 is not allowed.',
+    );
   });
 
   it('should propagate DNS resolution failures', async () => {

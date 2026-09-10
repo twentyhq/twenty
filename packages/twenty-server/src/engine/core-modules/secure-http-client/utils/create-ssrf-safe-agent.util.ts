@@ -4,28 +4,49 @@ import { type Socket } from 'net';
 import { type Duplex } from 'stream';
 
 import { isAllowedInternalHost } from 'src/engine/core-modules/secure-http-client/utils/is-allowed-internal-host.util';
-import { isPrivateIp } from 'src/engine/core-modules/secure-http-client/utils/is-private-ip.util';
+import {
+  isLinkLocalIp,
+  isPrivateIp,
+} from 'src/engine/core-modules/secure-http-client/utils/is-private-ip.util';
 
-// Checks whether a hostname is a private IP literal.
+type IsBlockedIp = (address: string) => boolean;
+
+// An allowlisted host may reach private networks but never the link-local
+// range, so a DNS change cannot turn it into a path to the metadata service.
+const getIsBlockedIp = (
+  host: string | undefined,
+  allowedInternalHosts: string[],
+): IsBlockedIp =>
+  host && isAllowedInternalHost(host, allowedInternalHosts)
+    ? isLinkLocalIp
+    : isPrivateIp;
+
+// Checks whether a hostname is a blocked IP literal.
 // Returns false for domain names — those are validated after DNS
 // resolution in the socket 'lookup' event handler.
-const isHostnamePrivateIp = (hostname: string): boolean => {
+const isHostnameBlockedIp = (
+  hostname: string,
+  isBlockedIp: IsBlockedIp,
+): boolean => {
   try {
-    return isPrivateIp(hostname);
+    return isBlockedIp(hostname);
   } catch {
     return false;
   }
 };
 
-const validateHost = (host?: string) => {
-  if (host && isHostnamePrivateIp(host)) {
+const validateHost = (host: string | undefined, isBlockedIp: IsBlockedIp) => {
+  if (host && isHostnameBlockedIp(host, isBlockedIp)) {
     throw new Error(`Request to internal IP address ${host} is not allowed.`);
   }
 };
 
-// Validates a resolved IP and destroys the socket if it's private.
+// Validates a resolved IP and destroys the socket if it's blocked.
 // Fails closed: if the IP cannot be parsed, the socket is destroyed.
-const attachLookupValidation = (duplex: Duplex): Socket => {
+const attachLookupValidation = (
+  duplex: Duplex,
+  isBlockedIp: IsBlockedIp,
+): Socket => {
   // createConnection returns a net.Socket at runtime; the Duplex
   // return type in @types/node is overly broad.
   const socket = duplex as Socket;
@@ -36,7 +57,7 @@ const attachLookupValidation = (duplex: Duplex): Socket => {
     }
 
     try {
-      if (isPrivateIp(address)) {
+      if (isBlockedIp(address)) {
         socket.destroy(
           new Error(
             `Request to internal IP address ${address} is not allowed.`,
@@ -68,16 +89,17 @@ class SsrfSafeHttpAgent extends http.Agent {
     options: http.ClientRequestArgs,
     callback?: (err: Error, stream: Duplex) => void,
   ): Duplex {
-    if (
-      options.host &&
-      isAllowedInternalHost(options.host, this.allowedInternalHosts)
-    ) {
-      return super.createConnection(options, callback);
-    }
+    const isBlockedIp = getIsBlockedIp(
+      options.host ?? undefined,
+      this.allowedInternalHosts,
+    );
 
-    validateHost(options.host ?? undefined);
+    validateHost(options.host ?? undefined, isBlockedIp);
 
-    return attachLookupValidation(super.createConnection(options, callback));
+    return attachLookupValidation(
+      super.createConnection(options, callback),
+      isBlockedIp,
+    );
   }
 }
 
@@ -90,16 +112,17 @@ class SsrfSafeHttpsAgent extends https.Agent {
     options: http.ClientRequestArgs,
     callback?: (err: Error, stream: Duplex) => void,
   ): Duplex {
-    if (
-      options.host &&
-      isAllowedInternalHost(options.host, this.allowedInternalHosts)
-    ) {
-      return super.createConnection(options, callback);
-    }
+    const isBlockedIp = getIsBlockedIp(
+      options.host ?? undefined,
+      this.allowedInternalHosts,
+    );
 
-    validateHost(options.host ?? undefined);
+    validateHost(options.host ?? undefined, isBlockedIp);
 
-    return attachLookupValidation(super.createConnection(options, callback));
+    return attachLookupValidation(
+      super.createConnection(options, callback),
+      isBlockedIp,
+    );
   }
 }
 

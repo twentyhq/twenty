@@ -22,6 +22,13 @@ PRIVATE_RANGES.addSubnet('::', 128, 'ipv6');
 PRIVATE_RANGES.addSubnet('fc00::', 7, 'ipv6');
 PRIVATE_RANGES.addSubnet('fe80::', 10, 'ipv6');
 
+// Cloud metadata services (169.254.169.254, ECS/EKS task credentials) live in
+// the link-local range, so it is never opened by the internal host allowlist.
+const LINK_LOCAL_RANGES = new BlockList();
+
+LINK_LOCAL_RANGES.addSubnet('169.254.0.0', 16);
+LINK_LOCAL_RANGES.addSubnet('fe80::', 10, 'ipv6');
+
 const fromLong = (ipl: number): string => {
   return `${ipl >>> 24}.${(ipl >> 16) & 255}.${(ipl >> 8) & 255}.${ipl & 255}`;
 };
@@ -97,24 +104,24 @@ const extractIpv4FromDottedMappedIpv6 = (addr: string): string | null => {
   return match ? match[1] : null;
 };
 
-export const isPrivateIp = (addr: string): boolean => {
+const matchesRanges = (ranges: BlockList, addr: string): boolean => {
   // IPv4-mapped IPv6 in hex form — the form Node.js URL parser produces.
   const hexMappedIpv4 = extractIpv4FromHexMappedIpv6(addr);
 
   if (hexMappedIpv4 !== null) {
-    return PRIVATE_RANGES.check(hexMappedIpv4);
+    return ranges.check(hexMappedIpv4);
   }
 
   // IPv4-mapped IPv6 in dotted-decimal form (::ffff:D.D.D.D)
   const dottedMappedIpv4 = extractIpv4FromDottedMappedIpv6(addr);
 
   if (dottedMappedIpv4 !== null) {
-    return PRIVATE_RANGES.check(dottedMappedIpv4);
+    return ranges.check(dottedMappedIpv4);
   }
 
   // Pure IPv6 (any address containing a colon that isn't IPv4-mapped)
   if (addr.includes(':')) {
-    return PRIVATE_RANGES.check(addr, 'ipv6');
+    return ranges.check(addr, 'ipv6');
   }
 
   // IPv4 in any encoding (standard, octal, hex, bare integer)
@@ -124,5 +131,11 @@ export const isPrivateIp = (addr: string): boolean => {
     throw new Error('invalid ipv4 address');
   }
 
-  return PRIVATE_RANGES.check(fromLong(ipl));
+  return ranges.check(fromLong(ipl));
 };
+
+export const isPrivateIp = (addr: string): boolean =>
+  matchesRanges(PRIVATE_RANGES, addr);
+
+export const isLinkLocalIp = (addr: string): boolean =>
+  matchesRanges(LINK_LOCAL_RANGES, addr);

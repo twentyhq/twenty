@@ -1,7 +1,19 @@
 export const ALLOW_ALL_INTERNAL_HOSTS = '*';
 
-// Hosts are matched before DNS resolution, so an entry is either a hostname
-// or an IP literal exactly as it appears in the connection settings.
+// Operators paste whatever they have at hand (a bare host, host:port or the
+// full issuer URL); connections are matched on the hostname alone.
+export const normalizeAllowedInternalHost = (entry: string): string => {
+  const trimmed = entry.trim();
+
+  try {
+    return new URL(
+      trimmed.includes('://') ? trimmed : `http://${trimmed}`,
+    ).hostname.replace(/^\[|\]$/g, '');
+  } catch {
+    return trimmed.toLowerCase();
+  }
+};
+
 export const isAllowedInternalHost = (
   host: string,
   allowedInternalHosts: string[],
