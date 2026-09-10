@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
@@ -19,5 +20,5 @@ export const claimSlackAssistantRequest = async (
     },
   });
 
-  return (mutationResult.updateSlackAssistantRequests?.length ?? 0) > 0;
+  return isNonEmptyArray(mutationResult.updateSlackAssistantRequests);
 };

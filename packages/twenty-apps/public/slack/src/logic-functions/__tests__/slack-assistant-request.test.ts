@@ -19,7 +19,7 @@ vi.mock('src/logic-functions/handlers/slack-assistant-worker-handler', () => ({
   slackAssistantWorkerHandler: slackAssistantWorkerHandlerMock,
 }));
 
-const EVENT_BODY = { type: 'event_callback' } as SlackEventsRequestBody;
+const EVENT_BODY: SlackEventsRequestBody = { type: 'event_callback' };
 
 const PENDING_REQUEST = {
   id: 'request-1',

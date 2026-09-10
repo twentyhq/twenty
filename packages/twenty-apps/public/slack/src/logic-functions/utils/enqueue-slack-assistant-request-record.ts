@@ -31,10 +31,22 @@ export const enqueueSlackAssistantRequestRecord = async (
     return { ok: true, skipped: ALREADY_QUEUED_SKIP_REASON };
   }
 
-  let requestId: string;
-
   try {
-    requestId = await createSlackAssistantRequest(client, request);
+    const requestId = await createSlackAssistantRequest(client, request);
+
+    return {
+      ok: true,
+      request: {
+        id: requestId,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.PENDING,
+        slackChannelId: request.slackChannelId,
+        slackChannelType: request.slackChannelType,
+        slackThreadTimestamp: request.slackThreadTimestamp,
+        slackMessageTimestamp: request.slackMessageTimestamp,
+        slackUserId: request.slackUserId,
+        requestText: request.requestText,
+      },
+    };
   } catch (error) {
     if (isDuplicateRecordError(error)) {
       return { ok: true, skipped: ALREADY_QUEUED_SKIP_REASON };
@@ -42,18 +54,4 @@ export const enqueueSlackAssistantRequestRecord = async (
 
     throw error;
   }
-
-  return {
-    ok: true,
-    request: {
-      id: requestId,
-      status: SLACK_ASSISTANT_REQUEST_STATUS.PENDING,
-      slackChannelId: request.slackChannelId,
-      slackChannelType: request.slackChannelType,
-      slackThreadTimestamp: request.slackThreadTimestamp,
-      slackMessageTimestamp: request.slackMessageTimestamp,
-      slackUserId: request.slackUserId,
-      requestText: request.requestText,
-    },
-  };
 };
