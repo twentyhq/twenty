@@ -144,6 +144,34 @@ export const VirtualizedSelection: Story = {
   },
 };
 
+export const VirtualizedArrowNavigation: Story = {
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.queryByRole('gridcell', { name: 'Contact 60' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(canvas.getAllByRole('radio', { name: 'Select' })[0]);
+    await userEvent.keyboard('{ArrowDown>59/}');
+    await expect(
+      within(canvas.getByRole('row', { name: /Contact 60/ })).getByRole(
+        'radio',
+      ),
+    ).toBeChecked();
+    await expect(args.onSelectedRowChange).toHaveBeenCalledTimes(59);
+    await expect(args.onSelectedRowChange).toHaveBeenLastCalledWith('row-59');
+
+    await userEvent.keyboard('{ArrowDown}');
+    await expect(args.onSelectedRowChange).toHaveBeenCalledTimes(59);
+    await userEvent.keyboard('{ArrowUp}');
+    await expect(
+      within(canvas.getByRole('row', { name: /Contact 59/ })).getByRole(
+        'radio',
+      ),
+    ).toBeChecked();
+    await expect(args.onSelectedRowChange).toHaveBeenLastCalledWith('row-58');
+  },
+};
+
 export const MultipleSelection: Story = {
   render: () => <MultipleSelectionExample />,
   play: async ({ canvasElement }) => {
