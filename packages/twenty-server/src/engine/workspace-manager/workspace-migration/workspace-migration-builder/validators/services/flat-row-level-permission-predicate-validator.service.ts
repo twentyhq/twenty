@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { ALL_METADATA_NAME, STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
   RowLevelPermissionPredicateOperand,
@@ -458,6 +458,19 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         code: RowLevelPermissionPredicateExceptionCode.FIELD_METADATA_NOT_FOUND,
         message: t`Workspace member field metadata not found`,
         userFriendlyMessage: msg`Workspace member field metadata not found`,
+      };
+    }
+
+    if (
+      workspaceMemberFieldMetadata.objectMetadataUniversalIdentifier !==
+      STANDARD_OBJECTS.workspaceMember.universalIdentifier
+    ) {
+      const workspaceMemberFieldName = workspaceMemberFieldMetadata.name;
+
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`Field "${workspaceMemberFieldName}" is not a field of the workspaceMember object, the predicate would never apply`,
+        userFriendlyMessage: msg`This field does not belong to the workspace member object`,
       };
     }
 

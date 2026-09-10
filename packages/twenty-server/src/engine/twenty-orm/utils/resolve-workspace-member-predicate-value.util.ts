@@ -4,7 +4,8 @@ import {
   FieldMetadataType,
   type RowLevelPermissionPredicateValue,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -22,8 +23,8 @@ type ResolveWorkspaceMemberPredicateValueArgs = {
 const isOwningRelationFlatFieldMetadata = (
   flatFieldMetadata: OrmFlatFieldMetadata,
 ): boolean =>
-  isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
   flatFieldMetadata.type === FieldMetadataType.RELATION &&
+  isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
   flatFieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE;
 
 export const resolveWorkspaceMemberPredicateValue = ({
@@ -31,17 +32,28 @@ export const resolveWorkspaceMemberPredicateValue = ({
   workspaceMemberFieldMetadata,
   workspaceMemberSubFieldName,
 }: ResolveWorkspaceMemberPredicateValueArgs): RowLevelPermissionPredicateValue | null => {
-  const workspaceMemberPropertyName = isOwningRelationFlatFieldMetadata(
-    workspaceMemberFieldMetadata,
-  )
-    ? computeMorphOrRelationFieldJoinColumnName({
-        name: workspaceMemberFieldMetadata.name,
-      })
-    : workspaceMemberFieldMetadata.name;
+  const workspaceMemberValues = workspaceMember as unknown as Record<
+    string,
+    unknown
+  >;
 
-  const rawWorkspaceMemberValue = Object.entries(workspaceMember).find(
-    ([key]) => key === workspaceMemberPropertyName,
-  )?.[1];
+  if (isMorphOrRelationFlatFieldMetadata(workspaceMemberFieldMetadata)) {
+    if (!isOwningRelationFlatFieldMetadata(workspaceMemberFieldMetadata)) {
+      return null;
+    }
+
+    const relatedRecordId =
+      workspaceMemberValues[
+        computeMorphOrRelationFieldJoinColumnName({
+          name: workspaceMemberFieldMetadata.name,
+        })
+      ];
+
+    return isNonEmptyString(relatedRecordId) ? relatedRecordId : null;
+  }
+
+  const rawWorkspaceMemberValue =
+    workspaceMemberValues[workspaceMemberFieldMetadata.name];
 
   if (!isDefined(rawWorkspaceMemberValue)) {
     return null;
@@ -50,7 +62,7 @@ export const resolveWorkspaceMemberPredicateValue = ({
   const workspaceMemberValue =
     isDefined(workspaceMemberSubFieldName) &&
     isCompositeFieldMetadataType(workspaceMemberFieldMetadata.type) &&
-    typeof rawWorkspaceMemberValue === 'object'
+    isPlainObject(rawWorkspaceMemberValue)
       ? rawWorkspaceMemberValue[workspaceMemberSubFieldName]
       : rawWorkspaceMemberValue;
 
@@ -66,5 +78,5 @@ export const resolveWorkspaceMemberPredicateValue = ({
     return [workspaceMemberValue];
   }
 
-  return workspaceMemberValue;
+  return workspaceMemberValue as RowLevelPermissionPredicateValue;
 };

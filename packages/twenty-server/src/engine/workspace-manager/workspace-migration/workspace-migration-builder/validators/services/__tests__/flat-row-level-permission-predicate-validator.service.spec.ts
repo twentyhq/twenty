@@ -3,6 +3,8 @@ import {
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { FlatRowLevelPermissionPredicateValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service';
 
@@ -66,6 +68,8 @@ const relatedMaps = (fieldType: FieldMetadataType) => ({
       type: FieldMetadataType.UUID,
       name: 'id',
       label: 'Id',
+      objectMetadataUniversalIdentifier:
+        STANDARD_OBJECTS.workspaceMember.universalIdentifier,
     },
     {
       universalIdentifier: WORKSPACE_MEMBER_RELATION_FIELD_UNIVERSAL_IDENTIFIER,
@@ -75,6 +79,8 @@ const relatedMaps = (fieldType: FieldMetadataType) => ({
       universalSettings: { relationType: RelationType.MANY_TO_ONE },
       relationTargetObjectMetadataUniversalIdentifier:
         RELATION_TARGET_OBJECT_UNIVERSAL_IDENTIFIER,
+      objectMetadataUniversalIdentifier:
+        STANDARD_OBJECTS.workspaceMember.universalIdentifier,
     },
     {
       universalIdentifier:
@@ -85,6 +91,8 @@ const relatedMaps = (fieldType: FieldMetadataType) => ({
       universalSettings: { relationType: RelationType.MANY_TO_ONE },
       relationTargetObjectMetadataUniversalIdentifier:
         OTHER_RELATION_TARGET_OBJECT_UNIVERSAL_IDENTIFIER,
+      objectMetadataUniversalIdentifier:
+        STANDARD_OBJECTS.workspaceMember.universalIdentifier,
     },
   ]),
   flatObjectMetadataMaps: mapsFrom([
@@ -278,6 +286,23 @@ describe('FlatRowLevelPermissionPredicateValidatorService', () => {
       expect(result.errors).toHaveLength(1);
       expect(result.errors[0].message).toContain(
         'must be relations pointing to the same object',
+      );
+    });
+
+    it('should reject a member field that belongs to another object', () => {
+      const result = service.validateFlatRowLevelPermissionPredicateCreation(
+        buildCreationArgs({
+          fieldType: FieldMetadataType.RELATION,
+          operand: RowLevelPermissionPredicateOperand.IS,
+          value: null,
+          workspaceMemberFieldMetadataUniversalIdentifier:
+            FIELD_UNIVERSAL_IDENTIFIER,
+        }),
+      );
+
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].message).toContain(
+        'is not a field of the workspaceMember object',
       );
     });
 
