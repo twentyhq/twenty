@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
 import { getAiModelTierLabel } from '@/ai/utils/getAiModelTierLabel';
 import { getPercentDelta } from '@/ai/utils/getPercentDelta';
+import { hasCostPerTaskForEveryModel } from '@/ai/utils/hasCostPerTaskForEveryModel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelTiersState } from '@/client-config/states/aiModelTiersState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
@@ -75,8 +76,8 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
     const referenceModel = resolvedModels.find(
       (resolved) => resolved.tier === REFERENCE_TIER,
     )?.model;
-    const hasCostPerTaskForEveryTier = resolvedModels.every(
-      ({ model }) => !isDefined(model) || isDefined(model.costPerTask),
+    const hasCostPerTaskForEveryTier = hasCostPerTaskForEveryModel(
+      resolvedModels.map(({ model }) => model),
     );
 
     return resolvedModels.map(({ tier, model, isPinned }) => ({

@@ -7,6 +7,7 @@ import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
+import { hasCostPerTaskForEveryModel } from '@/ai/utils/hasCostPerTaskForEveryModel';
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
 import { getAiModelBlendedCostPerMillionTokens } from '@/settings/ai/utils/getAiModelBlendedCostPerMillionTokens';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -72,8 +73,8 @@ const formatCost = ({
 
 export const SettingsAiModelTiersPreview = () => {
   const tiers = useAiModelTiers();
-  const hasCostPerTaskForEveryTier = tiers.every(
-    (tier) => !isDefined(tier.model) || isDefined(tier.model.costPerTask),
+  const hasCostPerTaskForEveryTier = hasCostPerTaskForEveryModel(
+    tiers.map((tier) => tier.model),
   );
 
   return (
