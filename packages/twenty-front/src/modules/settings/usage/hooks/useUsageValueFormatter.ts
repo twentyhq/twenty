@@ -14,14 +14,17 @@ export const useUsageValueFormatter = () => {
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const { formatNumber } = useNumberFormat();
 
-  const formatUsageValue = (value: number): string => {
+  const formatUsageValue = (
+    value: number,
+    { abbreviate = false }: { abbreviate?: boolean } = {},
+  ): string => {
     if (isBillingEnabled) {
       const decimals = getDecimalsNeeded(value);
 
-      return `${formatNumber(value, { decimals })} credits`;
+      return `${formatNumber(value, { decimals, abbreviate })} credits`;
     }
 
-    return `$${formatNumber(value, { decimals: 2 })}`;
+    return `$${formatNumber(value, { decimals: 2, abbreviate })}`;
   };
 
   const unitLabel = isBillingEnabled ? 'credits' : '$';
