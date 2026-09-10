@@ -29,4 +29,44 @@ describe('extractTextWithoutReplyQuotations', () => {
       forwardedBody,
     );
   });
+
+  it('should drop a Danish Outlook Fra:/Sendt:/Til:/Emne: quoted thread', () => {
+    const result = extractTextWithoutReplyQuotations(
+      'Hej Jane\n\nKan vi mødes i morgen?\n\nFra: John Doe <john@example.com>\nSendt: 1. september 2026 10:00\nTil: Jane Doe <jane@example.com>\nEmne: Re: Møde\n\nGammel besked her',
+    );
+
+    expect(result).toContain('Kan vi mødes i morgen?');
+    expect(result).not.toContain('Gammel besked her');
+    expect(result).not.toContain('john@example.com');
+  });
+
+  it('should keep a Danish forward that starts with Fra:', () => {
+    const forwardedBody =
+      'Fra: John Doe <john@example.com>\nSendt: 1. september 2026\n\nGammel besked her';
+
+    expect(extractTextWithoutReplyQuotations(forwardedBody)).toBe(
+      forwardedBody,
+    );
+  });
+
+  it('should leave Fra: intact when the Outlook separator sits above the header', () => {
+    const bodyWithSeparator =
+      'Svar her\n\n________________________________\nFra: John Doe <john@example.com>\nSendt: i dag\n\nGammel besked her';
+
+    expect(extractTextWithoutReplyQuotations(bodyWithSeparator)).toBe(
+      bodyWithSeparator,
+    );
+    expect(extractTextWithoutReplyQuotations(bodyWithSeparator)).not.toContain(
+      'From:',
+    );
+  });
+
+  it('should leave unmatched mid-message Fra: without an email address intact', () => {
+    const bodyWithoutBrackets =
+      'Hej\n\nFra: John Doe\nSendt: i dag\n\nGammel besked her';
+
+    expect(extractTextWithoutReplyQuotations(bodyWithoutBrackets)).toBe(
+      bodyWithoutBrackets,
+    );
+  });
 });
