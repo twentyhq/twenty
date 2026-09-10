@@ -120,15 +120,15 @@ export const IconPreact: Story = createGalleryStory(
   'preact',
 );
 
-// KNOWN ISSUE (TDD): Base UI 1.8 radios require Element.matches(':disabled'),
-// which the sandbox DOM does not implement.
+// KNOWN ISSUE (TDD): The sandbox DOM lacks Element.matches(':disabled') for
+// unselected radios and Node.compareDocumentPosition() for React radio groups.
 export const InputReact: Story = createKnownFailureGalleryStory(
   'twenty-ui-input-gallery',
-  ['CardPicker', 'Radio', 'RadioGroup'],
+  ['Radio', 'RadioGroup'],
 );
 export const InputPreact: Story = createKnownFailureGalleryStory(
   'twenty-ui-input-gallery',
-  ['CardPicker'],
+  ['Radio'],
   'preact',
 );
 
