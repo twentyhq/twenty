@@ -5013,6 +5013,7 @@ input SendEmailViaDomainInput {
 
 input SendMessageCampaignInput {
   campaignId: String!
+  scheduledAt: DateTime
 }
 
 input CancelMessageCampaignInput {

@@ -12,9 +12,9 @@ import {
 } from 'src/constants/universal-identifiers';
 import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
+import { SLACK_ASSISTANT_REQUEST_OBJECT_NAME } from 'src/logic-functions/constants/slack-assistant-request-object-name';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-worker-timeout-seconds';
-import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
 import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
@@ -31,8 +31,6 @@ import { runSlackAssistantAgentWithDeadline } from 'src/logic-functions/utils/ru
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
 import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
-
-const SLACK_ASSISTANT_REQUEST_OBJECT_NAME = 'slackAssistantRequest';
 
 type SlackAssistantRequestCreatedEvent = DatabaseEventPayload<
   ObjectRecordCreateEvent<SlackAssistantRequestRecord>
@@ -172,13 +170,11 @@ export const slackAssistantWorkerHandler = async (
       messageFormat: 'markdown',
       unfurlLinks: false,
       unfurlMedia: false,
-      messageBlocks:
-        responseText.length > SLACK_MARKDOWN_BLOCK_MAX_LENGTH
-          ? undefined
-          : buildSlackAssistantAnswerBlocks({
-              responseText,
-              requestId: record.id,
-            }),
+      messageBlocks: buildSlackAssistantAnswerBlocks({
+        responseText,
+        requestId: record.id,
+        workspaceBaseUrl: workspaceBaseUrls[0],
+      }),
     });
 
     if (!deliveryResult.success) {
