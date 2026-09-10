@@ -38,7 +38,7 @@ import {
 import {
   MenuItem,
   MenuItemNavigate,
-  MenuItemToggle,
+  MenuItemSwitch,
 } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
@@ -177,13 +177,13 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
             itemId="HideEmptyGroups"
             onEnter={() => handleHideEmptyRecordGroupChange()}
           >
-            <MenuItemToggle
+            <MenuItemSwitch
               focused={selectedItemId === 'HideEmptyGroups'}
               LeftIcon={IconCircleOff}
-              onToggleChange={handleHideEmptyRecordGroupChange}
-              toggled={shouldHideEmptyGroups}
+              onCheckedChange={handleHideEmptyRecordGroupChange}
+              checked={shouldHideEmptyGroups}
               text={t`Hide empty groups`}
-              toggleSize="small"
+              size="sm"
             />
           </SelectableListItem>
         </SelectableList>

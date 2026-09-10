@@ -79,9 +79,9 @@ export class AiGenerateTextController {
       result = await withDedicatedAiTrace(() =>
         generateText({
           model: registeredModel.model,
-          system: body.systemPrompt,
+          instructions: body.systemPrompt,
           prompt: body.userPrompt,
-          experimental_telemetry: buildAiTelemetry({
+          ...buildAiTelemetry({
             functionId: 'ai-generate-text',
             workspaceId: workspace.id,
             userWorkspaceId,

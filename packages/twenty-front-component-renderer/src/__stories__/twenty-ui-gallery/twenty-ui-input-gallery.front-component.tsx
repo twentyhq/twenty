@@ -1,7 +1,6 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
 import {
-  AdvancedSettingsToggle,
   AnimatedButton,
   AnimatedLightIconButton,
   Button,
@@ -33,7 +32,7 @@ import {
   StyledTabContainer,
   TabButton,
   TabContent,
-  Toggle,
+  Switch,
 } from 'twenty-ui/input';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
@@ -43,15 +42,6 @@ import {
 } from '../shared/front-components/component-gallery';
 
 const INPUT_ENTRIES: GalleryEntry[] = [
-  {
-    name: 'AdvancedSettingsToggle',
-    node: (
-      <AdvancedSettingsToggle
-        isAdvancedModeEnabled={false}
-        setIsAdvancedModeEnabled={() => {}}
-      />
-    ),
-  },
   {
     name: 'AnimatedButton',
     node: (
@@ -242,8 +232,14 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     node: <TabContent id="tc1" title="Content" />,
   },
   {
-    name: 'Toggle',
-    node: <Toggle value={false} onChange={() => {}} />,
+    name: 'Switch',
+    node: (
+      <Switch
+        aria-label="Example switch"
+        checked={false}
+        onCheckedChange={() => {}}
+      />
+    ),
   },
 ];
 

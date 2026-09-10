@@ -11,8 +11,8 @@ import {
 import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ObjectFieldIndexFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/object-field-index-flat-entity-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { SDK_LAYER_PREFIX_IN_ZIP } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { type LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
@@ -23,6 +23,7 @@ import { reprefixLambdaZipEntries } from 'src/engine/core-modules/logic-function
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
@@ -32,7 +33,12 @@ import {
 type LayerAppContext = {
   flatApplication: FlatApplication;
   applicationUniversalIdentifier: string;
-  flatEntityMapsOverride?: ObjectFieldIndexFlatEntityMaps;
+};
+
+const LAYER_LOCK_OPTIONS = {
+  ttl: 120_000,
+  ms: 500,
+  maxRetries: 240,
 };
 
 export class LambdaLayerManagerService {
@@ -47,6 +53,8 @@ export class LambdaLayerManagerService {
     private readonly toolFunctions: LambdaToolFunctionsService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
     private readonly sdkClientArchiveService: SdkClientArchiveService,
+    private readonly cacheLockService: CacheLockService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async ensureDepsLayer(context: LayerAppContext): Promise<string> {
@@ -61,38 +69,104 @@ export class LambdaLayerManagerService {
       return existingArn;
     }
 
-    await this.createDepsLayer({ ...context, layerName });
+    return this.cacheLockService.withLock(
+      async () => {
+        const arnCreatedWhileWaiting =
+          await this.awsClient.getExistingLayerArn(layerName);
 
-    const newArn = await this.awsClient.getExistingLayerArn(layerName);
+        if (isDefined(arnCreatedWhileWaiting)) {
+          return arnCreatedWhileWaiting;
+        }
 
-    if (!isDefined(newArn)) {
-      throw new Error(
-        `Layer '${layerName}' was not created by the yarn install Lambda`,
-      );
-    }
+        await this.createDepsLayer({ ...context, layerName });
 
-    return newArn;
+        const newArn = await this.awsClient.getExistingLayerArn(layerName);
+
+        if (!isDefined(newArn)) {
+          throw new Error(
+            `Layer '${layerName}' was not created by the yarn install Lambda`,
+          );
+        }
+
+        return newArn;
+      },
+      `lambda-deps-layer:${layerName}`,
+      LAYER_LOCK_OPTIONS,
+    );
   }
 
   async ensureSdkLayer(context: LayerAppContext): Promise<string> {
-    const {
-      flatApplication,
-      applicationUniversalIdentifier,
-      flatEntityMapsOverride,
-    } = context;
+    const { flatApplication, applicationUniversalIdentifier } = context;
     const layerName = getLambdaSdkLayerName({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
     });
 
-    if (!flatApplication.isSdkLayerStale) {
-      const existingArn = await this.awsClient.getExistingLayerArn(layerName);
+    const existingArn = await this.findFreshSdkLayerArn({
+      flatApplication,
+      layerName,
+    });
 
-      if (isDefined(existingArn)) {
-        return existingArn;
-      }
+    if (isDefined(existingArn)) {
+      return existingArn;
     }
 
+    return this.cacheLockService.withLock(
+      async () => {
+        const refreshedFlatApplication =
+          await this.refreshFlatApplication(flatApplication);
+
+        const arnPublishedWhileWaiting = await this.findFreshSdkLayerArn({
+          flatApplication: refreshedFlatApplication,
+          layerName,
+        });
+
+        if (isDefined(arnPublishedWhileWaiting)) {
+          return arnPublishedWhileWaiting;
+        }
+
+        return this.rebuildSdkLayer({
+          flatApplication: refreshedFlatApplication,
+          applicationUniversalIdentifier,
+          layerName,
+        });
+      },
+      `lambda-sdk-layer:${layerName}`,
+      LAYER_LOCK_OPTIONS,
+    );
+  }
+
+  private async findFreshSdkLayerArn({
+    flatApplication,
+    layerName,
+  }: {
+    flatApplication: FlatApplication;
+    layerName: string;
+  }): Promise<string | undefined> {
+    if (flatApplication.isSdkLayerStale) {
+      return undefined;
+    }
+
+    return this.awsClient.getExistingLayerArn(layerName);
+  }
+
+  private async refreshFlatApplication(
+    flatApplication: FlatApplication,
+  ): Promise<FlatApplication> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(
+        flatApplication.workspaceId,
+        ['flatApplicationMaps'],
+      );
+
+    return flatApplicationMaps.byId[flatApplication.id] ?? flatApplication;
+  }
+
+  private async rebuildSdkLayer({
+    flatApplication,
+    applicationUniversalIdentifier,
+    layerName,
+  }: LayerAppContext & { layerName: string }): Promise<string> {
     await this.deleteAllLayerVersions(layerName);
 
     const sdkArchiveBuffer =
@@ -100,7 +174,6 @@ export class LambdaLayerManagerService {
         workspaceId: flatApplication.workspaceId,
         applicationId: flatApplication.id,
         applicationUniversalIdentifier,
-        flatEntityMapsOverride,
       });
 
     const zipBuffer = await reprefixLambdaZipEntries({

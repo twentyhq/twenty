@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getUnresolvableObjectReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unresolvable-object-reason.util';
+import { getUnresolvableReferenceReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unresolvable-reference-reason.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 
@@ -20,12 +20,14 @@ export const getUnsupportedPageLayoutReason = ({
     return 'page layout without a name';
   }
 
-  const unresolvableObjectReason = getUnresolvableObjectReason({
+  const unresolvableObjectReason = getUnresolvableReferenceReason({
     metadataName: 'pageLayout',
-    objectUniversalIdentifier: flatPageLayout.objectMetadataUniversalIdentifier,
+    referenceMetadataName: 'objectMetadata',
+    referenceUniversalIdentifier:
+      flatPageLayout.objectMetadataUniversalIdentifier,
     applicationAllFlatEntityMaps,
     allFlatEntityMaps,
-    exportedObjectUniversalIdentifiers,
+    resolvableReferenceUniversalIdentifiers: exportedObjectUniversalIdentifiers,
   });
 
   if (isDefined(unresolvableObjectReason)) {
