@@ -74,7 +74,19 @@ export const SettingsRadioSettingsCard = <
   const { i18n } = useLingui();
 
   return (
-    <RadioGroup name={name} value={value} onValueChange={onChange}>
+    <RadioGroup
+      name={name}
+      value={value}
+      onValueChange={onChange}
+      onKeyDown={(event) => {
+        if (
+          !(event.target instanceof HTMLElement) ||
+          event.target.getAttribute('role') !== 'radio'
+        ) {
+          event.preventBaseUIHandler();
+        }
+      }}
+    >
       <Card fullWidth rounded>
         {options.map((option, index) => {
           const isSelected = value === option.value;

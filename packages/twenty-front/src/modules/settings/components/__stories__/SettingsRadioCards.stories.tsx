@@ -99,14 +99,31 @@ export const ExpandedContent: Story = {
       canvas.getByRole('radio', { name: 'Selected folders' }),
     ).toBeChecked();
     await expect(args.onChange).toHaveBeenCalledTimes(1);
-    await userEvent.type(
-      canvas.getByRole('textbox', { name: 'Folder name' }),
-      'Inbox',
-    );
+    const folderNameInput = canvas.getByRole('textbox', {
+      name: 'Folder name',
+    });
+    await userEvent.type(folderNameInput, 'Inbox');
     await expect(args.onChange).toHaveBeenCalledTimes(1);
-    await expect(
-      canvas.getByRole('textbox', { name: 'Folder name' }),
-    ).toHaveValue('Inbox');
+    await expect(folderNameInput).toHaveValue('Inbox');
+
+    for (const key of [
+      '{ArrowRight}',
+      '{ArrowDown}',
+      '{Home}',
+      '{ArrowLeft}',
+      '{ArrowUp}',
+      '{End}',
+    ]) {
+      await userEvent.keyboard(key);
+      await expect(
+        canvas.getByRole('radio', { name: 'Selected folders' }),
+      ).toBeChecked();
+      await expect(args.onChange).toHaveBeenCalledTimes(1);
+      await expect(folderNameInput).toHaveFocus();
+    }
+
+    await userEvent.keyboard('{ArrowLeft}X');
+    await expect(folderNameInput).toHaveValue('InboXx');
     await userEvent.click(
       canvas.getByRole('radio', { name: 'Selected folders' }),
     );
@@ -114,6 +131,7 @@ export const ExpandedContent: Story = {
     await waitFor(() =>
       expect(canvas.getByRole('radio', { name: 'All messages' })).toBeChecked(),
     );
+    await expect(args.onChange).toHaveBeenCalledTimes(2);
     await expect(
       canvas.queryByRole('textbox', { name: 'Folder name' }),
     ).not.toBeInTheDocument();
