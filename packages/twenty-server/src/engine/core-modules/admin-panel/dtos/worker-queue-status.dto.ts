@@ -1,5 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { WorkerQueueMetrics } from 'src/engine/core-modules/admin-panel/types/worker-queue-metrics.type';
+
 @ObjectType('WorkerQueueStatus')
 export class WorkerQueueStatusDTO {
   @Field(() => String)
@@ -8,15 +10,6 @@ export class WorkerQueueStatusDTO {
   @Field(() => Number)
   workers: number;
 
-  @Field(() => Number, { nullable: true })
-  waiting: number | null;
-
-  @Field(() => Number, { nullable: true })
-  active: number | null;
-
-  @Field(() => Number, { nullable: true })
-  delayed: number | null;
-
-  @Field(() => Number, { nullable: true })
-  failureRate: number | null;
+  @Field(() => WorkerQueueMetrics, { nullable: true })
+  metrics: WorkerQueueMetrics | null;
 }

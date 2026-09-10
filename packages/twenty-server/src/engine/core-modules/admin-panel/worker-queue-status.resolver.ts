@@ -30,10 +30,7 @@ export class WorkerQueueStatusResolver {
         return {
           queueName,
           workers: queueHealth?.workers ?? 0,
-          waiting: queueHealth?.metrics.waiting ?? null,
-          active: queueHealth?.metrics.active ?? null,
-          delayed: queueHealth?.metrics.delayed ?? null,
-          failureRate: queueHealth?.metrics.failureRate ?? null,
+          metrics: queueHealth?.metrics ?? null,
         };
       }),
     );
