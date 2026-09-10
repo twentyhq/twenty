@@ -5,7 +5,6 @@ import {
   ArrayNotEmpty,
   IsArray,
   IsNotEmpty,
-  IsOptional,
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -13,10 +12,9 @@ import { MAX_APPLICATION_FILE_UPLOAD_BATCH_SIZE } from 'src/engine/core-modules/
 
 @ArgsType()
 export class CompleteApplicationFileUploadsInput {
-  @Field(() => String, { nullable: true })
-  @IsOptional()
+  @Field(() => String)
   @IsNotEmpty()
-  applicationUniversalIdentifier?: string;
+  applicationUniversalIdentifier: string;
 
   @Field(() => [UUIDScalarType])
   @IsArray()

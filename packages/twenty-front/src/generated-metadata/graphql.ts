@@ -2845,6 +2845,7 @@ export type Mutation = {
   completeApplicationFileUploads: CompleteApplicationFileUploadsResult;
   completeBookCallOnboardingStep: OnboardingStepSuccess;
   completeFileUpload: FileWithSignedUrl;
+  completeUploadApplicationTarball: ApplicationRegistration;
   createApiKey: ApiKey;
   createApplicationFileUploads: CreateApplicationFileUploadsResult;
   createApplicationRegistration: CreateApplicationRegistration;
@@ -2881,6 +2882,7 @@ export type Mutation = {
   createSkill: Skill;
   createSubscriptionPaymentIntent: BillingPaymentIntent;
   createUnsubscribeTopic: UnsubscribeTopic;
+  createUploadApplicationTarball: FileUploadTarget;
   createView: View;
   createViewField: ViewField;
   createViewFieldGroup: ViewFieldGroup;
@@ -2965,7 +2967,6 @@ export type Mutation = {
   installApplication: Application;
   /** @deprecated Use installApplication instead */
   installMarketplaceApp: Scalars['Boolean']['output'];
-  publishAppTarball: ApplicationRegistration;
   refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
   removeQueryFromEventStream: Scalars['Boolean']['output'];
@@ -3062,7 +3063,7 @@ export type Mutation = {
   updateWorkspaceMemberRole: WorkspaceMember;
   updateWorkspaceMemberSettings: Scalars['Boolean']['output'];
   upgradeApplication: Scalars['Boolean']['output'];
-  /** @deprecated Upload the tarball with createApplicationFileUploads/completeApplicationFileUploads, then call publishAppTarball */
+  /** @deprecated Use createUploadApplicationTarball and completeUploadApplicationTarball */
   uploadAppTarball: ApplicationRegistration;
   /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads */
   uploadApplicationFile: File;
@@ -3161,7 +3162,7 @@ export type MutationClaimApplicationRegistrationOwnershipArgs = {
 
 
 export type MutationCompleteApplicationFileUploadsArgs = {
-  applicationUniversalIdentifier?: InputMaybe<Scalars['String']['input']>;
+  applicationUniversalIdentifier: Scalars['String']['input'];
   fileIds: Array<Scalars['UUID']['input']>;
 };
 
@@ -3177,13 +3178,19 @@ export type MutationCompleteFileUploadArgs = {
 };
 
 
+export type MutationCompleteUploadApplicationTarballArgs = {
+  fileId: Scalars['String']['input'];
+  universalIdentifier?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type MutationCreateApiKeyArgs = {
   input: CreateApiKeyInput;
 };
 
 
 export type MutationCreateApplicationFileUploadsArgs = {
-  applicationUniversalIdentifier?: InputMaybe<Scalars['String']['input']>;
+  applicationUniversalIdentifier: Scalars['String']['input'];
   files: Array<ApplicationFileUploadRequestInput>;
 };
 
@@ -3358,6 +3365,11 @@ export type MutationCreateSubscriptionPaymentIntentArgs = {
 
 export type MutationCreateUnsubscribeTopicArgs = {
   input: CreateUnsubscribeTopicInput;
+};
+
+
+export type MutationCreateUploadApplicationTarballArgs = {
+  size: Scalars['Float']['input'];
 };
 
 
@@ -3745,12 +3757,6 @@ export type MutationInstallApplicationArgs = {
 export type MutationInstallMarketplaceAppArgs = {
   universalIdentifier: Scalars['String']['input'];
   version?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type MutationPublishAppTarballArgs = {
-  fileId: Scalars['String']['input'];
-  universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
 

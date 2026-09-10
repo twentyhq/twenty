@@ -3888,8 +3888,9 @@ type Mutation {
   createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   deleteApplicationRegistrationVariable(id: String!): Boolean!
-  publishAppTarball(fileId: String!, universalIdentifier: String): ApplicationRegistration!
-  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration! @deprecated(reason: "Upload the tarball with createApplicationFileUploads/completeApplicationFileUploads, then call publishAppTarball")
+  createUploadApplicationTarball(size: Float!): FileUploadTarget!
+  completeUploadApplicationTarball(fileId: String!, universalIdentifier: String): ApplicationRegistration!
+  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration! @deprecated(reason: "Use createUploadApplicationTarball and completeUploadApplicationTarball")
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
@@ -4016,8 +4017,8 @@ type Mutation {
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
   syncApplication(manifest: JSON!, dryRun: Boolean, inferDeletionFromMissingEntities: Boolean): WorkspaceMigration!
   uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File! @deprecated(reason: "Use createApplicationFileUploads and completeApplicationFileUploads")
-  createApplicationFileUploads(applicationUniversalIdentifier: String, files: [ApplicationFileUploadRequestInput!]!): CreateApplicationFileUploadsResult!
-  completeApplicationFileUploads(applicationUniversalIdentifier: String, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
+  createApplicationFileUploads(applicationUniversalIdentifier: String!, files: [ApplicationFileUploadRequestInput!]!): CreateApplicationFileUploadsResult!
+  completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
   revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
   generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!

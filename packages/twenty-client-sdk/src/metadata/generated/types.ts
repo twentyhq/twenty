@@ -9092,7 +9092,16 @@ export default {
                     ]
                 }
             ],
-            "publishAppTarball": [
+            "createUploadApplicationTarball": [
+                150,
+                {
+                    "size": [
+                        15,
+                        "Float!"
+                    ]
+                }
+            ],
+            "completeUploadApplicationTarball": [
                 75,
                 {
                     "fileId": [
@@ -10481,7 +10490,8 @@ export default {
                 300,
                 {
                     "applicationUniversalIdentifier": [
-                        1
+                        1,
+                        "String!"
                     ],
                     "files": [
                         563,
@@ -10493,7 +10503,8 @@ export default {
                 296,
                 {
                     "applicationUniversalIdentifier": [
-                        1
+                        1,
+                        "String!"
                     ],
                     "fileIds": [
                         3,

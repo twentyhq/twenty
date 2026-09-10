@@ -45,10 +45,10 @@ export class ApplicationFileUploadService {
     files,
   }: {
     workspaceId: string;
-    applicationUniversalIdentifier?: string;
+    applicationUniversalIdentifier: string;
     files: ApplicationFileUploadRequestInput[];
   }): Promise<CreateApplicationFileUploadsResultDTO> {
-    const application = await this.resolveApplicationOrThrow({
+    const application = await this.findApplicationOrThrow({
       workspaceId,
       applicationUniversalIdentifier,
     });
@@ -79,7 +79,7 @@ export class ApplicationFileUploadService {
 
     const requests: BatchUploadTargetRequest[] = validFiles.map((file) => ({
       workspaceId,
-      applicationUniversalIdentifier: application.universalIdentifier,
+      applicationUniversalIdentifier,
       applicationId: application.id,
       fileFolder: file.fileFolder,
       resourcePath: file.filePath,
@@ -117,10 +117,10 @@ export class ApplicationFileUploadService {
     fileIds,
   }: {
     workspaceId: string;
-    applicationUniversalIdentifier?: string;
+    applicationUniversalIdentifier: string;
     fileIds: string[];
   }): Promise<CompleteApplicationFileUploadsResultDTO> {
-    const application = await this.resolveApplicationOrThrow({
+    const application = await this.findApplicationOrThrow({
       workspaceId,
       applicationUniversalIdentifier,
     });
@@ -149,7 +149,7 @@ export class ApplicationFileUploadService {
       await this.fileUploadCompletionService.completeUploadsBatch(
         files.map((file) => ({
           workspaceId,
-          applicationUniversalIdentifier: application.universalIdentifier,
+          applicationUniversalIdentifier,
           file,
         })),
       );
@@ -191,25 +191,13 @@ export class ApplicationFileUploadService {
     return undefined;
   }
 
-  // A tarball deploy uploads before the application exists in the workspace,
-  // so an absent identifier falls back to the workspace's own custom
-  // application, the same namespace createFileUpload writes into.
-  private async resolveApplicationOrThrow({
+  private async findApplicationOrThrow({
     workspaceId,
     applicationUniversalIdentifier,
   }: {
     workspaceId: string;
-    applicationUniversalIdentifier?: string;
+    applicationUniversalIdentifier: string;
   }) {
-    if (!isDefined(applicationUniversalIdentifier)) {
-      const { workspaceCustomFlatApplication } =
-        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-          { workspaceId },
-        );
-
-      return workspaceCustomFlatApplication;
-    }
-
     const application = await this.applicationService.findByUniversalIdentifier(
       {
         universalIdentifier: applicationUniversalIdentifier,

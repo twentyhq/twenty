@@ -3332,8 +3332,9 @@ export interface Mutation {
     createApplicationRegistrationVariable: ApplicationRegistrationVariable
     updateApplicationRegistrationVariable: ApplicationRegistrationVariable
     deleteApplicationRegistrationVariable: Scalars['Boolean']
-    publishAppTarball: ApplicationRegistration
-    /** @deprecated Upload the tarball with createApplicationFileUploads/completeApplicationFileUploads, then call publishAppTarball */
+    createUploadApplicationTarball: FileUploadTarget
+    completeUploadApplicationTarball: ApplicationRegistration
+    /** @deprecated Use createUploadApplicationTarball and completeUploadApplicationTarball */
     uploadAppTarball: ApplicationRegistration
     claimApplicationRegistrationOwnership: ApplicationRegistration
     transferApplicationRegistrationOwnership: ApplicationRegistration
@@ -6988,8 +6989,9 @@ export interface MutationGenqlSelection{
     createApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: CreateApplicationRegistrationVariableInput} })
     updateApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: UpdateApplicationRegistrationVariableInput} })
     deleteApplicationRegistrationVariable?: { __args: {id: Scalars['String']} }
-    publishAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {fileId: Scalars['String'], universalIdentifier?: (Scalars['String'] | null)} })
-    /** @deprecated Upload the tarball with createApplicationFileUploads/completeApplicationFileUploads, then call publishAppTarball */
+    createUploadApplicationTarball?: (FileUploadTargetGenqlSelection & { __args: {size: Scalars['Float']} })
+    completeUploadApplicationTarball?: (ApplicationRegistrationGenqlSelection & { __args: {fileId: Scalars['String'], universalIdentifier?: (Scalars['String'] | null)} })
+    /** @deprecated Use createUploadApplicationTarball and completeUploadApplicationTarball */
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
     claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
@@ -7120,8 +7122,8 @@ export interface MutationGenqlSelection{
     syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null), inferDeletionFromMissingEntities?: (Scalars['Boolean'] | null)} })
     /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads */
     uploadApplicationFile?: (FileGenqlSelection & { __args: {file: Scalars['Upload'], applicationUniversalIdentifier: Scalars['String'], fileFolder: FileFolder, filePath: Scalars['String']} })
-    createApplicationFileUploads?: (CreateApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier?: (Scalars['String'] | null), files: ApplicationFileUploadRequestInput[]} })
-    completeApplicationFileUploads?: (CompleteApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier?: (Scalars['String'] | null), fileIds: Scalars['UUID'][]} })
+    createApplicationFileUploads?: (CreateApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], files: ApplicationFileUploadRequestInput[]} })
+    completeApplicationFileUploads?: (CompleteApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], fileIds: Scalars['UUID'][]} })
     revokeApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }
     generateApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     renewApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationRefreshToken: Scalars['String']} })

@@ -27,6 +27,7 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationTarballUploadService } from 'src/engine/core-modules/application/application-registration/application-tarball-upload.service';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
+import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
 import { ApplicationRegistrationClaimInput } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-claim.input';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
@@ -257,18 +258,35 @@ export class ApplicationRegistrationResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
   )
+  @Mutation(() => FileUploadTargetDTO)
+  async createUploadApplicationTarball(
+    @Args({ name: 'size', type: () => Number }) size: number,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<FileUploadTargetDTO> {
+    return this.applicationTarballUploadService.createUploadApplicationTarball({
+      workspaceId,
+      size,
+    });
+  }
+
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
+  )
   @Mutation(() => ApplicationRegistrationEntity)
-  async publishAppTarball(
+  async completeUploadApplicationTarball(
     @Args({ name: 'fileId', type: () => String }) fileId: string,
     @Args('universalIdentifier', { type: () => String, nullable: true })
     universalIdentifier: string | undefined,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity> {
-    return this.applicationTarballUploadService.publishAppTarball({
-      workspaceId,
-      fileId,
-      universalIdentifier,
-    });
+    return this.applicationTarballUploadService.completeUploadApplicationTarball(
+      {
+        workspaceId,
+        fileId,
+        universalIdentifier,
+      },
+    );
   }
 
   @UseGuards(
@@ -277,7 +295,7 @@ export class ApplicationRegistrationResolver {
   )
   @Mutation(() => ApplicationRegistrationEntity, {
     deprecationReason:
-      'Upload the tarball with createApplicationFileUploads/completeApplicationFileUploads, then call publishAppTarball',
+      'Use createUploadApplicationTarball and completeUploadApplicationTarball',
   })
   async uploadAppTarball(
     @Args({ name: 'file', type: () => GraphQLUpload })

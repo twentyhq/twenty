@@ -6,7 +6,6 @@ export const APP_DEV_RATE_LIMIT_WINDOW_MS = 30_000;
 export const MAX_APPLICATION_FILE_UPLOAD_BATCH_SIZE = 100;
 
 export const ALLOWED_APPLICATION_FILE_FOLDERS: FileFolder[] = [
-  FileFolder.AppTarball,
   FileFolder.BuiltLogicFunction,
   FileFolder.BuiltFrontComponent,
   FileFolder.PublicAsset,
