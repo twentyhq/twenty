@@ -25,7 +25,6 @@ import {
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
 import { FileUploadTargetService } from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
-import { assertDirectUploadSizeOrThrow } from 'src/engine/core-modules/file/file-upload/utils/assert-direct-upload-size-or-throw.util';
 import { buildSvgTooLargeException } from 'src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
@@ -91,8 +90,6 @@ export class FileUploadService {
         },
       );
     }
-
-    assertDirectUploadSizeOrThrow(size);
 
     const { ext } = buildFileInfo(filename);
 
