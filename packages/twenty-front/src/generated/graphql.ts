@@ -501,6 +501,7 @@ export type Query = {
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   isMaintenanceModeBannerDismissed: Scalars['Boolean']['output'];
   search: SearchResultConnection;
+  workerQueueStatuses: Array<WorkerQueueStatus>;
   workflowStepConnectedAccountHandle?: Maybe<ConnectedAccountHandleDto>;
   workflowVersionContent: WorkflowVersionContent;
 };
@@ -800,6 +801,25 @@ export type UpdateWorkflowVersionTriggerInput = {
   trigger: Scalars['JSON']['input'];
   /** Workflow version ID */
   workflowVersionId: Scalars['UUID']['input'];
+};
+
+export type WorkerQueueMetrics = {
+  __typename?: 'WorkerQueueMetrics';
+  active: Scalars['Float']['output'];
+  completed: Scalars['Float']['output'];
+  completedData?: Maybe<Array<Scalars['Float']['output']>>;
+  delayed: Scalars['Float']['output'];
+  failed: Scalars['Float']['output'];
+  failedData?: Maybe<Array<Scalars['Float']['output']>>;
+  failureRate: Scalars['Float']['output'];
+  waiting: Scalars['Float']['output'];
+};
+
+export type WorkerQueueStatus = {
+  __typename?: 'WorkerQueueStatus';
+  metrics?: Maybe<WorkerQueueMetrics>;
+  queueName: Scalars['String']['output'];
+  workers: Scalars['Float']['output'];
 };
 
 export type WorkflowAction = {
