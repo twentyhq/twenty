@@ -142,14 +142,24 @@ describe('validateUsageLimitAgainstDefinition', () => {
     ).not.toThrow();
   });
 
-  it('accepts a quota scoped to one agent', () => {
+  it('accepts a quota scoped to one application', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaLimit,
+        spenderType: 'application',
+        spenderId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+      }),
+    ).not.toThrow();
+  });
+
+  it('rejects a quota scoped to an agent, which spends through its workflow', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
         ...validQuotaLimit,
         spenderType: 'agent',
         spenderId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
       }),
-    ).not.toThrow();
+    ).toThrow();
   });
 
   it('accepts a quota covering every operation of the resource', () => {
