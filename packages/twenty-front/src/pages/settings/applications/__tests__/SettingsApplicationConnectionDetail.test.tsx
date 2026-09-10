@@ -141,11 +141,9 @@ describe('SettingsApplicationConnectionDetail', () => {
           __typename: 'ApplicationConnectedAccountDTO',
           id: 'account-1',
           handle: 'workspace@example.com',
-          provider: 'app',
           authFailedAt: null,
           scopes: ['calendar.readonly'],
           lastSignedInAt: null,
-          userWorkspaceId: 'user-workspace-1',
           connectionProviderId: 'provider-1',
           name: 'Original name',
           visibility: 'user',
@@ -195,11 +193,9 @@ describe('SettingsApplicationConnectionDetail', () => {
           __typename: 'ApplicationConnectedAccountDTO',
           id: 'account-1',
           handle: 'workspace@example.com',
-          provider: 'app',
           authFailedAt: '2026-05-01T00:00:00.000Z',
           scopes: ['calendar.readonly'],
           lastSignedInAt: null,
-          userWorkspaceId: 'user-workspace-2',
           connectionProviderId: 'provider-1',
           name: 'Shared connection',
           visibility: 'workspace',
@@ -217,9 +213,7 @@ describe('SettingsApplicationConnectionDetail', () => {
 
     expect(screen.getByText('Workspace shared')).toBeVisible();
     expect(screen.getByText('Reconnect needed')).toBeVisible();
-    expect(
-      screen.queryByRole('button', { name: /^Reconnect(?! and share)/ }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Reconnect')).not.toBeInTheDocument();
   });
 
   it('shows the reconnect action to the owner of a failed connection', () => {
@@ -229,11 +223,9 @@ describe('SettingsApplicationConnectionDetail', () => {
           __typename: 'ApplicationConnectedAccountDTO',
           id: 'account-1',
           handle: 'workspace@example.com',
-          provider: 'app',
           authFailedAt: '2026-05-01T00:00:00.000Z',
           scopes: ['calendar.readonly'],
           lastSignedInAt: null,
-          userWorkspaceId: 'user-workspace-1',
           connectionProviderId: 'provider-1',
           name: 'Shared connection',
           visibility: 'workspace',
@@ -249,9 +241,7 @@ describe('SettingsApplicationConnectionDetail', () => {
 
     renderDetailPage();
 
-    fireEvent.click(
-      screen.getByRole('button', { name: /^Reconnect(?! and share)/ }),
-    );
+    fireEvent.click(screen.getByText('Reconnect'));
 
     expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
       applicationId: 'app-1',

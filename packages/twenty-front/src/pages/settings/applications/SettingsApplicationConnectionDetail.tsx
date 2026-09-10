@@ -13,7 +13,6 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { FIND_APPLICATION_CONNECTED_ACCOUNTS } from '@/settings/applications/graphql/queries/findApplicationConnectedAccounts';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -25,6 +24,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import {
+  ApplicationConnectedAccountsDocument,
   DeleteConnectedAccountDocument,
   FindOneApplicationDocument,
 } from '~/generated-metadata/graphql';
@@ -103,7 +103,7 @@ export const SettingsApplicationConnectionDetail = () => {
     {
       refetchQueries: [
         {
-          query: FIND_APPLICATION_CONNECTED_ACCOUNTS,
+          query: ApplicationConnectedAccountsDocument,
           variables: { applicationId },
         },
       ],

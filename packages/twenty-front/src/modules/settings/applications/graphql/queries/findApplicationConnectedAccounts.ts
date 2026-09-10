@@ -5,12 +5,10 @@ export const FIND_APPLICATION_CONNECTED_ACCOUNTS = gql`
     applicationConnectedAccounts(applicationId: $applicationId) {
       id
       handle
-      provider
       authFailedAt
       authFailedReason
       scopes
       lastSignedInAt
-      userWorkspaceId
       connectionProviderId
       name
       visibility

@@ -105,7 +105,7 @@ export class ConnectedAccountMetadataService {
         },
         userWorkspaceId,
       }),
-      order: { createdAt: 'ASC' },
+      order: { createdAt: 'ASC', id: 'ASC' },
     });
   }
 
