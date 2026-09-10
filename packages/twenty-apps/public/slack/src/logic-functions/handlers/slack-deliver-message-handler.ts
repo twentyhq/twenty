@@ -20,15 +20,13 @@ export const slackDeliverMessageHandler = async (
     waitOutRateLimit: false,
   });
 
-  if (result.success && !isNonEmptyString(slackAssistantRequestId)) {
-    return { delivered: true, attempt, statusRecorded: true };
-  }
-
   if (result.success) {
-    const statusRecorded = await markSlackAssistantRequestDone({
-      requestId: slackAssistantRequestId,
-      responseText: message.messageText,
-    });
+    const statusRecorded = isNonEmptyString(slackAssistantRequestId)
+      ? await markSlackAssistantRequestDone({
+          requestId: slackAssistantRequestId,
+          responseText: message.messageText,
+        })
+      : true;
 
     return { delivered: true, attempt, statusRecorded };
   }
