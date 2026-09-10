@@ -240,9 +240,7 @@ export class MessagingMessageListFetchService {
               await this.messagingMessageCleanerService.deleteMessagesChannelMessageAssociationsAndRelatedOrphans(
                 {
                   workspaceId,
-                  messageExternalIds: toDeleteChunk.filter(
-                    (messageExternalId) => isNonEmptyString(messageExternalId),
-                  ),
+                  messageExternalIds: toDeleteChunk,
                   messageChannelId: freshMessageChannel.id,
                 },
               );
