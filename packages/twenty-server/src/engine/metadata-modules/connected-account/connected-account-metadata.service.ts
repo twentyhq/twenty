@@ -183,6 +183,7 @@ export class ConnectedAccountMetadataService {
     connectedAccount,
     userWorkspaceId,
     workspaceId,
+    applicationId,
   }: {
     connectedAccount: Pick<
       ConnectedAccountEntity,
@@ -190,16 +191,22 @@ export class ConnectedAccountMetadataService {
     >;
     userWorkspaceId: string;
     workspaceId: string;
+    applicationId?: string;
   }): Promise<boolean> {
+    if (connectedAccount.userWorkspaceId === userWorkspaceId) {
+      return true;
+    }
+
     switch (connectedAccount.visibility) {
       case 'workspace':
         return this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId,
           workspaceId,
+          applicationId,
           setting: PermissionFlagType.WORKSPACE,
         });
       case 'user':
-        return connectedAccount.userWorkspaceId === userWorkspaceId;
+        return false;
       default:
         return assertUnreachable(connectedAccount.visibility);
     }
@@ -209,10 +216,12 @@ export class ConnectedAccountMetadataService {
     id,
     userWorkspaceId,
     workspaceId,
+    applicationId,
   }: {
     id: string;
     userWorkspaceId: string;
     workspaceId: string;
+    applicationId?: string;
   }): Promise<ConnectedAccountEntity> {
     const connectedAccount = await this.findByIdOrThrow({ id, workspaceId });
 
@@ -220,6 +229,7 @@ export class ConnectedAccountMetadataService {
       connectedAccount,
       userWorkspaceId,
       workspaceId,
+      applicationId,
     });
 
     if (!isAdministrableByCaller) {

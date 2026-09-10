@@ -32,6 +32,7 @@ const YC_CONNECTED_ACCOUNT_IDS = {
   PHIL: '30303030-cafc-4323-908d-e5b42ad69fdf',
   JANE: '30303030-b5c7-46f0-bf5c-3f4e4b3f7c1a',
   JANE_DELETABLE: '30303030-d1e5-4a8f-9c3b-7f6d5e4c3b2a',
+  JONY_SHARED: '30303030-c7b4-4f1a-8e2d-6b9a0f3c5d18',
   SUPPORT_GROUP: '30303030-5a1e-4b2c-9d3e-100000000001',
   CONTACT_GROUP: '30303030-5a1e-4b2c-9d3e-100000000002',
 };
@@ -159,6 +160,14 @@ const seedConnectedAccounts = async ({
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.JANE,
       visibility: 'user',
+      workspaceId,
+    },
+    {
+      id: ids.connectedAccountIds.JONY_SHARED,
+      handle: 'jony-shared@apple.dev',
+      provider: 'app',
+      userWorkspaceId: ids.userWorkspaceIds.JONY,
+      visibility: 'workspace',
       workspaceId,
     },
     {

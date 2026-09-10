@@ -1,4 +1,5 @@
 import { gql } from 'graphql-tag';
+import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
@@ -118,27 +119,24 @@ describe('connectedAccountResolver (e2e)', () => {
       expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
 
-    it('should deny a member deleting a workspace-shared account', async () => {
-      const response = await makeMetadataAPIRequest(
-        {
-          query: gql`
-            mutation DeleteConnectedAccount($id: UUID!) {
-              deleteConnectedAccount(id: $id) {
-                id
-              }
+    it('should deny a member deleting a workspace-shared account owned by someone else', async () => {
+      const response = await makeMetadataAPIRequestWithMemberRole({
+        query: gql`
+          mutation DeleteConnectedAccount($id: UUID!) {
+            deleteConnectedAccount(id: $id) {
+              id
             }
-          `,
-          variables: { id: CONNECTED_ACCOUNT_DATA_SEED_IDS.SUPPORT_GROUP },
-        },
-        APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      );
+          }
+        `,
+        variables: { id: CONNECTED_ACCOUNT_DATA_SEED_IDS.SUPPORT_GROUP },
+      });
 
       expect(response.status).toBe(200);
       expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
 
-    it('should keep the workspace-shared account reachable after a denied deletion', async () => {
-      const response = await makeMetadataAPIRequest({
+    it('should keep a denied member able to use the workspace-shared account', async () => {
+      const response = await makeMetadataAPIRequestWithMemberRole({
         query: gql`
           query MyMessageChannels($connectedAccountId: UUID) {
             myMessageChannels(connectedAccountId: $connectedAccountId) {
@@ -154,6 +152,25 @@ describe('connectedAccountResolver (e2e)', () => {
       expect(response.status).toBe(200);
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.myMessageChannels.length).toBeGreaterThan(0);
+    });
+
+    it('should allow a member deleting a workspace-shared account they own', async () => {
+      const response = await makeMetadataAPIRequestWithMemberRole({
+        query: gql`
+          mutation DeleteConnectedAccount($id: UUID!) {
+            deleteConnectedAccount(id: $id) {
+              id
+            }
+          }
+        `,
+        variables: { id: CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY_SHARED },
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.deleteConnectedAccount.id).toBe(
+        CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY_SHARED,
+      );
     });
 
     it('should allow an admin deleting a workspace-shared account', async () => {

@@ -1,4 +1,5 @@
 import { gql } from 'graphql-tag';
+import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
@@ -139,24 +140,21 @@ describe('messageChannelResolver (e2e)', () => {
     });
 
     it('should deny a member updating a workspace-shared group channel', async () => {
-      const response = await makeMetadataAPIRequest(
-        {
-          query: gql`
-            mutation UpdateMessageChannel($input: UpdateMessageChannelInput!) {
-              updateMessageChannel(input: $input) {
-                id
-              }
+      const response = await makeMetadataAPIRequestWithMemberRole({
+        query: gql`
+          mutation UpdateMessageChannel($input: UpdateMessageChannelInput!) {
+            updateMessageChannel(input: $input) {
+              id
             }
-          `,
-          variables: {
-            input: {
-              id: MESSAGE_CHANNEL_DATA_SEED_IDS.SUPPORT_GROUP,
-              update: { excludeGroupEmails: true },
-            },
+          }
+        `,
+        variables: {
+          input: {
+            id: MESSAGE_CHANNEL_DATA_SEED_IDS.SUPPORT_GROUP,
+            update: { excludeGroupEmails: true },
           },
         },
-        APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      );
+      });
 
       expect(response.status).toBe(200);
       expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
