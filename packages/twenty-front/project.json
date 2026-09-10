@@ -71,6 +71,18 @@
         }
       }
     },
+    "lint:i18n": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/locales/*.po",
+        "{projectRoot}/.eloqnt/config.ts"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx eloqnt lint"
+      }
+    },
     "lint:diff-with-main": {
       "executor": "nx:run-commands",
       "dependsOn": ["twenty-oxlint-rules:build"],

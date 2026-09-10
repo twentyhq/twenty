@@ -155,6 +155,7 @@
     "@argos-ci/storybook": "~6.0.18",
     "@babel/core": "^7.14.5",
     "@babel/preset-typescript": "^7.24.6",
+    "@eloqnt/cli": "^0.6.29",
     "@graphql-codegen/cli": "^6.3.1",
     "@graphql-codegen/typed-document-node": "^6.1.8",
     "@graphql-codegen/typescript": "^5.0.10",
