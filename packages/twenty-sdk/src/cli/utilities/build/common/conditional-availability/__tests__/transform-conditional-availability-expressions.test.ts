@@ -20,7 +20,6 @@ const buildMockCommandMenuContextApi = (
   isInSidePanel: false,
   isDashboardPageLayoutInEditMode: false,
   isLayoutCustomizationModeEnabled: false,
-  isLayoutCustomizationAllowedOnCurrentPage: true,
   favoriteRecordIds: [],
   isSelectAll: false,
   hasAnySoftDeleteFilterOnView: false,

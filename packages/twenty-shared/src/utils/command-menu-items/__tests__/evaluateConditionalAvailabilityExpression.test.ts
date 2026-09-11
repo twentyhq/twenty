@@ -8,7 +8,6 @@ const buildContext = (
   isInSidePanel: false,
   isDashboardPageLayoutInEditMode: false,
   isLayoutCustomizationModeEnabled: false,
-  isLayoutCustomizationAllowedOnCurrentPage: false,
   favoriteRecordIds: [],
   isSelectAll: false,
   hasAnySoftDeleteFilterOnView: false,
@@ -36,32 +35,6 @@ const buildContext = (
 });
 
 describe('evaluateConditionalAvailabilityExpression', () => {
-  it.each([
-    [true, false, true, true],
-    [false, false, true, false],
-    [true, true, true, false],
-    [true, false, false, false],
-  ])(
-    'evaluates layout eligibility=%s, editing=%s, permission=%s as %s',
-    (
-      isLayoutCustomizationAllowedOnCurrentPage,
-      isLayoutCustomizationModeEnabled,
-      hasLayoutsPermission,
-      expected,
-    ) => {
-      expect(
-        evaluateConditionalAvailabilityExpression(
-          'isLayoutCustomizationAllowedOnCurrentPage and not isLayoutCustomizationModeEnabled and permissionFlags.LAYOUTS',
-          buildContext({
-            isLayoutCustomizationAllowedOnCurrentPage,
-            isLayoutCustomizationModeEnabled,
-            permissionFlags: { LAYOUTS: hasLayoutsPermission },
-          }),
-        ),
-      ).toBe(expected);
-    },
-  );
-
   describe('arrayLength for favoriteRecordIds', () => {
     it('should evaluate arrayLength(favoriteRecordIds) < numberOfSelectedRecords when some selected are not favorites', () => {
       const expression =

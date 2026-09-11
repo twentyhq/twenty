@@ -165,8 +165,3 @@ export const someNonEmptyString = createExpressionOnlyPlaceholder(
 export const includesEvery = createExpressionOnlyPlaceholder(
   'includesEvery',
 ) as (array: unknown, prop: string, value: unknown) => boolean;
-
-export const isLayoutCustomizationAllowedOnCurrentPage =
-  createExpressionOnlyPlaceholder(
-    'isLayoutCustomizationAllowedOnCurrentPage',
-  ) as CommandMenuContextApi['isLayoutCustomizationAllowedOnCurrentPage'];

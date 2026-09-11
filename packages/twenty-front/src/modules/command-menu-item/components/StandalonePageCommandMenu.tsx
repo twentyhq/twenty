@@ -7,6 +7,7 @@ import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuCont
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/CommandMenuItemEditButton';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
+import { doesCommandMenuItemMatchLayoutCustomizationAvailability } from '@/command-menu-item/utils/doesCommandMenuItemMatchLayoutCustomizationAvailability';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
@@ -71,7 +72,6 @@ export const StandalonePageCommandMenu = () => {
       isInSidePanel: false,
       isDashboardPageLayoutInEditMode: false,
       isLayoutCustomizationModeEnabled,
-      isLayoutCustomizationAllowedOnCurrentPage,
       favoriteRecordIds: [],
       isSelectAll: false,
       hasAnySoftDeleteFilterOnView: false,
@@ -102,13 +102,17 @@ export const StandalonePageCommandMenu = () => {
     currentUser?.canImpersonate,
     currentUser?.canAccessFullAdminPanel,
     isLayoutCustomizationModeEnabled,
-    isLayoutCustomizationAllowedOnCurrentPage,
     objectMetadataItems,
     store,
   ]);
 
   const filteredCommandMenuItems = useMemo(() => {
     return commandMenuItems
+      .filter(
+        doesCommandMenuItemMatchLayoutCustomizationAvailability(
+          isLayoutCustomizationAllowedOnCurrentPage,
+        ),
+      )
       .filter(doesCommandMenuItemMatchObjectMetadataId(undefined))
       .filter(
         (item) =>
@@ -128,7 +132,12 @@ export const StandalonePageCommandMenu = () => {
       .sort(
         (firstItem, secondItem) => firstItem.position - secondItem.position,
       );
-  }, [commandMenuItems, commandMenuContextApi, currentPageLayoutId]);
+  }, [
+    commandMenuItems,
+    commandMenuContextApi,
+    currentPageLayoutId,
+    isLayoutCustomizationAllowedOnCurrentPage,
+  ]);
 
   return (
     <CommandMenuContext.Provider

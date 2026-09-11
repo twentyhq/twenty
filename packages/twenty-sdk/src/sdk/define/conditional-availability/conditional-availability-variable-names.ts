@@ -3,7 +3,6 @@ export const CONDITIONAL_AVAILABILITY_VARIABLE_NAMES = [
   'isInSidePanel',
   'isDashboardPageLayoutInEditMode',
   'isLayoutCustomizationModeEnabled',
-  'isLayoutCustomizationAllowedOnCurrentPage',
   'favoriteRecordIds',
   'isSelectAll',
   'hasAnySoftDeleteFilterOnView',
