@@ -32,6 +32,14 @@ describe('collectReferencedSkillIds', () => {
     ).toEqual([SKILL_ID, OTHER_SKILL_ID]);
   });
 
+  it('should match a reference whose label contains brackets', () => {
+    expect(
+      collectReferencedSkillIds([
+        userMessage(`Use [[skill:${SKILL_ID}:Research [beta]]] now`),
+      ]),
+    ).toEqual([SKILL_ID]);
+  });
+
   it('should ignore assistant messages and other reference kinds', () => {
     expect(
       collectReferencedSkillIds([
