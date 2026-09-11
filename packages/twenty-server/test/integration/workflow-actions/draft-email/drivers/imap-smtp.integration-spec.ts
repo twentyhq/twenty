@@ -62,7 +62,7 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
 
   beforeAll(async () => {
     await updateConfigVariable({
-      input: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: false },
+      input: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: ['*'] },
     });
 
     greenmail = await startGreenmailContainer({
@@ -105,7 +105,7 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
 
   afterAll(async () => {
     await updateConfigVariable({
-      input: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: true },
+      input: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: [] },
     }).catch(() => undefined);
 
     if (isNonEmptyString(connectedAccountId)) {

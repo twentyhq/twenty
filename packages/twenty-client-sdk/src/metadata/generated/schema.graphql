@@ -3253,6 +3253,7 @@ type Skill {
   description: String
   content: String!
   isCustom: Boolean!
+  isSystem: Boolean!
   isActive: Boolean!
   applicationId: UUID
   createdAt: DateTime!
