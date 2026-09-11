@@ -98,6 +98,69 @@ exports[`addPersonEmailFiltersToQueryBuilder empty emails array: should handle e
 ]
 `;
 
+exports[`addPersonEmailFiltersToQueryBuilder internationalized email domain normalization: should normalize internationalized domains to punycode - query builder calls 1`] = `
+[
+  {
+    "args": [
+      "LOWER("person"."emailsPrimaryEmail") IN (:...emails)",
+      {
+        "emails": [
+          "admin@💩.la",
+          "admin@xn--ls8h.la",
+          "user@例え.テスト",
+          "user@xn--r8jz45g.xn--zckzah",
+        ],
+      },
+    ],
+    "method": "where",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
+  },
+  {
+    "args": [
+      ""person"."emailsAdditionalEmails" @> :email0::jsonb",
+      {
+        "email0": "["admin@💩.la"]",
+      },
+    ],
+    "method": "orWhere",
+  },
+  {
+    "args": [
+      ""person"."emailsAdditionalEmails" @> :email1::jsonb",
+      {
+        "email1": "["admin@xn--ls8h.la"]",
+      },
+    ],
+    "method": "orWhere",
+  },
+  {
+    "args": [
+      ""person"."emailsAdditionalEmails" @> :email2::jsonb",
+      {
+        "email2": "["user@例え.テスト"]",
+      },
+    ],
+    "method": "orWhere",
+  },
+  {
+    "args": [
+      ""person"."emailsAdditionalEmails" @> :email3::jsonb",
+      {
+        "email3": "["user@xn--r8jz45g.xn--zckzah"]",
+      },
+    ],
+    "method": "orWhere",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
+  },
+]
+`;
+
 exports[`addPersonEmailFiltersToQueryBuilder multiple emails with exclusions: should handle exclusions with multiple emails - query builder calls 1`] = `
 [
   {

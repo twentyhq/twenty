@@ -1,5 +1,6 @@
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'class-validator';
+import { canonicalizeEmail } from 'twenty-shared/utils';
 
 export const transformEmailsValue = (
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -12,7 +13,7 @@ export const transformEmailsValue = (
 
   let additionalEmails: string | null = value?.additionalEmails;
   const primaryEmail = isNonEmptyString(value?.primaryEmail)
-    ? value.primaryEmail.toLowerCase()
+    ? canonicalizeEmail(value.primaryEmail)
     : null;
 
   if (additionalEmails) {
@@ -24,7 +25,7 @@ export const transformEmailsValue = (
       ) as string[];
 
       additionalEmails = isNonEmptyArray(emailArray)
-        ? JSON.stringify(emailArray.map((email) => email.toLowerCase()))
+        ? JSON.stringify(emailArray.map(canonicalizeEmail))
         : null;
     } catch {
       /* empty */
