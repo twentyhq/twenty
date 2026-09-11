@@ -64,7 +64,7 @@ export class AppPullCommand {
     console.log(chalk.gray(`Base recorded in ${PULL_BASE_FILE_PATH}`));
 
     if (result.data.isSdkResolvable) {
-      console.log(chalk.gray('Next: yarn twenty plan --no-delete'));
+      console.log(chalk.gray('Next: yarn twenty apply --no-delete'));
     } else {
       console.log(
         chalk.yellow(
@@ -73,7 +73,7 @@ export class AppPullCommand {
       );
       console.log(
         chalk.gray(
-          'Next: install your dependencies, then yarn twenty plan --no-delete',
+          'Next: install your dependencies, then yarn twenty apply --no-delete',
         ),
       );
     }
