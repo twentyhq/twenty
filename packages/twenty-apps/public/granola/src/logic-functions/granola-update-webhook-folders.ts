@@ -73,13 +73,10 @@ export const granolaUpdateWebhookFoldersHandler = async (
   try {
     await reconcileGranolaFolderSelectionOrThrow();
   } catch (error) {
-    if (error instanceof RetryableLogicFunctionError) {
-      return { success: false, error: error.message };
-    }
-
-    await kv.delete(GRANOLA_PENDING_FOLDER_SELECTION_KEY);
-
-    if (error instanceof GranolaApiError) {
+    if (
+      error instanceof RetryableLogicFunctionError ||
+      error instanceof GranolaApiError
+    ) {
       return { success: false, error: error.message };
     }
 

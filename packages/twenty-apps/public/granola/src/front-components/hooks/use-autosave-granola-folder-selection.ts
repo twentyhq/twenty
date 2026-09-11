@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { t } from 'twenty-sdk/front-component';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -17,20 +17,26 @@ export const useAutosaveGranolaFolderSelection = ({
   onSaveSuccess,
   onSaveError,
 }: UseAutosaveGranolaFolderSelectionParams) => {
+  const latestRequestedFolderIdsRef = useRef<string[] | undefined>(undefined);
   const [saveQueue] = useState(() =>
     createSaveQueue<string[]>({
       saveValue: async (folderIds, isSupersededValue) => {
+        // A selection still waiting on the debounce timer is not queued yet.
+        const isStaleValue = () =>
+          isSupersededValue() ||
+          latestRequestedFolderIdsRef.current !== folderIds;
+
         onSaveStart();
 
         try {
           const savedFolderIds =
             await saveGranolaFolderSelectionOrThrow(folderIds);
 
-          if (!isSupersededValue()) {
+          if (!isStaleValue()) {
             onSaveSuccess(savedFolderIds);
           }
         } catch (error) {
-          if (!isSupersededValue()) {
+          if (!isStaleValue()) {
             onSaveError(
               error instanceof Error
                 ? error.message
@@ -42,13 +48,19 @@ export const useAutosaveGranolaFolderSelection = ({
     }),
   );
 
-  const saveDebounced = useDebouncedCallback(
+  const enqueueSaveDebounced = useDebouncedCallback(
     saveQueue.enqueueSave,
     GRANOLA_FOLDER_SELECTION_SAVE_DEBOUNCE_MILLISECONDS,
   );
 
+  const saveDebounced = (folderIds: string[]) => {
+    latestRequestedFolderIdsRef.current = folderIds;
+    enqueueSaveDebounced(folderIds);
+  };
+
   const saveImmediately = (folderIds: string[]) => {
-    saveDebounced.cancel();
+    latestRequestedFolderIdsRef.current = folderIds;
+    enqueueSaveDebounced.cancel();
     saveQueue.enqueueSave(folderIds);
   };
 

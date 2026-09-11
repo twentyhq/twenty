@@ -1,4 +1,4 @@
-import { kv } from 'twenty-sdk/logic-function';
+import { kv, RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import {
@@ -27,10 +27,17 @@ export const reconcileGranolaFolderSelectionOrThrow =
       );
     }
 
-    const endpoint = await createGranolaClientOrThrow().updateWebhookEndpoint({
-      webhookEndpointId: registration.webhookEndpointId,
-      folder_ids: pending.folderIds,
-    });
+    const endpoint = await createGranolaClientOrThrow()
+      .updateWebhookEndpoint({
+        webhookEndpointId: registration.webhookEndpointId,
+        folder_ids: pending.folderIds,
+      })
+      .catch(async (error: unknown) => {
+        if (!(error instanceof RetryableLogicFunctionError)) {
+          await kv.delete(GRANOLA_PENDING_FOLDER_SELECTION_KEY);
+        }
+        throw error;
+      });
 
     await kv.set(GRANOLA_WEBHOOK_REGISTRATION_KEY, {
       ...registration,

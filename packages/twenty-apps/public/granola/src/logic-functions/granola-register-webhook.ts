@@ -18,7 +18,13 @@ export const granolaRegisterWebhookHandler = async () => {
   }
   try {
     const registration = await ensureGranolaWebhookRegistrationOrThrow();
-    await reconcileGranolaFolderSelectionOrThrow();
+    try {
+      await reconcileGranolaFolderSelectionOrThrow();
+    } catch (error) {
+      console.error(
+        `[granola] Could not apply the pending folder selection for registration ${registration.registrationId}. ${toErrorMessage(error)}`,
+      );
+    }
     try {
       await enqueueGranolaInitialBackfillOrThrow();
     } catch (error) {
