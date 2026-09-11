@@ -58,7 +58,7 @@
   {"Callback function that is fired when a value change is committed.\nDoes not fire if the value did not change, or if the change was canceled.\n**Warning**: This is a generic event, not a change event.\n\nThe eventDetails.reason indicates what triggered the commit:\n\n- 'drag' while dragging a thumb\n- 'track-press' when the control track is pressed\n- 'keyboard' for keyboard input\n- 'input-change' when the hidden range input emits a change event (for example, via form integration)\n- 'none' when the commit occurs without a specific interaction"}
 </ParamField>
 
-<ParamField body="Root.orientation" type={"\"horizontal\" | \"vertical\""} default={"'horizontal'"}>
+<ParamField body="Root.orientation" type={"\"horizontal\" | \"vertical\""} default={"horizontal"}>
   {"The component orientation."}
 </ParamField>
 
@@ -78,7 +78,7 @@
   {"How the thumb(s) are aligned relative to Slider.Control when the value is at min or max:\n- center: The center of the thumb is aligned with the control edge\n- edge: The thumb is inset within the control such that its edge is aligned with the control edge\n- edge-client-only: Same as edge but renders after React hydration on the client, reducing bundle size in return"}
 </ParamField>
 
-<ParamField body="Root.thumbCollisionBehavior" type={"\"push\" | \"none\" | \"swap\""} default={"'push'"}>
+<ParamField body="Root.thumbCollisionBehavior" type={"\"push\" | \"none\" | \"swap\""} default={"push"}>
   {"Controls how thumbs behave when they collide during pointer interactions.\n\n- 'push' (default): Thumbs push each other without restoring their previous positions when dragged back.\n- 'swap': Thumbs swap places when dragged past each other.\n- 'none': Thumbs cannot move past each other; excess movement is ignored."}
 </ParamField>
 

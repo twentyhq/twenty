@@ -7,6 +7,7 @@ import ts from 'typescript';
 import { DESIGN_TOKENS } from '../design-tokens/designTokens';
 import { collectLeaves } from '../design-tokens/pipeline/collectLeaves';
 import { DOCUMENTED_COMPONENTS } from '../docs/components';
+import { normalizeDocumentationDefaultValue } from '../docs/normalizeDocumentationDefaultValue';
 import {
   type ComponentDocumentation,
   type TokenDocumentation,
@@ -85,8 +86,7 @@ const extractProps = (
               .join(' | ')
           : prop.type.name,
       required: prop.required,
-      defaultValue:
-        prop.defaultValue === null ? null : String(prop.defaultValue.value),
+      defaultValue: normalizeDocumentationDefaultValue(prop.defaultValue),
       description: prop.description,
     }));
 };

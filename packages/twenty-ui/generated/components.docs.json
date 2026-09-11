@@ -89,7 +89,7 @@
             "name": "validationMode",
             "type": "\"onBlur\" | \"onChange\" | \"onSubmit\"",
             "required": false,
-            "defaultValue": "'onSubmit'",
+            "defaultValue": "onSubmit",
             "description": "Determines when the field should be validated.\nThis takes precedence over the `validationMode` prop on `<Form>`.\n\n- `onSubmit`: triggers validation when the form is submitted, and re-validates on change after submission.\n- `onBlur`: triggers validation when the control loses focus.\n- `onChange`: triggers validation on every change to the control value."
           }
         ]
@@ -389,7 +389,7 @@
         "name": "checked",
         "type": "boolean",
         "required": false,
-        "defaultValue": "undefined",
+        "defaultValue": null,
         "description": "Whether the checkbox is currently ticked.\n\nTo render an uncontrolled checkbox, use the `defaultChecked` prop instead."
       },
       {
@@ -459,7 +459,7 @@
         "name": "name",
         "type": "string",
         "required": false,
-        "defaultValue": "undefined",
+        "defaultValue": null,
         "description": "Identifies the field when a form is submitted."
       },
       {
@@ -1205,7 +1205,7 @@
             "name": "orientation",
             "type": "\"horizontal\" | \"vertical\"",
             "required": false,
-            "defaultValue": "'horizontal'",
+            "defaultValue": "horizontal",
             "description": "The orientation of the separator."
           },
           {
@@ -1337,7 +1337,7 @@
             "name": "orientation",
             "type": "\"horizontal\" | \"vertical\"",
             "required": false,
-            "defaultValue": "'horizontal'",
+            "defaultValue": "horizontal",
             "description": "The component orientation."
           },
           {
@@ -1372,7 +1372,7 @@
             "name": "thumbCollisionBehavior",
             "type": "\"push\" | \"none\" | \"swap\"",
             "required": false,
-            "defaultValue": "'push'",
+            "defaultValue": "push",
             "description": "Controls how thumbs behave when they collide during pointer interactions.\n\n- `'push'` (default): Thumbs push each other without restoring their previous positions when dragged back.\n- `'swap'`: Thumbs swap places when dragged past each other.\n- `'none'`: Thumbs cannot move past each other; excess movement is ignored."
           },
           {
@@ -1870,7 +1870,7 @@
             "name": "orientation",
             "type": "\"horizontal\" | \"vertical\"",
             "required": false,
-            "defaultValue": "'horizontal'",
+            "defaultValue": "horizontal",
             "description": "The component orientation (layout flow direction)."
           },
           {
@@ -2462,7 +2462,7 @@
             "name": "orientation",
             "type": "\"horizontal\" | \"vertical\"",
             "required": false,
-            "defaultValue": "'vertical'",
+            "defaultValue": "vertical",
             "description": "The visual orientation of the menu.\nControls whether roving focus uses up/down or left/right arrow keys."
           },
           {
@@ -3130,7 +3130,7 @@
             "name": "orientation",
             "type": "\"horizontal\" | \"vertical\"",
             "required": false,
-            "defaultValue": "'horizontal'",
+            "defaultValue": "horizontal",
             "description": "The orientation of the separator."
           },
           {
@@ -3226,7 +3226,7 @@
             "name": "orientation",
             "type": "\"horizontal\" | \"vertical\"",
             "required": false,
-            "defaultValue": "'vertical'",
+            "defaultValue": "vertical",
             "description": "The visual orientation of the menu.\nControls whether roving focus uses up/down or left/right arrow keys."
           }
         ]
