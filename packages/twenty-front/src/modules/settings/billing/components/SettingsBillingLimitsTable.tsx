@@ -15,6 +15,7 @@ import { type UsageQuotaWithConsumption } from '@/settings/billing/types/UsageQu
 import { filterUsageLimitRows } from '@/settings/billing/utils/filterUsageLimitRows';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
+import { SettingsNameCellSecondaryLabel } from '@/settings/components/SettingsNameCellSecondaryLabel';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { ProgressRing } from '@/ui/feedback/progress-ring/components/ProgressRing';
 import { type UsageResourceType } from '~/generated-metadata/graphql';
@@ -35,6 +36,14 @@ const StyledName = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const StyledNameContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
 `;
 
 const StyledNameIcon = styled.div`
@@ -71,7 +80,10 @@ const StyledTooltipRow = styled.div`
 `;
 
 const NameCell = ({ item }: { item: UsageLimitRow }) => {
+  const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
+
+  const deactivatedAnchorId = `usage-limit-deactivated-${item.id}`;
 
   return (
     <StyledCell>
@@ -81,7 +93,23 @@ const NameCell = ({ item }: { item: UsageLimitRow }) => {
           stroke={theme.icon.stroke.sm}
         />
       </StyledNameIcon>
-      <StyledName>{item.name}</StyledName>
+      <StyledNameContainer>
+        <StyledName>{item.name}</StyledName>
+        {!item.isEnforced && (
+          <>
+            <SettingsNameCellSecondaryLabel id={deactivatedAnchorId}>
+              {t`Deactivated`}
+            </SettingsNameCellSecondaryLabel>
+            <AppTooltip
+              anchorSelect={`#${deactivatedAnchorId}`}
+              title={t`Limits on members, API keys and apps require the Organization plan.`}
+              place="top"
+              delay={TooltipDelay.shortDelay}
+              positionStrategy="fixed"
+            />
+          </>
+        )}
+      </StyledNameContainer>
     </StyledCell>
   );
 };
@@ -89,23 +117,25 @@ const NameCell = ({ item }: { item: UsageLimitRow }) => {
 const UsedCell = ({ item }: { item: UsageLimitRow }) => {
   const { t } = useLingui();
 
-  if (!isDefined(item.consumedPercentage) || !isDefined(item.consumedText)) {
-    return <StyledEmptyValue>—</StyledEmptyValue>;
-  }
-
   const anchorId = `usage-limit-ring-${item.id}`;
 
   return (
     <StyledUsed id={anchorId}>
-      <span>{item.consumedPercentage}%</span>
-      <ProgressRing
-        size={USED_RING_SIZE}
-        value={item.consumedPercentage}
-        barColor={getUsageLimitRingColor({
-          consumedPercentage: item.consumedPercentage,
-          isExhausted: item.isExhausted,
-        })}
-      />
+      {isDefined(item.consumedPercentage) ? (
+        <>
+          <span>{item.consumedPercentage}%</span>
+          <ProgressRing
+            size={USED_RING_SIZE}
+            value={item.consumedPercentage}
+            barColor={getUsageLimitRingColor({
+              consumedPercentage: item.consumedPercentage,
+              isExhausted: item.isExhausted,
+            })}
+          />
+        </>
+      ) : (
+        <StyledEmptyValue>—</StyledEmptyValue>
+      )}
       <AppTooltip
         anchorSelect={`#${anchorId}`}
         place="top"
@@ -113,13 +143,15 @@ const UsedCell = ({ item }: { item: UsageLimitRow }) => {
         positionStrategy="fixed"
       >
         <StyledTooltipRows>
-          <StyledTooltipRow>
-            {t`Used`}
-            <SettingsBillingLimitAmount
-              text={item.consumedText}
-              isCreditsMeter={item.isCreditsMeter}
-            />
-          </StyledTooltipRow>
+          {isDefined(item.consumedText) && (
+            <StyledTooltipRow>
+              {t`Used`}
+              <SettingsBillingLimitAmount
+                text={item.consumedText}
+                isCreditsMeter={item.isCreditsMeter}
+              />
+            </StyledTooltipRow>
+          )}
           <StyledTooltipRow>
             {t`Limit`}
             <SettingsBillingLimitAmount

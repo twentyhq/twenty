@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 
 import { SettingsBillingLimitsTable } from '@/settings/billing/components/SettingsBillingLimitsTable';
@@ -66,11 +67,30 @@ const meta: Meta<typeof SettingsBillingLimitsTable> = {
 export default meta;
 type Story = StoryObj<typeof SettingsBillingLimitsTable>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.hover(await canvas.findByText('Deactivated'));
+
+    const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
+      'tooltip',
+      {},
+      { timeout: 2000 },
+    );
+
+    await waitFor(() =>
+      expect(tooltip).toHaveTextContent('require the Organization plan'),
+    );
+  },
+};
 
 export const Exhausted: Story = {
   args: {
     quotas: [buildQuota({ consumedValue: 100_000_000, remainingValue: 0 })],
+  },
+  play: async ({ canvasElement }) => {
+    expect(await within(canvasElement).findByText('100%')).toBeVisible();
   },
 };
 
@@ -85,5 +105,18 @@ export const WithoutCountedUsage: Story = {
         periodEnd: null,
       },
     ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.hover(await canvas.findByText('—'));
+
+    const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
+      'tooltip',
+      {},
+      { timeout: 2000 },
+    );
+
+    await waitFor(() => expect(tooltip).toHaveTextContent('Limit'));
   },
 };

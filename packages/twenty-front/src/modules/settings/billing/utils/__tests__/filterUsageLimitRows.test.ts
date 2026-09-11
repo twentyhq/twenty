@@ -12,6 +12,7 @@ const buildRow = (overrides: Partial<UsageLimitRow> = {}): UsageLimitRow => ({
   spenderAvatarUrl: null,
   spenderType: 'userWorkspace',
   resourceType: UsageResourceType.AI,
+  isEnforced: true,
   consumedPercentage: 60,
   consumedText: '60 credits',
   limitText: '100 credits',

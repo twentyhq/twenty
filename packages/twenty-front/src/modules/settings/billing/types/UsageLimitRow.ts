@@ -10,6 +10,7 @@ export type UsageLimitRow = {
   spenderAvatarUrl: string | null;
   spenderType: string;
   resourceType: UsageResourceType | null;
+  isEnforced: boolean;
   consumedPercentage: number | null;
   consumedText: string | null;
   limitText: string;
