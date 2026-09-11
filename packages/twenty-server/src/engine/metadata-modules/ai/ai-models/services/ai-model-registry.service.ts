@@ -449,8 +449,9 @@ export class AiModelRegistryService {
     const allowedModels = this.getAdminFilteredModels();
 
     return (
-      allowedModels.find((model) => model.isDeprecated !== true) ??
-      allowedModels[0]
+      allowedModels.find(
+        (model) => this.getModelConfig(model.modelId)?.isDeprecated !== true,
+      ) ?? allowedModels[0]
     );
   }
 
