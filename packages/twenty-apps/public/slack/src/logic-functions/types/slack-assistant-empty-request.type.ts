@@ -3,4 +3,5 @@ import { type SlackMessageReference } from 'src/logic-functions/types/slack-mess
 export type SlackAssistantEmptyRequest = SlackMessageReference & {
   parentMessageTimestamp: string | undefined;
   isInExistingThread: boolean;
+  sharedFileNames: string[];
 };

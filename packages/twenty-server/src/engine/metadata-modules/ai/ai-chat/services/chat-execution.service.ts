@@ -93,6 +93,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
+import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
@@ -187,17 +188,18 @@ export class ChatExecutionService {
       { compactOutput: true, spillLargeOutput: true },
     );
 
-    const resolvedModelId = modelId ?? workspace.smartModel;
-
-    this.aiModelRegistryService.validateModelAvailability(
-      resolvedModelId,
+    const resolvedModelId = getChatModelId({
+      requestedModelId: modelId,
       workspace,
-    );
+    });
+
+    this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
 
     const registeredModel =
-      await this.aiModelRegistryService.resolveModelForAgent({
-        modelId: resolvedModelId,
-      });
+      await this.aiModelRegistryService.resolveModelForAgent(
+        { modelId: resolvedModelId },
+        workspace,
+      );
 
     const modelConfig = this.aiModelRegistryService.getEffectiveModelConfig(
       registeredModel.modelId,
