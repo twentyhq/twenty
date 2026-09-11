@@ -1,0 +1,101 @@
+---
+title: Menu
+description: Present commands, checked options, radio choices, and nested menus.
+---
+
+import MenuReference from '/snippets/ui/generated/surfaces/menu.mdx';
+
+Use `Menu` for actions opened from a trigger. Its items supply keyboard navigation and the visual layout of [ListItem](/ui/components/navigation/list-item).
+
+## Action menu
+
+```tsx
+import { IconCopy, IconTrash } from 'twenty-ui/icon';
+import { Menu } from 'twenty-ui/surfaces';
+
+type RecordMenuProps = { onDuplicate: () => void; onDelete: () => void };
+
+export const RecordMenu = ({ onDuplicate, onDelete }: RecordMenuProps) => (
+  <Menu.Root>
+    <Menu.Trigger>Record actions</Menu.Trigger>
+    <Menu.Popup>
+      <Menu.Item startIcon={<IconCopy />} onClick={onDuplicate}>
+        Duplicate
+      </Menu.Item>
+      <Menu.Separator />
+      <Menu.Item startIcon={<IconTrash />} color="danger" onClick={onDelete}>
+        Delete
+      </Menu.Item>
+    </Menu.Popup>
+  </Menu.Root>
+);
+```
+
+Action items close the menu when selected by default. `disabled` prevents selection. `hotkeys` displays shortcut hints; register shortcut handlers in your application.
+
+## Selection and submenus
+
+```tsx
+import { useState } from 'react';
+import { Menu } from 'twenty-ui/surfaces';
+
+export const ViewMenu = () => {
+  const [showArchived, setShowArchived] = useState(false);
+  const [view, setView] = useState('list');
+
+  return (
+    <Menu.Root>
+      <Menu.Trigger>View options</Menu.Trigger>
+      <Menu.Popup>
+        <Menu.CheckboxItem
+          checked={showArchived}
+          onCheckedChange={setShowArchived}
+        >
+          Show archived records
+        </Menu.CheckboxItem>
+        <Menu.Separator />
+        <Menu.SubmenuRoot>
+          <Menu.SubmenuTrigger>Layout</Menu.SubmenuTrigger>
+          <Menu.Popup>
+            <Menu.RadioGroup value={view} onValueChange={setView}>
+              <Menu.RadioItem value="list">List</Menu.RadioItem>
+              <Menu.RadioItem value="board">Board</Menu.RadioItem>
+            </Menu.RadioGroup>
+          </Menu.Popup>
+        </Menu.SubmenuRoot>
+      </Menu.Popup>
+    </Menu.Root>
+  );
+};
+```
+
+Checkbox and radio items keep the popup open by default so users can adjust options. Use `closeOnClick` to change that behavior. Nest a `SubmenuRoot`, `SubmenuTrigger`, and `Popup` inside a parent popup for submenus.
+
+## Parts and interaction
+
+| Part                            | Purpose                                      |
+| ------------------------------- | -------------------------------------------- |
+| `Root`, `Trigger`, `Popup`      | Own, open, and position the menu.            |
+| `Item`                          | Runs an action.                              |
+| `CheckboxItem`                  | Toggles an independent boolean option.       |
+| `RadioGroup`, `RadioItem`       | Coordinate mutually exclusive options.       |
+| `Group`, `GroupLabel`           | Label a group of related items.              |
+| `Separator`                     | Separates groups.                            |
+| `SubmenuRoot`, `SubmenuTrigger` | Coordinate a nested menu with its own popup. |
+
+Arrow keys navigate enabled items; typeahead finds items by their text. Enter or Space selects an item. Escape closes the menu and returns focus to its trigger. Use clear text labels even when items have icons.
+
+`Popup` owns its portal and accepts placement props and a `container` override. Placement defaults depend on whether it is a top-level menu or a submenu:
+
+| Popup          | `side`       | `align` | `sideOffset` | `alignOffset` |
+| -------------- | ------------ | ------- | ------------ | ------------- |
+| Top-level menu | `bottom`     | `start` | `8`          | `0`           |
+| Submenu        | `inline-end` | `start` | `0`          | `-4`          |
+
+It uses the [theme's portal container](/ui/theming) by default. Control open state with `Root.open` and `Root.onOpenChange`.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<MenuReference />

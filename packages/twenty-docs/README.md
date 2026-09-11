@@ -11,7 +11,7 @@ Visit the documentation at [docs.twenty.com](https://docs.twenty.com)
 This repository contains:
 - **User Guide** (46 pages) - Complete guide for Twenty users
 - **Developers** (24 pages) - Technical documentation for developers
-- **Twenty UI** (25 pages) - UI component library documentation
+- **UI Library** - English guides and component references
 
 ## 🚀 Local Development
 
@@ -31,7 +31,7 @@ The documentation will be available at `http://localhost:3000`
 1. Edit MDX files in the appropriate directory:
    - `user-guide/` - User documentation
    - `developers/` - Developer documentation
-   - `twenty-ui/` - Component documentation
+   - `ui/` - UI library guides and component references
 
 2. Update `navigation/base-structure.json` if you need to change the tab/group hierarchy or add/remove pages. This file stays in the repo and is **not** uploaded to Crowdin.
 3. Keep the translation template (`navigation/navigation.template.json`) in sync by running `yarn docs:generate-navigation-template` after editing the base structure. This template is the only file that should be pushed to Crowdin.
@@ -78,6 +78,12 @@ Your content here...
 # Validate the documentation build
 npx nx run twenty-docs:validate
 ```
+
+## UI reference generation
+
+Run `npx nx generate:ui twenty-docs` after changing documented component props or theme tokens. Run `npx nx check:ui twenty-docs` to check generated references and compile the UI guide examples against the public entry points. Hand-written pages live under `ui/`; generated snippets live under `snippets/ui/generated/`.
+
+The UI Library tab is English-only. Keep it out of the Crowdin navigation template and source paths.
 
 ## 🔗 Links
 

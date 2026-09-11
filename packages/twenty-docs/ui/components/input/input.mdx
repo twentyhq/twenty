@@ -1,0 +1,64 @@
+---
+title: Input
+description: A text input with native attributes, field integration, and two sizes.
+---
+
+import InputReference from '/snippets/ui/generated/input/input.mdx';
+
+`Input` renders a text input and accepts native input attributes such as `type`, `name`, `required`, `disabled`, and `autoComplete`.
+
+## Label an input
+
+```tsx
+import { Field, Input } from 'twenty-ui/input';
+
+export const EmailField = () => (
+  <Field.Root>
+    <Field.Label>Email</Field.Label>
+    <Input name="email" type="email" autoComplete="email" />
+    <Field.Description>Use your work email address.</Field.Description>
+  </Field.Root>
+);
+```
+
+## Control the value
+
+`onValueChange` receives the next string value and event details. For an uncontrolled input, use `defaultValue` instead of `value`.
+
+```tsx
+import { useState } from 'react';
+import { Input } from 'twenty-ui/input';
+
+export const SearchField = () => {
+  const [query, setQuery] = useState('');
+
+  return (
+    <Input
+      aria-label="Search contacts"
+      value={query}
+      onValueChange={setQuery}
+    />
+  );
+};
+```
+
+## Add an adornment
+
+`InputGroup` owns the surrounding border and provides a size to its input. The default size is `md`; use `sm` for a compact field. An explicit input size takes precedence over the group's size.
+
+```tsx
+import { IconSearch } from 'twenty-ui/icon';
+import { Input, InputGroup } from 'twenty-ui/input';
+
+export const CompactSearch = () => (
+  <InputGroup size="sm" startElement={<IconSearch size={16} aria-hidden />}>
+    <Input aria-label="Search contacts" />
+  </InputGroup>
+);
+```
+
+## Props
+
+The reference includes component-specific and inherited Base UI props. Native input attributes are also accepted. When `size` is omitted, the input uses its group's size or `md`.
+
+<InputReference />

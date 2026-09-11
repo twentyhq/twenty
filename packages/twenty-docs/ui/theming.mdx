@@ -1,0 +1,80 @@
+---
+title: Theming
+description: Use Twenty UI theme tokens and scope theme overrides to part of your application.
+---
+
+Twenty UI components read public CSS custom properties prefixed with `--t-`. Prefer semantic tokens such as `background.secondary` and `font.color.primary` when styling your own components; these values adapt to the active palette.
+
+## Use tokens in styles
+
+`themeCssVariables` maps token paths to CSS variable references. Use it for values that CSS resolves:
+
+```tsx
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+export const Summary = () => (
+  <section
+    style={{
+      background: themeCssVariables.background.secondary,
+      color: themeCssVariables.font.color.primary,
+      padding: themeCssVariables.spacing[4],
+      borderRadius: themeCssVariables.border.radius.md,
+    }}
+  >
+    Three tasks are due today.
+  </section>
+);
+```
+
+The equivalent CSS uses variables directly:
+
+```css
+.summary {
+  background: var(--t-background-secondary);
+  color: var(--t-font-color-primary);
+  padding: var(--t-spacing-4);
+  border-radius: var(--t-border-radius-md);
+}
+```
+
+## Read resolved values
+
+`useTheme()` reads the active provider's computed tokens. Use it when a component expects a JavaScript number, such as an icon size. The provider needs the theme stylesheet to be loaded in the browser to resolve CSS variables.
+
+```tsx
+import { IconCheck } from 'twenty-ui/icon';
+import { useTheme } from 'twenty-ui/theme-constants';
+
+export const CompleteIcon = () => {
+  const theme = useTheme();
+
+  return <IconCheck size={theme.icon.size.md} aria-hidden />;
+};
+```
+
+Every entry in `themeCssVariables` is a CSS reference string, including numeric tokens. Do not perform arithmetic on those strings. On the server, resolved browser values are unavailable; see [Server rendering](/ui/ssr).
+
+## Scope an override
+
+Pass `applyToRoot={false}` to apply a theme to a subtree. Override public CSS variables by their full name:
+
+```tsx
+import { type ReactNode } from 'react';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
+
+export const EmbeddedPanel = ({ children }: { children: ReactNode }) => (
+  <ThemeProvider
+    colorScheme="light"
+    applyToRoot={false}
+    overrides={{ '--t-background-secondary': '#f4f6ff' }}
+  >
+    {children}
+  </ThemeProvider>
+);
+```
+
+A scoped provider adds a wrapper with `display: contents`; it does not create a layout box. It also supplies a container for components that support themed portals. Portals created by other libraries need their own container configuration.
+
+Variables prefixed with `--tw-` are private component details. Use public props and `--t-` tokens instead of depending on those variables.
+
+See the [token reference](/ui/tokens) for the available names and palette values.

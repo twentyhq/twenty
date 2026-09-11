@@ -10,6 +10,7 @@ type BaseGroup = {
 };
 
 type BaseTab = {
+  isEnglishOnly?: boolean;
   key: string;
   label: string;
   groups: BaseGroup[];
@@ -63,16 +64,18 @@ const buildGroupMap = (groups: BaseGroup[]): Record<string, TemplateGroup> =>
   }, {});
 
 const template: TemplateFile = {
-  tabs: baseStructure.tabs.reduce<Record<string, TemplateTab>>(
-    (acc, tab) => ({
-      ...acc,
-      [tab.key]: {
-        label: tab.label,
-        groups: buildGroupMap(tab.groups),
-      },
-    }),
-    {},
-  ),
+  tabs: baseStructure.tabs
+    .filter((tab) => !tab.isEnglishOnly)
+    .reduce<Record<string, TemplateTab>>(
+      (acc, tab) => ({
+        ...acc,
+        [tab.key]: {
+          label: tab.label,
+          groups: buildGroupMap(tab.groups),
+        },
+      }),
+      {},
+    ),
 };
 
 fs.writeFileSync(templatePath, `${JSON.stringify(template, null, 2)}\n`);

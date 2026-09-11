@@ -1,0 +1,77 @@
+---
+title: RadioGroup
+description: Manage a single selection across a set of radio options.
+---
+
+import RadioGroupReference from '/snippets/ui/generated/input/radio-group.mdx';
+
+`RadioGroup` coordinates the value, keyboard navigation, and form submission of its [Radio](/ui/components/input/radio) children.
+
+## Default selection
+
+```tsx
+import { useId } from 'react';
+import { Radio, RadioGroup } from 'twenty-ui/input';
+
+export const BillingFrequency = () => {
+  const labelId = useId();
+
+  return (
+    <fieldset>
+      <legend id={labelId}>Billing frequency</legend>
+      <RadioGroup
+        name="billingFrequency"
+        defaultValue="monthly"
+        aria-labelledby={labelId}
+      >
+        <label>
+          <Radio value="monthly" />
+          Monthly
+        </label>
+        <label>
+          <Radio value="yearly" />
+          Yearly
+        </label>
+      </RadioGroup>
+    </fieldset>
+  );
+};
+```
+
+Use `defaultValue` for an uncontrolled group. Its `name` identifies the selected value in form submission. Give the group an accessible name as well as labeling each radio.
+
+## Controlled state
+
+```tsx
+import { useState } from 'react';
+import { Radio, RadioGroup } from 'twenty-ui/input';
+
+export const DisplayDensity = () => {
+  const [density, setDensity] = useState('comfortable');
+
+  return (
+    <RadioGroup
+      value={density}
+      onValueChange={setDensity}
+      aria-label="Display density"
+    >
+      <label>
+        <Radio value="compact" />
+        Compact
+      </label>
+      <label>
+        <Radio value="comfortable" />
+        Comfortable
+      </label>
+    </RadioGroup>
+  );
+};
+```
+
+`onValueChange` receives the next value and event details. The generic value type is inferred from the props. Use `disabled` on the group to disable every option, or on an individual radio to disable one choice. Arrow keys navigate the enabled options; Tab moves out of the group.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<RadioGroupReference />

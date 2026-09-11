@@ -1,0 +1,53 @@
+---
+title: Switch
+description: A labeled on or off control with controlled and uncontrolled state.
+---
+
+import SwitchReference from '/snippets/ui/generated/input/switch.mdx';
+
+Use `Switch` for an on or off preference. Give the control a visible label or an accessible name.
+
+## Uncontrolled state
+
+```tsx
+import { Switch } from 'twenty-ui/input';
+
+export const NotificationsPreference = () => (
+  <label>
+    <Switch name="notifications" defaultChecked />
+    Email notifications
+  </label>
+);
+```
+
+## Controlled state
+
+```tsx
+import { useState } from 'react';
+import { Switch } from 'twenty-ui/input';
+
+export const NotificationsPreference = () => {
+  const [checked, setChecked] = useState(false);
+
+  return (
+    <label>
+      <Switch checked={checked} onCheckedChange={setChecked} />
+      Email notifications
+    </label>
+  );
+};
+```
+
+`onCheckedChange` receives the next boolean and event details. The `size` prop accepts `sm` or `md` and defaults to `md`.
+
+## Keyboard and forms
+
+Tab moves focus to the switch; Space toggles it. Clicking its associated label also toggles it. Use `disabled` to prevent interaction or `readOnly` to retain a focusable control whose value cannot be changed.
+
+A named switch submits its value when checked. Use `value` to customize that value, and `uncheckedValue` if the form should also submit a value when it is off.
+
+## Props
+
+The reference includes component-specific and inherited Base UI props. Native attributes such as `aria-label` and `data-*` are also accepted.
+
+<SwitchReference />

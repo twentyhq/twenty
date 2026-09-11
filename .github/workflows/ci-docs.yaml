@@ -20,6 +20,9 @@ jobs:
     with:
       files: |
         package.json
+        yarn.lock
+        packages/twenty-ui/**
+        .github/workflows/ci-docs.yaml
         packages/twenty-docs/**
 
   docs-lint:
@@ -41,3 +44,6 @@ jobs:
 
       - name: Docs / Test
         run: npx nx test twenty-docs
+
+      - name: Docs / Generated UI references
+        run: npx nx check:ui twenty-docs

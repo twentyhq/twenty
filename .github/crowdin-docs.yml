@@ -8,6 +8,7 @@
 "base_url": "https://twenty.api.crowdin.com"
 "base_path": ".."
 
+# UI library pages and generated snippets stay English-only; keep these source paths explicit.
 files: [
   {
     "source": "packages/twenty-docs/getting-started/**/*.mdx",

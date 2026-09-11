@@ -1,0 +1,57 @@
+---
+title: Text
+description: Render text with single-line truncation or a limited number of lines.
+---
+
+import TextReference from '/snippets/ui/generated/typography/text.mdx';
+
+`Text` provides overflow handling. It renders a `div` by default and inherits typography from its surroundings.
+
+## Truncate one line
+
+Give the text a constrained width, then set `truncate` to show an ellipsis when it overflows:
+
+```tsx
+import { Text } from 'twenty-ui/typography';
+
+export const ContactName = () => (
+  <Text truncate style={{ maxWidth: 160 }}>
+    Alexandra Montgomery
+  </Text>
+);
+```
+
+## Limit the number of lines
+
+Use `lineClamp` with a positive integer. Choose either `truncate` or `lineClamp`; their props are mutually exclusive.
+
+```tsx
+import { Text } from 'twenty-ui/typography';
+
+export const Summary = () => (
+  <Text lineClamp={2} style={{ maxWidth: 240 }}>
+    Follow up with the customer about their onboarding milestones and upcoming
+    renewal.
+  </Text>
+);
+```
+
+## Choose an element
+
+Use `render` when the text needs another semantic element:
+
+```tsx
+import { Text } from 'twenty-ui/typography';
+
+export const Description = () => (
+  <Text render={<p />}>Account description</Text>
+);
+```
+
+Truncation affects the visual presentation; it does not shorten the text in the DOM. Provide a way to read the full content when the visible portion is insufficient.
+
+## Props
+
+Native attributes, children, refs, class names, and styles are also accepted.
+
+<TextReference />

@@ -53,6 +53,7 @@
     "jsdom": "^30.0.1",
     "prettier": "^3.1.1",
     "react": "^19.2.0",
+    "react-docgen-typescript": "^2.2.2",
     "react-dom": "^19.2.0",
     "sass": "^1.83.0",
     "sass-embedded": "^1.83.0",
