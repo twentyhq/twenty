@@ -28,11 +28,11 @@ export class SendEmailTool implements Tool {
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
     try {
-      const result = await this.emailComposerService.composeEmail(
+      const result = await this.emailComposerService.composeEmail({
         parameters,
         context,
-        'SEND',
-      );
+        operation: 'SEND',
+      });
 
       if (!result.success) {
         return result.output;

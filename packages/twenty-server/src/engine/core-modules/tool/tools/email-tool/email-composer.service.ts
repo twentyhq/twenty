@@ -363,11 +363,15 @@ export class EmailComposerService {
     }, authContext);
   }
 
-  async composeEmail(
-    parameters: ComposeEmailParams,
-    context: ToolExecutionContext,
-    operation: EmailOperation,
-  ): Promise<EmailComposerResult> {
+  async composeEmail({
+    parameters,
+    context,
+    operation,
+  }: {
+    parameters: ComposeEmailParams;
+    context: ToolExecutionContext;
+    operation: EmailOperation;
+  }): Promise<EmailComposerResult> {
     const { workspaceId, userWorkspaceId } = context;
     const { subject, body, files, inReplyTo, fromHandle } = parameters;
     let { connectedAccountId } = parameters;

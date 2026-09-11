@@ -32,8 +32,6 @@ const getFirstWorkspaceConnectedAccountId = async (): Promise<string> => {
   return id;
 };
 
-// Restore what was actually there rather than a literal: these rows are seeded,
-// and a hardcoded restore would silently rewrite the seed if it ever changes.
 const readConnectedAccountState = async (
   connectedAccountId: string,
 ): Promise<{ visibility: string; archivedAt: string | null }> => {
@@ -55,8 +53,6 @@ const setVisibility = async (
   );
 };
 
-// Identity and application connections share the connectedAccount table with
-// mailboxes, and sort ahead of them whenever they were created earlier.
 const insertConnectedAccount = async ({
   id,
   provider,
@@ -117,11 +113,17 @@ describe('EmailComposerService connected account resolution (integration)', () =
 
   describe('when the caller names a connected account', () => {
     it('uses that account, whoever owns it', async () => {
-      const result = await service.composeEmail(
-        { ...baseParams, connectedAccountId: JONY_CONNECTED_ACCOUNT_ID },
-        { workspaceId: WORKSPACE_ID, userWorkspaceId: PHIL_USER_WORKSPACE_ID },
-        'SEND',
-      );
+      const result = await service.composeEmail({
+        parameters: {
+          ...baseParams,
+          connectedAccountId: JONY_CONNECTED_ACCOUNT_ID,
+        },
+        context: {
+          workspaceId: WORKSPACE_ID,
+          userWorkspaceId: PHIL_USER_WORKSPACE_ID,
+        },
+        operation: 'SEND',
+      });
 
       expect(result.success).toBe(true);
       expect(result.success && result.data.connectedAccount.id).toBe(
@@ -130,11 +132,14 @@ describe('EmailComposerService connected account resolution (integration)', () =
     });
 
     it('uses that account when there is no caller (workflow run)', async () => {
-      const result = await service.composeEmail(
-        { ...baseParams, connectedAccountId: JONY_CONNECTED_ACCOUNT_ID },
-        { workspaceId: WORKSPACE_ID },
-        'SEND',
-      );
+      const result = await service.composeEmail({
+        parameters: {
+          ...baseParams,
+          connectedAccountId: JONY_CONNECTED_ACCOUNT_ID,
+        },
+        context: { workspaceId: WORKSPACE_ID },
+        operation: 'SEND',
+      });
 
       expect(result.success).toBe(true);
       expect(result.success && result.data.connectedAccount.id).toBe(
@@ -144,27 +149,30 @@ describe('EmailComposerService connected account resolution (integration)', () =
 
     it('throws when the id is not a valid UUID', async () => {
       await expect(
-        service.composeEmail(
-          { ...baseParams, connectedAccountId: 'not-a-uuid' },
-          {
+        service.composeEmail({
+          parameters: { ...baseParams, connectedAccountId: 'not-a-uuid' },
+          context: {
             workspaceId: WORKSPACE_ID,
             userWorkspaceId: PHIL_USER_WORKSPACE_ID,
           },
-          'SEND',
-        ),
+          operation: 'SEND',
+        }),
       ).rejects.toThrow('Connected account id is not a valid UUID');
     });
 
     it('throws when no connected account matches the id', async () => {
       await expect(
-        service.composeEmail(
-          { ...baseParams, connectedAccountId: UNKNOWN_CONNECTED_ACCOUNT_ID },
-          {
+        service.composeEmail({
+          parameters: {
+            ...baseParams,
+            connectedAccountId: UNKNOWN_CONNECTED_ACCOUNT_ID,
+          },
+          context: {
             workspaceId: WORKSPACE_ID,
             userWorkspaceId: PHIL_USER_WORKSPACE_ID,
           },
-          'SEND',
-        ),
+          operation: 'SEND',
+        }),
       ).rejects.toThrow('No connected account found for id');
     });
 
@@ -179,14 +187,17 @@ describe('EmailComposerService connected account resolution (integration)', () =
 
       try {
         await expect(
-          service.composeEmail(
-            { ...baseParams, connectedAccountId: appConnectedAccountId },
-            {
+          service.composeEmail({
+            parameters: {
+              ...baseParams,
+              connectedAccountId: appConnectedAccountId,
+            },
+            context: {
               workspaceId: WORKSPACE_ID,
               userWorkspaceId: PHIL_USER_WORKSPACE_ID,
             },
-            'SEND',
-          ),
+            operation: 'SEND',
+          }),
         ).rejects.toThrow('cannot send email');
       } finally {
         await deleteConnectedAccount(appConnectedAccountId);
@@ -202,11 +213,14 @@ describe('EmailComposerService connected account resolution (integration)', () =
 
       try {
         await expect(
-          service.composeEmail(
-            { ...baseParams, connectedAccountId: JONY_CONNECTED_ACCOUNT_ID },
-            { workspaceId: WORKSPACE_ID },
-            'SEND',
-          ),
+          service.composeEmail({
+            parameters: {
+              ...baseParams,
+              connectedAccountId: JONY_CONNECTED_ACCOUNT_ID,
+            },
+            context: { workspaceId: WORKSPACE_ID },
+            operation: 'SEND',
+          }),
         ).rejects.toThrow('No connected account found for id');
       } finally {
         await setArchivedAt(JONY_CONNECTED_ACCOUNT_ID, archivedAt);
@@ -216,14 +230,14 @@ describe('EmailComposerService connected account resolution (integration)', () =
 
   describe('when drafting rather than sending', () => {
     it('composes a draft from the caller own mailbox', async () => {
-      const result = await service.composeEmail(
-        baseParams,
-        {
+      const result = await service.composeEmail({
+        parameters: baseParams,
+        context: {
           workspaceId: WORKSPACE_ID,
           userWorkspaceId: PHIL_USER_WORKSPACE_ID,
         },
-        'DRAFT',
-      );
+        operation: 'DRAFT',
+      });
 
       expect(result.success).toBe(true);
       expect(result.success && result.data.connectedAccount.id).toBe(
@@ -244,14 +258,14 @@ describe('EmailComposerService connected account resolution (integration)', () =
 
       try {
         await expect(
-          service.composeEmail(
-            {
+          service.composeEmail({
+            parameters: {
               ...baseParams,
               connectedAccountId: emailGroupConnectedAccountId,
             },
-            { workspaceId: WORKSPACE_ID },
-            'DRAFT',
-          ),
+            context: { workspaceId: WORKSPACE_ID },
+            operation: 'DRAFT',
+          }),
         ).rejects.toThrow('cannot draft email');
       } finally {
         await deleteConnectedAccount(emailGroupConnectedAccountId);
@@ -261,14 +275,14 @@ describe('EmailComposerService connected account resolution (integration)', () =
 
   describe('when the caller names none', () => {
     it('composes from the caller own account rather than the first of the workspace', async () => {
-      const result = await service.composeEmail(
-        baseParams,
-        {
+      const result = await service.composeEmail({
+        parameters: baseParams,
+        context: {
           workspaceId: WORKSPACE_ID,
           userWorkspaceId: PHIL_USER_WORKSPACE_ID,
         },
-        'SEND',
-      );
+        operation: 'SEND',
+      });
 
       expect(result.success).toBe(true);
       expect(result.success && result.data.connectedAccount.id).toBe(
@@ -286,14 +300,14 @@ describe('EmailComposerService connected account resolution (integration)', () =
       });
 
       try {
-        const result = await service.composeEmail(
-          baseParams,
-          {
+        const result = await service.composeEmail({
+          parameters: baseParams,
+          context: {
             workspaceId: WORKSPACE_ID,
             userWorkspaceId: PHIL_USER_WORKSPACE_ID,
           },
-          'SEND',
-        );
+          operation: 'SEND',
+        });
 
         expect(result.success).toBe(true);
         expect(result.success && result.data.connectedAccount.id).toBe(
@@ -317,11 +331,11 @@ describe('EmailComposerService connected account resolution (integration)', () =
         const firstWorkspaceConnectedAccountId =
           await getFirstWorkspaceConnectedAccountId();
 
-        const result = await service.composeEmail(
-          baseParams,
-          { workspaceId: WORKSPACE_ID },
-          'SEND',
-        );
+        const result = await service.composeEmail({
+          parameters: baseParams,
+          context: { workspaceId: WORKSPACE_ID },
+          operation: 'SEND',
+        });
 
         expect(result.success).toBe(true);
         expect(result.success && result.data.connectedAccount.id).toBe(
@@ -343,14 +357,14 @@ describe('EmailComposerService connected account resolution (integration)', () =
       await setVisibility(JONY_CONNECTED_ACCOUNT_ID, 'workspace');
 
       try {
-        const result = await service.composeEmail(
-          baseParams,
-          {
+        const result = await service.composeEmail({
+          parameters: baseParams,
+          context: {
             workspaceId: WORKSPACE_ID,
             userWorkspaceId: UNKNOWN_USER_WORKSPACE_ID,
           },
-          'SEND',
-        );
+          operation: 'SEND',
+        });
 
         expect(result.success).toBe(true);
         expect(result.success && result.data.connectedAccount.id).toBe(
@@ -363,14 +377,14 @@ describe('EmailComposerService connected account resolution (integration)', () =
 
     it('throws rather than composing from a colleague account', async () => {
       await expect(
-        service.composeEmail(
-          baseParams,
-          {
+        service.composeEmail({
+          parameters: baseParams,
+          context: {
             workspaceId: WORKSPACE_ID,
             userWorkspaceId: UNKNOWN_USER_WORKSPACE_ID,
           },
-          'SEND',
-        ),
+          operation: 'SEND',
+        }),
       ).rejects.toThrow('available to user workspace');
     });
 
@@ -378,11 +392,11 @@ describe('EmailComposerService connected account resolution (integration)', () =
       const firstWorkspaceConnectedAccountId =
         await getFirstWorkspaceConnectedAccountId();
 
-      const result = await service.composeEmail(
-        baseParams,
-        { workspaceId: WORKSPACE_ID },
-        'SEND',
-      );
+      const result = await service.composeEmail({
+        parameters: baseParams,
+        context: { workspaceId: WORKSPACE_ID },
+        operation: 'SEND',
+      });
 
       expect(result.success).toBe(true);
       expect(result.success && result.data.connectedAccount.id).toBe(

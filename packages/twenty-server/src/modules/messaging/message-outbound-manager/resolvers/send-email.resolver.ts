@@ -56,8 +56,8 @@ export class SendEmailResolver {
         workspaceId: workspace.id,
       });
 
-      const result = await this.emailComposerService.composeEmail(
-        {
+      const result = await this.emailComposerService.composeEmail({
+        parameters: {
           recipients: {
             to: input.to,
             cc: input.cc ?? '',
@@ -70,9 +70,9 @@ export class SendEmailResolver {
           files: input.files ?? [],
           inReplyTo: input.inReplyTo,
         },
-        { workspaceId: workspace.id },
-        'SEND',
-      );
+        context: { workspaceId: workspace.id },
+        operation: 'SEND',
+      });
 
       if (!result.success) {
         return {

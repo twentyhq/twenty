@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/client/react';
 
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { canConnectedAccountSendEmail } from '@/accounts/utils/canConnectedAccountSendEmail';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
+import { canConnectedAccountPerformEmailOperation } from 'twenty-shared/utils';
 
 type UseFirstConnectedAccountOptions = {
   skip?: boolean;
@@ -21,7 +21,12 @@ export const useFirstConnectedAccount = (
   });
 
   const firstAccount =
-    data?.myConnectedAccounts?.find(canConnectedAccountSendEmail) ?? null;
+    data?.myConnectedAccounts?.find((connectedAccount) =>
+      canConnectedAccountPerformEmailOperation({
+        connectedAccount,
+        operation: 'SEND',
+      }),
+    ) ?? null;
 
   return {
     connectedAccountId: firstAccount?.id ?? null,

@@ -30,11 +30,11 @@ export class DraftEmailTool implements Tool {
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
     try {
-      const result = await this.emailComposerService.composeEmail(
+      const result = await this.emailComposerService.composeEmail({
         parameters,
         context,
-        'DRAFT',
-      );
+        operation: 'DRAFT',
+      });
 
       if (!result.success) {
         return result.output;

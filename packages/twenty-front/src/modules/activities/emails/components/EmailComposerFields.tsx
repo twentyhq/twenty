@@ -3,7 +3,11 @@ import { useContext } from 'react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { getSendableEmailHandles, isDefined } from 'twenty-shared/utils';
+import {
+  canConnectedAccountPerformEmailOperation,
+  getSendableEmailHandles,
+  isDefined,
+} from 'twenty-shared/utils';
 import { IconPaperclip } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -23,7 +27,6 @@ import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/ut
 import { type EmailComposerState } from '@/activities/emails/types/EmailComposerState';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { buildConnectedAccountSenderOptions } from '@/accounts/utils/buildConnectedAccountSenderOptions';
-import { canConnectedAccountSendEmail } from '@/accounts/utils/canConnectedAccountSendEmail';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
@@ -121,7 +124,11 @@ export const EmailComposerFields = ({
   }>(GET_MY_CONNECTED_ACCOUNTS);
 
   const sendableAccounts = (accountsData?.myConnectedAccounts ?? []).filter(
-    canConnectedAccountSendEmail,
+    (connectedAccount) =>
+      canConnectedAccountPerformEmailOperation({
+        connectedAccount,
+        operation: 'SEND',
+      }),
   );
 
   const senderOptions = buildConnectedAccountSenderOptions(sendableAccounts);
