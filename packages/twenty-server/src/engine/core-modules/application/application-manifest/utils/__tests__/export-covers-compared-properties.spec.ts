@@ -1,8 +1,8 @@
 import {
   type NavigationMenuItemManifest,
   type PageLayoutManifest,
-  type PageLayoutTabManifest,
-  type PageLayoutWidgetManifest,
+  type NormalizedPageLayoutTabManifest,
+  type NormalizedPageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
   type ViewFieldGroupManifest,
   type ViewFieldManifest,
@@ -16,7 +16,6 @@ import {
   AggregateOperations,
   FieldMetadataType,
   PageLayoutTabLayoutMode,
-  PageLayoutType,
   NavigationMenuItemType,
   ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,
@@ -156,7 +155,7 @@ const PAGE_LAYOUT_UID = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
 const PAGE_LAYOUT_TAB_UID = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
 const PAGE_LAYOUT_WIDGET_UID = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
 
-const PAGE_LAYOUT_WIDGET_MANIFEST: PageLayoutWidgetManifest = {
+const PAGE_LAYOUT_WIDGET_MANIFEST: NormalizedPageLayoutWidgetManifest = {
   universalIdentifier: PAGE_LAYOUT_WIDGET_UID,
   title: 'Fields',
   type: 'FIELDS',
@@ -170,7 +169,7 @@ const PAGE_LAYOUT_WIDGET_MANIFEST: PageLayoutWidgetManifest = {
   },
 };
 
-const PAGE_LAYOUT_TAB_MANIFEST: PageLayoutTabManifest = {
+const PAGE_LAYOUT_TAB_MANIFEST: NormalizedPageLayoutTabManifest = {
   universalIdentifier: PAGE_LAYOUT_TAB_UID,
   title: 'Overview',
   position: 0,
@@ -451,7 +450,6 @@ const EXPORTED_KINDS: ExportedKind[] = [
           fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
             pageLayoutTabManifest: PAGE_LAYOUT_TAB_MANIFEST,
             pageLayoutUniversalIdentifier: PAGE_LAYOUT_UID,
-            pageLayoutType: PageLayoutType.RECORD_PAGE,
             applicationUniversalIdentifier: APP_UID,
             now: NOW,
           }),
@@ -470,7 +468,6 @@ const EXPORTED_KINDS: ExportedKind[] = [
           fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
             pageLayoutWidgetManifest: PAGE_LAYOUT_WIDGET_MANIFEST,
             pageLayoutTabUniversalIdentifier: PAGE_LAYOUT_TAB_UID,
-            pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
             applicationUniversalIdentifier: APP_UID,
             now: NOW,
           }),
