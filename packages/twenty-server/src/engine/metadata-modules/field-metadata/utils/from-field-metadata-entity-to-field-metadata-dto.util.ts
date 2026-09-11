@@ -3,8 +3,6 @@ import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadat
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 
-// A TypeORM entity carries no owner universal identifier: without it every
-// entry ranks as a non-owner one, which is the custom application's here.
 const resolveEffectiveEntityIsActive = (entity: {
   isActive: boolean;
   overrides: unknown;

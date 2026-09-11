@@ -59,9 +59,6 @@ export const resolveMetadataEventRecord = ({
     return resolved;
   }
 
-  // An override with no base value still has to win, so the resolver runs
-  // regardless of the base; only an empty result is dropped, which keeps an
-  // absent or null base from being delivered as a translated empty string.
   for (const property of translatableProperties) {
     const effectiveValue = resolveEffectiveEntityPropertyByName({
       metadataName,

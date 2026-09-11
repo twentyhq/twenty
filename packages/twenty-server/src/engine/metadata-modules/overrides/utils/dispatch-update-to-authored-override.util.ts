@@ -21,10 +21,6 @@ type DispatchUpdateToAuthoredOverrideArgs<TProperties extends object> = {
 const isEmptyRecord = (record: object): boolean =>
   Object.keys(record).length === 0;
 
-// Splits an update: overridable properties go to the author's entry, the rest
-// comes back as columnProperties for the caller to write. A value that equals
-// what the author would see without its entry (the entries beneath it, then
-// the base column) is a revert, so the property leaves the entry instead.
 export const dispatchUpdateToAuthoredOverride = <
   TProperties extends object,
   TEntry = Record<string, unknown>,

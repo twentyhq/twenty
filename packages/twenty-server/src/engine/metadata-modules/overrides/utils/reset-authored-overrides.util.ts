@@ -8,7 +8,6 @@ type FlatEntityWithOverrides = {
   universalOverrides?: unknown;
 };
 
-// A reset drops the caller's entry only: other authors keep theirs.
 export const resetAuthoredOverrides = <T extends FlatEntityWithOverrides>({
   metadataName,
   flatEntity,

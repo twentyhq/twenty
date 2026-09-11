@@ -10,9 +10,6 @@ import {
   resolveEffectiveFlatEntityProperty,
 } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
-// The read edge of a flat entity: every overridable property resolved across
-// author entries, the translatable ones also run through the catalogs. Flat
-// entities and caches stay untranslated; this is for what leaves the server.
 export const resolveEffectiveTranslatedFlatEntity = <
   TFlatEntity extends OverridableFlatEntity & Record<string, unknown>,
 >({
@@ -34,8 +31,6 @@ export const resolveEffectiveTranslatedFlatEntity = <
       ...effectiveFlatEntity,
       [property]: translatableProperties.includes(property)
         ? resolveEffectiveEntityPropertyByName({
-            // A property is only listed as translatable under a translatable
-            // metadata name.
             metadataName: metadataName as TranslatableMetadataName,
             baseValue: flatEntity[property],
             overrides: flatEntity.overrides,

@@ -8,9 +8,6 @@ type OverridableUniversalFlatEntity = {
   universalOverrides?: unknown;
 };
 
-// The property is a universal name, such as viewFieldGroupUniversalIdentifier,
-// which the registry only knows through universalProperty; it is not narrowed
-// to the overridable set the way the flat resolver's is.
 export const resolveEffectiveUniversalFlatEntityProperty = <
   TUniversalFlatEntity extends OverridableUniversalFlatEntity,
   TProperty extends string & keyof TUniversalFlatEntity,

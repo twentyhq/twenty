@@ -137,8 +137,6 @@ export class DatabaseToolProvider implements ToolProvider {
       context.locale ?? SOURCE_LOCALE,
     );
 
-    // Only field descriptions resolve overrides, and only when schemas are
-    // included, so the author lookup is skipped otherwise.
     const resolveFields = includeSchemas
       ? await this.buildFieldsResolver({
           context,

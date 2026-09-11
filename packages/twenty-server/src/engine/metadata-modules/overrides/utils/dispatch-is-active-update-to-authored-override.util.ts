@@ -11,10 +11,6 @@ type FlatEntityWithIsActive = {
   isSystemSideEffect?: boolean;
 };
 
-// An overriding author, including the owner of an engine-managed row, writes
-// its entry so a reset can drop it; any other author writes the column.
-// isActive carries no foreign key, so universalOverrides takes the same entry
-// change without a converter.
 export const dispatchIsActiveUpdateToAuthoredOverride = <
   T extends FlatEntityWithIsActive,
 >({
@@ -38,8 +34,6 @@ export const dispatchIsActiveUpdateToAuthoredOverride = <
     isSystemSideEffect: flatEntity.isSystemSideEffect ?? false,
   });
 
-  // Kinds without an overrides column, such as view filters, only carry the
-  // column.
   if (!isAuthorOverridingEntity || !('overrides' in flatEntity)) {
     return { ...flatEntity, isActive };
   }

@@ -97,10 +97,6 @@ export class FlatFieldMetadataValidatorService {
           ),
       );
 
-      // A workspace deactivation of a system field arrives as the caller's
-      // override entry. Only that entry is judged, other authors' entries are
-      // not this update's, and isActive is the only key it may carry. A
-      // non-system build's caller is the workspace custom application.
       const callerEntry = isDefined(updatedOverrides)
         ? readAuthoredOverrideEntry<Record<string, unknown>>({
             metadataName: 'fieldMetadata',

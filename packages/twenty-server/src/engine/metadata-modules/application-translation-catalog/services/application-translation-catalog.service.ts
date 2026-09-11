@@ -38,11 +38,6 @@ export class ApplicationTranslationCatalogService {
     private readonly i18nService: I18nService,
   ) {}
 
-  // The workspace custom application is only reachable through the workspace
-  // row; flat application maps carry no marker for it.
-  // The flat application maps do not mark the workspace custom application;
-  // only the workspace row does. A caller that already holds the row passes
-  // the id and skips the query.
   async getApplicationAuthorIdentifiers({
     workspaceId,
     workspaceCustomApplicationId,
