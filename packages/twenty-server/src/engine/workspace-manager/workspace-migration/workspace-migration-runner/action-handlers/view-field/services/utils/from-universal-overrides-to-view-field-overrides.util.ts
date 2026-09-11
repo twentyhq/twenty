@@ -49,9 +49,12 @@ export const fromUniversalOverridesToViewFieldOverrides = ({
   universalOverrides: AuthoredOverrides<UniversalViewFieldOverrides>;
   flatViewFieldGroupMaps: FlatViewFieldGroupMaps;
 }): AuthoredOverrides<ViewFieldOverrides> =>
-  mapAuthoredOverrideEntries(universalOverrides, (entry) =>
-    fromUniversalOverridesToViewFieldOverridesEntry({
-      universalOverrides: entry,
-      flatViewFieldGroupMaps,
-    }),
-  );
+  mapAuthoredOverrideEntries({
+    metadataName: 'viewField',
+    overrides: universalOverrides,
+    mapEntry: (entry) =>
+      fromUniversalOverridesToViewFieldOverridesEntry({
+        universalOverrides: entry,
+        flatViewFieldGroupMaps,
+      }),
+  });

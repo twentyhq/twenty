@@ -64,10 +64,13 @@ export const fromViewFieldOverridesToUniversalOverrides = ({
   viewFieldGroupUniversalIdentifierById: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
 }): AuthoredOverrides<UniversalViewFieldOverrides> =>
-  mapAuthoredOverrideEntries(overrides, (entry) =>
-    fromViewFieldOverridesToUniversalOverridesEntry({
-      overrides: entry,
-      viewFieldGroupUniversalIdentifierById,
-      shouldThrowOnMissingIdentifier,
-    }),
-  );
+  mapAuthoredOverrideEntries({
+    metadataName: 'viewField',
+    overrides,
+    mapEntry: (entry) =>
+      fromViewFieldOverridesToUniversalOverridesEntry({
+        overrides: entry,
+        viewFieldGroupUniversalIdentifierById,
+        shouldThrowOnMissingIdentifier,
+      }),
+  });

@@ -91,10 +91,13 @@ export const fromViewOverridesToUniversalOverrides = ({
   fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
 }): AuthoredOverrides<UniversalViewOverrides> =>
-  mapAuthoredOverrideEntries(overrides, (entry) =>
-    fromViewOverridesToUniversalOverridesEntry({
-      overrides: entry,
-      fieldMetadataUniversalIdentifierById,
-      shouldThrowOnMissingIdentifier,
-    }),
-  );
+  mapAuthoredOverrideEntries({
+    metadataName: 'view',
+    overrides,
+    mapEntry: (entry) =>
+      fromViewOverridesToUniversalOverridesEntry({
+        overrides: entry,
+        fieldMetadataUniversalIdentifierById,
+        shouldThrowOnMissingIdentifier,
+      }),
+  });

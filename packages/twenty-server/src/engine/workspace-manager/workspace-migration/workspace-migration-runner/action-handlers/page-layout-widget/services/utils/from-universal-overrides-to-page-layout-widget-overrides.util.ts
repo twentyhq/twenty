@@ -47,9 +47,12 @@ export const fromUniversalOverridesToPageLayoutWidgetOverrides = ({
   universalOverrides: AuthoredOverrides<UniversalPageLayoutWidgetOverrides>;
   flatPageLayoutTabMaps: FlatPageLayoutTabMaps;
 }): AuthoredOverrides<PageLayoutWidgetOverrides> =>
-  mapAuthoredOverrideEntries(universalOverrides, (entry) =>
-    fromUniversalOverridesToPageLayoutWidgetOverridesEntry({
-      universalOverrides: entry,
-      flatPageLayoutTabMaps,
-    }),
-  );
+  mapAuthoredOverrideEntries({
+    metadataName: 'pageLayoutWidget',
+    overrides: universalOverrides,
+    mapEntry: (entry) =>
+      fromUniversalOverridesToPageLayoutWidgetOverridesEntry({
+        universalOverrides: entry,
+        flatPageLayoutTabMaps,
+      }),
+  });
