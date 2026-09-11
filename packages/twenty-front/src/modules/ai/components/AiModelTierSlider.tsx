@@ -260,7 +260,7 @@ export const AiModelTierSlider = ({
             Icon: IconCoins,
             deltaPercent: resolvedTier.costDeltaPercent,
             tooltipTitle: costTitle,
-            description: costComparison,
+            description: t`Estimated model cost to complete a typical task. ${costComparison}.`,
           },
         ]
       : []),
