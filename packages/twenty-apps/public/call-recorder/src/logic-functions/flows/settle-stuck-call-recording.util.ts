@@ -4,6 +4,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import {
   AUDIO_IMPORT_EXPIRED_FAILURE_REASON,
+  RECORDING_IMPORT_EXPIRED_FAILURE_REASON,
   VIDEO_IMPORT_EXPIRED_FAILURE_REASON,
 } from 'src/logic-functions/constants/media-import-expired-failure-reasons';
 import { completeCallRecordingImport } from 'src/logic-functions/data/complete-call-recording-import.util';
@@ -85,7 +86,7 @@ const settleWithImportedArtifacts = async (
       callRecordingId: callRecording.id,
       data: {
         status: CallRecordingStatus.FAILED,
-        callRecorderFailureReason: 'recording_import_expired',
+        callRecorderFailureReason: RECORDING_IMPORT_EXPIRED_FAILURE_REASON,
       },
     });
 
