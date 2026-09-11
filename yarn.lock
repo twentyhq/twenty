@@ -334,14 +334,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@argos-ci/api-client@npm:0.31.0":
-  version: 0.31.0
-  resolution: "@argos-ci/api-client@npm:0.31.0"
+"@argos-ci/api-client@npm:0.28.0":
+  version: 0.28.0
+  resolution: "@argos-ci/api-client@npm:0.28.0"
   dependencies:
     debug: "npm:^4.4.3"
     openapi-fetch: "npm:^0.17.0"
     p-retry: "npm:^8.0.0"
-  checksum: 10c0/b9254e2b8693215f81aa1c4ee95b4f1162c194b58ca038706c9459db32df65b5e9f4ac0a2bde3184a76349c6be66430476453f686bbb6e93fc4f0ecd7c519365
+  checksum: 10c0/f4ba8ee91577a6c37a0675aa9744dba201f3fac9cf90d61cbb328c06e061b268e7c4c85c0fca155188a6ed9a4cadfac734eaf8896d3c47f93003f1efe448a721
   languageName: node
   linkType: hard
 
@@ -352,12 +352,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@argos-ci/core@npm:6.8.3":
-  version: 6.8.3
-  resolution: "@argos-ci/core@npm:6.8.3"
+"@argos-ci/core@npm:6.7.2":
+  version: 6.7.2
+  resolution: "@argos-ci/core@npm:6.7.2"
   dependencies:
-    "@argos-ci/api-client": "npm:0.31.0"
-    "@argos-ci/util": "npm:4.2.0"
+    "@argos-ci/api-client": "npm:0.28.0"
+    "@argos-ci/util": "npm:4.1.0"
     convict: "npm:^6.2.5"
     debug: "npm:^4.4.3"
     fast-glob: "npm:^3.3.3"
@@ -365,56 +365,56 @@ __metadata:
     p-retry: "npm:^8.0.0"
     sharp: "npm:^0.35.3"
     tmp: "npm:^0.2.7"
-  checksum: 10c0/8da7399540541c9e9dbbb5e50c852a8ac242d9fcf809389920985544f119f390852ba097611bc36838e31706cb47572bdccfac43b6ed9689c81b58bb9cb0464e
+  checksum: 10c0/ac20d41c6de2be75df42c07b7fe9cb55dc53c6a9e1b09e54ef3f7c4c561c3841b6021f7012fd004d70ddb8bc859a46ef6441061b986702038a3d2240395c10ee
   languageName: node
   linkType: hard
 
-"@argos-ci/playwright@npm:7.5.0":
-  version: 7.5.0
-  resolution: "@argos-ci/playwright@npm:7.5.0"
+"@argos-ci/playwright@npm:7.4.3":
+  version: 7.4.3
+  resolution: "@argos-ci/playwright@npm:7.4.3"
   dependencies:
     "@argos-ci/browser": "npm:6.4.5"
-    "@argos-ci/core": "npm:6.8.3"
-    "@argos-ci/util": "npm:4.2.0"
+    "@argos-ci/core": "npm:6.7.2"
+    "@argos-ci/util": "npm:4.1.0"
     chalk: "npm:^6.0.0"
     debug: "npm:^4.4.3"
-  checksum: 10c0/70d2403912f66a31e01cfd3890b2c9d2d65910ac53b57d98ba2d315fed1be4a36f2c364964981961e340dcd5ff17a44f7f8a69729459505ff85d0355964c987b
+  checksum: 10c0/76504eaa8abc633325cdf41f9f7f9f66975abc000518fce8154f52bc32a584026518279f3f48d79190031cf1f3abb48d2b972b83ca97309b92cc1333ca41d9ce
   languageName: node
   linkType: hard
 
-"@argos-ci/storybook@npm:~6.2.3":
-  version: 6.2.8
-  resolution: "@argos-ci/storybook@npm:6.2.8"
+"@argos-ci/storybook@npm:6.2.3":
+  version: 6.2.3
+  resolution: "@argos-ci/storybook@npm:6.2.3"
   dependencies:
-    "@argos-ci/core": "npm:6.8.3"
-    "@argos-ci/playwright": "npm:7.5.0"
-    "@argos-ci/util": "npm:4.2.0"
-    "@argos-ci/vitest": "npm:0.5.0"
-  checksum: 10c0/15e38805cd6ee65027fc2634e7dcb752332e6d0f8bdae871ba1889da35689a1855f7545f674472e099ad2a84573be2f35c52c020d15768c09d9bad97806070fb
+    "@argos-ci/core": "npm:6.7.2"
+    "@argos-ci/playwright": "npm:7.4.3"
+    "@argos-ci/util": "npm:4.1.0"
+    "@argos-ci/vitest": "npm:0.4.3"
+  checksum: 10c0/131d84c9f1a3ab10e1e5a24602252e148eb1d4f7b7d8ea84dff528f5b6591c6ab79983264a0785ed05b4c63a7ca96d59c7357ae7f1f7b0574953434275848add
   languageName: node
   linkType: hard
 
-"@argos-ci/util@npm:4.2.0":
-  version: 4.2.0
-  resolution: "@argos-ci/util@npm:4.2.0"
-  checksum: 10c0/9e307030237d3f8a713e1df62a5458338e6ce2cdf98caf1a141ff7725b539e70b6310af5db8b0437825f17b988051bdd5504aae86b46d709204dd049e39bc049
+"@argos-ci/util@npm:4.1.0":
+  version: 4.1.0
+  resolution: "@argos-ci/util@npm:4.1.0"
+  checksum: 10c0/7b8e8ec7896abf49cbbaa9c4c6e06f6fbc3d8362607bcdb8c8203d2844828a4d7000b0d41f1da8cf553b8c6c3facf77854cb815757100e1889ee47ecd960cfea
   languageName: node
   linkType: hard
 
-"@argos-ci/vitest@npm:0.5.0":
-  version: 0.5.0
-  resolution: "@argos-ci/vitest@npm:0.5.0"
+"@argos-ci/vitest@npm:0.4.3":
+  version: 0.4.3
+  resolution: "@argos-ci/vitest@npm:0.4.3"
   dependencies:
     "@argos-ci/browser": "npm:6.4.5"
-    "@argos-ci/core": "npm:6.8.3"
-    "@argos-ci/playwright": "npm:7.5.0"
-    "@argos-ci/util": "npm:4.2.0"
+    "@argos-ci/core": "npm:6.7.2"
+    "@argos-ci/playwright": "npm:7.4.3"
+    "@argos-ci/util": "npm:4.1.0"
   peerDependencies:
     "@vitest/browser": ">=4"
     "@vitest/browser-playwright": ">=4"
     playwright: ">=1"
     vitest: ">=4"
-  checksum: 10c0/d8d346fc79988697c2cb70d8ed6c9643ac82e1689ea0fe1925be7dee80aa254711accb17124eb09d26a484ceb5b997381b336cd1ea03c9c18e348a9058201e5f
+  checksum: 10c0/cb3459a0d8b74785d403aebe6054600922dedf2e86ecd8e0cfc444cd08590666cc3c4d01fa33b7f3833bf1e7da824a4f3d6a9d821c858721eaa98b54f95b9c95
   languageName: node
   linkType: hard
 
@@ -49568,7 +49568,7 @@ __metadata:
   resolution: "twenty-front@workspace:packages/twenty-front"
   dependencies:
     "@apollo/client": "npm:^4.0.0"
-    "@argos-ci/storybook": "npm:~6.2.3"
+    "@argos-ci/storybook": "npm:6.2.3"
     "@babel/core": "npm:^7.14.5"
     "@babel/preset-typescript": "npm:^7.24.6"
     "@blocknote/mantine": "npm:^0.51.4"
@@ -50073,7 +50073,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-ui@workspace:packages/twenty-ui"
   dependencies:
-    "@argos-ci/storybook": "npm:~6.2.3"
+    "@argos-ci/storybook": "npm:6.2.3"
     "@base-ui/react": "npm:^1.8.0"
     "@fontsource/inter": "npm:^5.2.8"
     "@monaco-editor/react": "npm:^4.7.0"
