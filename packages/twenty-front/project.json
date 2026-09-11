@@ -76,7 +76,8 @@
       "cache": true,
       "inputs": [
         "{projectRoot}/src/locales/*.po",
-        "{projectRoot}/.eloqnt/config.ts"
+        "{projectRoot}/.eloqnt/config.ts",
+        "{workspaceRoot}/yarn.lock"
       ],
       "options": {
         "cwd": "{projectRoot}",
