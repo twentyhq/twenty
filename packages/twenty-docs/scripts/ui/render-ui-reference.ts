@@ -3,8 +3,41 @@ import {
   type TokenDocumentation,
 } from '../../../twenty-ui/docs/types';
 
-const toMdxString = (value: string): string =>
-  JSON.stringify(value).replace(/</g, '\\u003c');
+const CODE_SEGMENT_PATTERN = /(`{3,})[\s\S]*?\1|`[^`\n]+`/g;
+
+const escapeAttributeValue = (value: string): string =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
+const escapeProseText = (text: string): string =>
+  text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/\{/g, '&#123;')
+    .replace(/\}/g, '&#125;');
+
+const escapeMarkdown = (markdown: string): string => {
+  let escaped = '';
+  let proseStart = 0;
+
+  for (const codeSegment of markdown.matchAll(CODE_SEGMENT_PATTERN)) {
+    escaped +=
+      escapeProseText(markdown.slice(proseStart, codeSegment.index)) +
+      codeSegment[0];
+    proseStart = codeSegment.index + codeSegment[0].length;
+  }
+
+  return escaped + escapeProseText(markdown.slice(proseStart));
+};
+
+const indent = (text: string): string =>
+  text
+    .split('\n')
+    .map((line) => (line.length > 0 ? `  ${line}` : line))
+    .join('\n');
 
 const renderProps = ({
   props,
@@ -16,16 +49,15 @@ const renderProps = ({
   props
     .map((prop) => {
       const attributes = [
-        `body=${toMdxString(partName ? `${partName}.${prop.name}` : prop.name)}`,
-        `type={${toMdxString(prop.type)}}`,
+        `body="${escapeAttributeValue(partName ? `${partName}.${prop.name}` : prop.name)}"`,
+        `type="${escapeAttributeValue(prop.type)}"`,
         ...(prop.required ? ['required'] : []),
         ...(prop.defaultValue === null
           ? []
-          : [`default={${toMdxString(prop.defaultValue)}}`]),
+          : [`default="${escapeAttributeValue(prop.defaultValue)}"`]),
       ];
-      const description = prop.description.replace(/`/g, '');
 
-      return `<ParamField ${attributes.join(' ')}>\n  {${toMdxString(description)}}\n</ParamField>`;
+      return `<ParamField ${attributes.join(' ')}>\n${indent(escapeMarkdown(prop.description))}\n</ParamField>`;
     })
     .join('\n\n') + '\n';
 

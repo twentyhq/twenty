@@ -3,10 +3,11 @@ import { describe, expect, it } from 'vitest';
 
 import { getDocumentationImportDiagnostics } from '../../../../twenty-ui/docs/getDocumentationImportDiagnostics';
 
-const exportedModules = new Set([
+const allowedModules = new Set([
   'twenty-ui',
   'twenty-ui/input',
   'twenty-ui/style.css',
+  'react',
 ]);
 
 const checkImports = (content: string) =>
@@ -18,11 +19,11 @@ const checkImports = (content: string) =>
       true,
       ts.ScriptKind.TSX,
     ),
-    exportedModules,
+    allowedModules,
   });
 
 describe('documentation imports', () => {
-  it('allows public entry points, exported CSS, and other packages', () => {
+  it('allows public entry points, exported CSS, and peer dependencies', () => {
     expect(
       checkImports(`
       import { Input } from 'twenty-ui/input';
@@ -47,6 +48,19 @@ describe('documentation imports', () => {
     expect(diagnostics[0].category).toBe(ts.DiagnosticCategory.Error);
     expect(diagnostics[0].messageText).toContain(
       'is not exported by twenty-ui/package.json',
+    );
+  });
+
+  it.each([
+    "import { Checkbox } from '@ui/input/Checkbox/Checkbox';",
+    "import { Input } from '../../twenty-ui/src/input';",
+    "import { vi } from 'vitest';",
+  ])('rejects a module outside the public surface in %s', (content) => {
+    const diagnostics = checkImports(content);
+
+    expect(diagnostics).toHaveLength(1);
+    expect(diagnostics[0].messageText).toContain(
+      'is not a twenty-ui entry point or peer dependency',
     );
   });
 });

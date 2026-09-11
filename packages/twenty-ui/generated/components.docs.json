@@ -17,7 +17,7 @@
           },
           {
             "name": "className",
-            "type": "string | ((state: FieldRootState) => string)",
+            "type": "string | ((state: FieldRootState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -59,7 +59,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: FieldRootState) => CSSProperties)",
+            "type": "CSSProperties | ((state: FieldRootState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -99,7 +99,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: FieldLabelState) => string)",
+            "type": "string | ((state: FieldLabelState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -120,7 +120,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: FieldLabelState) => CSSProperties)",
+            "type": "CSSProperties | ((state: FieldLabelState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -132,7 +132,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: FieldControlState) => string)",
+            "type": "string | ((state: FieldControlState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -146,7 +146,7 @@
           },
           {
             "name": "onValueChange",
-            "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element; }) => void)",
+            "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
             "required": false,
             "defaultValue": null,
             "description": "Callback fired when the `value` changes. Use when controlled."
@@ -160,7 +160,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: FieldControlState) => CSSProperties)",
+            "type": "CSSProperties | ((state: FieldControlState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -172,7 +172,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: FieldDescriptionState) => string)",
+            "type": "string | ((state: FieldDescriptionState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -186,7 +186,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: FieldDescriptionState) => CSSProperties)",
+            "type": "CSSProperties | ((state: FieldDescriptionState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -198,7 +198,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: FieldErrorState) => string)",
+            "type": "string | ((state: FieldErrorState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -219,7 +219,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: FieldErrorState) => CSSProperties)",
+            "type": "CSSProperties | ((state: FieldErrorState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -247,7 +247,7 @@
     "props": [
       {
         "name": "className",
-        "type": "string | ((state: InputState) => string)",
+        "type": "string | ((state: InputState) => string | undefined)",
         "required": false,
         "defaultValue": null,
         "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -261,7 +261,7 @@
       },
       {
         "name": "onValueChange",
-        "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element; }) => void)",
+        "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
         "required": false,
         "defaultValue": null,
         "description": "Callback fired when the `value` changes. Use when controlled."
@@ -278,11 +278,11 @@
         "type": "\"sm\" | \"md\"",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Visual size of the input. Inside an `InputGroup`, the group's size applies."
       },
       {
         "name": "style",
-        "type": "CSSProperties | ((state: InputState) => CSSProperties)",
+        "type": "CSSProperties | ((state: InputState) => CSSProperties | undefined)",
         "required": false,
         "defaultValue": null,
         "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -306,7 +306,7 @@
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Content rendered after the input, such as a suffix or a button."
       },
       {
         "name": "render",
@@ -320,14 +320,14 @@
         "type": "\"sm\" | \"md\"",
         "required": false,
         "defaultValue": "md",
-        "description": ""
+        "description": "Visual size of the group and its input."
       },
       {
         "name": "startElement",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Content rendered before the input, such as a prefix or an icon."
       }
     ]
   },
@@ -341,28 +341,28 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": ""
+        "description": "Grows the textarea with its content instead of showing a scrollbar."
       },
       {
         "name": "className",
-        "type": "string | ((state: InputState) => string)",
+        "type": "string | ((state: InputState) => string | undefined)",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "CSS class applied to the textarea, or a function that returns a class\nbased on the input state."
       },
       {
         "name": "maxRows",
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Maximum number of rows the textarea grows to when `autoResize` is set.\nLonger content scrolls."
       },
       {
         "name": "onValueChange",
-        "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element; }) => void)",
+        "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Called with the new value when the textarea value changes."
       },
       {
         "name": "render",
@@ -376,7 +376,7 @@
         "type": "\"sm\" | \"md\"",
         "required": false,
         "defaultValue": "md",
-        "description": ""
+        "description": "Visual size of the textarea."
       }
     ]
   },
@@ -394,7 +394,7 @@
       },
       {
         "name": "className",
-        "type": "string | ((state: CheckboxRootState) => string)",
+        "type": "string | ((state: CheckboxRootState) => string | undefined)",
         "required": false,
         "defaultValue": null,
         "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -404,7 +404,7 @@
         "type": "\"accent\" | \"success\" | \"warning\"",
         "required": false,
         "defaultValue": "accent",
-        "description": ""
+        "description": "Color used while the checkbox is checked or indeterminate."
       },
       {
         "name": "defaultChecked",
@@ -432,7 +432,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "true",
-        "description": ""
+        "description": "Adds padding around the box and a hover background. Disable it for a\ncompact checkbox inside another interactive element."
       },
       {
         "name": "id",
@@ -471,7 +471,7 @@
       },
       {
         "name": "onCheckedChange",
-        "type": "((checked: boolean, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element; }) => void)",
+        "type": "((checked: boolean, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
         "required": false,
         "defaultValue": null,
         "description": "Event handler called when the checkbox is ticked or unticked."
@@ -509,18 +509,18 @@
         "type": "\"square\" | \"round\"",
         "required": false,
         "defaultValue": "square",
-        "description": ""
+        "description": "Corner shape of the box."
       },
       {
         "name": "size",
         "type": "\"sm\" | \"md\"",
         "required": false,
         "defaultValue": "sm",
-        "description": ""
+        "description": "Visual size of the checkbox."
       },
       {
         "name": "style",
-        "type": "CSSProperties | ((state: CheckboxRootState) => CSSProperties)",
+        "type": "CSSProperties | ((state: CheckboxRootState) => CSSProperties | undefined)",
         "required": false,
         "defaultValue": null,
         "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -544,7 +544,7 @@
         "type": "\"solid\" | \"outline\" | \"soft\"",
         "required": false,
         "defaultValue": "solid",
-        "description": ""
+        "description": "Visual style of the box: filled, outlined, or tinted."
       }
     ]
   },
@@ -555,7 +555,7 @@
     "props": [
       {
         "name": "className",
-        "type": "string | ((state: RadioRootState) => string)",
+        "type": "string | ((state: RadioRootState) => string | undefined)",
         "required": false,
         "defaultValue": null,
         "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -607,11 +607,11 @@
         "type": "\"sm\" | \"md\"",
         "required": false,
         "defaultValue": "sm",
-        "description": ""
+        "description": "Visual size of the radio."
       },
       {
         "name": "style",
-        "type": "CSSProperties | ((state: RadioRootState) => CSSProperties)",
+        "type": "CSSProperties | ((state: RadioRootState) => CSSProperties | undefined)",
         "required": false,
         "defaultValue": null,
         "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -632,7 +632,7 @@
     "props": [
       {
         "name": "className",
-        "type": "string | ((state: RadioGroupState) => string)",
+        "type": "string | ((state: RadioGroupState) => string | undefined)",
         "required": false,
         "defaultValue": null,
         "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -674,7 +674,7 @@
       },
       {
         "name": "onValueChange",
-        "type": "((value: TValue, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element; }) => void)",
+        "type": "((value: TValue, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
         "required": false,
         "defaultValue": null,
         "description": "Callback fired when the value changes."
@@ -702,7 +702,7 @@
       },
       {
         "name": "style",
-        "type": "CSSProperties | ((state: RadioGroupState) => CSSProperties)",
+        "type": "CSSProperties | ((state: RadioGroupState) => CSSProperties | undefined)",
         "required": false,
         "defaultValue": null,
         "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -737,7 +737,7 @@
             "type": "string",
             "required": false,
             "defaultValue": null,
-            "description": "Provides a hint to the browser for autofill.\n@see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/autocomplete"
+            "description": "Provides a hint to the browser for autofill."
           },
           {
             "name": "defaultOpen",
@@ -800,7 +800,7 @@
             "type": "Record<string, ReactNode> | readonly { label: ReactNode; value: any; }[] | readonly Group<any>[]",
             "required": false,
             "defaultValue": null,
-            "description": "Data structure of the items rendered in the select popup.\nWhen specified, `<Select.Value>` renders the label of the selected item instead of the raw value.\n@example ```tsx\nconst items = {\n  sans: 'Sans-serif',\n  serif: 'Serif',\n  mono: 'Monospace',\n  cursive: 'Cursive',\n};\n<Select.Root items={items} />\n```"
+            "description": "Data structure of the items rendered in the select popup.\nWhen specified, `<Select.Value>` renders the label of the selected item instead of the raw value."
           },
           {
             "name": "itemToStringLabel",
@@ -893,7 +893,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: SelectTriggerState) => string)",
+            "type": "string | ((state: SelectTriggerState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -924,11 +924,11 @@
             "type": "\"sm\" | \"md\"",
             "required": false,
             "defaultValue": "md",
-            "description": ""
+            "description": "Visual size of the trigger."
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: SelectTriggerState) => CSSProperties)",
+            "type": "CSSProperties | ((state: SelectTriggerState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -943,11 +943,11 @@
             "type": "ReactNode | ((value: any) => ReactNode)",
             "required": false,
             "defaultValue": null,
-            "description": "Accepts a function that returns a `ReactNode` to format the selected value.\nTreat the value as read-only: in `multiple` mode it may be a shared frozen array\nwhen nothing is selected.\n@example ```tsx\n<Select.Value>\n  {(value: string | null) => value ? labels[value] : 'No value'}\n</Select.Value>\n```"
+            "description": "Accepts a function that returns a `ReactNode` to format the selected value.\nTreat the value as read-only: in `multiple` mode it may be a shared frozen array\nwhen nothing is selected."
           },
           {
             "name": "className",
-            "type": "string | ((state: SelectValueState) => string)",
+            "type": "string | ((state: SelectValueState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -968,7 +968,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: SelectValueState) => CSSProperties)",
+            "type": "CSSProperties | ((state: SelectValueState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -997,7 +997,7 @@
             "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": "0",
-            "description": "Additional offset along the alignment axis in pixels.\nAlso accepts a function that returns the offset to read the dimensions of the anchor\nand positioner elements, along with its side and alignment.\n\nThe function takes a `data` object parameter with the following properties:\n- `data.anchor`: the dimensions of the anchor element with properties `width` and `height`.\n- `data.positioner`: the dimensions of the positioner element with properties `width` and `height`.\n- `data.side`: which side of the anchor element the positioner is aligned against.\n- `data.align`: how the positioner is aligned relative to the specified side.\n@example ```jsx\n<Positioner\n  alignOffset={({ side, align, anchor, positioner }) => {\n    return side === 'top' || side === 'bottom'\n      ? anchor.width\n      : anchor.height;\n  }}\n/>\n```"
+            "description": "Additional offset along the alignment axis in pixels.\nAlso accepts a function that returns the offset to read the dimensions of the anchor\nand positioner elements, along with its side and alignment.\n\nThe function takes a `data` object parameter with the following properties:\n- `data.anchor`: the dimensions of the anchor element with properties `width` and `height`.\n- `data.positioner`: the dimensions of the positioner element with properties `width` and `height`.\n- `data.side`: which side of the anchor element the positioner is aligned against.\n- `data.align`: how the positioner is aligned relative to the specified side."
           },
           {
             "name": "anchor",
@@ -1008,7 +1008,7 @@
           },
           {
             "name": "className",
-            "type": "string | ((state: SelectPopupState) => string)",
+            "type": "string | ((state: SelectPopupState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -1018,7 +1018,7 @@
             "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Element the popup is portaled into. Defaults to the theme's portal\ncontainer."
           },
           {
             "name": "finalFocus",
@@ -1046,11 +1046,11 @@
             "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": "8",
-            "description": "Distance between the anchor and the popup in pixels.\nAlso accepts a function that returns the distance to read the dimensions of the anchor\nand positioner elements, along with its side and alignment.\n\nThe function takes a `data` object parameter with the following properties:\n- `data.anchor`: the dimensions of the anchor element with properties `width` and `height`.\n- `data.positioner`: the dimensions of the positioner element with properties `width` and `height`.\n- `data.side`: which side of the anchor element the positioner is aligned against.\n- `data.align`: how the positioner is aligned relative to the specified side.\n@example ```jsx\n<Positioner\n  sideOffset={({ side, align, anchor, positioner }) => {\n    return side === 'top' || side === 'bottom'\n      ? anchor.height\n      : anchor.width;\n  }}\n/>\n```"
+            "description": "Distance between the anchor and the popup in pixels.\nAlso accepts a function that returns the distance to read the dimensions of the anchor\nand positioner elements, along with its side and alignment.\n\nThe function takes a `data` object parameter with the following properties:\n- `data.anchor`: the dimensions of the anchor element with properties `width` and `height`.\n- `data.positioner`: the dimensions of the positioner element with properties `width` and `height`.\n- `data.side`: which side of the anchor element the positioner is aligned against.\n- `data.align`: how the positioner is aligned relative to the specified side."
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: SelectPopupState) => CSSProperties)",
+            "type": "CSSProperties | ((state: SelectPopupState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -1062,7 +1062,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: SelectItemState) => string)",
+            "type": "string | ((state: SelectItemState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -1072,14 +1072,14 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Supporting text, placed according to `descriptionPlacement`."
           },
           {
             "name": "descriptionPlacement",
             "type": "\"inline\" | \"end\"",
             "required": false,
             "defaultValue": "inline",
-            "description": ""
+            "description": "Where the description renders: inline after the content or at the end of\nthe row."
           },
           {
             "name": "disabled",
@@ -1093,7 +1093,7 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Icon rendered after the content."
           },
           {
             "name": "label",
@@ -1121,11 +1121,11 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Icon rendered before the content."
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: SelectItemState) => CSSProperties)",
+            "type": "CSSProperties | ((state: SelectItemState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -1144,7 +1144,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: SelectGroupState) => string)",
+            "type": "string | ((state: SelectGroupState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -1158,7 +1158,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: SelectGroupState) => CSSProperties)",
+            "type": "CSSProperties | ((state: SelectGroupState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -1170,7 +1170,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: SelectGroupLabelState) => string)",
+            "type": "string | ((state: SelectGroupLabelState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -1184,7 +1184,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: SelectGroupLabelState) => CSSProperties)",
+            "type": "CSSProperties | ((state: SelectGroupLabelState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -1196,7 +1196,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: SelectSeparatorState) => string)",
+            "type": "string | ((state: SelectSeparatorState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -1217,7 +1217,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: SelectSeparatorState) => CSSProperties)",
+            "type": "CSSProperties | ((state: SelectSeparatorState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -1237,7 +1237,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: SliderRootState) => string)",
+            "type": "string | ((state: SliderRootState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -1247,7 +1247,7 @@
             "type": "\"accent\" | \"success\"",
             "required": false,
             "defaultValue": "accent",
-            "description": ""
+            "description": "Color of the indicator and thumbs."
           },
           {
             "name": "defaultValue",
@@ -1356,7 +1356,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: SliderRootState) => CSSProperties)",
+            "type": "CSSProperties | ((state: SliderRootState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -1389,7 +1389,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: SliderControlState) => string)",
+            "type": "string | ((state: SliderControlState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -1403,7 +1403,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: SliderControlState) => CSSProperties)",
+            "type": "CSSProperties | ((state: SliderControlState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -1415,7 +1415,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: SliderTrackState) => string)",
+            "type": "string | ((state: SliderTrackState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -1429,7 +1429,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: SliderTrackState) => CSSProperties)",
+            "type": "CSSProperties | ((state: SliderTrackState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -1441,7 +1441,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: SliderIndicatorState) => string)",
+            "type": "string | ((state: SliderIndicatorState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -1455,7 +1455,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: SliderIndicatorState) => CSSProperties)",
+            "type": "CSSProperties | ((state: SliderIndicatorState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -1474,7 +1474,7 @@
           },
           {
             "name": "className",
-            "type": "string | ((state: SliderThumbState) => string)",
+            "type": "string | ((state: SliderThumbState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -1505,7 +1505,7 @@
             "type": "number",
             "required": false,
             "defaultValue": null,
-            "description": "The index of the thumb which corresponds to the index of its value in the\n`value` or `defaultValue` array.\nThis prop is required to support server-side rendering for range sliders\nwith multiple thumbs.\n@example ```tsx\n<Slider.Root value={[10, 20]}>\n  <Slider.Thumb index={0} />\n  <Slider.Thumb index={1} />\n</Slider.Root>\n```"
+            "description": "The index of the thumb which corresponds to the index of its value in the\n`value` or `defaultValue` array.\nThis prop is required to support server-side rendering for range sliders\nwith multiple thumbs."
           },
           {
             "name": "inputRef",
@@ -1544,7 +1544,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: SliderThumbState) => CSSProperties)",
+            "type": "CSSProperties | ((state: SliderThumbState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -1563,7 +1563,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: SliderRootState) => string)",
+            "type": "string | ((state: SliderRootState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -1577,7 +1577,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: SliderRootState) => CSSProperties)",
+            "type": "CSSProperties | ((state: SliderRootState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -1589,7 +1589,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: SliderValueState) => string)",
+            "type": "string | ((state: SliderValueState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -1603,7 +1603,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: SliderValueState) => CSSProperties)",
+            "type": "CSSProperties | ((state: SliderValueState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -1626,7 +1626,7 @@
       },
       {
         "name": "className",
-        "type": "string | ((state: SwitchRootState) => string)",
+        "type": "string | ((state: SwitchRootState) => string | undefined)",
         "required": false,
         "defaultValue": null,
         "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -1682,7 +1682,7 @@
       },
       {
         "name": "onCheckedChange",
-        "type": "((checked: boolean, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element; }) => void)",
+        "type": "((checked: boolean, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
         "required": false,
         "defaultValue": null,
         "description": "Event handler called when the switch is activated or deactivated."
@@ -1713,11 +1713,11 @@
         "type": "\"sm\" | \"md\"",
         "required": false,
         "defaultValue": "md",
-        "description": ""
+        "description": "Visual size of the switch."
       },
       {
         "name": "style",
-        "type": "CSSProperties | ((state: SwitchRootState) => CSSProperties)",
+        "type": "CSSProperties | ((state: SwitchRootState) => CSSProperties | undefined)",
         "required": false,
         "defaultValue": null,
         "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -1748,70 +1748,70 @@
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Trailing content, such as buttons, rendered after the content."
       },
       {
         "name": "color",
         "type": "\"neutral\" | \"danger\"",
         "required": false,
         "defaultValue": "neutral",
-        "description": ""
+        "description": "Color of the text and icons. `danger` marks a destructive action."
       },
       {
         "name": "description",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Supporting text, placed according to `descriptionPlacement`."
       },
       {
         "name": "descriptionPlacement",
         "type": "\"inline\" | \"end\"",
         "required": false,
         "defaultValue": "inline",
-        "description": ""
+        "description": "Where the description renders: inline after the content or at the end of\nthe row."
       },
       {
         "name": "disabled",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": ""
+        "description": "Prevents clicks and applies the disabled style."
       },
       {
         "name": "endIcon",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Icon rendered after the content."
       },
       {
         "name": "focused",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": ""
+        "description": "Applies the highlighted style, for example to the focused item of a list."
       },
       {
         "name": "hasSubmenu",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": ""
+        "description": "Shows a chevron indicating that the item opens a submenu."
       },
       {
         "name": "hotkeys",
         "type": "string[]",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
       },
       {
         "name": "indicator",
         "type": "\"none\" | \"checkbox\" | \"check\"",
         "required": false,
         "defaultValue": "none",
-        "description": ""
+        "description": "Selection indicator: a check icon after the content or a checkbox before\nit."
       },
       {
         "name": "render",
@@ -1825,14 +1825,14 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": ""
+        "description": "Whether the item is selected. Shows the check or checkbox indicator when\n`indicator` is set."
       },
       {
         "name": "startIcon",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Icon rendered before the content."
       }
     ]
   },
@@ -1847,7 +1847,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: TabsRootState) => string)",
+            "type": "string | ((state: TabsRootState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -1882,7 +1882,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: TabsRootState) => CSSProperties)",
+            "type": "CSSProperties | ((state: TabsRootState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -1908,7 +1908,7 @@
           },
           {
             "name": "className",
-            "type": "string | ((state: TabsListState) => string)",
+            "type": "string | ((state: TabsListState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -1929,7 +1929,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: TabsListState) => CSSProperties)",
+            "type": "CSSProperties | ((state: TabsListState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -1944,11 +1944,11 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Content rendered after the label, such as a count."
           },
           {
             "name": "className",
-            "type": "string | ((state: TabsTabState) => string)",
+            "type": "string | ((state: TabsTabState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -1979,18 +1979,18 @@
             "type": "\"sm\" | \"md\"",
             "required": false,
             "defaultValue": "sm",
-            "description": ""
+            "description": "Visual size of the tab."
           },
           {
             "name": "startIcon",
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Icon rendered before the label."
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: TabsTabState) => CSSProperties)",
+            "type": "CSSProperties | ((state: TabsTabState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -2009,7 +2009,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: TabsPanelState) => string)",
+            "type": "string | ((state: TabsPanelState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -2030,7 +2030,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: TabsPanelState) => CSSProperties)",
+            "type": "CSSProperties | ((state: TabsPanelState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -2125,7 +2125,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: DialogTriggerState) => string)",
+            "type": "string | ((state: DialogTriggerState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -2167,7 +2167,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: DialogTriggerState) => CSSProperties)",
+            "type": "CSSProperties | ((state: DialogTriggerState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -2179,7 +2179,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: DialogPopupState) => string)",
+            "type": "string | ((state: DialogPopupState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -2189,7 +2189,7 @@
             "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Element the dialog is portaled into. Defaults to the theme's portal\ncontainer."
           },
           {
             "name": "finalFocus",
@@ -2210,7 +2210,7 @@
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Keeps the dialog mounted in the DOM while it is closed."
           },
           {
             "name": "render",
@@ -2224,11 +2224,11 @@
             "type": "\"sm\" | \"md\" | \"lg\" | \"xl\" | \"fullscreen\"",
             "required": false,
             "defaultValue": "md",
-            "description": ""
+            "description": "Width of the dialog, or `fullscreen` to fill the viewport."
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: DialogPopupState) => CSSProperties)",
+            "type": "CSSProperties | ((state: DialogPopupState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -2240,7 +2240,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: DialogTitleState) => string)",
+            "type": "string | ((state: DialogTitleState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -2254,7 +2254,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: DialogTitleState) => CSSProperties)",
+            "type": "CSSProperties | ((state: DialogTitleState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -2266,7 +2266,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: DialogDescriptionState) => string)",
+            "type": "string | ((state: DialogDescriptionState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -2280,7 +2280,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: DialogDescriptionState) => CSSProperties)",
+            "type": "CSSProperties | ((state: DialogDescriptionState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -2292,7 +2292,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: DialogCloseState) => string)",
+            "type": "string | ((state: DialogCloseState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -2313,7 +2313,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: DialogCloseState) => CSSProperties)",
+            "type": "CSSProperties | ((state: DialogCloseState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -2479,7 +2479,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: MenuTriggerState) => string)",
+            "type": "string | ((state: MenuTriggerState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -2542,7 +2542,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: MenuTriggerState) => CSSProperties)",
+            "type": "CSSProperties | ((state: MenuTriggerState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -2557,25 +2557,25 @@
             "type": "\"center\" | \"start\" | \"end\"",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Alignment of the popup along the anchor. Defaults to `start`."
           },
           {
             "name": "alignOffset",
             "type": "number",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Offset in pixels along the alignment axis. Defaults to `0` for a menu and\n`-4` for a submenu."
           },
           {
             "name": "anchor",
             "type": "Element | VirtualElement | RefObject<Element | null> | (() => Element | VirtualElement | null) | null",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Element or position the popup is anchored to. Defaults to the trigger."
           },
           {
             "name": "className",
-            "type": "string | ((state: MenuPopupState) => string)",
+            "type": "string | ((state: MenuPopupState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -2585,7 +2585,7 @@
             "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Element the popup is portaled into. Defaults to the theme's portal\ncontainer."
           },
           {
             "name": "finalFocus",
@@ -2595,18 +2595,11 @@
             "description": "Determines the element to focus when the menu is closed.\n\n- `false`: Do not move focus.\n- `true`: Move focus based on the default behavior (trigger or previously focused element).\n- `RefObject`: Move focus to the ref element.\n- `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).\n  Return an element to focus, `true` to use the default behavior, or `false`/`undefined` to do nothing."
           },
           {
-            "name": "id",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "@ignore"
-          },
-          {
             "name": "keepMounted",
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Keeps the popup mounted in the DOM while the menu is closed."
           },
           {
             "name": "render",
@@ -2620,18 +2613,18 @@
             "type": "\"top\" | \"bottom\" | \"left\" | \"right\" | \"inline-end\" | \"inline-start\"",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Side of the anchor the popup is placed on. Defaults to `bottom` for a menu\nand `inline-end` for a submenu."
           },
           {
             "name": "sideOffset",
             "type": "number",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Distance in pixels between the anchor and the popup. Defaults to `8` for a\nmenu and `0` for a submenu."
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: MenuPopupState) => CSSProperties)",
+            "type": "CSSProperties | ((state: MenuPopupState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -2643,7 +2636,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: MenuItemState) => string)",
+            "type": "string | ((state: MenuItemState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -2660,21 +2653,21 @@
             "type": "\"neutral\" | \"danger\"",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Color of the text and icons. `danger` marks a destructive action."
           },
           {
             "name": "description",
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Supporting text, placed according to `descriptionPlacement`."
           },
           {
             "name": "descriptionPlacement",
             "type": "\"inline\" | \"end\"",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Where the description renders: inline after the content or at the end of\nthe row."
           },
           {
             "name": "disabled",
@@ -2688,21 +2681,14 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Icon rendered after the content."
           },
           {
             "name": "hotkeys",
             "type": "string[]",
             "required": false,
             "defaultValue": null,
-            "description": ""
-          },
-          {
-            "name": "id",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "@ignore"
+            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
           },
           {
             "name": "label",
@@ -2737,11 +2723,11 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Icon rendered before the content."
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: MenuItemState) => CSSProperties)",
+            "type": "CSSProperties | ((state: MenuItemState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -2760,7 +2746,7 @@
           },
           {
             "name": "className",
-            "type": "string | ((state: MenuCheckboxItemState) => string)",
+            "type": "string | ((state: MenuCheckboxItemState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -2777,7 +2763,7 @@
             "type": "\"neutral\" | \"danger\"",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Color of the text and icons. `danger` marks a destructive action."
           },
           {
             "name": "defaultChecked",
@@ -2791,14 +2777,14 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Supporting text, placed according to `descriptionPlacement`."
           },
           {
             "name": "descriptionPlacement",
             "type": "\"inline\" | \"end\"",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Where the description renders: inline after the content or at the end of\nthe row."
           },
           {
             "name": "disabled",
@@ -2812,21 +2798,14 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Icon rendered after the content."
           },
           {
             "name": "hotkeys",
             "type": "string[]",
             "required": false,
             "defaultValue": null,
-            "description": ""
-          },
-          {
-            "name": "id",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "@ignore"
+            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
           },
           {
             "name": "label",
@@ -2868,11 +2847,11 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Icon rendered before the content."
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: MenuCheckboxItemState) => CSSProperties)",
+            "type": "CSSProperties | ((state: MenuCheckboxItemState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -2891,7 +2870,7 @@
           },
           {
             "name": "className",
-            "type": "string | ((state: MenuRadioGroupState) => string)",
+            "type": "string | ((state: MenuRadioGroupState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -2926,7 +2905,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: MenuRadioGroupState) => CSSProperties)",
+            "type": "CSSProperties | ((state: MenuRadioGroupState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -2945,7 +2924,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: MenuRadioItemState) => string)",
+            "type": "string | ((state: MenuRadioItemState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -2962,21 +2941,21 @@
             "type": "\"neutral\" | \"danger\"",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Color of the text and icons. `danger` marks a destructive action."
           },
           {
             "name": "description",
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Supporting text, placed according to `descriptionPlacement`."
           },
           {
             "name": "descriptionPlacement",
             "type": "\"inline\" | \"end\"",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Where the description renders: inline after the content or at the end of\nthe row."
           },
           {
             "name": "disabled",
@@ -2990,21 +2969,14 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Icon rendered after the content."
           },
           {
             "name": "hotkeys",
             "type": "string[]",
             "required": false,
             "defaultValue": null,
-            "description": ""
-          },
-          {
-            "name": "id",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "@ignore"
+            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
           },
           {
             "name": "label",
@@ -3039,11 +3011,11 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Icon rendered before the content."
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: MenuRadioItemState) => CSSProperties)",
+            "type": "CSSProperties | ((state: MenuRadioItemState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -3069,7 +3041,7 @@
           },
           {
             "name": "className",
-            "type": "string | ((state: MenuGroupState) => string)",
+            "type": "string | ((state: MenuGroupState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -3083,7 +3055,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: MenuGroupState) => CSSProperties)",
+            "type": "CSSProperties | ((state: MenuGroupState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -3095,7 +3067,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: MenuGroupLabelState) => string)",
+            "type": "string | ((state: MenuGroupLabelState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -3109,7 +3081,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: MenuGroupLabelState) => CSSProperties)",
+            "type": "CSSProperties | ((state: MenuGroupLabelState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -3121,7 +3093,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: SeparatorState) => string)",
+            "type": "string | ((state: SeparatorState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -3142,7 +3114,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: SeparatorState) => CSSProperties)",
+            "type": "CSSProperties | ((state: SeparatorState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -3236,7 +3208,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: MenuSubmenuTriggerState) => string)",
+            "type": "string | ((state: MenuSubmenuTriggerState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -3253,7 +3225,7 @@
             "type": "\"neutral\" | \"danger\"",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Color of the text and icons. `danger` marks a destructive action."
           },
           {
             "name": "delay",
@@ -3267,14 +3239,14 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Supporting text, placed according to `descriptionPlacement`."
           },
           {
             "name": "descriptionPlacement",
             "type": "\"inline\" | \"end\"",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Where the description renders: inline after the content or at the end of\nthe row."
           },
           {
             "name": "disabled",
@@ -3288,21 +3260,14 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Icon rendered after the content."
           },
           {
             "name": "hotkeys",
             "type": "string[]",
             "required": false,
             "defaultValue": null,
-            "description": ""
-          },
-          {
-            "name": "id",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "@ignore"
+            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
           },
           {
             "name": "label",
@@ -3344,11 +3309,11 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Icon rendered before the content."
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: MenuSubmenuTriggerState) => CSSProperties)",
+            "type": "CSSProperties | ((state: MenuSubmenuTriggerState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -3443,7 +3408,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: PopoverTriggerState) => string)",
+            "type": "string | ((state: PopoverTriggerState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -3480,8 +3445,8 @@
             "name": "nativeButton",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true\ntrue",
-            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`).\nWhether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+            "defaultValue": "true",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
           },
           {
             "name": "openOnHover",
@@ -3506,7 +3471,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties)",
+            "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -3521,32 +3486,32 @@
             "type": "\"center\" | \"start\" | \"end\"",
             "required": false,
             "defaultValue": "center",
-            "description": ""
+            "description": "Alignment of the popup along the anchor."
           },
           {
             "name": "alignOffset",
             "type": "number",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Offset in pixels along the alignment axis."
           },
           {
             "name": "anchor",
             "type": "Element | VirtualElement | RefObject<Element | null> | (() => Element | VirtualElement | null) | null",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Element or position the popup is anchored to. Defaults to the trigger."
           },
           {
             "name": "arrow",
             "type": "boolean",
             "required": false,
             "defaultValue": "false",
-            "description": ""
+            "description": "Shows an arrow pointing at the anchor."
           },
           {
             "name": "className",
-            "type": "string | ((state: PopoverPopupState) => string)",
+            "type": "string | ((state: PopoverPopupState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -3556,7 +3521,7 @@
             "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Element the popup is portaled into. Defaults to the theme's portal\ncontainer."
           },
           {
             "name": "finalFocus",
@@ -3577,7 +3542,7 @@
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": ""
+            "description": "Keeps the popup mounted in the DOM while the popover is closed."
           },
           {
             "name": "render",
@@ -3591,18 +3556,18 @@
             "type": "\"top\" | \"bottom\" | \"left\" | \"right\" | \"inline-end\" | \"inline-start\"",
             "required": false,
             "defaultValue": "bottom",
-            "description": ""
+            "description": "Side of the anchor the popup is placed on."
           },
           {
             "name": "sideOffset",
             "type": "number",
             "required": false,
             "defaultValue": "8",
-            "description": ""
+            "description": "Distance in pixels between the anchor and the popup."
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: PopoverPopupState) => CSSProperties)",
+            "type": "CSSProperties | ((state: PopoverPopupState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -3614,7 +3579,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: PopoverTitleState) => string)",
+            "type": "string | ((state: PopoverTitleState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -3628,7 +3593,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: PopoverTitleState) => CSSProperties)",
+            "type": "CSSProperties | ((state: PopoverTitleState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -3640,7 +3605,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: PopoverDescriptionState) => string)",
+            "type": "string | ((state: PopoverDescriptionState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -3654,7 +3619,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: PopoverDescriptionState) => CSSProperties)",
+            "type": "CSSProperties | ((state: PopoverDescriptionState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -3666,7 +3631,7 @@
         "props": [
           {
             "name": "className",
-            "type": "string | ((state: PopoverCloseState) => string)",
+            "type": "string | ((state: PopoverCloseState) => string | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
@@ -3687,7 +3652,7 @@
           },
           {
             "name": "style",
-            "type": "CSSProperties | ((state: PopoverCloseState) => CSSProperties)",
+            "type": "CSSProperties | ((state: PopoverCloseState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
@@ -3706,84 +3671,84 @@
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Content rendered in the footer, such as an action button."
       },
       {
         "name": "cancelLabel",
         "type": "string",
         "required": false,
         "defaultValue": "Cancel",
-        "description": ""
+        "description": "Label of the cancel button."
       },
       {
         "name": "closeLabel",
         "type": "string",
         "required": false,
         "defaultValue": "Close",
-        "description": ""
+        "description": "Accessible name of the close button."
       },
       {
         "name": "description",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Supporting content rendered below the message."
       },
       {
         "name": "duration",
         "type": "number",
         "required": false,
         "defaultValue": "6000",
-        "description": ""
+        "description": "Milliseconds before `onClose` is called. The countdown pauses while the\npointer is over the toast."
       },
       {
         "name": "icon",
         "type": "ReactNode",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Replaces the variant's icon."
       },
       {
         "name": "iconLabel",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Accessible name of the default icon. Without it, the icon is hidden from\nassistive technology."
       },
       {
         "name": "onCancel",
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Called when the cancel button is clicked. The button renders only when\nthis callback is provided."
       },
       {
         "name": "onClose",
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Called when the close button is clicked or the countdown completes. The\nbutton renders only when this callback is provided."
       },
       {
         "name": "progress",
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Completion percentage shown in the progress bar. When set, the countdown\nis disabled."
       },
       {
         "name": "render",
         "type": "RenderProp<Record<string, unknown>>",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Replaces the rendered element or composes it with another component.\nAccepts a React element or a function that returns the element to render."
       },
       {
         "name": "variant",
         "type": "\"success\" | \"warning\" | \"default\" | \"error\" | \"info\"",
         "required": false,
         "defaultValue": "default",
-        "description": ""
+        "description": "Visual variant that selects the icon and colors."
       }
     ]
   },
@@ -3797,7 +3762,7 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Maximum number of lines before the text is truncated with an ellipsis.\nCannot be combined with `truncate`."
       },
       {
         "name": "render",
@@ -3811,7 +3776,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": ""
+        "description": "Truncates overflowing text on one line with an ellipsis. Cannot be\ncombined with `lineClamp`."
       }
     ]
   }

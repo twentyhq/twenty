@@ -3,6 +3,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 
+import { extractDocumentationExamples } from '../docs/extractDocumentationExamples';
 import { getDocumentationImportDiagnostics } from '../docs/getDocumentationImportDiagnostics';
 
 const toModuleName = (subpath: string): string =>
@@ -10,13 +11,17 @@ const toModuleName = (subpath: string): string =>
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const documentationRoot = resolve(packageRoot, '../twenty-docs/ui');
-const packageManifest: { exports: Record<string, unknown> } = JSON.parse(
-  readFileSync(resolve(packageRoot, 'package.json'), 'utf8'),
-);
+const packageManifest: {
+  exports: Record<string, unknown>;
+  peerDependencies: Record<string, string>;
+} = JSON.parse(readFileSync(resolve(packageRoot, 'package.json'), 'utf8'));
 const exportedSubpaths = Object.entries(packageManifest.exports)
   .filter(([, target]) => target !== null)
   .map(([subpath]) => subpath);
-const exportedModules = new Set(exportedSubpaths.map(toModuleName));
+const allowedModules = new Set([
+  ...exportedSubpaths.map(toModuleName),
+  ...Object.keys(packageManifest.peerDependencies),
+]);
 const configuration = ts.readConfigFile(
   resolve(packageRoot, 'tsconfig.json'),
   ts.sys.readFile,
@@ -31,12 +36,15 @@ const examples = new Map<string, string>();
 for (const page of globSync('**/*.mdx', { cwd: documentationRoot })) {
   const contents = readFileSync(resolve(documentationRoot, page), 'utf8');
 
-  for (const [index, match] of [
-    ...contents.matchAll(/^```tsx\r?\n([\s\S]*?)^```\s*$/gm),
-  ].entries()) {
+  for (const [index, example] of extractDocumentationExamples(
+    contents,
+  ).entries()) {
     examples.set(
-      resolve(documentationRoot, `${page}.example-${index + 1}.tsx`),
-      match[1],
+      resolve(
+        documentationRoot,
+        `${page}.example-${index + 1}.${example.language}`,
+      ),
+      example.code,
     );
   }
 }
@@ -49,6 +57,7 @@ const compilerOptions: ts.CompilerOptions = {
   ...options,
   preserveSymlinks: true,
   noEmit: true,
+  types: [],
   paths: {
     ...options.paths,
     ...Object.fromEntries(
@@ -83,7 +92,7 @@ compilerHost.getSourceFile = (
         example,
         languageVersion,
         true,
-        ts.ScriptKind.TSX,
+        fileName.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
       );
 };
 const program = ts.createProgram(
@@ -101,7 +110,7 @@ const diagnostics = [
     }
 
     return [
-      ...getDocumentationImportDiagnostics({ source, exportedModules }),
+      ...getDocumentationImportDiagnostics({ source, allowedModules }),
       ...program.getSyntacticDiagnostics(source),
       ...program.getSemanticDiagnostics(source),
     ];

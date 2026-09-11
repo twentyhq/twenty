@@ -10,5 +10,9 @@ export type SelectPopupProps = SelectPrimitive.Popup.Props &
     | 'alignItemWithTrigger'
     | 'anchor'
   > & {
+    /**
+     * Element the popup is portaled into. Defaults to the theme's portal
+     * container.
+     */
     container?: SelectPrimitive.Portal.Props['container'];
   };

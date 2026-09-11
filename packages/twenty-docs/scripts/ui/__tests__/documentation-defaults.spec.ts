@@ -48,7 +48,7 @@ describe('documentation defaults', () => {
     });
 
     expect(normalizeDocumentationDefaultValue(null)).toBeNull();
-    expect(reference).toContain('default={"onSubmit"}');
+    expect(reference).toContain('default="onSubmit"');
     expect(reference.match(/default=/g)).toHaveLength(1);
   });
 });

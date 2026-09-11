@@ -1,19 +1,25 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Parser, type ComponentDoc } from 'react-docgen-typescript';
+import { type ComponentDoc, type PropItem } from 'react-docgen-typescript';
 import ts from 'typescript';
 
 import { DESIGN_TOKENS } from '../design-tokens/designTokens';
 import { collectLeaves } from '../design-tokens/pipeline/collectLeaves';
 import { DOCUMENTED_COMPONENTS } from '../docs/components';
+import { DocumentationParser } from '../docs/DocumentationParser';
+import { formatDocumentationTokenValue } from '../docs/formatDocumentationTokenValue';
 import { normalizeDocumentationDefaultValue } from '../docs/normalizeDocumentationDefaultValue';
+import { normalizeDocumentationPropType } from '../docs/normalizeDocumentationPropType';
 import {
   type ComponentDocumentation,
   type TokenDocumentation,
 } from '../docs/types';
 
+const HIDDEN_PROP_TAGS = ['ignore', 'internal'];
+
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const sourceRoot = resolve(packageRoot, 'src');
 const configurationPath = resolve(packageRoot, 'tsconfig.json');
 const configuration = ts.readConfigFile(configurationPath, ts.sys.readFile);
 
@@ -38,20 +44,33 @@ if (errors.length > 0) {
 }
 
 const sourcePaths = DOCUMENTED_COMPONENTS.map((component) =>
-  resolve(packageRoot, 'src', component.source),
+  resolve(sourceRoot, component.source),
 );
 const program = ts.createProgram(sourcePaths, {
   ...options,
   preserveSymlinks: true,
 });
 const checker = program.getTypeChecker();
-const parser = new Parser(program, {
+
+const isReactNativeAttribute = (prop: PropItem): boolean =>
+  prop.declarations !== undefined &&
+  prop.declarations.length > 0 &&
+  prop.declarations.every((declaration) =>
+    declaration.fileName.includes('@types/react/'),
+  );
+
+const isHiddenProp = (prop: PropItem): boolean =>
+  HIDDEN_PROP_TAGS.some((tag) => tag in (prop.tags ?? {}));
+
+const isDeclaredInTwentyUi = (prop: PropItem): boolean =>
+  prop.declarations?.some((declaration) =>
+    declaration.fileName.startsWith(sourceRoot),
+  ) ?? false;
+
+const parser = new DocumentationParser(program, {
   shouldExtractLiteralValuesFromEnum: true,
-  shouldRemoveUndefinedFromOptional: true,
-  propFilter: (prop) =>
-    !prop.declarations?.every((declaration) =>
-      declaration.fileName.includes('@types/react/'),
-    ),
+  shouldIncludePropTagMap: true,
+  propFilter: (prop) => !isReactNativeAttribute(prop) && !isHiddenProp(prop),
 });
 
 const extractProps = (
@@ -76,25 +95,31 @@ const extractProps = (
 
   return Object.values(parsed.props)
     .sort((left, right) => left.name.localeCompare(right.name, 'en'))
-    .map((prop) => ({
-      name: prop.name,
-      type:
-        prop.type.name === 'enum'
-          ? prop.type.value
-              .map((value: { value: string }) => value.value)
-              .join(' | ')
-          : prop.type.name,
-      required: prop.required,
-      defaultValue: normalizeDocumentationDefaultValue(prop.defaultValue),
-      description: prop.description,
-    }));
+    .map((prop) => {
+      const description = prop.description.trim();
+
+      if (description.length === 0 && isDeclaredInTwentyUi(prop)) {
+        throw new Error(
+          `Missing JSDoc description for ${name}.${prop.name}. Document the prop in its props type.`,
+        );
+      }
+
+      return {
+        name: prop.name,
+        type: normalizeDocumentationPropType({
+          type: prop.type,
+          required: prop.required,
+        }),
+        required: prop.required,
+        defaultValue: normalizeDocumentationDefaultValue(prop.defaultValue),
+        description,
+      };
+    });
 };
 
 const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
   (component) => {
-    const source = program.getSourceFile(
-      resolve(packageRoot, 'src', component.source),
-    );
+    const source = program.getSourceFile(resolve(sourceRoot, component.source));
     const moduleSymbol = source && checker.getSymbolAtLocation(source);
     const symbol =
       moduleSymbol &&
@@ -133,7 +158,6 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
         throw new Error(`Could not find ${component.name}.${part.name}`);
       }
 
-      // Follow the original declaration so wrapper defaults survive extraction.
       if (partSymbol.flags & ts.SymbolFlags.Alias) {
         partSymbol = checker.getAliasedSymbol(partSymbol);
       }
@@ -156,11 +180,13 @@ const tokens: TokenDocumentation[] = collectLeaves(DESIGN_TOKENS)
   .map((leaf) => ({
     path: leaf.path.join('.'),
     cssVariable: leaf.varName,
-    light: leaf.light,
-    dark: leaf.dark,
+    light: formatDocumentationTokenValue(leaf.light),
+    dark: formatDocumentationTokenValue(leaf.dark),
     isNumber: leaf.unit === 'number',
   }))
-  .sort((left, right) => left.path.localeCompare(right.path, 'en'));
+  .sort((left, right) =>
+    left.path.localeCompare(right.path, 'en', { numeric: true }),
+  );
 
 const outputs = [
   { name: 'components.docs.json', data: components },

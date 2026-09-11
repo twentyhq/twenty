@@ -6,8 +6,7 @@ import {
 } from '../render-ui-reference';
 
 describe('renderComponentReference', () => {
-  it('preserves generic types and JSX-like text without emitting tags', () => {
-    const type = 'Ref<custom> | "quoted"';
+  it('escapes attributes and prose while keeping markdown and code intact', () => {
     const reference = renderComponentReference({
       name: 'Example',
       entryPoint: 'twenty-ui/input',
@@ -15,20 +14,29 @@ describe('renderComponentReference', () => {
       props: [
         {
           name: 'render',
-          type,
+          type: 'Ref<custom> | "quoted"',
           required: true,
           defaultValue: null,
-          description: 'Render `<custom>` with {value}.',
+          description:
+            'Render `<custom>` with {value} & more.\n\n- `unmount`: Manually unmounts.\n\n```tsx\n<Example render={<span />} />\n```',
         },
       ],
     });
-    const renderedType = reference.match(/type=\{("(?:\\.|[^"\\])*")\}/)?.[1];
 
-    expect(renderedType).toBeDefined();
-    expect(JSON.parse(renderedType ?? 'null')).toBe(type);
-    expect(reference).not.toContain('<custom>');
-    expect(reference).toContain('required');
-    expect(reference).not.toContain('default=');
+    expect(reference).toBe(
+      [
+        '<ParamField body="render" type="Ref&lt;custom&gt; | &quot;quoted&quot;" required>',
+        '  Render `<custom>` with &#123;value&#125; &amp; more.',
+        '',
+        '  - `unmount`: Manually unmounts.',
+        '',
+        '  ```tsx',
+        '  <Example render={<span />} />',
+        '  ```',
+        '</ParamField>',
+        '',
+      ].join('\n'),
+    );
   });
 });
 
@@ -70,10 +78,10 @@ describe('compound component references', () => {
     expect(reference).toContain('### Menu.Item');
     expect(reference).toContain('### Menu.CheckboxItem');
     expect(reference).toContain(
-      'body="Item.closeOnClick" type={"boolean"} default={"true"}',
+      '<ParamField body="Item.closeOnClick" type="boolean" default="true">',
     );
     expect(reference).toContain(
-      'body="CheckboxItem.closeOnClick" type={"boolean"} default={"false"}',
+      '<ParamField body="CheckboxItem.closeOnClick" type="boolean" default="false">',
     );
   });
 });

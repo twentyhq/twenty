@@ -1,11 +1,19 @@
 import ts from 'typescript';
 
+const isTwentyUiModule = (specifier: string): boolean =>
+  specifier === 'twenty-ui' || specifier.startsWith('twenty-ui/');
+
+const describeDisallowedModule = (specifier: string): string =>
+  isTwentyUiModule(specifier)
+    ? `${specifier} is not exported by twenty-ui/package.json.`
+    : `${specifier} is not a twenty-ui entry point or peer dependency. Documentation examples can only import those.`;
+
 export const getDocumentationImportDiagnostics = ({
   source,
-  exportedModules,
+  allowedModules,
 }: {
   source: ts.SourceFile;
-  exportedModules: ReadonlySet<string>;
+  allowedModules: ReadonlySet<string>;
 }): ts.Diagnostic[] => {
   const diagnostics: ts.Diagnostic[] = [];
 
@@ -31,9 +39,7 @@ export const getDocumentationImportDiagnostics = ({
     if (
       specifier &&
       ts.isStringLiteralLike(specifier) &&
-      (specifier.text === 'twenty-ui' ||
-        specifier.text.startsWith('twenty-ui/')) &&
-      !exportedModules.has(specifier.text)
+      !allowedModules.has(specifier.text)
     ) {
       diagnostics.push({
         category: ts.DiagnosticCategory.Error,
@@ -41,7 +47,7 @@ export const getDocumentationImportDiagnostics = ({
         file: source,
         start: specifier.getStart(source),
         length: specifier.getWidth(source),
-        messageText: `${specifier.text} is not exported by twenty-ui/package.json.`,
+        messageText: describeDisallowedModule(specifier.text),
       });
     }
 

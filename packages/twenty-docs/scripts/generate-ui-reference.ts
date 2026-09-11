@@ -5,6 +5,7 @@ import {
   type ComponentDocumentation,
   type TokenDocumentation,
 } from '../../twenty-ui/docs/types';
+import { checkUiReferenceImports } from './ui/check-ui-reference-imports';
 import {
   renderComponentReference,
   renderTokenReference,
@@ -13,6 +14,7 @@ import { syncUiReferenceFiles } from './ui/sync-ui-reference-files';
 
 const dataRoot = resolve(__dirname, '../../twenty-ui/generated');
 const snippetsRoot = resolve(__dirname, '../snippets/ui/generated');
+const pagesRoot = resolve(__dirname, '../ui');
 const components: ComponentDocumentation[] = JSON.parse(
   readFileSync(resolve(dataRoot, 'components.docs.json'), 'utf8'),
 );
@@ -27,7 +29,7 @@ const outputs = [
   { name: 'tokens.mdx', content: renderTokenReference(tokens) },
 ];
 
-const errors = syncUiReferenceFiles({
+const syncErrors = syncUiReferenceFiles({
   directory: snippetsRoot,
   outputs: outputs.map((output) => ({
     ...output,
@@ -36,9 +38,21 @@ const errors = syncUiReferenceFiles({
   isCheckMode: process.argv.includes('--check'),
 });
 
-if (errors.length > 0) {
+if (syncErrors.length > 0) {
   process.stderr.write(
-    `${errors.join('\n')}\nRun npx nx generate:ui twenty-docs.\n`,
+    `${syncErrors.join('\n')}\nRun npx nx generate:ui twenty-docs.\n`,
+  );
+  process.exitCode = 1;
+}
+
+const importErrors = checkUiReferenceImports({
+  pagesDirectory: pagesRoot,
+  outputs,
+});
+
+if (importErrors.length > 0) {
+  process.stderr.write(
+    `${importErrors.join('\n')}\nKeep the pages under ui/ and DOCUMENTED_COMPONENTS in twenty-ui/docs/components.ts in sync.\n`,
   );
   process.exitCode = 1;
 }

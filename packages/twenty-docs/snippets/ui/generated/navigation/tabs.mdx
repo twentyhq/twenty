@@ -2,112 +2,159 @@
 
 ### Tabs.Root
 
-<ParamField body="Root.className" type={"string | ((state: TabsRootState) => string)"}>
-  {"CSS class applied to the element, or a function that\nreturns a class based on the component's state."}
+<ParamField body="Root.className" type="string | ((state: TabsRootState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="Root.defaultValue" type={"any"} default={"0"}>
-  {"The default value. Use when the component is not controlled.\nWhen the value is null, no Tab will be active."}
+<ParamField body="Root.defaultValue" type="any" default="0">
+  The default value. Use when the component is not controlled.
+  When the value is `null`, no Tab will be active.
 </ParamField>
 
-<ParamField body="Root.onValueChange" type={"((value: any, eventDetails: TabsRootChangeEventDetails) => void)"}>
-  {"Callback invoked when new value is being set.\n\nThe event reason is 'none' for user-initiated changes, such as a click\nor keyboard navigation; 'initial' for the first automatic selection or\nfallback in uncontrolled roots when defaultValue is omitted or\nundefined, including when the implicit initial value is disabled or\nmissing; 'disabled' for automatic fallback when the selected tab becomes\ndisabled in uncontrolled roots; or 'missing' for automatic fallback when\nthe selected tab is removed, or when an explicit defaultValue never\nmatches a mounted tab in uncontrolled roots.\n\nFor automatic changes, the selected value can be null when no enabled Tab\nis available as a fallback.\n\nAutomatic changes cannot be canceled; calling eventDetails.cancel() for\n'initial', 'disabled', or 'missing' has no effect."}
+<ParamField body="Root.onValueChange" type="((value: any, eventDetails: TabsRootChangeEventDetails) =&gt; void)">
+  Callback invoked when new value is being set.
+
+  The event `reason` is `'none'` for user-initiated changes, such as a click
+  or keyboard navigation; `'initial'` for the first automatic selection or
+  fallback in uncontrolled roots when `defaultValue` is omitted or
+  `undefined`, including when the implicit initial value is disabled or
+  missing; `'disabled'` for automatic fallback when the selected tab becomes
+  disabled in uncontrolled roots; or `'missing'` for automatic fallback when
+  the selected tab is removed, or when an explicit `defaultValue` never
+  matches a mounted tab in uncontrolled roots.
+
+  For automatic changes, the selected value can be `null` when no enabled Tab
+  is available as a fallback.
+
+  Automatic changes cannot be canceled; calling `eventDetails.cancel()` for
+  `'initial'`, `'disabled'`, or `'missing'` has no effect.
 </ParamField>
 
-<ParamField body="Root.orientation" type={"\"horizontal\" | \"vertical\""} default={"horizontal"}>
-  {"The component orientation (layout flow direction)."}
+<ParamField body="Root.orientation" type="&quot;horizontal&quot; | &quot;vertical&quot;" default="horizontal">
+  The component orientation (layout flow direction).
 </ParamField>
 
-<ParamField body="Root.render" type={"ReactElement\u003cunknown, string | JSXElementConstructor\u003cany>> | ComponentRenderFn\u003cHTMLProps, TabsRootState>"}>
-  {"Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a ReactElement or a function that returns the element to render."}
+<ParamField body="Root.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, TabsRootState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Root.style" type={"CSSProperties | ((state: TabsRootState) => CSSProperties)"}>
-  {"Style applied to the element, or a function that\nreturns a style object based on the component's state."}
+<ParamField body="Root.style" type="CSSProperties | ((state: TabsRootState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
 </ParamField>
 
-<ParamField body="Root.value" type={"any"}>
-  {"The value of the currently active Tab. Use when the component is controlled.\nWhen the value is null, no Tab will be active."}
+<ParamField body="Root.value" type="any">
+  The value of the currently active `Tab`. Use when the component is controlled.
+  When the value is `null`, no Tab will be active.
 </ParamField>
 
 ### Tabs.List
 
-<ParamField body="List.activateOnFocus" type={"boolean"} default={"false"}>
-  {"Whether to automatically change the active tab on arrow key focus.\nOtherwise, tabs will be activated using \u003ckbd>Enter\u003c/kbd> or \u003ckbd>Space\u003c/kbd> key press."}
+<ParamField body="List.activateOnFocus" type="boolean" default="false">
+  Whether to automatically change the active tab on arrow key focus.
+  Otherwise, tabs will be activated using &lt;kbd>Enter&lt;/kbd> or &lt;kbd>Space&lt;/kbd> key press.
 </ParamField>
 
-<ParamField body="List.className" type={"string | ((state: TabsListState) => string)"}>
-  {"CSS class applied to the element, or a function that\nreturns a class based on the component's state."}
+<ParamField body="List.className" type="string | ((state: TabsListState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="List.loopFocus" type={"boolean"} default={"true"}>
-  {"Whether to loop keyboard focus back to the first item\nwhen the end of the list is reached while using the arrow keys."}
+<ParamField body="List.loopFocus" type="boolean" default="true">
+  Whether to loop keyboard focus back to the first item
+  when the end of the list is reached while using the arrow keys.
 </ParamField>
 
-<ParamField body="List.render" type={"ReactElement\u003cunknown, string | JSXElementConstructor\u003cany>> | ComponentRenderFn\u003cHTMLProps, TabsListState>"}>
-  {"Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a ReactElement or a function that returns the element to render."}
+<ParamField body="List.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, TabsListState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="List.style" type={"CSSProperties | ((state: TabsListState) => CSSProperties)"}>
-  {"Style applied to the element, or a function that\nreturns a style object based on the component's state."}
+<ParamField body="List.style" type="CSSProperties | ((state: TabsListState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
 </ParamField>
 
 ### Tabs.Tab
 
-<ParamField body="Tab.badge" type={"ReactNode"}>
-  {""}
+<ParamField body="Tab.badge" type="ReactNode">
+  Content rendered after the label, such as a count.
 </ParamField>
 
-<ParamField body="Tab.className" type={"string | ((state: TabsTabState) => string)"}>
-  {"CSS class applied to the element, or a function that\nreturns a class based on the component's state."}
+<ParamField body="Tab.className" type="string | ((state: TabsTabState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="Tab.disabled" type={"boolean"}>
-  {"Whether the Tab is disabled.\n\nIf a first Tab on a \u003cTabs.List> is disabled, it won't initially be selected.\nInstead, the next enabled Tab will be selected.\nHowever, it does not work like this during server-side rendering, as it is not known\nduring pre-rendering which Tabs are disabled.\nTo work around it, ensure that defaultValue or value on \u003cTabs.Root> is set to an enabled Tab's value."}
+<ParamField body="Tab.disabled" type="boolean">
+  Whether the Tab is disabled.
+
+  If a first Tab on a `<Tabs.List>` is disabled, it won't initially be selected.
+  Instead, the next enabled Tab will be selected.
+  However, it does not work like this during server-side rendering, as it is not known
+  during pre-rendering which Tabs are disabled.
+  To work around it, ensure that `defaultValue` or `value` on `<Tabs.Root>` is set to an enabled Tab's value.
 </ParamField>
 
-<ParamField body="Tab.nativeButton" type={"boolean"} default={"true"}>
-  {"Whether the component renders a native \u003cbutton> element when replacing it\nvia the render prop.\nSet to false if the rendered element is not a button (for example, \u003cdiv>)."}
+<ParamField body="Tab.nativeButton" type="boolean" default="true">
+  Whether the component renders a native `<button>` element when replacing it
+  via the `render` prop.
+  Set to `false` if the rendered element is not a button (for example, `<div>`).
 </ParamField>
 
-<ParamField body="Tab.render" type={"ReactElement\u003cunknown, string | JSXElementConstructor\u003cany>> | ComponentRenderFn\u003cHTMLProps, TabsTabState>"}>
-  {"Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a ReactElement or a function that returns the element to render."}
+<ParamField body="Tab.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, TabsTabState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Tab.size" type={"\"sm\" | \"md\""} default={"sm"}>
-  {""}
+<ParamField body="Tab.size" type="&quot;sm&quot; | &quot;md&quot;" default="sm">
+  Visual size of the tab.
 </ParamField>
 
-<ParamField body="Tab.startIcon" type={"ReactNode"}>
-  {""}
+<ParamField body="Tab.startIcon" type="ReactNode">
+  Icon rendered before the label.
 </ParamField>
 
-<ParamField body="Tab.style" type={"CSSProperties | ((state: TabsTabState) => CSSProperties)"}>
-  {"Style applied to the element, or a function that\nreturns a style object based on the component's state."}
+<ParamField body="Tab.style" type="CSSProperties | ((state: TabsTabState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
 </ParamField>
 
-<ParamField body="Tab.value" type={"any"} required>
-  {"The value of the Tab."}
+<ParamField body="Tab.value" type="any" required>
+  The value of the Tab.
 </ParamField>
 
 ### Tabs.Panel
 
-<ParamField body="Panel.className" type={"string | ((state: TabsPanelState) => string)"}>
-  {"CSS class applied to the element, or a function that\nreturns a class based on the component's state."}
+<ParamField body="Panel.className" type="string | ((state: TabsPanelState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="Panel.keepMounted" type={"boolean"} default={"false"}>
-  {"Whether to keep the HTML element in the DOM while the panel is hidden."}
+<ParamField body="Panel.keepMounted" type="boolean" default="false">
+  Whether to keep the HTML element in the DOM while the panel is hidden.
 </ParamField>
 
-<ParamField body="Panel.render" type={"ReactElement\u003cunknown, string | JSXElementConstructor\u003cany>> | ComponentRenderFn\u003cHTMLProps, TabsPanelState>"}>
-  {"Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a ReactElement or a function that returns the element to render."}
+<ParamField body="Panel.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, TabsPanelState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Panel.style" type={"CSSProperties | ((state: TabsPanelState) => CSSProperties)"}>
-  {"Style applied to the element, or a function that\nreturns a style object based on the component's state."}
+<ParamField body="Panel.style" type="CSSProperties | ((state: TabsPanelState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
 </ParamField>
 
-<ParamField body="Panel.value" type={"any"} required>
-  {"The value of the TabPanel. It will be shown when the Tab with the corresponding value is active."}
+<ParamField body="Panel.value" type="any" required>
+  The value of the TabPanel. It will be shown when the Tab with the corresponding value is active.
 </ParamField>

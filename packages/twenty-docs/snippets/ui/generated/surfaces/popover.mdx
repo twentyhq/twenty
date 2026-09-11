@@ -2,184 +2,256 @@
 
 ### Popover.Root
 
-<ParamField body="Root.actionsRef" type={"RefObject\u003cPopoverRootActions | null>"}>
-  {"A ref to imperative actions.\n- unmount: Manually unmounts the popover.\nCall this after any externally controlled closing animation finishes.\n- close: Closes the popover imperatively when called."}
+<ParamField body="Root.actionsRef" type="RefObject&lt;PopoverRootActions | null&gt;">
+  A ref to imperative actions.
+  - `unmount`: Manually unmounts the popover.
+  Call this after any externally controlled closing animation finishes.
+  - `close`: Closes the popover imperatively when called.
 </ParamField>
 
-<ParamField body="Root.children" type={"ReactNode | PayloadChildRenderFunction\u003cPayload>"}>
-  {"The content of the popover.\nThis can be a regular React node or a render function that receives the payload of the active trigger."}
+<ParamField body="Root.children" type="ReactNode | PayloadChildRenderFunction&lt;Payload&gt;">
+  The content of the popover.
+  This can be a regular React node or a render function that receives the `payload` of the active trigger.
 </ParamField>
 
-<ParamField body="Root.defaultOpen" type={"boolean"} default={"false"}>
-  {"Whether the popover is initially open.\n\nTo render a controlled popover, use the open prop instead."}
+<ParamField body="Root.defaultOpen" type="boolean" default="false">
+  Whether the popover is initially open.
+
+  To render a controlled popover, use the `open` prop instead.
 </ParamField>
 
-<ParamField body="Root.defaultTriggerId" type={"string | null"}>
-  {"ID of the trigger that the popover is associated with.\nThis is useful in conjunction with the defaultOpen prop to create an initially open popover."}
+<ParamField body="Root.defaultTriggerId" type="string | null">
+  ID of the trigger that the popover is associated with.
+  This is useful in conjunction with the `defaultOpen` prop to create an initially open popover.
 </ParamField>
 
-<ParamField body="Root.handle" type={"PopoverHandle\u003cPayload>"}>
-  {"A handle to associate the popover with a trigger.\nIf specified, allows external triggers to control the popover's open state."}
+<ParamField body="Root.handle" type="PopoverHandle&lt;Payload&gt;">
+  A handle to associate the popover with a trigger.
+  If specified, allows external triggers to control the popover's open state.
 </ParamField>
 
-<ParamField body="Root.modal" type={"boolean | \"trap-focus\""} default={"false"}>
-  {"Determines if the popover enters a modal state when open.\n- true: user interaction is limited to the popover: document page scroll is locked, and pointer interactions on outside elements are disabled.\n- false: user interaction with the rest of the document is allowed.\n- 'trap-focus': focus is trapped inside the popover, but document page scroll is not locked and pointer interactions outside of it remain enabled.\n\nOn touch devices, a true modal blocks outside taps but leaves the page scrollable unless the popup spans nearly the full viewport width, matching native iOS behavior.\n\nWhen modal is true, focus trapping is enabled only if \u003cPopover.Close> is rendered\ninside \u003cPopover.Popup>. It can be visually hidden with your own CSS if needed, such as\nTailwind's sr-only utility.\n\nWhen modal is 'trap-focus', render \u003cPopover.Close> inside \u003cPopover.Popup> so touch\nscreen readers can escape the popup."}
+<ParamField body="Root.modal" type="boolean | &quot;trap-focus&quot;" default="false">
+  Determines if the popover enters a modal state when open.
+  - `true`: user interaction is limited to the popover: document page scroll is locked, and pointer interactions on outside elements are disabled.
+  - `false`: user interaction with the rest of the document is allowed.
+  - `'trap-focus'`: focus is trapped inside the popover, but document page scroll is not locked and pointer interactions outside of it remain enabled.
+
+  On touch devices, a `true` modal blocks outside taps but leaves the page scrollable unless the popup spans nearly the full viewport width, matching native iOS behavior.
+
+  When `modal` is `true`, focus trapping is enabled only if `<Popover.Close>` is rendered
+  inside `<Popover.Popup>`. It can be visually hidden with your own CSS if needed, such as
+  Tailwind's `sr-only` utility.
+
+  When `modal` is `'trap-focus'`, render `<Popover.Close>` inside `<Popover.Popup>` so touch
+  screen readers can escape the popup.
 </ParamField>
 
-<ParamField body="Root.onOpenChange" type={"((open: boolean, eventDetails: PopoverRootChangeEventDetails) => void)"}>
-  {"Event handler called when the popover is opened or closed."}
+<ParamField body="Root.onOpenChange" type="((open: boolean, eventDetails: PopoverRootChangeEventDetails) =&gt; void)">
+  Event handler called when the popover is opened or closed.
 </ParamField>
 
-<ParamField body="Root.onOpenChangeComplete" type={"((open: boolean) => void)"}>
-  {"Event handler called after any animations complete when the popover is opened or closed."}
+<ParamField body="Root.onOpenChangeComplete" type="((open: boolean) =&gt; void)">
+  Event handler called after any animations complete when the popover is opened or closed.
 </ParamField>
 
-<ParamField body="Root.open" type={"boolean"}>
-  {"Whether the popover is currently open."}
+<ParamField body="Root.open" type="boolean">
+  Whether the popover is currently open.
 </ParamField>
 
-<ParamField body="Root.triggerId" type={"string | null"}>
-  {"ID of the trigger that the popover is associated with.\nThis is useful in conjunction with the open prop to create a controlled popover.\nThere's no need to specify this prop when the popover is uncontrolled (that is, when the open prop is not set)."}
+<ParamField body="Root.triggerId" type="string | null">
+  ID of the trigger that the popover is associated with.
+  This is useful in conjunction with the `open` prop to create a controlled popover.
+  There's no need to specify this prop when the popover is uncontrolled (that is, when the `open` prop is not set).
 </ParamField>
 
 ### Popover.Trigger
 
-<ParamField body="Trigger.className" type={"string | ((state: PopoverTriggerState) => string)"}>
-  {"CSS class applied to the element, or a function that\nreturns a class based on the component's state."}
+<ParamField body="Trigger.className" type="string | ((state: PopoverTriggerState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="Trigger.closeDelay" type={"number"} default={"0"}>
-  {"How long to wait before closing the popover that was opened on hover.\nSpecified in milliseconds.\n\nRequires the openOnHover prop."}
+<ParamField body="Trigger.closeDelay" type="number" default="0">
+  How long to wait before closing the popover that was opened on hover.
+  Specified in milliseconds.
+
+  Requires the `openOnHover` prop.
 </ParamField>
 
-<ParamField body="Trigger.delay" type={"number"} default={"300"}>
-  {"How long to wait before the popover may be opened on hover. Specified in milliseconds.\n\nRequires the openOnHover prop."}
+<ParamField body="Trigger.delay" type="number" default="300">
+  How long to wait before the popover may be opened on hover. Specified in milliseconds.
+
+  Requires the `openOnHover` prop.
 </ParamField>
 
-<ParamField body="Trigger.handle" type={"PopoverHandle\u003cPayload>"}>
-  {"A handle to associate the trigger with a popover."}
+<ParamField body="Trigger.handle" type="PopoverHandle&lt;Payload&gt;">
+  A handle to associate the trigger with a popover.
 </ParamField>
 
-<ParamField body="Trigger.id" type={"string"}>
-  {"ID of the trigger. In addition to being forwarded to the rendered element,\nit is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot triggerId prop)."}
+<ParamField body="Trigger.id" type="string">
+  ID of the trigger. In addition to being forwarded to the rendered element,
+  it is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop).
 </ParamField>
 
-<ParamField body="Trigger.nativeButton" type={"boolean"} default={"true\ntrue"}>
-  {"Whether the component renders a native \u003cbutton> element when replacing it\nvia the render prop.\nSet to false if the rendered element is not a button (for example, \u003cdiv>).\nWhether the component renders a native \u003cbutton> element when replacing it\nvia the render prop.\nSet to false if the rendered element is not a button (e.g. \u003cdiv>)."}
+<ParamField body="Trigger.nativeButton" type="boolean" default="true">
+  Whether the component renders a native `<button>` element when replacing it
+  via the `render` prop.
+  Set to `false` if the rendered element is not a button (e.g. `<div>`).
 </ParamField>
 
-<ParamField body="Trigger.openOnHover" type={"boolean"} default={"false"}>
-  {"Whether the popover should also open when the trigger is hovered."}
+<ParamField body="Trigger.openOnHover" type="boolean" default="false">
+  Whether the popover should also open when the trigger is hovered.
 </ParamField>
 
-<ParamField body="Trigger.payload" type={"Payload"}>
-  {"A payload to pass to the popover when it is opened."}
+<ParamField body="Trigger.payload" type="Payload">
+  A payload to pass to the popover when it is opened.
 </ParamField>
 
-<ParamField body="Trigger.render" type={"ReactElement\u003cunknown, string | JSXElementConstructor\u003cany>> | ComponentRenderFn\u003cHTMLProps, PopoverTriggerState>"}>
-  {"Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a ReactElement or a function that returns the element to render."}
+<ParamField body="Trigger.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, PopoverTriggerState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Trigger.style" type={"CSSProperties | ((state: PopoverTriggerState) => CSSProperties)"}>
-  {"Style applied to the element, or a function that\nreturns a style object based on the component's state."}
+<ParamField body="Trigger.style" type="CSSProperties | ((state: PopoverTriggerState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
 </ParamField>
 
 ### Popover.Popup
 
-<ParamField body="Popup.align" type={"\"center\" | \"start\" | \"end\""} default={"center"}>
-  {""}
+<ParamField body="Popup.align" type="&quot;center&quot; | &quot;start&quot; | &quot;end&quot;" default="center">
+  Alignment of the popup along the anchor.
 </ParamField>
 
-<ParamField body="Popup.alignOffset" type={"number"}>
-  {""}
+<ParamField body="Popup.alignOffset" type="number">
+  Offset in pixels along the alignment axis.
 </ParamField>
 
-<ParamField body="Popup.anchor" type={"Element | VirtualElement | RefObject\u003cElement | null> | (() => Element | VirtualElement | null) | null"}>
-  {""}
+<ParamField body="Popup.anchor" type="Element | VirtualElement | RefObject&lt;Element | null&gt; | (() =&gt; Element | VirtualElement | null) | null">
+  Element or position the popup is anchored to. Defaults to the trigger.
 </ParamField>
 
-<ParamField body="Popup.arrow" type={"boolean"} default={"false"}>
-  {""}
+<ParamField body="Popup.arrow" type="boolean" default="false">
+  Shows an arrow pointing at the anchor.
 </ParamField>
 
-<ParamField body="Popup.className" type={"string | ((state: PopoverPopupState) => string)"}>
-  {"CSS class applied to the element, or a function that\nreturns a class based on the component's state."}
+<ParamField body="Popup.className" type="string | ((state: PopoverPopupState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="Popup.container" type={"HTMLElement | ShadowRoot | RefObject\u003cHTMLElement | ShadowRoot | null> | null"}>
-  {""}
+<ParamField body="Popup.container" type="HTMLElement | ShadowRoot | RefObject&lt;HTMLElement | ShadowRoot | null&gt; | null">
+  Element the popup is portaled into. Defaults to the theme's portal
+  container.
 </ParamField>
 
-<ParamField body="Popup.finalFocus" type={"boolean | RefObject\u003cHTMLElement | null> | ((closeType: InteractionType) => boolean | void | HTMLElement | null)"}>
-  {"Determines the element to focus when the popover is closed.\n\n- false: Do not move focus.\n- true: Move focus based on the default behavior (trigger or previously focused element).\n- RefObject: Move focus to the ref element.\n- function: Called with the interaction type (mouse, touch, pen, or keyboard).\n  Return an element to focus, true to use the default behavior, null to fall back to the default behavior, or false/undefined to do nothing."}
+<ParamField body="Popup.finalFocus" type="boolean | RefObject&lt;HTMLElement | null&gt; | ((closeType: InteractionType) =&gt; boolean | void | HTMLElement | null)">
+  Determines the element to focus when the popover is closed.
+
+  - `false`: Do not move focus.
+  - `true`: Move focus based on the default behavior (trigger or previously focused element).
+  - `RefObject`: Move focus to the ref element.
+  - `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).
+    Return an element to focus, `true` to use the default behavior, `null` to fall back to the default behavior, or `false`/`undefined` to do nothing.
 </ParamField>
 
-<ParamField body="Popup.initialFocus" type={"boolean | RefObject\u003cHTMLElement | null> | ((openType: InteractionType) => boolean | void | HTMLElement | null)"}>
-  {"Determines the element to focus when the popover is opened.\nBy default, focus moves to the first tabbable element inside the popup, except when the popover\nis opened by touch — then the popup itself is focused to avoid opening the virtual keyboard.\n\n- false: Do not move focus.\n- true: Move focus based on the default behavior (first tabbable element or popup).\n- RefObject: Move focus to the ref element.\n- function: Called with the interaction type (mouse, touch, pen, or keyboard).\n  Return an element to focus, true to use the default behavior, null to fall back to the default behavior, or false/undefined to do nothing."}
+<ParamField body="Popup.initialFocus" type="boolean | RefObject&lt;HTMLElement | null&gt; | ((openType: InteractionType) =&gt; boolean | void | HTMLElement | null)">
+  Determines the element to focus when the popover is opened.
+  By default, focus moves to the first tabbable element inside the popup, except when the popover
+  is opened by touch — then the popup itself is focused to avoid opening the virtual keyboard.
+
+  - `false`: Do not move focus.
+  - `true`: Move focus based on the default behavior (first tabbable element or popup).
+  - `RefObject`: Move focus to the ref element.
+  - `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).
+    Return an element to focus, `true` to use the default behavior, `null` to fall back to the default behavior, or `false`/`undefined` to do nothing.
 </ParamField>
 
-<ParamField body="Popup.keepMounted" type={"boolean"}>
-  {""}
+<ParamField body="Popup.keepMounted" type="boolean">
+  Keeps the popup mounted in the DOM while the popover is closed.
 </ParamField>
 
-<ParamField body="Popup.render" type={"ReactElement\u003cunknown, string | JSXElementConstructor\u003cany>> | ComponentRenderFn\u003cHTMLProps, PopoverPopupState>"}>
-  {"Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a ReactElement or a function that returns the element to render."}
+<ParamField body="Popup.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, PopoverPopupState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Popup.side" type={"\"top\" | \"bottom\" | \"left\" | \"right\" | \"inline-end\" | \"inline-start\""} default={"bottom"}>
-  {""}
+<ParamField body="Popup.side" type="&quot;top&quot; | &quot;bottom&quot; | &quot;left&quot; | &quot;right&quot; | &quot;inline-end&quot; | &quot;inline-start&quot;" default="bottom">
+  Side of the anchor the popup is placed on.
 </ParamField>
 
-<ParamField body="Popup.sideOffset" type={"number"} default={"8"}>
-  {""}
+<ParamField body="Popup.sideOffset" type="number" default="8">
+  Distance in pixels between the anchor and the popup.
 </ParamField>
 
-<ParamField body="Popup.style" type={"CSSProperties | ((state: PopoverPopupState) => CSSProperties)"}>
-  {"Style applied to the element, or a function that\nreturns a style object based on the component's state."}
+<ParamField body="Popup.style" type="CSSProperties | ((state: PopoverPopupState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
 </ParamField>
 
 ### Popover.Title
 
-<ParamField body="Title.className" type={"string | ((state: PopoverTitleState) => string)"}>
-  {"CSS class applied to the element, or a function that\nreturns a class based on the component's state."}
+<ParamField body="Title.className" type="string | ((state: PopoverTitleState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="Title.render" type={"ReactElement\u003cunknown, string | JSXElementConstructor\u003cany>> | ComponentRenderFn\u003cHTMLProps, PopoverTitleState>"}>
-  {"Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a ReactElement or a function that returns the element to render."}
+<ParamField body="Title.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, PopoverTitleState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Title.style" type={"CSSProperties | ((state: PopoverTitleState) => CSSProperties)"}>
-  {"Style applied to the element, or a function that\nreturns a style object based on the component's state."}
+<ParamField body="Title.style" type="CSSProperties | ((state: PopoverTitleState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
 </ParamField>
 
 ### Popover.Description
 
-<ParamField body="Description.className" type={"string | ((state: PopoverDescriptionState) => string)"}>
-  {"CSS class applied to the element, or a function that\nreturns a class based on the component's state."}
+<ParamField body="Description.className" type="string | ((state: PopoverDescriptionState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="Description.render" type={"ReactElement\u003cunknown, string | JSXElementConstructor\u003cany>> | ComponentRenderFn\u003cHTMLProps, PopoverDescriptionState>"}>
-  {"Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a ReactElement or a function that returns the element to render."}
+<ParamField body="Description.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, PopoverDescriptionState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Description.style" type={"CSSProperties | ((state: PopoverDescriptionState) => CSSProperties)"}>
-  {"Style applied to the element, or a function that\nreturns a style object based on the component's state."}
+<ParamField body="Description.style" type="CSSProperties | ((state: PopoverDescriptionState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
 </ParamField>
 
 ### Popover.Close
 
-<ParamField body="Close.className" type={"string | ((state: PopoverCloseState) => string)"}>
-  {"CSS class applied to the element, or a function that\nreturns a class based on the component's state."}
+<ParamField body="Close.className" type="string | ((state: PopoverCloseState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="Close.nativeButton" type={"boolean"} default={"true"}>
-  {"Whether the component renders a native \u003cbutton> element when replacing it\nvia the render prop.\nSet to false if the rendered element is not a button (for example, \u003cdiv>)."}
+<ParamField body="Close.nativeButton" type="boolean" default="true">
+  Whether the component renders a native `<button>` element when replacing it
+  via the `render` prop.
+  Set to `false` if the rendered element is not a button (for example, `<div>`).
 </ParamField>
 
-<ParamField body="Close.render" type={"ReactElement\u003cunknown, string | JSXElementConstructor\u003cany>> | ComponentRenderFn\u003cHTMLProps, PopoverCloseState>"}>
-  {"Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a ReactElement or a function that returns the element to render."}
+<ParamField body="Close.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, PopoverCloseState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Close.style" type={"CSSProperties | ((state: PopoverCloseState) => CSSProperties)"}>
-  {"Style applied to the element, or a function that\nreturns a style object based on the component's state."}
+<ParamField body="Close.style" type="CSSProperties | ((state: PopoverCloseState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
 </ParamField>
