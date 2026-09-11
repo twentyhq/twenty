@@ -737,8 +737,11 @@ export type PageLayoutTabLayoutMode = 'GRID' | 'VERTICAL_LIST' | 'CANVAS'
 export interface PageLayoutWidgetVerticalListPosition {
     layoutMode: PageLayoutTabLayoutMode
     index: Scalars['Int']
+    heightBehavior?: PageLayoutWidgetVerticalListHeightBehavior
     __typename: 'PageLayoutWidgetVerticalListPosition'
 }
+
+export type PageLayoutWidgetVerticalListHeightBehavior = 'FIT_CONTENT' | 'TAB_VIEWPORT'
 
 export interface PageLayoutWidgetCanvasPosition {
     layoutMode: PageLayoutTabLayoutMode
@@ -4259,6 +4262,7 @@ export interface PageLayoutWidgetGridPositionGenqlSelection{
 export interface PageLayoutWidgetVerticalListPositionGenqlSelection{
     layoutMode?: boolean | number
     index?: boolean | number
+    heightBehavior?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10311,6 +10315,11 @@ export const enumPageLayoutTabLayoutMode = {
    GRID: 'GRID' as const,
    VERTICAL_LIST: 'VERTICAL_LIST' as const,
    CANVAS: 'CANVAS' as const
+}
+
+export const enumPageLayoutWidgetVerticalListHeightBehavior = {
+   FIT_CONTENT: 'FIT_CONTENT' as const,
+   TAB_VIEWPORT: 'TAB_VIEWPORT' as const
 }
 
 export const enumWidgetConfigurationType = {
