@@ -2,12 +2,12 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { parseThemeColor } from 'twenty-ui/utilities';
 import { v4 } from 'uuid';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { type SettingsDataModelFieldSelectFormValues } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
+import { normalizeSelectOptions } from '@/settings/data-model/fields/forms/select/utils/normalizeSelectOptions';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
 
 const getDefaultOption = (): FieldMetadataItemOption => {
@@ -36,12 +36,7 @@ export const useSelectSettingsFormInitialValues = ({
   const initialOptions = useMemo(
     () =>
       isNonEmptyArray(fieldMetadataItem?.options)
-        ? fieldMetadataItem.options
-            .map((option) => ({
-              ...option,
-              color: parseThemeColor(option.color),
-            }))
-            .sort((optionA, optionB) => optionA.position - optionB.position)
+        ? normalizeSelectOptions(fieldMetadataItem.options)
         : [getDefaultOption()],
     [fieldMetadataItem?.options],
   );
