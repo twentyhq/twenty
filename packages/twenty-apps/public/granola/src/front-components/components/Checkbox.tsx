@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { IconCheck } from 'twenty-ui/icon';
+import { IconCheck, IconMinus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 // twenty-ui's Checkbox dispatches a PointerEvent the front-component sandbox does not provide.
@@ -61,6 +61,7 @@ const StyledBox = styled.span`
 type CheckboxProps = {
   id?: string;
   checked: boolean;
+  indeterminate?: boolean;
   disabled?: boolean;
   'aria-label'?: string;
   onChange: (checked: boolean) => void;
@@ -69,24 +70,32 @@ type CheckboxProps = {
 export const Checkbox = ({
   id,
   checked,
+  indeterminate = false,
   disabled = false,
   'aria-label': ariaLabel,
   onChange,
-}: CheckboxProps) => (
-  <StyledCheckbox
-    type="button"
-    role="checkbox"
-    id={id}
-    aria-checked={checked ? 'true' : 'false'}
-    aria-label={ariaLabel}
-    disabled={disabled}
-    onClick={() => onChange(!checked)}
-  >
-    <StyledBox
-      data-checked={checked ? 'true' : 'false'}
-      data-disabled={disabled ? 'true' : 'false'}
+}: CheckboxProps) => {
+  const isFilled = checked || indeterminate;
+
+  return (
+    <StyledCheckbox
+      type="button"
+      role="checkbox"
+      id={id}
+      aria-checked={indeterminate ? 'mixed' : checked ? 'true' : 'false'}
+      aria-label={ariaLabel}
+      disabled={disabled}
+      onClick={() => onChange(!checked)}
     >
-      {checked && <IconCheck size={CHECKBOX_ICON_SIZE_PIXELS} stroke={3} />}
-    </StyledBox>
-  </StyledCheckbox>
-);
+      <StyledBox
+        data-checked={isFilled ? 'true' : 'false'}
+        data-disabled={disabled ? 'true' : 'false'}
+      >
+        {checked && <IconCheck size={CHECKBOX_ICON_SIZE_PIXELS} stroke={3} />}
+        {!checked && indeterminate && (
+          <IconMinus size={CHECKBOX_ICON_SIZE_PIXELS} stroke={3} />
+        )}
+      </StyledBox>
+    </StyledCheckbox>
+  );
+};

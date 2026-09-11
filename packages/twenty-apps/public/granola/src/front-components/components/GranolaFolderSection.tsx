@@ -1,22 +1,22 @@
 import { useState } from 'react';
 import { t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { IconFolder } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/typography';
 
 import { GRANOLA_FOLDER_SELECTION_LIMIT } from 'src/constants/granola-api.constant';
-import { GranolaFolderRow } from 'src/front-components/components/GranolaFolderRow';
+import { GranolaFolderEmptyState } from 'src/front-components/components/GranolaFolderEmptyState';
+import { GranolaFolderPolicyIcon } from 'src/front-components/components/GranolaFolderPolicyIcon';
+import { GranolaFolderTree } from 'src/front-components/components/GranolaFolderTree';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
-import { SettingsOptionCardContentToggle } from 'src/front-components/components/SettingsOptionCardContentToggle';
-import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
+import { SettingsRadioCard } from 'src/front-components/components/SettingsRadioCard';
 import { StyledSettingsError } from 'src/front-components/components/StyledSettingsError';
 import { StyledSettingsHint } from 'src/front-components/components/StyledSettingsHint';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
 import { useAutosaveGranolaFolderSelection } from 'src/front-components/hooks/use-autosave-granola-folder-selection';
+import { type GranolaFolderPolicy } from 'src/front-components/types/granola-folder-policy.type';
 import { type GranolaSettingsFolder } from 'src/front-components/types/granola-settings-folder.type';
 import { fetchGranolaFoldersOrThrow } from 'src/front-components/utils/fetch-granola-folders-or-throw.util';
-import { getGranolaFolderOptions } from 'src/front-components/utils/get-granola-folder-options.util';
 
 type FolderSaveState =
   | { kind: 'idle' }
@@ -31,12 +31,12 @@ export const GranolaFolderSection = () => {
   );
   const [loadError, setLoadError] = useState<string | undefined>(undefined);
   const [selectedFolderIds, setSelectedFolderIds] = useState<string[]>([]);
-  const [isRestricted, setIsRestricted] = useState(false);
+  const [policy, setPolicy] = useState<GranolaFolderPolicy>('ALL_FOLDERS');
   const [hasInaccessibleSelection, setHasInaccessibleSelection] =
     useState(false);
   const [saveState, setSaveState] = useState<FolderSaveState>({ kind: 'idle' });
 
-  const { saveDebounced, saveImmediately } = useAutosaveGranolaFolderSelection({
+  const { save } = useAutosaveGranolaFolderSelection({
     onSaveStart: () => setSaveState({ kind: 'saving' }),
     onSaveSuccess: (folderIds) => {
       setSaveState({ kind: 'saved' });
@@ -57,7 +57,9 @@ export const GranolaFolderSection = () => {
 
       setFolders(result.folders);
       setSelectedFolderIds(accessibleSelectedIds);
-      setIsRestricted(storedFolderIds.length > 0);
+      setPolicy(
+        storedFolderIds.length > 0 ? 'SELECTED_FOLDERS' : 'ALL_FOLDERS',
+      );
       setHasInaccessibleSelection(
         storedFolderIds.length > 0 && accessibleSelectedIds.length === 0,
       );
@@ -70,33 +72,36 @@ export const GranolaFolderSection = () => {
     }
   };
 
-  const handleSyncAllChange = (isSyncingAll: boolean) => {
-    setIsRestricted(!isSyncingAll);
+  const handlePolicyChange = (nextPolicy: GranolaFolderPolicy) => {
+    setPolicy(nextPolicy);
 
     if (
-      isSyncingAll &&
+      nextPolicy === 'ALL_FOLDERS' &&
       (selectedFolderIds.length > 0 || hasInaccessibleSelection)
     ) {
       setHasInaccessibleSelection(false);
       setSelectedFolderIds([]);
-      saveImmediately([]);
+      save([]);
     }
   };
 
-  const handleFolderChange = (folderId: string, checked: boolean) => {
-    const nextSelectedFolderIds = checked
-      ? [...selectedFolderIds, folderId]
-      : selectedFolderIds.filter((id) => id !== folderId);
-
+  const handleReplaceSelection = (nextSelectedFolderIds: string[]) => {
     setHasInaccessibleSelection(false);
     setSelectedFolderIds(nextSelectedFolderIds);
-    saveDebounced(nextSelectedFolderIds);
+    save(nextSelectedFolderIds);
   };
 
-  const folderOptions = getGranolaFolderOptions(folders ?? []);
-  const selectedFolderIdSet = new Set(selectedFolderIds);
+  const handleToggleFolder = (folderId: string, checked: boolean) => {
+    handleReplaceSelection(
+      checked
+        ? [...selectedFolderIds, folderId]
+        : selectedFolderIds.filter((id) => id !== folderId),
+    );
+  };
+
   const isSelectionFull =
     selectedFolderIds.length >= GRANOLA_FOLDER_SELECTION_LIMIT;
+  const hasFolders = isDefined(folders) && folders.length > 0;
 
   return (
     <Section>
@@ -104,69 +109,68 @@ export const GranolaFolderSection = () => {
       <H2Title
         title={t('Folders')}
         description={t(
-          'Sync every folder you can access, or only the ones you pick. Picking a folder includes its subfolders.',
+          'Choose which Granola folders feed live sync and history imports.',
         )}
       />
       <StyledSettingsSectionStack>
-        <StyledSettingsCard>
-          <SettingsOptionCardContentToggle
-            Icon={IconFolder}
-            title={t('Sync all folders')}
-            description={t('Turn off to choose specific folders below.')}
-            checked={!isRestricted}
-            disabled={!isDefined(folders)}
-            divider={isRestricted}
-            onChange={handleSyncAllChange}
-          />
-          {isRestricted &&
-            folderOptions.map((folder) => {
-              const isCoveredByAncestor = folder.ancestorIds.some((id) =>
-                selectedFolderIdSet.has(id),
-              );
-              const isChecked =
-                isCoveredByAncestor || selectedFolderIdSet.has(folder.id);
-
-              return (
-                <GranolaFolderRow
-                  key={folder.id}
-                  name={folder.name}
-                  path={folder.path}
-                  depth={folder.depth}
-                  checked={isChecked}
-                  disabled={
-                    isCoveredByAncestor || (isSelectionFull && !isChecked)
-                  }
-                  onChange={(checked) => handleFolderChange(folder.id, checked)}
+        <SettingsRadioCard
+          value={policy}
+          disabled={!isDefined(folders)}
+          onChange={handlePolicyChange}
+          options={[
+            {
+              value: 'ALL_FOLDERS',
+              cardMedia: <GranolaFolderPolicyIcon policy="ALL_FOLDERS" />,
+              title: t('Everything'),
+              description: t('Sync notes from every folder you can access'),
+            },
+            {
+              value: 'SELECTED_FOLDERS',
+              cardMedia: <GranolaFolderPolicyIcon policy="SELECTED_FOLDERS" />,
+              title: t('Some folders'),
+              description: t(
+                'Sync only the folders you pick, including their subfolders',
+              ),
+              expandedContent: hasFolders ? (
+                <GranolaFolderTree
+                  folders={folders}
+                  selectedFolderIds={selectedFolderIds}
+                  selectionLimit={GRANOLA_FOLDER_SELECTION_LIMIT}
+                  onToggleFolder={handleToggleFolder}
+                  onReplaceSelection={handleReplaceSelection}
                 />
-              );
-            })}
-        </StyledSettingsCard>
+              ) : (
+                <GranolaFolderEmptyState />
+              ),
+            },
+          ]}
+        />
         {!isDefined(folders) && !isDefined(loadError) && (
           <StyledSettingsHint>{t('Loading folders…')}</StyledSettingsHint>
         )}
         {isDefined(loadError) && (
           <StyledSettingsError>{loadError}</StyledSettingsError>
         )}
-        {isRestricted && folderOptions.length === 0 && isDefined(folders) && (
-          <StyledSettingsHint>
-            {t('This key has no access to any folder yet.')}
-          </StyledSettingsHint>
-        )}
         {hasInaccessibleSelection && (
           <StyledSettingsError>
             {t(
-              'The folders you picked are no longer available. Pick folders again, or turn on Sync all folders.',
+              'The folders you picked are no longer available. Pick folders again, or switch to Everything.',
             )}
           </StyledSettingsError>
         )}
-        {isRestricted &&
+        {policy === 'SELECTED_FOLDERS' &&
           !hasInaccessibleSelection &&
-          folderOptions.length > 0 &&
+          hasFolders &&
           selectedFolderIds.length === 0 && (
             <StyledSettingsHint>
-              {t('Pick at least one folder. Until then, every folder syncs.')}
+              {t('Nothing is picked yet, so every folder still syncs.')}
             </StyledSettingsHint>
           )}
+        {policy === 'SELECTED_FOLDERS' && selectedFolderIds.length === 1 && (
+          <StyledSettingsHint>
+            {t('Switch to Everything to stop filtering by folder.')}
+          </StyledSettingsHint>
+        )}
         {isSelectionFull && (
           <StyledSettingsHint>
             {t('You can pick up to {limit} folders.', {
