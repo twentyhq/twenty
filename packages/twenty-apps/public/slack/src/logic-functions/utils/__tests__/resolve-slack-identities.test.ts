@@ -188,6 +188,22 @@ describe('resolveSlackIdentities', () => {
     });
   });
 
+  it('should not resolve a member by email for a restricted account', async () => {
+    findWorkspaceMemberIdsByEmailsMock.mockResolvedValue({
+      workspaceMemberIdByEmail: new Map([['alice@twenty.com', 'member-1']]),
+      ambiguousEmailCount: 0,
+    });
+
+    const resolution = (
+      await resolve([identity({ isRegularUserAccount: false })])
+    ).get('U04ABC');
+
+    expect(resolution?.outcome).toBe('membershipNotConfirmed');
+    expect(findWorkspaceMemberIdsByEmailsMock).toHaveBeenCalledWith(client, {
+      emails: [],
+    });
+  });
+
   it('should report an account it cannot identify as unidentified', async () => {
     usersInfoMock.mockRejectedValue(new Error('user_not_found'));
 
@@ -242,6 +258,14 @@ describe('resolveSlackIdentities', () => {
     await resolve([identity()]);
 
     expect(usersInfoMock).not.toHaveBeenCalled();
+  });
+
+  it('should surface a failing link query rather than claiming anything', async () => {
+    findSlackUserLinksBySlackUserIdsMock.mockRejectedValue(
+      new Error('permission denied'),
+    );
+
+    await expect(resolve([identity()])).rejects.toThrow('permission denied');
   });
 
   it('should revalidate only the accounts a hand-picked link does not settle', async () => {

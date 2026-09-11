@@ -44,8 +44,6 @@ const fetchMissingIdentities = async ({
   return identityBySlackUserId;
 };
 
-// A link is keyed by the workspace its user belongs to, which for a guest or
-// Slack Connect member is not the workspace the app is installed in.
 const groupSlackUserIdsByTeamId = (
   identityBySlackUserId: ReadonlyMap<string, SlackUserIdentity>,
 ): Map<string, string[]> => {
@@ -94,8 +92,6 @@ const buildResolution = ({
     return { slackUserId, identity, link, outcome: 'unidentified' };
   }
 
-  // A hand-picked consented link settles the question on its own, including
-  // when it deliberately names nobody, so it never falls back to an email.
   if (isDefined(link) && isManualConsentedSlackUserLink(link)) {
     return isNonEmptyString(link.workspaceMemberId)
       ? {
@@ -129,9 +125,6 @@ const buildResolution = ({
     : { slackUserId, identity, link, outcome: 'membershipNotConfirmed' };
 };
 
-// The one place that decides which workspace member a Slack account speaks for.
-// Run-as and mention rendering both read it, so neither can drift into trusting
-// a stored member id the other would have re-earned from the live account.
 export const resolveSlackIdentities = async ({
   slackUserIds,
   knownIdentities = [],
@@ -144,13 +137,14 @@ export const resolveSlackIdentities = async ({
   slackClient: WebClient | undefined;
 }): Promise<Map<string, SlackIdentityResolution>> => {
   const resolutionBySlackUserId = new Map<string, SlackIdentityResolution>();
+  const requestedSlackUserIds = [...new Set(slackUserIds)];
 
-  if (slackUserIds.length === 0) {
+  if (requestedSlackUserIds.length === 0) {
     return resolutionBySlackUserId;
   }
 
   if (!isDefined(slackClient)) {
-    for (const slackUserId of slackUserIds) {
+    for (const slackUserId of requestedSlackUserIds) {
       resolutionBySlackUserId.set(slackUserId, {
         slackUserId,
         identity: undefined,
@@ -166,7 +160,7 @@ export const resolveSlackIdentities = async ({
     getInstalledSlackTeamId(slackClient),
     fetchMissingIdentities({
       slackClient,
-      slackUserIds,
+      slackUserIds: requestedSlackUserIds,
       knownIdentityBySlackUserId: new Map(
         knownIdentities.map((identity) => [identity.slackUserId, identity]),
       ),
@@ -193,7 +187,7 @@ export const resolveSlackIdentities = async ({
     { emails: revalidatedEmails },
   );
 
-  for (const slackUserId of slackUserIds) {
+  for (const slackUserId of requestedSlackUserIds) {
     resolutionBySlackUserId.set(
       slackUserId,
       buildResolution({

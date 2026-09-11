@@ -7,23 +7,23 @@ import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/sla
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
 import { createSlackUserLink } from 'src/logic-functions/data/create-slack-user-link';
 import { updateSlackUserLink } from 'src/logic-functions/data/update-slack-user-link';
-import { type SlackIdentityResolution } from 'src/logic-functions/types/slack-identity-resolution.type';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
+import { type SlackUserLinkSummary } from 'src/logic-functions/types/slack-user-link-summary.type';
 import { resolveSlackIdentities } from 'src/logic-functions/utils/resolve-slack-identities';
 
-// Only an email match refreshes the audit trail. A hand-picked link is the
-// record of someone's decision, so it is read and never rewritten here.
 const recordEmailMatchOnAutoLink = async ({
-  resolution,
-  identity,
+  link,
+  slackUserId,
+  slackTeamId,
+  displayName,
   workspaceMemberId,
 }: {
-  resolution: SlackIdentityResolution;
-  identity: SlackUserIdentity;
+  link: SlackUserLinkSummary | undefined;
+  slackUserId: string;
+  slackTeamId: string;
+  displayName: string | undefined;
   workspaceMemberId: string;
 }): Promise<void> => {
-  const { link } = resolution;
-
   if (link?.source === SLACK_USER_LINK_SOURCE.MANUAL) {
     return;
   }
@@ -32,10 +32,10 @@ const recordEmailMatchOnAutoLink = async ({
 
   if (!isDefined(link)) {
     await createSlackUserLink(applicationClient, {
-      slackTeamId: identity.slackTeamId ?? '',
-      slackUserId: identity.slackUserId,
+      slackTeamId,
+      slackUserId,
       workspaceMemberId,
-      name: identity.displayName ?? identity.slackUserId,
+      name: displayName ?? slackUserId,
       source: SLACK_USER_LINK_SOURCE.AUTO,
       consentState: SLACK_USER_LINK_CONSENT_STATE.ACTIVE,
     }).catch(() => undefined);
@@ -64,14 +64,16 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
     return undefined;
   }
 
+  const { slackUserId, slackTeamId, displayName } = identity;
+
   const resolutionBySlackUserId = await resolveSlackIdentities({
-    slackUserIds: [identity.slackUserId],
+    slackUserIds: [slackUserId],
     knownIdentities: [identity],
     client,
     slackClient,
   }).catch(() => undefined);
 
-  const resolution = resolutionBySlackUserId?.get(identity.slackUserId);
+  const resolution = resolutionBySlackUserId?.get(slackUserId);
 
   if (!isDefined(resolution) || resolution.outcome !== 'confirmedMember') {
     return undefined;
@@ -81,8 +83,10 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
 
   if (memberProvenance === 'verifiedEmail') {
     await recordEmailMatchOnAutoLink({
-      resolution,
-      identity,
+      link: resolution.link,
+      slackUserId,
+      slackTeamId,
+      displayName,
       workspaceMemberId,
     });
   }

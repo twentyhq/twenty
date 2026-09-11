@@ -85,8 +85,6 @@ const givenEmailMatches = (workspaceMemberId: string | undefined) =>
     ambiguousEmailCount: 0,
   });
 
-// The email lookup is always issued, so "did not consult the email match" is
-// the assertion that it was asked about nobody.
 const expectNoEmailMatchConsulted = () =>
   expect(findWorkspaceMemberIdsByEmailsMock).toHaveBeenCalledWith(client, {
     emails: [],

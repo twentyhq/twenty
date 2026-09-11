@@ -13,9 +13,8 @@ const MAX_MENTIONED_USERS = 20;
 const MAX_MENTION_NAME_LENGTH = 80;
 const LABEL_SUFFIX_FORGING_CHARACTERS_PATTERN = /[()]/g;
 
-// Slack profile names are attacker-controlled: newlines let a name pose as its
-// own prompt section and parentheses let it forge the "(workspace member …)"
-// suffix the agent trusts for ids.
+// Slack profile names are attacker-controlled, and a newline lets one pose as
+// its own prompt section.
 const sanitizeMentionName = (name: string | undefined): string | undefined => {
   const flattened = (name ?? '')
     .replace(LABEL_SUFFIX_FORGING_CHARACTERS_PATTERN, '')
@@ -57,8 +56,7 @@ const buildLabel = ({
 }): SlackMentionLabel => {
   const slackName = resolveSlackName(resolution);
 
-  // A member id whose record is gone is worse to hand over than no id, so a
-  // resolution the workspace can no longer name degrades to the Slack name.
+  // A member id whose record is gone is worse to hand over than no id.
   if (
     resolution.outcome === 'confirmedMember' &&
     nameByWorkspaceMemberId.has(resolution.workspaceMemberId)

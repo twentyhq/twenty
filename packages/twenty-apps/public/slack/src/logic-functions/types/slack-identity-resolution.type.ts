@@ -15,14 +15,6 @@ export type SlackIdentityResolution = SlackIdentityResolutionBase &
         workspaceMemberId: string;
         memberProvenance: SlackMemberProvenance;
       }
-    | {
-        outcome: 'membershipNotConfirmed';
-        workspaceMemberId?: never;
-        memberProvenance?: never;
-      }
-    | {
-        outcome: 'unidentified';
-        workspaceMemberId?: never;
-        memberProvenance?: never;
-      }
+    | { outcome: 'membershipNotConfirmed' }
+    | { outcome: 'unidentified' }
   );
