@@ -7,8 +7,13 @@ import { isDefined } from 'twenty-shared/utils';
 const SKILL_REFERENCE_REGEX =
   /\[\[skill:([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}):/g;
 
+export type ReferencedSkillSourceMessage = Pick<
+  ExtendedUIMessage,
+  'role' | 'parts'
+>;
+
 export const collectReferencedSkillIds = (
-  messages: ExtendedUIMessage[],
+  messages: ReferencedSkillSourceMessage[],
 ): string[] => {
   const skillIds = new Set<string>();
 
