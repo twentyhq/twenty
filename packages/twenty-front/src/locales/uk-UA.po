@@ -164,7 +164,7 @@ msgstr "[empty string]"
 #. placeholder {2}: formatNumber(counts.duplicateEmails)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
-msgstr "{0, plural, one {{1} дублікат} few {{2} дублікати} many {{2} дублікатів} other {{2} дубліката}}},{"
+msgstr ""
 
 #. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
@@ -1811,7 +1811,7 @@ msgstr "Розширені"
 #. js-lingui-id: cBdysG
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Advanced Encryption"
-msgstr "Розширене шифрування}]} }]}```? Wait need ensure formatting correct. I will correct. JSON must be valid. Let's output correct: {"
+msgstr "Розширене шифрування"
 
 #. js-lingui-id: tMFFwF
 #: src/modules/views/components/ViewBarFilterDropdownAdvancedFilterButton.tsx

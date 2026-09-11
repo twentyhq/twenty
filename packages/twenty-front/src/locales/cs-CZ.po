@@ -233,7 +233,7 @@ msgstr "{0, plural, one {Nemáte povolení pro přístup k poli {fieldsList}} fe
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr "{0} vrácených nebo s nahlášenou stížností},{"
+msgstr "{0} vrácených nebo s nahlášenou stížností"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })

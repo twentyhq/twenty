@@ -417,7 +417,7 @@ msgstr "{browser} su {operatingSystem}"
 #. js-lingui-id: SU5Crx
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "{cachedPercent}% cached"
-msgstr "{cachedPercent}% in cache},{"
+msgstr "{cachedPercent}% in cache"
 
 #. js-lingui-id: 8SynPU
 #. placeholder {0}: (type === 'percentage' ? 99 : 1000).toFixed(count)

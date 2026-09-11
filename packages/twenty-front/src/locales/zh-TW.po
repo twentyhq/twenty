@@ -233,7 +233,7 @@ msgstr "{0, plural, other {您無法訪問 {fieldsList} 字段}}"
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr "{0} 個退信或投訴的收件人},{"
+msgstr "{0} 個退信或投訴的收件人"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -510,7 +510,7 @@ msgstr "已收到 {headersCount} 個標頭"
 #. js-lingui-id: 4xzh1W
 #: src/modules/object-record/record-list/components/RecordListRow.tsx
 msgid "{hiddenFieldCount, plural, one {# more populated field available} other {# more populated fields available}}"
-msgstr "{hiddenFieldCount, plural, other {還有 # 個已填入欄位可用}}}]}દાવાદ്?ฤศจassistant to=developer? no. Need ensure output schema pluralForm? developer says only if source contains non-null pluralForm. source object doesn't pluralForm, omit. Good. But Chinese phrasing "
+msgstr "{hiddenFieldCount, plural, other {還有 # 個已填入欄位可用}}"
 
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx

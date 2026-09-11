@@ -12924,7 +12924,7 @@ msgstr "التنقل"
 #. js-lingui-id: FpO6v4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "navigation menu item"
-msgstr "عنصر قائمة التنقل}]} }]]=## Error: JSON parsing failed due to invalid syntax. Please correct any formatting issues and try again.------------------------------------------------------------------------{"
+msgstr "عنصر قائمة التنقل"
 
 #. js-lingui-id: jRptK+
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx

@@ -20310,7 +20310,7 @@ msgstr "תקופת ניסיון"
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
 msgid "Trigger"
-msgstr "הפעל\",\"pluralForm\":null}]}]}{"
+msgstr ""
 
 #. js-lingui-id: SzG8Sm
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx

@@ -164,7 +164,7 @@ msgstr "[空の文字列]"
 #. placeholder {2}: formatNumber(counts.duplicateEmails)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
-msgstr "{0, plural, other {{2} 件の重複}}},{"
+msgstr ""
 
 #. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
@@ -510,7 +510,7 @@ msgstr "{headersCount} 件のヘッダーを受信"
 #. js-lingui-id: 4xzh1W
 #: src/modules/object-record/record-list/components/RecordListRow.tsx
 msgid "{hiddenFieldCount, plural, one {# more populated field available} other {# more populated fields available}}"
-msgstr "{hiddenFieldCount, plural, other {利用可能な入力済みフィールドが # 件増えました}}]}]}ેણ</analysis to=system ＿一本道  日本一本道ികായി  ചികിതിക  天天购彩票 񹚻കം  天天中彩票是不是? Wait plural ICU Japanese other only yes. Need preserve variable. Good. But wording "
+msgstr "{hiddenFieldCount, plural, other {利用可能な入力済みフィールドが # 件増えました}}"
 
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -7427,7 +7427,7 @@ msgstr "プロフィールを編集"
 #. js-lingui-id: 19vPbj
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 msgid "Edit Record Table"
-msgstr "レコードテーブルを編集},{"
+msgstr "レコードテーブルを編集"
 
 #. js-lingui-id: 6n2zpV
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -10196,7 +10196,7 @@ msgstr ""
 "npx create-twenty-app@latest my-twenty-app\n"
 "```\n"
 "\n"
-"詳しい手順は[入門ガイド](https://twenty.com/developers/extend/apps/getting-started)を参照し、`defineApplication` / `defineEntity` API については[アプリの構築](https://twenty.com/developers/extend/apps/building)を参照してください。},{"
+"詳しい手順は[入門ガイド](https://twenty.com/developers/extend/apps/getting-started)を参照し、`defineApplication` / `defineEntity` API については[アプリの構築](https://twenty.com/developers/extend/apps/building)を参照してください。"
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -16052,7 +16052,7 @@ msgstr "レコードページ"
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Record Table Settings"
-msgstr "レコードテーブルの設定},{"
+msgstr "レコードテーブルの設定"
 
 #. js-lingui-id: kvxD0C
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
@@ -18449,7 +18449,7 @@ msgstr "並べ替え"
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Sorts"
-msgstr "ソート},{"
+msgstr "ソート"
 
 #. js-lingui-id: wdxz7K
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts

@@ -510,7 +510,7 @@ msgstr "S'han rebut {headersCount} capçaleres"
 #. js-lingui-id: 4xzh1W
 #: src/modules/object-record/record-list/components/RecordListRow.tsx
 msgid "{hiddenFieldCount, plural, one {# more populated field available} other {# more populated fields available}}"
-msgstr "{hiddenFieldCount, plural, one {# camp emplenat més disponible} other {# camps emplenats més disponibles}}]}]} 银雀് ഇവിടെ? Wait malformed? Need valid. Let's craft.{"
+msgstr "{hiddenFieldCount, plural, one {# camp emplenat més disponible} other {# camps emplenats més disponibles}}"
 
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx

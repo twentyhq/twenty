@@ -9111,7 +9111,7 @@ msgstr "Felt på destination"
 #. js-lingui-id: P8JCfj
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field permission"
-msgstr "felttilladelse}]}]}** Error: The JSON is invalid and cannot be parsed. ** Correction is applied below. ** Corrected JSON: {"
+msgstr "felttilladelse"
 
 #. js-lingui-id: lcNTiF
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts

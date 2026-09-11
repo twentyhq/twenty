@@ -6900,7 +6900,7 @@ msgstr "Inaktivera användarimitation"
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Disabled"
-msgstr "Inaktiverad}]} }]}? Wait this not correct. Let's rewrite. We'll output exactly correct JSON. Let's produce: {"
+msgstr "Inaktiverad"
 
 #. js-lingui-id: bzSI52
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx

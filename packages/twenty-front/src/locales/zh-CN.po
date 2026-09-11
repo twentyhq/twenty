@@ -164,7 +164,7 @@ msgstr "[空字符串]"
 #. placeholder {2}: formatNumber(counts.duplicateEmails)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
-msgstr "{0, plural, other {{2} 个重复项}}},{"
+msgstr ""
 
 #. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length

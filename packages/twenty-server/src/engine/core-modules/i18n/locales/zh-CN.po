@@ -208,7 +208,7 @@ msgstr "该应用程序的更高版本已安装。不允许降级。"
 #. js-lingui-id: 0sxIdH
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
-msgstr "营销邮件一次只能发送给一位收件人，因此每个人都会获得自己的取消订阅链接。},{"
+msgstr "营销邮件一次只能发送给一位收件人，因此每个人都会获得自己的取消订阅链接。"
 
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
