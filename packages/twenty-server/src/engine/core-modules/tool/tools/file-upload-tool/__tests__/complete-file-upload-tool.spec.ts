@@ -78,5 +78,9 @@ describe('CompleteFileUploadTool', () => {
     expect(result.success).toBe(false);
     expect(result.error).toBe(`File not found: ${baseInput.fileId}`);
     expect(mockCompleteFileUpload).toHaveBeenCalledTimes(1);
+    expect(mockCompleteFileUpload).toHaveBeenCalledWith({
+      workspaceId: 'workspace-1',
+      fileId: baseInput.fileId,
+    });
   });
 });

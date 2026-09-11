@@ -87,5 +87,11 @@ describe('CreateFileUploadTool', () => {
     expect(result.success).toBe(false);
     expect(result.error).toContain('Invalid file size');
     expect(mockCreateFileUpload).toHaveBeenCalledTimes(1);
+    expect(mockCreateFileUpload).toHaveBeenCalledWith({
+      workspaceId: 'workspace-1',
+      filename: 'notes.txt',
+      size: 0,
+      fileFolder: FileFolder.AgentChat,
+    });
   });
 });
