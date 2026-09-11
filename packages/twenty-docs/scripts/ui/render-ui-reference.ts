@@ -53,7 +53,13 @@ export const renderTokenReference = (tokens: TokenDocumentation[]): string => {
 
   for (const token of tokens) {
     const group = token.path.split('.')[0];
-    groups.set(group, [...(groups.get(group) ?? []), token]);
+    const entries = groups.get(group);
+
+    if (entries) {
+      entries.push(token);
+    } else {
+      groups.set(group, [token]);
+    }
   }
 
   return (
