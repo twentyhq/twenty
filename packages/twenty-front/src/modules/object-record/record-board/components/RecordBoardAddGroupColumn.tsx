@@ -1,6 +1,7 @@
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardViewSettingsReadOnlyComponentState';
 import { AddRecordGroupButton } from '@/object-record/record-group/components/AddRecordGroupButton';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { canAddRecordGroupForFieldMetadataItem } from '@/object-record/record-group/utils/canAddRecordGroupForFieldMetadataItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
@@ -16,6 +17,7 @@ const StyledColumn = styled.div`
 `;
 
 export const RecordBoardAddGroupColumn = () => {
+  const { recordIndexId } = useRecordIndexContextOrThrow();
   const { selectFieldMetadataItem } = useContext(RecordBoardContext);
 
   const isRecordBoardViewSettingsReadOnly = useAtomComponentStateValue(
@@ -34,7 +36,7 @@ export const RecordBoardAddGroupColumn = () => {
     <StyledColumn>
       <AddRecordGroupButton
         fieldMetadataItem={selectFieldMetadataItem}
-        dropdownId={RECORD_BOARD_ADD_GROUP_DROPDOWN_ID}
+        dropdownId={`${RECORD_BOARD_ADD_GROUP_DROPDOWN_ID}-${recordIndexId}`}
         dropdownOffset={{ x: 0, y: 10 }}
       />
     </StyledColumn>

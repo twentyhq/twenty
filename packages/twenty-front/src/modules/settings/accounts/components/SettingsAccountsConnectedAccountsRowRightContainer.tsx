@@ -31,7 +31,7 @@ export const SettingsAccountsConnectedAccountsRowRightContainer = ({
   if (isArchived) {
     return (
       <StyledRowRightContainer>
-        <Status color="gray" text={t`Archived`} weight="medium" />
+        <Status color="gray" weight="medium">{t`Archived`}</Status>
         <SettingsAccountsRowDropdownMenu account={account} />
       </StyledRowRightContainer>
     );
@@ -40,24 +40,23 @@ export const SettingsAccountsConnectedAccountsRowRightContainer = ({
   return (
     <StyledRowRightContainer>
       {status === SyncStatus.FAILED && (
-        <Status color="red" text={t`Sync failed`} weight="medium" />
+        <Status color="red" weight="medium">{t`Sync failed`}</Status>
       )}
       {status === SyncStatus.SYNCED && (
-        <Status color="green" text={t`Synced`} weight="medium" />
+        <Status color="green" weight="medium">{t`Synced`}</Status>
       )}
       {status === SyncStatus.NOT_SYNCED && (
-        <Status color="orange" text={t`Not synced`} weight="medium" />
+        <Status color="orange" weight="medium">{t`Not synced`}</Status>
       )}
       {status === SyncStatus.IMPORTING && (
         <Status
           color="turquoise"
-          text={t`Importing`}
           weight="medium"
-          isLoaderVisible
-        />
+          loading
+        >{t`Importing`}</Status>
       )}
       {status === SyncStatus.PENDING_CONFIGURATION && (
-        <Status color="orange" text={t`Setup incomplete`} weight="medium" />
+        <Status color="orange" weight="medium">{t`Setup incomplete`}</Status>
       )}
       <SettingsAccountsRowDropdownMenu account={account} />
     </StyledRowRightContainer>
