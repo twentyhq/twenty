@@ -12,6 +12,8 @@ export enum EmailToolExceptionCode {
   FILE_NOT_FOUND = 'FILE_NOT_FOUND',
   INVALID_FILE_ID = 'INVALID_FILE_ID',
   TOO_MANY_RECIPIENTS = 'TOO_MANY_RECIPIENTS',
+  NO_EMAIL_CAPABLE_CONNECTED_ACCOUNT = 'NO_EMAIL_CAPABLE_CONNECTED_ACCOUNT',
+  CONNECTED_ACCOUNT_NOT_EMAIL_CAPABLE = 'CONNECTED_ACCOUNT_NOT_EMAIL_CAPABLE',
 }
 
 const getEmailToolExceptionUserFriendlyMessage = (
@@ -32,6 +34,10 @@ const getEmailToolExceptionUserFriendlyMessage = (
       return msg`Invalid file ID.`;
     case EmailToolExceptionCode.TOO_MANY_RECIPIENTS:
       return msg`Too many recipients.`;
+    case EmailToolExceptionCode.NO_EMAIL_CAPABLE_CONNECTED_ACCOUNT:
+      return msg`No mailbox is connected for this action. Connect one in Settings.`;
+    case EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_EMAIL_CAPABLE:
+      return msg`This connected account cannot be used for this action.`;
     default:
       assertUnreachable(code);
   }

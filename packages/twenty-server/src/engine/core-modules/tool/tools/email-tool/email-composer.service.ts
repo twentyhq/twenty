@@ -22,8 +22,12 @@ import {
 } from 'src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception';
 import { type ComposeEmailParams } from 'src/engine/core-modules/tool/tools/email-tool/types/compose-email-params.type';
 import { EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-tool/types/email-composer-result.type';
+import { type EmailOperation } from 'src/engine/core-modules/tool/tools/email-tool/types/email-operation.type';
+import { canConnectedAccountPerformEmailOperation } from 'src/engine/core-modules/tool/tools/email-tool/utils/can-connected-account-perform-email-operation.util';
+import { getEmailOperationVerb } from 'src/engine/core-modules/tool/tools/email-tool/utils/get-email-operation-verb.util';
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
 import { selectConnectedAccountIdForCaller } from 'src/engine/core-modules/tool/tools/email-tool/utils/select-connected-account-id-for-caller.util';
+import { summarizeConnectedAccountProviders } from 'src/engine/core-modules/tool/tools/email-tool/utils/summarize-connected-account-providers.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -56,9 +60,11 @@ export class EmailComposerService {
   private async getConnectedAccountOrThrow({
     connectedAccountId,
     workspaceId,
+    operation,
   }: {
     connectedAccountId: string;
     workspaceId: string;
+    operation: EmailOperation;
   }): Promise<ConnectedAccountEntity> {
     if (!isValidUuid(connectedAccountId)) {
       throw new EmailToolException(
@@ -71,7 +77,7 @@ export class EmailComposerService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const connectedAccount = await this.connectedAccountRepository.findOne({
-        where: { id: connectedAccountId, workspaceId },
+        where: { id: connectedAccountId, workspaceId, archivedAt: IsNull() },
         relations: {
           messageChannels: {
             messageFolders: true,
@@ -86,6 +92,18 @@ export class EmailComposerService {
         );
       }
 
+      if (
+        !canConnectedAccountPerformEmailOperation({
+          connectedAccount,
+          operation,
+        })
+      ) {
+        throw new EmailToolException(
+          `Connected account '${connectedAccount.handle}' (${connectedAccount.provider}) cannot ${getEmailOperationVerb(operation)} email`,
+          EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_EMAIL_CAPABLE,
+        );
+      }
+
       return connectedAccount;
     }, authContext);
   }
@@ -93,9 +111,11 @@ export class EmailComposerService {
   private async getDefaultConnectedAccountIdOrThrow({
     workspaceId,
     userWorkspaceId,
+    operation,
   }: {
     workspaceId: string;
     userWorkspaceId?: string;
+    operation: EmailOperation;
   }): Promise<string> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -112,19 +132,35 @@ export class EmailComposerService {
         );
       }
 
+      // Identity and application connections share the connectedAccount table with
+      // mailboxes, so selecting on recency alone picks rows that can never send.
+      const emailCapableAccounts = allAccounts.filter((connectedAccount) =>
+        canConnectedAccountPerformEmailOperation({
+          connectedAccount,
+          operation,
+        }),
+      );
+
+      if (!isNonEmptyArray(emailCapableAccounts)) {
+        throw new EmailToolException(
+          `No connected account in this workspace can ${getEmailOperationVerb(operation)} email. Connected accounts by provider: ${summarizeConnectedAccountProviders(allAccounts)}`,
+          EmailToolExceptionCode.NO_EMAIL_CAPABLE_CONNECTED_ACCOUNT,
+        );
+      }
+
       if (!isDefined(userWorkspaceId)) {
-        return allAccounts[0].id;
+        return emailCapableAccounts[0].id;
       }
 
       const connectedAccountId = selectConnectedAccountIdForCaller({
-        connectedAccounts: allAccounts,
+        connectedAccounts: emailCapableAccounts,
         userWorkspaceId,
       });
 
       if (!isDefined(connectedAccountId)) {
         throw new EmailToolException(
-          `No connected account available for user workspace '${userWorkspaceId}'`,
-          EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+          `No connected account available to user workspace '${userWorkspaceId}' can ${getEmailOperationVerb(operation)} email`,
+          EmailToolExceptionCode.NO_EMAIL_CAPABLE_CONNECTED_ACCOUNT,
         );
       }
 
@@ -325,6 +361,7 @@ export class EmailComposerService {
   async composeEmail(
     parameters: ComposeEmailParams,
     context: ToolExecutionContext,
+    operation: EmailOperation,
   ): Promise<EmailComposerResult> {
     const { workspaceId, userWorkspaceId } = context;
     const { subject, body, files, inReplyTo, fromHandle } = parameters;
@@ -368,12 +405,14 @@ export class EmailComposerService {
       connectedAccountId = await this.getDefaultConnectedAccountIdOrThrow({
         workspaceId,
         userWorkspaceId,
+        operation,
       });
     }
 
     const connectedAccount = await this.getConnectedAccountOrThrow({
       connectedAccountId,
       workspaceId,
+      operation,
     });
 
     const messageChannel =
@@ -383,19 +422,11 @@ export class EmailComposerService {
             (channel) => channel.handle === connectedAccount.handle,
           );
 
+    // An SMTP-only account never syncs, so it legitimately has no message channel.
+    // Its SMTP configuration is already guaranteed by the capability check above.
     const isSmtpOnlyAccount =
       connectedAccount.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
       !isDefined(connectedAccount.connectionParameters?.IMAP);
-
-    if (
-      isSmtpOnlyAccount &&
-      !isDefined(connectedAccount.connectionParameters?.SMTP)
-    ) {
-      throw new EmailToolException(
-        `SMTP is not configured for connected account '${connectedAccountId}'`,
-        EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
-      );
-    }
 
     if (!isSmtpOnlyAccount && !isDefined(messageChannel)) {
       throw new EmailToolException(

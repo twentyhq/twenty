@@ -23,6 +23,7 @@ const getFirstWorkspaceConnectedAccountId = async (): Promise<string> => {
   const [{ id }] = await global.testDataSource.query(
     `SELECT id FROM core."connectedAccount"
      WHERE "workspaceId" = $1 AND "archivedAt" IS NULL
+       AND provider NOT IN ('app', 'oidc', 'saml')
      ORDER BY "createdAt" ASC, id ASC
      LIMIT 1`,
     [WORKSPACE_ID],
@@ -31,13 +32,77 @@ const getFirstWorkspaceConnectedAccountId = async (): Promise<string> => {
   return id;
 };
 
+// Restore what was actually there rather than a literal: these rows are seeded,
+// and a hardcoded restore would silently rewrite the seed if it ever changes.
+const readConnectedAccountState = async (
+  connectedAccountId: string,
+): Promise<{ visibility: string; archivedAt: string | null }> => {
+  const [state] = await global.testDataSource.query(
+    `SELECT visibility, "archivedAt" FROM core."connectedAccount" WHERE id = $1`,
+    [connectedAccountId],
+  );
+
+  return state;
+};
+
 const setVisibility = async (
   connectedAccountId: string,
-  visibility: 'user' | 'workspace',
+  visibility: string,
 ) => {
   await global.testDataSource.query(
     `UPDATE core."connectedAccount" SET visibility = $1 WHERE id = $2`,
     [visibility, connectedAccountId],
+  );
+};
+
+// Identity and application connections share the connectedAccount table with
+// mailboxes, and sort ahead of them whenever they were created earlier.
+const insertConnectedAccount = async ({
+  id,
+  provider,
+  userWorkspaceId,
+  visibility = 'user',
+}: {
+  id: string;
+  provider: 'app' | 'oidc' | 'saml' | 'email_group';
+  userWorkspaceId: string;
+  visibility?: 'user' | 'workspace';
+}) => {
+  await global.testDataSource.query(
+    `INSERT INTO core."connectedAccount"
+       (id, handle, provider, "userWorkspaceId", "workspaceId", visibility, "createdAt", "updatedAt")
+     VALUES ($1, $2, $3, $4, $5, $6, '1970-01-01T00:00:00Z', now())`,
+    [
+      id,
+      `${provider}@example.com`,
+      provider,
+      userWorkspaceId,
+      WORKSPACE_ID,
+      visibility,
+    ],
+  );
+};
+
+const insertNonMailboxConnectedAccount = async (params: {
+  id: string;
+  provider: 'app' | 'oidc' | 'saml';
+  userWorkspaceId: string;
+}) => insertConnectedAccount(params);
+
+const deleteConnectedAccount = async (connectedAccountId: string) => {
+  await global.testDataSource.query(
+    `DELETE FROM core."connectedAccount" WHERE id = $1`,
+    [connectedAccountId],
+  );
+};
+
+const setArchivedAt = async (
+  connectedAccountId: string,
+  archivedAt: string | null,
+) => {
+  await global.testDataSource.query(
+    `UPDATE core."connectedAccount" SET "archivedAt" = $1 WHERE id = $2`,
+    [archivedAt, connectedAccountId],
   );
 };
 
@@ -55,6 +120,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
       const result = await service.composeEmail(
         { ...baseParams, connectedAccountId: JONY_CONNECTED_ACCOUNT_ID },
         { workspaceId: WORKSPACE_ID, userWorkspaceId: PHIL_USER_WORKSPACE_ID },
+        'SEND',
       );
 
       expect(result.success).toBe(true);
@@ -67,6 +133,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
       const result = await service.composeEmail(
         { ...baseParams, connectedAccountId: JONY_CONNECTED_ACCOUNT_ID },
         { workspaceId: WORKSPACE_ID },
+        'SEND',
       );
 
       expect(result.success).toBe(true);
@@ -83,6 +150,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
             workspaceId: WORKSPACE_ID,
             userWorkspaceId: PHIL_USER_WORKSPACE_ID,
           },
+          'SEND',
         ),
       ).rejects.toThrow('Connected account id is not a valid UUID');
     });
@@ -95,17 +163,67 @@ describe('EmailComposerService connected account resolution (integration)', () =
             workspaceId: WORKSPACE_ID,
             userWorkspaceId: PHIL_USER_WORKSPACE_ID,
           },
+          'SEND',
         ),
       ).rejects.toThrow('No connected account found for id');
     });
-  });
 
-  describe('when the caller names none', () => {
-    it('composes from the caller own account rather than the first of the workspace', async () => {
-      const result = await service.composeEmail(baseParams, {
-        workspaceId: WORKSPACE_ID,
+    it('refuses an application connection that cannot carry mail', async () => {
+      const appConnectedAccountId = '20202020-0000-4000-8000-0000000000a1';
+
+      await insertNonMailboxConnectedAccount({
+        id: appConnectedAccountId,
+        provider: 'app',
         userWorkspaceId: PHIL_USER_WORKSPACE_ID,
       });
+
+      try {
+        await expect(
+          service.composeEmail(
+            { ...baseParams, connectedAccountId: appConnectedAccountId },
+            {
+              workspaceId: WORKSPACE_ID,
+              userWorkspaceId: PHIL_USER_WORKSPACE_ID,
+            },
+            'SEND',
+          ),
+        ).rejects.toThrow('cannot send email');
+      } finally {
+        await deleteConnectedAccount(appConnectedAccountId);
+      }
+    });
+
+    it('refuses an archived account named explicitly', async () => {
+      const { archivedAt } = await readConnectedAccountState(
+        JONY_CONNECTED_ACCOUNT_ID,
+      );
+
+      await setArchivedAt(JONY_CONNECTED_ACCOUNT_ID, new Date().toISOString());
+
+      try {
+        await expect(
+          service.composeEmail(
+            { ...baseParams, connectedAccountId: JONY_CONNECTED_ACCOUNT_ID },
+            { workspaceId: WORKSPACE_ID },
+            'SEND',
+          ),
+        ).rejects.toThrow('No connected account found for id');
+      } finally {
+        await setArchivedAt(JONY_CONNECTED_ACCOUNT_ID, archivedAt);
+      }
+    });
+  });
+
+  describe('when drafting rather than sending', () => {
+    it('composes a draft from the caller own mailbox', async () => {
+      const result = await service.composeEmail(
+        baseParams,
+        {
+          workspaceId: WORKSPACE_ID,
+          userWorkspaceId: PHIL_USER_WORKSPACE_ID,
+        },
+        'DRAFT',
+      );
 
       expect(result.success).toBe(true);
       expect(result.success && result.data.connectedAccount.id).toBe(
@@ -113,40 +231,158 @@ describe('EmailComposerService connected account resolution (integration)', () =
       );
     });
 
+    it('refuses an email group, which has no drafts folder', async () => {
+      const emailGroupConnectedAccountId =
+        '20202020-0000-4000-8000-0000000000a4';
+
+      await insertConnectedAccount({
+        id: emailGroupConnectedAccountId,
+        provider: 'email_group',
+        userWorkspaceId: PHIL_USER_WORKSPACE_ID,
+        visibility: 'workspace',
+      });
+
+      try {
+        await expect(
+          service.composeEmail(
+            {
+              ...baseParams,
+              connectedAccountId: emailGroupConnectedAccountId,
+            },
+            { workspaceId: WORKSPACE_ID },
+            'DRAFT',
+          ),
+        ).rejects.toThrow('cannot draft email');
+      } finally {
+        await deleteConnectedAccount(emailGroupConnectedAccountId);
+      }
+    });
+  });
+
+  describe('when the caller names none', () => {
+    it('composes from the caller own account rather than the first of the workspace', async () => {
+      const result = await service.composeEmail(
+        baseParams,
+        {
+          workspaceId: WORKSPACE_ID,
+          userWorkspaceId: PHIL_USER_WORKSPACE_ID,
+        },
+        'SEND',
+      );
+
+      expect(result.success).toBe(true);
+      expect(result.success && result.data.connectedAccount.id).toBe(
+        PHIL_CONNECTED_ACCOUNT_ID,
+      );
+    });
+
+    it('skips an older application connection and still picks the mailbox', async () => {
+      const appConnectedAccountId = '20202020-0000-4000-8000-0000000000a2';
+
+      await insertNonMailboxConnectedAccount({
+        id: appConnectedAccountId,
+        provider: 'app',
+        userWorkspaceId: PHIL_USER_WORKSPACE_ID,
+      });
+
+      try {
+        const result = await service.composeEmail(
+          baseParams,
+          {
+            workspaceId: WORKSPACE_ID,
+            userWorkspaceId: PHIL_USER_WORKSPACE_ID,
+          },
+          'SEND',
+        );
+
+        expect(result.success).toBe(true);
+        expect(result.success && result.data.connectedAccount.id).toBe(
+          PHIL_CONNECTED_ACCOUNT_ID,
+        );
+      } finally {
+        await deleteConnectedAccount(appConnectedAccountId);
+      }
+    });
+
+    it('skips an older SSO connection when there is no caller (workflow run)', async () => {
+      const oidcConnectedAccountId = '20202020-0000-4000-8000-0000000000a3';
+
+      await insertNonMailboxConnectedAccount({
+        id: oidcConnectedAccountId,
+        provider: 'oidc',
+        userWorkspaceId: PHIL_USER_WORKSPACE_ID,
+      });
+
+      try {
+        const firstWorkspaceConnectedAccountId =
+          await getFirstWorkspaceConnectedAccountId();
+
+        const result = await service.composeEmail(
+          baseParams,
+          { workspaceId: WORKSPACE_ID },
+          'SEND',
+        );
+
+        expect(result.success).toBe(true);
+        expect(result.success && result.data.connectedAccount.id).toBe(
+          firstWorkspaceConnectedAccountId,
+        );
+        expect(result.success && result.data.connectedAccount.id).not.toBe(
+          oidcConnectedAccountId,
+        );
+      } finally {
+        await deleteConnectedAccount(oidcConnectedAccountId);
+      }
+    });
+
     it('falls back to an account shared with the whole workspace', async () => {
+      const { visibility } = await readConnectedAccountState(
+        JONY_CONNECTED_ACCOUNT_ID,
+      );
+
       await setVisibility(JONY_CONNECTED_ACCOUNT_ID, 'workspace');
 
       try {
-        const result = await service.composeEmail(baseParams, {
-          workspaceId: WORKSPACE_ID,
-          userWorkspaceId: UNKNOWN_USER_WORKSPACE_ID,
-        });
+        const result = await service.composeEmail(
+          baseParams,
+          {
+            workspaceId: WORKSPACE_ID,
+            userWorkspaceId: UNKNOWN_USER_WORKSPACE_ID,
+          },
+          'SEND',
+        );
 
         expect(result.success).toBe(true);
         expect(result.success && result.data.connectedAccount.id).toBe(
           JONY_CONNECTED_ACCOUNT_ID,
         );
       } finally {
-        await setVisibility(JONY_CONNECTED_ACCOUNT_ID, 'user');
+        await setVisibility(JONY_CONNECTED_ACCOUNT_ID, visibility);
       }
     });
 
     it('throws rather than composing from a colleague account', async () => {
       await expect(
-        service.composeEmail(baseParams, {
-          workspaceId: WORKSPACE_ID,
-          userWorkspaceId: UNKNOWN_USER_WORKSPACE_ID,
-        }),
-      ).rejects.toThrow('No connected account available for user workspace');
+        service.composeEmail(
+          baseParams,
+          {
+            workspaceId: WORKSPACE_ID,
+            userWorkspaceId: UNKNOWN_USER_WORKSPACE_ID,
+          },
+          'SEND',
+        ),
+      ).rejects.toThrow('available to user workspace');
     });
 
     it('takes the first workspace account when there is no caller (workflow run)', async () => {
       const firstWorkspaceConnectedAccountId =
         await getFirstWorkspaceConnectedAccountId();
 
-      const result = await service.composeEmail(baseParams, {
-        workspaceId: WORKSPACE_ID,
-      });
+      const result = await service.composeEmail(
+        baseParams,
+        { workspaceId: WORKSPACE_ID },
+        'SEND',
+      );
 
       expect(result.success).toBe(true);
       expect(result.success && result.data.connectedAccount.id).toBe(

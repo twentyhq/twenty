@@ -31,6 +31,7 @@ export class SendEmailTool implements Tool {
       const result = await this.emailComposerService.composeEmail(
         parameters,
         context,
+        'SEND',
       );
 
       if (!result.success) {

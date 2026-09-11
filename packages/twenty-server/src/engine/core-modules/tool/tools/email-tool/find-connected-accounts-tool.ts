@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { FindConnectedAccountsToolInputZodSchema } from 'src/engine/core-modules/tool/tools/email-tool/find-connected-accounts-tool.schema';
 import { type FindConnectedAccountsToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/find-connected-accounts-tool-input.type';
+import { canProviderPerformEmailOperation } from 'src/engine/core-modules/tool/tools/email-tool/utils/can-provider-perform-email-operation.util';
 import { filterConnectedAccountsByHandle } from 'src/engine/core-modules/tool/tools/email-tool/utils/filter-connected-accounts-by-handle.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -13,7 +14,7 @@ import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/con
 @Injectable()
 export class FindConnectedAccountsTool implements Tool {
   description =
-    'List connected email accounts the caller can use with draft_email and send_email. Returns id, handle, provider, visibility and aliases. Use a returned id as connectedAccountId.';
+    'List the mailboxes the caller can use with draft_email and send_email. Returns id, handle, provider, visibility and aliases. Pass a returned id as connectedAccountId. If more than one is returned, ask the user which one to send from rather than guessing. Whether a given mailbox supports drafting also depends on its configuration, which draft_email reports if it does not.';
   inputSchema = FindConnectedAccountsToolInputZodSchema;
 
   constructor(
@@ -30,12 +31,21 @@ export class FindConnectedAccountsTool implements Tool {
         userWorkspaceId,
       });
 
+    // Identity and application connections are stored as connected accounts too;
+    // listing them would offer the model senders that can never deliver.
+    const mailboxAccounts = usableAccounts.filter((connectedAccount) =>
+      canProviderPerformEmailOperation({
+        provider: connectedAccount.provider,
+        operation: 'SEND',
+      }),
+    );
+
     const matchingAccounts = isNonEmptyString(handle)
       ? filterConnectedAccountsByHandle({
-          connectedAccounts: usableAccounts,
+          connectedAccounts: mailboxAccounts,
           handle,
         })
-      : usableAccounts;
+      : mailboxAccounts;
 
     const records = matchingAccounts.map((connectedAccount) => ({
       id: connectedAccount.id,
