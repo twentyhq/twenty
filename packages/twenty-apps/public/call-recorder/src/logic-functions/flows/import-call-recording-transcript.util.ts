@@ -84,11 +84,30 @@ export const importCallRecordingTranscript = async ({
         `[call-recorder] failed to request transcript for Recall recording ${externalRecordingId}: ${createResult.errorMessage}`,
       );
 
-      return buildEmptyTranscriptArtifactResult({
-        hasRetryableFailure:
-          !isNull(createResult.status) &&
-          isRetryableRecallApiStatus(createResult.status),
-      });
+      // A lost response may still have created the transcript, and the next
+      // run lists transcripts before requesting a new one.
+      if (isNull(createResult.status)) {
+        return buildEmptyTranscriptArtifactResult();
+      }
+
+      if (isRetryableRecallApiStatus(createResult.status)) {
+        return buildEmptyTranscriptArtifactResult({
+          hasRetryableFailure: true,
+        });
+      }
+
+      // Recall rejected the request, so finish the recording without a
+      // transcript instead of leaving it processing.
+      return {
+        updateData: {
+          transcript: buildEmptyTranscriptMarker({
+            recallTranscriptId: null,
+            subCode: `transcript_request_rejected:${createResult.status}`,
+          }),
+        },
+        requestedTranscript: false,
+        hasRetryableFailure: false,
+      };
     }
 
     return {
