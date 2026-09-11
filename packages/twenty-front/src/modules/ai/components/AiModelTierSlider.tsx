@@ -92,10 +92,15 @@ const StyledFill = styled.div`
   left: ${TRACK_INSET_PX}px;
   position: absolute;
   top: ${TRACK_INSET_PX}px;
+  transition: width 180ms cubic-bezier(0.22, 1, 0.36, 1);
   width: calc(
     ${DOT_CENTER_INSET_PX - TRACK_INSET_PX + HANDLE_WIDTH_PX / 2}px +
       var(--slider-step) * (100% - ${2 * DOT_CENTER_INSET_PX}px) / ${LAST_STEP}
   );
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `;
 
 const StyledDots = styled.div`
@@ -115,7 +120,12 @@ const StyledDot = styled.span<{ isReached: boolean }>`
   border-radius: ${themeCssVariables.border.radius.rounded};
   corner-shape: round;
   height: 4px;
+  transition: background-color 180ms ease-out;
   width: 4px;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `;
 
 const StyledHandle = styled.div`
