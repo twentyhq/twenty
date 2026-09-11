@@ -7,8 +7,9 @@ import { AddMessageCampaignScheduledAtCommand } from 'src/database/commands/upgr
 import { BackfillCoreWorkflowIdOnWorkflowVersionsCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788960408162-backfill-core-workflow-id-on-workflow-versions.command';
 import { MakeCallRecordingPrivateCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789100000000-make-call-recording-private.command';
 import { BackfillCallRecordingSharesCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789100000001-backfill-call-recording-shares.command';
-import { MakeStandardChildObjectsInheritedCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789100100001-make-standard-child-objects-inherited.command';
 import { BackfillChannelRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789100200000-backfill-channel-record-shares.command';
+import { ReconcileStandardSkillsCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789129759229-reconcile-standard-skills.command';
+import { MakeStandardChildObjectsInheritedCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789130100001-make-standard-child-objects-inherited.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -39,8 +40,9 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
     BackfillCoreWorkflowIdOnWorkflowVersionsCommand,
     MakeCallRecordingPrivateCommand,
     BackfillCallRecordingSharesCommand,
-    MakeStandardChildObjectsInheritedCommand,
     BackfillChannelRecordSharesCommand,
+    ReconcileStandardSkillsCommand,
+    MakeStandardChildObjectsInheritedCommand,
   ],
 })
 export class V2_40_UpgradeVersionCommandModule {}

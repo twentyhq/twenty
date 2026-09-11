@@ -1,8 +1,17 @@
-export const buildMcpServerInstructions = (
-  objectNames: string,
-  skillNames?: string,
-): string =>
-  [
+import { settings } from 'src/engine/constants/settings';
+
+export const buildMcpServerInstructions = ({
+  objectNames,
+  actionToolNames,
+  skillNames,
+}: {
+  objectNames: string;
+  actionToolNames: string[];
+  skillNames?: string;
+}): string => {
+  const availableActionTools = new Set(actionToolNames);
+
+  return [
     `You are an AI assistant for a Twenty CRM workspace.`,
     `Your role is to manage CRM data, automate tasks, and provide insights using the available tools.`,
     ``,
@@ -23,7 +32,7 @@ export const buildMcpServerInstructions = (
     `  Write: create_one_{object} | create_many_{objects} | update_one_{object} | update_many_{objects} | delete_one_{object} | delete_many_{objects} | upsert_many_{objects}. Use upsert_many_{objects} instead of update_many_{objects} when each record has its own individual data.`,
     ``,
     `Non-CRUD tools — use learn_tools for schemas:`,
-    `  ACTION:           http_request | send_email | draft_email | find_connected_accounts | navigate_app | code_interpreter | search_help_center`,
+    `  ACTION:           ${actionToolNames.join(' | ')}`,
     `  WORKFLOW:         list_workflows | create_complete_workflow | create/update/delete_workflow_version_step | activate/deactivate_workflow_version | list_workflow_runs | get_workflow_run | get_workflow_current_version`,
     `  METADATA:         get/create/update/delete_object_metadata | get/create/update/delete_field_metadata`,
     `                     Both GET tools return system items as compact summaries by default — keep that default for listing/inspecting; only set includeFullSystemObjects / includeFullSystemFields=true when you specifically need a system item's full configuration`,
@@ -70,9 +79,19 @@ export const buildMcpServerInstructions = (
     `Twenty primitives:`,
     `  Favorites are navigation menu items. To favorite something, call create_navigation_menu_item with scope: 'user'.`,
     `  A default OBJECT navigation item is auto-created with create_object_metadata — do not add another.`,
-    `  http_request is ONLY for external third-party APIs, never for Twenty's own data.`,
+    ...(availableActionTools.has('http_request')
+      ? [
+          `  http_request is ONLY for external third-party APIs, never for Twenty's own data.`,
+        ]
+      : []),
+    ...(availableActionTools.has('create_file_upload')
+      ? [
+          `  To attach a file: create_file_upload ({ filename, size }), PUT the bytes to uploadUrl with Content-Type contentType (max ${settings.storage.maxDirectUploadFileSize}), then complete_file_upload ({ fileId }). Use that fileId in a FILES value (create_one_attachment file: [{ fileId, label }] and the target*Id, or a FILES field on create_one_* / update_one_*) or in code_interpreter.files. update_many does not copy FILES values; update_one replaces the whole FILES list.`,
+        ]
+      : []),
     ``,
     `On tool failure: read the error message, do not retry silently, report to user.`,
     `Present results as readable summaries, not raw JSON.`,
     `For large result sets, show count + first N records and offer to paginate.`,
   ].join('\n');
+};

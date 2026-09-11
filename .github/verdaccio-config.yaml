@@ -1,4 +1,6 @@
 storage: /tmp/verdaccio-storage
+# Published tarballs are base64-encoded in the registry request body.
+max_body_size: 50mb
 auth:
   htpasswd:
     file: /tmp/verdaccio-htpasswd

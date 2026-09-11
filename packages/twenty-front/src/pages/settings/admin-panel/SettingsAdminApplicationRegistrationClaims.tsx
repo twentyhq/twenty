@@ -53,7 +53,7 @@ export const SettingsAdminApplicationRegistrationClaims = ({
                 {claim.workspaceDisplayName ?? claim.workspaceId}
               </TableCell>
               <TableCell>
-                <Tag text={t`Owner`} color="green" />
+                <Tag color="green">{t`Owner`}</Tag>
               </TableCell>
             </TableRow>
           ))}

@@ -44,6 +44,27 @@ export class FileStorageService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
+  private async resolveFileIdKeepingExistingRow({
+    fileRepository,
+    workspaceId,
+    filePath,
+    applicationId,
+    fileId,
+  }: {
+    fileRepository: WorkspaceScopedRepository<FileEntity>;
+    workspaceId: string;
+    filePath: string;
+    applicationId: string;
+    fileId: string | undefined;
+  }): Promise<string | undefined> {
+    const existingFile = await fileRepository.findOne(workspaceId, {
+      where: { path: filePath, applicationId },
+      withDeleted: true,
+    });
+
+    return existingFile?.id ?? fileId;
+  }
+
   private async resolveApplicationIdOrThrow({
     applicationUniversalIdentifier,
     workspaceId,
@@ -251,7 +272,13 @@ export class FileStorageService {
       {
         path: filePath,
         applicationId: resolvedApplicationId,
-        id: fileId,
+        id: await this.resolveFileIdKeepingExistingRow({
+          fileRepository,
+          workspaceId,
+          filePath,
+          applicationId: resolvedApplicationId,
+          fileId,
+        }),
         mimeType,
         size:
           typeof persistedSourceFile === 'string'
@@ -302,7 +329,13 @@ export class FileStorageService {
       {
         path: filePath,
         applicationId: resolvedApplicationId,
-        id: fileId,
+        id: await this.resolveFileIdKeepingExistingRow({
+          fileRepository: this.fileRepository,
+          workspaceId,
+          filePath,
+          applicationId: resolvedApplicationId,
+          fileId,
+        }),
         mimeType,
         size,
         settings,
