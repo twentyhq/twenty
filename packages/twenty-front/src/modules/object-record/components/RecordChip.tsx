@@ -12,7 +12,6 @@ import {
   AvatarOrIcon,
   Chip,
   type ChipSize,
-  ChipVariant,
   LinkChip,
 } from 'twenty-ui/data-display';
 import { type TriggerEventType } from 'twenty-ui/utilities';
@@ -21,7 +20,7 @@ export type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
   className?: string;
-  variant?: ChipVariant.Highlighted | ChipVariant.Transparent;
+  variant?: 'soft' | 'ghost';
   forceDisableClick?: boolean;
   isBold?: boolean;
   maxWidth?: number;
@@ -76,14 +75,13 @@ export const RecordChip = ({
   ) {
     return (
       <Chip
-        label={recordChipData.name}
         emptyLabel={t`Untitled`}
-        isBold={isBold}
+        weight={isBold ? 'medium' : 'regular'}
         size={size}
         maxWidth={maxWidth}
         className={className}
-        variant={ChipVariant.Transparent}
-        leftComponent={
+        variant="ghost"
+        startElement={
           isIconHidden ? null : (
             <AvatarOrIcon
               placeholder={recordChipData.name}
@@ -93,7 +91,11 @@ export const RecordChip = ({
             />
           )
         }
-      />
+        style={{ paddingInlineStart: 0 }}
+        clickable={false}
+      >
+        {recordChipData.name}
+      </Chip>
     );
   }
 
@@ -101,11 +103,10 @@ export const RecordChip = ({
     <LinkChip
       size={size}
       maxWidth={maxWidth}
-      label={recordChipData.name}
       emptyLabel={t`Untitled`}
-      isBold={isBold}
+      weight={isBold ? 'medium' : 'regular'}
       isLabelHidden={isLabelHidden}
-      leftComponent={
+      startElement={
         isIconHidden ? null : (
           <AvatarOrIcon
             placeholder={recordChipData.name}
@@ -116,13 +117,14 @@ export const RecordChip = ({
         )
       }
       className={className}
-      variant={
-        variant ??
-        (!forceDisableClick ? ChipVariant.Highlighted : ChipVariant.Transparent)
-      }
+      variant={variant ?? 'soft'}
+      clickable={variant !== 'ghost'}
+      style={variant === 'ghost' ? { paddingInlineStart: 0 } : undefined}
       to={to ?? getLinkToShowPage(objectNameSingular, record)}
       onClick={handleCustomClick}
       triggerEvent={triggerEvent}
-    />
+    >
+      {recordChipData.name}
+    </LinkChip>
   );
 };

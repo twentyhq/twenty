@@ -3,13 +3,7 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
-import {
-  Avatar,
-  Chip,
-  ChipAccent,
-  ChipSize,
-  ChipVariant,
-} from 'twenty-ui/data-display';
+import { Avatar, Chip } from 'twenty-ui/data-display';
 import { IconBuildingSkyscraper, IconPlus } from 'twenty-ui/icon';
 import { Checkbox } from 'twenty-ui/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
@@ -74,12 +68,11 @@ export const OnboardingImportPreviewCompanies = () => {
         <StyledRow key={company.id}>
           <Checkbox checked={false} hoverable />
           <Chip
-            label={company.name}
-            size={ChipSize.Small}
-            variant={ChipVariant.Transparent}
-            accent={ChipAccent.TextPrimary}
+            size="sm"
+            variant="ghost"
+            color="primary"
             clickable={false}
-            leftComponent={
+            startElement={
               <Avatar
                 shape="square"
                 size="md"
@@ -90,7 +83,10 @@ export const OnboardingImportPreviewCompanies = () => {
                 )}
               />
             }
-          />
+            style={{ paddingInlineStart: 0 }}
+          >
+            {company.name}
+          </Chip>
         </StyledRow>
       ))}
     </StyledColumn>

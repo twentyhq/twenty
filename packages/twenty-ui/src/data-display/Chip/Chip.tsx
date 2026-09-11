@@ -1,153 +1,99 @@
-import { type ReactNode } from 'react';
-
-import { isNonEmptyString } from '@sniptt/guards';
-import { type TooltipPosition } from '@ui/surfaces/AppTooltip/AppTooltip';
-import { OverflowingTextWithTooltip } from '@ui/surfaces/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
+import { Button as ButtonPrimitive } from '@base-ui/react/button';
+import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
+import { type CSSProperties } from 'react';
+
+import { OverflowingTextWithTooltip } from '@ui/surfaces/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Chip.module.scss';
-
-export enum ChipSize {
-  Large = 'large',
-  Small = 'small',
-}
-
-export enum ChipAccent {
-  TextPrimary = 'text-primary',
-  TextSecondary = 'text-secondary',
-}
-
-export enum ChipVariant {
-  Highlighted = 'highlighted',
-  Regular = 'regular',
-  Transparent = 'transparent',
-  Rounded = 'rounded',
-  Static = 'static',
-}
-
-export type ChipProps = {
-  size?: ChipSize;
-  disabled?: boolean;
-  clickable?: boolean;
-  label: string;
-  tooltipLabel?: string;
-  tooltipPlace?: TooltipPosition;
-  alwaysShowTooltip?: boolean;
-  isLabelHidden?: boolean;
-  isBold?: boolean;
-  maxWidth?: number;
-  variant?: ChipVariant;
-  accent?: ChipAccent;
-  leftComponent?: ReactNode | null;
-  rightComponent?: (() => ReactNode) | ReactNode | null;
-  rightComponentDivider?: boolean;
-  className?: string;
-  forceEmptyText?: boolean;
-  emptyLabel?: string;
-};
-
-const renderRightComponent = (
-  rightComponent: (() => ReactNode) | ReactNode | null,
-  rightComponentDivider?: boolean,
-) => {
-  if (!rightComponent) {
-    return null;
-  }
-
-  const rendered =
-    typeof rightComponent === 'function' ? rightComponent() : rightComponent;
-
-  if (rightComponentDivider === true) {
-    return (
-      <>
-        <div className={styles.rightComponentDivider} />
-        {rendered}
-      </>
-    );
-  }
-
-  return rendered;
-};
+import { type ChipProps } from './types/ChipProps';
 
 export const Chip = ({
-  size = ChipSize.Small,
-  label,
+  children,
+  size = 'sm',
+  variant = 'ghost',
+  color = 'primary',
+  shape = 'square',
+  weight = 'regular',
+  disabled = false,
+  clickable = true,
+  nativeButton = true,
+  startElement,
+  endElement,
+  endElementDivider = false,
+  maxWidth,
   tooltipLabel,
   tooltipPlace,
   alwaysShowTooltip = false,
   isLabelHidden = false,
-  isBold = false,
-  disabled = false,
-  clickable = true,
-  variant = ChipVariant.Regular,
-  leftComponent = null,
-  rightComponent = null,
-  rightComponentDivider = false,
-  accent = ChipAccent.TextPrimary,
-  className,
-  maxWidth,
   forceEmptyText = false,
   emptyLabel = 'Untitled',
+  className,
+  style,
+  render,
+  ref,
+  onClick,
+  ...props
 }: ChipProps) => {
-  // Cursor precedence mirrors the Linaria ternary:
-  // transparent > clickable > disabled > inherit.
-  const cursorClass =
-    variant === ChipVariant.Transparent
-      ? undefined
-      : clickable
-        ? styles.cursorPointer
-        : disabled
-          ? styles.cursorNotAllowed
-          : undefined;
+  const hasContent =
+    isDefined(children) && children !== '' && children !== false;
 
-  const backgroundClass =
-    variant === ChipVariant.Highlighted
-      ? styles.backgroundHighlighted
-      : variant === ChipVariant.Static
-        ? styles.backgroundStatic
-        : variant === ChipVariant.Regular && !disabled && clickable
-          ? styles.interactiveRegular
-          : undefined;
-
-  return (
-    <div
-      data-testid="chip"
-      className={clsx(
-        styles.chip,
-        size === ChipSize.Large ? styles.sizeLarge : styles.sizeSmall,
-        accent === ChipAccent.TextPrimary
-          ? styles.accentTextPrimary
-          : styles.accentTextSecondary,
-        disabled && styles.disabled,
-        (isBold || accent === ChipAccent.TextSecondary) && styles.fontMedium,
-        cursorClass,
-        backgroundClass,
-        maxWidth ? styles.hasMaxWidth : undefined,
-        variant === ChipVariant.Transparent && styles.paddingLeftNone,
-        className,
-      )}
-      style={
-        maxWidth
-          ? ({ '--chip-max-width': `${maxWidth}px` } as React.CSSProperties)
-          : undefined
-      }
-    >
-      {leftComponent}
-      {!isLabelHidden && isDefined(label) && isNonEmptyString(label) ? (
-        <OverflowingTextWithTooltip
-          size={size}
-          text={label}
-          tooltipContent={tooltipLabel}
-          tooltipPlace={tooltipPlace}
-          alwaysShowTooltip={alwaysShowTooltip}
-        />
-      ) : !forceEmptyText && !isLabelHidden ? (
-        <div className={styles.emptyLabel}>{emptyLabel}</div>
-      ) : (
-        ''
-      )}
-      {renderRightComponent(rightComponent, rightComponentDivider)}
-    </div>
-  );
+  return useRender({
+    render: isDefined(onClick) ? (
+      <ButtonPrimitive
+        render={render}
+        disabled={disabled}
+        nativeButton={nativeButton}
+      />
+    ) : (
+      render
+    ),
+    ref,
+    state: { size, variant, color, shape, weight, disabled, clickable },
+    props: {
+      ...props,
+      onClick,
+      className: clsx(styles.chip, className),
+      style: {
+        ...(isDefined(maxWidth)
+          ? {
+              '--tw-chip-max-width': `calc(${maxWidth}px - 2 * var(--tw-chip-padding))`,
+            }
+          : {}),
+        ...style,
+      } as CSSProperties,
+      children: (
+        <>
+          {startElement}
+          {!isLabelHidden &&
+            (hasContent ? (
+              typeof children === 'string' ? (
+                <OverflowingTextWithTooltip
+                  size={size === 'md' ? 'large' : 'small'}
+                  text={children}
+                  tooltipContent={tooltipLabel}
+                  tooltipPlace={tooltipPlace}
+                  alwaysShowTooltip={alwaysShowTooltip}
+                />
+              ) : (
+                <span className={styles.content}>{children}</span>
+              )
+            ) : (
+              !forceEmptyText && (
+                <span className={styles.emptyLabel}>{emptyLabel}</span>
+              )
+            ))}
+          {isDefined(endElement) && endElement !== false && (
+            <>
+              {endElementDivider && (
+                <span className={styles.endElementDivider} />
+              )}
+              {endElement}
+            </>
+          )}
+        </>
+      ),
+    },
+  });
 };

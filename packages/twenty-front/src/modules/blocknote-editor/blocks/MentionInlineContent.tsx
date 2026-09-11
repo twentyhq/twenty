@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Chip, ChipVariant } from 'twenty-ui/data-display';
+import { Chip } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -53,20 +53,22 @@ const LegacyMentionRenderer = ({
   if (!isDefined(objectMetadataItem)) {
     return (
       <Chip
-        label={t`Unknown object`}
-        variant={ChipVariant.Transparent}
+        variant="ghost"
         disabled
-      />
+        style={{ paddingInlineStart: 0 }}
+        clickable={false}
+      >{t`Unknown object`}</Chip>
     );
   }
 
   if (!isDefined(record)) {
     return (
       <Chip
-        label={t`Deleted record`}
-        variant={ChipVariant.Transparent}
+        variant="ghost"
         disabled
-      />
+        style={{ paddingInlineStart: 0 }}
+        clickable={false}
+      >{t`Deleted record`}</Chip>
     );
   }
 

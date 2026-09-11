@@ -11,7 +11,6 @@ import { ExpandableListResizeEffect } from '@/ui/layout/expandable-list/componen
 import { ExpandedListDropdown } from '@/ui/layout/expandable-list/components/ExpandedListDropdown';
 import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/utils/isFirstOverflowingChildElement';
 import { isDefined } from 'twenty-shared/utils';
-import { ChipSize } from 'twenty-ui/data-display';
 import { AnimatedContainer } from 'twenty-ui/layout';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -180,7 +179,7 @@ export const ExpandableList = ({
           <StyledUnShrinkableContainer onClick={handleChipCountClick}>
             <OverflowingTextWithTooltip
               text={`+${hiddenChildrenCount}`}
-              size={ChipSize.Small}
+              size="small"
             />
           </StyledUnShrinkableContainer>
         </AnimatedContainer>

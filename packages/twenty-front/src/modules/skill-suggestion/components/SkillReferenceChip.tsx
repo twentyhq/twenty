@@ -1,6 +1,6 @@
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { ChipVariant, LinkChip } from 'twenty-ui/data-display';
+import { LinkChip } from 'twenty-ui/data-display';
 import { useIcons } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme-constants';
 
@@ -23,12 +23,13 @@ export const SkillReferenceChip = ({
 
   return (
     <LinkChip
-      label={label}
       to={getSettingsPath(SettingsPath.AiSkillDetail, { skillId })}
-      variant={ChipVariant.Highlighted}
-      leftComponent={
+      variant="soft"
+      startElement={
         <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
       }
-    />
+    >
+      {label}
+    </LinkChip>
   );
 };

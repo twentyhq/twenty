@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Chip, ChipVariant, LinkChip } from 'twenty-ui/data-display';
+import { Chip, LinkChip } from 'twenty-ui/data-display';
 
 import { ChatReferenceNavigationEnabledContext } from '@/ai/contexts/ChatReferenceNavigationEnabledContext';
 import { useChatReferenceTarget } from '@/ai/hooks/useChatReferenceTarget';
@@ -22,23 +22,25 @@ export const ChatReferenceChip = ({ reference }: ChatReferenceChipProps) => {
   if (!isDefined(target.to) || !isNavigationEnabled) {
     return (
       <Chip
-        label={reference.displayName}
         emptyLabel={t`Untitled`}
-        variant={ChipVariant.Static}
-        leftComponent={target.leftComponent}
+        variant="soft"
+        startElement={target.leftComponent}
         clickable={false}
-      />
+      >
+        {reference.displayName}
+      </Chip>
     );
   }
 
   return (
     <LinkChip
-      label={reference.displayName}
       emptyLabel={t`Untitled`}
       to={target.to}
       onClick={target.onClick}
-      variant={ChipVariant.Highlighted}
-      leftComponent={target.leftComponent}
-    />
+      variant="soft"
+      startElement={target.leftComponent}
+    >
+      {reference.displayName}
+    </LinkChip>
   );
 };
