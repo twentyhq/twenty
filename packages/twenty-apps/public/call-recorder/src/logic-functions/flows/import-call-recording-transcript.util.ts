@@ -1,6 +1,7 @@
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isArray, isNull, isUndefined } from '@sniptt/guards';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { buildEmptyTranscriptMarker } from 'src/logic-functions/domain/build-empty-transcript-marker.util';
 import { buildFailedTranscriptMarker } from 'src/logic-functions/domain/build-failed-transcript-marker.util';
 import { buildPendingTranscriptMarker } from 'src/logic-functions/domain/build-pending-transcript-marker.util';
 import { buildTranscriptFailureReason } from 'src/logic-functions/domain/build-transcript-failure-reason.util';
@@ -39,7 +40,10 @@ export const importCallRecordingTranscript = async ({
     return buildEmptyTranscriptArtifactResult();
   }
 
-  if (existingTranscriptMarker?.status === 'FAILED') {
+  if (
+    existingTranscriptMarker?.status === 'FAILED' ||
+    existingTranscriptMarker?.status === 'EMPTY'
+  ) {
     return buildEmptyTranscriptArtifactResult();
   }
 
@@ -131,9 +135,17 @@ export const importCallRecordingTranscript = async ({
   });
 
   if (downloadResult.outcome === 'filled') {
+    // Twenty stores an empty JSON array as null, which would read as never imported.
+    const isEmptyTranscript =
+      isArray(downloadResult.content) && downloadResult.content.length === 0;
+
     return {
       updateData: {
-        transcript: downloadResult.content as Record<string, unknown>,
+        transcript: isEmptyTranscript
+          ? buildEmptyTranscriptMarker({
+              recallTranscriptId: transcriptIdToDownload,
+            })
+          : (downloadResult.content as Record<string, unknown>),
       },
       requestedTranscript: false,
       hasRetryableFailure: false,
