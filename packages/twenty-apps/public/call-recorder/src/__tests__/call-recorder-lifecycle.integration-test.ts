@@ -193,6 +193,7 @@ class FakeRecallApi {
   botIdByIdempotencyKey = new Map<string, string>();
   transcripts = new Map<string, FakeRecallTranscript>();
   transcriptRequestFailureStatus: number | undefined = undefined;
+  failVideoDownload = false;
   deletedBotIds: string[] = [];
   listRequestCount = 0;
   artifactImportRequests: object[] = [];
@@ -398,6 +399,10 @@ class FakeRecallApi {
       method === 'GET' &&
       requestUrl.startsWith(`${FAKE_RECALL_DOWNLOAD_BASE_URL}/media/`)
     ) {
+      if (this.failVideoDownload && requestUrl.endsWith('.mp4')) {
+        return jsonResponse(500, {});
+      }
+
       // Twenty checks uploads by magic bytes, so the fake media needs real headers.
       const mediaBytes = requestUrl.endsWith('.mp4')
         ? MP4_FILE_HEADER_BYTES
@@ -1291,6 +1296,48 @@ describe('call recorder app lifecycle (integration)', () => {
         recallTranscriptId: 'recall-transcript-1',
         status: 'EMPTY',
       });
+    });
+
+    it('completes a stuck processing recording with only audio and records the expired video', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      recall.failVideoDownload = true;
+
+      await deliverRecallWebhook(
+        buildRecordingDoneWebhook({
+          botId,
+          metadata,
+          startedAt: hoursAgo(1),
+          completedAt: new Date().toISOString(),
+        }),
+      );
+      await expect(runQueuedArtifactImports()).rejects.toMatchObject({
+        name: 'RetryableLogicFunctionError',
+      });
+      await client.mutation({
+        updateCalendarEvent: {
+          __args: {
+            id: calendarEventId,
+            data: { startsAt: daysAgo(9), endsAt: daysAgo(8) },
+          },
+          id: true,
+        },
+      });
+
+      const cronResult = await runStaleStateCron();
+
+      expect(cronResult.settledCompletedCallRecordingIds).toEqual([
+        callRecordingId,
+      ]);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'video_import_expired',
+      );
+      expect(callRecording.transcript).toMatchObject({ status: 'EMPTY' });
     });
 
     it('leaves a processing recording whose meeting is still inside the convergence window', async () => {

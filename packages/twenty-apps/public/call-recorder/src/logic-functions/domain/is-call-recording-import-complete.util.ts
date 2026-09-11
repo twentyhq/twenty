@@ -1,8 +1,8 @@
 import { isNonEmptyArray, isNull, isUndefined } from '@sniptt/guards';
 
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
-import { parseMediaFileTooLargeMarkers } from 'src/logic-functions/domain/parse-media-file-too-large-markers.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
+import { parseUnrecoverableMediaMarkers } from 'src/logic-functions/domain/parse-unrecoverable-media-markers.util';
 
 export const isCallRecordingImportComplete = ({
   transcript,
@@ -15,15 +15,15 @@ export const isCallRecordingImportComplete = ({
   video: FilesFieldValue | undefined;
   callRecorderFailureReason: string | null | undefined;
 }): boolean => {
-  const { audioFileTooLarge, videoFileTooLarge } =
-    parseMediaFileTooLargeMarkers(callRecorderFailureReason);
+  const { isAudioUnrecoverable, isVideoUnrecoverable } =
+    parseUnrecoverableMediaMarkers(callRecorderFailureReason);
   const transcriptMarker = parseTranscriptMarker(transcript);
 
   return (
     !isNull(transcript) &&
     !isUndefined(transcript) &&
     (isUndefined(transcriptMarker) || transcriptMarker.status === 'EMPTY') &&
-    (isNonEmptyArray(audio) || audioFileTooLarge) &&
-    (isNonEmptyArray(video) || videoFileTooLarge)
+    (isNonEmptyArray(audio) || isAudioUnrecoverable) &&
+    (isNonEmptyArray(video) || isVideoUnrecoverable)
   );
 };
