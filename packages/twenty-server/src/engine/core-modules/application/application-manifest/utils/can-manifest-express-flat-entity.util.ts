@@ -18,7 +18,7 @@ type ProbedPropertyName =
 
 type ProbedFlatEntity = {
   universalIdentifier: string;
-} & Partial<Record<ProbedPropertyName, unknown>>;
+} & Partial<Record<ProbedPropertyName, string | null>>;
 
 export const canManifestExpressFlatEntity = ({
   metadataName,
