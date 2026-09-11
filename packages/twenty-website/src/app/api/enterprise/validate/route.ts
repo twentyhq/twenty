@@ -4,20 +4,22 @@ import {
   ENTERPRISE_RATE_LIMIT_CODE,
   EnterpriseInstanceType,
   evaluateValidityTokenEmissionRateLimit,
+  findNextPaymentAttempt,
   getAutoReleaseDays,
   getEnterpriseConfigError,
   getStripeClient,
   getSubscriptionCurrentPeriodEnd,
   parseInstanceType,
   resolveServerBinding,
+  resolveSubscriptionLicenseState,
   SERVER_BINDING_OUTCOME,
   signValidityToken,
+  SUBSCRIPTION_GRACE_STATUSES,
+  SUBSCRIPTION_LICENSE_OUTCOME,
   verifyEnterpriseKey,
 } from '@/platform/enterprise';
 
 export const dynamic = 'force-dynamic';
-
-const ACTIVATABLE_STATUSES = new Set(['active', 'trialing']);
 
 type InstanceMetadata = {
   serverId?: string;
@@ -65,7 +67,21 @@ export async function POST(request: Request) {
     const stripe = getStripeClient();
     const subscription = await stripe.subscriptions.retrieve(payload.sub);
 
-    if (!ACTIVATABLE_STATUSES.has(subscription.status)) {
+    const nextPaymentAttempt = SUBSCRIPTION_GRACE_STATUSES.has(
+      subscription.status,
+    )
+      ? await findNextPaymentAttempt({
+          stripe,
+          subscriptionId: subscription.id,
+        })
+      : null;
+
+    const licenseState = resolveSubscriptionLicenseState({
+      status: subscription.status,
+      nextPaymentAttempt,
+    });
+
+    if (licenseState.outcome === SUBSCRIPTION_LICENSE_OUTCOME.REJECTED) {
       return NextResponse.json(
         { error: 'Subscription is not active', status: subscription.status },
         { status: 403 },
@@ -130,6 +146,7 @@ export async function POST(request: Request) {
 
     const validityToken = signValidityToken(payload.sub, {
       subscriptionCancelAt: effectiveCancelAt,
+      graceExpiresAt: licenseState.graceExpiresAt,
     });
 
     return NextResponse.json({
