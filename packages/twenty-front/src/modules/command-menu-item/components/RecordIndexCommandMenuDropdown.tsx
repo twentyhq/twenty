@@ -77,7 +77,6 @@ export const RecordIndexCommandMenuDropdown = () => {
       dropdownId={dropdownId}
       data-select-disable
       dropdownPlacement="bottom-start"
-      dropdownStrategy="absolute"
       dropdownOffset={{
         x: recordIndexCommandMenuDropdownPosition.x ?? 0,
         y: recordIndexCommandMenuDropdownPosition.y ?? 0,
