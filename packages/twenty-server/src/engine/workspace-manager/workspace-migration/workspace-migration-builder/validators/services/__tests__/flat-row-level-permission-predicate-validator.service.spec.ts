@@ -297,7 +297,7 @@ describe('FlatRowLevelPermissionPredicateValidatorService', () => {
           operand: RowLevelPermissionPredicateOperand.IS,
           value: null,
           workspaceMemberFieldMetadataUniversalIdentifier:
-            FIELD_UNIVERSAL_IDENTIFIER,
+            WORKSPACE_MEMBER_RELATION_FIELD_UNIVERSAL_IDENTIFIER,
           parent: {
             sharingRuleUniversalIdentifier: SHARING_RULE_UNIVERSAL_IDENTIFIER,
           },
