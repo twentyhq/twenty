@@ -327,35 +327,33 @@ export const SettingsApplicationConnectionDetail = () => {
                 title={connectionLabel}
                 description={t`Manage this application's OAuth connection.`}
               />
-              {connection.isOwnedByCurrentUser && (
-                <StyledActions>
-                  {connection.authFailedAt && (
-                    <Button
-                      title={t`Reconnect`}
-                      Icon={IconRefresh}
-                      variant="secondary"
-                      accent="blue"
-                      onClick={handleReconnect}
-                    />
-                  )}
-                  {connection.visibility !== 'workspace' && (
-                    <Button
-                      title={t`Share with workspace`}
-                      Icon={IconUsers}
-                      variant="secondary"
-                      accent="default"
-                      onClick={() => openModal(shareWithWorkspaceModalId)}
-                    />
-                  )}
+              <StyledActions>
+                {connection.authFailedAt && (
                   <Button
-                    title={t`Disconnect`}
-                    Icon={IconTrash}
+                    title={t`Reconnect`}
+                    Icon={IconRefresh}
                     variant="secondary"
-                    accent="danger"
-                    onClick={() => openModal(deleteModalId)}
+                    accent="blue"
+                    onClick={handleReconnect}
                   />
-                </StyledActions>
-              )}
+                )}
+                {connection.visibility !== 'workspace' && (
+                  <Button
+                    title={t`Share with workspace`}
+                    Icon={IconUsers}
+                    variant="secondary"
+                    accent="default"
+                    onClick={() => openModal(shareWithWorkspaceModalId)}
+                  />
+                )}
+                <Button
+                  title={t`Disconnect`}
+                  Icon={IconTrash}
+                  variant="secondary"
+                  accent="danger"
+                  onClick={() => openModal(deleteModalId)}
+                />
+              </StyledActions>
             </Section>
             <Section>
               <H2Title
