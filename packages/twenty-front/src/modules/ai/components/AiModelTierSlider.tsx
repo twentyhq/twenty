@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ChangeEvent, useContext, useId } from 'react';
+import { type ChangeEvent, useContext, useId, useState } from 'react';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -140,6 +140,51 @@ const StyledHandle = styled.div`
   top: 50%;
   transform: translateY(-50%);
   width: ${HANDLE_WIDTH_PX}px;
+
+  &[data-celebrating='true'] {
+    animation: reasoning-pulse 400ms ease-out 120ms;
+  }
+
+  &[data-celebrating='true']::after {
+    animation: reasoning-halo 400ms ease-out 120ms;
+    border: 2px solid ${themeCssVariables.color.blue};
+    border-radius: inherit;
+    content: '';
+    inset: -3px;
+    opacity: 0;
+    position: absolute;
+  }
+
+  @keyframes reasoning-pulse {
+    0%,
+    100% {
+      transform: translateY(-50%) scale(1);
+    }
+    35% {
+      transform: translateY(-50%) scale(1.08, 1.16);
+    }
+    65% {
+      transform: translateY(-50%) scale(1, 0.97);
+    }
+  }
+
+  @keyframes reasoning-halo {
+    from {
+      opacity: 0.35;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(2.2, 1.6);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &[data-celebrating='true'],
+    &[data-celebrating='true']::after {
+      animation: none;
+    }
+  }
 `;
 
 const StyledInput = styled.input`
@@ -187,6 +232,7 @@ export const AiModelTierSlider = ({
   const { theme } = useContext(ThemeContext);
   const tiers = useAiModelTiers();
   const tooltipId = useId().replace(/:/g, '');
+  const [isCelebrating, setIsCelebrating] = useState(false);
 
   const selectedStep = AI_MODEL_TIERS.indexOf(selectedTier);
   const resolvedTier = tiers[selectedStep];
@@ -248,6 +294,9 @@ export const AiModelTierSlider = ({
     const tier = AI_MODEL_TIERS[Number(event.target.value)];
 
     if (isDefined(tier)) {
+      setIsCelebrating(
+        tier === AI_MODEL_TIERS[LAST_STEP] && tier !== selectedTier,
+      );
       onTierChange(tier);
     }
   };
@@ -276,7 +325,10 @@ export const AiModelTierSlider = ({
         style={{ '--slider-step': selectedStep } as React.CSSProperties}
       >
         <StyledFill>
-          <StyledHandle />
+          <StyledHandle
+            data-celebrating={isCelebrating && selectedStep === LAST_STEP}
+            onAnimationEnd={() => setIsCelebrating(false)}
+          />
         </StyledFill>
         <StyledDots>
           {AI_MODEL_TIERS.map((tier, index) => (
