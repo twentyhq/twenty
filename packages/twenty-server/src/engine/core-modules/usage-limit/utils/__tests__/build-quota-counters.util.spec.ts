@@ -33,7 +33,6 @@ const buildCounters = ({ limits }: { limits: FlatUsageLimit[] }) =>
     limits,
     usageSpenders: { userWorkspaceId: 'user-1' },
     workspaceId: 'workspace-1',
-    resourceType: UsageResourceType.AI,
     operationType: UsageOperationType.AI_CHAT_TOKEN,
     periodByUnit: { month: MONTH_PERIOD, week: WEEK_PERIOD },
   });

@@ -62,9 +62,9 @@ export const STANDARD_CHILD_OBJECTS_TO_MAKE_INHERITED = [
   },
 ] as const;
 
-@RegisteredWorkspaceCommand('2.40.0', 1789140100001)
+@RegisteredWorkspaceCommand('2.41.0', 1789140100001)
 @Command({
-  name: 'upgrade:2-40:make-standard-child-objects-inherited',
+  name: 'upgrade:2-41:make-standard-child-objects-inherited',
   description:
     'Set the readability of the existing attachment, timelineActivity, noteTarget, taskTarget, messageThreadTarget and calendarEventTarget standard objects to INHERITED with their parent fields, as the standard application now declares them; workspaces created after the change already have it',
 })
