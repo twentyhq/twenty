@@ -2,7 +2,7 @@ import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
 
 import type { SkillSuggestionItem } from '@/skill-suggestion/types/SkillSuggestionItem';
-import { FindManySkillsDocument } from '~/generated-metadata/graphql';
+import { FindManySkillsForSuggestionDocument } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 export const useSkillSuggestionSearch = () => {
@@ -14,7 +14,7 @@ export const useSkillSuggestionSearch = () => {
       // catalog, so the list is refreshed when the menu opens (empty query)
       // and served from cache while the user narrows it down.
       const { data } = await apolloMetadataClient.query({
-        query: FindManySkillsDocument,
+        query: FindManySkillsForSuggestionDocument,
         fetchPolicy: query === '' ? 'network-only' : 'cache-first',
       });
 

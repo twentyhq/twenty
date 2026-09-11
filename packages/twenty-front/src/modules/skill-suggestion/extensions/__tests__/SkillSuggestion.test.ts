@@ -1,8 +1,10 @@
 import { Editor } from '@tiptap/core';
 import { Document } from '@tiptap/extension-document';
+import { HardBreak } from '@tiptap/extension-hard-break';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 
+import { SKILL_SUGGESTION_PLUGIN_KEY } from '@/skill-suggestion/constants/SkillSuggestionPluginKey';
 import { SkillSuggestion } from '@/skill-suggestion/extensions/SkillSuggestion';
 
 // Mock ReactRenderer (DOM-dependent)
@@ -29,6 +31,7 @@ describe('SkillSuggestion', () => {
         Document,
         Paragraph,
         Text,
+        HardBreak,
         SkillSuggestion.configure({
           searchSkills: mockSearchSkills,
         }),
@@ -65,6 +68,39 @@ describe('SkillSuggestion', () => {
     >;
 
     expect(storage['skill-suggestion'].searchSkills).toBe(mockSearchSkills);
+  });
+
+  const isSuggestionActive = () =>
+    SKILL_SUGGESTION_PLUGIN_KEY.getState(editor.state)?.active === true;
+
+  it('should open the suggestion when / is typed at the start of a line', () => {
+    editor.commands.focus('end');
+    editor.commands.insertContent('/');
+
+    expect(isSuggestionActive()).toBe(true);
+  });
+
+  it('should open the suggestion when / follows a space', () => {
+    editor.commands.focus('end');
+    editor.commands.insertContent('Use /');
+
+    expect(isSuggestionActive()).toBe(true);
+  });
+
+  it('should open the suggestion when / follows a hard break', () => {
+    editor.commands.focus('end');
+    editor.commands.insertContent('first line');
+    editor.commands.setHardBreak();
+    editor.commands.insertContent('/');
+
+    expect(isSuggestionActive()).toBe(true);
+  });
+
+  it('should not open the suggestion when / is part of a word such as a URL', () => {
+    editor.commands.focus('end');
+    editor.commands.insertContent('https:/');
+
+    expect(isSuggestionActive()).toBe(false);
   });
 
   it('should use default empty search function when not configured', () => {
