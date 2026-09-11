@@ -18,6 +18,10 @@ export class SmtpDriver implements EmailDriverInterface {
     this.transport = createTransport({ ...options, pool: true });
   }
 
+  close(): void {
+    this.transport.close();
+  }
+
   async send(sendMailOptions: SendMailOptions): Promise<void> {
     await this.transport.sendMail(sendMailOptions).catch((err) => {
       this.logger.error(`sending email to '${sendMailOptions.to}': ${err}`);

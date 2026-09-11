@@ -1,7 +1,9 @@
+import { type OnModuleDestroy } from '@nestjs/common';
+
 import { type ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-export abstract class DriverFactoryBase<TDriver> {
+export abstract class DriverFactoryBase<TDriver> implements OnModuleDestroy {
   private currentDriver: TDriver | null = null;
   private currentConfigKey: string | null = null;
 
@@ -22,14 +24,19 @@ export abstract class DriverFactoryBase<TDriver> {
     }
 
     if (this.currentConfigKey !== configKey) {
+      let newDriver: TDriver;
+
       try {
-        this.currentDriver = this.createDriver();
+        newDriver = this.createDriver();
       } catch (error) {
         throw new Error(
           `Failed to create driver for ${this.constructor.name} with config key: ${configKey}. Original error: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
 
+      this.releaseCurrentDriver();
+
+      this.currentDriver = newDriver;
       this.currentConfigKey = configKey;
     }
 
@@ -42,6 +49,22 @@ export abstract class DriverFactoryBase<TDriver> {
     return this.currentDriver;
   }
 
+  onModuleDestroy(): void {
+    this.releaseCurrentDriver();
+
+    this.currentConfigKey = null;
+  }
+
+  private releaseCurrentDriver(): void {
+    if (this.currentDriver === null) {
+      return;
+    }
+
+    this.disposeDriver?.(this.currentDriver);
+    this.currentDriver = null;
+  }
+
   protected abstract buildConfigKey(): string;
   protected abstract createDriver(): TDriver;
+  protected disposeDriver?(driver: TDriver): void;
 }
