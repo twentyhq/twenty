@@ -63,8 +63,11 @@ const SuggestionMenuInner = <TItem,>(
 
   const selectedItem = items[clampedSelectedIndex];
 
+  const [isSelectedItemVisible, setIsSelectedItemVisible] = useState(true);
+
   const shouldDisplayPreview =
     !isMobile &&
+    isSelectedItemVisible &&
     selectedItemPreview !== undefined &&
     selectedItem !== undefined;
 
@@ -168,6 +171,35 @@ const SuggestionMenuInner = <TItem,>(
     scrollableContainer.style.transition = 'none';
     scrollableContainer.scrollTop = offsetTop - offsetHeight;
   }, [clampedSelectedIndex]);
+
+  // The preview is anchored to the selected row, so once the user scrolls that
+  // row out of the list it would float detached from the menu.
+  useLayoutEffect(() => {
+    const scrollableContainer =
+      listContainerRef.current?.firstElementChild ?? null;
+    const activeItemContainer = activeItemRef.current;
+
+    if (
+      !scrollableContainer ||
+      !activeItemContainer ||
+      typeof IntersectionObserver === 'undefined'
+    ) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSelectedItemVisible(entry.isIntersecting);
+      },
+      { root: scrollableContainer, threshold: 0.99 },
+    );
+
+    observer.observe(activeItemContainer);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [clampedSelectedIndex, items]);
 
   return (
     <motion.div
