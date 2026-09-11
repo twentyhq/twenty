@@ -1,4 +1,4 @@
-import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
+import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type AllStandardAgentName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-agent-name.type';
 import {
@@ -40,7 +40,7 @@ Response format:
 - Use markdown for readability
 
 Always base answers on official Twenty documentation. Be patient and helpful.`,
-        modelId: AUTO_SELECT_SMART_MODEL_ID,
+        modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
         responseFormat: { type: 'text' },
         isCustom: false,
         modelConfiguration: {},

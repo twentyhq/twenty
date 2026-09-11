@@ -11,6 +11,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
 import { CalendarEventWebhookSyncJob } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/jobs/calendar-event-webhook-sync.job';
 import { type CalendarEventWebhookSyncJobData } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/types/calendar-event-webhook-sync-job-data.type';
 import { CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-debounce-ms.constant';
@@ -33,12 +34,22 @@ export class WebhookSyncTriggerService {
     private readonly cacheStorage: CacheStorageService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    private readonly workspaceActivationService: WorkspaceActivationService,
   ) {}
 
   async triggerMessagingSync(
     messageChannelId: string,
     workspaceId: string,
   ): Promise<void> {
+    const isWorkspaceServiceable =
+      await this.workspaceActivationService.isWorkspaceServiceableFromCache(
+        workspaceId,
+      );
+
+    if (!isWorkspaceServiceable) {
+      return;
+    }
+
     const updateResult = await this.messageChannelRepository
       .createQueryBuilder()
       .update()
@@ -85,6 +96,15 @@ export class WebhookSyncTriggerService {
     calendarChannelId: string,
     workspaceId: string,
   ): Promise<void> {
+    const isWorkspaceServiceable =
+      await this.workspaceActivationService.isWorkspaceServiceableFromCache(
+        workspaceId,
+      );
+
+    if (!isWorkspaceServiceable) {
+      return;
+    }
+
     const debounceCacheKey = `calendar-event-webhook-sync-debounce:${workspaceId}:${calendarChannelId}`;
 
     const hasOpenedDebounceWindow = await this.cacheStorage.setIfAbsent(

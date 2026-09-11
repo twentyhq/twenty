@@ -12,7 +12,7 @@ import {
   type ToolSet,
 } from 'ai';
 import { type RunAgentMessage } from 'twenty-shared/application';
-import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
+import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 import {
   isDefined,
@@ -290,23 +290,24 @@ export class AgentAsyncExecutorService {
     let cacheCreationTokens = 0;
     let nativeWebSearchCallCount = 0;
     let executionSteps: StepResult<ToolSet>[] = [];
+    let resolvedModelId: string | undefined;
 
     try {
-      if (agent) {
-        const workspace = await this.workspaceRepository.findOneBy({
-          id: agent.workspaceId,
-        });
+      const workspace = await this.workspaceRepository.findOneBy({
+        id: workspaceId,
+      });
 
-        if (workspace) {
-          this.aiModelRegistryService.validateModelAvailability(
-            agent.modelId,
-            workspace,
-          );
-        }
+      if (isDefined(agent)) {
+        this.aiModelRegistryService.validateModelAvailability(agent.modelId);
       }
 
       const registeredModel =
-        await this.aiModelRegistryService.resolveModelForAgent(agent);
+        await this.aiModelRegistryService.resolveModelForAgent(
+          agent,
+          workspace ?? undefined,
+        );
+
+      resolvedModelId = registeredModel.modelId;
 
       let tools: ToolSet = {};
       let toolCatalogSection = '';
@@ -547,9 +548,8 @@ export class AgentAsyncExecutorService {
         result = structuredResult.output as object;
       }
 
-      const resolvedModelId = registeredModel.modelId;
       const tokenCostInDollars = this.aiBillingService.calculateCost(
-        resolvedModelId,
+        registeredModel.modelId,
         { usage: accumulatedUsage, cacheCreationTokens },
       );
       const totalCostInDollars =
@@ -577,11 +577,18 @@ export class AgentAsyncExecutorService {
         AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     } finally {
-      const modelId = agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID;
-      const costInDollars = this.aiBillingService.calculateCost(modelId, {
-        usage: accumulatedUsage,
-        cacheCreationTokens,
-      });
+      const modelId =
+        resolvedModelId ??
+        agent?.modelId ??
+        AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID;
+      // Nothing was generated when execution failed before a model resolved,
+      // and pricing an unresolved id would throw over the original error.
+      const costInDollars = isDefined(resolvedModelId)
+        ? this.aiBillingService.calculateCost(resolvedModelId, {
+            usage: accumulatedUsage,
+            cacheCreationTokens,
+          })
+        : 0;
       const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
       const totalTokens =
         (accumulatedUsage.inputTokens ?? 0) +

@@ -12,15 +12,13 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { type FindManySkillsQuery } from '~/generated-metadata/graphql';
 import { SettingsSkillInactiveMenuDropDown } from '~/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown';
 import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsSkillTableMetadata';
+import { type SettingsSkillTableItem } from '~/pages/settings/ai/types/SettingsSkillTableItem';
 import { SettingsSkillTableRow } from './SettingsSkillTableRow';
 
-type Skill = FindManySkillsQuery['skills'][number];
-
 type SettingsAgentSkillsTableProps = {
-  skills: Skill[];
+  skills: SettingsSkillTableItem[];
   loading: boolean;
   onActivate: (skillId: string) => void;
   onDelete: (skillId: string) => void;

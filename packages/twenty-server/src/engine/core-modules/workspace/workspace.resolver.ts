@@ -147,13 +147,6 @@ export class WorkspaceResolver {
     }
   }
 
-  @ResolveField(() => String, { nullable: true })
-  async routerModel(
-    @Parent() _workspace: WorkspaceEntity,
-  ): Promise<string | null> {
-    return 'auto';
-  }
-
   @ResolveField(() => [FeatureFlagDTO], { nullable: true })
   async featureFlags(
     @Parent() workspace: WorkspaceEntity,
@@ -210,34 +203,6 @@ export class WorkspaceResolver {
     return isDefined(defaultRoleEntity)
       ? fromRoleEntityToRoleDto(defaultRoleEntity)
       : null;
-  }
-
-  @ResolveField(() => String, { nullable: true })
-  async fastModel(
-    @Parent() workspace: WorkspaceEntity,
-  ): Promise<string | null> {
-    return workspace.fastModel;
-  }
-
-  @ResolveField(() => String, { nullable: true })
-  async smartModel(
-    @Parent() workspace: WorkspaceEntity,
-  ): Promise<string | null> {
-    return workspace.smartModel;
-  }
-
-  @ResolveField(() => [String], { nullable: true })
-  async enabledAiModelIds(
-    @Parent() workspace: WorkspaceEntity,
-  ): Promise<string[]> {
-    return workspace.enabledAiModelIds;
-  }
-
-  @ResolveField(() => Boolean, { nullable: false })
-  async useRecommendedModels(
-    @Parent() workspace: WorkspaceEntity,
-  ): Promise<boolean> {
-    return workspace.useRecommendedModels;
   }
 
   @ResolveField(() => ApplicationDTO, { nullable: true })

@@ -850,12 +850,11 @@ type Workspace {
   isInternalMessagesImportEnabled: Boolean!
   editableProfileFields: [String!]
   defaultRole: Role
-  fastModel: String!
-  smartModel: String!
+  aiChatModelTier: AiModelTier!
+  aiAgentModelTier: AiModelTier!
+  isAutoModelSelectionEnabled: Boolean!
+  aiModelIdByTier: JSON!
   aiAdditionalInstructions: String
-  enabledAiModelIds: [String!]
-  useRecommendedModels: Boolean!
-  routerModel: String!
   workspaceCustomApplication: Application
   featureFlags: [FeatureFlag!]
   billingSubscriptions: [BillingSubscription!]!
@@ -882,6 +881,14 @@ enum WorkspaceActivationStatus {
   ACTIVE
   INACTIVE
   SUSPENDED
+}
+
+enum AiModelTier {
+  extraFast
+  fast
+  balanced
+  smart
+  extraSmart
 }
 
 type User {
@@ -1910,6 +1917,28 @@ type ConnectedAccountPublicDTO {
   connectionParameters: PublicImapSmtpCaldavConnectionParameters
 }
 
+type ApplicationConnectedAccountDTO {
+  id: UUID!
+  handle: String!
+  provider: String!
+  lastCredentialsRefreshedAt: DateTime
+  authFailedAt: DateTime
+  authFailedReason: String
+  archivedAt: DateTime
+  handleAliases: [String!]
+  scopes: [String!]
+  lastSignedInAt: DateTime
+  userWorkspaceId: UUID!
+  connectionProviderId: UUID
+  applicationId: UUID
+  name: String
+  visibility: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  connectionParameters: PublicImapSmtpCaldavConnectionParameters
+  isOwnedByCurrentUser: Boolean!
+}
+
 type FeatureFlag {
   key: FeatureFlagKey!
   value: Boolean!
@@ -2033,12 +2062,17 @@ type ClientAiModelConfig {
   outputCostPerMillionTokens: Float
   nativeCapabilities: NativeModelCapabilities
   isDeprecated: Boolean
-  isRecommended: Boolean
   providerName: String
   providerLabel: String
   contextWindowTokens: Float
   maxOutputTokens: Float
   dataResidency: String
+  intelligenceIndex: Float
+  outputTokensPerSecond: Float
+  costPerTask: Float
+  efforts: [String!]
+  effort: String
+  isBenchmarkInherited: Boolean
 }
 
 enum ModelFamily {
@@ -2047,6 +2081,11 @@ enum ModelFamily {
   GEMINI
   MISTRAL
   GROK
+}
+
+type ClientAiModelTierConfig {
+  tier: AiModelTier!
+  modelId: String!
 }
 
 type Billing {
@@ -2110,6 +2149,7 @@ type ClientConfig {
   authProviders: AuthProviders!
   billing: Billing!
   aiModels: [ClientAiModelConfig!]!
+  aiModelTiers: [ClientAiModelTierConfig!]!
   signInPrefilled: Boolean!
   isMultiWorkspaceEnabled: Boolean!
   isEmailVerificationRequired: Boolean!
@@ -3612,6 +3652,7 @@ type Query {
   apiKey(input: GetApiKeyInput!): ApiKey
   currentUserSessions: [UserSession!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
+  applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
   listPlans: [BillingPlan!]!
@@ -4818,12 +4859,12 @@ input UpdateWorkspaceInput {
   isTwoFactorAuthenticationEnforced: Boolean
   trashRetentionDays: Float
   eventLogRetentionDays: Float
-  fastModel: String
-  smartModel: String
+  aiChatModelTier: AiModelTier
+  aiAgentModelTier: AiModelTier
+  isAutoModelSelectionEnabled: Boolean
+  aiModelIdByTier: JSON
   aiAdditionalInstructions: String
   editableProfileFields: [String!]
-  enabledAiModelIds: [String!]
-  useRecommendedModels: Boolean
   isInternalMessagesImportEnabled: Boolean
 }
 
