@@ -21,7 +21,6 @@ export const SkillSuggestionMenuItem = ({
     <MenuItemSuggestion
       LeftIcon={getIcon(item.icon ?? DEFAULT_SKILL_ICON)}
       text={item.label}
-      contextualText={item.description ?? undefined}
       selected={isSelected}
       onClick={() => {
         onSelect(item);

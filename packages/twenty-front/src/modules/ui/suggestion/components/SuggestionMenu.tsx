@@ -207,7 +207,7 @@ const SuggestionMenuInner = <TItem,>(
       {shouldDisplayPreview && (
         <AppTooltip
           anchorSelect={`#${getSuggestionMenuItemAnchorId(getItemKey(selectedItem))}`}
-          place="left-start"
+          place="right-start"
           offset={16}
           noArrow
           interactive
