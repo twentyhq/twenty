@@ -19,7 +19,7 @@ export const granolaDailyCatchUpHandler = async () => {
   }
 
   await reconcileGranolaFolderSelectionOrThrow();
-  await enqueueGranolaInitialBackfillOrThrow(registration);
+  await enqueueGranolaInitialBackfillOrThrow();
   const result = await enqueueGranolaBackfillOrThrow({
     updatedAfter: new Date(
       Date.now() - GRANOLA_CATCH_UP_WINDOW_DAYS * GRANOLA_MILLISECONDS_PER_DAY,

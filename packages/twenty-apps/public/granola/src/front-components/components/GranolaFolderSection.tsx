@@ -32,6 +32,8 @@ export const GranolaFolderSection = () => {
   const [loadError, setLoadError] = useState<string | undefined>(undefined);
   const [selectedFolderIds, setSelectedFolderIds] = useState<string[]>([]);
   const [isRestricted, setIsRestricted] = useState(false);
+  const [hasInaccessibleSelection, setHasInaccessibleSelection] =
+    useState(false);
   const [saveState, setSaveState] = useState<FolderSaveState>({ kind: 'idle' });
 
   const { saveDebounced, saveImmediately } = useAutosaveGranolaFolderSelection({
@@ -55,7 +57,10 @@ export const GranolaFolderSection = () => {
 
       setFolders(result.folders);
       setSelectedFolderIds(accessibleSelectedIds);
-      setIsRestricted(accessibleSelectedIds.length > 0);
+      setIsRestricted(storedFolderIds.length > 0);
+      setHasInaccessibleSelection(
+        storedFolderIds.length > 0 && accessibleSelectedIds.length === 0,
+      );
 
       if (isDefined(result.pendingFolderIds)) {
         setSaveState({ kind: 'pending' });
@@ -68,7 +73,11 @@ export const GranolaFolderSection = () => {
   const handleSyncAllChange = (isSyncingAll: boolean) => {
     setIsRestricted(!isSyncingAll);
 
-    if (isSyncingAll && selectedFolderIds.length > 0) {
+    if (
+      isSyncingAll &&
+      (selectedFolderIds.length > 0 || hasInaccessibleSelection)
+    ) {
+      setHasInaccessibleSelection(false);
       setSelectedFolderIds([]);
       saveImmediately([]);
     }
@@ -79,6 +88,7 @@ export const GranolaFolderSection = () => {
       ? [...selectedFolderIds, folderId]
       : selectedFolderIds.filter((id) => id !== folderId);
 
+    setHasInaccessibleSelection(false);
     setSelectedFolderIds(nextSelectedFolderIds);
     saveDebounced(nextSelectedFolderIds);
   };
@@ -142,7 +152,15 @@ export const GranolaFolderSection = () => {
             {t('This key has no access to any folder yet.')}
           </StyledSettingsHint>
         )}
+        {hasInaccessibleSelection && (
+          <StyledSettingsError>
+            {t(
+              'The folders you picked are no longer available. Pick folders again, or turn on Sync all folders.',
+            )}
+          </StyledSettingsError>
+        )}
         {isRestricted &&
+          !hasInaccessibleSelection &&
           folderOptions.length > 0 &&
           selectedFolderIds.length === 0 && (
             <StyledSettingsHint>

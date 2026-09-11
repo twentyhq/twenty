@@ -47,5 +47,10 @@ export const useAutosaveGranolaFolderSelection = ({
     GRANOLA_FOLDER_SELECTION_SAVE_DEBOUNCE_MILLISECONDS,
   );
 
-  return { saveDebounced, saveImmediately: saveQueue.enqueueSave };
+  const saveImmediately = (folderIds: string[]) => {
+    saveDebounced.cancel();
+    saveQueue.enqueueSave(folderIds);
+  };
+
+  return { saveDebounced, saveImmediately };
 };

@@ -20,7 +20,7 @@ export const granolaRegisterWebhookHandler = async () => {
     const registration = await ensureGranolaWebhookRegistrationOrThrow();
     await reconcileGranolaFolderSelectionOrThrow();
     try {
-      await enqueueGranolaInitialBackfillOrThrow(registration);
+      await enqueueGranolaInitialBackfillOrThrow();
     } catch (error) {
       console.error(
         `[granola] Could not queue the initial import for registration ${registration.registrationId}; the daily catch-up will retry. ${toErrorMessage(error)}`,
