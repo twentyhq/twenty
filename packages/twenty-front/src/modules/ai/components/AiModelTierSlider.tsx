@@ -209,8 +209,8 @@ export const AiModelTierSlider = ({
     intelligenceDelta >= 100
       ? t`${formatMetricDelta(intelligenceDelta)} the score of Balanced`
       : intelligenceDelta < 0
-        ? t`${formatNumber(Math.abs(intelligenceDelta))}% lower score than Balanced Intelligence score`
-        : t`${formatNumber(intelligenceDelta)}% higher score than Balanced Intelligence score`;
+        ? t`${formatNumber(Math.abs(intelligenceDelta))}% lower score than Balanced`
+        : t`${formatNumber(intelligenceDelta)}% higher score than Balanced`;
   const intelligenceScore = t`Intelligence score: ${formatNumber(model?.intelligenceIndex ?? 0)}`;
   const modelEffort = model?.effort;
   const reasoningEffort =
