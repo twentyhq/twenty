@@ -3,13 +3,20 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { galleryRenderTest } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
 
+type CreateDisplayControlTestOptions = {
+  buttonName: string;
+  disabledButtonName: string;
+  staticContent: string;
+  checkGallery?: TwentyUiGalleryPlayFunction;
+};
+
 const createDisplayControlTest =
-  (
-    buttonName: string,
-    disabledButtonName: string,
-    staticContent: string,
-    checkGallery: TwentyUiGalleryPlayFunction = galleryRenderTest,
-  ): TwentyUiGalleryPlayFunction =>
+  ({
+    buttonName,
+    disabledButtonName,
+    staticContent,
+    checkGallery = galleryRenderTest,
+  }: CreateDisplayControlTestOptions): TwentyUiGalleryPlayFunction =>
   async (context) => {
     await checkGallery(context);
     const canvas = within(context.canvasElement);
@@ -36,8 +43,8 @@ const createDisplayControlTest =
     await expect(canvas.getByLabelText('Activations')).toHaveTextContent('3');
   };
 
-export const statusControlsTest = createDisplayControlTest(
-  'Open status',
-  'Disabled status',
-  'Loading status',
-);
+export const statusControlsTest = createDisplayControlTest({
+  buttonName: 'Open status',
+  disabledButtonName: 'Disabled status',
+  staticContent: 'Loading status',
+});
