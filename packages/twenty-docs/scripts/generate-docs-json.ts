@@ -99,7 +99,6 @@ const buildLanguageEntry = (language: string): GeneratedLanguage => {
   return {
     language,
     tabs: baseStructure.tabs
-      .filter((tab) => !tab.isEnglishOnly || language === DEFAULT_LANGUAGE)
       .map((tab) => ({
         tab: translationMaps.tabLabels.get(tab.key) ?? tab.label,
         groups: tab.groups

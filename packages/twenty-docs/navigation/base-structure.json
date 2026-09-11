@@ -512,7 +512,6 @@
     {
       "key": "uiLibrary",
       "label": "UI Library",
-      "isEnglishOnly": true,
       "groups": [
         {
           "key": "uiGuides",

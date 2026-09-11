@@ -8,7 +8,6 @@
 "base_url": "https://twenty.api.crowdin.com"
 "base_path": ".."
 
-# UI library pages and generated snippets stay English-only; keep these source paths explicit.
 files: [
   {
     "source": "packages/twenty-docs/getting-started/**/*.mdx",
@@ -27,6 +26,13 @@ files: [
   {
     "source": "packages/twenty-docs/developers/**/*.mdx",
     "translation": "packages/twenty-docs/l/%two_letters_code%/developers/**/%original_file_name%",
+    "type": "mdx_v2",
+    "exclude_code_blocks": true,
+    "excluded_front_matter_elements": ["icon"],
+  },
+  {
+    "source": "packages/twenty-docs/ui/**/*.mdx",
+    "translation": "packages/twenty-docs/l/%two_letters_code%/ui/**/%original_file_name%",
     "type": "mdx_v2",
     "exclude_code_blocks": true,
     "excluded_front_matter_elements": ["icon"],

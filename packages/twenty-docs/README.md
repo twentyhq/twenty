@@ -11,7 +11,7 @@ Visit the documentation at [docs.twenty.com](https://docs.twenty.com)
 This repository contains:
 - **User Guide** (46 pages) - Complete guide for Twenty users
 - **Developers** (24 pages) - Technical documentation for developers
-- **UI Library** - English guides and component references
+- **UI Library** - Guides and component references
 
 ## 🚀 Local Development
 
@@ -65,7 +65,7 @@ Your content here...
 
 ## 🔧 Configuration
 
-- `navigation/base-structure.json` - Source of truth for tabs, groups, icons, and page slugs (English only, not sent to Crowdin).
+- `navigation/base-structure.json` - Source of truth for tabs, groups, icons, and page slugs (English source labels, not sent to Crowdin).
 - `navigation/navigation.template.json` - Generated translation template (labels only) that is uploaded to Crowdin.
 - `l/<language>/navigation.json` - Locale-specific label files pulled from Crowdin.
 - `docs.json` - Generated Mintlify configuration (always run `yarn docs:generate` after modifying navigation files).
@@ -83,7 +83,7 @@ npx nx run twenty-docs:validate
 
 Run `npx nx generate:ui twenty-docs` after changing documented component props or theme tokens. Run `npx nx check:ui twenty-docs` to check generated references and compile the UI guide examples against the public entry points. Hand-written pages live under `ui/`; generated snippets live under `snippets/ui/generated/`.
 
-The UI Library tab is English-only. Keep it out of the Crowdin navigation template and source paths.
+UI guides, component pages, and navigation labels use the existing Crowdin translation workflow. Translated pages appear in their locale’s navigation once the corresponding files exist. Generated API and token snippets are shared across locales and maintained by the reference generator.
 
 ## 🔗 Links
 

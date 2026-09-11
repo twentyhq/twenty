@@ -8,7 +8,6 @@ export type BaseGroup = {
 };
 
 type BaseTab = {
-  isEnglishOnly?: boolean;
   key: string;
   label: string;
   groups: BaseGroup[];
