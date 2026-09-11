@@ -1,11 +1,9 @@
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 
-import {
-  closeToastAtom,
-  completeToastExitAtom,
-  toastStateAtom,
-} from '@ui/feedback/Toast/internal/toastAtoms';
-import { useToastContext } from '@ui/feedback/Toast/internal/useToastContext';
+import { useCloseToast } from '@ui/feedback/Toast/hooks/useCloseToast';
+import { useCompleteToastExit } from '@ui/feedback/Toast/hooks/useCompleteToastExit';
+import { useToastContext } from '@ui/feedback/Toast/hooks/useToastContext';
+import { toastState } from '@ui/feedback/Toast/states/toastState';
 
 import { type ToasterProps } from '../types/ToasterProps';
 import { ToasterItem } from './ToasterItem';
@@ -16,9 +14,9 @@ type ToasterItemsProps = {
 
 export const ToasterItems = ({ getToastProps }: ToasterItemsProps) => {
   const store = useToastContext();
-  const { toasts } = useAtomValue(toastStateAtom, { store });
-  const close = useSetAtom(closeToastAtom, { store });
-  const completeExit = useSetAtom(completeToastExitAtom, { store });
+  const { toasts } = useAtomValue(toastState, { store });
+  const { close } = useCloseToast();
+  const { completeToastExit } = useCompleteToastExit();
 
   return toasts.map((toast) => (
     <ToasterItem
@@ -26,7 +24,7 @@ export const ToasterItems = ({ getToastProps }: ToasterItemsProps) => {
       toastEntry={toast}
       getToastProps={getToastProps}
       onClose={close}
-      onExitComplete={completeExit}
+      onExitComplete={completeToastExit}
     />
   ));
 };

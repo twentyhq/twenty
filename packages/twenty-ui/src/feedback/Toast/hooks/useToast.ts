@@ -1,23 +1,11 @@
-import { useSetAtom } from 'jotai';
 import { useMemo } from 'react';
 
-import { closeToastAtom, enqueueToastAtom } from '../internal/toastAtoms';
-import { useToastContext } from '../internal/useToastContext';
-import { type ToastOptions } from '../types/ToastOptions';
+import { useCloseToast } from './useCloseToast';
+import { useEnqueueToast } from './useEnqueueToast';
 
 export const useToast = () => {
-  const store = useToastContext();
-  const close = useSetAtom(closeToastAtom, { store });
+  const { close } = useCloseToast();
+  const { enqueueToast } = useEnqueueToast();
 
-  return useMemo(() => {
-    function enqueueToast(options: ToastOptions): string;
-    function enqueueToast(
-      options: ToastOptions | undefined,
-    ): string | undefined;
-    function enqueueToast(options: ToastOptions | undefined) {
-      return store.set(enqueueToastAtom, options);
-    }
-
-    return { enqueueToast, close };
-  }, [store, close]);
+  return useMemo(() => ({ enqueueToast, close }), [enqueueToast, close]);
 };

@@ -1,6 +1,6 @@
 import { type RefObject, useLayoutEffect } from 'react';
 
-import { type ToastEntry } from '@ui/feedback/Toast/internal/ToastEntry';
+import { type ToastEntry } from '@ui/feedback/Toast/types/ToastEntry';
 
 type ToasterItemExitEffectProps = {
   elementRef: RefObject<HTMLDivElement | null>;

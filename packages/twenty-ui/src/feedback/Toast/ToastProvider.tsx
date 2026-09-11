@@ -1,8 +1,9 @@
 import { createStore } from 'jotai';
 import { useState } from 'react';
 
-import { DEFAULT_TOAST_LIMIT, toastStateAtom } from './internal/toastAtoms';
-import { ToastContext } from './internal/ToastContext';
+import { DEFAULT_TOAST_LIMIT } from './constants/DefaultToastLimit';
+import { ToastContext } from './contexts/ToastContext';
+import { toastState } from './states/toastState';
 import { type ToastProviderProps } from './types/ToastProviderProps';
 
 export const ToastProvider = ({
@@ -15,7 +16,7 @@ export const ToastProvider = ({
     }
 
     const toastStore = createStore();
-    toastStore.set(toastStateAtom, (state) => ({ ...state, limit }));
+    toastStore.set(toastState, (state) => ({ ...state, limit }));
     return toastStore;
   });
 
