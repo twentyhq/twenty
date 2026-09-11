@@ -197,6 +197,7 @@ Use this when you only want to **add** a widget to a tab that already exists —
 import {
   definePageLayoutWidget,
   PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
@@ -208,7 +209,11 @@ export default definePageLayoutWidget({
       .universalIdentifier,
   title: 'Hello World',
   type: 'FRONT_COMPONENT',
-  position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 1000 },
+  position: {
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    index: 1000,
+    heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+  },
   configuration: {
     configurationType: 'FRONT_COMPONENT',
     frontComponentUniversalIdentifier:
@@ -239,6 +244,7 @@ export default definePageLayoutWidget({
   ```
 
 - `position` is **required**, since the tab is not part of your manifest and its layout mode cannot be inferred. Match the tab's layout mode: record page tabs are vertical lists, so use `{ layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index }` with an index above the built-in widgets (the Fields widget sits at 0).
+- For a vertical list, set `position.heightBehavior` to `PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT` to fill one tab viewport, or `PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT` to use the widget's content or configured height. Import this enum from `twenty-sdk/define`, as in the example above. If omitted, the widget keeps its built-in default. Only one active widget per tab can fill the viewport, and its index must place it after all fit-content widgets. `heightBehavior` is not supported in `GRID` or `CANVAS` positions.
 - `configuration` works exactly like a widget defined inline in `definePageLayout` or `definePageLayoutTab`: it references [front components](/developers/extend/apps/layout/front-components), views, fields and so on.
 - Use this instead of `definePageLayoutTab` when the tab already exists and you only want to place one widget on it. Use `definePageLayoutTab` when you want a tab of your own.
 - `yarn twenty pull` writes a widget you added to a tab you do not own back as a `definePageLayoutWidget()` file, under the same limits as widgets of a `definePageLayout()`.
