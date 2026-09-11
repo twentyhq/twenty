@@ -1,26 +1,27 @@
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { msg } from '@lingui/core/macro';
 
-import { type Skill } from '~/generated-metadata/graphql';
+import { type SettingsSkillTableItem } from '~/pages/settings/ai/types/SettingsSkillTableItem';
 
-export const SETTINGS_SKILL_TABLE_METADATA: TableMetadata<Skill> = {
-  tableId: 'settingsSkill',
-  fields: [
-    {
-      fieldLabel: msg`Name`,
-      fieldName: 'name',
-      fieldType: 'string',
-      align: 'left',
+export const SETTINGS_SKILL_TABLE_METADATA: TableMetadata<SettingsSkillTableItem> =
+  {
+    tableId: 'settingsSkill',
+    fields: [
+      {
+        fieldLabel: msg`Name`,
+        fieldName: 'label',
+        fieldType: 'string',
+        align: 'left',
+      },
+      {
+        fieldLabel: msg`App`,
+        fieldName: 'applicationLabel',
+        fieldType: 'string',
+        align: 'left',
+      },
+    ],
+    initialSort: {
+      fieldName: 'label',
+      direction: 'asc',
     },
-    {
-      fieldLabel: msg`Type`,
-      fieldName: 'isCustom',
-      fieldType: 'string',
-      align: 'left',
-    },
-  ],
-  initialSort: {
-    fieldName: 'name',
-    direction: 'asc',
-  },
-};
+  };
