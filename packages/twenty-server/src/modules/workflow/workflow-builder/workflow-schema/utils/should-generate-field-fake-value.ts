@@ -15,7 +15,10 @@ const isExcludedSystemField = (field: FlatFieldMetadata) => {
 };
 
 const isManyToOneRelationField = (field: FlatFieldMetadata) => {
-  if (isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION)) {
+  if (
+    isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) ||
+    isFlatFieldMetadataOfType(field, FieldMetadataType.MORPH_RELATION)
+  ) {
     return field.settings?.relationType === RelationType.MANY_TO_ONE;
   }
 

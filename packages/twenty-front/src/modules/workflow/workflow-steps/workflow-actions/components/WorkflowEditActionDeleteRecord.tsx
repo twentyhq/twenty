@@ -9,9 +9,9 @@ import { useEffect, useState } from 'react';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { getObjectMetadataItemsManageableByAutomation } from '@/workflow/workflow-steps/workflow-actions/utils/getObjectMetadataItemsManageableByAutomation';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { isDefined } from 'twenty-shared/utils';
-import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 import { HorizontalSeparator } from 'twenty-ui/layout';
 import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
@@ -40,21 +40,17 @@ export const WorkflowEditActionDeleteRecord = ({
 }: WorkflowEditActionDeleteRecordProps) => {
   const { getSelectIconPropsFromObjectMetadataItem } =
     useObjectMetadataSelectHelpers();
-  const { activeNonSystemObjectMetadataItems } =
-    useFilteredObjectMetadataItems();
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+
+  const selectableObjectMetadataItems =
+    getObjectMetadataItemsManageableByAutomation(activeObjectMetadataItems);
 
   const availableMetadata: Array<SelectOption<string>> =
-    activeNonSystemObjectMetadataItems
-      .filter((objectMetadataItem) =>
-        canObjectBeManagedByAutomation({
-          nameSingular: objectMetadataItem.nameSingular,
-        }),
-      )
-      .map((item) => ({
-        label: item.labelPlural,
-        value: item.nameSingular,
-        ...getSelectIconPropsFromObjectMetadataItem(item),
-      }));
+    selectableObjectMetadataItems.map((item) => ({
+      label: item.labelPlural,
+      value: item.nameSingular,
+      ...getSelectIconPropsFromObjectMetadataItem(item),
+    }));
 
   const [formData, setFormData] = useState<DeleteRecordFormData>({
     objectNameSingular: action.settings.input.objectName,
@@ -76,7 +72,7 @@ export const WorkflowEditActionDeleteRecord = ({
     saveAction(newFormData);
   };
 
-  const objectNameSingular = activeNonSystemObjectMetadataItems.find(
+  const objectNameSingular = selectableObjectMetadataItems.find(
     (item) => item.nameSingular === formData.objectNameSingular,
   )?.nameSingular;
 

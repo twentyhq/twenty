@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
+import { isServerManagedField } from '@/object-metadata/utils/isServerManagedField';
 import {
   type WorkflowActionType,
   type WorkflowTriggerType,
@@ -52,14 +53,14 @@ export const shouldDisplayFormField = ({
     case 'UPDATE_RECORD':
       return (
         !isNotSupportedRelation &&
-        (fieldMetadataItem.isUIEditable ?? true) &&
+        !isServerManagedField(fieldMetadataItem) &&
         !isHiddenSystemField(fieldMetadataItem) &&
         fieldMetadataItem.isActive
       );
     case 'UPSERT_RECORD':
       return (
         (!isNotSupportedRelation &&
-          (fieldMetadataItem.isUIEditable ?? true) &&
+          !isServerManagedField(fieldMetadataItem) &&
           !isHiddenSystemField(fieldMetadataItem) &&
           fieldMetadataItem.isActive) ||
         isIdField

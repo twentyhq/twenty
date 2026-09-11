@@ -98,13 +98,53 @@ describe('shouldDisplayFormField', () => {
     expect(result).toBe(true);
   });
 
-  it('returns false for UPDATE_RECORD with non UI editable field', () => {
+  it('returns true for UPDATE_RECORD with non UI editable field', () => {
     const field = { ...baseField, isUIEditable: false } as FieldMetadataItem;
     const result = shouldDisplayFormField({
       fieldMetadataItem: field,
       actionType: 'UPDATE_RECORD',
     });
+    expect(result).toBe(true);
+  });
+
+  it('returns false for UPDATE_RECORD with server managed system field', () => {
+    const field = {
+      ...baseField,
+      isSystem: true,
+      name: 'createdAt',
+    } as FieldMetadataItem;
+    const result = shouldDisplayFormField({
+      fieldMetadataItem: field,
+      actionType: 'UPDATE_RECORD',
+    });
     expect(result).toBe(false);
+  });
+
+  it('returns false for CREATE_RECORD with server managed system field', () => {
+    const field = {
+      ...baseField,
+      isSystem: true,
+      name: 'updatedBy',
+    } as FieldMetadataItem;
+    const result = shouldDisplayFormField({
+      fieldMetadataItem: field,
+      actionType: 'CREATE_RECORD',
+    });
+    expect(result).toBe(false);
+  });
+
+  it('returns true for CREATE_RECORD with MORPH_RELATION MANY_TO_ONE field', () => {
+    const field = {
+      ...baseField,
+      type: FieldMetadataType.MORPH_RELATION,
+      isUIEditable: false,
+      settings: { relationType: 'MANY_TO_ONE' },
+    } as FieldMetadataItem;
+    const result = shouldDisplayFormField({
+      fieldMetadataItem: field,
+      actionType: 'CREATE_RECORD',
+    });
+    expect(result).toBe(true);
   });
 
   it('returns true for DATABASE_EVENT with non UI editable field', () => {

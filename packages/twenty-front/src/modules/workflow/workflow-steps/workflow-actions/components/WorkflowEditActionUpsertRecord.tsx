@@ -17,12 +17,12 @@ import {
   type RecordActionFormData,
   type RelationManyToOneField,
 } from '@/workflow/workflow-steps/workflow-actions/utils/buildUpdatedRecordActionFormData';
+import { getObjectMetadataItemsManageableByAutomation } from '@/workflow/workflow-steps/workflow-actions/utils/getObjectMetadataItemsManageableByAutomation';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 import { HorizontalSeparator } from 'twenty-ui/layout';
 import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
@@ -75,21 +75,17 @@ export const WorkflowEditActionUpsertRecord = ({
 }: WorkflowEditActionUpsertRecordProps) => {
   const { getSelectIconPropsFromObjectMetadataItem } =
     useObjectMetadataSelectHelpers();
-  const { activeNonSystemObjectMetadataItems } =
-    useFilteredObjectMetadataItems();
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+
+  const selectableObjectMetadataItems =
+    getObjectMetadataItemsManageableByAutomation(activeObjectMetadataItems);
 
   const availableMetadata: Array<SelectOption<string>> =
-    activeNonSystemObjectMetadataItems
-      .filter((objectMetadataItem) =>
-        canObjectBeManagedByAutomation({
-          nameSingular: objectMetadataItem.nameSingular,
-        }),
-      )
-      .map((item) => ({
-        label: item.labelPlural,
-        value: item.nameSingular,
-        ...getSelectIconPropsFromObjectMetadataItem(item),
-      }));
+    selectableObjectMetadataItems.map((item) => ({
+      label: item.labelPlural,
+      value: item.nameSingular,
+      ...getSelectIconPropsFromObjectMetadataItem(item),
+    }));
 
   const [formData, setFormData] = useState<UpsertRecordFormData>({
     objectName: action.settings.input.objectName,
