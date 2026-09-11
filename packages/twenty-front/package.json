@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test:argos-capture": "node --experimental-strip-types --test .storybook/argosScreenshot.test.mjs",
     "build": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 npx vite build",
     "build:sourcemaps": "NODE_ENV=production VITE_BUILD_SOURCEMAP=true NODE_OPTIONS=--max-old-space-size=8192 npx vite build",
     "start:prod": "NODE_ENV=production npx serve -s build",
@@ -152,7 +153,7 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
-    "@argos-ci/storybook": "~6.0.18",
+    "@argos-ci/storybook": "6.2.3",
     "@babel/core": "^7.14.5",
     "@babel/preset-typescript": "^7.24.6",
     "@graphql-codegen/cli": "^6.3.1",

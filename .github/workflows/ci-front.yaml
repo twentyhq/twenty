@@ -118,6 +118,10 @@ jobs:
           npx playwright install chromium
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
+      - name: Verify Argos capture dimensions
+        if: matrix.shard == 1 && matrix.storybook_scope == 'pages'
+        run: yarn workspace twenty-front test:argos-capture
+
       - name: Serve storybook & run tests
         run: |
           npx http-server packages/twenty-front/storybook-static --port 6006 --silent &
@@ -235,8 +239,8 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest-8-cores
     env:
-      NODE_OPTIONS: "--max-old-space-size=10240"
-      ANALYZE: "true"
+      NODE_OPTIONS: '--max-old-space-size=10240'
+      ANALYZE: 'true'
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -258,8 +262,7 @@ jobs:
     if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs:
-      [
+    needs: [
         changed-files-check,
         front-task,
         front-build,
