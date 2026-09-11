@@ -40,6 +40,10 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     return <SettingsSkillFormContent />;
   }
 
+  if (hasFailedToLoad) {
+    return null;
+  }
+
   if (!isDefined(skill)) {
     const SkillIcon = getIcon('IconBook');
 

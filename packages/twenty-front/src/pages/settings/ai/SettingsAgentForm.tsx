@@ -40,6 +40,10 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     return <SettingsAgentFormContent />;
   }
 
+  if (hasFailedToLoad) {
+    return null;
+  }
+
   if (!isDefined(agent)) {
     const AgentIcon = getIcon('IconLego');
 
