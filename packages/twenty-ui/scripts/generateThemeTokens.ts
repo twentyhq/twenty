@@ -6,7 +6,6 @@ import { fileURLToPath } from 'node:url';
 import { MAIN_COLOR_TOKENS } from '../design-tokens/color/mainColors';
 import { DESIGN_TOKENS } from '../design-tokens/designTokens';
 import { buildMainColorNames } from '../design-tokens/pipeline/buildMainColorNames';
-import { buildTagColors } from '../design-tokens/pipeline/buildTagColors';
 import { buildThemeConstants } from '../design-tokens/pipeline/buildThemeConstants';
 import { buildThemeCss } from '../design-tokens/pipeline/buildThemeCss';
 import { buildThemeCommon } from '../design-tokens/pipeline/buildThemeCommon';
@@ -60,10 +59,6 @@ const sourceOutputs = [
   {
     path: resolve(themeDirectory, 'constants/MainColorNames.ts'),
     content: buildMainColorNames(Object.keys(MAIN_COLOR_TOKENS)),
-  },
-  {
-    path: resolve(packageRoot, '../twenty-shared/src/constants/TagColors.ts'),
-    content: buildTagColors(Object.keys(MAIN_COLOR_TOKENS)),
   },
   {
     path: resolve(themeDirectory, 'constants/Animation.ts'),
