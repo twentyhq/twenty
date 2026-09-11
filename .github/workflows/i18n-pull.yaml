@@ -87,9 +87,11 @@ jobs:
       - name: Fix file permissions
         run: sudo chown -R runner:docker .
 
-      # Fix encoding issues (escaped Unicode like \u62db -> 招) and push fixes back to Crowdin
+      # Fix encoding issues (escaped Unicode like \u62db -> 招) and translations carrying a
+      # leaked response envelope, then push the fixes back to Crowdin so they
+      # survive the next sync.
       - name: Normalize translations in Crowdin
-        run: npx tsx packages/twenty-utils/crowdin-normalizer/normalize-crowdin-translations.ts --project=1 --apply --rules=escaped-unicode || echo "::warning::translation normalization failed (non-blocking)"
+        run: npx tsx packages/twenty-utils/crowdin-normalizer/normalize-crowdin-translations.ts --project=1 --apply --rules=escaped-unicode,corrupted-model-output || echo "::warning::translation normalization failed (non-blocking)"
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
