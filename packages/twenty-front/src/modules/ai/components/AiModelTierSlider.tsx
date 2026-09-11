@@ -134,7 +134,7 @@ const StyledDot = styled.span<{ isReached: boolean }>`
 `;
 
 const StyledHandle = styled.div`
-  background: ${themeCssVariables.background.primary};
+  background: white;
   border-radius: ${themeCssVariables.border.radius.md};
   box-shadow: ${themeCssVariables.boxShadow.light};
   corner-shape: round;
@@ -212,7 +212,18 @@ export const AiModelTierSlider = ({
         ? t`${formatNumber(Math.abs(intelligenceDelta))}% lower score than Balanced`
         : t`${formatNumber(intelligenceDelta)}% higher score than Balanced`;
   const intelligenceScore = t`Intelligence score: ${formatNumber(model?.intelligenceIndex ?? 0)}`;
+  const costDelta = resolvedTier.costDeltaPercent ?? 0;
+  const costComparison =
+    costDelta >= 100
+      ? t`${formatMetricDelta(costDelta)} the cost of Balanced.`
+      : costDelta < 0
+        ? t`${formatNumber(Math.abs(costDelta))}% lower cost than Balanced.`
+        : t`${formatNumber(costDelta)}% higher cost than Balanced.`;
   const modelEffort = model?.effort;
+  const modelName = getAiModelModeDescription(resolvedTier, {
+    showAutomatic: false,
+    showEffort: false,
+  });
   const reasoningEffort =
     isDefined(modelEffort) && isAiModelEffort(modelEffort)
     ? getAiModelEffortLabel(modelEffort)
@@ -240,10 +251,7 @@ export const AiModelTierSlider = ({
             key: 'cost',
             Icon: IconCoins,
             deltaPercent: resolvedTier.costDeltaPercent,
-            description:
-              (resolvedTier.costDeltaPercent ?? 0) >= 100
-                ? t`${formatMetricDelta(resolvedTier.costDeltaPercent ?? 0)} the cost of Balanced Mode.`
-                : t`${formatMetricDelta(resolvedTier.costDeltaPercent ?? 0)} change in cost compared with Balanced Mode.`,
+            description: costComparison,
           },
         ]
       : []),
@@ -322,6 +330,7 @@ export const AiModelTierSlider = ({
               tooltipTitle ??
               getAiModelModeDescription(resolvedTier, {
                 showAutomatic: false,
+                showEffort: false,
               })
             }
             description={`${description}${inheritedNote}`}
@@ -332,7 +341,7 @@ export const AiModelTierSlider = ({
       {isDefined(model) && (
         <AppTooltip
           anchorSelect={`#ai-model-tier-name-${tooltipId}`}
-          title={model.label}
+          title={modelName}
           description={t`Reasoning effort: ${reasoningEffort}`}
           delay={TooltipDelay.shortDelay}
           place="bottom"

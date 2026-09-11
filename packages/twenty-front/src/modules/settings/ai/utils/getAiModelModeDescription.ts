@@ -7,7 +7,10 @@ import { getAiModelEffortLabel } from '@/ai/utils/getAiModelEffortLabel';
 
 export const getAiModelModeDescription = (
   { model, isPinned }: Pick<ResolvedAiModelTier, 'model' | 'isPinned'>,
-  { showAutomatic = true }: { showAutomatic?: boolean } = {},
+  {
+    showAutomatic = true,
+    showEffort = true,
+  }: { showAutomatic?: boolean; showEffort?: boolean } = {},
 ) => {
   if (!isDefined(model)) {
     return t`No model available`;
@@ -22,7 +25,9 @@ export const getAiModelModeDescription = (
       ? label.slice(0, -suffix.length)
       : label;
 
-    label = `${modelName} · ${getAiModelEffortLabel(effort)}`;
+    label = showEffort
+      ? `${modelName} · ${getAiModelEffortLabel(effort)}`
+      : modelName;
   }
 
   return isPinned || !showAutomatic ? label : t`${label} (Auto)`;
