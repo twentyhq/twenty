@@ -9,7 +9,11 @@ export const parseICalEvents = (
   objectUrl: string,
 ): FetchedCalendarEvent[] => {
   try {
-    const events = Object.values(ical.parseICS(rawData))
+    // iCal mandates CRLF line breaks; servers like Kerio Connect serve
+    // calendar-data with bare CR (or LF) breaks, which node-ical parses as {}
+    const normalizedRawData = rawData.replace(/\r\n|\r|\n/g, '\r\n');
+
+    const events = Object.values(ical.parseICS(normalizedRawData))
       .filter(
         (calendarComponent): calendarComponent is ical.VEvent =>
           calendarComponent.type === 'VEVENT',
