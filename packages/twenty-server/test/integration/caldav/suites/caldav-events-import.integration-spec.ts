@@ -86,7 +86,7 @@ describe('CalDAV calendar events import (integration)', () => {
     // The CalDAV driver wraps its fetch in the SSRF guard, which rejects the
     // container's private address before the request is made.
     await updateConfigVariable({
-      input: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: false },
+      input: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: ['*'] },
     });
 
     radicale = await startRadicaleContainer({
@@ -136,7 +136,7 @@ describe('CalDAV calendar events import (integration)', () => {
 
   afterAll(async () => {
     await updateConfigVariable({
-      input: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: true },
+      input: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: [] },
     }).catch(() => undefined);
 
     if (isNonEmptyString(connectedAccountId)) {
