@@ -1796,20 +1796,11 @@ type UsageAnalytics {
   userDailyUsage: UsageUserDaily
 }
 
-type UsageLimit {
-  id: UUID!
+type UsageQuotaDefinition {
   resourceType: UsageResourceType!
-  operationType: UsageOperationType!
-  spenderType: String!
-  spenderId: String
-  limitKind: String!
-  periodCount: Int!
-  periodUnit: String!
-  meter: String!
-  limitValue: BigInt!
-  burstValue: BigInt
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  allowedOperationTypes: [UsageOperationType!]!
+  allowedSpenderTypes: [String!]!
+  allowedMeters: [String!]!
 }
 
 enum UsageResourceType {
@@ -1837,10 +1828,55 @@ enum UsageOperationType {
   SUBSCRIPTION
 }
 
+type UsageQuotaDefinitions {
+  definitions: [UsageQuotaDefinition!]!
+  isIntraWorkspaceLimitEntitled: Boolean!
+  hasAllowancePeriod: Boolean!
+}
+
+type UsageQuotaWithConsumption {
+  id: UUID!
+  resourceType: UsageResourceType!
+  operationType: UsageOperationType!
+  spenderType: String!
+  spenderId: String
+  spenderLabel: String
+  periodUnit: String!
+  meter: String!
+  limitValue: BigInt!
+  isEnforced: Boolean!
+  consumedValue: BigInt
+  remainingValue: BigInt
+  periodStart: DateTime
+  periodEnd: DateTime
+}
+
 """
 The `BigInt` scalar type represents non-fractional signed whole numeric values.
 """
 scalar BigInt
+
+type UsageQuotaScopeConsumption {
+  consumedValue: BigInt
+  periodStart: DateTime!
+  periodEnd: DateTime!
+}
+
+type UsageLimit {
+  id: UUID!
+  resourceType: UsageResourceType!
+  operationType: UsageOperationType!
+  spenderType: String!
+  spenderId: String
+  limitKind: String!
+  periodCount: Int!
+  periodUnit: String!
+  meter: String!
+  limitValue: BigInt!
+  burstValue: BigInt
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
 
 type ApprovedAccessDomain {
   id: UUID!
@@ -3616,6 +3652,9 @@ type Query {
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   usageLimits: [UsageLimit!]!
+  usageQuotasWithConsumption: [UsageQuotaWithConsumption!]!
+  usageQuotaDefinitions: UsageQuotaDefinitions!
+  usageQuotaScopeConsumption(input: UsageQuotaScopeInput!): UsageQuotaScopeConsumption
   getViewFilterGroups(viewId: String): [ViewFilterGroup!]!
   getViewFilterGroup(id: String!): ViewFilterGroup
   getViewFilters(viewId: String): [ViewFilter!]!
@@ -3760,6 +3799,15 @@ input UsageAnalyticsInput {
   operationTypes: [UsageOperationType!]
 }
 
+input UsageQuotaScopeInput {
+  resourceType: UsageResourceType!
+  operationType: UsageOperationType!
+  spenderType: String!
+  spenderId: String
+  periodUnit: String!
+  meter: String!
+}
+
 input GetApiKeyInput {
   id: UUID!
 }
@@ -3873,7 +3921,8 @@ type Mutation {
   uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl!
   uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl!
-  upsertUsageLimit(input: UpsertUsageLimitInput!): UsageLimit!
+  createUsageLimit(input: CreateUsageLimitInput!): UsageLimit!
+  updateUsageLimit(input: UpdateUsageLimitInput!): UsageLimit!
   deleteUsageLimit(usageLimitId: UUID!): Boolean!
   createViewFilterGroup(input: CreateViewFilterGroupInput!): ViewFilterGroup!
   updateViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): ViewFilterGroup!
@@ -4161,7 +4210,7 @@ input UpdateNavigationMenuItemInput {
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
-input UpsertUsageLimitInput {
+input CreateUsageLimitInput {
   resourceType: UsageResourceType!
   operationType: UsageOperationType!
   spenderType: String!
@@ -4172,6 +4221,11 @@ input UpsertUsageLimitInput {
   meter: String!
   limitValue: BigInt!
   burstValue: BigInt
+}
+
+input UpdateUsageLimitInput {
+  id: UUID!
+  payload: CreateUsageLimitInput!
 }
 
 input CreateViewFilterGroupInput {
