@@ -29,6 +29,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 
 const STATE_JWT_EXPIRES_IN = '10m';
 
@@ -78,21 +79,24 @@ export class ConnectionProviderOAuthFlowService {
 
     assertOAuthProvider(connectionProvider);
 
-    // Reconnect target must live in the requesting workspace and belong to
-    // the same provider — without this guard a foreign id would silently
-    // leak through findOneByOrFail later in the flow.
+    // Reconnect overwrites the stored credentials, so the caller must be
+    // allowed to use the target: same workspace, same provider, and either
+    // workspace-shared or their own.
     if (isDefined(args.reconnectingConnectedAccountId)) {
-      const target = await this.connectedAccountRepository.findOne({
-        where: {
-          id: args.reconnectingConnectedAccountId,
-          workspaceId,
-          connectionProviderId: connectionProvider.id,
-        },
+      const reconnectTarget = await this.connectedAccountRepository.findOne({
+        where: buildConnectedAccountUsableByCallerWhere({
+          baseWhere: {
+            id: args.reconnectingConnectedAccountId,
+            workspaceId,
+            connectionProviderId: connectionProvider.id,
+          },
+          userWorkspaceId,
+        }),
       });
 
-      if (!isDefined(target)) {
+      if (!isDefined(reconnectTarget)) {
         throw new ConnectionProviderException(
-          `Cannot reconnect connectedAccount ${args.reconnectingConnectedAccountId}: not found in this workspace for the requested provider.`,
+          `Cannot reconnect connectedAccount ${args.reconnectingConnectedAccountId}: not found in this workspace for the requested provider, or not usable by this member.`,
           ConnectionProviderExceptionCode.FORBIDDEN,
         );
       }

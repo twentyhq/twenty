@@ -223,10 +223,9 @@ describe('SettingsApplicationConnectionDetail', () => {
       redirectLocation: '/settings/applications/app-1/connections/account-1',
     });
 
-    // The mocked confirmation modal also renders "Disconnect".
-    const [disconnectAction] = screen.getAllByText('Disconnect');
+    const [disconnectButton] = screen.getAllByText('Disconnect');
 
-    fireEvent.click(disconnectAction);
+    fireEvent.click(disconnectButton);
 
     expect(mockOpenModal).toHaveBeenCalledTimes(1);
     expect(mockOpenModal).toHaveBeenCalledWith(
