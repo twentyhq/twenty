@@ -1,4 +1,3 @@
-import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { MultiWorkspaceDropdownClickableComponent } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownClickableComponent';
 import { MultiWorkspaceDropdownDefaultComponents } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents';
@@ -10,7 +9,6 @@ import { MULTI_WORKSPACE_DROPDOWN_MOBILE_BOUNDARY_PADDING } from '@/ui/navigatio
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
 
 type MultiWorkspaceDropdownButtonProps = {
@@ -22,9 +20,6 @@ export const MultiWorkspaceDropdownButton = ({
 }: MultiWorkspaceDropdownButtonProps) => {
   const [multiWorkspaceDropdown, setMultiWorkspaceDropdown] = useAtomState(
     multiWorkspaceDropdownState,
-  );
-  const isLayoutCustomizationModeEnabled = useAtomStateValue(
-    isLayoutCustomizationModeEnabledState,
   );
   const isMobile = useIsMobile();
 
@@ -64,12 +59,10 @@ export const MultiWorkspaceDropdownButton = ({
       }
       clickableComponent={
         <MultiWorkspaceDropdownClickableComponent
-          disabled={isLayoutCustomizationModeEnabled}
           shouldHideLabel={shouldHideLabel}
         />
       }
       clickableComponentWidth={shouldHideLabel ? 'auto' : '100%'}
-      disableClickForClickableComponent={isLayoutCustomizationModeEnabled}
       dropdownComponents={<DropdownComponents />}
       onClose={() => {
         setMultiWorkspaceDropdown('default');

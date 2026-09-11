@@ -140,10 +140,9 @@ export const SettingsDnsRecordsTable = ({
           {hasStatusColumn && (
             <TableCell align="right">
               {isDefined(record.status) && isDefined(record.statusColor) && (
-                <Status
-                  color={record.statusColor}
-                  text={capitalize(record.status)}
-                />
+                <Status color={record.statusColor}>
+                  {capitalize(record.status)}
+                </Status>
               )}
             </TableCell>
           )}

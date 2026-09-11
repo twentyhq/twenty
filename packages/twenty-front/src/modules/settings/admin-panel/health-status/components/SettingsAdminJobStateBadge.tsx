@@ -34,17 +34,14 @@ export const SettingsAdminJobStateBadge = ({
 
   return (
     <StyledContainer>
-      <Tag color={color} text={state} />
+      <Tag color={color}>{state}</Tag>
       {showAttempts && (
-        <Tag
-          color="red"
-          text={plural(attemptsMade, {
+        <Tag color="red" weight="medium" preventShrink>
+          {plural(attemptsMade, {
             one: `${attemptsMade} attempt`,
             other: `${attemptsMade} attempts`,
           })}
-          weight="medium"
-          preventShrink
-        />
+        </Tag>
       )}
     </StyledContainer>
   );
