@@ -4,13 +4,11 @@ import {
 } from '@/command-menu-item/contexts/CommandMenuContext';
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
-import { doesCommandMenuItemMatchLayoutCustomizationAvailability } from '@/command-menu-item/utils/doesCommandMenuItemMatchLayoutCustomizationAvailability';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
-import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import {
   currentPageLayoutIdState,
   PageLayoutIdContext,
@@ -36,8 +34,6 @@ export const CommandMenuContextProviderContent = ({
   isInPreviewMode,
 }: CommandMenuContextProviderContentProps) => {
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
-  const isLayoutCustomizationAllowedOnCurrentPage =
-    useIsLayoutCustomizationAllowedOnCurrentPage();
   const commandMenuItemsDraft = useAtomStateValue(commandMenuItemsDraftState);
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
   const pageLayoutIdFromContext = useContext(PageLayoutIdContext);
@@ -56,11 +52,6 @@ export const CommandMenuContextProviderContent = ({
       : commandMenuItems;
 
     return commandMenuItemsToDisplay
-      .filter(
-        doesCommandMenuItemMatchLayoutCustomizationAvailability(
-          isLayoutCustomizationAllowedOnCurrentPage,
-        ),
-      )
       .filter(
         doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
       )
@@ -83,7 +74,6 @@ export const CommandMenuContextProviderContent = ({
     commandMenuItemsDraft,
     effectivePageLayoutId,
     isInPreviewMode,
-    isLayoutCustomizationAllowedOnCurrentPage,
   ]);
 
   return (

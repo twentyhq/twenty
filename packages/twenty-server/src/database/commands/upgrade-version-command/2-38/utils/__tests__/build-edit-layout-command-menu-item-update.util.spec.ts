@@ -38,7 +38,7 @@ describe('buildEditLayoutCommandMenuItemUpdate', () => {
       ...LEGACY_COMMAND_MENU_ITEM,
       availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
       conditionalAvailabilityExpression:
-        'pageType != "SETTINGS_PAGE" and not isLayoutCustomizationModeEnabled and permissionFlags.LAYOUTS',
+        'isLayoutCustomizationAllowedOnCurrentPage and not isLayoutCustomizationModeEnabled and permissionFlags.LAYOUTS',
       updatedAt: NOW,
     });
   });

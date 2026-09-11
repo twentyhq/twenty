@@ -7,6 +7,7 @@ export type CommandMenuContextApi = {
   isInSidePanel: boolean;
   isDashboardPageLayoutInEditMode: boolean;
   isLayoutCustomizationModeEnabled: boolean;
+  isLayoutCustomizationAllowedOnCurrentPage: boolean;
   favoriteRecordIds: string[];
   isSelectAll: boolean;
   hasAnySoftDeleteFilterOnView: boolean;

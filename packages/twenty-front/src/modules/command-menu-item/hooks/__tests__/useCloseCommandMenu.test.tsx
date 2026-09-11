@@ -48,6 +48,7 @@ const getWrapper =
           isInSidePanel,
           isDashboardPageLayoutInEditMode: false,
           isLayoutCustomizationModeEnabled: false,
+          isLayoutCustomizationAllowedOnCurrentPage: false,
           favoriteRecordIds: [],
           isSelectAll: false,
           hasAnySoftDeleteFilterOnView: false,

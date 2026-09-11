@@ -1,3 +1,4 @@
+import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -33,6 +34,8 @@ import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
 
 export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   const store = useStore();
+  const isLayoutCustomizationAllowedOnCurrentPage =
+    useIsLayoutCustomizationAllowedOnCurrentPage();
 
   const workspaceSurface = useWorkspaceSurface();
   const isInSidePanel = workspaceSurface.type === 'side-panel';
@@ -187,6 +190,7 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     isInSidePanel,
     isDashboardPageLayoutInEditMode: isDashboardInEditMode,
     isLayoutCustomizationModeEnabled,
+    isLayoutCustomizationAllowedOnCurrentPage,
     favoriteRecordIds,
     isSelectAll,
     hasAnySoftDeleteFilterOnView,

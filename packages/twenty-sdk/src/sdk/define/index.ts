@@ -54,6 +54,7 @@ export {
   isDefined,
   isInSidePanel,
   isLayoutCustomizationModeEnabled,
+  isLayoutCustomizationAllowedOnCurrentPage,
   isNonEmptyString,
   isSelectAll,
   none,

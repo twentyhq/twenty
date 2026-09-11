@@ -8,6 +8,7 @@ export const EMPTY_COMMAND_MENU_CONTEXT_API: CommandMenuContextApi = {
   isInSidePanel: false,
   isDashboardPageLayoutInEditMode: false,
   isLayoutCustomizationModeEnabled: false,
+  isLayoutCustomizationAllowedOnCurrentPage: false,
   favoriteRecordIds: [],
   isSelectAll: false,
   hasAnySoftDeleteFilterOnView: false,
