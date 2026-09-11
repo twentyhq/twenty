@@ -5,6 +5,7 @@ import { H2Title } from 'twenty-ui/typography';
 
 import { SettingsBillingLimitsTable } from '@/settings/billing/components/SettingsBillingLimitsTable';
 import { useUsageQuotasWithConsumption } from '@/settings/billing/hooks/useUsageQuotasWithConsumption';
+import { hasKnownUsageLimitSpender } from '@/settings/billing/utils/hasKnownUsageLimitSpender';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 
@@ -12,6 +13,8 @@ export const SettingsBillingLimitsContent = () => {
   const { t } = useLingui();
   const { usageQuotasWithConsumption, loading, error } =
     useUsageQuotasWithConsumption();
+
+  const quotas = usageQuotasWithConsumption.filter(hasKnownUsageLimitSpender);
 
   if (loading) {
     return null;
@@ -30,7 +33,7 @@ export const SettingsBillingLimitsContent = () => {
     );
   }
 
-  if (usageQuotasWithConsumption.length === 0) {
+  if (quotas.length === 0) {
     return (
       <SettingsPageContainer>
         <Section>
@@ -48,7 +51,7 @@ export const SettingsBillingLimitsContent = () => {
 
   return (
     <SettingsPageContainer>
-      <SettingsBillingLimitsTable quotas={usageQuotasWithConsumption} />
+      <SettingsBillingLimitsTable quotas={quotas} />
     </SettingsPageContainer>
   );
 };

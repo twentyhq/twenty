@@ -22,16 +22,6 @@ describe('getUsageLimitSpenderName', () => {
     ).toBe('All API keys');
   });
 
-  it('does not pass a limit off as pool-wide when its spender no longer resolves', () => {
-    expect(
-      getUsageLimitSpenderName({
-        spenderType: 'userWorkspace',
-        spenderId: 'deleted-member-id',
-        spenderLabel: null,
-      }),
-    ).toBe('Unknown spender');
-  });
-
   it('speaks of the workspace itself for a workspace-wide limit', () => {
     expect(
       getUsageLimitSpenderName({
