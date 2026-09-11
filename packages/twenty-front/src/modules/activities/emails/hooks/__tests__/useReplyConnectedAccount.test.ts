@@ -71,6 +71,26 @@ describe('useReplyConnectedAccount', () => {
     });
   });
 
+  it('returns a workspace-shared mailbox the caller does not own', () => {
+    stubQueries(
+      [{ id: 'channel-group', connectedAccountId: 'account-group' }],
+      [
+        {
+          id: 'account-group',
+          handle: 'support@example.com',
+          provider: ConnectedAccountProvider.EMAIL_GROUP,
+        },
+      ],
+    );
+
+    const { result } = renderHook(() =>
+      useReplyConnectedAccount('channel-group'),
+    );
+
+    expect(result.current.connectedAccountId).toBe('account-group');
+    expect(result.current.connectedAccountHandle).toBe('support@example.com');
+  });
+
   it('returns null when the thread channel is not accessible to the current user', () => {
     stubQueries(
       [{ id: 'channel-google', connectedAccountId: 'account-google' }],
