@@ -168,6 +168,23 @@ export interface LogicFunction {
 
 export type LogicFunctionExecutionMode = 'LIVE' | 'PREBUILT'
 
+export interface ObjectAccessInheritanceRelationRef {
+    kind: ObjectAccessInheritanceRelationKind
+    fieldUniversalIdentifier?: Scalars['UUID']
+    morphId?: Scalars['UUID']
+    __typename: 'ObjectAccessInheritanceRelationRef'
+}
+
+export type ObjectAccessInheritanceRelationKind = 'FIELD' | 'MORPH'
+
+export interface ObjectAccessInheritance {
+    through: ObjectAccessInheritanceRelationRef[]
+    match: ObjectAccessInheritanceMatch
+    __typename: 'ObjectAccessInheritance'
+}
+
+export type ObjectAccessInheritanceMatch = 'ANY' | 'ALL'
+
 export interface Object {
     id: Scalars['UUID']
     universalIdentifier: Scalars['String']
@@ -189,6 +206,7 @@ export interface Object {
     isSearchable: Scalars['Boolean']
     openRecordIn: ObjectOpenRecordIn
     readability: MetadataReadability
+    inheritance?: ObjectAccessInheritance
     writability: MetadataWritability
     applicationId: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -3735,6 +3753,21 @@ export interface LogicFunctionGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ObjectAccessInheritanceRelationRefGenqlSelection{
+    kind?: boolean | number
+    fieldUniversalIdentifier?: boolean | number
+    morphId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ObjectAccessInheritanceGenqlSelection{
+    through?: ObjectAccessInheritanceRelationRefGenqlSelection
+    match?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ObjectGenqlSelection{
     id?: boolean | number
     universalIdentifier?: boolean | number
@@ -3756,6 +3789,7 @@ export interface ObjectGenqlSelection{
     isSearchable?: boolean | number
     openRecordIn?: boolean | number
     readability?: boolean | number
+    inheritance?: ObjectAccessInheritanceGenqlSelection
     writability?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
@@ -7835,6 +7869,22 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const ObjectAccessInheritanceRelationRef_possibleTypes: string[] = ['ObjectAccessInheritanceRelationRef']
+    export const isObjectAccessInheritanceRelationRef = (obj?: { __typename?: any } | null): obj is ObjectAccessInheritanceRelationRef => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectAccessInheritanceRelationRef"')
+      return ObjectAccessInheritanceRelationRef_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectAccessInheritance_possibleTypes: string[] = ['ObjectAccessInheritance']
+    export const isObjectAccessInheritance = (obj?: { __typename?: any } | null): obj is ObjectAccessInheritance => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectAccessInheritance"')
+      return ObjectAccessInheritance_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const Object_possibleTypes: string[] = ['Object']
     export const isObject = (obj?: { __typename?: any } | null): obj is Object => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isObject"')
@@ -10200,6 +10250,16 @@ export const enumCommandMenuItemAvailabilityType = {
 export const enumLogicFunctionExecutionMode = {
    LIVE: 'LIVE' as const,
    PREBUILT: 'PREBUILT' as const
+}
+
+export const enumObjectAccessInheritanceRelationKind = {
+   FIELD: 'FIELD' as const,
+   MORPH: 'MORPH' as const
+}
+
+export const enumObjectAccessInheritanceMatch = {
+   ANY: 'ANY' as const,
+   ALL: 'ALL' as const
 }
 
 export const enumObjectOpenRecordIn = {

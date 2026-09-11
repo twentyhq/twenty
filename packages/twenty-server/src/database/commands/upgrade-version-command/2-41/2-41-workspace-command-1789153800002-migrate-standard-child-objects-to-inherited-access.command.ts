@@ -1,9 +1,5 @@
 import { Command } from 'nest-commander';
 import {
-  STANDARD_OBJECT_FIELDS,
-  STANDARD_OBJECTS,
-} from 'twenty-shared/metadata';
-import {
   FieldMetadataType,
   MetadataReadability,
   type ObjectAccessInheritance,
@@ -13,6 +9,10 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  morphRef,
+  STANDARD_CHILD_OBJECT_INHERITANCES,
+} from 'src/database/commands/upgrade-version-command/2-41/standard-child-object-inheritances.constant';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
@@ -23,78 +23,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-
-const morphRef = (morphId: string): ObjectAccessInheritanceRelationRef => ({
-  kind: ObjectAccessInheritanceRelationKind.MORPH,
-  morphId,
-});
-
-const fieldRef = (
-  fieldUniversalIdentifier: string,
-): ObjectAccessInheritanceRelationRef => ({
-  kind: ObjectAccessInheritanceRelationKind.FIELD,
-  fieldUniversalIdentifier,
-});
-
-const anyOf = (
-  ref: ObjectAccessInheritanceRelationRef,
-): ObjectAccessInheritance => ({
-  match: ObjectAccessInheritanceMatch.ANY,
-  through: [ref],
-});
-
-export const STANDARD_CHILD_OBJECT_INHERITANCES = [
-  {
-    nameSingular: 'attachment',
-    universalIdentifier: STANDARD_OBJECTS.attachment.universalIdentifier,
-    inheritance: anyOf(
-      morphRef(STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId),
-    ),
-  },
-  {
-    nameSingular: 'timelineActivity',
-    universalIdentifier: STANDARD_OBJECTS.timelineActivity.universalIdentifier,
-    inheritance: anyOf(
-      morphRef(STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId),
-    ),
-  },
-  {
-    nameSingular: 'noteTarget',
-    universalIdentifier: STANDARD_OBJECTS.noteTarget.universalIdentifier,
-    inheritance: anyOf(
-      fieldRef(STANDARD_OBJECT_FIELDS.noteTarget.note.universalIdentifier),
-    ),
-  },
-  {
-    nameSingular: 'taskTarget',
-    universalIdentifier: STANDARD_OBJECTS.taskTarget.universalIdentifier,
-    inheritance: anyOf(
-      fieldRef(STANDARD_OBJECT_FIELDS.taskTarget.task.universalIdentifier),
-    ),
-  },
-  {
-    nameSingular: 'messageThreadTarget',
-    universalIdentifier:
-      STANDARD_OBJECTS.messageThreadTarget.universalIdentifier,
-    inheritance: anyOf(
-      fieldRef(
-        STANDARD_OBJECT_FIELDS.messageThreadTarget.messageThread
-          .universalIdentifier,
-      ),
-    ),
-  },
-  {
-    nameSingular: 'calendarEventTarget',
-    universalIdentifier:
-      STANDARD_OBJECTS.calendarEventTarget.universalIdentifier,
-    inheritance: anyOf(
-      fieldRef(
-        STANDARD_OBJECT_FIELDS.calendarEventTarget.calendarEvent
-          .universalIdentifier,
-      ),
-    ),
-  },
-] as const;
 
 const STANDARD_INHERITANCE_BY_UNIVERSAL_IDENTIFIER = new Map<
   string,

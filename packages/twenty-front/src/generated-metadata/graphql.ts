@@ -4455,6 +4455,7 @@ export type Object = {
   imageIdentifierFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   indexMetadataList: Array<Index>;
   indexMetadatas: ObjectIndexMetadatasConnection;
+  inheritance?: Maybe<ObjectAccessInheritance>;
   isActive: Scalars['Boolean']['output'];
   isLabelSyncedWithName: Scalars['Boolean']['output'];
   isRemote: Scalars['Boolean']['output'];
@@ -4488,6 +4489,29 @@ export type ObjectFieldsArgs = {
 export type ObjectIndexMetadatasArgs = {
   filter?: IndexFilter;
   paging?: CursorPaging;
+};
+
+export type ObjectAccessInheritance = {
+  __typename?: 'ObjectAccessInheritance';
+  match: ObjectAccessInheritanceMatch;
+  through: Array<ObjectAccessInheritanceRelationRef>;
+};
+
+export enum ObjectAccessInheritanceMatch {
+  ALL = 'ALL',
+  ANY = 'ANY'
+}
+
+export enum ObjectAccessInheritanceRelationKind {
+  FIELD = 'FIELD',
+  MORPH = 'MORPH'
+}
+
+export type ObjectAccessInheritanceRelationRef = {
+  __typename?: 'ObjectAccessInheritanceRelationRef';
+  fieldUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
+  kind: ObjectAccessInheritanceRelationKind;
+  morphId?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type ObjectConnection = {

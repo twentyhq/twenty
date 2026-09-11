@@ -14,6 +14,7 @@ export type EnrichedObjectMetadataItem = Omit<
   | 'fieldsList'
   | 'indexMetadataList'
   | 'searchFieldMetadataList'
+  | 'inheritance'
   // Deprecated GraphQL field kept server-side for one release; no longer queried
   | 'isUIReadOnly'
   | 'readability'
