@@ -1,4 +1,3 @@
-import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -12,7 +11,6 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useOpenCreateViewDropdown } from '@/views/hooks/useOpenCreateViewDropown';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconCopy,
@@ -26,7 +24,8 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const ObjectOptionsDropdownDefaultView = () => {
   const { t } = useLingui();
-  const { recordIndexId, onContentChange } = useObjectOptionsDropdown();
+  const { recordIndexId, onContentChange, dropdownId } =
+    useObjectOptionsDropdown();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -43,19 +42,16 @@ export const ObjectOptionsDropdownDefaultView = () => {
     'Create custom view',
   ];
 
-  const scopedObjectOptionsDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(OBJECT_OPTIONS_DROPDOWN_ID);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedObjectOptionsDropdownId,
+    dropdownId,
   );
 
   const { openCreateViewDropdown } = useOpenCreateViewDropdown(recordIndexId);
   const { closeDropdown } = useCloseDropdown();
 
   const handleCreateCustomView = () => {
-    closeDropdown(OBJECT_OPTIONS_DROPDOWN_ID);
+    closeDropdown(dropdownId);
 
     openCreateViewDropdown(currentView);
   };
@@ -77,8 +73,8 @@ export const ObjectOptionsDropdownDefaultView = () => {
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <SelectableList
-        selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-        focusId={OBJECT_OPTIONS_DROPDOWN_ID}
+        selectableListInstanceId={dropdownId}
+        focusId={dropdownId}
         selectableItemIdArray={selectableItemIdArray}
       >
         <DropdownMenuItemsContainer scrollable={false}>
