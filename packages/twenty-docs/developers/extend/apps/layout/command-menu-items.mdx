@@ -86,6 +86,7 @@ These represent the current state of the page:
 |----------|------|-------------|
 | `pageType` | `string` | Current page type (e.g. `'RecordIndexPage'`, `'RecordShowPage'`) |
 | `isInSidePanel` | `boolean` | Whether the component is rendered in a side panel |
+| `isLayoutCustomizationAllowedOnCurrentPage` | `boolean` | Whether the current page supports entering layout customization. False on AI chat and Settings pages; does not check permissions or whether editing is already active. |
 | `numberOfSelectedRecords` | `number` | Number of currently selected records |
 | `isSelectAll` | `boolean` | Whether "select all" is active |
 | `selectedRecords` | `array` | The selected record objects |

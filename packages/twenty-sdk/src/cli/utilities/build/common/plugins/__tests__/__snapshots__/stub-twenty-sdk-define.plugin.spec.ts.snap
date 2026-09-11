@@ -56,6 +56,7 @@ exports[`stub-twenty-sdk-define plugin > matches the recorded export partition 1
     "isDashboardPageLayoutInEditMode",
     "isDefined",
     "isInSidePanel",
+    "isLayoutCustomizationAllowedOnCurrentPage",
     "isLayoutCustomizationModeEnabled",
     "isNonEmptyString",
     "isSelectAll",
