@@ -1,24 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 
-type BasePage = string | BaseGroup;
-
-type BaseGroup = {
-  key: string;
-  label: string;
-  pages: BasePage[];
-};
-
-type BaseTab = {
-  isEnglishOnly?: boolean;
-  key: string;
-  label: string;
-  groups: BaseGroup[];
-};
-
-type BaseStructure = {
-  tabs: BaseTab[];
-};
+import {
+  type BaseGroup,
+  type BaseStructure,
+} from '../navigation/base-structure-types';
 
 type TemplateGroup = {
   label: string;
