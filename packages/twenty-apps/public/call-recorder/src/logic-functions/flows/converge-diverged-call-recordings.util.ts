@@ -15,6 +15,7 @@ import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-ca
 import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
 import { runCallRecordingArtifactImportWithClaim } from 'src/logic-functions/flows/run-call-recording-artifact-import-with-claim.util';
 import { settleCallRecordingImport } from 'src/logic-functions/flows/settle-call-recording-import.util';
+import { settleStuckCallRecording } from 'src/logic-functions/flows/settle-stuck-call-recording.util';
 import {
   syncCallRecording,
   type SyncCallRecordingResult,
@@ -76,6 +77,8 @@ export const convergeDivergedCallRecordings = async ({
     requestedTranscriptCallRecordingIds: [],
     unconvergeableCallRecordingIds: [],
     skippedNotStartedCallRecordingIds: [],
+    settledCompletedCallRecordingIds: [],
+    settledFailedCallRecordingIds: [],
   };
   const actionableCandidates: Array<
     DivergedCallRecordingCandidate & { externalBotId: string }
@@ -83,6 +86,21 @@ export const convergeDivergedCallRecordings = async ({
 
   for (const candidate of candidates) {
     if (isOutsideConvergenceBound(candidate, convergenceLowerBound)) {
+      if (candidate.status === CallRecordingStatus.PROCESSING) {
+        const settlementOutcome = await settleStuckCallRecording(
+          client,
+          candidate,
+        );
+
+        if (settlementOutcome === 'completed') {
+          result.settledCompletedCallRecordingIds.push(candidate.id);
+        } else {
+          result.settledFailedCallRecordingIds.push(candidate.id);
+        }
+
+        continue;
+      }
+
       console.warn(
         `[call-recorder] call recording ${candidate.id} diverged but its meeting ended more than ${CONVERGENCE_LOOKBACK_DAYS} days ago; it will not converge automatically`,
       );

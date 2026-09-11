@@ -351,6 +351,8 @@ describe('convergeDivergedCallRecordings', () => {
       requestedTranscriptCallRecordingIds: ['call-recording-1'],
       unconvergeableCallRecordingIds: [],
       skippedNotStartedCallRecordingIds: [],
+      settledCompletedCallRecordingIds: [],
+      settledFailedCallRecordingIds: [],
     });
   });
 
@@ -479,6 +481,8 @@ describe('convergeDivergedCallRecordings', () => {
       requestedTranscriptCallRecordingIds: [],
       unconvergeableCallRecordingIds: [],
       skippedNotStartedCallRecordingIds: [],
+      settledCompletedCallRecordingIds: [],
+      settledFailedCallRecordingIds: [],
     });
   });
 

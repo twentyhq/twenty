@@ -14,6 +14,7 @@ import {
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/calendar-event-update-batch-size';
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
+import { convergeDivergedCallRecordings } from 'src/logic-functions/flows/converge-diverged-call-recordings.util';
 import { handleCallRecordingArtifactsImportJob } from 'src/logic-functions/flows/handle-call-recording-artifacts-import-job.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
@@ -153,6 +154,7 @@ const inTwoHours = () =>
   new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
 const hoursAgo = (hours: number) =>
   new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
+const daysAgo = (days: number) => hoursAgo(days * 24);
 
 // ---------------------------------------------------------------------------
 // Recall API fake, installed as a fetch interceptor. Twenty API traffic falls
@@ -273,6 +275,20 @@ class FakeRecallApi {
     }
 
     const botIdMatch = requestUrl.match(/\/bot\/([^/]+)\/$/);
+
+    if (method === 'GET' && botIdMatch !== null) {
+      const bot = this.bots.get(botIdMatch[1]);
+
+      if (bot === undefined) {
+        return jsonResponse(404, {});
+      }
+
+      return jsonResponse(200, {
+        id: bot.id,
+        metadata: bot.metadata,
+        status: { code: bot.statusCode },
+      });
+    }
 
     const ejectedBotIdMatch = requestUrl.match(/\/bot\/([^/]+)\/leave_call\/$/);
 
@@ -839,6 +855,8 @@ describe('call recorder app lifecycle (integration)', () => {
     scheduleRecallBotsForPendingCallRecordings({ client, now: new Date() });
   const runCancellationRetryCron = () =>
     retryFailedRecallCancellations({ client, now: new Date() });
+  const runStaleStateCron = () =>
+    convergeDivergedCallRecordings({ client, now: new Date() });
 
   describe('scheduling from calendar changes', () => {
     it('creates a recording and schedules a Recall bot for a meeting with recording enabled', async () => {
@@ -1187,6 +1205,103 @@ describe('call recorder app lifecycle (integration)', () => {
         (await fetchCallRecording(callRecordingId)).externalBotId,
       ).toBeFalsy();
       expect(recall.deletedBotIds).toContain(botId);
+    });
+  });
+
+  describe('settling recordings stuck outside the convergence window', () => {
+    it('fails a stuck processing recording whose media never arrived', async () => {
+      const calendarEventId = await createCalendarEvent({
+        startsAt: daysAgo(9),
+        endsAt: daysAgo(8),
+      });
+      const callRecordingId = await createPendingCallRecording({
+        calendarEventId,
+        status: 'PROCESSING',
+        externalBotId: 'recall-bot-stuck',
+      });
+
+      const cronResult = await runStaleStateCron();
+
+      expect(cronResult.settledFailedCallRecordingIds).toEqual([
+        callRecordingId,
+      ]);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('FAILED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'recording_import_expired',
+      );
+    });
+
+    it('completes a stuck processing recording with imported media and marks its transcript empty', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deliverRecallWebhook(
+        buildRecordingDoneWebhook({
+          botId,
+          metadata,
+          startedAt: hoursAgo(1),
+          completedAt: new Date().toISOString(),
+        }),
+      );
+      await runQueuedArtifactImports();
+      await client.mutation({
+        updateCalendarEvent: {
+          __args: {
+            id: calendarEventId,
+            data: { startsAt: daysAgo(9), endsAt: daysAgo(8) },
+          },
+          id: true,
+        },
+      });
+
+      const cronResult = await runStaleStateCron();
+
+      expect(cronResult.settledCompletedCallRecordingIds).toEqual([
+        callRecordingId,
+      ]);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.transcript).toEqual({
+        recallTranscriptId: 'recall-transcript-1',
+        status: 'EMPTY',
+      });
+    });
+
+    it('leaves a processing recording whose meeting is still inside the convergence window', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deliverRecallWebhook(
+        buildRecordingDoneWebhook({
+          botId,
+          metadata,
+          startedAt: hoursAgo(1),
+          completedAt: new Date().toISOString(),
+        }),
+      );
+      await client.mutation({
+        updateCalendarEvent: {
+          __args: {
+            id: calendarEventId,
+            data: { startsAt: daysAgo(2), endsAt: daysAgo(1) },
+          },
+          id: true,
+        },
+      });
+
+      const cronResult = await runStaleStateCron();
+
+      expect(cronResult.settledCompletedCallRecordingIds).toEqual([]);
+      expect(cronResult.settledFailedCallRecordingIds).toEqual([]);
+
+      expect((await fetchCallRecording(callRecordingId)).status).toBe(
+        'PROCESSING',
+      );
     });
   });
 
