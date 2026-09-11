@@ -14,7 +14,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
-const SLIDER_DROPDOWN_WIDTH_PX = 260;
+const SLIDER_DROPDOWN_WIDTH_PX = 240;
 
 const StyledSliderContainer = styled.div`
   padding: ${themeCssVariables.spacing[3]};
