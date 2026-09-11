@@ -145,14 +145,14 @@ export const SettingsAdminGeneral = () => {
                       overflow="hidden"
                     >
                       <Avatar
-                        avatarUrl={getAbsoluteImageUrl(user.avatarUrl)}
-                        placeholder={
+                        src={getAbsoluteImageUrl(user.avatarUrl)}
+                        name={
                           `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
                           user.email
                         }
-                        placeholderColorSeed={user.id}
+                        colorSeed={user.id}
                         size="md"
-                        type="rounded"
+                        shape="circle"
                       />
                       <OverflowingTextWithTooltip
                         text={
@@ -169,9 +169,9 @@ export const SettingsAdminGeneral = () => {
                       {user.workspaceId ? (
                         <>
                           <Avatar
-                            avatarUrl={getAbsoluteImageUrl(user.workspaceLogo)}
-                            placeholder={user.workspaceName || ''}
-                            placeholderColorSeed={user.workspaceId}
+                            src={getAbsoluteImageUrl(user.workspaceLogo)}
+                            name={user.workspaceName || ''}
+                            colorSeed={user.workspaceId}
                             size="sm"
                           />
                           <OverflowingTextWithTooltip
@@ -243,9 +243,9 @@ export const SettingsAdminGeneral = () => {
                       overflow="hidden"
                     >
                       <Avatar
-                        avatarUrl={getAbsoluteImageUrl(workspace.logoUrl)}
-                        placeholder={workspace.name || ''}
-                        placeholderColorSeed={workspace.id}
+                        src={getAbsoluteImageUrl(workspace.logoUrl)}
+                        name={workspace.name || ''}
+                        colorSeed={workspace.id}
                         size="md"
                       />
                       <OverflowingTextWithTooltip

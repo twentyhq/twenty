@@ -2,8 +2,8 @@ import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
-jest.mock('@/object-metadata/utils/getAvatarType', () => ({
-  getAvatarType: jest.fn(() => 'rounded'),
+jest.mock('@/object-metadata/utils/getAvatarShape', () => ({
+  getAvatarShape: jest.fn(() => 'circle'),
 }));
 
 jest.mock('@/object-metadata/utils/getBasePathToShowPage', () => ({
@@ -28,7 +28,7 @@ describe('recordIdentifierToObjectRecordIdentifier', () => {
     jest.clearAllMocks();
   });
 
-  it('should return ObjectRecordIdentifier with id, name, avatarUrl, avatarType, and linkToShowPage', () => {
+  it('should return ObjectRecordIdentifier with id, name, avatarUrl, avatarShape, and linkToShowPage', () => {
     const result = recordIdentifierToObjectRecordIdentifier({
       recordIdentifier: baseRecordIdentifier,
       objectMetadataItem: baseObjectMetadataItem,
@@ -38,7 +38,7 @@ describe('recordIdentifierToObjectRecordIdentifier', () => {
       id: 'record-123',
       name: 'John Doe',
       avatarUrl: 'https://example.com/avatar.jpg',
-      avatarType: 'rounded',
+      avatarShape: 'circle',
       linkToShowPage: '/object/person/record-123',
     });
   });

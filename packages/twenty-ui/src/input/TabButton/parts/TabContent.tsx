@@ -42,7 +42,7 @@ export const TabContent = ({
       {LeftIcon && (
         <LeftIcon color={iconColor} size={theme.icon.size.md} aria-hidden />
       )}
-      {logo && <Avatar avatarUrl={logo} size="md" placeholder={title} />}
+      {logo && <Avatar src={logo} size="md" name={title} />}
       {title}
       {RightIcon && (
         <RightIcon color={iconColor} size={theme.icon.size.md} aria-hidden />

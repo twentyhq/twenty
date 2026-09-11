@@ -96,10 +96,10 @@ export const SettingsToolIcon = ({
   if (isDefined(application) && isDefined(marketplaceApp?.logoUrl)) {
     return (
       <Avatar
-        avatarUrl={getAbsoluteImageUrl(marketplaceApp.logoUrl)}
-        placeholder={application.name}
-        placeholderColorSeed={application.name}
-        type="squared"
+        src={getAbsoluteImageUrl(marketplaceApp.logoUrl)}
+        name={application.name}
+        colorSeed={application.name}
+        shape="square"
         size="xs"
       />
     );
@@ -108,9 +108,9 @@ export const SettingsToolIcon = ({
   if (isDefined(application)) {
     return (
       <Avatar
-        placeholder={application.name}
-        placeholderColorSeed={application.name}
-        type="squared"
+        name={application.name}
+        colorSeed={application.name}
+        shape="square"
         size="xs"
       />
     );

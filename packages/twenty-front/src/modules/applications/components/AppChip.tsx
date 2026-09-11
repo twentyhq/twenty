@@ -51,11 +51,12 @@ export const AppChip = ({
   return (
     <StyledContainer className={className}>
       <Avatar
-        type={rounded ? 'rounded' : 'app'}
+        shape={rounded ? 'circle' : 'square'}
+        variant={rounded ? 'soft' : 'outline'}
         size={size}
-        avatarUrl={getAbsoluteImageUrl(logoUrl ?? applicationChipData.logo)}
-        placeholder={applicationChipData.name}
-        placeholderColorSeed={applicationChipData.seed}
+        src={getAbsoluteImageUrl(logoUrl ?? applicationChipData.logo)}
+        name={applicationChipData.name}
+        colorSeed={applicationChipData.seed}
         color={applicationChipData.colors?.color}
         backgroundColor={applicationChipData.colors?.backgroundColor}
         borderColor={applicationChipData.colors?.borderColor}

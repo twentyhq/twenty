@@ -64,10 +64,10 @@ export const SettingsRoleAssignmentTableRow = ({
         );
         return (
           <Avatar
-            avatarUrl={getAbsoluteImageUrl(enrichedWorkspaceMember?.avatarUrl)}
-            placeholderColorSeed={enrichedWorkspaceMember?.id}
-            placeholder={enrichedWorkspaceMember?.name.firstName ?? ''}
-            type="rounded"
+            src={getAbsoluteImageUrl(enrichedWorkspaceMember?.avatarUrl)}
+            colorSeed={enrichedWorkspaceMember?.id}
+            name={enrichedWorkspaceMember?.name.firstName ?? ''}
+            shape="circle"
             size="md"
           />
         );

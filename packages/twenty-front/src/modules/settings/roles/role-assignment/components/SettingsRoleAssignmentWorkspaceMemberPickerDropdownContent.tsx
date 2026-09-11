@@ -49,11 +49,11 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
             key={workspaceMember.id}
             onClick={() => onSelect(workspaceMember)}
             avatar={{
-              type: 'rounded',
+              shape: 'circle',
               size: 'md',
-              placeholder: workspaceMemberFullName,
-              placeholderColorSeed: workspaceMember.id,
-              avatarUrl: workspaceMember.avatarUrl,
+              name: workspaceMemberFullName,
+              colorSeed: workspaceMember.id,
+              src: workspaceMember.avatarUrl,
             }}
             text={workspaceMemberFullName}
             contextualText={workspaceMember.userEmail}

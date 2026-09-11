@@ -178,8 +178,8 @@ export const SignInUpGlobalScopeForm = () => {
                   <StyledWorkspaceItem>
                     <StyledWorkspaceContent>
                       <Avatar
-                        placeholder={availableWorkspace.displayName || ''}
-                        avatarUrl={getAbsoluteImageUrl(
+                        name={availableWorkspace.displayName || ''}
+                        src={getAbsoluteImageUrl(
                           availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
                         )}
                         size="lg"

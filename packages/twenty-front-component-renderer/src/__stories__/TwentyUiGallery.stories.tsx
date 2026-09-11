@@ -16,6 +16,7 @@ import {
 import {
   statusControlsTest,
   tagControlsTest,
+  avatarControlsTest,
 } from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
 import {
@@ -381,4 +382,16 @@ export const TagControlsPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-tag-controls',
   runtime: 'preact',
   play: tagControlsTest,
+});
+
+export const AvatarControlsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-avatar-controls',
+  runtime: 'react',
+  play: avatarControlsTest,
+});
+
+export const AvatarControlsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-avatar-controls',
+  runtime: 'preact',
+  play: avatarControlsTest,
 });

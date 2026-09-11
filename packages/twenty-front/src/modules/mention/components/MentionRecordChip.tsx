@@ -59,7 +59,7 @@ export const MentionRecordChip = ({
         <AvatarOrIcon
           placeholder={label}
           placeholderColorSeed={recordId}
-          avatarType="rounded"
+          avatarShape="circle"
           avatarUrl={getAbsoluteImageUrl(imageUrl)}
         />
       }

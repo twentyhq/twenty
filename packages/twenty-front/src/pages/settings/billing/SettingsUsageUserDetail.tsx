@@ -116,10 +116,10 @@ export const SettingsUsageUserDetail = () => {
       <SettingsPageContainer>
         <StyledUserHeader>
           <Avatar
-            type="rounded"
+            shape="circle"
             size="xl"
-            placeholder={displayName}
-            placeholderColorSeed={userWorkspaceId}
+            name={displayName}
+            colorSeed={userWorkspaceId}
           />
           <StyledUserInfo>
             <StyledUserName>{displayName}</StyledUserName>

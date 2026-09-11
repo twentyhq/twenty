@@ -81,11 +81,11 @@ export const OnboardingImportPreviewCompanies = () => {
             clickable={false}
             leftComponent={
               <Avatar
-                type="squared"
+                shape="square"
                 size="md"
-                placeholder={company.name}
-                placeholderColorSeed={company.id}
-                avatarUrl={getAbsoluteImageUrl(
+                name={company.name}
+                colorSeed={company.id}
+                src={getAbsoluteImageUrl(
                   getLogoUrlFromDomainName(company.domainName),
                 )}
               />

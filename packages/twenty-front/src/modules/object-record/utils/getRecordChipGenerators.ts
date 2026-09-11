@@ -3,7 +3,7 @@ import {
   type IdentifierChipGeneratorPerObject,
 } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
+import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { getAvatarUrl } from '@/object-metadata/utils/getAvatarUrl';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -75,7 +75,7 @@ export const getRecordChipGenerators = (
           const imageIdentifierFieldMetadataToUse =
             getImageIdentifierFieldMetadataItem(objectMetadataItemToUse);
 
-          const avatarType = getAvatarType(objectMetadataItemToUse);
+          const avatarShape = getAvatarShape(objectMetadataItemToUse);
 
           return [
             fieldMetadataItem.name,
@@ -92,7 +92,7 @@ export const getRecordChipGenerators = (
                   imageIdentifierFieldMetadataToUse,
                   allowRequestsToTwentyIcons,
                 ),
-                avatarType,
+                avatarShape,
                 isLabelIdentifier,
                 objectNameSingular: objectNameSingularToFind,
               }) satisfies RecordChipData,

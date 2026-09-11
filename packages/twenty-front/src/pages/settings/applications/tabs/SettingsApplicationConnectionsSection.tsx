@@ -69,9 +69,10 @@ export const SettingsApplicationConnectionsSection = ({
               description={t`Manage connections used by this app to call ${provider.displayName}.`}
               adornment={
                 <Avatar
-                  type="app"
-                  avatarUrl={getAbsoluteImageUrl(provider.logoUrl)}
-                  placeholder={provider.displayName}
+                  shape="square"
+                  variant="outline"
+                  src={getAbsoluteImageUrl(provider.logoUrl)}
+                  name={provider.displayName}
                 />
               }
             />

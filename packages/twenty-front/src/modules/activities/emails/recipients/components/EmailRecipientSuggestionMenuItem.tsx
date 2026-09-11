@@ -34,11 +34,11 @@ export const EmailRecipientSuggestionMenuItem = ({
         focused={isSelectedItemId}
         avatar={
           <Avatar
-            avatarUrl={getAbsoluteImageUrl(suggestion.avatarUrl)}
-            placeholder={suggestion.label}
-            placeholderColorSeed={suggestion.avatarColorSeed}
+            src={getAbsoluteImageUrl(suggestion.avatarUrl)}
+            name={suggestion.label}
+            colorSeed={suggestion.avatarColorSeed}
             size="md"
-            type="rounded"
+            shape="circle"
           />
         }
       />

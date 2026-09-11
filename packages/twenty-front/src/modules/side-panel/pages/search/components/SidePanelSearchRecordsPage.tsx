@@ -95,10 +95,10 @@ export const SidePanelSearchRecordsPage = () => {
                       onClick={handleClick}
                       LeftComponent={
                         <Avatar
-                          type={item.avatarType}
-                          avatarUrl={getAbsoluteImageUrl(item.imageUrl)}
-                          placeholderColorSeed={item.recordId}
-                          placeholder={item.label}
+                          shape={item.avatarShape}
+                          src={getAbsoluteImageUrl(item.imageUrl)}
+                          colorSeed={item.recordId}
+                          name={item.label}
                         />
                       }
                     />

@@ -9,11 +9,11 @@
 
 export type { AnimatedCheckmarkProps } from './AnimatedCheckmark/AnimatedCheckmark';
 export { AnimatedCheckmark } from './AnimatedCheckmark/AnimatedCheckmark';
-export type { AvatarProps } from './Avatar/Avatar';
 export { Avatar } from './Avatar/Avatar';
 export { AVATAR_PROPERTIES_BY_SIZE } from './Avatar/constants/AvatarPropertiesBySize';
+export type { AvatarProps } from './Avatar/types/AvatarProps';
+export type { AvatarShape } from './Avatar/types/AvatarShape';
 export type { AvatarSize } from './Avatar/types/AvatarSize';
-export type { AvatarType } from './Avatar/types/AvatarType';
 export type { AvatarGroupProps } from './AvatarGroup/AvatarGroup';
 export { AvatarGroup } from './AvatarGroup/AvatarGroup';
 export type { AvatarOrIconProps } from './AvatarOrIcon/AvatarOrIcon';

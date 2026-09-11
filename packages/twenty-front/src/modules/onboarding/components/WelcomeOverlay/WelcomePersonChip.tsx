@@ -51,11 +51,11 @@ export const WelcomePersonChip = ({
   return (
     <StyledChip sizeVariant={sizeVariant}>
       <Avatar
-        type="rounded"
+        shape="circle"
         size={avatarSize}
-        placeholder={fullName}
-        placeholderColorSeed={currentWorkspaceMember?.id}
-        avatarUrl={getAbsoluteImageUrl(currentWorkspaceMember?.avatarUrl)}
+        name={fullName}
+        colorSeed={currentWorkspaceMember?.id}
+        src={getAbsoluteImageUrl(currentWorkspaceMember?.avatarUrl)}
       />
       <StyledPersonName>{fullName}</StyledPersonName>
     </StyledChip>

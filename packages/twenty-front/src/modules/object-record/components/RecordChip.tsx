@@ -88,7 +88,7 @@ export const RecordChip = ({
             <AvatarOrIcon
               placeholder={recordChipData.name}
               placeholderColorSeed={record.id}
-              avatarType={recordChipData.avatarType}
+              avatarShape={recordChipData.avatarShape}
               avatarUrl={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
             />
           )
@@ -110,7 +110,7 @@ export const RecordChip = ({
           <AvatarOrIcon
             placeholder={recordChipData.name}
             placeholderColorSeed={record.id}
-            avatarType={recordChipData.avatarType}
+            avatarShape={recordChipData.avatarShape}
             avatarUrl={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
           />
         )

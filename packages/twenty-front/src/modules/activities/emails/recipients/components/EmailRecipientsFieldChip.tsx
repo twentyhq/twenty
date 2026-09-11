@@ -58,13 +58,13 @@ export const EmailRecipientsFieldChip = ({
   const avatar =
     isDefined(workspaceMember) || isDefined(person) ? (
       <Avatar
-        avatarUrl={getAbsoluteImageUrl(
+        src={getAbsoluteImageUrl(
           workspaceMember?.avatarUrl ?? person?.avatarUrl,
         )}
-        placeholder={resolvedLabel}
-        placeholderColorSeed={workspaceMember?.id ?? person?.id}
+        name={resolvedLabel}
+        colorSeed={workspaceMember?.id ?? person?.id}
         size="sm"
-        type="rounded"
+        shape="circle"
       />
     ) : undefined;
 

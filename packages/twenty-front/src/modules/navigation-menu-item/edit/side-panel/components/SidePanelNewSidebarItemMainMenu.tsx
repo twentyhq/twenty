@@ -89,8 +89,8 @@ export const SidePanelNewSidebarItemMainMenu = ({
                 <CommandMenuItem
                   Icon={() => (
                     <Avatar
-                      placeholder="L"
-                      type="rounded"
+                      name="L"
+                      shape="circle"
                       backgroundColor={themeCssVariables.color.green4}
                     />
                   )}

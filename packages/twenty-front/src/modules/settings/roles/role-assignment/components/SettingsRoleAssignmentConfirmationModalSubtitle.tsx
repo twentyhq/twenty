@@ -42,13 +42,13 @@ export const SettingsRoleAssignmentConfirmationModalSubtitle = ({
           title={selectedRoleTarget.role?.label || ''}
           Icon={
             <Avatar
-              avatarUrl={getAbsoluteImageUrl(
+              src={getAbsoluteImageUrl(
                 enrichedSelectedWorkspaceMember?.avatarUrl,
               )}
-              placeholderColorSeed={enrichedSelectedWorkspaceMember?.id}
-              placeholder={workspaceMemberName}
+              colorSeed={enrichedSelectedWorkspaceMember?.id}
+              name={workspaceMemberName}
               size="md"
-              type="rounded"
+              shape="circle"
             />
           }
           onClick={() =>

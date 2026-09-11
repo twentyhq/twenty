@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
+import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerIsSelectedComponentFamilySelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerIsSelectedComponentFamilySelector';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
@@ -84,11 +84,11 @@ export const MultipleRecordPickerMenuItemContent = ({
         selected={isRecordSelectedWithObjectItem}
         avatar={
           <Avatar
-            avatarUrl={getAbsoluteImageUrl(searchRecord.imageUrl)}
-            placeholderColorSeed={searchRecord.recordId}
-            placeholder={displayText}
+            src={getAbsoluteImageUrl(searchRecord.imageUrl)}
+            colorSeed={searchRecord.recordId}
+            name={displayText}
             size="md"
-            type={getAvatarType(objectMetadataItem)}
+            shape={getAvatarShape(objectMetadataItem)}
           />
         }
         text={displayText}

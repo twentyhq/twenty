@@ -27,7 +27,7 @@ export const Default: Story = {
   args: {
     text: 'First option',
     contextualText: 'Contextual text',
-    avatar: <Avatar avatarUrl={AVATAR_URL_MOCK} placeholder="L" />,
+    avatar: <Avatar src={AVATAR_URL_MOCK} name="L" />,
   },
   decorators: [ComponentDecorator],
 };
@@ -65,9 +65,9 @@ export const Catalog: CatalogStory<Story, typeof MenuItemMultiSelectAvatar> = {
           values: [true, false],
           props: (withAvatar: boolean) => ({
             avatar: withAvatar ? (
-              <Avatar avatarUrl={AVATAR_URL_MOCK} placeholder="L" />
+              <Avatar src={AVATAR_URL_MOCK} name="L" />
             ) : (
-              <Avatar avatarUrl="" placeholder="L" />
+              <Avatar src="" name="L" />
             ),
           }),
           labels: (withAvatar: boolean) =>

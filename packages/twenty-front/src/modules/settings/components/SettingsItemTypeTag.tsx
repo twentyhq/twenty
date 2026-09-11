@@ -27,10 +27,11 @@ export const SettingsItemTypeTag = ({
         accent={ChipAccent.TextPrimary}
         leftComponent={
           <Avatar
-            type="app"
+            shape="square"
+            variant="outline"
             size="sm"
-            placeholder="Remote"
-            placeholderColorSeed="Remote"
+            name="Remote"
+            colorSeed="Remote"
           />
         }
       />

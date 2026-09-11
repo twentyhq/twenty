@@ -3,20 +3,20 @@ import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getAvatarType = (
+export const getAvatarShape = (
   objectMetadataItem?: Pick<
     EnrichedObjectMetadataItem,
     'fields' | 'imageIdentifierFieldMetadataId' | 'nameSingular'
   >,
 ) => {
   if (!isDefined(objectMetadataItem)) {
-    return 'rounded';
+    return 'circle';
   }
 
   if (
     objectMetadataItem.nameSingular === CoreObjectNameSingular.WorkspaceMember
   ) {
-    return 'rounded';
+    return 'circle';
   }
 
   const imageIdentifierFieldMetadataItem =
@@ -25,9 +25,9 @@ export const getAvatarType = (
   if (isDefined(imageIdentifierFieldMetadataItem)) {
     switch (imageIdentifierFieldMetadataItem.type) {
       case FieldMetadataType.LINKS:
-        return 'squared';
+        return 'square';
       case FieldMetadataType.FILES:
-        return 'rounded';
+        return 'circle';
     }
   }
 
@@ -35,8 +35,8 @@ export const getAvatarType = (
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Task ||
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Note
   ) {
-    return 'icon';
+    return 'square';
   }
 
-  return 'rounded';
+  return 'circle';
 };

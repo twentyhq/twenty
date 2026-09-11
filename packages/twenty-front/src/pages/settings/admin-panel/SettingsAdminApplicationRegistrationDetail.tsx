@@ -100,11 +100,12 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
       title={registration.name}
       icon={
         <Avatar
-          type="app"
+          shape="square"
+          variant="outline"
           size="md"
-          avatarUrl={getAbsoluteImageUrl(registration.logoUrl ?? undefined)}
-          placeholder={registration.name}
-          placeholderColorSeed={registration.name}
+          src={getAbsoluteImageUrl(registration.logoUrl ?? undefined)}
+          name={registration.name}
+          colorSeed={registration.name}
         />
       }
       links={[

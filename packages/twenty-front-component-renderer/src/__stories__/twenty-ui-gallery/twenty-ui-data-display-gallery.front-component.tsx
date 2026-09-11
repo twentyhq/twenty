@@ -31,15 +31,15 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Avatar',
-    node: <Avatar placeholder="John Doe" size="md" type="rounded" />,
+    node: <Avatar name="John Doe" size="md" shape="circle" />,
   },
   {
     name: 'AvatarGroup',
     node: (
       <AvatarGroup
         avatars={[
-          <Avatar key="a" placeholder="Alice" />,
-          <Avatar key="b" placeholder="Bob" />,
+          <Avatar key="a" name="Alice" />,
+          <Avatar key="b" name="Bob" />,
         ]}
       />
     ),

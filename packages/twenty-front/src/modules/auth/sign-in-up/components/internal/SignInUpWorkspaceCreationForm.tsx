@@ -250,12 +250,10 @@ export const SignInUpWorkspaceCreationForm = () => {
         <OnboardingStepAnimatedItem index={2}>
           <StyledLogoRow>
             <StyledLogoAvatar
-              avatarUrl={logoPreviewUrl}
-              placeholder={
-                isNonEmptyString(workspaceName) ? workspaceName : '?'
-              }
-              placeholderColorSeed={workspaceName}
-              type="squared"
+              src={logoPreviewUrl}
+              name={isNonEmptyString(workspaceName) ? workspaceName : '?'}
+              colorSeed={workspaceName}
+              shape="square"
               size="xl"
               onClick={openFilePicker}
             />
@@ -294,7 +292,7 @@ export const SignInUpWorkspaceCreationForm = () => {
             autoFocus
             label={t`Name`}
             value={workspaceName}
-            placeholder={t`Apple`}
+            name={t`Apple`}
             onChange={handleWorkspaceNameChange}
             onKeyDown={handleKeyDown}
             fullWidth
@@ -306,7 +304,7 @@ export const SignInUpWorkspaceCreationForm = () => {
               <TextInput
                 label={t`Subdomain`}
                 value={subdomain}
-                placeholder={t`apple`}
+                name={t`apple`}
                 onChange={handleSubdomainChange}
                 onKeyDown={handleKeyDown}
                 rightAdornment={
