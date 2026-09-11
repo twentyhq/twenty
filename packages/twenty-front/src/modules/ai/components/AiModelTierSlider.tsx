@@ -105,7 +105,7 @@ const StyledDot = styled.span<{ isReached: boolean }>`
   align-self: center;
   background: ${({ isReached }) =>
     isReached
-      ? themeCssVariables.background.primary
+      ? 'rgba(255, 255, 255, 0.386)'
       : themeCssVariables.border.color.strong};
   border-radius: ${themeCssVariables.border.radius.rounded};
   corner-shape: round;
