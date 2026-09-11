@@ -41,7 +41,7 @@ const TwentyUiComponent = () => {
           <Tag color="purple" variant="soft">
             Styled
           </Tag>
-          <Tag color="blue" variant="outline">
+          <Tag color="blue" variant="outline" borderStyle="dashed">
             Themed
           </Tag>
         </div>

@@ -39,6 +39,7 @@ export const RecordGroupChip = ({
   return (
     <Tag
       variant={isValueGroup ? 'soft' : 'outline'}
+      borderStyle="dashed"
       color={isValueGroup ? recordGroupDefinition.color : 'transparent'}
       weight={isValueGroup ? valueTagWeight : 'medium'}
     >

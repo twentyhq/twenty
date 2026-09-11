@@ -29,11 +29,15 @@ export const RecordGroupRelationChip = ({
     !isDefined(targetObjectNameSingular) ||
     (!isDefined(record) && !loading)
   ) {
-    return <Tag variant="outline" color="transparent">{t`Deleted`}</Tag>;
+    return (
+      <Tag variant="outline" color="transparent" borderStyle="dashed">
+        {t`Deleted`}
+      </Tag>
+    );
   }
 
   if (!isDefined(record)) {
-    return <Tag variant="outline" color="transparent"></Tag>;
+    return <Tag variant="outline" color="transparent" borderStyle="dashed" />;
   }
 
   return (
