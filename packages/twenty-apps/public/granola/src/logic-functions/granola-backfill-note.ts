@@ -6,6 +6,7 @@ import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
 import { type GranolaBackfillNotePayload } from 'src/logic-functions/types/granola-backfill-note-payload.type';
 import { GranolaInvalidResponseError } from 'src/logic-functions/types/granola-invalid-response-error';
 import { GranolaTranscriptLimitError } from 'src/logic-functions/types/granola-transcript-limit-error';
+import { assertGranolaFolderSelectionReadyOrThrow } from 'src/logic-functions/utils/assert-granola-folder-selection-ready-or-throw.util';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { findGranolaRegistrationForCurrentKey } from 'src/logic-functions/utils/find-granola-registration-for-current-key.util';
 import { isGranolaJobInRegistrationScope } from 'src/logic-functions/utils/is-granola-job-in-registration-scope.util';
@@ -16,6 +17,7 @@ export const granolaBackfillNoteHandler = async (
   payload: GranolaBackfillNotePayload,
 ) => {
   try {
+    await assertGranolaFolderSelectionReadyOrThrow();
     const registration = await findGranolaRegistrationForCurrentKey();
 
     if (
