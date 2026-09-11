@@ -162,6 +162,9 @@ const buildPageLayoutTabEnumBindings = (prefix: string[]): EnumBinding[] => [
   ...buildPageLayoutWidgetEnumBindings([...prefix, 'widgets', '[]']),
 ];
 
+export const PAGE_LAYOUT_WIDGET_ENUM_BINDINGS: EnumBinding[] =
+  buildPageLayoutWidgetEnumBindings([]);
+
 export const PAGE_LAYOUT_TAB_ENUM_BINDINGS: EnumBinding[] =
   buildPageLayoutTabEnumBindings([]);
 
