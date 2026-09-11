@@ -6,10 +6,13 @@ import {
 const toMdxString = (value: string): string =>
   JSON.stringify(value).replace(/</g, '\\u003c');
 
-const renderProps = (
-  props: ComponentDocumentation['props'],
-  partName?: string,
-): string =>
+const renderProps = ({
+  props,
+  partName,
+}: {
+  props: ComponentDocumentation['props'];
+  partName?: string;
+}): string =>
   props
     .map((prop) => {
       const attributes = [
@@ -33,10 +36,10 @@ export const renderComponentReference = (
     ? component.parts
         .map(
           (part) =>
-            `### ${component.name}.${part.name}\n\n${renderProps(part.props, part.name)}`,
+            `### ${component.name}.${part.name}\n\n${renderProps({ props: part.props, partName: part.name })}`,
         )
         .join('\n')
-    : renderProps(component.props);
+    : renderProps({ props: component.props });
 
 const escapeTableCell = (value: string): string =>
   value
