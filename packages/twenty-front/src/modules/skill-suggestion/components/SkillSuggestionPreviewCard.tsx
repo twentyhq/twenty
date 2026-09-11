@@ -7,7 +7,6 @@ import { DEFAULT_SKILL_ICON } from '@/skill-suggestion/constants/DefaultSkillIco
 import { SKILL_SUGGESTION_PREVIEW_WIDTH } from '@/skill-suggestion/constants/SkillSuggestionPreviewWidth';
 import type { SkillSuggestionItem } from '@/skill-suggestion/types/SkillSuggestionItem';
 
-// Pinned width so the card keeps its shape across skills
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.primary};
   border-radius: ${themeCssVariables.border.radius.md};
