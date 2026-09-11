@@ -35,6 +35,11 @@ const PAGE_LAYOUT_WIDGET_GQL_FIELDS = `
   pageLayoutTabId
   title
   type
+  position {
+    ... on PageLayoutWidgetCanvasPosition {
+      layoutMode
+    }
+  }
   configuration {
     ... on TimelineConfiguration {
       configurationType
@@ -174,13 +179,91 @@ describe('Manifest update - page layout tabs (standalone)', () => {
     });
   }, 60000);
 
-  it('should migrate a standalone tab from canvas to vertical list without replacing its widget', async () => {
-    const buildPageLayoutTab = (layoutMode: PageLayoutTabLayoutMode) => ({
+  describe.each(['nested', 'standalone'])('invalid %s tab', (location) => {
+    it.each([
+      {
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        heightBehavior: 'TAB_VIEPORT',
+        message: 'unsupported heightBehavior "TAB_VIEPORT"',
+      },
+      {
+        layoutMode: PageLayoutTabLayoutMode.CANVAS,
+        heightBehavior: 'TAB_VIEWPORT',
+        message: 'heightBehavior is only supported for VERTICAL_LIST tabs',
+      },
+    ])(
+      'returns an input error for $layoutMode with $heightBehavior',
+      async ({ layoutMode, heightBehavior, message }) => {
+        const pageLayoutTab = {
+          universalIdentifier: TEST_TAB_ID,
+          title: 'Invalid tab',
+          position: 1000,
+          layoutMode,
+          widgets: [
+            {
+              universalIdentifier: TEST_WIDGET_ID,
+              title: 'Timeline',
+              type: 'TIMELINE',
+              heightBehavior,
+              configuration: { configurationType: 'TIMELINE' },
+            },
+          ],
+        };
+        const manifest: Manifest = JSON.parse(
+          JSON.stringify({
+            ...buildManifest(),
+            pageLayouts:
+              location === 'nested'
+                ? [
+                    {
+                      universalIdentifier: uuidv4(),
+                      name: 'Invalid page',
+                      type: 'STANDALONE_PAGE',
+                      tabs: [pageLayoutTab],
+                    },
+                  ]
+                : [],
+            pageLayoutTabs:
+              location === 'standalone'
+                ? [
+                    {
+                      ...pageLayoutTab,
+                      pageLayoutUniversalIdentifier:
+                        STANDARD_PERSON_PAGE_LAYOUT_UNIVERSAL_ID,
+                    },
+                  ]
+                : [],
+          }),
+        );
+
+        const { errors } = await syncApplication({
+          manifest,
+          expectToFail: true,
+        });
+
+        expect(errors).toEqual([
+          expect.objectContaining({
+            message: expect.stringContaining(message),
+            extensions: expect.objectContaining({ code: 'BAD_USER_INPUT' }),
+          }),
+        ]);
+        const applicationTabs = await globalThis.testDataSource.query(
+          `SELECT id FROM core."pageLayoutTab" WHERE "applicationId" = $1`,
+          [testApplicationId],
+        );
+
+        expect(applicationTabs).toHaveLength(0);
+      },
+    );
+  });
+
+  it('should preserve a legacy Canvas tab without replacing its widget on subsequent sync', async () => {
+    const buildLegacyCanvasPageLayoutTab = () => ({
       universalIdentifier: TEST_TAB_ID,
       pageLayoutUniversalIdentifier: STANDARD_PERSON_PAGE_LAYOUT_UNIVERSAL_ID,
       title: 'Timeline',
       position: 1000,
-      layoutMode,
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
       widgets: [
         {
           universalIdentifier: TEST_WIDGET_ID,
@@ -195,7 +278,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
 
     await syncApplication({
       manifest: buildManifest({
-        pageLayoutTabs: [buildPageLayoutTab(PageLayoutTabLayoutMode.CANVAS)],
+        pageLayoutTabs: [buildLegacyCanvasPageLayoutTab()],
       }),
       expectToFail: false,
     });
@@ -228,6 +311,9 @@ describe('Manifest update - page layout tabs (standalone)', () => {
       pageLayoutTabId: tabAfterFirstSync.id,
       title: 'Timeline',
       type: 'TIMELINE',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      },
       configuration: {
         configurationType: 'TIMELINE',
       },
@@ -235,9 +321,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
 
     await syncApplication({
       manifest: buildManifest({
-        pageLayoutTabs: [
-          buildPageLayoutTab(PageLayoutTabLayoutMode.VERTICAL_LIST),
-        ],
+        pageLayoutTabs: [buildLegacyCanvasPageLayoutTab()],
       }),
       expectToFail: false,
     });
@@ -251,7 +335,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
     expect(tabAfterSecondSync).toMatchObject({
       id: tabAfterFirstSync.id,
       universalIdentifier: TEST_TAB_ID,
-      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
     });
 
     const { data: widgetsAfterSecondSyncData } = await findPageLayoutWidgets({
@@ -268,6 +352,9 @@ describe('Manifest update - page layout tabs (standalone)', () => {
         pageLayoutTabId: tabAfterSecondSync.id,
         title: 'Timeline',
         type: 'TIMELINE',
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.CANVAS,
+        },
         configuration: {
           configurationType: 'TIMELINE',
         },

@@ -13,7 +13,10 @@ import {
   sliderTest,
   toastTest,
 } from '@/__stories__/twenty-ui-gallery/utils/componentInteractionTests';
-import { statusControlsTest } from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
+import {
+  statusControlsTest,
+  tagControlsTest,
+} from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
 import {
   codeEditorTest,
@@ -366,4 +369,16 @@ export const StatusControlsPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-status-controls',
   runtime: 'preact',
   play: statusControlsTest,
+});
+
+export const TagControlsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-tag-controls',
+  runtime: 'react',
+  play: tagControlsTest,
+});
+
+export const TagControlsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-tag-controls',
+  runtime: 'preact',
+  play: tagControlsTest,
 });
