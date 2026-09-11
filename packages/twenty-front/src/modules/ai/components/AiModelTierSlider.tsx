@@ -198,6 +198,15 @@ export const AiModelTierSlider = ({
     ? t` Not measured at this effort yet, so this is the base model's reading.`
     : '';
 
+  const intelligenceDelta = resolvedTier.intelligenceDeltaPercent ?? 0;
+  const intelligenceComparison =
+    intelligenceDelta >= 100
+      ? t`${formatMetricDelta(intelligenceDelta)} the score of Balanced`
+      : intelligenceDelta < 0
+        ? t`${formatNumber(Math.abs(intelligenceDelta))}% lower score than Balanced`
+        : t`${formatNumber(intelligenceDelta)}% higher score than Balanced`;
+  const intelligenceScore = t`Intelligence score: ${formatNumber(model?.intelligenceIndex ?? 0)}`;
+
   // Below Balanced the gain is speed, above it intelligence; cost moves with
   // both, so each side shows the two figures that explain the trade.
   const candidateMetrics: TierMetric[] = [
@@ -233,10 +242,7 @@ export const AiModelTierSlider = ({
             key: 'intelligence',
             Icon: IconBrain,
             deltaPercent: resolvedTier.intelligenceDeltaPercent,
-            description:
-              (resolvedTier.intelligenceDeltaPercent ?? 0) >= 100
-                ? t`Intelligence index ${formatNumber(model?.intelligenceIndex ?? 0)}, ${formatMetricDelta(resolvedTier.intelligenceDeltaPercent ?? 0)} the score of Balanced Mode.`
-                : t`Intelligence index ${formatNumber(model?.intelligenceIndex ?? 0)}, a ${formatMetricDelta(resolvedTier.intelligenceDeltaPercent ?? 0)} change in score compared with Balanced Mode.`,
+            description: `${intelligenceComparison}\n${intelligenceScore}`,
           },
         ]
       : []),
