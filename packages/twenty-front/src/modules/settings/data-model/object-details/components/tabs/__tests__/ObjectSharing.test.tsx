@@ -1,7 +1,7 @@
 import { type MockedResponse } from '@apollo/client/testing';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 
@@ -153,6 +153,7 @@ const sharingRulesMock: MockedResponse = {
 const commandMenuItemsMock: MockedResponse = {
   request: { query: FindManyCommandMenuItemsDocument },
   result: { data: { commandMenuItems: [] } },
+  maxUsageCount: Number.POSITIVE_INFINITY,
 };
 
 const renderObjectSharing = (
@@ -289,13 +290,19 @@ describe('ObjectSharing', () => {
       ),
     ).toBeVisible();
 
-    const [everyoneDeleteButton, janeDeleteButton] = screen.getAllByRole(
+    const [everyoneDeleteButton, janeDeleteButton] = await screen.findAllByRole(
       'button',
       { name: 'Delete' },
     );
 
     expect(everyoneDeleteButton).toBeDisabled();
     expect(janeDeleteButton).toBeEnabled();
+
+    // the command menu query resolves after the rules render and refetches them,
+    // so let it settle before the test unmounts the Apollo provider
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
   });
 
   it('deletes a rule', async () => {
