@@ -13,7 +13,7 @@ import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDes
 import { formatNumber } from '~/utils/format/formatNumber';
 
 const TRACK_HEIGHT_PX = 24;
-const TRACK_INSET_PX = 2;
+const TRACK_INSET_PX = 0;
 const DOT_CENTER_INSET_PX = 18;
 const HANDLE_WIDTH_PX = 12;
 const HANDLE_HEIGHT_PX = 28;
