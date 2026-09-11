@@ -9,6 +9,7 @@ import { GranolaTranscriptLimitError } from 'src/logic-functions/types/granola-t
 import { type GranolaTranscriptItem } from 'src/logic-functions/types/granola-api.type';
 import { type createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { isDefined } from 'twenty-sdk/utils';
+import { sleepForMilliseconds } from 'src/logic-functions/utils/sleep-for-milliseconds.util';
 
 export const fetchGranolaNoteWithTranscriptOrThrow = async ({
   client,
@@ -64,9 +65,7 @@ export const fetchGranolaNoteWithTranscriptOrThrow = async ({
 
     seenCursors.add(page.cursor);
     cursor = page.cursor;
-    await new Promise((resolve) =>
-      setTimeout(resolve, GRANOLA_PAGE_INTERVAL_MILLISECONDS),
-    );
+    await sleepForMilliseconds(GRANOLA_PAGE_INTERVAL_MILLISECONDS);
   }
 
   throw new GranolaTranscriptLimitError({ reason: 'page-limit' });

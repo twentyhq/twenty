@@ -5,6 +5,7 @@ import {
 import { type GranolaFolder } from 'src/logic-functions/types/granola-api.type';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { getGranolaNextPage } from 'src/logic-functions/utils/get-granola-next-page.util';
+import { sleepForMilliseconds } from 'src/logic-functions/utils/sleep-for-milliseconds.util';
 
 export const listAllGranolaFoldersOrThrow = async ({
   client = createGranolaClientOrThrow(),
@@ -36,8 +37,6 @@ export const listAllGranolaFoldersOrThrow = async ({
     }
 
     cursor = nextPage.cursor;
-    await new Promise((resolve) =>
-      setTimeout(resolve, GRANOLA_PAGE_INTERVAL_MILLISECONDS),
-    );
+    await sleepForMilliseconds(GRANOLA_PAGE_INTERVAL_MILLISECONDS);
   }
 };
