@@ -1,6 +1,7 @@
 import { isArray, isNull, isUndefined } from '@sniptt/guards';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { TRANSCRIPT_EXPIRED_SUB_CODE } from 'src/logic-functions/constants/transcript-expired-sub-code';
 import { buildEmptyTranscriptMarker } from 'src/logic-functions/domain/build-empty-transcript-marker.util';
 import { buildFailedTranscriptMarker } from 'src/logic-functions/domain/build-failed-transcript-marker.util';
 import { buildPendingTranscriptMarker } from 'src/logic-functions/domain/build-pending-transcript-marker.util';
@@ -26,12 +27,14 @@ export const importCallRecordingTranscript = async ({
   externalRecordingId,
   requestedAt,
   transcript,
+  isMediaExpired,
 }: {
   callRecordingId: string;
   currentStatus: string | undefined;
-  externalRecordingId: string;
+  externalRecordingId: string | undefined;
   requestedAt: string;
   transcript: unknown;
+  isMediaExpired: boolean;
 }): Promise<ImportCallRecordingTranscriptResult> => {
   const existingTranscriptMarker = parseTranscriptMarker(transcript);
 
@@ -48,6 +51,15 @@ export const importCallRecordingTranscript = async ({
     existingTranscriptMarker?.status === 'EMPTY'
   ) {
     return buildEmptyTranscriptArtifactResult();
+  }
+
+  if (isUndefined(externalRecordingId)) {
+    return isMediaExpired
+      ? buildExpiredTranscriptArtifactResult({
+          recallTranscriptId:
+            existingTranscriptMarker?.recallTranscriptId ?? null,
+        })
+      : buildEmptyTranscriptArtifactResult();
   }
 
   const listResult = await listRecallTranscripts({ externalRecordingId });
@@ -78,6 +90,10 @@ export const importCallRecordingTranscript = async ({
     isUndefined(transcriptArtifact) &&
     isUndefined(pendingTranscriptMarkerRecallTranscriptId)
   ) {
+    if (isMediaExpired) {
+      return buildExpiredTranscriptArtifactResult({ recallTranscriptId: null });
+    }
+
     const createResult = await createAsyncRecallTranscript({
       externalRecordingId,
     });
@@ -176,6 +192,12 @@ export const importCallRecordingTranscript = async ({
     };
   }
 
+  if (downloadResult.outcome === 'deleted') {
+    return buildExpiredTranscriptArtifactResult({
+      recallTranscriptId: transcriptIdToDownload,
+    });
+  }
+
   if (downloadResult.outcome === 'failed') {
     return {
       updateData: buildTranscriptFailureUpdate({
@@ -207,6 +229,21 @@ const buildEmptyTranscriptArtifactResult = ({
   updateData: {},
   requestedTranscript: false,
   hasRetryableFailure,
+});
+
+const buildExpiredTranscriptArtifactResult = ({
+  recallTranscriptId,
+}: {
+  recallTranscriptId: string | null;
+}): ImportCallRecordingTranscriptResult => ({
+  updateData: {
+    transcript: buildEmptyTranscriptMarker({
+      recallTranscriptId,
+      subCode: TRANSCRIPT_EXPIRED_SUB_CODE,
+    }),
+  },
+  requestedTranscript: false,
+  hasRetryableFailure: false,
 });
 
 const selectRecallTranscriptArtifact = (

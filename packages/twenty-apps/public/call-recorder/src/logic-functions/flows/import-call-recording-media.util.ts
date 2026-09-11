@@ -10,8 +10,12 @@ import {
   AUDIO_FILE_TOO_LARGE_FAILURE_REASON,
   VIDEO_FILE_TOO_LARGE_FAILURE_REASON,
 } from 'src/logic-functions/constants/media-file-too-large-failure-reasons';
+import {
+  AUDIO_IMPORT_EXPIRED_FAILURE_REASON,
+  VIDEO_IMPORT_EXPIRED_FAILURE_REASON,
+} from 'src/logic-functions/constants/media-import-expired-failure-reasons';
 import { putMediaDownloadBodyToUploadTarget } from 'src/logic-functions/flows/put-media-download-body-to-upload-target.util';
-import { extractRecallMediaUrls } from 'src/logic-functions/recall-api/extract-recall-media-urls.util';
+import { extractRecallMediaArtifacts } from 'src/logic-functions/recall-api/extract-recall-media-artifacts.util';
 import { getRecallRecording } from 'src/logic-functions/recall-api/get-recall-recording.util';
 import { type CallRecordingMediaFile } from 'src/logic-functions/types/call-recording-media-file.type';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
@@ -19,7 +23,7 @@ import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.
 
 type CallRecordingMediaUpdateFields = Pick<
   CallRecordingUpdateFields,
-  'audio' | 'video' | 'callRecorderFailureReason'
+  'audio' | 'video' | 'callRecorderFailureReason' | 'mediaExpiresAt'
 >;
 
 type ImportCallRecordingMediaResult = {
@@ -52,6 +56,7 @@ const MEDIA_ARTIFACT_DESCRIPTORS = [
     fieldMetadataUniversalIdentifier:
       CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER,
     tooLargeFailureReason: VIDEO_FILE_TOO_LARGE_FAILURE_REASON,
+    expiredFailureReason: VIDEO_IMPORT_EXPIRED_FAILURE_REASON,
   },
   {
     field: 'audio',
@@ -59,6 +64,7 @@ const MEDIA_ARTIFACT_DESCRIPTORS = [
     fieldMetadataUniversalIdentifier:
       CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER,
     tooLargeFailureReason: AUDIO_FILE_TOO_LARGE_FAILURE_REASON,
+    expiredFailureReason: AUDIO_IMPORT_EXPIRED_FAILURE_REASON,
   },
 ] as const;
 
@@ -87,20 +93,37 @@ export const importCallRecordingMedia = async ({
     return { updateData: {}, hasRetryableFailure: true };
   }
 
-  const mediaUrls = extractRecallMediaUrls(recordingResult.recording);
+  const mediaArtifacts = extractRecallMediaArtifacts(recordingResult.recording);
   const metadataClient = new MetadataApiClient();
-  const updateFields: CallRecordingMediaUpdateFields = {};
-  const tooLargeFailureReasons: string[] = [];
+  const updateFields: CallRecordingMediaUpdateFields = isUndefined(
+    mediaArtifacts.expiresAt,
+  )
+    ? {}
+    : { mediaExpiresAt: mediaArtifacts.expiresAt };
+  const unrecoverableFailureReasons: string[] = [];
   const failedMediaArtifactFields: string[] = [];
   const artifactStateByField = {
-    video: { alreadyImported: hasVideo, url: mediaUrls.videoUrl },
-    audio: { alreadyImported: hasAudio, url: mediaUrls.audioUrl },
+    video: { alreadyImported: hasVideo, artifact: mediaArtifacts.video },
+    audio: { alreadyImported: hasAudio, artifact: mediaArtifacts.audio },
   };
 
   for (const descriptor of MEDIA_ARTIFACT_DESCRIPTORS) {
-    const { alreadyImported, url } = artifactStateByField[descriptor.field];
+    const { alreadyImported, artifact } =
+      artifactStateByField[descriptor.field];
 
-    if (alreadyImported || isUndefined(url)) {
+    if (alreadyImported) {
+      continue;
+    }
+
+    if (artifact.statusCode === 'deleted') {
+      unrecoverableFailureReasons.push(descriptor.expiredFailureReason);
+
+      continue;
+    }
+
+    const url = artifact.downloadUrl;
+
+    if (isUndefined(url)) {
       continue;
     }
 
@@ -119,7 +142,7 @@ export const importCallRecordingMedia = async ({
     }
 
     if (importResult.outcome === 'too-large') {
-      tooLargeFailureReasons.push(descriptor.tooLargeFailureReason);
+      unrecoverableFailureReasons.push(descriptor.tooLargeFailureReason);
     }
 
     if (importResult.outcome === 'failed') {
@@ -127,8 +150,9 @@ export const importCallRecordingMedia = async ({
     }
   }
 
-  if (tooLargeFailureReasons.length > 0) {
-    updateFields.callRecorderFailureReason = tooLargeFailureReasons.join(',');
+  if (unrecoverableFailureReasons.length > 0) {
+    updateFields.callRecorderFailureReason =
+      unrecoverableFailureReasons.join(',');
   }
 
   return {

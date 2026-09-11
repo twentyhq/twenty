@@ -58,6 +58,7 @@ type CallRecordingNode = {
   startedAt?: string | null;
   endedAt?: string | null;
   callRecorderFailureReason?: string | null;
+  mediaExpiresAt?: string | null;
   transcript?: unknown;
   audio?: unknown;
   video?: unknown;
@@ -213,6 +214,86 @@ describe('importCallRecordingArtifacts', () => {
       scope: 'transcript',
       outcome: 'call-recording-artifacts-imported',
     });
+  });
+
+  it('settles expired media from the stored expiry without reading the recording', async () => {
+    const client = buildClient([
+      buildProcessingCallRecording({
+        audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+        transcript: { recallTranscriptId: null, status: 'EMPTY' },
+        mediaExpiresAt: '2026-01-08T14:00:00.000Z',
+      }),
+    ]);
+
+    const result = await importCallRecordingArtifacts({
+      client: client as unknown as CoreApiClient,
+      request: buildRequest(),
+      scope: 'media',
+    });
+
+    expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: { callRecorderFailureReason: 'video_import_expired' },
+      },
+      {
+        id: 'call-recording-1',
+        data: { status: 'COMPLETED' },
+      },
+    ]);
+    expect(chargeCompletedCallRecordingMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      startedAt: '2026-01-01T13:02:00.000Z',
+      endedAt: '2026-01-01T14:05:00.000Z',
+    });
+    expect(result).toEqual({
+      status: 'imported',
+      callRecordingId: 'call-recording-1',
+      scope: 'media',
+      outcome: 'call-recording-artifacts-imported',
+    });
+  });
+
+  it('marks an expired transcript empty without requesting one and fails a recording with nothing stored', async () => {
+    const client = buildClient([
+      buildProcessingCallRecording({
+        callRecorderFailureReason: 'video_import_expired,audio_import_expired',
+        mediaExpiresAt: '2026-01-08T14:00:00.000Z',
+      }),
+    ]);
+
+    await importCallRecordingArtifacts({
+      client: client as unknown as CoreApiClient,
+      request: buildRequest(),
+      scope: 'transcript',
+    });
+
+    expect(listRecallTranscriptsMock).toHaveBeenCalledWith({
+      externalRecordingId: 'recall-recording-1',
+    });
+    expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          transcript: {
+            recallTranscriptId: null,
+            status: 'EMPTY',
+            subCode: 'transcript_expired',
+          },
+        },
+      },
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'FAILED',
+          callRecorderFailureReason:
+            'video_import_expired,audio_import_expired',
+        },
+      },
+    ]);
+    expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
   });
 
   it('refreshes persisted artifacts after claiming the scope', async () => {

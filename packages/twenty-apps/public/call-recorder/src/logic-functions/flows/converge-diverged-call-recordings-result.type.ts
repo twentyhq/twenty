@@ -5,6 +5,4 @@ export type ConvergeDivergedCallRecordingsResult = {
   requestedTranscriptCallRecordingIds: string[];
   unconvergeableCallRecordingIds: string[];
   skippedNotStartedCallRecordingIds: string[];
-  settledCompletedCallRecordingIds: string[];
-  settledFailedCallRecordingIds: string[];
 };

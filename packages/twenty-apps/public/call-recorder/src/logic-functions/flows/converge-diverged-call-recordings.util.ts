@@ -15,7 +15,6 @@ import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-ca
 import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
 import { runCallRecordingArtifactImportWithClaim } from 'src/logic-functions/flows/run-call-recording-artifact-import-with-claim.util';
 import { settleCallRecordingImport } from 'src/logic-functions/flows/settle-call-recording-import.util';
-import { settleStuckCallRecording } from 'src/logic-functions/flows/settle-stuck-call-recording.util';
 import {
   syncCallRecording,
   type SyncCallRecordingResult,
@@ -51,6 +50,7 @@ type DivergedCallRecordingNode = {
   externalBotId?: string | null;
   externalRecordingId?: string | null;
   callRecorderFailureReason?: string | null;
+  mediaExpiresAt?: string | null;
   transcript?: unknown;
   audio?: FilesFieldValue | null;
   video?: FilesFieldValue | null;
@@ -77,33 +77,17 @@ export const convergeDivergedCallRecordings = async ({
     requestedTranscriptCallRecordingIds: [],
     unconvergeableCallRecordingIds: [],
     skippedNotStartedCallRecordingIds: [],
-    settledCompletedCallRecordingIds: [],
-    settledFailedCallRecordingIds: [],
   };
   const actionableCandidates: Array<
     DivergedCallRecordingCandidate & { externalBotId: string }
   > = [];
 
   for (const candidate of candidates) {
-    if (isOutsideConvergenceBound(candidate, convergenceLowerBound)) {
-      if (candidate.status === CallRecordingStatus.PROCESSING) {
-        const settlementOutcome = await settleStuckCallRecording({
-          client,
-          callRecordingId: candidate.id,
-          now,
-        });
-
-        if (settlementOutcome === 'completed') {
-          result.settledCompletedCallRecordingIds.push(candidate.id);
-        }
-
-        if (settlementOutcome === 'failed') {
-          result.settledFailedCallRecordingIds.push(candidate.id);
-        }
-
-        continue;
-      }
-
+    // Expired media settles from one bot read, so PROCESSING rows converge at any age.
+    if (
+      isOutsideConvergenceBound(candidate, convergenceLowerBound) &&
+      candidate.status !== CallRecordingStatus.PROCESSING
+    ) {
       console.warn(
         `[call-recorder] call recording ${candidate.id} diverged but its meeting ended more than ${CONVERGENCE_LOOKBACK_DAYS} days ago; it will not converge automatically`,
       );
@@ -222,6 +206,7 @@ const fetchDivergedCallRecordingCandidates = async (
               externalBotId: true,
               externalRecordingId: true,
               callRecorderFailureReason: true,
+              mediaExpiresAt: true,
               transcript: true,
               audio: { fileId: true },
               video: { fileId: true },
@@ -254,6 +239,9 @@ const fetchDivergedCallRecordingCandidates = async (
       : undefined,
     callRecorderFailureReason: isNonEmptyString(node.callRecorderFailureReason)
       ? node.callRecorderFailureReason
+      : undefined,
+    mediaExpiresAt: isNonEmptyString(node.mediaExpiresAt)
+      ? node.mediaExpiresAt
       : undefined,
     transcript: node.transcript ?? undefined,
     audio: node.audio ?? undefined,
@@ -344,6 +332,7 @@ const convergeCallRecording = async ({
             treatRecordingAsDone: false,
             requestedAt: artifactImportClaimedAt.toISOString(),
             artifactScope: artifactImportScope,
+            now: artifactImportClaimedAt,
           }),
       });
 
@@ -352,7 +341,7 @@ const convergeCallRecording = async ({
     }
   }
 
-  const hasCompletedImport = await settleCallRecordingImport(client, {
+  const settlementOutcome = await settleCallRecordingImport(client, {
     callRecordingId: candidate.id,
   });
   const hasUpdatedCallRecording = callRecordingSyncResults.some(
@@ -362,7 +351,7 @@ const convergeCallRecording = async ({
     (callRecordingSyncResult) => callRecordingSyncResult.requestedTranscript,
   );
 
-  if (hasUpdatedCallRecording || hasCompletedImport) {
+  if (hasUpdatedCallRecording || settlementOutcome !== 'pending') {
     result.updatedCallRecordingIds.push(candidate.id);
   }
 

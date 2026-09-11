@@ -22,6 +22,7 @@ export type CallRecordingUpdateFields = Partial<{
   audio: CallRecordingMediaFile[];
   video: CallRecordingMediaFile[];
   summary: CallRecordingSummary;
+  mediaExpiresAt: string;
   // null releases the concurrent-import lease.
   artifactsImportClaimedAt: string | null;
   transcriptImportClaimedAt: string | null;

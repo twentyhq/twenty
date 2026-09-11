@@ -162,10 +162,18 @@ const daysAgo = (days: number) => hoursAgo(days * 24);
 // captured here so fanned-out jobs do not run inside the test.
 // ---------------------------------------------------------------------------
 
+type FakeRecallBotStatusChange = {
+  code: string;
+  sub_code?: string;
+  created_at: string;
+};
+
 type FakeRecallBot = {
   id: string;
   metadata: Record<string, string>;
   statusCode: string;
+  statusChanges?: FakeRecallBotStatusChange[];
+  recordings?: Array<{ id: string; started_at: string; completed_at: string }>;
 };
 
 type FakeRecallTranscript = {
@@ -210,6 +218,41 @@ class FakeRecallApi {
     for (const transcript of this.transcripts.values()) {
       transcript.statusCode = 'done';
       transcript.content = content;
+    }
+  }
+
+  // Mirrors Recall after retention: the bot history ends with media_expired,
+  // the recording disappears from the bot, and its transcripts read as deleted.
+  expireBotMedia({
+    botId,
+    recordingStartedAt,
+    recordingEndedAt,
+  }: {
+    botId: string;
+    recordingStartedAt: string;
+    recordingEndedAt: string;
+  }): void {
+    const bot = this.bots.get(botId);
+
+    if (bot === undefined) {
+      throw new Error(`Unknown fake Recall bot ${botId}`);
+    }
+
+    bot.statusCode = 'media_expired';
+    bot.statusChanges = [
+      { code: 'in_call_recording', created_at: recordingStartedAt },
+      {
+        code: 'call_ended',
+        sub_code: 'timeout_exceeded_everyone_left',
+        created_at: recordingEndedAt,
+      },
+      { code: 'done', created_at: recordingEndedAt },
+      { code: 'media_expired', created_at: new Date().toISOString() },
+    ];
+    bot.recordings = [];
+
+    for (const transcript of this.transcripts.values()) {
+      transcript.statusCode = 'deleted';
     }
   }
 
@@ -272,6 +315,8 @@ class FakeRecallApi {
           id: bot.id,
           metadata: bot.metadata,
           status: { code: bot.statusCode },
+          status_changes: bot.statusChanges ?? [],
+          recordings: bot.recordings ?? [],
         })),
       });
     }
@@ -289,6 +334,8 @@ class FakeRecallApi {
         id: bot.id,
         metadata: bot.metadata,
         status: { code: bot.statusCode },
+        status_changes: bot.statusChanges ?? [],
+        recordings: bot.recordings ?? [],
       });
     }
 
@@ -741,6 +788,7 @@ describe('call recorder app lifecycle (integration)', () => {
             botScheduleAttemptedAt: true,
             botScheduleIdempotencyKey: true,
             callRecorderFailureReason: true,
+            mediaExpiresAt: true,
             startedAt: true,
             endedAt: true,
             transcript: true,
@@ -1218,123 +1266,157 @@ describe('call recorder app lifecycle (integration)', () => {
     });
   });
 
-  describe('settling recordings stuck outside the convergence window', () => {
-    it('fails a stuck processing recording whose media never arrived', async () => {
-      const calendarEventId = await createCalendarEvent({
-        startsAt: daysAgo(9),
-        endsAt: daysAgo(8),
+  describe('settling recordings whose Recall media expired', () => {
+    const recordingStartedAt = () => hoursAgo(1);
+
+    const deliverRecordingDone = async ({
+      botId,
+      metadata,
+    }: {
+      botId: string;
+      metadata: Record<string, string>;
+    }): Promise<{ startedAt: string; completedAt: string }> => {
+      const startedAt = recordingStartedAt();
+      const completedAt = new Date().toISOString();
+
+      await deliverRecallWebhook(
+        buildRecordingDoneWebhook({ botId, metadata, startedAt, completedAt }),
+      );
+
+      return { startedAt, completedAt };
+    };
+
+    const moveMeetingOutsideConvergenceWindow = (calendarEventId: string) =>
+      client.mutation({
+        updateCalendarEvent: {
+          __args: {
+            id: calendarEventId,
+            data: { startsAt: daysAgo(9), endsAt: daysAgo(8) },
+          },
+          id: true,
+        },
       });
-      const callRecordingId = await createPendingCallRecording({
-        calendarEventId,
-        status: 'PROCESSING',
-        externalBotId: 'recall-bot-stuck',
+
+    it('fails a processing recording whose media expired before any artifact was imported', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
       });
+
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: completedAt,
+      });
+      await moveMeetingOutsideConvergenceWindow(calendarEventId);
 
       const cronResult = await runStaleStateCron();
 
-      expect(cronResult.settledFailedCallRecordingIds).toEqual([
-        callRecordingId,
-      ]);
+      expect(cronResult.updatedCallRecordingIds).toEqual([callRecordingId]);
+      expect(cronResult.unconvergeableCallRecordingIds).toEqual([]);
 
       const callRecording = await fetchCallRecording(callRecordingId);
 
       expect(callRecording.status).toBe('FAILED');
       expect(callRecording.callRecorderFailureReason).toBe(
-        'recording_import_expired',
+        'video_import_expired,audio_import_expired',
       );
+      expect(callRecording.transcript).toEqual({
+        recallTranscriptId: null,
+        status: 'EMPTY',
+        subCode: 'transcript_expired',
+      });
+      expect(callRecording.mediaExpiresAt).toBeTruthy();
     });
 
-    it('leaves a stuck recording alone while an artifact import holds its claim', async () => {
-      const calendarEventId = await createCalendarEvent({
-        startsAt: daysAgo(9),
-        endsAt: daysAgo(8),
-      });
-      const callRecordingId = await createPendingCallRecording({
-        calendarEventId,
-        status: 'PROCESSING',
-        externalBotId: 'recall-bot-stuck',
-        artifactsImportClaimedAt: new Date().toISOString(),
-      });
-
-      const cronResult = await runStaleStateCron();
-
-      expect(cronResult.settledCompletedCallRecordingIds).toEqual([]);
-      expect(cronResult.settledFailedCallRecordingIds).toEqual([]);
-      expect((await fetchCallRecording(callRecordingId)).status).toBe(
-        'PROCESSING',
-      );
-    });
-
-    it('completes a stuck processing recording with imported media and marks its transcript empty', async () => {
+    it('defers media settlement while an artifact import holds its claim', async () => {
       const { calendarEventId, callRecordingId, botId, metadata } =
         await scheduleRecordingThroughCalendarReconciliation();
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
 
-      await deliverRecallWebhook(
-        buildRecordingDoneWebhook({
-          botId,
-          metadata,
-          startedAt: hoursAgo(1),
-          completedAt: new Date().toISOString(),
-        }),
-      );
-      await runQueuedArtifactImports();
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: completedAt,
+      });
+      await moveMeetingOutsideConvergenceWindow(calendarEventId);
       await client.mutation({
-        updateCalendarEvent: {
+        updateCallRecording: {
           __args: {
-            id: calendarEventId,
-            data: { startsAt: daysAgo(9), endsAt: daysAgo(8) },
+            id: callRecordingId,
+            data: { artifactsImportClaimedAt: new Date().toISOString() },
           },
           id: true,
         },
       });
 
+      await runStaleStateCron();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('PROCESSING');
+      expect(callRecording.callRecorderFailureReason).toBeFalsy();
+      expect(callRecording.transcript).toMatchObject({ status: 'EMPTY' });
+    });
+
+    it('completes a processing recording with imported media once Recall expires the rest', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
+
+      await runQueuedArtifactImports();
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: completedAt,
+      });
+      await moveMeetingOutsideConvergenceWindow(calendarEventId);
+
       const cronResult = await runStaleStateCron();
 
-      expect(cronResult.settledCompletedCallRecordingIds).toEqual([
-        callRecordingId,
-      ]);
+      expect(cronResult.updatedCallRecordingIds).toEqual([callRecordingId]);
 
       const callRecording = await fetchCallRecording(callRecordingId);
 
       expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.callRecorderFailureReason).toBeFalsy();
       expect(callRecording.transcript).toEqual({
         recallTranscriptId: 'recall-transcript-1',
         status: 'EMPTY',
+        subCode: 'transcript_expired',
       });
     });
 
-    it('completes a stuck processing recording with only audio and records the expired video', async () => {
+    it('completes a processing recording with only audio and records the expired video', async () => {
       const { calendarEventId, callRecordingId, botId, metadata } =
         await scheduleRecordingThroughCalendarReconciliation();
 
       recall.failVideoDownload = true;
 
-      await deliverRecallWebhook(
-        buildRecordingDoneWebhook({
-          botId,
-          metadata,
-          startedAt: hoursAgo(1),
-          completedAt: new Date().toISOString(),
-        }),
-      );
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
+
       await expect(runQueuedArtifactImports()).rejects.toMatchObject({
         name: 'RetryableLogicFunctionError',
       });
-      await client.mutation({
-        updateCalendarEvent: {
-          __args: {
-            id: calendarEventId,
-            data: { startsAt: daysAgo(9), endsAt: daysAgo(8) },
-          },
-          id: true,
-        },
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: completedAt,
       });
+      await moveMeetingOutsideConvergenceWindow(calendarEventId);
 
-      const cronResult = await runStaleStateCron();
-
-      expect(cronResult.settledCompletedCallRecordingIds).toEqual([
-        callRecordingId,
-      ]);
+      await runStaleStateCron();
 
       const callRecording = await fetchCallRecording(callRecordingId);
 
@@ -1345,63 +1427,79 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.transcript).toMatchObject({ status: 'EMPTY' });
     });
 
-    it('completes a stuck processing recording whose media was too large to store', async () => {
+    it('fails a recording whose media was too large to store and whose transcript never arrived', async () => {
       const { calendarEventId, callRecordingId, botId, metadata } =
         await scheduleRecordingThroughCalendarReconciliation();
 
       recall.mediaContentLengthBytes = 600 * 1024 * 1024;
 
-      await deliverRecallWebhook(
-        buildRecordingDoneWebhook({
-          botId,
-          metadata,
-          startedAt: hoursAgo(1),
-          completedAt: new Date().toISOString(),
-        }),
-      );
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
+
       await runQueuedArtifactImports();
 
       expect(
         (await fetchCallRecording(callRecordingId)).callRecorderFailureReason,
       ).toBe('video_file_too_large,audio_file_too_large');
 
-      await client.mutation({
-        updateCalendarEvent: {
-          __args: {
-            id: calendarEventId,
-            data: { startsAt: daysAgo(9), endsAt: daysAgo(8) },
-          },
-          id: true,
-        },
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: completedAt,
       });
+      await moveMeetingOutsideConvergenceWindow(calendarEventId);
 
-      const cronResult = await runStaleStateCron();
-
-      expect(cronResult.settledCompletedCallRecordingIds).toEqual([
-        callRecordingId,
-      ]);
+      await runStaleStateCron();
 
       const callRecording = await fetchCallRecording(callRecordingId);
 
-      expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.status).toBe('FAILED');
       expect(callRecording.callRecorderFailureReason).toBe(
         'video_file_too_large,audio_file_too_large',
       );
       expect(callRecording.transcript).toMatchObject({ status: 'EMPTY' });
     });
 
-    it('leaves a processing recording whose meeting is still inside the convergence window', async () => {
+    it('settles a processing recording when Recall reports its media expired by webhook', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deliverRecordingDone({ botId, metadata });
+      await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'media_expired',
+        }),
+      );
+
+      expect(
+        (await fetchCallRecording(callRecordingId)).mediaExpiresAt,
+      ).toBeTruthy();
+      expect(recall.artifactImportRequests).toHaveLength(4);
+
+      await runQueuedArtifactImports();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('FAILED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'video_import_expired,audio_import_expired',
+      );
+      expect(callRecording.transcript).toEqual({
+        recallTranscriptId: null,
+        status: 'EMPTY',
+        subCode: 'transcript_expired',
+      });
+    });
+
+    it('keeps converging a processing recording whose media is still available', async () => {
       const { calendarEventId, callRecordingId, botId, metadata } =
         await scheduleRecordingThroughCalendarReconciliation();
 
-      await deliverRecallWebhook(
-        buildRecordingDoneWebhook({
-          botId,
-          metadata,
-          startedAt: hoursAgo(1),
-          completedAt: new Date().toISOString(),
-        }),
-      );
+      await deliverRecordingDone({ botId, metadata });
       await client.mutation({
         updateCalendarEvent: {
           __args: {
@@ -1412,14 +1510,12 @@ describe('call recorder app lifecycle (integration)', () => {
         },
       });
 
-      const cronResult = await runStaleStateCron();
+      await runStaleStateCron();
 
-      expect(cronResult.settledCompletedCallRecordingIds).toEqual([]);
-      expect(cronResult.settledFailedCallRecordingIds).toEqual([]);
+      const callRecording = await fetchCallRecording(callRecordingId);
 
-      expect((await fetchCallRecording(callRecordingId)).status).toBe(
-        'PROCESSING',
-      );
+      expect(callRecording.status).toBe('PROCESSING');
+      expect(callRecording.callRecorderFailureReason).toBeFalsy();
     });
   });
 
