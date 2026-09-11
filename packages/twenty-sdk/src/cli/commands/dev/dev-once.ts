@@ -3,7 +3,7 @@ import { APP_ERROR_CODES } from '@/cli/types';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { confirmDestructiveApply } from '@/cli/utilities/dev/confirm-destructive-apply';
-import { hasPullBaseFile } from '@/cli/utilities/pull/pull-base-file';
+import { warnWhenApplyingAPulledProject } from '@/cli/utilities/dev/warn-when-applying-a-pulled-project';
 import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
 import chalk from 'chalk';
 
@@ -13,26 +13,6 @@ export type AppDevOnceCommandOptions = {
   apply?: boolean;
   force?: boolean;
   inferDeletionFromMissingEntities?: boolean;
-};
-
-const warnWhenDeletingFromAPulledProject = async (
-  appPath: string,
-): Promise<void> => {
-  if (!(await hasPullBaseFile({ appPath }))) {
-    return;
-  }
-
-  console.log(
-    chalk.yellow(
-      'This project was written by `twenty pull`, which is experimental and cannot export every entity yet.',
-    ),
-  );
-  console.log(
-    chalk.yellow(
-      'Entities it could not write are missing from your source, so applying will destroy them in the workspace.',
-    ),
-  );
-  console.log(chalk.yellow('Re-run with --no-delete to keep them.\n'));
 };
 
 export class AppDevOnceCommand {
@@ -51,9 +31,12 @@ export class AppDevOnceCommand {
     );
     console.log(chalk.gray(`App path: ${appPath}\n`));
 
-    if (apply && options.inferDeletionFromMissingEntities !== false) {
-      await warnWhenDeletingFromAPulledProject(appPath);
-    }
+    await warnWhenApplyingAPulledProject({
+      appPath,
+      isApplying: apply,
+      infersDeletionFromMissingEntities:
+        options.inferDeletionFromMissingEntities !== false,
+    });
 
     const result = await appDevOnce({
       appPath,
