@@ -164,9 +164,10 @@ export const SettingsAdminWorkspaceContent = ({
                 value: (
                   <Status
                     color={upgradeHealthStatusBadge.color}
-                    text={upgradeHealthStatusBadge.label}
                     weight="medium"
-                  />
+                  >
+                    {upgradeHealthStatusBadge.label}
+                  </Status>
                 ),
               },
               {

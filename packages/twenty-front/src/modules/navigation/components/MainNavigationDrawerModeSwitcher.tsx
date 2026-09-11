@@ -5,10 +5,13 @@ import { useContext, useId } from 'react';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
+import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 // Expanded, the row is sized off the page card header beside it so the rules
@@ -65,7 +68,12 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   width: ${({ isExpanded }) =>
     isExpanded ? 'auto' : themeCssVariables.spacing[6]};
 
-  &:hover {
+  &[aria-disabled='true'] {
+    color: ${themeCssVariables.font.color.light};
+    cursor: not-allowed;
+  }
+
+  &:hover:not([aria-disabled='true']) {
     background: ${({ isActive }) =>
       isActive
         ? themeCssVariables.background.transparent.light
@@ -96,6 +104,9 @@ export const MainNavigationDrawerModeSwitcher = () => {
   const { theme } = useContext(ThemeContext);
   const tooltipId = useId();
 
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
   const isMobile = useIsMobile();
   const isExpanded = useIsNavigationDrawerContentExpanded();
   const modes = useNavigationDrawerModes();
@@ -118,6 +129,9 @@ export const MainNavigationDrawerModeSwitcher = () => {
       >
         {modes.map(({ Icon, label, mode }) => {
           const isActive = mode === activeNavigationDrawerMode;
+          const isDisabled =
+            mode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
+            isLayoutCustomizationModeEnabled;
 
           return (
             <StyledMode
@@ -128,7 +142,14 @@ export const MainNavigationDrawerModeSwitcher = () => {
               isExpanded={isExpanded}
               aria-label={label}
               aria-current={isActive}
-              onClick={() => switchNavigationDrawerMode(mode)}
+              aria-disabled={isDisabled}
+              onClick={() => {
+                if (isDisabled) {
+                  return;
+                }
+
+                switchNavigationDrawerMode(mode);
+              }}
             >
               <StyledModeIcon>
                 <Icon size={theme.icon.size.md} />
@@ -149,18 +170,33 @@ export const MainNavigationDrawerModeSwitcher = () => {
           );
         })}
       </StyledSwitcher>
-      {shouldShowTooltips &&
-        modes.map(({ label, mode }) => (
+      {modes.map(({ label, mode }) => {
+        const isDisabled =
+          mode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
+          isLayoutCustomizationModeEnabled;
+
+        if (!shouldShowTooltips && !isDisabled) {
+          return null;
+        }
+
+        return (
           <AppTooltip
             key={mode}
             anchorSelect={`[data-tooltip-id='${tooltipId}-${mode}']`}
-            title={label}
+            title={
+              isDisabled
+                ? mode === NAVIGATION_DRAWER_TABS.SETTINGS
+                  ? t`Finish editing the layout to open Settings`
+                  : t`Finish editing the layout to open AI`
+                : label
+            }
             delay={TooltipDelay.noDelay}
-            place={TooltipPosition.Right}
+            place={isExpanded ? TooltipPosition.Bottom : TooltipPosition.Right}
             positionStrategy="fixed"
             noArrow
           />
-        ))}
+        );
+      })}
     </>
   );
 };

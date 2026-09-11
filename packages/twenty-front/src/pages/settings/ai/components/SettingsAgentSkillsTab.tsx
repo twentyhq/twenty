@@ -5,11 +5,12 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { IconArchive } from 'twenty-ui/icon';
+import { IconArchive, IconSettings } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { SearchInput } from 'twenty-ui/input';
 import { MenuItemSwitch } from 'twenty-ui/navigation';
@@ -42,6 +43,10 @@ export const SettingsAgentSkillsTab = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivated, setShowDeactivated] = useState(true);
+  const [showSystemSkills, setShowSystemSkills] = useState(true);
+
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
+  const shouldShowSystemSkills = isAdvancedModeEnabled && showSystemSkills;
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const installedApplications = currentWorkspace?.installedApplications;
@@ -85,9 +90,13 @@ export const SettingsAgentSkillsTab = () => {
           return false;
         }
 
+        if (skill.isSystem && !shouldShowSystemSkills) {
+          return false;
+        }
+
         return true;
       }),
-    [sortedSkills, searchTerm, showDeactivated],
+    [sortedSkills, searchTerm, showDeactivated, shouldShowSystemSkills],
   );
 
   const handleActivate = async (skillId: string) => {
@@ -138,6 +147,15 @@ export const SettingsAgentSkillsTab = () => {
                       text={t`Deactivated`}
                       size="sm"
                     />
+                    {isAdvancedModeEnabled && (
+                      <MenuItemSwitch
+                        LeftIcon={IconSettings}
+                        onCheckedChange={setShowSystemSkills}
+                        checked={showSystemSkills}
+                        text={t`System skills`}
+                        size="sm"
+                      />
+                    )}
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }

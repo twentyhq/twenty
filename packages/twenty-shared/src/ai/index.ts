@@ -63,6 +63,7 @@ export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
 export type { ModelConfiguration } from './types/model-configuration.type';
 export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';
 export { formatRecordReference } from './utils/format-record-reference.util';
+export { formatSkillReference } from './utils/format-skill-reference.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
 export { isAiModelEffort } from './utils/is-ai-model-effort.util';

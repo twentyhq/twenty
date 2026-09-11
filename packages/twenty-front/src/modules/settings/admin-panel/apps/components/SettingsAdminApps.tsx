@@ -371,10 +371,9 @@ const SettingsAdminAppsTableRow = ({
         {registration.isListed ? t`Yes` : t`No`}
       </TableCell>
       <TableCell align="right">
-        <Tag
-          color={registration.isConfigured ? 'green' : 'red'}
-          text={registration.isConfigured ? t`Yes` : t`No`}
-        />
+        <Tag color={registration.isConfigured ? 'green' : 'red'}>
+          {registration.isConfigured ? t`Yes` : t`No`}
+        </Tag>
       </TableCell>
       <TableCell align="right">
         <IconChevronRight

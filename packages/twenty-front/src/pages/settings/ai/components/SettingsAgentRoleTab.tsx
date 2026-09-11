@@ -21,7 +21,7 @@ import {
   CreateOneRoleDocument,
   GetRolesDocument,
 } from '~/generated-metadata/graphql';
-import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
+import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/validation-schemas/settingsAiAgentFormSchema';
 
 const StyledWarningText = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
