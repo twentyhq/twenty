@@ -35,7 +35,7 @@ export const getAvatarShape = (
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Task ||
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Note
   ) {
-    return 'square';
+    return 'rounded-square';
   }
 
   return 'circle';

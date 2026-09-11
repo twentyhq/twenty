@@ -6,7 +6,7 @@ export const turnCurrencyIntoSelectableItem = (
 ): SelectableItem => ({
   id: currency.value,
   AvatarIcon: currency.Icon,
-  avatarShape: 'square',
+  avatarShape: 'rounded-square',
   name: `${currency.label}`,
   isSelected: false,
 });
