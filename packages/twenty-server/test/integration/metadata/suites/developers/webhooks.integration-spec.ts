@@ -272,7 +272,7 @@ describe('webhooksResolver (e2e)', () => {
       }
     });
 
-    it('should deliver webhook successfully when safe mode is disabled', async () => {
+    it('should deliver webhook successfully when internal hosts are allowed', async () => {
       jest.useRealTimers();
 
       const receiver = await createWebhookReceiver(WEBHOOK_RECEIVER_PORT);
@@ -281,8 +281,8 @@ describe('webhooksResolver (e2e)', () => {
         const createConfigResponse = await makeAdminPanelAPIRequest({
           query: CREATE_CONFIG_VARIABLE_MUTATION,
           variables: {
-            key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED',
-            value: false,
+            key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS',
+            value: ['*'],
           },
         });
 
@@ -293,12 +293,12 @@ describe('webhooksResolver (e2e)', () => {
 
         const verifyConfig = await makeAdminPanelAPIRequest({
           query: GET_CONFIG_VARIABLE_QUERY,
-          variables: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED' },
+          variables: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS' },
         });
 
-        expect(verifyConfig.body.data.getDatabaseConfigVariable.value).toBe(
-          false,
-        );
+        expect(verifyConfig.body.data.getDatabaseConfigVariable.value).toEqual([
+          '*',
+        ]);
         expect(verifyConfig.body.data.getDatabaseConfigVariable.source).toBe(
           'DATABASE',
         );
@@ -346,7 +346,7 @@ describe('webhooksResolver (e2e)', () => {
         await receiver.close();
         await makeAdminPanelAPIRequest({
           query: DELETE_CONFIG_VARIABLE_MUTATION,
-          variables: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED' },
+          variables: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS' },
         }).catch(() => {});
         jest.useFakeTimers();
       }
