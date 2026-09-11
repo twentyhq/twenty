@@ -25,15 +25,16 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import {
+  ApplicationConnectedAccountsDocument,
   DeleteConnectedAccountDocument,
   FindOneApplicationDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import {
-  type AppConnectedAccount,
-  useMyAppConnectedAccounts,
-} from '~/pages/settings/applications/hooks/useMyAppConnectedAccounts';
+  type ApplicationConnectedAccount,
+  useApplicationConnectedAccounts,
+} from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
 import { type FrontendApplicationConnectionProvider } from '~/pages/settings/applications/types/FrontendApplicationConnectionProvider';
 
@@ -88,7 +89,7 @@ export const SettingsApplicationConnectionDetail = () => {
   const { connectionProviders, loading: providersLoading } =
     useFindApplicationConnectionProviders(applicationId);
   const { accounts: connectedAccounts, loading: accountsLoading } =
-    useMyAppConnectedAccounts();
+    useApplicationConnectedAccounts(applicationId);
 
   const { data, loading: applicationLoading } = useQuery(
     FindOneApplicationDocument,
@@ -101,7 +102,13 @@ export const SettingsApplicationConnectionDetail = () => {
   const [deleteConnectedAccount, { loading: isDeleting }] = useMutation(
     DeleteConnectedAccountDocument,
     {
-      refetchQueries: [{ query: GET_MY_CONNECTED_ACCOUNTS }],
+      refetchQueries: [
+        {
+          query: ApplicationConnectedAccountsDocument,
+          variables: { applicationId },
+        },
+        { query: GET_MY_CONNECTED_ACCOUNTS },
+      ],
     },
   );
 
@@ -191,7 +198,7 @@ export const SettingsApplicationConnectionDetail = () => {
     connection,
     provider,
   }: {
-    connection: AppConnectedAccount;
+    connection: ApplicationConnectedAccount;
     provider: FrontendApplicationConnectionProvider;
   }): { key: string; label: string; value: ReactNode }[] => {
     const scopes = connection.scopes ?? [];
@@ -320,33 +327,35 @@ export const SettingsApplicationConnectionDetail = () => {
                 title={connectionLabel}
                 description={t`Manage this application's OAuth connection.`}
               />
-              <StyledActions>
-                {connection.authFailedAt && (
+              {connection.isOwnedByCurrentUser && (
+                <StyledActions>
+                  {connection.authFailedAt && (
+                    <Button
+                      title={t`Reconnect`}
+                      Icon={IconRefresh}
+                      variant="secondary"
+                      accent="blue"
+                      onClick={handleReconnect}
+                    />
+                  )}
+                  {connection.visibility !== 'workspace' && (
+                    <Button
+                      title={t`Share with workspace`}
+                      Icon={IconUsers}
+                      variant="secondary"
+                      accent="default"
+                      onClick={() => openModal(shareWithWorkspaceModalId)}
+                    />
+                  )}
                   <Button
-                    title={t`Reconnect`}
-                    Icon={IconRefresh}
+                    title={t`Disconnect`}
+                    Icon={IconTrash}
                     variant="secondary"
-                    accent="blue"
-                    onClick={handleReconnect}
+                    accent="danger"
+                    onClick={() => openModal(deleteModalId)}
                   />
-                )}
-                {connection.visibility !== 'workspace' && (
-                  <Button
-                    title={t`Share with workspace`}
-                    Icon={IconUsers}
-                    variant="secondary"
-                    accent="default"
-                    onClick={() => openModal(shareWithWorkspaceModalId)}
-                  />
-                )}
-                <Button
-                  title={t`Disconnect`}
-                  Icon={IconTrash}
-                  variant="secondary"
-                  accent="danger"
-                  onClick={() => openModal(deleteModalId)}
-                />
-              </StyledActions>
+                </StyledActions>
+              )}
             </Section>
             <Section>
               <H2Title
