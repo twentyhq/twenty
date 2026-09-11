@@ -22,7 +22,7 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
-import { computeEffectiveUpdatedProperties } from 'src/engine/metadata-modules/overrides/utils/compute-effective-updated-properties.util';
+import { readAuthoredOverrideEntry } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-entry.util';
 
 @Injectable()
 export class FlatFieldMetadataValidatorService {
@@ -88,18 +88,39 @@ export class FlatFieldMetadataValidatorService {
       !buildOptions.isSystemBuild &&
       existingFlatFieldMetadataToUpdate.isSystem
     ) {
-      // A workspace deactivation of a system field arrives as an override
-      // entry; the guard is on what the update changes, not on the keys.
-      const disallowedProperties = computeEffectiveUpdatedProperties({
-        metadataName: 'fieldMetadata',
-        existingFlatEntity: existingFlatFieldMetadataToUpdate,
-        flatEntityUpdate,
-      }).filter(
+      const { overrides: updatedOverrides, ...columnUpdate } = flatEntityUpdate;
+
+      const disallowedColumnProperties = Object.keys(columnUpdate).filter(
         (property) =>
           !SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES.includes(
             property as (typeof SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES)[number],
           ),
       );
+
+      // A workspace deactivation of a system field arrives as the caller's
+      // override entry. Only that entry is judged, other authors' entries are
+      // not this update's, and isActive is the only key it may carry. A
+      // non-system build's caller is the workspace custom application.
+      const callerEntry = isDefined(updatedOverrides)
+        ? readAuthoredOverrideEntry<Record<string, unknown>>({
+            metadataName: 'fieldMetadata',
+            overrides: updatedOverrides,
+            authorUniversalIdentifier:
+              buildOptions.applicationUniversalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier:
+              buildOptions.applicationUniversalIdentifier,
+          })
+        : undefined;
+      const disallowedOverriddenProperties = Object.keys(
+        callerEntry ?? {},
+      ).filter((property) => property !== 'isActive');
+
+      const disallowedProperties = [
+        ...new Set([
+          ...disallowedColumnProperties,
+          ...disallowedOverriddenProperties,
+        ]),
+      ];
 
       if (disallowedProperties.length > 0) {
         validationResult.errors.push({
