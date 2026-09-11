@@ -684,37 +684,54 @@ export const AudioSeekInteractions: Story = {
       throw new Error('Audio player was not rendered');
     }
 
-    const seekSlider = await canvas.findByRole('slider', { name: 'Seek' });
+    const seekSlider = await canvas.findByRole<HTMLInputElement>('slider', {
+      name: 'Seek',
+    });
 
     await waitFor(() => expect(seekSlider).toBeEnabled());
 
     audioElement.currentTime = 6;
     fireEvent.timeUpdate(audioElement);
 
-    // Synthetic pointer events cannot acquire a native pointer capture.
-    const setPointerCapture = spyOn(
-      seekSlider,
-      'setPointerCapture',
-    ).mockImplementation(() => {});
+    await waitFor(() => expect(seekSlider).toHaveValue('6'));
 
-    fireEvent.pointerDown(seekSlider);
-    fireEvent.input(seekSlider, { target: { value: '22' } });
-    fireEvent.timeUpdate(audioElement);
+    const pointer = userEvent.setup();
+    const bounds = seekSlider.getBoundingClientRect();
+    const x = bounds.left + bounds.width / 2;
+    const y = bounds.top + bounds.height / 2;
 
-    expect(seekSlider).toHaveValue('22');
+    await pointer.pointer({
+      target: seekSlider,
+      keys: '[MouseLeft>]',
+      coords: { x, y },
+    });
+    await pointer.pointer({
+      target: seekSlider,
+      coords: { x: x + 50, y },
+    });
+
+    const previewTime = seekSlider.valueAsNumber;
+
+    expect(previewTime).toBeGreaterThan(6);
     expect(audioElement.currentTime).toBeCloseTo(6);
 
-    fireEvent.pointerUp(seekSlider);
-    setPointerCapture.mockRestore();
+    fireEvent.timeUpdate(audioElement);
+    expect(seekSlider).toHaveValue(String(previewTime));
 
-    await waitFor(() => expect(audioElement.currentTime).toBeCloseTo(22));
+    await pointer.pointer({ target: seekSlider, keys: '[/MouseLeft]' });
+
+    await waitFor(() =>
+      expect(audioElement.currentTime).toBeCloseTo(previewTime),
+    );
 
     const { userEvent: browserUserEvent } = await import('vitest/browser');
 
     seekSlider.focus();
     await browserUserEvent.keyboard('{ArrowRight}');
 
-    await waitFor(() => expect(audioElement.currentTime).toBeGreaterThan(22));
+    await waitFor(() =>
+      expect(audioElement.currentTime).toBeGreaterThan(previewTime),
+    );
     expect(seekSlider).toHaveAttribute('aria-valuetext', expect.any(String));
 
     await browserUserEvent.click(
@@ -724,14 +741,18 @@ export const AudioSeekInteractions: Story = {
     await browserUserEvent.click(canvas.getByRole('button', { name: 'Play' }));
     expect(await canvas.findByRole('button', { name: 'Pause' })).toBeVisible();
 
-    await waitFor(() => {
-      expect(audioElement.currentTime).toBeGreaterThan(6.5);
-      expect(
-        canvasElement.querySelector(
-          `[${CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE}]`,
-        ),
-      ).not.toHaveTextContent(/^The$/);
-    });
+    // Metadata preload can delay playback while Chromium fills its audio buffer.
+    await waitFor(
+      () => {
+        expect(audioElement.currentTime).toBeGreaterThan(6.5);
+        expect(
+          canvasElement.querySelector(
+            `[${CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE}]`,
+          ),
+        ).not.toHaveTextContent(/^The$/);
+      },
+      { timeout: 5000 },
+    );
 
     await browserUserEvent.click(canvas.getByRole('button', { name: 'Pause' }));
 

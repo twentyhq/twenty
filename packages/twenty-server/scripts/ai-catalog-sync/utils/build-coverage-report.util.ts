@@ -16,6 +16,7 @@ export const buildCoverageReport = (
   const report: CoverageReport = {
     generalPurposeModelCount: 0,
     scoredGeneralPurposeModelCount: 0,
+    costedGeneralPurposeModelCount: 0,
     unscoredGeneralPurposeModelIds: [],
     specializedModelCount: 0,
     declaredEffortVariantCount: 0,
@@ -35,6 +36,10 @@ export const buildCoverageReport = (
       }
 
       report.generalPurposeModelCount += 1;
+
+      if (isDefined(model.benchmark?.costPerTask)) {
+        report.costedGeneralPurposeModelCount += 1;
+      }
 
       if (isDefined(model.benchmark?.intelligenceIndex)) {
         report.scoredGeneralPurposeModelCount += 1;

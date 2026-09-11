@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
 import {
   FieldMetadataType,
@@ -20,10 +21,8 @@ import { v4 } from 'uuid';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
-import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
   LogicFunctionException,
@@ -78,39 +77,16 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly codeStepBuildService: CodeStepBuildService,
     private readonly agentService: AgentService,
-    private readonly aiModelRegistryService: AiModelRegistryService,
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly aiAgentRoleService: AiAgentRoleService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
-
-  private async getWorkspaceDefaultFastModelId(
-    workspaceId: string,
-  ): Promise<string> {
-    const workspace = await this.workspaceRepository.findOneBy({
-      id: workspaceId,
-    });
-
-    if (!isDefined(workspace)) {
-      throw new WorkflowVersionStepException(
-        `Workspace ${workspaceId} not found`,
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
-
-    const effectiveModelConfig =
-      this.aiModelRegistryService.getEffectiveModelConfig(workspace.fastModel);
-
-    return effectiveModelConfig.modelId;
-  }
 
   async runWorkflowVersionStepDeletionSideEffects({
     step,
@@ -586,7 +562,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             description: '',
             prompt:
               'You are a helpful AI assistant. Complete the task based on the workflow context.',
-            modelId: await this.getWorkspaceDefaultFastModelId(workspaceId),
+            modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
             responseFormat: { type: 'text' },
             isCustom: true,
           },
