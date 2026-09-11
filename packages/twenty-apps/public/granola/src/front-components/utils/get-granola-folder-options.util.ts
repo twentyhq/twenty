@@ -10,6 +10,20 @@ export type GranolaFolderOption = {
   ancestorIds: string[];
 };
 
+// Joined paths interleave a child with a sibling whose name sorts between
+// the parent name and the parent name followed by the separator.
+const compareNamePaths = (left: string[], right: string[]): number => {
+  for (let index = 0; index < Math.min(left.length, right.length); index++) {
+    const comparison = left[index].localeCompare(right[index]);
+
+    if (comparison !== 0) {
+      return comparison;
+    }
+  }
+
+  return left.length - right.length;
+};
+
 export const getGranolaFolderOptions = (
   folders: GranolaSettingsFolder[],
 ): GranolaFolderOption[] => {
@@ -34,12 +48,16 @@ export const getGranolaFolderOptions = (
       }
 
       return {
-        id: folder.id,
-        name: folder.name,
-        path: names.join(' / '),
-        depth: ancestorIds.length,
-        ancestorIds,
+        names,
+        option: {
+          id: folder.id,
+          name: folder.name,
+          path: names.join(' / '),
+          depth: ancestorIds.length,
+          ancestorIds,
+        },
       };
     })
-    .sort((left, right) => left.path.localeCompare(right.path));
+    .sort((left, right) => compareNamePaths(left.names, right.names))
+    .map(({ option }) => option);
 };
