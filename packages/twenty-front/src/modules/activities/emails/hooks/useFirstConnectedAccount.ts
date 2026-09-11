@@ -20,8 +20,6 @@ export const useFirstConnectedAccount = (
     skip: options?.skip,
   });
 
-  // The oldest connected account is frequently an SSO or application connection
-  // rather than a mailbox, and those cannot send.
   const firstAccount =
     data?.myConnectedAccounts?.find(canConnectedAccountSendEmail) ?? null;
 

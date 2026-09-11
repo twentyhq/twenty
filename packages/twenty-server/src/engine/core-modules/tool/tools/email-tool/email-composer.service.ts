@@ -22,14 +22,14 @@ import {
 } from 'src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception';
 import { type ComposeEmailParams } from 'src/engine/core-modules/tool/tools/email-tool/types/compose-email-params.type';
 import { EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-tool/types/email-composer-result.type';
-import { type EmailOperation } from 'src/engine/core-modules/tool/tools/email-tool/types/email-operation.type';
-import { canConnectedAccountPerformEmailOperation } from 'src/engine/core-modules/tool/tools/email-tool/utils/can-connected-account-perform-email-operation.util';
-import { getEmailOperationVerb } from 'src/engine/core-modules/tool/tools/email-tool/utils/get-email-operation-verb.util';
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
 import { selectConnectedAccountIdForCaller } from 'src/engine/core-modules/tool/tools/email-tool/utils/select-connected-account-id-for-caller.util';
-import { summarizeConnectedAccountProviders } from 'src/engine/core-modules/tool/tools/email-tool/utils/summarize-connected-account-providers.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
+import { EMAIL_DRAFTING_PROVIDERS } from 'src/engine/metadata-modules/connected-account/constants/email-drafting-providers.constant';
+import { EMAIL_SENDING_PROVIDERS } from 'src/engine/metadata-modules/connected-account/constants/email-sending-providers.constant';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type EmailOperation } from 'src/engine/metadata-modules/connected-account/types/email-operation.type';
+import { canConnectedAccountPerformEmailOperation } from 'src/engine/metadata-modules/connected-account/utils/can-connected-account-perform-email-operation.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -99,7 +99,7 @@ export class EmailComposerService {
         })
       ) {
         throw new EmailToolException(
-          `Connected account '${connectedAccount.handle}' (${connectedAccount.provider}) cannot ${getEmailOperationVerb(operation)} email`,
+          `Connected account '${connectedAccount.handle}' (${connectedAccount.provider}) cannot ${operation.toLowerCase()} email`,
           EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_EMAIL_CAPABLE,
         );
       }
@@ -120,46 +120,45 @@ export class EmailComposerService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const allAccounts = await this.connectedAccountRepository.find({
-        where: { workspaceId, archivedAt: IsNull() },
+      const mailboxes = await this.connectedAccountRepository.find({
+        where: {
+          workspaceId,
+          archivedAt: IsNull(),
+          provider: In(
+            operation === 'SEND'
+              ? EMAIL_SENDING_PROVIDERS
+              : EMAIL_DRAFTING_PROVIDERS,
+          ),
+        },
         order: { createdAt: 'ASC', id: 'ASC' },
       });
 
-      if (!isNonEmptyArray(allAccounts)) {
-        throw new EmailToolException(
-          'No connected accounts found for this workspace',
-          EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
-        );
-      }
-
-      // Identity and application connections share the connectedAccount table with
-      // mailboxes, so selecting on recency alone picks rows that can never send.
-      const emailCapableAccounts = allAccounts.filter((connectedAccount) =>
+      const usableMailboxes = mailboxes.filter((connectedAccount) =>
         canConnectedAccountPerformEmailOperation({
           connectedAccount,
           operation,
         }),
       );
 
-      if (!isNonEmptyArray(emailCapableAccounts)) {
+      if (!isNonEmptyArray(usableMailboxes)) {
         throw new EmailToolException(
-          `No connected account in this workspace can ${getEmailOperationVerb(operation)} email. Connected accounts by provider: ${summarizeConnectedAccountProviders(allAccounts)}`,
+          `No connected account in this workspace can ${operation.toLowerCase()} email`,
           EmailToolExceptionCode.NO_EMAIL_CAPABLE_CONNECTED_ACCOUNT,
         );
       }
 
       if (!isDefined(userWorkspaceId)) {
-        return emailCapableAccounts[0].id;
+        return usableMailboxes[0].id;
       }
 
       const connectedAccountId = selectConnectedAccountIdForCaller({
-        connectedAccounts: emailCapableAccounts,
+        connectedAccounts: usableMailboxes,
         userWorkspaceId,
       });
 
       if (!isDefined(connectedAccountId)) {
         throw new EmailToolException(
-          `No connected account available to user workspace '${userWorkspaceId}' can ${getEmailOperationVerb(operation)} email`,
+          `No connected account available to user workspace '${userWorkspaceId}' can ${operation.toLowerCase()} email`,
           EmailToolExceptionCode.NO_EMAIL_CAPABLE_CONNECTED_ACCOUNT,
         );
       }
@@ -422,8 +421,6 @@ export class EmailComposerService {
             (channel) => channel.handle === connectedAccount.handle,
           );
 
-    // An SMTP-only account never syncs, so it legitimately has no message channel.
-    // Its SMTP configuration is already guaranteed by the capability check above.
     const isSmtpOnlyAccount =
       connectedAccount.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
       !isDefined(connectedAccount.connectionParameters?.IMAP);

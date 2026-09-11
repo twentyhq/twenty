@@ -4,7 +4,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { FindConnectedAccountsToolInputZodSchema } from 'src/engine/core-modules/tool/tools/email-tool/find-connected-accounts-tool.schema';
 import { type FindConnectedAccountsToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/find-connected-accounts-tool-input.type';
-import { canConnectedAccountPerformEmailOperation } from 'src/engine/core-modules/tool/tools/email-tool/utils/can-connected-account-perform-email-operation.util';
 import { filterConnectedAccountsByHandle } from 'src/engine/core-modules/tool/tools/email-tool/utils/filter-connected-accounts-by-handle.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -25,21 +24,12 @@ export class FindConnectedAccountsTool implements Tool {
     { handle }: FindConnectedAccountsToolInput,
     { workspaceId, userWorkspaceId }: ToolExecutionContext,
   ): Promise<ToolOutput> {
-    const usableAccounts =
-      await this.connectedAccountMetadataService.findUsableByCaller({
+    const mailboxAccounts =
+      await this.connectedAccountMetadataService.findMailboxesUsableByCaller({
         workspaceId,
         userWorkspaceId,
-      });
-
-    // Identity and application connections are stored as connected accounts too, and
-    // an imap account without SMTP cannot send. Listing either would offer the model
-    // a sender that send_email then rejects.
-    const mailboxAccounts = usableAccounts.filter((connectedAccount) =>
-      canConnectedAccountPerformEmailOperation({
-        connectedAccount,
         operation: 'SEND',
-      }),
-    );
+      });
 
     const matchingAccounts = isNonEmptyString(handle)
       ? filterConnectedAccountsByHandle({

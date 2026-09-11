@@ -7,13 +7,12 @@ import {
 } from 'twenty-shared/utils';
 import { IsNull, type Repository } from 'typeorm';
 
-import { type EmailOperation } from 'src/engine/core-modules/tool/tools/email-tool/types/email-operation.type';
-import { canConnectedAccountPerformEmailOperation } from 'src/engine/core-modules/tool/tools/email-tool/utils/can-connected-account-perform-email-operation.util';
-import { getEmailOperationVerb } from 'src/engine/core-modules/tool/tools/email-tool/utils/get-email-operation-verb.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type EmailOperation } from 'src/engine/metadata-modules/connected-account/types/email-operation.type';
+import { canConnectedAccountPerformEmailOperation } from 'src/engine/metadata-modules/connected-account/utils/can-connected-account-perform-email-operation.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -134,7 +133,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
 
       if (!isDefined(connectedAccountId)) {
         throw new WorkflowStepExecutorException(
-          `Workspace member '${senderId}' has no connected account that can ${getEmailOperationVerb(this.getMode())} email`,
+          `Workspace member '${senderId}' has no connected account that can ${this.getMode().toLowerCase()} email`,
           WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
         );
       }
@@ -178,8 +177,6 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
       order: { createdAt: 'ASC', id: 'ASC' },
     });
 
-    // Identity and application connections share this table with mailboxes, so a
-    // member's oldest row is frequently not something that can send at all.
     const operation: EmailOperation = this.getMode();
 
     const emailCapableAccount = connectedAccounts.find((connectedAccount) =>

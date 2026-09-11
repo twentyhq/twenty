@@ -18,7 +18,11 @@ import {
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
+import { EMAIL_DRAFTING_PROVIDERS } from 'src/engine/metadata-modules/connected-account/constants/email-drafting-providers.constant';
+import { EMAIL_SENDING_PROVIDERS } from 'src/engine/metadata-modules/connected-account/constants/email-sending-providers.constant';
 import { type ConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/types/connected-account-usable-by-caller.type';
+import { type EmailOperation } from 'src/engine/metadata-modules/connected-account/types/email-operation.type';
+import { canConnectedAccountPerformEmailOperation } from 'src/engine/metadata-modules/connected-account/utils/can-connected-account-perform-email-operation.util';
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
@@ -42,15 +46,25 @@ export class ConnectedAccountMetadataService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
-  async findUsableByCaller({
+  async findMailboxesUsableByCaller({
     workspaceId,
     userWorkspaceId,
+    operation,
   }: {
     workspaceId: string;
     userWorkspaceId?: string;
+    operation: EmailOperation;
   }): Promise<ConnectedAccountUsableByCaller[]> {
     const connectedAccounts = await this.repository.find({
-      where: { workspaceId, archivedAt: IsNull() },
+      where: {
+        workspaceId,
+        archivedAt: IsNull(),
+        provider: In(
+          operation === 'SEND'
+            ? EMAIL_SENDING_PROVIDERS
+            : EMAIL_DRAFTING_PROVIDERS,
+        ),
+      },
       order: { createdAt: 'ASC', id: 'ASC' },
       select: {
         id: true,
@@ -64,15 +78,21 @@ export class ConnectedAccountMetadataService {
       },
     });
 
-    if (!isDefined(userWorkspaceId)) {
-      return connectedAccounts.filter(
-        (connectedAccount) => connectedAccount.visibility === 'workspace',
+    return connectedAccounts
+      .filter((connectedAccount) =>
+        canConnectedAccountPerformEmailOperation({
+          connectedAccount,
+          operation,
+        }),
+      )
+      .filter((connectedAccount) =>
+        isDefined(userWorkspaceId)
+          ? isConnectedAccountUsableByCaller({
+              connectedAccount,
+              userWorkspaceId,
+            })
+          : connectedAccount.visibility === 'workspace',
       );
-    }
-
-    return connectedAccounts.filter((connectedAccount) =>
-      isConnectedAccountUsableByCaller({ connectedAccount, userWorkspaceId }),
-    );
   }
 
   async findByUserWorkspaceId({

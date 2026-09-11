@@ -1,9 +1,10 @@
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { EMAIL_DRAFTING_PROVIDERS } from 'src/engine/metadata-modules/connected-account/constants/email-drafting-providers.constant';
+import { EMAIL_SENDING_PROVIDERS } from 'src/engine/metadata-modules/connected-account/constants/email-sending-providers.constant';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { type EmailOperation } from 'src/engine/core-modules/tool/tools/email-tool/types/email-operation.type';
-import { canProviderPerformEmailOperation } from 'src/engine/core-modules/tool/tools/email-tool/utils/can-provider-perform-email-operation.util';
+import { type EmailOperation } from 'src/engine/metadata-modules/connected-account/types/email-operation.type';
 
 export const canConnectedAccountPerformEmailOperation = ({
   connectedAccount,
@@ -15,12 +16,10 @@ export const canConnectedAccountPerformEmailOperation = ({
   >;
   operation: EmailOperation;
 }): boolean => {
-  if (
-    !canProviderPerformEmailOperation({
-      provider: connectedAccount.provider,
-      operation,
-    })
-  ) {
+  const providersForOperation =
+    operation === 'SEND' ? EMAIL_SENDING_PROVIDERS : EMAIL_DRAFTING_PROVIDERS;
+
+  if (!providersForOperation.includes(connectedAccount.provider)) {
     return false;
   }
 
@@ -28,7 +27,6 @@ export const canConnectedAccountPerformEmailOperation = ({
     return true;
   }
 
-  // SMTP carries outbound mail; drafts are appended to the IMAP Drafts folder.
   return operation === 'SEND'
     ? isDefined(connectedAccount.connectionParameters?.SMTP)
     : isDefined(connectedAccount.connectionParameters?.IMAP);

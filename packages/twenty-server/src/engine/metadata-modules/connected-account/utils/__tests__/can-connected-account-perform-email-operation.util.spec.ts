@@ -3,7 +3,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { type EncryptedConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
-import { canConnectedAccountPerformEmailOperation } from 'src/engine/core-modules/tool/tools/email-tool/utils/can-connected-account-perform-email-operation.util';
+import { canConnectedAccountPerformEmailOperation } from 'src/engine/metadata-modules/connected-account/utils/can-connected-account-perform-email-operation.util';
 
 const connectionParameters: EncryptedConnectionParameters = {
   host: 'mail.example.com',
@@ -13,8 +13,6 @@ const connectionParameters: EncryptedConnectionParameters = {
   connectionSecurity: EmailConnectionSecurity.SSL_TLS,
 };
 
-// Provider-level rules are covered by can-provider-perform-email-operation.util.spec.
-// This suite owns the configuration branch that provider alone cannot answer.
 describe('canConnectedAccountPerformEmailOperation', () => {
   describe('IMAP_SMTP_CALDAV, where capability depends on what is configured', () => {
     it('sends but cannot draft when only SMTP is configured', () => {
