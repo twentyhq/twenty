@@ -35,16 +35,17 @@ import { buildIntraWorkspaceLimitCounterKeys } from 'src/engine/core-modules/usa
 import { buildLimitQuotaCounter } from 'src/engine/core-modules/usage-limit/utils/build-limit-quota-counter.util';
 import { buildLimitWarmedEntries } from 'src/engine/core-modules/usage-limit/utils/build-limit-warmed-entries.util';
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
-import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
 import { clampQuotaCost } from 'src/engine/core-modules/usage-limit/utils/clamp-quota-cost.util';
+import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { fromConsumeResultsToRemainings } from 'src/engine/core-modules/usage-limit/utils/from-consume-results-to-remainings.util';
+import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
@@ -257,22 +258,22 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return new Map();
     }
 
-    const remainings = await this.readRemainings({
+    const consumedValues = await this.readConsumedValuesAdmittingOnFailure({
       workspaceId,
       counters: entries.map(({ counter }) => counter),
     });
 
     return new Map(
       entries.map(({ limit, counter }, index) => {
-        const remainingValue = remainings[index] ?? null;
+        const consumedValue = consumedValues[index] ?? null;
 
         return [
           limit.id,
           {
-            consumedValue: isDefined(remainingValue)
-              ? limit.limitValue - remainingValue
+            consumedValue,
+            remainingValue: isDefined(consumedValue)
+              ? limit.limitValue - consumedValue
               : null,
-            remainingValue,
             periodStart: counter.periodStart,
             periodEnd: counter.periodEnd,
           },
@@ -595,6 +596,62 @@ export class UsageLimitQuotaService implements OnModuleInit {
     });
   }
 
+  private async readConsumedValuesAdmittingOnFailure({
+    workspaceId,
+    counters,
+  }: {
+    workspaceId: string;
+    counters: LimitQuotaCounter[];
+  }): Promise<(number | null)[]> {
+    try {
+      return await this.readConsumedValues({ workspaceId, counters });
+    } catch (error) {
+      return this.admitOnFailure<(number | null)[]>({
+        error,
+        workspaceId,
+        admitted: [],
+      });
+    }
+  }
+
+  private async readConsumedValues({
+    workspaceId,
+    counters,
+  }: {
+    workspaceId: string;
+    counters: LimitQuotaCounter[];
+  }): Promise<(number | null)[]> {
+    const remainings = await this.cacheStorage.mget<number>(
+      counters.map((counter) => counter.key),
+    );
+
+    const coldLimitCounters = counters.filter(
+      (_, index) => !isDefined(remainings[index]),
+    );
+
+    const rowsByPeriod =
+      coldLimitCounters.length > 0
+        ? await this.fetchConsumptionRowsByPeriod({
+            workspaceId,
+            coldLimitCounters,
+          })
+        : new Map<string, UsageConsumptionRow[]>();
+
+    return counters.map((counter, index) => {
+      const remaining = remainings[index];
+
+      if (isDefined(remaining)) {
+        return counter.limitValue - remaining;
+      }
+
+      const rows = rowsByPeriod.get(buildPeriodGroupKey(counter));
+
+      return isDefined(rows)
+        ? computeQuotaConsumed({ rows, scope: counter })
+        : null;
+    });
+  }
+
   private async readRemainings({
     workspaceId,
     counters,
@@ -772,7 +829,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     workspaceId: string;
     counter: LimitQuotaCounter;
   }): Promise<UsageConsumptionRow[]> {
-    return this.usageAnalyticsService.getConsumptionRows({
+    return this.usageAnalyticsService.getConsumptionRowsForAllScopes({
       workspaceId,
       resourceType: counter.resourceType,
       periodStart: counter.periodStart,

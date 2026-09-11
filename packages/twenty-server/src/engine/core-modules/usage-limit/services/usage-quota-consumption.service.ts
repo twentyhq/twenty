@@ -15,7 +15,6 @@ import { type UsageQuotaScopeConsumption } from 'src/engine/core-modules/usage-l
 import { type UsageQuotaWithConsumption } from 'src/engine/core-modules/usage-limit/types/usage-quota-with-consumption.type';
 import { type UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { buildCustomQuota } from 'src/engine/core-modules/usage-limit/utils/build-custom-quota.util';
-import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { normalizeSpenderId } from 'src/engine/core-modules/usage-limit/utils/normalize-spender-id.util';
 import { groupSpenderIdsByType } from 'src/engine/core-modules/usage-limit/utils/group-spender-ids-by-type.util';
@@ -77,24 +76,20 @@ export class UsageQuotaConsumptionService {
     }
 
     try {
-      const rows = await this.usageAnalyticsService.getConsumptionRows({
-        workspaceId,
-        resourceType: scope.resourceType,
-        periodStart: period.periodStart,
-        periodEnd: period.periodEnd,
-        periodAnchor: getPeriodAnchor(periodUnit),
-      });
+      const totals =
+        await this.usageAnalyticsService.getConsumptionTotalsForScope({
+          workspaceId,
+          resourceType: scope.resourceType,
+          operationType: scope.operationType,
+          spenderType: scope.spenderType,
+          spenderId: normalizeSpenderId(scope.spenderId ?? ''),
+          periodStart: period.periodStart,
+          periodEnd: period.periodEnd,
+          periodAnchor: getPeriodAnchor(periodUnit),
+        });
 
       return {
-        consumedValue: computeQuotaConsumed({
-          rows,
-          scope: {
-            operationType: scope.operationType,
-            spenderType: scope.spenderType,
-            spenderId: normalizeSpenderId(scope.spenderId ?? ''),
-            meter: scope.meter,
-          },
-        }),
+        consumedValue: Number(totals[scope.meter]),
         periodStart: period.periodStart,
         periodEnd: period.periodEnd,
       };

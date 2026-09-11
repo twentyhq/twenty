@@ -8,12 +8,15 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
+import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
+import { type UsageConsumptionTotals } from 'src/engine/core-modules/usage/types/usage-consumption-totals.type';
 import { type UsagePeriodAnchor } from 'src/engine/core-modules/usage/types/usage-period-anchor.type';
 import { buildRecurringChargeKey } from 'src/engine/core-modules/usage/utils/build-recurring-charge-key.util';
 import { buildUsagePeriodClause } from 'src/engine/core-modules/usage/utils/build-usage-period-clause.util';
+import { buildUsageScopeFilter } from 'src/engine/core-modules/usage/utils/build-usage-scope-filter.util';
 import { fillUsageTimeSeriesGaps } from 'src/engine/core-modules/usage/utils/fill-usage-time-series-gaps.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { toDollars } from 'src/engine/core-modules/usage/utils/to-dollars.util';
@@ -72,7 +75,7 @@ const DECLARED_OPERATION_KEY_SEPARATOR = ':';
 export class UsageAnalyticsService {
   constructor(private readonly clickHouseService: ClickHouseService) {}
 
-  async getConsumptionRows({
+  async getConsumptionRowsForAllScopes({
     workspaceId,
     resourceType,
     periodStart,
@@ -98,8 +101,7 @@ export class UsageAnalyticsService {
        WHERE workspaceId = {workspaceId:String}
          AND resourceType = {resourceType:String}
          ${periodClause}
-       GROUP BY workspaceId, resourceType, toStartOfDay(timestamp, 'UTC'),
-                operationType, userWorkspaceId, apiKeyId, applicationId,
+       GROUP BY operationType, userWorkspaceId, apiKeyId, applicationId,
                 agentId, workflowId, logicFunctionId`,
       {
         workspaceId,
@@ -108,6 +110,55 @@ export class UsageAnalyticsService {
         periodEnd: formatDateTimeForClickHouse(periodEnd),
       },
     );
+  }
+
+  async getConsumptionTotalsForScope({
+    workspaceId,
+    resourceType,
+    operationType,
+    spenderType,
+    spenderId,
+    periodStart,
+    periodEnd,
+    periodAnchor,
+  }: {
+    workspaceId: string;
+    resourceType: UsageResourceType;
+    operationType: UsageOperationType;
+    spenderType: SpenderType;
+    spenderId: string | null;
+    periodStart: Date;
+    periodEnd: Date;
+    periodAnchor: UsagePeriodAnchor;
+  }): Promise<UsageConsumptionTotals> {
+    const scopeFilter = buildUsageScopeFilter({
+      operationType,
+      spenderType,
+      spenderId,
+    });
+
+    const rows =
+      await this.clickHouseService.selectOrThrow<UsageConsumptionTotals>(
+        `SELECT sum(creditsUsedMicro) AS creditsUsedMicro,
+                sum(quantity) AS quantity
+         FROM usageEvent
+         WHERE workspaceId = {workspaceId:String}
+           AND resourceType = {resourceType:String}
+           ${buildUsagePeriodClause(periodAnchor)}
+           ${scopeFilter.clause}`,
+        {
+          workspaceId,
+          resourceType,
+          periodStart: formatDateTimeForClickHouse(periodStart),
+          periodEnd: formatDateTimeForClickHouse(periodEnd),
+          ...scopeFilter.params,
+        },
+      );
+
+    return {
+      creditsUsedMicro: rows[0]?.creditsUsedMicro ?? 0,
+      quantity: rows[0]?.quantity ?? 0,
+    };
   }
 
   async getCreditsUsedMicroForBillingPeriod({
