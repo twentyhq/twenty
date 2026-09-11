@@ -107,7 +107,7 @@ export const ObjectFilterDropdownCountrySelect = () => {
         autoFocus
         type="text"
         value={searchText}
-        name={t`Search country`}
+        placeholder={t`Search country`}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           setSearchText(event.target.value);
         }}

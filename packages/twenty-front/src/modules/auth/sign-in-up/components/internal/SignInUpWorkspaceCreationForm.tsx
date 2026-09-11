@@ -292,7 +292,7 @@ export const SignInUpWorkspaceCreationForm = () => {
             autoFocus
             label={t`Name`}
             value={workspaceName}
-            name={t`Apple`}
+            placeholder={t`Apple`}
             onChange={handleWorkspaceNameChange}
             onKeyDown={handleKeyDown}
             fullWidth
@@ -304,7 +304,7 @@ export const SignInUpWorkspaceCreationForm = () => {
               <TextInput
                 label={t`Subdomain`}
                 value={subdomain}
-                name={t`apple`}
+                placeholder={t`apple`}
                 onChange={handleSubdomainChange}
                 onKeyDown={handleKeyDown}
                 rightAdornment={
