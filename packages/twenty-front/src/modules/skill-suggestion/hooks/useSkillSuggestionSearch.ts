@@ -24,6 +24,9 @@ export const useSkillSuggestionSearch = () => {
         .filter(
           (skill) =>
             skill.isActive &&
+            // System skills are agent-only know-how: the agent loads them on
+            // its own, so offering them in the composer is noise.
+            !skill.isSystem &&
             (normalizeSearchText(skill.name).includes(normalizedQuery) ||
               normalizeSearchText(skill.label).includes(normalizedQuery)),
         )

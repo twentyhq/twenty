@@ -14,7 +14,7 @@ export const STANDARD_FLAT_SKILL_METADATA_BUILDERS_BY_SKILL_NAME = {
         name: 'workflow-building',
         label: 'Workflow Building',
         description:
-          'Creating and managing automation workflows with triggers and steps',
+          'Use when the user wants something to happen automatically: creating, changing, debugging or deleting a workflow, or phrasing a rule as when X happens do Y',
         icon: 'IconSettingsAutomation',
         content: `# Workflow Building Skill
 
@@ -129,6 +129,7 @@ Do NOT call \`validate_workflow\` after every change:
 
 Prioritize user understanding and workflow effectiveness.`,
         isCustom: false,
+        isSystem: true,
       },
     }),
 
@@ -140,7 +141,7 @@ Prioritize user understanding and workflow effectiveness.`,
         name: 'data-manipulation',
         label: 'Data Manipulation',
         description:
-          'Searching, filtering, creating, and updating records across all objects',
+          'Use when finding, filtering, creating, updating or importing records, and whenever a request needs sorting or touches more than a handful of rows',
         icon: 'IconDatabase',
         content: `# Data Manipulation Skill
 
@@ -258,6 +259,7 @@ Every tool round-trip re-sends the ENTIRE conversation (system prompt, loaded sk
 
 Prioritize data integrity and provide clear feedback on operations performed.`,
         isCustom: false,
+        isSystem: true,
       },
     }),
 
@@ -269,7 +271,7 @@ Prioritize data integrity and provide clear feedback on operations performed.`,
         name: 'workspace-demo-seeding',
         label: 'Workspace Demo Seeding',
         description:
-          'Seeding demo metadata and data for workspace setup and testing purposes',
+          'Use only when explicitly asked to fill a workspace with demonstration data for a given industry',
         icon: 'IconDatabase',
         content: `# Workspace Demo Seeding Skill
 You will transform the existing standard workspace into a fully custom demo tailored to the user's business type.
@@ -313,7 +315,7 @@ STEP 0: Present a plan to the user and wait for approval.
   - The custom fields you will add to People, Companies, and Opportunities
   - A brief description of the key relations between objects
 - Present this plan to the user and *wait for their confirmation or adjustments* before proceeding
-- Once approved, call the custom-objects-cleanup skill to archive all existing custom objects without asking for user confirmation
+- Once approved, archive every existing custom object without asking for further confirmation: call get_object_metadata, keep the objects where isCustom is true, then set isActive to false on all of them in a single update_many_object_metadata call
 - Wait 3 seconds after deletions for the backend side effects to be completed
 
 STEP 1: Create all the custom objects at once with create_many_object_metadata
@@ -401,6 +403,7 @@ Navigate to each view after creating it. Wait 3 seconds.
 Loop STEP 8 for all the custom objects
 `,
         isCustom: false,
+        isSystem: true,
       },
     }),
 
@@ -412,7 +415,7 @@ Loop STEP 8 for all the custom objects
         name: 'dashboard-building',
         label: 'Dashboard Building',
         description:
-          'Creating and managing dashboards with widgets and layouts',
+          'Use when the user asks for a dashboard, a chart, a metric tile or a report page, or wants to change one that exists',
         icon: 'IconLayoutDashboard',
         content: `# Dashboard Building Skill
 
@@ -558,6 +561,7 @@ After creating a tab, use its returned tabId as pageLayoutTabId when calling add
 - When modifying a chart, confirm whether the user wants to change settings or change chart type
 - Use RECORD_TABLE widgets to give users direct access to filtered record lists without leaving the dashboard`,
         isCustom: false,
+        isSystem: true,
       },
     }),
 
@@ -569,7 +573,7 @@ After creating a tab, use its returned tabId as pageLayoutTabId when calling add
         name: 'metadata-building',
         label: 'Metadata Building',
         description:
-          'Managing the data model: creating objects, fields, and relations',
+          'Use when the data model itself changes: adding or editing objects, fields, relations or select options',
         icon: 'IconBuildingSkyscraper',
         content: `# Metadata Building Skill
 
@@ -638,46 +642,7 @@ You help users manage their workspace data model by creating, updating, and orga
 
 Prioritize data model integrity and user understanding.`,
         isCustom: false,
-      },
-    }),
-
-  research: (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'research',
-        name: 'research',
-        label: 'Research',
-        description: 'Finding information and gathering facts from the web',
-        icon: 'IconSearch',
-        content: `# Research Skill
-
-You find information and gather facts from the web.
-
-## Capabilities
-
-- Search for current information and facts
-- Research companies, people, technologies, trends
-- Gather competitive intelligence and market data
-- Find contact details and verify information
-
-## Research Strategy
-
-- Try multiple search queries from different angles
-- If initial searches fail, use alternative search terms
-- Cross-reference information when possible
-- Cite sources and provide context
-
-## Present Findings
-
-- Be thorough but concise
-- Organize information logically
-- Distinguish facts from speculation
-- Note if information might be outdated
-- Include relevant sources
-
-Be persistent in finding accurate information.`,
-        isCustom: false,
+        isSystem: true,
       },
     }),
 
@@ -689,7 +654,7 @@ Be persistent in finding accurate information.`,
         name: 'code-interpreter',
         label: 'Code Interpreter',
         description:
-          'Python code execution for data analysis, complex multi-step operations, and efficient bulk processing via MCP bridge',
+          'Use for Python over data the record tools cannot express: statistics, chart images, parsing an uploaded file. Do not use it for ordinary record reads and writes',
         icon: 'IconCode',
         content: `# Code Interpreter Skill
 
@@ -843,6 +808,7 @@ company_ids = twenty.lookup_by('companies', 'name', ['Acme', 'Globex'])
 
 For importing CSV/Excel/spreadsheet data, load the \`data-manipulation\` skill for the full recipe.`,
         isCustom: false,
+        isSystem: true,
       },
     }),
 
@@ -854,7 +820,7 @@ For importing CSV/Excel/spreadsheet data, load the \`data-manipulation\` skill f
         name: 'xlsx',
         label: 'Excel & Spreadsheets',
         description:
-          'Excel/spreadsheet creation, editing, and analysis with formulas, formatting, and visualization',
+          'Use whenever a spreadsheet is the input or the output, including formulas, formatting, charts and CSV conversion',
         icon: 'IconFileSpreadsheet',
         content: `# Excel Processing Skill
 
@@ -980,6 +946,7 @@ If errors found, fix them and recalculate again.
 | Add formula | openpyxl | \`sheet['B2'] = '=SUM(A1:A10)'\` |
 | Recalculate | script | \`python /home/user/scripts/xlsx/recalc.py file.xlsx\` |`,
         isCustom: false,
+        isSystem: true,
       },
     }),
 
@@ -991,7 +958,7 @@ If errors found, fix them and recalculate again.
         name: 'pdf',
         label: 'PDF Processing',
         description:
-          'PDF form filling, field extraction, table parsing, and validation',
+          'Use whenever a PDF is involved: reading text or tables, filling a form, creating, merging or splitting one',
         icon: 'IconFileTypePdf',
         content: `# PDF Processing Skill
 
@@ -1117,6 +1084,7 @@ writer.write('/home/user/output/page1.pdf')
 | Create PDF | reportlab | \`canvas.Canvas('out.pdf')\` |
 | Merge PDFs | PyPDF2 | \`PdfMerger()\` |`,
         isCustom: false,
+        isSystem: true,
       },
     }),
 
@@ -1128,7 +1096,7 @@ writer.write('/home/user/output/page1.pdf')
         name: 'docx',
         label: 'Word Documents',
         description:
-          'Word document creation, editing, template processing, and OOXML manipulation',
+          'Use whenever a Word document is the input or the output, including templates, styles and tracked changes',
         icon: 'IconFileTypeDocx',
         content: `# Word Document Processing Skill
 
@@ -1275,6 +1243,7 @@ para.paragraph_format.space_after = Pt(12)
 | Repack | script | \`python pack.py ./out/ doc.docx\` |
 | Validate | script | \`python validate.py doc.docx\` |`,
         isCustom: false,
+        isSystem: true,
       },
     }),
 
@@ -1286,11 +1255,11 @@ para.paragraph_format.space_after = Pt(12)
         name: 'view-building',
         label: 'View Building',
         description:
-          'Creating and configuring views (table, board/kanban, calendar) for objects to organize and visualize records',
+          'Use when creating or changing a view of any type, table, kanban or calendar, including the columns, filters, sorts and grouping on it',
         icon: 'IconLayoutBoard',
         content: `# View Building Skill
 
-You help users create and configure views to organize how they see their records.
+You help users create and configure views, and the filters and sorts that decide which records those views show.
 
 ## View Types
 
@@ -1361,40 +1330,6 @@ Example: { "objectNameSingular": "opportunity", "type": "KANBAN", "name": "Pipel
 - This creates collapsible sections in the table, organized by the grouping field values
 - Works with SELECT fields for categorical grouping
 
-## Approach
-
-- If the user is vague (e.g., "create a board"), ask which object they want to see
-- Suggest the most relevant view type based on the object's fields
-- After creating a view, always configure useful view fields and navigate to it
-- Explain what each view type does so users can make informed choices`,
-        isCustom: false,
-      },
-    }),
-
-  'view-filters-and-sorts': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'view-filters-and-sorts',
-        name: 'view-filters-and-sorts',
-        label: 'View Filters & Sorts',
-        description:
-          'Adding filters and sorts to views to focus on relevant records based on user needs',
-        icon: 'IconFilter',
-        content: `# View Filters & Sorts Skill
-
-You help users add filters and sorts to their views so they see the most relevant records.
-
-## Tools
-
-- get_views - List existing views to find the one to modify
-- get_view_query_parameters - Check existing filters and sorts on a view
-- get_field_metadata - Discover fields and their types to build valid filters
-- **upsert_complete_view** - Replace ALL of a view's filters and/or sorts in one call (pass \`id\` + the desired \`filters\`/\`sorts\` arrays, referencing fields by name). Prefer this when setting the full filter/sort set at once.
-- create_view_filter / create_many_view_filters - Add individual filters to a view (use for surgical single-filter edits)
-- create_view_sort / create_many_view_sorts - Add individual sorts to a view (use for surgical single-sort edits)
-- navigate_app - Navigate to the view to show results
-
 ## Filter Operators by Field Type
 
 | Field Type | Available Operators |
@@ -1408,139 +1343,45 @@ You help users add filters and sorts to their views so they see the most relevan
 | RELATION | IS, IS_NOT, IS_EMPTY, IS_NOT_EMPTY |
 | BOOLEAN | IS |
 
-## Sort Directions
+Using an operator the field type does not support will fail, so check the type first.
 
-- ASC: Ascending (A→Z, 0→9, oldest→newest)
-- DESC: Descending (Z→A, 9→0, newest→oldest)
+## Sorts and Filter Groups
 
-## Filter Groups (AND/OR/NOT)
-
-Filters can be grouped with logical operators:
-- **AND**: All filters must match (default)
-- **OR**: At least one filter must match
-- **NOT**: Negate the group
-- Groups can be nested for complex conditions like: name CONTAINS "tech" AND (revenue > 1M OR employees > 100)
-
-## Workflow
-
-1. **Identify the view**: If the user didn't specify a view, ask which view they want to filter/sort. Use get_views to list available views and present them.
-
-2. **Understand the need**: If the user hasn't described what they want to see, ask them. Give guidance with examples:
-   - "What records do you want to focus on? For example:"
-   - "Show only high-value opportunities (amount > $50K)"
-   - "Show companies in a specific city or industry"
-   - "Show tasks due this week, sorted by priority"
-   - "Show people from a specific company"
-   - "Show recent records created in the last 30 days"
-
-3. **Inspect the view**: Use get_view_query_parameters to see existing filters/sorts and get_field_metadata to discover available fields.
-
-4. **Build filters**: Based on the user's need, determine:
-   - Which field(s) to filter on
-   - Which operator is valid for that field type (see table above)
-   - What value to filter by
-   - Whether to use AND or OR grouping for multiple filters
-
-5. **Build sorts**: Determine:
-   - Which field to sort by (most relevant to the user's goal)
-   - Direction: ASC or DESC
-   - Multiple sorts can be added (primary, secondary, etc.)
-
-6. **Apply and navigate**: Create the filters/sorts on the view and navigate to it.
+- Directions are ASC (A to Z, oldest first) and DESC (Z to A, newest first).
+- Filters combine with AND by default; OR and NOT are available, and groups nest for conditions like name CONTAINS "tech" AND (revenue above 1M OR employees above 100).
+- \`upsert_complete_view\` replaces the whole filter or sort array, so pass the end state you want rather than editing entries one by one.
 
 ## Common Filter Patterns
 
-### By Time
-- Recent records: DATE_TIME field + IS_AFTER + a date value
-- Upcoming deadlines: DATE field + IS_IN_FUTURE
-- Overdue tasks: DATE field + IS_IN_PAST + status IS_NOT "DONE"
-- This week/month: DATE field + IS_RELATIVE
-
-### By Status/Stage
-- Open opportunities: stage IS "IN_PROGRESS" or IS_NOT "WON"/"LOST"
-- Active tasks: status IS_NOT "DONE"
-
-### By Relationship
-- Records linked to a company: company relation IS [specific company]
-- Unassigned tasks: assignee IS_EMPTY
-- Orphaned records: relation field IS_EMPTY
-
-### By Value
-- High-value deals: amount GREATER_THAN_OR_EQUAL threshold
-- Large companies: employees GREATER_THAN_OR_EQUAL threshold
+- Overdue work: a DATE field IS_IN_PAST combined with status IS_NOT done
+- Upcoming deadlines: a DATE field IS_IN_FUTURE
+- Recent activity: updatedAt or createdAt IS_AFTER a date
+- Open pipeline: stage IS_NOT the won and lost values
+- Unassigned or orphaned records: a relation field IS_EMPTY
+- High value: amount GREATER_THAN_OR_EQUAL a threshold
 
 ## Common Sort Patterns
 
-- Pipeline view: Sort by amount DESC (biggest deals first)
-- Task management: Sort by dueAt ASC (earliest due first)
-- Recent activity: Sort by updatedAt DESC or createdAt DESC
-- Alphabetical: Sort by name ASC
+- Pipeline boards sort by amount DESC, so the biggest deals read first
+- Task lists sort by dueAt ASC, so the most urgent reads first
+- Activity lists sort by updatedAt DESC
 
 ## Composite Fields
 
-Some fields have sub-fields that can be filtered:
-- CURRENCY: Use subFieldName "amountMicros" for the numeric value
-- ADDRESS: Use subFieldName like "addressCity", "addressCountry"
-- FULL_NAME: Use subFieldName like "firstName", "lastName"
-- EMAILS: Use the primary email
-- LINKS: Use the primary link URL
+Some fields carry sub-fields you filter on directly:
+- CURRENCY uses subFieldName "amountMicros" for the numeric value
+- ADDRESS uses sub-fields such as "addressCity" and "addressCountry"
+- FULL_NAME uses "firstName" and "lastName"
+- EMAILS and LINKS filter on the primary entry
 
 ## Approach
 
-- Always check field types before suggesting operators — using an invalid operator for a field type will fail
-- When the user says "show me X", translate that into the appropriate filter logic
-- Suggest sorts that complement the filters (e.g., if filtering overdue tasks, sort by dueAt ASC)
-- Explain what the filters do so users understand the results
-- If complex filtering is needed (AND + OR), explain the logic clearly`,
+- If the user is vague (e.g., "create a board"), ask which object they want to see
+- Suggest the most relevant view type based on the object's fields
+- After creating a view, always configure useful view fields and navigate to it
+- Explain what each view type does so users can make informed choices`,
         isCustom: false,
-      },
-    }),
-
-  'custom-objects-cleanup': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'custom-objects-cleanup',
-        name: 'custom-objects-cleanup',
-        label: 'Custom Objects Cleanup',
-        description:
-          'Archiving custom objects from a workspace (e.g. dev seed objects like pets, rockets)',
-        icon: 'IconArchive',
-        content: `# Custom Objects Cleanup Skill
-
-You help users archive custom objects from their workspace, such as objects created by the dev seed (pets, rockets, survey results, etc.) or any other custom objects.
-
-## Tools
-
-- get_object_metadata - List all objects in the workspace to identify custom ones
-- update_many_object_metadata - Archive custom objects by setting isActive to false
-
-## Workflow
-
-1. **List all objects**: Use get_object_metadata to get the full list of objects in the workspace.
-
-2. **Identify custom objects**: Filter the results to find objects where isCustom is true. These are the objects that were created by users or by the dev seed, as opposed to standard built-in objects (Company, Person, Opportunity, Task, Note, etc.).
-
-3. **Present findings**: Tell the user which custom objects were found. If none are found, inform the user that the workspace has no custom objects.
-
-4. **Confirm before archiving**: List the custom objects you found and ask the user to confirm which ones they want to archive. Present them clearly with their name, label, and description.
-
-5. **Archive confirmed objects**: Use update_many_object_metadata to set isActive to false on all confirmed objects in a single batch call.
-
-6. **Report results**: After archiving is complete, summarize what was archived.
-
-## Important Notes
-
-- Only objects with isCustom = true can be archived. Standard objects cannot be archived through this skill.
-- Archiving an object hides it from the workspace but does not delete its fields, relations, or records.
-- When called directly by a user, confirm before archiving. When called by another skill (e.g. workspace-demo-seeding), proceed without confirmation.
-
-## Approach
-
-- Be clear about what will be archived and that it is reversible
-- If an object has relations to other objects, mention this before archiving
-- Archive all confirmed objects in a single batch call using update_many_object_metadata`,
-        isCustom: false,
+        isSystem: true,
       },
     }),
 
@@ -1552,7 +1393,7 @@ You help users archive custom objects from their workspace, such as objects crea
         name: 'pptx',
         label: 'PowerPoint',
         description:
-          'PowerPoint creation, editing, templates, thumbnails, and slide manipulation',
+          'Use whenever a PowerPoint deck is the input or the output, including slides, templates, tables and charts',
         icon: 'IconPresentation',
         content: `# PowerPoint Processing Skill
 
@@ -1717,6 +1558,7 @@ python /home/user/scripts/pptx/replace.py input.pptx '{"{{company}}": "Acme Corp
 | Reorder slides | script | \`python rearrange.py pres.pptx '[2,1,3]' out.pptx\` |
 | Find/replace | script | \`python replace.py pres.pptx '{...}' out.pptx\` |`,
         isCustom: false,
+        isSystem: true,
       },
     }),
 
@@ -1728,7 +1570,7 @@ python /home/user/scripts/pptx/replace.py input.pptx '{"{{company}}": "Acme Corp
         name: 'roles',
         label: 'Roles',
         description:
-          'Managing roles and permissions: who can read, edit and delete what',
+          'Use when the user asks who can see or change what: creating a role, editing permissions, or assigning a role to someone',
         icon: 'IconLockAccess',
         content: `# Roles Skill
 
@@ -1817,6 +1659,197 @@ When the user names a person, resolve them to a workspace member first and resta
 
 Report what changed in plain terms: which role, what it can now do, and who is affected. If you changed overrides, restate the objects that are still overridden so the user can see nothing was dropped.`,
         isCustom: false,
+        isSystem: true,
+      },
+    }),
+
+  'meeting-prep': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
+    createStandardSkillFlatMetadata({
+      ...args,
+      context: {
+        skillName: 'meeting-prep',
+        name: 'meeting-prep',
+        label: 'Meeting Prep',
+        description:
+          'Use before a call or a meeting, and whenever the user asks who am I talking to, brief me on this account, or what do I need to know before this conversation',
+        icon: 'IconCalendarEvent',
+        content: `# Meeting Prep Skill
+
+Produce a brief the user can read in under a minute before they talk to someone.
+
+## Gather
+
+Start from the person or company the user named, or the record they are looking at. Then pull what hangs off it, filtering by the relation rather than scanning whole objects:
+
+- Who they are: role, company, and how long the record has existed
+- Open opportunities on that company, with stage, amount and close date
+- The most recent notes, tasks and timeline activities
+- Recent messages and calendar events they took part in
+
+If the person belongs to a company, read the company too. Deals and history usually live there rather than on the individual.
+
+## Produce
+
+Write it in this order, and stop when you run out of real material:
+
+1. One line on who they are and why this conversation matters now
+2. Open deals, with stage and amount, or a line saying there are none
+3. What happened last: the most recent exchange and what was agreed
+4. What changed since then, including anything overdue or unanswered
+5. Three questions worth asking, each drawn from something above
+
+Reference every record you name so the user can click through to it.
+
+## Rules
+
+- Never invent history. If contact has been quiet, say exactly how long.
+- This skill only reads. Do not create or update anything.
+- If the user has not said who the meeting is with, ask before gathering.
+- Keep it short. A brief nobody finishes is a brief nobody uses.`,
+        isCustom: false,
+        isSystem: false,
+      },
+    }),
+
+  'deal-review': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
+    createStandardSkillFlatMetadata({
+      ...args,
+      context: {
+        skillName: 'deal-review',
+        name: 'deal-review',
+        label: 'Deal Review',
+        description:
+          'Use when the user asks how a deal is doing, which deals are at risk, what is stuck or going quiet, or asks for a pipeline review',
+        icon: 'IconTargetArrow',
+        content: `# Deal Review Skill
+
+Judge the health of one opportunity or a set of them, and say what to do next.
+
+## Gather
+
+For each opportunity in scope, read the record and what is linked to it: the company, the people involved, notes, tasks, and recent messages and calendar events. Use group_by_opportunity when the question is about the shape of the pipeline rather than about individual deals.
+
+## Signals
+
+Work through these for every deal. Each one you can answer becomes a line in the output:
+
+- **Momentum.** How long has it sat in its current stage, and how does that compare with the rest of the pipeline?
+- **Contact.** When did anyone last exchange a message or meet? Silence against an approaching close date is the strongest warning sign there is.
+- **Threading.** How many distinct people at that company have been in contact? A deal running through one person is a deal that dies when that person leaves.
+- **Hygiene.** Is the close date set, already past, or implausible? Is the amount missing?
+- **Commitments.** Are there open or overdue tasks, and who owns them?
+
+## Produce
+
+For a single deal, write a short verdict, the evidence behind it, and one concrete next step.
+
+For several, lead with the deals that need attention, one line each, then summarise the rest. Sort by risk rather than by size, and reference every opportunity so the user can open it.
+
+Say which signals you could not evaluate and why. A review that hides its gaps is worse than a short one.
+
+## Rules
+
+- This skill only reads. Propose the next step and let the user ask you to create the task.
+- Never call a deal at risk without naming the signal that says so.
+- Never guess at an amount or a date that is missing. Report it as missing.`,
+        isCustom: false,
+        isSystem: false,
+      },
+    }),
+
+  'crm-hygiene': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
+    createStandardSkillFlatMetadata({
+      ...args,
+      context: {
+        skillName: 'crm-hygiene',
+        name: 'crm-hygiene',
+        label: 'CRM Hygiene',
+        description:
+          'Use when the user asks to clean up the CRM, find duplicates, fill in missing fields, or asks why the data is messy or which records are stale',
+        icon: 'IconListCheck',
+        content: `# CRM Hygiene Skill
+
+Audit records for problems, show the user what you found, and fix only what they approve.
+
+## Audit
+
+Ask which object to audit if the user has not said. Then look for these, in this order:
+
+- **Duplicates.** Read the object's duplicateCriteria from its metadata and search on those fields. Two companies sharing a domain, or two people sharing an email, are the reliable cases.
+- **Missing fields.** Identify the fields that make a record useful for that object, then count how many records leave them empty.
+- **Stale records.** Records untouched for a long time, especially opportunities whose close date has passed while they are still open.
+- **Broken links.** Records whose expected relation is empty, such as a person with no company or a deal with no contact.
+
+Use group_by_* to count rather than reading every record, then fetch only the rows you intend to show.
+
+## Report
+
+Lead with counts, so the user sees the shape of the problem before the detail. Then list the worst cases, referencing each record. Say which fix you propose for each group and what it would change.
+
+## Fix
+
+Always confirm before writing. Show what you will change and wait.
+
+- Merge duplicates only when the evidence is exact, such as an identical email or domain. Anything softer is a suggestion for the user to decide, not a merge for you to perform.
+- Fill missing fields only from data already in the workspace, never from a guess.
+- Apply approved changes with the update_many or upsert_many tools in one call rather than one record at a time.
+- Report what changed afterwards, and say what you deliberately left alone.
+
+## Rules
+
+- Never delete a record in this skill. Archiving and merging are enough.
+- Never confirm on the user's behalf, and never read a general yes as approval for a second batch.
+- If there is nothing wrong, say so. A clean workspace is a valid result.`,
+        isCustom: false,
+        isSystem: false,
+      },
+    }),
+
+  enrich: (args: Omit<CreateStandardSkillArgs, 'context'>) =>
+    createStandardSkillFlatMetadata({
+      ...args,
+      context: {
+        skillName: 'enrich',
+        name: 'enrich',
+        label: 'Enrich',
+        description:
+          'Use when the user asks to research or enrich a company or a person, fill in what the CRM does not know about them, or find out what a company actually does',
+        icon: 'IconSearch',
+        content: `# Enrich Skill
+
+Find what the workspace does not know about a company or a person, and offer it back as field updates.
+
+## Search
+
+Use app_exa_web_search with its category set deliberately. It is preloaded, so call it directly without looking it up first. If it is not available, say the workspace has no web search rather than guessing at answers.
+
+- Set category to "company" for an organisation: what it does, size, funding, headquarters, recent news.
+- Set category to "people" for an individual: current role, employer, background.
+- Set category to "news" when the user asks what changed rather than who they are.
+
+Start from what the record already holds. A domain makes a far better query than a company name, and a name plus an employer beats a name alone. Run several narrow searches rather than one broad one, and stop as soon as the field you were filling is answered.
+
+## Reconcile
+
+Read the record first and enrich only what is empty or clearly wrong. Overwriting a value a human typed is the fastest way to lose their trust in this feature.
+
+Keep the source for every fact. State plainly which facts came from the web and which were already in the workspace.
+
+## Produce
+
+Show a short table of proposed changes: the field, what it holds now, what you propose, and where it came from. Then ask before writing.
+
+After approval, apply the changes in a single update call and confirm what was written.
+
+Anything you found that has no field to live in belongs in a note on the record, not squeezed into an unrelated field.
+
+## Rules
+
+- Never invent a value to fill a gap. An empty field beats a wrong one.
+- Confidence matters: if the search returned a different person who shares the name, say so and stop.
+- Do not enrich a large set of records unless the user asked for exactly that, and confirm the scope before you start.`,
+        isCustom: false,
+        isSystem: false,
       },
     }),
 } satisfies {
