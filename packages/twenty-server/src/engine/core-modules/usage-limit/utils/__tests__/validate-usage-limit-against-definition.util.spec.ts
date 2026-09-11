@@ -1,10 +1,10 @@
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { type UpsertUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/upsert-usage-limit.input';
+import { type CreateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/create-usage-limit.input';
 import { UsageLimitExceptionCode } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { validateUsageLimitAgainstDefinition } from 'src/engine/core-modules/usage-limit/utils/validate-usage-limit-against-definition.util';
 
-const validSpeedLimit: UpsertUsageLimitInput = {
+const validSpeedLimit: CreateUsageLimitInput = {
   resourceType: UsageResourceType.API,
   operationType: UsageOperationType.API_REQUEST,
   spenderType: 'apiKey',
@@ -16,7 +16,7 @@ const validSpeedLimit: UpsertUsageLimitInput = {
   limitValue: 100,
 };
 
-const validQuotaLimit: UpsertUsageLimitInput = {
+const validQuotaLimit: CreateUsageLimitInput = {
   resourceType: UsageResourceType.AI,
   operationType: UsageOperationType.AI_CHAT_TOKEN,
   spenderType: 'workspace',
@@ -142,14 +142,24 @@ describe('validateUsageLimitAgainstDefinition', () => {
     ).not.toThrow();
   });
 
-  it('accepts a quota scoped to one agent', () => {
+  it('accepts a quota scoped to one application', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaLimit,
+        spenderType: 'application',
+        spenderId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+      }),
+    ).not.toThrow();
+  });
+
+  it('rejects a quota scoped to an agent, which spends through its workflow', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
         ...validQuotaLimit,
         spenderType: 'agent',
         spenderId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
       }),
-    ).not.toThrow();
+    ).toThrow();
   });
 
   it('accepts a quota covering every operation of the resource', () => {
