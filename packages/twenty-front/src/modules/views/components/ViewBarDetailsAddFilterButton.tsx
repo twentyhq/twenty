@@ -1,4 +1,5 @@
-import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { getViewBarFilterDropdownId } from '@/views/utils/getViewBarFilterDropdownId';
 
 import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useResetFilterDropdown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
@@ -8,15 +9,15 @@ import { LightButton } from 'twenty-ui/input';
 
 export const ViewBarDetailsAddFilterButton = () => {
   const { toggleDropdown } = useToggleDropdown();
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+  const filterDropdownId = getViewBarFilterDropdownId(recordIndexId);
 
-  const { resetFilterDropdown } = useResetFilterDropdown(
-    ViewBarFilterDropdownIds.MAIN,
-  );
+  const { resetFilterDropdown } = useResetFilterDropdown(filterDropdownId);
 
   const handleClick = () => {
     resetFilterDropdown();
     toggleDropdown({
-      dropdownComponentInstanceIdFromProps: ViewBarFilterDropdownIds.MAIN,
+      dropdownComponentInstanceIdFromProps: filterDropdownId,
     });
   };
 

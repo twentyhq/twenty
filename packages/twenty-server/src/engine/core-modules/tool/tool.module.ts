@@ -14,6 +14,8 @@ import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/dr
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
 import { FindConnectedAccountsTool } from 'src/engine/core-modules/tool/tools/email-tool/find-connected-accounts-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
+import { CompleteFileUploadTool } from 'src/engine/core-modules/tool/tools/file-upload-tool/complete-file-upload-tool';
+import { CreateFileUploadTool } from 'src/engine/core-modules/tool/tools/file-upload-tool/create-file-upload-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { CreateInboxItemTool } from 'src/engine/core-modules/tool/tools/inbox-tool/create-inbox-item-tool';
 import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
@@ -58,6 +60,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     CreateInboxItemTool,
     EmailComposerService,
     SearchHelpCenterTool,
+    CreateFileUploadTool,
+    CompleteFileUploadTool,
     CodeInterpreterTool,
     NavigateAppTool,
     ExtractJsonPathsTool,
@@ -74,6 +78,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     CreateInboxItemTool,
     EmailComposerService,
     SearchHelpCenterTool,
+    CreateFileUploadTool,
+    CompleteFileUploadTool,
     CodeInterpreterTool,
     NavigateAppTool,
     ExtractJsonPathsTool,

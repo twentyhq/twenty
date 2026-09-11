@@ -15,6 +15,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsAgentToolsTable } from '~/pages/settings/ai/components/SettingsAgentToolsTable';
 import { useSettingsAgentToolsTable } from '~/pages/settings/ai/hooks/useSettingsAgentToolsTable';
 import { type SettingsAgentToolItem } from '~/pages/settings/ai/types/SettingsAgentToolItem';
+import { isOwnedByInstalledApplication } from '~/pages/settings/ai/utils/isOwnedByInstalledApplication';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledSearchContainer = styled.div`
@@ -40,7 +41,10 @@ export const SettingsAgentToolsTab = () => {
     currentWorkspace?.workspaceCustomApplication?.id;
 
   const isManaged = (applicationId?: string | null) =>
-    isDefined(applicationId) && applicationId !== workspaceCustomApplicationId;
+    isOwnedByInstalledApplication({
+      applicationId,
+      workspaceCustomApplicationId,
+    });
 
   const isCustom = (tool: SettingsAgentToolItem) =>
     isDefined(tool.applicationId);

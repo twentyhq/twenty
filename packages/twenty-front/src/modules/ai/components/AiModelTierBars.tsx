@@ -43,7 +43,9 @@ type AiModelTierBarsProps = {
 };
 
 // One bar per tier, filled up to the selected one, so the composer shows the
-// level without spending the space a label would take.
+// level without spending the space a label would take. A native button, like
+// every other dropdown trigger, so it is focusable and ignores clicks when
+// disabled; the dropdown's wrapper is not.
 export const AiModelTierBars = ({
   selectedTier,
   label,

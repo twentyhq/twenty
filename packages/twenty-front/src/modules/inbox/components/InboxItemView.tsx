@@ -304,10 +304,9 @@ export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
           {isDone ? (
             <>
               {isDefined(inboxItem.outcome) && (
-                <Tag
-                  color="gray"
-                  text={getInboxItemOutcomeLabel(inboxItem.outcome)}
-                />
+                <Tag color="gray">
+                  {getInboxItemOutcomeLabel(inboxItem.outcome)}
+                </Tag>
               )}
               <Button
                 onClick={reopenItem}
