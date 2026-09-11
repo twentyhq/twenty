@@ -1,20 +1,26 @@
 import { AppPath } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
-export const useOpenAiChatPage = () => {
+export const useNavigateToAiChatPage = () => {
+  const store = useStore();
   const navigate = useNavigateApp();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
-  const openAiChatPage = ({
+  const navigateToAiChatPage = ({
     threadId,
   }: {
     threadId?: string | null;
   } = {}) => {
-    if (isCurrentPathAiChatPage()) {
+    if (
+      store.get(isLayoutCustomizationModeEnabledState.atom) ||
+      isCurrentPathAiChatPage()
+    ) {
       return;
     }
 
@@ -38,5 +44,5 @@ export const useOpenAiChatPage = () => {
     );
   };
 
-  return { openAiChatPage };
+  return { navigateToAiChatPage };
 };
