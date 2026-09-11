@@ -1,7 +1,11 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
-import { type CSSProperties } from 'react';
+import {
+  type CSSProperties,
+  type KeyboardEvent,
+  type SyntheticEvent,
+} from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/surfaces/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { themeCssVariables } from '@ui/theme-constants';
@@ -9,6 +13,19 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Tag.module.scss';
 import { type TagProps } from './types/TagProps';
+
+const preventDisabledInteraction = (event: SyntheticEvent) => {
+  event.preventDefault();
+  event.stopPropagation();
+};
+
+const preventDisabledKeyboardActivation = (event: KeyboardEvent) => {
+  if (event.key !== 'Enter' && event.key !== ' ') {
+    return;
+  }
+
+  preventDisabledInteraction(event);
+};
 
 export const Tag = ({
   children,
@@ -51,6 +68,15 @@ export const Tag = ({
     props: {
       ...props,
       onClick,
+      ...(disabled && {
+        disabled: true,
+        'aria-disabled': true,
+        tabIndex: -1,
+        onClickCapture: preventDisabledInteraction,
+        onPointerDownCapture: preventDisabledInteraction,
+        onKeyDownCapture: preventDisabledKeyboardActivation,
+        onKeyUpCapture: preventDisabledKeyboardActivation,
+      }),
       className: clsx(styles.tag, className),
       style: {
         '--tw-tag-background':
