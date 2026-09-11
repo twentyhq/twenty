@@ -158,17 +158,21 @@ msgstr "(tanlangan: {selectedIconKey})"
 msgid "[empty string]"
 msgstr "[boʻsh satr]"
 
-#. js-lingui-id: XHO5F1
+#. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
-msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
-msgstr "{0, plural, one {# ta ishni o‘chirishning imkoni bo‘lmadi} other {# ta ishni o‘chirishning imkoni bo‘lmadi}}"
+msgid "{0, plural, one {{1} job could not be deleted} other {{2} jobs could not be deleted}}"
+msgstr "{0, plural, one {{1} ta ishni o‘chirishning imkoni bo‘lmadi} other {{2} ta ishni o‘chirishning imkoni bo‘lmadi}}"
 
-#. js-lingui-id: AHhuJj
+#. js-lingui-id: VjPlMz
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
-msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
-msgstr "{0, plural, one {# ta ishni qayta ishga tushirib bo‘lmadi} other {# ta ishni qayta ishga tushirib bo‘lmadi}}"
+msgid "{0, plural, one {{1} job could not be retried} other {{2} jobs could not be retried}}"
+msgstr "{0, plural, one {{1} ta ishni qayta ishga tushirib bo‘lmadi} other {{2} ta ishni qayta ishga tushirib bo‘lmadi}}"
 
 #. js-lingui-id: 0LMb5P
 #. placeholder {0}: Math.abs(days)
@@ -213,6 +217,12 @@ msgstr "{0} kreditlar"
 msgid "{0} days"
 msgstr "{0} kun"
 
+#. js-lingui-id: okrK9q
+#. placeholder {0}: preview.duplicateEmails
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
+msgid "{0} duplicate"
+msgstr "{0} ta nusxa"
+
 #. js-lingui-id: stCODw
 #. placeholder {0}: appObject.fields.length
 #: src/modules/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication.ts
@@ -224,6 +234,19 @@ msgstr "{0} ta maydon"
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "{0} have no relation to {loadBalancePoolObjectLabel}. Pick a different object to balance by."
 msgstr "{0} ning {loadBalancePoolObjectLabel} bilan hech qanday aloqasi yo‘q. Muvozanatlashtirish uchun boshqa obyektni tanlang."
+
+#. js-lingui-id: TDB80r
+#. placeholder {0}: preview.totalMembers
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
+msgid "{0} in this list"
+msgstr "Ushbu ro‘yxatda {0}"
+
+#. js-lingui-id: /PXxEG
+#. placeholder {0}: preview.totalMembers
+#. placeholder {1}: preview.sendable
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
+msgid "{0} in this list, {1} sendable ({breakdown})"
+msgstr "Ushbu ro‘yxatda {0}, {1} ta yuborilishi mumkin ({breakdown})"
 
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
@@ -304,6 +327,12 @@ msgstr "{0} ko‘rinish"
 msgid "{0} widgets"
 msgstr "{0} ta vidjet"
 
+#. js-lingui-id: Aixgij
+#. placeholder {0}: preview.withoutEmail
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
+msgid "{0} without email"
+msgstr "{0} ta elektron pochtasiz"
+
 #. js-lingui-id: 2UKfhY
 #. placeholder {0}: selectedItemNames.length
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput.tsx
@@ -366,10 +395,14 @@ msgstr "{operatingSystem} operatsion tizimidagi {browser}"
 msgid "{cachedPercent}% cached"
 msgstr "{cachedPercent}% keshga olingan"
 
-#. js-lingui-id: M9lDqR
+#. js-lingui-id: 8SynPU
+#. placeholder {0}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {1}: type === 'percentage' ? '%' : ''
+#. placeholder {2}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {3}: type === 'percentage' ? '%' : ''
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "{count, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr "{count, plural, one {Masalan, # o‘nlik uchun {example}} other {Masalan, # o‘nliklar uchun {example}}}"
+msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
+msgstr "{count, plural, one {Masalan, {count} o‘nlik uchun {0}{1}} other {Masalan, {count} o‘nliklar uchun {2}{3}}}"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -381,10 +414,12 @@ msgstr "{currentCreditAmountDisplay} kredit "
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} kun} other {{days} kun}}"
 
-#. js-lingui-id: 7o03+8
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
-msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr "{decimals, plural, one {Masalan, # raqamli kasr uchun {example}} other {Masalan, # raqamli kasrlar uchun {example}}}"
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr "{decimals, plural, one {Masalan, {decimals} raqamli kasr uchun {0}} other {Masalan, {decimals} raqamli kasrlar uchun {1}}}"
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -507,7 +542,7 @@ msgstr "{morphRelationCount} ta obyekt"
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
-msgstr "{num, selectordinal, other {{num}-chi}}"
+msgstr "{num, selectordinal, one {{num}-chi} two {{num}-chi} few {{num}-chi} other {{num}-chi}}"
 
 #. js-lingui-id: fTSz8d
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -1877,6 +1912,11 @@ msgstr "Vaqt davomida AI sarfi."
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "AI Model"
 msgstr "AI modeli"
+
+#. js-lingui-id: Sfwld8
+#: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
+msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
+msgstr "AI sozlanmagan. Muhitingizda OPENAI_API_KEY, ANTHROPIC_API_KEY yoki XAI_API_KEY ni o‘rnating."
 
 #. js-lingui-id: jwOWhc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3582,6 +3622,16 @@ msgstr "Qo‘ng‘iroq kodi"
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Calls"
 msgstr "Qo‘ng‘iroqlar"
+
+#. js-lingui-id: 06mPlO
+#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
+msgid "Campaign queued to {queuedCount} recipient(s)"
+msgstr "Kampaniya {queuedCount} nafar qabul qiluvchiga navbatga qo‘yildi"
+
+#. js-lingui-id: 6nG/xd
+#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
+msgid "Campaign queued to {queuedCount} recipient(s), {skippedCount} skipped"
+msgstr "Kampaniya {queuedCount} nafar qabul qiluvchiga navbatga qo‘yildi, {skippedCount} tasi o‘tkazib yuborildi"
 
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -10728,10 +10778,10 @@ msgstr "Noto‘g‘ri cron ifodasi"
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "Yaroqsiz cron andozasi: {errorMessage}"
 
-#. js-lingui-id: CGivIJ
+#. js-lingui-id: jhbsV/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
-msgstr "Kun qiymati yaroqsiz \"{newDay}\". 1 dan katta butun son boʻlishi kerak"
+msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
+msgstr "Kun qiymati yaroqsiz '{newDay}'. 1 dan katta butun son boʻlishi kerak"
 
 #. js-lingui-id: u3hwhx
 #: src/modules/settings/domains/utils/getDomainValidationSchema.ts
@@ -10770,25 +10820,25 @@ msgstr "Elektron pochtani tasdiqlash havolasi yaroqsiz."
 msgid "Invalid file: {0}"
 msgstr "Yaroqsiz fayl: {0}"
 
-#. js-lingui-id: 1ccYjl
+#. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer between 0 and 23"
+msgid "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
 msgstr "\"{newHour}\" soat qiymati noto‘g‘ri. 0 dan 23 gacha bo‘lgan butun son bo‘lishi kerak"
 
-#. js-lingui-id: e3cT9e
+#. js-lingui-id: fLMLtY
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer greater than 1"
+msgid "Invalid hour value '{newHour}'. Should be integer greater than 1"
 msgstr "\"{newHour}\" soat qiymati noto‘g‘ri. 1 dan katta butun son bo‘lishi kerak"
 
-#. js-lingui-id: jw4O7y
+#. js-lingui-id: +Yi3bs
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer between 0 and 59"
+msgid "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
 msgstr "\"{newMinute}\" daqiqa qiymati noto‘g‘ri. 0 dan 59 gacha bo‘lgan butun son bo‘lishi kerak"
 
-#. js-lingui-id: SfvOlw
+#. js-lingui-id: 942L1w
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
+msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
 msgstr "\"{newMinute}\" daqiqa qiymati noto‘g‘ri. 1 dan katta butun son bo‘lishi kerak"
 
 #. js-lingui-id: WY8amq
@@ -13602,6 +13652,11 @@ msgstr "Alohida obyektlar uchun hech qanday ruxsatlar belgilanmagan."
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "No provenance attestation was found for this package. Publish it from GitHub Actions with npm trusted publishing, then try claiming again."
 msgstr "Ushbu paket uchun kelib chiqish (provenance) tasdig‘i topilmadi. Uni GitHub Actions’dan npm trusted publishing orqali chop eting, so‘ng egalikni tasdiqlashga yana urinib ko‘ring."
+
+#. js-lingui-id: 5sv+ia
+#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
+msgid "No recipients to send to ({skippedCount} skipped)"
+msgstr "Yuborish uchun oluvchilar yo‘q ({skippedCount} ta o‘tkazib yuborildi)"
 
 #. js-lingui-id: V/+aTW
 #: src/modules/object-record/record-field/ui/form-types/components/FormMorphRelationToOneFieldInput.tsx
@@ -19249,6 +19304,11 @@ msgstr "Transkriptni yaratib bo‘lmadi."
 msgid "The transcript is being prepared…"
 msgstr "Transkript tayyorlanmoqda…"
 
+#. js-lingui-id: qrhV2s
+#: src/modules/activities/emails/components/CampaignDetailsFields.tsx
+msgid "The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it."
+msgstr "Ushbu elektron xat tegishli bo‘lgan obunani bekor qilish mavzusi. Undan voz kechgan qabul qiluvchilar o‘tkazib yuboriladi va obunani bekor qilish havolasi shu mavzu doirasida ishlaydi."
+
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field"
@@ -22387,6 +22447,28 @@ msgstr "Siz bu elektron xatlarni qabul qilishni to‘xtatasiz."
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "Siz ish maydoningiz subdomenini o‘zgartirmoqchisiz. Bu harakat barcha foydalanuvchilarning tizimdan chiqishiga olib keladi."
 
+#. js-lingui-id: Z5uTAF
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+msgid "You've hit your usage limit. \n"
+"Reach to our support team to upgrade."
+msgstr "Foydalanish limitiga yetdingiz.\n"
+"Yangilash uchun qo‘llab-quvvatlash jamoamizga murojaat qiling."
+
+#. js-lingui-id: NTyvVW
+#. placeholder {0}: nextResourceCreditsAmount ?? ''
+#. placeholder {1}: nextResourceCreditPrice ?? ''
+#. placeholder {2}: nextTierInterval ?? ''
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+msgid "You've hit your usage limit. \n"
+"Upgrade to {0} credits for ${1}/{2}."
+msgstr "Siz foydalanish chegarangizga yetdingiz.\n"
+"{0} ta kreditga ${1}/{2} evaziga yangilang."
+
+#. js-lingui-id: yZ0wRS
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+msgid "You've hit your usage limit. Subscribe for more usage."
+msgstr "Foydalanish limitiga yetdingiz. Ko‘proq foydalanish uchun obuna bo‘ling."
+
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts
 msgid "Your app version is out of date. Please refresh the page."
@@ -22522,6 +22604,11 @@ msgstr "Ish maydoningizda faol obuna yoʻq."
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
 msgid "Your workspace doesn't have an active subscription. Please contact your admin."
 msgstr "Ish maydoningizda faol obuna yoʻq. Iltimos, administratoringiz bilan bogʻlaning."
+
+#. js-lingui-id: fAVJ0D
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+msgid "Your workspace hit its AI usage limit. Ask an admin to upgrade the plan."
+msgstr "Ish maydoningiz AI foydalanish chegarasiga yetdi. Rejani oshirishni administratoringizdan so‘rang."
 
 #. js-lingui-id: RhNbPE
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx

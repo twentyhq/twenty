@@ -166,17 +166,21 @@ msgstr "[șir gol]"
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
 msgstr ""
 
-#. js-lingui-id: XHO5F1
+#. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
-msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
-msgstr "{0, plural, one {# loc de muncă nu a putut fi șters} few {# locuri de muncă nu au putut fi șterse} other {# locuri de muncă nu au putut fi șterse}}"
+msgid "{0, plural, one {{1} job could not be deleted} other {{2} jobs could not be deleted}}"
+msgstr "{0, plural, one {{1} loc de muncă nu a putut fi șters} few {{2} locuri de muncă nu au putut fi șterse} other {{2} locuri de muncă nu au putut fi șterse}}"
 
-#. js-lingui-id: AHhuJj
+#. js-lingui-id: VjPlMz
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
-msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
-msgstr "{0, plural, one {# loc de muncă nu a putut fi reluat} few {# locuri de muncă nu au putut fi reluate} other {# locuri de muncă nu au putut fi reluate}}"
+msgid "{0, plural, one {{1} job could not be retried} other {{2} jobs could not be retried}}"
+msgstr "{0, plural, one {{1} loc de muncă nu a putut fi reluat} few {{2} locuri de muncă nu au putut fi reluate} other {{2} locuri de muncă nu au putut fi reluate}}"
 
 #. js-lingui-id: 5pucMh
 #. placeholder {0}: audiencePreview.sendable
@@ -415,10 +419,14 @@ msgstr "{browser} pe {operatingSystem}"
 msgid "{cachedPercent}% cached"
 msgstr "{cachedPercent}% în cache"
 
-#. js-lingui-id: M9lDqR
+#. js-lingui-id: 8SynPU
+#. placeholder {0}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {1}: type === 'percentage' ? '%' : ''
+#. placeholder {2}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {3}: type === 'percentage' ? '%' : ''
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "{count, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr "{count, plural, one {Exemplu: {example} pentru # zecimal} few {Exemplu: {example} pentru # zecimale} other {Exemplu: {example} pentru # zecimale}}"
+msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
+msgstr "{count, plural, one {Exemplu: {0}{1} pentru {count} zecimal} few {Exemplu: {2}{3} pentru {count} zecimale} other {Exemplu: {2}{3} pentru {count} zecimale}}"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -430,10 +438,12 @@ msgstr "{currentCreditAmountDisplay} credite "
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} zi} few {{days} zile} other {{days} zile}}"
 
-#. js-lingui-id: 7o03+8
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
-msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr "{decimals, plural, one {De exemplu {example} pentru # zecimal} other {De exemplu {example} pentru # zecimale}}"
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr "{decimals, plural, one {De exemplu {0} pentru {decimals} zecimal} other {De exemplu {1} pentru {decimals} zecimale}}"
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -556,7 +566,7 @@ msgstr "{morphRelationCount} obiecte"
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
-msgstr "{num, selectordinal, one {{num}st} other {{num}th}}"
+msgstr "{num, selectordinal, one {{num}st} few {{num}nd} few {{num}rd} other {{num}th}}"
 
 #. js-lingui-id: fTSz8d
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -10873,10 +10883,10 @@ msgstr "Expresie cron invalidă"
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "Model cron invalid: {errorMessage}"
 
-#. js-lingui-id: CGivIJ
+#. js-lingui-id: jhbsV/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
-msgstr "Valoare zi invalidă \"{newDay}\". Ar trebui să fie un număr întreg mai mare de 1"
+msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
+msgstr "Valoare zi invalidă '{newDay}'. Ar trebui să fie un număr întreg mai mare de 1"
 
 #. js-lingui-id: u3hwhx
 #: src/modules/settings/domains/utils/getDomainValidationSchema.ts
@@ -10915,26 +10925,26 @@ msgstr "Link de verificare a emailului invalid."
 msgid "Invalid file: {0}"
 msgstr "Fișier invalid: {0}"
 
-#. js-lingui-id: 1ccYjl
+#. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer between 0 and 23"
-msgstr "Valoare oră invalidă \"{newHour}\". Ar trebui să fie un număr întreg între 0 și 23"
+msgid "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
+msgstr "Valoare oră invalidă '{newHour}'. Ar trebui să fie un număr întreg între 0 și 23"
 
-#. js-lingui-id: e3cT9e
+#. js-lingui-id: fLMLtY
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer greater than 1"
-msgstr "Valoare oră invalidă \"{newHour}\". Ar trebui să fie un număr întreg mai mare de 1"
+msgid "Invalid hour value '{newHour}'. Should be integer greater than 1"
+msgstr "Valoare oră invalidă '{newHour}'. Ar trebui să fie un număr întreg mai mare de 1"
 
-#. js-lingui-id: jw4O7y
+#. js-lingui-id: +Yi3bs
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer between 0 and 59"
-msgstr "Valoare minut invalidă \"{newMinute}\". Ar trebui să fie un număr întreg între 0 și 59"
+msgid "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
+msgstr "Valoare minut invalidă '{newMinute}'. Ar trebui să fie un număr întreg între 0 și 59"
 
-#. js-lingui-id: SfvOlw
+#. js-lingui-id: 942L1w
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
-msgstr "Valoarea minutului invalidă \"{newMinute}\". Ar trebui să fie un număr întreg mai mare de 1"
+msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
+msgstr "Valoarea minutului invalidă '{newMinute}'. Ar trebui să fie un număr întreg mai mare de 1"
 
 #. js-lingui-id: WY8amq
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx

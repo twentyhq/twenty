@@ -166,17 +166,21 @@ msgstr "[מחרוזת ריקה]"
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
 msgstr ""
 
-#. js-lingui-id: XHO5F1
+#. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
-msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
-msgstr "{0, plural, one {# עבודה לא ניתנה למחיקה} two {# עבודות לא ניתנו למחיקה} other {# עבודות לא ניתנו למחיקה}}"
+msgid "{0, plural, one {{1} job could not be deleted} other {{2} jobs could not be deleted}}"
+msgstr "{0, plural, one {{1} עבודה לא ניתנה למחיקה} two {{2} עבודות לא ניתנו למחיקה} many {{2} עבודות לא ניתנו למחיקה} other {{2} עבודות לא ניתנו למחיקה}}"
 
-#. js-lingui-id: AHhuJj
+#. js-lingui-id: VjPlMz
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
-msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
-msgstr "{0, plural, one {# עבודה לא ניתנה להפעלה מחדש} two {# עבודות לא ניתנו להפעלה מחדש} other {# עבודות לא ניתנו להפעלה מחדש}}"
+msgid "{0, plural, one {{1} job could not be retried} other {{2} jobs could not be retried}}"
+msgstr "{0, plural, one {{1} עבודה לא ניתנה להפעלה מחדש} two {{2} עבודות לא ניתנו להפעלה מחדש} many {{2} עבודות לא ניתנו להפעלה מחדש} other {{2} עבודות לא ניתנו להפעלה מחדש}}"
 
 #. js-lingui-id: 5pucMh
 #. placeholder {0}: audiencePreview.sendable
@@ -203,13 +207,13 @@ msgstr ""
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "{0, plural, one {# Object} other {# Objects}}"
-msgstr "{0, plural, one {# אובייקט} two {# אובייקטים} other {# אובייקטים}}"
+msgstr "{0, plural, one {# אובייקט} two {# אובייקטים} many {# אובייקטים} other {# אובייקטים}}"
 
 #. js-lingui-id: 8ob0vY
 #. placeholder {0}: failedCount + behindCount
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 msgid "{0, plural, one {# workspace failed or behind} other {# workspaces failed or behind}}"
-msgstr "{0, plural, one {# מרחב עבודה נכשל או נמצא בפיגור} two {# מרחבי עבודה נכשלו או נמצאים בפיגור} other {# מרחבי עבודה נכשלו או נמצאים בפיגור}}"
+msgstr "{0, plural, one {# מרחב עבודה נכשל או נמצא בפיגור} two {# מרחבי עבודה נכשלו או נמצאים בפיגור} many {# מרחבי עבודה נכשלו או נמצאים בפיגור} other {# מרחבי עבודה נכשלו או נמצאים בפיגור}}"
 
 #. js-lingui-id: V5p/Lu
 #. placeholder {0}: canceled.canceledMessageCount
@@ -223,7 +227,7 @@ msgstr ""
 #. placeholder {0}: restriction.fieldNames.length
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
 msgid "{0, plural, one {You do not have permission to access the {fieldsList} field} other {You do not have permission to access the {fieldsList} fields}}"
-msgstr "{0, plural, one {אין לך גישה לשדה {fieldsList}} two {אין לך גישה לשדות {fieldsList}} other {אין לך גישה לשדות {fieldsList}}}"
+msgstr "{0, plural, one {אין לך גישה לשדה {fieldsList}} two {אין לך גישה לשדות {fieldsList}} many {אין לך גישה לשדות {fieldsList}} other {אין לך גישה לשדות {fieldsList}}}"
 
 #. js-lingui-id: 6lE3tD
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
@@ -362,7 +366,7 @@ msgstr "{0} חברי מרחב העבודה"
 #. js-lingui-id: qdQhzv
 #: src/modules/views/advanced-filter-chip/components/AdvancedFilterChip.tsx
 msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} other {{advancedFilterCount} advanced rules}}"
-msgstr "{advancedFilterCount, plural, one {{advancedFilterCount} כלל מתקדם} two {{advancedFilterCount} כללים מתקדמים} other {{advancedFilterCount} כללים מתקדמים}}"
+msgstr "{advancedFilterCount, plural, one {{advancedFilterCount} כלל מתקדם} two {{advancedFilterCount} כללים מתקדמים} many {{advancedFilterCount} כללים מתקדמים} other {{advancedFilterCount} כללים מתקדמים}}"
 
 #. js-lingui-id: XWd9bY
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -403,7 +407,7 @@ msgstr "{appName} מעוניין לבצע את הפעולות הבאות:"
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "{behindCount, plural, one {# workspace behind} other {# workspaces behind}}"
-msgstr "{behindCount, plural, one {# מרחב עבודה בפיגור} two {# מרחבי עבודה בפיגור} other {# מרחבי עבודה בפיגור}}"
+msgstr "{behindCount, plural, one {# מרחב עבודה בפיגור} two {# מרחבי עבודה בפיגור} many {# מרחבי עבודה בפיגור} other {# מרחבי עבודה בפיגור}}"
 
 #. js-lingui-id: SWRSbi
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
@@ -415,9 +419,13 @@ msgstr "{browser} ב־{operatingSystem}"
 msgid "{cachedPercent}% cached"
 msgstr "{cachedPercent}% במטמון"
 
-#. js-lingui-id: M9lDqR
+#. js-lingui-id: 8SynPU
+#. placeholder {0}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {1}: type === 'percentage' ? '%' : ''
+#. placeholder {2}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {3}: type === 'percentage' ? '%' : ''
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "{count, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
+msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
 msgstr ""
 
 #. js-lingui-id: LZWC7x
@@ -428,24 +436,26 @@ msgstr "{currentCreditAmountDisplay} קרדיטים "
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
-msgstr "{days, plural, one {{days} יום} two {{days} ימים} other {{days} ימים}}"
+msgstr "{days, plural, one {{days} יום} two {{days} ימים} many {{days} ימים} other {{days} ימים}}"
 
-#. js-lingui-id: 7o03+8
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
-msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr "{decimals, plural, one {לדוגמה {example} עבור # מקום עשרוני} other {לדוגמה {example} עבור # מקומות עשרוניים}}"
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr "{decimals, plural, one {לדוגמה {0} עבור {decimals} מקום עשרוני} other {לדוגמה {1} עבור {decimals} מקומות עשרוניים}}"
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 msgid "{deletedCount, plural, one {Successfully deleted {deletedCount} job} other {Successfully deleted {deletedCount} jobs}}"
-msgstr "{deletedCount, plural, one {העבודה {deletedCount} הוסרה בהצלחה} two {העבודות {deletedCount} הוסרו בהצלחה} other {העבודות {deletedCount} הוסרו בהצלחה}}"
+msgstr "{deletedCount, plural, one {העבודה {deletedCount} הוסרה בהצלחה} two {העבודות {deletedCount} הוסרו בהצלחה} many {העבודות {deletedCount} הוסרו בהצלחה} other {העבודות {deletedCount} הוסרו בהצלחה}}"
 
 #. js-lingui-id: nRKZKb
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "{failedCount, plural, one {# workspace failed} other {# workspaces failed}}"
-msgstr "{failedCount, plural, one {# מרחב עבודה נכשל} two {# מרחבי עבודה נכשלו} other {# מרחבי עבודה נכשלו}}"
+msgstr "{failedCount, plural, one {# מרחב עבודה נכשל} two {# מרחבי עבודה נכשלו} many {# מרחבי עבודה נכשלו} other {# מרחבי עבודה נכשלו}}"
 
 #. js-lingui-id: POhzPf
 #: src/modules/ai/hooks/useAiChatFileUpload.ts
@@ -470,7 +480,7 @@ msgstr "העלאת {fileName} נדחתה"
 #. js-lingui-id: bv2QCV
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 msgid "{filterRulesCount, plural, one {{filterRulesCount} rule} other {{filterRulesCount} rules}}"
-msgstr "{filterRulesCount, plural, one {{filterRulesCount} כלל} two {{filterRulesCount} כללים} other {{filterRulesCount} כללים}}"
+msgstr "{filterRulesCount, plural, one {{filterRulesCount} כלל} two {{filterRulesCount} כללים} many {{filterRulesCount} כללים} other {{filterRulesCount} כללים}}"
 
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -485,7 +495,7 @@ msgstr "{formattedType} של {objectLabel}"
 #. js-lingui-id: YF/a2j
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
 msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted for {grantedBy} objects}}"
-msgstr "{grantedBy, plural, one {הוענק עבור אובייקט {grantedBy}} two {הוענק עבור אובייקטים {grantedBy}} other {הוענק עבור אובייקטים {grantedBy}}}"
+msgstr "{grantedBy, plural, one {הוענק עבור אובייקט {grantedBy}} two {הוענק עבור אובייקטים {grantedBy}} many {הוענק עבור אובייקטים {grantedBy}} other {הוענק עבור אובייקטים {grantedBy}}}"
 
 #. js-lingui-id: Ae2fyu
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -505,7 +515,7 @@ msgstr "{hiddenFieldCount, plural, one {# שדה מאוכלס נוסף זמין}
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{hours, plural, one {{hours} hour} other {{hours} hours}}"
-msgstr "{hours, plural, one {{hours} שעה} two {{hours} שעות} other {{hours} שעות}}"
+msgstr "{hours, plural, one {{hours} שעה} two {{hours} שעות} many {{hours} שעות} other {{hours} שעות}}"
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -515,22 +525,22 @@ msgstr "נשלחו {invitationCount} הזמנות"
 #. js-lingui-id: j9A2IB
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
 msgid "{jobCount, plural, one {Delete {jobCount} Job} other {Delete {jobCount} Jobs}}"
-msgstr "{jobCount, plural, one {מחק {jobCount} עבודה} two {מחק {jobCount} עבודות} other {מחק {jobCount} עבודות}}"
+msgstr "{jobCount, plural, one {מחק {jobCount} עבודה} two {מחק {jobCount} עבודות} many {מחק {jobCount} עבודות} other {מחק {jobCount} עבודות}}"
 
 #. js-lingui-id: 48w++B
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
 msgid "{jobCount, plural, one {Retry {jobCount} Job} other {Retry {jobCount} Jobs}}"
-msgstr "{jobCount, plural, one {הפעל מחדש {jobCount} עבודה} two {הפעל מחדש {jobCount} עבודות} other {הפעל מחדש {jobCount} עבודות}}"
+msgstr "{jobCount, plural, one {הפעל מחדש {jobCount} עבודה} two {הפעל מחדש {jobCount} עבודות} many {הפעל מחדש {jobCount} עבודות} other {הפעל מחדש {jobCount} עבודות}}"
 
 #. js-lingui-id: X78+Nn
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
 msgid "{jobCount, plural, one {This will permanently remove it from the queue. This action cannot be undone.} other {This will permanently remove them from the queue. This action cannot be undone.}}"
-msgstr "{jobCount, plural, one {זה יסיר אותה מהתור לצמיתות. פעולה זו לא ניתנת לביטול.} two {זה יסיר אותן מהתור לצמיתות. פעולה זו לא ניתנת לביטול.} other {זה יסיר אותן מהתור לצמיתות. פעולה זו לא ניתנת לביטול.}}"
+msgstr "{jobCount, plural, one {זה יסיר אותה מהתור לצמיתות. פעולה זו לא ניתנת לביטול.} two {זה יסיר אותן מהתור לצמיתות. פעולה זו לא ניתנת לביטול.} many {זה יסיר אותן מהתור לצמיתות. פעולה זו לא ניתנת לביטול.} other {זה יסיר אותן מהתור לצמיתות. פעולה זו לא ניתנת לביטול.}}"
 
 #. js-lingui-id: QJYN9L
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
-msgstr "{jobCount, plural, one {זה ינסה להפעיל מחדש את העבודה הנבחרת. היא תבוצע שוב מההתחלה.} two {זה ינסה להפעיל מחדש את העבודות הנבחרות. הן תבוצענה שוב מההתחלה.} other {זה ינסה להפעיל מחדש את העבודות הנבחרות. הן תבוצענה שוב מההתחלה.}}"
+msgstr "{jobCount, plural, one {זה ינסה להפעיל מחדש את העבודה הנבחרת. היא תבוצע שוב מההתחלה.} two {זה ינסה להפעיל מחדש את העבודות הנבחרות. הן תבוצענה שוב מההתחלה.} many {זה ינסה להפעיל מחדש את העבודות הנבחרות. הן תבוצענה שוב מההתחלה.} other {זה ינסה להפעיל מחדש את העבודות הנבחרות. הן תבוצענה שוב מההתחלה.}}"
 
 #. js-lingui-id: FdY/eP
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -540,7 +550,7 @@ msgstr "רשימת {label}"
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{memberCount, plural, one {{memberCount} member} other {{memberCount} members}}"
-msgstr "{memberCount, plural, one {{memberCount} חבר} two {{memberCount} חברים} other {{memberCount} חברים}}"
+msgstr "{memberCount, plural, one {{memberCount} חבר} two {{memberCount} חברים} many {{memberCount} חברים} other {{memberCount} חברים}}"
 
 #. js-lingui-id: Y32cMj
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages.tsx
@@ -556,7 +566,7 @@ msgstr "{morphRelationCount} אובייקטים"
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
-msgstr "{num, selectordinal, other {{num} ־ות}}"
+msgstr "{num, selectordinal, one {{num} ראשון} two {{num} שני} many {{num} ־ות} other {{num} ־ות}}"
 
 #. js-lingui-id: fTSz8d
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -594,12 +604,12 @@ msgstr ""
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "{retriedCount, plural, one {Successfully retried {retriedCount} job} other {Successfully retried {retriedCount} jobs}}"
-msgstr "{retriedCount, plural, one {העבודה {retriedCount} הופעלה מחדש בהצלחה} two {העבודות {retriedCount} הופעלו מחדש בהצלחה} other {העבודות {retriedCount} הופעלו מחדש בהצלחה}}"
+msgstr "{retriedCount, plural, one {העבודה {retriedCount} הופעלה מחדש בהצלחה} two {העבודות {retriedCount} הופעלו מחדש בהצלחה} many {העבודות {retriedCount} הופעלו מחדש בהצלחה} other {העבודות {retriedCount} הופעלו מחדש בהצלחה}}"
 
 #. js-lingui-id: hcRYEH
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
 msgid "{revokedBy, plural, one {Revoked for {revokedBy} object} other {Revoked for {revokedBy} objects}}"
-msgstr "{revokedBy, plural, one {בוטל עבור אובייקט {revokedBy}} two {בוטל עבור אובייקטים {revokedBy}} other {בוטל עבור אובייקטים {revokedBy}}}"
+msgstr "{revokedBy, plural, one {בוטל עבור אובייקט {revokedBy}} two {בוטל עבור אובייקטים {revokedBy}} many {בוטל עבור אובייקטים {revokedBy}} other {בוטל עבור אובייקטים {revokedBy}}}"
 
 #. js-lingui-id: OeIgEg
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
@@ -624,12 +634,12 @@ msgstr "{scopeCount} תחומי הרשאה"
 #. js-lingui-id: kvVMdH
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "{selectedCount, plural, one {Delete {selectedCount} Job} other {Delete {selectedCount} Jobs}}"
-msgstr "{selectedCount, plural, one {מחק {selectedCount} עבודה} two {מחק {selectedCount} עבודות} other {מחק {selectedCount} עבודות}}"
+msgstr "{selectedCount, plural, one {מחק {selectedCount} עבודה} two {מחק {selectedCount} עבודות} many {מחק {selectedCount} עבודות} other {מחק {selectedCount} עבודות}}"
 
 #. js-lingui-id: 1y0QK1
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "{selectedCount, plural, one {Retry {selectedCount} Job} other {Retry {selectedCount} Jobs}}"
-msgstr "{selectedCount, plural, one {הפעל מחדש {selectedCount} עבודה} two {הפעל מחדש {selectedCount} עבודות} other {הפעל מחדש {selectedCount} עבודות}}"
+msgstr "{selectedCount, plural, one {הפעל מחדש {selectedCount} עבודה} two {הפעל מחדש {selectedCount} עבודות} many {הפעל מחדש {selectedCount} עבודות} other {הפעל מחדש {selectedCount} עבודות}}"
 
 #. js-lingui-id: e5lBpY
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownSourceSelect.tsx
@@ -644,7 +654,7 @@ msgstr "השירות {serviceLabel} אינו נגיש"
 #. js-lingui-id: 8vJ+2V
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "{stepCount, plural, one {# step} other {# steps}}"
-msgstr "{stepCount, plural, one {# שלב} two {# שלבים} other {# שלבים}}"
+msgstr "{stepCount, plural, one {# שלב} two {# שלבים} many {# שלבים} other {# שלבים}}"
 
 #. js-lingui-id: Bzjg0/
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -664,42 +674,42 @@ msgstr "{totalFieldsCount} שדות גלויים"
 #. js-lingui-id: fzpQ2b
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Day} other {Days}}"
-msgstr "{unitCount, plural, one {יום} two {ימים} other {ימים}}"
+msgstr "{unitCount, plural, one {יום} two {ימים} many {ימים} other {ימים}}"
 
 #. js-lingui-id: D02E4w
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Hour} other {Hours}}"
-msgstr "{unitCount, plural, one {שעה} two {שעות} other {שעות}}"
+msgstr "{unitCount, plural, one {שעה} two {שעות} many {שעות} other {שעות}}"
 
 #. js-lingui-id: ywrpHp
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Minute} other {Minutes}}"
-msgstr "{unitCount, plural, one {דקה} two {דקות} other {דקות}}"
+msgstr "{unitCount, plural, one {דקה} two {דקות} many {דקות} other {דקות}}"
 
 #. js-lingui-id: GiWRiw
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Month} other {Months}}"
-msgstr "{unitCount, plural, one {חודש} two {חודשים} other {חודשים}}"
+msgstr "{unitCount, plural, one {חודש} two {חודשים} many {חודשים} other {חודשים}}"
 
 #. js-lingui-id: OlALtW
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Quarter} other {Quarters}}"
-msgstr "{unitCount, plural, one {רבעון} two {רבעונים} other {רבעונים}}"
+msgstr "{unitCount, plural, one {רבעון} two {רבעונים} many {רבעונים} other {רבעונים}}"
 
 #. js-lingui-id: 8qhX2K
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Second} other {Seconds}}"
-msgstr "{unitCount, plural, one {שנייה} two {שניות} other {שניות}}"
+msgstr "{unitCount, plural, one {שנייה} two {שניות} many {שניות} other {שניות}}"
 
 #. js-lingui-id: mRxyPD
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Week} other {Weeks}}"
-msgstr "{unitCount, plural, one {שבוע} two {שבועות} other {שבועות}}"
+msgstr "{unitCount, plural, one {שבוע} two {שבועות} many {שבועות} other {שבועות}}"
 
 #. js-lingui-id: J407xr
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Year} other {Years}}"
-msgstr "{unitCount, plural, one {שנה} two {שנים} other {שנים}}"
+msgstr "{unitCount, plural, one {שנה} two {שנים} many {שנים} other {שנים}}"
 
 #. js-lingui-id: YdwR4T
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -715,7 +725,7 @@ msgstr "{visibleFieldsCount} שדות גלויים"
 #. js-lingui-id: riMLMq
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
 msgid "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
-msgstr "{workflowRunIteratorSubStepIterationsCount, plural, one {# פריט} two {# פריטים} other {# פריטים}}"
+msgstr "{workflowRunIteratorSubStepIterationsCount, plural, one {# פריט} two {# פריטים} many {# פריטים} other {# פריטים}}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -4004,7 +4014,7 @@ msgstr "בדוק את ההרצות האחרונות של זרימת העבודה
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
 msgid "Check verification"
-msgstr "בדוק אימות"
+msgstr "<span dir=\"rtl\">בדוק אימות</span>"
 
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -8608,7 +8618,7 @@ msgstr "הוארך"
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Failed"
-msgstr "נכשל"
+msgstr "<span dir=\"rtl\">נכשל</span>"
 
 #. js-lingui-id: tKcbYd
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -10873,10 +10883,10 @@ msgstr "ביטוי כרון לא חוקי"
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "תבנית cron לא תקפה: {errorMessage}"
 
-#. js-lingui-id: CGivIJ
+#. js-lingui-id: jhbsV/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
-msgstr "ערך יום לא תקין \"{newDay}\". צריך להיות מספר שלם גדול מ-1"
+msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
+msgstr "ערך יום לא תקין '{newDay}'. צריך להיות מספר שלם גדול מ-1"
 
 #. js-lingui-id: u3hwhx
 #: src/modules/settings/domains/utils/getDomainValidationSchema.ts
@@ -10915,26 +10925,26 @@ msgstr "קישור אימות דוא\"ל לא תקין."
 msgid "Invalid file: {0}"
 msgstr "קובץ לא תקין: {0}"
 
-#. js-lingui-id: 1ccYjl
+#. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer between 0 and 23"
-msgstr "ערך שעה לא חוקי \"{newHour}\". צריך להיות שלם בין 0 ו-23"
+msgid "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
+msgstr "ערך שעה לא חוקי '{newHour}'. צריך להיות שלם בין 0 ו-23"
 
-#. js-lingui-id: e3cT9e
+#. js-lingui-id: fLMLtY
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer greater than 1"
-msgstr "ערך שעה לא חוקי \"{newHour}\". צריך להיות שלם גדול מ-1"
+msgid "Invalid hour value '{newHour}'. Should be integer greater than 1"
+msgstr "ערך שעה לא חוקי '{newHour}'. צריך להיות שלם גדול מ-1"
 
-#. js-lingui-id: jw4O7y
+#. js-lingui-id: +Yi3bs
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer between 0 and 59"
-msgstr "ערך דקה לא חוקי \"{newMinute}\". צריך להיות שלם בין 0 ל-59"
+msgid "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
+msgstr "ערך דקה לא חוקי '{newMinute}'. צריך להיות שלם בין 0 ל-59"
 
-#. js-lingui-id: SfvOlw
+#. js-lingui-id: 942L1w
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
-msgstr "ערך דקה לא חוקי \"{newMinute}\". צריך להיות שלם גדול מ-1"
+msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
+msgstr "ערך דקה לא חוקי '{newMinute}'. צריך להיות שלם גדול מ-1"
 
 #. js-lingui-id: WY8amq
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
@@ -15120,7 +15130,7 @@ msgstr "PDF"
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Pending"
-msgstr "ממתין"
+msgstr "<span dir=\"rtl\">ממתין</span>"
 
 #. js-lingui-id: PxBA+g
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
@@ -15572,7 +15582,7 @@ msgstr "מועדפות"
 #. js-lingui-id: 1hKEom
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 msgid "Priority"
-msgstr "עדיפות"
+msgstr "<span dir=\"rtl\">עדיפות</span>"
 
 #. js-lingui-id: k62X/2
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -18187,7 +18197,7 @@ msgstr "שדה יחיד עם פורמטים חכמים"
 #. js-lingui-id: 5v3IHX
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithSso.tsx
 msgid "Single sign-on (SSO)"
-msgstr "כניסה אחידה (SSO)"
+msgstr "כניסה אחידה <b>(</b>SSO)"
 
 #. js-lingui-id: maCaRp
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -18572,7 +18582,7 @@ msgstr "התחל את המנוי שלך"
 #. js-lingui-id: hTX65V
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
 msgid "Started verification process"
-msgstr "התחלת תהליך אימות"
+msgstr "<span dir=\"rtl\"><span dir=\"ltr\">התחלת תהליך אימות</span></span>"
 
 #. js-lingui-id: rCIXU9
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
@@ -19162,7 +19172,7 @@ msgstr "חבר צוות"
 #. js-lingui-id: lKXcJz
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Temporary Failure"
-msgstr "כשל זמני"
+msgstr "<span dir=\"rtl\"><span dir=\"ltr\">כשל זמני</span></span>"
 
 #. js-lingui-id: h0xgxg
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -20300,7 +20310,7 @@ msgstr "תקופת ניסיון"
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
 msgid "Trigger"
-msgstr "הפעל"
+msgstr "הפעל\",\"pluralForm\":null}]}]}{"
 
 #. js-lingui-id: SzG8Sm
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -20378,7 +20388,7 @@ msgstr "נסה עם דוא\"ל אחר"
 #. js-lingui-id: ouRvqq
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 msgid "TTL"
-msgstr "TTL"
+msgstr "<span dir=\"rtl\"><span dir=\"ltr\">TTL</span></span>"
 
 #. js-lingui-id: Kz91g/
 #: src/localization/hooks/useLocaleOptions.ts
@@ -21483,7 +21493,7 @@ msgstr "משתנים"
 #. js-lingui-id: QDEWii
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Verified"
-msgstr "מאומת"
+msgstr "<span dir=\"rtl\">מאומת</span>"
 
 #. js-lingui-id: uSMfoN
 #: src/utils/title-utils.ts

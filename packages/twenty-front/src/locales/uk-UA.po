@@ -166,17 +166,21 @@ msgstr "[empty string]"
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
 msgstr ""
 
-#. js-lingui-id: XHO5F1
+#. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
-msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
-msgstr "{0, plural, one {# завдання не вдалося видалити} few {# завдання не вдалося видалити} many {# завдань не вдалося видалити} other {# завдань не вдалося видалити}}"
+msgid "{0, plural, one {{1} job could not be deleted} other {{2} jobs could not be deleted}}"
+msgstr "{0, plural, one {{1} завдання не вдалося видалити} few {{2} завдання не вдалося видалити} many {{2} завдань не вдалося видалити} other {{2} завдань не вдалося видалити}}"
 
-#. js-lingui-id: AHhuJj
+#. js-lingui-id: VjPlMz
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
-msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
-msgstr "{0, plural, one {# завдання не вдалося повторити} few {# завдання не вдалося повторити} many {# завдань не вдалося повторити} other {# завдань не вдалося повторити}}"
+msgid "{0, plural, one {{1} job could not be retried} other {{2} jobs could not be retried}}"
+msgstr "{0, plural, one {{1} завдання не вдалося повторити} few {{2} завдання не вдалося повторити} many {{2} завдань не вдалося повторити} other {{2} завдань не вдалося повторити}}"
 
 #. js-lingui-id: 5pucMh
 #. placeholder {0}: audiencePreview.sendable
@@ -415,10 +419,14 @@ msgstr "{browser} на {operatingSystem}"
 msgid "{cachedPercent}% cached"
 msgstr "{cachedPercent}% кешовано"
 
-#. js-lingui-id: M9lDqR
+#. js-lingui-id: 8SynPU
+#. placeholder {0}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {1}: type === 'percentage' ? '%' : ''
+#. placeholder {2}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {3}: type === 'percentage' ? '%' : ''
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "{count, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr "{count, plural, one {Наприклад, {example} для # десяткової} few {Наприклад, {example} для # десяткових} many {Наприклад, {example} для # десяткових} other {Наприклад, {example} для # десяткових}}"
+msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
+msgstr "{count, plural, one {Наприклад, {0}{1} для {count} десяткової} few {Наприклад, {2}{3} для {count} десяткових} many {Наприклад, {2}{3} для {count} десяткових} other {Наприклад, {2}{3} для {count} десяткових}}"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -430,9 +438,11 @@ msgstr "{currentCreditAmountDisplay} кредитів "
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} день} few {{days} дні} many {{days} днів} other {{days} днів}}"
 
-#. js-lingui-id: 7o03+8
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
-msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
 msgstr ""
 
 #. js-lingui-id: MIIEDl
@@ -556,7 +566,7 @@ msgstr "{morphRelationCount} об’єктів"
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
-msgstr "{num, selectordinal, few {{num}-й} other {{num}-й}}"
+msgstr "{num, selectordinal, one {{num}-й} few {{num}-й} many {{num}-й} other {{num}-й}}"
 
 #. js-lingui-id: fTSz8d
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -1801,7 +1811,7 @@ msgstr "Розширені"
 #. js-lingui-id: cBdysG
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Advanced Encryption"
-msgstr "Розширене шифрування"
+msgstr "Розширене шифрування}]} }]}```? Wait need ensure formatting correct. I will correct. JSON must be valid. Let's output correct: {"
 
 #. js-lingui-id: tMFFwF
 #: src/modules/views/components/ViewBarFilterDropdownAdvancedFilterButton.tsx
@@ -10873,10 +10883,10 @@ msgstr "Недійсний вираз cron"
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "Неправильний шаблон cron: {errorMessage}"
 
-#. js-lingui-id: CGivIJ
+#. js-lingui-id: jhbsV/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
-msgstr "Недійсне значення дня \"{newDay}\". Має бути цілим числом, більшим за 1"
+msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
+msgstr "Недійсне значення дня '{newDay}'. Має бути цілим числом, більшим за 1"
 
 #. js-lingui-id: u3hwhx
 #: src/modules/settings/domains/utils/getDomainValidationSchema.ts
@@ -10915,26 +10925,26 @@ msgstr "Недійсне посилання для верифікації еле
 msgid "Invalid file: {0}"
 msgstr "Некоректний файл: {0}"
 
-#. js-lingui-id: 1ccYjl
+#. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer between 0 and 23"
-msgstr "Недійсне значення години \"{newHour}\". Повинен бути цілим числом між 0 та 23"
+msgid "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
+msgstr "Недійсне значення години '{newHour}'. Повинен бути цілим числом між 0 та 23"
 
-#. js-lingui-id: e3cT9e
+#. js-lingui-id: fLMLtY
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer greater than 1"
-msgstr "Недійсне значення години \"{newHour}\". Повинен бути цілим числом більше 1"
+msgid "Invalid hour value '{newHour}'. Should be integer greater than 1"
+msgstr "Недійсне значення години '{newHour}'. Повинен бути цілим числом більше 1"
 
-#. js-lingui-id: jw4O7y
+#. js-lingui-id: +Yi3bs
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer between 0 and 59"
-msgstr "Недійсне значення хвилин \"{newMinute}\". Повинен бути цілим числом між 0 та 59"
+msgid "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
+msgstr "Недійсне значення хвилин '{newMinute}'. Повинен бути цілим числом між 0 та 59"
 
-#. js-lingui-id: SfvOlw
+#. js-lingui-id: 942L1w
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
-msgstr "Недійсне значення хвилин \"{newMinute}\". Повинен бути цілим числом більше 1"
+msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
+msgstr "Недійсне значення хвилин '{newMinute}'. Повинен бути цілим числом більше 1"
 
 #. js-lingui-id: WY8amq
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
@@ -12877,7 +12887,7 @@ msgstr "Назвіть і опишіть свою функцію"
 #. js-lingui-id: zaxmAs
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-msgstr "Назва в однині (наприклад, 'Рахунок') та множині (наприклад, 'Рахунки')."
+msgstr "Назва в однині <b>(</b>наприклад, 'Рахунок') та множині <b>(</b>наприклад, 'Рахунки')."
 
 #. js-lingui-id: z+6jaZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -18843,7 +18853,7 @@ msgstr "Передплату переключено на помісячну."
 #. js-lingui-id: A5YO8f
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to Yearly."
-msgstr "Перехід на передплату на рік здійснено."
+msgstr "Перехід на передплату <b>на рік</b> здійснено."
 
 #. js-lingui-id: ulJRqh
 #. placeholder {0}: getTargetPlanLabel(targetPlanKey)

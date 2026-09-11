@@ -166,17 +166,21 @@ msgstr ""
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
 msgstr ""
 
-#. js-lingui-id: XHO5F1
+#. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
-msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
-msgstr "{0, plural, other {# công việc không thể xóa}}"
+msgid "{0, plural, one {{1} job could not be deleted} other {{2} jobs could not be deleted}}"
+msgstr "{0, plural, other {{2} công việc không thể xóa}}"
 
-#. js-lingui-id: AHhuJj
+#. js-lingui-id: VjPlMz
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
-msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
-msgstr "{0, plural, other {# công việc không thể thử lại}}"
+msgid "{0, plural, one {{1} job could not be retried} other {{2} jobs could not be retried}}"
+msgstr "{0, plural, other {{2} công việc không thể thử lại}}"
 
 #. js-lingui-id: 5pucMh
 #. placeholder {0}: audiencePreview.sendable
@@ -190,13 +194,13 @@ msgstr ""
 #. placeholder {0}: Math.abs(days)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} day} other {{days} days}}"
-msgstr "{0, plural, other {{days} ngày}}"
+msgstr "{0, plural, one {{days} ngày} other {{days} ngày}}"
 
 #. js-lingui-id: dXYycw
 #. placeholder {0}: Math.abs(years)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} year} other {{years} years}}"
-msgstr "{0, plural, other {{years} năm}}"
+msgstr "{0, plural, one {{years} năm} other {{years} năm}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -209,7 +213,7 @@ msgstr "{0, plural, other {# Đối tượng}}"
 #. placeholder {0}: failedCount + behindCount
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 msgid "{0, plural, one {# workspace failed or behind} other {# workspaces failed or behind}}"
-msgstr "{0, plural, other {# không gian làm việc bị lỗi hoặc tụt lại}}"
+msgstr "{0, plural, one {# không gian làm việc bị lỗi hoặc tụt lại} other {# không gian làm việc bị lỗi hoặc tụt lại}}"
 
 #. js-lingui-id: V5p/Lu
 #. placeholder {0}: canceled.canceledMessageCount
@@ -367,7 +371,7 @@ msgstr "{advancedFilterCount, plural, other {{advancedFilterCount} quy tắc nâ
 #. js-lingui-id: XWd9bY
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}}"
-msgstr "{agentCount, plural, other {{agentCount} nhân viên}}"
+msgstr "{agentCount, plural, one {{agentCount} nhân viên} other {{agentCount} nhân viên}}"
 
 #. js-lingui-id: WGnqk6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -387,7 +391,7 @@ msgstr "{aggregateLabel} của {fieldLabel}"
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
-msgstr "{apiKeyCount, plural, other {{apiKeyCount} khóa API}}"
+msgstr "{apiKeyCount, plural, one {{apiKeyCount} khóa API} other {{apiKeyCount} khóa API}}"
 
 #. js-lingui-id: u1mVnV
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
@@ -403,7 +407,7 @@ msgstr "{appName} muốn:"
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "{behindCount, plural, one {# workspace behind} other {# workspaces behind}}"
-msgstr "{behindCount, plural, other {# không gian làm việc tụt lại}}"
+msgstr "{behindCount, plural, one {# không gian làm việc tụt lại} other {# không gian làm việc tụt lại}}"
 
 #. js-lingui-id: SWRSbi
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
@@ -415,10 +419,14 @@ msgstr "{browser} trên {operatingSystem}"
 msgid "{cachedPercent}% cached"
 msgstr "{cachedPercent}% đã được lưu vào bộ nhớ đệm"
 
-#. js-lingui-id: M9lDqR
+#. js-lingui-id: 8SynPU
+#. placeholder {0}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {1}: type === 'percentage' ? '%' : ''
+#. placeholder {2}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {3}: type === 'percentage' ? '%' : ''
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "{count, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr "{count, plural, other {Ví dụ: {example} cho # chữ số thập phân}}"
+msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
+msgstr "{count, plural, other {Ví dụ: {2}{3} cho {count} chữ số thập phân}}"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -430,10 +438,12 @@ msgstr "{currentCreditAmountDisplay} tín dụng "
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, other {{days} ngày}}"
 
-#. js-lingui-id: 7o03+8
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
-msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr "{decimals, plural, other {Ví dụ {example} cho # chữ số thập phân}}"
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr "{decimals, plural, one {Ví dụ {0} cho {decimals} chữ số thập phân} other {Ví dụ {1} cho {decimals} chữ số thập phân}}"
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -445,7 +455,7 @@ msgstr "{deletedCount, plural, other {Đã xóa thành công {deletedCount} côn
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "{failedCount, plural, one {# workspace failed} other {# workspaces failed}}"
-msgstr "{failedCount, plural, other {# không gian làm việc bị lỗi}}"
+msgstr "{failedCount, plural, one {# không gian làm việc bị lỗi} other {# không gian làm việc bị lỗi}}"
 
 #. js-lingui-id: POhzPf
 #: src/modules/ai/hooks/useAiChatFileUpload.ts
@@ -540,7 +550,7 @@ msgstr "Danh sách {label}"
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{memberCount, plural, one {{memberCount} member} other {{memberCount} members}}"
-msgstr "{memberCount, plural, other {{memberCount} thành viên}}"
+msgstr "{memberCount, plural, one {{memberCount} thành viên} other {{memberCount} thành viên}}"
 
 #. js-lingui-id: Y32cMj
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages.tsx
@@ -644,7 +654,7 @@ msgstr "Không thể truy cập dịch vụ {serviceLabel}"
 #. js-lingui-id: 8vJ+2V
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "{stepCount, plural, one {# step} other {# steps}}"
-msgstr "{stepCount, plural, other {# bước}}"
+msgstr "{stepCount, plural, one {# bước} other {# bước}}"
 
 #. js-lingui-id: Bzjg0/
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -664,42 +674,42 @@ msgstr "{totalFieldsCount} trường hiển thị"
 #. js-lingui-id: fzpQ2b
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Day} other {Days}}"
-msgstr "{unitCount, plural, other {Ngày}}"
+msgstr "{unitCount, plural, one {Ngày} other {Ngày}}"
 
 #. js-lingui-id: D02E4w
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Hour} other {Hours}}"
-msgstr "{unitCount, plural, other {Giờ}}"
+msgstr "{unitCount, plural, one {Giờ} other {Giờ}}"
 
 #. js-lingui-id: ywrpHp
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Minute} other {Minutes}}"
-msgstr "{unitCount, plural, other {Phút}}"
+msgstr "{unitCount, plural, one {Phút} other {Phút}}"
 
 #. js-lingui-id: GiWRiw
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Month} other {Months}}"
-msgstr "{unitCount, plural, other {Tháng}}"
+msgstr "{unitCount, plural, one {Tháng} other {Tháng}}"
 
 #. js-lingui-id: OlALtW
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Quarter} other {Quarters}}"
-msgstr "{unitCount, plural, other {Quý}}"
+msgstr "{unitCount, plural, one {Quý} other {Quý}}"
 
 #. js-lingui-id: 8qhX2K
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Second} other {Seconds}}"
-msgstr "{unitCount, plural, other {Giây}}"
+msgstr "{unitCount, plural, one {Giây} other {Giây}}"
 
 #. js-lingui-id: mRxyPD
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Week} other {Weeks}}"
-msgstr "{unitCount, plural, other {Tuần}}"
+msgstr "{unitCount, plural, one {Tuần} other {Tuần}}"
 
 #. js-lingui-id: J407xr
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Year} other {Years}}"
-msgstr "{unitCount, plural, other {Năm}}"
+msgstr "{unitCount, plural, one {Năm} other {Năm}}"
 
 #. js-lingui-id: YdwR4T
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -10873,10 +10883,10 @@ msgstr "Biểu thức cron không hợp lệ"
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "Mẫu cron không hợp lệ: {errorMessage}"
 
-#. js-lingui-id: CGivIJ
+#. js-lingui-id: jhbsV/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
-msgstr "Giá trị ngày \"{newDay}\" không hợp lệ. Phải là số nguyên lớn hơn 1"
+msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
+msgstr "Giá trị ngày '{newDay}' không hợp lệ. Phải là số nguyên lớn hơn 1"
 
 #. js-lingui-id: u3hwhx
 #: src/modules/settings/domains/utils/getDomainValidationSchema.ts
@@ -10915,26 +10925,26 @@ msgstr "Liên kết xác minh email không hợp lệ."
 msgid "Invalid file: {0}"
 msgstr "Tệp không hợp lệ: {0}"
 
-#. js-lingui-id: 1ccYjl
+#. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer between 0 and 23"
-msgstr "Giá trị giờ \"{newHour}\" không hợp lệ. Phải là số nguyên từ 0 đến 23"
+msgid "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
+msgstr "Giá trị giờ '{newHour}' không hợp lệ. Phải là số nguyên từ 0 đến 23"
 
-#. js-lingui-id: e3cT9e
+#. js-lingui-id: fLMLtY
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer greater than 1"
-msgstr "Giá trị giờ \"{newHour}\" không hợp lệ. Phải là số nguyên lớn hơn 1"
+msgid "Invalid hour value '{newHour}'. Should be integer greater than 1"
+msgstr "Giá trị giờ '{newHour}' không hợp lệ. Phải là số nguyên lớn hơn 1"
 
-#. js-lingui-id: jw4O7y
+#. js-lingui-id: +Yi3bs
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer between 0 and 59"
-msgstr "Giá trị phút \"{newMinute}\" không hợp lệ. Phải là số nguyên từ 0 đến 59"
+msgid "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
+msgstr "Giá trị phút '{newMinute}' không hợp lệ. Phải là số nguyên từ 0 đến 59"
 
-#. js-lingui-id: SfvOlw
+#. js-lingui-id: 942L1w
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
-msgstr "Giá trị phút \"{newMinute}\" không hợp lệ. Phải là số nguyên lớn hơn 1"
+msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
+msgstr "Giá trị phút '{newMinute}' không hợp lệ. Phải là số nguyên lớn hơn 1"
 
 #. js-lingui-id: WY8amq
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx

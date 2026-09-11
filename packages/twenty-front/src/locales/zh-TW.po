@@ -166,17 +166,21 @@ msgstr "[空字串]"
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
 msgstr ""
 
-#. js-lingui-id: XHO5F1
+#. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
-msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
-msgstr "{0, plural, other {# 個工作無法刪除}}"
+msgid "{0, plural, one {{1} job could not be deleted} other {{2} jobs could not be deleted}}"
+msgstr "{0, plural, other {{2} 個工作無法刪除}}"
 
-#. js-lingui-id: AHhuJj
+#. js-lingui-id: VjPlMz
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
-msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
-msgstr "{0, plural, other {# 個工作無法重試}}"
+msgid "{0, plural, one {{1} job could not be retried} other {{2} jobs could not be retried}}"
+msgstr "{0, plural, other {{2} 個工作無法重試}}"
 
 #. js-lingui-id: 5pucMh
 #. placeholder {0}: audiencePreview.sendable
@@ -367,7 +371,7 @@ msgstr "{advancedFilterCount, plural, other {{advancedFilterCount} 條進階規�
 #. js-lingui-id: XWd9bY
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}}"
-msgstr "{agentCount, plural, other {{agentCount} 位客服人員}}"
+msgstr "{agentCount, plural, one {{agentCount} 位客服人員} other {{agentCount} 位客服人員}}"
 
 #. js-lingui-id: WGnqk6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -387,7 +391,7 @@ msgstr "{aggregateLabel} 的 {fieldLabel}"
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
-msgstr "{apiKeyCount, plural, other {{apiKeyCount} 個 API 金鑰}}"
+msgstr "{apiKeyCount, plural, one {{apiKeyCount} 個 API 金鑰} other {{apiKeyCount} 個 API 金鑰}}"
 
 #. js-lingui-id: u1mVnV
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
@@ -415,10 +419,14 @@ msgstr "{operatingSystem} 上的 {browser}"
 msgid "{cachedPercent}% cached"
 msgstr "{cachedPercent}% 已快取"
 
-#. js-lingui-id: M9lDqR
+#. js-lingui-id: 8SynPU
+#. placeholder {0}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {1}: type === 'percentage' ? '%' : ''
+#. placeholder {2}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {3}: type === 'percentage' ? '%' : ''
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "{count, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr "{count, plural, other {例如 {example} 用於 # 位小數}}"
+msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
+msgstr "{count, plural, other {例如 {2}{3} 用於 {count} 位小數}}"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -430,10 +438,12 @@ msgstr "{currentCreditAmountDisplay} 積分 "
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, other {{days} 天}}"
 
-#. js-lingui-id: 7o03+8
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
-msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr "{decimals, plural, other {例如 {example}，用於 # 位小數}}"
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr "{decimals, plural, one {例如 {0}，用於 {decimals} 位小數} other {例如 {1}，用於 {decimals} 位小數}}"
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -540,7 +550,7 @@ msgstr "{label} 清單"
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{memberCount, plural, one {{memberCount} member} other {{memberCount} members}}"
-msgstr "{memberCount, plural, other {{memberCount} 位成員}}"
+msgstr "{memberCount, plural, one {{memberCount} 位成員} other {{memberCount} 位成員}}"
 
 #. js-lingui-id: Y32cMj
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages.tsx
@@ -10850,9 +10860,9 @@ msgstr "無效的排程表達式"
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "無效的 cron 格式：{errorMessage}"
 
-#. js-lingui-id: CGivIJ
+#. js-lingui-id: jhbsV/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
+msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
 msgstr "無效的日值「{newDay}」。應為大於 1 的整數"
 
 #. js-lingui-id: u3hwhx
@@ -10892,26 +10902,26 @@ msgstr "無效的電子郵件驗證鏈接。"
 msgid "Invalid file: {0}"
 msgstr "無效的檔案：{0}"
 
-#. js-lingui-id: 1ccYjl
+#. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer between 0 and 23"
-msgstr "小時值「{newHour}」無效。應為0到23之間的整數"
+msgid "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
+msgstr "小時值無效。應為0到23之間的整數"
 
-#. js-lingui-id: e3cT9e
+#. js-lingui-id: fLMLtY
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer greater than 1"
-msgstr "小時值「{newHour}」無效。應為大於1的整數"
+msgid "Invalid hour value '{newHour}'. Should be integer greater than 1"
+msgstr "小時值無效。應為大於1的整數"
 
-#. js-lingui-id: jw4O7y
+#. js-lingui-id: +Yi3bs
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer between 0 and 59"
-msgstr "分鐘值「{newMinute}」無效。應為0到59之間的整數"
+msgid "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
+msgstr "分鐘值無效。應為0到59之間的整數"
 
-#. js-lingui-id: SfvOlw
+#. js-lingui-id: 942L1w
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
-msgstr "分鐘值「{newMinute}」無效。應為大於1的整數"
+msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
+msgstr "分鐘值無效。應為大於1的整數"
 
 #. js-lingui-id: WY8amq
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx

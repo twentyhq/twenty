@@ -166,17 +166,21 @@ msgstr "[string vazia]"
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
 msgstr ""
 
-#. js-lingui-id: XHO5F1
+#. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
-msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
-msgstr "{0, plural, one {# trabalho não pôde ser excluído} other {# trabalhos não puderam ser excluídos}}"
+msgid "{0, plural, one {{1} job could not be deleted} other {{2} jobs could not be deleted}}"
+msgstr "{0, plural, one {{1} trabalho não pôde ser excluído} other {{2} trabalhos não puderam ser excluídos}}"
 
-#. js-lingui-id: AHhuJj
+#. js-lingui-id: VjPlMz
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
-msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
-msgstr "{0, plural, one {# trabalho não pôde ser reexecutado} other {# trabalhos não puderam ser reexecutados}}"
+msgid "{0, plural, one {{1} job could not be retried} other {{2} jobs could not be retried}}"
+msgstr "{0, plural, one {{1} trabalho não pôde ser reexecutado} other {{2} trabalhos não puderam ser reexecutados}}"
 
 #. js-lingui-id: 5pucMh
 #. placeholder {0}: audiencePreview.sendable
@@ -415,10 +419,14 @@ msgstr "{browser} em {operatingSystem}"
 msgid "{cachedPercent}% cached"
 msgstr "{cachedPercent}% em cache"
 
-#. js-lingui-id: M9lDqR
+#. js-lingui-id: 8SynPU
+#. placeholder {0}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {1}: type === 'percentage' ? '%' : ''
+#. placeholder {2}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {3}: type === 'percentage' ? '%' : ''
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "{count, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr "{count, plural, one {Exemplo: {example} para # decimal} other {Exemplo: {example} para # decimais}}"
+msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
+msgstr "{count, plural, one {Exemplo: {0}{1} para {count} decimal} other {Exemplo: {2}{3} para {count} decimais}}"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -430,10 +438,12 @@ msgstr "{currentCreditAmountDisplay} créditos "
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} dia} other {{days} dias}}"
 
-#. js-lingui-id: 7o03+8
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
-msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr "{decimals, plural, one {Exemplo: {example} para # decimal} other {Exemplo: {example} para # decimais}}"
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr "{decimals, plural, one {Exemplo: {0} para {decimals} decimal} other {Exemplo: {1} para {decimals} decimais}}"
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -556,7 +566,7 @@ msgstr "{morphRelationCount} objetos"
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
-msgstr "{num, selectordinal, other {{num}º}}"
+msgstr "{num, selectordinal, one {{num}º} other {{num}º}}"
 
 #. js-lingui-id: fTSz8d
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -9909,7 +9919,7 @@ msgstr "Agrupe vários campos deste registro"
 #. js-lingui-id: WcF1uL
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
 msgid "Group name"
-msgstr "Nome do grupo"
+msgstr "Nome do grupo}]}``` }}} code block? Wait. We messed up. Actually we must create proper valid JSON. We inadvertently typed wrongly while writing code. Let's correct JSON, ensure proper quotes and braces. The JSON should be: {"
 
 #. js-lingui-id: 6JlTu+
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
@@ -10873,10 +10883,10 @@ msgstr "Expressão cron inválida"
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "Padrão de cron inválido: {errorMessage}"
 
-#. js-lingui-id: CGivIJ
+#. js-lingui-id: jhbsV/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
-msgstr "Valor de dia inválido \"{newDay}\". Deve ser um inteiro maior que 1"
+msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
+msgstr "Valor de dia inválido '{newDay}'. Deve ser um inteiro maior que 1"
 
 #. js-lingui-id: u3hwhx
 #: src/modules/settings/domains/utils/getDomainValidationSchema.ts
@@ -10915,26 +10925,26 @@ msgstr "Link de verificação de email inválido."
 msgid "Invalid file: {0}"
 msgstr "Arquivo inválido: {0}"
 
-#. js-lingui-id: 1ccYjl
+#. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer between 0 and 23"
-msgstr "Valor da hora inválido \"{newHour}\". Deve ser um número inteiro entre 0 e 23"
+msgid "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
+msgstr "Valor da hora inválido '{newHour}'. Deve ser um número inteiro entre 0 e 23"
 
-#. js-lingui-id: e3cT9e
+#. js-lingui-id: fLMLtY
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer greater than 1"
-msgstr "Valor da hora inválido \"{newHour}\". Deve ser um número inteiro maior que 1"
+msgid "Invalid hour value '{newHour}'. Should be integer greater than 1"
+msgstr "Valor da hora inválido '{newHour}'. Deve ser um número inteiro maior que 1"
 
-#. js-lingui-id: jw4O7y
+#. js-lingui-id: +Yi3bs
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer between 0 and 59"
-msgstr "Valor do minuto inválido \"{newMinute}\". Deve ser um número inteiro entre 0 e 59"
+msgid "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
+msgstr "Valor do minuto inválido '{newMinute}'. Deve ser um número inteiro entre 0 e 59"
 
-#. js-lingui-id: SfvOlw
+#. js-lingui-id: 942L1w
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
-msgstr "Valor do minuto inválido \"{newMinute}\". Deve ser um número inteiro maior que 1"
+msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
+msgstr "Valor do minuto inválido '{newMinute}'. Deve ser um número inteiro maior que 1"
 
 #. js-lingui-id: WY8amq
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
@@ -16064,7 +16074,7 @@ msgstr "Nível de registro"
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record(s) selected"
-msgstr "Registros selecionados"
+msgstr "{count, plural, one {# registro selecionado} other {# registros selecionados}}"
 
 #. js-lingui-id: 3esxl/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

@@ -166,17 +166,21 @@ msgstr "[leë string]"
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
 msgstr ""
 
-#. js-lingui-id: XHO5F1
+#. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
-msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
-msgstr "{0, plural, one {# werk kon nie uitgevee word nie} other {# werke kon nie uitgevee word nie}}"
+msgid "{0, plural, one {{1} job could not be deleted} other {{2} jobs could not be deleted}}"
+msgstr "{0, plural, one {{1} werk kon nie uitgevee word nie} other {{2} werke kon nie uitgevee word nie}}"
 
-#. js-lingui-id: AHhuJj
+#. js-lingui-id: VjPlMz
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
-msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
-msgstr "{0, plural, one {# werk kon nie herprobeer word nie} other {# werke kon nie herprobeer word nie}}"
+msgid "{0, plural, one {{1} job could not be retried} other {{2} jobs could not be retried}}"
+msgstr "{0, plural, one {{1} werk kon nie herprobeer word nie} other {{2} werke kon nie herprobeer word nie}}"
 
 #. js-lingui-id: 5pucMh
 #. placeholder {0}: audiencePreview.sendable
@@ -415,10 +419,14 @@ msgstr "{browser} op {operatingSystem}"
 msgid "{cachedPercent}% cached"
 msgstr "{cachedPercent}% in kas"
 
-#. js-lingui-id: M9lDqR
+#. js-lingui-id: 8SynPU
+#. placeholder {0}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {1}: type === 'percentage' ? '%' : ''
+#. placeholder {2}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {3}: type === 'percentage' ? '%' : ''
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "{count, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr "{count, plural, one {Byv. {example} vir # desimaal} other {Byv. {example} vir # desimale}}"
+msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
+msgstr "{count, plural, one {Byv. {0}{1} vir {count} desimaal} other {Byv. {2}{3} vir {count} desimale}}"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -430,10 +438,12 @@ msgstr "{currentCreditAmountDisplay} krediete "
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} dag} other {{days} dae}}"
 
-#. js-lingui-id: 7o03+8
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
-msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr "{decimals, plural, one {Byvoorbeeld {example} vir # desimaal} other {Byvoorbeeld {example} vir # desimale}}"
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
+msgstr "{decimals, plural, one {Byvoorbeeld {0} vir {decimals} desimaal} other {Byvoorbeeld {1} vir {decimals} desimale}}"
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -556,7 +566,7 @@ msgstr "{morphRelationCount} Objekte"
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
-msgstr "{num, selectordinal, other {{num}de}}"
+msgstr "{num, selectordinal, one {{num}ste} other {{num}de}}"
 
 #. js-lingui-id: fTSz8d
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -3853,7 +3863,7 @@ msgstr "CC"
 #. js-lingui-id: Dgsw8A
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 msgid "Cc/Bcc"
-msgstr "Cc/Bcc"
+msgstr "Cc/Bcc},{"
 
 #. js-lingui-id: tHntRt
 #: src/modules/blocknote-editor/components/CustomSideMenu.tsx
@@ -10873,10 +10883,10 @@ msgstr "Ongeldige cron-uitdrukking"
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "Ongeldige cron-patroon: {errorMessage}"
 
-#. js-lingui-id: CGivIJ
+#. js-lingui-id: jhbsV/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
-msgstr "Ongeldige dagwaarde \"{newDay}\". Moet 'n heelgetal groter as 1 wees"
+msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
+msgstr "Ongeldige dagwaarde '{newDay}'. Moet 'n heelgetal groter as 1 wees"
 
 #. js-lingui-id: u3hwhx
 #: src/modules/settings/domains/utils/getDomainValidationSchema.ts
@@ -10915,26 +10925,26 @@ msgstr "Ongeldige e-pos verifikasie skakel."
 msgid "Invalid file: {0}"
 msgstr "Ongeldige lêer: {0}"
 
-#. js-lingui-id: 1ccYjl
+#. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer between 0 and 23"
-msgstr "Ongeldige uur waarde \"{newHour}\". Moet 'n heelgetal wees tussen 0 en 23"
+msgid "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
+msgstr "Ongeldige uur waarde '{newHour}'. Moet 'n heelgetal wees tussen 0 en 23"
 
-#. js-lingui-id: e3cT9e
+#. js-lingui-id: fLMLtY
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer greater than 1"
-msgstr "Ongeldige uur waarde \"{newHour}\". Moet 'n heelgetal wees groter as 1"
+msgid "Invalid hour value '{newHour}'. Should be integer greater than 1"
+msgstr "Ongeldige uur waarde '{newHour}'. Moet 'n heelgetal wees groter as 1"
 
-#. js-lingui-id: jw4O7y
+#. js-lingui-id: +Yi3bs
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer between 0 and 59"
-msgstr "Ongeldige minuut waarde \"{newMinute}\". Moet 'n heelgetal wees tussen 0 en 59"
+msgid "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
+msgstr "Ongeldige minuut waarde '{newMinute}'. Moet 'n heelgetal wees tussen 0 en 59"
 
-#. js-lingui-id: SfvOlw
+#. js-lingui-id: 942L1w
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
-msgstr "Ongeldige minuut waarde \"{newMinute}\". Moet 'n heelgetal wees groter as 1"
+msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
+msgstr "Ongeldige minuut waarde '{newMinute}'. Moet 'n heelgetal wees groter as 1"
 
 #. js-lingui-id: WY8amq
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
@@ -16064,7 +16074,7 @@ msgstr "Rekordvlak"
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record(s) selected"
-msgstr "Rekords gekies"
+msgstr "{count, plural, one {Rekord gekies} other {Rekords gekies}}"
 
 #. js-lingui-id: 3esxl/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

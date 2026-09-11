@@ -166,17 +166,21 @@ msgstr "[空字符串]"
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
 msgstr ""
 
-#. js-lingui-id: XHO5F1
+#. js-lingui-id: Z2fCN4
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
-msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
-msgstr "{0, plural, other {# 个任务无法删除}}"
+msgid "{0, plural, one {{1} job could not be deleted} other {{2} jobs could not be deleted}}"
+msgstr "{0, plural, other {{2} 个任务无法删除}}"
 
-#. js-lingui-id: AHhuJj
+#. js-lingui-id: VjPlMz
 #. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
-msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
-msgstr "{0, plural, other {# 个任务无法重试}}"
+msgid "{0, plural, one {{1} job could not be retried} other {{2} jobs could not be retried}}"
+msgstr "{0, plural, other {{2} 个任务无法重试}}"
 
 #. js-lingui-id: 5pucMh
 #. placeholder {0}: audiencePreview.sendable
@@ -190,13 +194,13 @@ msgstr ""
 #. placeholder {0}: Math.abs(days)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} day} other {{days} days}}"
-msgstr "{0, plural, other {{days} 天}}"
+msgstr "{0, plural, one {{days} 天} other {{days} 天}}"
 
 #. js-lingui-id: dXYycw
 #. placeholder {0}: Math.abs(years)
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} year} other {{years} years}}"
-msgstr "{0, plural, other {{years} 年}}"
+msgstr "{0, plural, one {{years} 年} other {{years} 年}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -209,7 +213,7 @@ msgstr "{0, plural, other {# 个对象}}"
 #. placeholder {0}: failedCount + behindCount
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 msgid "{0, plural, one {# workspace failed or behind} other {# workspaces failed or behind}}"
-msgstr "{0, plural, other {# 个工作区失败或落后}}"
+msgstr "{0, plural, one {# 个工作区失败或落后} other {# 个工作区失败或落后}}"
 
 #. js-lingui-id: V5p/Lu
 #. placeholder {0}: canceled.canceledMessageCount
@@ -367,7 +371,7 @@ msgstr "{advancedFilterCount, plural, other {{advancedFilterCount} 个高级规�
 #. js-lingui-id: XWd9bY
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}}"
-msgstr "{agentCount, plural, other {{agentCount} 名坐席}}"
+msgstr "{agentCount, plural, one {{agentCount} 名坐席} other {{agentCount} 名坐席}}"
 
 #. js-lingui-id: WGnqk6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -387,7 +391,7 @@ msgstr "{aggregateLabel} 的 {fieldLabel}"
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
-msgstr "{apiKeyCount, plural, other {{apiKeyCount} 个 API 密钥}}"
+msgstr "{apiKeyCount, plural, one {{apiKeyCount} 个 API 密钥} other {{apiKeyCount} 个 API 密钥}}"
 
 #. js-lingui-id: u1mVnV
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
@@ -403,7 +407,7 @@ msgstr "{appName} 请求执行以下操作："
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "{behindCount, plural, one {# workspace behind} other {# workspaces behind}}"
-msgstr "{behindCount, plural, other {# 个工作区落后}}"
+msgstr "{behindCount, plural, one {# 个工作区落后} other {# 个工作区落后}}"
 
 #. js-lingui-id: SWRSbi
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
@@ -415,9 +419,13 @@ msgstr "{operatingSystem} 上的 {browser}"
 msgid "{cachedPercent}% cached"
 msgstr "{cachedPercent}% 已缓存"
 
-#. js-lingui-id: M9lDqR
+#. js-lingui-id: 8SynPU
+#. placeholder {0}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {1}: type === 'percentage' ? '%' : ''
+#. placeholder {2}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {3}: type === 'percentage' ? '%' : ''
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "{count, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
+msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
 msgstr ""
 
 #. js-lingui-id: LZWC7x
@@ -430,9 +438,11 @@ msgstr "{currentCreditAmountDisplay} 积分 "
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, other {{days} 天}}"
 
-#. js-lingui-id: 7o03+8
+#. js-lingui-id: 0KwX9P
+#. placeholder {0}: (1000).toFixed(decimals)
+#. placeholder {1}: (1000).toFixed(decimals)
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
-msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
+msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
 msgstr ""
 
 #. js-lingui-id: MIIEDl
@@ -445,7 +455,7 @@ msgstr ""
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "{failedCount, plural, one {# workspace failed} other {# workspaces failed}}"
-msgstr "{failedCount, plural, other {# 个工作区失败}}"
+msgstr "{failedCount, plural, one {# 个工作区失败} other {# 个工作区失败}}"
 
 #. js-lingui-id: POhzPf
 #: src/modules/ai/hooks/useAiChatFileUpload.ts
@@ -540,7 +550,7 @@ msgstr "{label} 列表"
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{memberCount, plural, one {{memberCount} member} other {{memberCount} members}}"
-msgstr "{memberCount, plural, other {{memberCount} 名成员}}"
+msgstr "{memberCount, plural, one {{memberCount} 名成员} other {{memberCount} 名成员}}"
 
 #. js-lingui-id: Y32cMj
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages.tsx
@@ -644,7 +654,7 @@ msgstr "{serviceLabel} 服务不可访问"
 #. js-lingui-id: 8vJ+2V
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "{stepCount, plural, one {# step} other {# steps}}"
-msgstr "{stepCount, plural, other {# 步}}"
+msgstr "{stepCount, plural, one {# 步} other {# 步}}"
 
 #. js-lingui-id: Bzjg0/
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -664,42 +674,42 @@ msgstr "{totalFieldsCount} 个可见字段"
 #. js-lingui-id: fzpQ2b
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Day} other {Days}}"
-msgstr "{unitCount, plural, other {天}}"
+msgstr "{unitCount, plural, one {天} other {天}}"
 
 #. js-lingui-id: D02E4w
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Hour} other {Hours}}"
-msgstr "{unitCount, plural, other {小时}}"
+msgstr "{unitCount, plural, one {小时} other {小时}}"
 
 #. js-lingui-id: ywrpHp
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Minute} other {Minutes}}"
-msgstr "{unitCount, plural, other {分钟}}"
+msgstr "{unitCount, plural, one {分钟} other {分钟}}"
 
 #. js-lingui-id: GiWRiw
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Month} other {Months}}"
-msgstr "{unitCount, plural, other {月}}"
+msgstr "{unitCount, plural, one {月} other {月}}"
 
 #. js-lingui-id: OlALtW
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Quarter} other {Quarters}}"
-msgstr "{unitCount, plural, other {季度}}"
+msgstr "{unitCount, plural, one {季度} other {季度}}"
 
 #. js-lingui-id: 8qhX2K
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Second} other {Seconds}}"
-msgstr "{unitCount, plural, other {秒}}"
+msgstr "{unitCount, plural, one {秒} other {秒}}"
 
 #. js-lingui-id: mRxyPD
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Week} other {Weeks}}"
-msgstr "{unitCount, plural, other {周}}"
+msgstr "{unitCount, plural, one {周} other {周}}"
 
 #. js-lingui-id: J407xr
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Year} other {Years}}"
-msgstr "{unitCount, plural, other {年}}"
+msgstr "{unitCount, plural, one {年} other {年}}"
 
 #. js-lingui-id: YdwR4T
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -10850,9 +10860,9 @@ msgstr "无效的 Cron 表达式"
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "无效的 cron 表达式：{errorMessage}"
 
-#. js-lingui-id: CGivIJ
+#. js-lingui-id: jhbsV/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
+msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
 msgstr "无效的日期值“{newDay}”。应为大于 1 的整数"
 
 #. js-lingui-id: u3hwhx
@@ -10892,26 +10902,26 @@ msgstr "无效的电子邮件验证链接。"
 msgid "Invalid file: {0}"
 msgstr "无效的文件：{0}"
 
-#. js-lingui-id: 1ccYjl
+#. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer between 0 and 23"
-msgstr "无效的小时值 \"{newHour}\"。应该是 0 到 23 之间的整数"
+msgid "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
+msgstr "无效的小时值 '{newHour}'。应该是 0 到 23 之间的整数"
 
-#. js-lingui-id: e3cT9e
+#. js-lingui-id: fLMLtY
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value \"{newHour}\". Should be integer greater than 1"
-msgstr "无效的小时值 \"{newHour}\"。应该是大于 1 的整数"
+msgid "Invalid hour value '{newHour}'. Should be integer greater than 1"
+msgstr "无效的小时值 '{newHour}'。应该是大于 1 的整数"
 
-#. js-lingui-id: jw4O7y
+#. js-lingui-id: +Yi3bs
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer between 0 and 59"
-msgstr "无效的分钟值 \"{newMinute}\"。应该是 0 到 59 之间的整数"
+msgid "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
+msgstr "无效的分钟值 '{newMinute}'。应该是 0 到 59 之间的整数"
 
-#. js-lingui-id: SfvOlw
+#. js-lingui-id: 942L1w
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
-msgstr "无效的分钟值 \"{newMinute}\"。应该是大于 1 的整数"
+msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
+msgstr "无效的分钟值 '{newMinute}'。应该是大于 1 的整数"
 
 #. js-lingui-id: WY8amq
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
