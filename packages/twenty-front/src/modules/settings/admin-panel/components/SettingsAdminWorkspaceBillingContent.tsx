@@ -264,10 +264,9 @@ export const SettingsAdminWorkspaceBillingContent = ({
           Icon: IconStatusChange,
           label: t`Status`,
           value: (
-            <Tag
-              color={STATUS_COLORS[subscription.status]}
-              text={STATUS_LABELS[subscription.status]}
-            />
+            <Tag color={STATUS_COLORS[subscription.status]}>
+              {STATUS_LABELS[subscription.status]}
+            </Tag>
           ),
         },
         ...(isDefined(planKey)
@@ -348,7 +347,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
             <StyledItemValue>
               <span>{formatItemValue(item)}</span>
               {isDefined(item.productKey) && (
-                <Tag color="gray" text={item.productKey} />
+                <Tag color="gray">{item.productKey}</Tag>
               )}
             </StyledItemValue>
           ),
