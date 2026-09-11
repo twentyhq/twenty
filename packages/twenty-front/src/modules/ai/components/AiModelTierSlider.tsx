@@ -19,6 +19,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { getAiModelEffortLabel } from '@/ai/utils/getAiModelEffortLabel';
 import { formatMetricDelta } from '@/ai/utils/formatMetricDelta';
+import { hasCostPerTaskForEveryModel } from '@/ai/utils/hasCostPerTaskForEveryModel';
 import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
 import { formatNumber } from '~/utils/format/formatNumber';
 
@@ -215,10 +216,17 @@ export const AiModelTierSlider = ({
   const costDelta = resolvedTier.costDeltaPercent ?? 0;
   const costComparison =
     costDelta >= 100
-      ? t`${formatMetricDelta(costDelta)} the cost of Balanced.`
+      ? t`${formatMetricDelta(costDelta)} the cost of Balanced`
       : costDelta < 0
-        ? t`${formatNumber(Math.abs(costDelta))}% lower cost than Balanced.`
-        : t`${formatNumber(costDelta)}% higher cost than Balanced.`;
+        ? t`${formatNumber(Math.abs(costDelta))}% lower than Balanced`
+        : t`${formatNumber(costDelta)}% higher than Balanced`;
+  const hasCostPerTaskForEveryTier = hasCostPerTaskForEveryModel(
+    tiers.map((tier) => tier.model),
+  );
+  const costTitle =
+    hasCostPerTaskForEveryTier && isDefined(model?.costPerTask)
+      ? t`Cost per task: $${formatNumber(model.costPerTask, { decimals: 2 })}`
+      : undefined;
   const modelEffort = model?.effort;
   const modelName = getAiModelModeDescription(resolvedTier, {
     showAutomatic: false,
@@ -251,6 +259,7 @@ export const AiModelTierSlider = ({
             key: 'cost',
             Icon: IconCoins,
             deltaPercent: resolvedTier.costDeltaPercent,
+            tooltipTitle: costTitle,
             description: costComparison,
           },
         ]
