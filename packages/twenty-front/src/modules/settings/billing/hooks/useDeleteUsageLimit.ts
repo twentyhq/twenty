@@ -10,7 +10,6 @@ export const useDeleteUsageLimit = () => {
     DeleteUsageLimitDocument,
     {
       refetchQueries: [UsageQuotasWithConsumptionDocument],
-      awaitRefetchQueries: true,
     },
   );
 

@@ -10,7 +10,6 @@ export const useUpdateUsageLimit = () => {
     UpdateUsageLimitDocument,
     {
       refetchQueries: [UsageQuotasWithConsumptionDocument],
-      awaitRefetchQueries: true,
     },
   );
 
