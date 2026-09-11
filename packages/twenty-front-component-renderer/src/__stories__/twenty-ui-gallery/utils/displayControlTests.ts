@@ -48,3 +48,9 @@ export const statusControlsTest = createDisplayControlTest({
   disabledButtonName: 'Disabled status',
   staticContent: 'Loading status',
 });
+
+export const tagControlsTest = createDisplayControlTest({
+  buttonName: 'Open tag',
+  disabledButtonName: 'Disabled tag',
+  staticContent: 'Static tag',
+});

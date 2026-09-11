@@ -86,10 +86,9 @@ export const SettingsAdminChatAskQuestionsPart = ({
         <IconHelpCircle size={14} />
         {t`Questions`}
         <StyledStatusTag>
-          <Tag
-            color={getStatusTagColor(result.status)}
-            text={getStatusLabel(result.status)}
-          />
+          <Tag color={getStatusTagColor(result.status)}>
+            {getStatusLabel(result.status)}
+          </Tag>
         </StyledStatusTag>
       </StyledCardHeader>
       {result.questions.map((question, questionIndex) => (
