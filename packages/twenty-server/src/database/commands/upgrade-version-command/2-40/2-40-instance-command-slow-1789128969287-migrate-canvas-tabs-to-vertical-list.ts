@@ -47,7 +47,7 @@ const ELIGIBLE_CANVAS_TABS_QUERY = `
     ) = 1
 `;
 
-@RegisteredInstanceCommand('2.39.0', 1788770678957, { type: 'slow' })
+@RegisteredInstanceCommand('2.40.0', 1789128969287, { type: 'slow' })
 export class MigrateCanvasTabsToVerticalListSlowInstanceCommand implements SlowInstanceCommand {
   constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
 

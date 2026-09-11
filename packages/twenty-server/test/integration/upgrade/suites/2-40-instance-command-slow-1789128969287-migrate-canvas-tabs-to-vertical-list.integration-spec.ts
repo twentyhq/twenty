@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { MigrateCanvasTabsToVerticalListSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1788770678957-migrate-canvas-tabs-to-vertical-list';
+import { MigrateCanvasTabsToVerticalListSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1789128969287-migrate-canvas-tabs-to-vertical-list';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 jest.useRealTimers();
