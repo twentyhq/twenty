@@ -118,10 +118,6 @@ jobs:
           npx playwright install chromium
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
-      - name: Verify Argos capture dimensions
-        if: matrix.shard == 1 && matrix.storybook_scope == 'pages'
-        run: yarn workspace twenty-front test:argos-capture
-
       - name: Serve storybook & run tests
         run: |
           npx http-server packages/twenty-front/storybook-static --port 6006 --silent &

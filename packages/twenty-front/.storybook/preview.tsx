@@ -12,8 +12,6 @@ import { http, HttpResponse } from 'msw';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { argosParameters } from './argosParameters';
-
 // oxlint-disable-next-line no-restricted-imports
 import { DateFormat } from '../src/modules/localization/constants/DateFormat';
 // oxlint-disable-next-line no-restricted-imports
@@ -149,7 +147,10 @@ const preview: Preview = {
   loaders: [mswLoader, waitForInterFontLoadedBeforeScreenshot],
 
   parameters: {
-    argos: argosParameters,
+    argos: {
+      // CSS zoom combined with viewport-sized stories makes the iframe grow during capture.
+      fitToContent: { zoom: 1 },
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,

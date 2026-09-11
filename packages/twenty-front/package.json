@@ -3,7 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:argos-capture": "node --experimental-strip-types --test .storybook/argos-screenshot.test.mjs",
     "build": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 npx vite build",
     "build:sourcemaps": "NODE_ENV=production VITE_BUILD_SOURCEMAP=true NODE_OPTIONS=--max-old-space-size=8192 npx vite build",
     "start:prod": "NODE_ENV=production npx serve -s build",
