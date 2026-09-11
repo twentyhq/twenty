@@ -54,7 +54,39 @@ export class ReconcileStandardSkillsCommand extends ProvisionedWorkspaceCommandR
       standardAllFlatEntityMaps.flatSkillMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
-    const skillsToCreate = standardSkills.filter(
+    const existingSkills = Object.values(
+      existingFlatSkillMaps.byUniversalIdentifier,
+    ).filter(isDefined);
+
+    const standardSkillUniversalIdentifiers = new Set(
+      standardSkills.map((standardSkill) => standardSkill.universalIdentifier),
+    );
+
+    const skillsToDelete = existingSkills.filter(
+      (existingSkill) =>
+        existingSkill.applicationId === twentyStandardFlatApplication.id &&
+        !standardSkillUniversalIdentifiers.has(
+          existingSkill.universalIdentifier,
+        ),
+    );
+
+    const universalIdentifiersToDelete = new Set(
+      skillsToDelete.map((skillToDelete) => skillToDelete.universalIdentifier),
+    );
+
+    // Skill names are unique per workspace whatever their isActive state, and
+    // one rejected create fails the whole migration — which would cost this
+    // workspace the isSystem flip and the deletions too
+    const takenNames = new Set(
+      existingSkills
+        .filter(
+          (existingSkill) =>
+            !universalIdentifiersToDelete.has(existingSkill.universalIdentifier),
+        )
+        .map((existingSkill) => existingSkill.name),
+    );
+
+    const missingSkills = standardSkills.filter(
       (standardSkill) =>
         !isDefined(
           existingFlatSkillMaps.byUniversalIdentifier[
@@ -62,6 +94,20 @@ export class ReconcileStandardSkillsCommand extends ProvisionedWorkspaceCommandR
           ],
         ),
     );
+
+    const skillsToCreate = missingSkills.filter(
+      (missingSkill) => !takenNames.has(missingSkill.name),
+    );
+
+    const skillsSkippedForNameClash = missingSkills.filter((missingSkill) =>
+      takenNames.has(missingSkill.name),
+    );
+
+    if (skillsSkippedForNameClash.length > 0) {
+      this.logger.warn(
+        `Workspace ${workspaceId} already has a skill named ${skillsSkippedForNameClash.map((skill) => skill.name).join(', ')}; skipping ${skillsSkippedForNameClash.length === 1 ? 'that standard skill' : 'those standard skills'}`,
+      );
+    }
 
     const skillsToUpdate = standardSkills.reduce<FlatSkill[]>(
       (accumulator, standardSkill) => {
@@ -100,22 +146,6 @@ export class ReconcileStandardSkillsCommand extends ProvisionedWorkspaceCommandR
       },
       [],
     );
-
-    const standardSkillUniversalIdentifiers = new Set(
-      standardSkills.map((standardSkill) => standardSkill.universalIdentifier),
-    );
-
-    const skillsToDelete = Object.values(
-      existingFlatSkillMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (existingSkill) =>
-          existingSkill.applicationId === twentyStandardFlatApplication.id &&
-          !standardSkillUniversalIdentifiers.has(
-            existingSkill.universalIdentifier,
-          ),
-      );
 
     if (
       skillsToCreate.length === 0 &&

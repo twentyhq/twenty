@@ -17,18 +17,20 @@ const buildExistingSkill = ({
   isSystem = false,
   isActive = true,
   content = 'content',
+  name,
 }: {
   universalIdentifier: string;
   applicationId?: string;
   isSystem?: boolean;
   isActive?: boolean;
   content?: string;
+  name?: string;
 }) => ({
   id: `id-${universalIdentifier}`,
   universalIdentifier,
   applicationId,
   workspaceId: WORKSPACE_ID,
-  name: `name-${universalIdentifier}`,
+  name: name ?? `name-${universalIdentifier}`,
   label: `label-${universalIdentifier}`,
   description: 'description',
   icon: 'IconBook',
@@ -195,6 +197,49 @@ describe('ReconcileStandardSkillsCommand', () => {
     } as Parameters<typeof command.runOnWorkspace>[0]);
 
     expect(validateBuildAndRunLegacyWorkspaceMigration).not.toHaveBeenCalled();
+  });
+
+  it('skips a create whose name a custom skill already took, and still flips isSystem', async () => {
+    const skillOperation = await runAndGetSkillOperation([
+      buildExistingSkill({
+        universalIdentifier: '20202020-0000-0000-0000-00000000c0de',
+        applicationId: OTHER_APPLICATION_ID,
+        name: 'enrich',
+      }),
+      buildExistingSkill({
+        universalIdentifier: VIEW_BUILDING_UNIVERSAL_IDENTIFIER,
+        isSystem: false,
+      }),
+    ]);
+
+    const createdNames = skillOperation?.flatEntityToCreate.map(
+      (skill: { name: string }) => skill.name,
+    );
+
+    expect(createdNames).not.toContain('enrich');
+    expect(createdNames).toContain('meeting-prep');
+
+    const updatedSkill = skillOperation?.flatEntityToUpdate.find(
+      (skill: { universalIdentifier: string }) =>
+        skill.universalIdentifier === VIEW_BUILDING_UNIVERSAL_IDENTIFIER,
+    );
+
+    expect(updatedSkill?.isSystem).toBe(true);
+  });
+
+  it('still creates a standard skill whose name is only held by a skill being deleted', async () => {
+    const skillOperation = await runAndGetSkillOperation([
+      buildExistingSkill({
+        universalIdentifier: RETIRED_SKILL_UNIVERSAL_IDENTIFIER,
+        name: 'enrich',
+      }),
+    ]);
+
+    expect(
+      skillOperation?.flatEntityToCreate.map(
+        (skill: { name: string }) => skill.name,
+      ),
+    ).toContain('enrich');
   });
 
   it('skips the migration entirely in dry run', async () => {

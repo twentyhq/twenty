@@ -1792,7 +1792,7 @@ Always confirm before writing. Show what you will change and wait.
 
 - You cannot merge records. There is no merge tool; merging happens in the UI, where the user selects the records and uses the Merge action. Report each duplicate pair with both records referenced and leave the merge to them.
 - Fill missing fields only from data already in the workspace, never from a guess.
-- Apply approved changes with the update_many or upsert_many tools in one call rather than one record at a time.
+- Apply approved changes in one call rather than one record at a time. These tools carry the object's plural name: update_many_people, upsert_many_companies, and so on. Use update_many_* when every matched record gets the same value, upsert_many_* when each record needs its own.
 - Report what changed afterwards, and say what you deliberately left alone.
 
 ## Rules
