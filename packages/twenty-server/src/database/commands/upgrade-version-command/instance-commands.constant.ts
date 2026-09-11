@@ -181,8 +181,8 @@ import { AddReadabilityToObjectMetadataFastInstanceCommand } from 'src/database/
 import { AddAuthFailedReasonToConnectedAccountFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788781233982-add-auth-failed-reason-to-connected-account';
 import { AddOwnerFieldToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1789100400000-add-owner-field-to-object-metadata';
 import { AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1789100100000-add-readability-parent-fields-to-object-metadata';
-import { AddSharingRuleTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788961100000-add-sharing-rule-table';
-import { AddSharingRuleParentToRowLevelPermissionPredicateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788961100001-add-sharing-rule-parent-to-row-level-permission-predicate';
+import { AddSharingRuleTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1789100600000-add-sharing-rule-table';
+import { AddSharingRuleParentToRowLevelPermissionPredicateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1789100600001-add-sharing-rule-parent-to-row-level-permission-predicate';
 import { MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788871259040-make-billing-credit-grant-expires-at-nullable';
 import { ConvertLiveCreditGrantsToNoExpirySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1788877128693-convert-live-credit-grants-to-no-expiry';
 import { AddIsAuditLoggedToFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788885873410-add-is-audit-logged-to-field-metadata';
