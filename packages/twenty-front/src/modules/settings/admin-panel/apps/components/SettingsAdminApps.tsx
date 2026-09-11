@@ -32,7 +32,7 @@ import {
 import { H2Title } from 'twenty-ui/typography';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { MenuItemSwitch } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { Tag } from 'twenty-ui/data-display';
 import {
@@ -218,68 +218,68 @@ export const SettingsAdminApps = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemToggle
+                    <MenuItemSwitch
                       LeftIcon={IconPinned}
-                      onToggleChange={() =>
+                      onCheckedChange={() =>
                         setShowPreInstalledOnly(!showPreInstalledOnly)
                       }
-                      toggled={showPreInstalledOnly}
+                      checked={showPreInstalledOnly}
                       text={t`Pre-installed only`}
-                      toggleSize="small"
+                      size="sm"
                     />
                     <DropdownMenuSectionLabel label={t`Source`} />
                     {SOURCE_TYPE_FILTER_OPTIONS.map(({ sourceType, label }) => (
-                      <MenuItemToggle
+                      <MenuItemSwitch
                         key={sourceType}
-                        onToggleChange={() =>
+                        onCheckedChange={() =>
                           toggleSourceTypeFilter(sourceType)
                         }
-                        toggled={sourceTypeFilters.includes(sourceType)}
+                        checked={sourceTypeFilters.includes(sourceType)}
                         text={label}
-                        toggleSize="small"
+                        size="sm"
                       />
                     ))}
                     <DropdownMenuSectionLabel label={t`Listed`} />
-                    <MenuItemToggle
-                      onToggleChange={() =>
+                    <MenuItemSwitch
+                      onCheckedChange={() =>
                         setIsListedFilter(
                           isListedFilter === true ? undefined : true,
                         )
                       }
-                      toggled={isListedFilter === true}
+                      checked={isListedFilter === true}
                       text={t`Listed`}
-                      toggleSize="small"
+                      size="sm"
                     />
-                    <MenuItemToggle
-                      onToggleChange={() =>
+                    <MenuItemSwitch
+                      onCheckedChange={() =>
                         setIsListedFilter(
                           isListedFilter === false ? undefined : false,
                         )
                       }
-                      toggled={isListedFilter === false}
+                      checked={isListedFilter === false}
                       text={t`Not listed`}
-                      toggleSize="small"
+                      size="sm"
                     />
                     <DropdownMenuSectionLabel label={t`Configured`} />
-                    <MenuItemToggle
-                      onToggleChange={() =>
+                    <MenuItemSwitch
+                      onCheckedChange={() =>
                         setIsConfiguredFilter(
                           isConfiguredFilter === true ? undefined : true,
                         )
                       }
-                      toggled={isConfiguredFilter === true}
+                      checked={isConfiguredFilter === true}
                       text={t`Configured`}
-                      toggleSize="small"
+                      size="sm"
                     />
-                    <MenuItemToggle
-                      onToggleChange={() =>
+                    <MenuItemSwitch
+                      onCheckedChange={() =>
                         setIsConfiguredFilter(
                           isConfiguredFilter === false ? undefined : false,
                         )
                       }
-                      toggled={isConfiguredFilter === false}
+                      checked={isConfiguredFilter === false}
                       text={t`Not configured`}
-                      toggleSize="small"
+                      size="sm"
                     />
                   </DropdownMenuItemsContainer>
                 </DropdownContent>

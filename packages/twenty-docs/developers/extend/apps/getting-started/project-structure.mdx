@@ -59,20 +59,20 @@ my-twenty-app/
 
 ## Dependencies
 
-Both Twenty SDK packages belong under `devDependencies`, not `dependencies`:
+The Twenty SDK and UI packages belong under `devDependencies`:
 
 ```json filename="package.json"
 {
   "dependencies": {},
   "devDependencies": {
-    "twenty-client-sdk": "2.20.0",
-    "twenty-sdk": "2.20.0",
-    "twenty-ui": "1.0.0-alpha.1"
+    "twenty-client-sdk": "2.40.0",
+    "twenty-sdk": "2.40.0",
+    "twenty-ui": "2.40.0"
   }
 }
 ```
 
-The scaffolder pins `twenty-sdk` and `twenty-client-sdk` to its own version — keep the two in sync when upgrading.
+The scaffolder pins `twenty-sdk`, `twenty-client-sdk`, and `twenty-ui` to its own version. Keep all three in sync when upgrading.
 
 - **`twenty-sdk`** ships the `twenty` CLI and the build/scaffolding tooling. It only runs at development and build time and is never imported by your published app's runtime.
 - **`twenty-client-sdk`** _is_ imported by your app code (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), but Twenty provides it at runtime — logic functions get it from a generated SDK layer, and front components resolve it from server-served modules. Your installed copy is only used for typechecking and the deploy-time build, so it never needs to ship in the deployed bundle.

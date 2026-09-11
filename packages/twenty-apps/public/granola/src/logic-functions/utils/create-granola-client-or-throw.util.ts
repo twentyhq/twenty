@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { z } from 'zod';
 
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
+import { GranolaInvalidResponseError } from 'src/logic-functions/types/granola-invalid-response-error';
 import {
   GRANOLA_FOLDER_SCHEMA,
   GRANOLA_NOTE_SCHEMA,
@@ -92,7 +93,7 @@ export const createGranolaClientOrThrow = ({
     const result = schema.safeParse(payload);
 
     if (!result.success) {
-      throw new Error('Granola returned an unexpected response.');
+      throw new GranolaInvalidResponseError();
     }
 
     return result.data;

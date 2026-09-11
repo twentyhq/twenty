@@ -1,5 +1,6 @@
 import { buildPullEntities } from '@/cli/utilities/pull/build-pull-entities';
 import {
+  NAVIGATION_MENU_ITEM_ENUM_BINDINGS,
   PAGE_LAYOUT_ENUM_BINDINGS,
   PAGE_LAYOUT_TAB_ENUM_BINDINGS,
   VIEW_ENUM_BINDINGS,
@@ -7,10 +8,13 @@ import {
 } from '@/cli/utilities/pull/write-define-file';
 import {
   getSystemRecordPageLayoutUniversalIdentifier,
+  getSystemViewUniversalIdentifier,
   type Manifest,
+  type NavigationMenuItemManifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
   type StandaloneViewFieldManifest,
+  SYSTEM_VIEW_KEYS,
   type ViewManifest,
 } from 'twenty-shared/application';
 import {
@@ -20,6 +24,7 @@ import {
 } from 'twenty-shared/metadata';
 import {
   AggregateOperations,
+  NavigationMenuItemType,
   PageLayoutTabLayoutMode,
   ViewSortDirection,
   ViewType,
@@ -41,6 +46,8 @@ const PAGE_LAYOUT_UID = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
 const PAGE_LAYOUT_TAB_UID = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
 const WIDGET_UID = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
 const STANDALONE_TAB_UID = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
+const NAVIGATION_MENU_ITEM_UID = '10101010-1010-4010-8010-101010101010';
+const NAVIGATION_FOLDER_UID = '20202020-2020-4020-8020-202020202020';
 
 const buildManifest = (overrides: Partial<Manifest> = {}): Manifest =>
   ({
@@ -163,6 +170,16 @@ const buildPageLayoutTabManifest = (
   title: 'Extra',
   position: 60,
   layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+  ...overrides,
+});
+
+const buildNavigationMenuItemManifest = (
+  overrides: Partial<NavigationMenuItemManifest> = {},
+): NavigationMenuItemManifest => ({
+  universalIdentifier: NAVIGATION_MENU_ITEM_UID,
+  type: NavigationMenuItemType.OBJECT,
+  position: 8,
+  targetObjectUniversalIdentifier: PET_UID,
   ...overrides,
 });
 
@@ -585,6 +602,307 @@ describe('buildPullEntities', () => {
         reason: 'it does not name the page layout it belongs to',
       },
     ]);
+  });
+
+  it('should write a navigation menu item verbatim into src/navigation-menu-items with the navigation menu item enum bindings, named after the object it targets', () => {
+    const navigationMenuItemManifest = buildNavigationMenuItemManifest();
+    const { entities, skipped } = buildPullEntities(
+      buildManifest({ navigationMenuItems: [navigationMenuItemManifest] }),
+    );
+    const navigationMenuItem = entities.find(
+      (entity) => entity.kind === 'navigationMenuItem',
+    );
+
+    expect(skipped).toEqual([]);
+    expect(navigationMenuItem?.universalIdentifier).toBe(
+      NAVIGATION_MENU_ITEM_UID,
+    );
+    expect(navigationMenuItem?.definer).toBe('defineNavigationMenuItem');
+    expect(navigationMenuItem?.config).toEqual(navigationMenuItemManifest);
+    expect(navigationMenuItem?.enumBindings).toEqual(
+      NAVIGATION_MENU_ITEM_ENUM_BINDINGS,
+    );
+    expect(navigationMenuItem?.parentName).toBeNull();
+    expect(
+      `${navigationMenuItem?.defaultFolder}/${navigationMenuItem?.fileBaseName}${navigationMenuItem?.fileSuffix}`,
+    ).toBe('src/navigation-menu-items/pet.navigation-menu-item.ts');
+  });
+
+  it('should prefer the name a navigation menu item carries over the object it targets', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({
+        navigationMenuItems: [
+          buildNavigationMenuItemManifest({ name: 'Pet shelter' }),
+        ],
+      }),
+    );
+    const navigationMenuItem = entities.find(
+      (entity) => entity.kind === 'navigationMenuItem',
+    );
+
+    expect(navigationMenuItem?.fileBaseName).toBe('pet-shelter');
+  });
+
+  it('should name a navigation menu item with an empty name after the object it targets', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({
+        navigationMenuItems: [buildNavigationMenuItemManifest({ name: '' })],
+      }),
+    );
+    const navigationMenuItem = entities.find(
+      (entity) => entity.kind === 'navigationMenuItem',
+    );
+
+    expect(navigationMenuItem?.fileBaseName).toBe('pet');
+  });
+
+  it('should name a navigation menu item whose name is only whitespace after the object it targets', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({
+        navigationMenuItems: [buildNavigationMenuItemManifest({ name: '   ' })],
+      }),
+    );
+    const navigationMenuItem = entities.find(
+      (entity) => entity.kind === 'navigationMenuItem',
+    );
+
+    expect(navigationMenuItem?.fileBaseName).toBe('pet');
+  });
+
+  it('should name a navigation menu item targeting a standard object after that object', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({
+        navigationMenuItems: [
+          buildNavigationMenuItemManifest({
+            targetObjectUniversalIdentifier:
+              STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+          }),
+        ],
+      }),
+    );
+    const navigationMenuItem = entities.find(
+      (entity) => entity.kind === 'navigationMenuItem',
+    );
+
+    expect(navigationMenuItem?.fileBaseName).toBe('person');
+  });
+
+  it('should name a navigation menu item pointing at a view of the manifest after that view', () => {
+    const {
+      targetObjectUniversalIdentifier: _targetObjectUniversalIdentifier,
+      ...viewItemManifest
+    } = buildNavigationMenuItemManifest({
+      type: NavigationMenuItemType.VIEW,
+      viewUniversalIdentifier: VIEW_UID,
+    });
+    const { entities } = buildPullEntities(
+      buildManifest({
+        views: [buildViewManifest()],
+        navigationMenuItems: [viewItemManifest],
+      }),
+    );
+    const navigationMenuItem = entities.find(
+      (entity) => entity.kind === 'navigationMenuItem',
+    );
+
+    expect(navigationMenuItem?.fileBaseName).toBe('all-pets');
+  });
+
+  it('should name a navigation menu item pointing at the index view of a manifest object after that view', () => {
+    const {
+      targetObjectUniversalIdentifier: _targetObjectUniversalIdentifier,
+      ...indexViewItemManifest
+    } = buildNavigationMenuItemManifest({
+      type: NavigationMenuItemType.VIEW,
+      viewUniversalIdentifier: getSystemViewUniversalIdentifier({
+        objectMetadataApplicationUniversalIdentifier: APP_UID,
+        objectUniversalIdentifier: PET_UID,
+        viewKey: SYSTEM_VIEW_KEYS.INDEX,
+      }),
+    });
+    const { entities } = buildPullEntities(
+      buildManifest({ navigationMenuItems: [indexViewItemManifest] }),
+    );
+    const navigationMenuItem = entities.find(
+      (entity) => entity.kind === 'navigationMenuItem',
+    );
+
+    expect(navigationMenuItem?.fileBaseName).toBe('pet-index-view');
+  });
+
+  it('should name a navigation menu item pointing at a page layout after that layout', () => {
+    const {
+      targetObjectUniversalIdentifier: _targetObjectUniversalIdentifier,
+      ...pageLayoutItemManifest
+    } = buildNavigationMenuItemManifest({
+      type: NavigationMenuItemType.PAGE_LAYOUT,
+      pageLayoutUniversalIdentifier: PAGE_LAYOUT_UID,
+    });
+    const { entities } = buildPullEntities(
+      buildManifest({
+        pageLayouts: [buildPageLayoutManifest()],
+        navigationMenuItems: [pageLayoutItemManifest],
+      }),
+    );
+    const navigationMenuItem = entities.find(
+      (entity) => entity.kind === 'navigationMenuItem',
+    );
+
+    expect(navigationMenuItem?.fileBaseName).toBe('pet-page');
+  });
+
+  it('should name a navigation menu item that points at nothing of the manifest after its identifier prefix', () => {
+    const {
+      targetObjectUniversalIdentifier: _targetObjectUniversalIdentifier,
+      ...linkItemManifest
+    } = buildNavigationMenuItemManifest({
+      type: NavigationMenuItemType.LINK,
+      link: 'https://twenty.com',
+    });
+    const { entities } = buildPullEntities(
+      buildManifest({ navigationMenuItems: [linkItemManifest] }),
+    );
+    const navigationMenuItem = entities.find(
+      (entity) => entity.kind === 'navigationMenuItem',
+    );
+
+    expect(navigationMenuItem?.fileBaseName).toBe('10101010');
+  });
+
+  it('should give a navigation menu item sitting in a folder that folder as parent', () => {
+    const {
+      targetObjectUniversalIdentifier: _targetObjectUniversalIdentifier,
+      ...folderManifest
+    } = buildNavigationMenuItemManifest({
+      universalIdentifier: NAVIGATION_FOLDER_UID,
+      type: NavigationMenuItemType.FOLDER,
+      name: 'Care',
+      position: 0,
+    });
+    const { entities } = buildPullEntities(
+      buildManifest({
+        navigationMenuItems: [
+          folderManifest,
+          buildNavigationMenuItemManifest({
+            folderUniversalIdentifier: NAVIGATION_FOLDER_UID,
+          }),
+        ],
+      }),
+    );
+    const navigationMenuItem = entities.find(
+      (entity) => entity.universalIdentifier === NAVIGATION_MENU_ITEM_UID,
+    );
+
+    expect(navigationMenuItem?.parentName).toBe('Care');
+  });
+
+  it('should give a navigation menu item sitting in a folder without a name no parent', () => {
+    const {
+      targetObjectUniversalIdentifier: _targetObjectUniversalIdentifier,
+      ...folderManifest
+    } = buildNavigationMenuItemManifest({
+      universalIdentifier: NAVIGATION_FOLDER_UID,
+      type: NavigationMenuItemType.FOLDER,
+      name: '',
+      position: 0,
+    });
+    const { entities } = buildPullEntities(
+      buildManifest({
+        navigationMenuItems: [
+          folderManifest,
+          buildNavigationMenuItemManifest({
+            folderUniversalIdentifier: NAVIGATION_FOLDER_UID,
+          }),
+        ],
+      }),
+    );
+    const navigationMenuItem = entities.find(
+      (entity) => entity.universalIdentifier === NAVIGATION_MENU_ITEM_UID,
+    );
+
+    expect(navigationMenuItem?.parentName).toBeNull();
+  });
+
+  it('should give a navigation menu item sitting in a folder named only with punctuation no parent', () => {
+    const {
+      targetObjectUniversalIdentifier: _targetObjectUniversalIdentifier,
+      ...folderManifest
+    } = buildNavigationMenuItemManifest({
+      universalIdentifier: NAVIGATION_FOLDER_UID,
+      type: NavigationMenuItemType.FOLDER,
+      name: '///',
+      position: 0,
+    });
+    const { entities } = buildPullEntities(
+      buildManifest({
+        navigationMenuItems: [
+          folderManifest,
+          buildNavigationMenuItemManifest({
+            folderUniversalIdentifier: NAVIGATION_FOLDER_UID,
+          }),
+        ],
+      }),
+    );
+    const navigationMenuItem = entities.find(
+      (entity) => entity.universalIdentifier === NAVIGATION_MENU_ITEM_UID,
+    );
+
+    expect(navigationMenuItem?.parentName).toBeNull();
+  });
+
+  it('should give a navigation menu item whose folder is not part of the export no parent', () => {
+    const { entities, skipped } = buildPullEntities(
+      buildManifest({
+        navigationMenuItems: [
+          buildNavigationMenuItemManifest({
+            folderUniversalIdentifier: 'a-folder-of-another-application',
+          }),
+        ],
+      }),
+    );
+    const navigationMenuItem = entities.find(
+      (entity) => entity.kind === 'navigationMenuItem',
+    );
+
+    expect(skipped).toEqual([]);
+    expect(navigationMenuItem?.parentName).toBeNull();
+  });
+
+  it('should write a standalone page layout widget into src/page-layout-widgets, named after its title', () => {
+    const { entities, skipped } = buildPullEntities(
+      buildManifest({
+        pageLayoutWidgets: [
+          {
+            universalIdentifier: WIDGET_UID,
+            pageLayoutTabUniversalIdentifier: PAGE_LAYOUT_TAB_UID,
+            title: 'Care notes',
+            type: 'IFRAME',
+            objectUniversalIdentifier: PET_UID,
+            position: {
+              layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+              index: 1000,
+            },
+            configuration: {
+              configurationType: 'IFRAME',
+              url: 'https://example.com/docs',
+              __typename: 'IframeConfiguration',
+            },
+          },
+        ],
+      } as unknown as Partial<Manifest>),
+    );
+    const widget = entities.find(
+      (entity) => entity.kind === 'pageLayoutWidget',
+    );
+
+    expect(skipped).toEqual([]);
+    expect(widget?.definer).toBe('definePageLayoutWidget');
+    expect(
+      `${widget?.defaultFolder}/${widget?.fileBaseName}${widget?.fileSuffix}`,
+    ).toBe('src/page-layout-widgets/care-notes.page-layout-widget.ts');
+    expect(widget?.parentName).toBe('pet');
+    expect(widget?.config).not.toHaveProperty('configuration.__typename');
+    expect(JSON.stringify(widget?.config)).not.toContain('__typename');
   });
 
   it('should build a manifest that has no views, view fields, page layouts and page layout tabs properties without producing their entities', () => {
