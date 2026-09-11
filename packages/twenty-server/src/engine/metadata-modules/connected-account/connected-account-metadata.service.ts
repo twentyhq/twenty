@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, IsNull, Repository } from 'typeorm';
 
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
@@ -18,6 +19,7 @@ import {
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
 import { type ConnectedAccountWithoutCredentials } from 'src/engine/metadata-modules/connected-account/types/connected-account-without-credentials.type';
+import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -81,6 +83,49 @@ export class ConnectedAccountMetadataService {
   }): Promise<ConnectedAccountEntity[]> {
     return this.repository.find({
       where: { userWorkspaceId, workspaceId },
+    });
+  }
+
+  async findApplicationConnectedAccountsUsableByCaller({
+    applicationId,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<ConnectedAccountEntity[]> {
+    return this.repository.find({
+      where: buildConnectedAccountUsableByCallerWhere({
+        baseWhere: {
+          applicationId,
+          workspaceId,
+          provider: ConnectedAccountProvider.APP,
+          archivedAt: IsNull(),
+        },
+        userWorkspaceId,
+      }),
+      order: { createdAt: 'ASC', id: 'ASC' },
+      select: {
+        id: true,
+        handle: true,
+        provider: true,
+        lastCredentialsRefreshedAt: true,
+        authFailedAt: true,
+        authFailedReason: true,
+        archivedAt: true,
+        handleAliases: true,
+        scopes: true,
+        lastSignedInAt: true,
+        userWorkspaceId: true,
+        connectionProviderId: true,
+        applicationId: true,
+        workspaceId: true,
+        name: true,
+        visibility: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
   }
 

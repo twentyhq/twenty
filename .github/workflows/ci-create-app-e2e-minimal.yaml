@@ -22,10 +22,12 @@ jobs:
         packages/create-twenty-app/**
         packages/twenty-sdk/**
         packages/twenty-client-sdk/**
+        packages/twenty-ui/**
         packages/twenty-shared/**
         !packages/create-twenty-app/package.json
         !packages/twenty-sdk/package.json
         !packages/twenty-client-sdk/package.json
+        !packages/twenty-ui/package.json
         !packages/twenty-shared/package.json
   create-app-e2e-minimal:
     needs: changed-files-check
@@ -50,7 +52,7 @@ jobs:
         ports:
           - 6379:6379
     env:
-      PUBLISHABLE_PACKAGES: twenty-client-sdk twenty-sdk create-twenty-app
+      PUBLISHABLE_PACKAGES: twenty-client-sdk twenty-ui twenty-sdk create-twenty-app
       TWENTY_API_URL: http://localhost:3000
       TWENTY_API_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ1c2VySWQiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtNDYzZi00MzViLTgyOGMtMTA3ZTAwN2EyNzExIiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWU3Yy00M2Q5LWE1ZGItNjg1YjUwNjlkODE2IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjIwNjY4NTc3MDR9.HMGqCsVlOAPVUBhKSGlD1X86VoHKt4LIUtET3CGIdik
     steps:
@@ -117,15 +119,17 @@ jobs:
       - name: Verify installed app versions
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          echo "--- Checking package.json references correct SDK version ---"
+          echo "--- Checking scaffolded app package versions ---"
           node -e "
             const pkg = require('./package.json');
-            const sdkVersion = pkg.devDependencies['twenty-sdk'];
-            if (!sdkVersion.startsWith('0.0.0-ci.')) {
-              console.error('Expected twenty-sdk version to start with 0.0.0-ci., got:', sdkVersion);
-              process.exit(1);
+            for (const name of ['twenty-client-sdk', 'twenty-sdk', 'twenty-ui']) {
+              const version = pkg.devDependencies[name];
+              if (version !== process.env.CI_VERSION) {
+                console.error('Expected', name, 'version', process.env.CI_VERSION, 'got:', version);
+                process.exit(1);
+              }
+              console.log(name, 'version in scaffolded app:', version);
             }
-            console.log('SDK version in scaffolded app:', sdkVersion);
           "
 
       - name: Verify SDK CLI is available
