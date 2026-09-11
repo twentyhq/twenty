@@ -107,6 +107,25 @@ test('assertFrontComponentGuidance passes on current state', () => {
   assert.deepStrictEqual(collectFailures(crossDocContracts.assertFrontComponentGuidance), []);
 });
 
+test('assertFrontComponentGuidance catches independent UI version guidance', () => {
+  const frontComponentsPath = path.join(
+    PLUGIN_ROOT,
+    'references/develop-app/front-components.md',
+  );
+
+  withFileMutation(
+    frontComponentsPath,
+    (contents) => contents.replace(
+      'at the same version as `twenty-sdk` and `twenty-client-sdk`',
+      'at an independent version',
+    ),
+    () => {
+      const failures = collectFailures(crossDocContracts.assertFrontComponentGuidance);
+      assert.ok(failures.some((failure) => failure.includes('same version as')));
+    },
+  );
+});
+
 test('assertCliGuidanceSplit passes on current state', () => {
   assert.deepStrictEqual(collectFailures(crossDocContracts.assertCliGuidanceSplit), []);
 });

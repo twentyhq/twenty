@@ -2,14 +2,22 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type LanguageModel, type TranscriptionModel } from 'ai';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type AiModelEffort, type AiSdkPackage } from 'twenty-shared/ai';
+import {
+  AI_MODEL_TIERS,
+  AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+  DEFAULT_AI_AGENT_MODEL_TIER,
+  getAiModelTierFromModelId,
+  type AiModelEffort,
+  type AiModelTier,
+  type AiSdkPackage,
+  AI_MODEL_EFFORT_LABELS,
+  parseAiModelVariantId,
+} from 'twenty-shared/ai';
 
 import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-enterprise-key.constant';
 import { CustomAiProviderAccessService } from 'src/engine/core-modules/enterprise/services/custom-ai-provider-access.service';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
-import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
-
 import {
   AiException,
   AiExceptionCode,
@@ -26,24 +34,16 @@ import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { DEFAULT_CONTEXT_WINDOW_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-context-window-tokens.const';
-import {
-  AUTO_SELECT_FAST_MODEL_ID,
-  AUTO_SELECT_SMART_MODEL_ID,
-} from 'twenty-shared/constants';
 import { isAutoSelectModelId, isDefined } from 'twenty-shared/utils';
 
 import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-max-output-tokens.const';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
+import { getAiModelTiersByDistance } from 'src/engine/metadata-modules/ai/ai-models/utils/get-ai-model-tiers-by-distance.util';
 import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/utils/get-available-efforts.util';
 import { getPositiveTokenLimitOrDefault } from 'src/engine/metadata-modules/ai/ai-models/utils/get-positive-token-limit-or-default.util';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
 import { isProviderConfigured } from 'src/engine/metadata-modules/ai/ai-models/utils/is-provider-configured.util';
-import { parseModelVariantId } from 'src/engine/metadata-modules/ai/ai-models/utils/parse-model-variant-id.util';
-import {
-  isModelAllowedByWorkspace,
-  type WorkspaceModelAvailabilitySettings,
-} from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
-import { workspaceHasEnabledModels } from 'src/engine/metadata-modules/ai/ai-models/utils/workspace-has-enabled-models.util';
+import { type WorkspaceAiModelSettings } from 'src/engine/metadata-modules/ai/ai-models/types/workspace-ai-model-settings.type';
 
 export interface RegisteredAiModel {
   modelId: string;
@@ -187,50 +187,51 @@ export class AiModelRegistryService {
     }
   }
 
-  // A variant exists only where an operator listed one, so no caller reaches an
-  // effort the catalog never declared by typing an id.
   private registerConfiguredVariants(): void {
-    const preferences = this.preferencesService.getPreferences();
-    const listedModelIds = new Set([
-      ...(preferences.recommendedModels ?? []),
-      ...(preferences.defaultFastModels ?? []),
-      ...(preferences.defaultSmartModels ?? []),
-    ]);
-
-    for (const variantId of listedModelIds) {
-      const variant = this.resolveConfiguredVariant(variantId);
-
-      if (!isDefined(variant)) {
-        continue;
+    for (const tier of AI_MODEL_TIERS) {
+      for (const variantId of this.preferencesService.getDefaultModelIdsForTier(
+        tier,
+      )) {
+        this.registerVariant(variantId);
       }
+    }
+  }
 
-      const { baseConfig, effort } = variant;
+  // Any effort the catalog declares for a model is reachable by id, whether it
+  // sits in a chain, a workspace pin or an agent. An undeclared one never is.
+  private registerVariant(variantId: string): void {
+    const variant = this.resolveConfiguredVariant(variantId);
 
-      this.modelConfigCache.set(variantId, {
-        ...baseConfig,
+    if (!isDefined(variant)) {
+      return;
+    }
+
+    const { baseConfig, effort } = variant;
+
+    this.modelConfigCache.set(variantId, {
+      ...baseConfig,
+      modelId: variantId,
+      label: `${baseConfig.label} (${AI_MODEL_EFFORT_LABELS[effort]})`,
+      effort,
+      // A reading describes the effort it was taken at, so the variant gets
+      // the one taken at its effort or none, never the base model's ceiling.
+      benchmark: baseConfig.benchmarkByEffort?.[effort],
+    });
+
+    const baseModelDef = this.providerModelDefCache.get(baseConfig.modelId);
+
+    if (isDefined(baseModelDef)) {
+      this.providerModelDefCache.set(variantId, baseModelDef);
+    }
+
+    const baseModel = this.modelRegistry.get(baseConfig.modelId);
+
+    if (isDefined(baseModel)) {
+      this.modelRegistry.set(variantId, {
+        ...baseModel,
         modelId: variantId,
-        label: `${baseConfig.label} (${effort})`,
         effort,
-        // A reading describes the effort it was taken at, so the variant gets
-        // the one taken at its effort or none, never the base model's ceiling.
-        benchmark: baseConfig.benchmarkByEffort?.[effort],
       });
-
-      const baseModelDef = this.providerModelDefCache.get(baseConfig.modelId);
-
-      if (isDefined(baseModelDef)) {
-        this.providerModelDefCache.set(variantId, baseModelDef);
-      }
-
-      const baseModel = this.modelRegistry.get(baseConfig.modelId);
-
-      if (isDefined(baseModel)) {
-        this.modelRegistry.set(variantId, {
-          ...baseModel,
-          modelId: variantId,
-          effort,
-        });
-      }
     }
   }
 
@@ -241,7 +242,7 @@ export class AiModelRegistryService {
       return undefined;
     }
 
-    const { modelId, effort } = parseModelVariantId(variantId);
+    const { modelId, effort } = parseAiModelVariantId(variantId);
 
     if (!isDefined(effort)) {
       return undefined;
@@ -254,10 +255,6 @@ export class AiModelRegistryService {
     }
 
     if (!getAvailableEfforts(baseConfig).includes(effort)) {
-      this.logger.warn(
-        `Skipping "${variantId}": effort "${effort}" is not available for ${modelId}`,
-      );
-
       return undefined;
     }
 
@@ -400,6 +397,7 @@ export class AiModelRegistryService {
 
   getModel(modelId: string): RegisteredAiModel | undefined {
     this.ensureFresh();
+    this.registerVariant(modelId);
 
     return this.modelRegistry.get(modelId);
   }
@@ -412,12 +410,9 @@ export class AiModelRegistryService {
 
   getModelConfig(modelId: string): AiModelConfig | undefined {
     this.ensureFresh();
+    this.registerVariant(modelId);
 
     return this.modelConfigCache.get(modelId);
-  }
-
-  getRecommendedModelIds(): Set<string> {
-    return this.preferencesService.getRecommendedModelIds();
   }
 
   private getFirstAvailableModelFromList(
@@ -426,7 +421,7 @@ export class AiModelRegistryService {
     for (const modelId of modelIds) {
       const model = this.getModel(modelId);
 
-      if (model) {
+      if (isDefined(model) && this.isModelAdminAllowed(modelId)) {
         return model;
       }
     }
@@ -434,24 +429,34 @@ export class AiModelRegistryService {
     return undefined;
   }
 
-  getDefaultSpeedModel(): RegisteredAiModel {
-    return this.getDefaultModelForRole(AiModelRole.FAST);
-  }
+  // A rung whose chain names nothing available borrows the nearest rung's
+  // chain, so an instance with two models lands on the neighbouring tier
+  // rather than on whatever the catalog happens to list first. The last
+  // resort is any model the admin still allows, a current one before a
+  // deprecated one: a chain that names only disabled models must not hand a
+  // disabled one to the client.
+  findDefaultModelForTier(tier: AiModelTier): RegisteredAiModel | undefined {
+    for (const candidateTier of getAiModelTiersByDistance(tier)) {
+      const model = this.getFirstAvailableModelFromList(
+        this.preferencesService.getDefaultModelIdsForTier(candidateTier),
+      );
 
-  getDefaultPerformanceModel(): RegisteredAiModel {
-    return this.getDefaultModelForRole(AiModelRole.SMART);
-  }
-
-  private getDefaultModelForRole(role: AiModelRole): RegisteredAiModel {
-    const prefs = this.preferencesService.getPreferences();
-    const preferenceKey =
-      role === AiModelRole.FAST ? 'defaultFastModels' : 'defaultSmartModels';
-
-    let model = this.getFirstAvailableModelFromList(prefs[preferenceKey] ?? []);
-
-    if (!model) {
-      model = this.getAvailableModels()[0];
+      if (isDefined(model)) {
+        return model;
+      }
     }
+
+    const allowedModels = this.getAdminFilteredModels();
+
+    return (
+      allowedModels.find(
+        (model) => this.getModelConfig(model.modelId)?.isDeprecated !== true,
+      ) ?? allowedModels[0]
+    );
+  }
+
+  getDefaultModelForTier(tier: AiModelTier): RegisteredAiModel {
+    const model = this.findDefaultModelForTier(tier);
 
     if (!model) {
       throw new AiException(
@@ -463,18 +468,61 @@ export class AiModelRegistryService {
     return model;
   }
 
-  getEffectiveModelConfig(modelId: string): AiModelConfig {
+  // A pin only applies while the pinned model still resolves and is not
+  // disabled, so a workspace never loses a tier because a provider key went
+  // away or an admin disabled the model after it was pinned.
+  private resolveModelForTier(
+    tier: AiModelTier,
+    workspaceSettings?: WorkspaceAiModelSettings,
+  ): RegisteredAiModel {
+    const pinnedModelId =
+      isDefined(workspaceSettings) &&
+      !workspaceSettings.isAutoModelSelectionEnabled
+        ? workspaceSettings.aiModelIdByTier[tier]
+        : undefined;
+
+    if (isDefined(pinnedModelId) && this.isModelAdminAllowed(pinnedModelId)) {
+      const pinnedModel = this.getModel(pinnedModelId);
+
+      if (isDefined(pinnedModel)) {
+        return pinnedModel;
+      }
+    }
+
+    return this.getDefaultModelForTier(tier);
+  }
+
+  private resolveAutoSelectModel(
+    modelId: string,
+    workspaceSettings?: WorkspaceAiModelSettings,
+  ): RegisteredAiModel | undefined {
+    const tier =
+      modelId === AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID
+        ? (workspaceSettings?.aiAgentModelTier ?? DEFAULT_AI_AGENT_MODEL_TIER)
+        : getAiModelTierFromModelId(modelId);
+
+    if (!isDefined(tier)) {
+      return undefined;
+    }
+
+    return this.resolveModelForTier(tier, workspaceSettings);
+  }
+
+  getEffectiveModelConfig(
+    modelId: string,
+    workspaceSettings?: WorkspaceAiModelSettings,
+  ): AiModelConfig {
     this.ensureFresh();
 
-    if (isAutoSelectModelId(modelId)) {
-      const defaultModel =
-        modelId === AUTO_SELECT_FAST_MODEL_ID
-          ? this.getDefaultSpeedModel()
-          : this.getDefaultPerformanceModel();
+    const autoSelectedModel = this.resolveAutoSelectModel(
+      modelId,
+      workspaceSettings,
+    );
 
+    if (isDefined(autoSelectedModel)) {
       return (
-        this.modelConfigCache.get(defaultModel.modelId) ??
-        this.createDefaultConfigForCustomModel(defaultModel)
+        this.modelConfigCache.get(autoSelectedModel.modelId) ??
+        this.createDefaultConfigForCustomModel(autoSelectedModel)
       );
     }
 
@@ -542,16 +590,19 @@ export class AiModelRegistryService {
       return true;
     }
 
-    const prefs = this.preferencesService.getPreferences();
-    const disabledModels = prefs.disabledModels ?? [];
+    const disabledModels = this.preferencesService.getDisabledModelIds();
+    // Disabling a model disables every effort it can be pinned at.
+    const { modelId: baseModelId } = parseAiModelVariantId(modelId);
 
-    return !disabledModels.includes(modelId);
+    return (
+      !disabledModels.includes(modelId) && !disabledModels.includes(baseModelId)
+    );
   }
 
-  validateModelAvailability(
-    modelId: string,
-    availabilitySettings: WorkspaceModelAvailabilitySettings,
-  ): void {
+  // Catalog membership rather than registration: an instance can name a
+  // model before it holds the provider key, and a key added later makes the
+  // stored id work without touching the agent.
+  validateModelAvailability(modelId: string): void {
     if (!this.isModelAdminAllowed(modelId)) {
       throw new AiException(
         'The selected model has been disabled by the administrator.',
@@ -559,19 +610,12 @@ export class AiModelRegistryService {
       );
     }
 
-    const recommendedModelIds = this.getRecommendedModelIds();
-
-    const isAvailable = isAutoSelectModelId(modelId)
-      ? workspaceHasEnabledModels(availabilitySettings, recommendedModelIds)
-      : isModelAllowedByWorkspace(
-          modelId,
-          availabilitySettings,
-          recommendedModelIds,
-        );
-
-    if (!isAvailable) {
+    if (
+      !isAutoSelectModelId(modelId) &&
+      !isDefined(this.getModelConfig(modelId))
+    ) {
       throw new AiException(
-        'The selected model is not available in this workspace.',
+        this.buildModelNotFoundMessage(modelId),
         AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
@@ -587,12 +631,10 @@ export class AiModelRegistryService {
     modelConfig: AiModelConfig;
     isAvailable: boolean;
     isAdminEnabled: boolean;
-    isRecommended: boolean;
     providerName?: string;
     name?: string;
   }> {
     this.ensureFresh();
-    const recommended = this.getRecommendedModelIds();
 
     return Array.from(this.modelConfigCache.values()).map((modelConfig) => {
       const registered = this.modelRegistry.get(modelConfig.modelId);
@@ -602,7 +644,6 @@ export class AiModelRegistryService {
         modelConfig,
         isAvailable: !!registered,
         isAdminEnabled: this.isModelAdminAllowed(modelConfig.modelId),
-        isRecommended: recommended.has(modelConfig.modelId),
         providerName: registered?.providerName ?? cached?.providerName,
         name: cached?.modelDef.name,
       };
@@ -614,14 +655,6 @@ export class AiModelRegistryService {
     await this.preferencesService.setModelAdminEnabled(modelId, enabled);
   }
 
-  async setModelRecommended(
-    modelId: string,
-    recommended: boolean,
-  ): Promise<void> {
-    this.validateModelInRegistry(modelId);
-    await this.preferencesService.setModelRecommended(modelId, recommended);
-  }
-
   async setModelsAdminEnabled(
     modelIds: string[],
     enabled: boolean,
@@ -630,17 +663,9 @@ export class AiModelRegistryService {
     await this.preferencesService.setModelsAdminEnabled(modelIds, enabled);
   }
 
-  async setModelsRecommended(
-    modelIds: string[],
-    recommended: boolean,
-  ): Promise<void> {
-    modelIds.forEach((id) => this.validateModelInRegistry(id));
-    await this.preferencesService.setModelsRecommended(modelIds, recommended);
-  }
-
-  async setDefaultModel(role: AiModelRole, modelId: string): Promise<void> {
+  async setDefaultModel(tier: AiModelTier, modelId: string): Promise<void> {
     this.validateModelInRegistry(modelId);
-    await this.preferencesService.setDefaultModel(role, modelId);
+    await this.preferencesService.setDefaultModel(tier, modelId);
   }
 
   private validateModelInRegistry(modelId: string): void {
@@ -665,9 +690,13 @@ export class AiModelRegistryService {
     return this.providerConfigService.getCatalogProviderNames();
   }
 
-  resolveModelForAgent(agent: { modelId: string } | null): RegisteredAiModel {
+  resolveModelForAgent(
+    agent: { modelId: string } | null,
+    workspaceSettings?: WorkspaceAiModelSettings,
+  ): RegisteredAiModel {
     const aiModel = this.getEffectiveModelConfig(
-      agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID,
+      agent?.modelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+      workspaceSettings,
     );
 
     const registeredModel = this.getModel(aiModel.modelId);

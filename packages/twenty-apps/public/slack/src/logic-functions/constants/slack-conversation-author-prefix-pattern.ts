@@ -1,0 +1,1 @@
+export const SLACK_CONVERSATION_AUTHOR_PREFIX_PATTERN = /^<@([A-Z0-9]+)>: /;

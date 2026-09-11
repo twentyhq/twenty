@@ -55,9 +55,9 @@ Prod prerequisites: a connected mailbox (Settings → Accounts) and the app inst
 
 Run smtp4dev:
 `docker run --rm -d --name smtp4dev -p 8090:80 -p 2525:25 -p 1143:143 rnwood/smtp4dev`.
-Set `OUTBOUND_HTTP_SAFE_MODE_ENABLED` to false (Settings → Admin Panel → Config
-Variables) — safe mode blocks private hosts for IMAP/SMTP on purpose. Connect an
-IMAP/SMTP account with host `host.docker.internal` (SMTP 2525, IMAP 1143, no TLS, any
+Add `host.docker.internal` to `OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS` (Settings → Admin
+Panel → Config Variables) — private hosts are blocked for IMAP/SMTP on purpose. Connect
+an IMAP/SMTP account with host `host.docker.internal` (SMTP 2525, IMAP 1143, no TLS, any
 credentials). Mails land at http://localhost:8090. `EMAIL_DRIVER` env vars are the
 system mailer, not this — leave them alone.
 
