@@ -12,7 +12,7 @@ export const useCloseToast = () => {
   const store = useToastContext();
   const { dismissToasts } = useDismissToasts();
 
-  const close = useCallback(
+  const closeToast = useCallback(
     (id?: string) => {
       const toastsToClose = store
         .get(toastState)
@@ -31,5 +31,5 @@ export const useCloseToast = () => {
     [store, dismissToasts],
   );
 
-  return { close };
+  return { closeToast };
 };

@@ -15,7 +15,7 @@ type ToasterItemsProps = {
 export const ToasterItems = ({ getToastProps }: ToasterItemsProps) => {
   const store = useToastContext();
   const { toasts } = useAtomValue(toastState, { store });
-  const { close } = useCloseToast();
+  const { closeToast } = useCloseToast();
   const { completeToastExit } = useCompleteToastExit();
 
   return toasts.map((toast) => (
@@ -23,7 +23,7 @@ export const ToasterItems = ({ getToastProps }: ToasterItemsProps) => {
       key={toast.renderKey}
       toastEntry={toast}
       getToastProps={getToastProps}
-      onClose={close}
+      onClose={closeToast}
       onExitComplete={completeToastExit}
     />
   ));

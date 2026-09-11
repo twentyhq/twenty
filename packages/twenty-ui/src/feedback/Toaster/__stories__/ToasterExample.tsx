@@ -12,7 +12,7 @@ export type ToasterExampleProps = {
 };
 
 export const ToastControls = ({ onClose }: ToasterExampleProps) => {
-  const { enqueueToast, close } = useToast();
+  const { enqueueToast, closeToast } = useToast();
   const [count, setCount] = useState(1);
   const [toastId, setToastId] = useState('');
 
@@ -59,10 +59,10 @@ export const ToastControls = ({ onClose }: ToasterExampleProps) => {
       >
         Add timed notification
       </button>
-      <button type="button" onClick={() => close(toastId)}>
+      <button type="button" onClick={() => closeToast(toastId)}>
         Close last notification
       </button>
-      <button type="button" onClick={() => close()}>
+      <button type="button" onClick={() => closeToast()}>
         Close all notifications
       </button>
       <button

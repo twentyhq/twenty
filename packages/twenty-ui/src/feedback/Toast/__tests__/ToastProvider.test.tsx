@@ -58,7 +58,7 @@ it('deduplicates consecutive enqueues and applies the provider limit synchronous
     ),
   });
   const onClose = vi.fn();
-  const { enqueueToast, close } = result.current;
+  const { enqueueToast, closeToast } = result.current;
 
   const firstId: string = enqueueToast({ dedupeKey: 'saved', onClose });
   expect(enqueueToast({ dedupeKey: 'saved' })).toBe(firstId);
@@ -67,6 +67,6 @@ it('deduplicates consecutive enqueues and applies the provider limit synchronous
 
   enqueueToast({ children: 'Next notification' });
   expect(onClose).toHaveBeenCalledOnce();
-  close(firstId);
+  closeToast(firstId);
   expect(onClose).toHaveBeenCalledOnce();
 });

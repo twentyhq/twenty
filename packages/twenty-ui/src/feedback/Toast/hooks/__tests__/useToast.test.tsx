@@ -73,13 +73,13 @@ it('retains a dismissed toast until its exit finishes and calls onClose once', (
   listener.mockClear();
   const id = result.current.enqueueToast({ children: 'Saved', onClose });
 
-  result.current.close(id);
+  result.current.closeToast(id);
   const [closingToast] = store.get(toastState).toasts;
   expect(closingToast.status).toBe('closing');
   expect(onClose).toHaveBeenCalledOnce();
 
-  result.current.close(id);
-  result.current.close();
+  result.current.closeToast(id);
+  result.current.closeToast();
   expect(onClose).toHaveBeenCalledOnce();
   expect(listener).toHaveBeenCalledTimes(2);
 
@@ -119,7 +119,7 @@ it('counts only visible toasts toward the limit and evicts the oldest', () => {
   const onSecondClose = vi.fn();
   result.current.enqueueToast({ id: 'first', onClose: onFirstClose });
   result.current.enqueueToast({ id: 'second', onClose: onSecondClose });
-  result.current.close('first');
+  result.current.closeToast('first');
   result.current.enqueueToast({ id: 'third' });
   expect(onSecondClose).not.toHaveBeenCalled();
 
@@ -144,7 +144,7 @@ it('appends a restored toast under a new render key and ignores completion from 
   const onClose = vi.fn();
   result.current.enqueueToast({ id: 'first', dedupeKey: 'saved', onClose });
   result.current.enqueueToast({ id: 'second' });
-  result.current.close('first');
+  result.current.closeToast('first');
   const [firstExit] = store.get(toastState).toasts;
 
   result.current.enqueueToast({
@@ -164,7 +164,7 @@ it('appends a restored toast under a new render key and ignores completion from 
     'Restored',
   );
 
-  result.current.close('first');
+  result.current.closeToast('first');
   const snapshot = store.get(toastState).toasts;
   result.current.completeToastExit(firstExit);
   expect(store.get(toastState).toasts).toBe(snapshot);
@@ -183,7 +183,7 @@ it('can restore a notification from its close callback', () => {
   });
   result.current.enqueueToast({ id: 'saved', onClose });
 
-  result.current.close();
+  result.current.closeToast();
 
   expect(store.get(toastState).toasts).toEqual([
     {
@@ -206,7 +206,7 @@ it('removes dismissed notifications immediately without a viewport', () => {
   ).toEqual(['second']);
   expect(onClose).toHaveBeenCalledOnce();
 
-  result.current.close();
+  result.current.closeToast();
   expect(store.get(toastState).toasts).toEqual([]);
   expect(onClose).toHaveBeenCalledTimes(2);
 });
@@ -218,7 +218,7 @@ it('discards unfinished exits when the last viewport unmounts and keeps visible 
   const onClose = vi.fn();
   result.current.enqueueToast({ id: 'first', onClose });
   result.current.enqueueToast({ id: 'second' });
-  result.current.close('first');
+  result.current.closeToast('first');
   const closingSnapshot = store.get(toastState).toasts;
 
   unsubscribeFirst();
@@ -240,7 +240,7 @@ it('ignores unknown dismissals and completion for visible notifications', () => 
   result.current.enqueueToast({ id: 'saved' });
   const snapshot = store.get(toastState).toasts;
 
-  result.current.close('unknown');
+  result.current.closeToast('unknown');
   result.current.completeToastExit(snapshot[0]);
 
   expect(store.get(toastState).toasts).toBe(snapshot);

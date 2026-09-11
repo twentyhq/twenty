@@ -4,8 +4,11 @@ import { useCloseToast } from './useCloseToast';
 import { useEnqueueToast } from './useEnqueueToast';
 
 export const useToast = () => {
-  const { close } = useCloseToast();
+  const { closeToast } = useCloseToast();
   const { enqueueToast } = useEnqueueToast();
 
-  return useMemo(() => ({ enqueueToast, close }), [enqueueToast, close]);
+  return useMemo(
+    () => ({ enqueueToast, closeToast }),
+    [enqueueToast, closeToast],
+  );
 };
