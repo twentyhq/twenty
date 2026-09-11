@@ -23,7 +23,7 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
 @InputType()
-export class UpsertUsageLimitInput {
+export class CreateUsageLimitInput {
   @Field(() => UsageResourceType)
   @IsEnum(UsageResourceType)
   resourceType: UsageResourceType;
