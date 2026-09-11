@@ -1,8 +1,11 @@
+import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
@@ -13,6 +16,7 @@ import { MenuItemSwitch } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useMutation, useQuery } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
 import {
   ActivateSkillDocument,
@@ -20,6 +24,7 @@ import {
   FindManySkillsDocument,
 } from '~/generated-metadata/graphql';
 import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsSkillTableMetadata';
+import { type SettingsSkillTableItem } from '~/pages/settings/ai/types/SettingsSkillTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { SettingsAgentSkillsTable } from './SettingsAgentSkillsTable';
 
@@ -38,9 +43,28 @@ export const SettingsAgentSkillsTab = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivated, setShowDeactivated] = useState(true);
 
-  const skills = data?.skills ?? [];
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const installedApplications = currentWorkspace?.installedApplications;
 
-  const sortedSkills = useSortedArray(skills, SETTINGS_SKILL_TABLE_METADATA);
+  // not memoized: getApplicationDisplayName translates the standard and custom
+  // labels, so a cached label would survive a locale change
+  const skillTableItems = (data?.skills ?? []).map((skill) => {
+    const application = installedApplications?.find(
+      (installedApplication) => installedApplication.id === skill.applicationId,
+    );
+
+    return {
+      ...skill,
+      applicationLabel: isDefined(application)
+        ? getApplicationDisplayName({ application, currentWorkspace })
+        : '',
+    } satisfies SettingsSkillTableItem;
+  });
+
+  const sortedSkills = useSortedArray(
+    skillTableItems,
+    SETTINGS_SKILL_TABLE_METADATA,
+  );
 
   const filteredSkills = useMemo(
     () =>
@@ -48,7 +72,10 @@ export const SettingsAgentSkillsTab = () => {
         const searchNormalized = normalizeSearchText(searchTerm);
         const matchesSearch =
           normalizeSearchText(skill.name).includes(searchNormalized) ||
-          normalizeSearchText(skill.label).includes(searchNormalized);
+          normalizeSearchText(skill.label).includes(searchNormalized) ||
+          normalizeSearchText(skill.applicationLabel).includes(
+            searchNormalized,
+          );
 
         if (!matchesSearch) {
           return false;
