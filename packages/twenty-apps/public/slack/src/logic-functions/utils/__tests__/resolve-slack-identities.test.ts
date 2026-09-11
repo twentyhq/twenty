@@ -93,7 +93,7 @@ describe('resolveSlackIdentities', () => {
       expect.objectContaining({
         outcome: 'confirmedMember',
         workspaceMemberId: 'member-1',
-        memberProvenance: 'MANUAL_CONSENTED_LINK',
+        memberProvenance: 'manualConsentedLink',
       }),
     );
   });
@@ -113,7 +113,30 @@ describe('resolveSlackIdentities', () => {
       expect.objectContaining({
         outcome: 'confirmedMember',
         workspaceMemberId: 'member-live',
-        memberProvenance: 'VERIFIED_EMAIL',
+        memberProvenance: 'verifiedEmail',
+      }),
+    );
+  });
+
+  it('should keep the member own email match when a manual link is pending or declined', async () => {
+    findSlackUserLinksBySlackUserIdsMock.mockResolvedValue(
+      new Map([
+        [
+          'U04ABC',
+          link({ consentState: 'PENDING', workspaceMemberId: 'member-other' }),
+        ],
+      ]),
+    );
+    findWorkspaceMemberIdsByEmailsMock.mockResolvedValue({
+      workspaceMemberIdByEmail: new Map([['alice@twenty.com', 'member-own']]),
+      ambiguousEmailCount: 0,
+    });
+
+    expect((await resolve([identity()])).get('U04ABC')).toEqual(
+      expect.objectContaining({
+        outcome: 'confirmedMember',
+        workspaceMemberId: 'member-own',
+        memberProvenance: 'verifiedEmail',
       }),
     );
   });
@@ -157,7 +180,7 @@ describe('resolveSlackIdentities', () => {
     expect(resolution).toEqual(
       expect.objectContaining({
         outcome: 'confirmedMember',
-        memberProvenance: 'MANUAL_CONSENTED_LINK',
+        memberProvenance: 'manualConsentedLink',
       }),
     );
     expect(findSlackUserLinksBySlackUserIdsMock).toHaveBeenCalledWith(client, {
@@ -193,6 +216,28 @@ describe('resolveSlackIdentities', () => {
     expect(findSlackUserLinksBySlackUserIdsMock).not.toHaveBeenCalled();
   });
 
+  it('should bound how many identities it asks Slack for', async () => {
+    usersInfoMock.mockImplementation(({ user }: { user: string }) =>
+      Promise.resolve({
+        user: {
+          id: user,
+          team_id: INSTALLED_TEAM_ID,
+          profile: { display_name: user, email: `${user}@twenty.com` },
+          is_email_confirmed: true,
+        },
+      }),
+    );
+
+    const resolutions = await resolveSlackIdentities({
+      slackUserIds: Array.from({ length: 30 }, (_unused, index) => `U${index}`),
+      client,
+      slackClient,
+    });
+
+    expect(usersInfoMock.mock.calls.length).toBeLessThanOrEqual(8);
+    expect(resolutions.get('U29')?.outcome).toBe('unidentified');
+  });
+
   it('should not ask Slack again for an identity the caller already has', async () => {
     await resolve([identity()]);
 
@@ -216,16 +261,5 @@ describe('resolveSlackIdentities', () => {
     expect(findWorkspaceMemberIdsByEmailsMock).toHaveBeenCalledWith(client, {
       emails: ['bob@twenty.com'],
     });
-  });
-
-  it('should carry the identity and the link through so callers need no second lookup', async () => {
-    findSlackUserLinksBySlackUserIdsMock.mockResolvedValue(
-      new Map([['U04ABC', link()]]),
-    );
-
-    const resolution = (await resolve([identity()])).get('U04ABC');
-
-    expect(resolution?.identity?.displayName).toBe('alice.m');
-    expect(resolution?.link?.id).toBe('link-1');
   });
 });

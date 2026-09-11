@@ -8,9 +8,24 @@ import { findWorkspaceMemberNamesByIds } from 'src/logic-functions/data/find-wor
 import { type SlackIdentityResolution } from 'src/logic-functions/types/slack-identity-resolution.type';
 import { type SlackMentionLabel } from 'src/logic-functions/types/slack-mention-label.type';
 import { resolveSlackIdentities } from 'src/logic-functions/utils/resolve-slack-identities';
-import { sanitizeSlackMentionName } from 'src/logic-functions/utils/sanitize-slack-mention-name';
 
 const MAX_MENTIONED_USERS = 20;
+const MAX_MENTION_NAME_LENGTH = 80;
+const LABEL_SUFFIX_FORGING_CHARACTERS_PATTERN = /[()]/g;
+
+// Slack profile names are attacker-controlled: newlines let a name pose as its
+// own prompt section and parentheses let it forge the "(workspace member …)"
+// suffix the agent trusts for ids.
+const sanitizeMentionName = (name: string | undefined): string | undefined => {
+  const flattened = (name ?? '')
+    .replace(LABEL_SUFFIX_FORGING_CHARACTERS_PATTERN, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, MAX_MENTION_NAME_LENGTH)
+    .trim();
+
+  return isNonEmptyString(flattened) ? flattened : undefined;
+};
 
 const formatWorkspaceMemberLabel = ({
   name,
@@ -30,7 +45,7 @@ const resolveSlackName = (
   resolution: SlackIdentityResolution,
 ): string | undefined =>
   [resolution.identity?.displayName, resolution.link?.name]
-    .map(sanitizeSlackMentionName)
+    .map(sanitizeMentionName)
     .find(isNonEmptyString);
 
 const buildLabel = ({
@@ -49,7 +64,7 @@ const buildLabel = ({
     nameByWorkspaceMemberId.has(resolution.workspaceMemberId)
   ) {
     const name =
-      sanitizeSlackMentionName(
+      sanitizeMentionName(
         nameByWorkspaceMemberId.get(resolution.workspaceMemberId),
       ) ??
       slackName ??

@@ -3,7 +3,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { SLACK_MEMBER_PROVENANCE } from 'src/logic-functions/constants/slack-member-provenance';
 import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/slack-user-link-consent-state';
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
 import { createSlackUserLink } from 'src/logic-functions/data/create-slack-user-link';
@@ -80,7 +79,7 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
 
   const { workspaceMemberId, memberProvenance } = resolution;
 
-  if (memberProvenance === SLACK_MEMBER_PROVENANCE.VERIFIED_EMAIL) {
+  if (memberProvenance === 'verifiedEmail') {
     await recordEmailMatchOnAutoLink({
       resolution,
       identity,

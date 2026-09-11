@@ -3,7 +3,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { SLACK_MEMBER_PROVENANCE } from 'src/logic-functions/constants/slack-member-provenance';
 import { findSlackUserLinksBySlackUserIds } from 'src/logic-functions/data/find-slack-user-links-by-slack-user-ids';
 import { findWorkspaceMemberIdsByEmails } from 'src/logic-functions/data/find-workspace-member-ids-by-emails';
 import { type SlackIdentityResolution } from 'src/logic-functions/types/slack-identity-resolution.type';
@@ -105,7 +104,7 @@ const buildResolution = ({
           link,
           outcome: 'confirmedMember',
           workspaceMemberId: link.workspaceMemberId,
-          memberProvenance: SLACK_MEMBER_PROVENANCE.MANUAL_CONSENTED_LINK,
+          memberProvenance: 'manualConsentedLink',
         }
       : { slackUserId, identity, link, outcome: 'membershipNotConfirmed' };
   }
@@ -125,7 +124,7 @@ const buildResolution = ({
         link,
         outcome: 'confirmedMember',
         workspaceMemberId,
-        memberProvenance: SLACK_MEMBER_PROVENANCE.VERIFIED_EMAIL,
+        memberProvenance: 'verifiedEmail',
       }
     : { slackUserId, identity, link, outcome: 'membershipNotConfirmed' };
 };
