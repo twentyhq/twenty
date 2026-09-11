@@ -1,7 +1,7 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,7 +15,6 @@ import {
   UpdateOneAgentDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { useAutoSaveOnChange } from '~/pages/settings/ai/hooks/useAutoSaveOnChange';
 import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/validation-schemas/settingsAiAgentFormSchema';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -126,16 +125,19 @@ export const useSettingsAgentSave = ({
     }
   }, 1_000);
 
-  useAutoSaveOnChange({
-    autoSave,
-    isEnabled: isDefined(agent),
-    watchedValue: formValues,
-  });
-  useAutoSaveOnChange({
-    autoSave,
-    isEnabled: isDefined(agent),
-    watchedValue: isRoleDirty,
-  });
+  // Role permissions are edited by the shared roles module through Jotai
+  // state, so there is no change handler to schedule the save from.
+  useEffect(() => {
+    if (isRoleDirty) {
+      autoSave();
+    }
+  }, [isRoleDirty, autoSave]);
+
+  useEffect(() => {
+    return () => {
+      autoSave.flush();
+    };
+  }, [autoSave]);
 
   const handleSave = async () => {
     if (isReadonlyMode || !validateForm()) {
@@ -189,5 +191,5 @@ export const useSettingsAgentSave = ({
     }
   };
 
-  return { handleSave, isSubmitting };
+  return { handleSave, isSubmitting, scheduleAutoSave: autoSave };
 };

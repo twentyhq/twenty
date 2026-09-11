@@ -75,6 +75,22 @@ export const SettingsSkillFormContent = ({
   );
   const [formValues, setFormValues] = useState(initialFormValues);
 
+  const validateForm = (): boolean => {
+    return (
+      formValues.name.trim().length > 0 &&
+      formValues.label.trim().length > 0 &&
+      formValues.content.trim().length > 0
+    );
+  };
+
+  const { handleSave, isSubmitting, scheduleAutoSave } = useSettingsSkillSave({
+    skill,
+    formValues,
+    initialFormValues,
+    isReadonlyMode,
+    validateForm,
+  });
+
   const handleFieldChange = <TField extends keyof SettingsSkillFormValues>(
     fieldName: TField,
     value: SettingsSkillFormValues[TField],
@@ -92,23 +108,11 @@ export const SettingsSkillFormContent = ({
 
       return newValues;
     });
-  };
 
-  const validateForm = (): boolean => {
-    return (
-      formValues.name.trim().length > 0 &&
-      formValues.label.trim().length > 0 &&
-      formValues.content.trim().length > 0
-    );
+    if (isDefined(skill)) {
+      scheduleAutoSave();
+    }
   };
-
-  const { handleSave, isSubmitting } = useSettingsSkillSave({
-    skill,
-    formValues,
-    initialFormValues,
-    isReadonlyMode,
-    validateForm,
-  });
 
   const canSave = !isReadonlyMode && validateForm() && !isSubmitting;
 

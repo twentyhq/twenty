@@ -35,6 +35,7 @@ import { SettingsAgentSettingsTab } from '~/pages/settings/ai/components/Setting
 import { SETTINGS_AGENT_DETAIL_TABS } from '~/pages/settings/ai/constants/SettingsAgentDetailTabs';
 import { useSettingsAgentFormState } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
 import { useSettingsAgentSave } from '~/pages/settings/ai/hooks/useSettingsAgentSave';
+import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/validation-schemas/settingsAiAgentFormSchema';
 import { getSettingsAgentInitialFormValues } from '~/pages/settings/ai/utils/getSettingsAgentInitialFormValues';
 import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
 import { isOwnedByInstalledApplication } from '~/pages/settings/ai/utils/isOwnedByInstalledApplication';
@@ -78,7 +79,7 @@ export const SettingsAgentFormContent = ({
     tabListComponentId,
   );
 
-  const { formValues, handleFieldChange, validateForm } =
+  const { formValues, setFieldValue, validateForm } =
     useSettingsAgentFormState(initialFormValues);
 
   const settingsDraftRole = useAtomFamilyStateValue(
@@ -98,7 +99,7 @@ export const SettingsAgentFormContent = ({
     isDefined(formValues.role) &&
     !isDeeplyEqual(settingsDraftRole, settingsPersistedRole);
 
-  const { handleSave, isSubmitting } = useSettingsAgentSave({
+  const { handleSave, isSubmitting, scheduleAutoSave } = useSettingsAgentSave({
     agent,
     formValues,
     initialFormValues,
@@ -106,6 +107,17 @@ export const SettingsAgentFormContent = ({
     isRoleDirty,
     validateForm,
   });
+
+  const handleFieldChange = (
+    field: keyof SettingsAiAgentFormValues,
+    value: SettingsAiAgentFormValues[keyof SettingsAiAgentFormValues],
+  ) => {
+    setFieldValue(field, value);
+
+    if (isDefined(agent)) {
+      scheduleAutoSave();
+    }
+  };
 
   const canSave = !isReadonlyMode && validateForm() && !isSubmitting;
 

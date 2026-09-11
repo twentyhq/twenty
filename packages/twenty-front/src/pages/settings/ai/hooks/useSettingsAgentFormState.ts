@@ -12,7 +12,7 @@ export const useSettingsAgentFormState = (
   const validateForm = (): boolean =>
     settingsAiAgentFormSchema.safeParse(formValues).success;
 
-  const handleFieldChange = (
+  const setFieldValue = (
     field: keyof SettingsAiAgentFormValues,
     value: SettingsAiAgentFormValues[keyof SettingsAiAgentFormValues],
   ) => {
@@ -21,7 +21,7 @@ export const useSettingsAgentFormState = (
 
   return {
     formValues,
-    handleFieldChange,
+    setFieldValue,
     validateForm,
   };
 };

@@ -1,6 +1,6 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,7 +12,6 @@ import {
   UpdateSkillDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { useAutoSaveOnChange } from '~/pages/settings/ai/hooks/useAutoSaveOnChange';
 import { type SettingsSkillFormValues } from '~/pages/settings/ai/types/SettingsSkillFormValues';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -79,11 +78,11 @@ export const useSettingsSkillSave = ({
     }
   }, 1_000);
 
-  useAutoSaveOnChange({
-    autoSave,
-    isEnabled: isDefined(skill),
-    watchedValue: formValues,
-  });
+  useEffect(() => {
+    return () => {
+      autoSave.flush();
+    };
+  }, [autoSave]);
 
   const handleSave = async () => {
     if (isReadonlyMode || !validateForm()) {
@@ -119,5 +118,5 @@ export const useSettingsSkillSave = ({
     }
   };
 
-  return { handleSave, isSubmitting };
+  return { handleSave, isSubmitting, scheduleAutoSave: autoSave };
 };
