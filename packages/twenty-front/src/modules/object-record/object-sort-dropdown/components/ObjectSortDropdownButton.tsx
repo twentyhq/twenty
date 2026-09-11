@@ -21,7 +21,6 @@ import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/Dropdo
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -37,6 +36,7 @@ import { IconX, useIcons } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
+import { useIsDropdownOpen } from '@/ui/layout/dropdown/hooks/useIsDropdownOpen';
 
 export const ObjectSortDropdownButton = () => {
   const { resetRecordSortDropdownSearchInput } =
@@ -141,10 +141,7 @@ export const ObjectSortDropdownButton = () => {
     setIsRecordSortDirectionDropdownMenuUnfolded(false);
   };
 
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    OBJECT_SORT_DROPDOWN_ID,
-  );
+  const isDropdownOpen = useIsDropdownOpen(OBJECT_SORT_DROPDOWN_ID);
 
   const { t } = useLingui();
 
@@ -224,9 +221,9 @@ export const ObjectSortDropdownButton = () => {
             }
           />
           <SelectableList
-            selectableListInstanceId={OBJECT_SORT_DROPDOWN_ID}
+            selectableListInstanceId={scopedObjectSortDropdownId}
             selectableItemIdArray={selectableItemIdArray}
-            focusId={OBJECT_SORT_DROPDOWN_ID}
+            focusId={scopedObjectSortDropdownId}
           >
             {shouldShowVisibleFields && (
               <>

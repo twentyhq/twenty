@@ -10,10 +10,8 @@ import { type SettingsRoleAssignmentConfirmationModalSelectedRoleTarget } from '
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useState } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
@@ -29,6 +27,7 @@ import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPart
 import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '@/settings/roles/role-assignment/constants/RoleAssignmentConfirmationModalId';
 import { ROLE_TARGET_CONFIG } from '@/settings/roles/role-assignment/constants/RoleTargetConfig';
 import { buildRoleMaps } from '@/settings/roles/role-assignment/utils/buildRoleMaps';
+import { useIsModalOpened } from '@/ui/layout/modal/hooks/useIsModalOpened';
 
 type SettingsRoleAssignmentProps = {
   roleId: string;
@@ -91,10 +90,7 @@ export const SettingsRoleAssignment = ({
     setSelectRoleTarget(null);
   };
 
-  const isModalOpened = useAtomComponentStateValue(
-    isModalOpenedComponentState,
-    modalInstanceId,
-  );
+  const isModalOpened = useIsModalOpened(modalInstanceId);
 
   const handleConfirm = async () => {
     if (!selectedRoleTarget || !isModalOpened) return;

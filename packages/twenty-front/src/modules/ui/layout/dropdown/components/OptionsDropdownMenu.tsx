@@ -13,6 +13,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useId } from 'react';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/input';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 type OptionsDropdownMenuProps = {
   dropdownId?: string;
@@ -70,7 +71,9 @@ export const OptionsDropdownMenu = ({
   children,
 }: OptionsDropdownMenuProps) => {
   const generatedDropdownId = useId();
-  const dropdownId = dropdownIdFromProps ?? generatedDropdownId;
+  const dropdownId = useWorkspaceSurfaceScopedComponentInstanceId(
+    dropdownIdFromProps ?? generatedDropdownId,
+  );
   const { t } = useLingui();
 
   const listId = selectableListId ?? dropdownId;

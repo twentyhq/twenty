@@ -80,8 +80,8 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <SelectableList
-          selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-          focusId={OBJECT_OPTIONS_DROPDOWN_ID}
+          selectableListInstanceId={scopedObjectOptionsDropdownId}
+          focusId={scopedObjectOptionsDropdownId}
           selectableItemIdArray={selectableItemIdArray}
         >
           <SelectableListItem

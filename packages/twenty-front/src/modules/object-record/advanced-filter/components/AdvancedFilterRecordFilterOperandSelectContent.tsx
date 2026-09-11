@@ -94,11 +94,11 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
             <SelectableList
-              focusId={dropdownId}
+              focusId={scopedDropdownId}
               selectableItemIdArray={operandsForFilterType.map(
                 (operand) => operand,
               )}
-              selectableListInstanceId={dropdownId}
+              selectableListInstanceId={scopedDropdownId}
             >
               {operandsForFilterType.map((filterOperand, index) => (
                 <SelectableListItem

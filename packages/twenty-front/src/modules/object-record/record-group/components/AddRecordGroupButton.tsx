@@ -12,6 +12,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { LightButton } from 'twenty-ui/input';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 type AddRecordGroupButtonProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -27,6 +28,8 @@ export const AddRecordGroupButton = ({
   const { currentView } = useGetCurrentViewOnly();
   const { addRecordGroup } = useAddRecordGroup();
   const { closeDropdown } = useCloseDropdown();
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
 
   const targetObjectNameSingular =
     fieldMetadataItem.relation?.targetObjectMetadata.nameSingular;
@@ -62,7 +65,7 @@ export const AddRecordGroupButton = ({
       }
       dropdownComponents={
         <SingleRecordPicker
-          focusId={dropdownId}
+          focusId={scopedDropdownId}
           componentInstanceId={dropdownId}
           onCancel={() => closeDropdown(dropdownId)}
           onMorphItemSelected={handleRecordSelected}

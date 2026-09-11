@@ -29,6 +29,7 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
@@ -81,6 +82,8 @@ export const FormMultiRecordPicker = ({
 
   const componentId = useId();
   const dropdownId = `form-multi-record-picker-${componentId}`;
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
   const variablesDropdownId = `form-multi-record-picker-${componentId}-variables`;
 
   const { closeDropdown } = useCloseDropdown();
@@ -230,7 +233,7 @@ export const FormMultiRecordPicker = ({
               dropdownComponents={
                 <MultipleRecordPicker
                   componentInstanceId={dropdownId}
-                  focusId={dropdownId}
+                  focusId={scopedDropdownId}
                   onChange={handleMorphItemChange}
                   onSubmit={() => closeDropdown(dropdownId)}
                   onClickOutside={() => closeDropdown(dropdownId)}

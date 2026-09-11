@@ -20,6 +20,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
   () => {
@@ -55,6 +56,10 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
       useUpsertObjectFilterDropdownCurrentFilter();
 
     const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+    const scopedViewBarFilterDropdownId =
+      useWorkspaceSurfaceScopedComponentInstanceId(
+        ViewBarFilterDropdownIds.MAIN,
+      );
     const { getInitialFilterValue } = useGetInitialFilterValue();
 
     const store = useStore();
@@ -75,7 +80,7 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
 
           if (filterType === 'RELATION' || filterType === 'SELECT') {
             pushFocusItemToFocusStack({
-              focusId: ViewBarFilterDropdownIds.MAIN,
+              focusId: scopedViewBarFilterDropdownId,
               component: {
                 type: FocusComponentType.DROPDOWN,
                 instanceId: fieldMetadataItem.id,
@@ -144,6 +149,7 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
         },
         [
           store,
+          scopedViewBarFilterDropdownId,
           fieldMetadataItemUsedInDropdownCallbackState,
           currentRecordFiltersCallbackState,
           objectFilterDropdownFilterIsSelectedCallbackState,

@@ -24,6 +24,7 @@ import { useCallback, useContext, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
@@ -125,6 +126,8 @@ export const FormSingleRecordPicker = ({
 
   const componentId = useId();
   const dropdownId = `form-record-picker-${componentId}`;
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
   const variablesDropdownId = `form-record-picker-${componentId}-variables`;
 
   const { closeDropdown } = useCloseDropdown();
@@ -251,7 +254,7 @@ export const FormSingleRecordPicker = ({
               }
               dropdownComponents={
                 <SingleRecordPicker
-                  focusId={dropdownId}
+                  focusId={scopedDropdownId}
                   componentInstanceId={dropdownId}
                   EmptyIcon={IconForbid}
                   emptyLabel={t`No record`}

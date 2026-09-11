@@ -26,13 +26,13 @@ import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/can
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
+import { useIsDropdownOpen } from '@/ui/layout/dropdown/hooks/useIsDropdownOpen';
 
 const StyledHeader = styled.div<{ isReadOnly: boolean }>`
   align-items: center;
@@ -197,10 +197,7 @@ export const RecordBoardColumnHeader = () => {
 
   const dropdownId = `record-board-column-dropdown-${columnDefinition.id}`;
 
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownId,
-  );
+  const isDropdownOpen = useIsDropdownOpen(dropdownId);
 
   const handleCreateNewRecordClick = async () => {
     await createNewIndexRecord({

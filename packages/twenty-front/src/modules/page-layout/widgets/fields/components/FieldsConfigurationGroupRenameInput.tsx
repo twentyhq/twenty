@@ -6,6 +6,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -32,6 +33,7 @@ export const FieldsConfigurationGroupRenameInput = ({
   onCancel,
 }: FieldsConfigurationGroupRenameInputProps) => {
   const { t } = useLingui();
+  const focusId = useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
 
   const handleSave = () => {
     if (renameValue.trim().length > 0) {
@@ -43,14 +45,14 @@ export const FieldsConfigurationGroupRenameInput = ({
   useHotkeysOnFocusedElement({
     keys: [Key.Enter],
     callback: handleSave,
-    focusId: dropdownId,
+    focusId,
     dependencies: [handleSave],
   });
 
   useHotkeysOnFocusedElement({
     keys: [Key.Escape],
     callback: onCancel,
-    focusId: dropdownId,
+    focusId,
     dependencies: [onCancel],
   });
 

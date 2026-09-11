@@ -11,9 +11,8 @@ import { TEXT_INPUT_CLICK_OUTSIDE_ID } from '@/ui/input/components/constants/Tex
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
 import { SELECT_COUNTRY_DROPDOWN_ID } from '@/ui/input/components/internal/country/constants/SelectCountryDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { useIsDropdownOpen } from '@/ui/layout/dropdown/hooks/useIsDropdownOpen';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 
@@ -22,6 +21,7 @@ import { type AllowedAddressSubField } from 'twenty-shared/types';
 import { useAddressAutocomplete } from '@/ui/field/input/hooks/useAddressAutocomplete';
 import { useCountryUtils } from '@/ui/field/input/hooks/useCountryUtils';
 import { useFocusManagement } from '@/ui/field/input/hooks/useFocusManagement';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 const StyledAddressContainer = styled.div`
   padding: 4px 8px;
@@ -227,15 +227,20 @@ export const AddressInput = ({
     onShiftTab: handleShiftTab,
   });
 
-  const activeDropdownFocusId = useAtomStateValue(activeDropdownFocusIdState);
+  const autocompleteDropdownId = useWorkspaceSurfaceScopedComponentInstanceId(
+    SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID,
+  );
+
+  const isCountryDropdownOpen = useIsDropdownOpen(SELECT_COUNTRY_DROPDOWN_ID);
+  const isAutocompleteDropdownOpen = useIsDropdownOpen(autocompleteDropdownId);
 
   useListenClickOutside({
     refs: [wrapperRef],
     callback: (event) => {
-      if (
-        activeDropdownFocusId === SELECT_COUNTRY_DROPDOWN_ID ||
-        activeDropdownFocusId === SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID
-      ) {
+      // A click on an option of one of our own dropdowns lands in a portal,
+      // outside wrapperRef, and must reach the option rather than close the
+      // whole address input.
+      if (isCountryDropdownOpen || isAutocompleteDropdownOpen) {
         return;
       }
 
@@ -270,7 +275,7 @@ export const AddressInput = ({
     return (
       <StyledInputWithDropdownContainer>
         <Dropdown
-          dropdownId={SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID}
+          dropdownId={autocompleteDropdownId}
           dropdownPlacement="bottom-start"
           excludedClickOutsideIds={[
             TEXT_INPUT_CLICK_OUTSIDE_ID,
@@ -283,7 +288,7 @@ export const AddressInput = ({
             <PlaceAutocompleteSelect
               list={validAutocompleteData}
               onChange={handlePlaceSelection}
-              dropdownId={SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID}
+              dropdownId={autocompleteDropdownId}
             />
           }
         />

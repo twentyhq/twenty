@@ -25,6 +25,7 @@ import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdow
 import { useLingui } from '@lingui/react/macro';
 import { IconX } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 export const StyledInput = styled.input`
   background: transparent;
@@ -62,6 +63,9 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
   } = useFilterDropdownSelectableFieldMetadataItems();
 
   const { closeDropdown } = useCloseDropdown();
+
+  const scopedViewBarFilterDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(ViewBarFilterDropdownIds.MAIN);
 
   const selectableFieldMetadataItemIds = [
     ...selectableVisibleFieldMetadataItems.map(
@@ -112,7 +116,7 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
         <SelectableList
           selectableItemIdArray={selectableFieldMetadataItemIds}
           selectableListInstanceId={FILTER_FIELD_LIST_ID}
-          focusId={ViewBarFilterDropdownIds.MAIN}
+          focusId={scopedViewBarFilterDropdownId}
         >
           {shouldShowVisibleFields && (
             <>

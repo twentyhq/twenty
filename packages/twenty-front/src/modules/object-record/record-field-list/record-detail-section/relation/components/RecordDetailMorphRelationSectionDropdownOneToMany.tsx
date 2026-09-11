@@ -17,13 +17,13 @@ import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/reco
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
+import { useDropdownPlacement } from '@/ui/layout/dropdown/hooks/useDropdownPlacement';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 type RecordDetailMorphRelationSectionDropdownOneToManyProps = {
   dropdownTriggerClickableComponent?: ReactNode;
@@ -66,12 +66,12 @@ export const RecordDetailMorphRelationSectionDropdownOneToMany = ({
     instanceId: scopeInstanceId,
   });
 
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
+
   const { closeDropdown } = useCloseDropdown();
 
-  const dropdownPlacement = useAtomComponentStateValue(
-    dropdownPlacementComponentState,
-    dropdownId,
-  );
+  const dropdownPlacement = useDropdownPlacement(dropdownId);
 
   const setMultipleRecordPickerSearchFilter = useSetAtomComponentState(
     multipleRecordPickerSearchFilterComponentState,
@@ -169,7 +169,7 @@ export const RecordDetailMorphRelationSectionDropdownOneToMany = ({
       }
       dropdownComponents={
         <MultipleRecordPicker
-          focusId={dropdownId}
+          focusId={scopedDropdownId}
           componentInstanceId={dropdownId}
           onChange={(morphItem) => {
             updateMorphRelationOneToMany(morphItem);

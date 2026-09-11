@@ -18,10 +18,8 @@ import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/reco
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { indexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/indexViewIdFromObjectMetadataItemFamilySelector';
 import { useLingui } from '@lingui/react/macro';
 import {
@@ -37,6 +35,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
+import { useIsDropdownOpen } from '@/ui/layout/dropdown/hooks/useIsDropdownOpen';
 
 type RecordDetailRelationSectionProps = {
   loading: boolean;
@@ -101,10 +100,7 @@ export const RecordDetailRelationSection = ({
     instanceId: scopeInstanceId,
   });
 
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownId,
-  );
+  const isDropdownOpen = useIsDropdownOpen(dropdownId);
 
   const indexViewId = useAtomFamilySelectorValue(
     indexViewIdFromObjectMetadataItemFamilySelector,

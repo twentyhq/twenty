@@ -77,6 +77,8 @@ export const ObjectFilterDropdownOptionSelect = ({
   const scopedComponentInstanceId =
     useWorkspaceSurfaceScopedComponentInstanceId(componentInstanceId);
 
+  const scopedFocusId = useWorkspaceSurfaceScopedComponentInstanceId(focusId);
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     scopedComponentInstanceId,
@@ -123,7 +125,7 @@ export const ObjectFilterDropdownOptionSelect = ({
       closeDropdown();
       resetSelectedItem();
     },
-    focusId,
+    focusId: scopedFocusId,
     dependencies: [closeDropdown, resetSelectedItem],
   });
 
@@ -174,7 +176,7 @@ export const ObjectFilterDropdownOptionSelect = ({
     <SelectableList
       selectableListInstanceId={componentInstanceId}
       selectableItemIdArray={objectRecordsIds}
-      focusId={focusId}
+      focusId={scopedFocusId}
     >
       <DropdownMenuItemsContainer hasMaxHeight>
         {showNoResult ? (

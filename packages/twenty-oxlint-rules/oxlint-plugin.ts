@@ -61,6 +61,10 @@ import {
   RULE_NAME as noStorybookA11yDisableName,
 } from './rules/no-storybook-a11y-disable';
 import {
+  rule as noSurfaceScopedStateOutsideOwner,
+  RULE_NAME as noSurfaceScopedStateOutsideOwnerName,
+} from './rules/no-surface-scoped-state-outside-owner';
+import {
   rule as preferWorkspaceScopedRepository,
   RULE_NAME as preferWorkspaceScopedRepositoryName,
 } from './rules/prefer-workspace-scoped-repository';
@@ -100,6 +104,7 @@ export default definePlugin({
     [noNavigatePreferLinkName]: noNavigatePreferLink,
     [noStateUserefName]: noStateUseref,
     [noStorybookA11yDisableName]: noStorybookA11yDisable,
+    [noSurfaceScopedStateOutsideOwnerName]: noSurfaceScopedStateOutsideOwner,
     [preferWorkspaceScopedRepositoryName]: preferWorkspaceScopedRepository,
     [restApiMethodsShouldBeGuardedName]: restApiMethodsShouldBeGuarded,
     [sortCssPropertiesAlphabeticallyName]: sortCssPropertiesAlphabetically,

@@ -13,6 +13,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { z } from 'zod';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 export const EMPTY_FILTER_VALUE = '[]';
 export const MAX_ITEMS_TO_DISPLAY = 3;
@@ -22,6 +23,9 @@ export const ObjectFilterDropdownSourceSelect = ({
 }: {
   dropdownId: string;
 }) => {
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
+
   const objectFilterDropdownSearchInput = useAtomComponentStateValue(
     objectFilterDropdownSearchInputComponentState,
   );
@@ -88,7 +92,7 @@ export const ObjectFilterDropdownSourceSelect = ({
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <MultipleSelectDropdown
         selectableListId="object-filter-source-select-id"
-        focusId={dropdownId}
+        focusId={scopedDropdownId}
         itemsToSelect={sourceTypes.filter(
           (item) =>
             !filteredSelectedItems.some((selected) => selected.id === item.id),

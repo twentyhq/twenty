@@ -11,9 +11,8 @@ import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { useIsDropdownOpen } from '@/ui/layout/dropdown/hooks/useIsDropdownOpen';
 
 const StyledThreadItem = styled.div`
   align-items: center;
@@ -104,10 +103,7 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
     thread.id,
     AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL,
   );
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    itemMenuDropdownId,
-  );
+  const isDropdownOpen = useIsDropdownOpen(itemMenuDropdownId);
 
   return (
     <StyledThreadItem

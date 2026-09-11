@@ -5,10 +5,9 @@ import { NAVIGATION_MENU_ITEM_FOLDER_DELETE_MODAL_ID } from '@/navigation-menu-i
 import { useDeleteNavigationMenuItemFolder } from '@/navigation-menu-item/edit/folder/hooks/useDeleteNavigationMenuItemFolder';
 import { useRenameNavigationMenuItemFolder } from '@/navigation-menu-item/edit/folder/hooks/useRenameNavigationMenuItemFolder';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useIsDropdownOpen } from '@/ui/layout/dropdown/hooks/useIsDropdownOpen';
+import { useIsModalOpened } from '@/ui/layout/modal/hooks/useIsModalOpened';
 
 type UseFavoritesFolderEditParams = {
   folderId: string;
@@ -31,17 +30,11 @@ export const useFavoritesFolderEdit = ({
   const { openModal } = useModal();
 
   const dropdownId = `navigation-menu-item-folder-edit-${folderId}`;
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownId,
-  );
+  const isDropdownOpen = useIsDropdownOpen(dropdownId);
   const { closeDropdown } = useCloseDropdown();
 
   const modalId = `${NAVIGATION_MENU_ITEM_FOLDER_DELETE_MODAL_ID}-${folderId}`;
-  const isModalOpened = useAtomComponentStateValue(
-    isModalOpenedComponentState,
-    modalId,
-  );
+  const isModalOpened = useIsModalOpened(modalId);
 
   const handleSubmitRename = async (value: string) => {
     if (value === '') return;

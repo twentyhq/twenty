@@ -413,6 +413,9 @@ export const IconPicker = ({
 
   const iconColorPickerDropdownId = `${dropdownId}-icon-color-picker`;
 
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
+
   const selectableListInstanceId =
     useWorkspaceSurfaceScopedComponentInstanceId('icon-list');
 
@@ -459,7 +462,7 @@ export const IconPicker = ({
               <SelectableList
                 selectableListInstanceId={selectableListInstanceId}
                 selectableItemIdMatrix={iconKeys2d}
-                focusId={dropdownId}
+                focusId={scopedDropdownId}
               >
                 <IconPickerSearchRow
                   closeDropdown={closeDropdown}

@@ -26,6 +26,7 @@ import {
 import { IconUserCircle } from 'twenty-ui/icon';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 export const EMPTY_FILTER_VALUE: string = JSON.stringify({
   isCurrentWorkspaceMemberSelected: false,
@@ -52,6 +53,9 @@ const ObjectFilterDropdownRecordSelectContent = ({
   recordFilterId,
   dropdownId,
 }: ObjectFilterDropdownRecordSelectContentProps) => {
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
+
   const fieldMetadataItemUsedInFilterDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
@@ -227,7 +231,7 @@ const ObjectFilterDropdownRecordSelectContent = ({
       )}
       <MultipleSelectDropdown
         selectableListId="object-filter-record-select-id"
-        focusId={dropdownId}
+        focusId={scopedDropdownId}
         itemsToSelect={recordsToSelect}
         filteredSelectedItems={filteredSelectedRecords}
         selectedItems={selectedRecords}

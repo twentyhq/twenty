@@ -24,13 +24,13 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
+import { useDropdownPlacement } from '@/ui/layout/dropdown/hooks/useDropdownPlacement';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 type RecordDetailRelationSectionDropdownToManyProps = {
   dropdownTriggerClickableComponent?: ReactNode;
@@ -121,12 +121,12 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     instanceId: scopeInstanceId,
   });
 
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
+
   const { closeDropdown } = useCloseDropdown();
 
-  const dropdownPlacement = useAtomComponentStateValue(
-    dropdownPlacementComponentState,
-    dropdownId,
-  );
+  const dropdownPlacement = useDropdownPlacement(dropdownId);
 
   const setMultipleRecordPickerSearchFilter = useSetAtomComponentState(
     multipleRecordPickerSearchFilterComponentState,
@@ -252,7 +252,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
       }
       dropdownComponents={
         <MultipleRecordPicker
-          focusId={dropdownId}
+          focusId={scopedDropdownId}
           componentInstanceId={dropdownId}
           onCreate={
             isJunctionRelation || isDefined(createNewRecordAndOpenSidePanel)

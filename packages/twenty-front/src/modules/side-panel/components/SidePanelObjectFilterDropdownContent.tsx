@@ -86,8 +86,8 @@ export const SidePanelObjectFilterDropdownContent = ({
       />
       <DropdownMenuSeparator />
       <SelectableList
-        selectableListInstanceId={OBJECT_FILTER_DROPDOWN_ID}
-        focusId={OBJECT_FILTER_DROPDOWN_ID}
+        selectableListInstanceId={scopedSelectableListId}
+        focusId={scopedSelectableListId}
         selectableItemIdArray={selectableItemIdArray}
       >
         <DropdownMenuItemsContainer hasMaxHeight>

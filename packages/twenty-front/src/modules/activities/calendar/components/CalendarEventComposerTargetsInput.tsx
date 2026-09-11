@@ -13,6 +13,7 @@ import { t } from '@lingui/core/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 const StyledClickableContainer = styled.div`
   align-items: center;
@@ -41,6 +42,8 @@ export const CalendarEventComposerTargetsInput = ({
 }: CalendarEventComposerTargetsInputProps) => {
   const componentId = useId();
   const dropdownId = `calendar-event-composer-targets-${componentId}`;
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
 
   const { closeDropdown } = useCloseDropdown();
   const { openCalendarEventTargetsPicker } =
@@ -100,7 +103,7 @@ export const CalendarEventComposerTargetsInput = ({
       dropdownComponents={
         <MultipleRecordPicker
           componentInstanceId={dropdownId}
-          focusId={dropdownId}
+          focusId={scopedDropdownId}
           onChange={onTargetChange}
           onSubmit={() => closeDropdown(dropdownId)}
           onClickOutside={() => closeDropdown(dropdownId)}

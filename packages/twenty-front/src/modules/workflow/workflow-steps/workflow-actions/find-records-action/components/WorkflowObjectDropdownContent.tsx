@@ -98,8 +98,8 @@ export const WorkflowObjectDropdownContent = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         <SelectableList
-          selectableListInstanceId={dropdownId}
-          focusId={dropdownId}
+          selectableListInstanceId={scopedDropdownId}
+          focusId={scopedDropdownId}
           selectableItemIdArray={selectableItemIdArray}
         >
           {filteredObjects.map((objectMetadataItem) => (

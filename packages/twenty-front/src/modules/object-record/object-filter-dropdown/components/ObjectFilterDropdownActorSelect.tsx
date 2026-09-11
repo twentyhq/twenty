@@ -16,6 +16,7 @@ import {
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/icon';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 export const EMPTY_ACTOR_FILTER_VALUE: string = JSON.stringify({
   isCurrentWorkspaceMemberSelected: false,
@@ -31,6 +32,9 @@ type ObjectFilterDropdownActorSelectProps = {
 export const ObjectFilterDropdownActorSelect = ({
   dropdownId,
 }: ObjectFilterDropdownActorSelectProps) => {
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
+
   const { objectFilterDropdownFilterValue } =
     useObjectFilterDropdownFilterValue();
 
@@ -160,7 +164,7 @@ export const ObjectFilterDropdownActorSelect = ({
       )}
       <MultipleSelectDropdown
         selectableListId="object-filter-actor-select-id"
-        focusId={dropdownId}
+        focusId={scopedDropdownId}
         itemsToSelect={recordsToSelect}
         filteredSelectedItems={filteredSelectedRecords}
         selectedItems={selectedRecords}

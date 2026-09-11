@@ -3,8 +3,6 @@ import { t } from '@lingui/core/macro';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetRecordIndexTotalCount } from '@/views/hooks/internal/useGetRecordIndexTotalCount';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewPickerContentCreateMode } from '@/views/view-picker/components/ViewPickerContentCreateMode';
@@ -23,6 +21,7 @@ import {
   ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
+import { useIsDropdownOpen } from '@/ui/layout/dropdown/hooks/useIsDropdownOpen';
 
 const StyledIconContainer = styled.span`
   display: flex;
@@ -61,10 +60,7 @@ export const ViewPickerDropdown = () => {
 
   const { formatNumber } = useNumberFormat();
 
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    VIEW_PICKER_DROPDOWN_ID,
-  );
+  const isDropdownOpen = useIsDropdownOpen(VIEW_PICKER_DROPDOWN_ID);
 
   const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
 

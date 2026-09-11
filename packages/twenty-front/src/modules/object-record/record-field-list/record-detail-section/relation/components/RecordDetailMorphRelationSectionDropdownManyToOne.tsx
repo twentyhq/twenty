@@ -15,13 +15,13 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconForbid, IconPencil } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
+import { useDropdownPlacement } from '@/ui/layout/dropdown/hooks/useDropdownPlacement';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 type RecordDetailMorphRelationSectionDropdownManyToOneProps = {
   dropdownTriggerClickableComponent?: ReactNode;
@@ -63,12 +63,12 @@ export const RecordDetailMorphRelationSectionDropdownManyToOne = ({
     instanceId: scopeInstanceId,
   });
 
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
+
   const { closeDropdown } = useCloseDropdown();
 
-  const dropdownPlacement = useAtomComponentStateValue(
-    dropdownPlacementComponentState,
-    dropdownId,
-  );
+  const dropdownPlacement = useDropdownPlacement(dropdownId);
 
   const setSingleRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
@@ -134,7 +134,7 @@ export const RecordDetailMorphRelationSectionDropdownManyToOne = ({
       }
       dropdownComponents={
         <SingleRecordPicker
-          focusId={dropdownId}
+          focusId={scopedDropdownId}
           componentInstanceId={dropdownId}
           EmptyIcon={IconForbid}
           onMorphItemSelected={handleRelationPickerEntitySelected}

@@ -9,10 +9,9 @@ import { useRecordGroupReorderConfirmationModal } from '@/object-record/record-g
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffsetY';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type ViewType } from '@/views/types/ViewType';
 import { Trans } from '@lingui/react/macro';
+import { useIsDropdownOpen } from '@/ui/layout/dropdown/hooks/useIsDropdownOpen';
 
 type ObjectOptionsDropdownProps = {
   viewType: ViewType;
@@ -28,10 +27,7 @@ export const ObjectOptionsDropdown = ({
   const { currentContentId, handleContentChange, handleResetContent } =
     useDropdownContextCurrentContentId<ObjectOptionsContentId>();
 
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    OBJECT_OPTIONS_DROPDOWN_ID,
-  );
+  const isDropdownOpen = useIsDropdownOpen(OBJECT_OPTIONS_DROPDOWN_ID);
 
   const {
     handleRecordGroupOrderChangeWithModal,

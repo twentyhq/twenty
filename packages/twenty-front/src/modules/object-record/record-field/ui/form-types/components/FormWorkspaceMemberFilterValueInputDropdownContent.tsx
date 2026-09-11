@@ -7,6 +7,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 type FormWorkspaceMemberFilterValueInputDropdownContentProps = {
   dropdownId: string;
@@ -32,33 +33,38 @@ export const FormWorkspaceMemberFilterValueInputDropdownContent = ({
   selectedRecords,
   loading,
   onSelectChange,
-}: FormWorkspaceMemberFilterValueInputDropdownContentProps) => (
-  <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
-    <DropdownMenuSearchInput
-      autoFocus
-      type="text"
-      value={searchFilter}
-      onChange={onSearchChange}
-    />
-    <DropdownMenuSeparator />
-    {pinnedSelectableItems.length > 0 && (
-      <>
-        <ObjectFilterDropdownRecordPinnedItems
-          selectableItems={pinnedSelectableItems}
-          onChange={onSelectChange}
-        />
-        <DropdownMenuSeparator />
-      </>
-    )}
-    <MultipleSelectDropdown
-      selectableListId={selectableListId}
-      focusId={dropdownId}
-      itemsToSelect={recordsToSelect}
-      filteredSelectedItems={filteredSelectedRecords}
-      selectedItems={selectedRecords}
-      onChange={onSelectChange}
-      searchFilter={searchFilter}
-      loadingItems={loading}
-    />
-  </DropdownContent>
-);
+}: FormWorkspaceMemberFilterValueInputDropdownContentProps) => {
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
+
+  return (
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+      <DropdownMenuSearchInput
+        autoFocus
+        type="text"
+        value={searchFilter}
+        onChange={onSearchChange}
+      />
+      <DropdownMenuSeparator />
+      {pinnedSelectableItems.length > 0 && (
+        <>
+          <ObjectFilterDropdownRecordPinnedItems
+            selectableItems={pinnedSelectableItems}
+            onChange={onSelectChange}
+          />
+          <DropdownMenuSeparator />
+        </>
+      )}
+      <MultipleSelectDropdown
+        selectableListId={selectableListId}
+        focusId={scopedDropdownId}
+        itemsToSelect={recordsToSelect}
+        filteredSelectedItems={filteredSelectedRecords}
+        selectedItems={selectedRecords}
+        onChange={onSelectChange}
+        searchFilter={searchFilter}
+        loadingItems={loading}
+      />
+    </DropdownContent>
+  );
+};

@@ -13,9 +13,9 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 
-import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { useIsModalOpened } from '@/ui/layout/modal/hooks/useIsModalOpened';
 
 type RecordBoardContainerProps = {
   recordBoardId: string;
@@ -55,10 +55,7 @@ export const RecordBoardContainer = ({
       ...args,
     });
 
-  const isModalOpened = useAtomComponentStateValue(
-    isModalOpenedComponentState,
-    RECORD_INDEX_REMOVE_SORTING_MODAL_ID,
-  );
+  const isModalOpened = useIsModalOpened(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
 
   if (!isDefined(recordIndexGroupFieldMetadataItem)) {
     return null;

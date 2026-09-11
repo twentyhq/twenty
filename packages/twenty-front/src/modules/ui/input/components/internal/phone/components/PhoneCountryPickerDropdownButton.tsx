@@ -8,12 +8,11 @@ import { PhoneCountryPickerDropdownSelect } from './PhoneCountryPickerDropdownSe
 
 import { PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID } from '@/ui/input/components/internal/phone/constants/PhoneCountryCodePickerDropdownId';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import 'react-phone-number-input/style.css';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconWorld } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsDropdownOpen } from '@/ui/layout/dropdown/hooks/useIsDropdownOpen';
 
 type StyledDropdownButtonProps = {
   isUnfolded: boolean;
@@ -76,8 +75,7 @@ export const PhoneCountryPickerDropdownButton = ({
 }) => {
   const [selectedCountry, setSelectedCountry] = useState<Country>();
 
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
+  const isDropdownOpen = useIsDropdownOpen(
     PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID,
   );
 

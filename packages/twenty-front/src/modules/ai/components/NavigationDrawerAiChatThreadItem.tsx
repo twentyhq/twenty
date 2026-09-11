@@ -4,11 +4,10 @@ import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { useIsDropdownOpen } from '@/ui/layout/dropdown/hooks/useIsDropdownOpen';
 
 type NavigationDrawerAiChatThreadItemProps = {
   thread: AgentChatThread;
@@ -37,10 +36,7 @@ export const NavigationDrawerAiChatThreadItem = ({
     thread.id,
     AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER,
   );
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    itemMenuDropdownId,
-  );
+  const isDropdownOpen = useIsDropdownOpen(itemMenuDropdownId);
 
   if (isRenaming) {
     return (

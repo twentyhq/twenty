@@ -170,7 +170,7 @@ export const Select = <Value extends SelectValue>({
     scopedDropdownId,
   );
 
-  const { setSelectedItemId } = useSelectableList(dropdownId);
+  const { setSelectedItemId } = useSelectableList(scopedDropdownId);
 
   const controlSelectedOption = useMemo(() => {
     if (!isDefined(selectedOption) || showContextualTextInControl) {
@@ -214,7 +214,7 @@ export const Select = <Value extends SelectValue>({
         />
       ) : (
         <Dropdown
-          dropdownId={dropdownId}
+          dropdownId={scopedDropdownId}
           dropdownPlacement="bottom-start"
           dropdownOffset={dropdownOffset}
           isDropdownInModal={isDropdownInModal}
@@ -254,7 +254,7 @@ export const Select = <Value extends SelectValue>({
                     onClick={() => {
                       onChange?.(pinnedOption.value);
                       onBlur?.();
-                      closeDropdown(dropdownId);
+                      closeDropdown(scopedDropdownId);
                     }}
                   />
                 </DropdownMenuItemsContainer>
@@ -265,8 +265,8 @@ export const Select = <Value extends SelectValue>({
               {isNonEmptyArray(filteredOptions) && (
                 <DropdownMenuItemsContainer hasMaxHeight>
                   <SelectableList
-                    selectableListInstanceId={dropdownId}
-                    focusId={dropdownId}
+                    selectableListInstanceId={scopedDropdownId}
+                    focusId={scopedDropdownId}
                     selectableItemIdArray={selectableItemIdArray}
                   >
                     {filteredOptions.map((option) => (
@@ -276,7 +276,7 @@ export const Select = <Value extends SelectValue>({
                         onEnter={() => {
                           onChange?.(option.value);
                           onBlur?.();
-                          closeDropdown(dropdownId);
+                          closeDropdown(scopedDropdownId);
                         }}
                       >
                         <MenuItemSelect
@@ -292,7 +292,7 @@ export const Select = <Value extends SelectValue>({
                           onClick={() => {
                             onChange?.(option.value);
                             onBlur?.();
-                            closeDropdown(dropdownId);
+                            closeDropdown(scopedDropdownId);
                           }}
                         />
                       </SelectableListItem>

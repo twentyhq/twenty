@@ -88,9 +88,9 @@ export const RecordIndexCommandMenuDropdown = () => {
           >
             <DropdownMenuItemsContainer>
               <SelectableList
-                focusId={dropdownId}
+                focusId={scopedDropdownId}
                 selectableItemIdArray={selectedItemIdArray}
-                selectableListInstanceId={dropdownId}
+                selectableListInstanceId={scopedDropdownId}
               >
                 {recordIndexCommandMenuItems.map((item) => (
                   <CommandMenuItemRenderer item={item} key={item.id} />

@@ -127,6 +127,28 @@
     "twenty/no-jotai-store-in-selector": "error",
     "twenty/no-direct-atom-family-in-selector": "error",
     "twenty/folder-structure": "error",
+    "twenty/no-surface-scoped-state-outside-owner": [
+      "error",
+      {
+        "restrictedStates": [
+          {
+            "importPath": "@/ui/layout/dropdown/states/isDropdownOpenComponentState",
+            "ownerModulePath": "src/modules/ui/layout/dropdown/",
+            "useInstead": "useIsDropdownOpen"
+          },
+          {
+            "importPath": "@/ui/layout/dropdown/states/dropdownPlacementComponentState",
+            "ownerModulePath": "src/modules/ui/layout/dropdown/",
+            "useInstead": "useDropdownPlacement"
+          },
+          {
+            "importPath": "@/ui/layout/modal/states/isModalOpenedComponentState",
+            "ownerModulePath": "src/modules/ui/layout/modal/",
+            "useInstead": "useIsModalOpened"
+          }
+        ]
+      }
+    ],
     "twenty/enforce-module-boundaries": [
       "error",
       {
