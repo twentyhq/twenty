@@ -3,7 +3,12 @@ import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent, useContext, useId } from 'react';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBolt, IconBrain, IconCoins } from 'twenty-ui/icon';
+import {
+  IconBolt,
+  IconBrain,
+  IconCoins,
+  type IconComponent,
+} from 'twenty-ui/icon';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -139,6 +144,21 @@ const StyledInput = styled.input`
   width: 100%;
 `;
 
+type TierMetric = {
+  key: string;
+  Icon: IconComponent;
+  deltaPercent: number | undefined;
+  description: string;
+};
+
+// A tier backed by the same model as Balanced, or by one the sync has no
+// reading for, has nothing to compare: showing "0%" would read as a measured
+// tie rather than as a missing benchmark.
+const hasDeltaToShow = (
+  metric: TierMetric,
+): metric is TierMetric & { deltaPercent: number } =>
+  isDefined(metric.deltaPercent) && metric.deltaPercent !== 0;
+
 type AiModelTierSliderProps = {
   selectedTier: AiModelTier;
   onTierChange: (tier: AiModelTier) => void;
@@ -170,7 +190,7 @@ export const AiModelTierSlider = ({
 
   // Below Balanced the gain is speed, above it intelligence; cost moves with
   // both, so each side shows the two figures that explain the trade.
-  const metrics = [
+  const candidateMetrics: TierMetric[] = [
     ...(selectedStep < BALANCED_STEP
       ? [
           {
@@ -210,7 +230,9 @@ export const AiModelTierSlider = ({
           },
         ]
       : []),
-  ].filter((metric) => isDefined(metric.deltaPercent));
+  ];
+
+  const metrics = candidateMetrics.filter(hasDeltaToShow);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const tier = AI_MODEL_TIERS[Number(event.target.value)];
@@ -234,7 +256,7 @@ export const AiModelTierSlider = ({
               isInherited={isBenchmarkInherited}
             >
               <Icon size={theme.icon.size.md} />
-              {formatMetricDelta(deltaPercent ?? 0)}
+              {formatMetricDelta(deltaPercent)}
             </StyledMetric>
           ))}
         </StyledMetrics>

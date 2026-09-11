@@ -1,5 +1,8 @@
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
-import { mergeCustomProvidersIntoCatalog } from 'src/engine/metadata-modules/ai/ai-models/utils/merge-custom-providers-into-catalog.util';
+import {
+  inheritCatalogReadings,
+  mergeCustomProvidersIntoCatalog,
+} from 'src/engine/metadata-modules/ai/ai-models/utils/merge-custom-providers-into-catalog.util';
 
 const catalog: AiProvidersConfig = {
   openai: {
@@ -192,6 +195,37 @@ describe('mergeCustomProvidersIntoCatalog', () => {
 
     expect(merged['azure-foundry'].models?.[0]?.benchmark).toEqual({
       intelligenceIndex: 12.7,
+    });
+  });
+});
+
+describe('inheritCatalogReadings', () => {
+  it('keeps only the providers it is given, with the catalog readings', () => {
+    const providers = inheritCatalogReadings({
+      catalog,
+      providers: {
+        'azure-foundry': {
+          npm: '@ai-sdk/azure',
+          label: 'Azure',
+          apiKey: 'azure-key',
+          models: [
+            {
+              name: 'gpt-5.6-luna',
+              label: 'Luna on Azure',
+              inputCostPerMillionTokens: 0.25,
+              outputCostPerMillionTokens: 1.4,
+            },
+          ],
+        },
+      } as unknown as AiProvidersConfig,
+    });
+
+    expect(Object.keys(providers)).toEqual(['azure-foundry']);
+    expect(providers['azure-foundry'].models?.[0]).toMatchObject({
+      label: 'Luna on Azure',
+      efforts: ['low', 'medium', 'high'],
+      benchmark: { intelligenceIndex: 37.5 },
+      inputCostPerMillionTokens: 0.25,
     });
   });
 });
