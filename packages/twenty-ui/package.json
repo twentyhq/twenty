@@ -1,6 +1,6 @@
 {
   "name": "twenty-ui",
-  "version": "1.0.0-alpha.1",
+  "version": "2.40.0",
   "description": "Twenty's shared React UI component library.",
   "license": "MIT",
   "repository": {
@@ -29,7 +29,7 @@
     "**/*.scss"
   ],
   "devDependencies": {
-    "@argos-ci/storybook": "~6.0.18",
+    "@argos-ci/storybook": "6.2.3",
     "@fontsource/inter": "^5.2.8",
     "@prettier/sync": "^0.5.2",
     "@size-limit/preset-small-lib": "^12.1.0",
@@ -88,6 +88,7 @@
   },
   "files": [
     "dist",
+    "LICENSE",
     "!dist/individual",
     "!dist/individual/**",
     "!dist/**/*.map"

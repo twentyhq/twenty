@@ -77,9 +77,9 @@ export const SettingsAdminAiProviderListCard = ({
       getItemDescription={getProviderDescription}
       RowRightComponent={({ item: provider }) =>
         isProviderConfigured(provider) ? (
-          <Status color="green" text={t`Configured`} weight="medium" />
+          <Status color="green" weight="medium">{t`Configured`}</Status>
         ) : (
-          <Status color="orange" text={t`No credentials`} weight="medium" />
+          <Status color="orange" weight="medium">{t`No credentials`}</Status>
         )
       }
       to={(provider) =>

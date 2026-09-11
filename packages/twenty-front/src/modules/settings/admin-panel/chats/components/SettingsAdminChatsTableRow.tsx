@@ -72,13 +72,9 @@ export const SettingsAdminChatsTableRow = ({
       </TableCell>
       <TableCell minWidth="0" overflow="hidden">
         <StyledFlagsContainer>
-          {thread.hasError && <Tag color="red" text={t`Error`} />}
-          {isDefined(thread.deletedAt) && (
-            <Tag color="gray" text={t`Archived`} />
-          )}
-          {thread.isOnboardingThread && (
-            <Tag color="blue" text={t`Onboarding`} />
-          )}
+          {thread.hasError && <Tag color="red">{t`Error`}</Tag>}
+          {isDefined(thread.deletedAt) && <Tag color="gray">{t`Archived`}</Tag>}
+          {thread.isOnboardingThread && <Tag color="blue">{t`Onboarding`}</Tag>}
         </StyledFlagsContainer>
       </TableCell>
       <TableCell align="right">

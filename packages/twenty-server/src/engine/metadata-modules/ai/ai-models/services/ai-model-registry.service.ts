@@ -38,6 +38,7 @@ import { isAutoSelectModelId, isDefined } from 'twenty-shared/utils';
 
 import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-max-output-tokens.const';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
+import { getAiModelTiersByDistance } from 'src/engine/metadata-modules/ai/ai-models/utils/get-ai-model-tiers-by-distance.util';
 import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/utils/get-available-efforts.util';
 import { getPositiveTokenLimitOrDefault } from 'src/engine/metadata-modules/ai/ai-models/utils/get-positive-token-limit-or-default.util';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
@@ -428,13 +429,29 @@ export class AiModelRegistryService {
     return undefined;
   }
 
-  // The last resort is any model the admin still allows: a chain that names
-  // only disabled models must not hand a disabled one to the client.
+  // A rung whose chain names nothing available borrows the nearest rung's
+  // chain, so an instance with two models lands on the neighbouring tier
+  // rather than on whatever the catalog happens to list first. The last
+  // resort is any model the admin still allows, a current one before a
+  // deprecated one: a chain that names only disabled models must not hand a
+  // disabled one to the client.
   findDefaultModelForTier(tier: AiModelTier): RegisteredAiModel | undefined {
+    for (const candidateTier of getAiModelTiersByDistance(tier)) {
+      const model = this.getFirstAvailableModelFromList(
+        this.preferencesService.getDefaultModelIdsForTier(candidateTier),
+      );
+
+      if (isDefined(model)) {
+        return model;
+      }
+    }
+
+    const allowedModels = this.getAdminFilteredModels();
+
     return (
-      this.getFirstAvailableModelFromList(
-        this.preferencesService.getDefaultModelIdsForTier(tier),
-      ) ?? this.getAdminFilteredModels()[0]
+      allowedModels.find(
+        (model) => this.getModelConfig(model.modelId)?.isDeprecated !== true,
+      ) ?? allowedModels[0]
     );
   }
 
