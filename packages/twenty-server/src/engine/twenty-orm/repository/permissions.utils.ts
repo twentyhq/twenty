@@ -97,12 +97,15 @@ export const validateOperationIsPermittedOrThrow = ({
     objectMetadata.universalIdentifier ===
     WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER;
 
-  // TODO: this should be improved, we may have more complex permission configuration for is system objects
-  if (objectMetadataIsSystem && !isWorkspaceMemberObject) {
+  const permissionsForEntity = objectsPermissions[objectMetadataIdForEntity];
+
+  if (
+    objectMetadataIsSystem &&
+    !isWorkspaceMemberObject &&
+    !isDefined(permissionsForEntity)
+  ) {
     return;
   }
-
-  const permissionsForEntity = objectsPermissions[objectMetadataIdForEntity];
 
   switch (operationType) {
     case 'select':
