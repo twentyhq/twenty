@@ -17,7 +17,7 @@ type MenuItemSelectTagProps = {
   onClick?: () => void;
   color: ThemeColor | 'transparent';
   text: string;
-  variant?: 'solid' | 'outline';
+  variant?: 'soft' | 'outline';
   LeftIcon?: IconComponent | null;
 };
 
@@ -29,7 +29,7 @@ export const MenuItemSelectTag = ({
   className,
   onClick,
   text,
-  variant = 'solid',
+  variant = 'soft',
   LeftIcon,
 }: MenuItemSelectTagProps) => {
   const theme = useTheme();
@@ -43,11 +43,13 @@ export const MenuItemSelectTag = ({
     >
       <StyledMenuItemLeftContent>
         <Tag
+          borderStyle="dashed"
           variant={variant}
           color={color}
-          text={text}
-          Icon={LeftIcon ?? undefined}
-        />
+          startIcon={LeftIcon ? <LeftIcon /> : undefined}
+        >
+          {text}
+        </Tag>
       </StyledMenuItemLeftContent>
       {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>

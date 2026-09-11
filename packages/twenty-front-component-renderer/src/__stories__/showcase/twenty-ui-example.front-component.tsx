@@ -35,9 +35,15 @@ const TwentyUiComponent = () => {
           description="The CRM's own component library with theme-aware styling."
         />
         <div style={ROW_STYLE}>
-          <Tag color="green" text="Badge" variant="solid" />
-          <Tag color="purple" text="Styled" variant="solid" />
-          <Tag color="blue" text="Themed" variant="outline" />
+          <Tag color="green" variant="solid">
+            Badge
+          </Tag>
+          <Tag color="purple" variant="solid">
+            Styled
+          </Tag>
+          <Tag color="blue" variant="outline">
+            Themed
+          </Tag>
         </div>
         <div style={ROW_STYLE}>
           <Status color="green">Online</Status>

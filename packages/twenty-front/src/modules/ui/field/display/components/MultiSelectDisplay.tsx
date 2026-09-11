@@ -37,9 +37,12 @@ export const MultiSelectDisplay = ({
           preventShrink
           key={index}
           color={selectedOption.color ?? 'transparent'}
-          text={selectedOption.label}
-          Icon={selectedOption.Icon ?? undefined}
-        />
+          startIcon={
+            isDefined(selectedOption.Icon) ? <selectedOption.Icon /> : undefined
+          }
+        >
+          {selectedOption.label}
+        </Tag>
       ))}
     </StyledContainer>
   );

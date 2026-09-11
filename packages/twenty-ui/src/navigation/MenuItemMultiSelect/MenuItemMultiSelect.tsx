@@ -47,7 +47,9 @@ export const MenuItemMultiSelect = ({
           ariaLabel={text}
         />
         {color ? (
-          <Tag color={color} text={text} Icon={LeftIcon} />
+          <Tag color={color} startIcon={LeftIcon ? <LeftIcon /> : undefined}>
+            {text}
+          </Tag>
         ) : (
           <MenuItemLeftContent
             LeftIcon={LeftIcon}

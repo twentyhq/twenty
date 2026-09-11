@@ -142,7 +142,7 @@ export const SettingsAdminSigningKeysTable = () => {
                   )}
                 </TableCell>
                 <TableCell>
-                  <Tag text={status.text} color={status.color} />
+                  <Tag color={status.color}>{status.text}</Tag>
                 </TableCell>
                 <TableCell align="right">
                   {signingKey.verifyCountInWindow}
@@ -175,7 +175,7 @@ export const SettingsAdminSigningKeysTable = () => {
             </TableCell>
             <TableCell>{EM_DASH}</TableCell>
             <TableCell>
-              <Tag text={t`Legacy`} color="gray" />
+              <Tag color="gray">{t`Legacy`}</Tag>
             </TableCell>
             <TableCell align="right">{legacyVerifyCountInWindow}</TableCell>
             <TableCell align="right" />

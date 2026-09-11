@@ -18,8 +18,9 @@ export const SelectDisplay = ({
   <Tag
     preventShrink
     color={color}
-    text={label}
-    Icon={Icon}
+    startIcon={Icon ? <Icon /> : undefined}
     preventPadding={preventPadding}
-  />
+  >
+    {label}
+  </Tag>
 );

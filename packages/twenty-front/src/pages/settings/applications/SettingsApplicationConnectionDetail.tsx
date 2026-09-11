@@ -243,7 +243,9 @@ export const SettingsApplicationConnectionDetail = () => {
           scopes.length > 0 ? (
             <StyledScopeList>
               {scopes.map((scope) => (
-                <Tag key={scope} color="gray" text={scope} />
+                <Tag key={scope} color="gray">
+                  {scope}
+                </Tag>
               ))}
             </StyledScopeList>
           ) : (

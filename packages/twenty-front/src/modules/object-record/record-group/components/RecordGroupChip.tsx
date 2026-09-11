@@ -40,8 +40,9 @@ export const RecordGroupChip = ({
     <Tag
       variant={isValueGroup ? 'solid' : 'outline'}
       color={isValueGroup ? recordGroupDefinition.color : 'transparent'}
-      text={recordGroupDefinition.title}
       weight={isValueGroup ? valueTagWeight : 'medium'}
-    />
+    >
+      {recordGroupDefinition.title}
+    </Tag>
   );
 };
