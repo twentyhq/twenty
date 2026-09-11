@@ -13,6 +13,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-removal-strategy.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -25,8 +26,8 @@ import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/
 import { fromViewFieldOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-overrides-to-universal-overrides.util';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
-import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/utils/sanitize-overridable-entity-input.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
+import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
 import { type UpsertFieldsWidgetFieldInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/upsert-fields-widget-field.input';
 import { UpsertFieldsWidgetGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/upsert-fields-widget-group.input';
 import { UpsertFieldsWidgetInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/upsert-fields-widget.input';
@@ -39,6 +40,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 @Injectable()
 export class FieldsWidgetUpsertService {
@@ -143,13 +145,27 @@ export class FieldsWidgetUpsertService {
       flatViewFieldGroupMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((group) => group.isActive && group.viewId === viewId);
+      .filter(
+        (group) =>
+          resolveEffectiveFlatEntityProperty({
+            metadataName: 'viewFieldGroup',
+            flatEntity: group,
+            property: 'isActive',
+          }) && group.viewId === viewId,
+      );
 
     const existingViewFields = Object.values(
       flatViewFieldMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((field) => field.isActive && field.viewId === viewId);
+      .filter(
+        (field) =>
+          resolveEffectiveFlatEntityProperty({
+            metadataName: 'viewField',
+            flatEntity: field,
+            property: 'isActive',
+          }) && field.viewId === viewId,
+      );
 
     if (hasGroups) {
       await this.upsertFieldsWidgetWithGroups({
@@ -263,6 +279,10 @@ export class FieldsWidgetUpsertService {
               isVisible: inputGroup.isVisible,
             },
             shouldOverride,
+            callerApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
           });
 
         groupsToUpdate.push({
@@ -311,22 +331,15 @@ export class FieldsWidgetUpsertService {
 
       const newViewFieldGroupId = inputGroup.id;
 
-      const resolvedIsVisible = isDefined(existingField.overrides?.isVisible)
-        ? existingField.overrides.isVisible
-        : existingField.isVisible;
-      const resolvedPosition = isDefined(existingField.overrides?.position)
-        ? existingField.overrides.position
-        : existingField.position;
-      // null is a valid override value (meaning "ungrouped"), so use !== undefined
-      const resolvedViewFieldGroupId =
-        existingField.overrides?.viewFieldGroupId !== undefined
-          ? existingField.overrides.viewFieldGroupId
-          : existingField.viewFieldGroupId;
+      const effectiveExistingField = resolveEffectiveFlatEntity({
+        metadataName: 'viewField',
+        flatEntity: existingField,
+      });
 
       const hasChanged =
-        resolvedIsVisible !== inputField.isVisible ||
-        resolvedPosition !== inputField.position ||
-        resolvedViewFieldGroupId !== newViewFieldGroupId;
+        effectiveExistingField.isVisible !== inputField.isVisible ||
+        effectiveExistingField.position !== inputField.position ||
+        effectiveExistingField.viewFieldGroupId !== newViewFieldGroupId;
 
       if (!hasChanged) {
         return [];
@@ -363,6 +376,9 @@ export class FieldsWidgetUpsertService {
             viewFieldGroupId: newViewFieldGroupId,
           },
           shouldOverride,
+          callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier:
+            applicationUniversalIdentifier,
         });
 
       const updatedField: FlatViewField = {
@@ -450,6 +466,10 @@ export class FieldsWidgetUpsertService {
                 viewFieldGroupId: inputGroup.id,
               },
               shouldOverride,
+              callerApplicationUniversalIdentifier:
+                applicationUniversalIdentifier,
+              workspaceCustomApplicationUniversalIdentifier:
+                applicationUniversalIdentifier,
             });
 
           const updatedField: FlatViewField = {
@@ -545,6 +565,7 @@ export class FieldsWidgetUpsertService {
       toHardDelete: customGroupsToDelete,
       toDeactivate: deactivatedGroupUpdates,
     } = splitEntitiesByRemovalStrategy({
+      metadataName: 'viewFieldGroup',
       entitiesToRemove: groupsToDeactivate,
       workspaceCustomApplicationUniversalIdentifier:
         applicationUniversalIdentifier,
@@ -619,21 +640,15 @@ export class FieldsWidgetUpsertService {
         return [];
       }
 
-      const resolvedIsVisible = isDefined(existingField.overrides?.isVisible)
-        ? existingField.overrides.isVisible
-        : existingField.isVisible;
-      const resolvedPosition = isDefined(existingField.overrides?.position)
-        ? existingField.overrides.position
-        : existingField.position;
-      const resolvedViewFieldGroupId =
-        existingField.overrides?.viewFieldGroupId !== undefined
-          ? existingField.overrides.viewFieldGroupId
-          : existingField.viewFieldGroupId;
+      const effectiveExistingField = resolveEffectiveFlatEntity({
+        metadataName: 'viewField',
+        flatEntity: existingField,
+      });
 
       const hasChanged =
-        resolvedIsVisible !== inputField.isVisible ||
-        resolvedPosition !== inputField.position ||
-        resolvedViewFieldGroupId !== null;
+        effectiveExistingField.isVisible !== inputField.isVisible ||
+        effectiveExistingField.position !== inputField.position ||
+        effectiveExistingField.viewFieldGroupId !== null;
 
       if (!hasChanged) {
         return [];
@@ -658,6 +673,9 @@ export class FieldsWidgetUpsertService {
             viewFieldGroupId: null as string | null,
           },
           shouldOverride,
+          callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier:
+            applicationUniversalIdentifier,
         });
 
       const updatedField: FlatViewField = {
@@ -718,6 +736,10 @@ export class FieldsWidgetUpsertService {
               viewFieldGroupId: null,
             },
             shouldOverride,
+            callerApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
           });
 
         const updatedField: FlatViewField = {
@@ -805,6 +827,7 @@ export class FieldsWidgetUpsertService {
       toHardDelete: customGroupsToDelete,
       toDeactivate: deactivatedGroupUpdates,
     } = splitEntitiesByRemovalStrategy({
+      metadataName: 'viewFieldGroup',
       entitiesToRemove: groupsToDeactivate,
       workspaceCustomApplicationUniversalIdentifier:
         applicationUniversalIdentifier,
@@ -890,20 +913,15 @@ export class FieldsWidgetUpsertService {
     existing: FlatViewFieldGroup,
     input: UpsertFieldsWidgetGroupInput,
   ): boolean {
-    const resolvedName = isDefined(existing.overrides?.name)
-      ? existing.overrides.name
-      : existing.name;
-    const resolvedPosition = isDefined(existing.overrides?.position)
-      ? existing.overrides.position
-      : existing.position;
-    const resolvedIsVisible = isDefined(existing.overrides?.isVisible)
-      ? existing.overrides.isVisible
-      : existing.isVisible;
+    const effectiveExisting = resolveEffectiveFlatEntity({
+      metadataName: 'viewFieldGroup',
+      flatEntity: existing,
+    });
 
     return (
-      resolvedName !== input.name ||
-      resolvedPosition !== input.position ||
-      resolvedIsVisible !== input.isVisible
+      effectiveExisting.name !== input.name ||
+      effectiveExisting.position !== input.position ||
+      effectiveExisting.isVisible !== input.isVisible
     );
   }
 }

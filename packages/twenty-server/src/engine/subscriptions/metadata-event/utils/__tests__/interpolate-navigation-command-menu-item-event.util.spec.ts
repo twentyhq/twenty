@@ -1,4 +1,4 @@
-import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
+import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -67,6 +67,10 @@ const buildStandardI18nContext = (): EffectiveEntityI18nContext => ({
   i18nInstance: mockI18nInstance,
   isStandardApp: true,
   applicationCatalog: undefined,
+  workspaceCustomApplicationUniversalIdentifier:
+    'workspace-custom-application-universal-identifier',
+  ownerApplicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION.universalIdentifier,
 });
 
 describe('interpolateNavigationCommandMenuItemEvent', () => {

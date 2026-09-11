@@ -26,7 +26,7 @@ import { TimelineActivityTypeDTO } from 'src/engine/metadata-modules/timeline-ac
 import { UpdateTimelineActivityTypeInput } from 'src/engine/metadata-modules/timeline-activity-type/dtos/update-timeline-activity-type.input';
 import { TimelineActivityTypeGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/timeline-activity-type/interceptors/timeline-activity-type-graphql-api-exception.interceptor';
 import { TimelineActivityTypeService } from 'src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.service';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 @UseGuards(WorkspaceAuthGuard)

@@ -1,13 +1,16 @@
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { resolveTranslatableProperties } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-translatable-properties.util';
-import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
+import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
 
 const i18nContext: EffectiveEntityI18nContext = {
   locale: 'fr-FR',
   i18nInstance: { _: (messageId: string) => messageId },
   isStandardApp: false,
   applicationCatalog: undefined,
+  workspaceCustomApplicationUniversalIdentifier:
+    'workspace-custom-application-universal-identifier',
+  ownerApplicationUniversalIdentifier: undefined,
 };
 
 describe('resolveTranslatableProperties', () => {

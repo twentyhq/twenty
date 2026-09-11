@@ -11,6 +11,7 @@ import {
   ObjectOpenRecordIn,
 } from 'twenty-shared/types';
 
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
@@ -46,7 +47,7 @@ export class ObjectMetadataDTO {
   icon?: string;
 
   @HideField()
-  overrides?: ObjectMetadataOverrides | null;
+  overrides?: AuthoredOverrides<ObjectMetadataOverrides> | null;
 
   @Field({ nullable: true })
   shortcut?: string;

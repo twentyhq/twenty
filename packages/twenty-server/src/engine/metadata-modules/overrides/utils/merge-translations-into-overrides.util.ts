@@ -1,8 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { type TranslationOverrideEntry } from 'src/engine/metadata-modules/utils/translation-override-entry.type';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
+import { normalizeAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/normalize-authored-overrides.util';
+import { type OverrideAuthorContext } from 'src/engine/metadata-modules/overrides/types/override-author-context.type';
+import { type TranslationOverrideEntry } from 'src/engine/metadata-modules/overrides/types/translation-override-entry.type';
 
-type OverridesWithTranslations = Record<string, unknown> & {
+type EntryWithTranslations = Record<string, unknown> & {
   translations?: Record<string, Record<string, unknown>> | null;
 };
 
@@ -11,31 +15,47 @@ type OverridesWithTranslations = Record<string, unknown> & {
 const isSafeObjectKey = (key: string): boolean =>
   !['__proto__', 'constructor', 'prototype'].includes(key);
 
-// Mirrors computeMetadataOverridesBlob for the nested translations key: an
+// Mirrors dispatchUpdateToAuthoredOverride for the nested translations key: an
 // empty value deletes the entry, empty locale groups and an empty blob
 // collapse to null so a fully-reverted entity stores no overrides at all.
 // Custom entities call this too: their property edits live in base columns,
 // but per-locale translations still belong in the overrides blob.
 export const mergeTranslationsIntoOverrides = <
-  TOverrides = Record<string, unknown>,
+  TEntry = Record<string, unknown>,
 >({
+  metadataName,
   existingOverrides,
   translationEntries,
+  authorUniversalIdentifier,
+  authorContext,
 }: {
-  existingOverrides: TOverrides | null;
+  metadataName: AllMetadataName;
+  existingOverrides: unknown;
   translationEntries: TranslationOverrideEntry[];
-}): TOverrides | null => {
+  authorUniversalIdentifier: string;
+  authorContext: OverrideAuthorContext;
+}): AuthoredOverrides<TEntry> | null => {
+  const authoredOverrides =
+    normalizeAuthoredOverrides<EntryWithTranslations>({
+      metadataName,
+      overrides: existingOverrides,
+      workspaceCustomApplicationUniversalIdentifier:
+        authorContext.workspaceCustomApplicationUniversalIdentifier,
+    }) ?? {};
+
   const safeTranslationEntries = translationEntries.filter(
     ({ locale, property }) =>
       isSafeObjectKey(locale) && isSafeObjectKey(property),
   );
 
   if (safeTranslationEntries.length === 0) {
-    return existingOverrides;
+    return Object.keys(authoredOverrides).length > 0
+      ? (authoredOverrides as AuthoredOverrides<TEntry>)
+      : null;
   }
 
-  const { translations: existingTranslations, ...otherOverrides } =
-    (existingOverrides ?? {}) as OverridesWithTranslations;
+  const { translations: existingTranslations, ...otherEntryProperties } =
+    authoredOverrides[authorUniversalIdentifier] ?? {};
 
   const locales = new Set([
     ...Object.keys(existingTranslations ?? {}),
@@ -74,14 +94,21 @@ export const mergeTranslationsIntoOverrides = <
       .filter(([, values]) => Object.keys(values).length > 0),
   );
 
-  const overrides =
+  const authorEntry =
     Object.keys(mergedTranslations).length > 0
-      ? { ...otherOverrides, translations: mergedTranslations }
-      : otherOverrides;
+      ? { ...otherEntryProperties, translations: mergedTranslations }
+      : otherEntryProperties;
+
+  const { [authorUniversalIdentifier]: _previousEntry, ...otherEntries } =
+    authoredOverrides;
+  const overrides =
+    Object.keys(authorEntry).length > 0
+      ? { ...otherEntries, [authorUniversalIdentifier]: authorEntry }
+      : otherEntries;
 
   if (Object.keys(overrides).length === 0) {
     return null;
   }
 
-  return overrides as TOverrides;
+  return overrides as AuthoredOverrides<TEntry>;
 };

@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
 import { type TimelineActivityTypeDTO } from 'src/engine/metadata-modules/timeline-activity-type/dtos/timeline-activity-type.dto';
-import { resolveOverridableEntityProperty } from 'src/engine/metadata-modules/utils/resolve-overridable-entity-property.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 export const fromFlatTimelineActivityTypeToTimelineActivityTypeDto = (
   flatTimelineActivityType: FlatTimelineActivityType,
@@ -10,7 +10,11 @@ export const fromFlatTimelineActivityTypeToTimelineActivityTypeDto = (
   id: flatTimelineActivityType.id,
   universalIdentifier: flatTimelineActivityType.universalIdentifier,
   name: flatTimelineActivityType.name,
-  label: resolveOverridableEntityProperty(flatTimelineActivityType, 'label'),
+  label: resolveEffectiveFlatEntityProperty({
+    metadataName: 'timelineActivityType',
+    flatEntity: flatTimelineActivityType,
+    property: 'label',
+  }),
   emit: isDefined(flatTimelineActivityType.action)
     ? {
         on: flatTimelineActivityType.action,
@@ -31,13 +35,21 @@ export const fromFlatTimelineActivityTypeToTimelineActivityTypeDto = (
       }
     : null,
   action: flatTimelineActivityType.action,
-  icon: resolveOverridableEntityProperty(flatTimelineActivityType, 'icon'),
+  icon: resolveEffectiveFlatEntityProperty({
+    metadataName: 'timelineActivityType',
+    flatEntity: flatTimelineActivityType,
+    property: 'icon',
+  }),
   frontComponentUniversalIdentifier:
     flatTimelineActivityType.frontComponentUniversalIdentifier,
   objectUniversalIdentifier: flatTimelineActivityType.objectUniversalIdentifier,
   replacesTimelineActivityTypeUniversalIdentifier:
     flatTimelineActivityType.replacesTimelineActivityTypeUniversalIdentifier,
-  isActive: flatTimelineActivityType.isActive,
+  isActive: resolveEffectiveFlatEntityProperty({
+    metadataName: 'timelineActivityType',
+    flatEntity: flatTimelineActivityType,
+    property: 'isActive',
+  }),
   workspaceId: flatTimelineActivityType.workspaceId,
   applicationId: flatTimelineActivityType.applicationId,
   overrides: flatTimelineActivityType.overrides,

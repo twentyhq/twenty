@@ -15,6 +15,7 @@ import { fromFlatTimelineActivityTypeToTimelineActivityTypeDto } from 'src/engin
 import { fromUpdateTimelineActivityTypeInputToFlatTimelineActivityTypeToUpdateOrThrow } from 'src/engine/metadata-modules/timeline-activity-type/utils/from-update-timeline-activity-type-input-to-flat-timeline-activity-type-to-update-or-throw.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { resetAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/reset-authored-overrides.util';
 
 @Injectable()
 export class TimelineActivityTypeService {
@@ -101,8 +102,14 @@ export class TimelineActivityTypeService {
 
     return this.persistUpdate({
       flatTimelineActivityTypeToUpdate: {
-        ...existingFlatTimelineActivityType,
-        overrides: null,
+        ...resetAuthoredOverrides({
+          metadataName: 'timelineActivityType',
+          flatEntity: existingFlatTimelineActivityType,
+          authorUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        }),
         isActive: true,
         updatedAt: new Date().toISOString(),
       },

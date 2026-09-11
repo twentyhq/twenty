@@ -217,13 +217,12 @@ export class FieldMetadataService {
     isSystemBuild?: boolean;
     ownerFlatApplication?: FlatApplication;
   }): Promise<FlatFieldMetadata> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
     const resolvedOwnerFlatApplication =
-      ownerFlatApplication ??
-      (
-        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-          { workspaceId },
-        )
-      ).workspaceCustomFlatApplication;
+      ownerFlatApplication ?? workspaceCustomFlatApplication;
 
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
@@ -259,6 +258,8 @@ export class FieldMetadataService {
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatApplication: resolvedOwnerFlatApplication,
       isSystemBuild,
+      workspaceCustomApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
     });
 
     if (inputTranspilationResult.status === 'fail') {

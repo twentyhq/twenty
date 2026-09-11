@@ -72,6 +72,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       isOverridable: true,
     },
     isActive: {
+      isOverridable: true,
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
@@ -211,6 +212,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       isOverridable: true,
     },
     isActive: {
+      isOverridable: true,
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
@@ -441,10 +443,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       isOverridable: true,
     },
     isActive: {
+      isOverridable: true,
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: false,
     },
     overrides: {
       toCompare: true,
@@ -497,10 +499,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       isOverridable: true,
     },
     isActive: {
+      isOverridable: true,
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: false,
     },
     deletedAt: {
       toStringify: false,
@@ -590,10 +592,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'viewUniversalIdentifier',
     },
     isActive: {
+      isOverridable: true,
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: false,
     },
     overrides: {
       toCompare: true,
@@ -1099,10 +1101,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       isOverridable: true,
     },
     isActive: {
+      isOverridable: true,
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: false,
     },
     overrides: {
       toCompare: true,
@@ -1160,10 +1162,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     isActive: {
+      isOverridable: true,
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: false,
     },
     overrides: {
       toCompare: true,
@@ -1317,10 +1319,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       isOverridable: true,
     },
     isActive: {
+      isOverridable: true,
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: false,
     },
     overrides: {
       toCompare: true,
@@ -1974,10 +1976,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     isActive: {
+      isOverridable: true,
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
-      isOverridable: false,
     },
     overrides: {
       toCompare: true,

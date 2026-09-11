@@ -8,8 +8,8 @@ import {
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FLAT_VIEW_FIELD_GROUP_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-field-group/constants/flat-view-field-group-editable-properties.constant';
 import { type FlatViewFieldGroupMaps } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group-maps.type';
-import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
-import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/utils/sanitize-overridable-entity-input.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
+import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
 import { type UpdateViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/update-view-field-group.input';
 import {
   ViewFieldGroupException,
@@ -68,6 +68,8 @@ export const fromUpdateViewFieldGroupInputToFlatViewFieldGroupToUpdateOrThrow =
         existingFlatEntity: existingFlatViewFieldGroupToUpdate,
         updatedEditableProperties: editableProperties,
         shouldOverride,
+        callerApplicationUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier,
       });
 
     return {

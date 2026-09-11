@@ -22,6 +22,7 @@ import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigatio
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 @Injectable()
 export class NavigateAppTool implements Tool {
@@ -278,7 +279,11 @@ export class NavigateAppTool implements Tool {
       (metadata): metadata is FlatObjectMetadata =>
         isDefined(metadata) &&
         metadata.nameSingular === objectNameSingular &&
-        metadata.isActive,
+        resolveEffectiveFlatEntityProperty({
+          metadataName: 'objectMetadata',
+          flatEntity: metadata,
+          property: 'isActive',
+        }),
     );
 
     if (!isDefined(flatObjectMetadata)) {
@@ -287,7 +292,12 @@ export class NavigateAppTool implements Tool {
       )
         .filter(
           (metadata): metadata is FlatObjectMetadata =>
-            isDefined(metadata) && metadata.isActive,
+            isDefined(metadata) &&
+            resolveEffectiveFlatEntityProperty({
+              metadataName: 'objectMetadata',
+              flatEntity: metadata,
+              property: 'isActive',
+            }),
         )
         .map((metadata) => metadata.nameSingular)
         .join(', ');

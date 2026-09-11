@@ -7,6 +7,7 @@ import {
 } from '@nestjs/graphql';
 import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type PageLayoutTabOverrides } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
@@ -69,5 +70,5 @@ export class PageLayoutTabDTO {
   isOverridden?: boolean;
 
   @HideField()
-  overrides?: PageLayoutTabOverrides | null;
+  overrides?: AuthoredOverrides<PageLayoutTabOverrides> | null;
 }

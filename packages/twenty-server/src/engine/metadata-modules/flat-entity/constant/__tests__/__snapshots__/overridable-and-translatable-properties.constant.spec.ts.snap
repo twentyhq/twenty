@@ -15,11 +15,13 @@ exports[`registry-derived override property maps derives the overridable propert
     "engineComponentKey",
     "hotKeys",
     "pageLayoutId",
+    "isActive",
   ],
   "connectionProvider": [],
   "fieldMetadata": [
     "description",
     "icon",
+    "isActive",
     "label",
   ],
   "fieldPermission": [],
@@ -32,6 +34,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "color",
     "description",
     "icon",
+    "isActive",
     "labelPlural",
     "labelSingular",
     "imageIdentifierFieldMetadataId",
@@ -42,6 +45,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "title",
     "position",
     "icon",
+    "isActive",
   ],
   "pageLayoutWidget": [
     "title",
@@ -49,6 +53,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "pageLayoutTabId",
     "conditionalDisplay",
     "conditionalAvailabilityExpression",
+    "isActive",
   ],
   "permissionFlag": [],
   "role": [],
@@ -61,6 +66,7 @@ exports[`registry-derived override property maps derives the overridable propert
   "timelineActivityType": [
     "label",
     "icon",
+    "isActive",
   ],
   "view": [
     "name",
@@ -79,6 +85,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "mainGroupByFieldMetadataId",
     "shouldHideEmptyGroups",
     "kanbanColumnWidth",
+    "isActive",
   ],
   "viewField": [
     "isVisible",
@@ -86,11 +93,13 @@ exports[`registry-derived override property maps derives the overridable propert
     "position",
     "aggregateOperation",
     "viewFieldGroupId",
+    "isActive",
   ],
   "viewFieldGroup": [
     "name",
     "position",
     "isVisible",
+    "isActive",
   ],
   "viewFilter": [],
   "viewFilterGroup": [],

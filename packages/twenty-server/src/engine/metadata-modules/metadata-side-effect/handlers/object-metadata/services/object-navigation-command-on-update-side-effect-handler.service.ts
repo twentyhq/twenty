@@ -13,6 +13,7 @@ import {
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 @Injectable()
 export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -51,9 +52,18 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
       };
     }
 
+    const updatedIsActive = resolveEffectiveFlatEntityProperty({
+      metadataName: 'objectMetadata',
+      flatEntity: updatedFlatObjectMetadata,
+      property: 'isActive',
+    });
     const isActiveChanged =
-      updatedFlatObjectMetadata.isActive !==
-      existingFlatObjectMetadata.isActive;
+      updatedIsActive !==
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'objectMetadata',
+        flatEntity: existingFlatObjectMetadata,
+        property: 'isActive',
+      });
     const nameSingularChanged =
       updatedFlatObjectMetadata.nameSingular !==
       existingFlatObjectMetadata.nameSingular;
@@ -84,9 +94,7 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
 
     const navigationFlatCommandMenuItemToUpdate = {
       ...existingNavigationFlatCommandMenuItem,
-      ...(isActiveChanged
-        ? { isActive: updatedFlatObjectMetadata.isActive }
-        : {}),
+      ...(isActiveChanged ? { isActive: updatedIsActive } : {}),
       ...(nameSingularChanged
         ? {
             conditionalAvailabilityExpression:
