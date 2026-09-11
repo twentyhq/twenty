@@ -54,7 +54,7 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Chip',
-    node: <Chip label="Chip label" />,
+    node: <Chip>Chip label</Chip>,
   },
   {
     name: 'ColorSample',
@@ -69,7 +69,7 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   // Router whose navigator bridges to the host navigate API.
   {
     name: 'LinkChip',
-    node: <LinkChip to="/example" label="Link chip" />,
+    node: <LinkChip to="/example">Link chip</LinkChip>,
   },
   {
     name: 'NotificationCounter',

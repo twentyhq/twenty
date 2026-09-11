@@ -2,7 +2,7 @@ import { type FieldActorValue } from '@/object-record/record-field/ui/types/Fiel
 
 import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { AvatarOrIcon, Chip, ChipVariant } from 'twenty-ui/data-display';
+import { AvatarOrIcon, Chip } from 'twenty-ui/data-display';
 import {
   IconApi,
   IconCalendar,
@@ -87,11 +87,10 @@ export const ActorDisplay = ({
 
   return (
     <Chip
-      label={name ?? ''}
       clickable={false}
       emptyLabel={t`Untitled`}
-      variant={ChipVariant.Transparent}
-      leftComponent={
+      variant="ghost"
+      startElement={
         <AvatarOrIcon
           placeholderColorSeed={workspaceMemberId ?? undefined}
           avatarShape={workspaceMemberId ? 'circle' : 'square'}
@@ -100,6 +99,9 @@ export const ActorDisplay = ({
           avatarUrl={getAbsoluteImageUrl(avatarUrl ?? undefined)}
         />
       }
-    />
+      style={{ paddingInlineStart: 0 }}
+    >
+      {name ?? ''}
+    </Chip>
   );
 };

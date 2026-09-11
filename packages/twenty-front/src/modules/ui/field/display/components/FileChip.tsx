@@ -5,7 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { FileIcon } from '@/file/components/FileIcon';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
-import { Chip, ChipVariant } from 'twenty-ui/data-display';
+import { Chip } from 'twenty-ui/data-display';
 
 const MAX_WIDTH = 120;
 
@@ -49,23 +49,24 @@ export const FileChip = ({
       onMouseDown={handleMouseDown}
     >
       <Chip
-        label={label}
         alwaysShowTooltip={isDeleted}
         tooltipLabel={
           isDeleted ? t`File no longer exists - ${label}` : undefined
         }
         disabled={isDeleted}
         maxWidth={MAX_WIDTH}
-        leftComponent={
+        startElement={
           <FileIcon
             fileCategory={fileCategory}
             size="small"
             thumbnailUrl={isDeleted ? undefined : file.url}
           />
         }
-        variant={isDeleted ? ChipVariant.Static : ChipVariant.Highlighted}
+        variant="soft"
         clickable={isClickable}
-      />
+      >
+        {label}
+      </Chip>
     </StyledClickableContainer>
   );
 };

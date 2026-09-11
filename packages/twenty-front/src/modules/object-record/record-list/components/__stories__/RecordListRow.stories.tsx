@@ -69,11 +69,7 @@ export const ResponsiveFields: Story = {
       {},
       { timeout: 3000 },
     );
-    const recordIdentifierChip = recordIdentifier.closest(
-      '[data-testid="chip"]',
-    );
-
-    await expect(recordIdentifierChip).toHaveClass(/fontMedium/);
+    await expect(getComputedStyle(recordIdentifier).fontWeight).toBe('500');
 
     const overflowChips = await canvas.findAllByRole('link', {
       name: /^\+\d+$/,

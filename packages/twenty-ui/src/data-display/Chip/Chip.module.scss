@@ -1,115 +1,77 @@
 .chip {
-  --chip-horizontal-padding: var(--t-spacing-1);
-  --chip-vertical-padding: var(--t-spacing-1);
+  @include focus-ring;
 
-  // Height and max-width are sized against the content box.
+  --tw-chip-padding: var(--t-spacing-1);
   box-sizing: content-box;
-  text-decoration: none;
   align-items: center;
-  cursor: inherit;
   display: inline-flex;
-  justify-content: flex-start;
   gap: var(--t-spacing-1);
-  max-width: 100%;
+  block-size: var(--t-spacing-3);
+  max-inline-size: var(--tw-chip-max-width, 100%);
   overflow: hidden;
-  padding: var(--chip-vertical-padding) var(--chip-horizontal-padding);
+  padding: var(--t-spacing-1) var(--tw-chip-padding);
   user-select: none;
-  font-weight: inherit;
-  background-color: inherit;
+  font: inherit;
+  color: var(--t-font-color-primary);
+  background: inherit;
   border: none;
   border-radius: var(--t-border-radius-sm-round);
   corner-shape: round;
+  text-decoration: none;
 
   & > svg {
     flex-shrink: 0;
   }
-}
-
-.sizeLarge {
-  height: var(--t-spacing-4);
-}
-
-.sizeSmall {
-  height: var(--t-spacing-3);
-}
-
-.accentTextPrimary {
-  color: var(--t-font-color-primary);
-}
-
-.accentTextSecondary {
-  color: var(--t-font-color-secondary);
-}
-
-// Disabled color wins over accent colors, matching the Linaria ternary order.
-.disabled {
-  color: var(--t-font-color-light);
-}
-
-.fontMedium {
-  font-weight: var(--t-font-weight-medium);
-}
-
-.cursorPointer {
-  cursor: pointer;
-}
-
-.cursorNotAllowed {
-  cursor: not-allowed;
-}
-
-.backgroundHighlighted {
-  background-color: var(--t-background-transparent-light);
-
-  @include hover-capable {
-    &:hover {
-      background-color: var(--t-background-transparent-medium);
+  &[data-size='md'] {
+    block-size: var(--t-spacing-4);
+  }
+  &[data-shape='round'] {
+    border-radius: var(--t-border-radius-pill);
+  }
+  &[data-color='secondary'] {
+    color: var(--t-font-color-secondary);
+  }
+  &[data-weight='medium'] {
+    font-weight: var(--t-font-weight-medium);
+  }
+  &[data-variant='soft'] {
+    background: var(--t-background-transparent-light);
+  }
+  &[data-variant='solid'] {
+    background: var(--t-background-transparent-medium);
+  }
+  &[data-disabled] {
+    color: var(--t-font-color-light);
+    cursor: not-allowed;
+  }
+  &[data-clickable]:not([data-disabled]) {
+    cursor: pointer;
+    @include hover-capable {
+      &:hover {
+        background: var(--t-background-transparent-light);
+      }
+      &[data-variant='soft']:hover {
+        background: var(--t-background-transparent-medium);
+      }
+    }
+    &:active {
+      background: var(--t-background-transparent-medium);
+    }
+    &[data-variant='soft']:active {
+      background: var(--t-background-transparent-strong);
     }
   }
-
-  &:active {
-    background-color: var(--t-background-transparent-strong);
-  }
 }
 
-.backgroundStatic {
-  background-color: var(--t-background-transparent-light);
-
-  &:hover {
-    background-color: var(--t-background-transparent-light);
-  }
-
-  &:active {
-    background-color: var(--t-background-transparent-light);
-  }
+.content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-
-// Applied only when variant is regular, clickable and not disabled.
-.interactiveRegular {
-  @include hover-capable {
-    &:hover {
-      background-color: var(--t-background-transparent-light);
-    }
-  }
-
-  &:active {
-    background-color: var(--t-background-transparent-medium);
-  }
-}
-
-.hasMaxWidth {
-  max-width: calc(var(--chip-max-width) - 2 * var(--chip-horizontal-padding));
-}
-
-.paddingLeftNone {
-  padding-left: var(--t-spacing-0);
-}
-
 .emptyLabel {
   color: var(--t-font-color-tertiary);
 }
-
-.rightComponentDivider {
+.endElementDivider {
   align-self: stretch;
-  border-left: 1px solid var(--t-border-color-light);
+  border-inline-start: 1px solid var(--t-border-color-light);
 }

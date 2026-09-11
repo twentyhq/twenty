@@ -1,7 +1,7 @@
 import { FileIcon } from '@/file/components/FileIcon';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
-import { Chip, ChipVariant } from 'twenty-ui/data-display';
+import { Chip } from 'twenty-ui/data-display';
 import { MultiItemFieldMenuItem } from './MultiItemFieldMenuItem';
 
 type FilesFieldMenuItemProps = {
@@ -28,8 +28,7 @@ export const FilesFieldMenuItem = ({
       onClick={onClick}
       DisplayComponent={({ value }: { value: string }) => (
         <Chip
-          label={value}
-          leftComponent={
+          startElement={
             <FileIcon
               fileCategory={
                 file.fileCategory ??
@@ -39,8 +38,11 @@ export const FilesFieldMenuItem = ({
               thumbnailUrl={file.url}
             />
           }
-          variant={ChipVariant.Rounded}
-        />
+          variant="ghost"
+          clickable={false}
+        >
+          {value}
+        </Chip>
       )}
       showPrimaryIcon={false}
       showSetAsPrimaryButton={false}
