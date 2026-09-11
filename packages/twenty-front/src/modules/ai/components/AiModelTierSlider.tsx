@@ -7,7 +7,6 @@ import { IconBolt, IconBrain, IconCoins } from 'twenty-ui/icon';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { AiModelTierIndicator } from '@/ai/components/AiModelTierIndicator';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { formatMetricDelta } from '@/ai/utils/formatMetricDelta';
 import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
@@ -36,14 +35,7 @@ const StyledHeader = styled.div`
 `;
 
 const StyledTitle = styled.span`
-  align-items: center;
   color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  min-width: 0;
-`;
-
-const StyledTitleText = styled.span`
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   overflow: hidden;
@@ -232,8 +224,7 @@ export const AiModelTierSlider = ({
     <StyledContainer>
       <StyledHeader>
         <StyledTitle title={model?.label}>
-          <AiModelTierIndicator tier={selectedTier} />
-          <StyledTitleText>{title ?? resolvedTier.label}</StyledTitleText>
+          {title ?? resolvedTier.label}
         </StyledTitle>
         <StyledMetrics>
           {metrics.map(({ key, Icon, deltaPercent }) => (
