@@ -20,14 +20,14 @@ describe('getGranolaJobId', () => {
     expect(jobId.length).toBeLessThanOrEqual(128);
   });
 
-  it('separates jobs that differ only by page or batch content', () => {
+  it('separates jobs that import different notes', () => {
     const first = getGranolaJobId({
-      prefix: 'granola-batch',
-      identity: { registrationId: 'reg-1', noteIds: ['not_a'] },
+      prefix: 'granola-note',
+      identity: { registrationId: 'reg-1', noteId: 'not_a' },
     });
     const second = getGranolaJobId({
-      prefix: 'granola-batch',
-      identity: { registrationId: 'reg-1', noteIds: ['not_b'] },
+      prefix: 'granola-note',
+      identity: { registrationId: 'reg-1', noteId: 'not_b' },
     });
 
     expect(first).not.toBe(second);

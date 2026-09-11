@@ -1,9 +1,9 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { GRANOLA_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { GRANOLA_BACKFILL_NOTE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
-import { type GranolaBackfillBatchPayload } from 'src/logic-functions/types/granola-backfill-batch-payload.type';
+import { type GranolaBackfillNotePayload } from 'src/logic-functions/types/granola-backfill-note-payload.type';
 import { GranolaInvalidResponseError } from 'src/logic-functions/types/granola-invalid-response-error';
 import { GranolaTranscriptLimitError } from 'src/logic-functions/types/granola-transcript-limit-error';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
@@ -12,8 +12,8 @@ import { isGranolaJobInRegistrationScope } from 'src/logic-functions/utils/is-gr
 import { rethrowKnownOrWrapGranolaError } from 'src/logic-functions/utils/rethrow-known-or-wrap-granola-error.util';
 import { syncGranolaNoteToCallRecordingOrThrow } from 'src/logic-functions/utils/sync-granola-note-to-call-recording-or-throw.util';
 
-export const granolaBackfillBatchHandler = async (
-  payload: GranolaBackfillBatchPayload,
+export const granolaBackfillNoteHandler = async (
+  payload: GranolaBackfillNotePayload,
 ) => {
   try {
     const registration = await findGranolaRegistrationForCurrentKey();
@@ -30,50 +30,42 @@ export const granolaBackfillBatchHandler = async (
 
     const coreApiClient = new CoreApiClient({ runAs: 'application' });
     const client = createGranolaClientOrThrow();
-    const results: Awaited<
-      ReturnType<typeof syncGranolaNoteToCallRecordingOrThrow>
-    >[] = [];
+    try {
+      const result = await syncGranolaNoteToCallRecordingOrThrow({
+        coreApiClient,
+        client,
+        noteId: payload.noteId,
+      });
 
-    for (const noteId of payload.noteIds) {
-      try {
-        results.push(
-          await syncGranolaNoteToCallRecordingOrThrow({
-            coreApiClient,
-            client,
-            noteId,
-          }),
+      return {
+        success: true,
+        importedNoteCount: result.skipped ? 0 : 1,
+      };
+    } catch (error) {
+      if (
+        error instanceof GranolaInvalidResponseError ||
+        error instanceof GranolaTranscriptLimitError ||
+        (error instanceof GranolaApiError && [403, 404].includes(error.status))
+      ) {
+        console.error(
+          `[granola] Skipped unreadable note ${payload.noteId}: ${error.message}`,
         );
-      } catch (error) {
-        if (
-          error instanceof GranolaInvalidResponseError ||
-          error instanceof GranolaTranscriptLimitError ||
-          (error instanceof GranolaApiError &&
-            [403, 404].includes(error.status))
-        ) {
-          console.error(
-            `[granola] Skipped unreadable note ${noteId}: ${error.message}`,
-          );
-          continue;
-        }
 
-        throw error;
+        return { success: true, importedNoteCount: 0 };
       }
-    }
 
-    return {
-      success: true,
-      importedNoteCount: results.filter((result) => !result.skipped).length,
-    };
+      throw error;
+    }
   } catch (error) {
     rethrowKnownOrWrapGranolaError({ operation: 'Note import', error });
   }
 };
 
 export default defineLogicFunction({
-  universalIdentifier: GRANOLA_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER,
-  name: 'granola-backfill-batch',
+  universalIdentifier: GRANOLA_BACKFILL_NOTE_UNIVERSAL_IDENTIFIER,
+  name: 'granola-backfill-note',
   description:
-    'Imports one paced batch of Granola notes while preserving deleted recordings.',
+    'Imports one paced Granola note while preserving deleted recordings.',
   timeoutSeconds: 900,
-  handler: granolaBackfillBatchHandler,
+  handler: granolaBackfillNoteHandler,
 });

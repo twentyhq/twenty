@@ -1,33 +1,33 @@
 import { describe, expect, it } from 'vitest';
 
-import { getGranolaBatchSchedule } from 'src/logic-functions/utils/get-granola-batch-schedule.util';
+import { getGranolaNoteImportSchedule } from 'src/logic-functions/utils/get-granola-note-import-schedule.util';
 
-describe('getGranolaBatchSchedule', () => {
+describe('getGranolaNoteImportSchedule', () => {
   it('spaces note jobs by four seconds after the existing reservation', () => {
     expect(
-      getGranolaBatchSchedule({
+      getGranolaNoteImportSchedule({
         now: 1000,
         nextAvailableAt: 11000,
-        batchCount: 3,
+        noteCount: 3,
       }),
     ).toEqual({
-      batchDelays: [10000, 14000, 18000],
+      noteDelays: [10000, 14000, 18000],
       continuationDelay: 22000,
-      nextBatchAvailableAt: 23000,
+      nextNoteAvailableAt: 23000,
     });
   });
 
   it('does not schedule in the past and paces empty pages', () => {
     expect(
-      getGranolaBatchSchedule({
+      getGranolaNoteImportSchedule({
         now: 1000,
         nextAvailableAt: 10,
-        batchCount: 0,
+        noteCount: 0,
       }),
     ).toEqual({
-      batchDelays: [],
+      noteDelays: [],
       continuationDelay: 4000,
-      nextBatchAvailableAt: 1000,
+      nextNoteAvailableAt: 1000,
     });
   });
 });
