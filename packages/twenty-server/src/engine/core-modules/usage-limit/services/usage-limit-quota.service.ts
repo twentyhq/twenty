@@ -35,6 +35,7 @@ import { buildIntraWorkspaceLimitCounterKeys } from 'src/engine/core-modules/usa
 import { buildLimitQuotaCounter } from 'src/engine/core-modules/usage-limit/utils/build-limit-quota-counter.util';
 import { buildLimitWarmedEntries } from 'src/engine/core-modules/usage-limit/utils/build-limit-warmed-entries.util';
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
+import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
@@ -776,8 +777,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
       resourceType: counter.resourceType,
       periodStart: counter.periodStart,
       periodEnd: counter.periodEnd,
-      periodAnchor:
-        counter.periodUnit === 'allowancePeriod' ? 'billing' : 'calendar',
+      periodAnchor: getPeriodAnchor(counter.periodUnit),
     });
   }
 }

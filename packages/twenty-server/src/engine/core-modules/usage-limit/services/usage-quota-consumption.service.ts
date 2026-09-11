@@ -16,6 +16,7 @@ import { type UsageQuotaWithConsumption } from 'src/engine/core-modules/usage-li
 import { type UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { buildCustomQuota } from 'src/engine/core-modules/usage-limit/utils/build-custom-quota.util';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
+import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { normalizeSpenderId } from 'src/engine/core-modules/usage-limit/utils/normalize-spender-id.util';
 import { groupSpenderIdsByType } from 'src/engine/core-modules/usage-limit/utils/group-spender-ids-by-type.util';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
@@ -81,7 +82,7 @@ export class UsageQuotaConsumptionService {
         resourceType: scope.resourceType,
         periodStart: period.periodStart,
         periodEnd: period.periodEnd,
-        periodAnchor: periodUnit === 'allowancePeriod' ? 'billing' : 'calendar',
+        periodAnchor: getPeriodAnchor(periodUnit),
       });
 
       return {

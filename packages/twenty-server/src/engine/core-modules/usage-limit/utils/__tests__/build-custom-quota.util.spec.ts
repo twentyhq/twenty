@@ -8,24 +8,17 @@ const MONTH_PERIOD = {
   periodEnd: new Date('2026-10-01T00:00:00.000Z'),
 };
 
-const buildUsageLimit = (
-  overrides: Partial<UsageLimitEntity> = {},
-): UsageLimitEntity =>
-  ({
-    id: 'limit-1',
-    workspaceId: 'workspace-1',
-    resourceType: UsageResourceType.AI,
-    operationType: UsageOperationType.AI_CHAT_TOKEN,
-    spenderType: 'workspace',
-    spenderId: '',
-    limitKind: 'quota',
-    periodCount: 1,
-    periodUnit: 'month',
-    meter: 'creditsUsedMicro',
-    limitValue: 1_000_000,
-    burstValue: null,
-    ...overrides,
-  }) as UsageLimitEntity;
+const buildUsageLimit = (overrides: Partial<UsageLimitEntity> = {}) => ({
+  id: 'limit-1',
+  resourceType: UsageResourceType.AI,
+  operationType: UsageOperationType.AI_CHAT_TOKEN,
+  spenderType: 'workspace' as const,
+  spenderId: '',
+  periodUnit: 'month' as const,
+  meter: 'creditsUsedMicro' as const,
+  limitValue: 1_000_000,
+  ...overrides,
+});
 
 describe('buildCustomQuota', () => {
   it('carries the consumption and the period of the counter', () => {

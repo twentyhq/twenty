@@ -132,7 +132,9 @@ export class UsageLimitService {
       { where: { id: usageLimit.id } },
     );
 
+    // counters are keyed by scope, so a scope change leaves two of them to rewarm
     await this.usageLimitQuotaService.dropLimitCounter(usageLimit);
+    await this.usageLimitQuotaService.dropLimitCounter(updatedUsageLimit);
 
     return updatedUsageLimit;
   }

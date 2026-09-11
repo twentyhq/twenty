@@ -5,13 +5,25 @@ import { type UsageQuotaWithConsumption } from 'src/engine/core-modules/usage-li
 import { type UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { normalizeSpenderId } from 'src/engine/core-modules/usage-limit/utils/normalize-spender-id.util';
 
+type CustomQuotaScope = Pick<
+  UsageLimitEntity,
+  | 'id'
+  | 'resourceType'
+  | 'operationType'
+  | 'spenderType'
+  | 'spenderId'
+  | 'periodUnit'
+  | 'meter'
+  | 'limitValue'
+>;
+
 export const buildCustomQuota = ({
   usageLimit,
   isEnforced,
   consumption,
   spenderLabel,
 }: {
-  usageLimit: UsageLimitEntity;
+  usageLimit: CustomQuotaScope;
   isEnforced: boolean;
   consumption: LimitConsumption | undefined;
   spenderLabel: string | null;
