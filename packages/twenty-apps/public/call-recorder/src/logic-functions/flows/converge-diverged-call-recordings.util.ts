@@ -87,14 +87,17 @@ export const convergeDivergedCallRecordings = async ({
   for (const candidate of candidates) {
     if (isOutsideConvergenceBound(candidate, convergenceLowerBound)) {
       if (candidate.status === CallRecordingStatus.PROCESSING) {
-        const settlementOutcome = await settleStuckCallRecording(
+        const settlementOutcome = await settleStuckCallRecording({
           client,
-          candidate,
-        );
+          callRecordingId: candidate.id,
+          now,
+        });
 
         if (settlementOutcome === 'completed') {
           result.settledCompletedCallRecordingIds.push(candidate.id);
-        } else {
+        }
+
+        if (settlementOutcome === 'failed') {
           result.settledFailedCallRecordingIds.push(candidate.id);
         }
 

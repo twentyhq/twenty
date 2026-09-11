@@ -1234,6 +1234,27 @@ describe('call recorder app lifecycle (integration)', () => {
       );
     });
 
+    it('leaves a stuck recording alone while an artifact import holds its claim', async () => {
+      const calendarEventId = await createCalendarEvent({
+        startsAt: daysAgo(9),
+        endsAt: daysAgo(8),
+      });
+      const callRecordingId = await createPendingCallRecording({
+        calendarEventId,
+        status: 'PROCESSING',
+        externalBotId: 'recall-bot-stuck',
+        artifactsImportClaimedAt: new Date().toISOString(),
+      });
+
+      const cronResult = await runStaleStateCron();
+
+      expect(cronResult.settledCompletedCallRecordingIds).toEqual([]);
+      expect(cronResult.settledFailedCallRecordingIds).toEqual([]);
+      expect((await fetchCallRecording(callRecordingId)).status).toBe(
+        'PROCESSING',
+      );
+    });
+
     it('completes a stuck processing recording with imported media and marks its transcript empty', async () => {
       const { calendarEventId, callRecordingId, botId, metadata } =
         await scheduleRecordingThroughCalendarReconciliation();
