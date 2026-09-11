@@ -129,6 +129,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Lint translations
+        run: npx nx run twenty-front:lint:i18n
+
       - name: Mint twenty-infra dispatch token
         id: app-token
         if: steps.compile_translations.outputs.changes_detected == 'true'
