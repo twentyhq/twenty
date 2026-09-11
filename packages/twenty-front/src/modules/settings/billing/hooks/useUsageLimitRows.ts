@@ -14,6 +14,7 @@ import { type UsageQuotaWithConsumption } from '@/settings/billing/types/UsageQu
 import { computeUsageLimitProgress } from '@/settings/billing/utils/computeUsageLimitProgress';
 import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel';
 import { getUsageLimitSpenderName } from '@/settings/billing/utils/getUsageLimitSpenderName';
+import { isCreditsMeter } from '@/settings/billing/utils/isCreditsMeter';
 import { isKeyOfRecord } from '@/settings/billing/utils/isKeyOfRecord';
 import { getUsageOperationTypeLabel } from '@/settings/usage/utils/getUsageOperationTypeLabel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -98,7 +99,7 @@ export const useUsageLimitRows = (
         meter: quota.meter,
         operationType: quota.operationType,
       }),
-      isCreditsMeter: quota.meter === 'creditsUsedMicro',
+      isCreditsMeter: isCreditsMeter(quota.meter),
       isExhausted: progress?.remainingValue === 0,
       periodName: getPeriodName(quota.periodUnit),
     };

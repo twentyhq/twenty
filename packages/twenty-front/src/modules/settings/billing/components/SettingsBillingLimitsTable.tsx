@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useContext, useMemo, useState } from 'react';
+import { type ReactNode, useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { SearchInput } from 'twenty-ui/input';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
@@ -150,23 +150,17 @@ export const SettingsBillingLimitsTable = ({
 
   const rows = useUsageLimitRows(quotas);
 
-  const resourceTypes = useMemo(
-    () => [
-      ...new Set(
-        rows
-          .map((row) => row.resourceType)
-          .filter((candidate): candidate is UsageResourceType =>
-            isDefined(candidate),
-          ),
-      ),
-    ],
-    [rows],
-  );
+  const resourceTypes = [
+    ...new Set(
+      rows
+        .map((row) => row.resourceType)
+        .filter((candidate): candidate is UsageResourceType =>
+          isDefined(candidate),
+        ),
+    ),
+  ];
 
-  const spenderTypes = useMemo(
-    () => [...new Set(rows.map((row) => row.spenderType))],
-    [rows],
-  );
+  const spenderTypes = [...new Set(rows.map((row) => row.spenderType))];
 
   const filteredRows = filterUsageLimitRows({
     rows,

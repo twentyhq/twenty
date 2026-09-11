@@ -42,8 +42,6 @@ const StyledFooter = styled.div`
 
 const HEADER_PADDING = `0 ${themeCssVariables.spacing[2]} 0 ${themeCssVariables.spacing[2]}`;
 
-const CHEVRON_COLUMN_WIDTH = themeCssVariables.spacing[8];
-
 export type SettingsTableListSectionColumn<Item> = {
   label: string;
   align?: 'left' | 'right';
@@ -81,7 +79,7 @@ export const SettingsTableListSection = <
   onFooterButtonClick,
 }: SettingsTableListSectionProps<Item>) => {
   const resolvedGridAutoColumns = showRowChevron
-    ? `${gridAutoColumns} ${CHEVRON_COLUMN_WIDTH}`
+    ? `${gridAutoColumns} auto`
     : gridAutoColumns;
 
   return (

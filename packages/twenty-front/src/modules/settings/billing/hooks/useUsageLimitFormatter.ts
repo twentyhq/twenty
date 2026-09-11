@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { USAGE_LIMIT_QUANTITY_UNIT_LABELS } from '@/settings/billing/constants/UsageLimitQuantityUnitLabels';
+import { isCreditsMeter } from '@/settings/billing/utils/isCreditsMeter';
 import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { type UsageOperationType } from '~/generated-metadata/graphql';
@@ -22,7 +23,7 @@ export const useUsageLimitFormatter = () => {
     meter: string;
     operationType: UsageOperationType;
   }): string => {
-    if (meter === 'creditsUsedMicro') {
+    if (isCreditsMeter(meter)) {
       return formatUsageAmount(value / INTERNAL_CREDITS_PER_DISPLAY_CREDIT, {
         abbreviate: true,
       });
