@@ -56,9 +56,9 @@ const OBJECTS_TO_UPDATE = [
   },
 ];
 
-@RegisteredWorkspaceCommand('2.40.0', 1789140300000)
+@RegisteredWorkspaceCommand('2.41.0', 1789140300000)
 @Command({
-  name: 'upgrade:2-40:make-messaging-and-calendar-private',
+  name: 'upgrade:2-41:make-messaging-and-calendar-private',
   description:
     'Set the readability of the existing message, messageThread and calendarEvent standard objects to PRIVATE and of messageParticipant and calendarEventParticipant to INHERITED from them, as the standard application now declares them; workspaces created after the change already have it',
 })
