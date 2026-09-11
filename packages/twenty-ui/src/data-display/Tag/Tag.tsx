@@ -1,109 +1,114 @@
-import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { OverflowingTextWithTooltip } from '@ui/surfaces/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
-import { type ThemeColor } from '@ui/theme';
-import { themeCssVariables, useTheme } from '@ui/theme-constants';
+import { Button as ButtonPrimitive } from '@base-ui/react/button';
+import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
+import {
+  type CSSProperties,
+  type KeyboardEvent,
+  type SyntheticEvent,
+} from 'react';
+
+import { OverflowingTextWithTooltip } from '@ui/surfaces/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
+import { themeCssVariables } from '@ui/theme-constants';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Tag.module.scss';
+import { type TagProps } from './types/TagProps';
 
-type TagWeight = 'regular' | 'medium';
-type TagVariant = 'solid' | 'outline' | 'border';
-export type TagColor = ThemeColor | 'transparent';
+const preventDisabledInteraction = (event: SyntheticEvent) => {
+  event.preventDefault();
+  event.stopPropagation();
+};
 
-type TagProps = {
-  className?: string;
-  color: TagColor;
-  text: string;
-  Icon?: IconComponent;
-  onClick?: () => void;
-  weight?: TagWeight;
-  variant?: TagVariant;
-  preventShrink?: boolean;
-  preventPadding?: boolean;
+const preventDisabledKeyboardActivation = (event: KeyboardEvent) => {
+  if (event.key !== 'Enter' && event.key !== ' ') {
+    return;
+  }
+
+  preventDisabledInteraction(event);
 };
 
 export const Tag = ({
-  className,
+  children,
   color,
-  text,
-  Icon,
-  onClick,
   weight = 'regular',
-  variant = 'solid',
-  preventShrink,
-  preventPadding,
-}: TagProps) => {
-  const theme = useTheme();
-
-  const tagBackground =
-    color === 'transparent'
-      ? 'transparent'
-      : (themeCssVariables.tag.background[color] ??
-        themeCssVariables.tag.background.gray);
-
-  const tagText =
-    color === 'transparent'
-      ? themeCssVariables.font.color.secondary
-      : (themeCssVariables.tag.text[color] ??
-        themeCssVariables.font.color.secondary);
-
-  const isInteractive = isDefined(onClick);
-
-  const tagContent = (
-    <>
-      {isDefined(Icon) ? (
-        <div className={styles.iconContainer}>
-          <Icon
-            size={theme.icon.size.sm}
-            stroke={theme.icon.stroke.sm}
-            aria-hidden
-          />
-        </div>
-      ) : (
-        <></>
-      )}
-      {preventShrink ? (
-        <span className={styles.nonShrinkableText}>{text}</span>
-      ) : (
-        <span className={styles.content}>
-          <OverflowingTextWithTooltip text={text} />
-        </span>
-      )}
-    </>
-  );
-
-  const sharedStyle = {
-    '--tag-background': tagBackground,
-    '--tag-text': tagText,
-  } as React.CSSProperties;
-
-  const sharedClassName = clsx(
-    styles.tag,
-    weight === 'medium' && styles.weightMedium,
-    variant === 'outline' && styles.variantOutline,
-    variant === 'border' && styles.variantBorder,
-    preventShrink && styles.preventShrink,
-    preventPadding && styles.preventPadding,
-    className,
-  );
-
-  if (isInteractive) {
-    return (
-      <button
-        type="button"
-        className={clsx(sharedClassName, styles.interactive)}
-        onClick={onClick}
-        style={sharedStyle}
-      >
-        {tagContent}
-      </button>
-    );
-  }
-
-  return (
-    <span className={sharedClassName} style={sharedStyle}>
-      {tagContent}
-    </span>
-  );
-};
+  variant = 'soft',
+  startIcon,
+  preventShrink = false,
+  preventPadding = false,
+  borderStyle = 'solid',
+  disabled = false,
+  nativeButton = true,
+  onClick,
+  className,
+  style,
+  render,
+  ref,
+  ...props
+}: TagProps) =>
+  useRender({
+    defaultTagName: 'span',
+    render: isDefined(onClick) ? (
+      <ButtonPrimitive
+        render={render}
+        disabled={disabled}
+        nativeButton={nativeButton}
+      />
+    ) : (
+      render
+    ),
+    ref,
+    state: {
+      variant,
+      weight,
+      disabled,
+      interactive: isDefined(onClick),
+      preventShrink,
+      preventPadding,
+    },
+    props: {
+      ...props,
+      onClick,
+      ...(disabled && {
+        disabled: true,
+        'aria-disabled': true,
+        tabIndex: -1,
+        onClickCapture: preventDisabledInteraction,
+        onPointerDownCapture: preventDisabledInteraction,
+        onKeyDownCapture: preventDisabledKeyboardActivation,
+        onKeyUpCapture: preventDisabledKeyboardActivation,
+      }),
+      className: clsx(styles.tag, className),
+      style: {
+        '--tw-tag-background':
+          color === 'transparent'
+            ? 'transparent'
+            : (themeCssVariables.tag.background[color] ??
+              themeCssVariables.tag.background.gray),
+        '--tw-tag-text':
+          color === 'transparent'
+            ? themeCssVariables.font.color.secondary
+            : (themeCssVariables.tag.text[color] ??
+              themeCssVariables.font.color.secondary),
+        '--tw-tag-border-style': borderStyle,
+        ...style,
+      } as CSSProperties,
+      children: (
+        <>
+          {isDefined(startIcon) &&
+            typeof startIcon !== 'boolean' &&
+            startIcon !== '' && (
+              <span className={styles.iconContainer} aria-hidden>
+                {startIcon}
+              </span>
+            )}
+          <span className={styles.content}>
+            {typeof children === 'string' && !preventShrink ? (
+              <OverflowingTextWithTooltip text={children} />
+            ) : (
+              children
+            )}
+          </span>
+        </>
+      ),
+    },
+  });

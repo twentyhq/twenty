@@ -24,9 +24,8 @@ export const useOpenCreateViewDropdown = (viewBardId?: string) => {
       setViewPickerReferenceViewId(referenceView.id);
       setViewPickerMode('create-empty');
       openDropdown({
-        dropdownComponentInstanceIdFromProps: getViewPickerDropdownId(
-          viewBardId ?? recordIndexId,
-        ),
+        dropdownComponentInstanceIdFromProps:
+          getViewPickerDropdownId(recordIndexId),
       });
     }
   };
