@@ -9,7 +9,7 @@ import { ViewBarPageTitle } from '@/views/components/ViewBarPageTitle';
 import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDropdown';
 
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { VIEW_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ViewSortDropdownId';
+import { getObjectSortDropdownId } from '@/object-record/object-sort-dropdown/utils/getObjectSortDropdownId';
 import { ObjectSortDropdownComponentInstanceContext } from '@/object-record/object-sort-dropdown/states/context/ObjectSortDropdownComponentInstanceContext';
 import { QueryParamsCleanupEffect } from '@/views/components/QueryParamsCleanupEffect';
 import { ViewBarAnyFieldFilterEffect } from '@/views/components/ViewBarAnyFieldFilterEffect';
@@ -49,7 +49,7 @@ export const ViewBar = ({
 
   return (
     <ObjectSortDropdownComponentInstanceContext.Provider
-      value={{ instanceId: `${VIEW_SORT_DROPDOWN_ID}-${recordIndexId}` }}
+      value={{ instanceId: getObjectSortDropdownId(recordIndexId) }}
     >
       <ViewBarRecordFilterGroupEffect />
       <ViewBarAnyFieldFilterEffect />
