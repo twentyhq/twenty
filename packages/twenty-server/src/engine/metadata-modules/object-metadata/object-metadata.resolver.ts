@@ -58,6 +58,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 import { SearchFieldMetadataDTO } from 'src/engine/metadata-modules/search-field-metadata/dtos/search-field-metadata.dto';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/object-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
 
 @UseGuards(WorkspaceAuthGuard)
 @MetadataResolver(() => ObjectMetadataDTO)
@@ -92,7 +93,7 @@ export class ObjectMetadataResolver {
       description: 'Specify to filter the records returned.',
     })
     filter: ObjectFilterInput,
-  ): Promise<CursorConnection<ObjectMetadataEntity>> {
+  ): Promise<CursorConnection<ObjectMetadataDTO>> {
     const queryBuilder = this.objectMetadataRepository
       .createQueryBuilder('objectMetadata')
       .where('"objectMetadata"."workspaceId" = :workspaceId', { workspaceId });
@@ -104,11 +105,19 @@ export class ObjectMetadataResolver {
       columnByFilterField: OBJECT_FILTER_COLUMN_BY_FILTER_FIELD,
     });
 
-    return findManyWithCursorPagination({
+    const connection = await findManyWithCursorPagination({
       queryBuilder,
       alias: 'objectMetadata',
       paging,
     });
+
+    return {
+      ...connection,
+      edges: connection.edges.map((edge) => ({
+        ...edge,
+        node: fromObjectMetadataEntityToObjectMetadataDto(edge.node),
+      })),
+    };
   }
 
   @UseGuards(NoPermissionGuard)
@@ -120,7 +129,7 @@ export class ObjectMetadataResolver {
     })
     id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ObjectMetadataEntity> {
+  ): Promise<ObjectMetadataDTO> {
     const objectMetadata = await this.objectMetadataRepository.findOne({
       where: { id, workspaceId },
     });
@@ -131,7 +140,7 @@ export class ObjectMetadataResolver {
       );
     }
 
-    return objectMetadata;
+    return fromObjectMetadataEntityToObjectMetadataDto(objectMetadata);
   }
 
   @ResolveField(() => ObjectFieldsConnectionDTO)
