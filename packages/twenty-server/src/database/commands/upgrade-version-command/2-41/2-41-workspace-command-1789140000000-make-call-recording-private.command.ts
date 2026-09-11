@@ -13,9 +13,9 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.40.0', 1789140000000)
+@RegisteredWorkspaceCommand('2.41.0', 1789140000000)
 @Command({
-  name: 'upgrade:2-40:make-call-recording-private',
+  name: 'upgrade:2-41:make-call-recording-private',
   description:
     'Set the readability of the existing callRecording standard object to PRIVATE, as the standard application now declares it; workspaces created after the change already have it',
 })

@@ -17,9 +17,9 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { CalendarChannelRecordShareService } from 'src/modules/calendar/common/services/calendar-channel-record-share.service';
 import { MessageChannelRecordShareService } from 'src/modules/messaging/common/services/message-channel-record-share.service';
 
-@RegisteredWorkspaceCommand('2.40.0', 1789140200000)
+@RegisteredWorkspaceCommand('2.41.0', 1789140200000)
 @Command({
-  name: 'upgrade:2-40:backfill-channel-record-shares',
+  name: 'upgrade:2-41:backfill-channel-record-shares',
   description:
     'Rebuild the owner FULL and everyone READ recordShare rows of every message channel and calendar channel from their association tables, so messages, threads and calendar events keep their readers once those objects become PRIVATE',
 })

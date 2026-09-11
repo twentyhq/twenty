@@ -22,9 +22,9 @@ import { type CallRecordingWorkspaceEntity } from 'src/modules/call-recording/st
 
 const CALL_RECORDING_SHARE_CHUNK_SIZE = 500;
 
-@RegisteredWorkspaceCommand('2.40.0', 1789140000001)
+@RegisteredWorkspaceCommand('2.41.0', 1789140000001)
 @Command({
-  name: 'upgrade:2-40:backfill-call-recording-shares',
+  name: 'upgrade:2-41:backfill-call-recording-shares',
   description:
     'Insert one EVERYONE FULL recordShare row per existing callRecording, deleted ones included, so nothing a workspace member could do before the object became PRIVATE is lost once record sharing is enabled',
 })
