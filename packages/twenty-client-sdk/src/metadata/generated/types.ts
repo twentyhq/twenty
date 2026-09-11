@@ -6395,6 +6395,9 @@ export default {
             "isCustom": [
                 8
             ],
+            "isSystem": [
+                8
+            ],
             "isActive": [
                 8
             ],

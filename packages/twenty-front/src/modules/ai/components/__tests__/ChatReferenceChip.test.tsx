@@ -73,6 +73,7 @@ const skillsApolloMock = {
           description: null,
           icon: 'IconSettingsAutomation',
           isActive: true,
+          isSystem: false,
         },
       ],
     },

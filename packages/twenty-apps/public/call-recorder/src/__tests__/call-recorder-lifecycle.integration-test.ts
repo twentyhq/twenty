@@ -14,6 +14,7 @@ import {
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/calendar-event-update-batch-size';
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
+import { handleCallRecordingArtifactsImportJob } from 'src/logic-functions/flows/handle-call-recording-artifacts-import-job.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
@@ -165,9 +166,31 @@ type FakeRecallBot = {
   statusCode: string;
 };
 
+type FakeRecallTranscript = {
+  id: string;
+  statusCode: string;
+  content: unknown;
+};
+
+const FAKE_RECALL_DOWNLOAD_BASE_URL = `${RECALL_BASE_URL}/fake-downloads`;
+
+const MP4_FILE_HEADER_BYTES = Uint8Array.from([
+  0x00, 0x00, 0x00, 0x18, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6f, 0x6d, 0x00,
+  0x00, 0x02, 0x00, 0x69, 0x73, 0x6f, 0x6d, 0x69, 0x73, 0x6f, 0x32,
+]);
+const MP3_FRAME_HEADER_BYTES = Uint8Array.from([
+  0xff,
+  0xfb,
+  0x90,
+  0x64,
+  ...new Array(412).fill(0),
+]);
+
 class FakeRecallApi {
   bots = new Map<string, FakeRecallBot>();
   botIdByIdempotencyKey = new Map<string, string>();
+  transcripts = new Map<string, FakeRecallTranscript>();
+  transcriptRequestFailureStatus: number | undefined = undefined;
   deletedBotIds: string[] = [];
   listRequestCount = 0;
   artifactImportRequests: object[] = [];
@@ -177,6 +200,13 @@ class FakeRecallApi {
 
   seedBot(bot: FakeRecallBot): void {
     this.bots.set(bot.id, bot);
+  }
+
+  completeTranscripts(content: unknown): void {
+    for (const transcript of this.transcripts.values()) {
+      transcript.statusCode = 'done';
+      transcript.content = content;
+    }
   }
 
   botForCallRecording(callRecordingId: string): FakeRecallBot | undefined {
@@ -268,6 +298,99 @@ class FakeRecallApi {
       this.deletedBotIds.push(botIdMatch[1]);
 
       return new Response(null, { status: 204 });
+    }
+
+    if (
+      method === 'POST' &&
+      /\/recording\/[^/]+\/create_transcript\/$/.test(requestUrl)
+    ) {
+      if (this.transcriptRequestFailureStatus !== undefined) {
+        return jsonResponse(this.transcriptRequestFailureStatus, {});
+      }
+
+      const transcript: FakeRecallTranscript = {
+        id: `recall-transcript-${this.transcripts.size + 1}`,
+        statusCode: 'processing',
+        content: undefined,
+      };
+
+      this.transcripts.set(transcript.id, transcript);
+
+      return jsonResponse(200, { id: transcript.id });
+    }
+
+    if (
+      method === 'GET' &&
+      requestUrl.startsWith(`${RECALL_BASE_URL}/transcript/?`)
+    ) {
+      return jsonResponse(200, {
+        next: null,
+        results: [...this.transcripts.values()].map((transcript) => ({
+          id: transcript.id,
+          status: { code: transcript.statusCode },
+        })),
+      });
+    }
+
+    const transcriptIdMatch = requestUrl.match(/\/transcript\/([^/?]+)\/$/);
+
+    if (method === 'GET' && transcriptIdMatch !== null) {
+      const transcript = this.transcripts.get(transcriptIdMatch[1]);
+
+      if (transcript === undefined) {
+        return jsonResponse(404, {});
+      }
+
+      return jsonResponse(200, {
+        id: transcript.id,
+        status: { code: transcript.statusCode },
+        data: {
+          download_url:
+            transcript.statusCode === 'done'
+              ? `${FAKE_RECALL_DOWNLOAD_BASE_URL}/transcripts/${transcript.id}.json`
+              : null,
+        },
+      });
+    }
+
+    const transcriptDownloadMatch = requestUrl.match(
+      /\/fake-downloads\/transcripts\/([^/]+)\.json$/,
+    );
+
+    if (method === 'GET' && transcriptDownloadMatch !== null) {
+      const transcript = this.transcripts.get(transcriptDownloadMatch[1]);
+
+      return new Response(JSON.stringify(transcript?.content ?? null), {
+        status: 200,
+      });
+    }
+
+    if (method === 'GET' && /\/recording\/[^/]+\/$/.test(requestUrl)) {
+      return jsonResponse(200, {
+        media_shortcuts: {
+          video_mixed: {
+            download_url: `${FAKE_RECALL_DOWNLOAD_BASE_URL}/media/video.mp4`,
+          },
+          audio_mixed: {
+            download_url: `${FAKE_RECALL_DOWNLOAD_BASE_URL}/media/audio.mp3`,
+          },
+        },
+      });
+    }
+
+    if (
+      method === 'GET' &&
+      requestUrl.startsWith(`${FAKE_RECALL_DOWNLOAD_BASE_URL}/media/`)
+    ) {
+      // Twenty checks uploads by magic bytes, so the fake media needs real headers.
+      const mediaBytes = requestUrl.endsWith('.mp4')
+        ? MP4_FILE_HEADER_BYTES
+        : MP3_FRAME_HEADER_BYTES;
+
+      return new Response(mediaBytes, {
+        status: 200,
+        headers: { 'content-length': String(mediaBytes.byteLength) },
+      });
     }
 
     throw new Error(`Unhandled Recall API request: ${method} ${requestUrl}`);
@@ -409,6 +532,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
   beforeEach(() => {
     recall = new FakeRecallApi();
+    nextArtifactImportRequestIndex = 0;
 
     const realFetch = globalThis.fetch;
 
@@ -593,6 +717,7 @@ describe('call recorder app lifecycle (integration)', () => {
             callRecorderFailureReason: true,
             startedAt: true,
             endedAt: true,
+            transcript: true,
           },
         },
       },
@@ -691,6 +816,23 @@ describe('call recorder app lifecycle (integration)', () => {
   // the payload Recall would have delivered.
   const deliverRecallWebhook = (body: object) =>
     processRecallWebhookHandler(body);
+
+  // Mocked job queue: runs the artifact imports the webhooks enqueued since
+  // the last call, in order.
+  let nextArtifactImportRequestIndex = 0;
+
+  const runQueuedArtifactImports = async (): Promise<void> => {
+    while (
+      nextArtifactImportRequestIndex < recall.artifactImportRequests.length
+    ) {
+      const artifactImportRequest =
+        recall.artifactImportRequests[nextArtifactImportRequestIndex];
+
+      nextArtifactImportRequestIndex += 1;
+
+      await handleCallRecordingArtifactsImportJob(artifactImportRequest);
+    }
+  };
 
   // Mocked cron trigger: runs the flows the recovery cron dispatches.
   const runPendingRecoveryCron = () =>
@@ -803,6 +945,113 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.artifactImportRequests[2]).toMatchObject({
         callRecordingId,
       });
+    });
+
+    it('completes a recording whose transcript came back empty', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deliverRecallWebhook(
+        buildRecordingDoneWebhook({
+          botId,
+          metadata,
+          startedAt: hoursAgo(1),
+          completedAt: new Date().toISOString(),
+        }),
+      );
+      await runQueuedArtifactImports();
+
+      expect((await fetchCallRecording(callRecordingId)).status).toBe(
+        'PROCESSING',
+      );
+
+      recall.completeTranscripts([]);
+
+      await deliverRecallWebhook(
+        buildTranscriptDoneWebhook({ botId, metadata }),
+      );
+      await runQueuedArtifactImports();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.transcript).toEqual({
+        recallTranscriptId: 'recall-transcript-1',
+        status: 'EMPTY',
+      });
+    });
+
+    it('completes a recording without a transcript when Recall rejects the transcript request', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      recall.transcriptRequestFailureStatus = 400;
+
+      await deliverRecallWebhook(
+        buildRecordingDoneWebhook({
+          botId,
+          metadata,
+          startedAt: hoursAgo(1),
+          completedAt: new Date().toISOString(),
+        }),
+      );
+      await runQueuedArtifactImports();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.transcript).toEqual({
+        recallTranscriptId: null,
+        status: 'EMPTY',
+        subCode: 'transcript_request_rejected:400',
+      });
+    });
+
+    it('keeps a recording processing when the Recall account rejects the transcript request', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      recall.transcriptRequestFailureStatus = 402;
+
+      await deliverRecallWebhook(
+        buildRecordingDoneWebhook({
+          botId,
+          metadata,
+          startedAt: hoursAgo(1),
+          completedAt: new Date().toISOString(),
+        }),
+      );
+      await runQueuedArtifactImports();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('PROCESSING');
+      expect(callRecording.transcript).toBeNull();
+    });
+
+    it('keeps a recording processing while the transcript request fails temporarily', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      recall.transcriptRequestFailureStatus = 503;
+
+      await deliverRecallWebhook(
+        buildRecordingDoneWebhook({
+          botId,
+          metadata,
+          startedAt: hoursAgo(1),
+          completedAt: new Date().toISOString(),
+        }),
+      );
+
+      await expect(runQueuedArtifactImports()).rejects.toMatchObject({
+        name: 'RetryableLogicFunctionError',
+      });
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('PROCESSING');
+      expect(callRecording.transcript).toBeNull();
     });
 
     it('never moves the status backwards on late webhook deliveries', async () => {

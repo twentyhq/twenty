@@ -10,6 +10,7 @@ import {
 } from 'twenty-shared/application';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { messages as frMessages } from '~/locales/generated/fr-FR';
 import { FindManySkillsDocument } from '~/generated-metadata/graphql';
@@ -43,11 +44,13 @@ const buildSkill = ({
   name,
   label,
   applicationId,
+  isSystem = false,
 }: {
   id: string;
   name: string;
   label: string;
   applicationId: string;
+  isSystem?: boolean;
 }) => ({
   __typename: 'Skill' as const,
   id,
@@ -57,6 +60,7 @@ const buildSkill = ({
   icon: 'IconBook',
   content: 'Some skill content',
   isCustom: false,
+  isSystem,
   isActive: true,
   applicationId,
   createdAt: '2026-01-01T00:00:00.000Z',
@@ -77,6 +81,14 @@ const RESEARCH_SKILL = buildSkill({
   applicationId: ACME_APPLICATION.id,
 });
 
+const VIEW_BUILDING_SKILL = buildSkill({
+  id: '20202020-2e4f-4b8a-9c1d-5a6b7c8d9e10',
+  name: 'view-building',
+  label: 'View Building',
+  applicationId: STANDARD_APPLICATION.id,
+  isSystem: true,
+});
+
 const CUSTOM_SKILL = buildSkill({
   id: '20202020-6c5d-4e3f-9a8b-7d6e5f4c3b21',
   name: 'quarterly-report',
@@ -84,19 +96,27 @@ const CUSTOM_SKILL = buildSkill({
   applicationId: WORKSPACE_CUSTOM_APPLICATION.id,
 });
 
-const renderSkillsTab = () => {
+const renderSkillsTab = ({
+  isAdvancedModeEnabled = false,
+}: { isAdvancedModeEnabled?: boolean } = {}) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [
       {
         request: { query: FindManySkillsDocument },
         result: {
           data: {
-            skills: [WORD_DOCUMENTS_SKILL, RESEARCH_SKILL, CUSTOM_SKILL],
+            skills: [
+              WORD_DOCUMENTS_SKILL,
+              RESEARCH_SKILL,
+              VIEW_BUILDING_SKILL,
+              CUSTOM_SKILL,
+            ],
           },
         },
       },
     ],
     onInitializeJotaiStore: (store) => {
+      store.set(isAdvancedModeEnabledState.atom, isAdvancedModeEnabled);
       store.set(currentWorkspaceState.atom, {
         ...mockCurrentWorkspace,
         workspaceCustomApplication: WORKSPACE_CUSTOM_APPLICATION,
@@ -162,6 +182,26 @@ describe('SettingsAgentSkillsTab', () => {
 
     expect(screen.getByText('Quarterly Report')).toBeInTheDocument();
     expect(screen.queryByText('Research')).not.toBeInTheDocument();
+  });
+
+  it('hides system skills, which the agent loads on its own', async () => {
+    renderSkillsTab();
+
+    await screen.findByText('Word Documents');
+
+    expect(screen.queryByText('View Building')).not.toBeInTheDocument();
+  });
+
+  it('shows system skills in advanced mode, and hides them again from the filter', async () => {
+    renderSkillsTab({ isAdvancedModeEnabled: true });
+
+    expect(await screen.findByText('View Building')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Filter' }));
+    await userEvent.click(screen.getByText('System skills'));
+
+    expect(screen.queryByText('View Building')).not.toBeInTheDocument();
+    expect(screen.getByText('Word Documents')).toBeInTheDocument();
   });
 
   it('filters skills by application name', async () => {
