@@ -16,7 +16,7 @@ export const getAiModelModeDescription = (
   const effort = model.effort;
   let label = model.label;
 
-  if (isAiModelEffort(effort)) {
+  if (isDefined(effort) && isAiModelEffort(effort)) {
     const suffix = ` (${AI_MODEL_EFFORT_LABELS[effort]})`;
     const modelName = label.endsWith(suffix)
       ? label.slice(0, -suffix.length)
