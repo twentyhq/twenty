@@ -48,7 +48,6 @@ const checker = program.getTypeChecker();
 const parser = new Parser(program, {
   shouldExtractLiteralValuesFromEnum: true,
   shouldRemoveUndefinedFromOptional: true,
-  // React's native attributes remain available without overwhelming each reference.
   propFilter: (prop) =>
     !prop.declarations?.every((declaration) =>
       declaration.fileName.includes('@types/react/'),
