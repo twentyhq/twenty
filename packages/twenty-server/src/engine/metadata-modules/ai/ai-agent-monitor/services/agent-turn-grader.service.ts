@@ -9,6 +9,7 @@ import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-executi
 import { AgentTurnEvaluationEntity } from 'src/engine/metadata-modules/ai/ai-agent-monitor/entities/agent-turn-evaluation.entity';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai-models/utils/build-reasoning-provider-options.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
@@ -54,7 +55,8 @@ export class AgentTurnGraderService {
     turn: AgentTurnEntity & { messages: AgentMessageEntity[] },
   ): Promise<{ score: number; comment: string }> {
     try {
-      const defaultModel = this.aiModelRegistryService.getDefaultSpeedModel();
+      const defaultModel =
+        this.aiModelRegistryService.getDefaultModelForTier('fast');
 
       if (!defaultModel) {
         this.logger.warn('No default AI model available for evaluation');
@@ -83,6 +85,7 @@ Respond ONLY with valid JSON in this exact format:
 
       const result = await generateText({
         model: defaultModel.model,
+        providerOptions: buildReasoningProviderOptions(defaultModel),
         prompt,
         temperature: 0.3,
         ...buildAiTelemetry({

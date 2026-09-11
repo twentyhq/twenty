@@ -14,6 +14,7 @@ export const buildSlackMessageEventBody = ({
   botUserId,
   botId,
   subtype,
+  files,
 }: SlackMessageEventOptions): SlackEventsRequestBody =>
   buildSlackEventCallback(
     {
@@ -22,6 +23,7 @@ export const buildSlackMessageEventBody = ({
       channel_type: channelType,
       user: userId,
       text,
+      files,
       ts: messageTimestamp,
       thread_ts: threadTimestamp,
       bot_id: botId,

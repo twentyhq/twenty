@@ -82,7 +82,7 @@ const assertFrontComponentGuidance = (fail) => {
     'defineFrontComponent',
     'Use `twenty-sdk/front-component`',
     'Use `twenty-client-sdk/core` or `twenty-client-sdk/metadata`',
-    'twenty-ui@1.0.0-alpha.1',
+    'Install `twenty-ui` from npm at the same version as `twenty-sdk` and `twenty-client-sdk`',
     'import Twenty UI components, icons, and theme tokens from its subpaths',
     'ThemeProvider',
     'showcase/twenty-ui-example.front-component.tsx',
