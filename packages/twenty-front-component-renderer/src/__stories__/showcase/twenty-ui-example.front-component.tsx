@@ -40,9 +40,9 @@ const TwentyUiComponent = () => {
           <Tag color="blue" text="Themed" variant="outline" />
         </div>
         <div style={ROW_STYLE}>
-          <Status color="green" text="Online" />
-          <Status color="red" text="Offline" />
-          <Status color="orange" text="Away" />
+          <Status color="green">Online</Status>
+          <Status color="red">Offline</Status>
+          <Status color="orange">Away</Status>
         </div>
         <div style={ROW_STYLE}>
           <Chip label="Highlighted" variant={ChipVariant.Highlighted} />

@@ -220,21 +220,20 @@ export const SettingsApplicationConnectionDetail = () => {
         value: (
           <Status
             color={connection.visibility === 'workspace' ? 'blue' : 'gray'}
-            text={
-              connection.visibility === 'workspace'
-                ? t`Workspace shared`
-                : t`Just for me`
-            }
-          />
+          >
+            {connection.visibility === 'workspace'
+              ? t`Workspace shared`
+              : t`Just for me`}
+          </Status>
         ),
       },
       {
         key: 'status',
         label: t`Status`,
         value: connection.authFailedAt ? (
-          <Status color="red" text={t`Reconnect needed`} />
+          <Status color="red">{t`Reconnect needed`}</Status>
         ) : (
-          <Status color="green" text={t`Connected`} />
+          <Status color="green">{t`Connected`}</Status>
         ),
       },
       {

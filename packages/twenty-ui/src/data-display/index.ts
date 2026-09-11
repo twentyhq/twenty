@@ -38,6 +38,7 @@ export { NumberDisplay } from './NumberDisplay/NumberDisplay';
 export { Pill } from './Pill/Pill';
 export { SelectDisplay } from './SelectDisplay/SelectDisplay';
 export { Status } from './Status/Status';
+export type { StatusProps } from './Status/types/StatusProps';
 export { StyledTintedIconTileContainer } from './StyledTintedIconTileContainer/StyledTintedIconTileContainer';
 export type { TagColor } from './Tag/Tag';
 export { Tag } from './Tag/Tag';

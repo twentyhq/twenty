@@ -14,7 +14,7 @@ const meta: Meta<typeof Status> = {
   title: 'UI/Data Display/Status',
   component: Status,
   args: {
-    text: 'Urgent',
+    children: 'Urgent',
     weight: 'medium',
   },
 };
@@ -31,7 +31,7 @@ export const Default: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    const status = canvas.getByRole('heading', { level: 3 });
+    const status = canvas.getByRole('button', { name: 'Urgent' });
 
     await userEvent.click(status);
     expect(args.onClick).toHaveBeenCalled();
@@ -42,7 +42,7 @@ export const WithLongText: Story = {
   decorators: [ComponentDecorator],
   args: {
     color: 'green',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+    children: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
   },
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
@@ -59,6 +59,11 @@ export const Catalog: CatalogStory<Story, typeof Status> = {
     catalog: {
       dimensions: [
         {
+          name: 'state',
+          values: ['default', 'loading'],
+          props: (state: string) => ({ loading: state === 'loading' }),
+        },
+        {
           name: 'colors',
           values: MAIN_COLOR_NAMES,
           props: (color: ThemeColor) => ({ color }),
@@ -67,4 +72,46 @@ export const Catalog: CatalogStory<Story, typeof Status> = {
     },
   },
   decorators: [CatalogDecorator],
+};
+
+export const CatalogDark: typeof Catalog = {
+  ...Catalog,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
+};
+
+export const PointerAndKeyboard: Story = {
+  decorators: [ComponentDecorator],
+  args: { children: 'Open details', onClick: fn(), color: 'blue' },
+  play: async ({ canvasElement, args }) => {
+    const control = within(canvasElement).getByRole('button', {
+      name: 'Open details',
+    });
+    await userEvent.click(control);
+    await userEvent.keyboard('{Enter}');
+    await userEvent.keyboard(' ');
+    await expect(args.onClick).toHaveBeenCalledTimes(3);
+    await expect(control).toHaveFocus();
+    await expect(args.onClick).toHaveBeenLastCalledWith(
+      expect.objectContaining({ type: 'click' }),
+    );
+  },
+};
+
+export const Disabled: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    children: 'Unavailable',
+    disabled: true,
+    onClick: fn(),
+    color: 'blue',
+  },
+  play: async ({ canvasElement, args }) => {
+    const control = within(canvasElement).getByRole('button', {
+      name: 'Unavailable',
+    });
+    await expect(control).toBeDisabled();
+    await userEvent.click(control);
+    await expect(args.onClick).not.toHaveBeenCalled();
+  },
 };
