@@ -7,6 +7,7 @@ import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
+import { hasCostPerTaskForEveryModel } from '@/ai/utils/hasCostPerTaskForEveryModel';
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
 import { getAiModelBlendedCostPerMillionTokens } from '@/settings/ai/utils/getAiModelBlendedCostPerMillionTokens';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -46,14 +47,20 @@ const formatIntelligence = (tier: ResolvedAiModelTier) =>
     : EMPTY_VALUE;
 
 // Artificial Analysis measures a cost per task at the same time as the index.
-// Where a model has no such reading, the catalog prices give a blended price
-// per million tokens instead, so the unit is spelled out on every row.
-const formatCost = (tier: ResolvedAiModelTier) => {
+// The column only uses it when every tier has one; otherwise the rows would
+// mix a price per task with a price per million tokens and stop comparing.
+const formatCost = ({
+  tier,
+  hasCostPerTaskForEveryTier,
+}: {
+  tier: ResolvedAiModelTier;
+  hasCostPerTaskForEveryTier: boolean;
+}) => {
   if (!isDefined(tier.model)) {
     return EMPTY_VALUE;
   }
 
-  if (isDefined(tier.model.costPerTask)) {
+  if (hasCostPerTaskForEveryTier && isDefined(tier.model.costPerTask)) {
     return t`$${formatNumber(tier.model.costPerTask, { decimals: 2 })} / task`;
   }
 
@@ -66,6 +73,9 @@ const formatCost = (tier: ResolvedAiModelTier) => {
 
 export const SettingsAiModelTiersPreview = () => {
   const tiers = useAiModelTiers();
+  const hasCostPerTaskForEveryTier = hasCostPerTaskForEveryModel(
+    tiers.map((tier) => tier.model),
+  );
 
   return (
     <Section>
@@ -93,7 +103,9 @@ export const SettingsAiModelTiersPreview = () => {
             <TableCell align="right">
               {renderBenchmarkValue(tier, formatIntelligence(tier))}
             </TableCell>
-            <TableCell align="right">{formatCost(tier)}</TableCell>
+            <TableCell align="right">
+              {formatCost({ tier, hasCostPerTaskForEveryTier })}
+            </TableCell>
           </TableRow>
         ))}
       </Table>
