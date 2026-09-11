@@ -65,6 +65,8 @@ yarn twenty app:publish --private
 # yarn twenty app:publish --private --remote production
 ```
 
+The `logo` declared in `defineApplication()` is uploaded alongside the tarball, so a deployed app shows its configured logo like a marketplace one. The path is resolved against your app source, since the build output does not carry it. If the file is missing, the deploy still succeeds and any previously uploaded logo is kept.
+
 ### Sharing a deployed app
 
 Tarball apps are not listed in the public marketplace, so other workspaces on the same server won't discover them by browsing. To share a deployed app:
@@ -114,14 +116,14 @@ The value is a standard [semver range](https://github.com/npm/node-semver#ranges
 | `>=2.3.0 <3.0.0` | 2.3.0 or later, but below the next major |
 | `^2.3.0` | Same as `>=2.3.0 <3.0.0` |
 
-**What happens at deploy and install time:**
+**What happens at install time:**
 
-- If `engines.twenty` is set and the target server's version does not satisfy the range, the deploy (tarball upload) or install is rejected with a `SERVER_VERSION_INCOMPATIBLE` error and a message indicating both the required range and the actual server version.
+- If `engines.twenty` is set and the target workspace's version does not satisfy the range, the install is rejected with a `SERVER_VERSION_INCOMPATIBLE` error and a message indicating both the required range and the actual server version.
 - If `engines.twenty` is **not set**, the app is accepted on any server version (backward-compatible with existing apps).
 - If the server has no `APP_VERSION` configured, the check is skipped.
 
 <Note>
-The server is the authoritative check — it validates `engines.twenty` on both tarball upload and workspace install. If you deploy a tarball out-of-band or install from the marketplace, the server still enforces compatibility.
+The server is the authoritative check — it validates `engines.twenty` at workspace install. Publishing is never gated on it: the same artifact can be installed into workspaces at different upgrade cursors, and a server too old when you published may satisfy the range later.
 </Note>
 
 ## Automated CI/CD (scaffolded workflows)
