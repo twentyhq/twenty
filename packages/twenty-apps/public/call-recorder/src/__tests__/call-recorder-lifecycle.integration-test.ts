@@ -985,7 +985,7 @@ describe('call recorder app lifecycle (integration)', () => {
       const { callRecordingId, botId, metadata } =
         await scheduleRecordingThroughCalendarReconciliation();
 
-      recall.transcriptRequestFailureStatus = 402;
+      recall.transcriptRequestFailureStatus = 400;
 
       await deliverRecallWebhook(
         buildRecordingDoneWebhook({
@@ -1003,8 +1003,30 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.transcript).toEqual({
         recallTranscriptId: null,
         status: 'EMPTY',
-        subCode: 'transcript_request_rejected:402',
+        subCode: 'transcript_request_rejected:400',
       });
+    });
+
+    it('keeps a recording processing when the Recall account rejects the transcript request', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      recall.transcriptRequestFailureStatus = 402;
+
+      await deliverRecallWebhook(
+        buildRecordingDoneWebhook({
+          botId,
+          metadata,
+          startedAt: hoursAgo(1),
+          completedAt: new Date().toISOString(),
+        }),
+      );
+      await runQueuedArtifactImports();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('PROCESSING');
+      expect(callRecording.transcript).toBeNull();
     });
 
     it('keeps a recording processing while the transcript request fails temporarily', async () => {
