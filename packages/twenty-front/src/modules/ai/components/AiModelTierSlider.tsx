@@ -8,7 +8,8 @@ import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
-import { formatPercentDelta } from '@/ai/utils/formatPercentDelta';
+import { formatMetricDelta } from '@/ai/utils/formatMetricDelta';
+import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
 import { formatNumber } from '~/utils/format/formatNumber';
 
 const TRACK_HEIGHT_PX = 24;
@@ -176,7 +177,10 @@ export const AiModelTierSlider = ({
             key: 'speed',
             Icon: IconBolt,
             deltaPercent: resolvedTier.speedDeltaPercent,
-            description: t`${formatNumber(model?.outputTokensPerSecond ?? 0)} tokens per second`,
+            description:
+              (resolvedTier.speedDeltaPercent ?? 0) >= 100
+                ? t`${formatNumber(model?.outputTokensPerSecond ?? 0)} tokens/s, ${formatMetricDelta(resolvedTier.speedDeltaPercent ?? 0)} the speed of Balanced Mode.`
+                : t`${formatNumber(model?.outputTokensPerSecond ?? 0)} tokens/s, a ${formatMetricDelta(resolvedTier.speedDeltaPercent ?? 0)} change in speed compared with Balanced Mode.`,
           },
         ]
       : []),
@@ -186,7 +190,10 @@ export const AiModelTierSlider = ({
             key: 'cost',
             Icon: IconCoins,
             deltaPercent: resolvedTier.costDeltaPercent,
-            description: t`cost per task`,
+            description:
+              (resolvedTier.costDeltaPercent ?? 0) >= 100
+                ? t`${formatMetricDelta(resolvedTier.costDeltaPercent ?? 0)} the cost of Balanced Mode.`
+                : t`${formatMetricDelta(resolvedTier.costDeltaPercent ?? 0)} change in cost compared with Balanced Mode.`,
           },
         ]
       : []),
@@ -196,7 +203,10 @@ export const AiModelTierSlider = ({
             key: 'intelligence',
             Icon: IconBrain,
             deltaPercent: resolvedTier.intelligenceDeltaPercent,
-            description: t`intelligence index ${formatNumber(model?.intelligenceIndex ?? 0)}`,
+            description:
+              (resolvedTier.intelligenceDeltaPercent ?? 0) >= 100
+                ? t`Intelligence index ${formatNumber(model?.intelligenceIndex ?? 0)}, ${formatMetricDelta(resolvedTier.intelligenceDeltaPercent ?? 0)} the score of Balanced Mode.`
+                : t`Intelligence index ${formatNumber(model?.intelligenceIndex ?? 0)}, a ${formatMetricDelta(resolvedTier.intelligenceDeltaPercent ?? 0)} change in score compared with Balanced Mode.`,
           },
         ]
       : []),
@@ -224,7 +234,7 @@ export const AiModelTierSlider = ({
               isInherited={isBenchmarkInherited}
             >
               <Icon size={theme.icon.size.md} />
-              {formatPercentDelta(deltaPercent ?? 0)}
+              {formatMetricDelta(deltaPercent ?? 0)}
             </StyledMetric>
           ))}
         </StyledMetrics>
@@ -258,7 +268,10 @@ export const AiModelTierSlider = ({
           <AppTooltip
             key={key}
             anchorSelect={`#ai-model-tier-${key}-${tooltipId}`}
-            title={`${t`${model.label}: ${description}, compared with the Balanced tier.`}${inheritedNote}`}
+            title={getAiModelModeDescription(resolvedTier, {
+              showAutomatic: false,
+            })}
+            description={`${description}${inheritedNote}`}
             delay={TooltipDelay.shortDelay}
             place="bottom"
           />

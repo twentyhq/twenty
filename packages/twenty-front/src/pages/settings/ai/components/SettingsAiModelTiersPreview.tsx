@@ -6,17 +6,17 @@ import { Section } from 'twenty-ui/layout';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { AiModelTierIndicator } from '@/ai/components/AiModelTierIndicator';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
-import { hasCostPerTaskForEveryModel } from '@/ai/utils/hasCostPerTaskForEveryModel';
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
-import { getAiModelBlendedCostPerMillionTokens } from '@/settings/ai/utils/getAiModelBlendedCostPerMillionTokens';
+import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { formatNumber } from '~/utils/format/formatNumber';
 
-const GRID_TEMPLATE_COLUMNS = '1fr 1fr 1fr 1fr 1.4fr';
+const GRID_TEMPLATE_COLUMNS = '1fr 1fr 1fr 1fr';
 const EMPTY_VALUE = '–';
 
 const StyledInheritedValue = styled.span`
@@ -46,69 +46,73 @@ const formatIntelligence = (tier: ResolvedAiModelTier) =>
     ? formatNumber(tier.model.intelligenceIndex, { decimals: 0 })
     : EMPTY_VALUE;
 
-// Artificial Analysis measures a cost per task at the same time as the index.
-// The column only uses it when every tier has one; otherwise the rows would
-// mix a price per task with a price per million tokens and stop comparing.
-const formatCost = ({
-  tier,
-  hasCostPerTaskForEveryTier,
-}: {
-  tier: ResolvedAiModelTier;
-  hasCostPerTaskForEveryTier: boolean;
-}) => {
-  if (!isDefined(tier.model)) {
-    return EMPTY_VALUE;
-  }
-
-  if (hasCostPerTaskForEveryTier && isDefined(tier.model.costPerTask)) {
-    return t`$${formatNumber(tier.model.costPerTask, { decimals: 2 })} / task`;
-  }
-
-  const blendedCost = getAiModelBlendedCostPerMillionTokens(tier.model);
-
-  return isDefined(blendedCost)
-    ? t`$${formatNumber(blendedCost, { decimals: 2 })} / 1M tokens`
+const formatCost = (tier: ResolvedAiModelTier) =>
+  isDefined(tier.model?.outputCostPerMillionTokens)
+    ? t`$${formatNumber(tier.model.outputCostPerMillionTokens, { decimals: 2 })} / 1M`
     : EMPTY_VALUE;
-};
+
+const StyledMode = styled.span`
+  align-items: center;
+  display: inline-flex;
+  gap: ${themeCssVariables.spacing[2]};
+  white-space: nowrap;
+`;
+
+const StyledTable = styled(Table)`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+`;
 
 export const SettingsAiModelTiersPreview = () => {
   const tiers = useAiModelTiers();
-  const hasCostPerTaskForEveryTier = hasCostPerTaskForEveryModel(
-    tiers.map((tier) => tier.model),
-  );
 
   return (
     <Section>
       <H2Title
         title={t`Preview`}
-        description={t`The tiers people and agents choose between`}
+        description={t`The modes people and agents choose between`}
       />
-      <Table>
+      <StyledTable>
         <TableRow gridTemplateColumns={GRID_TEMPLATE_COLUMNS}>
-          <TableHeader>{t`Tier`}</TableHeader>
-          <TableHeader>{t`Model`}</TableHeader>
+          <TableHeader>{t`Mode`}</TableHeader>
           <TableHeader align="right">{t`Speed`}</TableHeader>
           <TableHeader align="right">{t`Intelligence`}</TableHeader>
-          <TableHeader align="right">{t`Cost`}</TableHeader>
+          <TableHeader align="right">{t`Output cost`}</TableHeader>
         </TableRow>
         {tiers.map((tier) => (
           <TableRow key={tier.tier} gridTemplateColumns={GRID_TEMPLATE_COLUMNS}>
             <TableCell color={themeCssVariables.font.color.primary}>
-              {tier.label}
+              <StyledMode
+                data-tooltip-id={`ai-model-mode-${tier.tier}`}
+                tabIndex={0}
+              >
+                <AiModelTierIndicator tier={tier.tier} />
+                {tier.label}
+              </StyledMode>
+              <AppTooltip
+                anchorSelect={`[data-tooltip-id="ai-model-mode-${tier.tier}"]`}
+                title={getAiModelModeDescription(tier, {
+                  showAutomatic: false,
+                })}
+                description={
+                  !isDefined(tier.model)
+                    ? t`No model is available for this mode.`
+                    : tier.isPinned
+                      ? t`Manually selected for this mode.`
+                      : t`Automatically selected by Twenty for this mode.`
+                }
+                delay={TooltipDelay.shortDelay}
+              />
             </TableCell>
-            <TableCell>{tier.model?.label ?? EMPTY_VALUE}</TableCell>
             <TableCell align="right">
               {renderBenchmarkValue(tier, formatSpeed(tier))}
             </TableCell>
             <TableCell align="right">
               {renderBenchmarkValue(tier, formatIntelligence(tier))}
             </TableCell>
-            <TableCell align="right">
-              {formatCost({ tier, hasCostPerTaskForEveryTier })}
-            </TableCell>
+            <TableCell align="right">{formatCost(tier)}</TableCell>
           </TableRow>
         ))}
-      </Table>
+      </StyledTable>
       {tiers.some((tier) => tier.model?.isBenchmarkInherited ?? false) && (
         <AppTooltip
           anchorSelect={`.${INHERITED_BENCHMARK_CLASS_NAME}`}

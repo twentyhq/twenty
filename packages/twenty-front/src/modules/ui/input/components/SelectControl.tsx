@@ -77,6 +77,12 @@ export const StyledControlContainer = styled.div<{
   text-align: left;
 `;
 
+const StyledLeadingContent = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
 const StyledIconChevronDownWrapper = styled.div<{
   disabled?: boolean;
 }>`
@@ -105,34 +111,41 @@ export const SelectControl = ({
   variant = 'default',
 }: SelectControlProps) => {
   const { theme } = useContext(ThemeContext);
+  const hasLeadingContent =
+    isDefined(selectedOption.Icon) || isDefined(selectedOption.LeftComponent);
   return (
     <StyledControlContainer
       disabled={isDisabled}
-      hasIcon={isDefined(selectedOption?.Icon)}
+      hasIcon={hasLeadingContent}
       selectSizeVariant={selectSizeVariant}
       textAccent={textAccent}
       hasRightElement={hasRightElement}
       $variant={variant}
       title={selectedOption.fullLabel}
     >
-      {isDefined(selectedOption?.Icon) ? (
-        isDefined(selectedOption.iconThemeColor) ? (
-          <TintedIconTile
-            Icon={selectedOption.Icon}
-            color={selectedOption.iconThemeColor}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
-        ) : (
-          <selectedOption.Icon
-            color={
-              isDisabled ? theme.font.color.light : theme.font.color.primary
-            }
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
-        )
-      ) : null}
+      {hasLeadingContent && (
+        <StyledLeadingContent>
+          {isDefined(selectedOption?.Icon) ? (
+            isDefined(selectedOption.iconThemeColor) ? (
+              <TintedIconTile
+                Icon={selectedOption.Icon}
+                color={selectedOption.iconThemeColor}
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            ) : (
+              <selectedOption.Icon
+                color={
+                  isDisabled ? theme.font.color.light : theme.font.color.primary
+                }
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            )
+          ) : null}
+          {selectedOption.LeftComponent}
+        </StyledLeadingContent>
+      )}
       <OverflowingTextWithTooltip
         text={
           selectedOption.contextualText

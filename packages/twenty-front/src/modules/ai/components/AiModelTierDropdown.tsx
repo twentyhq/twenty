@@ -14,7 +14,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
-const SLIDER_DROPDOWN_WIDTH_PX = 286;
+const SLIDER_DROPDOWN_WIDTH_PX = 260;
 
 const StyledSliderContainer = styled.div`
   padding: ${themeCssVariables.spacing[3]};
@@ -67,7 +67,7 @@ export const AiModelTierDropdown = ({
         <DropdownContent widthInPixels={SLIDER_DROPDOWN_WIDTH_PX}>
           <StyledSliderContainer
             role="group"
-            aria-label={t`Choose a model tier`}
+            aria-label={t`Choose a model mode`}
           >
             <AiModelTierSlider
               selectedTier={selectedTier}
