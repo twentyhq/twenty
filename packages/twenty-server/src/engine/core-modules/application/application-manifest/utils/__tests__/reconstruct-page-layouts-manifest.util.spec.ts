@@ -32,6 +32,7 @@ import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layou
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { normalizePageLayoutTabManifestOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/normalize-page-layout-tab-manifest-or-throw.test-util';
 
 const APP_ID = 'application-id';
 const WORKSPACE_ID = 'workspace-id';
@@ -204,9 +205,11 @@ const buildFlatPageLayoutTab = ({
   pageLayoutUniversalIdentifier: string;
 } & Partial<FlatPageLayoutTab>): FlatPageLayoutTab => ({
   ...fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
-    pageLayoutTabManifest,
+    pageLayoutTabManifest: normalizePageLayoutTabManifestOrThrow({
+      pageLayoutTabManifest,
+      pageLayoutType: PageLayoutType.RECORD_PAGE,
+    }),
     pageLayoutUniversalIdentifier,
-    pageLayoutType: PageLayoutType.RECORD_PAGE,
     applicationUniversalIdentifier: APP_UID,
     now: NOW,
   }),
@@ -227,9 +230,19 @@ const buildFlatPageLayoutWidget = ({
   pageLayoutTabUniversalIdentifier: string;
 } & Partial<FlatPageLayoutWidget>): FlatPageLayoutWidget => ({
   ...fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
-    pageLayoutWidgetManifest,
+    pageLayoutWidgetManifest: normalizePageLayoutTabManifestOrThrow({
+      pageLayoutTabManifest: {
+        universalIdentifier: pageLayoutTabUniversalIdentifier,
+        title: 'Overview',
+        position: 0,
+        layoutMode:
+          pageLayoutWidgetManifest.position?.layoutMode ??
+          PageLayoutTabLayoutMode.VERTICAL_LIST,
+        widgets: [pageLayoutWidgetManifest],
+      },
+      pageLayoutType: PageLayoutType.RECORD_PAGE,
+    }).widgets[0],
     pageLayoutTabUniversalIdentifier,
-    pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     applicationUniversalIdentifier: APP_UID,
     now: NOW,
   }),
