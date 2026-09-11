@@ -72,6 +72,7 @@ import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
 import { hasNoAssistantMessage } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-no-assistant-message.util';
 import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-succeeded-workspace-setup-completion.util';
+import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-referenced-skill-ids.util';
 import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
@@ -283,6 +284,13 @@ export class ChatExecutionService {
 
     const uploadedFiles = collectUploadedFileReferences(messages);
 
+    // Skills the user tagged with / are inlined into the prompt so the model
+    // does not spend a round trip calling load_skills for them.
+    const referencedSkills = await this.skillService.findFlatSkillsByIds(
+      collectReferencedSkillIds(messages),
+      workspace.id,
+    );
+
     let processedMessages: ExtendedUIMessage[] = replaceUnsupportedFileParts(
       messages,
       modelConfig.modalities,
@@ -327,6 +335,7 @@ export class ChatExecutionService {
     const systemPrompt = buildFullSystemPrompt({
       toolCatalog,
       skillCatalog,
+      referencedSkills,
       preloadedTools: preloadedToolNames,
       uploadedFilesContext: {
         uploadedFiles,
