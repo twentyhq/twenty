@@ -4,6 +4,10 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
+  STANDARD_OBJECT_FIELDS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
+import {
   FeatureFlagKey,
   MetadataReadability,
   type ObjectAccessInheritanceMatch,
@@ -1727,6 +1731,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       queryBuilder,
       alias,
       flatObjectMetadata,
+      operationType,
     });
   }
 
@@ -1736,19 +1741,38 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     queryBuilder,
     alias,
     flatObjectMetadata,
+    operationType,
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder;
     alias: string;
     flatObjectMetadata: FlatObjectMetadata;
+    operationType: OperationType;
   }): void {
     if (
+      operationType !== 'select' ||
       !this.isRecordSharingEnabled() ||
-      flatObjectMetadata.id !==
-        this.options.internalContext.objectIdByNameSingular.timelineActivity ||
+      flatObjectMetadata.universalIdentifier !==
+        STANDARD_OBJECTS.timelineActivity.universalIdentifier ||
       isOwningApplicationAuthContext({
         authContext: this.options.authContext,
         owningApplicationId: flatObjectMetadata.applicationId,
       })
+    ) {
+      return;
+    }
+
+    const linkedObjectMetadataIdColumnName = this.resolveFieldColumnName(
+      STANDARD_OBJECT_FIELDS.timelineActivity.linkedObjectMetadataId
+        .universalIdentifier,
+    );
+    const linkedRecordIdColumnName = this.resolveFieldColumnName(
+      STANDARD_OBJECT_FIELDS.timelineActivity.linkedRecordId
+        .universalIdentifier,
+    );
+
+    if (
+      !isDefined(linkedObjectMetadataIdColumnName) ||
+      !isDefined(linkedRecordIdColumnName)
     ) {
       return;
     }
@@ -1781,8 +1805,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     const condition = buildLinkedRecordGuardCondition({
       tableAlias: alias,
-      linkedObjectMetadataIdColumnName: 'linkedObjectMetadataId',
-      linkedRecordIdColumnName: 'linkedRecordId',
+      linkedObjectMetadataIdColumnName,
+      linkedRecordIdColumnName,
       objectGates,
       recordShareTableExpression: this.getRecordShareTableExpression(),
       principalIds,
@@ -2188,6 +2212,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       )}.${escapeIdentifier(parentTableShape.tableName)}`,
       conditions: parentRowConditions,
     };
+  }
+
+  private resolveFieldColumnName(
+    fieldUniversalIdentifier: string,
+  ): string | undefined {
+    return this.options.internalContext.flatFieldMetadataMaps
+      .byUniversalIdentifier[fieldUniversalIdentifier]?.name;
   }
 
   private getRecordShareTableExpression(): string {
