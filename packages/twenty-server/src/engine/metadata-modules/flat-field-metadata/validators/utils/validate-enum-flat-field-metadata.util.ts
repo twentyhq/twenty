@@ -17,6 +17,8 @@ import {
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
+import { isFlatFieldMetadataOfTypes } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-types.util';
+import { validateMetadataOptionColor } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util';
 import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { IDENTIFIER_MIN_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-min-char-length.constants';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -197,9 +199,13 @@ const validateDuplicates = (
   return errors;
 };
 
-const validateFieldMetadataInputOptions = (
-  universalFlatFieldMetadata: UniversalFlatFieldMetadata<EnumFieldMetadataType>,
-): FlatFieldMetadataValidationError[] => {
+const validateFieldMetadataInputOptions = ({
+  universalFlatFieldMetadata,
+  shouldValidateOptionColors,
+}: {
+  universalFlatFieldMetadata: UniversalFlatFieldMetadata<EnumFieldMetadataType>;
+  shouldValidateOptionColors: boolean;
+}): FlatFieldMetadataValidationError[] => {
   const { options } = universalFlatFieldMetadata;
 
   if (!isDefined(options) || options.length === 0) {
@@ -223,7 +229,22 @@ const validateFieldMetadataInputOptions = (
 
   const duplicatedValidationErrors = validateDuplicates(options);
 
-  return [...optionsValidationErrors, ...duplicatedValidationErrors];
+  const colorValidationErrors =
+    shouldValidateOptionColors &&
+    isFlatFieldMetadataOfTypes(universalFlatFieldMetadata, [
+      FieldMetadataType.SELECT,
+      FieldMetadataType.MULTI_SELECT,
+    ])
+      ? universalFlatFieldMetadata.options.flatMap((option) =>
+          validateMetadataOptionColor(option.color),
+        )
+      : [];
+
+  return [
+    ...optionsValidationErrors,
+    ...duplicatedValidationErrors,
+    ...colorValidationErrors,
+  ];
 };
 
 const validateSelectDefaultValue = ({
@@ -355,10 +376,15 @@ const validateFieldMetadataDefaultValue = ({
 
 export const validateEnumSelectFlatFieldMetadata = ({
   flatEntityToValidate: universalFlatFieldMetadataToValidate,
+  update,
 }: FlatFieldMetadataTypeValidationArgs<EnumFieldMetadataType>): FlatFieldMetadataValidationError[] => {
-  const optionsValidationErrors = validateFieldMetadataInputOptions(
-    universalFlatFieldMetadataToValidate,
-  );
+  const shouldValidateOptionColors =
+    !isDefined(update) || isDefined(update.options);
+
+  const optionsValidationErrors = validateFieldMetadataInputOptions({
+    universalFlatFieldMetadata: universalFlatFieldMetadataToValidate,
+    shouldValidateOptionColors,
+  });
 
   const defaultValueValidationErrors = isDefined(
     universalFlatFieldMetadataToValidate.defaultValue,

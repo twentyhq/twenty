@@ -1,6 +1,8 @@
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { parseThemeColor } from 'twenty-ui/utilities';
 import { v4 } from 'uuid';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
@@ -33,10 +35,13 @@ export const useSelectSettingsFormInitialValues = ({
     null;
   const initialOptions = useMemo(
     () =>
-      fieldMetadataItem?.options?.length
-        ? [...fieldMetadataItem.options].sort(
-            (optionA, optionB) => optionA.position - optionB.position,
-          )
+      isNonEmptyArray(fieldMetadataItem?.options)
+        ? fieldMetadataItem.options
+            .map((option) => ({
+              ...option,
+              color: parseThemeColor(option.color),
+            }))
+            .sort((optionA, optionB) => optionA.position - optionB.position)
         : [getDefaultOption()],
     [fieldMetadataItem?.options],
   );
