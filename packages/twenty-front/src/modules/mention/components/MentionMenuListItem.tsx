@@ -1,7 +1,7 @@
 import { type MouseEvent } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
+import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { Avatar } from 'twenty-ui/data-display';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -46,10 +46,10 @@ export const MentionMenuListItem = ({
       contextualTextPosition="left"
       LeftIcon={() => (
         <Avatar
-          placeholder={label}
-          placeholderColorSeed={recordId}
-          avatarUrl={getAbsoluteImageUrl(imageUrl)}
-          type={getAvatarType(objectMetadataItem)}
+          name={label}
+          colorSeed={recordId}
+          src={getAbsoluteImageUrl(imageUrl)}
+          shape={getAvatarShape(objectMetadataItem)}
           size="sm"
         />
       )}

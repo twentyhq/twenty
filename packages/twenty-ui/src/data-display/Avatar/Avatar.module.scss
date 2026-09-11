@@ -1,22 +1,25 @@
 // Size values mirror AVATAR_PROPERTIES_BY_SIZE (constants/AvatarPropertiesBySize.ts)
 .root {
+  @include focus-ring;
+  padding: 0;
+  font-family: inherit;
   align-items: center;
   flex-shrink: 0;
   overflow: hidden;
   user-select: none;
   border-radius: var(--t-border-radius-xs);
-  border: var(--avatar-border, none);
+  border: var(--tw-avatar-border, none);
   box-sizing: border-box;
   display: flex;
   justify-content: center;
-  color: var(--avatar-color);
-  background: var(--avatar-background);
+  color: var(--tw-avatar-color);
+  background: var(--tw-avatar-background);
 
-  &[data-type='icon'] {
+  &[data-shape='rounded-square'] {
     border-radius: var(--t-border-radius-sm);
   }
 
-  &[data-type='rounded'] {
+  &[data-shape='circle'] {
     border-radius: 50%;
     corner-shape: round;
   }
@@ -32,37 +35,37 @@
   }
 }
 
-.xl {
+.root[data-size='xl'] {
   font-size: 16px;
-  height: 40px;
-  width: 40px;
+  block-size: 40px;
+  inline-size: 40px;
 }
 
-.lg {
+.root[data-size='lg'] {
   font-size: 13px;
-  height: 24px;
-  width: 24px;
+  block-size: 24px;
+  inline-size: 24px;
 }
 
-.md {
+.root[data-size='md'] {
   font-size: 12px;
-  height: 16px;
-  width: 16px;
+  block-size: 16px;
+  inline-size: 16px;
 }
 
-.sm {
+.root[data-size='sm'] {
   font-size: 10px;
-  height: 14px;
-  width: 14px;
+  block-size: 14px;
+  inline-size: 14px;
 }
 
-.xs {
+.root[data-size='xs'] {
   font-size: 8px;
-  height: 12px;
-  width: 12px;
+  block-size: 12px;
+  inline-size: 12px;
 }
 
-.pulsing {
+.root[data-pulsing] {
   animation: avatarPulsing 0.8s ease-in-out infinite alternate;
 }
 
@@ -76,20 +79,24 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pulsing {
+  .root[data-pulsing] {
     animation: none;
     opacity: 1;
   }
 }
 
 .image {
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  height: 100%;
-  width: 100%;
+  object-fit: cover;
+  block-size: 100%;
+  inline-size: 100%;
 }
-
-.placeholderChar {
-  font-weight: 500;
+.fallback {
+  font-weight: var(--t-font-weight-medium);
+}
+.icon {
+  display: flex;
+  & > svg {
+    inline-size: calc(var(--t-icon-size-xl) * 1px);
+    block-size: calc(var(--t-icon-size-xl) * 1px);
+  }
 }

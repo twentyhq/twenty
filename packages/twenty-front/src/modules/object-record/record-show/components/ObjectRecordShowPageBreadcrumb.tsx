@@ -155,11 +155,11 @@ export const ObjectRecordShowPageBreadcrumb = ({
         isDefined(recordIdentifier) && (
           <StyledAvatarContainer>
             <Avatar
-              avatarUrl={getAbsoluteImageUrl(recordIdentifier.avatarUrl)}
-              placeholder={recordIdentifier.name}
-              placeholderColorSeed={objectRecordId}
+              src={getAbsoluteImageUrl(recordIdentifier.avatarUrl)}
+              name={recordIdentifier.name}
+              colorSeed={objectRecordId}
               size="md"
-              type={recordIdentifier.avatarType}
+              shape={recordIdentifier.avatarShape ?? undefined}
             />
           </StyledAvatarContainer>
         )

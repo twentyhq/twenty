@@ -92,7 +92,7 @@ export const useChatReferenceTarget = (
             <AvatarOrIcon
               placeholder={reference.displayName}
               placeholderColorSeed={reference.recordId}
-              avatarType="rounded"
+              avatarShape="circle"
               avatarUrl=""
             />
           ),

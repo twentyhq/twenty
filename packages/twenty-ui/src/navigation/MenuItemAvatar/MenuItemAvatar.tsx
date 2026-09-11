@@ -15,7 +15,7 @@ export type MenuItemAvatarProps = {
   isTooltipOpen?: boolean;
   avatar?: Pick<
     AvatarProps,
-    'avatarUrl' | 'placeholderColorSeed' | 'placeholder' | 'size' | 'type'
+    'src' | 'colorSeed' | 'name' | 'size' | 'shape'
   > | null;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
@@ -51,11 +51,11 @@ export const MenuItemAvatar = ({
       LeftComponent={
         isDefined(avatar) ? (
           <Avatar
-            placeholder={avatar.placeholder}
-            avatarUrl={avatar.avatarUrl}
-            placeholderColorSeed={avatar.placeholderColorSeed}
+            name={avatar.name}
+            src={avatar.src}
+            colorSeed={avatar.colorSeed}
             size={avatar.size}
-            type={avatar.type}
+            shape={avatar.shape}
           />
         ) : undefined
       }

@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
 import { Avatar } from '@ui/data-display/Avatar/Avatar';
-import { type AvatarType } from '@ui/data-display/Avatar/types/AvatarType';
+import { type AvatarShape } from '@ui/data-display/Avatar/types/AvatarShape';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
 import { useTheme } from '@ui/theme-constants';
 import { type Nullable } from '@ui/utilities';
@@ -13,7 +13,7 @@ import styles from './AvatarOrIcon.module.scss';
 export type AvatarOrIconProps = {
   placeholder?: string;
   avatarUrl?: string;
-  avatarType?: Nullable<AvatarType>;
+  avatarShape?: Nullable<AvatarShape>;
   Icon?: IconComponent;
   IconColor?: string;
   IconBackgroundColor?: string;
@@ -25,7 +25,7 @@ export type AvatarOrIconProps = {
 export const AvatarOrIcon = ({
   Icon,
   placeholderColorSeed,
-  avatarType,
+  avatarShape,
   avatarUrl,
   placeholder,
   isIconInverted = false,
@@ -38,11 +38,11 @@ export const AvatarOrIcon = ({
   if (!isDefined(Icon)) {
     return (
       <Avatar
-        avatarUrl={avatarUrl}
-        placeholderColorSeed={placeholderColorSeed}
-        placeholder={placeholder}
+        src={avatarUrl}
+        colorSeed={placeholderColorSeed}
+        name={placeholder}
         size="sm"
-        type={avatarType}
+        shape={avatarShape ?? undefined}
         onClick={onClick}
       />
     );

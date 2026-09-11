@@ -1,163 +1,129 @@
-import { isNonEmptyString, isNull } from '@sniptt/guards';
-import { clsx } from 'clsx';
-import { useState } from 'react';
+import { Avatar as AvatarPrimitive } from '@base-ui/react/avatar';
+import { Button as ButtonPrimitive } from '@base-ui/react/button';
+import { type CSSProperties } from 'react';
 
-import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
-import { AvatarImageLoadErrorEffect } from '@ui/data-display/Avatar/internal/AvatarImageLoadErrorEffect';
-import { type AvatarSize } from '@ui/data-display/Avatar/types/AvatarSize';
-import { type AvatarType } from '@ui/data-display/Avatar/types/AvatarType';
-import { type IconComponent } from '@ui/icon/types/IconComponent';
 import { useTheme } from '@ui/theme-constants';
 import { stringToThemeColorP3String } from '@ui/utilities';
-import { type Nullable } from '@ui/utilities/types/Nullable';
 import { isDefined } from '@ui/utilities/utils/isDefined';
+import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from './Avatar.module.scss';
-
-export type AvatarProps = {
-  avatarUrl?: string | null;
-  className?: string;
-  size?: AvatarSize;
-  placeholder: string | undefined;
-  placeholderColorSeed?: string;
-  Icon?: IconComponent;
-  iconColor?: string;
-  type?: Nullable<AvatarType>;
-  color?: string;
-  backgroundColor?: string;
-  borderColor?: string;
-  pulsing?: boolean;
-  onClick?: () => void;
-};
+import { type AvatarProps } from './types/AvatarProps';
 
 export const Avatar = ({
-  avatarUrl,
-  className,
+  src,
+  name,
+  colorSeed = name,
   size = 'md',
-  placeholder,
-  placeholderColorSeed = placeholder,
-  Icon,
-  iconColor,
-  onClick,
-  type = 'squared',
+  shape = 'square',
+  variant = 'soft',
+  icon,
   color,
   backgroundColor,
   borderColor,
   pulsing = false,
+  disabled = false,
+  nativeButton = true,
+  onClick,
+  className,
+  style,
+  render,
+  'aria-label': ariaLabel,
+  ...props
 }: AvatarProps) => {
   const theme = useTheme();
-
-  const [erroredAvatarImageURI, setErroredAvatarImageURI] = useState<
-    string | null
-  >(null);
-
-  const avatarImageURI = isNonEmptyString(avatarUrl) ? avatarUrl : null;
-
-  const avatarImageFailedToLoad =
-    isNonEmptyString(avatarImageURI) &&
-    erroredAvatarImageURI === avatarImageURI;
-
-  const placeholderFirstChar = placeholder?.trim()?.charAt(0);
-  const isPlaceholderFirstCharEmpty =
-    !placeholderFirstChar || placeholderFirstChar === '';
-  const placeholderChar = placeholderFirstChar?.toUpperCase() || '-';
-
-  const showPlaceholder = isNull(avatarImageURI) || avatarImageFailedToLoad;
-
-  const fixedColor = isPlaceholderFirstCharEmpty
-    ? theme.font.color.tertiary
-    : (color ??
+  const initial = name?.trim().charAt(0).toUpperCase();
+  const fallbackColor = initial
+    ? (color ??
       stringToThemeColorP3String({
-        string: placeholderColorSeed ?? '',
+        string: colorSeed ?? '',
         variant: 12,
         theme,
-      }));
-  const fixedBackgroundColor = isPlaceholderFirstCharEmpty
-    ? theme.background.transparent.light
-    : (backgroundColor ??
+      }))
+    : theme.font.color.tertiary;
+  const fallbackBackground = initial
+    ? (backgroundColor ??
       stringToThemeColorP3String({
-        string: placeholderColorSeed ?? '',
-        variant: type === 'app' ? 5 : 4,
+        string: colorSeed ?? '',
+        variant: variant === 'outline' ? 5 : 4,
         theme,
-      }));
-
-  const fixedBorderColor =
-    type === 'app'
-      ? (borderColor ??
-        (isPlaceholderFirstCharEmpty
-          ? undefined
-          : stringToThemeColorP3String({
-              string: placeholderColorSeed ?? '',
-              variant: 6,
-              theme,
-            })))
-      : undefined;
-
-  const showBackgroundColor = showPlaceholder;
-
-  const showBorderColor = showPlaceholder;
-
-  const appliedBorderColor = showBorderColor ? fixedBorderColor : undefined;
-
-  const avatarStyle = {
-    '--avatar-color': fixedColor,
-    '--avatar-background': Icon
-      ? 'inherit'
-      : showBackgroundColor
-        ? fixedBackgroundColor
-        : 'none',
-    ...(type === 'app' && appliedBorderColor
-      ? { '--avatar-border': `1px solid ${appliedBorderColor}` }
-      : {}),
-  } as React.CSSProperties;
-
-  const avatarClassName = clsx(
-    styles.root,
-    styles[size],
-    pulsing && styles.pulsing,
-    className,
-  );
-
-  const isClickable = isDefined(onClick);
-
-  const clickableAriaLabel = isNonEmptyString(placeholder)
-    ? placeholder
-    : 'Avatar';
+      }))
+    : theme.background.transparent.light;
+  const fallbackBorder =
+    borderColor ??
+    (initial
+      ? stringToThemeColorP3String({
+          string: colorSeed ?? '',
+          variant: 6,
+          theme,
+        })
+      : undefined);
+  const isInteractive = isDefined(onClick);
+  const hasIcon = isDefined(icon) && typeof icon !== 'boolean' && icon !== '';
 
   return (
-    // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
-    <div
-      className={avatarClassName}
-      data-type={type ?? undefined}
-      data-clickable={isClickable || undefined}
-      role={isClickable ? 'button' : undefined}
-      tabIndex={isClickable ? 0 : undefined}
-      aria-label={isClickable ? clickableAriaLabel : undefined}
+    <AvatarPrimitive.Root
+      {...props}
       onClick={onClick}
-      onKeyDown={isClickable ? handleClickableElementKeyDown : undefined}
-      style={avatarStyle}
+      aria-label={
+        ariaLabel ?? (isInteractive ? name?.trim() || 'Avatar' : undefined)
+      }
+      data-size={size}
+      data-shape={shape}
+      data-pulsing={pulsing || undefined}
+      data-disabled={disabled || undefined}
+      data-clickable={isInteractive || undefined}
+      className={mergeClassNames(styles.root, className)}
+      style={(state) =>
+        ({
+          '--tw-avatar-color': fallbackColor,
+          '--tw-avatar-background': hasIcon
+            ? 'inherit'
+            : state.imageLoadingStatus === 'loaded'
+              ? 'none'
+              : fallbackBackground,
+          '--tw-avatar-border':
+            variant === 'outline' &&
+            state.imageLoadingStatus !== 'loaded' &&
+            fallbackBorder
+              ? `1px solid ${fallbackBorder}`
+              : 'none',
+          ...(typeof style === 'function' ? style(state) : style),
+        }) as CSSProperties
+      }
+      render={
+        isInteractive
+          ? (rootProps, state) => (
+              <ButtonPrimitive
+                {...rootProps}
+                disabled={disabled}
+                nativeButton={nativeButton}
+                render={
+                  typeof render === 'function'
+                    ? (buttonProps) => render(buttonProps, state)
+                    : render
+                }
+              />
+            )
+          : render
+      }
     >
-      {isNonEmptyString(avatarImageURI) && (
-        <AvatarImageLoadErrorEffect
-          avatarImageURI={avatarImageURI}
-          onImageLoadError={setErroredAvatarImageURI}
-        />
-      )}
-      {Icon ? (
-        <Icon
-          color={iconColor ? iconColor : 'currentColor'}
-          size={theme.icon.size.xl}
-        />
-      ) : showPlaceholder ? (
-        <span className={styles.placeholderChar}>{placeholderChar}</span>
+      {hasIcon ? (
+        <span className={styles.icon} aria-hidden>
+          {icon}
+        </span>
       ) : (
-        <div
-          className={styles.image}
-          style={{
-            backgroundImage: `url("${CSS.escape(avatarImageURI)}")`,
-          }}
-        />
+        <>
+          <AvatarPrimitive.Image
+            src={src ?? undefined}
+            alt={name ?? ''}
+            className={styles.image}
+          />
+          <AvatarPrimitive.Fallback className={styles.fallback}>
+            {initial || '-'}
+          </AvatarPrimitive.Fallback>
+        </>
       )}
-    </div>
+    </AvatarPrimitive.Root>
   );
 };

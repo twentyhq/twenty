@@ -32,10 +32,10 @@ export const ObjectFilterDropdownRecordPinnedItems = (props: {
             avatar={
               selectableItem.avatarUrl ? (
                 <Avatar
-                  avatarUrl={getAbsoluteImageUrl(selectableItem.avatarUrl)}
-                  placeholderColorSeed={selectableItem.id}
-                  placeholder={selectableItem.name}
-                  type={selectableItem.avatarType}
+                  src={getAbsoluteImageUrl(selectableItem.avatarUrl)}
+                  colorSeed={selectableItem.id}
+                  name={selectableItem.name}
+                  shape={selectableItem.avatarShape}
                   size="md"
                 />
               ) : (

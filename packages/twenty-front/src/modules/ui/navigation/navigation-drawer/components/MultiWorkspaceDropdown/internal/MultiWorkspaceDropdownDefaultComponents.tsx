@@ -109,8 +109,8 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           <DropdownMenuHeaderLeftComponent
             Avatar={
               <Avatar
-                placeholder={currentWorkspace?.displayName || ''}
-                avatarUrl={getAbsoluteImageUrl(
+                name={currentWorkspace?.displayName || ''}
+                src={getAbsoluteImageUrl(
                   currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
                 )}
               />
@@ -174,8 +174,8 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                     text={availableWorkspace.displayName ?? t`(No name)`}
                     avatar={
                       <Avatar
-                        placeholder={availableWorkspace.displayName || ''}
-                        avatarUrl={getAbsoluteImageUrl(
+                        name={availableWorkspace.displayName || ''}
+                        src={getAbsoluteImageUrl(
                           availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
                         )}
                       />

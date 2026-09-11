@@ -71,12 +71,10 @@ export const ParticipantChip = ({
         <StyledChip>
           <StyledAvatarContainer>
             <Avatar
-              avatarUrl={getAbsoluteImageUrl(avatarUrl)}
-              type="rounded"
-              placeholder={displayName}
-              placeholderColorSeed={getEmailParticipantAvatarColorSeed(
-                participant,
-              )}
+              src={getAbsoluteImageUrl(avatarUrl)}
+              shape="circle"
+              name={displayName}
+              colorSeed={getEmailParticipantAvatarColorSeed(participant)}
               size="sm"
             />
           </StyledAvatarContainer>

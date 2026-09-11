@@ -144,10 +144,10 @@ export const SettingsAdminUserDetail = () => {
       title={displayName}
       icon={
         <Avatar
-          placeholder={displayName}
-          placeholderColorSeed={user?.id}
+          name={displayName}
+          colorSeed={user?.id}
           size="md"
-          type="rounded"
+          shape="circle"
         />
       }
       links={[

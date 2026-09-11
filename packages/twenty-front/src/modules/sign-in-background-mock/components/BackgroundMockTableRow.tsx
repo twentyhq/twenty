@@ -92,12 +92,7 @@ const PersonChip = ({ fullName }: { fullName: string | null }) => {
       accent={ChipAccent.TextPrimary}
       clickable={false}
       leftComponent={
-        <Avatar
-          type="rounded"
-          placeholder={fullName}
-          placeholderColorSeed={fullName}
-          size="md"
-        />
+        <Avatar shape="circle" name={fullName} colorSeed={fullName} size="md" />
       }
     />
   );
@@ -125,10 +120,10 @@ export const BackgroundMockTableRow = ({
           clickable={false}
           leftComponent={
             <Avatar
-              type="squared"
-              avatarUrl={getAbsoluteImageUrl(logoUrl)}
-              placeholder={company.name}
-              placeholderColorSeed={company.id}
+              shape="square"
+              src={getAbsoluteImageUrl(logoUrl)}
+              name={company.name}
+              colorSeed={company.id}
               size="md"
             />
           }

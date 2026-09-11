@@ -20,7 +20,7 @@ const renderItem = (
       <AvatarOrIcon
         placeholder={item.label}
         placeholderColorSeed={item.recordId}
-        avatarType="rounded"
+        avatarShape="circle"
         avatarUrl={getAbsoluteImageUrl(item.imageUrl)}
       />
     )}

@@ -170,9 +170,9 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
                   overflow="hidden"
                 >
                   <Avatar
-                    avatarUrl={getAbsoluteImageUrl(workspace.logo ?? undefined)}
-                    placeholder={workspace.displayName ?? '—'}
-                    placeholderColorSeed={workspace.id}
+                    src={getAbsoluteImageUrl(workspace.logo ?? undefined)}
+                    name={workspace.displayName ?? '—'}
+                    colorSeed={workspace.id}
                     size="md"
                   />
                   <OverflowingTextWithTooltip

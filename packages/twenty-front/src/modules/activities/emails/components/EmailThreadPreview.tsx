@@ -143,34 +143,34 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>
           <Avatar
-            avatarUrl={getAbsoluteImageUrl(thread?.firstParticipant?.avatarUrl)}
-            placeholder={thread.firstParticipant.displayName}
-            placeholderColorSeed={getEmailParticipantAvatarColorSeed(
+            src={getAbsoluteImageUrl(thread?.firstParticipant?.avatarUrl)}
+            name={thread.firstParticipant.displayName}
+            colorSeed={getEmailParticipantAvatarColorSeed(
               thread.firstParticipant,
             )}
-            type="rounded"
+            shape="circle"
           />
           {isDefined(thread?.lastTwoParticipants?.[0]) && (
             <StyledAvatarWrapper>
               <Avatar
-                avatarUrl={getAbsoluteImageUrl(
+                src={getAbsoluteImageUrl(
                   thread.lastTwoParticipants[0].avatarUrl,
                 )}
-                placeholder={thread.lastTwoParticipants[0].displayName}
-                placeholderColorSeed={getEmailParticipantAvatarColorSeed(
+                name={thread.lastTwoParticipants[0].displayName}
+                colorSeed={getEmailParticipantAvatarColorSeed(
                   thread.lastTwoParticipants[0],
                 )}
-                type="rounded"
+                shape="circle"
               />
             </StyledAvatarWrapper>
           )}
           {displayedName && (
             <StyledAvatarWrapper>
               <Avatar
-                avatarUrl={getAbsoluteImageUrl(avatarUrl)}
-                placeholder={displayedName}
-                placeholderColorSeed={placeholderColorSeed}
-                type="rounded"
+                src={getAbsoluteImageUrl(avatarUrl)}
+                name={displayedName}
+                colorSeed={placeholderColorSeed}
+                shape="circle"
                 color={isCountIcon ? theme.grayScale.gray11 : undefined}
                 backgroundColor={
                   isCountIcon ? theme.grayScale.gray2 : undefined

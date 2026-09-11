@@ -94,7 +94,7 @@ export const ActorDisplay = ({
       leftComponent={
         <AvatarOrIcon
           placeholderColorSeed={workspaceMemberId ?? undefined}
-          avatarType={workspaceMemberId ? 'rounded' : 'squared'}
+          avatarShape={workspaceMemberId ? 'circle' : 'square'}
           placeholder={name}
           Icon={LeftIcon}
           avatarUrl={getAbsoluteImageUrl(avatarUrl ?? undefined)}

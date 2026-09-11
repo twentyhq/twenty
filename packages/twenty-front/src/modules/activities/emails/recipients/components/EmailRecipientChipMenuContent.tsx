@@ -95,13 +95,13 @@ export const EmailRecipientChipMenuContent = ({
             {isDefined(workspaceMember) ? (
               <MenuItemAvatar
                 avatar={{
-                  avatarUrl: getAbsoluteImageUrl(workspaceMember.avatarUrl),
-                  placeholder: isNonEmptyString(workspaceMemberFullName)
+                  src: getAbsoluteImageUrl(workspaceMember.avatarUrl),
+                  name: isNonEmptyString(workspaceMemberFullName)
                     ? workspaceMemberFullName
                     : recipient.address,
-                  placeholderColorSeed: workspaceMember.id,
+                  colorSeed: workspaceMember.id,
                   size: 'md',
-                  type: 'rounded',
+                  shape: 'circle',
                 }}
                 text={
                   isNonEmptyString(workspaceMemberFullName)
@@ -113,13 +113,13 @@ export const EmailRecipientChipMenuContent = ({
             ) : isDefined(person) ? (
               <MenuItemAvatar
                 avatar={{
-                  avatarUrl: getAbsoluteImageUrl(person.avatarUrl),
-                  placeholder: isNonEmptyString(personFullName)
+                  src: getAbsoluteImageUrl(person.avatarUrl),
+                  name: isNonEmptyString(personFullName)
                     ? personFullName
                     : recipient.address,
-                  placeholderColorSeed: person.id,
+                  colorSeed: person.id,
                   size: 'md',
-                  type: 'rounded',
+                  shape: 'circle',
                 }}
                 text={
                   isNonEmptyString(personFullName)

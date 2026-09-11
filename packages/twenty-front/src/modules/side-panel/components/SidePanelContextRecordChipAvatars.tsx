@@ -41,16 +41,16 @@ export const SidePanelContextRecordChipAvatars = ({
   );
   return (
     <StyledIconWrapper
-      withIconBackground={recordChipData.avatarType !== 'rounded'}
+      withIconBackground={recordChipData.avatarShape !== 'circle'}
     >
       {Icon ? (
         <Icon color={IconColor} size={theme.icon.size.sm} />
       ) : (
         <Avatar
-          avatarUrl={getAbsoluteImageUrl(recordChipData.avatarUrl)}
-          placeholderColorSeed={recordChipData.recordId}
-          placeholder={recordChipData.name}
-          type={recordChipData.avatarType}
+          src={getAbsoluteImageUrl(recordChipData.avatarUrl)}
+          colorSeed={recordChipData.recordId}
+          name={recordChipData.name}
+          shape={recordChipData.avatarShape}
           size="sm"
         />
       )}
