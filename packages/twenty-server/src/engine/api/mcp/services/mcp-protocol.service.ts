@@ -1,7 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { type ToolSet, zodSchema } from 'ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -55,7 +54,6 @@ import {
 } from 'src/engine/core-modules/tool-provider/tools/load-skill.tool';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -98,32 +96,17 @@ export class McpProtocolService {
     private readonly mcpInstructionBuilderService: McpInstructionBuilderService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly permissionsService: PermissionsService,
   ) {}
 
   async handleInitialize(
     requestId: string | number,
-    {
-      workspaceId,
-      userWorkspaceId,
-      apiKey,
-    }: {
-      workspaceId: string;
-      userWorkspaceId?: string;
-      apiKey?: FlatApiKey;
-    },
+    { workspaceId, roleId }: { workspaceId: string; roleId: string },
   ) {
-    const roleId = await this.getRoleId(workspaceId, userWorkspaceId, apiKey);
-    const canUploadFile = await this.permissionsService.hasToolPermission(
-      { unionOf: [roleId] },
-      workspaceId,
-      PermissionFlagType.UPLOAD_FILE,
-    );
     const instructions =
-      await this.mcpInstructionBuilderService.buildInstructions(
+      await this.mcpInstructionBuilderService.buildInstructions({
         workspaceId,
-        canUploadFile,
-      );
+        roleId,
+      });
 
     return wrapJsonRpcResponse(requestId, {
       result: {
@@ -322,12 +305,14 @@ export class McpProtocolService {
         return null;
       }
 
+      const roleId = await this.getRoleId(
+        workspace.id,
+        userWorkspaceId,
+        apiKey,
+      );
+
       if (method === 'initialize') {
-        return this.handleInitialize(id, {
-          workspaceId: workspace.id,
-          userWorkspaceId,
-          apiKey,
-        });
+        return this.handleInitialize(id, { workspaceId: workspace.id, roleId });
       }
 
       if (method === 'ping') {
@@ -354,12 +339,6 @@ export class McpProtocolService {
           },
         });
       }
-
-      const roleId = await this.getRoleId(
-        workspace.id,
-        userWorkspaceId,
-        apiKey,
-      );
 
       const authContext = isDefined(apiKey)
         ? buildApiKeyAuthContext({ workspace, apiKey })

@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadException } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { CompleteFileUploadToolInputZodSchema } from 'src/engine/core-modules/tool/tools/file-upload-tool/file-upload-tool.schema';
@@ -9,9 +7,6 @@ import { type CompleteFileUploadToolInput } from 'src/engine/core-modules/tool/t
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-
-type CompletedDirectUpload = FileWithSignedUrlDTO &
-  Pick<FileEntity, 'mimeType'>;
 
 @Injectable()
 export class CompleteFileUploadTool implements Tool {
@@ -28,11 +23,10 @@ export class CompleteFileUploadTool implements Tool {
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
     try {
-      // completeFileUpload spreads the FileEntity; the GraphQL DTO omits mimeType.
-      const completedFile = (await this.fileUploadService.completeFileUpload({
+      const completedFile = await this.fileUploadService.completeFileUpload({
         workspaceId: context.workspaceId,
         fileId: parameters.fileId,
-      })) as CompletedDirectUpload;
+      });
 
       this.logger.log(
         `Completed file upload ${completedFile.id} for workspace ${context.workspaceId}`,
