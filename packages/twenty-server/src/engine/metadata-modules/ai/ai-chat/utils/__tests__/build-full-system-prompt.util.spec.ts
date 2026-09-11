@@ -1,4 +1,5 @@
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
+import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 
 const WORKSPACE_INSTRUCTIONS_DOCUMENT = JSON.stringify({
   type: 'doc',
@@ -28,7 +29,37 @@ const buildPrompt = (isWorkspaceSetupThread?: boolean) =>
     isWorkspaceSetupThread,
   });
 
+const REFERENCED_SKILL = {
+  name: 'workflow-building',
+  label: 'Workflow building',
+  content: JSON.stringify({
+    type: 'doc',
+    content: [
+      {
+        type: 'paragraph',
+        content: [{ type: 'text', text: 'Always create a trigger first.' }],
+      },
+    ],
+  }),
+} as FlatSkill;
+
 describe('buildFullSystemPrompt', () => {
+  it('should inline referenced skills after the skill catalog', () => {
+    const prompt = buildFullSystemPrompt({
+      toolCatalog: [],
+      skillCatalog: [],
+      referencedSkills: [REFERENCED_SKILL],
+      preloadedTools: [],
+    });
+
+    expect(prompt).toContain('## Referenced Skills (already loaded)');
+    expect(prompt).toContain('Always create a trigger first.');
+  });
+
+  it('should omit the referenced skills section when nothing is referenced', () => {
+    expect(buildPrompt(false)).not.toContain('## Referenced Skills');
+  });
+
   it('should keep the standard composition for regular threads', () => {
     const prompt = buildPrompt(false);
 

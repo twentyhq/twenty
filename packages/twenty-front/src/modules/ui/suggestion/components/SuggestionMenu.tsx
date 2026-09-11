@@ -5,6 +5,7 @@ import {
   shift,
   useFloating,
 } from '@floating-ui/react';
+import { css } from '@linaria/core';
 import { motion } from 'framer-motion';
 import {
   forwardRef,
@@ -20,6 +21,20 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import type { SuggestionMenuProps } from '@/ui/suggestion/types/SuggestionMenuProps';
+import { getSuggestionMenuItemAnchorId } from '@/ui/suggestion/utils/getSuggestionMenuItemAnchorId';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+// The preview card brings its own surface, so the tooltip only contributes
+// the shadow. Tooltips render at 0.9 opacity, which would make it translucent.
+const previewTooltipClass = css`
+  background: transparent !important;
+  border-radius: ${themeCssVariables.border.radius.md} !important;
+  box-shadow: ${themeCssVariables.boxShadow.strong} !important;
+  opacity: 1 !important;
+  padding: 0 !important;
+`;
 
 type SuggestionMenuInnerProps<TItem> = SuggestionMenuProps<TItem>;
 
@@ -28,13 +43,30 @@ const SuggestionMenuInner = <TItem,>(
   props: SuggestionMenuInnerProps<TItem>,
   parentRef: React.ForwardedRef<unknown>,
 ) => {
-  const { items, onSelect, editor, range, getItemKey, renderItem, onKeyDown } =
-    props;
+  const {
+    items,
+    onSelect,
+    editor,
+    range,
+    getItemKey,
+    renderItem,
+    selectedItemPreview,
+    onKeyDown,
+  } = props;
+
+  const isMobile = useIsMobile();
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const clampedSelectedIndex =
     items.length > 0 ? Math.min(selectedIndex, items.length - 1) : 0;
+
+  const selectedItem = items[clampedSelectedIndex];
+
+  const shouldDisplayPreview =
+    !isMobile &&
+    selectedItemPreview !== undefined &&
+    selectedItem !== undefined;
 
   const activeItemRef = useRef<HTMLDivElement>(null);
   const listContainerRef = useRef<HTMLDivElement>(null);
@@ -159,6 +191,7 @@ const SuggestionMenuInner = <TItem,>(
               return (
                 <div
                   key={getItemKey(item)}
+                  id={getSuggestionMenuItemAnchorId(getItemKey(item))}
                   ref={isSelected ? activeItemRef : null}
                   onMouseDown={(event) => {
                     event.preventDefault();
@@ -171,6 +204,21 @@ const SuggestionMenuInner = <TItem,>(
           </DropdownMenuItemsContainer>
         </DropdownContent>
       </OverlayContainer>
+      {shouldDisplayPreview && (
+        <AppTooltip
+          anchorSelect={`#${getSuggestionMenuItemAnchorId(getItemKey(selectedItem))}`}
+          place="left-start"
+          offset={16}
+          noArrow
+          interactive
+          isOpen
+          delay={TooltipDelay.noDelay}
+          className={previewTooltipClass}
+          maxWidth={`${selectedItemPreview.width}px`}
+        >
+          {selectedItemPreview.render(selectedItem)}
+        </AppTooltip>
+      )}
     </motion.div>
   );
 };

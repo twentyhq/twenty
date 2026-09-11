@@ -1,10 +1,8 @@
 import { useIcons } from 'twenty-ui/icon';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
 
+import { DEFAULT_SKILL_ICON } from '@/skill-suggestion/constants/DefaultSkillIcon';
 import type { SkillSuggestionItem } from '@/skill-suggestion/types/SkillSuggestionItem';
-import { formatSkillReference } from '@/skill-suggestion/utils/formatSkillReference';
-
-const DEFAULT_SKILL_ICON = 'IconBook';
 
 type SkillSuggestionMenuItemProps = {
   item: SkillSuggestionItem;
@@ -23,8 +21,7 @@ export const SkillSuggestionMenuItem = ({
     <MenuItemSuggestion
       LeftIcon={getIcon(item.icon ?? DEFAULT_SKILL_ICON)}
       text={item.label}
-      contextualText={formatSkillReference(item.name)}
-      contextualTextPosition="right"
+      contextualText={item.description ?? undefined}
       selected={isSelected}
       onClick={() => {
         onSelect(item);

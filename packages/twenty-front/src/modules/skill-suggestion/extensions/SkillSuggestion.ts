@@ -4,7 +4,6 @@ import Suggestion from '@tiptap/suggestion';
 import { SkillSuggestionMenu } from '@/skill-suggestion/components/SkillSuggestionMenu';
 import { SKILL_SUGGESTION_PLUGIN_KEY } from '@/skill-suggestion/constants/SkillSuggestionPluginKey';
 import type { SkillSuggestionItem } from '@/skill-suggestion/types/SkillSuggestionItem';
-import { formatSkillReference } from '@/skill-suggestion/utils/formatSkillReference';
 import { createSuggestionRenderLifecycle } from '@/ui/suggestion/components/createSuggestionRenderLifecycle';
 
 type SkillSuggestionOptions = {
@@ -42,7 +41,16 @@ export const SkillSuggestion = Extension.create<SkillSuggestionOptions>({
             .chain()
             .focus()
             .deleteRange(range)
-            .insertContent(`${formatSkillReference(selectedItem.name)} `)
+            .insertContent({
+              type: 'skillTag',
+              attrs: {
+                skillId: selectedItem.id,
+                name: selectedItem.name,
+                label: selectedItem.label,
+                icon: selectedItem.icon,
+              },
+            })
+            .insertContent(' ')
             .run();
         },
         render: () =>

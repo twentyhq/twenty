@@ -6,6 +6,7 @@ export const FIND_MANY_SKILLS_FOR_SUGGESTION = gql`
       id
       name
       label
+      description
       icon
       isActive
     }

@@ -29,8 +29,10 @@ export const useSkillSuggestionSearch = () => {
         )
         .sort((skillA, skillB) => skillA.label.localeCompare(skillB.label))
         .map((skill) => ({
+          id: skill.id,
           name: skill.name,
           label: skill.label,
+          description: skill.description ?? null,
           icon: skill.icon ?? null,
         }));
     },
