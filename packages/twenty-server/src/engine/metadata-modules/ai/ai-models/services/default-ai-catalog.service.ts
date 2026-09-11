@@ -5,15 +5,17 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import defaultAiProviders from 'src/engine/metadata-modules/ai/ai-models/ai-providers.json';
 import { aiProvidersConfigSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.schema';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
+import { inheritCatalogReadings } from 'src/engine/metadata-modules/ai/ai-models/utils/merge-custom-providers-into-catalog.util';
 import { normalizeAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/normalize-ai-providers.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Injectable()
 export class DefaultAiCatalogService implements OnModuleInit {
   private readonly logger = new Logger(DefaultAiCatalogService.name);
-  private catalog: AiProvidersConfig = normalizeAiProviders(
+  private readonly builtInCatalog: AiProvidersConfig = normalizeAiProviders(
     defaultAiProviders as AiProvidersConfig,
   );
+  private catalog: AiProvidersConfig = this.builtInCatalog;
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
@@ -34,7 +36,13 @@ export class DefaultAiCatalogService implements OnModuleInit {
     try {
       const raw = await this.fetchCatalog(catalogPath);
 
-      this.catalog = normalizeAiProviders(raw);
+      // A stored catalog carries the credentials, labels and prices of one
+      // deployment, not the efforts and benchmarks the sync measures, so it
+      // lists the models and the built-in catalog describes the ones it knows.
+      this.catalog = inheritCatalogReadings({
+        catalog: this.builtInCatalog,
+        providers: normalizeAiProviders(raw),
+      });
       this.logger.log(`Loaded AI catalog from storage: ${catalogPath}`);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
