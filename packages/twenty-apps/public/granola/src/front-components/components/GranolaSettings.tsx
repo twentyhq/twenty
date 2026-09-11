@@ -15,6 +15,7 @@ import {
   type ThemeType,
 } from 'twenty-ui/theme-constants';
 
+import { GranolaFolderSection } from 'src/front-components/components/GranolaFolderSection';
 import { GranolaImportHistorySection } from 'src/front-components/components/GranolaImportHistorySection';
 import { GRANOLA_WEBHOOK_REGISTRATION_ROUTE_PATH } from 'src/constants/granola-webhook-registration-route-path';
 import { GRANOLA_WEBHOOK_REMOVAL_ROUTE_PATH } from 'src/constants/granola-webhook-removal-route-path';
@@ -198,7 +199,12 @@ export const GranolaSettings = () => {
               isGranolaConnectionReady(state.status) &&
               !isConnecting &&
               !isRegistering &&
-              !isDefined(registrationError) && <GranolaImportHistorySection />}
+              !isDefined(registrationError) && (
+                <>
+                  <GranolaFolderSection />
+                  <GranolaImportHistorySection />
+                </>
+              )}
           </>
         )}
       </StyledContainer>
