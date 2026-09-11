@@ -10,6 +10,7 @@ import { MakeCallRecordingPrivateCommand } from 'src/database/commands/upgrade-v
 import { BackfillCallRecordingSharesCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789130000001-backfill-call-recording-shares.command';
 import { MakeStandardChildObjectsInheritedCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789130100001-make-standard-child-objects-inherited.command';
 import { BackfillChannelRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789130200000-backfill-channel-record-shares.command';
+import { MakeStandardChildObjectsInheritedCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789140100001-make-standard-child-objects-inherited.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -41,8 +42,8 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
     ReconcileStandardSkillsCommand,
     MakeCallRecordingPrivateCommand,
     BackfillCallRecordingSharesCommand,
-    MakeStandardChildObjectsInheritedCommand,
     BackfillChannelRecordSharesCommand,
+    MakeStandardChildObjectsInheritedCommand,
   ],
 })
 export class V2_40_UpgradeVersionCommandModule {}
