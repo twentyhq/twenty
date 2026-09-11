@@ -89,6 +89,8 @@ export const ensureGranolaWebhookRegistrationOrThrow =
       apiKeyFingerprint,
       scopes: createdEndpoint.scopes,
       folderIds: createdEndpoint.folder_ids,
+      isInitialBackfillEnqueued:
+        isExistingKeyCurrent && existing.isInitialBackfillEnqueued,
     };
     try {
       await kv.set(GRANOLA_WEBHOOK_REGISTRATION_KEY, registration);

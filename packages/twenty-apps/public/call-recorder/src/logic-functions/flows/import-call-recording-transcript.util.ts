@@ -1,6 +1,7 @@
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isArray, isNull, isUndefined } from '@sniptt/guards';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { buildEmptyTranscriptMarker } from 'src/logic-functions/domain/build-empty-transcript-marker.util';
 import { buildFailedTranscriptMarker } from 'src/logic-functions/domain/build-failed-transcript-marker.util';
 import { buildPendingTranscriptMarker } from 'src/logic-functions/domain/build-pending-transcript-marker.util';
 import { buildTranscriptFailureReason } from 'src/logic-functions/domain/build-transcript-failure-reason.util';
@@ -8,7 +9,10 @@ import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-ca
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { createAsyncRecallTranscript } from 'src/logic-functions/recall-api/create-async-recall-transcript.util';
 import { listRecallTranscripts } from 'src/logic-functions/recall-api/list-recall-transcripts.util';
-import { isRetryableRecallApiStatus } from 'src/logic-functions/recall-api/recall-api-retry-policy.util';
+import {
+  isRecallAccountStatus,
+  isRetryableRecallApiStatus,
+} from 'src/logic-functions/recall-api/recall-api-retry-policy.util';
 import { type RecallTranscriptSummary } from 'src/logic-functions/recall-api/recall-transcript-summary.type';
 import { downloadTranscript } from 'src/logic-functions/flows/download-transcript.util';
 import { type ImportCallRecordingTranscriptResult } from 'src/logic-functions/flows/import-call-recording-transcript-result.type';
@@ -39,7 +43,10 @@ export const importCallRecordingTranscript = async ({
     return buildEmptyTranscriptArtifactResult();
   }
 
-  if (existingTranscriptMarker?.status === 'FAILED') {
+  if (
+    existingTranscriptMarker?.status === 'FAILED' ||
+    existingTranscriptMarker?.status === 'EMPTY'
+  ) {
     return buildEmptyTranscriptArtifactResult();
   }
 
@@ -80,11 +87,32 @@ export const importCallRecordingTranscript = async ({
         `[call-recorder] failed to request transcript for Recall recording ${externalRecordingId}: ${createResult.errorMessage}`,
       );
 
-      return buildEmptyTranscriptArtifactResult({
-        hasRetryableFailure:
-          !isNull(createResult.status) &&
-          isRetryableRecallApiStatus(createResult.status),
-      });
+      // A lost response may still have created the transcript, and the next
+      // run lists transcripts before requesting a new one.
+      if (isNull(createResult.status)) {
+        return buildEmptyTranscriptArtifactResult();
+      }
+
+      if (isRetryableRecallApiStatus(createResult.status)) {
+        return buildEmptyTranscriptArtifactResult({
+          hasRetryableFailure: true,
+        });
+      }
+
+      if (isRecallAccountStatus(createResult.status)) {
+        return buildEmptyTranscriptArtifactResult();
+      }
+
+      return {
+        updateData: {
+          transcript: buildEmptyTranscriptMarker({
+            recallTranscriptId: null,
+            subCode: `transcript_request_rejected:${createResult.status}`,
+          }),
+        },
+        requestedTranscript: false,
+        hasRetryableFailure: false,
+      };
     }
 
     return {
@@ -131,9 +159,17 @@ export const importCallRecordingTranscript = async ({
   });
 
   if (downloadResult.outcome === 'filled') {
+    // Twenty stores an empty JSON array as null, which would read as never imported.
+    const isEmptyTranscript =
+      isArray(downloadResult.content) && downloadResult.content.length === 0;
+
     return {
       updateData: {
-        transcript: downloadResult.content as Record<string, unknown>,
+        transcript: isEmptyTranscript
+          ? buildEmptyTranscriptMarker({
+              recallTranscriptId: transcriptIdToDownload,
+            })
+          : (downloadResult.content as Record<string, unknown>),
       },
       requestedTranscript: false,
       hasRetryableFailure: false,
