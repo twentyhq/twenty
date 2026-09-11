@@ -4,6 +4,7 @@ import { MenuItemLeftContent } from '@ui/navigation/MenuItem/parts/MenuItemLeftC
 import { MenuItemMultiSelectCheckbox } from '@ui/navigation/MenuItem/parts/MenuItemMultiSelectCheckbox';
 import { type ThemeColor } from '@ui/theme';
 import { StyledMenuItemBase } from '@ui/navigation/MenuItem/parts/StyledMenuItemBase';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './MenuItemMultiSelect.module.scss';
 
@@ -47,7 +48,10 @@ export const MenuItemMultiSelect = ({
           ariaLabel={text}
         />
         {color ? (
-          <Tag color={color} startIcon={LeftIcon ? <LeftIcon /> : undefined}>
+          <Tag
+            color={color}
+            startIcon={isDefined(LeftIcon) ? <LeftIcon /> : undefined}
+          >
             {text}
           </Tag>
         ) : (

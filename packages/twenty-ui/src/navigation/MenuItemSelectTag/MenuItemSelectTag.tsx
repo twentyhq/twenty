@@ -8,6 +8,7 @@ import { type IconComponent } from '@ui/icon';
 import { type ThemeColor } from '@ui/theme';
 import { useTheme } from '@ui/theme-constants';
 import { StyledMenuItemSelect } from '@ui/navigation/MenuItemSelect/MenuItemSelect';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 type MenuItemSelectTagProps = {
   selected?: boolean;
@@ -46,7 +47,7 @@ export const MenuItemSelectTag = ({
           borderStyle="dashed"
           variant={variant}
           color={color}
-          startIcon={LeftIcon ? <LeftIcon /> : undefined}
+          startIcon={isDefined(LeftIcon) ? <LeftIcon /> : undefined}
         >
           {text}
         </Tag>

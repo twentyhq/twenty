@@ -1,6 +1,7 @@
 import { type IconComponent } from '@ui/icon/types/IconComponent';
 import { Tag } from '@ui/data-display/Tag/Tag';
 import { type ThemeColor } from '@ui/theme';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 type SelectDisplayProps = {
   color: ThemeColor | 'transparent';
@@ -18,7 +19,7 @@ export const SelectDisplay = ({
   <Tag
     preventShrink
     color={color}
-    startIcon={Icon ? <Icon /> : undefined}
+    startIcon={isDefined(Icon) ? <Icon /> : undefined}
     preventPadding={preventPadding}
   >
     {label}
