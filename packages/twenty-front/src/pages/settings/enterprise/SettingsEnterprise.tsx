@@ -63,9 +63,16 @@ type SubscriptionStatus = {
   isCancellationScheduled: boolean;
 };
 
-const StyledStatusDot = styled.div<{ isActive: boolean }>`
-  background-color: ${({ isActive }) =>
-    isActive ? themeCssVariables.color.green : themeCssVariables.color.red};
+type StatusDotVariant = 'active' | 'warning' | 'inactive';
+
+const STATUS_DOT_COLOR: Record<StatusDotVariant, string> = {
+  active: themeCssVariables.color.green,
+  warning: themeCssVariables.color.orange,
+  inactive: themeCssVariables.color.red,
+};
+
+const StyledStatusDot = styled.div<{ variant: StatusDotVariant }>`
+  background-color: ${({ variant }) => STATUS_DOT_COLOR[variant]};
   border-radius: 50%;
   corner-shape: round;
   height: 8px;
@@ -232,6 +239,14 @@ export const SettingsEnterprise = ({
   const currentPeriodEnd = isDefined(subscriptionStatus?.currentPeriodEnd)
     ? new Date(subscriptionStatus.currentPeriodEnd)
     : null;
+
+  const licenseExpiresAt = isDefined(subscriptionStatus?.expiresAt)
+    ? new Date(subscriptionStatus.expiresAt)
+    : null;
+
+  const licenseExpiresAtDate = isDefined(licenseExpiresAt)
+    ? licenseExpiresAt.toLocaleDateString()
+    : '';
 
   const cancelAtDate =
     isCancelScheduled && isDefined(cancelAt)
@@ -682,7 +697,7 @@ export const SettingsEnterprise = ({
                 Icon={IconCheck}
                 currentValue={
                   <StyledStatusContainer>
-                    <StyledStatusDot isActive={true} />
+                    <StyledStatusDot variant="active" />
                     {stripeStatus === 'trialing' ? (
                       <Trans>Trial</Trans>
                     ) : (
@@ -742,7 +757,9 @@ export const SettingsEnterprise = ({
                 Icon={IconCheck}
                 currentValue={
                   <StyledStatusContainer>
-                    <StyledStatusDot isActive={!isCancelScheduled} />
+                    <StyledStatusDot
+                      variant={isCancelScheduled ? 'inactive' : 'active'}
+                    />
                     {isCancelScheduled ? (
                       <Trans>Cancelling</Trans>
                     ) : stripeStatus === 'trialing' ? (
@@ -819,7 +836,7 @@ export const SettingsEnterprise = ({
                 Icon={IconCheck}
                 currentValue={
                   <StyledStatusContainer>
-                    <StyledStatusDot isActive={false} />
+                    <StyledStatusDot variant="inactive" />
                     <Trans>Canceled</Trans>
                   </StyledStatusContainer>
                 }
@@ -861,7 +878,11 @@ export const SettingsEnterprise = ({
           <Section>
             <H2Title
               title={t`Enterprise License`}
-              description={t`There is a payment issue with your subscription. Please update your payment method.`}
+              description={
+                hasValidityToken
+                  ? t`A payment on your subscription failed. Your enterprise features stay active while we retry it.`
+                  : t`There is a payment issue with your subscription. Your enterprise features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one.`
+              }
             />
             <SubscriptionInfoContainer>
               <SubscriptionInfoRowContainer
@@ -869,17 +890,47 @@ export const SettingsEnterprise = ({
                 Icon={IconCheck}
                 currentValue={
                   <StyledStatusContainer>
-                    <StyledStatusDot isActive={false} />
+                    <StyledStatusDot
+                      variant={hasValidityToken ? 'warning' : 'inactive'}
+                    />
                     <Trans>Payment issue</Trans>
                   </StyledStatusContainer>
                 }
               />
+              {hasValidityToken && isDefined(licenseExpiresAt) && (
+                <SubscriptionInfoRowContainer
+                  label={t`Features active until`}
+                  Icon={IconCalendarRepeat}
+                  currentValue={licenseExpiresAtDate}
+                />
+              )}
+              <SubscriptionInfoRowContainer
+                label={t`Billing history`}
+                Icon={IconCreditCard}
+                currentValue={
+                  <Button
+                    title={t`View invoices`}
+                    variant="secondary"
+                    size="small"
+                    onClick={openBillingPortal}
+                  />
+                }
+              />
             </SubscriptionInfoContainer>
+            {hasValidityToken && isDefined(licenseExpiresAt) && (
+              <StyledCancellationNotice>
+                {t`Update your payment method before ${licenseExpiresAtDate} to avoid losing access.`}
+              </StyledCancellationNotice>
+            )}
           </Section>
           <Section>
             <H2Title
               title={t`Update payment method`}
-              description={t`Fix the payment issue to keep your enterprise features active.`}
+              description={
+                hasValidityToken
+                  ? t`Fix the payment issue to keep your enterprise features active.`
+                  : t`Fix the payment issue to restore your enterprise features.`
+              }
             />
             <Button
               Icon={IconCreditCard}
@@ -907,7 +958,7 @@ export const SettingsEnterprise = ({
                 Icon={IconCheck}
                 currentValue={
                   <StyledStatusContainer>
-                    <StyledStatusDot isActive={false} />
+                    <StyledStatusDot variant="inactive" />
                     <Trans>Incomplete</Trans>
                   </StyledStatusContainer>
                 }

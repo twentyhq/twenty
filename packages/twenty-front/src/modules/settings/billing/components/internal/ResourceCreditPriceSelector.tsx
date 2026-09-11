@@ -1,3 +1,4 @@
+import { useToast } from 'twenty-ui/feedback';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ResourceCreditPackagePickerModal } from '@/settings/billing/components/internal/ResourceCreditPackagePickerModal';
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
@@ -11,9 +12,8 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useMemo, useState, type ChangeEvent } from 'react';
+import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/feedback';
 import {
   IconAdjustments,
   IconArrowUp,
@@ -281,8 +281,8 @@ export const ResourceCreditPriceSelector = ({
     openModal(BILLING_MODAL_IDS.creditPackagePicker);
   };
 
-  const handleSliderChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const price = sortedResourceCreditPrices[Number(event.target.value)];
+  const handleSliderValueChange = (value: number) => {
+    const price = sortedResourceCreditPrices[value];
 
     if (isDefined(price)) {
       setSelectedPriceId(price.stripePriceId);
@@ -428,7 +428,7 @@ export const ResourceCreditPriceSelector = ({
         newRolloverLimitValue={newRolloverLimitValue}
         onCancel={() => closeModal(BILLING_MODAL_IDS.creditPackagePicker)}
         onConfirm={handleConfirmPackagePicker}
-        onSliderChange={handleSliderChange}
+        onSliderValueChange={handleSliderValueChange}
         priceCount={sortedResourceCreditPrices.length}
         selectedCreditAmountValue={selectedCreditAmountValue}
         selectedPriceAmountValue={selectedPriceAmountValue}

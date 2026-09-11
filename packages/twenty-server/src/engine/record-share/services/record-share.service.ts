@@ -88,6 +88,26 @@ export class RecordShareService {
     );
   }
 
+  async findByRecordIds({
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    recordIds: string[];
+  }): Promise<RecordShare[]> {
+    if (recordIds.length === 0) {
+      return [];
+    }
+
+    return this.withRepository({ workspaceId }, (repository) =>
+      repository.find({
+        where: { objectMetadataId, recordId: In(recordIds) },
+      }),
+    );
+  }
+
   private async withRepository<TResult>(
     {
       workspaceId,
