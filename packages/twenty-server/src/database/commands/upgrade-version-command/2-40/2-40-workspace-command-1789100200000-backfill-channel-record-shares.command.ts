@@ -17,7 +17,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { CalendarChannelRecordShareService } from 'src/modules/calendar/common/services/calendar-channel-record-share.service';
 import { MessageChannelRecordShareService } from 'src/modules/messaging/common/services/message-channel-record-share.service';
 
-@RegisteredWorkspaceCommand('2.40.0', 1788960700000)
+@RegisteredWorkspaceCommand('2.40.0', 1789100200000)
 @Command({
   name: 'upgrade:2-40:backfill-channel-record-shares',
   description:
