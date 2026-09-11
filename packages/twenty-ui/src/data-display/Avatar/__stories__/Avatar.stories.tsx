@@ -11,6 +11,8 @@ import {
 } from '@ui/testing';
 
 import { Avatar } from '@ui/data-display/Avatar/Avatar';
+import { type AvatarShape } from '@ui/data-display/Avatar/types/AvatarShape';
+import { IconUser } from '@ui/icon';
 
 const meta: Meta<typeof Avatar> = {
   title: 'UI/Data Display/Avatar',
@@ -31,6 +33,28 @@ export const Rounded: Story = { decorators: [ComponentDecorator] };
 export const Squared: Story = {
   decorators: [ComponentDecorator],
   args: { shape: 'square' },
+};
+
+export const IconTile: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    src: undefined,
+    shape: 'rounded-square',
+    icon: <IconUser />,
+    role: 'img',
+    'aria-label': 'Workspace icon',
+  },
+  play: async ({ canvasElement }) => {
+    const iconTile = within(canvasElement).getByRole('img', {
+      name: 'Workspace icon',
+    });
+    const computedStyle = getComputedStyle(iconTile);
+
+    await expect(iconTile).toBeVisible();
+    await expect(computedStyle.borderRadius).toBe(
+      computedStyle.getPropertyValue('--t-border-radius-sm').trim(),
+    );
+  },
 };
 
 export const NoAvatarPictureRounded: Story = {
@@ -142,8 +166,8 @@ export const Catalog: CatalogStory<Story, typeof Avatar> = {
         },
         {
           name: 'shape',
-          values: ['square', 'circle'],
-          props: (shape: 'square' | 'circle') => ({ shape }),
+          values: ['square', 'rounded-square', 'circle'],
+          props: (shape: AvatarShape) => ({ shape }),
         },
         {
           name: 'variant',

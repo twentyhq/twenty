@@ -15,6 +15,10 @@
   color: var(--tw-avatar-color);
   background: var(--tw-avatar-background);
 
+  &[data-shape='rounded-square'] {
+    border-radius: var(--t-border-radius-sm);
+  }
+
   &[data-shape='circle'] {
     border-radius: 50%;
     corner-shape: round;

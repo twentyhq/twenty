@@ -34,7 +34,12 @@ const AvatarControls = () => {
                   size="xl"
                 />
                 <Avatar name="Disabled avatar" onClick={handleClick} disabled />
-                <Avatar name="Acme" variant="outline" size="lg" />
+                <Avatar
+                  name="Acme"
+                  shape="rounded-square"
+                  variant="outline"
+                  size="lg"
+                />
               </>
             ),
           },

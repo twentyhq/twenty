@@ -1,1 +1,1 @@
-export type AvatarShape = 'square' | 'circle';
+export type AvatarShape = 'square' | 'rounded-square' | 'circle';

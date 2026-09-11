@@ -87,8 +87,7 @@ export const NavigationMenuItemIcon = ({
       >
         <Avatar
           size="sm"
-          shape="square"
-          style={{ borderRadius: themeCssVariables.border.radius.sm }}
+          shape="rounded-square"
           icon={
             isDefined(PageLayoutIcon) ? (
               <PageLayoutIcon color={pageLayoutIconStyle.iconColor} />
@@ -157,12 +156,7 @@ export const NavigationMenuItemIcon = ({
   const avatar = (
     <Avatar
       size={iconStyle ? 'sm' : 'md'}
-      shape={recordIdentifier?.avatarShape ?? 'square'}
-      style={
-        isDefined(recordIdentifier?.avatarShape)
-          ? undefined
-          : { borderRadius: themeCssVariables.border.radius.sm }
-      }
+      shape={recordIdentifier?.avatarShape ?? 'rounded-square'}
       icon={
         isDefined(IconToUse) ? <IconToUse color={iconColorToUse} /> : undefined
       }
