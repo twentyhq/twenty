@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
-import { IconMessageCircle, IconRobot, IconWand } from 'twenty-ui/icon';
+import { IconMessage, IconRobot, IconWand } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { Card } from 'twenty-ui/surfaces';
@@ -57,7 +57,7 @@ export const SettingsAiModelsTab = () => {
         <Card rounded backgroundColor={themeCssVariables.background.secondary}>
           <StyledSettingsSelectGroup controlWidth={160}>
             <SettingsOptionCardContentSelect
-              Icon={IconMessageCircle}
+              Icon={IconMessage}
               title={t`AI chat`}
               description={t`Model used when you chat with Twenty`}
               divider
