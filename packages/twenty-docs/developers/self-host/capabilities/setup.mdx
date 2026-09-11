@@ -344,7 +344,7 @@ Twenty supports logic functions for workflows and the code interpreter for AI da
 **In development (NODE_ENV=development):** Both default to **LOCAL** for convenience when running locally.
 
 <Warning>
-**Security Notice:** The local driver (`LOGIC_FUNCTION_TYPE=LOCAL` or `CODE_INTERPRETER_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. It should only be used for trusted code in development. For production deployments handling untrusted code, use `LOGIC_FUNCTION_TYPE=LAMBDA` or `CODE_INTERPRETER_TYPE=E2B` (with sandboxing), or keep them disabled.
+**Security Notice:** The local driver (`LOGIC_FUNCTION_TYPE=LOCAL` or `CODE_INTERPRETER_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. It should only be used for trusted code in development. Setting `LOGIC_FUNCTION_TYPE=LOCAL` or `CODE_INTERPRETER_TYPE=LOCAL` when `NODE_ENV=production` is refused. For production, use `LOGIC_FUNCTION_TYPE=LAMBDA` or `CODE_INTERPRETER_TYPE=E2B`, or keep them disabled.
 </Warning>
 
 ### Logic Functions - Available Drivers
@@ -352,7 +352,7 @@ Twenty supports logic functions for workflows and the code interpreter for AI da
 | Driver | Environment Variable | Use Case | Security Level |
 |--------|---------------------|----------|----------------|
 | Disabled | `LOGIC_FUNCTION_TYPE=DISABLED` | Disable logic functions entirely | N/A |
-| Local | `LOGIC_FUNCTION_TYPE=LOCAL` | Development and trusted environments | Low (no sandboxing) |
+| Local | `LOGIC_FUNCTION_TYPE=LOCAL` | Development only | Low (no sandboxing) |
 | Lambda | `LOGIC_FUNCTION_TYPE=LAMBDA` | Production with untrusted code | High (hardware-level isolation) |
 
 ### Logic Functions - Recommended Configuration

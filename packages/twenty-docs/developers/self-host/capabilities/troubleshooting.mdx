@@ -160,7 +160,7 @@ Run `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@
 
 #### When running workflow, workflow run fails with "Logic function execution is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable."
 
-In production, logic functions are disabled by default. Set the `LOGIC_FUNCTION_TYPE` environment variable to `LOCAL` or `LAMBDA` to enable them. This can be configured via environment variables or through the admin panel database variables. See the [Logic Functions setup guide](/developers/self-host/capabilities/setup#logic-functions-available-drivers) for details.
+In production, logic functions are disabled by default. Set `LOGIC_FUNCTION_TYPE=LAMBDA` to run them on AWS Lambda. `LOCAL` is refused when `NODE_ENV=production`. This can be configured via environment variables or through the admin panel database variables. See the [Logic Functions setup guide](/developers/self-host/capabilities/setup#logic-functions-available-drivers) for details.
 
 #### When I type a message in AI chat, it doesn't answer immediately and I must refresh the page to see the answer
 

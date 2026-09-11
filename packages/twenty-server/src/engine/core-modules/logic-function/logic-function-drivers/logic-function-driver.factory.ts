@@ -16,6 +16,7 @@ import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-func
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -50,13 +51,22 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
       case LogicFunctionDriverType.DISABLED:
         return new DisabledDriver();
 
-      case LogicFunctionDriverType.LOCAL:
+      case LogicFunctionDriverType.LOCAL: {
+        const nodeEnv = this.twentyConfigService.get('NODE_ENV');
+
+        if (nodeEnv === NodeEnvironment.PRODUCTION) {
+          return new DisabledDriver(
+            'LOCAL logic function driver is not allowed in production. Use LAMBDA, or keep LOGIC_FUNCTION_TYPE=DISABLED.',
+          );
+        }
+
         return new LocalDriver({
           logicFunctionResourceService: this.logicFunctionResourceService,
           sdkClientArchiveService: this.sdkClientArchiveService,
           cacheLockService: this.cacheLockService,
           workspaceCacheService: this.workspaceCacheService,
         });
+      }
 
       case LogicFunctionDriverType.LAMBDA: {
         const region = this.twentyConfigService.get(

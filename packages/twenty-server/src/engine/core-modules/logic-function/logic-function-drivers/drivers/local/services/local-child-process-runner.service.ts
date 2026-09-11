@@ -163,12 +163,14 @@ export class LocalChildProcessRunnerService {
       stdout: string;
       stderr: string;
     }>((resolve) => {
-      // Strip NODE_OPTIONS to prevent tsx loader from being inherited
-      const { NODE_OPTIONS: _n1, ...cleanProcessEnv } = process.env;
-      const { NODE_OPTIONS: _n2, ...cleanUserEnv } = env;
+      // Only the caller-supplied env is passed through. Spreading
+      // process.env used to hand the child APP_SECRET, database URLs,
+      // and the rest of the host environment. NODE_OPTIONS is still
+      // stripped so a function cannot re-enable the tsx loader.
+      const { NODE_OPTIONS: _ignored, ...cleanUserEnv } = env;
 
       const child = spawn(process.execPath, [runnerPath], {
-        env: { ...cleanProcessEnv, ...cleanUserEnv },
+        env: cleanUserEnv,
         stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
       });
 
