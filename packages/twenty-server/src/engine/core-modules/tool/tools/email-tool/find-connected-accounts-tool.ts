@@ -1,3 +1,4 @@
+import { EmailOperation } from 'twenty-shared/types';
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -28,7 +29,7 @@ export class FindConnectedAccountsTool implements Tool {
       await this.connectedAccountMetadataService.findMailboxesUsableByCaller({
         workspaceId,
         userWorkspaceId,
-        operation: 'SEND',
+        operation: EmailOperation.SEND,
       });
 
     const matchingAccounts = isNonEmptyString(handle)

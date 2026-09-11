@@ -23,10 +23,7 @@ import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-e
 import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { getUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-user-from-auth-context.util';
 import { type WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
-import {
-  buildEmailStepLog,
-  type EmailStepLogMode,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/build-email-step-log.util';
+import { buildEmailStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/build-email-step-log.util';
 import { resolveEmailBody } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-email-body.util';
 import { resolveEmailFiles } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-email-files.util';
 import { ToolBackedWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/tool-backed/tool-backed.workflow-action';
@@ -45,7 +42,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     super(loggerName, workflowRunStepLogService);
   }
 
-  protected abstract getMode(): EmailStepLogMode;
+  protected abstract getMode(): EmailOperation;
 
   protected override async preprocessInput(
     rawInput: WorkflowSendEmailActionInput,
@@ -177,7 +174,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
       order: { createdAt: 'ASC', id: 'ASC' },
     });
 
-    const operation: EmailOperation = this.getMode();
+    const operation = this.getMode();
 
     const emailCapableAccount = connectedAccounts.find((connectedAccount) =>
       canConnectedAccountPerformEmailOperation({ connectedAccount, operation }),

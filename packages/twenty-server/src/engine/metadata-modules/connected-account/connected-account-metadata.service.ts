@@ -7,10 +7,7 @@ import {
   EMAIL_DRAFTING_PROVIDERS,
   EMAIL_SENDING_PROVIDERS,
 } from 'twenty-shared/constants';
-import {
-  ConnectedAccountProvider,
-  type EmailOperation,
-} from 'twenty-shared/types';
+import { ConnectedAccountProvider, EmailOperation } from 'twenty-shared/types';
 import {
   canConnectedAccountPerformEmailOperation,
   isDefined,
@@ -66,7 +63,7 @@ export class ConnectedAccountMetadataService {
         workspaceId,
         archivedAt: IsNull(),
         provider: In(
-          operation === 'SEND'
+          operation === EmailOperation.SEND
             ? EMAIL_SENDING_PROVIDERS
             : EMAIL_DRAFTING_PROVIDERS,
         ),

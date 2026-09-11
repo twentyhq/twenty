@@ -10,7 +10,7 @@ import {
 import {
   ConnectedAccountProvider,
   type EmailAttachment,
-  type EmailOperation,
+  EmailOperation,
 } from 'twenty-shared/types';
 import {
   canConnectedAccountPerformEmailOperation,
@@ -131,7 +131,7 @@ export class EmailComposerService {
           workspaceId,
           archivedAt: IsNull(),
           provider: In(
-            operation === 'SEND'
+            operation === EmailOperation.SEND
               ? EMAIL_SENDING_PROVIDERS
               : EMAIL_DRAFTING_PROVIDERS,
           ),

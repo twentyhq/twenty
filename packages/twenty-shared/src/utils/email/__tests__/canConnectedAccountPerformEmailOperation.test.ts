@@ -1,4 +1,4 @@
-import { ConnectedAccountProvider } from '@/types';
+import { ConnectedAccountProvider, EmailOperation } from '@/types';
 import { canConnectedAccountPerformEmailOperation } from '@/utils/email/canConnectedAccountPerformEmailOperation';
 
 const connectionParameters = { host: 'mail.example.com', port: 993 };
@@ -14,13 +14,13 @@ describe('canConnectedAccountPerformEmailOperation', () => {
       expect(
         canConnectedAccountPerformEmailOperation({
           connectedAccount,
-          operation: 'SEND',
+          operation: EmailOperation.SEND,
         }),
       ).toBe(true);
       expect(
         canConnectedAccountPerformEmailOperation({
           connectedAccount,
-          operation: 'DRAFT',
+          operation: EmailOperation.DRAFT,
         }),
       ).toBe(false);
     });
@@ -34,13 +34,13 @@ describe('canConnectedAccountPerformEmailOperation', () => {
       expect(
         canConnectedAccountPerformEmailOperation({
           connectedAccount,
-          operation: 'SEND',
+          operation: EmailOperation.SEND,
         }),
       ).toBe(false);
       expect(
         canConnectedAccountPerformEmailOperation({
           connectedAccount,
-          operation: 'DRAFT',
+          operation: EmailOperation.DRAFT,
         }),
       ).toBe(true);
     });
@@ -57,13 +57,13 @@ describe('canConnectedAccountPerformEmailOperation', () => {
       expect(
         canConnectedAccountPerformEmailOperation({
           connectedAccount,
-          operation: 'SEND',
+          operation: EmailOperation.SEND,
         }),
       ).toBe(true);
       expect(
         canConnectedAccountPerformEmailOperation({
           connectedAccount,
-          operation: 'DRAFT',
+          operation: EmailOperation.DRAFT,
         }),
       ).toBe(true);
     });
@@ -77,13 +77,13 @@ describe('canConnectedAccountPerformEmailOperation', () => {
       expect(
         canConnectedAccountPerformEmailOperation({
           connectedAccount,
-          operation: 'SEND',
+          operation: EmailOperation.SEND,
         }),
       ).toBe(false);
       expect(
         canConnectedAccountPerformEmailOperation({
           connectedAccount,
-          operation: 'DRAFT',
+          operation: EmailOperation.DRAFT,
         }),
       ).toBe(false);
     });
@@ -97,13 +97,13 @@ describe('canConnectedAccountPerformEmailOperation', () => {
       expect(
         canConnectedAccountPerformEmailOperation({
           connectedAccount,
-          operation: 'SEND',
+          operation: EmailOperation.SEND,
         }),
       ).toBe(false);
       expect(
         canConnectedAccountPerformEmailOperation({
           connectedAccount,
-          operation: 'DRAFT',
+          operation: EmailOperation.DRAFT,
         }),
       ).toBe(false);
     });
@@ -119,13 +119,13 @@ describe('canConnectedAccountPerformEmailOperation', () => {
       expect(
         canConnectedAccountPerformEmailOperation({
           connectedAccount,
-          operation: 'SEND',
+          operation: EmailOperation.SEND,
         }),
       ).toBe(true);
       expect(
         canConnectedAccountPerformEmailOperation({
           connectedAccount,
-          operation: 'DRAFT',
+          operation: EmailOperation.DRAFT,
         }),
       ).toBe(true);
     });
@@ -139,13 +139,13 @@ describe('canConnectedAccountPerformEmailOperation', () => {
       expect(
         canConnectedAccountPerformEmailOperation({
           connectedAccount,
-          operation: 'SEND',
+          operation: EmailOperation.SEND,
         }),
       ).toBe(true);
       expect(
         canConnectedAccountPerformEmailOperation({
           connectedAccount,
-          operation: 'DRAFT',
+          operation: EmailOperation.DRAFT,
         }),
       ).toBe(false);
     });
@@ -162,7 +162,7 @@ describe('canConnectedAccountPerformEmailOperation', () => {
               provider,
               connectionParameters: { SMTP: connectionParameters },
             },
-            operation: 'SEND',
+            operation: EmailOperation.SEND,
           }),
         ).toBe(false);
       }

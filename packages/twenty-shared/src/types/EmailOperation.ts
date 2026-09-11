@@ -1,1 +1,4 @@
-export type EmailOperation = 'SEND' | 'DRAFT';
+export enum EmailOperation {
+  SEND = 'SEND',
+  DRAFT = 'DRAFT',
+}

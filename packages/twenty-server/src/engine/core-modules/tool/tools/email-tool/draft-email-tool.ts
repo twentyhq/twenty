@@ -1,3 +1,4 @@
+import { EmailOperation } from 'twenty-shared/types';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
@@ -33,7 +34,7 @@ export class DraftEmailTool implements Tool {
       const result = await this.emailComposerService.composeEmail({
         parameters,
         context,
-        operation: 'DRAFT',
+        operation: EmailOperation.DRAFT,
       });
 
       if (!result.success) {

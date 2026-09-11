@@ -1,29 +1,38 @@
 import { EMAIL_DRAFTING_PROVIDERS, EMAIL_SENDING_PROVIDERS } from '@/constants';
-import { ConnectedAccountProvider, type EmailOperation } from '@/types';
+import {
+  ConnectedAccountProvider,
+  type ConnectedAccountEmailFields,
+  EmailOperation,
+} from '@/types';
+import { assertUnreachable } from '@/utils/assertUnreachable';
 import { isDefined } from '@/utils/validation/isDefined';
 
 export const canConnectedAccountPerformEmailOperation = ({
   connectedAccount,
   operation,
 }: {
-  connectedAccount: {
-    provider: ConnectedAccountProvider;
-    connectionParameters?: { IMAP?: unknown; SMTP?: unknown } | null;
-  };
+  connectedAccount: ConnectedAccountEmailFields;
   operation: EmailOperation;
 }): boolean => {
-  const providersForOperation =
-    operation === 'SEND' ? EMAIL_SENDING_PROVIDERS : EMAIL_DRAFTING_PROVIDERS;
+  const { provider, connectionParameters } = connectedAccount;
+  const isImapSmtpCaldav =
+    provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV;
 
-  if (!providersForOperation.includes(connectedAccount.provider)) {
-    return false;
+  switch (operation) {
+    case EmailOperation.SEND:
+      return (
+        EMAIL_SENDING_PROVIDERS.includes(provider) &&
+        (!isImapSmtpCaldav || isDefined(connectionParameters?.SMTP))
+      );
+    case EmailOperation.DRAFT:
+      return (
+        EMAIL_DRAFTING_PROVIDERS.includes(provider) &&
+        (!isImapSmtpCaldav || isDefined(connectionParameters?.IMAP))
+      );
+    default:
+      return assertUnreachable(
+        operation,
+        `Unhandled email operation: ${operation}`,
+      );
   }
-
-  if (connectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV) {
-    return true;
-  }
-
-  return operation === 'SEND'
-    ? isDefined(connectedAccount.connectionParameters?.SMTP)
-    : isDefined(connectedAccount.connectionParameters?.IMAP);
 };

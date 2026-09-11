@@ -1,3 +1,4 @@
+import { EmailOperation } from 'twenty-shared/types';
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -122,7 +123,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
           workspaceId: WORKSPACE_ID,
           userWorkspaceId: PHIL_USER_WORKSPACE_ID,
         },
-        operation: 'SEND',
+        operation: EmailOperation.SEND,
       });
 
       expect(result.success).toBe(true);
@@ -138,7 +139,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
           connectedAccountId: JONY_CONNECTED_ACCOUNT_ID,
         },
         context: { workspaceId: WORKSPACE_ID },
-        operation: 'SEND',
+        operation: EmailOperation.SEND,
       });
 
       expect(result.success).toBe(true);
@@ -155,7 +156,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
             workspaceId: WORKSPACE_ID,
             userWorkspaceId: PHIL_USER_WORKSPACE_ID,
           },
-          operation: 'SEND',
+          operation: EmailOperation.SEND,
         }),
       ).rejects.toThrow('Connected account id is not a valid UUID');
     });
@@ -171,7 +172,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
             workspaceId: WORKSPACE_ID,
             userWorkspaceId: PHIL_USER_WORKSPACE_ID,
           },
-          operation: 'SEND',
+          operation: EmailOperation.SEND,
         }),
       ).rejects.toThrow('No connected account found for id');
     });
@@ -196,7 +197,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
               workspaceId: WORKSPACE_ID,
               userWorkspaceId: PHIL_USER_WORKSPACE_ID,
             },
-            operation: 'SEND',
+            operation: EmailOperation.SEND,
           }),
         ).rejects.toThrow('cannot send email');
       } finally {
@@ -219,7 +220,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
               connectedAccountId: JONY_CONNECTED_ACCOUNT_ID,
             },
             context: { workspaceId: WORKSPACE_ID },
-            operation: 'SEND',
+            operation: EmailOperation.SEND,
           }),
         ).rejects.toThrow('No connected account found for id');
       } finally {
@@ -236,7 +237,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
           workspaceId: WORKSPACE_ID,
           userWorkspaceId: PHIL_USER_WORKSPACE_ID,
         },
-        operation: 'DRAFT',
+        operation: EmailOperation.DRAFT,
       });
 
       expect(result.success).toBe(true);
@@ -264,7 +265,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
               connectedAccountId: emailGroupConnectedAccountId,
             },
             context: { workspaceId: WORKSPACE_ID },
-            operation: 'DRAFT',
+            operation: EmailOperation.DRAFT,
           }),
         ).rejects.toThrow('cannot draft email');
       } finally {
@@ -281,7 +282,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
           workspaceId: WORKSPACE_ID,
           userWorkspaceId: PHIL_USER_WORKSPACE_ID,
         },
-        operation: 'SEND',
+        operation: EmailOperation.SEND,
       });
 
       expect(result.success).toBe(true);
@@ -306,7 +307,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
             workspaceId: WORKSPACE_ID,
             userWorkspaceId: PHIL_USER_WORKSPACE_ID,
           },
-          operation: 'SEND',
+          operation: EmailOperation.SEND,
         });
 
         expect(result.success).toBe(true);
@@ -334,7 +335,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
         const result = await service.composeEmail({
           parameters: baseParams,
           context: { workspaceId: WORKSPACE_ID },
-          operation: 'SEND',
+          operation: EmailOperation.SEND,
         });
 
         expect(result.success).toBe(true);
@@ -363,7 +364,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
             workspaceId: WORKSPACE_ID,
             userWorkspaceId: UNKNOWN_USER_WORKSPACE_ID,
           },
-          operation: 'SEND',
+          operation: EmailOperation.SEND,
         });
 
         expect(result.success).toBe(true);
@@ -383,7 +384,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
             workspaceId: WORKSPACE_ID,
             userWorkspaceId: UNKNOWN_USER_WORKSPACE_ID,
           },
-          operation: 'SEND',
+          operation: EmailOperation.SEND,
         }),
       ).rejects.toThrow('available to user workspace');
     });
@@ -395,7 +396,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
       const result = await service.composeEmail({
         parameters: baseParams,
         context: { workspaceId: WORKSPACE_ID },
-        operation: 'SEND',
+        operation: EmailOperation.SEND,
       });
 
       expect(result.success).toBe(true);

@@ -29,7 +29,11 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
-import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  EmailOperation,
+  SettingsPath,
+} from 'twenty-shared/types';
 import {
   canConnectedAccountPerformEmailOperation,
   getSendableEmailHandles,
@@ -170,7 +174,7 @@ export const WorkflowEditActionEmailBase = ({
     ...myAccounts.filter((connectedAccount) =>
       canConnectedAccountPerformEmailOperation({
         connectedAccount,
-        operation: 'SEND',
+        operation: EmailOperation.SEND,
       }),
     ),
     ...(isDefined(otherAccount) ? [otherAccount] : []),

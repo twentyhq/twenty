@@ -1,3 +1,4 @@
+import { EmailOperation } from 'twenty-shared/types';
 import { useQuery } from '@apollo/client/react';
 
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
@@ -24,7 +25,7 @@ export const useFirstConnectedAccount = (
     data?.myConnectedAccounts?.find((connectedAccount) =>
       canConnectedAccountPerformEmailOperation({
         connectedAccount,
-        operation: 'SEND',
+        operation: EmailOperation.SEND,
       }),
     ) ?? null;
 

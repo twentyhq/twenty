@@ -1,3 +1,4 @@
+import { EmailOperation } from 'twenty-shared/types';
 import { useQuery } from '@apollo/client/react';
 import { useContext } from 'react';
 import { DragDropProvider } from '@dnd-kit/react';
@@ -127,7 +128,7 @@ export const EmailComposerFields = ({
     (connectedAccount) =>
       canConnectedAccountPerformEmailOperation({
         connectedAccount,
-        operation: 'SEND',
+        operation: EmailOperation.SEND,
       }),
   );
 

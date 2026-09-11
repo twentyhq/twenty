@@ -1,3 +1,4 @@
+import { EmailOperation } from 'twenty-shared/types';
 import {
   ForbiddenException,
   Logger,
@@ -71,7 +72,7 @@ export class SendEmailResolver {
           inReplyTo: input.inReplyTo,
         },
         context: { workspaceId: workspace.id },
-        operation: 'SEND',
+        operation: EmailOperation.SEND,
       });
 
       if (!result.success) {
