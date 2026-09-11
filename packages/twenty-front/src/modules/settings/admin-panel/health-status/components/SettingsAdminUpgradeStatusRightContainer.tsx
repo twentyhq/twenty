@@ -12,18 +12,20 @@ export const SettingsAdminUpgradeStatusRightContainer = ({
 }) => {
   if (item.kind === 'inferred-version') {
     return (
-      <Status
-        color="gray"
-        text={item.inferredVersion ?? t`Unknown`}
-        weight="medium"
-      />
+      <Status color="gray" weight="medium">
+        {item.inferredVersion ?? t`Unknown`}
+      </Status>
     );
   }
 
   if (item.kind === 'instance-status') {
     const badge = getUpgradeHealthStatusBadge(item.instanceHealth);
 
-    return <Status color={badge.color} text={badge.label} weight="medium" />;
+    return (
+      <Status color={badge.color} weight="medium">
+        {badge.label}
+      </Status>
+    );
   }
 
   const workspacesUpgradeHealth = getWorkspacesUpgradeHealth(
@@ -40,10 +42,8 @@ export const SettingsAdminUpgradeStatusRightContainer = ({
   );
 
   return (
-    <Status
-      color={workspacesUpgradeHealthBadge.color}
-      text={workspacesUpgradeHealthText}
-      weight="medium"
-    />
+    <Status color={workspacesUpgradeHealthBadge.color} weight="medium">
+      {workspacesUpgradeHealthText}
+    </Status>
   );
 };

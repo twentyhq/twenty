@@ -6,7 +6,6 @@ import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-l
 import { SelectableListContextProvider } from '@/ui/layout/selectable-list/states/contexts/SelectableListContext';
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
@@ -31,19 +30,17 @@ export const SelectableList = ({
   focusId,
   shouldPreselectFirstItem,
 }: SelectableListProps) => {
-  const scopedSelectableListInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceId(selectableListInstanceId);
-  useSelectableListHotKeys(scopedSelectableListInstanceId, focusId, onSelect);
+  useSelectableListHotKeys(selectableListInstanceId, focusId, onSelect);
 
   const store = useStore();
 
   const { resetSelectedItem, setSelectedItemId } = useSelectableList(
-    scopedSelectableListInstanceId,
+    selectableListInstanceId,
   );
 
   const setSelectableItemIds = useSetAtomComponentState(
     selectableItemIdsComponentState,
-    scopedSelectableListInstanceId,
+    selectableListInstanceId,
   );
 
   useEffect(() => {
@@ -76,7 +73,7 @@ export const SelectableList = ({
 
     const selectedItemId = store.get(
       selectedItemIdComponentState.atomFamily({
-        instanceId: scopedSelectableListInstanceId,
+        instanceId: selectableListInstanceId,
       }),
     );
 
@@ -86,7 +83,7 @@ export const SelectableList = ({
   }, [
     selectableItemIdArray,
     selectableItemIdMatrix,
-    scopedSelectableListInstanceId,
+    selectableListInstanceId,
     setSelectableItemIds,
     shouldPreselectFirstItem,
     resetSelectedItem,
@@ -97,7 +94,7 @@ export const SelectableList = ({
   return (
     <SelectableListComponentInstanceContext.Provider
       value={{
-        instanceId: scopedSelectableListInstanceId,
+        instanceId: selectableListInstanceId,
       }}
     >
       <SelectableListContextProvider value={{ focusId }}>

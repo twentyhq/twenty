@@ -35,9 +35,9 @@ export const SettingsWorkspaceUnsubscribeTopicSection = () => {
           align: 'right',
           Cell: ({ item }) =>
             item.visibility === UnsubscribeTopicVisibility.PUBLIC ? (
-              <Status color="blue" text={t`Public`} />
+              <Status color="blue">{t`Public`}</Status>
             ) : (
-              <Status color="gray" text={t`Private`} />
+              <Status color="gray">{t`Private`}</Status>
             ),
         },
       ]}

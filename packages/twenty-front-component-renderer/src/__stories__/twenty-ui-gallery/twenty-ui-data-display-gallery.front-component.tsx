@@ -81,7 +81,7 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Status',
-    node: <Status color="green" text="Active" />,
+    node: <Status color="green">Active</Status>,
   },
   {
     name: 'StyledTintedIconTileContainer',
