@@ -1,3 +1,4 @@
+import { getFloatingReferenceScale } from '@/ui/layout/overlay/utils/getFloatingReferenceScale';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
@@ -80,11 +81,8 @@ export const RecordTableCellEditMode = ({
     strategy: 'fixed',
     middleware: [
       flip(),
-      offset(({ rects, elements }) => {
-        const referenceScale =
-          elements.reference instanceof HTMLElement
-            ? rects.reference.width / elements.reference.offsetWidth
-            : 1;
+      offset((state) => {
+        const referenceScale = getFloatingReferenceScale(state);
 
         return {
           mainAxis: -33 * referenceScale,
