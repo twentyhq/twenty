@@ -194,6 +194,7 @@ class FakeRecallApi {
   transcripts = new Map<string, FakeRecallTranscript>();
   transcriptRequestFailureStatus: number | undefined = undefined;
   failVideoDownload = false;
+  mediaContentLengthBytes: number | undefined = undefined;
   deletedBotIds: string[] = [];
   listRequestCount = 0;
   artifactImportRequests: object[] = [];
@@ -410,7 +411,11 @@ class FakeRecallApi {
 
       return new Response(mediaBytes, {
         status: 200,
-        headers: { 'content-length': String(mediaBytes.byteLength) },
+        headers: {
+          'content-length': String(
+            this.mediaContentLengthBytes ?? mediaBytes.byteLength,
+          ),
+        },
       });
     }
 
@@ -1336,6 +1341,51 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.status).toBe('COMPLETED');
       expect(callRecording.callRecorderFailureReason).toBe(
         'video_import_expired',
+      );
+      expect(callRecording.transcript).toMatchObject({ status: 'EMPTY' });
+    });
+
+    it('completes a stuck processing recording whose media was too large to store', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      recall.mediaContentLengthBytes = 600 * 1024 * 1024;
+
+      await deliverRecallWebhook(
+        buildRecordingDoneWebhook({
+          botId,
+          metadata,
+          startedAt: hoursAgo(1),
+          completedAt: new Date().toISOString(),
+        }),
+      );
+      await runQueuedArtifactImports();
+
+      expect(
+        (await fetchCallRecording(callRecordingId)).callRecorderFailureReason,
+      ).toBe('video_file_too_large,audio_file_too_large');
+
+      await client.mutation({
+        updateCalendarEvent: {
+          __args: {
+            id: calendarEventId,
+            data: { startsAt: daysAgo(9), endsAt: daysAgo(8) },
+          },
+          id: true,
+        },
+      });
+
+      const cronResult = await runStaleStateCron();
+
+      expect(cronResult.settledCompletedCallRecordingIds).toEqual([
+        callRecordingId,
+      ]);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'video_file_too_large,audio_file_too_large',
       );
       expect(callRecording.transcript).toMatchObject({ status: 'EMPTY' });
     });

@@ -14,6 +14,10 @@ import { updateNonTerminalCallRecordingState } from 'src/logic-functions/data/up
 import { buildEmptyTranscriptMarker } from 'src/logic-functions/domain/build-empty-transcript-marker.util';
 import { isCallRecordingImportComplete } from 'src/logic-functions/domain/is-call-recording-import-complete.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
+import {
+  parseUnrecoverableMediaMarkers,
+  type UnrecoverableMediaMarkers,
+} from 'src/logic-functions/domain/parse-unrecoverable-media-markers.util';
 import { runCallRecordingArtifactImportWithClaim } from 'src/logic-functions/flows/run-call-recording-artifact-import-with-claim.util';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
@@ -78,10 +82,16 @@ const settleWithImportedArtifacts = async (
     return 'skipped';
   }
 
-  if (
-    !isNonEmptyArray(callRecording.audio) &&
-    !isNonEmptyArray(callRecording.video)
-  ) {
+  const unrecoverableMediaMarkers = parseUnrecoverableMediaMarkers(
+    callRecording.callRecorderFailureReason,
+  );
+  const hasCapturedMedia =
+    isNonEmptyArray(callRecording.audio) ||
+    isNonEmptyArray(callRecording.video) ||
+    unrecoverableMediaMarkers.isAudioUnrecoverable ||
+    unrecoverableMediaMarkers.isVideoUnrecoverable;
+
+  if (!hasCapturedMedia) {
     await updateNonTerminalCallRecordingState(client, {
       callRecordingId: callRecording.id,
       data: {
@@ -93,7 +103,10 @@ const settleWithImportedArtifacts = async (
     return 'failed';
   }
 
-  const settledFields = buildSettledArtifactFields(callRecording);
+  const settledFields = buildSettledArtifactFields({
+    callRecording,
+    unrecoverableMediaMarkers,
+  });
 
   if (Object.keys(settledFields).length > 0) {
     await updateCallRecording(client, {
@@ -120,20 +133,26 @@ const settleWithImportedArtifacts = async (
   return 'completed';
 };
 
-const buildSettledArtifactFields = (
-  callRecording: StuckCallRecording,
-): CallRecordingUpdateFields => {
+const buildSettledArtifactFields = ({
+  callRecording,
+  unrecoverableMediaMarkers,
+}: {
+  callRecording: StuckCallRecording;
+  unrecoverableMediaMarkers: UnrecoverableMediaMarkers;
+}): CallRecordingUpdateFields => {
   const transcriptMarker = parseTranscriptMarker(callRecording.transcript);
   const isTranscriptMissing =
     isUndefined(callRecording.transcript) ||
     transcriptMarker?.status === 'PENDING';
+  const isAudioExpired =
+    !isNonEmptyArray(callRecording.audio) &&
+    !unrecoverableMediaMarkers.isAudioUnrecoverable;
+  const isVideoExpired =
+    !isNonEmptyArray(callRecording.video) &&
+    !unrecoverableMediaMarkers.isVideoUnrecoverable;
   const expiredMediaFailureReasons = [
-    ...(isNonEmptyArray(callRecording.audio)
-      ? []
-      : [AUDIO_IMPORT_EXPIRED_FAILURE_REASON]),
-    ...(isNonEmptyArray(callRecording.video)
-      ? []
-      : [VIDEO_IMPORT_EXPIRED_FAILURE_REASON]),
+    ...(isAudioExpired ? [AUDIO_IMPORT_EXPIRED_FAILURE_REASON] : []),
+    ...(isVideoExpired ? [VIDEO_IMPORT_EXPIRED_FAILURE_REASON] : []),
   ];
 
   return {
