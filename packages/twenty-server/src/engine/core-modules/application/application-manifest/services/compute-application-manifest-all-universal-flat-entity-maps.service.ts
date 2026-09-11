@@ -35,6 +35,7 @@ import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-m
 import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-group-manifest-to-universal-flat-view-filter-group.util';
 import { fromViewFilterManifestToUniversalFlatViewFilter } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-manifest-to-universal-flat-view-filter.util';
 import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-group-manifest-to-universal-flat-view-group.util';
+import { fromViewManifestToImplicitUniversalFlatViewGroups } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-implicit-universal-flat-view-groups.util';
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
 import { fromViewSortManifestToUniversalFlatViewSort } from 'src/engine/core-modules/application/application-manifest/converters/from-view-sort-manifest-to-universal-flat-view-sort.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -471,6 +472,39 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           universalFlatEntityMapsToMutate:
             allUniversalFlatEntityMaps.flatViewGroupMaps,
         });
+      }
+
+      const mainGroupByFieldMetadataUniversalIdentifier =
+        viewManifest.mainGroupByFieldMetadataUniversalIdentifier;
+      const mainGroupByFieldMetadata = isDefined(
+        mainGroupByFieldMetadataUniversalIdentifier,
+      )
+        ? (allUniversalFlatEntityMaps.flatFieldMetadataMaps
+            .byUniversalIdentifier[
+            mainGroupByFieldMetadataUniversalIdentifier
+          ] ??
+          fromAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+            mainGroupByFieldMetadataUniversalIdentifier
+          ])
+        : undefined;
+
+      if (isDefined(mainGroupByFieldMetadata)) {
+        for (const implicitUniversalFlatViewGroup of fromViewManifestToImplicitUniversalFlatViewGroups(
+          {
+            viewManifest,
+            mainGroupByFieldMetadata,
+            applicationUniversalIdentifier,
+            now,
+          },
+        )) {
+          addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
+            {
+              universalFlatEntity: implicitUniversalFlatViewGroup,
+              universalFlatEntityMapsToMutate:
+                allUniversalFlatEntityMaps.flatViewGroupMaps,
+            },
+          );
+        }
       }
 
       for (const viewSortManifest of viewManifest.sorts ?? []) {
