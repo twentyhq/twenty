@@ -54,31 +54,14 @@ const StyledMeterRow = styled.div`
   grid-template-columns: 1fr 1fr;
 `;
 
-const StyledAmountCell = styled.div`
-  align-items: end;
-  display: flex;
-  gap: ${themeCssVariables.spacing[4]};
-`;
-
 const StyledAmountField = styled.div`
   flex: 1;
   min-width: 0;
-
-  input[type='number'] {
-    appearance: textfield;
-  }
-
-  input[type='number']::-webkit-inner-spin-button,
-  input[type='number']::-webkit-outer-spin-button {
-    appearance: none;
-    margin: 0;
-  }
 `;
 
-const StyledRingCell = styled.div`
+const StyledRingAnchor = styled.div`
   align-items: center;
   display: flex;
-  height: ${themeCssVariables.spacing[8]};
 `;
 
 type SettingsBillingLimitFormProps = {
@@ -197,51 +180,51 @@ export const SettingsBillingLimitForm = ({
           description={t`How much can be spent, and how often it resets.`}
         />
         <StyledRow>
-          <StyledAmountCell>
-            <StyledAmountField>
-              <StyledSettingsBillingFieldLabel>
-                {isCreditsMeter ? t`Credits` : t`Amount`}
-              </StyledSettingsBillingFieldLabel>
-              <SettingsTextInput
-                instanceId="usage-limit-value"
-                placeholder={isCreditsMeter ? '100' : '1000'}
-                type="number"
-                min={0}
-                value={values.limitValue}
-                onChange={(limitValue) => onChange({ ...values, limitValue })}
-                fullWidth
-                disabled={!hasResource}
-              />
-            </StyledAmountField>
-            <StyledRingCell id={RING_ANCHOR_ID}>
-              <ProgressRing
-                value={consumedPercentage}
-                barColor={getUsageLimitRingColor({
-                  consumedPercentage,
-                  isExhausted,
-                })}
-              />
-              <AppTooltip
-                anchorSelect={`#${RING_ANCHOR_ID}`}
-                place="top"
-                delay={TooltipDelay.shortDelay}
-                positionStrategy="fixed"
-              >
-                {isDefined(progress) ? (
-                  <StyledTooltipRow>
-                    {t`Used`}
-                    <SettingsBillingLimitAmount
-                      text={consumedText}
-                      isCreditsMeter={isCreditsMeter}
-                    />
-                    {`· ${periodSpanLabel}`}
-                  </StyledTooltipRow>
-                ) : (
-                  t`Nothing counted against this scope yet`
-                )}
-              </AppTooltip>
-            </StyledRingCell>
-          </StyledAmountCell>
+          <StyledAmountField>
+            <StyledSettingsBillingFieldLabel>
+              {isCreditsMeter ? t`Credits` : t`Amount`}
+            </StyledSettingsBillingFieldLabel>
+            <SettingsTextInput
+              instanceId="usage-limit-value"
+              placeholder={isCreditsMeter ? '100' : '1000'}
+              type="number"
+              min={0}
+              value={values.limitValue}
+              onChange={(limitValue) => onChange({ ...values, limitValue })}
+              fullWidth
+              disabled={!hasResource}
+              RightIcon={() => (
+                <StyledRingAnchor id={RING_ANCHOR_ID}>
+                  <ProgressRing
+                    value={consumedPercentage}
+                    barColor={getUsageLimitRingColor({
+                      consumedPercentage,
+                      isExhausted,
+                    })}
+                  />
+                </StyledRingAnchor>
+              )}
+            />
+            <AppTooltip
+              anchorSelect={`#${RING_ANCHOR_ID}`}
+              place="top"
+              delay={TooltipDelay.shortDelay}
+              positionStrategy="fixed"
+            >
+              {isDefined(progress) ? (
+                <StyledTooltipRow>
+                  {t`Used`}
+                  <SettingsBillingLimitAmount
+                    text={consumedText}
+                    isCreditsMeter={isCreditsMeter}
+                  />
+                  {`· ${periodSpanLabel}`}
+                </StyledTooltipRow>
+              ) : (
+                t`Nothing counted against this scope yet`
+              )}
+            </AppTooltip>
+          </StyledAmountField>
           <StyledMeterRow>
             <Select
               dropdownId="usage-limit-meter"
