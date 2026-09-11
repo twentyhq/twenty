@@ -1,7 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent, useContext, useId } from 'react';
-import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
+import {
+  AI_MODEL_TIERS,
+  type AiModelTier,
+  isAiModelEffort,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconBolt,
@@ -13,6 +17,7 @@ import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
+import { getAiModelEffortLabel } from '@/ai/utils/getAiModelEffortLabel';
 import { formatMetricDelta } from '@/ai/utils/formatMetricDelta';
 import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
 import { formatNumber } from '~/utils/format/formatNumber';
@@ -158,6 +163,7 @@ type TierMetric = {
   key: string;
   Icon: IconComponent;
   deltaPercent: number | undefined;
+  tooltipTitle?: string;
   description: string;
 };
 
@@ -203,9 +209,14 @@ export const AiModelTierSlider = ({
     intelligenceDelta >= 100
       ? t`${formatMetricDelta(intelligenceDelta)} the score of Balanced`
       : intelligenceDelta < 0
-        ? t`${formatNumber(Math.abs(intelligenceDelta))}% lower score than Balanced`
-        : t`${formatNumber(intelligenceDelta)}% higher score than Balanced`;
+        ? t`${formatNumber(Math.abs(intelligenceDelta))}% lower score than Balanced Intelligence score`
+        : t`${formatNumber(intelligenceDelta)}% higher score than Balanced Intelligence score`;
   const intelligenceScore = t`Intelligence score: ${formatNumber(model?.intelligenceIndex ?? 0)}`;
+  const modelEffort = model?.effort;
+  const reasoningEffort =
+    isDefined(modelEffort) && isAiModelEffort(modelEffort)
+    ? getAiModelEffortLabel(modelEffort)
+    : t`Default`;
 
   // Below Balanced the gain is speed, above it intelligence; cost moves with
   // both, so each side shows the two figures that explain the trade.
@@ -242,7 +253,8 @@ export const AiModelTierSlider = ({
             key: 'intelligence',
             Icon: IconBrain,
             deltaPercent: resolvedTier.intelligenceDeltaPercent,
-            description: `${intelligenceComparison}\n${intelligenceScore}`,
+            tooltipTitle: intelligenceScore,
+            description: intelligenceComparison,
           },
         ]
       : []),
@@ -261,7 +273,7 @@ export const AiModelTierSlider = ({
   return (
     <StyledContainer>
       <StyledHeader>
-        <StyledTitle title={model?.label}>
+        <StyledTitle id={`ai-model-tier-name-${tooltipId}`}>
           {title ?? resolvedTier.label}
         </StyledTitle>
         <StyledMetrics>
@@ -302,18 +314,30 @@ export const AiModelTierSlider = ({
         />
       </StyledTrack>
       {isDefined(model) &&
-        metrics.map(({ key, description }) => (
+        metrics.map(({ key, description, tooltipTitle }) => (
           <AppTooltip
             key={key}
             anchorSelect={`#ai-model-tier-${key}-${tooltipId}`}
-            title={getAiModelModeDescription(resolvedTier, {
-              showAutomatic: false,
-            })}
+            title={
+              tooltipTitle ??
+              getAiModelModeDescription(resolvedTier, {
+                showAutomatic: false,
+              })
+            }
             description={`${description}${inheritedNote}`}
             delay={TooltipDelay.shortDelay}
             place="bottom"
           />
         ))}
+      {isDefined(model) && (
+        <AppTooltip
+          anchorSelect={`#ai-model-tier-name-${tooltipId}`}
+          title={model.label}
+          description={t`Reasoning effort: ${reasoningEffort}`}
+          delay={TooltipDelay.shortDelay}
+          place="bottom"
+        />
+      )}
     </StyledContainer>
   );
 };
