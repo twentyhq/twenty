@@ -1,4 +1,4 @@
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { ConnectedAccountProvider } from '@/types';
 
 export const EMAIL_SENDING_PROVIDERS: ConnectedAccountProvider[] = [
   ConnectedAccountProvider.GOOGLE,

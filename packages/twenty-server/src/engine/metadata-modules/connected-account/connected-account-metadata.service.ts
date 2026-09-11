@@ -3,8 +3,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, IsNull, Repository } from 'typeorm';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  EMAIL_DRAFTING_PROVIDERS,
+  EMAIL_SENDING_PROVIDERS,
+} from 'twenty-shared/constants';
+import {
+  ConnectedAccountProvider,
+  type EmailOperation,
+} from 'twenty-shared/types';
+import {
+  canConnectedAccountPerformEmailOperation,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
@@ -18,11 +28,7 @@ import {
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
-import { EMAIL_DRAFTING_PROVIDERS } from 'src/engine/metadata-modules/connected-account/constants/email-drafting-providers.constant';
-import { EMAIL_SENDING_PROVIDERS } from 'src/engine/metadata-modules/connected-account/constants/email-sending-providers.constant';
 import { type ConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/types/connected-account-usable-by-caller.type';
-import { type EmailOperation } from 'src/engine/metadata-modules/connected-account/types/email-operation.type';
-import { canConnectedAccountPerformEmailOperation } from 'src/engine/metadata-modules/connected-account/utils/can-connected-account-perform-email-operation.util';
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';

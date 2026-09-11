@@ -1,6 +1,8 @@
+import { type EmailOperation } from 'twenty-shared/types';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import {
+  canConnectedAccountPerformEmailOperation,
   isDefined,
   isValidUuid,
   resolveInput as resolveWorkflowInput,
@@ -11,8 +13,6 @@ import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/to
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { type EmailOperation } from 'src/engine/metadata-modules/connected-account/types/email-operation.type';
-import { canConnectedAccountPerformEmailOperation } from 'src/engine/metadata-modules/connected-account/utils/can-connected-account-perform-email-operation.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {

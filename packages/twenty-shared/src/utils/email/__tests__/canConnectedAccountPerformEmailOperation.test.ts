@@ -1,17 +1,7 @@
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { ConnectedAccountProvider } from '@/types';
+import { canConnectedAccountPerformEmailOperation } from '@/utils/email/canConnectedAccountPerformEmailOperation';
 
-import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
-import { type EncryptedConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
-import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
-import { canConnectedAccountPerformEmailOperation } from 'src/engine/metadata-modules/connected-account/utils/can-connected-account-perform-email-operation.util';
-
-const connectionParameters: EncryptedConnectionParameters = {
-  host: 'mail.example.com',
-  port: 993,
-  username: 'user',
-  password: 'enc:v2:00000000:cGFzc3dvcmQ=' as EncryptedString,
-  connectionSecurity: EmailConnectionSecurity.SSL_TLS,
-};
+const connectionParameters = { host: 'mail.example.com', port: 993 };
 
 describe('canConnectedAccountPerformEmailOperation', () => {
   describe('IMAP_SMTP_CALDAV, where capability depends on what is configured', () => {
@@ -98,10 +88,10 @@ describe('canConnectedAccountPerformEmailOperation', () => {
       ).toBe(false);
     });
 
-    it('does neither when only CALDAV is configured', () => {
+    it('does neither when neither IMAP nor SMTP is configured', () => {
       const connectedAccount = {
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-        connectionParameters: { CALDAV: connectionParameters },
+        connectionParameters: {},
       };
 
       expect(
@@ -120,28 +110,62 @@ describe('canConnectedAccountPerformEmailOperation', () => {
   });
 
   describe('providers whose capability does not depend on configuration', () => {
-    it('ignores connection parameters for Google', () => {
+    it('lets Google send and draft', () => {
+      const connectedAccount = {
+        provider: ConnectedAccountProvider.GOOGLE,
+        connectionParameters: null,
+      };
+
       expect(
         canConnectedAccountPerformEmailOperation({
-          connectedAccount: {
-            provider: ConnectedAccountProvider.GOOGLE,
-            connectionParameters: null,
-          },
+          connectedAccount,
+          operation: 'SEND',
+        }),
+      ).toBe(true);
+      expect(
+        canConnectedAccountPerformEmailOperation({
+          connectedAccount,
           operation: 'DRAFT',
         }),
       ).toBe(true);
     });
 
-    it('refuses an application connection even with SMTP configured', () => {
+    it('lets an email group send but never draft', () => {
+      const connectedAccount = {
+        provider: ConnectedAccountProvider.EMAIL_GROUP,
+        connectionParameters: null,
+      };
+
       expect(
         canConnectedAccountPerformEmailOperation({
-          connectedAccount: {
-            provider: ConnectedAccountProvider.APP,
-            connectionParameters: { SMTP: connectionParameters },
-          },
+          connectedAccount,
           operation: 'SEND',
         }),
+      ).toBe(true);
+      expect(
+        canConnectedAccountPerformEmailOperation({
+          connectedAccount,
+          operation: 'DRAFT',
+        }),
       ).toBe(false);
+    });
+
+    it('refuses a provider absent from both allowlists even with SMTP configured', () => {
+      for (const provider of [
+        ConnectedAccountProvider.OIDC,
+        ConnectedAccountProvider.SAML,
+        ConnectedAccountProvider.APP,
+      ]) {
+        expect(
+          canConnectedAccountPerformEmailOperation({
+            connectedAccount: {
+              provider,
+              connectionParameters: { SMTP: connectionParameters },
+            },
+            operation: 'SEND',
+          }),
+        ).toBe(false);
+      }
     });
   });
 });

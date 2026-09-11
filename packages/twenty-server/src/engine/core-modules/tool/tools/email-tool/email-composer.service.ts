@@ -2,12 +2,22 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
+import {
+  EMAIL_DRAFTING_PROVIDERS,
+  EMAIL_SENDING_PROVIDERS,
+  MAX_EMAIL_RECIPIENTS,
+} from 'twenty-shared/constants';
 import {
   ConnectedAccountProvider,
   type EmailAttachment,
+  type EmailOperation,
 } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
+import {
+  canConnectedAccountPerformEmailOperation,
+  isDefined,
+  isNonEmptyArray,
+  isValidUuid,
+} from 'twenty-shared/utils';
 import { In, IsNull, LessThanOrEqual, type Repository } from 'typeorm';
 import { z } from 'zod';
 
@@ -25,11 +35,7 @@ import { EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-to
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
 import { selectConnectedAccountIdForCaller } from 'src/engine/core-modules/tool/tools/email-tool/utils/select-connected-account-id-for-caller.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
-import { EMAIL_DRAFTING_PROVIDERS } from 'src/engine/metadata-modules/connected-account/constants/email-drafting-providers.constant';
-import { EMAIL_SENDING_PROVIDERS } from 'src/engine/metadata-modules/connected-account/constants/email-sending-providers.constant';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { type EmailOperation } from 'src/engine/metadata-modules/connected-account/types/email-operation.type';
-import { canConnectedAccountPerformEmailOperation } from 'src/engine/metadata-modules/connected-account/utils/can-connected-account-perform-email-operation.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
