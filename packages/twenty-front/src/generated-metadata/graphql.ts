@@ -346,29 +346,6 @@ export type ApplicationAuthorization = {
   workspaceId: Scalars['UUID']['output'];
 };
 
-export type ApplicationConnectedAccountDto = {
-  __typename?: 'ApplicationConnectedAccountDTO';
-  applicationId?: Maybe<Scalars['UUID']['output']>;
-  archivedAt?: Maybe<Scalars['DateTime']['output']>;
-  authFailedAt?: Maybe<Scalars['DateTime']['output']>;
-  authFailedReason?: Maybe<Scalars['String']['output']>;
-  connectionParameters?: Maybe<PublicImapSmtpCaldavConnectionParameters>;
-  connectionProviderId?: Maybe<Scalars['UUID']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  handle: Scalars['String']['output'];
-  handleAliases?: Maybe<Array<Scalars['String']['output']>>;
-  id: Scalars['UUID']['output'];
-  isOwnedByCurrentUser: Scalars['Boolean']['output'];
-  lastCredentialsRefreshedAt?: Maybe<Scalars['DateTime']['output']>;
-  lastSignedInAt?: Maybe<Scalars['DateTime']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
-  provider: Scalars['String']['output'];
-  scopes?: Maybe<Array<Scalars['String']['output']>>;
-  updatedAt: Scalars['DateTime']['output'];
-  userWorkspaceId: Scalars['UUID']['output'];
-  visibility: Scalars['String']['output'];
-};
-
 export type ApplicationConnectionProvider = {
   __typename?: 'ApplicationConnectionProvider';
   applicationId: Scalars['String']['output'];
@@ -4897,7 +4874,7 @@ export type Query = {
   appConnection: AppConnection;
   appConnections: Array<AppConnection>;
   appKeyValue?: Maybe<AppKeyValue>;
-  applicationConnectedAccounts: Array<ApplicationConnectedAccountDto>;
+  applicationConnectedAccounts: Array<ConnectedAccountPublicDto>;
   applicationConnectionProviders: Array<ApplicationConnectionProvider>;
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   applicationSdkClientChecksums?: Maybe<SdkClientChecksums>;
@@ -8958,7 +8935,7 @@ export type ApplicationConnectedAccountsQueryVariables = Exact<{
 }>;
 
 
-export type ApplicationConnectedAccountsQuery = { __typename?: 'Query', applicationConnectedAccounts: Array<{ __typename?: 'ApplicationConnectedAccountDTO', id: string, handle: string, authFailedAt?: string | null, authFailedReason?: string | null, scopes?: Array<string> | null, lastSignedInAt?: string | null, connectionProviderId?: string | null, name?: string | null, visibility: string, lastCredentialsRefreshedAt?: string | null, createdAt: string, updatedAt: string }> };
+export type ApplicationConnectedAccountsQuery = { __typename?: 'Query', applicationConnectedAccounts: Array<{ __typename?: 'ConnectedAccountPublicDTO', id: string, handle: string, authFailedAt?: string | null, authFailedReason?: string | null, scopes?: Array<string> | null, lastSignedInAt?: string | null, connectionProviderId?: string | null, name?: string | null, visibility: string, lastCredentialsRefreshedAt?: string | null, createdAt: string, updatedAt: string }> };
 
 export type ApplicationConnectionProvidersQueryVariables = Exact<{
   applicationId: Scalars['UUID']['input'];

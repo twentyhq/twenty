@@ -138,7 +138,7 @@ describe('SettingsApplicationConnectionDetail', () => {
     mockedUseApplicationConnectedAccounts.mockReturnValue({
       accounts: [
         {
-          __typename: 'ApplicationConnectedAccountDTO',
+          __typename: 'ConnectedAccountPublicDTO',
           id: 'account-1',
           handle: 'workspace@example.com',
           authFailedAt: null,
@@ -189,7 +189,7 @@ describe('SettingsApplicationConnectionDetail', () => {
     mockedUseApplicationConnectedAccounts.mockReturnValue({
       accounts: [
         {
-          __typename: 'ApplicationConnectedAccountDTO',
+          __typename: 'ConnectedAccountPublicDTO',
           id: 'account-1',
           handle: 'workspace@example.com',
           authFailedAt: '2026-05-01T00:00:00.000Z',
@@ -214,6 +214,7 @@ describe('SettingsApplicationConnectionDetail', () => {
 
     fireEvent.click(screen.getByText('Reconnect'));
 
+    expect(mockTriggerAppOAuth).toHaveBeenCalledTimes(1);
     expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
       applicationId: 'app-1',
       providerName: 'google-calendar',
@@ -222,12 +223,12 @@ describe('SettingsApplicationConnectionDetail', () => {
       redirectLocation: '/settings/applications/app-1/connections/account-1',
     });
 
-    // The mocked confirmation modal also renders "Disconnect", so pick the
-    // action, which comes first in the document.
+    // The mocked confirmation modal also renders "Disconnect".
     const [disconnectAction] = screen.getAllByText('Disconnect');
 
     fireEvent.click(disconnectAction);
 
+    expect(mockOpenModal).toHaveBeenCalledTimes(1);
     expect(mockOpenModal).toHaveBeenCalledWith(
       'delete-application-connection-modal-account-1',
     );
