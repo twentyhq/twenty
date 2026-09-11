@@ -15,6 +15,23 @@ type BuiltManifest = {
   application?: { universalIdentifier?: string; logo?: string };
 };
 
+const readBuiltIdentity = async (
+  outputDir: string,
+): Promise<{ manifest: BuiltManifest; version?: string } | undefined> => {
+  try {
+    const manifest = await readJson<BuiltManifest>(
+      path.join(outputDir, 'manifest.json'),
+    );
+    const { version } = await readJson<{ version?: string }>(
+      path.join(outputDir, 'package.json'),
+    );
+
+    return { manifest, version };
+  } catch {
+    return undefined;
+  }
+};
+
 // The logo is declared in the manifest as a path into the app source, which is
 // not part of the build output the tarball carries.
 const resolveLogoPath = ({
@@ -35,7 +52,7 @@ const resolveLogoPath = ({
 
 export type AppDeployOptions = {
   tarballPath: string;
-  appPath: string;
+  appPath?: string;
   remote?: string;
   serverUrl?: string;
   token?: string;
@@ -59,17 +76,27 @@ const innerAppDeploy = async (
 
   onProgress?.(`Uploading ${tarballPath}...`);
 
+  // appBuild packs the tarball inside the output directory, so the app root is
+  // two levels up from it when the caller did not name one.
+  const appPath =
+    options.appPath ?? path.resolve(path.dirname(tarballPath), '..', '..');
+  const outputDir = path.join(appPath, OUTPUT_DIR);
+
   // The tarball is packed from the output directory, so the identity the
   // server registers is read from the same files the archive carries.
-  const outputDir = path.join(options.appPath, OUTPUT_DIR);
+  const built = await readBuiltIdentity(outputDir);
 
-  const manifest = await readJson<BuiltManifest>(
-    path.join(outputDir, 'manifest.json'),
-  );
-  const { version } = await readJson<{ version?: string }>(
-    path.join(outputDir, 'package.json'),
-  );
+  if (!isDefined(built)) {
+    return {
+      success: false,
+      error: {
+        code: APP_ERROR_CODES.DEPLOY_FAILED,
+        message: `Could not read manifest.json and package.json in ${outputDir}. Build the app first, or pass appPath.`,
+      },
+    };
+  }
 
+  const { manifest, version } = built;
   const universalIdentifier = manifest.application?.universalIdentifier;
 
   if (!isDefined(universalIdentifier) || !isDefined(version)) {
@@ -83,7 +110,7 @@ const innerAppDeploy = async (
   }
 
   const logoPath = resolveLogoPath({
-    appPath: options.appPath,
+    appPath,
     logo: manifest.application?.logo,
   });
 
