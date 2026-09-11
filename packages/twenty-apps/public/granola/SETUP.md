@@ -1,6 +1,6 @@
 # Set up Granola
 
-1. In a Granola Business or Enterprise workspace, create an API key from **Settings → Connectors → API keys**. Workspace keys sync notes shared with the whole workspace; personal keys also sync the owner's own notes.
+1. In a Granola Business or Enterprise workspace, create an API key from **Settings → Connectors → API keys**. One key serves the whole Twenty workspace; members cannot connect their own Granola accounts yet. Workspace keys sync notes shared with the whole workspace; personal keys also sync the owner's own notes.
 2. Install Granola in Twenty, then open **Settings → Applications → Granola → Settings**. You need application-management permission.
 3. Paste the key and choose **Connect**. The key is saved as a secret application variable. The app checks it, detects the key type, registers a signed webhook, and queues the last 31 days of notes. The **Connecting** button keeps its loader and label visible until setup finishes, then the API key card shows **Connected**.
 4. If connection setup fails, an error appears below the key field. Choose **Connect** to retry, or **Cancel** to remove the saved key and start again. Choosing **Connect** also repairs a missing or paused Granola endpoint. The app never re-enables a paused endpoint on its own; the daily catch-up only imports notes updated in the last two days.
