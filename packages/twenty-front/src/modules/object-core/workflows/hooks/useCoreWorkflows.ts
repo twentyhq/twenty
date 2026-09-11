@@ -12,7 +12,6 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   CoreWorkflowOrderByDirection,
@@ -39,11 +38,10 @@ export const useCoreWorkflows = ({
   tableId?: string;
 } = {}) => {
   const apolloCoreClient = useApolloCoreClient();
-  const scopedTableId = useWorkspaceSurfaceScopedComponentInstanceId(tableId);
 
   const sortedFieldByTable = useAtomFamilyStateValue(
     sortedFieldByTableFamilyState,
-    { tableId: scopedTableId },
+    { tableId: tableId },
   );
 
   const sortValue = sortedFieldByTable ?? CORE_WORKFLOWS_INITIAL_SORT;

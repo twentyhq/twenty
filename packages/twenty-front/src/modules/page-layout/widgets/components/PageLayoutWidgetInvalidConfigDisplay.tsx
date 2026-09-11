@@ -26,7 +26,7 @@ export const PageLayoutWidgetInvalidConfigDisplay = ({
   return (
     <StyledInvalidConfigContainer>
       <div id={tooltipId}>
-        <Status color="red" text={text} />
+        <Status color="red">{text}</Status>
       </div>
       <AppTooltip
         anchorSelect={`#${tooltipId}`}
