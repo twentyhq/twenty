@@ -71,4 +71,36 @@ describe('shouldGenerateFieldFakeValue', () => {
 
     expect(shouldGenerateFieldFakeValue(field)).toBe(true);
   });
+
+  it('should return true for many-to-one morph relation fields', () => {
+    const field = getFlatFieldMetadataMock({
+      objectMetadataId: '20202020-0000-0000-0000-000000000001',
+      isSystem: true,
+      isActive: true,
+      type: FieldMetadataType.MORPH_RELATION,
+      name: 'targetCompany',
+      universalIdentifier: 'morph-relation-field-universal-id',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    });
+
+    expect(shouldGenerateFieldFakeValue(field)).toBe(true);
+  });
+
+  it('should return false for one-to-many morph relation fields', () => {
+    const field = getFlatFieldMetadataMock({
+      objectMetadataId: '20202020-0000-0000-0000-000000000001',
+      isSystem: true,
+      isActive: true,
+      type: FieldMetadataType.MORPH_RELATION,
+      name: 'targetCompanies',
+      universalIdentifier: 'morph-relation-one-to-many-field-universal-id',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    });
+
+    expect(shouldGenerateFieldFakeValue(field)).toBe(false);
+  });
 });

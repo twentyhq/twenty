@@ -10,6 +10,12 @@ export const shouldDisplayFormMultiEditField = (
     return false;
   }
 
+  // Unlike a workflow action, multi-edit is a UI editing surface, so it honours
+  // the field's UI-editability on top of what an automation is allowed to write
+  if ((fieldMetadataItem.isUIEditable ?? true) === false) {
+    return false;
+  }
+
   if (fieldMetadataItem.isUnique === true) {
     return false;
   }

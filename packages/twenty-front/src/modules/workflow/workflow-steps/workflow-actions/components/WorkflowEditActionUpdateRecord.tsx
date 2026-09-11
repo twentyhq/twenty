@@ -11,12 +11,12 @@ import { type WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { type UpdateRecordFormData } from '@/workflow/workflow-steps/workflow-actions/types/update-record-form-data.type';
+import { getObjectMetadataItemsManageableByAutomation } from '@/workflow/workflow-steps/workflow-actions/utils/getObjectMetadataItemsManageableByAutomation';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 import { HorizontalSeparator } from 'twenty-ui/layout';
 import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
@@ -41,21 +41,17 @@ export const WorkflowEditActionUpdateRecord = ({
 }: WorkflowEditActionUpdateRecordProps) => {
   const { getSelectIconPropsFromObjectMetadataItem } =
     useObjectMetadataSelectHelpers();
-  const { activeNonSystemObjectMetadataItems } =
-    useFilteredObjectMetadataItems();
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+
+  const selectableObjectMetadataItems =
+    getObjectMetadataItemsManageableByAutomation(activeObjectMetadataItems);
 
   const availableMetadata: Array<SelectOption<string>> =
-    activeNonSystemObjectMetadataItems
-      .filter((objectMetadataItem) =>
-        canObjectBeManagedByAutomation({
-          nameSingular: objectMetadataItem.nameSingular,
-        }),
-      )
-      .map((item) => ({
-        label: item.labelPlural,
-        value: item.nameSingular,
-        ...getSelectIconPropsFromObjectMetadataItem(item),
-      }));
+    selectableObjectMetadataItems.map((item) => ({
+      label: item.labelPlural,
+      value: item.nameSingular,
+      ...getSelectIconPropsFromObjectMetadataItem(item),
+    }));
 
   const [formData, setFormData] = useState<UpdateRecordFormData>({
     objectNameSingular: action.settings.input.objectName,
@@ -89,7 +85,7 @@ export const WorkflowEditActionUpdateRecord = ({
     saveAction(newFormData);
   };
 
-  const selectedObjectMetadataItem = activeNonSystemObjectMetadataItems.find(
+  const selectedObjectMetadataItem = selectableObjectMetadataItems.find(
     (item) => item.nameSingular === formData.objectNameSingular,
   );
 

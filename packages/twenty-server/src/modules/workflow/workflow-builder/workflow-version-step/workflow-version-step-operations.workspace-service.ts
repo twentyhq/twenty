@@ -379,6 +379,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         const activeObjectMetadataItem =
           await this.objectMetadataRepository.findOne({
             where: { workspaceId, isActive: true, isSystem: false },
+            order: { nameSingular: 'ASC' },
           });
 
         return {
@@ -400,6 +401,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         const activeObjectMetadataItem =
           await this.objectMetadataRepository.findOne({
             where: { workspaceId, isActive: true, isSystem: false },
+            order: { nameSingular: 'ASC' },
           });
 
         return {
@@ -423,6 +425,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         const activeObjectMetadataItem =
           await this.objectMetadataRepository.findOne({
             where: { workspaceId, isActive: true, isSystem: false },
+            order: { nameSingular: 'ASC' },
           });
 
         return {
@@ -444,6 +447,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         const activeObjectMetadataItem =
           await this.objectMetadataRepository.findOne({
             where: { workspaceId, isActive: true, isSystem: false },
+            order: { nameSingular: 'ASC' },
           });
 
         return {
@@ -466,6 +470,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         const activeObjectMetadataItem =
           await this.objectMetadataRepository.findOne({
             where: { workspaceId, isActive: true, isSystem: false },
+            order: { nameSingular: 'ASC' },
           });
 
         return {
@@ -488,6 +493,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         const activeObjectMetadataItem =
           await this.objectMetadataRepository.findOne({
             where: { workspaceId, isActive: true, isSystem: false },
+            order: { nameSingular: 'ASC' },
           });
 
         return {
