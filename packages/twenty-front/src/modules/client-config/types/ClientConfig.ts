@@ -4,6 +4,7 @@ import {
   type Billing,
   type Captcha,
   type ClientAiModelConfig,
+  type ClientAiModelTierConfig,
   type ClientConfigMaintenanceMode,
   type PublicFeatureFlag,
   type Sentry,
@@ -15,6 +16,7 @@ import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 export type ClientConfig = {
   appVersion?: string;
   aiModels: Array<ClientAiModelConfig>;
+  aiModelTiers: Array<ClientAiModelTierConfig>;
   analyticsEnabled: boolean;
   api: ApiConfig;
   authProviders: AuthProviders;

@@ -14,10 +14,10 @@
   background: var(--t-background-tertiary);
 }
 
-.radioContainer {
+.container > :first-child {
+  inset-block-start: var(--t-spacing-2);
+  inset-inline-end: var(--t-spacing-2);
   position: absolute;
-  right: var(--t-spacing-2);
-  top: var(--t-spacing-2);
 }
 
 .cardInner {

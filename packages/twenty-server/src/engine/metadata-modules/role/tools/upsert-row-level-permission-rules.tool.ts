@@ -48,7 +48,7 @@ const rowLevelPermissionPredicateSchema = z.object({
     .nullable()
     .optional()
     .describe(
-      'Dynamic comparison: id of a field on the workspaceMember object whose value for the CURRENT user is substituted at query time. Use the workspaceMember "id" field to express "matches the current user".',
+      'Dynamic comparison: id of a field on the workspaceMember object whose value for the CURRENT user is substituted at query time. Use the workspaceMember "id" field to express "matches the current user", or a many-to-one relation field to compare against a relation on the record pointing at the same object.',
     ),
   workspaceMemberSubFieldName: z
     .string()
@@ -118,6 +118,7 @@ export const createUpsertRowLevelPermissionRulesTool = (
   description: `Set row-level permission rules restricting which records members with a role can see on a given object (enterprise feature).
 
 Example, "members with this role only see records where the owner field matches the current user": pass one predicate with fieldMetadataId = the owner field on the object, operand = IS, and workspaceMemberFieldMetadataId = the "id" field of the workspaceMember object (resolved to the current user at query time). Use metadata tools to look up field ids.
+The same works between relations: for "only records in my region", pass fieldMetadataId = a many-to-one relation on the object and workspaceMemberFieldMetadataId = a many-to-one relation on workspaceMember pointing at the same object, with operand IS.
 Combine several predicates with predicateGroups (AND / OR): give each new group a client-generated UUID and reference it from predicates via rowLevelPermissionPredicateGroupId.
 IMPORTANT: this replaces the full rule set for the role + object. Predicates or groups omitted from the lists are deleted; empty lists clear all rules. System-managed roles (like Admin) cannot be changed.`,
   inputSchema: upsertRowLevelPermissionRulesSchema,

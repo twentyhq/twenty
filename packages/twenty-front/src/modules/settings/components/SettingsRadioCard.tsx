@@ -1,11 +1,12 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useContext, useId } from 'react';
 import { CardContent } from 'twenty-ui/surfaces';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Radio } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledRadioCardContentContainer = styled.div`
+const StyledRadioCardContentContainer = styled.label`
   > div {
     align-items: center;
     border: 1px solid ${themeCssVariables.border.color.medium};
@@ -42,36 +43,40 @@ const StyledDescription = styled.div`
 
 type SettingsRadioCardProps = {
   value: string;
-  handleSelect: (value: string) => void;
-  isSelected: boolean;
   title: string;
   description?: string;
   Icon?: IconComponent;
-  role?: string;
-  ariaChecked?: boolean;
 };
 
 export const SettingsRadioCard = ({
   value,
-  handleSelect,
   title,
   description,
-  isSelected,
   Icon,
 }: SettingsRadioCardProps) => {
+  const titleId = useId();
+  const descriptionId = useId();
   const { theme } = useContext(ThemeContext);
-  const onClick = () => handleSelect(value);
+  const hasDescription = isNonEmptyString(description);
 
   return (
     <StyledRadioCardContentContainer>
-      <CardContent tabIndex={0} onClick={onClick}>
+      <CardContent>
         {Icon && <Icon size={theme.icon.size.xl} color={theme.color.gray10} />}
         <span>
-          {title && <StyledTitle>{title}</StyledTitle>}
-          {description && <StyledDescription>{description}</StyledDescription>}
+          {title && <StyledTitle id={titleId}>{title}</StyledTitle>}
+          {hasDescription && (
+            <StyledDescription id={descriptionId}>
+              {description}
+            </StyledDescription>
+          )}
         </span>
         <StyledRadioContainer>
-          <Radio value={value} checked={isSelected} />
+          <Radio
+            value={value}
+            aria-labelledby={titleId}
+            aria-describedby={hasDescription ? descriptionId : undefined}
+          />
         </StyledRadioContainer>
       </CardContent>
     </StyledRadioCardContentContainer>

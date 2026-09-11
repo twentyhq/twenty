@@ -6,10 +6,10 @@ import { EditorContent } from '@tiptap/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
+import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
 import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
@@ -22,24 +22,15 @@ import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHi
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
-import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
 import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedText';
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
-import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
-import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
-import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { agentChatPendingQuestionComponentSelector } from '@/ai/states/selectors/agentChatPendingQuestionComponentSelector';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { Select } from '@/ui/input/components/Select';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { type SelectOption } from 'twenty-ui/input';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SETTINGS_AI_TABS } from '~/pages/settings/ai/constants/SettingsAiTabs';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledInputArea = styled(StyledAiChatContentContainer)<{
   isMobile: boolean;
@@ -155,31 +146,11 @@ const StyledRightButtonsContainer = styled.div`
 
 export const AiChatEditorSection = () => {
   const { t } = useLingui();
-  const navigateSettings = useNavigateSettings();
-  const hasAiSettingsPermission = useHasPermissionFlag(
-    PermissionFlagType.AI_SETTINGS,
-  );
   const isMobile = useIsMobile();
   const isComposerCentered = useIsAiChatComposerCentered();
   const hasReachedAiChatCreditsCap = useHasReachedAiChatCreditsCap();
-  const { enabledModels } = useWorkspaceAiModelAvailability();
-  const hasNoEnabledModels = enabledModels.length === 0;
-  const { options, pinnedOption } = useAiModelOptions({
-    variant: 'pinned-default',
-  });
-
-  const smartModelOptions: SelectOption<string | null>[] = options;
-  const defaultPinnedOption: SelectOption<string | null> | undefined =
-    pinnedOption
-      ? {
-          ...pinnedOption,
-          value: null,
-        }
-      : undefined;
-  const setAgentChatUserSelectedModel = useSetAtomState(
-    agentChatUserSelectedModelState,
-  );
-  const { selectedModelId } = useAgentChatModelId();
+  const aiModels = useAtomStateValue(aiModelsState);
+  const hasNoEnabledModels = aiModels.length === 0;
 
   const { editor, handleSendAndClear } = useAiChatEditor();
 
@@ -204,26 +175,7 @@ export const AiChatEditorSection = () => {
         <AgentChatContextPreview />
         {hasNoEnabledModels && (
           <AiChatInlineBanner
-            message={
-              hasAiSettingsPermission
-                ? t`No AI models are enabled.`
-                : t`Ask your workspace admin to enable an AI model.`
-            }
-            button={
-              hasAiSettingsPermission
-                ? {
-                    title: t`Configure models`,
-                    onClick: () =>
-                      navigateSettings(
-                        SettingsPath.AI,
-                        undefined,
-                        undefined,
-                        undefined,
-                        SETTINGS_AI_TABS.TABS_IDS.MODELS,
-                      ),
-                  }
-                : undefined
-            }
+            message={t`No AI provider is configured on this instance.`}
           />
         )}
         {hasReachedAiChatCreditsCap && <AIChatNoMoreBillingCreditsBanner />}
@@ -242,17 +194,9 @@ export const AiChatEditorSection = () => {
                 <AiChatContextUsageButton />
               </StyledLeftButtonsContainer>
               <StyledRightButtonsContainer>
-                <Select
-                  dropdownId="ai-chat-smart-model-select"
-                  value={selectedModelId}
-                  onChange={setAgentChatUserSelectedModel}
-                  options={smartModelOptions}
-                  pinnedOption={defaultPinnedOption}
+                <AiModelTierDropdown
+                  dropdownId="ai-chat-model-tier-dropdown"
                   disabled={hasNoEnabledModels}
-                  selectSizeVariant="small"
-                  showContextualTextInControl={false}
-                  withSearchInput
-                  dropdownOffset={{ x: 0, y: 8 }}
                 />
                 <SendMessageButton
                   onSend={handleSendAndClear}
