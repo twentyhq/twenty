@@ -49,6 +49,7 @@ const isUsableBaseManifest = (manifest: unknown): manifest is Manifest => {
     viewFields,
     pageLayouts,
     pageLayoutTabs,
+    pageLayoutWidgets,
     navigationMenuItems,
   } = manifest as Partial<Manifest>;
 
@@ -62,6 +63,7 @@ const isUsableBaseManifest = (manifest: unknown): manifest is Manifest => {
     (!isDefined(viewFields) || isEntityList(viewFields)) &&
     (!isDefined(pageLayouts) || isEntityList(pageLayouts)) &&
     (!isDefined(pageLayoutTabs) || isEntityList(pageLayoutTabs)) &&
+    (!isDefined(pageLayoutWidgets) || isEntityList(pageLayoutWidgets)) &&
     (!isDefined(navigationMenuItems) || isEntityList(navigationMenuItems))
   );
 };

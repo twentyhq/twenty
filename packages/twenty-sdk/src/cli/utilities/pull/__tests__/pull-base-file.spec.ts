@@ -282,6 +282,21 @@ describe('pull base file', () => {
     expect(await readBase()).toBeNull();
   });
 
+  it('should ignore a base whose page layout widgets are not a list', async () => {
+    await writeRawBaseFile(
+      JSON.stringify({
+        version: 1,
+        applicationUniversalIdentifier: APP_UID,
+        manifest: {
+          ...MANIFEST,
+          pageLayoutWidgets: { universalIdentifier: PAGE_LAYOUT_TAB_UID },
+        },
+      }),
+    );
+
+    expect(await readBase()).toBeNull();
+  });
+
   it('should return null when no base file has been written', async () => {
     expect(await readBase()).toBeNull();
   });

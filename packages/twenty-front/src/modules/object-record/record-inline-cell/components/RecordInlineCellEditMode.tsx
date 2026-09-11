@@ -1,3 +1,4 @@
+import { getFloatingReferenceScale } from '@/ui/layout/overlay/utils/getFloatingReferenceScale';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
@@ -74,11 +75,8 @@ export const RecordInlineCellEditMode = ({
     strategy: 'fixed',
     middleware: [
       flip(),
-      offset(({ rects, elements }) => {
-        const referenceScale =
-          elements.reference instanceof HTMLElement
-            ? rects.reference.width / elements.reference.offsetWidth
-            : 1;
+      offset((state) => {
+        const referenceScale = getFloatingReferenceScale(state);
 
         return {
           mainAxis: (isCentered ? -26 : -29) * referenceScale,
