@@ -1,9 +1,9 @@
 import {
   GRANOLA_TRANSCRIPT_MAX_PAGES,
-  GRANOLA_TRANSCRIPT_PAGE_INTERVAL_MILLISECONDS,
   GRANOLA_TRANSCRIPT_PAGE_SIZE,
   GRANOLA_TRANSCRIPT_TIMEOUT_MILLISECONDS,
 } from 'src/constants/granola-transcript.constant';
+import { GRANOLA_PAGE_INTERVAL_MILLISECONDS } from 'src/constants/granola-api.constant';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
 import { GranolaTranscriptLimitError } from 'src/logic-functions/types/granola-transcript-limit-error';
 import { type GranolaTranscriptItem } from 'src/logic-functions/types/granola-api.type';
@@ -65,7 +65,7 @@ export const fetchGranolaNoteWithTranscriptOrThrow = async ({
     seenCursors.add(page.cursor);
     cursor = page.cursor;
     await new Promise((resolve) =>
-      setTimeout(resolve, GRANOLA_TRANSCRIPT_PAGE_INTERVAL_MILLISECONDS),
+      setTimeout(resolve, GRANOLA_PAGE_INTERVAL_MILLISECONDS),
     );
   }
 
