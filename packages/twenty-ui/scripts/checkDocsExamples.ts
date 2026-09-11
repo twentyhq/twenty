@@ -3,8 +3,21 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 
+import { getDocumentationImportDiagnostics } from '../docs/getDocumentationImportDiagnostics';
+
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const documentationRoot = resolve(packageRoot, '../twenty-docs/ui');
+const packageManifest: { exports: Record<string, unknown> } = JSON.parse(
+  readFileSync(resolve(packageRoot, 'package.json'), 'utf8'),
+);
+const exportedSubpaths = Object.entries(packageManifest.exports)
+  .filter(([, target]) => target !== null)
+  .map(([subpath]) => subpath);
+const exportedModules = new Set(
+  exportedSubpaths.map((subpath) =>
+    subpath === '.' ? 'twenty-ui' : `twenty-ui/${subpath.slice(2)}`,
+  ),
+);
 const configuration = ts.readConfigFile(
   resolve(packageRoot, 'tsconfig.json'),
   ts.sys.readFile,
@@ -39,7 +52,14 @@ const compilerOptions: ts.CompilerOptions = {
   noEmit: true,
   paths: {
     ...options.paths,
-    'twenty-ui/*': [resolve(packageRoot, 'src/*/index.ts')],
+    ...Object.fromEntries(
+      exportedSubpaths
+        .filter((subpath) => !subpath.endsWith('.css'))
+        .map((subpath) => [
+          subpath === '.' ? 'twenty-ui' : `twenty-ui/${subpath.slice(2)}`,
+          [resolve(packageRoot, 'src', subpath, 'index.ts')],
+        ]),
+    ),
   },
 };
 const compilerHost = ts.createCompilerHost(compilerOptions);
@@ -82,6 +102,7 @@ const diagnostics = [
     }
 
     return [
+      ...getDocumentationImportDiagnostics({ source, exportedModules }),
       ...program.getSyntacticDiagnostics(source),
       ...program.getSemanticDiagnostics(source),
     ];
