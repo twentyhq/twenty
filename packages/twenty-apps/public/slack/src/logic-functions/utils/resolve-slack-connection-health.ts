@@ -55,9 +55,6 @@ const probeSlackAuth = async (
 
 const REPORT_SLACK_TOKEN_REJECTED_TIMEOUT_MS = 5_000;
 
-// Best-effort: the platform report only mirrors what this probe already tells
-// the settings tab, so a platform hiccup must not downgrade the health report
-// and a slow platform must not stall the probe past its route budget.
 const reportSlackTokenRejected = async ({
   connectionId,
   slackErrorCode,
