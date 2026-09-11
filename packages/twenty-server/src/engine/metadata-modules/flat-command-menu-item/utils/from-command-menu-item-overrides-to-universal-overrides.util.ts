@@ -90,11 +90,14 @@ export const fromCommandMenuItemOverridesToUniversalOverrides = ({
   pageLayoutUniversalIdentifierById: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
 }): AuthoredOverrides<UniversalCommandMenuItemOverrides> =>
-  mapAuthoredOverrideEntries(overrides, (entry) =>
-    fromCommandMenuItemOverridesToUniversalOverridesEntry({
-      overrides: entry,
-      objectMetadataUniversalIdentifierById,
-      pageLayoutUniversalIdentifierById,
-      shouldThrowOnMissingIdentifier,
-    }),
-  );
+  mapAuthoredOverrideEntries({
+    metadataName: 'commandMenuItem',
+    overrides,
+    mapEntry: (entry) =>
+      fromCommandMenuItemOverridesToUniversalOverridesEntry({
+        overrides: entry,
+        objectMetadataUniversalIdentifierById,
+        pageLayoutUniversalIdentifierById,
+        shouldThrowOnMissingIdentifier,
+      }),
+  });

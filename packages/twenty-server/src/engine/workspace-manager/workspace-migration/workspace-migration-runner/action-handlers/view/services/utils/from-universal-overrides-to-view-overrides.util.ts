@@ -76,9 +76,12 @@ export const fromUniversalOverridesToViewOverrides = ({
   universalOverrides: AuthoredOverrides<UniversalViewOverrides>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): AuthoredOverrides<ViewOverrides> =>
-  mapAuthoredOverrideEntries(universalOverrides, (entry) =>
-    fromUniversalOverridesToViewOverridesEntry({
-      universalOverrides: entry,
-      flatFieldMetadataMaps,
-    }),
-  );
+  mapAuthoredOverrideEntries({
+    metadataName: 'view',
+    overrides: universalOverrides,
+    mapEntry: (entry) =>
+      fromUniversalOverridesToViewOverridesEntry({
+        universalOverrides: entry,
+        flatFieldMetadataMaps,
+      }),
+  });

@@ -68,10 +68,13 @@ export const fromUniversalOverridesToCommandMenuItemOverrides = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatPageLayoutMaps: FlatEntityMaps<FlatPageLayout>;
 }): AuthoredOverrides<CommandMenuItemOverrides> =>
-  mapAuthoredOverrideEntries(universalOverrides, (entry) =>
-    fromUniversalOverridesToCommandMenuItemOverridesEntry({
-      universalOverrides: entry,
-      flatObjectMetadataMaps,
-      flatPageLayoutMaps,
-    }),
-  );
+  mapAuthoredOverrideEntries({
+    metadataName: 'commandMenuItem',
+    overrides: universalOverrides,
+    mapEntry: (entry) =>
+      fromUniversalOverridesToCommandMenuItemOverridesEntry({
+        universalOverrides: entry,
+        flatObjectMetadataMaps,
+        flatPageLayoutMaps,
+      }),
+  });

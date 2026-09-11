@@ -64,10 +64,13 @@ export const fromPageLayoutWidgetOverridesToUniversalOverrides = ({
   pageLayoutTabUniversalIdentifierById: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
 }): AuthoredOverrides<UniversalPageLayoutWidgetOverrides> =>
-  mapAuthoredOverrideEntries(overrides, (entry) =>
-    fromPageLayoutWidgetOverridesToUniversalOverridesEntry({
-      overrides: entry,
-      pageLayoutTabUniversalIdentifierById,
-      shouldThrowOnMissingIdentifier,
-    }),
-  );
+  mapAuthoredOverrideEntries({
+    metadataName: 'pageLayoutWidget',
+    overrides,
+    mapEntry: (entry) =>
+      fromPageLayoutWidgetOverridesToUniversalOverridesEntry({
+        overrides: entry,
+        pageLayoutTabUniversalIdentifierById,
+        shouldThrowOnMissingIdentifier,
+      }),
+  });
