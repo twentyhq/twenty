@@ -1498,6 +1498,19 @@ export type CreateUnsubscribeTopicInput = {
   visibility?: InputMaybe<UnsubscribeTopicVisibility>;
 };
 
+export type CreateUsageLimitInput = {
+  burstValue?: InputMaybe<Scalars['BigInt']['input']>;
+  limitKind: Scalars['String']['input'];
+  limitValue: Scalars['BigInt']['input'];
+  meter: Scalars['String']['input'];
+  operationType: UsageOperationType;
+  periodCount: Scalars['Int']['input'];
+  periodUnit: Scalars['String']['input'];
+  resourceType: UsageResourceType;
+  spenderId?: InputMaybe<Scalars['String']['input']>;
+  spenderType: Scalars['String']['input'];
+};
+
 export type CreateViewFieldGroupInput = {
   id?: InputMaybe<Scalars['UUID']['input']>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2946,6 +2959,7 @@ export type Mutation = {
   createSkill: Skill;
   createSubscriptionPaymentIntent: BillingPaymentIntent;
   createUnsubscribeTopic: UnsubscribeTopic;
+  createUsageLimit: UsageLimit;
   createView: View;
   createViewField: ViewField;
   createViewFieldGroup: ViewFieldGroup;
@@ -3118,6 +3132,7 @@ export type Mutation = {
   updateSkill: Skill;
   updateTimelineActivityType: TimelineActivityType;
   updateUnsubscribeTopic: UnsubscribeTopic;
+  updateUsageLimit: UsageLimit;
   updateUserEmail: Scalars['Boolean']['output'];
   updateView: View;
   updateViewField: ViewField;
@@ -3142,7 +3157,6 @@ export type Mutation = {
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertPermissionFlags: Array<RolePermissionFlag>;
   upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult;
-  upsertUsageLimit: UsageLimit;
   upsertViewWidget: View;
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
@@ -3429,6 +3443,11 @@ export type MutationCreateSubscriptionPaymentIntentArgs = {
 
 export type MutationCreateUnsubscribeTopicArgs = {
   input: CreateUnsubscribeTopicInput;
+};
+
+
+export type MutationCreateUsageLimitArgs = {
+  input: CreateUsageLimitInput;
 };
 
 
@@ -4273,6 +4292,11 @@ export type MutationUpdateUnsubscribeTopicArgs = {
 };
 
 
+export type MutationUpdateUsageLimitArgs = {
+  input: UpdateUsageLimitInput;
+};
+
+
 export type MutationUpdateUserEmailArgs = {
   newEmail: Scalars['String']['input'];
   verifyEmailRedirectPath?: InputMaybe<Scalars['String']['input']>;
@@ -4401,11 +4425,6 @@ export type MutationUpsertPermissionFlagsArgs = {
 
 export type MutationUpsertRowLevelPermissionPredicatesArgs = {
   input: UpsertRowLevelPermissionPredicatesInput;
-};
-
-
-export type MutationUpsertUsageLimitArgs = {
-  input: UpsertUsageLimitInput;
 };
 
 
@@ -5086,6 +5105,9 @@ export type Query = {
   timelineActivityTypes: Array<TimelineActivityType>;
   unsubscribeTopics: Array<UnsubscribeTopic>;
   usageLimits: Array<UsageLimit>;
+  usageQuotaDefinitions: UsageQuotaDefinitions;
+  usageQuotaScopeConsumption?: Maybe<UsageQuotaScopeConsumption>;
+  usageQuotasWithConsumption: Array<UsageQuotaWithConsumption>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
@@ -5548,6 +5570,11 @@ export type QuerySharingRulesArgs = {
 
 export type QuerySkillArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type QueryUsageQuotaScopeConsumptionArgs = {
+  input: UsageQuotaScopeInput;
 };
 
 
@@ -6540,6 +6567,11 @@ export type UpdateUnsubscribeTopicInput = {
   visibility?: InputMaybe<UnsubscribeTopicVisibility>;
 };
 
+export type UpdateUsageLimitInput = {
+  id: Scalars['UUID']['input'];
+  payload: CreateUsageLimitInput;
+};
+
 export type UpdateViewFieldGroupInput = {
   /** The id of the view field group to update */
   id: Scalars['UUID']['input'];
@@ -6743,19 +6775,6 @@ export type UpsertRowLevelPermissionPredicatesResult = {
   predicates: Array<RowLevelPermissionPredicate>;
 };
 
-export type UpsertUsageLimitInput = {
-  burstValue?: InputMaybe<Scalars['BigInt']['input']>;
-  limitKind: Scalars['String']['input'];
-  limitValue: Scalars['BigInt']['input'];
-  meter: Scalars['String']['input'];
-  operationType: UsageOperationType;
-  periodCount: Scalars['Int']['input'];
-  periodUnit: Scalars['String']['input'];
-  resourceType: UsageResourceType;
-  spenderId?: InputMaybe<Scalars['String']['input']>;
-  spenderType: Scalars['String']['input'];
-};
-
 export type UpsertViewWidgetInput = {
   /** View-level settings (layout type, group by, kanban and calendar settings) to apply to the widget view. */
   view?: InputMaybe<UpsertViewWidgetViewSettingsInput>;
@@ -6877,6 +6896,55 @@ export enum UsageOperationType {
   WEB_SEARCH = 'WEB_SEARCH',
   WORKFLOW_EXECUTION = 'WORKFLOW_EXECUTION'
 }
+
+export type UsageQuotaDefinition = {
+  __typename?: 'UsageQuotaDefinition';
+  allowedMeters: Array<Scalars['String']['output']>;
+  allowedOperationTypes: Array<UsageOperationType>;
+  allowedSpenderTypes: Array<Scalars['String']['output']>;
+  resourceType: UsageResourceType;
+};
+
+export type UsageQuotaDefinitions = {
+  __typename?: 'UsageQuotaDefinitions';
+  definitions: Array<UsageQuotaDefinition>;
+  hasAllowancePeriod: Scalars['Boolean']['output'];
+  isIntraWorkspaceLimitEntitled: Scalars['Boolean']['output'];
+};
+
+export type UsageQuotaScopeConsumption = {
+  __typename?: 'UsageQuotaScopeConsumption';
+  consumedValue?: Maybe<Scalars['BigInt']['output']>;
+  periodEnd: Scalars['DateTime']['output'];
+  periodStart: Scalars['DateTime']['output'];
+};
+
+export type UsageQuotaScopeInput = {
+  meter: Scalars['String']['input'];
+  operationType: UsageOperationType;
+  periodUnit: Scalars['String']['input'];
+  resourceType: UsageResourceType;
+  spenderId?: InputMaybe<Scalars['String']['input']>;
+  spenderType: Scalars['String']['input'];
+};
+
+export type UsageQuotaWithConsumption = {
+  __typename?: 'UsageQuotaWithConsumption';
+  consumedValue?: Maybe<Scalars['BigInt']['output']>;
+  id: Scalars['UUID']['output'];
+  isEnforced: Scalars['Boolean']['output'];
+  limitValue: Scalars['BigInt']['output'];
+  meter: Scalars['String']['output'];
+  operationType: UsageOperationType;
+  periodEnd?: Maybe<Scalars['DateTime']['output']>;
+  periodStart?: Maybe<Scalars['DateTime']['output']>;
+  periodUnit: Scalars['String']['output'];
+  remainingValue?: Maybe<Scalars['BigInt']['output']>;
+  resourceType: UsageResourceType;
+  spenderId?: Maybe<Scalars['String']['output']>;
+  spenderLabel?: Maybe<Scalars['String']['output']>;
+  spenderType: Scalars['String']['output'];
+};
 
 export enum UsageResourceType {
   AI = 'AI',
@@ -9313,6 +9381,10 @@ export type SharingRulesQueryVariables = Exact<{
 
 
 export type SharingRulesQuery = { __typename?: 'Query', sharingRules: Array<{ __typename?: 'SharingRule', id: string, objectMetadataId: string, name: string, description?: string | null, granteePrincipalType: RecordSharePrincipalType, granteePrincipalId?: string | null, granteeRoleId?: string | null, accessLevel: SharingRuleAccessLevel, isActive: boolean, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', sharingRuleId?: string | null, id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId?: string | null, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', sharingRuleId?: string | null, id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId?: string | null, objectMetadataId: string }> | null }> };
+export type UsageQuotasWithConsumptionQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UsageQuotasWithConsumptionQuery = { __typename?: 'Query', usageQuotasWithConsumption: Array<{ __typename?: 'UsageQuotaWithConsumption', id: string, resourceType: UsageResourceType, operationType: UsageOperationType, spenderType: string, spenderId?: string | null, spenderLabel?: string | null, periodUnit: string, meter: string, limitValue: any, isEnforced: boolean, consumedValue?: any | null, remainingValue?: any | null, periodStart?: string | null, periodEnd?: string | null }> };
 
 export type ApiKeyFragmentFragment = { __typename?: 'ApiKey', id: string, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } };
 
@@ -10301,6 +10373,7 @@ export const CreateSharingRuleDocument = {"kind":"Document","definitions":[{"kin
 export const DeleteSharingRuleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteSharingRule"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteSharingRule"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SharingRuleFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RowLevelPermissionPredicateFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RowLevelPermissionPredicate"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"operand"}},{"kind":"Field","name":{"kind":"Name","value":"subFieldName"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberSubFieldName"}},{"kind":"Field","name":{"kind":"Name","value":"rowLevelPermissionPredicateGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"positionInRowLevelPermissionPredicateGroup"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RowLevelPermissionPredicateGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RowLevelPermissionPredicateGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"parentRowLevelPermissionPredicateGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"logicalOperator"}},{"kind":"Field","name":{"kind":"Name","value":"positionInRowLevelPermissionPredicateGroup"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SharingRuleFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SharingRule"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"granteePrincipalType"}},{"kind":"Field","name":{"kind":"Name","value":"granteePrincipalId"}},{"kind":"Field","name":{"kind":"Name","value":"granteeRoleId"}},{"kind":"Field","name":{"kind":"Name","value":"accessLevel"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"rowLevelPermissionPredicates"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RowLevelPermissionPredicateFragment"}},{"kind":"Field","name":{"kind":"Name","value":"sharingRuleId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"rowLevelPermissionPredicateGroups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RowLevelPermissionPredicateGroupFragment"}},{"kind":"Field","name":{"kind":"Name","value":"sharingRuleId"}}]}}]}}]} as unknown as DocumentNode<DeleteSharingRuleMutation, DeleteSharingRuleMutationVariables>;
 export const UpdateSharingRuleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateSharingRule"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateSharingRuleInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateSharingRule"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SharingRuleFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RowLevelPermissionPredicateFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RowLevelPermissionPredicate"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"operand"}},{"kind":"Field","name":{"kind":"Name","value":"subFieldName"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberSubFieldName"}},{"kind":"Field","name":{"kind":"Name","value":"rowLevelPermissionPredicateGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"positionInRowLevelPermissionPredicateGroup"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RowLevelPermissionPredicateGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RowLevelPermissionPredicateGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"parentRowLevelPermissionPredicateGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"logicalOperator"}},{"kind":"Field","name":{"kind":"Name","value":"positionInRowLevelPermissionPredicateGroup"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SharingRuleFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SharingRule"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"granteePrincipalType"}},{"kind":"Field","name":{"kind":"Name","value":"granteePrincipalId"}},{"kind":"Field","name":{"kind":"Name","value":"granteeRoleId"}},{"kind":"Field","name":{"kind":"Name","value":"accessLevel"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"rowLevelPermissionPredicates"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RowLevelPermissionPredicateFragment"}},{"kind":"Field","name":{"kind":"Name","value":"sharingRuleId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"rowLevelPermissionPredicateGroups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RowLevelPermissionPredicateGroupFragment"}},{"kind":"Field","name":{"kind":"Name","value":"sharingRuleId"}}]}}]}}]} as unknown as DocumentNode<UpdateSharingRuleMutation, UpdateSharingRuleMutationVariables>;
 export const SharingRulesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SharingRules"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectMetadataId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sharingRules"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objectMetadataId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectMetadataId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SharingRuleFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RowLevelPermissionPredicateFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RowLevelPermissionPredicate"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"operand"}},{"kind":"Field","name":{"kind":"Name","value":"subFieldName"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberSubFieldName"}},{"kind":"Field","name":{"kind":"Name","value":"rowLevelPermissionPredicateGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"positionInRowLevelPermissionPredicateGroup"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RowLevelPermissionPredicateGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RowLevelPermissionPredicateGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"parentRowLevelPermissionPredicateGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"logicalOperator"}},{"kind":"Field","name":{"kind":"Name","value":"positionInRowLevelPermissionPredicateGroup"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SharingRuleFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SharingRule"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"granteePrincipalType"}},{"kind":"Field","name":{"kind":"Name","value":"granteePrincipalId"}},{"kind":"Field","name":{"kind":"Name","value":"granteeRoleId"}},{"kind":"Field","name":{"kind":"Name","value":"accessLevel"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"rowLevelPermissionPredicates"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RowLevelPermissionPredicateFragment"}},{"kind":"Field","name":{"kind":"Name","value":"sharingRuleId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"rowLevelPermissionPredicateGroups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RowLevelPermissionPredicateGroupFragment"}},{"kind":"Field","name":{"kind":"Name","value":"sharingRuleId"}}]}}]}}]} as unknown as DocumentNode<SharingRulesQuery, SharingRulesQueryVariables>;
+export const UsageQuotasWithConsumptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UsageQuotasWithConsumption"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usageQuotasWithConsumption"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"resourceType"}},{"kind":"Field","name":{"kind":"Name","value":"operationType"}},{"kind":"Field","name":{"kind":"Name","value":"spenderType"}},{"kind":"Field","name":{"kind":"Name","value":"spenderId"}},{"kind":"Field","name":{"kind":"Name","value":"spenderLabel"}},{"kind":"Field","name":{"kind":"Name","value":"periodUnit"}},{"kind":"Field","name":{"kind":"Name","value":"meter"}},{"kind":"Field","name":{"kind":"Name","value":"limitValue"}},{"kind":"Field","name":{"kind":"Name","value":"isEnforced"}},{"kind":"Field","name":{"kind":"Name","value":"consumedValue"}},{"kind":"Field","name":{"kind":"Name","value":"remainingValue"}},{"kind":"Field","name":{"kind":"Name","value":"periodStart"}},{"kind":"Field","name":{"kind":"Name","value":"periodEnd"}}]}}]}}]} as unknown as DocumentNode<UsageQuotasWithConsumptionQuery, UsageQuotasWithConsumptionQueryVariables>;
 export const AssignRoleToApiKeyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AssignRoleToApiKey"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"apiKeyId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"assignRoleToApiKey"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"apiKeyId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"apiKeyId"}}},{"kind":"Argument","name":{"kind":"Name","value":"roleId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}}}]}]}}]} as unknown as DocumentNode<AssignRoleToApiKeyMutation, AssignRoleToApiKeyMutationVariables>;
 export const CreateApiKeyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateApiKey"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateApiKeyInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createApiKey"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ApiKeyFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApiKeyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApiKey"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"revokedAt"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]}}]} as unknown as DocumentNode<CreateApiKeyMutation, CreateApiKeyMutationVariables>;
 export const CreateWebhookDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateWebhook"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateWebhookInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createWebhook"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WebhookFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WebhookFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Webhook"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"targetUrl"}},{"kind":"Field","name":{"kind":"Name","value":"operations"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"secret"}}]}}]} as unknown as DocumentNode<CreateWebhookMutation, CreateWebhookMutationVariables>;
