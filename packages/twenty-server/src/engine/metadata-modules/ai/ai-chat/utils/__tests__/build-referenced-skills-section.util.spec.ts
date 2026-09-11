@@ -1,5 +1,7 @@
-import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
-import { buildReferencedSkillsSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-referenced-skills-section.util';
+import {
+  buildReferencedSkillsSection,
+  type ReferencedSkill,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/build-referenced-skills-section.util';
 
 const SKILL_CONTENT = JSON.stringify({
   type: 'doc',
@@ -11,11 +13,11 @@ const SKILL_CONTENT = JSON.stringify({
   ],
 });
 
-const skill = {
+const skill: ReferencedSkill = {
   name: 'workflow-building',
   label: 'Workflow building',
   content: SKILL_CONTENT,
-} as FlatSkill;
+};
 
 describe('buildReferencedSkillsSection', () => {
   it('should return an empty string without referenced skills', () => {

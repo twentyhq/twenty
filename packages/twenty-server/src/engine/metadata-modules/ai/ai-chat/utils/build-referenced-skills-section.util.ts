@@ -3,8 +3,10 @@ import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 import { LOAD_SKILL_TOOL_NAME } from 'src/engine/core-modules/tool-provider/tools';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 
+export type ReferencedSkill = Pick<FlatSkill, 'name' | 'label' | 'content'>;
+
 export const buildReferencedSkillsSection = (
-  referencedSkills: FlatSkill[],
+  referencedSkills: ReferencedSkill[],
 ): string => {
   if (referencedSkills.length === 0) {
     return '';

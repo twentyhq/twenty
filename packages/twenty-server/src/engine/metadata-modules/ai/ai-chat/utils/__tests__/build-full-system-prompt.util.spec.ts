@@ -1,5 +1,5 @@
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
-import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
+import { type ReferencedSkill } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-referenced-skills-section.util';
 
 const WORKSPACE_INSTRUCTIONS_DOCUMENT = JSON.stringify({
   type: 'doc',
@@ -29,7 +29,7 @@ const buildPrompt = (isWorkspaceSetupThread?: boolean) =>
     isWorkspaceSetupThread,
   });
 
-const REFERENCED_SKILL = {
+const REFERENCED_SKILL: ReferencedSkill = {
   name: 'workflow-building',
   label: 'Workflow building',
   content: JSON.stringify({
@@ -41,7 +41,7 @@ const REFERENCED_SKILL = {
       },
     ],
   }),
-} as FlatSkill;
+};
 
 describe('buildFullSystemPrompt', () => {
   it('should inline referenced skills after the skill catalog', () => {
