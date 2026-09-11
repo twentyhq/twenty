@@ -157,9 +157,6 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
   });
 
   it('should still grant the member their own email match after a declined manual link to another member', async () => {
-    // Declining a link that lends another member's access must not cost the
-    // Slack user their own identity: run-as still resolves their own member by
-    // email, and never re-creates or re-updates the link.
     givenStoredLink({
       workspaceMemberId: 'member-2',
       consentState: 'DECLINED',
