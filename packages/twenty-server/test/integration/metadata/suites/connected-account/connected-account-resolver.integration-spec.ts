@@ -78,6 +78,44 @@ describe('connectedAccountResolver (e2e)', () => {
       );
     });
 
+    it('should resolve the account of every message channel the caller can see', async () => {
+      const channelsResponse = await makeMetadataAPIRequestWithMemberRole({
+        query: gql`
+          query MyMessageChannels {
+            myMessageChannels {
+              id
+              connectedAccountId
+            }
+          }
+        `,
+      });
+
+      const accountsResponse = await makeMetadataAPIRequestWithMemberRole({
+        query: gql`
+          query MyConnectedAccounts {
+            myConnectedAccounts {
+              id
+            }
+          }
+        `,
+      });
+
+      expect(channelsResponse.body.errors).toBeUndefined();
+      expect(accountsResponse.body.errors).toBeUndefined();
+
+      const accountIds = accountsResponse.body.data.myConnectedAccounts.map(
+        (account: { id: string }) => account.id,
+      );
+      const channelAccountIds =
+        channelsResponse.body.data.myMessageChannels.map(
+          (messageChannel: { connectedAccountId: string }) =>
+            messageChannel.connectedAccountId,
+        );
+
+      expect(channelAccountIds.length).toBeGreaterThan(0);
+      expect(accountIds).toEqual(expect.arrayContaining(channelAccountIds));
+    });
+
     it('should not return sensitive fields', async () => {
       const response = await makeMetadataAPIRequest({
         query: gql`
