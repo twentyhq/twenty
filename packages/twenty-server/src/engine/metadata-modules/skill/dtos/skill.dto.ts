@@ -44,6 +44,10 @@ export class SkillDTO {
 
   @IsBoolean()
   @Field()
+  isSystem: boolean;
+
+  @IsBoolean()
+  @Field()
   isActive: boolean;
 
   @HideField()

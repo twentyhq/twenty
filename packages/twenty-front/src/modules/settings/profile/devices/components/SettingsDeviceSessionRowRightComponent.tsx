@@ -17,10 +17,10 @@ export const SettingsDeviceSessionRowRightComponent = ({
   return (
     <>
       {session.isImpersonating && (
-        <Status color="orange" text={t`Impersonation`} />
+        <Status color="orange">{t`Impersonation`}</Status>
       )}
       {session.isCurrent ? (
-        <Status color="turquoise" text={t`This device`} />
+        <Status color="turquoise">{t`This device`}</Status>
       ) : (
         <SettingsDeviceSessionRowDropdownMenu userSessionId={session.id} />
       )}
