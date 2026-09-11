@@ -196,9 +196,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
         )}
         {visibility === MessageChannelVisibility.SHARE_EVERYTHING && (
           <>
-            {thread.lastMessageIsDraft && (
-              <Tag color="orange" text={t`Draft`} />
-            )}
+            {thread.lastMessageIsDraft && <Tag color="orange">{t`Draft`}</Tag>}
             <StyledSubject>{thread.subject}</StyledSubject>
             <StyledBody>{thread.lastMessageBody}</StyledBody>
           </>
