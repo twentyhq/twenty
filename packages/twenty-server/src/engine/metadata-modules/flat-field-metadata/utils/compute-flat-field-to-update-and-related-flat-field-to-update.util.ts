@@ -19,6 +19,7 @@ import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-fiel
 import { sanitizeRawUpdateFieldInput } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-raw-update-field-input';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 type ComputeFlatFieldToUpdateAndRelatedFlatFieldToUpdateReturnType = {
@@ -55,6 +56,20 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
     });
 
   const isStandardField = belongsToTwentyStandardApp(fromFlatFieldMetadata);
+  const updatedIsActive = rawUpdateFieldInput.isActive;
+  const dispatchIsActiveToRelatedFlatFieldMetadata = (
+    relatedFlatFieldMetadata: FlatFieldMetadata,
+  ): FlatFieldMetadata =>
+    isSystemBuild || !isDefined(updatedIsActive)
+      ? relatedFlatFieldMetadata
+      : dispatchIsActiveUpdateToAuthoredOverride({
+          metadataName: 'fieldMetadata',
+          flatEntity: relatedFlatFieldMetadata,
+          isActive: updatedIsActive,
+          authorUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier,
+        });
 
   const toFlatFieldMetadata = {
     ...mergeUpdateInExistingRecord({
@@ -116,12 +131,15 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
         flatFieldMetadataMaps,
       });
 
-    const relatedFlatFieldMetadataTo = mergeUpdateInExistingRecord({
-      existing: relatedFlatFieldMetadataFrom as FlatFieldMetadata,
-      properties:
-        FLAT_FIELD_METADATA_RELATION_EDITABLE_PROPERTIES_ON_SIBLING_MORPH_OR_RELATION_UPDATE_CONSTANT,
-      update: updatedEditableFieldProperties,
-    });
+    const relatedFlatFieldMetadataTo =
+      dispatchIsActiveToRelatedFlatFieldMetadata(
+        mergeUpdateInExistingRecord({
+          existing: relatedFlatFieldMetadataFrom as FlatFieldMetadata,
+          properties:
+            FLAT_FIELD_METADATA_RELATION_EDITABLE_PROPERTIES_ON_SIBLING_MORPH_OR_RELATION_UPDATE_CONSTANT,
+          update: updatedEditableFieldProperties,
+        }),
+      );
 
     return {
       flatFieldMetadataFromTo: {
@@ -158,14 +176,15 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
           FLAT_FIELD_METADATA_MORPH_RELATION_EDITABLE_PROPERTIES_ON_SIBLING_MORPH_RELATION_UPDATE_CONSTANT[
             isStandardField && !isSystemBuild ? 'standard' : 'custom'
           ];
-        const relatedFlatFieldMetadataTo = {
-          ...mergeUpdateInExistingRecord({
-            existing: relatedFlatFieldMetadataFrom as FlatFieldMetadata,
-            properties: relatedMorphPropertiesToUpdateTo,
-            update: updatedEditableFieldProperties,
-          }),
-          overrides,
-        };
+        const relatedFlatFieldMetadataTo =
+          dispatchIsActiveToRelatedFlatFieldMetadata({
+            ...mergeUpdateInExistingRecord({
+              existing: relatedFlatFieldMetadataFrom as FlatFieldMetadata,
+              properties: relatedMorphPropertiesToUpdateTo,
+              update: updatedEditableFieldProperties,
+            }),
+            overrides,
+          });
 
         return {
           fromFlatFieldMetadata: relatedFlatFieldMetadataFrom,
@@ -176,12 +195,15 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
     const relatedRelationFlatFieldMetadataTo = relationFlatFieldMetadatas.map<
       FromTo<FlatFieldMetadata, 'flatFieldMetadata'>
     >((relatedFlatFieldMetadataFrom) => {
-      const relatedFlatFieldMetadataTo = mergeUpdateInExistingRecord({
-        existing: relatedFlatFieldMetadataFrom as FlatFieldMetadata,
-        properties:
-          FLAT_FIELD_METADATA_RELATION_EDITABLE_PROPERTIES_ON_SIBLING_MORPH_OR_RELATION_UPDATE_CONSTANT,
-        update: updatedEditableFieldProperties,
-      });
+      const relatedFlatFieldMetadataTo =
+        dispatchIsActiveToRelatedFlatFieldMetadata(
+          mergeUpdateInExistingRecord({
+            existing: relatedFlatFieldMetadataFrom as FlatFieldMetadata,
+            properties:
+              FLAT_FIELD_METADATA_RELATION_EDITABLE_PROPERTIES_ON_SIBLING_MORPH_OR_RELATION_UPDATE_CONSTANT,
+            update: updatedEditableFieldProperties,
+          }),
+        );
 
       return {
         fromFlatFieldMetadata: relatedFlatFieldMetadataFrom,
