@@ -1,11 +1,8 @@
 declare const classNames: {
-  readonly container: 'container';
-  readonly containerLabelLeft: 'containerLabelLeft';
-  readonly radio: 'radio';
-  readonly small: 'small';
-  readonly large: 'large';
-  readonly label: 'label';
-  readonly labelRight: 'labelRight';
-  readonly labelLeft: 'labelLeft';
+  readonly root: 'root';
+  readonly control: 'control';
+  readonly sm: 'sm';
+  readonly md: 'md';
+  readonly indicator: 'indicator';
 };
 export default classNames;

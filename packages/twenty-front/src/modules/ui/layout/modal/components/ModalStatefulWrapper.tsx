@@ -7,7 +7,6 @@ import { useModalContainer } from '@/ui/layout/modal/contexts/ModalContainerCont
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { type ModalStatefulWrapperProps } from '@/ui/layout/modal/types/ModalStatefulWrapperProps';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -33,8 +32,6 @@ export const ModalStatefulWrapper = ({
   autoHeight,
   width,
 }: ModalStatefulWrapperProps) => {
-  const scopedModalInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceId(modalInstanceId);
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
   const { container } = useModalContainer();
@@ -44,7 +41,7 @@ export const ModalStatefulWrapper = ({
 
   const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
-    scopedModalInstanceId,
+    modalInstanceId,
   );
 
   const { closeModal } = useModal();
@@ -52,13 +49,13 @@ export const ModalStatefulWrapper = ({
   const handleClose = () => {
     onClose?.();
     if (shouldCloseModalOnClickOutsideOrEscape) {
-      closeModal(scopedModalInstanceId);
+      closeModal(modalInstanceId);
     }
   };
 
   return (
     <ModalComponentInstanceContext.Provider
-      value={{ instanceId: scopedModalInstanceId }}
+      value={{ instanceId: modalInstanceId }}
     >
       <ClickOutsideListenerContext.Provider
         value={{
@@ -67,7 +64,7 @@ export const ModalStatefulWrapper = ({
       >
         {isModalOpened && (
           <ModalHotkeysAndClickOutsideEffect
-            modalInstanceId={scopedModalInstanceId}
+            modalInstanceId={modalInstanceId}
             modalRef={modalRef}
             onEnter={onEnter}
             isClosable={isClosable}

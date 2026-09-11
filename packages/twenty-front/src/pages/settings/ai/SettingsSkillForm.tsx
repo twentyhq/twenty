@@ -1,604 +1,66 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { styled } from '@linaria/react';
-import { useParams } from 'react-router-dom';
-import { useDebouncedCallback } from 'use-debounce';
-
-import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
-import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
-import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { IconPicker } from '@/ui/input/components/IconPicker';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { TextArea } from '@/ui/input/components/TextArea';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  IconArchive,
-  IconArchiveOff,
-  IconInfoCircle,
-  IconRefresh,
-  IconTrash,
-  useIcons,
-} from 'twenty-ui/icon';
-import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation, useQuery } from '@apollo/client/react';
-import {
-  ActivateSkillDocument,
-  CreateSkillDocument,
-  DeactivateSkillDocument,
-  DeleteSkillDocument,
-  FindOneSkillDocument,
-  UpdateSkillDocument,
-} from '~/generated-metadata/graphql';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
-
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useParams } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/icon';
+import { Section } from 'twenty-ui/layout';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
-const StyledFormContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledIconNameRow = styled.div`
-  align-items: flex-start;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledNameContainer = styled.div`
-  flex: 1;
-`;
-
-const StyledAdvancedSettingsOuterContainer = styled.div`
-  padding-top: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledAdvancedSettingsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  width: 100%;
-`;
-
-const StyledDangerButtonsContainer = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-type SkillFormValues = {
-  name: string;
-  label: string;
-  description: string;
-  content: string;
-  icon: string;
-  isLabelSyncedWithName: boolean;
-};
-
-const DELETE_SKILL_MODAL_ID = 'delete-skill-modal';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { FindOneSkillDocument } from '~/generated-metadata/graphql';
+import { SettingsSkillFormContent } from '~/pages/settings/ai/components/SettingsSkillFormContent';
+import { useNavigateToNotFoundOnLoadFailure } from '~/pages/settings/ai/hooks/useNavigateToNotFoundOnLoadFailure';
+import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
 
 export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const { skillId = '' } = useParams<{ skillId: string }>();
-  const navigate = useNavigateSettings();
-  const navigateApp = useNavigateApp();
-  const { enqueueErrorSnackBar } = useSnackBar();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isReadonlyMode, setIsReadonlyMode] = useState(false);
-  const [originalFormValues, setOriginalFormValues] =
-    useState<SkillFormValues | null>(null);
-  const [initializedSkillId, setInitializedSkillId] = useState<string | null>(
-    null,
-  );
-  const { openModal, closeModal } = useModal();
 
-  const isEditMode = mode === 'edit';
   const isCreateMode = mode === 'create';
 
-  const [formValues, setFormValues] = useState<SkillFormValues>({
-    name: '',
-    label: '',
-    description: '',
-    content: '',
-    icon: 'IconBook',
-    isLabelSyncedWithName: true,
-  });
-
-  const {
-    data,
-    loading,
-    error: skillQueryError,
-  } = useQuery(FindOneSkillDocument, {
+  const { data, loading, error } = useQuery(FindOneSkillDocument, {
     variables: { id: skillId },
     skip: isCreateMode || !skillId,
   });
 
-  useEffect(() => {
-    if (data) {
-      const skill = data?.skill;
-      if (isDefined(skill)) {
-        if (initializedSkillId === skill.id) {
-          return;
-        }
-
-        setInitializedSkillId(skill.id);
-        setIsReadonlyMode(!skill.isCustom);
-
-        const computedNameFromLabel = computeMetadataNameFromLabel(skill.label);
-        const isLabelSyncedWithName = skill.name === computedNameFromLabel;
-
-        const initialValues: SkillFormValues = {
-          name: skill.name,
-          label: skill.label,
-          description: skill.description ?? '',
-          content: skill.content,
-          icon: skill.icon ?? 'IconBook',
-          isLabelSyncedWithName,
-        };
-        setFormValues(initialValues);
-        setOriginalFormValues(initialValues);
-      } else {
-        enqueueErrorSnackBar({
-          message: t`Skill not found`,
-        });
-        navigateApp(AppPath.NotFound);
-      }
-    }
-  }, [data, enqueueErrorSnackBar, initializedSkillId, navigateApp]);
-
-  useEffect(() => {
-    if (skillQueryError) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(skillQueryError)
-          ? skillQueryError
-          : undefined,
-      });
-      navigateApp(AppPath.NotFound);
-    }
-  }, [skillQueryError, enqueueErrorSnackBar, navigateApp]);
-
-  const [createSkill] = useMutation(CreateSkillDocument);
-  const [updateSkill] = useMutation(UpdateSkillDocument);
-  const [deleteSkill] = useMutation(DeleteSkillDocument);
-  const [activateSkill] = useMutation(ActivateSkillDocument);
-  const [deactivateSkill] = useMutation(DeactivateSkillDocument);
-
   const skill = data?.skill;
+  const hasFailedToLoad = !isCreateMode && !loading && !isDefined(skill);
 
-  const handleFieldChange = <K extends keyof SkillFormValues>(
-    fieldName: K,
-    value: SkillFormValues[K],
-  ) => {
-    setFormValues((prev) => {
-      const newValues = { ...prev, [fieldName]: value };
+  useNavigateToNotFoundOnLoadFailure({
+    hasFailedToLoad,
+    error,
+    notFoundMessage: t`Skill not found`,
+  });
 
-      if (fieldName === 'label' && prev.isLabelSyncedWithName) {
-        newValues.name = computeMetadataNameFromLabel(value as string);
-      }
+  if (isCreateMode) {
+    return <SettingsSkillFormContent />;
+  }
 
-      if (fieldName === 'isLabelSyncedWithName' && value === true) {
-        newValues.name = computeMetadataNameFromLabel(prev.label);
-      }
-
-      return newValues;
-    });
-  };
-
-  const validateForm = (): boolean => {
-    return (
-      formValues.name.trim().length > 0 &&
-      formValues.label.trim().length > 0 &&
-      formValues.content.trim().length > 0
-    );
-  };
-
-  const autoSave = useDebouncedCallback(async () => {
-    if (
-      isCreateMode ||
-      isReadonlyMode ||
-      !validateForm() ||
-      isSubmitting ||
-      !skill
-    ) {
-      return;
-    }
-
-    const hasChanges =
-      originalFormValues && !isDeeplyEqual(formValues, originalFormValues);
-
-    if (!hasChanges) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      await updateSkill({
-        variables: {
-          input: {
-            id: skill.id,
-            name: formValues.name,
-            label: formValues.label,
-            description: formValues.description || undefined,
-            content: formValues.content,
-            icon: formValues.icon || undefined,
-          },
-        },
-      });
-
-      setOriginalFormValues({ ...formValues });
-    } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, 1_000);
-
-  useEffect(() => {
-    if (isEditMode && !loading && isDefined(originalFormValues)) {
-      autoSave();
-    }
-  }, [formValues, isEditMode, loading, originalFormValues, autoSave]);
-
-  useEffect(() => {
-    return () => {
-      autoSave.flush();
-    };
-  }, [autoSave]);
-
-  if (!isCreateMode && !loading && !skill) {
+  if (hasFailedToLoad) {
     return null;
   }
 
-  const canSave = !isReadonlyMode && validateForm() && !isSubmitting;
+  if (!isDefined(skill)) {
+    const SkillIcon = getIcon('IconBook');
 
-  const handleSave = async () => {
-    if (isReadonlyMode || !validateForm()) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      if (isCreateMode) {
-        await createSkill({
-          variables: {
-            input: {
-              name: formValues.name,
-              label: formValues.label,
-              description: formValues.description || undefined,
-              content: formValues.content,
-              icon: formValues.icon || undefined,
-            },
-          },
-        });
-        navigate(SettingsPath.AI);
-        return;
-      }
-
-      if (!skill) {
-        return;
-      }
-
-      await updateSkill({
-        variables: {
-          input: {
-            id: skill.id,
-            name: formValues.name,
-            label: formValues.label,
-            description: formValues.description || undefined,
-            content: formValues.content,
-            icon: formValues.icon || undefined,
-          },
-        },
-      });
-
-      navigate(SettingsPath.AI);
-    } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!skill) return;
-
-    setIsSubmitting(true);
-    try {
-      await deleteSkill({
-        variables: { id: skill.id },
-      });
-      closeModal(DELETE_SKILL_MODAL_ID);
-      navigate(SettingsPath.AI);
-    } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleDeactivate = async () => {
-    if (!skill) return;
-
-    setIsSubmitting(true);
-    try {
-      await deactivateSkill({
-        variables: { id: skill.id },
-      });
-      navigate(SettingsPath.AI);
-    } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleActivate = async () => {
-    if (!skill) return;
-
-    setIsSubmitting(true);
-    try {
-      await activateSkill({
-        variables: { id: skill.id },
-      });
-      navigate(SettingsPath.AI);
-    } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setFormValues({
-      name: '',
-      label: '',
-      description: '',
-      content: '',
-      icon: 'IconBook',
-      isLabelSyncedWithName: true,
-    });
-    navigate(SettingsPath.AI);
-  };
-
-  const breadcrumbText = !isCreateMode
-    ? loading
-      ? t`Skill`
-      : skill?.label
-    : t`New Skill`;
-
-  const isNameEditEnabled =
-    !isReadonlyMode && !formValues.isLabelSyncedWithName;
-
-  const apiNameTooltipText = formValues.isLabelSyncedWithName
-    ? t`Deactivate "Synchronize Label and API Name" to set a custom API name`
-    : t`Input must be in camel case and cannot start with a number`;
-
-  const title = isCreateMode ? (
-    t`New Skill`
-  ) : loading ? (
-    t`Skill`
-  ) : (
-    <SettingsEditableTitle
-      instanceId="skill-label-input"
-      disabled={isReadonlyMode}
-      value={formValues.label}
-      onChange={(value) => handleFieldChange('label', value)}
-      placeholder={t`Skill name`}
-    />
-  );
-
-  const SkillIcon = getIcon(formValues.icon || 'IconBook');
-
-  return (
-    <SettingsPageLayout
-      title={title}
-      icon={<SkillIcon size={theme.icon.size.md} color={theme.color.blue9} />}
-      actionButton={
-        isCreateMode ? (
-          <SaveAndCancelButtons
-            onSave={handleSave}
-            onCancel={handleCancel}
-            isSaveDisabled={!canSave}
-            isLoading={isSubmitting}
-            isCancelDisabled={isSubmitting}
-          />
-        ) : undefined
-      }
-      links={[
-        {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.General),
-        },
-        { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
-        { children: breadcrumbText },
-      ]}
-    >
-      <SettingsPageContainer>
-        {isEditMode && loading ? (
+    return (
+      <SettingsPageLayout
+        title={t`Skill`}
+        icon={<SkillIcon size={theme.icon.size.md} color={theme.color.blue9} />}
+        links={getSettingsAiBreadcrumbLinks(t`Skill`)}
+      >
+        <SettingsPageContainer>
           <Section>
             <Skeleton height={400} borderRadius={4} />
           </Section>
-        ) : (
-          <>
-            <Section>
-              <H2Title
-                title={t`About`}
-                description={t`Define the name and instructions for this skill`}
-              />
-              <StyledFormContainer>
-                <StyledIconNameRow>
-                  <IconPicker
-                    selectedIconKey={formValues.icon || 'IconBook'}
-                    onChange={({ iconKey }) =>
-                      handleFieldChange('icon', iconKey)
-                    }
-                    disabled={isReadonlyMode}
-                  />
-                  <StyledNameContainer>
-                    <SettingsTextInput
-                      instanceId="skill-label-field-input"
-                      placeholder={t`Skill name`}
-                      value={formValues.label}
-                      onChange={(value) => handleFieldChange('label', value)}
-                      disabled={isReadonlyMode}
-                      fullWidth
-                    />
-                  </StyledNameContainer>
-                </StyledIconNameRow>
+        </SettingsPageContainer>
+      </SettingsPageLayout>
+    );
+  }
 
-                <TextArea
-                  textAreaId="skill-description-textarea"
-                  placeholder={t`Write a description`}
-                  minRows={3}
-                  maxRows={5}
-                  value={formValues.description}
-                  onChange={(value) =>
-                    handleFieldChange('description', value ?? '')
-                  }
-                  disabled={isReadonlyMode}
-                />
-
-                <FormAdvancedTextFieldInput
-                  key={originalFormValues?.content ?? 'loading'}
-                  label={t`Instructions`}
-                  readonly={isReadonlyMode}
-                  defaultValue={formValues.content}
-                  profile={AI_INSTRUCTIONS_EDITOR_PROFILE}
-                  onChange={(content: string) =>
-                    handleFieldChange('content', content)
-                  }
-                  enableFullScreen={true}
-                  fullScreenBreadcrumbs={[
-                    {
-                      children: formValues.label || t`Skill`,
-                      href: '#',
-                    },
-                    {
-                      children: t`Instructions Editor`,
-                    },
-                  ]}
-                  minHeight={300}
-                />
-
-                <AdvancedSettingsWrapper hideDot>
-                  <StyledAdvancedSettingsOuterContainer>
-                    <StyledAdvancedSettingsContainer>
-                      <SettingsTextInput
-                        instanceId="skill-api-name"
-                        label={t`API Name`}
-                        placeholder={t`mySkill`}
-                        value={formValues.name}
-                        onChange={(value) => handleFieldChange('name', value)}
-                        disabled={!isNameEditEnabled}
-                        fullWidth
-                        RightIcon={() =>
-                          apiNameTooltipText && (
-                            <>
-                              <IconInfoCircle
-                                id="info-circle-id-skill-name"
-                                size={theme.icon.size.md}
-                                color={theme.font.color.tertiary}
-                                style={{ outline: 'none' }}
-                              />
-                              <AppTooltip
-                                anchorSelect="#info-circle-id-skill-name"
-                                title={apiNameTooltipText}
-                                offset={5}
-                                noArrow
-                                place="bottom"
-                                positionStrategy="fixed"
-                                delay={TooltipDelay.shortDelay}
-                              />
-                            </>
-                          )
-                        }
-                      />
-                      <Card rounded>
-                        <SettingsOptionCardContentToggle
-                          Icon={IconRefresh}
-                          title={t`Synchronize Label and API Name`}
-                          description={t`Should changing the label also change the API name?`}
-                          checked={formValues.isLabelSyncedWithName}
-                          disabled={isReadonlyMode}
-                          advancedMode
-                          onChange={(value) =>
-                            handleFieldChange('isLabelSyncedWithName', value)
-                          }
-                        />
-                      </Card>
-                    </StyledAdvancedSettingsContainer>
-                  </StyledAdvancedSettingsOuterContainer>
-                </AdvancedSettingsWrapper>
-              </StyledFormContainer>
-            </Section>
-
-            {skill && (
-              <Section>
-                <H2Title
-                  title={t`Danger zone`}
-                  description={t`Deactivate or delete this skill`}
-                />
-                <StyledDangerButtonsContainer>
-                  <Button
-                    Icon={skill.isActive ? IconArchive : IconArchiveOff}
-                    title={skill.isActive ? t`Deactivate` : t`Activate`}
-                    size="small"
-                    onClick={skill.isActive ? handleDeactivate : handleActivate}
-                  />
-                  {skill.isCustom && (
-                    <Button
-                      Icon={IconTrash}
-                      title={t`Delete`}
-                      size="small"
-                      accent="danger"
-                      variant="secondary"
-                      onClick={() => openModal(DELETE_SKILL_MODAL_ID)}
-                    />
-                  )}
-                </StyledDangerButtonsContainer>
-              </Section>
-            )}
-          </>
-        )}
-      </SettingsPageContainer>
-
-      <ConfirmationModal
-        modalInstanceId={DELETE_SKILL_MODAL_ID}
-        title={t`Delete Skill`}
-        subtitle={t`Are you sure you want to delete this skill? This action cannot be undone.`}
-        onConfirmClick={handleDelete}
-        confirmButtonText={t`Delete`}
-        loading={isSubmitting}
-      />
-    </SettingsPageLayout>
-  );
+  return <SettingsSkillFormContent key={skill.id} skill={skill} />;
 };

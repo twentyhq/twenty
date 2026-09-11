@@ -5,6 +5,7 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
+import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
@@ -25,6 +26,7 @@ import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-
       WorkspaceEntity,
       UserWorkspaceEntity,
       BillingSubscriptionEntity,
+      KeyValuePairEntity,
     ]),
     WorkspaceModule,
     UserVarsModule,

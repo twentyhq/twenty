@@ -1,6 +1,5 @@
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,13 +8,10 @@ export const useSortedArray = <T>(
   arrayToSort: T[],
   tableMetadata: TableMetadata<T>,
 ): T[] => {
-  const scopedTableId = useWorkspaceSurfaceScopedComponentInstanceId(
-    tableMetadata.tableId,
-  );
   const sortedFieldByTable = useAtomFamilyStateValue(
     sortedFieldByTableFamilyState,
     {
-      tableId: scopedTableId,
+      tableId: tableMetadata.tableId,
     },
   );
 

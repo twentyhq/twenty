@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
   ObjectRecordEvent,
   type ObjectRecordCreateEvent,
@@ -8,24 +10,33 @@ import {
   type ObjectRecordUpdateEvent,
   type ObjectRecordUpsertEvent,
 } from 'twenty-shared/database-events';
-import { type ObjectRecord } from 'twenty-shared/types';
+import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { In } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
+import { type RecordShareGate } from 'src/engine/record-share/types/record-share-gate.type';
+import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
+import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
+import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
+import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { isCachedDatabaseEventTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -65,6 +76,7 @@ export class WorkflowDatabaseEventTriggerListener {
     private readonly messageQueueService: MessageQueueService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly recordShareService: RecordShareService,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -353,12 +365,19 @@ export class WorkflowDatabaseEventTriggerListener {
       databaseEventName,
     );
 
+    if (eventListeners.length === 0) {
+      return;
+    }
+
+    const recordShareGate = await this.buildRecordShareGate(payload);
+
     for (const eventListener of eventListeners) {
       for (const eventPayload of payload.events) {
         const shouldTriggerJob = this.shouldTriggerJob({
           eventPayload,
           eventListener,
           action,
+          recordShareGate,
         });
 
         if (shouldTriggerJob) {
@@ -395,15 +414,77 @@ export class WorkflowDatabaseEventTriggerListener {
     );
   }
 
+  private async buildRecordShareGate(
+    payload: WorkspaceEventBatch<ObjectRecordEvent>,
+  ): Promise<RecordShareGate | null> {
+    const { featureFlagsMap, flatApplicationMaps, flatRoleMaps } =
+      await this.workspaceCacheService.getOrRecompute(payload.workspaceId, [
+        'featureFlagsMap',
+        'flatApplicationMaps',
+        'flatRoleMaps',
+      ]);
+
+    if (!featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED]) {
+      return null;
+    }
+
+    const standardApplication = findActiveFlatApplicationByUniversalIdentifier(
+      flatApplicationMaps,
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+
+    return buildRecordShareGate({
+      readability: payload.objectMetadata.readability,
+      isOwningApplication:
+        isDefined(standardApplication) &&
+        payload.objectMetadata.applicationId === standardApplication.id,
+      principalIds: [
+        EVERYONE_PRINCIPAL_ID,
+        standardApplication?.defaultRoleId ??
+          findFlatEntityByUniversalIdentifier({
+            flatEntityMaps: flatRoleMaps,
+            universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+          })?.id,
+      ],
+      fetchRecordSharesByRecordId: async () =>
+        indexRecordSharesByRecordId(
+          await this.recordShareService.findByRecordIds({
+            workspaceId: payload.workspaceId,
+            objectMetadataId: payload.objectMetadata.id,
+            recordIds: payload.events.map((event) => event.recordId),
+          }),
+        ),
+    });
+  }
+
   private shouldTriggerJob({
     eventPayload,
     eventListener,
     action,
-  }: TriggerEvaluationArgs) {
+    recordShareGate,
+  }: TriggerEvaluationArgs & { recordShareGate: RecordShareGate | null }) {
     return (
       this.eventMatchesWatchedFields({ eventPayload, eventListener, action }) &&
-      this.eventMatchesRecordFilter({ eventPayload, eventListener })
+      this.eventMatchesRecordFilter({ eventPayload, eventListener }) &&
+      this.eventMatchesRecordShare({ eventPayload, recordShareGate })
     );
+  }
+
+  private eventMatchesRecordShare({
+    eventPayload,
+    recordShareGate,
+  }: Pick<TriggerEvaluationArgs, 'eventPayload'> & {
+    recordShareGate: RecordShareGate | null;
+  }) {
+    if (!isDefined(recordShareGate)) {
+      return true;
+    }
+
+    return isRecordSharedWithPrincipals({
+      recordShareGate,
+      recordId: eventPayload.recordId,
+      accessLevels: resolveRequiredRecordShareAccessLevels('select'),
+    });
   }
 
   private eventMatchesWatchedFields({

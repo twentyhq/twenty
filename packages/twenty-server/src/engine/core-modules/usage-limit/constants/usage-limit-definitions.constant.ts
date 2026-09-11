@@ -47,7 +47,6 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
         'userWorkspace',
         'apiKey',
         'application',
-        'agent',
       ],
       allowedMeters: ['creditsUsedMicro', 'quantity'],
     },
@@ -80,6 +79,21 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
           limitValueConfigVariable: 'EMAIL_SEND_RATE_LIMITING_LIMIT',
           windowMsConfigVariable: 'EMAIL_SEND_RATE_LIMITING_TTL_IN_MS',
           isOverridable: false,
+        },
+      ],
+    },
+  },
+  [UsageResourceType.WEBHOOK]: {
+    speed: {
+      allowedOperationTypes: [UsageOperationType.WEBHOOK_CALL],
+      allowedSpenderTypes: ['workspace'],
+      defaults: [
+        {
+          spenderType: 'workspace',
+          counterScope: 'perWorkspace',
+          limitValueConfigVariable: 'WEBHOOK_CALL_RATE_LIMITING_LIMIT',
+          windowMsConfigVariable: 'WEBHOOK_CALL_RATE_LIMITING_TTL_IN_MS',
+          isOverridable: true,
         },
       ],
     },

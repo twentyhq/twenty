@@ -38,6 +38,8 @@ const getChatReferenceIdentity = ({
       return { kind, roleId: firstSegment };
     case 'app':
       return { kind, applicationId: firstSegment };
+    case 'skill':
+      return { kind, skillId: firstSegment };
     default:
       return assertUnreachable(kind);
   }

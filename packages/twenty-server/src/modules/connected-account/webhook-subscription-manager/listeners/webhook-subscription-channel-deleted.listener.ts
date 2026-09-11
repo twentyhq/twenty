@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { CALENDAR_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/calendar-channel/constants/calendar-channel-deleted.constant';
 import { type CalendarChannelDeletedEvent } from 'src/engine/metadata-modules/calendar-channel/types/calendar-channel-deleted.type';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
@@ -16,6 +17,7 @@ export class WebhookSubscriptionChannelDeletedListener {
   constructor(
     private readonly messagingWebhookSubscriptionService: MessagingWebhookSubscriptionService,
     private readonly calendarWebhookSubscriptionService: CalendarWebhookSubscriptionService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @OnCustomBatchEvent(MESSAGE_CHANNEL_DELETED_EVENT)
@@ -29,10 +31,13 @@ export class WebhookSubscriptionChannelDeletedListener {
     }
 
     for (const event of batchEvent.events) {
-      await this.messagingWebhookSubscriptionService.deleteSubscription(
-        event.messageChannelId,
-        workspaceId,
-      );
+      await this.messagingWebhookSubscriptionService
+        .deleteSubscription(event.messageChannelId, workspaceId)
+        .catch((error) =>
+          this.exceptionHandlerService.captureExceptions([error], {
+            workspace: { id: workspaceId },
+          }),
+        );
     }
   }
 
@@ -47,10 +52,13 @@ export class WebhookSubscriptionChannelDeletedListener {
     }
 
     for (const event of batchEvent.events) {
-      await this.calendarWebhookSubscriptionService.deleteSubscription(
-        event.calendarChannelId,
-        workspaceId,
-      );
+      await this.calendarWebhookSubscriptionService
+        .deleteSubscription(event.calendarChannelId, workspaceId)
+        .catch((error) =>
+          this.exceptionHandlerService.captureExceptions([error], {
+            workspace: { id: workspaceId },
+          }),
+        );
     }
   }
 }

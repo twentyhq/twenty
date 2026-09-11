@@ -1,4 +1,3 @@
-import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
@@ -23,7 +22,6 @@ import {
 } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -36,7 +34,7 @@ import {
   IconTable,
 } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { MenuItem, MenuItemSelect, MenuItemToggle } from 'twenty-ui/navigation';
+import { MenuItem, MenuItemSelect, MenuItemSwitch } from 'twenty-ui/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
@@ -126,12 +124,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
       : []),
   ];
 
-  const scopedObjectOptionsDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(OBJECT_OPTIONS_DROPDOWN_ID);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedObjectOptionsDropdownId,
+    dropdownId,
   );
 
   return (
@@ -149,8 +144,8 @@ export const ObjectOptionsDropdownLayoutContent = () => {
 
       {!!currentView && (
         <SelectableList
-          selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-          focusId={OBJECT_OPTIONS_DROPDOWN_ID}
+          selectableListInstanceId={dropdownId}
+          focusId={dropdownId}
           selectableItemIdArray={selectableItemIdArray}
         >
           <DropdownMenuItemsContainer scrollable={false}>
@@ -308,18 +303,18 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     );
                   }}
                 >
-                  <MenuItemToggle
+                  <MenuItemSwitch
                     focused={selectedItemId === 'Compact view'}
                     LeftIcon={IconBaselineDensitySmall}
-                    onToggleChange={() =>
+                    onCheckedChange={() =>
                       setAndPersistIsCompactModeActive(
                         !isCompactModeActive,
                         currentView,
                       )
                     }
-                    toggled={isCompactModeActive}
+                    checked={isCompactModeActive}
                     text={t`Compact view`}
-                    toggleSize="small"
+                    size="sm"
                   />
                 </SelectableListItem>
               )}

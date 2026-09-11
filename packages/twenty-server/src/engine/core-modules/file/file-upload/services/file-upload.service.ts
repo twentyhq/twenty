@@ -16,11 +16,11 @@ import { settings } from 'src/engine/constants/settings';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { COMPLETE_FILE_UPLOAD_DEADLINE_MS } from 'src/engine/core-modules/file/file-upload/constants/complete-file-upload-deadline.constant';
 import { MAX_SANITIZABLE_SVG_BYTES } from 'src/engine/core-modules/file/file-upload/constants/max-sanitizable-svg-size.constant';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
+import { type CompletedFileUpload } from 'src/engine/core-modules/file/file-upload/types/completed-file-upload.type';
 import {
   FileUploadException,
   FileUploadExceptionCode,
@@ -250,7 +250,7 @@ export class FileUploadService {
   }: {
     workspaceId: string;
     fileId: string;
-  }): Promise<FileWithSignedUrlDTO> {
+  }): Promise<CompletedFileUpload> {
     const file = await this.findFileOrThrow({ workspaceId, fileId });
     const [fileFolder] = file.path.split('/');
 
@@ -451,7 +451,7 @@ export class FileUploadService {
     file: FileEntity;
     fileFolder: FileFolder;
     workspaceId: string;
-  }): Promise<FileWithSignedUrlDTO> {
+  }): Promise<CompletedFileUpload> {
     return {
       ...file,
       url: await this.fileUrlService.signFileByIdUrl({

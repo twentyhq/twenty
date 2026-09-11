@@ -12,6 +12,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
+import { RecordShareModule } from 'src/engine/record-share/record-share.module';
 import { EventStreamResolver } from 'src/engine/subscriptions/event-stream.resolver';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
@@ -37,6 +38,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     NavigationMenuItemModule,
     I18nModule,
     ApplicationTranslationCatalogModule,
+    RecordShareModule,
   ],
   providers: [
     SubscriptionService,

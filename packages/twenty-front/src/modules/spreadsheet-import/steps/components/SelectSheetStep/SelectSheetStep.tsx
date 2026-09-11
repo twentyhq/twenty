@@ -11,7 +11,7 @@ import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 
 import { ModalContent } from 'twenty-ui/surfaces';
 import { useLingui } from '@lingui/react/macro';
-import { Radio } from 'twenty-ui/input';
+import { Radio, RadioGroup } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type WorkBook } from 'xlsx-ugnis';
 
@@ -101,20 +101,18 @@ export const SelectSheetStep = ({
     <>
       <ModalContent isVerticallyCentered isHorizontallyCentered gap={8}>
         <Heading title={t`Select the sheet to use`} />
-        <StyledRadioContainer>
+        <RadioGroup
+          render={<StyledRadioContainer />}
+          aria-label={t`Select the sheet to use`}
+          value={value}
+          onValueChange={setValue}
+        >
           {sheetNames.map((sheetName) => (
             <StyledRadioItemContainer key={sheetName}>
-              <Radio
-                value={sheetName}
-                label={sheetName}
-                checked={value === sheetName}
-                onCheckedChange={(checked) => {
-                  if (checked) setValue(sheetName);
-                }}
-              />
+              <Radio value={sheetName}>{sheetName}</Radio>
             </StyledRadioItemContainer>
           ))}
-        </StyledRadioContainer>
+        </RadioGroup>
       </ModalContent>
       <StepNavigationButton
         onContinue={() => handleOnContinue(value)}
