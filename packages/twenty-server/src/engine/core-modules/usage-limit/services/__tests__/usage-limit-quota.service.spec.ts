@@ -1,7 +1,6 @@
 import { DiscoveryService } from '@nestjs/core';
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import {
   CacheLockException,
@@ -21,6 +20,7 @@ import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/serv
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
+import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
 import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
 import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
@@ -28,6 +28,7 @@ import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
+import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const MONTH_PERIOD = {
@@ -106,8 +107,9 @@ describe('UsageLimitQuotaService', () => {
     withLock: jest.fn((fn: () => Promise<unknown>) => fn()),
   };
 
-  const clickHouseService = {
-    selectOrThrow: jest.fn().mockResolvedValue([]),
+  const usageAnalyticsService = {
+    getConsumptionRowsForAllScopes: jest.fn().mockResolvedValue([]),
+    getCreditsUsedMicroForBillingPeriod: jest.fn().mockResolvedValue(0),
   };
 
   const usagePeriodService = {
@@ -165,7 +167,10 @@ describe('UsageLimitQuotaService', () => {
     );
     cacheStorage.mget.mockResolvedValue([]);
     cacheStorage.runScript.mockResolvedValue([]);
-    clickHouseService.selectOrThrow.mockResolvedValue([]);
+    usageAnalyticsService.getConsumptionRowsForAllScopes.mockResolvedValue([]);
+    usageAnalyticsService.getCreditsUsedMicroForBillingPeriod.mockResolvedValue(
+      0,
+    );
     periodByUnit = { month: MONTH_PERIOD, week: WEEK_PERIOD };
     usagePeriodService.findCurrentPeriod.mockImplementation(
       async ({ periodUnit }: { periodUnit: PeriodUnit }) =>
@@ -188,7 +193,7 @@ describe('UsageLimitQuotaService', () => {
         },
         { provide: WorkspaceCacheService, useValue: workspaceCacheService },
         { provide: CacheLockService, useValue: cacheLockService },
-        { provide: ClickHouseService, useValue: clickHouseService },
+        { provide: UsageAnalyticsService, useValue: usageAnalyticsService },
         { provide: UsagePeriodService, useValue: usagePeriodService },
         { provide: MetricsService, useValue: metricsService },
         {
@@ -213,7 +218,9 @@ describe('UsageLimitQuotaService', () => {
     cacheStorage.mget.mockResolvedValue([250]);
 
     await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
-    expect(clickHouseService.selectOrThrow).not.toHaveBeenCalled();
+    expect(
+      usageAnalyticsService.getConsumptionRowsForAllScopes,
+    ).not.toHaveBeenCalled();
   });
 
   it('denies on an exhausted warm counter', async () => {
@@ -235,11 +242,13 @@ describe('UsageLimitQuotaService', () => {
     cacheStorage.mget.mockResolvedValue([undefined]);
 
     await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
-    expect(clickHouseService.selectOrThrow).toHaveBeenCalledWith(
-      expect.stringContaining(
-        "toStartOfDay(timestamp, 'UTC') >= {periodStart:DateTime64(3)}",
-      ),
-      expect.anything(),
+    expect(
+      usageAnalyticsService.getConsumptionRowsForAllScopes,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        periodAnchor: 'calendar',
+        periodStart: MONTH_PERIOD.periodStart,
+      }),
     );
   });
 
@@ -252,21 +261,27 @@ describe('UsageLimitQuotaService', () => {
 
     await assertQuotaNotExhausted();
 
-    expect(clickHouseService.selectOrThrow).toHaveBeenCalledTimes(2);
+    expect(
+      usageAnalyticsService.getConsumptionRowsForAllScopes,
+    ).toHaveBeenCalledTimes(2);
   });
 
   it('warms a cold allowance counter from the live allowance minus the stamped consumption', async () => {
     setAllowance(100);
     cacheStorage.mget.mockResolvedValue([undefined]);
-    clickHouseService.selectOrThrow.mockResolvedValue([{ total: '150' }]);
+    usageAnalyticsService.getCreditsUsedMicroForBillingPeriod.mockResolvedValue(
+      150,
+    );
 
     await expect(assertQuotaNotExhausted()).rejects.toThrow(
       UsageLimitException,
     );
-    expect(clickHouseService.selectOrThrow).toHaveBeenCalledWith(
-      expect.stringContaining('periodStart = {periodStart:DateTime64(3)}'),
-      expect.anything(),
-    );
+    expect(
+      usageAnalyticsService.getCreditsUsedMicroForBillingPeriod,
+    ).toHaveBeenCalledWith({
+      workspaceId: 'workspace-1',
+      periodStart: ALLOWANCE_PERIOD.periodStart,
+    });
     expect(cacheStorage.mset).toHaveBeenCalledWith([
       expect.objectContaining({ value: -50 }),
     ]);
@@ -336,7 +351,7 @@ describe('UsageLimitQuotaService', () => {
       setAllowance(2_000);
       creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
       cacheStorage.mget.mockResolvedValue([undefined]);
-      clickHouseService.selectOrThrow.mockResolvedValue([
+      usageAnalyticsService.getConsumptionRowsForAllScopes.mockResolvedValue([
         {
           operationType: UsageOperationType.AI_CHAT_TOKEN,
           userWorkspaceId: 'user-1',
@@ -352,19 +367,14 @@ describe('UsageLimitQuotaService', () => {
 
       await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
 
-      expect(clickHouseService.selectOrThrow).toHaveBeenCalledWith(
-        expect.stringContaining(
-          'AND periodStart = {periodStart:DateTime64(3)}',
-        ),
+      expect(
+        usageAnalyticsService.getConsumptionRowsForAllScopes,
+      ).toHaveBeenCalledWith(
         expect.objectContaining({
-          periodStart: expect.stringContaining('2026-08-15'),
+          periodAnchor: 'billing',
+          periodStart: ALLOWANCE_PERIOD.periodStart,
+          periodEnd: ALLOWANCE_PERIOD.periodEnd,
         }),
-      );
-      expect(clickHouseService.selectOrThrow).toHaveBeenCalledWith(
-        expect.stringContaining(
-          'AND timestamp >= {periodStart:DateTime64(3)} - INTERVAL 1 DAY',
-        ),
-        expect.anything(),
       );
       expect(cacheStorage.mset).toHaveBeenCalledWith([
         expect.objectContaining({ value: 650 }),
@@ -413,7 +423,7 @@ describe('UsageLimitQuotaService', () => {
   it('admits when the warm query fails instead of granting a fresh budget', async () => {
     setLimits([buildLimit({})]);
     cacheStorage.mget.mockResolvedValue([undefined]);
-    clickHouseService.selectOrThrow.mockRejectedValue(
+    usageAnalyticsService.getConsumptionRowsForAllScopes.mockRejectedValue(
       new Error('clickhouse unreachable'),
     );
 
@@ -691,6 +701,159 @@ describe('UsageLimitQuotaService', () => {
         service.getAllowanceRemainingMicro('workspace-1'),
       ).resolves.toBeNull();
       expect(metricsService.incrementCounterBy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('readLimitConsumptions', () => {
+    const readLimitConsumptions = (limits: FlatUsageLimit[]) =>
+      service.readLimitConsumptions({ workspaceId: 'workspace-1', limits });
+
+    const buildConsumptionRow = (
+      overrides: Partial<UsageConsumptionRow> = {},
+    ): UsageConsumptionRow => ({
+      operationType: UsageOperationType.AI_CHAT_TOKEN,
+      userWorkspaceId: '',
+      apiKeyId: '',
+      applicationId: '',
+      agentId: '',
+      workflowId: '',
+      logicFunctionId: '',
+      creditsUsedMicro: '0',
+      quantity: '0',
+      ...overrides,
+    });
+
+    it('reads the consumption of each warm counter', async () => {
+      cacheStorage.mget.mockResolvedValue([700]);
+
+      await expect(
+        readLimitConsumptions([buildLimit({ limitValue: 1_000 })]),
+      ).resolves.toEqual(
+        new Map([
+          [
+            'limit-1',
+            {
+              consumedValue: 300,
+              remainingValue: 700,
+              periodStart: MONTH_PERIOD.periodStart,
+              periodEnd: MONTH_PERIOD.periodEnd,
+            },
+          ],
+        ]),
+      );
+    });
+
+    it('answers a null consumption when the counters cannot be read', async () => {
+      cacheStorage.mget.mockRejectedValue(new Error('Socket closed'));
+
+      await expect(
+        readLimitConsumptions([buildLimit({ limitValue: 1_000 })]),
+      ).resolves.toEqual(
+        new Map([
+          [
+            'limit-1',
+            {
+              consumedValue: null,
+              remainingValue: null,
+              periodStart: MONTH_PERIOD.periodStart,
+              periodEnd: MONTH_PERIOD.periodEnd,
+            },
+          ],
+        ]),
+      );
+      expect(metricsService.incrementCounterBy).not.toHaveBeenCalled();
+    });
+
+    it('reads a cold counter from the consumption rows without warming it', async () => {
+      cacheStorage.mget.mockResolvedValue([undefined]);
+      usageAnalyticsService.getConsumptionRowsForAllScopes.mockResolvedValue([
+        buildConsumptionRow({ creditsUsedMicro: '150' }),
+        buildConsumptionRow({ creditsUsedMicro: '90' }),
+      ]);
+
+      await expect(
+        readLimitConsumptions([buildLimit({ limitValue: 1_000 })]),
+      ).resolves.toEqual(
+        new Map([
+          [
+            'limit-1',
+            {
+              consumedValue: 240,
+              remainingValue: 760,
+              periodStart: MONTH_PERIOD.periodStart,
+              periodEnd: MONTH_PERIOD.periodEnd,
+            },
+          ],
+        ]),
+      );
+      expect(cacheStorage.mset).not.toHaveBeenCalled();
+      expect(cacheLockService.withLock).not.toHaveBeenCalled();
+    });
+
+    it('reads the warm counters from the cache and only the cold ones from ClickHouse', async () => {
+      cacheStorage.mget.mockResolvedValue([700, undefined]);
+      usageAnalyticsService.getConsumptionRowsForAllScopes.mockResolvedValue([
+        buildConsumptionRow({ creditsUsedMicro: '120' }),
+      ]);
+
+      await expect(
+        readLimitConsumptions([
+          buildLimit({ id: 'monthly', limitValue: 1_000 }),
+          buildLimit({ id: 'weekly', periodUnit: 'week', limitValue: 500 }),
+        ]),
+      ).resolves.toEqual(
+        new Map([
+          [
+            'monthly',
+            {
+              consumedValue: 300,
+              remainingValue: 700,
+              periodStart: MONTH_PERIOD.periodStart,
+              periodEnd: MONTH_PERIOD.periodEnd,
+            },
+          ],
+          [
+            'weekly',
+            {
+              consumedValue: 120,
+              remainingValue: 380,
+              periodStart: WEEK_PERIOD.periodStart,
+              periodEnd: WEEK_PERIOD.periodEnd,
+            },
+          ],
+        ]),
+      );
+      expect(
+        usageAnalyticsService.getConsumptionRowsForAllScopes,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        usageAnalyticsService.getConsumptionRowsForAllScopes,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({ periodStart: WEEK_PERIOD.periodStart }),
+      );
+    });
+
+    it('answers a null consumption when ClickHouse cannot be read', async () => {
+      cacheStorage.mget.mockResolvedValue([undefined]);
+      usageAnalyticsService.getConsumptionRowsForAllScopes.mockRejectedValue(
+        new Error('ClickHouse unreachable'),
+      );
+
+      await expect(
+        readLimitConsumptions([buildLimit({ limitValue: 1_000 })]),
+      ).resolves.toEqual(
+        new Map([
+          [
+            'limit-1',
+            {
+              consumedValue: null,
+              remainingValue: null,
+              periodStart: MONTH_PERIOD.periodStart,
+              periodEnd: MONTH_PERIOD.periodEnd,
+            },
+          ],
+        ]),
+      );
     });
   });
 });
