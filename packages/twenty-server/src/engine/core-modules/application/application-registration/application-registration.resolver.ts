@@ -17,6 +17,7 @@ import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
@@ -34,14 +35,14 @@ import { ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/app
 import { FindClaimableApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/find-claimable-application-registration.input';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
 import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
-import { CreateApplicationTarballUploadInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-tarball-upload.input';
+import { CreatePrivateApplicationDeploymentInput } from 'src/engine/core-modules/application/application-registration/dtos/create-private-application-deployment.input';
+import { PrivateApplicationDeploymentDTO } from 'src/engine/core-modules/application/application-registration/dtos/private-application-deployment.dto';
 import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
 import { RotateClientSecretDTO } from 'src/engine/core-modules/application/application-registration/dtos/rotate-client-secret.dto';
 import { TransferApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/transfer-application-registration-ownership.input';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -259,7 +260,7 @@ export class ApplicationRegistrationResolver {
   )
   @Mutation(() => ApplicationRegistrationEntity, {
     deprecationReason:
-      'Use createApplicationTarballUpload and completeApplicationTarballUpload instead.',
+      'Use createPrivateApplicationDeployment and completePrivateApplicationDeployment instead.',
   })
   async uploadAppTarball(
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -297,20 +298,14 @@ export class ApplicationRegistrationResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
   )
-  @Mutation(() => FileUploadTargetDTO)
-  async createApplicationTarballUpload(
-    @Args() {
-      manifest,
-      packageJson,
-      size,
-    }: CreateApplicationTarballUploadInput,
+  @Mutation(() => PrivateApplicationDeploymentDTO)
+  async createPrivateApplicationDeployment(
+    @Args('input') input: CreatePrivateApplicationDeploymentInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<FileUploadTargetDTO> {
-    return this.applicationTarballService.createTarballUpload({
+  ): Promise<PrivateApplicationDeploymentDTO> {
+    return this.applicationTarballService.createPrivateApplicationDeployment({
       workspaceId,
-      manifest,
-      packageJson,
-      size,
+      ...input,
     });
   }
 
@@ -319,13 +314,13 @@ export class ApplicationRegistrationResolver {
     SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
   )
   @Mutation(() => ApplicationRegistrationEntity)
-  async completeApplicationTarballUpload(
-    @Args('fileId', { type: () => String }) fileId: string,
+  async completePrivateApplicationDeployment(
+    @Args('deploymentId', { type: () => UUIDScalarType }) deploymentId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity> {
-    return this.applicationTarballService.completeTarballUpload({
+    return this.applicationTarballService.completePrivateApplicationDeployment({
       workspaceId,
-      fileId,
+      deploymentId,
     });
   }
 

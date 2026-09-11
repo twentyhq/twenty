@@ -2195,6 +2195,12 @@ type CreateApplicationRegistration {
   clientSecret: String!
 }
 
+type PrivateApplicationDeployment {
+  deploymentId: UUID!
+  tarball: FileUploadTarget!
+  logo: FileUploadTarget
+}
+
 type PublicApplicationRegistration {
   id: UUID!
   name: String!
@@ -3932,9 +3938,9 @@ type Mutation {
   createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   deleteApplicationRegistrationVariable(id: String!): Boolean!
-  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration! @deprecated(reason: "Use createApplicationTarballUpload and completeApplicationTarballUpload instead.")
-  createApplicationTarballUpload(manifest: JSON!, packageJson: JSON!, size: Int!): FileUploadTarget!
-  completeApplicationTarballUpload(fileId: String!): ApplicationRegistration!
+  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration! @deprecated(reason: "Use createPrivateApplicationDeployment and completePrivateApplicationDeployment instead.")
+  createPrivateApplicationDeployment(input: CreatePrivateApplicationDeploymentInput!): PrivateApplicationDeployment!
+  completePrivateApplicationDeployment(deploymentId: UUID!): ApplicationRegistration!
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
@@ -4837,6 +4843,18 @@ input UpdateApplicationRegistrationVariablePayload {
   value: String
   resetValue: Boolean
   description: String
+}
+
+input CreatePrivateApplicationDeploymentInput {
+  universalIdentifier: UUID!
+  version: String!
+  tarballSize: Int!
+  logo: PrivateApplicationDeploymentLogoInput
+}
+
+input PrivateApplicationDeploymentLogoInput {
+  filename: String!
+  size: Int!
 }
 
 input TriggerInstallApplicationJobInput {

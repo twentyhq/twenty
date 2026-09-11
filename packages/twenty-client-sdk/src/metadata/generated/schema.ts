@@ -1807,6 +1807,13 @@ export interface CreateApplicationRegistration {
     __typename: 'CreateApplicationRegistration'
 }
 
+export interface PrivateApplicationDeployment {
+    deploymentId: Scalars['UUID']
+    tarball: FileUploadTarget
+    logo?: FileUploadTarget
+    __typename: 'PrivateApplicationDeployment'
+}
+
 export interface PublicApplicationRegistration {
     id: Scalars['UUID']
     name: Scalars['String']
@@ -3369,10 +3376,10 @@ export interface Mutation {
     createApplicationRegistrationVariable: ApplicationRegistrationVariable
     updateApplicationRegistrationVariable: ApplicationRegistrationVariable
     deleteApplicationRegistrationVariable: Scalars['Boolean']
-    /** @deprecated Use createApplicationTarballUpload and completeApplicationTarballUpload instead. */
+    /** @deprecated Use createPrivateApplicationDeployment and completePrivateApplicationDeployment instead. */
     uploadAppTarball: ApplicationRegistration
-    createApplicationTarballUpload: FileUploadTarget
-    completeApplicationTarballUpload: ApplicationRegistration
+    createPrivateApplicationDeployment: PrivateApplicationDeployment
+    completePrivateApplicationDeployment: ApplicationRegistration
     claimApplicationRegistrationOwnership: ApplicationRegistration
     transferApplicationRegistrationOwnership: ApplicationRegistration
     /** @deprecated Use installApplication instead */
@@ -5385,6 +5392,14 @@ export interface CreateApplicationRegistrationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface PrivateApplicationDeploymentGenqlSelection{
+    deploymentId?: boolean | number
+    tarball?: FileUploadTargetGenqlSelection
+    logo?: FileUploadTargetGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface PublicApplicationRegistrationGenqlSelection{
     id?: boolean | number
     name?: boolean | number
@@ -7063,10 +7078,10 @@ export interface MutationGenqlSelection{
     createApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: CreateApplicationRegistrationVariableInput} })
     updateApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: UpdateApplicationRegistrationVariableInput} })
     deleteApplicationRegistrationVariable?: { __args: {id: Scalars['String']} }
-    /** @deprecated Use createApplicationTarballUpload and completeApplicationTarballUpload instead. */
+    /** @deprecated Use createPrivateApplicationDeployment and completePrivateApplicationDeployment instead. */
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
-    createApplicationTarballUpload?: (FileUploadTargetGenqlSelection & { __args: {manifest: Scalars['JSON'], packageJson: Scalars['JSON'], size: Scalars['Int']} })
-    completeApplicationTarballUpload?: (ApplicationRegistrationGenqlSelection & { __args: {fileId: Scalars['String']} })
+    createPrivateApplicationDeployment?: (PrivateApplicationDeploymentGenqlSelection & { __args: {input: CreatePrivateApplicationDeploymentInput} })
+    completePrivateApplicationDeployment?: (ApplicationRegistrationGenqlSelection & { __args: {deploymentId: Scalars['UUID']} })
     claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
     /** @deprecated Use installApplication instead */
@@ -7464,6 +7479,10 @@ export interface CreateApplicationRegistrationVariableInput {applicationRegistra
 export interface UpdateApplicationRegistrationVariableInput {id: Scalars['String'],update: UpdateApplicationRegistrationVariablePayload}
 
 export interface UpdateApplicationRegistrationVariablePayload {value?: (Scalars['String'] | null),resetValue?: (Scalars['Boolean'] | null),description?: (Scalars['String'] | null)}
+
+export interface CreatePrivateApplicationDeploymentInput {universalIdentifier: Scalars['UUID'],version: Scalars['String'],tarballSize: Scalars['Int'],logo?: (PrivateApplicationDeploymentLogoInput | null)}
+
+export interface PrivateApplicationDeploymentLogoInput {filename: Scalars['String'],size: Scalars['Int']}
 
 export interface TriggerInstallApplicationJobInput {universalIdentifier: Scalars['String']}
 
@@ -8827,6 +8846,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isCreateApplicationRegistration = (obj?: { __typename?: any } | null): obj is CreateApplicationRegistration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCreateApplicationRegistration"')
       return CreateApplicationRegistration_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PrivateApplicationDeployment_possibleTypes: string[] = ['PrivateApplicationDeployment']
+    export const isPrivateApplicationDeployment = (obj?: { __typename?: any } | null): obj is PrivateApplicationDeployment => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPrivateApplicationDeployment"')
+      return PrivateApplicationDeployment_possibleTypes.includes(obj.__typename)
     }
     
 

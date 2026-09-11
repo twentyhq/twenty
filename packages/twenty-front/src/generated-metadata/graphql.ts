@@ -1448,6 +1448,13 @@ export type CreatePageLayoutWidgetInput = {
   type: WidgetType;
 };
 
+export type CreatePrivateApplicationDeploymentInput = {
+  logo?: InputMaybe<PrivateApplicationDeploymentLogoInput>;
+  tarballSize: Scalars['Int']['input'];
+  universalIdentifier: Scalars['UUID']['input'];
+  version: Scalars['String']['input'];
+};
+
 export type CreateRoleInput = {
   canAccessAllTools?: InputMaybe<Scalars['Boolean']['input']>;
   canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2887,14 +2894,13 @@ export type Mutation = {
   checkoutSession: BillingSession;
   claimApplicationRegistrationOwnership: ApplicationRegistration;
   completeApplicationFileUploads: CompleteApplicationFileUploadsResult;
-  completeApplicationTarballUpload: ApplicationRegistration;
   completeBookCallOnboardingStep: OnboardingStepSuccess;
   completeFileUpload: FileWithSignedUrl;
+  completePrivateApplicationDeployment: ApplicationRegistration;
   createApiKey: ApiKey;
   createApplicationFileUploads: CreateApplicationFileUploadsResult;
   createApplicationRegistration: CreateApplicationRegistration;
   createApplicationRegistrationVariable: ApplicationRegistrationVariable;
-  createApplicationTarballUpload: FileUploadTarget;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent;
   createCalendarEvent: CreateCalendarEventOutput;
@@ -2922,6 +2928,7 @@ export type Mutation = {
   createPageLayout: PageLayout;
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
+  createPrivateApplicationDeployment: PrivateApplicationDeployment;
   createPublicDomain: PublicDomain;
   createSAMLIdentityProvider: SetupSso;
   createSkill: Skill;
@@ -3107,7 +3114,7 @@ export type Mutation = {
   updateWorkspaceMemberRole: WorkspaceMember;
   updateWorkspaceMemberSettings: Scalars['Boolean']['output'];
   upgradeApplication: Scalars['Boolean']['output'];
-  /** @deprecated Use createApplicationTarballUpload and completeApplicationTarballUpload instead. */
+  /** @deprecated Use createPrivateApplicationDeployment and completePrivateApplicationDeployment instead. */
   uploadAppTarball: ApplicationRegistration;
   /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads instead. */
   uploadApplicationFile: File;
@@ -3211,11 +3218,6 @@ export type MutationCompleteApplicationFileUploadsArgs = {
 };
 
 
-export type MutationCompleteApplicationTarballUploadArgs = {
-  fileId: Scalars['String']['input'];
-};
-
-
 export type MutationCompleteBookCallOnboardingStepArgs = {
   hasBookedCall?: Scalars['Boolean']['input'];
   isAutoSkipped?: Scalars['Boolean']['input'];
@@ -3224,6 +3226,11 @@ export type MutationCompleteBookCallOnboardingStepArgs = {
 
 export type MutationCompleteFileUploadArgs = {
   fileId: Scalars['String']['input'];
+};
+
+
+export type MutationCompletePrivateApplicationDeploymentArgs = {
+  deploymentId: Scalars['UUID']['input'];
 };
 
 
@@ -3245,13 +3252,6 @@ export type MutationCreateApplicationRegistrationArgs = {
 
 export type MutationCreateApplicationRegistrationVariableArgs = {
   input: CreateApplicationRegistrationVariableInput;
-};
-
-
-export type MutationCreateApplicationTarballUploadArgs = {
-  manifest: Scalars['JSON']['input'];
-  packageJson: Scalars['JSON']['input'];
-  size: Scalars['Int']['input'];
 };
 
 
@@ -3385,6 +3385,11 @@ export type MutationCreatePageLayoutTabArgs = {
 
 export type MutationCreatePageLayoutWidgetArgs = {
   input: CreatePageLayoutWidgetInput;
+};
+
+
+export type MutationCreatePrivateApplicationDeploymentArgs = {
+  input: CreatePrivateApplicationDeploymentInput;
 };
 
 
@@ -4840,6 +4845,18 @@ export type PlaceDetailsResult = {
 export type PreviewMessageCampaignAudienceInput = {
   listId: Scalars['String']['input'];
   unsubscribeTopicId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type PrivateApplicationDeployment = {
+  __typename?: 'PrivateApplicationDeployment';
+  deploymentId: Scalars['UUID']['output'];
+  logo?: Maybe<FileUploadTarget>;
+  tarball: FileUploadTarget;
+};
+
+export type PrivateApplicationDeploymentLogoInput = {
+  filename: Scalars['String']['input'];
+  size: Scalars['Int']['input'];
 };
 
 export type PublicApplicationRegistration = {

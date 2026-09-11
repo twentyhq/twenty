@@ -80,11 +80,22 @@ export type ApplicationFileCompletionError = {
   message: string;
 };
 
-export type ApplicationTarballUploadTarget = {
+export type PrivateApplicationDeploymentUploadTarget = {
   fileId: string;
   uploadUrl: string;
   contentType: string;
   expiresAt: string;
+};
+
+export type PrivateApplicationDeployment = {
+  deploymentId: string;
+  tarball: PrivateApplicationDeploymentUploadTarget;
+  logo: PrivateApplicationDeploymentUploadTarget | null;
+};
+
+export type PrivateApplicationDeploymentLogo = {
+  filename: string;
+  size: number;
 };
 
 export type ApplicationTarballRegistration = {
@@ -103,42 +114,55 @@ export class FileApi {
 
   // TODO: Migrate to MetadataClient once available
   // (see https://github.com/twentyhq/core-team-issues/issues/2289)
-  async createApplicationTarballUpload({
-    manifest,
-    packageJson,
-    size,
+  async createPrivateApplicationDeployment({
+    universalIdentifier,
+    version,
+    tarballSize,
+    logo,
   }: {
-    manifest: Record<string, unknown>;
-    packageJson: Record<string, unknown>;
-    size: number;
-  }): Promise<ApiResponse<ApplicationTarballUploadTarget>> {
+    universalIdentifier: string;
+    version: string;
+    tarballSize: number;
+    logo?: PrivateApplicationDeploymentLogo;
+  }): Promise<ApiResponse<PrivateApplicationDeployment>> {
     const mutation = `
-      mutation CreateApplicationTarballUpload($manifest: JSON!, $packageJson: JSON!, $size: Int!) {
-        createApplicationTarballUpload(manifest: $manifest, packageJson: $packageJson, size: $size) {
-          fileId
-          uploadUrl
-          contentType
-          expiresAt
+      mutation CreatePrivateApplicationDeployment($input: CreatePrivateApplicationDeploymentInput!) {
+        createPrivateApplicationDeployment(input: $input) {
+          deploymentId
+          tarball {
+            fileId
+            uploadUrl
+            contentType
+            expiresAt
+          }
+          logo {
+            fileId
+            uploadUrl
+            contentType
+            expiresAt
+          }
         }
       }
     `;
 
-    return this.runMetadataMutation<ApplicationTarballUploadTarget>({
+    return this.runMetadataMutation<PrivateApplicationDeployment>({
       mutation,
-      variables: { manifest, packageJson, size },
-      resultKey: 'createApplicationTarballUpload',
-      defaultErrorMessage: 'Failed to create tarball upload',
+      variables: {
+        input: { universalIdentifier, version, tarballSize, logo },
+      },
+      resultKey: 'createPrivateApplicationDeployment',
+      defaultErrorMessage: 'Failed to create the application deployment',
     });
   }
 
-  async completeApplicationTarballUpload({
-    fileId,
+  async completePrivateApplicationDeployment({
+    deploymentId,
   }: {
-    fileId: string;
+    deploymentId: string;
   }): Promise<ApiResponse<ApplicationTarballRegistration>> {
     const mutation = `
-      mutation CompleteApplicationTarballUpload($fileId: String!) {
-        completeApplicationTarballUpload(fileId: $fileId) {
+      mutation CompletePrivateApplicationDeployment($deploymentId: UUID!) {
+        completePrivateApplicationDeployment(deploymentId: $deploymentId) {
           id
           universalIdentifier
           name
@@ -148,9 +172,9 @@ export class FileApi {
 
     return this.runMetadataMutation<ApplicationTarballRegistration>({
       mutation,
-      variables: { fileId },
-      resultKey: 'completeApplicationTarballUpload',
-      defaultErrorMessage: 'Failed to upload tarball',
+      variables: { deploymentId },
+      resultKey: 'completePrivateApplicationDeployment',
+      defaultErrorMessage: 'Failed to deploy the application',
     });
   }
 

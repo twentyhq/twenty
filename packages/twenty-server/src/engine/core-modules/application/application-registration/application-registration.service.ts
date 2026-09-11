@@ -36,6 +36,7 @@ import {
   type UpdateApplicationRegistrationPayload,
 } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { type ApplicationRegistrationAdditionalFields } from 'src/engine/core-modules/application/application-registration/types/application-registration-additional-fields.type';
 import { buildRegistrationManifestUpdateFields } from 'src/engine/core-modules/application/application-registration/utils/build-registration-manifest-update-fields.util';
 import { serializeApplicationRegistrationForBroadcast } from 'src/engine/core-modules/application/application-registration/utils/serialize-application-registration-for-broadcast.util';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
@@ -624,17 +625,7 @@ export class ApplicationRegistrationService {
     latestAvailableVersion?: string | null;
     preventVersionDowngrade?: boolean;
     registrationBeforeUpdate?: ApplicationRegistrationEntity;
-    additionalFields?: Partial<
-      Pick<
-        ApplicationRegistrationEntity,
-        | 'name'
-        | 'sourcePackage'
-        | 'tarballFileId'
-        | 'isListed'
-        | 'isVetted'
-        | 'ownerWorkspaceId'
-      >
-    >;
+    additionalFields?: ApplicationRegistrationAdditionalFields;
   }): Promise<boolean> {
     return this.cacheLockService.withLock(
       async () => {
@@ -777,7 +768,7 @@ export class ApplicationRegistrationService {
       | 'sourcePackage'
       | 'latestAvailableVersion'
       | 'manifest'
-    >,
+    > & { additionalFields?: ApplicationRegistrationAdditionalFields },
   ): Promise<void> {
     const existing = await this.findOneByUniversalIdentifierGlobal(
       params.universalIdentifier,
@@ -799,6 +790,7 @@ export class ApplicationRegistrationService {
         additionalFields: {
           name: params.name,
           sourcePackage: params.sourcePackage,
+          ...params.additionalFields,
         },
       });
 
@@ -841,6 +833,7 @@ export class ApplicationRegistrationService {
         isListed: existing.isListed || isRelistedFromLocalSource,
         manifest: params.manifest,
         ...fromManifestApplicationToDisplayFields(params.manifest?.application),
+        ...params.additionalFields,
       });
 
       await this.invalidateMarketplaceAppsCache();
@@ -882,6 +875,7 @@ export class ApplicationRegistrationService {
       oAuthRedirectUris: [],
       oAuthScopes: [],
       ownerWorkspaceId: null,
+      ...params.additionalFields,
     });
 
     await this.applicationRegistrationRepository.save(registration);
