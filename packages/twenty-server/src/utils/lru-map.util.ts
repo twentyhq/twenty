@@ -19,9 +19,8 @@ export const readLruEntry = <Key, Value>({
   return value;
 };
 
-// The single eviction implementation: rank the candidate keys worst-first and
-// delete the first K. Insertion-order LRU and timestamp LRU differ only in where
-// that rank comes from, so both go through here. Returns the number deleted.
+// Insertion-order LRU and timestamp LRU differ only in where the rank comes
+// from, so both go through here rather than each keeping its own eviction loop.
 export const evictLeastRecentlyUsed = <Key, Value>({
   map,
   maxEntries,
