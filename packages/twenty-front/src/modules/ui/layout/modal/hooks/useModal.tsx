@@ -16,6 +16,18 @@ export const useModal = () => {
   const resolveComponentInstanceId =
     useWorkspaceSurfaceScopedComponentInstanceIdResolver();
 
+  // Imperative counterpart of useIsModalOpened, for callbacks that cannot
+  // subscribe: resolves the id the same way open, close and toggle do.
+  const isModalOpened = useCallback(
+    (modalInstanceId: string) =>
+      store.get(
+        isModalOpenedComponentState.atomFamily({
+          instanceId: resolveComponentInstanceId(modalInstanceId),
+        }),
+      ),
+    [store, resolveComponentInstanceId],
+  );
+
   const closeModal = useCallback(
     (modalInstanceId: string) => {
       const scopedModalInstanceId = resolveComponentInstanceId(modalInstanceId);
@@ -100,5 +112,6 @@ export const useModal = () => {
     closeModal,
     openModal,
     toggleModal,
+    isModalOpened,
   };
 };

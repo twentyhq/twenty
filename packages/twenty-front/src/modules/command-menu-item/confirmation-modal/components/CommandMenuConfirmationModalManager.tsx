@@ -9,8 +9,7 @@ import {
   ConfirmationModal,
   StyledCenteredButton,
 } from '@/ui/layout/modal/components/ConfirmationModal';
-import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useIsModalOpened } from '@/ui/layout/modal/hooks/useIsModalOpened';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,8 +18,7 @@ export const CommandMenuConfirmationModalManager = () => {
   const commandMenuItemConfirmationModalConfig = useAtomStateValue(
     commandMenuItemConfirmationModalConfigState,
   );
-  const isModalOpened = useAtomComponentStateValue(
-    isModalOpenedComponentState,
+  const isModalOpened = useIsModalOpened(
     COMMAND_MENU_CONFIRMATION_MODAL_INSTANCE_ID,
   );
   const setCommandMenuItemConfirmationModalConfig = useSetAtomState(

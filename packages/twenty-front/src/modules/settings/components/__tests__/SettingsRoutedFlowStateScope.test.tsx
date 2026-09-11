@@ -8,17 +8,16 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
+import { useIsDropdownOpen } from '@/ui/layout/dropdown/hooks/useIsDropdownOpen';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { useIsModalOpened } from '@/ui/layout/modal/hooks/useIsModalOpened';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import {
   RoutedFlowStateScopeContext,
   useRoutedFlowStateScopeId,
 } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -41,8 +40,6 @@ const ScopedStateProbe = ({
 }: {
   name: 'main' | 'panel' | 'panel-second';
 }) => {
-  const modalId = useWorkspaceSurfaceScopedComponentInstanceId(MODAL_ID);
-  const dropdownId = useWorkspaceSurfaceScopedComponentInstanceId(DROPDOWN_ID);
   const tableId = useWorkspaceSurfaceScopedComponentInstanceId('role-table');
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
@@ -60,15 +57,9 @@ const ScopedStateProbe = ({
     settingsPersistedRoleFamilyState,
     ROLE_ID,
   );
-  const isModalOpened = useAtomComponentStateValue(
-    isModalOpenedComponentState,
-    modalId,
-  );
+  const isModalOpened = useIsModalOpened(MODAL_ID);
   const { openModal, toggleModal } = useModal();
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownId,
-  );
+  const isDropdownOpen = useIsDropdownOpen(DROPDOWN_ID);
   const { openDropdown } = useOpenDropdown();
   const sortedFieldByTable = useAtomFamilyStateValue(
     sortedFieldByTableFamilyState,

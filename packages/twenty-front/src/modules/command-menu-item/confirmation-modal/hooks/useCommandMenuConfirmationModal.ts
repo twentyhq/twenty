@@ -7,7 +7,6 @@ import {
   commandMenuItemConfirmationModalConfigState,
 } from '@/command-menu-item/confirmation-modal/states/commandMenuItemConfirmationModalState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useCommandMenuConfirmationModal = () => {
@@ -15,17 +14,15 @@ export const useCommandMenuConfirmationModal = () => {
   const setCommandMenuItemConfirmationModalConfig = useSetAtomState(
     commandMenuItemConfirmationModalConfigState,
   );
-  const { openModal } = useModal();
+  const { openModal, isModalOpened } = useModal();
 
   const openConfirmationModal = useCallback(
     (config: CommandMenuItemConfirmationModalConfig) => {
       const existingCommandMenuItemConfirmationModalConfig = store.get(
         commandMenuItemConfirmationModalConfigState.atom,
       );
-      const isCommandMenuItemConfirmationModalOpened = store.get(
-        isModalOpenedComponentState.atomFamily({
-          instanceId: COMMAND_MENU_CONFIRMATION_MODAL_INSTANCE_ID,
-        }),
+      const isCommandMenuItemConfirmationModalOpened = isModalOpened(
+        COMMAND_MENU_CONFIRMATION_MODAL_INSTANCE_ID,
       );
 
       if (
@@ -41,7 +38,12 @@ export const useCommandMenuConfirmationModal = () => {
 
       openModal(COMMAND_MENU_CONFIRMATION_MODAL_INSTANCE_ID);
     },
-    [store, setCommandMenuItemConfirmationModalConfig, openModal],
+    [
+      store,
+      setCommandMenuItemConfirmationModalConfig,
+      openModal,
+      isModalOpened,
+    ],
   );
 
   return { openConfirmationModal };
