@@ -18,7 +18,7 @@ import { ViewBarRecordFieldEffect } from '@/views/components/ViewBarRecordFieldE
 import { ViewBarRecordFilterEffect } from '@/views/components/ViewBarRecordFilterEffect';
 import { ViewBarRecordFilterGroupEffect } from '@/views/components/ViewBarRecordFilterGroupEffect';
 import { ViewBarRecordSortEffect } from '@/views/components/ViewBarRecordSortEffect';
-import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { getViewBarFilterDropdownId } from '@/views/utils/getViewBarFilterDropdownId';
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
 import { ViewBarDetails } from './ViewBarDetails';
 
@@ -49,7 +49,7 @@ export const ViewBar = ({
 
   return (
     <ObjectSortDropdownComponentInstanceContext.Provider
-      value={{ instanceId: VIEW_SORT_DROPDOWN_ID }}
+      value={{ instanceId: `${VIEW_SORT_DROPDOWN_ID}-${viewBarId}` }}
     >
       <ViewBarRecordFilterGroupEffect />
       <ViewBarAnyFieldFilterEffect />
@@ -66,7 +66,7 @@ export const ViewBar = ({
         rightComponent={
           <>
             <ObjectFilterDropdownComponentInstanceContext.Provider
-              value={{ instanceId: ViewBarFilterDropdownIds.MAIN }}
+              value={{ instanceId: getViewBarFilterDropdownId(viewBarId) }}
             >
               <ViewBarFilterDropdown />
             </ObjectFilterDropdownComponentInstanceContext.Provider>

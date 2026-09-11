@@ -10,7 +10,9 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -20,11 +22,7 @@ import { ViewPickerCreateButton } from '@/views/view-picker/components/ViewPicke
 import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/ViewPickerIconAndNameContainer';
 import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
 import { ViewPickerSelectContainer } from '@/views/view-picker/components/ViewPickerSelectContainer';
-import { VIEW_PICKER_CALENDAR_FIELD_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerCalendarFieldDropdownId';
-import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
-import { VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerKanbanFieldDropdownId';
 import { VIEW_PICKER_TYPE_SELECT_OPTIONS } from '@/views/view-picker/constants/ViewPickerTypeSelectOptions';
-import { VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerViewTypeDropdownId';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
@@ -51,6 +49,9 @@ const StyledFieldAvailableContainer = styled.div`
 
 export const ViewPickerContentCreateMode = () => {
   const { t } = useLingui();
+  const dropdownId = useAvailableComponentInstanceIdOrThrow(
+    DropdownComponentInstanceContext,
+  );
   const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
   const [hasManuallySelectedIcon, setHasManuallySelectedIcon] = useState(false);
 
@@ -112,7 +113,7 @@ export const ViewPickerContentCreateMode = () => {
 
       await createViewFromCurrentState();
     },
-    focusId: VIEW_PICKER_DROPDOWN_ID,
+    focusId: dropdownId,
     dependencies: [
       viewPickerIsPersisting,
       createViewFromCurrentState,
@@ -191,7 +192,7 @@ export const ViewPickerContentCreateMode = () => {
               ...option,
               label: t(option.label),
             }))}
-            dropdownId={VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID}
+            dropdownId={`${dropdownId}-view-type`}
           />
         </ViewPickerSelectContainer>
         {viewPickerType === ViewType.KANBAN && (
@@ -213,7 +214,7 @@ export const ViewPickerContentCreateMode = () => {
                       }))
                     : [{ value: '', label: t`No Select field` }]
                 }
-                dropdownId={VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID}
+                dropdownId={`${dropdownId}-kanban-field`}
               />
             </ViewPickerSelectContainer>
             {availableFieldsForGrouping.length === 0 && (
@@ -244,7 +245,7 @@ export const ViewPickerContentCreateMode = () => {
                       }))
                     : [{ value: '', label: t`No Date field` }]
                 }
-                dropdownId={VIEW_PICKER_CALENDAR_FIELD_DROPDOWN_ID}
+                dropdownId={`${dropdownId}-calendar-field`}
               />
             </ViewPickerSelectContainer>
             {availableFieldsForCalendar.length === 0 && (

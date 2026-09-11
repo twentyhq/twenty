@@ -13,7 +13,6 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
@@ -36,9 +35,7 @@ export const SingleRecordPickerMenuItem = ({
     );
 
   const selectableListComponentInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceId(
-      getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId),
-    );
+    getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId);
 
   const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
