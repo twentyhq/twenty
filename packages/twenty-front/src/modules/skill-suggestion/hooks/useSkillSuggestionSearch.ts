@@ -24,6 +24,7 @@ export const useSkillSuggestionSearch = () => {
         .filter(
           (skill) =>
             skill.isActive &&
+            !skill.isSystem &&
             (normalizeSearchText(skill.name).includes(normalizedQuery) ||
               normalizeSearchText(skill.label).includes(normalizedQuery)),
         )
