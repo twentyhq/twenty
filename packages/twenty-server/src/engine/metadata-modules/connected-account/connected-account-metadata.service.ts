@@ -3,13 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, IsNull, Repository } from 'typeorm';
 
-import {
-  EMAIL_DRAFTING_PROVIDERS,
-  EMAIL_SENDING_PROVIDERS,
-} from 'twenty-shared/constants';
 import { ConnectedAccountProvider, EmailOperation } from 'twenty-shared/types';
 import {
   canConnectedAccountPerformEmailOperation,
+  getEmailProvidersForOperation,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -62,11 +59,7 @@ export class ConnectedAccountMetadataService {
       where: {
         workspaceId,
         archivedAt: IsNull(),
-        provider: In(
-          operation === EmailOperation.SEND
-            ? EMAIL_SENDING_PROVIDERS
-            : EMAIL_DRAFTING_PROVIDERS,
-        ),
+        provider: In(getEmailProvidersForOperation(operation)),
       },
       order: { createdAt: 'ASC', id: 'ASC' },
       select: {

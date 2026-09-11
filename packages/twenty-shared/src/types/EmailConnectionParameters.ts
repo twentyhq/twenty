@@ -1,5 +1,5 @@
 export type EmailConnectionParameters = {
-  IMAP?: unknown;
-  SMTP?: unknown;
-  CALDAV?: unknown;
+  IMAP?: object;
+  SMTP?: object;
+  CALDAV?: object;
 };

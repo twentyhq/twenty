@@ -2,11 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  EMAIL_DRAFTING_PROVIDERS,
-  EMAIL_SENDING_PROVIDERS,
-  MAX_EMAIL_RECIPIENTS,
-} from 'twenty-shared/constants';
+import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import {
   ConnectedAccountProvider,
   type EmailAttachment,
@@ -14,6 +10,7 @@ import {
 } from 'twenty-shared/types';
 import {
   canConnectedAccountPerformEmailOperation,
+  getEmailProvidersForOperation,
   isDefined,
   isNonEmptyArray,
   isValidUuid,
@@ -130,11 +127,7 @@ export class EmailComposerService {
         where: {
           workspaceId,
           archivedAt: IsNull(),
-          provider: In(
-            operation === EmailOperation.SEND
-              ? EMAIL_SENDING_PROVIDERS
-              : EMAIL_DRAFTING_PROVIDERS,
-          ),
+          provider: In(getEmailProvidersForOperation(operation)),
         },
         order: { createdAt: 'ASC', id: 'ASC' },
       });
