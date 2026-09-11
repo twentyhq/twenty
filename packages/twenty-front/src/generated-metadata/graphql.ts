@@ -1486,6 +1486,19 @@ export type CreateUnsubscribeTopicInput = {
   visibility?: InputMaybe<UnsubscribeTopicVisibility>;
 };
 
+export type CreateUsageLimitInput = {
+  burstValue?: InputMaybe<Scalars['BigInt']['input']>;
+  limitKind: Scalars['String']['input'];
+  limitValue: Scalars['BigInt']['input'];
+  meter: Scalars['String']['input'];
+  operationType: UsageOperationType;
+  periodCount: Scalars['Int']['input'];
+  periodUnit: Scalars['String']['input'];
+  resourceType: UsageResourceType;
+  spenderId?: InputMaybe<Scalars['String']['input']>;
+  spenderType: Scalars['String']['input'];
+};
+
 export type CreateViewFieldGroupInput = {
   id?: InputMaybe<Scalars['UUID']['input']>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2934,6 +2947,7 @@ export type Mutation = {
   createSkill: Skill;
   createSubscriptionPaymentIntent: BillingPaymentIntent;
   createUnsubscribeTopic: UnsubscribeTopic;
+  createUsageLimit: UsageLimit;
   createView: View;
   createViewField: ViewField;
   createViewFieldGroup: ViewFieldGroup;
@@ -3101,6 +3115,7 @@ export type Mutation = {
   updateSkill: Skill;
   updateTimelineActivityType: TimelineActivityType;
   updateUnsubscribeTopic: UnsubscribeTopic;
+  updateUsageLimit: UsageLimit;
   updateUserEmail: Scalars['Boolean']['output'];
   updateView: View;
   updateViewField: ViewField;
@@ -3128,7 +3143,6 @@ export type Mutation = {
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertPermissionFlags: Array<RolePermissionFlag>;
   upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult;
-  upsertUsageLimit: UsageLimit;
   upsertViewWidget: View;
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
@@ -3420,6 +3434,11 @@ export type MutationCreateSubscriptionPaymentIntentArgs = {
 
 export type MutationCreateUnsubscribeTopicArgs = {
   input: CreateUnsubscribeTopicInput;
+};
+
+
+export type MutationCreateUsageLimitArgs = {
+  input: CreateUsageLimitInput;
 };
 
 
@@ -4233,6 +4252,11 @@ export type MutationUpdateUnsubscribeTopicArgs = {
 };
 
 
+export type MutationUpdateUsageLimitArgs = {
+  input: UpdateUsageLimitInput;
+};
+
+
 export type MutationUpdateUserEmailArgs = {
   newEmail: Scalars['String']['input'];
   verifyEmailRedirectPath?: InputMaybe<Scalars['String']['input']>;
@@ -4361,11 +4385,6 @@ export type MutationUpsertPermissionFlagsArgs = {
 
 export type MutationUpsertRowLevelPermissionPredicatesArgs = {
   input: UpsertRowLevelPermissionPredicatesInput;
-};
-
-
-export type MutationUpsertUsageLimitArgs = {
-  input: UpsertUsageLimitInput;
 };
 
 
@@ -5054,6 +5073,9 @@ export type Query = {
   timelineActivityTypes: Array<TimelineActivityType>;
   unsubscribeTopics: Array<UnsubscribeTopic>;
   usageLimits: Array<UsageLimit>;
+  usageQuotaDefinitions: UsageQuotaDefinitions;
+  usageQuotaScopeConsumption?: Maybe<UsageQuotaScopeConsumption>;
+  usageQuotasWithConsumption: Array<UsageQuotaWithConsumption>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
@@ -5505,6 +5527,11 @@ export type QueryPublicMarketplaceAppsArgs = {
 
 export type QuerySkillArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type QueryUsageQuotaScopeConsumptionArgs = {
+  input: UsageQuotaScopeInput;
 };
 
 
@@ -6414,6 +6441,11 @@ export type UpdateUnsubscribeTopicInput = {
   visibility?: InputMaybe<UnsubscribeTopicVisibility>;
 };
 
+export type UpdateUsageLimitInput = {
+  id: Scalars['UUID']['input'];
+  payload: CreateUsageLimitInput;
+};
+
 export type UpdateViewFieldGroupInput = {
   /** The id of the view field group to update */
   id: Scalars['UUID']['input'];
@@ -6616,19 +6648,6 @@ export type UpsertRowLevelPermissionPredicatesResult = {
   predicates: Array<RowLevelPermissionPredicate>;
 };
 
-export type UpsertUsageLimitInput = {
-  burstValue?: InputMaybe<Scalars['BigInt']['input']>;
-  limitKind: Scalars['String']['input'];
-  limitValue: Scalars['BigInt']['input'];
-  meter: Scalars['String']['input'];
-  operationType: UsageOperationType;
-  periodCount: Scalars['Int']['input'];
-  periodUnit: Scalars['String']['input'];
-  resourceType: UsageResourceType;
-  spenderId?: InputMaybe<Scalars['String']['input']>;
-  spenderType: Scalars['String']['input'];
-};
-
 export type UpsertViewWidgetInput = {
   /** View-level settings (layout type, group by, kanban and calendar settings) to apply to the widget view. */
   view?: InputMaybe<UpsertViewWidgetViewSettingsInput>;
@@ -6750,6 +6769,55 @@ export enum UsageOperationType {
   WEB_SEARCH = 'WEB_SEARCH',
   WORKFLOW_EXECUTION = 'WORKFLOW_EXECUTION'
 }
+
+export type UsageQuotaDefinition = {
+  __typename?: 'UsageQuotaDefinition';
+  allowedMeters: Array<Scalars['String']['output']>;
+  allowedOperationTypes: Array<UsageOperationType>;
+  allowedSpenderTypes: Array<Scalars['String']['output']>;
+  resourceType: UsageResourceType;
+};
+
+export type UsageQuotaDefinitions = {
+  __typename?: 'UsageQuotaDefinitions';
+  definitions: Array<UsageQuotaDefinition>;
+  hasAllowancePeriod: Scalars['Boolean']['output'];
+  isIntraWorkspaceLimitEntitled: Scalars['Boolean']['output'];
+};
+
+export type UsageQuotaScopeConsumption = {
+  __typename?: 'UsageQuotaScopeConsumption';
+  consumedValue?: Maybe<Scalars['BigInt']['output']>;
+  periodEnd: Scalars['DateTime']['output'];
+  periodStart: Scalars['DateTime']['output'];
+};
+
+export type UsageQuotaScopeInput = {
+  meter: Scalars['String']['input'];
+  operationType: UsageOperationType;
+  periodUnit: Scalars['String']['input'];
+  resourceType: UsageResourceType;
+  spenderId?: InputMaybe<Scalars['String']['input']>;
+  spenderType: Scalars['String']['input'];
+};
+
+export type UsageQuotaWithConsumption = {
+  __typename?: 'UsageQuotaWithConsumption';
+  consumedValue?: Maybe<Scalars['BigInt']['output']>;
+  id: Scalars['UUID']['output'];
+  isEnforced: Scalars['Boolean']['output'];
+  limitValue: Scalars['BigInt']['output'];
+  meter: Scalars['String']['output'];
+  operationType: UsageOperationType;
+  periodEnd?: Maybe<Scalars['DateTime']['output']>;
+  periodStart?: Maybe<Scalars['DateTime']['output']>;
+  periodUnit: Scalars['String']['output'];
+  remainingValue?: Maybe<Scalars['BigInt']['output']>;
+  resourceType: UsageResourceType;
+  spenderId?: Maybe<Scalars['String']['output']>;
+  spenderLabel?: Maybe<Scalars['String']['output']>;
+  spenderType: Scalars['String']['output'];
+};
 
 export enum UsageResourceType {
   AI = 'AI',

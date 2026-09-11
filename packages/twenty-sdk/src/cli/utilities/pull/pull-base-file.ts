@@ -68,6 +68,12 @@ const isUsableBaseManifest = (manifest: unknown): manifest is Manifest => {
   );
 };
 
+export const hasPullBaseFile = async ({
+  appPath,
+}: {
+  appPath: string;
+}): Promise<boolean> => pathExists(join(appPath, PULL_BASE_FILE_PATH));
+
 export const readPullBaseManifest = async ({
   appPath,
   applicationUniversalIdentifier,
