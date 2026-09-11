@@ -5,6 +5,9 @@ import ts from 'typescript';
 
 import { getDocumentationImportDiagnostics } from '../docs/getDocumentationImportDiagnostics';
 
+const toModuleName = (subpath: string): string =>
+  subpath === '.' ? 'twenty-ui' : `twenty-ui/${subpath.slice(2)}`;
+
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const documentationRoot = resolve(packageRoot, '../twenty-docs/ui');
 const packageManifest: { exports: Record<string, unknown> } = JSON.parse(
@@ -13,11 +16,7 @@ const packageManifest: { exports: Record<string, unknown> } = JSON.parse(
 const exportedSubpaths = Object.entries(packageManifest.exports)
   .filter(([, target]) => target !== null)
   .map(([subpath]) => subpath);
-const exportedModules = new Set(
-  exportedSubpaths.map((subpath) =>
-    subpath === '.' ? 'twenty-ui' : `twenty-ui/${subpath.slice(2)}`,
-  ),
-);
+const exportedModules = new Set(exportedSubpaths.map(toModuleName));
 const configuration = ts.readConfigFile(
   resolve(packageRoot, 'tsconfig.json'),
   ts.sys.readFile,
@@ -56,7 +55,7 @@ const compilerOptions: ts.CompilerOptions = {
       exportedSubpaths
         .filter((subpath) => !subpath.endsWith('.css'))
         .map((subpath) => [
-          subpath === '.' ? 'twenty-ui' : `twenty-ui/${subpath.slice(2)}`,
+          toModuleName(subpath),
           [resolve(packageRoot, 'src', subpath, 'index.ts')],
         ]),
     ),
