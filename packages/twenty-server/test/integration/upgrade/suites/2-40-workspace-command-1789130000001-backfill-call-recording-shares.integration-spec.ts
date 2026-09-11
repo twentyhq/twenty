@@ -9,7 +9,7 @@ import {
   RecordShareRowCause,
 } from 'twenty-shared/types';
 
-import { BackfillCallRecordingSharesCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789100000001-backfill-call-recording-shares.command';
+import { BackfillCallRecordingSharesCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789130000001-backfill-call-recording-shares.command';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
@@ -28,7 +28,7 @@ const RUN_ON_WORKSPACE_ARGS = {
   total: 1,
 };
 
-describe('2-40 workspace command 1789100000001 - BackfillCallRecordingSharesCommand (integration)', () => {
+describe('2-40 workspace command 1789130000001 - BackfillCallRecordingSharesCommand (integration)', () => {
   let command: BackfillCallRecordingSharesCommand;
   let recordShareService: RecordShareService;
   let workspaceOrmManager: WorkspaceOrmManager;

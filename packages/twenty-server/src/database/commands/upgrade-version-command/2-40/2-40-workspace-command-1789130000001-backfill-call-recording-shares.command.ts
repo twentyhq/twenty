@@ -22,7 +22,7 @@ import { type CallRecordingWorkspaceEntity } from 'src/modules/call-recording/st
 
 const CALL_RECORDING_SHARE_CHUNK_SIZE = 500;
 
-@RegisteredWorkspaceCommand('2.40.0', 1789100000001)
+@RegisteredWorkspaceCommand('2.40.0', 1789130000001)
 @Command({
   name: 'upgrade:2-40:backfill-call-recording-shares',
   description:
