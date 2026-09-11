@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { promises as fs } from 'fs';
+import { createWriteStream, promises as fs } from 'fs';
 import { tmpdir } from 'os';
 import { basename, extname, isAbsolute, join, relative, resolve } from 'path';
+import { pipeline } from 'stream/promises';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -178,7 +179,11 @@ export class ApplicationTarballService {
 
     try {
       const registration = await this.registerDeployedTarball({
-        tarballBuffer: await this.readStoredFile(tarballLocation),
+        writeTarballTo: (destinationPath) =>
+          this.streamStoredFileTo({
+            location: tarballLocation,
+            destinationPath,
+          }),
         ownerWorkspaceId: workspaceId,
         expectedUniversalIdentifier: this.extractDeploymentUniversalIdentifier(
           tarballFile.path,
@@ -216,7 +221,8 @@ export class ApplicationTarballService {
     ownerWorkspaceId: string;
   }): Promise<ApplicationRegistrationEntity> {
     return this.registerDeployedTarball({
-      tarballBuffer,
+      writeTarballTo: (destinationPath) =>
+        fs.writeFile(destinationPath, tarballBuffer),
       ownerWorkspaceId,
       expectedUniversalIdentifier: universalIdentifier,
       uploadedLogo: null,
@@ -232,13 +238,13 @@ export class ApplicationTarballService {
   }
 
   private async registerDeployedTarball({
-    tarballBuffer,
+    writeTarballTo,
     ownerWorkspaceId,
     expectedUniversalIdentifier,
     uploadedLogo,
     resolveTarballFileId,
   }: {
-    tarballBuffer: Buffer;
+    writeTarballTo: (destinationPath: string) => Promise<void>;
     ownerWorkspaceId: string;
     expectedUniversalIdentifier?: string;
     uploadedLogo: UploadedLogo | null;
@@ -250,7 +256,7 @@ export class ApplicationTarballService {
 
     try {
       const { contentDir, manifest, packageJson } =
-        await this.extractAndValidateTarball(tempDir, tarballBuffer);
+        await this.extractAndValidateTarball(tempDir, writeTarballTo);
 
       const universalIdentifier = this.resolveDeployedUniversalIdentifier({
         expectedUniversalIdentifier,
@@ -469,6 +475,22 @@ export class ApplicationTarballService {
     };
   }
 
+  // An archive can be large, so it goes to disk as a stream rather than
+  // through a buffer; only the logo, bounded by the upload limit, is read
+  // into memory to be copied into server storage.
+  private async streamStoredFileTo({
+    location,
+    destinationPath,
+  }: {
+    location: FileUploadStorageLocation;
+    destinationPath: string;
+  }): Promise<void> {
+    await pipeline(
+      await this.fileStorageService.readFile(location),
+      createWriteStream(destinationPath),
+    );
+  }
+
   private async readStoredFile(
     location: FileUploadStorageLocation,
   ): Promise<Buffer> {
@@ -500,7 +522,7 @@ export class ApplicationTarballService {
 
   private async extractAndValidateTarball(
     tempDir: string,
-    tarballBuffer: Buffer,
+    writeTarballTo: (destinationPath: string) => Promise<void>,
   ): Promise<{
     contentDir: string;
     manifest: { application?: ApplicationManifest };
@@ -508,7 +530,7 @@ export class ApplicationTarballService {
   }> {
     const tarballPath = join(tempDir, TARBALL_RESOURCE_FILENAME);
 
-    await fs.writeFile(tarballPath, tarballBuffer);
+    await writeTarballTo(tarballPath);
 
     const extractDir = join(tempDir, 'extracted');
 

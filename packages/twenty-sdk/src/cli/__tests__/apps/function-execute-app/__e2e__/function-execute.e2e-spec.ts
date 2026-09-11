@@ -23,6 +23,7 @@ describe('functionExecute E2E', () => {
 
     const deployResult = await appDeploy({
       tarballPath: buildResult.data.tarballPath!,
+      appPath: APP_PATH,
     });
 
     if (!deployResult.success) {

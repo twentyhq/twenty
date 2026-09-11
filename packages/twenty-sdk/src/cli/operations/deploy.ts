@@ -1,41 +1,18 @@
-import { execFileSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { type PrivateApplicationDeploymentLogo } from '@/cli/utilities/api/file-api';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import { readJson } from '@/cli/utilities/file/fs-utils';
 import { putFileToUploadUrl } from '@/cli/utilities/file/put-file-to-upload-url';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
+import { OUTPUT_DIR } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-type TarballManifest = {
+type BuiltManifest = {
   application?: { universalIdentifier?: string; logo?: string };
-};
-
-// The identity the server registers has to describe the archive it is
-// registering, so it is read out of the tarball rather than from the build
-// output next to it.
-const readJsonFromTarball = (
-  tarballPath: string,
-  filename: string,
-): Record<string, unknown> => {
-  for (const entry of [`package/${filename}`, filename]) {
-    try {
-      const content = execFileSync('tar', ['-xzOf', tarballPath, entry], {
-        encoding: 'utf-8',
-      });
-
-      if (content.trim() !== '') {
-        return JSON.parse(content);
-      }
-    } catch {
-      continue;
-    }
-  }
-
-  throw new Error(`${filename} not found in ${tarballPath}`);
 };
 
 // The logo is declared in the manifest as a path into the app source, which is
@@ -44,10 +21,10 @@ const resolveLogoPath = ({
   appPath,
   logo,
 }: {
-  appPath: string | undefined;
+  appPath: string;
   logo: string | undefined;
 }): string | undefined => {
-  if (!isDefined(appPath) || !isDefined(logo) || /^https?:\/\//.test(logo)) {
+  if (!isDefined(logo) || /^https?:\/\//.test(logo)) {
     return undefined;
   }
 
@@ -58,7 +35,7 @@ const resolveLogoPath = ({
 
 export type AppDeployOptions = {
   tarballPath: string;
-  appPath?: string;
+  appPath: string;
   remote?: string;
   serverUrl?: string;
   token?: string;
@@ -82,13 +59,16 @@ const innerAppDeploy = async (
 
   onProgress?.(`Uploading ${tarballPath}...`);
 
-  const manifest = readJsonFromTarball(
-    tarballPath,
-    'manifest.json',
-  ) as TarballManifest;
-  const { version } = readJsonFromTarball(tarballPath, 'package.json') as {
-    version?: string;
-  };
+  // The tarball is packed from the output directory, so the identity the
+  // server registers is read from the same files the archive carries.
+  const outputDir = path.join(options.appPath, OUTPUT_DIR);
+
+  const manifest = await readJson<BuiltManifest>(
+    path.join(outputDir, 'manifest.json'),
+  );
+  const { version } = await readJson<{ version?: string }>(
+    path.join(outputDir, 'package.json'),
+  );
 
   const universalIdentifier = manifest.application?.universalIdentifier;
 
@@ -97,8 +77,7 @@ const innerAppDeploy = async (
       success: false,
       error: {
         code: APP_ERROR_CODES.DEPLOY_FAILED,
-        message:
-          'The tarball must declare a universalIdentifier in manifest.json and a version in package.json',
+        message: `The built app must declare a universalIdentifier in manifest.json and a version in package.json under ${OUTPUT_DIR}`,
       },
     };
   }
