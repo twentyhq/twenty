@@ -22,6 +22,7 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
+import { computeEffectiveUpdatedProperties } from 'src/engine/metadata-modules/overrides/utils/compute-effective-updated-properties.util';
 
 @Injectable()
 export class FlatFieldMetadataValidatorService {
@@ -87,7 +88,13 @@ export class FlatFieldMetadataValidatorService {
       !buildOptions.isSystemBuild &&
       existingFlatFieldMetadataToUpdate.isSystem
     ) {
-      const disallowedProperties = Object.keys(flatEntityUpdate).filter(
+      // A workspace deactivation of a system field arrives as an override
+      // entry; the guard is on what the update changes, not on the keys.
+      const disallowedProperties = computeEffectiveUpdatedProperties({
+        metadataName: 'fieldMetadata',
+        existingFlatEntity: existingFlatFieldMetadataToUpdate,
+        flatEntityUpdate,
+      }).filter(
         (property) =>
           !SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES.includes(
             property as (typeof SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES)[number],
