@@ -4,7 +4,6 @@ import {
 } from '@/command-menu-item/contexts/CommandMenuContext';
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
-import { doesCommandMenuItemMatchLayoutCustomizationAvailability } from '@/command-menu-item/utils/doesCommandMenuItemMatchLayoutCustomizationAvailability';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
@@ -19,6 +18,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useContext, useMemo } from 'react';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 type CommandMenuContextProviderContentProps = {
   displayType: CommandMenuContextType['displayType'];
@@ -57,9 +57,10 @@ export const CommandMenuContextProviderContent = ({
 
     return commandMenuItemsToDisplay
       .filter(
-        doesCommandMenuItemMatchLayoutCustomizationAvailability(
+        (item) =>
+          item.engineComponentKey !==
+            EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT ||
           isLayoutCustomizationAllowedOnCurrentPage,
-        ),
       )
       .filter(
         doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),

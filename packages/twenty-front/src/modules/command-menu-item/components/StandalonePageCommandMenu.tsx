@@ -7,7 +7,6 @@ import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuCont
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/CommandMenuItemEditButton';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
-import { doesCommandMenuItemMatchLayoutCustomizationAvailability } from '@/command-menu-item/utils/doesCommandMenuItemMatchLayoutCustomizationAvailability';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
@@ -23,7 +22,10 @@ import {
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
-import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
+import {
+  CommandMenuItemAvailabilityType,
+  EngineComponentKey,
+} from '~/generated-metadata/graphql';
 
 export const StandalonePageCommandMenu = () => {
   const store = useStore();
@@ -109,9 +111,10 @@ export const StandalonePageCommandMenu = () => {
   const filteredCommandMenuItems = useMemo(() => {
     return commandMenuItems
       .filter(
-        doesCommandMenuItemMatchLayoutCustomizationAvailability(
+        (item) =>
+          item.engineComponentKey !==
+            EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT ||
           isLayoutCustomizationAllowedOnCurrentPage,
-        ),
       )
       .filter(doesCommandMenuItemMatchObjectMetadataId(undefined))
       .filter(
