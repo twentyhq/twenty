@@ -1,5 +1,7 @@
 import { type OnModuleDestroy } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { type ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -56,7 +58,7 @@ export abstract class DriverFactoryBase<TDriver> implements OnModuleDestroy {
   }
 
   private releaseCurrentDriver(): void {
-    if (this.currentDriver === null) {
+    if (!isDefined(this.currentDriver)) {
       return;
     }
 
