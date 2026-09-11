@@ -6657,6 +6657,42 @@
   },
   "redirects": [
     {
+      "source": "/twenty-ui/input/checkbox",
+      "destination": "/ui/components/input/checkbox"
+    },
+    {
+      "source": "/twenty-ui/input/radio",
+      "destination": "/ui/components/input/radio"
+    },
+    {
+      "source": "/twenty-ui/input/select",
+      "destination": "/ui/components/input/select"
+    },
+    {
+      "source": "/twenty-ui/input/text",
+      "destination": "/ui/components/input/input"
+    },
+    {
+      "source": "/twenty-ui/input/toggle",
+      "destination": "/ui/components/input/switch"
+    },
+    {
+      "source": "/twenty-ui/navigation/menu-item",
+      "destination": "/ui/components/navigation/list-item"
+    },
+    {
+      "source": "/twenty-ui",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/l/:language/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
+    {
       "source": "/developers/extend/apps/getting-started",
       "destination": "/developers/extend/apps/getting-started/quick-start"
     },

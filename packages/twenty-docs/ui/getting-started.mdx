@@ -13,13 +13,13 @@ Twenty UI is Twenty's React component library. It provides components, icons, an
 
 ## Install
 
-For a standalone React application, install the library and its React 19 peer dependencies:
+For a standalone React application, install the library and its peer dependencies:
 
 ```bash
-yarn add twenty-ui react@^19 react-dom@^19
+yarn add twenty-ui monaco-editor react@^19 react-dom@^19
 ```
 
-Twenty UI also declares `monaco-editor` as a peer dependency. Install it if you use the code editor components.
+`monaco-editor` powers the code editor components, but install it even if you never render an editor: the `twenty-ui/input`, `twenty-ui/feedback`, and `twenty-ui/navigation` entry points reference it, and bundlers fail to resolve it otherwise.
 
 If you are building a Twenty app, follow [Using Twenty UI components](/developers/extend/apps/layout/front-components#using-twenty-ui-components). The front component renderer supplies the workspace theme and has a different setup from a standalone browser application.
 

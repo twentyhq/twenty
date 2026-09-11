@@ -34,7 +34,7 @@ export const PrioritySelect = () => (
 );
 ```
 
-Supply `items` on `Root` so `Value` can resolve labels before the popup opens. `defaultValue` initializes uncontrolled state; use `value` and `onValueChange` for controlled state. The selected value can be `null` when nothing is selected.
+Supply `items` on `Root` so `Value` renders the selected item's label; without it, the trigger shows the raw value. `defaultValue` initializes uncontrolled state; use `value` and `onValueChange` for controlled state. The selected value can be `null` when nothing is selected.
 
 ## Multiple selection
 

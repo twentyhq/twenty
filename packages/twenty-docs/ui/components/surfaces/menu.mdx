@@ -83,7 +83,7 @@ Checkbox and radio items keep the popup open by default so users can adjust opti
 | `Separator`                     | Separates groups.                            |
 | `SubmenuRoot`, `SubmenuTrigger` | Coordinate a nested menu with its own popup. |
 
-Arrow keys navigate enabled items; typeahead finds items by their text. Enter or Space selects an item. Escape closes the menu and returns focus to its trigger. Use clear text labels even when items have icons.
+Arrow keys move through the items, including disabled ones, which receive focus but cannot be selected; typeahead finds items by their text. Enter or Space selects an item. Escape closes the menu and returns focus to its trigger. Use clear text labels even when items have icons.
 
 `Popup` owns its portal and accepts placement props and a `container` override. Placement defaults depend on whether it is a top-level menu or a submenu:
 

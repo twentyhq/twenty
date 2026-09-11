@@ -44,7 +44,7 @@ export const SearchField = () => {
 
 ## Add an adornment
 
-`InputGroup` owns the surrounding border and provides a size to its input. The default size is `md`; use `sm` for a compact field. An explicit input size takes precedence over the group's size.
+`InputGroup` owns the surrounding border and sizes its input. The default size is `md`; use `sm` for a compact field. Set `size` on the group: a grouped input stretches to the group's height, so its own `size` has no visible effect.
 
 ```tsx
 import { IconSearch } from 'twenty-ui/icon';
@@ -59,6 +59,6 @@ export const CompactSearch = () => (
 
 ## Props
 
-The reference includes component-specific and inherited Base UI props. Native input attributes are also accepted. When `size` is omitted, the input uses its group's size or `md`.
+The reference includes component-specific and inherited Base UI props. Native input attributes are also accepted. A standalone input defaults to `md`; inside a group, the group's `size` applies.
 
 <InputReference />
