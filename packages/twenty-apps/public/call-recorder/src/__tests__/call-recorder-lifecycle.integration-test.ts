@@ -190,6 +190,7 @@ class FakeRecallApi {
   bots = new Map<string, FakeRecallBot>();
   botIdByIdempotencyKey = new Map<string, string>();
   transcripts = new Map<string, FakeRecallTranscript>();
+  transcriptRequestFailureStatus: number | undefined = undefined;
   deletedBotIds: string[] = [];
   listRequestCount = 0;
   artifactImportRequests: object[] = [];
@@ -303,6 +304,10 @@ class FakeRecallApi {
       method === 'POST' &&
       /\/recording\/[^/]+\/create_transcript\/$/.test(requestUrl)
     ) {
+      if (this.transcriptRequestFailureStatus !== undefined) {
+        return jsonResponse(this.transcriptRequestFailureStatus, {});
+      }
+
       const transcript: FakeRecallTranscript = {
         id: `recall-transcript-${this.transcripts.size + 1}`,
         statusCode: 'processing',
@@ -974,6 +979,79 @@ describe('call recorder app lifecycle (integration)', () => {
         recallTranscriptId: 'recall-transcript-1',
         status: 'EMPTY',
       });
+    });
+
+    it('completes a recording without a transcript when Recall rejects the transcript request', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      recall.transcriptRequestFailureStatus = 400;
+
+      await deliverRecallWebhook(
+        buildRecordingDoneWebhook({
+          botId,
+          metadata,
+          startedAt: hoursAgo(1),
+          completedAt: new Date().toISOString(),
+        }),
+      );
+      await runQueuedArtifactImports();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.transcript).toEqual({
+        recallTranscriptId: null,
+        status: 'EMPTY',
+        subCode: 'transcript_request_rejected:400',
+      });
+    });
+
+    it('keeps a recording processing when the Recall account rejects the transcript request', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      recall.transcriptRequestFailureStatus = 402;
+
+      await deliverRecallWebhook(
+        buildRecordingDoneWebhook({
+          botId,
+          metadata,
+          startedAt: hoursAgo(1),
+          completedAt: new Date().toISOString(),
+        }),
+      );
+      await runQueuedArtifactImports();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('PROCESSING');
+      expect(callRecording.transcript).toBeNull();
+    });
+
+    it('keeps a recording processing while the transcript request fails temporarily', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      recall.transcriptRequestFailureStatus = 503;
+
+      await deliverRecallWebhook(
+        buildRecordingDoneWebhook({
+          botId,
+          metadata,
+          startedAt: hoursAgo(1),
+          completedAt: new Date().toISOString(),
+        }),
+      );
+
+      await expect(runQueuedArtifactImports()).rejects.toMatchObject({
+        name: 'RetryableLogicFunctionError',
+      });
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('PROCESSING');
+      expect(callRecording.transcript).toBeNull();
     });
 
     it('never moves the status backwards on late webhook deliveries', async () => {
