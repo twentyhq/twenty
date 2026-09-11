@@ -37,6 +37,7 @@ import { useSettingsAgentFormState } from '~/pages/settings/ai/hooks/useSettings
 import { useSettingsAgentSave } from '~/pages/settings/ai/hooks/useSettingsAgentSave';
 import { getSettingsAgentInitialFormValues } from '~/pages/settings/ai/utils/getSettingsAgentInitialFormValues';
 import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
+import { isOwnedByInstalledApplication } from '~/pages/settings/ai/utils/isOwnedByInstalledApplication';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledContentContainer = styled.div`
@@ -60,11 +61,11 @@ export const SettingsAgentFormContent = ({
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const isCreateMode = !isDefined(agent);
-  // Agents created in the workspace belong to its own application; only an
-  // installed application's agents are managed elsewhere.
-  const isReadonlyMode =
-    isDefined(agent?.applicationId) &&
-    agent.applicationId !== currentWorkspace?.workspaceCustomApplication?.id;
+  const isReadonlyMode = isOwnedByInstalledApplication({
+    applicationId: agent?.applicationId,
+    workspaceCustomApplicationId:
+      currentWorkspace?.workspaceCustomApplication?.id,
+  });
   const agentId = agent?.id ?? '';
 
   const [initialFormValues] = useState(() =>
