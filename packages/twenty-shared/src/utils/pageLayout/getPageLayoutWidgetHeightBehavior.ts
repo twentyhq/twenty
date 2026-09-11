@@ -1,8 +1,20 @@
-import { WidgetType } from '~/generated-metadata/graphql';
+import {
+  PageLayoutWidgetVerticalListHeightBehavior,
+  WidgetType,
+} from '@/types';
+import { isDefined } from '@/utils/validation/isDefined';
 
-export const isViewportFillingWidgetType = (
-  widgetType: WidgetType,
-): boolean => {
+export const getPageLayoutWidgetHeightBehavior = ({
+  widgetType,
+  heightBehavior,
+}: {
+  widgetType: WidgetType;
+  heightBehavior?: PageLayoutWidgetVerticalListHeightBehavior | null;
+}): PageLayoutWidgetVerticalListHeightBehavior => {
+  if (isDefined(heightBehavior)) {
+    return heightBehavior;
+  }
+
   switch (widgetType) {
     case WidgetType.CALENDAR:
     case WidgetType.CALL_RECORDING_SUMMARY:
@@ -16,24 +28,12 @@ export const isViewportFillingWidgetType = (
     case WidgetType.WORKFLOW:
     case WidgetType.WORKFLOW_RUN:
     case WidgetType.WORKFLOW_VERSION:
-      return true;
+      return PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT;
 
     case WidgetType.IFRAME:
-      // Iframes use a fixed height because their content height is not measurable.
-      return false;
-
     case WidgetType.RECORD_TABLE:
-      // Record tables keep their own interactive frame and are not collapsed.
-      return false;
-
     case WidgetType.MESSAGE_CAMPAIGN_BODY:
-      // Campaign documents grow with their content so the tab owns scrolling.
-      return false;
-
     case WidgetType.MESSAGE_CAMPAIGN_DETAILS:
-      // This type is classified even though it currently renders no content.
-      return false;
-
     case WidgetType.FIELD:
     case WidgetType.FIELDS:
     case WidgetType.FORM_FIELD:
@@ -42,6 +42,6 @@ export const isViewportFillingWidgetType = (
     case WidgetType.GRAPH:
     case WidgetType.STANDALONE_RICH_TEXT:
     case WidgetType.VIEW:
-      return false;
+      return PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT;
   }
 };
