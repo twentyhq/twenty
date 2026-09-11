@@ -28,8 +28,6 @@ type SanitizeRawUpdateFieldInputArgs = {
   isSystemBuild: boolean;
   workspaceCustomApplicationUniversalIdentifier: string;
 };
-// Workspace edits of standard fields are authored by the workspace custom
-// application, whatever the caller: an application never overrides another's.
 export const sanitizeRawUpdateFieldInput = ({
   existingFlatFieldMetadata,
   rawUpdateFieldInput,

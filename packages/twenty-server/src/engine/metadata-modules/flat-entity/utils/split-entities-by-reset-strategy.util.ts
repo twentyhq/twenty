@@ -44,7 +44,6 @@ export const splitEntitiesByResetStrategy = <
             workspaceCustomApplicationUniversalIdentifier,
           workspaceCustomApplicationUniversalIdentifier,
         }),
-        // Deactivations written before author-keyed overrides sit on the column.
         isActive: true,
         updatedAt: now,
       });

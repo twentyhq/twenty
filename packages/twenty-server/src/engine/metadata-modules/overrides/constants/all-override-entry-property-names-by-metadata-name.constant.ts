@@ -10,9 +10,6 @@ type OverridablePropertyConfiguration = {
   universalProperty?: string;
 };
 
-// Every key an override entry of the kind can carry, in flat and universal
-// form. Author keys are application universal identifiers, which never
-// collide with a property name, so a key from this set marks a legacy entry.
 export const ALL_OVERRIDE_ENTRY_PROPERTY_NAMES_BY_METADATA_NAME: Record<
   AllMetadataName,
   ReadonlySet<string>

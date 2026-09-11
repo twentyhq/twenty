@@ -43,8 +43,6 @@ const listAuthoredOverrideEntries = ({
       .filter(isDefined);
   }
 
-  // A legacy non-authored override predates author keys and was written by
-  // the custom application, so it reads as the one non-owner entry.
   if (isLegacyNonAuthoredOverride({ metadataName, overrides })) {
     return [overrides];
   }
@@ -65,9 +63,6 @@ const readPath = (value: unknown, path: readonly string[]): unknown =>
     value,
   );
 
-// The first author in order that carries the path wins, null included: a null
-// override is an explicit value, only an absent key falls through. The path is
-// a property name, or ['translations', locale, property] for a translation.
 export const readAuthoredOverrideProperty = ({
   metadataName,
   overrides,

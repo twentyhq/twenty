@@ -7,9 +7,6 @@ import {
   resolveEffectiveFlatEntityProperty,
 } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
-// Every overridable property of the kind resolved across author entries, with
-// its own type. Translatable properties are not translated here; that is
-// resolveEffectiveTranslatedFlatEntity, at the read edge with a locale.
 export const resolveEffectiveFlatEntity = <
   TFlatEntity extends OverridableFlatEntity & Record<string, unknown>,
 >({
@@ -33,7 +30,6 @@ export const resolveEffectiveFlatEntity = <
       [property]: resolveEffectiveFlatEntityProperty({
         metadataName,
         flatEntity,
-        // The registry lists the kind's overridable names as strings.
         property: property as never,
         authorContext,
       }),

@@ -18,8 +18,6 @@ type SanitizeRawUpdateObjectInputArgs = {
   workspaceCustomApplicationUniversalIdentifier: string;
 };
 
-// Workspace edits of standard objects are authored by the workspace custom
-// application, whatever the caller: an application never overrides another's.
 export const sanitizeRawUpdateObjectInput = ({
   existingFlatObjectMetadata,
   rawUpdateObjectInput,
