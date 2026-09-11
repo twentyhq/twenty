@@ -3,7 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { fromFlatNavigationMenuItemToNavigationMenuItemManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-navigation-menu-item-to-navigation-menu-item-manifest.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
-import { getWorkspaceRuntimeReason } from 'src/engine/core-modules/application/application-manifest/utils/get-workspace-runtime-reason.util';
 import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/application-manifest/utils/build-exported-coverage-entry.util';
 import { getUnsupportedNavigationMenuItemReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-navigation-menu-item-reason.util';
 import { MANIFEST_ENTITY_REGISTRY } from 'src/engine/core-modules/application/application-manifest/utils/find-manifest-entity-descriptor-by-universal-identifier.util';
@@ -37,19 +36,25 @@ export const reconstructNavigationMenuItemsManifest = ({
   for (const flatNavigationMenuItem of sortFlatEntitiesByUniversalIdentifier(
     applicationAllFlatEntityMaps.flatNavigationMenuItemMaps,
   )) {
-    const { universalIdentifier } = flatNavigationMenuItem;
+    const { universalIdentifier, userWorkspaceId, targetRecordId } =
+      flatNavigationMenuItem;
 
-    const workspaceRuntimeReason = getWorkspaceRuntimeReason({
-      metadataName: 'navigationMenuItem',
-      flatEntity: flatNavigationMenuItem,
-    });
-
-    if (isDefined(workspaceRuntimeReason)) {
+    if (isDefined(userWorkspaceId)) {
       coverage.push({
         metadataName: 'navigationMenuItem',
         universalIdentifier,
         status: ApplicationExportCoverageStatus.EXCLUDED,
-        reason: workspaceRuntimeReason,
+        reason: 'personal navigation item',
+      });
+      continue;
+    }
+
+    if (isDefined(targetRecordId)) {
+      coverage.push({
+        metadataName: 'navigationMenuItem',
+        universalIdentifier,
+        status: ApplicationExportCoverageStatus.EXCLUDED,
+        reason: 'navigation item pinned to a record',
       });
       continue;
     }

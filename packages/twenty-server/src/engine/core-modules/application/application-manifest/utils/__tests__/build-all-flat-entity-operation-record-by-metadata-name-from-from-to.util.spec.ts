@@ -234,8 +234,22 @@ describe('buildAllFlatEntityOperationRecordByMetadataNameFromFromTo', () => {
     expect(result.commandMenuItem?.flatEntityToDelete).toBeUndefined();
   });
 
-  it('still deletes a command that is not a workflow trigger', () => {
+  it('does not delete a command without the front component its manifest requires', () => {
     const result = inferDeletionOf(withCommandMenuItem(COMMAND_MENU_ITEM));
+
+    expect(result.commandMenuItem?.flatEntityToDelete).toBeUndefined();
+  });
+
+  it('still deletes a command the manifest can express', () => {
+    const result = inferDeletionOf(
+      withCommandMenuItem({
+        ...COMMAND_MENU_ITEM,
+        engineComponentKey: EngineComponentKey.FRONT_COMPONENT_RENDERER,
+        frontComponentId: 'a-front-component-id',
+        frontComponentUniversalIdentifier:
+          'a-front-component-universal-identifier',
+      }),
+    );
 
     expect(
       result.commandMenuItem?.flatEntityToDelete?.[

@@ -16,7 +16,7 @@ import { isSystemSideEffectFlatEntity } from 'src/engine/metadata-modules/flat-e
 import { keepWorkspaceOwnedProperties } from 'src/engine/metadata-modules/flat-entity/utils/keep-workspace-owned-properties.util';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
-import { getWorkspaceRuntimeReason } from 'src/engine/core-modules/application/application-manifest/utils/get-workspace-runtime-reason.util';
+import { canManifestExpressFlatEntity } from 'src/engine/core-modules/application/application-manifest/utils/can-manifest-express-flat-entity.util';
 import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/utils/should-infer-deletion-from-missing-entities.util';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
@@ -69,19 +69,13 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
             ),
         )
         .filter(
-          (fromFlatEntity) =>
-            !isSystemSideEffectFlatEntity(
-              fromFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
-            ),
+          (fromFlatEntity) => !isSystemSideEffectFlatEntity(fromFlatEntity),
         )
-        .filter(
-          (fromFlatEntity) =>
-            !isDefined(
-              getWorkspaceRuntimeReason({
-                metadataName,
-                flatEntity: fromFlatEntity,
-              }),
-            ),
+        .filter((fromFlatEntity) =>
+          canManifestExpressFlatEntity({
+            metadataName,
+            flatEntity: fromFlatEntity,
+          }),
         )
     : [];
 
