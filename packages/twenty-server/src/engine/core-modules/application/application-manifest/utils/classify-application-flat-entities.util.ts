@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import { compareByCodePoint } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-code-point.util';
-import { getWorkspaceRuntimeReason } from 'src/engine/metadata-modules/flat-entity/utils/get-workspace-runtime-reason.util';
+import { getWorkspaceRuntimeReason } from 'src/engine/core-modules/application/application-manifest/utils/get-workspace-runtime-reason.util';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';

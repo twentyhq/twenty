@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { fromFlatNavigationMenuItemToNavigationMenuItemManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-navigation-menu-item-to-navigation-menu-item-manifest.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
-import { getWorkspaceRuntimeReason } from 'src/engine/metadata-modules/flat-entity/utils/get-workspace-runtime-reason.util';
+import { getWorkspaceRuntimeReason } from 'src/engine/core-modules/application/application-manifest/utils/get-workspace-runtime-reason.util';
 import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/application-manifest/utils/build-exported-coverage-entry.util';
 import { getUnsupportedNavigationMenuItemReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-navigation-menu-item-reason.util';
 import { MANIFEST_ENTITY_REGISTRY } from 'src/engine/core-modules/application/application-manifest/utils/find-manifest-entity-descriptor-by-universal-identifier.util';
