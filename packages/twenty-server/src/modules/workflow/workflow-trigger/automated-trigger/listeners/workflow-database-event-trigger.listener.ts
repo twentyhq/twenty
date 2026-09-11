@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
@@ -31,7 +33,9 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShareGate } from 'src/engine/record-share/types/record-share-gate.type';
 import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
+import { InheritedRecordAccessService } from 'src/engine/record-share/services/inherited-record-access.service';
 import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
+import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
 import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -77,6 +81,7 @@ export class WorkflowDatabaseEventTriggerListener {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareService: RecordShareService,
+    private readonly inheritedRecordAccessService: InheritedRecordAccessService,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -370,6 +375,7 @@ export class WorkflowDatabaseEventTriggerListener {
     }
 
     const recordShareGate = await this.buildRecordShareGate(payload);
+    const inheritedRecordIds = await this.resolveInheritedRecordIds(payload);
 
     for (const eventListener of eventListeners) {
       for (const eventPayload of payload.events) {
@@ -378,6 +384,7 @@ export class WorkflowDatabaseEventTriggerListener {
           eventListener,
           action,
           recordShareGate,
+          inheritedRecordIds,
         });
 
         if (shouldTriggerJob) {
@@ -457,16 +464,82 @@ export class WorkflowDatabaseEventTriggerListener {
     });
   }
 
+  // The workflow engine runs with the standard application's role, so
+  // inheritance is resolved for that principal instead of the child's own rows
+  private async resolveInheritedRecordIds(
+    payload: WorkspaceEventBatch<ObjectRecordEvent>,
+  ): Promise<Set<string> | undefined> {
+    const {
+      featureFlagsMap,
+      flatApplicationMaps,
+      flatRoleMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(payload.workspaceId, [
+      'featureFlagsMap',
+      'flatApplicationMaps',
+      'flatRoleMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+    ]);
+
+    if (!featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED]) {
+      return undefined;
+    }
+
+    const standardApplication = findActiveFlatApplicationByUniversalIdentifier(
+      flatApplicationMaps,
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+
+    if (
+      resolveRecordShareGateKind({
+        readability: payload.objectMetadata.readability,
+        isOwningApplication:
+          isDefined(standardApplication) &&
+          payload.objectMetadata.applicationId === standardApplication.id,
+      }) !== 'inherited'
+    ) {
+      return undefined;
+    }
+
+    return this.inheritedRecordAccessService.resolveAuthorizedEventRecordIds({
+      flatObjectMetadata: payload.objectMetadata,
+      events: payload.events,
+      context: {
+        workspaceId: payload.workspaceId,
+        principalIds: [
+          EVERYONE_PRINCIPAL_ID,
+          standardApplication?.defaultRoleId ??
+            findFlatEntityByUniversalIdentifier({
+              flatEntityMaps: flatRoleMaps,
+              universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+            })?.id,
+        ].filter(isNonEmptyString),
+        accessLevels: resolveRequiredRecordShareAccessLevels('select'),
+        applicationId: standardApplication?.id,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      },
+    });
+  }
+
   private shouldTriggerJob({
     eventPayload,
     eventListener,
     action,
     recordShareGate,
-  }: TriggerEvaluationArgs & { recordShareGate: RecordShareGate | null }) {
+    inheritedRecordIds,
+  }: TriggerEvaluationArgs & {
+    recordShareGate: RecordShareGate | null;
+    inheritedRecordIds: Set<string> | undefined;
+  }) {
     return (
       this.eventMatchesWatchedFields({ eventPayload, eventListener, action }) &&
       this.eventMatchesRecordFilter({ eventPayload, eventListener }) &&
-      this.eventMatchesRecordShare({ eventPayload, recordShareGate })
+      this.eventMatchesRecordShare({ eventPayload, recordShareGate }) &&
+      (!isDefined(inheritedRecordIds) ||
+        inheritedRecordIds.has(eventPayload.recordId))
     );
   }
 

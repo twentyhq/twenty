@@ -12,6 +12,7 @@ import {
 
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { InheritedRecordAccessService } from 'src/engine/record-share/services/inherited-record-access.service';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -118,6 +119,14 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           provide: RecordShareService,
           useValue: recordShareService,
+        },
+        {
+          provide: InheritedRecordAccessService,
+          useValue: {
+            resolveAuthorizedEventRecordIds: jest
+              .fn()
+              .mockResolvedValue(new Set<string>()),
+          },
         },
         {
           provide: 'MESSAGE_QUEUE_workflow-queue',

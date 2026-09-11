@@ -77,6 +77,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       isUICreatable: true,
       writability: MetadataWritability.OPEN,
       readability: MetadataReadability.OPEN,
+      inheritance: null,
       isSystem: false,
       labelPlural: capitalize(createObjectInput.labelPlural),
       labelSingular: capitalize(createObjectInput.labelSingular),

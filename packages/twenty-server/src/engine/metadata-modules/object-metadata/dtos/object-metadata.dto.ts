@@ -8,6 +8,9 @@ import {
 import {
   MetadataReadability,
   MetadataWritability,
+  type ObjectAccessInheritance,
+  ObjectAccessInheritanceMatch,
+  ObjectAccessInheritanceRelationKind,
   ObjectOpenRecordIn,
 } from 'twenty-shared/types';
 
@@ -18,6 +21,33 @@ import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object
 registerEnumType(ObjectOpenRecordIn, { name: 'ObjectOpenRecordIn' });
 registerEnumType(MetadataReadability, { name: 'MetadataReadability' });
 registerEnumType(MetadataWritability, { name: 'MetadataWritability' });
+registerEnumType(ObjectAccessInheritanceMatch, {
+  name: 'ObjectAccessInheritanceMatch',
+});
+registerEnumType(ObjectAccessInheritanceRelationKind, {
+  name: 'ObjectAccessInheritanceRelationKind',
+});
+
+@ObjectType('ObjectAccessInheritanceRelationRef')
+export class ObjectAccessInheritanceRelationRefDTO {
+  @Field(() => ObjectAccessInheritanceRelationKind)
+  kind: ObjectAccessInheritanceRelationKind;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  fieldUniversalIdentifier?: string;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  morphId?: string;
+}
+
+@ObjectType('ObjectAccessInheritance')
+export class ObjectAccessInheritanceDTO {
+  @Field(() => [ObjectAccessInheritanceRelationRefDTO])
+  through: ObjectAccessInheritanceRelationRefDTO[];
+
+  @Field(() => ObjectAccessInheritanceMatch)
+  match: ObjectAccessInheritanceMatch;
+}
 
 @ObjectType('Object')
 export class ObjectMetadataDTO {
@@ -84,6 +114,9 @@ export class ObjectMetadataDTO {
 
   @Field(() => MetadataReadability)
   readability: MetadataReadability;
+
+  @Field(() => ObjectAccessInheritanceDTO, { nullable: true })
+  inheritance?: ObjectAccessInheritance | null;
 
   @Field(() => MetadataWritability)
   writability: MetadataWritability;

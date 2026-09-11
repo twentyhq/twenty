@@ -2,6 +2,7 @@ import { type ObjectFieldManifest } from '@/application/objectFieldManifest.type
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type MetadataReadability } from '@/types/MetadataReadability';
 import { type MetadataWritability } from '@/types/MetadataWritability';
+import { type ObjectAccessInheritance } from '@/types/ObjectAccess';
 import { type ObjectOpenRecordIn } from '@/types/ObjectOpenRecordIn';
 
 export type ObjectManifest = SyncableEntityOptions & {
@@ -20,6 +21,8 @@ export type ObjectManifest = SyncableEntityOptions & {
   isUIEditable?: boolean;
   writability?: MetadataWritability;
   readability?: MetadataReadability;
+  // Required when readability is INHERITED, forbidden otherwise
+  inheritance?: ObjectAccessInheritance | null;
   openRecordIn?: ObjectOpenRecordIn;
   fields: ObjectFieldManifest[];
   labelIdentifierFieldMetadataUniversalIdentifier: string;

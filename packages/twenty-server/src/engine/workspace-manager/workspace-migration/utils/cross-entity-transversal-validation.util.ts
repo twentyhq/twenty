@@ -1,4 +1,5 @@
 import { validateNavigationMenuItemPageLayoutReferenceCrossEntity } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util';
+import { validateInheritedRelationNotDeletedCrossEntity } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-inherited-relation-not-deleted-cross-entity.util';
 import { validateObjectMetadataCrossEntity } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-cross-entity.util';
 import { validatePermissionFlagNotInUseCrossEntity } from 'src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util';
 import { validateViewFieldLabelIdentifierCrossEntity } from 'src/engine/metadata-modules/flat-view-field/validators/utils/validate-view-field-label-identifier-cross-entity.util';
@@ -28,6 +29,11 @@ export const crossEntityTransversalValidation = ({
     orchestratorActionsReport,
   });
 
+  const { fieldMetadata } = validateInheritedRelationNotDeletedCrossEntity({
+    optimisticUniversalFlatMaps,
+    deletedFieldActions: orchestratorActionsReport.fieldMetadata.delete,
+  });
+
   const { viewField } = validateViewFieldLabelIdentifierCrossEntity({
     optimisticUniversalFlatMaps,
     deletedViewFieldActions: orchestratorActionsReport.viewField.delete,
@@ -47,6 +53,7 @@ export const crossEntityTransversalValidation = ({
     });
 
   crossEntityFailureReport.objectMetadata.push(...objectMetadata);
+  crossEntityFailureReport.fieldMetadata.push(...fieldMetadata);
   crossEntityFailureReport.viewField.push(...viewField);
   crossEntityFailureReport.permissionFlag.push(...permissionFlag);
   crossEntityFailureReport.navigationMenuItem.push(...navigationMenuItem);

@@ -17,6 +17,11 @@ describe('resolveRecordShareGateKind', () => {
     {
       readability: MetadataReadability.INHERITED,
       isOwningApplication: false,
+      expected: 'inherited',
+    },
+    {
+      readability: MetadataReadability.INHERITED,
+      isOwningApplication: true,
       expected: 'open',
     },
     {

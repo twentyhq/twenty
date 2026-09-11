@@ -19,9 +19,12 @@ import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/typ
 import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
 import { computeWebhookOperationsToMatch } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-operations-to-match.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
+import { InheritedRecordAccessService } from 'src/engine/record-share/services/inherited-record-access.service';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
 import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
+import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
+import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;
@@ -34,6 +37,7 @@ export class CallWebhookJobsJob {
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareService: RecordShareService,
+    private readonly inheritedRecordAccessService: InheritedRecordAccessService,
     private readonly webhookRateLimitService: WebhookRateLimitService,
   ) {}
 
@@ -53,11 +57,20 @@ export class CallWebhookJobsJob {
       operation,
     });
 
-    const { flatWebhookMaps, flatObjectMetadataMaps, featureFlagsMap } =
-      await this.workspaceCacheService.getOrRecompute(
-        workspaceEventBatch.workspaceId,
-        ['flatWebhookMaps', 'flatObjectMetadataMaps', 'featureFlagsMap'],
-      );
+    const {
+      flatWebhookMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      featureFlagsMap,
+    } = await this.workspaceCacheService.getOrRecompute(
+      workspaceEventBatch.workspaceId,
+      [
+        'flatWebhookMaps',
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+        'featureFlagsMap',
+      ],
+    );
 
     const webhooks = Object.values(flatWebhookMaps.byUniversalIdentifier)
       .filter(isDefined)
@@ -108,8 +121,39 @@ export class CallWebhookJobsJob {
           })
         : null;
 
+    // A webhook carries no identity, so inheritance is resolved for the
+    // everyone principal alone, exactly like a share row would be
+    const inheritedRecordIds =
+      isRecordSharingEnabled &&
+      isDefined(flatObjectMetadata) &&
+      resolveRecordShareGateKind({
+        readability: flatObjectMetadata.readability,
+        isOwningApplication: false,
+      }) === 'inherited'
+        ? await this.inheritedRecordAccessService.resolveAuthorizedEventRecordIds(
+            {
+              flatObjectMetadata,
+              events: workspaceEventBatch.events,
+              context: {
+                workspaceId: workspaceEventBatch.workspaceId,
+                principalIds: [EVERYONE_PRINCIPAL_ID],
+                accessLevels: resolveRequiredRecordShareAccessLevels('select'),
+                flatObjectMetadataMaps,
+                flatFieldMetadataMaps,
+              },
+            },
+          )
+        : undefined;
+
     const webhookEvents = transformEventBatchToWebhookEvents({
-      workspaceEventBatch,
+      workspaceEventBatch: isDefined(inheritedRecordIds)
+        ? {
+            ...workspaceEventBatch,
+            events: workspaceEventBatch.events.filter((event) =>
+              inheritedRecordIds.has(event.recordId),
+            ),
+          }
+        : workspaceEventBatch,
       webhooks,
       recordShareGate,
     });

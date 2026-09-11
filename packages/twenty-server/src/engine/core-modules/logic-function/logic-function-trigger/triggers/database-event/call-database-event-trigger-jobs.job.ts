@@ -1,5 +1,7 @@
 import { Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,11 +23,16 @@ import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { InheritedRecordAccessService } from 'src/engine/record-share/services/inherited-record-access.service';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
 import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
 import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
 import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
+import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -40,15 +47,27 @@ export class CallDatabaseEventTriggerJobsJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
     private readonly recordShareService: RecordShareService,
+    private readonly inheritedRecordAccessService: InheritedRecordAccessService,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
   async handle(workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>) {
-    const { flatLogicFunctionMaps, flatApplicationMaps, featureFlagsMap } =
-      await this.workspaceCacheService.getOrRecompute(
-        workspaceEventBatch.workspaceId,
-        ['flatLogicFunctionMaps', 'flatApplicationMaps', 'featureFlagsMap'],
-      );
+    const {
+      flatLogicFunctionMaps,
+      flatApplicationMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      featureFlagsMap,
+    } = await this.workspaceCacheService.getOrRecompute(
+      workspaceEventBatch.workspaceId,
+      [
+        'flatLogicFunctionMaps',
+        'flatApplicationMaps',
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+        'featureFlagsMap',
+      ],
+    );
 
     const logicFunctionsWithDatabaseEventTrigger = Object.values(
       flatLogicFunctionMaps.byUniversalIdentifier,
@@ -126,6 +145,8 @@ export class CallDatabaseEventTriggerJobsJob {
           application,
           isRecordShareGated,
           fetchRecordSharesByRecordId,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
         }),
       });
 
@@ -169,18 +190,59 @@ export class CallDatabaseEventTriggerJobsJob {
     application,
     isRecordShareGated,
     fetchRecordSharesByRecordId,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
   }: {
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
     application: FlatApplication;
     isRecordShareGated: boolean;
     fetchRecordSharesByRecordId: () => Promise<Map<string, RecordShare[]>>;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): Promise<WorkspaceEventBatch<ObjectRecordEvent>> {
+    const principalIds = [
+      EVERYONE_PRINCIPAL_ID,
+      application.defaultRoleId,
+    ].filter(isNonEmptyString);
+    const isOwningApplication =
+      workspaceEventBatch.objectMetadata.applicationId === application.id;
+
+    if (
+      isRecordShareGated &&
+      resolveRecordShareGateKind({
+        readability: workspaceEventBatch.objectMetadata.readability,
+        isOwningApplication,
+      }) === 'inherited'
+    ) {
+      const authorizedRecordIds =
+        await this.inheritedRecordAccessService.resolveAuthorizedEventRecordIds(
+          {
+            flatObjectMetadata: workspaceEventBatch.objectMetadata,
+            events: workspaceEventBatch.events,
+            context: {
+              workspaceId: workspaceEventBatch.workspaceId,
+              principalIds,
+              accessLevels: resolveRequiredRecordShareAccessLevels('select'),
+              applicationId: application.id,
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
+            },
+          },
+        );
+
+      return {
+        ...workspaceEventBatch,
+        events: workspaceEventBatch.events.filter((event) =>
+          authorizedRecordIds.has(event.recordId),
+        ),
+      };
+    }
+
     const recordShareGate = isRecordShareGated
       ? await buildRecordShareGate({
           readability: workspaceEventBatch.objectMetadata.readability,
-          isOwningApplication:
-            workspaceEventBatch.objectMetadata.applicationId === application.id,
-          principalIds: [EVERYONE_PRINCIPAL_ID, application.defaultRoleId],
+          isOwningApplication,
+          principalIds,
           fetchRecordSharesByRecordId,
         })
       : null;

@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 import { validateFlatObjectMetadataIdentifiers } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util';
+import { validateObjectMetadataInheritance } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-inheritance.util';
 import {
   type OrchestratorActionsReport,
   type OrchestratorFailureReport,
@@ -62,6 +63,15 @@ export const validateObjectMetadataCrossEntity = ({
         universalFlatFieldMetadataMaps:
           optimisticUniversalFlatMaps.flatFieldMetadataMaps,
       }),
+      ...validateObjectMetadataInheritance({
+        universalFlatObjectMetadata,
+        maps: {
+          universalFlatObjectMetadataMaps:
+            optimisticUniversalFlatMaps.flatObjectMetadataMaps,
+          universalFlatFieldMetadataMaps:
+            optimisticUniversalFlatMaps.flatFieldMetadataMaps,
+        },
+      }),
     );
 
     if (createFailedFlatEntityValidations.errors.length > 0) {
@@ -105,6 +115,18 @@ export const validateObjectMetadataCrossEntity = ({
         }),
       );
     }
+
+    updateFailedFlatEntityValidations.errors.push(
+      ...validateObjectMetadataInheritance({
+        universalFlatObjectMetadata: updatedFlatObjectMetadata,
+        maps: {
+          universalFlatObjectMetadataMaps:
+            optimisticUniversalFlatMaps.flatObjectMetadataMaps,
+          universalFlatFieldMetadataMaps:
+            optimisticUniversalFlatMaps.flatFieldMetadataMaps,
+        },
+      }),
+    );
 
     if (updateFailedFlatEntityValidations.errors.length > 0) {
       metadataValidationErrors.objectMetadata.push(

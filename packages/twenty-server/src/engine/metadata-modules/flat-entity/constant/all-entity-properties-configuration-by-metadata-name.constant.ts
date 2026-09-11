@@ -278,6 +278,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    inheritance: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     isUICreatable: {
       toCompare: true,
       toStringify: false,

@@ -1,6 +1,7 @@
 import { randomBytes } from 'node:crypto';
 
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -11,12 +12,16 @@ export const buildRecordShareCondition = ({
   objectMetadataId,
   principalIds,
   accessLevels,
+  recordIdExpression,
+  objectMetadataIdExpression,
 }: {
   tableAlias: string;
   recordShareTableExpression: string;
-  objectMetadataId: string;
+  objectMetadataId?: string;
   principalIds: string[];
   accessLevels: RecordShareAccessLevel[];
+  recordIdExpression?: string;
+  objectMetadataIdExpression?: string;
 }): { sql: string; parameters: ObjectLiteral } => {
   const parameterSuffix = randomBytes(5).toString('hex');
   const objectMetadataIdParameterName = `recordShareObjectMetadataId_${parameterSuffix}`;
@@ -24,11 +29,15 @@ export const buildRecordShareCondition = ({
   const accessLevelsParameterName = `recordShareAccessLevels_${parameterSuffix}`;
 
   const recordShareAlias = escapeIdentifier(`${tableAlias}_recordShare`);
-  const quotedTableAlias = escapeIdentifier(tableAlias);
+  const recordIdSql =
+    recordIdExpression ?? `${escapeIdentifier(tableAlias)}."id"`;
+
+  const objectMetadataIdSql =
+    objectMetadataIdExpression ?? `:${objectMetadataIdParameterName}`;
 
   const conditions = [
-    `${recordShareAlias}."recordId" = ${quotedTableAlias}."id"`,
-    `${recordShareAlias}."objectMetadataId" = :${objectMetadataIdParameterName}`,
+    `${recordShareAlias}."recordId" = ${recordIdSql}`,
+    `${recordShareAlias}."objectMetadataId" = ${objectMetadataIdSql}`,
     `${recordShareAlias}."principalId" = ANY(:${principalIdsParameterName})`,
     `${recordShareAlias}."accessLevel" IN (:...${accessLevelsParameterName})`,
     `${recordShareAlias}."deletedAt" IS NULL`,
@@ -37,7 +46,9 @@ export const buildRecordShareCondition = ({
   return {
     sql: `EXISTS (SELECT 1 FROM ${recordShareTableExpression} AS ${recordShareAlias} WHERE ${conditions.join(' AND ')})`,
     parameters: {
-      [objectMetadataIdParameterName]: objectMetadataId,
+      ...(isDefined(objectMetadataIdExpression)
+        ? {}
+        : { [objectMetadataIdParameterName]: objectMetadataId }),
       [principalIdsParameterName]: principalIds,
       [accessLevelsParameterName]: accessLevels,
     },

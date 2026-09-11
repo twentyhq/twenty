@@ -180,6 +180,15 @@ export { NavigationMenuItemType } from './NavigationMenuItemType';
 export type { NonNullableRequired } from './NonNullableRequired';
 export type { Nullable } from './Nullable';
 export type { NullablePartial } from './NullablePartial';
+export type {
+  ObjectAccessInheritanceRelationRef,
+  ObjectAccessInheritance,
+  ObjectAccess,
+} from './ObjectAccess';
+export {
+  ObjectAccessInheritanceMatch,
+  ObjectAccessInheritanceRelationKind,
+} from './ObjectAccess';
 export { ObjectOpenRecordIn } from './ObjectOpenRecordIn';
 export type { ObjectPermissions } from './ObjectPermissions';
 export type { ObjectRecord } from './ObjectRecord';

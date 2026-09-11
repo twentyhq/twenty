@@ -47,6 +47,7 @@ type Assertions = [
       | 'isUICreatable'
       | 'writability'
       | 'readability'
+      | 'inheritance'
     >
   >,
 ];

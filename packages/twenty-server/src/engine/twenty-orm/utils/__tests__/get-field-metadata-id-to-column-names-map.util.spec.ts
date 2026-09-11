@@ -48,6 +48,7 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     isUICreatable: true,
     writability: MetadataWritability.OPEN,
     readability: MetadataReadability.OPEN,
+    inheritance: null,
     openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     labelIdentifierFieldMetadataId: null,
     imageIdentifierFieldMetadataId: null,

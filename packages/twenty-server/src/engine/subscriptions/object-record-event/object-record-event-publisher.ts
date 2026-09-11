@@ -39,10 +39,15 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
+import {
+  type InheritedAccessEvaluationContext,
+  InheritedRecordAccessService,
+} from 'src/engine/record-share/services/inherited-record-access.service';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShareGate } from 'src/engine/record-share/types/record-share-gate.type';
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
 import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
+import { extractEventRecord } from 'src/engine/record-share/utils/extract-event-record.util';
 import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
 import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
 import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
@@ -72,6 +77,7 @@ type StreamPermissionsContext = {
   rolesPermissions: ObjectsPermissionsByRoleId;
   flatApplicationMaps: FlatApplicationCacheMaps;
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 };
 
 @Injectable()
@@ -86,6 +92,7 @@ export class ObjectRecordEventPublisher {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly commonSelectFieldsHelper: CommonSelectFieldsHelper,
     private readonly recordShareService: RecordShareService,
+    private readonly inheritedRecordAccessService: InheritedRecordAccessService,
   ) {}
 
   async publish(
@@ -257,6 +264,26 @@ export class ObjectRecordEventPublisher {
       },
     );
 
+    const subscriberLinkedRecordGuard =
+      await this.resolveSubscriberLinkedRecordGuard({
+        subscriberAuthContext,
+        roleIds,
+        objectsPermissions,
+        workspaceEventBatch,
+        permissionsContext,
+        flatWorkspaceMemberMaps,
+      });
+
+    const subscriberInheritedRecordIds =
+      await this.resolveSubscriberInheritedRecordIds({
+        subscriberAuthContext,
+        roleIds,
+        objectsPermissions,
+        workspaceEventBatch,
+        permissionsContext,
+        flatWorkspaceMemberMaps,
+      });
+
     const restrictedFields = objectPermissions.restrictedFields;
 
     for (const event of workspaceEventBatch.events) {
@@ -292,6 +319,20 @@ export class ObjectRecordEventPublisher {
           recordId: filteredEvent.recordId,
           accessLevels: resolveRequiredRecordShareAccessLevels('select'),
         })
+      ) {
+        continue;
+      }
+
+      if (
+        isDefined(subscriberInheritedRecordIds) &&
+        !subscriberInheritedRecordIds.has(filteredEvent.recordId)
+      ) {
+        continue;
+      }
+
+      if (
+        isDefined(subscriberLinkedRecordGuard) &&
+        !subscriberLinkedRecordGuard(filteredEvent.recordId)
       ) {
         continue;
       }
@@ -587,6 +628,194 @@ export class ObjectRecordEventPublisher {
     });
   }
 
+  private async resolveSubscriberLinkedRecordGuard({
+    subscriberAuthContext,
+    roleIds,
+    objectsPermissions,
+    workspaceEventBatch,
+    permissionsContext,
+    flatWorkspaceMemberMaps,
+  }: {
+    subscriberAuthContext: SerializableAuthContext;
+    roleIds: string[];
+    objectsPermissions: ObjectsPermissions;
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
+    permissionsContext: StreamPermissionsContext;
+    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+  }): Promise<((recordId: string) => boolean) | undefined> {
+    if (
+      !permissionsContext.featureFlagsMap[
+        FeatureFlagKey.IS_RECORD_SHARING_ENABLED
+      ] ||
+      workspaceEventBatch.objectMetadata.nameSingular !== 'timelineActivity'
+    ) {
+      return undefined;
+    }
+
+    const linkedReferenceByRecordId = new Map<
+      string,
+      { linkedObjectMetadataId: string; linkedRecordId: string }
+    >();
+    const linkedRecordIdsByObjectMetadataId = new Map<string, string[]>();
+
+    for (const event of workspaceEventBatch.events) {
+      const record = extractEventRecord(event.properties);
+      const linkedObjectMetadataId = record.linkedObjectMetadataId;
+      const linkedRecordId = record.linkedRecordId;
+
+      if (
+        typeof linkedObjectMetadataId !== 'string' ||
+        typeof linkedRecordId !== 'string'
+      ) {
+        continue;
+      }
+
+      linkedReferenceByRecordId.set(event.recordId, {
+        linkedObjectMetadataId,
+        linkedRecordId,
+      });
+      linkedRecordIdsByObjectMetadataId.set(linkedObjectMetadataId, [
+        ...(linkedRecordIdsByObjectMetadataId.get(linkedObjectMetadataId) ??
+          []),
+        linkedRecordId,
+      ]);
+    }
+
+    if (linkedReferenceByRecordId.size === 0) {
+      return undefined;
+    }
+
+    const authorizedRecordIdsByObjectMetadataId =
+      await this.inheritedRecordAccessService.resolveAuthorizedLinkedRecordIds({
+        linkedRecordIdsByObjectMetadataId,
+        context: this.buildInheritedAccessEvaluationContext({
+          subscriberAuthContext,
+          roleIds,
+          objectsPermissions,
+          workspaceId: workspaceEventBatch.workspaceId,
+          permissionsContext,
+          flatWorkspaceMemberMaps,
+        }),
+      });
+
+    return (recordId: string) => {
+      const linkedReference = linkedReferenceByRecordId.get(recordId);
+
+      if (!isDefined(linkedReference)) {
+        return true;
+      }
+
+      return (
+        authorizedRecordIdsByObjectMetadataId
+          .get(linkedReference.linkedObjectMetadataId)
+          ?.has(linkedReference.linkedRecordId) === true
+      );
+    };
+  }
+
+  private buildInheritedAccessEvaluationContext({
+    subscriberAuthContext,
+    roleIds,
+    objectsPermissions,
+    workspaceId,
+    permissionsContext,
+    flatWorkspaceMemberMaps,
+  }: {
+    subscriberAuthContext: SerializableAuthContext;
+    roleIds: string[];
+    objectsPermissions: ObjectsPermissions;
+    workspaceId: string;
+    permissionsContext: StreamPermissionsContext;
+    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+  }): InheritedAccessEvaluationContext {
+    return {
+      workspaceId,
+      principalIds: [
+        EVERYONE_PRINCIPAL_ID,
+        ...(isDefined(subscriberAuthContext.workspaceMemberId)
+          ? [subscriberAuthContext.workspaceMemberId]
+          : []),
+        ...roleIds,
+      ],
+      accessLevels: resolveRequiredRecordShareAccessLevels('select'),
+      applicationId: subscriberAuthContext.applicationId,
+      flatObjectMetadataMaps: permissionsContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
+      objectsPermissions,
+      isParentRecordMatchingRowLevelPermissions: ({
+        parentFlatObjectMetadata,
+        parentRecord,
+      }) => {
+        const parentRLSFilter = this.buildSubscriberRLSFilter(
+          subscriberAuthContext,
+          roleIds,
+          parentFlatObjectMetadata,
+          permissionsContext,
+          flatWorkspaceMemberMaps,
+        );
+
+        if (
+          !isDefined(parentRLSFilter) ||
+          Object.keys(parentRLSFilter).length === 0
+        ) {
+          return true;
+        }
+
+        return isRecordMatchingRLSRowLevelPermissionPredicate({
+          record: parentRecord,
+          filter: parentRLSFilter,
+          flatObjectMetadata: parentFlatObjectMetadata,
+          flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
+          shouldIgnoreSoftDeleteDefaultFilter: true,
+        });
+      },
+    };
+  }
+
+  private async resolveSubscriberInheritedRecordIds({
+    subscriberAuthContext,
+    roleIds,
+    objectsPermissions,
+    workspaceEventBatch,
+    permissionsContext,
+    flatWorkspaceMemberMaps,
+  }: {
+    subscriberAuthContext: SerializableAuthContext;
+    roleIds: string[];
+    objectsPermissions: ObjectsPermissions;
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
+    permissionsContext: StreamPermissionsContext;
+    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+  }): Promise<Set<string> | undefined> {
+    if (
+      !permissionsContext.featureFlagsMap[
+        FeatureFlagKey.IS_RECORD_SHARING_ENABLED
+      ] ||
+      resolveRecordShareGateKind({
+        readability: workspaceEventBatch.objectMetadata.readability,
+        isOwningApplication:
+          isDefined(workspaceEventBatch.objectMetadata.applicationId) &&
+          subscriberAuthContext.applicationId ===
+            workspaceEventBatch.objectMetadata.applicationId,
+      }) !== 'inherited'
+    ) {
+      return undefined;
+    }
+
+    return this.inheritedRecordAccessService.resolveAuthorizedEventRecordIds({
+      flatObjectMetadata: workspaceEventBatch.objectMetadata,
+      events: workspaceEventBatch.events,
+      context: this.buildInheritedAccessEvaluationContext({
+        subscriberAuthContext,
+        roleIds,
+        objectsPermissions,
+        workspaceId: workspaceEventBatch.workspaceId,
+        permissionsContext,
+        flatWorkspaceMemberMaps,
+      }),
+    });
+  }
+
   private filterRestrictedFieldsFromEvent(
     event: ObjectRecordSubscriptionEvent,
     restrictedFields: RestrictedFieldsPermissions | undefined,
@@ -768,7 +997,9 @@ export class ObjectRecordEventPublisher {
       rolesPermissions,
       flatApplicationMaps,
       featureFlagsMap,
+      flatObjectMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
       'flatFieldMetadataMaps',
@@ -786,6 +1017,7 @@ export class ObjectRecordEventPublisher {
       rolesPermissions,
       flatApplicationMaps,
       featureFlagsMap,
+      flatObjectMetadataMaps,
     };
   }
 }

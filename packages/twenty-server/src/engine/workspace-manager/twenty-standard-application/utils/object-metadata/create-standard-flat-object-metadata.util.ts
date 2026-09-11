@@ -1,8 +1,13 @@
 import { msg } from '@lingui/core/macro';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECT_FIELDS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 import {
   MetadataReadability,
   MetadataWritability,
+  ObjectAccessInheritanceMatch,
+  ObjectAccessInheritanceRelationKind,
   ObjectOpenRecordIn,
 } from 'twenty-shared/types';
 
@@ -50,6 +55,17 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconFileImport',
         isSystem: true,
         isUICreatable: false,
+        readability: MetadataReadability.INHERITED,
+        inheritance: {
+          match: ObjectAccessInheritanceMatch.ANY,
+          through: [
+            {
+              kind: ObjectAccessInheritanceRelationKind.MORPH,
+              morphId:
+                STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
+            },
+          ],
+        },
         labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,
@@ -275,6 +291,18 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
+        readability: MetadataReadability.INHERITED,
+        inheritance: {
+          match: ObjectAccessInheritanceMatch.ANY,
+          through: [
+            {
+              kind: ObjectAccessInheritanceRelationKind.FIELD,
+              fieldUniversalIdentifier:
+                STANDARD_OBJECT_FIELDS.calendarEventTarget.calendarEvent
+                  .universalIdentifier,
+            },
+          ],
+        },
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -756,6 +784,18 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
+        readability: MetadataReadability.INHERITED,
+        inheritance: {
+          match: ObjectAccessInheritanceMatch.ANY,
+          through: [
+            {
+              kind: ObjectAccessInheritanceRelationKind.FIELD,
+              fieldUniversalIdentifier:
+                STANDARD_OBJECT_FIELDS.messageThreadTarget.messageThread
+                  .universalIdentifier,
+            },
+          ],
+        },
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -865,6 +905,17 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconCheckbox',
         isSystem: true,
         isUICreatable: false,
+        readability: MetadataReadability.INHERITED,
+        inheritance: {
+          match: ObjectAccessInheritanceMatch.ANY,
+          through: [
+            {
+              kind: ObjectAccessInheritanceRelationKind.FIELD,
+              fieldUniversalIdentifier:
+                STANDARD_OBJECT_FIELDS.noteTarget.note.universalIdentifier,
+            },
+          ],
+        },
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -1068,6 +1119,17 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconCheckbox',
         isSystem: true,
         isUICreatable: false,
+        readability: MetadataReadability.INHERITED,
+        inheritance: {
+          match: ObjectAccessInheritanceMatch.ANY,
+          through: [
+            {
+              kind: ObjectAccessInheritanceRelationKind.FIELD,
+              fieldUniversalIdentifier:
+                STANDARD_OBJECT_FIELDS.taskTarget.task.universalIdentifier,
+            },
+          ],
+        },
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -1115,6 +1177,18 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
+        readability: MetadataReadability.INHERITED,
+        inheritance: {
+          match: ObjectAccessInheritanceMatch.ANY,
+          through: [
+            {
+              kind: ObjectAccessInheritanceRelationKind.MORPH,
+              morphId:
+                STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId
+                  .morphId,
+            },
+          ],
+        },
         labelIdentifierFieldMetadataName: 'linkedRecordCachedName',
       },
       workspaceId,

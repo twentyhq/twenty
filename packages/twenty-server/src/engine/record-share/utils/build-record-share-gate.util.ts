@@ -27,6 +27,10 @@ export const buildRecordShareGate = async ({
   switch (gateKind) {
     case 'open':
       return null;
+    // Inheritance is resolved separately against the parents, never from the
+    // child's own rows
+    case 'inherited':
+      return null;
     case 'deny':
       return DENY_ALL_RECORD_SHARE_GATE;
     case 'private':

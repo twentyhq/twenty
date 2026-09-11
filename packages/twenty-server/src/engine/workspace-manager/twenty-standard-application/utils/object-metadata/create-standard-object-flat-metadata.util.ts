@@ -2,6 +2,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   MetadataReadability,
   MetadataWritability,
+  type ObjectAccessInheritance,
   ObjectOpenRecordIn,
 } from 'twenty-shared/types';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
@@ -26,6 +27,7 @@ export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
   isUICreatable?: boolean;
   writability?: MetadataWritability;
   readability?: MetadataReadability;
+  inheritance?: ObjectAccessInheritance | null;
   openRecordIn?: ObjectOpenRecordIn;
   shortcut?: string | null;
   duplicateCriteria?: string[][] | null;
@@ -58,6 +60,7 @@ export const createStandardObjectFlatMetadata = <
     isUICreatable = true,
     writability = MetadataWritability.OPEN,
     readability = MetadataReadability.OPEN,
+    inheritance = null,
     openRecordIn = ObjectOpenRecordIn.USER_CHOICE,
     shortcut = null,
     duplicateCriteria = null,
@@ -103,6 +106,7 @@ export const createStandardObjectFlatMetadata = <
     isUICreatable,
     writability,
     readability,
+    inheritance,
     openRecordIn,
     isLabelSyncedWithName: false,
     overrides: null,

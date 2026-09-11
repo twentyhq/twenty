@@ -24,6 +24,7 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { InheritedRecordAccessService } from 'src/engine/record-share/services/inherited-record-access.service';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
@@ -103,6 +104,12 @@ describe('ObjectRecordEventPublisher', () => {
   >;
   let mockRecordShareService: jest.Mocked<
     Pick<RecordShareService, 'findByRecordIds'>
+  >;
+  let mockInheritedRecordAccessService: jest.Mocked<
+    Pick<
+      InheritedRecordAccessService,
+      'resolveAuthorizedEventRecordIds' | 'resolveAuthorizedLinkedRecordIds'
+    >
   >;
 
   const workspaceId = COMPANY_FLAT_OBJECT_MOCK.workspaceId;
@@ -270,6 +277,15 @@ describe('ObjectRecordEventPublisher', () => {
       findByRecordIds: jest.fn().mockResolvedValue([]),
     };
 
+    mockInheritedRecordAccessService = {
+      resolveAuthorizedEventRecordIds: jest
+        .fn()
+        .mockResolvedValue(new Set<string>()),
+      resolveAuthorizedLinkedRecordIds: jest
+        .fn()
+        .mockResolvedValue(new Map<string, Set<string>>()),
+    };
+
     mockWorkspaceManyOrAllFlatEntityMapsCacheService = {
       getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
         flatFieldMetadataMaps: mockFlatFieldMetadataMaps,
@@ -318,6 +334,10 @@ describe('ObjectRecordEventPublisher', () => {
         {
           provide: RecordShareService,
           useValue: mockRecordShareService,
+        },
+        {
+          provide: InheritedRecordAccessService,
+          useValue: mockInheritedRecordAccessService,
         },
       ],
     }).compile();

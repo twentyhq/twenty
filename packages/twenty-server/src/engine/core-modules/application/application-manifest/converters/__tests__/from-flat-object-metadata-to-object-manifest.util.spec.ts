@@ -31,6 +31,7 @@ const OBJECT_MANIFEST: Required<ObjectManifest> = {
   isUIEditable: false,
   writability: MetadataWritability.APPLICATION,
   readability: MetadataReadability.PRIVATE,
+  inheritance: null,
   openRecordIn: ObjectOpenRecordIn.RECORD_PAGE,
   labelIdentifierFieldMetadataUniversalIdentifier: LABEL_FIELD_UID,
   imageIdentifierFieldMetadataUniversalIdentifier: IMAGE_FIELD_UID,

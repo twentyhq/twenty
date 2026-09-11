@@ -58,6 +58,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "icon": "icon",
   "imageIdentifierFieldMetadataUniversalIdentifier": "image-identifier-field-metadata-universal-identifier",
   "indexMetadataUniversalIdentifiers": [],
+  "inheritance": null,
   "isActive": true,
   "isAuditLogged": true,
   "isLabelSyncedWithName": false,
