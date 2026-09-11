@@ -1,6 +1,7 @@
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
+  isFieldMetadataSelectKind,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -18,6 +19,7 @@ import {
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
+import { sanitizeSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-option-colors.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { computeMetadataOverridesBlob } from 'src/engine/metadata-modules/utils/compute-metadata-overrides-blob.util';
 import { findInvalidTranslationOverrideProperties } from 'src/engine/metadata-modules/utils/find-invalid-translation-override-properties.util';
@@ -71,14 +73,20 @@ export const sanitizeRawUpdateFieldInput = ({
     updatedEditableFieldProperties.isSearchable = false;
   }
 
-  updatedEditableFieldProperties.options = !isDefined(
-    updatedEditableFieldProperties.options,
-  )
-    ? updatedEditableFieldProperties.options
-    : updatedEditableFieldProperties.options.map((option) => ({
+  if (isDefined(updatedEditableFieldProperties.options)) {
+    const optionsWithIds = updatedEditableFieldProperties.options.map(
+      (option) => ({
         id: v4(),
         ...option,
-      }));
+      }),
+    );
+
+    updatedEditableFieldProperties.options = isFieldMetadataSelectKind(
+      existingFlatFieldMetadata.type,
+    )
+      ? sanitizeSelectOptionColors(optionsWithIds)
+      : optionsWithIds;
+  }
 
   if (
     updatedEditableFieldProperties.defaultValue !== undefined &&

@@ -1,36 +1,25 @@
 import { msg } from '@lingui/core/macro';
 import { TAG_COLORS } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
-import { z } from 'zod';
+import { type FieldMetadataComplexOption } from 'twenty-shared/types';
+import { isDefined, isTagColor } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 
-const OPTION_COLOR_SCHEMA = z.enum(TAG_COLORS);
-
-export const validateMetadataOptionColor = (
-  color: unknown,
-): FlatFieldMetadataValidationError[] => {
-  if (!isDefined(color)) {
-    return [
-      {
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: 'Option color is required',
-        userFriendlyMessage: msg`Option color is required`,
-      },
-    ];
+export const validateMetadataOptionColor = ({
+  label: optionLabel,
+  color: optionColor,
+}: FieldMetadataComplexOption): FlatFieldMetadataValidationError[] => {
+  if (!isDefined(optionColor) || isTagColor(optionColor)) {
+    return [];
   }
 
-  if (!OPTION_COLOR_SCHEMA.safeParse(color).success) {
-    return [
-      {
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: 'Option color must be a supported color',
-        userFriendlyMessage: msg`Option color must be a supported color`,
-        value: color,
-      },
-    ];
-  }
-
-  return [];
+  return [
+    {
+      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      message: `Option "${optionLabel}" color "${optionColor}" is not supported. Supported colors: ${TAG_COLORS.join(', ')}`,
+      userFriendlyMessage: msg`Option "${optionLabel}" has an unsupported color`,
+      value: optionColor,
+    },
+  ];
 };

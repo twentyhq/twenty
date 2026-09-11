@@ -176,6 +176,44 @@ describe('defineField', () => {
       );
     });
 
+    it('should accept SELECT options without a color', () => {
+      const config = {
+        objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+        universalIdentifier: '550e8400-e29b-41d4-a716-446655440001',
+        type: FieldMetadataType.SELECT,
+        name: 'status',
+        label: 'Status',
+        options: [{ value: 'OPEN', label: 'Open', position: 0 }],
+      };
+
+      const result = defineField(config as any);
+
+      expect(result.success).toBe(true);
+    });
+
+    it('should return error when a SELECT option has an unsupported color', () => {
+      const config = {
+        objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+        universalIdentifier: '550e8400-e29b-41d4-a716-446655440001',
+        type: FieldMetadataType.SELECT,
+        name: 'status',
+        label: 'Status',
+        options: [
+          { value: 'OPEN', label: 'Open', color: 'green', position: 0 },
+          { value: 'CLOSED', label: 'Closed', color: 'grey', position: 1 },
+        ],
+      };
+
+      const result = defineField(config as any);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toEqual([
+        expect.stringContaining(
+          'Field "Status" option "Closed" has an unsupported color',
+        ),
+      ]);
+    });
+
     it('should accept isUnique on a TEXT field', () => {
       const config: FieldManifest = {
         ...validConfig,

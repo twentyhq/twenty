@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
-import { FIELD_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
+import { FIELD_TYPE_DEFAULT_ICONS, TAG_COLORS } from 'twenty-shared/constants';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { z } from 'zod';
 
@@ -11,6 +11,7 @@ import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/ut
 import { normalizeIconName } from 'src/engine/core-modules/tool-provider/utils/normalize-icon-name.util';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { DEFAULT_SELECT_OPTION_COLOR } from 'src/engine/metadata-modules/flat-field-metadata/constants/default-select-option-color.constant';
 import { getObjectMetadataIdByName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-object-metadata-id-by-name.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { isDefined } from 'twenty-shared/utils';
@@ -33,6 +34,8 @@ const RELATION_TYPE_DESCRIPTION =
   'Relation direction from the perspective of the object the field is created on. ' +
   "MANY_TO_ONE: the field points to a single target record; this object owns the foreign key and gets a writable '<fieldName>Id' on its create/update inputs. Use it for 'belongs to one' fields. " +
   "ONE_TO_MANY: the field is a read-only collection of target records; records are linked by writing the inverse '<fieldName>Id' on the target object.";
+
+const SELECT_OPTIONS_DESCRIPTION = `SELECT/MULTI_SELECT options: [{ label, value, position, color }]. color is one of ${TAG_COLORS.join(', ')}; defaults to ${DEFAULT_SELECT_OPTION_COLOR} when omitted.`;
 
 const RelationCreationPayloadSchema = z.object({
   type: z.nativeEnum(RelationType).describe(RELATION_TYPE_DESCRIPTION),
@@ -89,7 +92,7 @@ const CreateFieldMetadataInputSchema = z.object({
   isNullable: z.boolean().optional().describe('Nullable'),
   isUnique: z.boolean().optional().describe('Unique constraint'),
   defaultValue: z.unknown().optional().describe('Default value'),
-  options: z.unknown().optional().describe('SELECT/MULTI_SELECT options'),
+  options: z.unknown().optional().describe(SELECT_OPTIONS_DESCRIPTION),
   settings: z.unknown().optional().describe('Field settings'),
   isLabelSyncedWithName: z
     .boolean()
@@ -114,7 +117,7 @@ const UpdateFieldMetadataInputSchema = z.object({
   isNullable: z.boolean().optional().describe('Nullable'),
   isUnique: z.boolean().optional().describe('Unique constraint'),
   defaultValue: z.unknown().optional().describe('Default value'),
-  options: z.unknown().optional().describe('SELECT/MULTI_SELECT options'),
+  options: z.unknown().optional().describe(SELECT_OPTIONS_DESCRIPTION),
   settings: z.unknown().optional().describe('Field settings'),
   isLabelSyncedWithName: z
     .boolean()

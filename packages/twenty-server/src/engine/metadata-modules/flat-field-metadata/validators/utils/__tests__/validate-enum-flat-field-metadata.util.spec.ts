@@ -1,4 +1,3 @@
-import { TAG_COLORS } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
   type EnumFieldMetadataType,
@@ -9,6 +8,7 @@ import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-e
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util';
+import { type WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
 
 const OPTION_WITHOUT_COLOR = {
   id: '2c73ce21-d19f-4b37-935e-48c351e2bb1b',
@@ -50,23 +50,8 @@ const validateOptionColor = ({
       ],
     },
     additionalCacheDataMaps: {
-      featureFlagsMap: {
-        IS_APP_CLAIMING_ENABLED: false,
-        IS_UNIQUE_INDEXES_ENABLED: false,
-        IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: false,
-        IS_JSON_FILTER_ENABLED: false,
-        IS_EMAIL_GROUP_ENABLED: false,
-        IS_JUNCTION_RELATIONS_ENABLED: false,
-        IS_REST_METADATA_API_NEW_FORMAT_DIRECT: false,
-        IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: false,
-        IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED: false,
-        IS_API_RATE_LIMIT_V2_ENABLED: false,
-        IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED: false,
-        IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED: false,
-        IS_RECORD_CREATION_FORM_ENABLED: false,
-        IS_RECORD_SHARING_ENABLED: false,
-        IS_WEBHOOK_RATE_LIMIT_ENABLED: false,
-      },
+      featureFlagsMap:
+        {} as WorkspaceMigrationBuilderAdditionalCacheDataMaps['featureFlagsMap'],
     },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps:
       createEmptyAllFlatEntityMaps(),
@@ -88,51 +73,62 @@ describe('validateEnumSelectFlatFieldMetadata', () => {
     it.each([
       { description: 'missing', colorProperties: {} },
       { description: 'null', colorProperties: { color: null } },
+    ])('allows $description colors', ({ colorProperties }) => {
+      expect(validateOptionColor({ type, colorProperties })).toEqual([]);
+    });
+
+    it('accepts a supported color', () => {
+      expect(
+        validateOptionColor({ type, colorProperties: { color: 'blue' } }),
+      ).toEqual([]);
+    });
+
+    it.each([
       { description: 'empty', colorProperties: { color: '' } },
-      {
-        description: 'unsupported',
-        colorProperties: { color: 'unsupported-color' },
-      },
+      { description: 'misspelled', colorProperties: { color: 'grey' } },
       { description: 'non-string', colorProperties: { color: 42 } },
-    ])('rejects $description colors', ({ colorProperties }) => {
-      const errors = validateOptionColor({ type, colorProperties });
+    ])(
+      'rejects $description colors and names the option',
+      ({ colorProperties }) => {
+        const errors = validateOptionColor({ type, colorProperties });
 
-      expect(errors).toEqual([
-        expect.objectContaining({
-          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          message: expect.stringContaining('color'),
-        }),
-      ]);
-    });
+        expect(errors).toEqual([
+          expect.objectContaining({
+            code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            message: expect.stringContaining(
+              `Option "${OPTION_WITHOUT_COLOR.label}" color`,
+            ),
+            value: colorProperties.color,
+          }),
+        ]);
+      },
+    );
 
-    it('accepts every supported color', () => {
-      const errors = TAG_COLORS.flatMap((color) =>
-        validateOptionColor({ type, colorProperties: { color } }),
-      );
+    it('rejects an option update that sets an unsupported color', () => {
+      const optionWithUnsupportedColor = {
+        ...OPTION_WITHOUT_COLOR,
+        color: 'grey',
+      };
 
-      expect(errors).toEqual([]);
-    });
-
-    it('rejects an option update that removes its color', () => {
       const errors = validateOptionColor({
         type,
-        colorProperties: {},
-        update: { options: [OPTION_WITHOUT_COLOR] },
+        colorProperties: { color: 'grey' },
+        update: { options: [optionWithUnsupportedColor] },
       });
 
       expect(errors).toEqual([
         expect.objectContaining({
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          message: 'Option color is required',
+          value: 'grey',
         }),
       ]);
     });
 
-    it('allows unrelated updates to fields with existing missing colors', () => {
+    it('allows unrelated updates to fields with an existing unsupported color', () => {
       expect(
         validateOptionColor({
           type,
-          colorProperties: {},
+          colorProperties: { color: 'grey' },
           update: { label: 'Updated category' },
         }),
       ).toEqual([]);

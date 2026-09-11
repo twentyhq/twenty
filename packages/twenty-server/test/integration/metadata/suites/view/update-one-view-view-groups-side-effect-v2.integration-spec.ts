@@ -8,15 +8,12 @@ import { findViewGroups } from 'test/integration/metadata/suites/view-group/util
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
 import {
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
   FieldMetadataType,
   type EnumFieldMetadataType,
   ViewType,
 } from 'twenty-shared/types';
-
-import {
-  type FieldMetadataComplexOption,
-  type FieldMetadataDefaultOption,
-} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;
 

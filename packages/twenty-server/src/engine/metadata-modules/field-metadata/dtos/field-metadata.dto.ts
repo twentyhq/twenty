@@ -17,6 +17,7 @@ import {
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import {
+  type FieldMetadataDefaultOption,
   type FieldMetadataOptions,
   type FieldMetadataSettings,
   FieldMetadataType,
@@ -27,7 +28,6 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
 import { type FieldMetadataOverrides } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-overrides.type';
-import { type FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
 
 registerEnumType(FieldMetadataType, {

@@ -1,5 +1,6 @@
 import { type FieldManifest } from 'twenty-shared/application';
 import {
+  type FieldMetadataComplexOption,
   type FieldMetadataDefaultActor,
   FieldMetadataType,
   MetadataWritability,
@@ -199,6 +200,55 @@ describe('fromFieldManifestToUniversalFlatFieldMetadata', () => {
       });
 
       expect(result.isLabelSyncedWithName).toBe(true);
+    });
+  });
+
+  describe('options', () => {
+    it.each([
+      FieldMetadataType.SELECT,
+      FieldMetadataType.MULTI_SELECT,
+    ] as const)('defaults missing %s option colors to gray', (type) => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({
+          type,
+          options: [
+            { value: 'OPEN', label: 'Open', position: 0 },
+            { value: 'CLOSED', label: 'Closed', color: 'red', position: 1 },
+          ] as FieldMetadataComplexOption[],
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.options).toEqual([
+        { value: 'OPEN', label: 'Open', color: 'gray', position: 0 },
+        { value: 'CLOSED', label: 'Closed', color: 'red', position: 1 },
+      ]);
+    });
+
+    it('leaves rating options without colors', () => {
+      const ratingOptions = [{ value: 'RATING_1', label: '1', position: 0 }];
+
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({
+          type: FieldMetadataType.RATING,
+          options: ratingOptions,
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.options).toEqual(ratingOptions);
+    });
+
+    it('keeps options null when the manifest has none', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({}),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.options).toBeNull();
     });
   });
 });

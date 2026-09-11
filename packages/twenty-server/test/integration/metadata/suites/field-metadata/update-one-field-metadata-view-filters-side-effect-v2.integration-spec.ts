@@ -13,6 +13,8 @@ import {
   type EachTestingContext,
 } from 'twenty-shared/testing';
 import {
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
   FieldMetadataType,
   type EnumFieldMetadataType,
   ViewFilterOperand,
@@ -20,10 +22,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type FieldMetadataComplexOption,
-  type FieldMetadataDefaultOption,
-} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
 
 type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;
