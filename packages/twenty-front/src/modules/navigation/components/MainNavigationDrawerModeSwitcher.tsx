@@ -130,7 +130,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
         {modes.map(({ Icon, label, mode }) => {
           const isActive = mode === activeNavigationDrawerMode;
           const isDisabled =
-            mode === NAVIGATION_DRAWER_TABS.SETTINGS &&
+            mode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
             isLayoutCustomizationModeEnabled;
 
           return (
@@ -172,7 +172,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
       </StyledSwitcher>
       {modes.map(({ label, mode }) => {
         const isDisabled =
-          mode === NAVIGATION_DRAWER_TABS.SETTINGS &&
+          mode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
           isLayoutCustomizationModeEnabled;
 
         if (!shouldShowTooltips && !isDisabled) {
@@ -184,7 +184,11 @@ export const MainNavigationDrawerModeSwitcher = () => {
             key={mode}
             anchorSelect={`[data-tooltip-id='${tooltipId}-${mode}']`}
             title={
-              isDisabled ? t`Finish editing the layout to open Settings` : label
+              isDisabled
+                ? mode === NAVIGATION_DRAWER_TABS.SETTINGS
+                  ? t`Finish editing the layout to open Settings`
+                  : t`Finish editing the layout to open AI`
+                : label
             }
             delay={TooltipDelay.noDelay}
             place={isExpanded ? TooltipPosition.Bottom : TooltipPosition.Right}

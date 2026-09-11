@@ -102,18 +102,26 @@ describe('MainNavigationDrawerModeSwitcher', () => {
     );
   });
 
-  it.each([true, false])(
-    'disables Settings while editing layout with expanded=%s and restores it afterward',
-    async (isExpanded) => {
+  it.each([
+    [true, 'Settings', NAVIGATION_DRAWER_TABS.SETTINGS],
+    [false, 'Settings', NAVIGATION_DRAWER_TABS.SETTINGS],
+    [true, 'AI', NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY],
+    [false, 'AI', NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY],
+  ] as const)(
+    'disables navigation while editing layout with expanded=%s and mode=%s and restores it afterward',
+    async (isExpanded, label, mode) => {
       jest
         .mocked(useIsNavigationDrawerContentExpanded)
         .mockReturnValue(isExpanded);
       const { store } = renderModeSwitcher(true);
-      const settingsButton = screen.getByRole('button', { name: 'Settings' });
+      const settingsButton = screen.getByRole('button', { name: label });
 
       expect(settingsButton).toHaveAttribute('aria-disabled', 'true');
       expect(screen.getByRole('button', { name: 'Home' })).toBeEnabled();
-      expect(screen.getByRole('button', { name: 'AI' })).toBeEnabled();
+      expect(screen.getByRole('button', { name: 'Home' })).toHaveAttribute(
+        'aria-disabled',
+        'false',
+      );
 
       await userEvent.click(settingsButton);
       expect(settingsButton).toHaveFocus();
@@ -129,9 +137,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       await userEvent.click(settingsButton);
 
       expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledTimes(1);
-      expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(
-        NAVIGATION_DRAWER_TABS.SETTINGS,
-      );
+      expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(mode);
     },
   );
 
