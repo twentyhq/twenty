@@ -164,7 +164,7 @@ export class EmailComposerService {
 
       if (!isDefined(connectedAccountId)) {
         throw new EmailToolException(
-          `No connected account available to user workspace '${userWorkspaceId}' can ${operation.toLowerCase()} email`,
+          `No connected account available for user workspace '${userWorkspaceId}' that can ${operation.toLowerCase()} email`,
           EmailToolExceptionCode.NO_EMAIL_CAPABLE_CONNECTED_ACCOUNT,
         );
       }

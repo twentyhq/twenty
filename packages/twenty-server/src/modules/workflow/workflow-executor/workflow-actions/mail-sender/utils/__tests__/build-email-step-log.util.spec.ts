@@ -1,3 +1,5 @@
+import { EmailOperation } from 'twenty-shared/types';
+
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
 import { buildEmailStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/build-email-step-log.util';
@@ -25,7 +27,7 @@ const successOutput: ToolOutput = {
 describe('buildEmailStepLog', () => {
   it('builds a SUCCESS email log preferring parsed recipients from the tool output', () => {
     const stepLog = buildEmailStepLog({
-      mode: 'SEND',
+      mode: EmailOperation.SEND,
       input: baseInput,
       output: successOutput,
       durationMs: 120,
@@ -35,7 +37,7 @@ describe('buildEmailStepLog', () => {
       throw new Error('Expected EMAIL details');
     }
 
-    expect(stepLog.details.mode).toBe('SEND');
+    expect(stepLog.details.mode).toBe(EmailOperation.SEND);
     expect(stepLog.details.status).toBe('SUCCESS');
     expect(stepLog.details.recipients.to).toEqual([
       'alice@example.com',
@@ -49,7 +51,7 @@ describe('buildEmailStepLog', () => {
 
   it('falls back to splitting the comma-separated input when the tool output has no parsed recipients', () => {
     const stepLog = buildEmailStepLog({
-      mode: 'DRAFT',
+      mode: EmailOperation.DRAFT,
       input: {
         ...baseInput,
         recipients: {
@@ -69,7 +71,7 @@ describe('buildEmailStepLog', () => {
       throw new Error('Expected EMAIL details');
     }
 
-    expect(stepLog.details.mode).toBe('DRAFT');
+    expect(stepLog.details.mode).toBe(EmailOperation.DRAFT);
     expect(stepLog.details.status).toBe('ERROR');
     expect(stepLog.details.recipients.to).toEqual([
       'alice@example.com',
@@ -84,7 +86,7 @@ describe('buildEmailStepLog', () => {
     const longBody = `<p>${'x'.repeat(20_000)}</p>`;
 
     const stepLog = buildEmailStepLog({
-      mode: 'SEND',
+      mode: EmailOperation.SEND,
       input: { ...baseInput, body: longBody },
       output: successOutput,
       durationMs: 10,
@@ -101,7 +103,7 @@ describe('buildEmailStepLog', () => {
 
   it('prefers the sanitized HTML body from the tool output over the raw input body', () => {
     const stepLog = buildEmailStepLog({
-      mode: 'SEND',
+      mode: EmailOperation.SEND,
       input: {
         ...baseInput,
         body: '<script>alert("xss")</script><p>Hello</p>',
@@ -127,7 +129,7 @@ describe('buildEmailStepLog', () => {
 
   it('falls back to the raw input body when the tool failed before composing', () => {
     const stepLog = buildEmailStepLog({
-      mode: 'SEND',
+      mode: EmailOperation.SEND,
       input: { ...baseInput, body: '<p>Hello</p>' },
       output: {
         success: false,
@@ -146,7 +148,7 @@ describe('buildEmailStepLog', () => {
 
   it('omits cc/bcc when neither input nor output provides them', () => {
     const stepLog = buildEmailStepLog({
-      mode: 'SEND',
+      mode: EmailOperation.SEND,
       input: { ...baseInput, recipients: { to: 'alice@example.com' } },
       output: successOutput,
       durationMs: 10,

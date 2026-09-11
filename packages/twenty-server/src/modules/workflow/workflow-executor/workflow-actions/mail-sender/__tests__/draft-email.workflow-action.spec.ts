@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { ConnectedAccountProvider, EmailOperation } from 'twenty-shared/types';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -138,7 +138,7 @@ describe('DraftEmailWorkflowAction', () => {
         stepLog: expect.objectContaining({
           details: expect.objectContaining({
             type: 'EMAIL',
-            mode: 'DRAFT',
+            mode: EmailOperation.DRAFT,
           }),
         }),
       }),

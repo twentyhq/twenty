@@ -386,7 +386,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
           },
           operation: EmailOperation.SEND,
         }),
-      ).rejects.toThrow('available to user workspace');
+      ).rejects.toThrow('available for user workspace');
     });
 
     it('takes the first workspace account when there is no caller (workflow run)', async () => {
