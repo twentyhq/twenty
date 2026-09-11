@@ -10,6 +10,7 @@ import {
 } from 'twenty-shared/application';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { messages as frMessages } from '~/locales/generated/fr-FR';
 import { FindManySkillsDocument } from '~/generated-metadata/graphql';
@@ -95,7 +96,9 @@ const CUSTOM_SKILL = buildSkill({
   applicationId: WORKSPACE_CUSTOM_APPLICATION.id,
 });
 
-const renderSkillsTab = () => {
+const renderSkillsTab = ({
+  isAdvancedModeEnabled = false,
+}: { isAdvancedModeEnabled?: boolean } = {}) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [
       {
@@ -113,6 +116,7 @@ const renderSkillsTab = () => {
       },
     ],
     onInitializeJotaiStore: (store) => {
+      store.set(isAdvancedModeEnabledState.atom, isAdvancedModeEnabled);
       store.set(currentWorkspaceState.atom, {
         ...mockCurrentWorkspace,
         workspaceCustomApplication: WORKSPACE_CUSTOM_APPLICATION,
@@ -186,6 +190,18 @@ describe('SettingsAgentSkillsTab', () => {
     await screen.findByText('Word Documents');
 
     expect(screen.queryByText('View Building')).not.toBeInTheDocument();
+  });
+
+  it('shows system skills in advanced mode, and hides them again from the filter', async () => {
+    renderSkillsTab({ isAdvancedModeEnabled: true });
+
+    expect(await screen.findByText('View Building')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Filter' }));
+    await userEvent.click(screen.getByText('System skills'));
+
+    expect(screen.queryByText('View Building')).not.toBeInTheDocument();
+    expect(screen.getByText('Word Documents')).toBeInTheDocument();
   });
 
   it('filters skills by application name', async () => {

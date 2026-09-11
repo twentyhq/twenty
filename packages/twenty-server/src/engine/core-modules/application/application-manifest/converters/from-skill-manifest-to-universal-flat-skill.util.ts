@@ -20,8 +20,6 @@ export const fromSkillManifestToUniversalFlatSkill = ({
     description: skillManifest.description ?? null,
     content: skillManifest.content,
     isCustom: false,
-    // An app ships skills for the people using it, so they stay in the picker;
-    // the manifest has no way to opt out yet.
     isSystem: false,
     isActive: true,
     createdAt: now,

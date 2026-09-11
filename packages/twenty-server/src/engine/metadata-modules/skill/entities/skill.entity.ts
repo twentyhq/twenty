@@ -40,8 +40,6 @@ export class SkillEntity
   @Column({ default: false })
   isCustom: boolean;
 
-  // Agent-only know-how: loadable by the agent, hidden from the composer's
-  // skill picker and from the default settings list.
   @Column({ default: false })
   isSystem: boolean;
 

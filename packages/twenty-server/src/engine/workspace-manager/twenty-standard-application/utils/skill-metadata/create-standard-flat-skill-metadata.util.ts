@@ -1727,7 +1727,7 @@ Judge the health of one opportunity or a set of them, and say what to do next.
 
 ## Gather
 
-For each opportunity in scope, read the record and what is linked to it: the company, the people involved, notes, tasks, and recent messages and calendar events. Use group_by_opportunity when the question is about the shape of the pipeline rather than about individual deals.
+For each opportunity in scope, read the record and what is linked to it: the company, the people involved, notes, tasks, and recent messages and calendar events. Use group_by_opportunities when the question is about the shape of the pipeline rather than about individual deals.
 
 ## Signals
 
@@ -1790,14 +1790,14 @@ Lead with counts, so the user sees the shape of the problem before the detail. T
 
 Always confirm before writing. Show what you will change and wait.
 
-- Merge duplicates only when the evidence is exact, such as an identical email or domain. Anything softer is a suggestion for the user to decide, not a merge for you to perform.
+- You cannot merge records. There is no merge tool; merging happens in the UI, where the user selects the records and uses the Merge action. Report each duplicate pair with both records referenced and leave the merge to them.
 - Fill missing fields only from data already in the workspace, never from a guess.
 - Apply approved changes with the update_many or upsert_many tools in one call rather than one record at a time.
 - Report what changed afterwards, and say what you deliberately left alone.
 
 ## Rules
 
-- Never delete a record in this skill. Archiving and merging are enough.
+- Never delete a record in this skill, and never fake a merge by copying fields across and deleting the loser.
 - Never confirm on the user's behalf, and never read a general yes as approval for a second batch.
 - If there is nothing wrong, say so. A clean workspace is a valid result.`,
         isCustom: false,
