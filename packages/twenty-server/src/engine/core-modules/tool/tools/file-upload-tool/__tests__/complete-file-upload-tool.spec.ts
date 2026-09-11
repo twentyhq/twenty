@@ -83,4 +83,16 @@ describe('CompleteFileUploadTool', () => {
       fileId: baseInput.fileId,
     });
   });
+
+  it.each([
+    ['a malformed uuid', { fileId: 'not-a-uuid' }],
+    ['a non string fileId', { fileId: 42 }],
+    ['no argument at all', {}],
+  ])('should reject %s before reaching the service', async (_label, input) => {
+    const result = await tool.execute(input, { workspaceId: 'workspace-1' });
+
+    expect(result.success).toBe(false);
+    expect(result.message).toBe('Invalid input for complete file upload');
+    expect(mockCompleteFileUpload).not.toHaveBeenCalled();
+  });
 });

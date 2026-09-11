@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { FileUploadException } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { CompleteFileUploadToolInputZodSchema } from 'src/engine/core-modules/tool/tools/file-upload-tool/file-upload-tool.schema';
-import { type CompleteFileUploadToolInput } from 'src/engine/core-modules/tool/tools/file-upload-tool/types/complete-file-upload-tool-input.type';
+import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
@@ -19,13 +19,30 @@ export class CompleteFileUploadTool implements Tool {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
   async execute(
-    parameters: CompleteFileUploadToolInput,
+    parameters: ToolInput,
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
+    const parseResult =
+      CompleteFileUploadToolInputZodSchema.safeParse(parameters);
+
+    if (!parseResult.success) {
+      return {
+        success: false,
+        message: 'Invalid input for complete file upload',
+        error: parseResult.error.issues
+          .map(
+            (issue) => `${issue.path.join('.') || '(root)'}: ${issue.message}`,
+          )
+          .join('; '),
+      };
+    }
+
+    const { fileId } = parseResult.data;
+
     try {
       const completedFile = await this.fileUploadService.completeFileUpload({
         workspaceId: context.workspaceId,
-        fileId: parameters.fileId,
+        fileId,
       });
 
       this.logger.log(

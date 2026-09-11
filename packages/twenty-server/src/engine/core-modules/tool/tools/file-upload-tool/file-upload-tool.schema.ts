@@ -17,7 +17,9 @@ export const CreateFileUploadToolInputZodSchema = z.object({
 export const CompleteFileUploadToolInputZodSchema = z.object({
   fileId: z
     .string()
-    .refine((fileId) => isValidUuid(fileId))
+    .refine((fileId) => isValidUuid(fileId), {
+      message: 'fileId must be a valid UUID',
+    })
     .describe(
       'fileId returned by create_file_upload after the bytes have been PUT to uploadUrl.',
     ),

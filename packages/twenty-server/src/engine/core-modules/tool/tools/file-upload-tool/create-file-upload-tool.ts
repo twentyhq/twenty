@@ -6,7 +6,7 @@ import { settings } from 'src/engine/constants/settings';
 import { FileUploadException } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { CreateFileUploadToolInputZodSchema } from 'src/engine/core-modules/tool/tools/file-upload-tool/file-upload-tool.schema';
-import { type CreateFileUploadToolInput } from 'src/engine/core-modules/tool/tools/file-upload-tool/types/create-file-upload-tool-input.type';
+import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
@@ -21,19 +21,36 @@ export class CreateFileUploadTool implements Tool {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
   async execute(
-    parameters: CreateFileUploadToolInput,
+    parameters: ToolInput,
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
+    const parseResult =
+      CreateFileUploadToolInputZodSchema.safeParse(parameters);
+
+    if (!parseResult.success) {
+      return {
+        success: false,
+        message: 'Invalid input for create file upload',
+        error: parseResult.error.issues
+          .map(
+            (issue) => `${issue.path.join('.') || '(root)'}: ${issue.message}`,
+          )
+          .join('; '),
+      };
+    }
+
+    const { filename, size } = parseResult.data;
+
     try {
       const uploadTarget = await this.fileUploadService.createFileUpload({
         workspaceId: context.workspaceId,
-        filename: parameters.filename,
-        size: parameters.size,
+        filename,
+        size,
         fileFolder: FileFolder.AgentChat,
       });
 
       this.logger.log(
-        `Created file upload ${uploadTarget.fileId} (${parameters.filename}) for workspace ${context.workspaceId}`,
+        `Created file upload ${uploadTarget.fileId} (${filename}) for workspace ${context.workspaceId}`,
       );
 
       return {

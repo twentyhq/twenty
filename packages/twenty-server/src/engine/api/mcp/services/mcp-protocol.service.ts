@@ -305,14 +305,11 @@ export class McpProtocolService {
         return null;
       }
 
-      const roleId = await this.getRoleId(
-        workspace.id,
-        userWorkspaceId,
-        apiKey,
-      );
-
       if (method === 'initialize') {
-        return this.handleInitialize(id, { workspaceId: workspace.id, roleId });
+        return this.handleInitialize(id, {
+          workspaceId: workspace.id,
+          roleId: await this.getRoleId(workspace.id, userWorkspaceId, apiKey),
+        });
       }
 
       if (method === 'ping') {
@@ -339,6 +336,12 @@ export class McpProtocolService {
           },
         });
       }
+
+      const roleId = await this.getRoleId(
+        workspace.id,
+        userWorkspaceId,
+        apiKey,
+      );
 
       const authContext = isDefined(apiKey)
         ? buildApiKeyAuthContext({ workspace, apiKey })

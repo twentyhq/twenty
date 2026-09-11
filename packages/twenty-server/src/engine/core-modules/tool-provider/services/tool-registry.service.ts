@@ -34,7 +34,7 @@ export class ToolRegistryService {
 
   async getCatalog(
     context: ToolProviderContext,
-    options?: { categories?: ToolCategory[] },
+    options?: { categories?: ToolCategory[]; excludeTools?: Set<string> },
   ): Promise<ToolIndexEntry[]> {
     const categorySet = options?.categories
       ? new Set(options.categories)
@@ -56,7 +56,9 @@ export class ToolRegistryService {
       }),
     );
 
-    return results.flat();
+    const excludeTools = options?.excludeTools;
+
+    return results.flat().filter((entry) => !excludeTools?.has(entry.name));
   }
 
   async resolveSchemas({
@@ -172,6 +174,7 @@ export class ToolRegistryService {
       locale?: keyof typeof APP_LOCALES;
       rolePermissionConfig?: RolePermissionConfig;
       categories?: ToolCategory[];
+      excludeTools?: Set<string>;
     },
   ): Promise<ToolIndexEntry[]> {
     const context = this.buildContextFromToolContext({
@@ -183,7 +186,10 @@ export class ToolRegistryService {
       locale: options?.locale,
     });
 
-    return this.getCatalog(context, { categories: options?.categories });
+    return this.getCatalog(context, {
+      categories: options?.categories,
+      excludeTools: options?.excludeTools,
+    });
   }
 
   async getToolsByName(

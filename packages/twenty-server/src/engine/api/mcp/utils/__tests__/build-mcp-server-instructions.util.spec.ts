@@ -1,9 +1,7 @@
 import { buildMcpServerInstructions } from 'src/engine/api/mcp/utils/build-mcp-server-instructions.util';
 
 const getActionLine = (instructions: string): string =>
-  instructions
-    .split('\n')
-    .find((line) => line.includes('ACTION:')) ?? '';
+  instructions.split('\n').find((line) => line.includes('ACTION:')) ?? '';
 
 describe('buildMcpServerInstructions', () => {
   it('should render the ACTION line from the tools the caller can reach', () => {

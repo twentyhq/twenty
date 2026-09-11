@@ -71,7 +71,7 @@ describe('CreateFileUploadTool', () => {
   it('should return a file upload error without throwing', async () => {
     mockCreateFileUpload.mockRejectedValue(
       new FileUploadException(
-        'Invalid file size 0 (max 1000000000 bytes)',
+        'Invalid file size 2000000000 (max 1000000000 bytes)',
         FileUploadExceptionCode.FILE_TOO_LARGE,
         {
           userFriendlyMessage: msg`The file is empty or exceeds the maximum allowed size.`,
@@ -80,7 +80,7 @@ describe('CreateFileUploadTool', () => {
     );
 
     const result = await tool.execute(
-      { filename: 'notes.txt', size: 0 },
+      { filename: 'notes.txt', size: 2000000000 },
       { workspaceId: 'workspace-1' },
     );
 
@@ -90,8 +90,22 @@ describe('CreateFileUploadTool', () => {
     expect(mockCreateFileUpload).toHaveBeenCalledWith({
       workspaceId: 'workspace-1',
       filename: 'notes.txt',
-      size: 0,
+      size: 2000000000,
       fileFolder: FileFolder.AgentChat,
     });
+  });
+
+  it.each([
+    ['a non positive size', { filename: 'notes.txt', size: 0 }],
+    ['a fractional size', { filename: 'notes.txt', size: 12.5 }],
+    ['a non string filename', { filename: 12345, size: 5 }],
+    ['a missing filename', { size: 5 }],
+    ['no argument at all', {}],
+  ])('should reject %s before reaching the service', async (_label, input) => {
+    const result = await tool.execute(input, { workspaceId: 'workspace-1' });
+
+    expect(result.success).toBe(false);
+    expect(result.message).toBe('Invalid input for create file upload');
+    expect(mockCreateFileUpload).not.toHaveBeenCalled();
   });
 });

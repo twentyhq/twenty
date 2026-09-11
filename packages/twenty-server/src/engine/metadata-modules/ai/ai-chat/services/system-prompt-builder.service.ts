@@ -46,12 +46,15 @@ export class SystemPromptBuilderService {
         workspaceId,
       );
 
-    const toolCatalog = (
-      await this.toolRegistry.buildToolIndex(workspaceId, roleId, {
+    const toolCatalog = await this.toolRegistry.buildToolIndex(
+      workspaceId,
+      roleId,
+      {
         userId,
         userWorkspaceId,
-      })
-    ).filter((entry) => !AI_CHAT_EXCLUDED_TOOL_NAMES.has(entry.name));
+        excludeTools: AI_CHAT_EXCLUDED_TOOL_NAMES,
+      },
+    );
 
     const skillCatalog = await this.skillService.findAllFlatSkills(workspaceId);
 
