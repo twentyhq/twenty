@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
+import { type GranolaWebhookRegistration } from 'src/logic-functions/types/granola-webhook-registration.type';
 import { isGranolaJobInRegistrationScope } from 'src/logic-functions/utils/is-granola-job-in-registration-scope.util';
 
-const registration = {
+const registration: Pick<
+  GranolaWebhookRegistration,
+  'registrationId' | 'folderIds'
+> = {
   registrationId: 'reg-1',
-  folderIds: [] as string[],
+  folderIds: [],
 };
 
 describe('isGranolaJobInRegistrationScope', () => {

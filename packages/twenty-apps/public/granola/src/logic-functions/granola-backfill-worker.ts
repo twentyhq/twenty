@@ -1,6 +1,5 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 
 import { GRANOLA_MAX_PAGE_SIZE } from 'src/constants/granola-api.constant';
 import { GRANOLA_HISTORY_BATCH_SIZE } from 'src/constants/granola-history.constant';
@@ -8,11 +7,8 @@ import {
   GRANOLA_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER,
   GRANOLA_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
-import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
 import { type GranolaBackfillBatchPayload } from 'src/logic-functions/types/granola-backfill-batch-payload.type';
 import { type GranolaBackfillWorkerPayload } from 'src/logic-functions/types/granola-backfill-worker-payload.type';
-import { GranolaInvalidResponseError } from 'src/logic-functions/types/granola-invalid-response-error';
-import { buildRetryableGranolaError } from 'src/logic-functions/utils/build-retryable-granola-error.util';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { enqueueGranolaJobOrThrow } from 'src/logic-functions/utils/enqueue-granola-job-or-throw.util';
 import { excludeDeletedGranolaNotesOrThrow } from 'src/logic-functions/utils/exclude-deleted-granola-notes-or-throw.util';
@@ -21,6 +17,7 @@ import { getGranolaJobId } from 'src/logic-functions/utils/get-granola-job-id.ut
 import { getGranolaNextPage } from 'src/logic-functions/utils/get-granola-next-page.util';
 import { isGranolaJobInRegistrationScope } from 'src/logic-functions/utils/is-granola-job-in-registration-scope.util';
 import { reserveGranolaBackfillBatchSlotsOrThrow } from 'src/logic-functions/utils/reserve-granola-backfill-batch-slots-or-throw.util';
+import { rethrowKnownOrWrapGranolaError } from 'src/logic-functions/utils/rethrow-known-or-wrap-granola-error.util';
 import { chunkIntoBatchesOrThrow } from 'src/utils/chunk-into-batches-or-throw.util';
 
 export const granolaBackfillWorkerHandler = async (
@@ -127,15 +124,10 @@ export const granolaBackfillWorkerHandler = async (
       hasMore: nextPage.kind === 'next',
     };
   } catch (error) {
-    if (
-      error instanceof RetryableLogicFunctionError ||
-      error instanceof GranolaApiError ||
-      error instanceof GranolaInvalidResponseError
-    ) {
-      throw error;
-    }
-
-    throw buildRetryableGranolaError({ operation: 'History discovery', error });
+    rethrowKnownOrWrapGranolaError({
+      operation: 'History discovery',
+      error,
+    });
   }
 };
 

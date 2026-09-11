@@ -1,16 +1,15 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 
 import { GRANOLA_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
 import { type GranolaBackfillBatchPayload } from 'src/logic-functions/types/granola-backfill-batch-payload.type';
 import { GranolaInvalidResponseError } from 'src/logic-functions/types/granola-invalid-response-error';
 import { GranolaTranscriptLimitError } from 'src/logic-functions/types/granola-transcript-limit-error';
-import { buildRetryableGranolaError } from 'src/logic-functions/utils/build-retryable-granola-error.util';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { findGranolaRegistrationForCurrentKey } from 'src/logic-functions/utils/find-granola-registration-for-current-key.util';
 import { isGranolaJobInRegistrationScope } from 'src/logic-functions/utils/is-granola-job-in-registration-scope.util';
+import { rethrowKnownOrWrapGranolaError } from 'src/logic-functions/utils/rethrow-known-or-wrap-granola-error.util';
 import { syncGranolaNoteToCallRecordingOrThrow } from 'src/logic-functions/utils/sync-granola-note-to-call-recording-or-throw.util';
 
 export const granolaBackfillBatchHandler = async (
@@ -66,15 +65,7 @@ export const granolaBackfillBatchHandler = async (
       importedNoteCount: results.filter((result) => !result.skipped).length,
     };
   } catch (error) {
-    if (
-      error instanceof RetryableLogicFunctionError ||
-      error instanceof GranolaApiError ||
-      error instanceof GranolaInvalidResponseError
-    ) {
-      throw error;
-    }
-
-    throw buildRetryableGranolaError({ operation: 'Note import', error });
+    rethrowKnownOrWrapGranolaError({ operation: 'Note import', error });
   }
 };
 
