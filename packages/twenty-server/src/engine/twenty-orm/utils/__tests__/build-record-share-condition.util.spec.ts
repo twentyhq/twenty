@@ -69,6 +69,21 @@ describe('buildRecordShareCondition', () => {
     ).toEqual([]);
   });
 
+  it('should correlate on the given record id expression', () => {
+    const { sql } = buildRecordShareCondition({
+      tableAlias: 'attachment',
+      recordShareTableExpression: '"workspace_abc"."recordShare"',
+      objectMetadataId: OBJECT_METADATA_ID,
+      principalIds: PRINCIPAL_IDS,
+      accessLevels: ACCESS_LEVELS,
+      recordIdExpression: '"attachment"."targetNoteId"',
+    });
+
+    expect(sql).toContain(
+      '"attachment_recordShare"."recordId" = "attachment"."targetNoteId"',
+    );
+  });
+
   it('should escape the alias it derives', () => {
     const { sql } = buildRecordShareCondition({
       tableAlias: 'per"son',

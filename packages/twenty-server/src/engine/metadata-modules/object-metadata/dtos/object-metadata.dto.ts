@@ -85,6 +85,8 @@ export class ObjectMetadataDTO {
   @Field(() => MetadataReadability)
   readability: MetadataReadability;
 
+  @Field(() => [UUIDScalarType], { nullable: true })
+  readabilityParentFieldUniversalIdentifiers: string[] | null;
   @Field(() => MetadataWritability)
   writability: MetadataWritability;
 

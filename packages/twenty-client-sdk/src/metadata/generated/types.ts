@@ -552,6 +552,9 @@ export default {
             "readability": [
                 25
             ],
+            "readabilityParentFieldUniversalIdentifiers": [
+                3
+            ],
             "writability": [
                 26
             ],

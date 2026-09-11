@@ -266,6 +266,7 @@ type Object {
   isSearchable: Boolean!
   openRecordIn: ObjectOpenRecordIn!
   readability: MetadataReadability!
+  readabilityParentFieldUniversalIdentifiers: [UUID!]
   writability: MetadataWritability!
   applicationId: UUID!
   createdAt: DateTime!
