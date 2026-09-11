@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode, useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
 
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
@@ -98,37 +98,25 @@ export const ConfirmationModal = ({
     confirmButtonText ?? i18n._(defaultConfirmButtonText);
   const [inputConfirmationValue, setInputConfirmationValue] =
     useState<string>('');
-  const [isValidValue, setIsValidValue] = useState(!confirmationValue);
 
-  const isValueMatchingInput = useDebouncedCallback(
-    (value?: string, inputValue?: string) => {
-      setIsValidValue(Boolean(value && inputValue && value === inputValue));
-    },
-    250,
-  );
-
-  const resetConfirmationState = () => {
-    isValueMatchingInput.cancel();
-    setInputConfirmationValue('');
-    setIsValidValue(!confirmationValue);
-  };
-
-  const handleInputConfimrationValueChange = (value: string) => {
-    setInputConfirmationValue(value);
-    isValueMatchingInput(confirmationValue, value);
-  };
+  const isValidValue =
+    !isNonEmptyString(confirmationValue) ||
+    inputConfirmationValue === confirmationValue;
 
   const { closeModal } = useModal();
 
-  const handleConfirmClick = () => {
-    resetConfirmationState();
+  const handleClose = () => {
+    setInputConfirmationValue('');
     closeModal(modalInstanceId);
+  };
+
+  const handleConfirmClick = () => {
+    handleClose();
     onConfirmClick();
   };
 
   const handleCancelClick = () => {
-    resetConfirmationState();
-    closeModal(modalInstanceId);
+    handleClose();
     onClose?.();
   };
 
@@ -142,7 +130,7 @@ export const ConfirmationModal = ({
     <ModalStatefulWrapper
       modalInstanceId={modalInstanceId}
       onClose={() => {
-        resetConfirmationState();
+        setInputConfirmationValue('');
         onClose?.();
       }}
       onEnter={handleEnter}
@@ -172,7 +160,7 @@ export const ConfirmationModal = ({
             instanceId="confirmation-modal-input"
             dataTestId="confirmation-modal-input"
             value={inputConfirmationValue}
-            onChange={handleInputConfimrationValueChange}
+            onChange={setInputConfirmationValue}
             placeholder={confirmationPlaceholder}
             fullWidth
             disableHotkeys

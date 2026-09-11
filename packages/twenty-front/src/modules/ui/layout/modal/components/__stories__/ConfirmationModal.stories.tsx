@@ -191,29 +191,38 @@ export const ConfirmButtonClick: Story = {
 
 export const ResetsInputWhenReopened: Story = {
   args: {
-    confirmationValue: 'yes',
-    confirmationPlaceholder: 'yes',
     modalInstanceId: 'confirmation-modal',
-    title: 'Delete API key',
-    subtitle:
-      'Please type "yes" to confirm you want to delete this API Key. Be aware that any script using this key will stop working.',
-    confirmButtonText: 'Delete',
+    title: 'Reopen Reset Test',
+    subtitle: 'Reopening the modal should clear the confirmation input.',
+    confirmButtonText: 'Confirm',
+    confirmationValue: 'email@test.dev',
+    confirmationPlaceholder: 'email@test.dev',
     onConfirmClick: fn(),
+    onClose: fn(),
   },
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    const input = await body.findByPlaceholderText('yes');
-    const confirmButton = await body.findByRole('button', {
-      name: /Delete/,
+
+    await body.findByText('Reopen Reset Test');
+
+    await userEvent.type(
+      await body.findByTestId('confirmation-modal-input'),
+      'email@test.dev',
+    );
+
+    await waitFor(() => {
+      expect(
+        body.getByTestId('confirmation-modal-confirm-button'),
+      ).toBeEnabled();
     });
 
-    expect(confirmButton).toBeDisabled();
+    await userEvent.click(body.getByTestId('confirmation-modal-cancel-button'));
 
-    await userEvent.type(input, 'yes');
-    const cancelButton = await body.findByRole('button', {
-      name: /Cancel/,
+    await waitFor(() => {
+      expect(
+        body.queryByTestId('confirmation-modal-input'),
+      ).not.toBeInTheDocument();
     });
-    await userEvent.click(cancelButton);
 
     jotaiStore.set(
       isModalOpenedComponentState.atomFamily({
@@ -222,15 +231,13 @@ export const ResetsInputWhenReopened: Story = {
       true,
     );
 
-    await sleep(400);
+    await body.findByTestId('confirmation-modal-input');
 
     await waitFor(() => {
+      expect(body.getByTestId('confirmation-modal-input')).toHaveValue('');
       expect(
-        body.getByRole('button', {
-          name: /Delete/,
-        }),
+        body.getByTestId('confirmation-modal-confirm-button'),
       ).toBeDisabled();
     });
-    expect(body.getByPlaceholderText('yes')).toHaveValue('');
   },
 };
