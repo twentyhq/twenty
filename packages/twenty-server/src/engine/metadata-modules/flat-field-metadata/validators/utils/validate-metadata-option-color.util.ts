@@ -1,6 +1,5 @@
 import { msg } from '@lingui/core/macro';
 import { TAG_COLORS } from 'twenty-shared/constants';
-import { type FieldMetadataComplexOption } from 'twenty-shared/types';
 import { isDefined, isTagColor } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -9,7 +8,10 @@ import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modul
 export const validateMetadataOptionColor = ({
   label: optionLabel,
   color: optionColor,
-}: FieldMetadataComplexOption): FlatFieldMetadataValidationError[] => {
+}: {
+  label: string;
+  color?: unknown;
+}): FlatFieldMetadataValidationError[] => {
   if (!isDefined(optionColor) || isTagColor(optionColor)) {
     return [];
   }

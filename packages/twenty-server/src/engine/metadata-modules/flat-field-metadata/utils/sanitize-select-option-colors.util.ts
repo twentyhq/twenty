@@ -1,22 +1,21 @@
 import { type FieldMetadataComplexOption } from 'twenty-shared/types';
-import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
+import { extractAndSanitizeObjectStringFields } from 'twenty-shared/utils';
 
 import { DEFAULT_SELECT_OPTION_COLOR } from 'src/engine/metadata-modules/flat-field-metadata/constants/default-select-option-color.constant';
 
-type SelectOptionWithOptionalColor = Omit<FieldMetadataComplexOption, 'color'> &
-  Partial<Pick<FieldMetadataComplexOption, 'color'>>;
+type SelectOptionWithOptionalColor<TColor extends string> = Omit<
+  FieldMetadataComplexOption,
+  'color'
+> & { color?: TColor | null };
 
-export const sanitizeSelectOptionColors = (
-  options: SelectOptionWithOptionalColor[],
-): FieldMetadataComplexOption[] =>
+export const sanitizeSelectOptionColors = <TColor extends string>(
+  options: SelectOptionWithOptionalColor<TColor>[],
+) =>
   options.map((option) => {
-    const optionWithTrimmedColor =
-      trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(option, [
-        'color',
-      ]);
+    const { color } = extractAndSanitizeObjectStringFields(option, ['color']);
 
     return {
-      ...optionWithTrimmedColor,
-      color: optionWithTrimmedColor.color ?? DEFAULT_SELECT_OPTION_COLOR,
+      ...option,
+      color: color ?? DEFAULT_SELECT_OPTION_COLOR,
     };
   });

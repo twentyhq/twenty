@@ -1,5 +1,3 @@
-import { type TagColor } from 'twenty-shared/types';
-
 import { sanitizeSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-option-colors.util';
 
 const OPTION_WITHOUT_COLOR = {
@@ -18,9 +16,7 @@ describe('sanitizeSelectOptionColors', () => {
 
   it('defaults a null color to gray', () => {
     expect(
-      sanitizeSelectOptionColors([
-        { ...OPTION_WITHOUT_COLOR, color: null as unknown as TagColor },
-      ]),
+      sanitizeSelectOptionColors([{ ...OPTION_WITHOUT_COLOR, color: null }]),
     ).toEqual([{ ...OPTION_WITHOUT_COLOR, color: 'gray' }]);
   });
 
@@ -33,16 +29,14 @@ describe('sanitizeSelectOptionColors', () => {
   it('trims a provided color', () => {
     expect(
       sanitizeSelectOptionColors([
-        { ...OPTION_WITHOUT_COLOR, color: '  blue  ' as TagColor },
+        { ...OPTION_WITHOUT_COLOR, color: '  blue  ' },
       ]),
     ).toEqual([{ ...OPTION_WITHOUT_COLOR, color: 'blue' }]);
   });
 
   it('leaves an unsupported color for validation to reject', () => {
     expect(
-      sanitizeSelectOptionColors([
-        { ...OPTION_WITHOUT_COLOR, color: 'grey' as TagColor },
-      ]),
+      sanitizeSelectOptionColors([{ ...OPTION_WITHOUT_COLOR, color: 'grey' }]),
     ).toEqual([{ ...OPTION_WITHOUT_COLOR, color: 'grey' }]);
   });
 });
