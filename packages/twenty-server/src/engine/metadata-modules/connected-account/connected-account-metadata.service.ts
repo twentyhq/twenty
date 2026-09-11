@@ -84,23 +84,25 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<ConnectedAccountEntity[]> {
-    const ownedAccounts = await this.repository.find({
-      where: { userWorkspaceId, workspaceId },
+    const accounts = await this.repository.find({
+      where: buildConnectedAccountUsableByCallerWhere({
+        baseWhere: { workspaceId },
+        userWorkspaceId,
+      }),
       order: { createdAt: 'ASC', id: 'ASC' },
     });
 
-    const sharedAccounts = await this.repository.find({
-      where: { workspaceId, visibility: 'workspace' },
-      order: { createdAt: 'ASC', id: 'ASC' },
-    });
-
-    const ownedAccountIds = new Set(ownedAccounts.map((account) => account.id));
-
-    const sharedAccountsOwnedByOthers = sharedAccounts.filter(
-      (account) => !ownedAccountIds.has(account.id),
+    const ownedAccounts = accounts.filter(
+      (account) => account.userWorkspaceId === userWorkspaceId,
     );
 
-    return [...ownedAccounts, ...sharedAccountsOwnedByOthers];
+    const activeSharedAccountsOwnedByOthers = accounts.filter(
+      (account) =>
+        account.userWorkspaceId !== userWorkspaceId &&
+        !isDefined(account.archivedAt),
+    );
+
+    return [...ownedAccounts, ...activeSharedAccountsOwnedByOthers];
   }
 
   async findApplicationConnectedAccountsUsableByCaller({

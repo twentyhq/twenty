@@ -33,6 +33,7 @@ const YC_CONNECTED_ACCOUNT_IDS = {
   JANE: '30303030-b5c7-46f0-bf5c-3f4e4b3f7c1a',
   JANE_DELETABLE: '30303030-d1e5-4a8f-9c3b-7f6d5e4c3b2a',
   JONY_SHARED: '30303030-c7b4-4f1a-8e2d-6b9a0f3c5d18',
+  TIM_SHARED_ARCHIVED: '30303030-e3a9-4d76-b0c1-5f8e2a7d4c93',
   SUPPORT_GROUP: '30303030-5a1e-4b2c-9d3e-100000000001',
   CONTACT_GROUP: '30303030-5a1e-4b2c-9d3e-100000000002',
 };
@@ -128,6 +129,7 @@ const seedConnectedAccounts = async ({
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.TIM,
       visibility: 'user',
+      archivedAt: null,
       workspaceId,
     },
     {
@@ -136,6 +138,7 @@ const seedConnectedAccounts = async ({
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.JONY,
       visibility: 'user',
+      archivedAt: null,
       workspaceId,
     },
     {
@@ -144,6 +147,7 @@ const seedConnectedAccounts = async ({
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.PHIL,
       visibility: 'user',
+      archivedAt: null,
       workspaceId,
     },
     {
@@ -152,6 +156,7 @@ const seedConnectedAccounts = async ({
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.JANE,
       visibility: 'user',
+      archivedAt: null,
       workspaceId,
     },
     {
@@ -160,6 +165,7 @@ const seedConnectedAccounts = async ({
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.JANE,
       visibility: 'user',
+      archivedAt: null,
       workspaceId,
     },
     {
@@ -168,6 +174,16 @@ const seedConnectedAccounts = async ({
       provider: 'app',
       userWorkspaceId: ids.userWorkspaceIds.JONY,
       visibility: 'workspace',
+      archivedAt: null,
+      workspaceId,
+    },
+    {
+      id: ids.connectedAccountIds.TIM_SHARED_ARCHIVED,
+      handle: 'tim-shared-archived@apple.dev',
+      provider: 'app',
+      userWorkspaceId: ids.userWorkspaceIds.TIM,
+      visibility: 'workspace',
+      archivedAt: new Date().toISOString(),
       workspaceId,
     },
     {
@@ -176,6 +192,7 @@ const seedConnectedAccounts = async ({
       provider: 'email_group',
       userWorkspaceId: ids.userWorkspaceIds.TIM,
       visibility: 'workspace',
+      archivedAt: null,
       workspaceId,
     },
     {
@@ -184,6 +201,7 @@ const seedConnectedAccounts = async ({
       provider: 'email_group',
       userWorkspaceId: ids.userWorkspaceIds.TIM,
       visibility: 'workspace',
+      archivedAt: null,
       workspaceId,
     },
   ];
@@ -197,6 +215,7 @@ const seedConnectedAccounts = async ({
       'provider',
       'userWorkspaceId',
       'visibility',
+      'archivedAt',
       'workspaceId',
     ])
     .orIgnore()

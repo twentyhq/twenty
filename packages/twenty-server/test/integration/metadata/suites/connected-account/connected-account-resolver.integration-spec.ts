@@ -53,6 +53,29 @@ describe('connectedAccountResolver (e2e)', () => {
       );
     });
 
+    it('should not offer an archived workspace-shared account to other members', async () => {
+      const response = await makeMetadataAPIRequestWithMemberRole({
+        query: gql`
+          query MyConnectedAccounts {
+            myConnectedAccounts {
+              id
+            }
+          }
+        `,
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors).toBeUndefined();
+
+      const accountIds = response.body.data.myConnectedAccounts.map(
+        (account: { id: string }) => account.id,
+      );
+
+      expect(accountIds).not.toContain(
+        CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM_SHARED_ARCHIVED,
+      );
+    });
+
     it('should list the caller own accounts before workspace-shared ones', async () => {
       const response = await makeMetadataAPIRequestWithMemberRole({
         query: gql`
