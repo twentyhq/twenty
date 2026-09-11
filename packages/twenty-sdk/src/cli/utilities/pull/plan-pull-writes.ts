@@ -47,6 +47,7 @@ const ENTITY_KEY_BY_KIND: Record<PullEntityKind, ManifestEntityKey> = {
   pageLayout: ManifestEntityKey.PageLayouts,
   pageLayoutTab: ManifestEntityKey.PageLayoutTabs,
   navigationMenuItem: ManifestEntityKey.NavigationMenuItems,
+  pageLayoutWidget: ManifestEntityKey.PageLayoutWidgets,
 };
 
 const toPosixPath = (value: string): string => value.split('\\').join('/');
@@ -200,10 +201,12 @@ export const planPullWrites = ({
   manifest,
   baseManifest,
   scannedFiles,
+  workspaceUniversalIdentifiers,
 }: {
   manifest: Manifest;
   baseManifest: Manifest | null;
   scannedFiles: ScannedSourceFile[];
+  workspaceUniversalIdentifiers: ReadonlySet<string>;
 }): PullWritePlan & {
   skipped: ReturnType<typeof buildPullEntities>['skipped'];
 } => {
@@ -317,6 +320,7 @@ export const planPullWrites = ({
         isDefined(scannedFile.universalIdentifier) &&
         !exportedUniversalIdentifiers.has(scannedFile.universalIdentifier) &&
         !baseConfigByUniversalIdentifier.has(scannedFile.universalIdentifier) &&
+        !workspaceUniversalIdentifiers.has(scannedFile.universalIdentifier) &&
         !usedRelativePaths.has(toPosixPath(scannedFile.relativePath)),
     )
     .map((scannedFile) => toPosixPath(scannedFile.relativePath));
