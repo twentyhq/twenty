@@ -4,32 +4,13 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ASSISTANT_MENTION_LABEL } from 'src/logic-functions/constants/slack-assistant-mention-label';
-import { findSlackUserLinksBySlackUserIds } from 'src/logic-functions/data/find-slack-user-links-by-slack-user-ids';
-import { findWorkspaceMemberIdsByEmails } from 'src/logic-functions/data/find-workspace-member-ids-by-emails';
 import { findWorkspaceMemberNamesByIds } from 'src/logic-functions/data/find-workspace-member-names-by-ids';
+import { type SlackIdentityResolution } from 'src/logic-functions/types/slack-identity-resolution.type';
 import { type SlackMentionLabel } from 'src/logic-functions/types/slack-mention-label.type';
-import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
-import { type SlackUserLinkSummary } from 'src/logic-functions/types/slack-user-link-summary.type';
-import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
-import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
-import { isLinkableSlackIdentity } from 'src/logic-functions/utils/is-linkable-slack-identity';
-import { isManualConsentedSlackUserLink } from 'src/logic-functions/utils/is-manual-consented-slack-user-link';
+import { resolveSlackIdentities } from 'src/logic-functions/utils/resolve-slack-identities';
+import { sanitizeSlackMentionName } from 'src/logic-functions/utils/sanitize-slack-mention-name';
 
 const MAX_MENTIONED_USERS = 20;
-const MAX_SLACK_USER_LOOKUPS = 8;
-const MAX_MENTION_NAME_LENGTH = 80;
-const LABEL_SUFFIX_FORGING_CHARACTERS_PATTERN = /[()]/g;
-
-const sanitizeMentionName = (name: string | undefined): string | undefined => {
-  const flattened = (name ?? '')
-    .replace(LABEL_SUFFIX_FORGING_CHARACTERS_PATTERN, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, MAX_MENTION_NAME_LENGTH)
-    .trim();
-
-  return isNonEmptyString(flattened) ? flattened : undefined;
-};
 
 const formatWorkspaceMemberLabel = ({
   name,
@@ -45,71 +26,50 @@ const formatUnconfirmedLabel = (name: string): string =>
 const formatUnknownLabel = (slackUserId: string): string =>
   `@unknown Slack user ${slackUserId}`;
 
-const fetchSlackIdentities = async ({
-  slackClient,
-  slackUserIds,
+const resolveSlackName = (
+  resolution: SlackIdentityResolution,
+): string | undefined =>
+  [resolution.identity?.displayName, resolution.link?.name]
+    .map(sanitizeSlackMentionName)
+    .find(isNonEmptyString);
+
+const buildLabel = ({
+  resolution,
+  nameByWorkspaceMemberId,
 }: {
-  slackClient: WebClient;
-  slackUserIds: string[];
-}): Promise<Map<string, SlackUserIdentity>> => {
-  const identities = await Promise.all(
-    slackUserIds
-      .slice(0, MAX_SLACK_USER_LOOKUPS)
-      .map((slackUserId) =>
-        fetchSlackUserIdentity({ client: slackClient, slackUserId }),
-      ),
-  );
+  resolution: SlackIdentityResolution;
+  nameByWorkspaceMemberId: ReadonlyMap<string, string | undefined>;
+}): SlackMentionLabel => {
+  const slackName = resolveSlackName(resolution);
 
-  return new Map(
-    identities
-      .filter(isDefined)
-      .map((identity) => [identity.slackUserId, identity]),
-  );
-};
+  // A member id whose record is gone is worse to hand over than no id, so a
+  // resolution the workspace can no longer name degrades to the Slack name.
+  if (
+    resolution.outcome === 'confirmedMember' &&
+    nameByWorkspaceMemberId.has(resolution.workspaceMemberId)
+  ) {
+    const name =
+      sanitizeSlackMentionName(
+        nameByWorkspaceMemberId.get(resolution.workspaceMemberId),
+      ) ??
+      slackName ??
+      `Slack user ${resolution.slackUserId}`;
 
-const groupSlackUserIdsByTeamId = (
-  identityBySlackUserId: ReadonlyMap<string, SlackUserIdentity>,
-): Map<string, string[]> => {
-  const slackUserIdsBySlackTeamId = new Map<string, string[]>();
-
-  for (const identity of identityBySlackUserId.values()) {
-    if (!isNonEmptyString(identity.slackTeamId)) {
-      continue;
-    }
-
-    slackUserIdsBySlackTeamId.set(identity.slackTeamId, [
-      ...(slackUserIdsBySlackTeamId.get(identity.slackTeamId) ?? []),
-      identity.slackUserId,
-    ]);
+    return {
+      label: formatWorkspaceMemberLabel({
+        name,
+        workspaceMemberId: resolution.workspaceMemberId,
+      }),
+      name,
+    };
   }
 
-  return slackUserIdsBySlackTeamId;
-};
-
-// Mirrors resolveSlackRunAsWorkspaceMemberId: a hand-picked consented link is
-// authoritative, anything else has to re-earn its member from the account's
-// live verified email, so a stale row cannot name the wrong assignee.
-const resolveTrustedWorkspaceMemberId = ({
-  identity,
-  link,
-  installedSlackTeamId,
-  workspaceMemberIdByEmail,
-}: {
-  identity: SlackUserIdentity | undefined;
-  link: SlackUserLinkSummary | undefined;
-  installedSlackTeamId: string | undefined;
-  workspaceMemberIdByEmail: ReadonlyMap<string, string>;
-}): string | undefined => {
-  if (isDefined(link) && isManualConsentedSlackUserLink(link)) {
-    return link.workspaceMemberId;
-  }
-
-
-  if (!isLinkableSlackIdentity({ identity, installedSlackTeamId })) {
-    return undefined;
-  }
-
-  return workspaceMemberIdByEmail.get((identity?.email ?? '').toLowerCase());
+  return isNonEmptyString(slackName)
+    ? { label: formatUnconfirmedLabel(slackName), name: slackName }
+    : {
+        label: formatUnknownLabel(resolution.slackUserId),
+        name: undefined,
+      };
 };
 
 export const resolveSlackMentionLabels = async ({
@@ -145,87 +105,40 @@ export const resolveSlackMentionLabels = async ({
     });
   }
 
-  if (mentionedUserIds.length === 0 || !isDefined(slackClient)) {
+  if (mentionedUserIds.length === 0) {
     return labelBySlackUserId;
   }
 
-  const [installedSlackTeamId, identityBySlackUserId] = await Promise.all([
-    getInstalledSlackTeamId(slackClient),
-    fetchSlackIdentities({ slackClient, slackUserIds: mentionedUserIds }),
-  ]);
-
-  const linkBySlackUserId = await findSlackUserLinksBySlackUserIds(client, {
-    slackUserIdsBySlackTeamId: groupSlackUserIdsByTeamId(identityBySlackUserId),
+  const resolutionBySlackUserId = await resolveSlackIdentities({
+    slackUserIds: mentionedUserIds,
+    client,
+    slackClient,
   });
 
-  const revalidatedEmails = [...identityBySlackUserId.values()]
-    .filter(
-      (identity) =>
-        !isManualConsentedSlackUserLink(
-          linkBySlackUserId.get(identity.slackUserId) ?? {
-            source: undefined,
-            consentState: undefined,
-          },
-        ) && isLinkableSlackIdentity({ identity, installedSlackTeamId }),
-    )
-    .map((identity) => identity.email)
-    .filter(isNonEmptyString);
-
-  const { workspaceMemberIdByEmail } = await findWorkspaceMemberIdsByEmails(
-    client,
-    { emails: revalidatedEmails },
-  );
-
-  const workspaceMemberIdBySlackUserId = new Map<string, string>();
-
-  for (const slackUserId of mentionedUserIds) {
-    const workspaceMemberId = resolveTrustedWorkspaceMemberId({
-      identity: identityBySlackUserId.get(slackUserId),
-      link: linkBySlackUserId.get(slackUserId),
-      installedSlackTeamId,
-      workspaceMemberIdByEmail,
-    });
-
-    if (isNonEmptyString(workspaceMemberId)) {
-      workspaceMemberIdBySlackUserId.set(slackUserId, workspaceMemberId);
-    }
-  }
+  const confirmedWorkspaceMemberIds = [
+    ...new Set(
+      [...resolutionBySlackUserId.values()]
+        .map((resolution) =>
+          resolution.outcome === 'confirmedMember'
+            ? resolution.workspaceMemberId
+            : undefined,
+        )
+        .filter(isNonEmptyString),
+    ),
+  ];
 
   const nameByWorkspaceMemberId = await findWorkspaceMemberNamesByIds(client, {
-    workspaceMemberIds: [...new Set(workspaceMemberIdBySlackUserId.values())],
+    workspaceMemberIds: confirmedWorkspaceMemberIds,
   });
 
   for (const slackUserId of mentionedUserIds) {
-    const slackName = sanitizeMentionName(
-      identityBySlackUserId.get(slackUserId)?.displayName ??
-        linkBySlackUserId.get(slackUserId)?.name,
-    );
+    const resolution = resolutionBySlackUserId.get(slackUserId);
 
-    const workspaceMemberId = workspaceMemberIdBySlackUserId.get(slackUserId);
-
-    // A member id whose record is gone is worse to hand over than no id, so it
-    // degrades to the unconfirmed label rather than naming a dead record.
-    if (
-      isNonEmptyString(workspaceMemberId) &&
-      nameByWorkspaceMemberId.has(workspaceMemberId)
-    ) {
-      const name =
-        sanitizeMentionName(nameByWorkspaceMemberId.get(workspaceMemberId)) ??
-        slackName ??
-        `Slack user ${slackUserId}`;
-
-      labelBySlackUserId.set(slackUserId, {
-        label: formatWorkspaceMemberLabel({ name, workspaceMemberId }),
-        name,
-      });
-      continue;
-    }
-
-    if (isNonEmptyString(slackName)) {
-      labelBySlackUserId.set(slackUserId, {
-        label: formatUnconfirmedLabel(slackName),
-        name: slackName,
-      });
+    if (isDefined(resolution)) {
+      labelBySlackUserId.set(
+        slackUserId,
+        buildLabel({ resolution, nameByWorkspaceMemberId }),
+      );
     }
   }
 

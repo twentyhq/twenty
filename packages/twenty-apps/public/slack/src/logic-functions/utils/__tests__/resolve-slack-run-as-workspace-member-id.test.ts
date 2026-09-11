@@ -3,18 +3,19 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
+import { type SlackUserLinkSummary } from 'src/logic-functions/types/slack-user-link-summary.type';
 import { resolveSlackRunAsWorkspaceMemberId } from 'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id';
 
 const {
-  findSlackUserLinkMock,
-  findWorkspaceMemberIdByEmailMock,
+  findSlackUserLinksBySlackUserIdsMock,
+  findWorkspaceMemberIdsByEmailsMock,
   createSlackUserLinkMock,
   updateSlackUserLinkMock,
   coreApiClientMock,
   applicationClient,
 } = vi.hoisted(() => ({
-  findSlackUserLinkMock: vi.fn(),
-  findWorkspaceMemberIdByEmailMock: vi.fn(),
+  findSlackUserLinksBySlackUserIdsMock: vi.fn(),
+  findWorkspaceMemberIdsByEmailsMock: vi.fn(),
   createSlackUserLinkMock: vi.fn(),
   updateSlackUserLinkMock: vi.fn(),
   coreApiClientMock: vi.fn(),
@@ -25,12 +26,15 @@ vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: coreApiClientMock,
 }));
 
-vi.mock('src/logic-functions/data/find-slack-user-link', () => ({
-  findSlackUserLink: findSlackUserLinkMock,
-}));
+vi.mock(
+  'src/logic-functions/data/find-slack-user-links-by-slack-user-ids',
+  () => ({
+    findSlackUserLinksBySlackUserIds: findSlackUserLinksBySlackUserIdsMock,
+  }),
+);
 
-vi.mock('src/logic-functions/data/find-workspace-member-id-by-email', () => ({
-  findWorkspaceMemberIdByEmail: findWorkspaceMemberIdByEmailMock,
+vi.mock('src/logic-functions/data/find-workspace-member-ids-by-emails', () => ({
+  findWorkspaceMemberIdsByEmails: findWorkspaceMemberIdsByEmailsMock,
 }));
 
 vi.mock('src/logic-functions/data/create-slack-user-link', () => ({
@@ -54,25 +58,48 @@ const IDENTITY: SlackUserIdentity = {
   isRegularUserAccount: true,
 };
 
-const AUTO_LINK = {
+const link = (
+  overrides: Partial<SlackUserLinkSummary> = {},
+): SlackUserLinkSummary => ({
   id: 'link-1',
-  workspaceMemberId: 'member-1',
-  source: 'AUTO',
-  consentState: 'ACTIVE',
-};
-
-const MANUAL_LINK = {
-  id: 'link-1',
+  slackUserId: IDENTITY.slackUserId,
+  slackTeamId: 'T0INSTALLED',
+  name: 'ada',
   workspaceMemberId: 'member-1',
   source: 'MANUAL',
   consentState: 'ACTIVE',
-};
+  ...overrides,
+});
+
+const givenStoredLink = (overrides: Partial<SlackUserLinkSummary> = {}) =>
+  findSlackUserLinksBySlackUserIdsMock.mockResolvedValue(
+    new Map([[IDENTITY.slackUserId, link(overrides)]]),
+  );
+
+const givenEmailMatches = (workspaceMemberId: string | undefined) =>
+  findWorkspaceMemberIdsByEmailsMock.mockResolvedValue({
+    workspaceMemberIdByEmail:
+      workspaceMemberId === undefined
+        ? new Map()
+        : new Map([['ada@twenty.com', workspaceMemberId]]),
+    ambiguousEmailCount: 0,
+  });
+
+// The email lookup is always issued, so "did not consult the email match" is
+// the assertion that it was asked about nobody.
+const expectNoEmailMatchConsulted = () =>
+  expect(findWorkspaceMemberIdsByEmailsMock).toHaveBeenCalledWith(client, {
+    emails: [],
+  });
+
+const runAs = (identity: SlackUserIdentity = IDENTITY) =>
+  resolveSlackRunAsWorkspaceMemberId({ client, slackClient, identity });
 
 describe('resolveSlackRunAsWorkspaceMemberId', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    findSlackUserLinkMock.mockResolvedValue(undefined);
-    findWorkspaceMemberIdByEmailMock.mockResolvedValue(undefined);
+    findSlackUserLinksBySlackUserIdsMock.mockResolvedValue(new Map());
+    givenEmailMatches(undefined);
     createSlackUserLinkMock.mockResolvedValue(undefined);
     updateSlackUserLinkMock.mockResolvedValue(undefined);
     coreApiClientMock.mockImplementation(function () {
@@ -82,183 +109,99 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
   });
 
   it('should honor a manual link without consulting the email match', async () => {
-    findSlackUserLinkMock.mockResolvedValue(MANUAL_LINK);
+    givenStoredLink();
 
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: IDENTITY,
-      }),
-    ).toBe('member-1');
-    expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
+    expect(await runAs()).toBe('member-1');
+    expectNoEmailMatchConsulted();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
     expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should not run as anyone when a manual link has no workspace member', async () => {
-    findSlackUserLinkMock.mockResolvedValue({
-      ...MANUAL_LINK,
-      workspaceMemberId: undefined,
-    });
-    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+    givenStoredLink({ workspaceMemberId: undefined });
+    givenEmailMatches('member-1');
 
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: IDENTITY,
-      }),
-    ).toBeUndefined();
+    expect(await runAs()).toBeUndefined();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
     expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should prefer the manual link over a disagreeing email match, without touching it', async () => {
-    findSlackUserLinkMock.mockResolvedValue({
-      ...MANUAL_LINK,
-      workspaceMemberId: 'member-2',
-    });
-    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+    givenStoredLink({ workspaceMemberId: 'member-2' });
+    givenEmailMatches('member-1');
 
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: IDENTITY,
-      }),
-    ).toBe('member-2');
+    expect(await runAs()).toBe('member-2');
     expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should keep honoring a legacy manual link that predates the consent field', async () => {
-    findSlackUserLinkMock.mockResolvedValue({
-      ...MANUAL_LINK,
-      consentState: undefined,
-    });
+    givenStoredLink({ consentState: undefined });
 
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: IDENTITY,
-      }),
-    ).toBe('member-1');
-    expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
+    expect(await runAs()).toBe('member-1');
+    expectNoEmailMatchConsulted();
   });
 
   it('should treat an admin-set manual link as consented', async () => {
-    findSlackUserLinkMock.mockResolvedValue({
-      ...MANUAL_LINK,
-      consentState: 'ADMIN_SET',
-    });
+    givenStoredLink({ consentState: 'ADMIN_SET' });
 
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: IDENTITY,
-      }),
-    ).toBe('member-1');
-    expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
+    expect(await runAs()).toBe('member-1');
+    expectNoEmailMatchConsulted();
   });
 
   it('should fall through to the email match for a pending manual link, without touching it', async () => {
-    findSlackUserLinkMock.mockResolvedValue({
-      ...MANUAL_LINK,
-      workspaceMemberId: 'member-2',
-      consentState: 'PENDING',
-    });
-    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+    givenStoredLink({ workspaceMemberId: 'member-2', consentState: 'PENDING' });
+    givenEmailMatches('member-1');
 
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: IDENTITY,
-      }),
-    ).toBe('member-1');
+    expect(await runAs()).toBe('member-1');
     expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should still grant the member their own email match after a declined manual link to another member', async () => {
     // Declining a link that lends another member's access must not cost the
-    // Slack user their own identity: once DECLINED is no longer an early
-    // return, run-as still resolves their own member by email (which is all
-    // their own permissions) and never re-creates or re-updates the link.
-    findSlackUserLinkMock.mockResolvedValue({
-      ...MANUAL_LINK,
+    // Slack user their own identity: run-as still resolves their own member by
+    // email, and never re-creates or re-updates the link.
+    givenStoredLink({
       workspaceMemberId: 'member-2',
       consentState: 'DECLINED',
     });
-    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+    givenEmailMatches('member-1');
 
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: IDENTITY,
-      }),
-    ).toBe('member-1');
-    expect(findWorkspaceMemberIdByEmailMock).toHaveBeenCalledTimes(1);
-    expect(findWorkspaceMemberIdByEmailMock).toHaveBeenCalledWith(
-      client,
-      'ada@twenty.com',
-    );
+    expect(await runAs()).toBe('member-1');
+    expect(findWorkspaceMemberIdsByEmailsMock).toHaveBeenCalledWith(client, {
+      emails: ['ada@twenty.com'],
+    });
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
     expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should not fall back to a declined manual link when the user has no own email match', async () => {
-    findSlackUserLinkMock.mockResolvedValue({
-      ...MANUAL_LINK,
+    givenStoredLink({
       workspaceMemberId: 'member-2',
       consentState: 'DECLINED',
     });
-    findWorkspaceMemberIdByEmailMock.mockResolvedValue(undefined);
+    givenEmailMatches(undefined);
 
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: IDENTITY,
-      }),
-    ).toBeUndefined();
+    expect(await runAs()).toBeUndefined();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
     expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should honor a matched link when the live email match still agrees', async () => {
-    findSlackUserLinkMock.mockResolvedValue(AUTO_LINK);
-    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+    givenStoredLink({ source: 'AUTO' });
+    givenEmailMatches('member-1');
 
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: IDENTITY,
-      }),
-    ).toBe('member-1');
+    expect(await runAs()).toBe('member-1');
     expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should follow the live email match over a matched link that disagrees, and heal the link', async () => {
-    findSlackUserLinkMock.mockResolvedValue({
-      ...AUTO_LINK,
-      workspaceMemberId: 'member-victim',
-    });
-    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+    givenStoredLink({ source: 'AUTO', workspaceMemberId: 'member-victim' });
+    givenEmailMatches('member-1');
 
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: IDENTITY,
-      }),
-    ).toBe('member-1');
+    expect(await runAs()).toBe('member-1');
     expect(coreApiClientMock).toHaveBeenCalledWith({ runAs: 'application' });
     expect(updateSlackUserLinkMock).toHaveBeenCalledWith(applicationClient, {
       id: 'link-1',
@@ -267,53 +210,33 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
   });
 
   it('should fall back to the agent role when a matched link can no longer be re-verified', async () => {
-    findSlackUserLinkMock.mockResolvedValue(AUTO_LINK);
-    findWorkspaceMemberIdByEmailMock.mockResolvedValue(undefined);
+    givenStoredLink({ source: 'AUTO' });
+    givenEmailMatches(undefined);
 
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: IDENTITY,
-      }),
-    ).toBeUndefined();
+    expect(await runAs()).toBeUndefined();
     expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should not honor a matched link when the account is no longer a regular user', async () => {
-    findSlackUserLinkMock.mockResolvedValue(AUTO_LINK);
+    givenStoredLink({ source: 'AUTO' });
 
     expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: { ...IDENTITY, isRegularUserAccount: false },
-      }),
+      await runAs({ ...IDENTITY, isRegularUserAccount: false }),
     ).toBeUndefined();
-    expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
+    expectNoEmailMatchConsulted();
   });
 
   it('should not match on email when the Slack account is a bot or guest', async () => {
     expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: { ...IDENTITY, isRegularUserAccount: false },
-      }),
+      await runAs({ ...IDENTITY, isRegularUserAccount: false }),
     ).toBeUndefined();
-    expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
+    expectNoEmailMatchConsulted();
   });
 
   it('should store the link when the email matches a single member', async () => {
-    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+    givenEmailMatches('member-1');
 
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: IDENTITY,
-      }),
-    ).toBe('member-1');
+    expect(await runAs()).toBe('member-1');
     expect(coreApiClientMock).toHaveBeenCalledWith({ runAs: 'application' });
     expect(createSlackUserLinkMock).toHaveBeenCalledWith(applicationClient, {
       slackTeamId: 'T0INSTALLED',
@@ -326,68 +249,44 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
   });
 
   it('should still act on its own match when a concurrent request won the link race', async () => {
-    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+    givenEmailMatches('member-1');
     createSlackUserLinkMock.mockRejectedValue(new Error('duplicate key'));
 
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: IDENTITY,
-      }),
-    ).toBe('member-1');
+    expect(await runAs()).toBe('member-1');
   });
 
   it('should refuse run-as when the link lookup throws, since a manual link may exist', async () => {
-    findSlackUserLinkMock.mockRejectedValue(new Error('permission denied'));
-    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+    findSlackUserLinksBySlackUserIdsMock.mockRejectedValue(
+      new Error('permission denied'),
+    );
+    givenEmailMatches('member-1');
 
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: IDENTITY,
-      }),
-    ).toBeUndefined();
-    expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
+    expect(await runAs()).toBeUndefined();
+    expect(findWorkspaceMemberIdsByEmailsMock).not.toHaveBeenCalled();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should not link a Slack Connect user from another workspace', async () => {
-    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+    givenEmailMatches('member-1');
 
     expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: { ...IDENTITY, slackTeamId: 'T0EXTERNAL' },
-      }),
+      await runAs({ ...IDENTITY, slackTeamId: 'T0EXTERNAL' }),
     ).toBeUndefined();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should read the installing team from the live connection on every run', async () => {
-    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+    givenEmailMatches('member-1');
 
-    await resolveSlackRunAsWorkspaceMemberId({
-      client,
-      slackClient,
-      identity: IDENTITY,
-    });
+    await runAs();
 
     expect(authTestMock).toHaveBeenCalled();
   });
 
   it('should not link when the installing team cannot be read', async () => {
-    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+    givenEmailMatches('member-1');
     authTestMock.mockRejectedValue(new Error('invalid_auth'));
 
-    expect(
-      await resolveSlackRunAsWorkspaceMemberId({
-        client,
-        slackClient,
-        identity: IDENTITY,
-      }),
-    ).toBeUndefined();
+    expect(await runAs()).toBeUndefined();
   });
 });
