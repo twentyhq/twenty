@@ -112,9 +112,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
           <SortableTableHeader
             fieldName="label"
             label={t`Name`}
-            tableId={
-              SETTINGS_ROLE_PERMISSION_OBJECT_LEVEL_FIELD_PERMISSION_TABLE_ID
-            }
+            tableId={tableId}
             initialSort={{ fieldName: 'label', direction: 'asc' }}
           />
           <TableHeader>

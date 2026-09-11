@@ -121,11 +121,9 @@ export const SettingsAdminInstanceStatus = () => {
                 Icon: IconProgressCheck,
                 label: t`Status`,
                 value: (
-                  <Status
-                    color={instanceHealthBadge.color}
-                    text={instanceHealthBadge.label}
-                    weight="medium"
-                  />
+                  <Status color={instanceHealthBadge.color} weight="medium">
+                    {instanceHealthBadge.label}
+                  </Status>
                 ),
               },
               {
