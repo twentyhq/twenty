@@ -1,32 +1,5 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-import { IsValidGraphQLEnumName } from 'twenty-shared/types';
-
-export type TagColor =
-  | 'red'
-  | 'ruby'
-  | 'crimson'
-  | 'tomato'
-  | 'orange'
-  | 'amber'
-  | 'yellow'
-  | 'lime'
-  | 'grass'
-  | 'green'
-  | 'jade'
-  | 'mint'
-  | 'turquoise'
-  | 'cyan'
-  | 'sky'
-  | 'blue'
-  | 'iris'
-  | 'violet'
-  | 'purple'
-  | 'plum'
-  | 'pink'
-  | 'bronze'
-  | 'gold'
-  | 'brown'
-  | 'gray';
+import { IsValidGraphQLEnumName, type TagColor } from 'twenty-shared/types';
 
 export class FieldMetadataDefaultOption {
   @IsOptional()

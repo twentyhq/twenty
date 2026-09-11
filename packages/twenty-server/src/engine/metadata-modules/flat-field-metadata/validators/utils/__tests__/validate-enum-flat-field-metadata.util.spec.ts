@@ -1,3 +1,4 @@
+import { TAG_COLORS } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
   type EnumFieldMetadataType,
@@ -61,10 +62,12 @@ describe('validateEnumSelectFlatFieldMetadata', () => {
       ]);
     });
 
-    it('accepts a supported color', () => {
-      expect(
-        validateOptionColor({ type, colorProperties: { color: 'green' } }),
-      ).toEqual([]);
+    it('accepts every supported color', () => {
+      const errors = TAG_COLORS.flatMap((color) =>
+        validateOptionColor({ type, colorProperties: { color } }),
+      );
+
+      expect(errors).toEqual([]);
     });
 
     it('rejects an option update that removes its color', () => {

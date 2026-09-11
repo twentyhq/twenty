@@ -1,38 +1,12 @@
 import { msg } from '@lingui/core/macro';
-import { type TagColor } from 'twenty-shared/types';
+import { TAG_COLORS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 
-const OPTION_COLOR_SCHEMA = z.enum([
-  'red',
-  'ruby',
-  'crimson',
-  'tomato',
-  'orange',
-  'amber',
-  'yellow',
-  'lime',
-  'grass',
-  'green',
-  'jade',
-  'mint',
-  'turquoise',
-  'cyan',
-  'sky',
-  'blue',
-  'iris',
-  'violet',
-  'purple',
-  'plum',
-  'pink',
-  'bronze',
-  'gold',
-  'brown',
-  'gray',
-] as const satisfies TagColor[]);
+const OPTION_COLOR_SCHEMA = z.enum(TAG_COLORS);
 
 export const validateMetadataOptionColor = (
   color: unknown,

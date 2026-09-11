@@ -111,7 +111,6 @@ export {
 export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
 export { FieldMetadataSettingsOnClickAction } from './FieldMetadataMultiItemSettings';
 export type {
-  TagColor,
   FieldMetadataOptionForAnyType,
   FieldMetadataOptions,
 } from './FieldMetadataOptions';
@@ -323,6 +322,7 @@ export type {
   StepFilterWithPotentiallyDeprecatedOperand,
 } from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
+export type { TagColor } from './TagColor';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { UpgradeHealthEnum } from './UpgradeHealthEnum';
 export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';
