@@ -263,6 +263,18 @@ yarn command:prod cron:calendar:ongoing-stale
 yarn command:prod cron:workflow:automated-cron-trigger
 ```
 
+## Outbound Connections to Internal Hosts
+
+By default, Twenty refuses outbound connections to private/internal IP addresses (SSRF protection). This covers HTTP workflow actions, webhooks, SSO identity providers and IMAP/SMTP/CalDAV connections. If your identity provider, mail or calendar server runs on a private network, list its hostname or IP literal:
+
+```bash
+OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS=keycloak,mail.internal,192.168.1.10
+```
+
+Entries are matched on the hostname only, without wildcards: for an OIDC issuer such as `http://keycloak:8080/realms/twenty`, list `keycloak`. Every other private address stays blocked, and even an allowed host can never reach the cloud metadata address range. Set the variable to `*` to disable the protection entirely, which is only appropriate on trusted, isolated networks.
+
+`OUTBOUND_HTTP_SAFE_MODE_ENABLED` is deprecated. While it is set to `false`, the protection stays fully off and `OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS` is ignored, so remove it when you migrate to the list.
+
 ## Email Configuration
 
 1. Go to **Settings → Admin Panel → Configuration Variables**
