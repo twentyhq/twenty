@@ -18,6 +18,7 @@ import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-fie
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { readLruEntry, writeLruEntry } from 'src/utils/lru-map.util';
 
 export type PersonCampaignVariables = {
   definitions: CampaignVariableDefinition[];
@@ -68,12 +69,12 @@ export class CampaignVariableService {
       (cacheKey) => hashes[cacheKey] ?? '',
     ).join(':');
 
-    const cached = this.schemaByWorkspaceId.get(workspaceId);
+    const cached = readLruEntry({
+      map: this.schemaByWorkspaceId,
+      key: workspaceId,
+    });
 
     if (cached?.hash === hash) {
-      this.schemaByWorkspaceId.delete(workspaceId);
-      this.schemaByWorkspaceId.set(workspaceId, cached);
-
       return cached.schema;
     }
 
@@ -88,24 +89,14 @@ export class CampaignVariableService {
       fieldsByName: new Map(fields.map((field) => [field.name, field])),
     };
 
-    this.schemaByWorkspaceId.set(workspaceId, { hash, schema });
-    this.evictLeastRecentlyUsedSchemas();
+    writeLruEntry({
+      map: this.schemaByWorkspaceId,
+      key: workspaceId,
+      value: { hash, schema },
+      maxEntries: MAX_CACHED_WORKSPACE_SCHEMAS,
+    });
 
     return schema;
-  }
-
-  private evictLeastRecentlyUsedSchemas(): void {
-    while (this.schemaByWorkspaceId.size > MAX_CACHED_WORKSPACE_SCHEMAS) {
-      const leastRecentlyUsedWorkspaceId = this.schemaByWorkspaceId
-        .keys()
-        .next().value;
-
-      if (!isDefined(leastRecentlyUsedWorkspaceId)) {
-        return;
-      }
-
-      this.schemaByWorkspaceId.delete(leastRecentlyUsedWorkspaceId);
-    }
   }
 
   async assertKnownVariables(
