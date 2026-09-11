@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FindManySkillsForSuggestionDocument } from '~/generated-metadata/graphql';
 
@@ -6,7 +7,7 @@ import { FindManySkillsForSuggestionDocument } from '~/generated-metadata/graphq
 // cached skill catalog; the query is skipped when no skill is referenced.
 export const useSkillIcon = (skillId: string | null): string | null => {
   const { data } = useQuery(FindManySkillsForSuggestionDocument, {
-    skip: skillId === null,
+    skip: !isDefined(skillId),
     fetchPolicy: 'cache-first',
   });
 

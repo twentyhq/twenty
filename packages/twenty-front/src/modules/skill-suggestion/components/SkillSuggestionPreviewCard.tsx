@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
@@ -70,7 +71,7 @@ export const SkillSuggestionPreviewCard = ({
         <StyledTitleText>{skill.label}</StyledTitleText>
         <StyledName>/{skill.name}</StyledName>
       </StyledHeader>
-      {skill.description !== null && skill.description !== '' && (
+      {isNonEmptyString(skill.description) && (
         <StyledDescription>{skill.description}</StyledDescription>
       )}
     </StyledCard>
