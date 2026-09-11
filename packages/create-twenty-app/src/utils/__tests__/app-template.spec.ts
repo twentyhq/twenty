@@ -36,6 +36,7 @@ const TEMPLATE_PACKAGE_JSON = {
   devDependencies: {
     'twenty-client-sdk': '0.0.0',
     'twenty-sdk': '0.0.0',
+    'twenty-ui': '0.0.0',
   },
 };
 
@@ -136,7 +137,7 @@ describe('copyBaseApplicationProject', () => {
     expect(uuidMatches![0]).not.toBe(uuidMatches![1]);
   });
 
-  it('should update package.json with app name and SDK versions', async () => {
+  it('should update package.json with app name and matching package versions', async () => {
     await copyBaseApplicationProject({
       appName: 'my-test-app',
       appDisplayName: 'My Test App',
@@ -152,6 +153,9 @@ describe('copyBaseApplicationProject', () => {
       createTwentyAppPackageJson.version,
     );
     expect(packageJson.devDependencies['twenty-client-sdk']).toBe(
+      createTwentyAppPackageJson.version,
+    );
+    expect(packageJson.devDependencies['twenty-ui']).toBe(
       createTwentyAppPackageJson.version,
     );
   });
