@@ -35,7 +35,7 @@ export const ViewBar = ({
   optionsDropdownButton,
   isReadOnly = false,
 }: ViewBarProps) => {
-  const { objectNamePlural } = useRecordIndexContextOrThrow();
+  const { objectNamePlural, recordIndexId } = useRecordIndexContextOrThrow();
 
   if (!objectNamePlural) {
     return;
@@ -49,7 +49,7 @@ export const ViewBar = ({
 
   return (
     <ObjectSortDropdownComponentInstanceContext.Provider
-      value={{ instanceId: `${VIEW_SORT_DROPDOWN_ID}-${viewBarId}` }}
+      value={{ instanceId: `${VIEW_SORT_DROPDOWN_ID}-${recordIndexId}` }}
     >
       <ViewBarRecordFilterGroupEffect />
       <ViewBarAnyFieldFilterEffect />
@@ -66,7 +66,7 @@ export const ViewBar = ({
         rightComponent={
           <>
             <ObjectFilterDropdownComponentInstanceContext.Provider
-              value={{ instanceId: getViewBarFilterDropdownId(viewBarId) }}
+              value={{ instanceId: getViewBarFilterDropdownId(recordIndexId) }}
             >
               <ViewBarFilterDropdown />
             </ObjectFilterDropdownComponentInstanceContext.Provider>

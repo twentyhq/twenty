@@ -23,6 +23,7 @@ import { anyFieldFilterValueComponentState } from '@/object-record/record-filter
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { AnyFieldSearchDropdownButton } from '@/views/components/AnyFieldSearchDropdownButton';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { getAnyFieldSearchDropdownId } from '@/views/utils/getAnyFieldSearchDropdownId';
 import { EditableFilterDropdownButton } from '@/views/editable-chip/components/EditableFilterDropdownButton';
 import { getEditableChipObjectFilterDropdownComponentInstanceId } from '@/views/editable-chip/utils/getEditableChipObjectFilterDropdownComponentInstanceId';
@@ -105,6 +106,8 @@ export const ViewBarDetails = ({
   viewBarId,
   objectNamePlural,
 }: ViewBarDetailsProps) => {
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+
   const isViewBarExpanded = useAtomComponentStateValue(
     isViewBarExpandedComponentState,
   );
@@ -190,7 +193,7 @@ export const ViewBarDetails = ({
 
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    getAnyFieldSearchDropdownId(viewBarId),
+    getAnyFieldSearchDropdownId(recordIndexId),
   );
 
   const canResetView =
