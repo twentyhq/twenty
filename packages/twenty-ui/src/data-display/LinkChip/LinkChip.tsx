@@ -42,7 +42,9 @@ export const LinkChip = ({
         }}
         onMouseDown={(event) => {
           onMouseDown?.(event);
-          if (!event.defaultPrevented) onMouseDownHandler(event);
+          if (!event.defaultPrevented) {
+            onMouseDownHandler(event);
+          }
         }}
         data-click-outside-id={LINK_CHIP_CLICK_OUTSIDE_ID}
         target={target}
