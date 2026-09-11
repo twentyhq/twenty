@@ -50,11 +50,9 @@ export const SettingsAdminWorkspacesStatusSummaryCard = ({
           Icon: IconStatusChange,
           label: t`Upgrade health`,
           value: (
-            <Status
-              color={workspacesUpgradeHealthBadge.color}
-              text={workspacesUpgradeHealthText}
-              weight="medium"
-            />
+            <Status color={workspacesUpgradeHealthBadge.color} weight="medium">
+              {workspacesUpgradeHealthText}
+            </Status>
           ),
         },
         {
