@@ -101,7 +101,7 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
 };
 
 export const encodeCursorData = (cursorData: CursorData) => {
-  return Buffer.from(JSON.stringify(cursorData)).toString('base64');
+  return Buffer.from(JSON.stringify(cursorData)).toString('base64url');
 };
 
 export const getCursor = (

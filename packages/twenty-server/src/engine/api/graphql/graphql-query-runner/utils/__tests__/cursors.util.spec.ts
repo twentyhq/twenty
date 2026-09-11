@@ -9,7 +9,7 @@ import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { decodeCursor, encodeCursor } from '../cursors.util';
+import { decodeCursor, encodeCursor, encodeCursorData } from '../cursors.util';
 
 const buildMockField = (
   id: string,
@@ -312,5 +312,41 @@ describe('encodeCursor', () => {
     const decoded = decodeCursor(callEncodeCursor(record, undefined));
 
     expect(decoded).toEqual({ id: 'abc' });
+  });
+});
+
+describe('cursor serialization', () => {
+  const cursorData = { value: 'Ͽ' };
+
+  it('should encode cursors with the URL-safe base64 alphabet', () => {
+    const legacyBase64 = Buffer.from(JSON.stringify(cursorData)).toString(
+      'base64',
+    );
+    const cursor = encodeCursorData(cursorData);
+
+    expect(legacyBase64).toContain('+');
+    expect(legacyBase64).toContain('/');
+    expect(cursor).toBe(
+      Buffer.from(JSON.stringify(cursorData)).toString('base64url'),
+    );
+    expect(cursor).toMatch(/^[A-Za-z0-9_-]+$/);
+  });
+
+  it('should survive an unescaped query string round trip', () => {
+    const cursor = encodeCursorData(cursorData);
+    const parsedCursor = new URLSearchParams(`starting_after=${cursor}`).get(
+      'starting_after',
+    );
+
+    expect(parsedCursor).toBe(cursor);
+    expect(decodeCursor(parsedCursor as string)).toEqual(cursorData);
+  });
+
+  it('should continue to decode legacy base64 cursors', () => {
+    const legacyCursor = Buffer.from(JSON.stringify(cursorData)).toString(
+      'base64',
+    );
+
+    expect(decodeCursor(legacyCursor)).toEqual(cursorData);
   });
 });
