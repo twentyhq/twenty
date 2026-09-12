@@ -1,5 +1,4 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/constants/FilterFieldListId';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
@@ -15,7 +14,7 @@ export type ViewBarFilterDropdownFieldSelectMenuItemProps = {
 export const ViewBarFilterDropdownFieldSelectMenuItem = ({
   fieldMetadataItemToSelect,
 }: ViewBarFilterDropdownFieldSelectMenuItemProps) => {
-  const { resetSelectedItem } = useSelectableList(FILTER_FIELD_LIST_ID);
+  const { resetSelectedItem } = useSelectableList();
 
   const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,

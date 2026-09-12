@@ -1,7 +1,5 @@
-declare const classNames: {
+declare const styles: {
   readonly status: 'status';
-  readonly regular: 'regular';
-  readonly medium: 'medium';
   readonly content: 'content';
 };
-export default classNames;
+export default styles;

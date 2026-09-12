@@ -1,4 +1,4 @@
-import { RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID } from '@/object-record/record-group/constants/RecordGroupReorderConfirmationModalId';
+import { getRecordGroupReorderConfirmationModalId } from '@/object-record/record-group/utils/getRecordGroupReorderConfirmationModalId';
 import { useReorderRecordGroups } from '@/object-record/record-group/hooks/useReorderRecordGroups';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
@@ -60,7 +60,7 @@ export const useRecordGroupReorderConfirmationModal = ({
   const handleDragEndWithModal = (result: DraggableListDropResult) => {
     if (!isDragableSortRecordGroup) {
       closeAnyOpenDropdown();
-      openModal(RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID);
+      openModal(getRecordGroupReorderConfirmationModalId(recordIndexId));
       setActiveDropdownFocusIdAndMemorizePrevious(null);
       setPendingDragEndHandlerParams(result);
     } else {

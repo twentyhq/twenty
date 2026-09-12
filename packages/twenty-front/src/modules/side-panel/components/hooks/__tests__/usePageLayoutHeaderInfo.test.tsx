@@ -10,7 +10,11 @@ import {
   IconListDetails,
   IconPerspective,
 } from 'twenty-ui/icon';
-import { WidgetType } from '~/generated-metadata/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 describe('usePageLayoutHeaderInfo', () => {
   const getWidgetSettingsHeaderInfo = (widgetType: WidgetType) => {
@@ -40,6 +44,31 @@ describe('usePageLayoutHeaderInfo', () => {
     expect(
       getWidgetSettingsHeaderInfo(WidgetType.FRONT_COMPONENT)?.headerType,
     ).toBe('Widget');
+  });
+
+  it('identifies an explicit TAB_VIEWPORT front component in the side-panel header', () => {
+    const widget = {
+      ...makeWidget('widget-id', 0),
+      type: WidgetType.FRONT_COMPONENT,
+      position: {
+        __typename: 'PageLayoutWidgetVerticalListPosition' as const,
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 0,
+        heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+      },
+    };
+
+    const { result } = renderHook(() =>
+      usePageLayoutHeaderInfo({
+        sidePanelPage: SidePanelPages.PageLayoutWidgetSettings,
+        draftPageLayout: { tabs: [makeTab('tab-id', [widget])] },
+        pageLayoutEditingWidgetId: widget.id,
+        openTabId: null,
+        editedTitle: null,
+      }),
+    );
+
+    expect(result.current?.headerType).toBe('Full-height Widget');
   });
 
   it('keeps the generic widget icon', () => {

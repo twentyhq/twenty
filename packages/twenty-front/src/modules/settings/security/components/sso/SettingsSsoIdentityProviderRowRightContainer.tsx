@@ -22,9 +22,10 @@ export const SettingsSsoIdentityProviderRowRightContainer = ({
     <StyledRowRightContainer>
       <Status
         color={getColorBySsoIdentityProviderStatus[ssoIdp.status]}
-        text={ssoIdp.status}
         weight="medium"
-      />
+      >
+        {ssoIdp.status}
+      </Status>
       <SettingsSecuritySsoRowDropdownMenu ssoIdp={ssoIdp} />
     </StyledRowRightContainer>
   );

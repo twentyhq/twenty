@@ -2,13 +2,11 @@ import { PAGE_LAYOUT_WIDGET_DND_TYPE } from '@/page-layout/constants/PageLayoutW
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type PageLayoutWidgetDragData } from '@/page-layout/types/PageLayoutWidgetDragData';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { type Draggable } from '@dnd-kit/abstract';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 const StyledWidgetSlot = styled.div<{
   isInEditMode: boolean;
@@ -53,8 +51,7 @@ type PageLayoutVerticalListWidgetSlotProps = {
   canAcceptWidgetDrag: (source: Draggable) => boolean;
   index: number;
   isInEditMode: boolean;
-  isSoloCanvasPresentation: boolean;
-  layoutMode: PageLayoutTabLayoutMode;
+  fillsViewport: boolean;
   shouldShowDivider: boolean;
   tabId: string;
   widget: PageLayoutWidget;
@@ -64,21 +61,16 @@ export const PageLayoutVerticalListWidgetSlot = ({
   canAcceptWidgetDrag,
   index,
   isInEditMode,
-  isSoloCanvasPresentation,
-  layoutMode,
+  fillsViewport,
   shouldShowDivider,
   tabId,
   widget,
 }: PageLayoutVerticalListWidgetSlotProps) => {
-  const fillsViewport =
-    isSoloCanvasPresentation ||
-    (layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
-      isViewportFillingWidgetType(widget.type));
-
   const widgetDragData: PageLayoutWidgetDragData = {
     type: 'widget',
     widgetId: widget.id,
     widgetType: widget.type,
+    widgetPosition: widget.position,
     tabId,
     index,
   };

@@ -159,11 +159,9 @@ export const SettingsUnsubscribersList = () => {
               const badge = getMessageSuppressionReasonBadge(item.reason);
 
               return (
-                <Status
-                  color={badge.color}
-                  text={badge.label}
-                  weight="medium"
-                />
+                <Status color={badge.color} weight="medium">
+                  {badge.label}
+                </Status>
               );
             },
           },
