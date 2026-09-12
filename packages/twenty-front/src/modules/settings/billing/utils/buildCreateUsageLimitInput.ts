@@ -1,8 +1,8 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UsageLimitFormValues } from '@/settings/billing/types/UsageLimitFormValues';
+import { buildUsageQuotaScopeInput } from '@/settings/billing/utils/buildUsageQuotaScopeInput';
 import { type CreateUsageLimitInput } from '~/generated-metadata/graphql';
 
 const parsePositiveInteger = (value: string): number | null => {
@@ -20,50 +20,29 @@ const parsePositiveNumber = (value: string): number | null => {
 export const buildCreateUsageLimitInput = (
   values: UsageLimitFormValues,
 ): CreateUsageLimitInput | null => {
-  const {
-    resourceType,
-    operationType,
-    spenderType,
-    spenderId,
-    meter,
-    periodUnit,
-  } = values;
+  const scope = buildUsageQuotaScopeInput(values);
 
-  if (
-    !isDefined(resourceType) ||
-    !isDefined(operationType) ||
-    !isDefined(spenderType) ||
-    !isDefined(meter) ||
-    !isDefined(periodUnit)
-  ) {
+  if (!isDefined(scope)) {
     return null;
   }
 
-  const limitValue =
-    meter === 'creditsUsedMicro'
-      ? parsePositiveNumber(values.limitValue)
-      : parsePositiveInteger(values.limitValue);
+  const isCreditsMeter = scope.meter === 'creditsUsedMicro';
+
+  const limitValue = isCreditsMeter
+    ? parsePositiveNumber(values.limitValue)
+    : parsePositiveInteger(values.limitValue);
 
   if (!isDefined(limitValue)) {
     return null;
   }
 
   return {
-    resourceType,
-    operationType,
-    spenderType,
-    spenderId:
-      spenderType !== 'workspace' && isNonEmptyString(spenderId.trim())
-        ? spenderId.trim()
-        : null,
+    ...scope,
     limitKind: 'quota',
     periodCount: 1,
-    periodUnit,
-    meter,
-    limitValue:
-      meter === 'creditsUsedMicro'
-        ? Math.round(limitValue * INTERNAL_CREDITS_PER_DISPLAY_CREDIT)
-        : limitValue,
+    limitValue: isCreditsMeter
+      ? Math.round(limitValue * INTERNAL_CREDITS_PER_DISPLAY_CREDIT)
+      : limitValue,
     burstValue: null,
   };
 };

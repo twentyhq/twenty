@@ -30,7 +30,7 @@ export const SettingsBillingNewLimit = () => {
   );
 
   const input = buildCreateUsageLimitInput(values);
-  const { scopeConsumption } = useUsageQuotaScopeConsumption(input);
+  const { scopeConsumption } = useUsageQuotaScopeConsumption(values);
 
   const handleSave = async () => {
     if (!isDefined(input)) {

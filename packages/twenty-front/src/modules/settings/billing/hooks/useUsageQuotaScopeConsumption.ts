@@ -1,34 +1,35 @@
 import { skipToken, useQuery } from '@apollo/client/react';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type UsageLimitFormValues } from '@/settings/billing/types/UsageLimitFormValues';
 import { type UsageQuotaScopeConsumption } from '@/settings/billing/types/UsageQuotaScopeConsumption';
-import {
-  type CreateUsageLimitInput,
-  UsageQuotaScopeConsumptionDocument,
-  type UsageQuotaScopeInput,
-} from '~/generated-metadata/graphql';
+import { buildUsageQuotaScopeInput } from '@/settings/billing/utils/buildUsageQuotaScopeInput';
+import { UsageQuotaScopeConsumptionDocument } from '~/generated-metadata/graphql';
 
-const buildScopeInput = (
-  input: CreateUsageLimitInput | null,
-): UsageQuotaScopeInput | null =>
-  isDefined(input)
-    ? {
-        resourceType: input.resourceType,
-        operationType: input.operationType,
-        spenderType: input.spenderType,
-        spenderId: input.spenderId,
-        periodUnit: input.periodUnit,
-        meter: input.meter,
-      }
-    : null;
-
-export const useUsageQuotaScopeConsumption = (
-  input: CreateUsageLimitInput | null,
-): {
+export const useUsageQuotaScopeConsumption = ({
+  resourceType,
+  operationType,
+  spenderType,
+  spenderId,
+  meter,
+  periodUnit,
+}: Omit<UsageLimitFormValues, 'limitValue'>): {
   scopeConsumption: UsageQuotaScopeConsumption | null;
   loading: boolean;
 } => {
-  const scopeInput = buildScopeInput(input);
+  const scopeInput = useMemo(
+    () =>
+      buildUsageQuotaScopeInput({
+        resourceType,
+        operationType,
+        spenderType,
+        spenderId,
+        meter,
+        periodUnit,
+      }),
+    [resourceType, operationType, spenderType, spenderId, meter, periodUnit],
+  );
 
   const { data, loading } = useQuery(
     UsageQuotaScopeConsumptionDocument,

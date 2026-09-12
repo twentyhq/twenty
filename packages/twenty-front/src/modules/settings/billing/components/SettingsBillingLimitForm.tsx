@@ -131,6 +131,7 @@ export const SettingsBillingLimitForm = ({
   });
   const consumedPercentage = progress?.consumedPercentage ?? 0;
   const isExhausted = progress?.remainingValue === 0;
+  const hasConsumption = isDefined(consumedValue) && consumedValue > 0;
   const consumedText = isDefined(consumedValue)
     ? formatLimitValue({
         value: consumedValue,
@@ -211,7 +212,7 @@ export const SettingsBillingLimitForm = ({
               delay={TooltipDelay.shortDelay}
               positionStrategy="fixed"
             >
-              {isDefined(progress) ? (
+              {hasConsumption ? (
                 <StyledTooltipRow>
                   {t`Used`}
                   <SettingsBillingLimitAmount
