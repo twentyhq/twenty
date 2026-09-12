@@ -1,0 +1,65 @@
+---
+title: Field
+description: Connect a form control to its label, description, and validation feedback.
+---
+
+import FieldReference from '/snippets/ui/generated/input/field.mdx';
+
+Use `Field` to group one control with its accessible label and helper text. Components such as [Input](/ui/components/input/input) integrate with the field directly.
+
+## Labeled control
+
+```tsx
+import { Field, Input } from 'twenty-ui/input';
+
+export const EmailField = () => (
+  <Field.Root name="email" validationMode="onBlur">
+    <Field.Label>Work email</Field.Label>
+    <Input type="email" required placeholder="you@example.com" />
+    <Field.Description>
+      We send account updates to this address.
+    </Field.Description>
+    <Field.Error match="valueMissing">Enter your email address.</Field.Error>
+    <Field.Error match="typeMismatch">Enter a valid email address.</Field.Error>
+  </Field.Root>
+);
+```
+
+`Field.Root` manages the control's name, disabled state, and validity. `Field.Label` and `Field.Description` connect their content to the control. Set validation timing with `validationMode`; use `validate` for custom validation.
+
+## External errors
+
+Use `invalid` when your application owns the error state. An explicit `match` makes the error message visible.
+
+```tsx
+import { Field, Input } from 'twenty-ui/input';
+
+type UsernameFieldProps = { error?: string };
+
+export const UsernameField = ({ error }: UsernameFieldProps) => (
+  <Field.Root name="username" invalid={Boolean(error)}>
+    <Field.Label>Username</Field.Label>
+    <Input autoComplete="username" />
+    <Field.Error match={Boolean(error)}>{error}</Field.Error>
+  </Field.Root>
+);
+```
+
+## Parts
+
+| Part          | Purpose                                              |
+| ------------- | ---------------------------------------------------- |
+| `Root`        | Shares field state and validation with the control.  |
+| `Label`       | Names the control.                                   |
+| `Control`     | Provides an unstyled input with field integration.   |
+| `Description` | Adds persistent helper text.                         |
+| `Error`       | Shows feedback for a matching validation state.      |
+| `Validity`    | Exposes validity through a children render function. |
+
+Keep error messages actionable and provide a visible label even when the control has a placeholder.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<FieldReference />

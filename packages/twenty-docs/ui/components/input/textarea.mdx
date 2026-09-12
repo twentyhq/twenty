@@ -1,0 +1,60 @@
+---
+title: Textarea
+description: Enter multiple lines of text with optional automatic resizing.
+---
+
+import TextareaReference from '/snippets/ui/generated/input/textarea.mdx';
+
+Use `Textarea` for notes, descriptions, and other multiline values. It integrates with [Field](/ui/components/input/field) for labels and validation.
+
+## Basic textarea
+
+```tsx
+import { Field, Textarea } from 'twenty-ui/input';
+
+export const NotesField = () => (
+  <Field.Root name="notes">
+    <Field.Label>Notes</Field.Label>
+    <Textarea rows={4} defaultValue="Follow up next week." />
+    <Field.Description>Add context for your team.</Field.Description>
+  </Field.Root>
+);
+```
+
+Native textarea attributes such as `rows`, `maxLength`, `required`, and `readOnly` are available. `size` accepts `sm` or `md` and defaults to `md`.
+
+## Controlled value and automatic resizing
+
+```tsx
+import { useState } from 'react';
+import { Field, Textarea } from 'twenty-ui/input';
+
+export const DescriptionField = () => {
+  const [description, setDescription] = useState('');
+
+  return (
+    <Field.Root name="description">
+      <Field.Label>Description</Field.Label>
+      <Textarea
+        value={description}
+        onValueChange={setDescription}
+        autoResize
+        rows={2}
+        maxRows={6}
+        maxLength={500}
+      />
+      <Field.Description>
+        {description.length} of 500 characters
+      </Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+`autoResize` adjusts the textarea's height as its content changes. Use `maxRows` to cap the height. `onValueChange` receives the next string and event details; native `onChange` is also available. Keep keyboard focus on the textarea while the user types and use helper text for limits.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<TextareaReference />

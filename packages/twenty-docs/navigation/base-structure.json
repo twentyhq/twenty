@@ -508,6 +508,71 @@
           ]
         }
       ]
+    },
+    {
+      "key": "uiLibrary",
+      "label": "UI Library",
+      "groups": [
+        {
+          "key": "uiGuides",
+          "label": "Guides",
+          "pages": [
+            "ui/getting-started",
+            "ui/theming",
+            "ui/tokens",
+            "ui/dark-mode",
+            "ui/ssr",
+            "ui/accessibility"
+          ]
+        },
+        {
+          "key": "uiForms",
+          "label": "Forms",
+          "pages": [
+            "ui/components/input/field",
+            "ui/components/input/input",
+            "ui/components/input/input-group",
+            "ui/components/input/textarea",
+            "ui/components/input/checkbox",
+            "ui/components/input/radio",
+            "ui/components/input/radio-group",
+            "ui/components/input/select",
+            "ui/components/input/slider",
+            "ui/components/input/switch"
+          ]
+        },
+        {
+          "key": "uiNavigation",
+          "label": "Navigation",
+          "pages": [
+            "ui/components/navigation/list-item",
+            "ui/components/navigation/tabs"
+          ]
+        },
+        {
+          "key": "uiSurfaces",
+          "label": "Surfaces",
+          "pages": [
+            "ui/components/surfaces/alert-dialog",
+            "ui/components/surfaces/menu",
+            "ui/components/surfaces/popover"
+          ]
+        },
+        {
+          "key": "uiFeedback",
+          "label": "Feedback",
+          "pages": [
+            "ui/components/feedback/toast"
+          ]
+        },
+        {
+          "key": "uiTypography",
+          "label": "Typography",
+          "pages": [
+            "ui/components/typography/text"
+          ]
+        }
+      ]
     }
   ]
 }

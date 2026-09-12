@@ -1,0 +1,49 @@
+---
+title: Radio
+description: Render one option in a mutually exclusive radio group.
+---
+
+import RadioReference from '/snippets/ui/generated/input/radio.mdx';
+
+`Radio` represents one option inside [RadioGroup](/ui/components/input/radio-group). Give each option a distinct `value` and a visible label. The group owns the selected value.
+
+## Labeled options
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/input';
+
+export const ContactMethod = () => (
+  <RadioGroup
+    name="contactMethod"
+    defaultValue="email"
+    aria-label="Preferred contact method"
+  >
+    <label>
+      <Radio value="email" />
+      Email
+    </label>
+    <label>
+      <Radio value="phone" />
+      Phone
+    </label>
+    <label>
+      <Radio value="post" disabled />
+      Postal mail (unavailable)
+    </label>
+  </RadioGroup>
+);
+```
+
+The `size` prop accepts `sm` or `md` and defaults to `sm`. Use the same size for options in a group.
+
+## Keyboard and selection
+
+Tab enters or leaves the group. Arrow keys move between enabled options and select the focused option. Space selects the focused radio. Selection and change handlers belong on `RadioGroup`; see its [controlled example](/ui/components/input/radio-group#controlled-state).
+
+`Radio` is generic over the value type. Keep that type consistent with its group. Native attributes such as `aria-describedby` can associate an option with additional help text.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<RadioReference />

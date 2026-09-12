@@ -1,0 +1,98 @@
+---
+title: Select
+description: Choose one or more values from a popup list of options.
+---
+
+import SelectReference from '/snippets/ui/generated/input/select.mdx';
+
+Use `Select` for a form value chosen from a list. Use [Menu](/ui/components/surfaces/menu) for commands and actions.
+
+## Single selection
+
+```tsx
+import { Select } from 'twenty-ui/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => (
+  <Select.Root name="priority" defaultValue="normal" items={PRIORITIES}>
+    <Select.Trigger aria-label="Priority">
+      <Select.Value placeholder="Choose a priority" />
+    </Select.Trigger>
+    <Select.Popup>
+      {PRIORITIES.map(({ value, label }) => (
+        <Select.Item key={value} value={value}>
+          {label}
+        </Select.Item>
+      ))}
+    </Select.Popup>
+  </Select.Root>
+);
+```
+
+Supply `items` on `Root` so `Value` renders the selected item's label; without it, the trigger shows the raw value. `defaultValue` initializes uncontrolled state; use `value` and `onValueChange` for controlled state. The selected value can be `null` when nothing is selected.
+
+## Multiple selection
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/input';
+
+const LANGUAGES = [
+  { value: 'en', label: 'English' },
+  { value: 'fr', label: 'French' },
+  { value: 'es', label: 'Spanish' },
+];
+
+export const LanguageSelect = () => {
+  const [languages, setLanguages] = useState<string[]>(['en']);
+
+  return (
+    <Select.Root
+      multiple
+      value={languages}
+      onValueChange={setLanguages}
+      items={LANGUAGES}
+    >
+      <Select.Trigger aria-label="Languages">
+        <Select.Value placeholder="Choose languages" />
+      </Select.Trigger>
+      <Select.Popup>
+        {LANGUAGES.map(({ value, label }) => (
+          <Select.Item key={value} value={value}>
+            {label}
+          </Select.Item>
+        ))}
+      </Select.Popup>
+    </Select.Root>
+  );
+};
+```
+
+With `multiple`, the value is an array. The generic root types represent the option value and whether multiple selection is enabled.
+
+## Parts and placement
+
+| Part                  | Purpose                                                    |
+| --------------------- | ---------------------------------------------------------- |
+| `Root`                | Owns selection, open state, and form integration.          |
+| `Trigger`             | Opens the list and supports `sm` or `md` sizing.           |
+| `Value`               | Displays the selected label or a placeholder.              |
+| `Popup`               | Provides the portal and positioned list.                   |
+| `Item`                | Represents an option, with optional icons and description. |
+| `Group`, `GroupLabel` | Group related options under an accessible label.           |
+| `Separator`           | Separates groups visually.                                 |
+
+`Popup` defaults to `side="bottom"`, `align="start"`, and `sideOffset={8}`. Set `alignItemWithTrigger` to align the selected option over the trigger. It uses the [theme's portal container](/ui/theming#scope-an-override) unless you provide `container`.
+
+Keyboard users can open the list from the trigger, navigate options with arrow keys, and type to find an option. Escape dismisses the popup. Label the trigger or integrate the select with [Field](/ui/components/input/field); a placeholder alone does not name the control.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<SelectReference />

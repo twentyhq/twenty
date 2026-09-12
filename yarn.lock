@@ -50102,6 +50102,7 @@ __metadata:
     jsdom: "npm:^30.0.1"
     prettier: "npm:^3.1.1"
     react: "npm:^19.2.0"
+    react-docgen-typescript: "npm:^2.2.2"
     react-dom: "npm:^19.2.0"
     react-responsive: "npm:^9.0.2"
     react-router-dom: "npm:^6.30.6"

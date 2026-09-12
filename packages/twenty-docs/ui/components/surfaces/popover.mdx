@@ -1,0 +1,79 @@
+---
+title: Popover
+description: Display contextual content anchored to a trigger.
+---
+
+import PopoverReference from '/snippets/ui/generated/surfaces/popover.mdx';
+
+Use `Popover` for contextual information or lightweight controls. `Popup` includes positioning and a portal, so you can compose content directly inside it.
+
+## Contextual content
+
+```tsx
+import { Popover } from 'twenty-ui/surfaces';
+
+export const ImportHelp = () => (
+  <Popover.Root>
+    <Popover.Trigger>Import help</Popover.Trigger>
+    <Popover.Popup arrow>
+      <Popover.Title>Import a CSV file</Popover.Title>
+      <Popover.Description>
+        Use a header row to identify your columns.
+      </Popover.Description>
+      <Popover.Close>Got it</Popover.Close>
+    </Popover.Popup>
+  </Popover.Root>
+);
+```
+
+Use `Title` and `Description` to identify the popup. The trigger renders a button by default; `render` lets you supply a compatible element.
+
+## Controlled state
+
+```tsx
+import { useState } from 'react';
+import { Popover } from 'twenty-ui/surfaces';
+
+export const FilterPopover = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Trigger>Filters</Popover.Trigger>
+      <Popover.Popup align="start">
+        <Popover.Title>Record filters</Popover.Title>
+        <Popover.Description>
+          Choose which records to display.
+        </Popover.Description>
+        <label>
+          <input type="checkbox" />
+          Only my records
+        </label>
+        <Popover.Close>Done</Popover.Close>
+      </Popover.Popup>
+    </Popover.Root>
+  );
+};
+```
+
+`onOpenChange` receives the next boolean and event details. Use `defaultOpen` for uncontrolled initial state.
+
+## Parts and placement
+
+| Part                   | Purpose                                            |
+| ---------------------- | -------------------------------------------------- |
+| `Root`                 | Coordinates open state and interactions.           |
+| `Trigger`              | Opens or closes the popup.                         |
+| `Popup`                | Renders the positioned content and optional arrow. |
+| `Title`, `Description` | Name and describe the popup.                       |
+| `Close`                | Closes the popup.                                  |
+
+`Popup` defaults to `side="bottom"`, `align="center"`, and `sideOffset={8}`. Set `arrow` to show an arrow. Set `container` to override the theme's portal container; see [theming](/ui/theming).
+
+Escape closes the popup and focus returns to the trigger. Outside interaction dismisses it by default. Use the focus props on `Popup` when its content needs a specific initial or return focus target.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<PopoverReference />

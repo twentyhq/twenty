@@ -1,0 +1,15 @@
+---
+title: Design tokens
+description: Browse the generated CSS variables and light and dark values used by Twenty UI.
+---
+
+import TokenReference from '/snippets/ui/generated/tokens.mdx';
+
+This reference is generated from the same token definitions as Twenty UI's theme stylesheets. Token paths correspond to entries in `themeCssVariables` and `useTheme()`; CSS variable names can be used directly in stylesheets.
+
+- Prefer semantic tokens such as `background.primary` and `font.color.primary` for application surfaces and text.
+- Numeric tokens are unitless in CSS. Multiply them by a length when needed, for example `calc(var(--t-icon-size-md) * 1px)`. Under a mounted `ThemeProvider` with the theme stylesheet loaded, `useTheme()` resolves them to JavaScript numbers; without a provider it returns the CSS variable references.
+- Values containing `var(...)` or `calc(...)` are CSS expressions, not precomputed measurements.
+- The values below are the base stylesheet values. Theme overrides and supported squircle styling can change computed values. Squircle styling doubles selected radius tokens; the explicit round and pill tokens retain their base radii.
+
+<TokenReference />

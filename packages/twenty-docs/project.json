@@ -50,6 +50,29 @@
       "options": {
         "command": "npx vitest run --config {projectRoot}/vitest.config.mts"
       }
+    },
+    "generate:ui": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "commands": [
+          "tsx packages/twenty-ui/scripts/generateDocsData.ts",
+          "tsx packages/twenty-docs/scripts/generate-ui-reference.ts"
+        ],
+        "parallel": false
+      }
+    },
+    "check:ui": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "commands": [
+          "tsx packages/twenty-ui/scripts/generateDocsData.ts --check",
+          "tsx packages/twenty-docs/scripts/generate-ui-reference.ts --check",
+          "tsx packages/twenty-ui/scripts/checkDocsExamples.ts"
+        ],
+        "parallel": false
+      }
     }
   }
 }

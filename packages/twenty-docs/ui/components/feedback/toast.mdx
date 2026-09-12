@@ -1,0 +1,73 @@
+---
+title: Toast
+description: Display status messages with optional details, actions, and progress.
+---
+
+import ToastReference from '/snippets/ui/generated/feedback/toast.mdx';
+
+`Toast` renders one notification. Your application controls when it appears, its position, and when it is removed.
+
+## Dismissible notification
+
+```tsx
+import { useState } from 'react';
+import { Toast } from 'twenty-ui/feedback';
+
+export const SaveNotification = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <>
+      <button type="button" onClick={() => setVisible(true)}>
+        Show saved notification
+      </button>
+      {visible && (
+        <Toast
+          variant="success"
+          description="Your changes are available to your team."
+          duration={6000}
+          onClose={() => setVisible(false)}
+        >
+          Record saved
+        </Toast>
+      )}
+    </>
+  );
+};
+```
+
+`onClose` is called by the close button and when the countdown completes. Remove the toast in that callback. The countdown defaults to 6,000 milliseconds and pauses while the pointer is over the toast.
+
+## Progress and cancellation
+
+```tsx
+import { Toast } from 'twenty-ui/feedback';
+
+type ImportProgressProps = { progress: number; onCancel: () => void };
+
+export const ImportProgress = ({ progress, onCancel }: ImportProgressProps) => (
+  <Toast
+    variant="info"
+    progress={progress}
+    description="You can continue working while the import runs."
+    onCancel={onCancel}
+    cancelLabel="Cancel import"
+  >
+    Importing records: {progress}%
+  </Toast>
+);
+```
+
+Passing `progress` supplies a percentage and disables the countdown. Cancellation invokes `onCancel`; the parent owns cancellation and removal. `action` accepts a React node for a footer action.
+
+## Appearance and announcements
+
+`variant` accepts `default`, `error`, `success`, `info`, or `warning`. Each variant supplies an icon and theme colors. Use `icon` to replace the icon and `iconLabel` when the default icon needs its own accessible name.
+
+The default role is `status` with polite announcements. Use `role="alert"` for urgent feedback. Set `cancelLabel` and `closeLabel` to localize the controls, and allow enough time to read the content or interact with its actions.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<ToastReference />

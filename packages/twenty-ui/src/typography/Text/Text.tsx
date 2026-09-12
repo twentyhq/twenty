@@ -7,8 +7,22 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from './Text.module.scss';
 
 type TextTruncationProps =
-  | { truncate?: boolean; lineClamp?: never }
-  | { truncate?: never; lineClamp?: number };
+  | {
+      /**
+       * Truncates overflowing text on one line with an ellipsis. Cannot be
+       * combined with `lineClamp`.
+       */
+      truncate?: boolean;
+      lineClamp?: never;
+    }
+  | {
+      truncate?: never;
+      /**
+       * Maximum number of lines before the text is truncated with an ellipsis.
+       * Cannot be combined with `truncate`.
+       */
+      lineClamp?: number;
+    };
 
 type TextProps = useRender.ComponentProps<'div'> & TextTruncationProps;
 

@@ -501,6 +501,64 @@
                 ]
               }
             ]
+          },
+          {
+            "tab": "UI Library",
+            "groups": [
+              {
+                "group": "Guides",
+                "pages": [
+                  "ui/getting-started",
+                  "ui/theming",
+                  "ui/tokens",
+                  "ui/dark-mode",
+                  "ui/ssr",
+                  "ui/accessibility"
+                ]
+              },
+              {
+                "group": "Forms",
+                "pages": [
+                  "ui/components/input/field",
+                  "ui/components/input/input",
+                  "ui/components/input/input-group",
+                  "ui/components/input/textarea",
+                  "ui/components/input/checkbox",
+                  "ui/components/input/radio",
+                  "ui/components/input/radio-group",
+                  "ui/components/input/select",
+                  "ui/components/input/slider",
+                  "ui/components/input/switch"
+                ]
+              },
+              {
+                "group": "Navigation",
+                "pages": [
+                  "ui/components/navigation/list-item",
+                  "ui/components/navigation/tabs"
+                ]
+              },
+              {
+                "group": "Surfaces",
+                "pages": [
+                  "ui/components/surfaces/alert-dialog",
+                  "ui/components/surfaces/menu",
+                  "ui/components/surfaces/popover"
+                ]
+              },
+              {
+                "group": "Feedback",
+                "pages": [
+                  "ui/components/feedback/toast"
+                ]
+              },
+              {
+                "group": "Typography",
+                "pages": [
+                  "ui/components/typography/text"
+                ]
+              }
+            ]
           }
         ]
       },
@@ -6598,6 +6656,42 @@
     }
   },
   "redirects": [
+    {
+      "source": "/twenty-ui/input/checkbox",
+      "destination": "/ui/components/input/checkbox"
+    },
+    {
+      "source": "/twenty-ui/input/radio",
+      "destination": "/ui/components/input/radio"
+    },
+    {
+      "source": "/twenty-ui/input/select",
+      "destination": "/ui/components/input/select"
+    },
+    {
+      "source": "/twenty-ui/input/text",
+      "destination": "/ui/components/input/input"
+    },
+    {
+      "source": "/twenty-ui/input/toggle",
+      "destination": "/ui/components/input/switch"
+    },
+    {
+      "source": "/twenty-ui/navigation/menu-item",
+      "destination": "/ui/components/navigation/list-item"
+    },
+    {
+      "source": "/twenty-ui",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/l/:language/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
     {
       "source": "/developers/extend/apps/getting-started",
       "destination": "/developers/extend/apps/getting-started/quick-start"

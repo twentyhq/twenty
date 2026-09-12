@@ -31,6 +31,13 @@ files: [
     "excluded_front_matter_elements": ["icon"],
   },
   {
+    "source": "packages/twenty-docs/ui/**/*.mdx",
+    "translation": "packages/twenty-docs/l/%two_letters_code%/ui/**/%original_file_name%",
+    "type": "mdx_v2",
+    "exclude_code_blocks": true,
+    "excluded_front_matter_elements": ["icon"],
+  },
+  {
     #
     # Navigation labels template - translated into per-locale navigation.json
     #
