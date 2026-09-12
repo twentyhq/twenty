@@ -1,20 +1,8 @@
-// Projects the canonical catalog through a deployment spec.
+// Projects the canonical catalog through a deployment spec. See README.md.
 //
-// `index.ts` keeps one catalog of what every model is, refreshed daily from
-// models.dev and Artificial Analysis. A deployment serves a subset of those
-// models, through its own routes and credentials, and used to restate them:
-// prices, labels and modalities copied by hand into a second file that nothing
-// kept in step. Those copies went stale, and the copies that mattered most —
-// the effort levels a model takes and the readings measured for it — were never
-// made at all, so every deployment served models the product could not compare.
-//
-// So a deployment declares only what is its own: which routes exist, what
-// credentials they use, and which catalog models each one serves. Everything
-// that describes a model is read from the catalog at generation time.
-//
-// This entry point deliberately imports nothing from the workspace, so a
-// repository that only needs to generate a catalog can run it straight from a
-// sparse checkout without installing the monorepo.
+// This entry point and the files it imports deliberately use nothing from the
+// workspace, so a repository holding a private spec can run them straight from
+// a sparse checkout without installing the monorepo.
 
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -37,10 +25,22 @@ const DEFAULT_CATALOG_PATH = resolve(
   'ai-providers.json',
 );
 
+// A flag whose value is missing would otherwise swallow the next flag and write
+// the catalog to a file named after it.
 const readArgument = (flag: string): string | undefined => {
   const index = process.argv.indexOf(flag);
 
-  return index === -1 ? undefined : process.argv[index + 1];
+  if (index === -1) {
+    return undefined;
+  }
+
+  const value = process.argv[index + 1];
+
+  if (value === undefined || value.startsWith('--')) {
+    throw new Error(`${flag} is missing its value`);
+  }
+
+  return value;
 };
 
 const readJson = <TValue>(path: string): TValue => {
@@ -53,7 +53,13 @@ const readJson = <TValue>(path: string): TValue => {
   }
 };
 
-const assertSpecIsUsable = (spec: CatalogSpec, path: string): void => {
+const assertSpecIsUsable = ({
+  spec,
+  path,
+}: {
+  spec: CatalogSpec;
+  path: string;
+}): void => {
   if (!Array.isArray(spec.providers) || spec.providers.length === 0) {
     throw new Error(`${path} declares no providers`);
   }
@@ -98,7 +104,7 @@ const main = (): void => {
   const catalogPath = readArgument('--catalog') ?? DEFAULT_CATALOG_PATH;
   const spec = readJson<CatalogSpec>(specPath);
 
-  assertSpecIsUsable(spec, specPath);
+  assertSpecIsUsable({ spec, path: specPath });
 
   const projected = projectCatalog({
     canonicalCatalog: readJson<CanonicalCatalog>(catalogPath),

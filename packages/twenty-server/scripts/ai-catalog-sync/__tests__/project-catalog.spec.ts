@@ -1,7 +1,11 @@
+import { AI_SDK_PACKAGES, DATA_RESIDENCY_KEYS } from 'twenty-shared/ai';
+
 import { type CatalogSpec } from '../types/catalog-spec.type';
 import {
   type CanonicalCatalog,
   projectCatalog,
+  SUPPORTED_DATA_RESIDENCIES,
+  SUPPORTED_SDK_PACKAGES,
 } from '../utils/project-catalog.util';
 
 const canonicalCatalog: CanonicalCatalog = {
@@ -170,5 +174,101 @@ describe('projectCatalog', () => {
     expect(projected['azure-foundry'].models?.[0]).toMatchObject({
       modalities: ['image', 'pdf'],
     });
+  });
+
+  it('refuses a repeated provider, which would drop the first one silently', () => {
+    const spec: CatalogSpec = {
+      providers: [
+        {
+          name: 'azure-foundry',
+          npm: '@ai-sdk/azure',
+          models: ['gpt-5.6-luna'],
+        },
+        {
+          name: 'azure-foundry',
+          npm: '@ai-sdk/azure',
+          models: ['claude-opus-4-7'],
+        },
+      ],
+    };
+
+    expect(() => projectCatalog({ canonicalCatalog, spec })).toThrow(
+      'repeated or reserved',
+    );
+  });
+
+  it('refuses an SDK package or residency the server would not parse', () => {
+    const withNpm = (npm: string): CatalogSpec => ({
+      providers: [{ name: 'gateway', npm, models: ['gpt-5.6-luna'] }],
+    });
+
+    expect(() =>
+      projectCatalog({ canonicalCatalog, spec: withNpm('@ai-sdk/imaginary') }),
+    ).toThrow('unsupported SDK package');
+
+    expect(() =>
+      projectCatalog({
+        canonicalCatalog,
+        spec: {
+          providers: [
+            {
+              name: 'gateway',
+              npm: '@ai-sdk/openai',
+              dataResidency: 'mars',
+              models: ['gpt-5.6-luna'],
+            },
+          ],
+        },
+      }),
+    ).toThrow('unsupported data residency');
+  });
+
+  it('refuses a negotiated price that is not a usable number', () => {
+    const spec: CatalogSpec = {
+      providers: [
+        {
+          name: 'azure-foundry',
+          npm: '@ai-sdk/azure',
+          models: [{ model: 'gpt-5.6-luna', inputCostPerMillionTokens: -1 }],
+        },
+      ],
+    };
+
+    expect(() => projectCatalog({ canonicalCatalog, spec })).toThrow(
+      'which is not a usable number',
+    );
+  });
+
+  it('marks the route on a label the spec overrides', () => {
+    const spec: CatalogSpec = {
+      providers: [
+        {
+          name: 'azure-foundry',
+          npm: '@ai-sdk/azure',
+          labelSuffix: ' (Azure)',
+          models: [{ model: 'gpt-5.6-luna', label: 'Luna' }],
+        },
+      ],
+    };
+
+    const projected = projectCatalog({ canonicalCatalog, spec });
+
+    expect(projected['azure-foundry'].models?.[0]?.label).toBe('Luna (Azure)');
+  });
+});
+
+// The projector cannot import these and stay runnable outside the monorepo, so
+// the copies are held in step here instead.
+describe('the vocabularies the projector copies', () => {
+  it('lists every SDK package the server accepts', () => {
+    expect([...SUPPORTED_SDK_PACKAGES].sort()).toEqual(
+      [...AI_SDK_PACKAGES].sort(),
+    );
+  });
+
+  it('lists every data residency the server accepts', () => {
+    expect([...SUPPORTED_DATA_RESIDENCIES].sort()).toEqual(
+      [...DATA_RESIDENCY_KEYS].sort(),
+    );
   });
 });

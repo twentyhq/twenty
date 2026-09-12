@@ -28,6 +28,15 @@ const OVERRIDABLE_FIELDS = [
   'cacheCreationCostPerMillionTokens',
 ] as const satisfies readonly (keyof CatalogSpecModelOverrides)[];
 
+const NUMERIC_FIELDS = [
+  'contextWindowTokens',
+  'maxOutputTokens',
+  'inputCostPerMillionTokens',
+  'outputCostPerMillionTokens',
+  'cachedInputCostPerMillionTokens',
+  'cacheCreationCostPerMillionTokens',
+] as const satisfies readonly (keyof CatalogSpecModelOverrides)[];
+
 const PROVIDER_CREDENTIAL_FIELDS = [
   'label',
   'apiKey',
@@ -38,6 +47,34 @@ const PROVIDER_CREDENTIAL_FIELDS = [
   'secretAccessKey',
   'sessionToken',
 ] as const;
+
+// Mirrors AI_SDK_PACKAGES and DATA_RESIDENCY_KEYS in twenty-shared, which this
+// file cannot import and stay runnable outside the monorepo. A spec test holds
+// the two in step; a value the server's schema rejects would otherwise leave a
+// deployment with no catalog at all.
+export const SUPPORTED_SDK_PACKAGES = [
+  '@ai-sdk/openai',
+  '@ai-sdk/openai-compatible',
+  '@ai-sdk/anthropic',
+  '@ai-sdk/google',
+  '@ai-sdk/mistral',
+  '@ai-sdk/xai',
+  '@ai-sdk/azure',
+  '@ai-sdk/amazon-bedrock',
+];
+
+export const SUPPORTED_DATA_RESIDENCIES = [
+  'us',
+  'eu',
+  'global',
+  'uk',
+  'ap',
+  'jp',
+  'au',
+  'ca',
+  'de',
+  'fr',
+];
 
 const asSpecModel = (entry: string | CatalogSpecModel): CatalogSpecModel =>
   typeof entry === 'string' ? { model: entry } : entry;
@@ -65,7 +102,11 @@ const projectModel = ({
   specModel: CatalogSpecModel;
   provider: CatalogSpecProvider;
 }): CanonicalModel => {
-  const label = `${canonicalModel.label ?? canonicalModel.name}${provider.labelSuffix ?? ''}`;
+  const overrides = Object.fromEntries(
+    OVERRIDABLE_FIELDS.filter((field) => specModel[field] !== undefined).map(
+      (field) => [field, specModel[field]],
+    ),
+  );
 
   const routeFields = {
     ...(provider.dataResidency === undefined
@@ -76,37 +117,97 @@ const projectModel = ({
       : { zeroDataRetention: provider.zeroDataRetention }),
   };
 
-  const overrides = Object.fromEntries(
-    OVERRIDABLE_FIELDS.filter((field) => specModel[field] !== undefined).map(
-      (field) => [field, specModel[field]],
-    ),
-  );
-
   return {
     ...canonicalModel,
-    name: specModel.as ?? canonicalModel.name,
-    label,
     ...routeFields,
     ...overrides,
+    name: specModel.as ?? canonicalModel.name,
+    // The suffix marks the route, so it is appended to whichever name the model
+    // ends up with rather than to the catalog's.
+    label: `${specModel.label ?? canonicalModel.label ?? canonicalModel.name}${provider.labelSuffix ?? ''}`,
   };
+};
+
+const assertProviderIsUsable = ({
+  provider,
+  seenNames,
+}: {
+  provider: CatalogSpecProvider;
+  seenNames: Set<string>;
+}): void => {
+  // Providers key an object, so a repeat would drop the first one's credentials
+  // and models on the floor, and `__proto__` would drop its own.
+  if (seenNames.has(provider.name) || provider.name === '__proto__') {
+    throw new Error(`Provider "${provider.name}" is repeated or reserved`);
+  }
+
+  if (!SUPPORTED_SDK_PACKAGES.includes(provider.npm)) {
+    throw new Error(
+      `Provider "${provider.name}" names an unsupported SDK package: ${provider.npm}`,
+    );
+  }
+
+  if (
+    provider.dataResidency !== undefined &&
+    !SUPPORTED_DATA_RESIDENCIES.includes(provider.dataResidency)
+  ) {
+    throw new Error(
+      `Provider "${provider.name}" names an unsupported data residency: ${provider.dataResidency}`,
+    );
+  }
+};
+
+const assertNumbersAreUsable = ({
+  provider,
+  specModel,
+}: {
+  provider: CatalogSpecProvider;
+  specModel: CatalogSpecModel;
+}): void => {
+  for (const field of NUMERIC_FIELDS) {
+    const value = specModel[field];
+
+    if (value !== undefined && (!Number.isFinite(value) || value < 0)) {
+      throw new Error(
+        `${provider.name}/${specModel.model} sets ${field} to ${value}, which is not a usable number`,
+      );
+    }
+  }
 };
 
 // A spec naming a model the catalog does not carry is the failure this whole
 // pipeline exists to prevent: it publishes a route to nothing, and the tier
 // chains then fall through to a neighbouring rung in silence.
-const findUnknownModels = ({
-  spec,
+const resolveModels = ({
+  provider,
   canonicalModels,
 }: {
-  spec: CatalogSpec;
+  provider: CatalogSpecProvider;
   canonicalModels: Map<string, CanonicalModel>;
-}): string[] =>
-  spec.providers.flatMap((provider) =>
-    provider.models
-      .map(asSpecModel)
-      .filter(({ model }) => !canonicalModels.has(model))
-      .map(({ model }) => `${provider.name}/${model}`),
-  );
+}): { canonicalModel: CanonicalModel; specModel: CatalogSpecModel }[] => {
+  const specModels = provider.models.map(asSpecModel);
+  const unknown = specModels
+    .filter(({ model }) => !canonicalModels.has(model))
+    .map(({ model }) => `${provider.name}/${model}`);
+
+  if (unknown.length > 0) {
+    throw new Error(
+      `The catalog does not carry: ${unknown.join(', ')}. Check the model names, or wait for the catalog sync to pick them up.`,
+    );
+  }
+
+  return specModels.map((specModel) => {
+    assertNumbersAreUsable({ provider, specModel });
+
+    const canonicalModel = canonicalModels.get(specModel.model);
+
+    if (canonicalModel === undefined) {
+      throw new Error(`The catalog does not carry ${specModel.model}`);
+    }
+
+    return { canonicalModel, specModel };
+  });
+};
 
 export const projectCatalog = ({
   canonicalCatalog,
@@ -116,17 +217,13 @@ export const projectCatalog = ({
   spec: CatalogSpec;
 }): CanonicalCatalog => {
   const canonicalModels = indexCanonicalModels(canonicalCatalog);
-  const unknownModels = findUnknownModels({ spec, canonicalModels });
-
-  if (unknownModels.length > 0) {
-    throw new Error(
-      `The catalog does not carry: ${unknownModels.join(', ')}. Check the model names, or wait for the catalog sync to pick them up.`,
-    );
-  }
-
   const projected: CanonicalCatalog = {};
+  const seenNames = new Set<string>();
 
   for (const provider of spec.providers) {
+    assertProviderIsUsable({ provider, seenNames });
+    seenNames.add(provider.name);
+
     const credentials = Object.fromEntries(
       PROVIDER_CREDENTIAL_FIELDS.filter(
         (field) => provider[field] !== undefined,
@@ -137,15 +234,8 @@ export const projectCatalog = ({
       npm: provider.npm,
       label: provider.label ?? provider.name,
       ...credentials,
-      models: provider.models.map(asSpecModel).map((specModel) =>
-        projectModel({
-          // Checked above, so the lookup cannot miss.
-          canonicalModel: canonicalModels.get(
-            specModel.model,
-          ) as CanonicalModel,
-          specModel,
-          provider,
-        }),
+      models: resolveModels({ provider, canonicalModels }).map((resolved) =>
+        projectModel({ ...resolved, provider }),
       ),
     };
   }
