@@ -58,7 +58,7 @@ const StyledMetrics = styled.div`
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledMetric = styled.span<{ isInherited: boolean }>`
@@ -69,8 +69,8 @@ const StyledMetric = styled.span<{ isInherited: boolean }>`
       : themeCssVariables.font.color.tertiary};
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: 2px;
+  font-weight: ${themeCssVariables.font.weight.regular};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledTrack = styled.div<{ disabled: boolean }>`
@@ -292,7 +292,7 @@ export const AiModelTierSlider = ({
               id={`ai-model-tier-${key}-${tooltipId}`}
               isInherited={isBenchmarkInherited}
             >
-              <Icon size={theme.icon.size.md} />
+              <Icon size={theme.icon.size.sm} />
               {formatMetricDelta(deltaPercent)}
             </StyledMetric>
           ))}
