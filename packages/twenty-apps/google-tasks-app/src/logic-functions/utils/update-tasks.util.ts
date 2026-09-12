@@ -3,7 +3,7 @@ import { isUndefined } from "@sniptt/guards";
 import { chunk } from "src/logic-functions/utils/chunk.util";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
 import { TASKS_BATCH_SIZE, UPDATE_CONCURRENCY } from "src/constants/sync";
-import { type TaskFields, type TaskUpdate } from "src/logic-functions/types";
+import { type TaskFields, type TaskUpdate } from "src/logic-functions/types/types";
 
 type UpdateOperation = {
   fields: TaskFields;

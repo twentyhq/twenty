@@ -1,7 +1,8 @@
 import { type CoreApiClient } from "twenty-client-sdk/core";
-import { type GoogleTask } from "src/logic-functions/types";
+import { type GoogleTask } from "src/logic-functions/types/types";
 import { chunk } from "src/logic-functions/utils/chunk.util";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
+import { normalizeDueDate } from "src/logic-functions/utils/normalize-due-date.util";
 import { TASKS_BATCH_SIZE } from "src/constants/sync";
 
 export const createTasks = async (client: CoreApiClient, assigneeId: string, googleTasks: GoogleTask[]) => {
@@ -17,7 +18,7 @@ export const createTasks = async (client: CoreApiClient, assigneeId: string, goo
               bodyV2: {
                 markdown: googleTask.notes ?? null,
               },
-              dueAt: googleTask.due ?? null,
+              dueAt: normalizeDueDate(googleTask.due),
               status: googleTask.completed ? 'DONE' as const : 'TODO' as const,
             })),
           },

@@ -19,5 +19,9 @@ export default defineConnectionProvider({
     clientSecretVariable: 'GOOGLE_TASKS_CLIENT_SECRET',
     tokenRequestContentType: 'form-urlencoded',
     usePkce: true,
+    authorizationParams: {
+      access_type: 'offline',
+      prompt: 'consent',
+    },
   },
 });

@@ -1,11 +1,14 @@
 import { type CoreApiClient } from "twenty-client-sdk/core";
-import { isString, isUndefined } from "@sniptt/guards";
-import { type GoogleTask, TaskFields, TaskNode, TasksSyncPlan } from "src/logic-functions/types";
+import { isNull, isString, isUndefined } from "@sniptt/guards";
+import { type GoogleTask, TaskFields, TaskNode, TasksSyncPlan } from "src/logic-functions/types/types";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
+import { normalizeDueDate } from "src/logic-functions/utils/normalize-due-date.util";
 import { TASKS_BATCH_SIZE } from "src/constants/sync";
 
 const isSameDueDate = (due: string | undefined, dueAt: string | null | undefined) => {
-  if (isUndefined(due)) {
+  const normalizedDue = normalizeDueDate(due);
+
+  if (isNull(normalizedDue)) {
     return !isString(dueAt);
   }
 
@@ -13,7 +16,7 @@ const isSameDueDate = (due: string | undefined, dueAt: string | null | undefined
     return false;
   }
 
-  return new Date(due).getTime() === new Date(dueAt).getTime();
+  return new Date(normalizedDue).getTime() === new Date(dueAt).getTime();
 };
 
 const isSameStatus = (completed: string | undefined, status: string | null | undefined) =>
@@ -33,7 +36,7 @@ const diffTask = (googleTask: GoogleTask, existingTask: TaskNode): TaskFields | 
   }
 
   if (!isSameDueDate(googleTask.due, existingTask.dueAt)) {
-    fields.dueAt = googleTask.due ?? null;
+    fields.dueAt = normalizeDueDate(googleTask.due);
   }
 
   if (!isSameStatus(googleTask.completed, existingTask.status)) {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { partitionTasks } from 'src/logic-functions/utils/build-sync-plan.util';
-import { type GoogleTask, TaskNode } from 'src/logic-functions/types';
+import { type GoogleTask, TaskNode } from 'src/logic-functions/types/types';
 
 const googleTask = (overrides: Partial<GoogleTask> = {}): GoogleTask => ({
   id: 'google-1',
@@ -87,7 +87,7 @@ describe('partitionTasks', () => {
     expect(plan.tasksToUpdate[0].fields).toEqual({
       title: 'Buy oat milk',
       bodyV2: { markdown: 'from the corner shop' },
-      dueAt: '2026-09-01T00:00:00.000Z',
+      dueAt: '2026-09-01T12:00:00.000Z',
       status: 'DONE',
     });
   });
@@ -137,7 +137,7 @@ describe('partitionTasks', () => {
   it('treats due dates that differ only in serialization as equal', () => {
     const plan = partitionTasks(
       [googleTask({ due: '2026-09-01T00:00:00.000Z' })],
-      [existingTask({ dueAt: '2026-09-01T00:00:00Z' })],
+      [existingTask({ dueAt: '2026-09-01T12:00:00Z' })],
     );
 
     expect(plan.tasksToUpdate).toHaveLength(0);
@@ -146,10 +146,21 @@ describe('partitionTasks', () => {
   it('updates a task whose due date actually moved', () => {
     const plan = partitionTasks(
       [googleTask({ due: '2026-09-02T00:00:00.000Z' })],
-      [existingTask({ dueAt: '2026-09-01T00:00:00.000Z' })],
+      [existingTask({ dueAt: '2026-09-01T12:00:00.000Z' })],
     );
 
     expect(plan.tasksToUpdate).toHaveLength(1);
+  });
+
+  it('moves a due date still stored at midnight to noon on the same day', () => {
+    const plan = partitionTasks(
+      [googleTask({ due: '2026-09-01T00:00:00.000Z' })],
+      [existingTask({ dueAt: '2026-09-01T00:00:00.000Z' })],
+    );
+
+    expect(plan.tasksToUpdate[0].fields).toEqual({
+      dueAt: '2026-09-01T12:00:00.000Z',
+    });
   });
 
   it('never resurrects a task that was soft-deleted in Twenty', () => {

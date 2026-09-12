@@ -13,6 +13,7 @@
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
+    "typecheck": "tsc --noEmit -p tsconfig.spec.json",
     "test": "vitest run --config vitest.unit.config.ts",
     "test:watch": "vitest --config vitest.unit.config.ts",
     "test:integration": "vitest run"
@@ -25,8 +26,8 @@
     "oxlint": "^1.80.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "twenty-client-sdk": "^2.37.0",
-    "twenty-sdk": "^2.37.0",
+    "twenty-client-sdk": "^2.40.0",
+    "twenty-sdk": "^2.40.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.10"

@@ -41,8 +41,17 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Run integration tests
+      - name: Lint
+        run: yarn lint
+
+      - name: Typecheck
+        run: yarn typecheck
+
+      - name: Run unit tests
         run: yarn test
+
+      - name: Run integration tests
+        run: yarn test:integration
         env:
           TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
           TWENTY_API_KEY: ${{ steps.twenty.outputs.api-key }}

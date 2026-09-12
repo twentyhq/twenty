@@ -12,7 +12,10 @@ const sleep = (durationMs: number): Promise<void> =>
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
 
-const isRetryableError = (error: unknown): boolean =>
+// Last resort for callers with no structured error to inspect, such as the
+// GraphQL client: prefer passing an explicit classifier, since a message match
+// also fires on an error whose text merely quotes a record containing "429".
+const hasRetryableErrorMessage = (error: unknown): boolean =>
   RETRYABLE_ERROR_PATTERN.test(getErrorMessage(error));
 
 const parseRetryAfterMs = (error: unknown): number | undefined => {
@@ -22,12 +25,13 @@ const parseRetryAfterMs = (error: unknown): number | undefined => {
 
 export const executeWithRetry = async <TResult>(
   execute: () => TResult,
+  isRetryable: (error: unknown) => boolean = hasRetryableErrorMessage,
 ): Promise<Awaited<TResult>> => {
   for (let attempt = 1; ; attempt += 1) {
     try {
       return await execute();
     } catch (error) {
-      if (attempt >= MAX_ATTEMPTS || !isRetryableError(error)) {
+      if (attempt >= MAX_ATTEMPTS || !isRetryable(error)) {
         throw error;
       }
 
