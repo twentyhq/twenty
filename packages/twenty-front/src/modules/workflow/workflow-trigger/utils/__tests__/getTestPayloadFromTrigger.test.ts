@@ -1,3 +1,4 @@
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type WorkflowTrigger } from '@/workflow/types/Workflow';
 import { getTestPayloadFromTrigger } from '@/workflow/workflow-trigger/utils/getTestPayloadFromTrigger';
 
@@ -11,7 +12,7 @@ describe('getTestPayloadFromTrigger', () => {
       },
     };
 
-    expect(getTestPayloadFromTrigger(trigger)).toBeUndefined();
+    expect(getTestPayloadFromTrigger({ trigger })).toBeUndefined();
   });
 
   it('returns undefined for a cron trigger', () => {
@@ -25,7 +26,7 @@ describe('getTestPayloadFromTrigger', () => {
       },
     };
 
-    expect(getTestPayloadFromTrigger(trigger)).toBeUndefined();
+    expect(getTestPayloadFromTrigger({ trigger })).toBeUndefined();
   });
 
   it('returns expectedBody for a POST webhook trigger', () => {
@@ -41,7 +42,7 @@ describe('getTestPayloadFromTrigger', () => {
       },
     };
 
-    expect(getTestPayloadFromTrigger(trigger)).toEqual(expectedBody);
+    expect(getTestPayloadFromTrigger({ trigger })).toEqual(expectedBody);
   });
 
   it('returns undefined for a GET webhook trigger', () => {
@@ -55,10 +56,10 @@ describe('getTestPayloadFromTrigger', () => {
       },
     };
 
-    expect(getTestPayloadFromTrigger(trigger)).toBeUndefined();
+    expect(getTestPayloadFromTrigger({ trigger })).toBeUndefined();
   });
 
-  it('throws for a database event trigger', () => {
+  it('throws for a database event trigger without a test record', () => {
     const trigger: WorkflowTrigger = {
       type: 'DATABASE_EVENT',
       name: 'Test',
@@ -68,8 +69,30 @@ describe('getTestPayloadFromTrigger', () => {
       },
     };
 
-    expect(() => getTestPayloadFromTrigger(trigger)).toThrow(
-      'Test workflow is not supported for database event triggers',
+    expect(() => getTestPayloadFromTrigger({ trigger })).toThrow(
+      'Select a test record on the trigger to test a database event workflow',
     );
+  });
+
+  it('builds a record event payload for a database event trigger', () => {
+    const trigger: WorkflowTrigger = {
+      type: 'DATABASE_EVENT',
+      name: 'Test',
+      settings: {
+        eventName: 'company.created',
+        outputSchema: {},
+      },
+    };
+    const databaseEventTestRecord = {
+      id: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+      name: 'Airbnb',
+    } as unknown as ObjectRecord;
+
+    expect(
+      getTestPayloadFromTrigger({ trigger, databaseEventTestRecord }),
+    ).toEqual({
+      recordId: databaseEventTestRecord.id,
+      properties: { after: databaseEventTestRecord },
+    });
   });
 });

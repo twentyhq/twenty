@@ -1,5 +1,6 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
+import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -20,11 +21,10 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowStepFilterBuilder } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterBuilder';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
-import { WorkflowEditTriggerDatabaseEventTestRecord } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventTestRecord';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -186,6 +186,23 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     });
   };
 
+  const handleTestRecordChange = (testRecordId: string | null) => {
+    if (triggerOptions.readonly === true) {
+      return;
+    }
+
+    triggerOptions.onTriggerUpdate({
+      ...trigger,
+      settings: {
+        ...trigger.settings,
+        testRecordId:
+          isDefined(testRecordId) && isValidUuid(testRecordId)
+            ? testRecordId
+            : null,
+      },
+    });
+  };
+
   const handleFilterSettingsUpdate = (filterSettings: FilterSettings) => {
     if (triggerOptions.readonly === true) {
       return;
@@ -284,11 +301,15 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             onFilterSettingsUpdate={handleFilterSettingsUpdate}
           />
         )}
-        {!triggerOptions.readonly && isDefined(selectedObjectMetadataItem) && (
-          <WorkflowEditTriggerDatabaseEventTestRecord
-            trigger={trigger}
-            objectNameSingular={selectedObjectMetadataItem.nameSingular}
-            onTriggerUpdate={triggerOptions.onTriggerUpdate}
+        {isDefined(selectedObjectMetadataItem) && (
+          <FormSingleRecordPicker
+            label={t`Test Record`}
+            defaultValue={trigger.settings.testRecordId ?? undefined}
+            objectNameSingulars={[selectedObjectMetadataItem.nameSingular]}
+            onChange={handleTestRecordChange}
+            onClear={() => handleTestRecordChange(null)}
+            disabled={triggerOptions.readonly}
+            testId="workflow-edit-trigger-database-event-test-record"
           />
         )}
       </WorkflowStepBody>
