@@ -9,6 +9,7 @@ import { RecordPositionModule } from 'src/engine/core-modules/record-position/re
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 
@@ -25,6 +26,7 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     RecordPositionModule,
     SubscriptionsModule,
     TimelineActivityModule,
+    WorkspaceCacheModule,
   ],
   providers: [EntityEventsToDbListener, TelemetryListener],
 })

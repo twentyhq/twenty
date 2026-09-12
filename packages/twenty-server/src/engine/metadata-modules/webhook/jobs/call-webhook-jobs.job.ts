@@ -17,7 +17,7 @@ import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-we
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
-import { computeWebhookOperationsToMatch } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-operations-to-match.util';
+import { filterWebhooksMatchingEvent } from 'src/engine/metadata-modules/webhook/utils/filter-webhooks-matching-event.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
@@ -48,24 +48,17 @@ export class CallWebhookJobsJob {
 
     const [nameSingular, operation] = workspaceEventBatch.name.split('.');
 
-    const operationsToMatch = computeWebhookOperationsToMatch({
-      nameSingular,
-      operation,
-    });
-
     const { flatWebhookMaps, flatObjectMetadataMaps, featureFlagsMap } =
       await this.workspaceCacheService.getOrRecompute(
         workspaceEventBatch.workspaceId,
         ['flatWebhookMaps', 'flatObjectMetadataMaps', 'featureFlagsMap'],
       );
 
-    const webhooks = Object.values(flatWebhookMaps.byUniversalIdentifier)
-      .filter(isDefined)
-      .filter((webhook) =>
-        operationsToMatch.some((operationToMatch) =>
-          webhook.operations.includes(operationToMatch),
-        ),
-      );
+    const webhooks = filterWebhooksMatchingEvent({
+      flatWebhookMaps,
+      nameSingular,
+      operation,
+    });
 
     if (webhooks.length === 0) {
       return;
