@@ -1,7 +1,11 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 import { describe, expect, it } from 'vitest';
+
+import {
+  APPLICATION_UNIVERSAL_IDENTIFIER,
+  GOOGLE_CONTACTS_ID_FIELD_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 
 describe('App installation', () => {
   it('should find the installed app in the applications list', async () => {
@@ -16,31 +20,56 @@ describe('App installation', () => {
     });
 
     const app = result.findManyApplications.find(
-      (a: { universalIdentifier: string }) =>
-        a.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
+      (application: { universalIdentifier: string }) =>
+        application.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
     );
 
     expect(app).toBeDefined();
   });
 });
 
-describe('CoreApiClient', () => {
-  it('should support CRUD on standard objects', async () => {
-    const client = new CoreApiClient();
+describe('App schema', () => {
+  it('should extend person with a unique googleContactsId field', async () => {
+    const client = new MetadataApiClient();
 
-    const created = await client.mutation({
-      createNote: {
-        __args: { data: { title: 'Integration test note' } },
-        id: true,
+    const result = await client.query({
+      objects: {
+        __args: {
+          paging: { first: 1 },
+          filter: {
+            universalIdentifier: {
+              eq: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person
+                .universalIdentifier,
+            },
+          },
+        },
+        edges: {
+          node: {
+            nameSingular: true,
+            fields: {
+              __args: { paging: { first: 200 }, filter: {} },
+              edges: {
+                node: {
+                  universalIdentifier: true,
+                  name: true,
+                  isUnique: true,
+                },
+              },
+            },
+          },
+        },
       },
     });
-    expect(created.createNote.id).toBeDefined();
 
-    await client.mutation({
-      destroyNote: {
-        __args: { id: created.createNote.id },
-        id: true,
-      },
-    });
+    const googleContactsIdField = result.objects.edges[0]?.node.fields.edges
+      .map((edge) => edge.node)
+      .find(
+        (field) =>
+          field.universalIdentifier ===
+          GOOGLE_CONTACTS_ID_FIELD_UNIVERSAL_IDENTIFIER,
+      );
+
+    expect(googleContactsIdField?.name).toBe('googleContactsId');
+    expect(googleContactsIdField?.isUnique).toBe(true);
   });
 });

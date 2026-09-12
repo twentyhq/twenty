@@ -1,7 +1,8 @@
-import { defineField, FieldType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+import { defineField, FieldType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS, } from 'twenty-sdk/define';
+import { GOOGLE_CONTACTS_ID_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 export default defineField({
-  universalIdentifier: '51e8733e-09b4-4b90-8923-edae357d9c5f',
+  universalIdentifier: GOOGLE_CONTACTS_ID_FIELD_UNIVERSAL_IDENTIFIER,
   name: 'googleContactsId',
   label: 'Google Contacts ID',
   type: FieldType.TEXT,

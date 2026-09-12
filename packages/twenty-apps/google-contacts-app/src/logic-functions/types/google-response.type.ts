@@ -1,49 +1,53 @@
 type EmailAddress = {
-  value: string;
-}
+  value?: string;
+};
 
 type Name = {
-  displayNameLastFirst: string;
-}
+  givenName?: string;
+  familyName?: string;
+  displayName?: string;
+  displayNameLastFirst?: string;
+};
 
 type Organization = {
   name?: string;
   title?: string;
-}
+};
 
 type PhoneNumber = {
-  // Canonicalized ITU-T E.164 form.
-  canonicalForm: string;
-}
+  value?: string;
+  // Canonicalized ITU-T E.164 form
+  canonicalForm?: string;
+};
 
 type Photo = {
-  default: boolean;
-  url: string;
-}
+  default?: boolean;
+  url?: string;
+};
 
-type Url = {
-  value: string;
-}
+export type PersonUrl = {
+  value?: string;
+};
 
 type PersonMetadata = {
   deleted?: boolean;
   previousResourceNames?: string[];
-}
+};
 
 export type Person = {
   emailAddresses?: EmailAddress[];
   metadata?: PersonMetadata;
-  names: Name[];
+  names?: Name[];
   organizations?: Organization[];
   phoneNumbers?: PhoneNumber[];
-  photos: Photo[];
+  photos?: Photo[];
   resourceName: string;
-  urls?: Url[];
-}
+  urls?: PersonUrl[];
+};
 
 export type ListConnectionsResponse = {
-  connections: Person[];
+  connections?: Person[];
   nextPageToken?: string;
-  nextSyncToken: string;
-  totalItems: number;
-}
+  nextSyncToken?: string;
+  totalItems?: number;
+};

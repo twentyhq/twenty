@@ -1,150 +1,188 @@
-import { defineLogicFunction, RoutePayload } from 'twenty-sdk/define';
-import { ListConnectionsResponse, Person } from "src/logic-functions/types/google-response.type";
-import { prepareUrl } from "src/logic-functions/data/prepare-url.util";
-import { CoreApiClient } from "twenty-client-sdk/core";
-import axios from "axios";
-import { parsePhoneNumberWithError } from "libphonenumber-js";
-import { getConnection } from "twenty-sdk/logic-function";
+import axios, { type AxiosInstance } from 'axios';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import {
+  AppConnectionAuthFailedError,
+  getConnection,
+  kv,
+  reportConnectionAuthFailure,
+  RoutePayload,
+} from 'twenty-sdk/logic-function';
 
-const PAGE_SIZE = 200;
+import { SYNC_CONTACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { chunk } from 'src/logic-functions/data/chunk.util';
+import { mapGooglePerson } from 'src/logic-functions/data/map-google-person.util';
+import { prepareUrl } from 'src/logic-functions/data/prepare-url.util';
+import { type ListConnectionsResponse } from 'src/logic-functions/types/google-response.type';
+import { type TwentyPersonInput } from 'src/logic-functions/types/twenty-person.type';
+import { isDefined } from "twenty-sdk/utils";
+import { isNonEmptyString } from "@sniptt/guards";
 
-type PersonAgg = {
-  name?: {
-    firstName?: string;
-    lastName?: string;
-  }
-  emails: {
-    primaryEmail: string;
-    additionalEmails: string[];
-  }
-  phones?: {
-    primaryPhoneNumber: string;
-    primaryPhoneCallingCode: string;
-    primaryPhoneCountryCode: string;
-  }
-  googleContactsId?: string;
-  linkedinLink?: {
-    primaryLinkLabel: string;
-    primaryLinkUrl: string;
-  }
-  xLink?: {
-    primaryLinkLabel: string;
-    primaryLinkUrl: string;
-  }
-  jobTitle?: string;
-}
+const GOOGLE_PEOPLE_BASE_URL = 'https://people.googleapis.com/v1/people/me';
+const GOOGLE_REQUEST_TIMEOUT_MILLISECONDS = 30_000;
+const PEOPLE_UPSERT_BATCH_SIZE = 200;
+const SYNC_TOKEN_EXPIRED_STATUS = 410;
+const UNAUTHORIZED_STATUSES = [401, 403];
 
-const aggPerson = (data: Person, agg: PersonAgg): PersonAgg => {
-  if (data.phoneNumbers) {
-    const parsedPhone = parsePhoneNumberWithError(data.phoneNumbers[0].canonicalForm);
-    let additionalPhones = '';
-    if (data.phoneNumbers.length > 1) {
-      for (let i = 1; i < data.phoneNumbers.length; i++) {
-        const parsedAdditionalPhone = parsePhoneNumberWithError(data.phoneNumbers[i].canonicalForm);
-        additionalPhones += {
-          number: parsedAdditionalPhone.nationalNumber,
-          countryCode: parsedAdditionalPhone.getPossibleCountries()[0],
-          callingCode: '+'.concat(parsedAdditionalPhone.countryCallingCode)
-        };
+const readGoogleErrorStatus = (error: unknown): number | undefined =>
+  axios.isAxiosError(error) ? error.response?.status : undefined;
+
+const describeError = (error: unknown): unknown =>
+  axios.isAxiosError(error)
+    ? (error.response?.data ?? error.message)
+    : error instanceof Error
+      ? error.message
+      : error;
+
+const fetchAndUpsertPeople = async ({
+                                      axiosInstance,
+                                      client,
+                                      syncToken,
+                                    }: {
+  axiosInstance: AxiosInstance;
+  client: CoreApiClient;
+  syncToken: string | null;
+}): Promise<string | undefined> => {
+  let pageToken: string | undefined;
+  let nextSyncToken: string | undefined;
+
+  do {
+    const googleResponse = await axiosInstance.get<ListConnectionsResponse>(
+      prepareUrl(syncToken, pageToken),
+    );
+
+    const peopleToUpsert: TwentyPersonInput[] = [];
+
+    for (const person of googleResponse.data.connections ?? []) {
+      if (person.metadata?.deleted === true) {
+        continue;
       }
-    }
-    agg.phones = {
-      primaryPhoneNumber: parsedPhone.nationalNumber,
-      primaryPhoneCountryCode: parsedPhone.getPossibleCountries()[0],
-      primaryPhoneCallingCode: '+'.concat(parsedPhone.countryCallingCode),
-    }
-  }
-  agg.googleContactsId = data.resourceName.replace("people/", "");
-  agg.name = {
-    firstName: data.names[0].displayNameLastFirst.split(",", 2)[1],
-    lastName: data.names[0].displayNameLastFirst.split(",", 2)[0]
-  }
-  agg.emails = {
-    primaryEmail: data.emailAddresses ? data.emailAddresses[0].value : '',
-    additionalEmails: data.emailAddresses ? data.emailAddresses.map((email) => email.value) : [],
-  }
-  if (data.urls?.filter((url: { value: string }) => url.value.includes("x.com"))) {
-    // @ts-ignore for some reason, IDE takes url type from node, no idea why
-    const link: string = data.urls.find((url: { value: string }) => url.value.includes("x.com")) ?? '';
-    agg.xLink = {
-      primaryLinkLabel: link,
-      primaryLinkUrl: link,
-    }
-  }
-  if (data.urls?.filter((url: { value: string }) => url.value.includes("linkedin.com"))) {
-    // @ts-ignore for some reason, IDE takes url type from node, no idea why
-    const link: string = data.urls.find((url: { value: string }) => url.value.includes("linkedin.com")) ?? '';
-    agg.linkedinLink = {
-      primaryLinkLabel: link,
-      primaryLinkUrl: link,
-    }
-  }
-  agg.jobTitle = data.organizations?.[0].title;
-  return agg;
-}
 
-const chunk = <T>(items: T[], size: number): T[][] => {
-  const chunks: T[][] = [];
-  for (let i = 0; i < items.length; i += size) {
-    chunks.push(items.slice(i, i + size));
-  }
-  return chunks;
+      const personToUpsert = mapGooglePerson(person);
+
+      if (!isDefined(personToUpsert)) {
+        continue;
+      }
+
+      peopleToUpsert.push(personToUpsert);
+    }
+
+    for (const peopleBatch of chunk(peopleToUpsert, PEOPLE_UPSERT_BATCH_SIZE)) {
+      await client.mutation({
+        createPeople: {
+          __args: { data: peopleBatch, upsert: true },
+          id: true,
+        },
+      });
+    }
+
+    pageToken = googleResponse.data.nextPageToken;
+    nextSyncToken = googleResponse.data.nextSyncToken ?? nextSyncToken;
+  } while (isDefined(pageToken));
+
+  return nextSyncToken;
 };
 
-const handler = async (params: RoutePayload<{
-  connectionId: string;
-}>) => {
-  if (params.body?.connectionId === '' || params.body === null) {
+const handler = async (payload: RoutePayload<{ connectionId: string }>) => {
+  const connectionId = payload.body?.connectionId;
+
+  if (isNonEmptyString(connectionId) === false) {
     return;
   }
-  const connection = await getConnection(params.body.connectionId);
+
+  let accessToken: string;
+
+  try {
+    accessToken = (await getConnection(connectionId)).accessToken;
+  } catch (error) {
+    if (error instanceof AppConnectionAuthFailedError) {
+      console.error(
+        '[google-contacts] Skipping connection flagged as auth failed',
+        connectionId,
+      );
+
+      return { status: 'auth-failed' };
+    }
+
+    throw error;
+  }
+
+  const syncToken = await kv.get<string>(connectionId);
+
   const client = new CoreApiClient();
   const axiosInstance = axios.create({
-    baseURL: 'https://people.googleapis.com/v1/people/me',
-    timeout: 10000,
+    baseURL: GOOGLE_PEOPLE_BASE_URL,
+    timeout: GOOGLE_REQUEST_TIMEOUT_MILLISECONDS,
     headers: {
-      'Authorization': `Bearer ${connection.accessToken}`,
-    }
+      Authorization: `Bearer ${accessToken}`,
+    },
   });
-  let after;
+
+  let nextSyncToken: string | undefined;
+
   try {
-    do {
-      // TODO: add after cursor
-      const googleResponse = await axiosInstance.get<ListConnectionsResponse>(prepareUrl());
-      const peopleToCreate = [];
-      for (const personChunk of chunk(googleResponse.data.connections, PAGE_SIZE)) {
-        for (const person of personChunk) {
-          const agg: PersonAgg = { emails: { primaryEmail: '', additionalEmails: [] } };
-          peopleToCreate.push(aggPerson(person, agg));
-        }
-        await client.mutation({
-          createPeople: {
-            __args: {
-              data: peopleToCreate,
-              upsert: true,
-            }
-          }
-        })
-      }
-      after = googleResponse.data.nextPageToken;
+    nextSyncToken = await fetchAndUpsertPeople({
+      axiosInstance,
+      client,
+      syncToken,
+    });
+  } catch (error) {
+    const status = readGoogleErrorStatus(error);
+
+    if (status === SYNC_TOKEN_EXPIRED_STATUS) {
+      await kv.delete(connectionId);
+
+      nextSyncToken = await fetchAndUpsertPeople({
+        axiosInstance,
+        client,
+        syncToken: null,
+      });
+    } else if (isDefined(status) && UNAUTHORIZED_STATUSES.includes(status)) {
+      console.error(
+        '[google-contacts] Connection needs to be reconnected',
+        connectionId,
+        describeError(error),
+      );
+
+      await reportConnectionAuthFailure({
+        connectionId,
+        reason: `Google People API returned ${status}`,
+      });
+
+      return { status: 'auth-failed' };
+    } else {
+      console.error(
+        '[google-contacts] Sync failed',
+        connectionId,
+        describeError(error),
+      );
+
+      throw error;
     }
-    while (after !== undefined);
-    return;
-  } catch (error: any) {
-    console.error(error.response.data.error);
-    return;
   }
+
+  if (isNonEmptyString(nextSyncToken)) {
+    await kv.set(connectionId, nextSyncToken);
+  }
+
+  console.log('[google-contacts] Sync finished', {
+    connectionId,
+    isIncremental: isNonEmptyString(syncToken),
+  });
+
+  return { status: 'synced' };
 };
 
 export default defineLogicFunction({
-  universalIdentifier: '27c18158-23b7-48bc-bd0f-64e4bbec4209',
+  universalIdentifier: SYNC_CONTACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'sync-contacts',
-  description: 'Add a description for your logic function',
+  description:
+    'Upserts the Google contacts of one connection into Twenty people, incrementally once a sync token is stored.',
   timeoutSeconds: 900,
   handler,
   httpRouteTriggerSettings: {
-    path: '/sync-contacts',
+    path: '/sync-google-contacts',
     httpMethod: 'POST',
     isAuthRequired: true,
-  },
+  }
 });
