@@ -486,11 +486,32 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
 }
 
 function evaluateSelectFilter(filter: ResolvedFilter): boolean {
+  const leftValue = filter.leftOperand;
+  const rightValue = filter.rightOperand;
+
   switch (filter.operand) {
     case ViewFilterOperand.IS:
-      return contains(filter.leftOperand, filter.rightOperand);
+      if (Array.isArray(rightValue)) {
+        return rightValue.some((item) => String(item) === String(leftValue));
+      }
+      if (Array.isArray(leftValue)) {
+        return leftValue.some((item) => String(item) === String(rightValue));
+      }
+      if (isDefined(leftValue) && isDefined(rightValue)) {
+        return String(leftValue) === String(rightValue);
+      }
+      return leftValue === rightValue;
     case ViewFilterOperand.IS_NOT:
-      return !contains(filter.leftOperand, filter.rightOperand);
+      if (Array.isArray(rightValue)) {
+        return !rightValue.some((item) => String(item) === String(leftValue));
+      }
+      if (Array.isArray(leftValue)) {
+        return !leftValue.some((item) => String(item) === String(rightValue));
+      }
+      if (isDefined(leftValue) && isDefined(rightValue)) {
+        return String(leftValue) !== String(rightValue);
+      }
+      return leftValue !== rightValue;
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(filter.leftOperand);
 

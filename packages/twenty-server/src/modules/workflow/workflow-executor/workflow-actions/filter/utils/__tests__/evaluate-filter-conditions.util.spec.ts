@@ -361,6 +361,79 @@ describe('evaluateFilterConditions', () => {
 
         expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
       });
+    describe('Select filter operands', () => {
+      it('should return true for IS when select values match exactly', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          'ACTIVE',
+          'ACTIVE',
+          'SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
+      });
+
+      it('should return false for IS when select value is a substring of filter value', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          'ACTIVE',
+          'INACTIVE',
+          'SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(false);
+      });
+
+      it('should return false for IS when filter value is a substring of select value', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          'INACTIVE',
+          'ACTIVE',
+          'SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(false);
+      });
+
+      it('should return true for IS_NOT when select values differ even if substrings overlap', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'INACTIVE',
+          'ACTIVE',
+          'SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
+      });
+
+      it('should return false for IS_NOT when select values match exactly', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'ACTIVE',
+          'ACTIVE',
+          'SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(false);
+      });
+
+      it('should support array rightOperand for IS', () => {
+        const filterMatch = createFilter(
+          ViewFilterOperand.IS,
+          'ACTIVE',
+          ['PENDING', 'ACTIVE'],
+          'SELECT',
+        );
+        const filterNoMatch = createFilter(
+          ViewFilterOperand.IS,
+          'ARCHIVED',
+          ['PENDING', 'ACTIVE'],
+          'SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filterMatch] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filterNoMatch] })).toBe(false);
+      });
     });
 
     describe('Rating filter operands', () => {
