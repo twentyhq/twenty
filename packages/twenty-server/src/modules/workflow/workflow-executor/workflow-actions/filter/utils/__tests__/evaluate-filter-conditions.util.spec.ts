@@ -395,11 +395,44 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter] })).toBe(false);
       });
 
+      it('should return false for IS when select value is substring in JSON-stringified array', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          'CUSTOMER_SUCCESS',
+          '["CUSTOMER"]',
+          'SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(false);
+      });
+
+      it('should return true for IS when select value matches element in JSON-stringified array', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          'CUSTOMER',
+          '["CUSTOMER", "LEAD"]',
+          'SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
+      });
+
       it('should return true for IS_NOT when select values differ even if substrings overlap', () => {
         const filter = createFilter(
           ViewFilterOperand.IS_NOT,
           'INACTIVE',
           'ACTIVE',
+          'SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
+      });
+
+      it('should return true for IS_NOT when select value is substring of JSON-stringified array element', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'CUSTOMER_SUCCESS',
+          '["CUSTOMER"]',
           'SELECT',
         );
 
@@ -417,7 +450,7 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter] })).toBe(false);
       });
 
-      it('should support array rightOperand for IS', () => {
+      it('should support array rightOperand for IS and IS_NOT', () => {
         const filterMatch = createFilter(
           ViewFilterOperand.IS,
           'ACTIVE',
@@ -430,9 +463,62 @@ describe('evaluateFilterConditions', () => {
           ['PENDING', 'ACTIVE'],
           'SELECT',
         );
+        const filterIsNotMatch = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'ARCHIVED',
+          ['PENDING', 'ACTIVE'],
+          'SELECT',
+        );
+        const filterIsNotNoMatch = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'ACTIVE',
+          ['PENDING', 'ACTIVE'],
+          'SELECT',
+        );
 
         expect(evaluateFilterConditions({ filters: [filterMatch] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filterNoMatch] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filterIsNotMatch] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filterIsNotNoMatch] })).toBe(false);
+      });
+
+      it('should handle IS_EMPTY and IS_NOT_EMPTY for select filter', () => {
+        const filterEmptyNull = createFilter(
+          ViewFilterOperand.IS_EMPTY,
+          null,
+          null,
+          'SELECT',
+        );
+        const filterEmptyEmptyString = createFilter(
+          ViewFilterOperand.IS_EMPTY,
+          '',
+          null,
+          'SELECT',
+        );
+        const filterEmptyWithValue = createFilter(
+          ViewFilterOperand.IS_EMPTY,
+          'ACTIVE',
+          null,
+          'SELECT',
+        );
+        const filterNotEmptyWithValue = createFilter(
+          ViewFilterOperand.IS_NOT_EMPTY,
+          'ACTIVE',
+          null,
+          'SELECT',
+        );
+        const filterNotEmptyNull = createFilter(
+          ViewFilterOperand.IS_NOT_EMPTY,
+          null,
+          null,
+          'SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filterEmptyNull] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filterEmptyEmptyString] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filterEmptyWithValue] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filterNotEmptyWithValue] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filterNotEmptyNull] })).toBe(false);
       });
     });
 

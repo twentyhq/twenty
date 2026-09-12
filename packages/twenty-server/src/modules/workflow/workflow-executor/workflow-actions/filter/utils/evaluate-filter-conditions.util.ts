@@ -485,33 +485,46 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
   }
 }
 
-function evaluateSelectFilter(filter: ResolvedFilter): boolean {
-  const leftValue = filter.leftOperand;
-  const rightValue = filter.rightOperand;
+function isSelectMatch(leftValue: unknown, rightValue: unknown): boolean {
+  if (Array.isArray(leftValue) && Array.isArray(rightValue)) {
+    return leftValue.some((item) => rightValue.includes(item));
+  }
 
+  if (Array.isArray(rightValue)) {
+    return rightValue.includes(leftValue);
+  }
+
+  if (Array.isArray(leftValue)) {
+    return leftValue.includes(rightValue);
+  }
+
+  if (isString(rightValue)) {
+    try {
+      const parsedRightValue = JSON.parse(rightValue);
+
+      if (Array.isArray(parsedRightValue)) {
+        if (Array.isArray(leftValue)) {
+          return leftValue.some((item) => parsedRightValue.includes(item));
+        }
+
+        return parsedRightValue.includes(leftValue);
+      } else {
+        return leftValue === parsedRightValue;
+      }
+    } catch {
+      return leftValue === rightValue;
+    }
+  }
+
+  return leftValue === rightValue;
+}
+
+function evaluateSelectFilter(filter: ResolvedFilter): boolean {
   switch (filter.operand) {
     case ViewFilterOperand.IS:
-      if (Array.isArray(rightValue)) {
-        return rightValue.some((item) => String(item) === String(leftValue));
-      }
-      if (Array.isArray(leftValue)) {
-        return leftValue.some((item) => String(item) === String(rightValue));
-      }
-      if (isDefined(leftValue) && isDefined(rightValue)) {
-        return String(leftValue) === String(rightValue);
-      }
-      return leftValue === rightValue;
+      return isSelectMatch(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_NOT:
-      if (Array.isArray(rightValue)) {
-        return !rightValue.some((item) => String(item) === String(leftValue));
-      }
-      if (Array.isArray(leftValue)) {
-        return !leftValue.some((item) => String(item) === String(rightValue));
-      }
-      if (isDefined(leftValue) && isDefined(rightValue)) {
-        return String(leftValue) !== String(rightValue);
-      }
-      return leftValue !== rightValue;
+      return !isSelectMatch(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(filter.leftOperand);
 
