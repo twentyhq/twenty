@@ -58,7 +58,7 @@ const StyledMetrics = styled.div`
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  gap: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledMetric = styled.span<{ isInherited: boolean }>`
