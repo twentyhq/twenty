@@ -12,6 +12,26 @@ export type OrderByLeafColumn = {
   columnType: FieldMetadataType;
 };
 
+// The type of the column an orderBy leaf sorts on, which for composite and
+// relation leaves is the resolved sub/target column rather than the field the
+// leaf hangs off. Callers that only need the comparison semantics of the
+// ordering (e.g. the cursor keyset conditions) read it without resolving an
+// alias they have no use for.
+export const computeOrderByLeafColumnType = (
+  leaf: OrderByLeaf,
+): FieldMetadataType | null => {
+  switch (leaf.kind) {
+    case 'relation':
+      return isDefined(leaf.targetFieldMetadata)
+        ? (leaf.targetCompositeProperty ?? leaf.targetFieldMetadata).type
+        : null;
+    case 'composite':
+      return leaf.compositeProperty.type;
+    case 'scalar':
+      return leaf.fieldMetadata.type;
+  }
+};
+
 // The one mapping from an orderBy leaf to the column its values live in. The
 // SQL ORDER BY expression, the hidden column selection and the raw-row alias
 // the cursor side channel reads back (`"<tableAlias>_<columnName>"`) all
@@ -20,13 +40,15 @@ export const computeOrderByLeafColumn = (
   leaf: OrderByLeaf,
   objectNameSingular: string,
 ): OrderByLeafColumn | null => {
-  switch (leaf.kind) {
-    case 'relation': {
-      if (!isDefined(leaf.targetFieldMetadata)) {
-        // A relation without a resolvable target contributes no ordering
-        return null;
-      }
+  const columnType = computeOrderByLeafColumnType(leaf);
 
+  if (!isDefined(columnType)) {
+    // A relation without a resolvable target contributes no ordering
+    return null;
+  }
+
+  switch (leaf.kind) {
+    case 'relation':
       return {
         tableAlias: leaf.path[0],
         columnName: isDefined(leaf.targetCompositeProperty)
@@ -35,10 +57,8 @@ export const computeOrderByLeafColumn = (
               leaf.targetCompositeProperty,
             )
           : leaf.path[1],
-        columnType: (leaf.targetCompositeProperty ?? leaf.targetFieldMetadata)
-          .type,
+        columnType,
       };
-    }
     case 'composite':
       return {
         tableAlias: objectNameSingular,
@@ -46,13 +66,13 @@ export const computeOrderByLeafColumn = (
           leaf.path[0],
           leaf.compositeProperty,
         ),
-        columnType: leaf.compositeProperty.type,
+        columnType,
       };
     case 'scalar':
       return {
         tableAlias: objectNameSingular,
         columnName: leaf.path[0],
-        columnType: leaf.fieldMetadata.type,
+        columnType,
       };
   }
 };
