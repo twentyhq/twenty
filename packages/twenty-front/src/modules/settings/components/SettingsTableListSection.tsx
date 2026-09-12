@@ -42,6 +42,9 @@ const StyledFooter = styled.div`
 
 const HEADER_PADDING = `0 ${themeCssVariables.spacing[2]} 0 ${themeCssVariables.spacing[2]}`;
 
+// an auto track resolves differently in the header and in the rows, so the chevron column is fixed
+const CHEVRON_COLUMN_WIDTH = themeCssVariables.spacing[8];
+
 export type SettingsTableListSectionColumn<Item> = {
   label: string;
   align?: 'left' | 'right';
@@ -79,7 +82,7 @@ export const SettingsTableListSection = <
   onFooterButtonClick,
 }: SettingsTableListSectionProps<Item>) => {
   const resolvedGridAutoColumns = showRowChevron
-    ? `${gridAutoColumns} auto`
+    ? `${gridAutoColumns} ${CHEVRON_COLUMN_WIDTH}`
     : gridAutoColumns;
 
   return (
