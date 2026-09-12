@@ -1,3 +1,5 @@
+import { getEmailMatchCandidates } from 'twenty-shared/utils';
+
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 export interface AddPersonEmailFiltersToQueryBuilderOptions {
@@ -12,7 +14,9 @@ export function addPersonEmailFiltersToQueryBuilder({
   emails,
   excludePersonIds = [],
 }: AddPersonEmailFiltersToQueryBuilderOptions): WorkspaceSelectQueryBuilder {
-  const normalizedEmails = emails.map((email) => email.toLowerCase());
+  const normalizedEmails = [
+    ...new Set(emails.flatMap(getEmailMatchCandidates)),
+  ];
 
   queryBuilder = queryBuilder
     .where('LOWER("person"."emailsPrimaryEmail") IN (:...emails)', {

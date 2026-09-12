@@ -12,6 +12,7 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
+import { canonicalizeEmailFilter } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/canonicalize-email-filter.util';
 import { validateAndTransformOperatorAndValue } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util';
 import {
   CommonQueryRunnerException,
@@ -348,7 +349,7 @@ export class FilterArgProcessorService {
         );
       }
 
-      transformedFilter[subFieldKey] = validateAndTransformOperatorAndValue(
+      const transformedSubFieldFilter = validateAndTransformOperatorAndValue(
         `${fieldMetadata.name}.${subFieldKey}`,
         subFieldFilter as Record<string, unknown>,
         {
@@ -356,6 +357,12 @@ export class FilterArgProcessorService {
           type: subFieldMetadata.type as FieldMetadataType,
         },
       );
+
+      transformedFilter[subFieldKey] =
+        fieldMetadata.type === FieldMetadataType.EMAILS &&
+        subFieldKey === 'primaryEmail'
+          ? canonicalizeEmailFilter(transformedSubFieldFilter)
+          : transformedSubFieldFilter;
     }
 
     return transformedFilter;

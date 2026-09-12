@@ -1,3 +1,5 @@
+import { canonicalizeEmail } from 'twenty-shared/utils';
+
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 export const findPersonByPrimaryOrAdditionalEmail = ({
@@ -7,10 +9,12 @@ export const findPersonByPrimaryOrAdditionalEmail = ({
   people: PersonWorkspaceEntity[];
   email: string;
 }): PersonWorkspaceEntity | undefined => {
-  const lowercaseEmail = email.toLowerCase();
+  const canonicalEmail = canonicalizeEmail(email);
 
   const personWithPrimaryEmail = people.find(
-    (person) => person.emails?.primaryEmail?.toLowerCase() === lowercaseEmail,
+    (person) =>
+      person.emails?.primaryEmail &&
+      canonicalizeEmail(person.emails.primaryEmail) === canonicalEmail,
   );
 
   if (personWithPrimaryEmail) {
@@ -25,7 +29,8 @@ export const findPersonByPrimaryOrAdditionalEmail = ({
     }
 
     return additionalEmails.some(
-      (additionalEmail) => additionalEmail.toLowerCase() === lowercaseEmail,
+      (additionalEmail) =>
+        canonicalizeEmail(additionalEmail) === canonicalEmail,
     );
   });
 

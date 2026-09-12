@@ -156,6 +156,44 @@ describe('findPersonByPrimaryOrAdditionalEmail', () => {
     expect(result).toEqual(mockPeople[2]);
   });
 
+  it('should match Unicode and punycode primary email domains', () => {
+    const people = [
+      {
+        id: 'person-idn',
+        emails: {
+          primaryEmail: 'admin@xn--ls8h.la',
+          additionalEmails: null,
+        },
+      },
+    ] as PersonWorkspaceEntity[];
+
+    const result = findPersonByPrimaryOrAdditionalEmail({
+      people,
+      email: 'admin@💩.la',
+    });
+
+    expect(result).toEqual(people[0]);
+  });
+
+  it('should match Unicode and punycode additional email domains', () => {
+    const people = [
+      {
+        id: 'person-idn',
+        emails: {
+          primaryEmail: 'other@example.com',
+          additionalEmails: ['admin@xn--ls8h.la'],
+        },
+      },
+    ] as PersonWorkspaceEntity[];
+
+    const result = findPersonByPrimaryOrAdditionalEmail({
+      people,
+      email: 'admin@💩.la',
+    });
+
+    expect(result).toEqual(people[0]);
+  });
+
   it('should handle people with non-array additional emails', () => {
     const peopleWithInvalidAdditionalEmail = [
       {

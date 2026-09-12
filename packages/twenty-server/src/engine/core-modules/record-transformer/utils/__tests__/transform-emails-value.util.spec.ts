@@ -24,6 +24,15 @@ describe('transformEmailsValue', () => {
     expect(result.primaryEmail).toBe('test@example.com');
   });
 
+  it('should canonicalize an internationalized primary email domain', () => {
+    const result = transformEmailsValue({
+      primaryEmail: 'Admin@💩.la',
+      additionalEmails: null,
+    });
+
+    expect(result.primaryEmail).toBe('admin@xn--ls8h.la');
+  });
+
   it('should return null for primaryEmail when it is empty string', () => {
     const value = {
       primaryEmail: '',
@@ -66,6 +75,17 @@ describe('transformEmailsValue', () => {
 
     expect(result.additionalEmails).toBe(
       '["user1@example.com","user2@example.com"]',
+    );
+  });
+
+  it('should canonicalize internationalized additional email domains', () => {
+    const result = transformEmailsValue({
+      primaryEmail: 'test@example.com',
+      additionalEmails: ['user@例え.テスト', 'user@пример.рф'],
+    });
+
+    expect(result.additionalEmails).toBe(
+      '["user@xn--r8jz45g.xn--zckzah","user@xn--e1afmkfd.xn--p1ai"]',
     );
   });
 

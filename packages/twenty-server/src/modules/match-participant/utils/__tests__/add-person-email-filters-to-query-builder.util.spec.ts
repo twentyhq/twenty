@@ -72,6 +72,13 @@ const testCases: AddPersonEmailFiltersToQueryBuilderTestCase[] = [
       description: 'should normalize emails to lowercase',
     },
   },
+  {
+    title: 'internationalized email domain normalization',
+    context: {
+      emails: ['admin@💩.la', 'user@例え.テスト'],
+      description: 'should normalize internationalized domains to punycode',
+    },
+  },
 ];
 
 interface QueryBuilderCall {
