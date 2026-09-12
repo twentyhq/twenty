@@ -1,6 +1,5 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { buildConnectedAccountSenderOptions } from '@/accounts/utils/buildConnectedAccountSenderOptions';
-import { canConnectedAccountSendEmail } from '@/accounts/utils/canConnectedAccountSendEmail';
 import { getMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
@@ -30,8 +29,16 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
-import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
-import { getSendableEmailHandles, isDefined } from 'twenty-shared/utils';
+import {
+  ConnectedAccountProvider,
+  EmailOperation,
+  SettingsPath,
+} from 'twenty-shared/types';
+import {
+  canConnectedAccountPerformEmailOperation,
+  getSendableEmailHandles,
+  isDefined,
+} from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/feedback';
 import { IconPlus } from 'twenty-ui/icon';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -164,7 +171,12 @@ export const WorkflowEditActionEmailBase = ({
       : null;
 
   const sendableAccounts = [
-    ...myAccounts.filter(canConnectedAccountSendEmail),
+    ...myAccounts.filter((connectedAccount) =>
+      canConnectedAccountPerformEmailOperation({
+        connectedAccount,
+        operation: EmailOperation.SEND,
+      }),
+    ),
     ...(isDefined(otherAccount) ? [otherAccount] : []),
   ];
 
