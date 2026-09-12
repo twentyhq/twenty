@@ -120,6 +120,24 @@ describe('projectCatalog', () => {
     });
   });
 
+  it('takes a limit the route caps below the one the model allows', () => {
+    const spec: CatalogSpec = {
+      providers: [
+        {
+          name: 'amazon-bedrock',
+          npm: '@ai-sdk/amazon-bedrock',
+          models: [{ model: 'gpt-5.6-luna', maxOutputTokens: 64000 }],
+        },
+      ],
+    };
+
+    const projected = projectCatalog({ canonicalCatalog, spec });
+
+    expect(projected['amazon-bedrock'].models?.[0]).toMatchObject({
+      maxOutputTokens: 64000,
+    });
+  });
+
   it('refuses a spec naming a model the catalog does not carry', () => {
     const spec: CatalogSpec = {
       providers: [

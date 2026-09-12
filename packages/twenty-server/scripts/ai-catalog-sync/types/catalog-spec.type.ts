@@ -1,9 +1,14 @@
-// What a deployment is allowed to say about a model. Everything else — prices,
-// context window, modalities, efforts, benchmarks — is read from the canonical
-// catalog, so a deployment cannot drift from the measured truth by restating it.
+// What a deployment is allowed to say about a model: the prices it negotiated,
+// the limits its route caps, and how it names the model. Everything else —
+// modalities, reasoning support, efforts, benchmarks — is read from the
+// canonical catalog, so a deployment cannot drift from the measured truth by
+// restating it.
 export type CatalogSpecModelOverrides = {
   label?: string;
   isDeprecated?: boolean;
+  // A route can serve a model under a tighter limit than the model's own.
+  contextWindowTokens?: number;
+  maxOutputTokens?: number;
   inputCostPerMillionTokens?: number;
   outputCostPerMillionTokens?: number;
   cachedInputCostPerMillionTokens?: number;

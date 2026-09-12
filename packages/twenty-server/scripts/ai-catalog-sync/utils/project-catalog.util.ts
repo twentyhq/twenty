@@ -20,6 +20,8 @@ export type CanonicalCatalog = Record<string, CanonicalProvider>;
 const OVERRIDABLE_FIELDS = [
   'label',
   'isDeprecated',
+  'contextWindowTokens',
+  'maxOutputTokens',
   'inputCostPerMillionTokens',
   'outputCostPerMillionTokens',
   'cachedInputCostPerMillionTokens',

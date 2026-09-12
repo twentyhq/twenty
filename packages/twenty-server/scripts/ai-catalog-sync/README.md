@@ -64,9 +64,9 @@ A spec looks like this:
 ```
 
 A spec can rename a model for the route that deploys it (`as`) and override the
-prices it negotiated, its label and its deprecation. It cannot restate what a
-model is: context window, modalities, efforts and benchmarks always come from
-the catalog, which is what keeps a deployment from drifting away from the
+prices it negotiated, the limits its route caps, its label and its deprecation.
+It cannot restate what a model is: modalities, reasoning support, efforts and
+benchmarks always come from the catalog, which is what keeps a deployment from drifting away from the
 measured truth. Naming a model the catalog does not carry fails the run rather
 than publishing a route to nothing.
 
