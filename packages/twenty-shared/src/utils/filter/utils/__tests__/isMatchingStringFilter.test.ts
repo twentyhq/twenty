@@ -209,4 +209,39 @@ describe('isMatchingStringFilter', () => {
       ).toBe(false);
     });
   });
+
+  describe('escaped wildcards', () => {
+    it('should match escaped underscore literally', () => {
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { like: 't\\_st' },
+          value: 't_st',
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { like: 't\\_st' },
+          value: 'test',
+        }),
+      ).toBe(false);
+    });
+
+    it('should match escaped percent sign literally', () => {
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { like: '100\\%' },
+          value: '100%',
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { like: '100\\%' },
+          value: '1000',
+        }),
+      ).toBe(false);
+    });
+  });
 });
+

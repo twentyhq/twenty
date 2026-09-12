@@ -98,6 +98,42 @@ describe('isMatchingRichTextFilter', () => {
     });
   });
 
+  describe('direct ilike and like predicates', () => {
+    it('should support direct ilike predicate on string value', () => {
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { ilike: '%direct%' } as any,
+          value: 'direct content',
+        }),
+      ).toBe(true);
+    });
+
+    it('should support direct ilike predicate on object value', () => {
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { ilike: '%direct%' } as any,
+          value: { markdown: 'some direct text' },
+        }),
+      ).toBe(true);
+    });
+
+    it('should support escaped wildcards in markdown ilike', () => {
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { markdown: { ilike: '%100\\%%' } },
+          value: 'Coverage is 100% complete',
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { markdown: { ilike: '%100\\%%' } },
+          value: 'Coverage is 1000 complete',
+        }),
+      ).toBe(false);
+    });
+  });
+
   describe('default', () => {
     it('should throw for unexpected filter', () => {
       expect(() =>
@@ -109,3 +145,4 @@ describe('isMatchingRichTextFilter', () => {
     });
   });
 });
+

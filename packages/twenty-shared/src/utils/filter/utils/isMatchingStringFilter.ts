@@ -1,6 +1,34 @@
 import { type StringFilter } from '@/types';
 import escapeRegExp from 'lodash.escaperegexp';
 
+const sqlWildcardToRegex = (pattern: string): string => {
+  let result = '';
+
+  for (let i = 0; i < pattern.length; i++) {
+    const char = pattern[i];
+
+    if (char === '\\' && i + 1 < pattern.length) {
+      const nextChar = pattern[i + 1];
+
+      if (nextChar === '%' || nextChar === '_' || nextChar === '\\') {
+        result += escapeRegExp(nextChar);
+        i++;
+        continue;
+      }
+    }
+
+    if (char === '%') {
+      result += '[\\s\\S]*';
+    } else if (char === '_') {
+      result += '[\\s\\S]';
+    } else {
+      result += escapeRegExp(char);
+    }
+  }
+
+  return result;
+};
+
 export const isMatchingStringFilter = ({
   stringFilter,
   value,
@@ -28,20 +56,14 @@ export const isMatchingStringFilter = ({
       return value <= stringFilter.lte;
     }
     case stringFilter.like !== undefined: {
-      const escapedPattern = escapeRegExp(stringFilter.like);
-      const regexPattern = escapedPattern
-        .replace(/%/g, '.*')
-        .replace(/_/g, '.');
-      const regexCaseSensitive = new RegExp(`^${regexPattern}$`, 's');
+      const regexPattern = sqlWildcardToRegex(stringFilter.like);
+      const regexCaseSensitive = new RegExp(`^${regexPattern}$`, 'u');
 
       return regexCaseSensitive.test(value);
     }
     case stringFilter.ilike !== undefined: {
-      const escapedPattern = escapeRegExp(stringFilter.ilike);
-      const regexPattern = escapedPattern
-        .replace(/%/g, '.*')
-        .replace(/_/g, '.');
-      const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'is');
+      const regexPattern = sqlWildcardToRegex(stringFilter.ilike);
+      const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'iu');
 
       return regexCaseInsensitive.test(value);
     }
