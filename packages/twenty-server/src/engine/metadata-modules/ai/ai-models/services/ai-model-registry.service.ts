@@ -636,18 +636,21 @@ export class AiModelRegistryService {
   }> {
     this.ensureFresh();
 
-    return Array.from(this.modelConfigCache.values()).map((modelConfig) => {
-      const registered = this.modelRegistry.get(modelConfig.modelId);
-      const cached = this.providerModelDefCache.get(modelConfig.modelId);
+    // Effort variants share the base model's management and deletion target.
+    return Array.from(this.modelConfigCache.values())
+      .filter((modelConfig) => !isDefined(modelConfig.effort))
+      .map((modelConfig) => {
+        const registered = this.modelRegistry.get(modelConfig.modelId);
+        const cached = this.providerModelDefCache.get(modelConfig.modelId);
 
-      return {
-        modelConfig,
-        isAvailable: !!registered,
-        isAdminEnabled: this.isModelAdminAllowed(modelConfig.modelId),
-        providerName: registered?.providerName ?? cached?.providerName,
-        name: cached?.modelDef.name,
-      };
-    });
+        return {
+          modelConfig,
+          isAvailable: !!registered,
+          isAdminEnabled: this.isModelAdminAllowed(modelConfig.modelId),
+          providerName: registered?.providerName ?? cached?.providerName,
+          name: cached?.modelDef.name,
+        };
+      });
   }
 
   async setModelAdminEnabled(modelId: string, enabled: boolean): Promise<void> {

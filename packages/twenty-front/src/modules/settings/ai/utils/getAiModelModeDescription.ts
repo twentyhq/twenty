@@ -23,7 +23,7 @@ export const getAiModelModeDescription = (
     ? ` (${AI_MODEL_EFFORT_LABELS[validEffort]})`
     : '';
   const modelName =
-    suffix && model.label.endsWith(suffix)
+    isDefined(validEffort) && model.label.endsWith(suffix)
       ? model.label.slice(0, -suffix.length)
       : model.label;
   const label =

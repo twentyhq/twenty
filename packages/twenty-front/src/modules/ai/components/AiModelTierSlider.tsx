@@ -121,7 +121,8 @@ const StyledDot = styled.span<{ isReached: boolean }>`
   align-self: center;
   background: ${({ isReached }) =>
     isReached
-      ? 'rgba(255, 255, 255, 0.386)'
+      ? // oxlint-disable-next-line twenty/no-hardcoded-colors -- Dots must remain translucent white over the blue track in both themes.
+        'rgba(255, 255, 255, 0.386)'
       : themeCssVariables.border.color.strong};
   border-radius: ${themeCssVariables.border.radius.rounded};
   corner-shape: round;

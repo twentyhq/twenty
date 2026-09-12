@@ -89,4 +89,18 @@ describe('AiModelRegistryService effort catalog', () => {
         .some(({ modelId }) => modelId.startsWith('openai/astra')),
     ).toBe(false);
   });
+
+  it('exposes only base models in provider management after resolving variants', () => {
+    registry.getModelConfig('openai/astra@medium');
+
+    expect(
+      registry.getAllModelsWithStatus().map(({ modelConfig, name }) => ({
+        modelId: modelConfig.modelId,
+        name,
+      })),
+    ).toEqual([
+      { modelId: 'openai/sol', name: 'sol' },
+      { modelId: 'openai/astra', name: 'astra' },
+    ]);
+  });
 });

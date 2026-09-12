@@ -100,7 +100,7 @@ export const SettingsAiModelsTab = () => {
                   isLast={index === tiers.length - 1}
                 >
                   <SettingsOptionCardContentSelect
-                    icon={<AiModelTierIndicator tier={tier.tier} />}
+                    LeftComponent={<AiModelTierIndicator tier={tier.tier} />}
                     title={tier.label}
                     description={getAiModelModeDescription(tier)}
                     divider={index < tiers.length - 1}

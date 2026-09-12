@@ -15,7 +15,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsOptionCardContentSelectProps = {
   Icon?: IconComponent;
-  icon?: React.ReactNode;
+  LeftComponent?: React.ReactNode;
   title: React.ReactNode;
   description?: string;
   divider?: boolean;
@@ -51,7 +51,7 @@ const StyledSelectText = styled(StyledSettingsCardTextContainer)`
 
 export const SettingsOptionCardContentSelect = ({
   Icon,
-  icon,
+  LeftComponent,
   title,
   description,
   divider,
@@ -61,9 +61,10 @@ export const SettingsOptionCardContentSelect = ({
   return (
     <>
       <StyledSelectRow disabled={disabled}>
-        {(isDefined(icon) || isDefined(Icon)) && (
+        {(isDefined(LeftComponent) || isDefined(Icon)) && (
           <StyledSettingsCardIcon>
-            {icon ?? (Icon && <SettingsOptionIconCustomizer Icon={Icon} />)}
+            {LeftComponent ??
+              (Icon && <SettingsOptionIconCustomizer Icon={Icon} />)}
           </StyledSettingsCardIcon>
         )}
         <StyledSelectText>
