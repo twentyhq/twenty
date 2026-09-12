@@ -458,6 +458,12 @@ const SettingsUsage = lazy(() =>
   })),
 );
 
+const SettingsBillingLimits = lazy(() =>
+  import('~/pages/settings/billing/SettingsBillingLimits').then((module) => ({
+    default: module.SettingsBillingLimits,
+  })),
+);
+
 const SettingsUsageUserDetail = lazy(() =>
   import('~/pages/settings/billing/SettingsUsageUserDetail').then((module) => ({
     default: module.SettingsUsageUserDetail,
@@ -786,6 +792,10 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.UsageUserDetail}
         element={<SettingsUsageUserDetail />}
+      />
+      <Route
+        path={SettingsPath.BillingLimits}
+        element={<SettingsBillingLimits />}
       />
       <Route
         path={SettingsPath.Subdomain}

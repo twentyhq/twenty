@@ -1,7 +1,7 @@
 import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TintedIconTile } from 'twenty-ui/data-display';
 import { IconChevronDown } from 'twenty-ui/icon';
@@ -95,6 +95,7 @@ const StyledIconChevronDownWrapper = styled.div<{
 
 export type SelectControlProps = {
   selectedOption: SelectOption<string | number | boolean | null>;
+  LeftComponent?: ReactNode;
   isDisabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
   textAccent?: SelectControlTextAccent;
@@ -104,6 +105,7 @@ export type SelectControlProps = {
 
 export const SelectControl = ({
   selectedOption,
+  LeftComponent,
   isDisabled,
   selectSizeVariant,
   textAccent = 'default',
@@ -112,7 +114,9 @@ export const SelectControl = ({
 }: SelectControlProps) => {
   const { theme } = useContext(ThemeContext);
   const hasLeadingContent =
-    isDefined(selectedOption.Icon) || isDefined(selectedOption.LeftComponent);
+    isDefined(LeftComponent) ||
+    isDefined(selectedOption.Icon) ||
+    isDefined(selectedOption.LeftComponent);
   return (
     <StyledControlContainer
       disabled={isDisabled}
@@ -123,7 +127,9 @@ export const SelectControl = ({
       $variant={variant}
       title={selectedOption.fullLabel}
     >
-      {hasLeadingContent && (
+      {isDefined(LeftComponent) ? (
+        LeftComponent
+      ) : hasLeadingContent ? (
         <StyledLeadingContent>
           {isDefined(selectedOption?.Icon) ? (
             isDefined(selectedOption.iconThemeColor) ? (
@@ -145,7 +151,7 @@ export const SelectControl = ({
           ) : null}
           {selectedOption.LeftComponent}
         </StyledLeadingContent>
-      )}
+      ) : null}
       <OverflowingTextWithTooltip
         text={
           selectedOption.contextualText
