@@ -66,8 +66,6 @@ export class UserSessionService {
     private readonly userSessionCookieService: UserSessionCookieService,
   ) {}
 
-  // Best effort by design: while token pairs remain the primary credential, a
-  // session failure must never break an otherwise successful sign-in.
   async issueSessionForTokenPair({
     tokenPair,
     request,
@@ -80,7 +78,7 @@ export class UserSessionService {
     const response = request.res;
 
     if (!isDefined(response)) {
-      return;
+      throw new Error('Cannot issue a user session without an HTTP response');
     }
 
     // Cannot live in the CSRF middleware, which cannot know a request is about
@@ -90,7 +88,10 @@ export class UserSessionService {
         `Refused to issue a session cookie to origin ${request.headers.origin}`,
       );
 
-      return;
+      throw new AuthException(
+        'Request origin is not allowed to receive a session cookie',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
     }
 
     try {
@@ -101,53 +102,38 @@ export class UserSessionService {
       );
 
       if (!isDefined(sessionInput)) {
-        return;
+        throw new AuthException(
+          'Cannot issue a session from an invalid token pair',
+          AuthExceptionCode.UNAUTHENTICATED,
+        );
       }
 
       const presentedSessionToken =
         this.userSessionCookieService.extractSessionTokenFromRequest(request);
 
-      if (isDefined(presentedSessionToken)) {
-        if (origin === 'renewal_bridge') {
-          try {
-            const { payload: presentedPayload } = await this.resolveSession(
-              presentedSessionToken,
-            );
+      if (isDefined(presentedSessionToken) && origin === 'renewal_bridge') {
+        try {
+          const { payload: presentedPayload } = await this.resolveSession(
+            presentedSessionToken,
+          );
 
-            if (
-              this.isSessionScopeMatchingRenewal(presentedPayload, sessionInput)
-            ) {
-              return;
-            }
-
-            await this.revokeSessionByToken(
-              presentedSessionToken,
-              UserSessionRevokedReason.Superseded,
-            );
-          } catch (error) {
-            if (
-              !(error instanceof AuthException) ||
-              error.code !== AuthExceptionCode.UNAUTHENTICATED
-            ) {
-              throw error;
-            }
+          if (
+            this.isSessionScopeMatchingRenewal(presentedPayload, sessionInput)
+          ) {
+            return;
           }
-        } else if (sessionInput.isImpersonating === true) {
-          // The one sign-in that must not revoke what it replaces: parking the
-          // impersonator's session lets stopImpersonation hand back the credential
-          // they already held.
-          this.userSessionCookieService.attachImpersonatorSessionTokenToResponse(
-            response,
-            presentedSessionToken,
-          );
-        } else {
-          await this.revokeSessionByToken(
-            presentedSessionToken,
-            UserSessionRevokedReason.Superseded,
-          );
+        } catch (error) {
+          if (
+            !(error instanceof AuthException) ||
+            error.code !== AuthExceptionCode.UNAUTHENTICATED
+          ) {
+            throw error;
+          }
         }
       }
 
+      // Create the replacement before touching the presented session. If the
+      // insert fails, the browser keeps its last working credential.
       const { sessionToken, session } = await this.createSession(sessionInput);
 
       this.userSessionCookieService.attachSessionTokenToResponse(
@@ -155,21 +141,45 @@ export class UserSessionService {
         sessionToken,
         session.expiresAt,
       );
-    } catch (error) {
-      // Sign-in only: the presented cookie may be the previous account's. On
-      // renewal it is this user's own live session, which a transient failure
-      // must not kill.
-      if (origin === 'sign_in') {
-        try {
-          this.userSessionCookieService.clearSessionCookie(response);
-        } catch {}
+
+      if (!isDefined(presentedSessionToken)) {
+        return;
       }
 
+      if (sessionInput.isImpersonating === true) {
+        // The one sign-in that must not revoke what it replaces: parking the
+        // impersonator's session lets stopImpersonation hand back the credential
+        // they already held.
+        this.userSessionCookieService.attachImpersonatorSessionTokenToResponse(
+          response,
+          presentedSessionToken,
+        );
+
+        return;
+      }
+
+      try {
+        await this.revokeSessionByToken(
+          presentedSessionToken,
+          UserSessionRevokedReason.Superseded,
+        );
+      } catch (error) {
+        // The replacement session and cookie are already valid. A cleanup
+        // failure must not turn that successful handoff into another logout.
+        this.logger.error(
+          `Failed to revoke the superseded session: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      }
+    } catch (error) {
       this.logger.error(
-        `Failed to issue a session alongside the token pair: ${
+        `Failed to issue a required session: ${
           error instanceof Error ? error.message : String(error)
         }`,
       );
+
+      throw error;
     }
   }
 

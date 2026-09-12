@@ -83,6 +83,26 @@ describe('PageLayoutVerticalList', () => {
     mockIsInPinnedTab = false;
   });
 
+  it('renders caller-provided edit controls without record-page dependencies', () => {
+    render(
+      <PageLayoutVerticalList
+        isInEditMode
+        widgets={[
+          makeWidget('first', WidgetType.FIELDS),
+          makeWidget('second', WidgetType.FIELDS),
+        ]}
+        leadingElement={<button>Before widgets</button>}
+        trailingElement={<button>After widgets</button>}
+        renderWidgetSeparator={(widget) => <button>Before {widget.id}</button>}
+      />,
+    );
+
+    expect(
+      screen.getAllByRole('button').map(({ textContent }) => textContent),
+    ).toEqual(['Before widgets', 'Before second', 'After widgets']);
+    expect(screen.queryByText('Add widget')).not.toBeInTheDocument();
+  });
+
   it('gives Timeline FILL_VIEWPORT sizing regardless of its position', () => {
     render(
       <PageLayoutVerticalList

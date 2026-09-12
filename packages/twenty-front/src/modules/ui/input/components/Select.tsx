@@ -18,6 +18,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
@@ -161,9 +162,12 @@ export const Select = <Value extends SelectValue>({
 
   const selectableItemIdArray = filteredOptions.map((option) => option.label);
 
+  const scopedDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    dropdownId,
+    scopedDropdownId,
   );
 
   const { setSelectedItemId } = useSelectableList(dropdownId);

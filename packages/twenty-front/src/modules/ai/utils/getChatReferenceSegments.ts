@@ -1,11 +1,11 @@
 import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
-import { findChatReferences } from '@/ai/utils/findChatReferences';
+import { parseChatReferences } from '@/ai/utils/parseChatReferences';
 import { replaceMalformedChatReferencesWithDisplayName } from '@/ai/utils/replaceMalformedChatReferencesWithDisplayName';
 
 export const getChatReferenceSegments = (
   text: string,
 ): Array<string | ChatReferenceMatch> => {
-  const references = findChatReferences(text);
+  const references = parseChatReferences(text);
   const segments: Array<string | ChatReferenceMatch> = [];
   let lastIndex = 0;
 

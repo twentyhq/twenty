@@ -6,6 +6,7 @@ import {
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 
 const agentChatThreadTableName = 'agentChatThread';
 const agentTurnTableName = 'agentTurn';
@@ -25,8 +26,6 @@ export const AGENT_CHAT_THREAD_DATA_SEED_IDS = {
 export const AGENT_CHAT_MESSAGE_DATA_SEED_IDS = {
   APPLE_MESSAGE_1: '20202020-0000-4000-8000-000000000021',
   APPLE_MESSAGE_2: '20202020-0000-4000-8000-000000000022',
-  APPLE_MESSAGE_3: '20202020-0000-4000-8000-000000000023',
-  APPLE_MESSAGE_4: '20202020-0000-4000-8000-000000000024',
   YCOMBINATOR_MESSAGE_1: '20202020-0000-4000-8000-000000000031',
   YCOMBINATOR_MESSAGE_2: '20202020-0000-4000-8000-000000000032',
   YCOMBINATOR_MESSAGE_3: '20202020-0000-4000-8000-000000000033',
@@ -36,8 +35,6 @@ export const AGENT_CHAT_MESSAGE_DATA_SEED_IDS = {
 export const AGENT_CHAT_MESSAGE_PART_DATA_SEED_IDS = {
   APPLE_MESSAGE_1_PART_1: '20202020-0000-4000-8000-000000000041',
   APPLE_MESSAGE_2_PART_1: '20202020-0000-4000-8000-000000000042',
-  APPLE_MESSAGE_3_PART_1: '20202020-0000-4000-8000-000000000043',
-  APPLE_MESSAGE_4_PART_1: '20202020-0000-4000-8000-000000000044',
   YCOMBINATOR_MESSAGE_1_PART_1: '20202020-0000-4000-8000-000000000051',
   YCOMBINATOR_MESSAGE_2_PART_1: '20202020-0000-4000-8000-000000000052',
   YCOMBINATOR_MESSAGE_3_PART_1: '20202020-0000-4000-8000-000000000053',
@@ -102,6 +99,14 @@ type SeedChatMessagesArgs = {
   schemaName: string;
   workspaceId: string;
   threadId: string;
+  chatReferenceIds: ChatReferenceIds;
+};
+
+export type ChatReferenceIds = {
+  applicationId: string;
+  objectMetadataId: string;
+  roleId: string;
+  viewId: string;
 };
 
 const seedChatMessages = async ({
@@ -109,6 +114,7 @@ const seedChatMessages = async ({
   schemaName,
   workspaceId,
   threadId,
+  chatReferenceIds,
 }: SeedChatMessagesArgs) => {
   let messageIds: string[];
   let partIds: string[];
@@ -138,19 +144,12 @@ const seedChatMessages = async ({
     messageIds = [
       AGENT_CHAT_MESSAGE_DATA_SEED_IDS.APPLE_MESSAGE_1,
       AGENT_CHAT_MESSAGE_DATA_SEED_IDS.APPLE_MESSAGE_2,
-      AGENT_CHAT_MESSAGE_DATA_SEED_IDS.APPLE_MESSAGE_3,
-      AGENT_CHAT_MESSAGE_DATA_SEED_IDS.APPLE_MESSAGE_4,
     ];
     partIds = [
       AGENT_CHAT_MESSAGE_PART_DATA_SEED_IDS.APPLE_MESSAGE_1_PART_1,
       AGENT_CHAT_MESSAGE_PART_DATA_SEED_IDS.APPLE_MESSAGE_2_PART_1,
-      AGENT_CHAT_MESSAGE_PART_DATA_SEED_IDS.APPLE_MESSAGE_3_PART_1,
-      AGENT_CHAT_MESSAGE_PART_DATA_SEED_IDS.APPLE_MESSAGE_4_PART_1,
     ];
-    turnIds = [
-      '20202020-0000-4000-8000-000000000061',
-      '20202020-0000-4000-8000-000000000062',
-    ];
+    turnIds = ['20202020-0000-4000-8000-000000000061'];
     messages = [
       {
         id: messageIds[0],
@@ -168,22 +167,6 @@ const seedChatMessages = async ({
         role: AgentMessageRole.ASSISTANT,
         createdAt: new Date(baseTime.getTime() + 5 * 60 * 1000),
       },
-      {
-        id: messageIds[2],
-        workspaceId,
-        threadId,
-        turnId: turnIds[1],
-        role: AgentMessageRole.USER,
-        createdAt: new Date(baseTime.getTime() + 10 * 60 * 1000),
-      },
-      {
-        id: messageIds[3],
-        workspaceId,
-        threadId,
-        turnId: turnIds[1],
-        role: AgentMessageRole.ASSISTANT,
-        createdAt: new Date(baseTime.getTime() + 15 * 60 * 1000),
-      },
     ];
     messageParts = [
       {
@@ -193,7 +176,7 @@ const seedChatMessages = async ({
         orderIndex: 0,
         type: 'text',
         textContent:
-          'Hello! Can you help me understand our current product roadmap and key metrics?',
+          'Can you show me examples of everything I can open from AI chat?',
         createdAt: new Date(baseTime.getTime()),
       },
       {
@@ -202,29 +185,8 @@ const seedChatMessages = async ({
         messageId: messageIds[1],
         orderIndex: 0,
         type: 'text',
-        textContent:
-          "Hello! I'd be happy to help you understand Apple's product roadmap and metrics. Based on your workspace data, I can see you have various projects and initiatives tracked. What specific aspect would you like to explore - product development timelines, user engagement metrics, or revenue targets?",
+        textContent: `Here are linked examples: [[record:company:${COMPANY_DATA_SEED_IDS.ID_1}:Google]] is one record. Browse [[records:${chatReferenceIds.objectMetadataId}:Company records]], open the specific [[view:${chatReferenceIds.viewId}:All Companies]] view, configure the [[object:company:Companies]] data model, inspect [[field:company:domainName:Domain name]], review [[role:${chatReferenceIds.roleId}:Admin]], or manage [[app:${chatReferenceIds.applicationId}:Twenty]].`,
         createdAt: new Date(baseTime.getTime() + 5 * 60 * 1000),
-      },
-      {
-        id: partIds[2],
-        workspaceId,
-        messageId: messageIds[2],
-        orderIndex: 0,
-        type: 'text',
-        textContent:
-          "I'd like to focus on our user engagement metrics and how they're trending over the last quarter.",
-        createdAt: new Date(baseTime.getTime() + 10 * 60 * 1000),
-      },
-      {
-        id: partIds[3],
-        workspaceId,
-        messageId: messageIds[3],
-        orderIndex: 0,
-        type: 'text',
-        textContent:
-          'Great! Looking at your user engagement data, I can see several key trends from the last quarter. Your active user base has grown by 15%, with particularly strong engagement in the mobile app. Daily active users are averaging 2.3 million, and session duration has increased by 8%. Would you like me to dive deeper into any specific engagement metrics or create a detailed report?',
-        createdAt: new Date(baseTime.getTime() + 15 * 60 * 1000),
       },
     ];
   } else if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
@@ -382,17 +344,15 @@ type SeedAgentsArgs = {
   queryRunner: QueryRunner;
   schemaName: string;
   workspaceId: string;
+  chatReferenceIds: ChatReferenceIds;
 };
 
 export const seedAgents = async ({
   queryRunner,
   schemaName,
   workspaceId,
+  chatReferenceIds,
 }: SeedAgentsArgs) => {
-  if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
-    return;
-  }
-
   const threadId = await seedChatThreads({
     queryRunner,
     schemaName,
@@ -404,5 +364,6 @@ export const seedAgents = async ({
     schemaName,
     workspaceId,
     threadId,
+    chatReferenceIds,
   });
 };

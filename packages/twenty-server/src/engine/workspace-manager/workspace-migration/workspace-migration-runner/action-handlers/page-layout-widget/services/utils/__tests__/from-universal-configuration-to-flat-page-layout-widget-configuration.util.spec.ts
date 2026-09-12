@@ -10,6 +10,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
+import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout-widget/services/utils/from-universal-configuration-to-flat-page-layout-widget-configuration.util';
 
@@ -91,6 +92,28 @@ const getChartRecordFilters = (
 };
 
 describe('fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration', () => {
+  it('should create a field widget without its embedded view when the view does not exist yet', () => {
+    expect(
+      fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration({
+        universalConfiguration: {
+          configurationType: WidgetConfigurationType.FIELD,
+          fieldMetadataId: RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+          fieldDisplayMode: FieldDisplayMode.TABLE,
+          viewId: '40404040-4444-4444-8444-000000000004',
+        },
+        flatFieldMetadataMaps,
+        flatFrontComponentMaps: createEmptyFlatEntityMaps(),
+        flatViewMaps: createEmptyFlatEntityMaps(),
+        flatViewFieldGroupMaps: createEmptyFlatEntityMaps(),
+      }),
+    ).toEqual({
+      configurationType: WidgetConfigurationType.FIELD,
+      fieldMetadataId: RELATION_FIELD_ID,
+      fieldDisplayMode: FieldDisplayMode.TABLE,
+      viewId: undefined,
+    });
+  });
+
   it('should preserve front component widget header command menu item references', () => {
     const frontComponentId = '11111111-4444-4444-8444-000000000004';
     const frontComponentUniversalIdentifier =

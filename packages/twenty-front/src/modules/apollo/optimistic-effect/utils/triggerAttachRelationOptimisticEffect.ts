@@ -1,18 +1,27 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 
+import { triggerUpdateRootQueriesOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRootQueriesOptimisticEffect';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
+import { getFieldMetadataFromGqlField } from '@/object-record/cache/utils/getFieldMetadataFromGqlField';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
+import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type ObjectPermissions } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { type ObjectPermissions, RelationType } from 'twenty-shared/types';
+import {
+  capitalize,
+  getConnectionTypename,
+  getEdgeTypename,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export const triggerAttachRelationOptimisticEffect = ({
   cache,
   sourceObjectNameSingular,
-  sourceRecordId,
+  sourceRecord,
   targetObjectMetadataItem,
   fieldNameOnTargetRecord,
   targetRecordId,
@@ -22,11 +31,8 @@ export const triggerAttachRelationOptimisticEffect = ({
 }: {
   cache: ApolloCache;
   sourceObjectNameSingular: string;
-  sourceRecordId: string;
-  targetObjectMetadataItem: Pick<
-    EnrichedObjectMetadataItem,
-    'fields' | 'nameSingular' | 'id' | 'readableFields'
-  >;
+  sourceRecord: RecordGqlNode;
+  targetObjectMetadataItem: EnrichedObjectMetadataItem;
   fieldNameOnTargetRecord: string;
   targetRecordId: string;
   objectMetadataItems: EnrichedObjectMetadataItem[];
@@ -36,6 +42,7 @@ export const triggerAttachRelationOptimisticEffect = ({
   >;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 }) => {
+  const sourceRecordId = sourceRecord.id;
   const sourceRecordTypeName = capitalize(sourceObjectNameSingular);
   const targetRecordTypeName = capitalize(
     targetObjectMetadataItem.nameSingular,
@@ -123,4 +130,75 @@ export const triggerAttachRelationOptimisticEffect = ({
   }
 
   upsertRecordsInStore({ partialRecords: [newCachedRecord] });
+
+  const newCachedRecordNode = getRecordNodeFromRecord({
+    objectMetadataItems,
+    objectMetadataItem: targetObjectMetadataItem,
+    record: newCachedRecord,
+    computeReferences: false,
+  });
+
+  if (!isDefined(newCachedRecordNode)) {
+    return;
+  }
+
+  triggerUpdateRootQueriesOptimisticEffect({
+    cache,
+    objectMetadataItem: targetObjectMetadataItem,
+    objectMetadataItems,
+    updatedRecords: [
+      isDefined(newCachedRecordNode[fieldNameOnTargetRecord])
+        ? newCachedRecordNode
+        : {
+            ...newCachedRecordNode,
+            [fieldNameOnTargetRecord]: buildRelationValueFromSourceRecord({
+              sourceObjectNameSingular,
+              sourceRecord,
+              targetObjectMetadataItem,
+              fieldNameOnTargetRecord,
+            }),
+          },
+    ],
+  });
+};
+
+// A target fetched without the relation field cannot be modified in the cache,
+// but it is still attached to the source record, which is all the target's
+// cached lists need to know to place it.
+const buildRelationValueFromSourceRecord = ({
+  sourceObjectNameSingular,
+  sourceRecord,
+  targetObjectMetadataItem,
+  fieldNameOnTargetRecord,
+}: {
+  sourceObjectNameSingular: string;
+  sourceRecord: RecordGqlNode;
+  targetObjectMetadataItem: EnrichedObjectMetadataItem;
+  fieldNameOnTargetRecord: string;
+}) => {
+  const fieldMetadataItemOnTargetRecord = getFieldMetadataFromGqlField({
+    objectMetadataItem: targetObjectMetadataItem,
+    gqlField: fieldNameOnTargetRecord,
+  });
+
+  const isToManyRelation =
+    fieldMetadataItemOnTargetRecord?.relation?.type ===
+      RelationType.ONE_TO_MANY ||
+    fieldMetadataItemOnTargetRecord?.settings?.relationType ===
+      RelationType.ONE_TO_MANY;
+
+  if (!isToManyRelation) {
+    return sourceRecord;
+  }
+
+  return {
+    __typename: getConnectionTypename(sourceObjectNameSingular),
+    edges: [
+      {
+        __typename: getEdgeTypename(sourceObjectNameSingular),
+        node: sourceRecord,
+        cursor: '',
+      },
+    ],
+  };
 };

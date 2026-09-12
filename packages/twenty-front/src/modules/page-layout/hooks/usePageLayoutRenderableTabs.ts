@@ -7,6 +7,7 @@ import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsRenderableForTargetObject } from '@/page-layout/utils/getTabsRenderableForTargetObject';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -14,7 +15,8 @@ import { useIsMobile } from 'twenty-ui/utilities';
 // every consumer derives them from the same filtered tab set.
 export const usePageLayoutRenderableTabs = () => {
   const isMobile = useIsMobile();
-  const { isInSidePanel, targetRecordIdentifier } = useLayoutRenderingContext();
+  const { targetRecordIdentifier } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { objectMetadataItems } = useObjectMetadataItems();

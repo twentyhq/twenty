@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
@@ -17,13 +18,17 @@ import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbou
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
+import { countDeliveredRecipients } from 'src/engine/core-modules/emailing-domain/utils/count-delivered-recipients.util';
 
 @Injectable()
 export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
+  private readonly logger = new Logger(EmailGroupMessageOutboundService.name);
+
   constructor(
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
+    private readonly emailBillingService: EmailBillingService,
   ) {}
 
   async sendMessage(
@@ -39,10 +44,15 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
       );
     }
 
+    await this.emailBillingService.validateEmailCreditsOrThrow(
+      connectedAccount.workspaceId,
+    );
+
     const result = await this.emailingDomainSenderService.sendEmail(
       connectedAccount.workspaceId,
       emailingDomain.id,
       {
+        sendKind: 'TRANSACTIONAL',
         to: this.toRecipientArray(sendMessageInput.to),
         cc: this.toRecipientArray(sendMessageInput.cc),
         bcc: this.toRecipientArray(sendMessageInput.bcc),
@@ -56,6 +66,21 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
         attachments: sendMessageInput.attachments,
       },
     );
+
+    // The provider has already accepted the mail, so surfacing a billing
+    // failure would invite a retry that sends it a second time.
+    await this.emailBillingService
+      .billSentEmails({
+        workspaceId: connectedAccount.workspaceId,
+        sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
+      })
+      .catch((error) => {
+        this.logger.error(
+          `Workspace ${connectedAccount.workspaceId} sent email ${result.messageId} but failed to bill it, so this send is unbilled: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      });
 
     return {
       headerMessageId: result.messageId,

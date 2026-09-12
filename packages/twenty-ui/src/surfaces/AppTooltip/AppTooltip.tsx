@@ -2,6 +2,7 @@ import { Tooltip } from '@base-ui/react/tooltip';
 import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { useEffect, useRef, useState } from 'react';
+import { type IconComponent } from '@ui/icon/types/IconComponent';
 import { useThemeContainer } from '@ui/theme-constants';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
@@ -48,32 +49,36 @@ const DEFAULT_OFFSET = 10;
 export type AppTooltipProps = {
   className?: string;
   anchorSelect?: string;
-  content?: string;
-  children?: React.ReactNode;
   offset?: number;
   noArrow?: boolean;
   hidden?: boolean;
   place?: PlacesType;
   delay?: TooltipDelay;
   positionStrategy?: PositionStrategy;
-  clickable?: boolean;
-  width?: string;
+  interactive?: boolean;
+  maxWidth?: string;
   isOpen?: boolean;
+  title?: string;
+  Icon?: IconComponent;
+  description?: string;
+  children?: React.ReactNode;
 };
 
 export const AppTooltip = ({
   anchorSelect,
   className,
-  content,
+  title,
+  Icon,
+  description,
   hidden = false,
-  noArrow,
+  noArrow = true,
   offset,
   delay = TooltipDelay.mediumDelay,
   place,
   positionStrategy,
   children,
-  clickable,
-  width,
+  interactive,
+  maxWidth = '300px',
   isOpen,
 }: AppTooltipProps) => {
   const getDelayInMis = (delay: TooltipDelay) => {
@@ -200,7 +205,11 @@ export const AppTooltip = ({
       clearTimeout(hideDelayTimerRef.current);
     };
 
-    const handleAnchorLeave = () => {
+    const handleAnchorLeave = (anchorElement: Element) => {
+      if (anchorElement.contains(anchorElement.ownerDocument.activeElement)) {
+        return;
+      }
+
       clearTimeout(hideDelayTimerRef.current);
       hideDelayTimerRef.current = setTimeout(() => {
         if (isHoveringTooltipRef.current) {
@@ -213,7 +222,7 @@ export const AppTooltip = ({
 
     const removeListeners = anchorElements.map((anchorElement) => {
       const handleEnter = () => handleAnchorEnter(anchorElement);
-      const handleLeave = () => handleAnchorLeave();
+      const handleLeave = () => handleAnchorLeave(anchorElement);
 
       // mouseover/mouseout instead of mouseenter/mouseleave to replicate
       // react-tooltip's default open and close events
@@ -246,6 +255,9 @@ export const AppTooltip = ({
 
   const handleTooltipMouseLeave = () => {
     isHoveringTooltipRef.current = false;
+    if (activeAnchor?.contains(activeAnchor.ownerDocument.activeElement)) {
+      return;
+    }
     clearTimeout(hideDelayTimerRef.current);
     hideDelayTimerRef.current = setTimeout(() => {
       if (isHoveringTooltipRef.current) {
@@ -258,8 +270,27 @@ export const AppTooltip = ({
     clearTimeout(showDelayTimerRef.current);
   };
 
-  // react-tooltip's content priority: content prop wins over children
-  const renderedContent = isNonEmptyString(content) ? content : children;
+  const hasTitle = isNonEmptyString(title);
+  const hasDescription = isNonEmptyString(description);
+  const renderedContent =
+    hasTitle || hasDescription ? (
+      <>
+        <div className={styles.textContent}>
+          {hasTitle && (
+            <div className={styles.title}>
+              {isDefined(Icon) && <Icon className={styles.icon} aria-hidden />}
+              <span>{title}</span>
+            </div>
+          )}
+          {hasDescription && (
+            <div className={styles.description}>{description}</div>
+          )}
+        </div>
+        {children}
+      </>
+    ) : (
+      children
+    );
 
   const isTooltipOpen =
     !hidden &&
@@ -294,17 +325,17 @@ export const AppTooltip = ({
           sideOffset={offset ?? DEFAULT_OFFSET}
           positionMethod={positionStrategy}
           className={styles.positioner}
-          style={{ maxWidth: width ?? '40%' }}
+          style={{ maxWidth }}
         >
           <Tooltip.Popup
             role="tooltip"
             className={clsx(
               styles.tooltip,
-              clickable && styles.clickable,
+              interactive && styles.interactive,
               className,
             )}
-            onMouseEnter={clickable ? handleTooltipMouseEnter : undefined}
-            onMouseLeave={clickable ? handleTooltipMouseLeave : undefined}
+            onMouseEnter={interactive ? handleTooltipMouseEnter : undefined}
+            onMouseLeave={interactive ? handleTooltipMouseLeave : undefined}
           >
             {renderedContent}
             {!noArrow && <Tooltip.Arrow className={styles.arrow} />}

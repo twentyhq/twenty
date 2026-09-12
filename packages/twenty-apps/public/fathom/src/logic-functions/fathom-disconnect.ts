@@ -1,0 +1,77 @@
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { getConnection, kv } from 'twenty-sdk/logic-function';
+import { isDefined } from 'src/utils/is-defined';
+
+import {
+  FATHOM_DISCONNECT_UNIVERSAL_IDENTIFIER,
+  FATHOM_RECONCILE_MEDIA_IMPORTS_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+import { type FathomConnectionHookPayload } from 'src/logic-functions/types/fathom-connection-hook-payload.type';
+import { type FathomWebhookRegistration } from 'src/logic-functions/types/fathom-webhook-registration.type';
+import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
+import { deleteStaleFathomWebhook } from 'src/logic-functions/utils/delete-stale-fathom-webhook.util';
+import { enqueueFathomJobsOrThrow } from 'src/logic-functions/utils/enqueue-fathom-jobs-or-throw.util';
+import { getFathomConnectionClaimKey } from 'src/logic-functions/utils/get-fathom-connection-claim-key.util';
+import { getFathomWebhookRegistrationKey } from 'src/logic-functions/utils/get-fathom-webhook-registration-key.util';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
+
+export const fathomDisconnectHandler = async (
+  payload: FathomConnectionHookPayload,
+): Promise<{ success: true }> => {
+  const registrationKey = getFathomWebhookRegistrationKey(
+    payload.connectedAccountId,
+  );
+  const registration = await kv.get<FathomWebhookRegistration>(registrationKey);
+
+  // Enqueued before the Fathom call because a webhook deletion failure throws
+  // to retry the hook, and the media imports still have to be settled.
+  await enqueueFathomJobsOrThrow({
+    logicFunctionUniversalIdentifier:
+      FATHOM_RECONCILE_MEDIA_IMPORTS_UNIVERSAL_IDENTIFIER,
+    payloads: [{ disconnectedAccountId: payload.connectedAccountId }],
+  });
+
+  if (!isDefined(registration)) {
+    await kv.delete(getFathomConnectionClaimKey(payload.connectedAccountId), {
+      scope: 'SERVER',
+    });
+
+    return { success: true };
+  }
+
+  await kv.set(registrationKey, { ...registration, isActive: false });
+
+  const connection = await getConnection(payload.connectedAccountId);
+
+  try {
+    await deleteStaleFathomWebhook({
+      fathomClient: createFathomClient(connection.accessToken),
+      webhookId: registration.webhookId,
+    });
+  } catch (error) {
+    // Twenty deletes the connected account right after this hook, so the
+    // registration left behind is keyed on an id that never comes back and this
+    // log line is the only record of the webhook still live in Fathom.
+    console.error(
+      `[fathom] leaked webhook ${registration.webhookId} for connected account ${payload.connectedAccountId}: ${toErrorMessage(error)}`,
+    );
+
+    throw error;
+  }
+
+  await kv.delete(registrationKey);
+  await kv.delete(getFathomConnectionClaimKey(payload.connectedAccountId), {
+    scope: 'SERVER',
+  });
+
+  return { success: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: FATHOM_DISCONNECT_UNIVERSAL_IDENTIFIER,
+  name: 'fathom-disconnect',
+  description:
+    'Deletes the registered Fathom webhook and schedules media cleanup after a user removes their Fathom connection.',
+  timeoutSeconds: 30,
+  handler: fathomDisconnectHandler,
+});

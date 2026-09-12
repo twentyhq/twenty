@@ -7,6 +7,7 @@ import { type InputSchemaPropertyType } from 'twenty-shared/workflow';
 
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { type WorkflowVariableStepSelection } from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
@@ -68,8 +69,13 @@ export const WorkflowVariablesDropdown = ({
   const [selectedStep, setSelectedStep] = useState<
     StepOutputSchemaV2 | undefined
   >(initialStep);
+  const [selectedPath, setSelectedPath] = useState<string[]>([]);
 
-  const handleStepSelect = (stepId: string) => {
+  const handleStepSelect = ({
+    stepId,
+    path = [],
+  }: WorkflowVariableStepSelection) => {
+    setSelectedPath(path);
     setSelectedStep(
       availableVariablesInWorkflowStep.find((step) => step.id === stepId),
     );
@@ -78,6 +84,7 @@ export const WorkflowVariablesDropdown = ({
   const handleSubItemSelect = (subItem: string) => {
     onVariableSelect(subItem);
     setSelectedStep(initialStep);
+    setSelectedPath([]);
     closeDropdown(dropdownId);
   };
 
@@ -99,7 +106,7 @@ export const WorkflowVariablesDropdown = ({
         </StyledDropdownVariableButtonContainer>
         <AppTooltip
           anchorSelect={`[data-variable-picker-disabled-anchor="${dropdownId}"]`}
-          content={t`No variables are available yet. Variables come from the workflow trigger and previous steps.`}
+          title={t`No variables are available yet. Variables come from the workflow trigger and previous steps.`}
           place={TooltipPosition.Top}
           delay={TooltipDelay.mediumDelay}
           offset={5}
@@ -126,10 +133,16 @@ export const WorkflowVariablesDropdown = ({
             dropdownId={dropdownId}
             steps={availableVariablesInWorkflowStep}
             onSelect={handleStepSelect}
+            onVariableSelect={({ rawVariableName }) =>
+              handleSubItemSelect(rawVariableName)
+            }
+            shouldDisplayRecordObjects={shouldDisplayRecordObjects}
+            objectNameSingularsToSelect={objectNameSingularsToSelect}
           />
         ) : (
           <WorkflowVariablesDropdownStepItems
             step={selectedStep}
+            initialPath={selectedPath}
             onSelect={handleSubItemSelect}
             onBack={handleBack}
             shouldDisplayRecordObjects={shouldDisplayRecordObjects}

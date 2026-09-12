@@ -1,7 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { runAgent } from 'twenty-sdk/logic-function';
 
-import { CALL_RECORDING_SUMMARIZER_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-summarizer-agent-universal-identifier';
+import { CALL_RECORDING_SUMMARIZER_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { findCallRecordingForSummary } from 'src/logic-functions/data/find-call-recording-for-summary.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { buildCallRecordingSummaryPrompt } from 'src/logic-functions/domain/build-call-recording-summary-prompt.util';

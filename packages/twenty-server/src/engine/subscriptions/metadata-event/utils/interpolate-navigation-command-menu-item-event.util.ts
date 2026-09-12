@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { buildNavigationPlaceholderValues } from 'src/engine/metadata-modules/command-menu-item/utils/build-navigation-placeholder-values.util';
-import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -12,7 +11,7 @@ import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/uti
 
 type InterpolatableCommandMenuItemRecord = Record<string, unknown> & {
   engineComponentKey?: unknown;
-  payload?: unknown;
+  navigationTargetObjectMetadataId?: unknown;
 };
 
 const INTERPOLATED_FIELDS = ['label', 'shortLabel', 'icon'] as const;
@@ -35,14 +34,15 @@ export const interpolateNavigationCommandMenuItemEvent = ({
     return record;
   }
 
-  const payload = record.payload;
+  const navigationTargetObjectMetadataId =
+    record.navigationTargetObjectMetadataId;
 
-  if (!isObjectMetadataCommandMenuItemPayload(payload)) {
+  if (!isNonEmptyString(navigationTargetObjectMetadataId)) {
     return record;
   }
 
   const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: payload.objectMetadataItemId,
+    flatEntityId: navigationTargetObjectMetadataId,
     flatEntityMaps: flatObjectMetadataMaps,
   });
 

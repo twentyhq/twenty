@@ -65,13 +65,27 @@ export class CalendarFetchEventsService {
                 'calendarChannelEventAssociation',
               );
 
+            const associationsToDelete =
+              await calendarChannelEventAssociationRepository.find({
+                where: {
+                  eventExternalId: Any(calendarEventIdsToDelete),
+                  calendarChannelId: calendarChannel.id,
+                },
+                select: { calendarEventId: true },
+              });
+
             await calendarChannelEventAssociationRepository.delete({
               eventExternalId: Any(calendarEventIdsToDelete),
               calendarChannelId: calendarChannel.id,
             });
 
-            await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
-              workspaceId,
+            await this.calendarEventCleanerService.deleteOrphanedCalendarEvents(
+              {
+                calendarEventIds: associationsToDelete.map(
+                  ({ calendarEventId }) => calendarEventId,
+                ),
+                workspaceId,
+              },
             );
           }
 

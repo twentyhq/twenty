@@ -36,8 +36,14 @@ jest.mock('@/page-layout/utils/getTabLayoutMode', () => ({
 
 jest.mock('@/ui/layout/contexts/LayoutRenderingContext', () => ({
   useLayoutRenderingContext: () => ({
-    isInSidePanel: mockIsInSidePanel,
     layoutType: PageLayoutType.RECORD_PAGE,
+  }),
+}));
+
+jest.mock('@/ui/layout/hooks/useWorkspaceSurface', () => ({
+  useWorkspaceSurface: () => ({
+    type: mockIsInSidePanel ? 'side-panel' : 'main',
+    instanceId: mockIsInSidePanel ? 'side-panel' : 'main',
   }),
 }));
 

@@ -148,7 +148,7 @@ export const EmailField = () => {
             {shouldShowWorkspaceLimitTooltip && (
               <AppTooltip
                 anchorSelect={`#${EMAIL_EDIT_DISABLED_TOOLTIP_ANCHOR_ID}`}
-                content={t`You can't change your email because you belong to 2 or more workspaces.`}
+                title={t`You can't change your email because you belong to 2 or more workspaces.`}
                 delay={TooltipDelay.noDelay}
                 place="top"
               />

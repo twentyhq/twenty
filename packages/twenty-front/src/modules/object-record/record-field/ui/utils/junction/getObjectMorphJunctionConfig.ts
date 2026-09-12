@@ -1,11 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import {
-  getJunctionConfig,
-  type JunctionConfig,
-} from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
 import { isConfiguredJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isConfiguredJunctionRelationField';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { type JunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/JunctionConfig';
 import { isDefined } from 'twenty-shared/utils';
 
 type ObjectMorphJunctionConfig = JunctionConfig & {
@@ -39,7 +38,8 @@ export const getObjectMorphJunctionConfig = ({
     });
 
     if (
-      !junctionConfig?.isMorphRelation ||
+      !isUsableJunctionConfig(junctionConfig) ||
+      !junctionConfig.isMorphRelation ||
       !isDefined(junctionConfig.sourceField)
     ) {
       continue;

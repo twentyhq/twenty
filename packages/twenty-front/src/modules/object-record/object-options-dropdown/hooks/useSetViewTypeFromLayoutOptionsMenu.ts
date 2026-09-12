@@ -1,10 +1,10 @@
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { useContextStoreInstanceId } from '@/context-store/hooks/useContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
@@ -18,7 +18,9 @@ import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const useSetViewTypeFromLayoutOptionsMenu = () => {
   const { updateCurrentView } = useUpdateCurrentView();
-  const setRecordIndexViewType = useSetAtomState(recordIndexViewTypeState);
+  const setRecordIndexViewType = useSetAtomComponentState(
+    recordIndexViewTypeState,
+  );
   const { availableFieldsForGrouping } =
     useGetAvailableFieldsToGroupRecordsBy();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
@@ -27,13 +29,15 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
   const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
 
+  const contextStoreInstanceId = useContextStoreInstanceId();
+
   const store = useStore();
 
   const setAndPersistViewType = useCallback(
     async (viewType: ViewType) => {
       const currentViewId = store.get(
         contextStoreCurrentViewIdComponentState.atomFamily({
-          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          instanceId: contextStoreInstanceId,
         }),
       );
 
@@ -132,6 +136,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       availableFieldsForCalendar,
       loadRecordIndexStates,
       objectMetadataItem,
+      contextStoreInstanceId,
     ],
   );
 

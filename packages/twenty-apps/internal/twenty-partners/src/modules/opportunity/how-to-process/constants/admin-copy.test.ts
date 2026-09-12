@@ -41,6 +41,7 @@ describe('HOW_TO_PROCESS_STEPS', () => {
     expect(text).toMatch(/daily digest/i);
     expect(text).toMatch(/Intro Sent At/i);
     expect(text).toMatch(/Listed.*off/i);
+    expect(text).toMatch(/keep it in My Applications/i);
     expect(text).toMatch(/Won/i);
     expect(text).toMatch(/Declined/i);
     expect(text).toMatch(/Backup stays/i);

@@ -120,7 +120,10 @@ export const WidgetCardShell = ({
           variant={variant}
           hasHeader={showHeader}
           isEditable={isEditable}
-          hasInteractiveContent={widget.type === WidgetType.RECORD_TABLE}
+          hasInteractiveContent={
+            widget.type === WidgetType.RECORD_TABLE ||
+            widget.type === WidgetType.STANDALONE_RICH_TEXT
+          }
           isFixedHeight={isFixedHeightIframe}
           contentPadding={contentPadding}
         >

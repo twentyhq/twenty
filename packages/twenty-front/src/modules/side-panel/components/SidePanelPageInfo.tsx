@@ -10,7 +10,6 @@ import { SidePanelMultipleRecordsInfo } from '@/side-panel/components/SidePanelM
 import { SidePanelObjectViewRecordInfo } from '@/side-panel/components/SidePanelObjectViewRecordInfo';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLayoutInfo';
-import { SidePanelRecordInfo } from '@/side-panel/components/SidePanelRecordInfo';
 import { SidePanelWorkflowStepInfo } from '@/side-panel/components/SidePanelWorkflowStepInfo';
 import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -30,7 +29,6 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     selectedNavigationMenuItemIdInEditModeState,
   );
   const items = useNavigationMenuItemEditSectionItems();
-
   if (!isDefined(pageChip)) {
     return null;
   }
@@ -59,14 +57,6 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     ) {
       return <SidePanelObjectViewRecordInfo />;
     }
-  }
-
-  const isRecordPage = pageChip.page?.page === SidePanelPages.ViewRecord;
-
-  if (isRecordPage && isDefined(pageChip.page?.pageId)) {
-    return (
-      <SidePanelRecordInfo sidePanelPageInstanceId={pageChip.page.pageId} />
-    );
   }
 
   const isWorkflowStepPage = pageChip.page?.page

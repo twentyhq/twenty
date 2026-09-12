@@ -1,8 +1,10 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { TintedIconTile } from 'twenty-ui/data-display';
 import { type IconComponent } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -23,15 +25,20 @@ const StyledIconContainer = styled.span`
 type CoreObjectNameCellProps = {
   name: string | null | undefined;
   Icon: IconComponent;
+  iconColor?: ThemeColor;
 };
 
-export const CoreObjectNameCell = ({ name, Icon }: CoreObjectNameCellProps) => {
+export const CoreObjectNameCell = ({
+  name,
+  Icon,
+  iconColor,
+}: CoreObjectNameCellProps) => {
   const { t } = useLingui();
 
   return (
     <StyledContainer>
       <StyledIconContainer>
-        <Icon size={16} />
+        <TintedIconTile Icon={Icon} color={iconColor} size={16} />
       </StyledIconContainer>
       <OverflowingTextWithTooltip
         text={isNonEmptyString(name) ? name : t`Untitled`}

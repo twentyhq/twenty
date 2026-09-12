@@ -369,6 +369,7 @@ describe('FileController', () => {
       );
 
       expect(mockResponse.destroy).not.toHaveBeenCalled();
+      expect(mockStream.destroyed).toBe(true);
     });
 
     it('should destroy the response without throwing when the stream errors after headers are sent', async () => {
@@ -397,6 +398,7 @@ describe('FileController', () => {
       );
 
       expect(mockResponse.destroy).toHaveBeenCalledTimes(1);
+      expect(mockStream.destroyed).toBe(true);
     });
   });
 

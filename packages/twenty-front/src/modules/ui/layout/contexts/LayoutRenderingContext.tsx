@@ -9,8 +9,6 @@ export type LayoutRenderingContextType = {
   targetRecordIdentifier: TargetRecordIdentifier | undefined;
 
   layoutType: PageLayoutType;
-
-  isInSidePanel: boolean;
 };
 
 export const [LayoutRenderingProvider, useLayoutRenderingContext] =

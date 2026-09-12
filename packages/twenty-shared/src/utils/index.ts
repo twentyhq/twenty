@@ -65,6 +65,7 @@ export {
 export { isFieldMetadataArrayKind } from './fieldMetadata/isFieldMetadataArrayKind';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
 export { isFieldMetadataEligibleForFieldsWidget } from './fieldMetadata/isFieldMetadataEligibleForFieldsWidget';
+export { isFieldMetadataEligibleForRecordForm } from './fieldMetadata/isFieldMetadataEligibleForRecordForm';
 export { isFieldMetadataEnumKind } from './fieldMetadata/isFieldMetadataEnumKind';
 export { isFieldMetadataNumericKind } from './fieldMetadata/isFieldMetadataNumericKind';
 export { isFieldMetadataSelectKind } from './fieldMetadata/isFieldMetadataSelectKind';
@@ -185,7 +186,7 @@ export {
 export { formatToShortNumber } from './format/formatToShortNumber';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
-export { getURLSafely } from './getURLSafely';
+export { getUrlSafely } from './getUrlSafely';
 export {
   getNodeTypename,
   getConnectionTypename,

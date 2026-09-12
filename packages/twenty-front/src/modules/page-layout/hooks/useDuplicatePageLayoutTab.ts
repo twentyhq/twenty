@@ -135,17 +135,14 @@ export const useDuplicatePageLayoutTab = ({
         ...generateDuplicatedTimestamps(),
       };
 
-      const sourceLayouts = allTabLayouts[tabId] ?? {
-        desktop: [],
-        mobile: [],
-      };
+      const sourceLayouts = allTabLayouts[tabId];
 
       const newLayouts = {
-        desktop: sourceLayouts.desktop.map((layout) => ({
+        desktop: (sourceLayouts?.desktop ?? []).map((layout) => ({
           ...layout,
           i: widgetOldIdNewIdMap.get(layout.i) || layout.i,
         })),
-        mobile: sourceLayouts.mobile.map((layout) => ({
+        mobile: (sourceLayouts?.mobile ?? []).map((layout) => ({
           ...layout,
           i: widgetOldIdNewIdMap.get(layout.i) || layout.i,
         })),

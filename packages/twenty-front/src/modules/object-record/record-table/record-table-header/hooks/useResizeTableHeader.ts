@@ -1,4 +1,6 @@
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
+import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
+import { getViewPersistTarget } from '@/object-record/record-table-widget/utils/getViewPersistTarget';
 
 import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthVariableName';
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
@@ -11,7 +13,7 @@ import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-tab
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
-import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
+import { useRecordTableFirstColumnWidthOverride } from '@/object-record/record-table/hooks/useRecordTableFirstColumnWidthOverride';
 import { computeLastRecordTableColumnWidth } from '@/object-record/record-table/utils/computeLastRecordTableColumnWidth';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
@@ -25,7 +27,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSaveRecordFields } from '@/views/hooks/useSaveRecordFields';
 import { useStore } from 'jotai';
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import {
   findById,
   findByProperty,
@@ -34,6 +36,7 @@ import {
 
 export const useResizeTableHeader = () => {
   const { recordTableId, visibleRecordFields } = useRecordTableContextOrThrow();
+  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
 
   const resizeFieldOffset = useAtomComponentStateCallbackState(
     resizeFieldOffsetComponentState,
@@ -67,10 +70,8 @@ export const useResizeTableHeader = () => {
     recordTableId,
   );
 
-  const shouldCompactRecordTableFirstColumn = useAtomComponentStateValue(
-    shouldCompactRecordTableFirstColumnComponentState,
-    recordTableId,
-  );
+  const firstColumnWidthOverride =
+    useRecordTableFirstColumnWidthOverride(recordTableId);
 
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(
     isRecordTableDragColumnHiddenComponentState,
@@ -121,7 +122,7 @@ export const useResizeTableHeader = () => {
 
       const { lastColumnWidth } = computeLastRecordTableColumnWidth({
         recordFields: visibleRecordFields,
-        shouldCompactFirstColumn: shouldCompactRecordTableFirstColumn,
+        firstColumnWidthOverride,
         tableWidth: recordTableWidth,
         isDragColumnHidden: isRecordTableDragColumnHidden,
         isCheckboxColumnHidden: isRecordTableCheckboxColumnHidden,
@@ -154,7 +155,7 @@ export const useResizeTableHeader = () => {
       recordField,
       recordTableId,
       visibleRecordFields,
-      shouldCompactRecordTableFirstColumn,
+      firstColumnWidthOverride,
       recordTableWidth,
       isRecordTableDragColumnHidden,
       isRecordTableCheckboxColumnHidden,
@@ -189,7 +190,18 @@ export const useResizeTableHeader = () => {
         size: nextWidth,
       });
 
-      saveRecordFields([updatedRecordField]);
+      const persistTarget = getViewPersistTarget(recordTableWidgetContext);
+
+      if (persistTarget.target === 'api') {
+        saveRecordFields([updatedRecordField]);
+      } else if (persistTarget.target === 'pageLayoutDraft') {
+        persistTarget.widgetContext.updateViewDraftField(
+          updatedRecordField.id,
+          {
+            size: nextWidth,
+          },
+        );
+      }
     }
 
     setDragSelectionStartEnabled(true);
@@ -202,6 +214,7 @@ export const useResizeTableHeader = () => {
     updateRecordField,
     setDragSelectionStartEnabled,
     recordField,
+    recordTableWidgetContext,
   ]);
 
   useTrackPointer({

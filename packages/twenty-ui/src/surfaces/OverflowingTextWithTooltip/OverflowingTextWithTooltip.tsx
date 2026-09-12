@@ -1,4 +1,10 @@
-import { type ReactNode, useId, useRef, useState } from 'react';
+import {
+  type KeyboardEvent,
+  type ReactNode,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -6,7 +12,11 @@ import { clsx } from 'clsx';
 import { LinkifiedText } from '@ui/typography/LinkifiedText/LinkifiedText';
 import { Text } from '@ui/typography/Text/Text';
 import { isDefined } from '@ui/utilities/utils/isDefined';
-import { AppTooltip, TooltipDelay } from '@ui/surfaces/AppTooltip/AppTooltip';
+import {
+  AppTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from '@ui/surfaces/AppTooltip/AppTooltip';
 
 import styles from './OverflowingTextWithTooltip.module.scss';
 
@@ -15,7 +25,9 @@ type OverflowingTextWithTooltipProps = {
   isTooltipMultiline?: boolean;
   displayedMaxRows?: number;
   tooltipDelay?: TooltipDelay;
+  tooltipPlace?: TooltipPosition;
   alwaysShowTooltip?: boolean;
+  isFocusable?: boolean;
 } & (
   | {
       text: string | null | undefined;
@@ -34,7 +46,9 @@ export const OverflowingTextWithTooltip = ({
   displayedMaxRows,
   tooltipContent,
   tooltipDelay = TooltipDelay.mediumDelay,
+  tooltipPlace = TooltipPosition.Bottom,
   alwaysShowTooltip = false,
+  isFocusable = false,
 }: OverflowingTextWithTooltipProps) => {
   const textElementId = `title-id-${useId().replace(/:/g, '')}`;
 
@@ -43,7 +57,7 @@ export const OverflowingTextWithTooltip = ({
   const [isTitleOverflowing, setIsTitleOverflowing] = useState(false);
   const [shouldRenderTooltip, setShouldRenderTooltip] = useState(false);
 
-  const handleMouseEnter = () => {
+  const handleShowTooltip = () => {
     const isOverflowing = textRef.current
       ? textRef.current?.scrollHeight > textRef.current?.clientHeight ||
         textRef.current.scrollWidth > textRef.current.clientWidth
@@ -53,9 +67,33 @@ export const OverflowingTextWithTooltip = ({
     setShouldRenderTooltip(true);
   };
 
-  const handleMouseLeave = () => {
+  const handleHideTooltip = () => {
     setIsTitleOverflowing(false);
     setShouldRenderTooltip(false);
+  };
+
+  const handleMouseLeave = () => {
+    if (isFocusable && document.activeElement === textRef.current) {
+      return;
+    }
+
+    handleHideTooltip();
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (
+      event.key === 'Escape' &&
+      shouldRenderTooltip &&
+      (isTitleOverflowing || alwaysShowTooltip)
+    ) {
+      event.stopPropagation();
+      handleHideTooltip();
+    }
+  };
+
+  const handleTextClick = () => {
+    textRef.current?.focus();
+    handleShowTooltip();
   };
 
   const handleTooltipClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -82,7 +120,12 @@ export const OverflowingTextWithTooltip = ({
           )}
           ref={textRef}
           id={textElementId}
-          onMouseEnter={handleMouseEnter}
+          tabIndex={isFocusable ? 0 : undefined}
+          onFocus={isFocusable ? handleShowTooltip : undefined}
+          onBlur={isFocusable ? handleHideTooltip : undefined}
+          onKeyDown={isFocusable ? handleKeyDown : undefined}
+          onClick={isFocusable ? handleTextClick : undefined}
+          onMouseEnter={handleShowTooltip}
           onMouseLeave={handleMouseLeave}
         >
           {isNonEmptyString(text) ? <LinkifiedText text={text} /> : text}
@@ -98,7 +141,12 @@ export const OverflowingTextWithTooltip = ({
           )}
           ref={textRef}
           id={textElementId}
-          onMouseEnter={handleMouseEnter}
+          tabIndex={isFocusable ? 0 : undefined}
+          onFocus={isFocusable ? handleShowTooltip : undefined}
+          onBlur={isFocusable ? handleHideTooltip : undefined}
+          onKeyDown={isFocusable ? handleKeyDown : undefined}
+          onClick={isFocusable ? handleTextClick : undefined}
+          onMouseEnter={handleShowTooltip}
           onMouseLeave={handleMouseLeave}
         >
           {isNonEmptyString(text) ? <LinkifiedText text={text} /> : text}
@@ -113,19 +161,17 @@ export const OverflowingTextWithTooltip = ({
           <div onClick={handleTooltipClick}>
             <AppTooltip
               anchorSelect={`#${textElementId}`}
+              title={tooltipText}
+              className={
+                isTooltipMultiline ? styles.multilineTooltip : undefined
+              }
               offset={5}
               noArrow
-              place="bottom"
+              place={tooltipPlace}
               positionStrategy="absolute"
               delay={tooltipDelay}
               isOpen={true}
-            >
-              {isTooltipMultiline ? (
-                <pre className={styles.pre}>{tooltipText}</pre>
-              ) : (
-                tooltipText
-              )}
-            </AppTooltip>
+            />
           </div>,
           document.body,
         )}

@@ -7,24 +7,12 @@ import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFoc
 import { MAX_RELATION_CHIPS_DISPLAYED_INLINE } from '@/object-record/record-field/ui/meta-types/display/constants/MaxRelationChipsDisplayedInline';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
-import { getReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { styled } from '@linaria/react';
 import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: flex-start;
-  max-width: 100%;
-  overflow: hidden;
-  width: 100%;
-`;
 
 export const RelationFromManyFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
@@ -42,17 +30,11 @@ export const RelationFromManyFieldDisplay = () => {
     (item) => item.nameSingular === objectMetadataNameSingular,
   )?.id;
 
-  const junctionConfig = getJunctionConfig({
+  const junctionConfig = resolveJunctionConfig({
     settings: fieldDefinition.metadata.settings,
     relationObjectMetadataId: fieldDefinition.metadata.relationObjectMetadataId,
     relationTargetFieldMetadataId:
       fieldDefinition.metadata.relationFieldMetadataId,
-    sourceObjectMetadataId,
-    objectMetadataItems,
-  });
-
-  const reverseJunctionConfig = getReverseJunctionConfig({
-    junctionObjectMetadataId: fieldDefinition.metadata.relationObjectMetadataId,
     sourceObjectMetadataId,
     objectMetadataItems,
   });
@@ -70,6 +52,10 @@ export const RelationFromManyFieldDisplay = () => {
   }
 
   if (isDefined(junctionConfig)) {
+    if (!isUsableJunctionConfig(junctionConfig)) {
+      return null;
+    }
+
     const { targetFields } = junctionConfig;
 
     if (targetFields.length === 0) {
@@ -114,47 +100,6 @@ export const RelationFromManyFieldDisplay = () => {
           />
         ))}
       </ExpandableList>
-    );
-  }
-
-  if (isDefined(reverseJunctionConfig)) {
-    const chips = fieldValue
-      .map((junctionRecord) => {
-        const relatedRecord =
-          junctionRecord?.[reverseJunctionConfig.relationFieldName];
-
-        if (!isDefined(junctionRecord) || !isDefined(relatedRecord)) {
-          return undefined;
-        }
-
-        return (
-          <RecordChip
-            key={junctionRecord.id}
-            objectNameSingular={
-              reverseJunctionConfig.relatedObjectMetadata.nameSingular
-            }
-            record={relatedRecord}
-            forceDisableClick={disableChipClick}
-          />
-        );
-      })
-      .filter(isDefined);
-
-    if (isFocused) {
-      return (
-        <ExpandableList
-          isChipCountDisplayed
-          maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
-        >
-          {chips}
-        </ExpandableList>
-      );
-    }
-
-    return (
-      <StyledContainer>
-        {chips.slice(0, MAX_RELATION_CHIPS_DISPLAYED_INLINE)}
-      </StyledContainer>
     );
   }
 

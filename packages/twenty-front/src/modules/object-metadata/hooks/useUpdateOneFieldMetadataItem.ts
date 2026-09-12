@@ -44,6 +44,7 @@ export const useUpdateOneFieldMetadataItem = () => {
       | 'icon'
       | 'isActive'
       | 'isUnique'
+      | 'isSearchable'
       | 'label'
       | 'name'
       | 'defaultValue'

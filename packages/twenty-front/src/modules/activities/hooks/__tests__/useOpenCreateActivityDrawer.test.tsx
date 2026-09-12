@@ -4,8 +4,6 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
-import { viewableRecordNameSingularState } from '@/object-record/record-side-panel/states/viewableRecordNameSingularState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
@@ -70,10 +68,6 @@ describe('useOpenCreateActivityDrawer', () => {
       isNewRecord: true,
     });
 
-    expect(jotaiStore.get(viewableRecordIdState.atom)).toBe(fakeNoteId);
-    expect(jotaiStore.get(viewableRecordNameSingularState.atom)).toBe(
-      CoreObjectNameSingular.Note,
-    );
     expect(jotaiStore.get(activityTargetableEntityArrayState.atom)).toEqual([]);
     expect(jotaiStore.get(isUpsertingActivityInDBState.atom)).toBe(false);
   });

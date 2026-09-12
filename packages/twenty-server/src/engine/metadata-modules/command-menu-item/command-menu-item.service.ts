@@ -18,7 +18,6 @@ import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/com
 import { type UpdateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/update-command-menu-item.input';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { interpolateNavigationCommandMenuItemField } from 'src/engine/metadata-modules/command-menu-item/utils/interpolate-navigation-command-menu-item-field.util';
-import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-create-command-menu-item-input-to-flat-command-menu-item-to-create.util';
 import { fromDeleteCommandMenuItemInputToFlatCommandMenuItemOrThrow } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-delete-command-menu-item-input-to-flat-command-menu-item-or-throw.util';
@@ -433,13 +432,13 @@ export class CommandMenuItemService {
   }): Promise<ObjectMetadataDTO | null> {
     if (
       commandMenuItem.engineComponentKey !== EngineComponentKey.NAVIGATION ||
-      !isObjectMetadataCommandMenuItemPayload(commandMenuItem.payload)
+      !isDefined(commandMenuItem.navigationTargetObjectMetadataId)
     ) {
       return null;
     }
 
     return objectMetadataLoader.load({
-      objectMetadataId: commandMenuItem.payload.objectMetadataItemId,
+      objectMetadataId: commandMenuItem.navigationTargetObjectMetadataId,
       workspaceId,
     });
   }

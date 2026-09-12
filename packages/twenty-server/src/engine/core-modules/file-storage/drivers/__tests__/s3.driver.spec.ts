@@ -1,9 +1,16 @@
-import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import {
+  GetObjectCommand,
+  HeadObjectCommand,
+  PutObjectCommand,
+  S3,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 import { Readable } from 'stream';
 
+import { FILE_STORAGE_S3_METADATA_MAX_ATTEMPTS } from 'src/engine/core-modules/file-storage/constants/s3-client-timeouts.constant';
 import { S3Driver } from 'src/engine/core-modules/file-storage/drivers/s3.driver';
+import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 const mockS3Send = jest.fn();
 
@@ -49,6 +56,104 @@ describe('S3Driver.readFile', () => {
           Key: 'recordings/video.mp4',
           Range: 'bytes=100-199',
         }),
+      }),
+    );
+  });
+});
+
+describe('S3Driver.readFilePrefix', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should request only the leading byte range and buffer it', async () => {
+    mockS3Send.mockResolvedValue({
+      Body: {
+        transformToByteArray: jest
+          .fn()
+          .mockResolvedValue(new Uint8Array(Buffer.from('prefix'))),
+      },
+    });
+
+    const driver = new S3Driver({
+      bucketName: 'test-bucket',
+      region: 'us-east-1',
+    });
+
+    const prefix = await driver.readFilePrefix({
+      filePath: 'attachments/file.pdf',
+      byteCount: 64,
+    });
+
+    expect(prefix).toEqual(Buffer.from('prefix'));
+    expect(mockS3Send).toHaveBeenCalledTimes(1);
+    expect(mockS3Send.mock.calls[0][0]).toBeInstanceOf(GetObjectCommand);
+    expect(mockS3Send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        input: expect.objectContaining({
+          Bucket: 'test-bucket',
+          Key: 'attachments/file.pdf',
+          Range: 'bytes=0-63',
+        }),
+      }),
+    );
+  });
+
+  it('should return an empty buffer when the object is empty', async () => {
+    mockS3Send.mockRejectedValue(
+      Object.assign(new Error('The requested range is not satisfiable'), {
+        name: 'InvalidRange',
+      }),
+    );
+
+    const driver = new S3Driver({
+      bucketName: 'test-bucket',
+      region: 'us-east-1',
+    });
+
+    await expect(
+      driver.readFilePrefix({ filePath: 'attachments/empty', byteCount: 64 }),
+    ).resolves.toEqual(Buffer.alloc(0));
+  });
+
+  it('should map a missing key to FILE_NOT_FOUND', async () => {
+    mockS3Send.mockRejectedValue(
+      Object.assign(new Error('missing'), { name: 'NoSuchKey' }),
+    );
+
+    const driver = new S3Driver({
+      bucketName: 'test-bucket',
+      region: 'us-east-1',
+    });
+
+    await expect(
+      driver.readFilePrefix({ filePath: 'attachments/missing', byteCount: 64 }),
+    ).rejects.toMatchObject({ code: FileStorageExceptionCode.FILE_NOT_FOUND });
+  });
+});
+
+describe('S3Driver.getFileMetadata', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should issue HeadObject through a client with a capped attempt count', async () => {
+    mockS3Send.mockResolvedValue({ ContentLength: 42 });
+
+    const driver = new S3Driver({
+      bucketName: 'test-bucket',
+      region: 'us-east-1',
+    });
+
+    await expect(
+      driver.getFileMetadata({ filePath: 'attachments/file.pdf' }),
+    ).resolves.toEqual({ size: 42 });
+
+    expect(mockS3Send.mock.calls[0][0]).toBeInstanceOf(HeadObjectCommand);
+    expect(S3).toHaveBeenCalledWith(
+      expect.objectContaining({
+        maxAttempts: FILE_STORAGE_S3_METADATA_MAX_ATTEMPTS,
+        responseChecksumValidation: 'WHEN_REQUIRED',
       }),
     );
   });

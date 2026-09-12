@@ -116,6 +116,12 @@ export const TAB_PROPS = {
     icon: 'IconNotes',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   },
+  members: {
+    title: 'Members',
+    position: 15,
+    icon: 'IconUsers',
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+  },
   flow: {
     title: 'Flow',
     position: 10,

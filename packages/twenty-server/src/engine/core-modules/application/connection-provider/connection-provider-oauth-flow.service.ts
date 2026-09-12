@@ -304,6 +304,7 @@ export class ConnectionProviderOAuthFlowService {
       scopes: tokenResponse.scopes ?? provider.oauthConfig.scopes,
       lastCredentialsRefreshedAt: new Date(),
       authFailedAt: null,
+      authFailedReason: null,
       visibility,
       handle,
     };

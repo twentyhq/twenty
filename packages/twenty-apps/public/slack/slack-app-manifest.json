@@ -15,22 +15,30 @@
     },
     "agent_view": {
       "agent_description": "Ask about your CRM: look up people, companies and opportunities, create and update records, and capture notes and tasks."
+    },
+    "unfurl_domains": ["<your-twenty-front-host>"],
+    "rich_previews": {
+      "is_active": true,
+      "entity_types": ["slack#/entities/item", "slack#/entities/task"]
     }
   },
   "oauth_config": {
-    "redirect_urls": ["<YOUR_TWENTY_SERVER_URL>/auth/apps/callback"],
+    "redirect_urls": ["https://<your-twenty-host>/auth/apps/callback"],
     "scopes": {
       "bot": [
         "channels:read",
         "chat:write",
         "chat:write.public",
         "groups:read",
+        "im:write",
         "reactions:write",
         "app_mentions:read",
         "channels:history",
         "groups:history",
         "im:history",
         "im:read",
+        "links:read",
+        "links:write",
         "users:read",
         "users:read.email",
         "assistant:write"
@@ -40,14 +48,16 @@
   "settings": {
     "interactivity": {
       "is_enabled": true,
-      "request_url": "<YOUR_TWENTY_SERVER_URL>/webhooks/server/fd756b00-50a2-4816-a919-a1a959a2ed9a"
+      "request_url": "https://<your-twenty-host>/webhooks/server/fd756b00-50a2-4816-a919-a1a959a2ed9a"
     },
     "event_subscriptions": {
-      "request_url": "<YOUR_TWENTY_SERVER_URL>/webhooks/server/9ad6fa20-dff5-4d3f-ad5f-084f3c8b0b09",
+      "request_url": "https://<your-twenty-host>/webhooks/server/9ad6fa20-dff5-4d3f-ad5f-084f3c8b0b09",
       "bot_events": [
         "app_home_opened",
         "app_mention",
         "app_uninstalled",
+        "entity_details_requested",
+        "link_shared",
         "member_joined_channel",
         "message.channels",
         "message.groups",

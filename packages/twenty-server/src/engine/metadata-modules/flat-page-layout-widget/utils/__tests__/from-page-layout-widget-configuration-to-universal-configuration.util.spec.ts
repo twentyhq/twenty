@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/types';
 
 import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
+import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
 const RELATION_FIELD_ID = '11111111-1111-4111-8111-000000000001';
@@ -109,5 +110,42 @@ describe('fromPageLayoutWidgetConfigurationToUniversalConfiguration', () => {
     expect(
       recordFilters?.[0].relationTargetFieldMetadataUniversalIdentifier,
     ).toBeNull();
+  });
+
+  it('should preserve disabled widget content editing on field configurations', () => {
+    const fieldMetadataId = '3e20d40a-0e85-44c1-8fa8-f802e8a1edce';
+    const fieldMetadataUniversalIdentifier =
+      'eb7b0329-4069-4de3-8f7c-6e6e3451e4f0';
+
+    expect(
+      fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+        configuration: {
+          configurationType: WidgetConfigurationType.FIELD,
+          fieldMetadataId,
+          fieldDisplayMode: FieldDisplayMode.TABLE,
+          isUIEditable: false,
+        },
+        fieldMetadataUniversalIdentifierById: {
+          [fieldMetadataId]: fieldMetadataUniversalIdentifier,
+        },
+      }),
+    ).toMatchObject({
+      fieldMetadataId: fieldMetadataUniversalIdentifier,
+      isUIEditable: false,
+    });
+  });
+
+  it('should preserve disabled widget content editing on record table configurations', () => {
+    expect(
+      fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+        configuration: {
+          configurationType: WidgetConfigurationType.RECORD_TABLE,
+          isUIEditable: false,
+        },
+        fieldMetadataUniversalIdentifierById: {},
+      }),
+    ).toMatchObject({
+      isUIEditable: false,
+    });
   });
 });

@@ -72,6 +72,7 @@ import { Button } from 'twenty-ui/input';
 npx nx build twenty-ui                 # Build the library (dual ESM/CJS + types)
 npx nx storybook:serve:dev twenty-ui   # Run Storybook
 npx nx test twenty-ui                  # Run unit tests
+npx vitest run --root packages/twenty-ui --project unit <file>   # Run a single test file
 ```
 
 # License

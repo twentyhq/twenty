@@ -14820,13 +14820,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/colors@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@radix-ui/colors@npm:3.0.0"
-  checksum: 10c0/612c6bb4efe987f2d49aaca2f785687d08150da59a248328bc2b4e187ece4ef731c1dc5c6a9430fffcac4af9e65cf2f89ceb9806f8809940c9eb238b79d2cf2f
-  languageName: node
-  linkType: hard
-
 "@radix-ui/primitive@npm:1.1.4":
   version: 1.1.4
   resolution: "@radix-ui/primitive@npm:1.1.4"
@@ -18262,17 +18255,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@smithy/util-stream@npm:^4.5.10":
-  version: 4.6.3
-  resolution: "@smithy/util-stream@npm:4.6.3"
-  dependencies:
-    "@smithy/core": "npm:^3.24.3"
-    tslib: "npm:^2.6.2"
-  checksum: 10c0/7a0ab21330e6bc8a8ff85747c860fd917df4696735e19a858fa00550068af3f0b9705c429e46db56e8ec14b80f741f4efb64a178980d8f6312985920902c402d
-  languageName: node
-  linkType: hard
-
-"@smithy/util-stream@npm:^4.5.16":
+"@smithy/util-stream@npm:4.5.16, @smithy/util-stream@npm:^4.5.16":
   version: 4.5.16
   resolution: "@smithy/util-stream@npm:4.5.16"
   dependencies:
@@ -18285,6 +18268,16 @@ __metadata:
     "@smithy/util-utf8": "npm:^4.2.1"
     tslib: "npm:^2.6.2"
   checksum: 10c0/266fbed834b0d6d1daccaf89eb24cab93feb6d2ee904689ceaf5cd15c9e9170f4f46632ab5dc630bc09dd8a3465d7e72aeda43f4b4150f4eebf21f00027ed015
+  languageName: node
+  linkType: hard
+
+"@smithy/util-stream@npm:^4.5.10":
+  version: 4.6.3
+  resolution: "@smithy/util-stream@npm:4.6.3"
+  dependencies:
+    "@smithy/core": "npm:^3.24.3"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/7a0ab21330e6bc8a8ff85747c860fd917df4696735e19a858fa00550068af3f0b9705c429e46db56e8ec14b80f741f4efb64a178980d8f6312985920902c402d
   languageName: node
   linkType: hard
 
@@ -21107,15 +21100,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-grid-layout@npm:^1":
-  version: 1.3.5
-  resolution: "@types/react-grid-layout@npm:1.3.5"
-  dependencies:
-    "@types/react": "npm:*"
-  checksum: 10c0/abd2a1dda9625c753ff2571a10b69740b2fb9ed1d3141755d54d5814cc12a9701c7c5cd78e8797e945486b441303b82543be71043a32d6a988b57a14237f93c6
-  languageName: node
-  linkType: hard
-
 "@types/react-transition-group@npm:^4.4.12":
   version: 4.4.12
   resolution: "@types/react-transition-group@npm:4.4.12"
@@ -21125,7 +21109,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^19":
+"@types/react@npm:^19":
   version: 19.1.0
   resolution: "@types/react@npm:19.1.0"
   dependencies:
@@ -43803,7 +43787,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-draggable@npm:^4.0.3, react-draggable@npm:^4.4.6":
+"react-draggable@npm:^4.4.6":
   version: 4.5.0
   resolution: "react-draggable@npm:4.5.0"
   dependencies:
@@ -43813,6 +43797,19 @@ __metadata:
     react: ">= 16.3.0"
     react-dom: ">= 16.3.0"
   checksum: 10c0/6f7591fe450555218bf0d9e31984be02451bf3f678fb121f51ac0a0a645d01a1b5ea8248ef9afddcd24239028911fd88032194b9c00b30ad5ece76ea13397fc3
+  languageName: node
+  linkType: hard
+
+"react-draggable@npm:^4.5.0":
+  version: 4.7.1
+  resolution: "react-draggable@npm:4.7.1"
+  dependencies:
+    clsx: "npm:^2.1.1"
+    prop-types: "npm:^15.8.1"
+  peerDependencies:
+    react: ">= 16.3.0"
+    react-dom: ">= 16.3.0"
+  checksum: 10c0/1ab282a51794bb62b09b2b781805adfc9b86f2b92266b23b28de03a45c54d38d99d522395e0b592430451def488c54313880a036367818344bd087592f2a9a32
   languageName: node
   linkType: hard
 
@@ -43875,20 +43872,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-grid-layout@npm:^1.5.2":
-  version: 1.5.2
-  resolution: "react-grid-layout@npm:1.5.2"
+"react-grid-layout@npm:^2.2.4":
+  version: 2.2.4
+  resolution: "react-grid-layout@npm:2.2.4"
   dependencies:
     clsx: "npm:^2.1.1"
     fast-equals: "npm:^4.0.3"
     prop-types: "npm:^15.8.1"
     react-draggable: "npm:^4.4.6"
-    react-resizable: "npm:^3.0.5"
+    react-resizable: "npm:^3.1.3"
     resize-observer-polyfill: "npm:^1.5.1"
   peerDependencies:
     react: ">= 16.3.0"
     react-dom: ">= 16.3.0"
-  checksum: 10c0/b6605d1435fe116c3720d168100a5a08da924c6905686fe8a486c33b82abbde8ccacbb59e5c6243fa52f5e808ad393a7bdf0c09a3446ebf76efe43f29d9f13ee
+  checksum: 10c0/cde80a1fa5aaa40ac5b42a0c99c7bb07436e14c5e076b11c6a66810665ff9e23c78cc5583e2edcabec57629801af976bf34c3345a25b85662aea470eca40813b
   languageName: node
   linkType: hard
 
@@ -44166,15 +44163,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-resizable@npm:^3.0.5":
-  version: 3.0.5
-  resolution: "react-resizable@npm:3.0.5"
+"react-resizable@npm:^3.1.3":
+  version: 3.2.0
+  resolution: "react-resizable@npm:3.2.0"
   dependencies:
     prop-types: "npm:15.x"
-    react-draggable: "npm:^4.0.3"
+    react-draggable: "npm:^4.5.0"
   peerDependencies:
     react: ">= 16.3"
-  checksum: 10c0/cfe50aa6efb79e0aa09bd681a5beab2fcd1186737c4952eb4c3974ed9395d5d263ccd1130961d06b8f5e24c8f544dd2967b5c740ce68719962d1771de7bdb350
+    react-dom: ">= 16.3"
+  checksum: 10c0/b589bca0b1135dc4bf875f09dd677821bfe4b468e5c9ec7e37d91a06ca49281f3dec289d5aa41a7cc0f4603872610b0c5d1d077287c3fef73a5c9339d3216598
   languageName: node
   linkType: hard
 
@@ -49581,7 +49579,6 @@ __metadata:
     "@types/js-cookie": "npm:^3.0.3"
     "@types/json-logic-js": "npm:^2"
     "@types/marked": "npm:^6.0.0"
-    "@types/react-grid-layout": "npm:^1"
     "@types/uuid": "npm:^9.0.2"
     "@vitejs/plugin-react-swc": "npm:^4.3.1"
     "@vitest/coverage-istanbul": "npm:^4.1.0"
@@ -49646,7 +49643,7 @@ __metadata:
     react-dom: "npm:^19.2.0"
     react-dropzone: "npm:^14.2.3"
     react-error-boundary: "npm:^4.0.11"
-    react-grid-layout: "npm:^1.5.2"
+    react-grid-layout: "npm:^2.2.4"
     react-hook-form: "npm:^7.45.1"
     react-hotkeys-hook: "npm:^4.4.4"
     react-imask: "npm:^7.6.0"
@@ -49800,6 +49797,7 @@ __metadata:
     "@sentry/nestjs": "npm:^10.59.0"
     "@sentry/node": "npm:^10.59.0"
     "@sentry/profiling-node": "npm:^10.59.0"
+    "@smithy/util-stream": "npm:4.5.16"
     "@sniptt/guards": "npm:0.2.0"
     "@swc/cli": "npm:^0.8.1"
     "@swc/core": "npm:^1.15.11"
@@ -50013,7 +50011,6 @@ __metadata:
     "@fontsource/inter": "npm:^5.2.8"
     "@monaco-editor/react": "npm:^4.7.0"
     "@prettier/sync": "npm:^0.5.2"
-    "@radix-ui/colors": "npm:^3.0.0"
     "@size-limit/preset-small-lib": "npm:^12.1.0"
     "@sniptt/guards": "npm:^0.2.0"
     "@storybook-community/storybook-addon-cookie": "npm:^5.0.0"
@@ -50023,12 +50020,11 @@ __metadata:
     "@storybook/addon-vitest": "npm:^10.4.6"
     "@storybook/react-vite": "npm:^10.4.6"
     "@swc/core": "npm:^1.15.11"
-    "@swc/jest": "npm:^0.2.39"
     "@tabler/icons-react": "npm:^3.31.0"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.3.0"
-    "@types/jest": "npm:^30.0.0"
+    "@testing-library/user-event": "npm:^14.6.1"
     "@types/react": "npm:^19.2.0"
     "@types/react-dom": "npm:^19.2.0"
     "@vitejs/plugin-react-swc": "npm:^4.3.1"
@@ -50036,8 +50032,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     esbuild: "npm:^0.28.1"
     glob: "npm:^11.1.0"
-    jest: "npm:29.7.0"
-    jest-environment-jsdom: "npm:30.0.0-beta.3"
+    jsdom: "npm:^30.0.1"
     prettier: "npm:^3.1.1"
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
@@ -50048,7 +50043,6 @@ __metadata:
     size-limit: "npm:^12.1.0"
     slash: "npm:^5.1.0"
     storybook-addon-pseudo-states: "npm:^10.3.3"
-    ts-jest: "npm:^29.1.1"
     tsx: "npm:^4.19.3"
     type-fest: "npm:^4.10.1"
     typescript: "npm:^5.9.3"

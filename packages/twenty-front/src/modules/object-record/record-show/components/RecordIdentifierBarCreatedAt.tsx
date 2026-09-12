@@ -48,8 +48,8 @@ export const RecordIdentifierBarCreatedAt = ({
       </StyledCreatedAt>
       <AppTooltip
         anchorSelect={`#${createdAtElementId}`}
-        content={beautifyExactDateTime(recordCreatedAt)}
-        clickable
+        title={beautifyExactDateTime(recordCreatedAt)}
+        interactive
         noArrow
         place="left"
       />

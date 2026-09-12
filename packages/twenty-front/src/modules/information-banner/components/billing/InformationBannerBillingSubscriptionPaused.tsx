@@ -14,17 +14,17 @@ import {
 export const InformationBannerBillingSubscriptionPaused = () => {
   const { redirect } = useRedirect();
 
+  const { [PermissionFlagType.BILLING]: hasPermissionToUpdateBillingDetails } =
+    usePermissionFlagMap();
+
   const { data, loading, error } = useQuery(BillingPortalSessionDocument, {
     variables: {
       returnUrlPath: getSettingsPath(SettingsPath.Billing),
     },
+    skip: !hasPermissionToUpdateBillingDetails,
   });
 
   useSnackBarOnQueryError(error);
-
-  const {
-    [PermissionFlagType.WORKSPACE]: hasPermissionToUpdateBillingDetails,
-  } = usePermissionFlagMap();
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {

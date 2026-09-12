@@ -8,4 +8,5 @@ export const GOOGLE_PERMANENT_OAUTH_ERROR_CODES = new Set([
   'unsupported_grant_type',
   'invalid_scope',
   'admin_policy_enforced',
+  'policy_enforced',
 ]);

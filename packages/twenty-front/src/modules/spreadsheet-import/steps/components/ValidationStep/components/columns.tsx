@@ -127,7 +127,7 @@ export const generateColumns = (
                 <AppTooltip
                   anchorSelect={`#${formatSafeId(column.key)}`}
                   place="top"
-                  content={column.description}
+                  title={column.description}
                 />,
                 document.body,
               )}
@@ -223,7 +223,7 @@ export const generateColumns = (
                 <AppTooltip
                   anchorSelect={`#${formatSafeId(`${columnKey}-${row.__index}`)}`}
                   place="top"
-                  content={row.__errors?.[columnKey]?.message}
+                  title={row.__errors?.[columnKey]?.message}
                   delay={TooltipDelay.shortDelay}
                 />,
                 document.body,

@@ -59,6 +59,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       tracesSampleRate,
     }).filter((integration) => integration.name !== 'Modules'),
     integrations: [
+      Sentry.extraErrorDataIntegration(),
       Sentry.redisIntegration(),
       Sentry.httpIntegration(),
       Sentry.expressIntegration(),

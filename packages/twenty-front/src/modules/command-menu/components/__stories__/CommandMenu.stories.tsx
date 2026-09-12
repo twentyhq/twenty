@@ -17,12 +17,10 @@ import { mockedCommandMenuItems } from '~/testing/mock-data/generated/metadata/c
 import {
   mockCurrentWorkspace,
   mockedLimitedPermissionsUserData,
-  mockedUserData,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 import { sleep } from '~/utils/sleep';
 
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -34,13 +32,11 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
-import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { type SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -92,15 +88,7 @@ const meta: Meta<typeof SidePanelCommandMenuItemDisplayPage> = {
         currentWorkspaceMemberState.atom,
         mockedWorkspaceMemberData,
       );
-      jotaiStore.set(
-        currentUserWorkspaceState.atom,
-        mockedUserData.currentUserWorkspace,
-      );
       jotaiStore.set(isSidePanelOpenedState.atom, true);
-      jotaiStore.set(sidePanelPageInfoState.atom, {
-        title: 'Command Menu',
-        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
-      });
       jotaiStore.set(sidePanelNavigationStackState.atom, [
         {
           page: SidePanelPages.CommandMenuDisplay,
@@ -168,6 +156,9 @@ export const DefaultWithoutSearch: Story = {
 };
 
 export const LimitedPermissions: Story = {
+  parameters: {
+    currentUserWorkspace: mockedLimitedPermissionsUserData.currentUserWorkspace,
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expect(await canvas.findByText('Go to People')).toBeVisible();
@@ -178,16 +169,6 @@ export const LimitedPermissions: Story = {
     expect(await canvas.findByText('Go to Settings')).toBeVisible();
     expect(await canvas.findByText('Go to Notes')).toBeVisible();
   },
-  decorators: [
-    (Story) => {
-      jotaiStore.set(
-        currentUserWorkspaceState.atom,
-        mockedLimitedPermissionsUserData.currentUserWorkspace,
-      );
-
-      return <Story />;
-    },
-  ],
 };
 
 export const MatchingNavigate: Story = {
@@ -267,14 +248,6 @@ export const SubPageNavigation: Story = {
   },
   decorators: [
     (Story) => {
-      jotaiStore.set(
-        sidePanelPageState.atom,
-        SidePanelPages.NavigationMenuAddItem,
-      );
-      jotaiStore.set(sidePanelPageInfoState.atom, {
-        title: 'Add item',
-        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
-      });
       jotaiStore.set(sidePanelNavigationStackState.atom, [
         {
           page: SidePanelPages.NavigationMenuAddItem,

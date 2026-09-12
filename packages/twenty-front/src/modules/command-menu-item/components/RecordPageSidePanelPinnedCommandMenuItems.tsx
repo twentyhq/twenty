@@ -36,7 +36,6 @@ export const RecordPageSidePanelPinnedCommandMenuItems = () => {
 
   return (
     <CommandMenuContextProvider
-      isInSidePanel={true}
       displayType="button"
       containerType={CommandMenuItemContainerType.SidePanelFooter}
     >

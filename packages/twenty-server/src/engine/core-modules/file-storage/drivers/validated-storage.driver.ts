@@ -1,6 +1,7 @@
 import { type Readable } from 'stream';
 
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
 
 import { assertStoragePathIsSafe } from 'src/engine/core-modules/file-storage/utils/assert-storage-path-is-safe.util';
 import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
@@ -15,6 +16,15 @@ export class ValidatedStorageDriver implements StorageDriver {
     assertStoragePathIsSafe(params.filePath);
 
     return this.delegate.readFile(params);
+  }
+
+  async readFilePrefix(params: {
+    filePath: string;
+    byteCount: number;
+  }): Promise<Buffer> {
+    assertStoragePathIsSafe(params.filePath);
+
+    return this.delegate.readFilePrefix(params);
   }
 
   async writeFile(params: {
@@ -39,7 +49,7 @@ export class ValidatedStorageDriver implements StorageDriver {
 
   async getFileMetadata(params: {
     filePath: string;
-  }): Promise<{ size: number } | null> {
+  }): Promise<FileStorageMetadata | null> {
     assertStoragePathIsSafe(params.filePath);
 
     return this.delegate.getFileMetadata(params);
@@ -88,6 +98,7 @@ export class ValidatedStorageDriver implements StorageDriver {
   async move(params: {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
+    ifMatchChecksum?: string;
   }): Promise<void> {
     assertStoragePathIsSafe(params.from.folderPath);
     assertStoragePathIsSafe(params.to.folderPath);

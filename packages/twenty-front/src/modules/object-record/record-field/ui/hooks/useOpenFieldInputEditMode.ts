@@ -14,7 +14,8 @@ import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/t
 import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -62,10 +63,8 @@ export const useOpenFieldInputEditMode = () => {
         ({ nameSingular }) =>
           nameSingular === fieldDefinition.metadata.objectMetadataNameSingular,
       )?.id;
-      const fieldHasJunctionConfig =
-        isFieldRelationOneToMany(fieldDefinition) &&
-        isDefined(
-          getJunctionConfig({
+      const junctionConfig = isFieldRelationOneToMany(fieldDefinition)
+        ? resolveJunctionConfig({
             settings: fieldDefinition.metadata.settings,
             relationObjectMetadataId:
               fieldDefinition.metadata.relationObjectMetadataId,
@@ -73,8 +72,8 @@ export const useOpenFieldInputEditMode = () => {
               fieldDefinition.metadata.relationFieldMetadataId,
             sourceObjectMetadataId,
             objectMetadataItems,
-          }),
-        );
+          })
+        : null;
 
       if (isFieldFiles(fieldDefinition)) {
         const objectMetadataItem = objectMetadataItems.find(
@@ -107,12 +106,18 @@ export const useOpenFieldInputEditMode = () => {
         }
       }
 
-      if (isFieldRelationOneToMany(fieldDefinition) && fieldHasJunctionConfig) {
-        openJunctionRelationFieldInput({
-          fieldDefinition,
-          recordId,
-          prefix,
-        });
+      if (
+        isFieldRelationOneToMany(fieldDefinition) &&
+        isDefined(junctionConfig)
+      ) {
+        if (isUsableJunctionConfig(junctionConfig)) {
+          openJunctionRelationFieldInput({
+            fieldDefinition,
+            recordId,
+            prefix,
+          });
+        }
+
         return;
       }
 

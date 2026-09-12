@@ -84,8 +84,8 @@ export class DashboardDuplicationService {
           title: newDashboard.title,
           pageLayoutId: newDashboard.pageLayoutId,
           position: newDashboard.position,
-          createdAt: newDashboard.createdAt,
-          updatedAt: newDashboard.updatedAt,
+          createdAt: new Date(newDashboard.createdAt).toISOString(),
+          updatedAt: new Date(newDashboard.updatedAt).toISOString(),
         };
       } catch (error) {
         this.logger.error(

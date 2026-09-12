@@ -10,7 +10,7 @@ export class ObjectMetadataCommandMenuItemPayloadDTO {
   @IsNotEmpty()
   @Field(() => UUIDScalarType, {
     deprecationReason:
-      'Use CommandMenuItem.navigationTargetObjectMetadataId instead, which is the modelled relation. This variant is dual-written and kept for backward compatibility.',
+      'Never returned anymore: navigation targets moved to CommandMenuItem.navigationTargetObjectMetadataId. This variant only remains one release so frontends deployed after the server keep validating; it will be removed in the next release.',
   })
   objectMetadataItemId: string;
 }

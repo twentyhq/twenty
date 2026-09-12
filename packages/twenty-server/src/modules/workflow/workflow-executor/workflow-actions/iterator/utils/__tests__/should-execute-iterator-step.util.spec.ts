@@ -241,6 +241,30 @@ describe('shouldExecuteIteratorStep', () => {
       expect(result).toBe(true);
     });
 
+    it('should return true when a loop step failed and continues on failure, even without the iteration flag', () => {
+      const iteratorStep = createMockIteratorStep('iterator-1', [], ['step-1']);
+      const steps = [
+        createMockCodeStep('step-1', ['iterator-1'], {
+          continueOnFailure: true,
+        }),
+        iteratorStep,
+      ];
+      const stepInfos = {
+        'iterator-1': { status: StepStatus.RUNNING },
+        'step-1': { status: StepStatus.FAILED_SAFELY, error: 'some error' },
+      };
+
+      getAllStepIdsInLoop.mockReturnValue(['step-1']);
+
+      const result = shouldExecuteIteratorStep({
+        step: iteratorStep,
+        steps,
+        stepInfos,
+      });
+
+      expect(result).toBe(true);
+    });
+
     it('should return false if some of the steps targeting the iterator have failed', () => {
       const iteratorStep = createMockIteratorStep('iterator-1', [], ['step-1']);
       const steps = [
@@ -455,7 +479,7 @@ describe('shouldExecuteIteratorStep', () => {
           },
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
           outputSchema: {},
         },

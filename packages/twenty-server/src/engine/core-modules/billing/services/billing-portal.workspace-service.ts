@@ -203,8 +203,10 @@ export class BillingPortalWorkspaceService {
       );
     }
 
-    const setupIntent =
-      await this.stripeCustomerService.createSetupIntent(stripeCustomerId);
+    const setupIntent = await this.stripeCustomerService.createSetupIntent({
+      stripeCustomerId,
+      workspaceId: workspace.id,
+    });
 
     assertIsDefinedOrThrow(
       setupIntent.client_secret,
@@ -369,7 +371,7 @@ export class BillingPortalWorkspaceService {
     };
   }
 
-  async computeBillingPortalSessionURLOrThrow(
+  async computeBillingPortalSessionUrlOrThrow(
     workspace: WorkspaceEntity,
     returnUrlPath?: string,
     forPaymentMethodUpdate?: boolean,
@@ -415,7 +417,7 @@ export class BillingPortalWorkspaceService {
     return session.url;
   }
 
-  async computeBillingPortalSessionURLForPaymentMethodUpdate(
+  async computeBillingPortalSessionUrlForPaymentMethodUpdate(
     workspace: WorkspaceEntity,
     stripeCustomerId: string,
     returnUrlPath?: string,

@@ -23,4 +23,56 @@ describe('categorizeRelationFields', () => {
       boxedRelationFields: [],
     });
   });
+
+  it('does not expose an invalid configured junction as a regular relation', () => {
+    const taskMetadata = getMockObjectMetadataItemOrThrow('task');
+    const taskTargetsField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskMetadata,
+      fieldName: 'taskTargets',
+    });
+
+    if (!taskTargetsField.relation) {
+      throw new Error('Task targets relation not found');
+    }
+
+    const invalidTaskTargetsField = {
+      ...taskTargetsField,
+      settings: {
+        ...taskTargetsField.settings,
+        junctionTargetFieldId: taskTargetsField.relation.targetFieldMetadata.id,
+      },
+    };
+
+    expect(
+      categorizeRelationFields({
+        relationFields: [invalidTaskTargetsField],
+        objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+        objectPermissionsByObjectMetadataId: {},
+      }),
+    ).toEqual({
+      inlineRelationFields: [],
+      junctionRelationFields: [],
+      boxedRelationFields: [],
+    });
+  });
+
+  it('categorizes an editable inverse junction as an inline junction', () => {
+    const rocketMetadata = getMockObjectMetadataItemOrThrow('rocket');
+    const taskTargetsField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: rocketMetadata,
+      fieldName: 'taskTargets',
+    });
+
+    expect(
+      categorizeRelationFields({
+        relationFields: [taskTargetsField],
+        objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+        objectPermissionsByObjectMetadataId: {},
+      }),
+    ).toEqual({
+      inlineRelationFields: [taskTargetsField],
+      junctionRelationFields: [taskTargetsField],
+      boxedRelationFields: [],
+    });
+  });
 });

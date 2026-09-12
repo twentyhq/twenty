@@ -68,7 +68,7 @@ export class BillingSubscriptionItemResolver {
 
       return (
         !creditAvailability.hasAvailableCredits &&
-        creditAvailability.reason === 'no-credits'
+        creditAvailability.reason === 'NO_CREDITS'
       );
     } catch (error) {
       this.logger.warn(

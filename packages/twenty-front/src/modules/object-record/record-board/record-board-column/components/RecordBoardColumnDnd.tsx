@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 
+import { closestCenter } from '@dnd-kit/collision';
 import { RecordBoardAddGroupColumn } from '@/object-record/record-board/components/RecordBoardAddGroupColumn';
 import { RecordBoardColumnHeaderWrapper } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderWrapper';
 import { RECORD_BOARD_COLUMN_DROPPABLE_ID } from '@/object-record/record-board/record-board-column/dnd/constants/RecordBoardColumnDroppableId';
@@ -31,6 +32,7 @@ export const RecordBoardColumnDnd = () => {
             group={RECORD_BOARD_COLUMN_DROPPABLE_ID}
             fill
             restrictMovementTo="x"
+            collisionDetector={closestCenter}
           >
             <RecordGroupContext.Provider value={{ recordGroupId }}>
               <RecordBoardColumnHeaderWrapper

@@ -1,10 +1,10 @@
-import { type Layouts } from 'react-grid-layout';
+import { type ResponsiveLayouts } from 'react-grid-layout';
 
 export const updateLayoutItemConstraints = (
-  layouts: Layouts,
+  layouts: ResponsiveLayouts,
   layoutItemId: string,
   constraints: { minW: number; minH: number },
-): Layouts => ({
+): ResponsiveLayouts => ({
   desktop: layouts.desktop?.map((layoutItem) =>
     layoutItem.i === layoutItemId
       ? {

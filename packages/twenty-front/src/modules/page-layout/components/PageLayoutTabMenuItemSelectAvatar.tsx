@@ -80,7 +80,10 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
               Icon={IconPencil}
               size="small"
               accent="tertiary"
-              onClick={() => onEditClick?.(tab.id)}
+              onClick={(event) => {
+                event.stopPropagation();
+                onEditClick?.(tab.id);
+              }}
             />
           </div>
         )}

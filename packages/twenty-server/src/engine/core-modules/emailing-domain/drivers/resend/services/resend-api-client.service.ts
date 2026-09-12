@@ -23,6 +23,16 @@ export class ResendApiClientService {
     return this.requestJson<{ id: string }>('POST', '/emails', payload);
   }
 
+  async sendEmailBatch(
+    payloads: ResendSendEmailPayload[],
+  ): Promise<{ data: { id: string }[] }> {
+    return this.requestJson<{ data: { id: string }[] }>(
+      'POST',
+      '/emails/batch',
+      payloads,
+    );
+  }
+
   async createDomain(payload: {
     name: string;
     region?: string;

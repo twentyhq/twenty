@@ -25,6 +25,9 @@ const toISOStringMock = jest.fn(() => mockedDate);
 global.Date.prototype.toISOString = toISOStringMock;
 
 const { id, title, bodyV2, status, dueAt } = mockedTasks[0];
+const bodyV2WithoutTypename = isDefined(bodyV2)
+  ? { blocknote: bodyV2.blocknote, markdown: bodyV2.markdown }
+  : bodyV2;
 const mockedActivity = {
   id,
   title,
@@ -74,7 +77,10 @@ const mocks: MockedResponse[] = [
     request: {
       query: createOneTaskMutation,
       variables: {
-        input: mockedActivity,
+        input: {
+          ...mockedActivity,
+          bodyV2: bodyV2WithoutTypename,
+        },
       },
     },
     result: mockResult,

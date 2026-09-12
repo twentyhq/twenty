@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 
-import { copyToClipboard } from 'twenty-sdk/front-component';
+import { copyToClipboard, enqueueSnackbar } from 'twenty-sdk/front-component';
 
 import { COLORS, FONT } from 'src/modules/shared/front-components/palette';
 import { MarkdownContent } from './markdown-render';
@@ -52,8 +52,11 @@ const buildPrompt = (value: string): string =>
   ].join('\n');
 
 // The front-component runs in a Web Worker with no clipboard API; copyToClipboard is a host
-// action that copies on the main thread and shows its own confirmation snackbar.
-const copyPrompt = (value: string): Promise<void> => copyToClipboard(buildPrompt(value));
+// action that copies on the main thread, silently — the confirmation is ours to show.
+const copyPrompt = async (value: string): Promise<void> => {
+  await copyToClipboard(buildPrompt(value));
+  await enqueueSnackbar({ message: 'Prompt copied to clipboard', variant: 'success' });
+};
 
 const EDITOR_HEIGHT = 280;
 

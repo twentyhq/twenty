@@ -6,10 +6,9 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
-  CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH,
   CampaignEnvelopeBox,
+  CampaignEnvelopeRow,
 } from '@/activities/emails/components/CampaignEnvelopeBox';
-import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { RecordChip } from '@/object-record/components/RecordChip';
@@ -82,20 +81,14 @@ export const CampaignSentEnvelope = ({
 
   return (
     <CampaignEnvelopeBox width={width}>
-      <ComposerFieldRow
-        label={t`From`}
-        labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
-      >
+      <CampaignEnvelopeRow label={t`From`}>
         {isNonEmptyString(fromAddress) ? (
           <StyledValue>{fromAddress}</StyledValue>
         ) : (
           <StyledEmptyValue>{t`No sender`}</StyledEmptyValue>
         )}
-      </ComposerFieldRow>
-      <ComposerFieldRow
-        label={t`To`}
-        labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
-      >
+      </CampaignEnvelopeRow>
+      <CampaignEnvelopeRow label={t`To`}>
         {isDefined(list) ? (
           <RecordChip
             record={list}
@@ -108,12 +101,9 @@ export const CampaignSentEnvelope = ({
             <StyledEmptyValue>{t`Unavailable`}</StyledEmptyValue>
           )
         )}
-      </ComposerFieldRow>
+      </CampaignEnvelopeRow>
       {hasUnsubscribeTopic && (
-        <ComposerFieldRow
-          label={t`Unsubscribe topic`}
-          labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
-        >
+        <CampaignEnvelopeRow label={t`Unsubscribe topic`}>
           {isDefined(unsubscribeTopic) ? (
             <StyledValue>
               {unsubscribeTopic.name ?? t`Untitled topic`}
@@ -123,18 +113,15 @@ export const CampaignSentEnvelope = ({
               <StyledEmptyValue>{t`Unavailable`}</StyledEmptyValue>
             )
           )}
-        </ComposerFieldRow>
+        </CampaignEnvelopeRow>
       )}
-      <ComposerFieldRow
-        label={t`Subject`}
-        labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
-      >
+      <CampaignEnvelopeRow label={t`Subject`}>
         {isNonEmptyString(subject) ? (
           <StyledValue>{subject}</StyledValue>
         ) : (
           <StyledEmptyValue>{t`No subject`}</StyledEmptyValue>
         )}
-      </ComposerFieldRow>
+      </CampaignEnvelopeRow>
     </CampaignEnvelopeBox>
   );
 };

@@ -25,7 +25,10 @@ const query = `query FindOnePerson($objectRecordId: UUID!) {
     linkedinLink {
       primaryLinkUrl
       primaryLinkLabel
-      secondaryLinks
+      secondaryLinks {
+        label
+        url
+      }
       __typename
     }
     name {
@@ -38,7 +41,11 @@ const query = `query FindOnePerson($objectRecordId: UUID!) {
       primaryPhoneNumber
       primaryPhoneCountryCode
       primaryPhoneCallingCode
-      additionalPhones
+      additionalPhones {
+        number
+        callingCode
+        countryCode
+      }
       __typename
     }
     position

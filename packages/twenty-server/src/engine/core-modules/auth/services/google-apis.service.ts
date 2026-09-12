@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
@@ -8,6 +8,7 @@ import {
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
   type MessageChannelVisibility,
+  WebhookSubscriptionChannelType,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 import { EntityManager, Repository } from 'typeorm';
@@ -20,7 +21,7 @@ import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
-import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
+import { GoogleApiScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { GoogleApisServiceAvailabilityService } from 'src/engine/core-modules/auth/services/google-apis-service-availability.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
@@ -41,6 +42,11 @@ import {
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
+import { WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-creation-retry-limit.constant';
+import {
+  CreateWebhookSubscriptionJob,
+  type CreateWebhookSubscriptionJobData,
+} from 'src/modules/connected-account/webhook-subscription-manager/jobs/create-webhook-subscription.job';
 
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
@@ -52,12 +58,16 @@ import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class GoogleAPIsService {
+  private readonly logger = new Logger(GoogleAPIsService.name);
+
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.webhookQueue)
+    private readonly webhookQueueService: MessageQueueService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly accountsToReconnectService: AccountsToReconnectService,
     private readonly createMessageChannelService: CreateMessageChannelService,
@@ -66,7 +76,7 @@ export class GoogleAPIsService {
     private readonly createCalendarChannelService: CreateCalendarChannelService,
     private readonly createConnectedAccountService: CreateConnectedAccountService,
     private readonly updateConnectedAccountOnReconnectService: UpdateConnectedAccountOnReconnectService,
-    private readonly googleAPIScopesService: GoogleAPIScopesService,
+    private readonly googleApiScopesService: GoogleApiScopesService,
     private readonly googleApisServiceAvailabilityService: GoogleApisServiceAvailabilityService,
     private readonly onboardingRecentMessagesImportService: OnboardingRecentMessagesImportService,
     private readonly syncMessageFoldersService: SyncMessageFoldersService,
@@ -111,7 +121,7 @@ export class GoogleAPIsService {
     );
 
     const { scopes, isValid } =
-      await this.googleAPIScopesService.getScopesFromGoogleAccessTokenAndCheckIfExpectedScopesArePresent(
+      await this.googleApiScopesService.getScopesFromGoogleAccessTokenAndCheckIfExpectedScopesArePresent(
         input.accessToken,
       );
 
@@ -340,6 +350,12 @@ export class GoogleAPIsService {
                 MessagingMessageListFetchJob.name,
                 { workspaceId, messageChannelId: messageChannel.id },
               );
+              await this.enqueueWebhookSubscriptionCreation({
+                channelType: WebhookSubscriptionChannelType.MESSAGING,
+                channelId: messageChannel.id,
+                isSyncEnabled: messageChannel.isSyncEnabled,
+                workspaceId,
+              });
               this.onboardingRecentMessagesImportService
                 .importRecentMessages({
                   messageChannelId: messageChannel.id,
@@ -380,6 +396,12 @@ export class GoogleAPIsService {
                 CalendarEventListFetchJob.name,
                 { workspaceId, calendarChannelId: calendarChannel.id },
               );
+              await this.enqueueWebhookSubscriptionCreation({
+                channelType: WebhookSubscriptionChannelType.CALENDAR,
+                channelId: calendarChannel.id,
+                isSyncEnabled: calendarChannel.isSyncEnabled,
+                workspaceId,
+              });
             }
           }
         }
@@ -387,5 +409,39 @@ export class GoogleAPIsService {
 
       return newOrExistingConnectedAccountId;
     }, authContext);
+  }
+
+  private async enqueueWebhookSubscriptionCreation({
+    channelType,
+    channelId,
+    isSyncEnabled,
+    workspaceId,
+  }: {
+    channelType: WebhookSubscriptionChannelType;
+    channelId: string;
+    isSyncEnabled: boolean;
+    workspaceId: string;
+  }): Promise<void> {
+    if (
+      !isSyncEnabled ||
+      !this.twentyConfigService.get(
+        'IS_CONNECTED_ACCOUNT_WEBHOOK_SUBSCRIPTION_ENABLED',
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await this.webhookQueueService.add<CreateWebhookSubscriptionJobData>(
+        CreateWebhookSubscriptionJob.name,
+        { channelType, channelId, workspaceId },
+        { retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT },
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to enqueue webhook subscription job for ${channelType} channel ${channelId}`,
+        error,
+      );
+    }
   }
 }

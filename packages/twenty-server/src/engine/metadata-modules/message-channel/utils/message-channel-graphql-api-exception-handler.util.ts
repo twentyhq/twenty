@@ -47,7 +47,10 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
         throw new ForbiddenError(error);
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_FOUND:
         throw new NotFoundError(error);
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS:
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE:
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE:
+      case EmailingDomainExceptionCode.EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY:
       case EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED:
         throw new UserInputError(error);
       default: {

@@ -16,11 +16,11 @@ const isSupportedLocale = (locale: string): locale is AppLocale =>
 
 export const compileApplicationTranslations = async (
   appPath: string,
-): Promise<TranslationsManifest> => {
+): Promise<TranslationsManifest | undefined> => {
   const localesDir = path.join(appPath, LOCALES_DIR);
 
   if (!(await pathExists(localesDir))) {
-    return {};
+    return undefined;
   }
 
   const localeFiles = (await readdir(localesDir)).filter((entry) =>

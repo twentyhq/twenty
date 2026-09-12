@@ -8,7 +8,6 @@ import {
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
 import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-reserved-system-flat-field-metadatas-for-custom-object.util';
-import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 @Injectable()
 export class ObjectSystemFieldsOnCreateSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -21,10 +20,8 @@ export class ObjectSystemFieldsOnCreateSideEffectHandlerService extends Metadata
   },
 ) {
   buildSideEffects({
-    flatEntity: flatObjectMetadata,
+    flatEntity: sourceFlatObjectMetadata,
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
-    const sourceFlatObjectMetadata =
-      flatObjectMetadata as UniversalFlatObjectMetadata;
     const { applicationUniversalIdentifier, universalIdentifier } =
       sourceFlatObjectMetadata;
 

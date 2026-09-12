@@ -5,9 +5,13 @@ import {
   type WorkflowLayoutNode,
 } from '@/workflow/layout/utils/compute-workflow-layout.util';
 
-const buildNode = (id: string): WorkflowLayoutNode => ({
+const buildNode = (
+  id: string,
+  dimensions: Partial<Omit<WorkflowLayoutNode, 'id'>> = {},
+): WorkflowLayoutNode => ({
   id,
   ...WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
+  ...dimensions,
 });
 
 const doNodesOverlap = (
@@ -37,6 +41,20 @@ describe('computeWorkflowLayout', () => {
     ]);
   });
 
+  it('should position a node on its center rather than its top left corner', () => {
+    const { width, height } = WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS;
+
+    const positions = computeWorkflowLayout({
+      nodes: [buildNode('trigger')],
+      edges: [],
+    });
+
+    expect(positions[0].centerPosition).toEqual({
+      x: width / 2,
+      y: height / 2,
+    });
+  });
+
   it('should stack a linear chain vertically without overlap (rankdir TB)', () => {
     const nodes = [buildNode('trigger'), buildNode('a'), buildNode('b')];
     const edges: WorkflowLayoutEdge[] = [
@@ -47,7 +65,7 @@ describe('computeWorkflowLayout', () => {
     const positionById = new Map(
       computeWorkflowLayout({ nodes, edges }).map((position) => [
         position.id,
-        position.position,
+        position.centerPosition,
       ]),
     );
 
@@ -75,7 +93,7 @@ describe('computeWorkflowLayout', () => {
     const positionById = new Map(
       computeWorkflowLayout({ nodes, edges }).map((position) => [
         position.id,
-        position.position,
+        position.centerPosition,
       ]),
     );
 
@@ -84,6 +102,33 @@ describe('computeWorkflowLayout', () => {
 
     expect(branchA.x).not.toEqual(branchB.x);
     expect(doNodesOverlap(branchA, branchB)).toBe(false);
+  });
+
+  it('should spread if-else branches symmetrically around their parent whatever their width', () => {
+    const nodes = [
+      buildNode('trigger'),
+      buildNode('ifElse'),
+      buildNode('branchA', { width: 44 }),
+      buildNode('branchB', { width: 240 }),
+    ];
+    const edges: WorkflowLayoutEdge[] = [
+      { source: 'trigger', target: 'ifElse' },
+      { source: 'ifElse', target: 'branchA' },
+      { source: 'ifElse', target: 'branchB' },
+    ];
+
+    const positionById = new Map(
+      computeWorkflowLayout({ nodes, edges }).map((position) => [
+        position.id,
+        position.centerPosition,
+      ]),
+    );
+
+    const ifElse = positionById.get('ifElse')!;
+    const branchA = positionById.get('branchA')!;
+    const branchB = positionById.get('branchB')!;
+
+    expect(branchA.x + branchB.x).toEqual(ifElse.x * 2);
   });
 
   it('should ignore edges pointing to unknown nodes', () => {

@@ -1,1 +1,1 @@
-export const LIMIT_KINDS = ['speed'] as const;
+export const LIMIT_KINDS = ['speed', 'quota'] as const;

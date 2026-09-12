@@ -140,6 +140,7 @@ const handleRecallStatusEvent = async ({
   ) {
     await enqueueCallRecordingArtifactsImport({
       callRecordingId: callRecording.id,
+      scopes: ['transcript', 'media'],
     });
   }
 
@@ -177,6 +178,7 @@ const queueCallRecordingArtifactsImport = async ({
 
   await enqueueCallRecordingArtifactsImport({
     callRecordingId: callRecording.id,
+    scopes: ['transcript'],
   });
 
   return {

@@ -16,11 +16,11 @@ export const useOpenPageLayoutTabSettings = (
 
   const openTabSettings = useCallback(
     (tabId: string) => {
-      setPageLayoutTabSettingsOpenTabId(tabId);
       navigatePageLayoutSidePanel({
         sidePanelPage: SidePanelPages.PageLayoutTabSettings,
         resetNavigationStack: true,
       });
+      setPageLayoutTabSettingsOpenTabId(tabId);
     },
     [setPageLayoutTabSettingsOpenTabId, navigatePageLayoutSidePanel],
   );

@@ -1,4 +1,3 @@
-import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
@@ -19,8 +18,8 @@ import { FieldWidgetRelationEditAction } from '@/page-layout/widgets/field/compo
 import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks/useFieldWidgetFieldDefinition';
 import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 type WidgetActionFieldEditProps = {
@@ -31,14 +30,12 @@ export const WidgetActionFieldEdit = ({
   widget,
 }: WidgetActionFieldEditProps) => {
   const targetRecord = useTargetRecord();
-  const { isInSidePanel } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const { objectMetadataItem, fieldMetadataItem, fieldDefinition } =
     useFieldWidgetFieldDefinition(widget);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const getIsMetadataItemFromStandardApplication =
-    useGetIsMetadataItemFromStandardApplication();
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -92,17 +89,11 @@ export const WidgetActionFieldEdit = ({
     isDisplayModeFixHeight: false,
     isRecordFieldReadOnly: isRecordFieldReadOnly({
       isRecordReadOnly,
-      isSystemObject: objectMetadataItem.isSystem,
       objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
         objectPermissionsByObjectMetadataId,
         objectMetadataId: objectMetadataItem.id,
       }),
-      isFieldFromStandardApplication:
-        getIsMetadataItemFromStandardApplication(fieldMetadataItem),
-      fieldMetadataItem: {
-        id: fieldMetadataItem.id,
-        isUIEditable: fieldMetadataItem.isUIEditable ?? true,
-      },
+      fieldMetadataItem,
       fieldDefinition,
       objectPermissionsByObjectMetadataId,
     }),

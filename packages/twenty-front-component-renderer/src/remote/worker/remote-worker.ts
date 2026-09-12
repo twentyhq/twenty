@@ -23,6 +23,7 @@ import { installMediaCapturePolyfills } from '@/polyfills/media/utils/installMed
 import { frontComponentStorageBridges } from '@/polyfills/storage/states/frontComponentStorageBridges';
 import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBridge';
+import { installWindowAliasesPolyfill } from '@/polyfills/window-aliases/utils/installWindowAliasesPolyfill';
 import { exposeGlobals } from '@/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/elements/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemoteElementAttributes';
@@ -60,6 +61,10 @@ installElementGeometryPolyfill({
 installWindowGeometryPolyfill({
   globalScope: toGlobalScopeRecord(globalThis),
   geometryStore: workerGeometryStore,
+});
+
+installWindowAliasesPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
 });
 
 installStorageBridge({

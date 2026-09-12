@@ -1,5 +1,5 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
+import { SettingsRoleRouteGuard } from '@/settings/roles/components/SettingsRoleRouteGuard';
 import { SettingsRolePermissionsObjectLevelObjectPicker } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -81,8 +81,7 @@ export const SettingsRoleAddObjectLevel = () => {
       : (settingsDraftRole.label ?? '');
 
   return (
-    <>
-      <SettingsRolesQueryEffect />
+    <SettingsRoleRouteGuard roleId={roleId}>
       <SettingsPageLayout
         title={headerTitle}
         titleColor={themeCssVariables.font.color.tertiary}
@@ -93,6 +92,6 @@ export const SettingsRoleAddObjectLevel = () => {
           <SettingsRolePermissionsObjectLevelObjectPicker roleId={roleId} />
         </SettingsPageContainer>
       </SettingsPageLayout>
-    </>
+    </SettingsRoleRouteGuard>
   );
 };

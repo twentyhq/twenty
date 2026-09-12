@@ -119,7 +119,7 @@ const SettingsMcpSetupCardAction = ({
         {isDefined(card.disabledTooltip) && isDefined(card.tooltipId) && (
           <AppTooltip
             anchorSelect={`[data-tooltip-id='${card.tooltipId}']`}
-            content={card.disabledTooltip}
+            title={card.disabledTooltip}
             delay={TooltipDelay.shortDelay}
             noArrow
             place="bottom"

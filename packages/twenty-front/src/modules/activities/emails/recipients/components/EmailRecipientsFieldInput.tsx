@@ -53,6 +53,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 const SUGGESTIONS_SEARCH_DEBOUNCE_MS = 300;
 
@@ -127,7 +128,9 @@ export const EmailRecipientsFieldInput = ({
 }: EmailRecipientsFieldInputProps) => {
   const instanceId = useId();
   const focusId = `email-recipients-field-${instanceId}`;
-  const suggestionsDropdownId = `${focusId}-suggestions`;
+  const suggestionsDropdownId = useWorkspaceSurfaceScopedComponentInstanceId(
+    `${focusId}-suggestions`,
+  );
 
   const inputRef = useRef<HTMLInputElement>(null);
 

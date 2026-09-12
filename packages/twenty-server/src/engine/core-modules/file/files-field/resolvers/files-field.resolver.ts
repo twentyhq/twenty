@@ -26,31 +26,6 @@ export class FilesFieldResolver {
 
   @Mutation(() => FileWithSignedUrlDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
-  async uploadFilesFieldFile(
-    @AuthWorkspace()
-    { id: workspaceId }: WorkspaceEntity,
-    @Args({ name: 'file', type: () => GraphQLUpload })
-    { createReadStream, filename }: FileUpload,
-    @Args({
-      name: 'fieldMetadataId',
-      type: () => String,
-      nullable: false,
-    })
-    fieldMetadataId: string,
-  ): Promise<FileWithSignedUrlDTO> {
-    const stream = createReadStream();
-    const buffer = await streamToBuffer(stream);
-
-    return await this.filesFieldService.uploadFile({
-      file: buffer,
-      filename,
-      workspaceId,
-      fieldMetadataId,
-    });
-  }
-
-  @Mutation(() => FileWithSignedUrlDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
   async uploadFilesFieldFileByUniversalIdentifier(
     @AuthWorkspace()
     { id: workspaceId }: WorkspaceEntity,

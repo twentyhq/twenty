@@ -3,11 +3,14 @@ import {
   CalendarEventImportDriverExceptionCode,
 } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 
-export const parseGoogleCalendarError = (error: {
-  code?: number;
-  reason: string;
-  message: string;
-}): CalendarEventImportDriverException => {
+export const parseGoogleCalendarError = (
+  error: {
+    code?: number;
+    reason: string;
+    message: string;
+  },
+  options?: { cause?: unknown },
+): CalendarEventImportDriverException => {
   const { code, reason, message } = error;
 
   if (code === 400) {
@@ -15,6 +18,7 @@ export const parseGoogleCalendarError = (error: {
       return new CalendarEventImportDriverException(
         message,
         CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        options,
       );
     }
 
@@ -22,6 +26,7 @@ export const parseGoogleCalendarError = (error: {
       return new CalendarEventImportDriverException(
         message,
         CalendarEventImportDriverExceptionCode.UNKNOWN,
+        options,
       );
     }
   }
@@ -34,6 +39,7 @@ export const parseGoogleCalendarError = (error: {
     return new CalendarEventImportDriverException(
       message,
       CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      options,
     );
   }
 
@@ -41,11 +47,13 @@ export const parseGoogleCalendarError = (error: {
     return new CalendarEventImportDriverException(
       message,
       CalendarEventImportDriverExceptionCode.NOT_FOUND,
+      options,
     );
   }
 
   return new CalendarEventImportDriverException(
     message,
     CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+    options,
   );
 };

@@ -1,0 +1,1 @@
+export const COMPLETE_FILE_UPLOAD_DEADLINE_MS = 60 * 1000;

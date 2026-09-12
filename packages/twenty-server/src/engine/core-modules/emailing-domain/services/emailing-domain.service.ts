@@ -16,6 +16,7 @@ import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
+import { DmarcRecordService } from 'src/engine/core-modules/emailing-domain/services/dmarc-record.service';
 import { UnsubscribeHostnameService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -34,7 +35,16 @@ export class EmailingDomainService {
     private readonly globalEmailingDomainRepository: Repository<EmailingDomainEntity>,
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
     private readonly unsubscribeHostnameService: UnsubscribeHostnameService,
+    private readonly dmarcRecordService: DmarcRecordService,
   ) {}
+
+  private async withDnsRecords(
+    emailingDomain: EmailingDomainEntity,
+  ): Promise<EmailingDomainEntity> {
+    return this.dmarcRecordService.withDnsRecord(
+      await this.unsubscribeHostnameService.withDnsRecords(emailingDomain),
+    );
+  }
 
   async createEmailingDomain(
     domain: string,
@@ -82,7 +92,7 @@ export class EmailingDomainService {
       provision: true,
     });
 
-    return this.unsubscribeHostnameService.withDnsRecords(
+    return this.withDnsRecords(
       await this.emailingDomainRepository.findOneOrFail(workspaceId, {
         where: { id: emailingDomain.id },
       }),
@@ -179,17 +189,20 @@ export class EmailingDomainService {
 
     return Promise.all(
       emailingDomains.map((emailingDomain) =>
-        this.unsubscribeHostnameService.withDnsRecords(emailingDomain),
+        this.withDnsRecords(emailingDomain),
       ),
     );
   }
 
-  async verifyEmailingDomain(
-    workspace: WorkspaceEntity,
-    emailingDomainId: string,
-  ): Promise<EmailingDomainEntity> {
+  async verifyEmailingDomain({
+    workspaceId,
+    emailingDomainId,
+  }: {
+    workspaceId: string;
+    emailingDomainId: string;
+  }): Promise<EmailingDomainEntity> {
     const emailingDomain = await this.findEmailingDomainByIdOrThrow(
-      workspace.id,
+      workspaceId,
       emailingDomainId,
     );
 
@@ -206,7 +219,7 @@ export class EmailingDomainService {
       verificationResult.status === EmailingDomainStatus.VERIFIED;
 
     await this.emailingDomainRepository.update(
-      workspace.id,
+      workspaceId,
       { id: emailingDomain.id },
       {
         status: verificationResult.status,
@@ -215,16 +228,12 @@ export class EmailingDomainService {
       },
     );
 
-    await this.unsubscribeHostnameService.sync(
-      workspace.id,
-      emailingDomain.id,
-      {
-        provision: true,
-      },
-    );
+    await this.unsubscribeHostnameService.sync(workspaceId, emailingDomain.id, {
+      provision: true,
+    });
 
-    return this.unsubscribeHostnameService.withDnsRecords(
-      await this.emailingDomainRepository.findOneOrFail(workspace.id, {
+    return this.withDnsRecords(
+      await this.emailingDomainRepository.findOneOrFail(workspaceId, {
         where: { id: emailingDomain.id },
       }),
     );

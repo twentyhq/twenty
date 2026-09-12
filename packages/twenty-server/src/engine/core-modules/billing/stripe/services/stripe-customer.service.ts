@@ -45,13 +45,18 @@ export class StripeCustomerService {
     return paymentMethods.length > 0;
   }
 
-  async createSetupIntent(
-    stripeCustomerId: string,
-  ): Promise<Stripe.SetupIntent> {
+  async createSetupIntent({
+    stripeCustomerId,
+    workspaceId,
+  }: {
+    stripeCustomerId: string;
+    workspaceId: string;
+  }): Promise<Stripe.SetupIntent> {
     return await this.stripe.setupIntents.create({
       customer: stripeCustomerId,
       usage: 'off_session',
       automatic_payment_methods: { enabled: true },
+      metadata: { workspaceId },
     });
   }
 
@@ -78,6 +83,18 @@ export class StripeCustomerService {
 
     await this.stripe.customers.update(stripeCustomerId, {
       invoice_settings: { default_payment_method: paymentMethodId },
+    });
+  }
+
+  async setDefaultPaymentMethod({
+    stripeCustomerId,
+    stripePaymentMethodId,
+  }: {
+    stripeCustomerId: string;
+    stripePaymentMethodId: string;
+  }): Promise<void> {
+    await this.stripe.customers.update(stripeCustomerId, {
+      invoice_settings: { default_payment_method: stripePaymentMethodId },
     });
   }
 

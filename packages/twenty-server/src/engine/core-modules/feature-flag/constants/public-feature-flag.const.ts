@@ -22,15 +22,6 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       icon: 'IconRelationManyToMany',
     },
   },
-  {
-    key: FeatureFlagKey.IS_LIST_VIEW_ENABLED,
-    metadata: {
-      label: 'List View',
-      description:
-        'Display records in a list layout with collapsible groups and inline fields',
-      icon: 'IconList',
-    },
-  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {

@@ -13,13 +13,18 @@ import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-do
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-content.type';
+import { type EmailingDomainBatchRecipient } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-batch-recipient.type';
+import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
+import { type EmailingDomainSendKind } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-kind.type';
 import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { formatMessageFromHeader } from 'src/modules/messaging/message-outbound-manager/utils/format-message-from-header.util';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { type CampaignBatchSendOutcome } from 'src/modules/emailing/types/campaign-batch-send-outcome.type';
 import { type DeliverableRecipients } from 'src/engine/core-modules/emailing-domain/types/deliverable-recipients.type';
+import { isSuppressionBlockingSend } from 'src/engine/core-modules/emailing-domain/utils/is-suppression-blocking-send.util';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -79,6 +84,128 @@ export class EmailingDomainSenderService {
     return this.emailingDomainDriverFactory
       .getCurrentDriver()
       .sendEmail(emailToSend);
+  }
+
+  async sendEmailBatch({
+    workspaceId,
+    emailingDomainId,
+    sendKind,
+    from,
+    template,
+    recipients,
+    unsubscribeTopicId,
+  }: {
+    workspaceId: string;
+    emailingDomainId: string;
+    sendKind: EmailingDomainSendKind;
+    from: string;
+    template: EmailingDomainEmailTemplate;
+    recipients: EmailingDomainBatchRecipient[];
+    unsubscribeTopicId?: string;
+  }): Promise<CampaignBatchSendOutcome> {
+    const emailingDomain = await this.findEmailingDomainByIdOrThrow(
+      workspaceId,
+      emailingDomainId,
+    );
+
+    this.assertDomainCanSend(emailingDomain, from);
+
+    // Resolved here, immediately before the handoff, and never taken from the
+    // caller: everything between choosing recipients and sending them is time
+    // in which one of them can unsubscribe.
+    const blockedAddresses = await this.findBlockedRecipientAddresses({
+      workspaceId,
+      sendKind,
+      emailAddresses: recipients.map((recipient) => recipient.email),
+      unsubscribeTopicId,
+    });
+
+    const deliverableRecipients: EmailingDomainBatchRecipient[] = [];
+    const deliverableRecipientIndexes: number[] = [];
+    const suppressedRecipientIndexes: number[] = [];
+
+    recipients.forEach((recipient, recipientIndex) => {
+      if (blockedAddresses.has(recipient.email.trim().toLowerCase())) {
+        suppressedRecipientIndexes.push(recipientIndex);
+
+        return;
+      }
+
+      deliverableRecipients.push(recipient);
+      deliverableRecipientIndexes.push(recipientIndex);
+    });
+
+    if (deliverableRecipients.length === 0) {
+      return { entries: [], suppressedRecipientIndexes };
+    }
+
+    const emailGroupChannel = await this.findEmailGroupChannel(
+      workspaceId,
+      from,
+    );
+
+    const { entries } = await this.emailingDomainDriverFactory
+      .getCurrentDriver()
+      .sendEmailBatch({
+        sendKind,
+        workspaceId,
+        domain: emailingDomain.domain,
+        emailingDomain,
+        from: formatMessageFromHeader({
+          fromEmail: from,
+          fromName: emailGroupChannel?.displayName,
+        }),
+        replyTo: isNonEmptyString(emailGroupChannel?.handle)
+          ? [emailGroupChannel.handle]
+          : undefined,
+        template,
+        recipients: deliverableRecipients,
+        unsubscribeTopicId,
+      });
+
+    return {
+      entries: entries.map((entry) => ({
+        recipientIndex: deliverableRecipientIndexes[entry.recipientIndex],
+        messageId: entry.messageId,
+        errorMessage: entry.errorMessage,
+      })),
+      suppressedRecipientIndexes,
+    };
+  }
+
+  // Exposed so a caller can tell who is deliverable before spending anything on
+  // their behalf. It is an estimate for that purpose only: sendEmailBatch
+  // resolves suppression again at the handoff, and that later answer is the one
+  // that decides who is mailed.
+  async findBlockedRecipientAddresses({
+    workspaceId,
+    sendKind,
+    emailAddresses,
+    unsubscribeTopicId,
+  }: {
+    workspaceId: string;
+    sendKind: EmailingDomainSendKind;
+    emailAddresses: string[];
+    unsubscribeTopicId?: string;
+  }): Promise<Set<string>> {
+    const suppressions =
+      await this.messageSuppressionService.findApplicableSuppressions({
+        workspaceId,
+        emailAddresses,
+        unsubscribeTopicId,
+      });
+
+    return new Set(
+      suppressions
+        .filter((suppression) =>
+          isSuppressionBlockingSend({
+            sendKind,
+            suppression,
+            unsubscribeTopicId,
+          }),
+        )
+        .map((suppression) => suppression.emailAddress),
+    );
   }
 
   private async findEmailGroupChannel(
@@ -168,26 +295,27 @@ export class EmailingDomainSenderService {
       ...(emailContent.bcc ?? []),
     ];
 
-    const suppressedAddresses =
-      await this.messageSuppressionService.getSuppressedAddresses(
+    const suppressions =
+      await this.messageSuppressionService.findApplicableSuppressions({
         workspaceId,
-        allRecipients,
-      );
+        emailAddresses: allRecipients,
+        unsubscribeTopicId: emailContent.unsubscribeTopicId,
+      });
 
-    const listUnsubscribedAddresses = await this.getListUnsubscribedAddresses(
-      workspaceId,
-      allRecipients,
-      emailContent.unsubscribeTopicId,
+    const blockedAddresses = new Set(
+      suppressions
+        .filter((suppression) =>
+          isSuppressionBlockingSend({
+            sendKind: emailContent.sendKind,
+            suppression,
+            unsubscribeTopicId: emailContent.unsubscribeTopicId,
+          }),
+        )
+        .map((suppression) => suppression.emailAddress),
     );
 
-    const isDeliverable = (address: string): boolean => {
-      const normalizedAddress = address.trim().toLowerCase();
-
-      return (
-        !suppressedAddresses.has(normalizedAddress) &&
-        !listUnsubscribedAddresses.has(normalizedAddress)
-      );
-    };
+    const isDeliverable = (address: string): boolean =>
+      !blockedAddresses.has(address.trim().toLowerCase());
 
     const to = emailContent.to.filter(isDeliverable);
 
@@ -203,21 +331,5 @@ export class EmailingDomainSenderService {
       cc: emailContent.cc?.filter(isDeliverable),
       bcc: emailContent.bcc?.filter(isDeliverable),
     };
-  }
-
-  private async getListUnsubscribedAddresses(
-    workspaceId: string,
-    recipients: string[],
-    unsubscribeTopicId: string | undefined,
-  ): Promise<Set<string>> {
-    if (!isNonEmptyString(unsubscribeTopicId)) {
-      return new Set();
-    }
-
-    return this.messageSuppressionService.getTopicSuppressedAddresses(
-      workspaceId,
-      recipients,
-      unsubscribeTopicId,
-    );
   }
 }

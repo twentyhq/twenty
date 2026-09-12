@@ -2,12 +2,12 @@ import { useLingui } from '@lingui/react/macro';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { SettingsWorkspaceUnsubscribeTopicSection } from '@/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection';
 import { SettingsUnsubscribePreview } from '@/settings/unsubscribers/components/SettingsUnsubscribePreview';
 import { SettingsUnsubscribersList } from '@/settings/unsubscribers/components/SettingsUnsubscribersList';
 import { SETTINGS_UNSUBSCRIBE_TAB_IDS } from '@/settings/unsubscribers/constants/SettingsUnsubscribeTabIds';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -63,12 +63,14 @@ export const SettingsWorkspaceUnsubscribe = () => {
         },
         { children: t`Unsubscribe` },
       ]}
-    >
-      <SettingsPageContainer>
-        <TabList
+      secondaryBar={
+        <SettingsTabBar
           tabs={tabs}
           componentInstanceId={UNSUBSCRIBE_TABS_INSTANCE_ID}
         />
+      }
+    >
+      <SettingsPageContainer>
         {activeTabId === SETTINGS_UNSUBSCRIBE_TAB_IDS.UNSUBSCRIBERS && (
           <SettingsUnsubscribersList />
         )}

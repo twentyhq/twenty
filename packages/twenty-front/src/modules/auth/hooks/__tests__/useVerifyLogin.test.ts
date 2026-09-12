@@ -1,5 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
@@ -8,7 +9,6 @@ import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
-import { tokenPairState } from '@/auth/states/tokenPairState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -42,17 +42,6 @@ const renderHooks = () => {
   return { result };
 };
 
-const staleTokenPair = {
-  accessOrWorkspaceAgnosticToken: {
-    token: 'stale-access-token',
-    expiresAt: '2020-01-01T00:00:00.000Z',
-  },
-  refreshToken: {
-    token: 'stale-refresh-token',
-    expiresAt: '2020-01-01T00:00:00.000Z',
-  },
-};
-
 describe('useVerifyLogin', () => {
   const mockGetAuthTokensFromLoginToken = jest.fn();
   const mockEnqueueErrorSnackBar = jest.fn();
@@ -82,21 +71,7 @@ describe('useVerifyLogin', () => {
     expect(mockGetAuthTokensFromLoginToken).toHaveBeenCalledWith('test-token');
   });
 
-  it('should clear the existing token pair before exchanging the login token', async () => {
-    jotaiStore.set(tokenPairState.atom, staleTokenPair);
-    const tokenPairsAtExchangeTime: unknown[] = [];
-    mockGetAuthTokensFromLoginToken.mockImplementation(() => {
-      tokenPairsAtExchangeTime.push(jotaiStore.get(tokenPairState.atom));
-    });
-
-    const { result } = renderHooks();
-
-    await result.current.verifyLoginToken('test-token');
-
-    expect(tokenPairsAtExchangeTime).toEqual([null]);
-  });
-
-  it('should handle verification error', async () => {
+  it('should handle a non-GraphQL verification error', async () => {
     const error = new Error('Verification failed');
     mockGetAuthTokensFromLoginToken.mockRejectedValueOnce(error);
 
@@ -106,6 +81,22 @@ describe('useVerifyLogin', () => {
 
     expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
       message: 'Authentication failed',
+    });
+    expect(mockNavigate).toHaveBeenCalledWith(AppPath.SignInUp);
+  });
+
+  it('should preserve a GraphQL verification error for the snackbar', async () => {
+    const error = new CombinedGraphQLErrors({
+      errors: [{ message: 'Session could not be created' }],
+    });
+    mockGetAuthTokensFromLoginToken.mockRejectedValueOnce(error);
+
+    const { result } = renderHooks();
+
+    await result.current.verifyLoginToken('test-token');
+
+    expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
+      apolloError: error,
     });
     expect(mockNavigate).toHaveBeenCalledWith(AppPath.SignInUp);
   });

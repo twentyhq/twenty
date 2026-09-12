@@ -1,6 +1,8 @@
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 
-import { ThemeProvider, type ThemeType } from '../ThemeProvider';
+import { ThemeProvider } from '../ThemeProvider';
+import { type ThemeType } from '../themeTypes';
 import { themeCssVariables } from '../themeCssVariables';
 import { useTheme } from '../useTheme';
 
@@ -91,7 +93,7 @@ describe('ThemeProvider token resolution', () => {
   };
 
   const mockResolvedTokens = (resolvedTokens: Record<string, string>) => {
-    jest.spyOn(window, 'getComputedStyle').mockReturnValue({
+    vi.spyOn(window, 'getComputedStyle').mockReturnValue({
       getPropertyValue: (property: string) => resolvedTokens[property] ?? '',
     } as CSSStyleDeclaration);
   };
@@ -108,7 +110,7 @@ describe('ThemeProvider token resolution', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should keep the CSS variable reference when no custom property resolves', () => {

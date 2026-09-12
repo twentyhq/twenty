@@ -6,8 +6,11 @@ import {
   getBillingUsageCacheService,
   getSeededBillingWorkspaceId,
   listCreditGrants,
+  quitBillingFixtureRedis,
+  readAllowanceCounter,
   resetBillingCreditState,
   setupResourceCreditSubscription,
+  warmAllowanceCounter,
 } from 'test/integration/billing/utils/billing-credit-fixtures.util';
 
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
@@ -89,6 +92,10 @@ describe('Admin credit grant and revoke (integration)', () => {
     await resetBillingCreditState(workspaceId);
   });
 
+  afterAll(async () => {
+    await quitBillingFixtureRedis();
+  });
+
   it('records a granted amount on the ledger and mirrors it', async () => {
     const response = await grantCredits({
       workspaceId,
@@ -110,7 +117,7 @@ describe('Admin credit grant and revoke (integration)', () => {
     });
   });
 
-  it('adds the granted amount to a warm usage counter', async () => {
+  it('adds the granted amount to a warm available-credits counter', async () => {
     const cache = getBillingUsageCacheService();
 
     await cache.warmAvailableCredits(
@@ -132,7 +139,7 @@ describe('Admin credit grant and revoke (integration)', () => {
     );
   });
 
-  it('takes a revoked grant back off the ledger and the counter', async () => {
+  it('takes a revoked grant back off the ledger and the available-credits counter', async () => {
     const cache = getBillingUsageCacheService();
 
     await cache.warmAvailableCredits(
@@ -166,6 +173,63 @@ describe('Admin credit grant and revoke (integration)', () => {
     expect(await cache.getAvailableCredits(workspaceId, PERIOD_START)).toBe(
       500_000,
     );
+  });
+
+  it.each([
+    BillingCreditGrantType.ROLLOVER,
+    BillingCreditGrantType.ONBOARDING_REWARD,
+  ])('refuses to grant a %s by hand', async (type) => {
+    const response = await grantCredits({
+      workspaceId,
+      amount: 1,
+      type,
+      reason: null,
+    });
+
+    expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
+      'BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE',
+    );
+    expect(await listCreditGrants(workspaceId)).toHaveLength(0);
+  });
+
+  it('drops the warm allowance counter when a grant lands', async () => {
+    await warmAllowanceCounter(workspaceId, PERIOD_START, 500_000);
+
+    await grantCredits({
+      workspaceId,
+      amount: 2,
+      type: BillingCreditGrantType.COMPENSATION,
+      reason: null,
+    });
+
+    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
+  });
+
+  it('takes a revoked grant off the ledger and drops the counter', async () => {
+    const granted = await grantCredits({
+      workspaceId,
+      amount: 2,
+      type: BillingCreditGrantType.COMPENSATION,
+      reason: null,
+    });
+    const creditGrantId = granted.body.data.grantWorkspaceCredits.id;
+
+    await warmAllowanceCounter(workspaceId, PERIOD_START, 500_000);
+
+    const revoked = await callAdminGraphql(REVOKE_MUTATION, {
+      workspaceId,
+      creditGrantId,
+    });
+
+    expect(revoked.body.errors).toBeUndefined();
+    expect(
+      revoked.body.data.revokeWorkspaceCreditGrant.revokedAt,
+    ).not.toBeNull();
+
+    const grants = await listCreditGrants(workspaceId);
+
+    expect(grants[0].revokedAt).not.toBeNull();
+    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
   });
 
   // The panel only offers the three operator types, but the mutation is

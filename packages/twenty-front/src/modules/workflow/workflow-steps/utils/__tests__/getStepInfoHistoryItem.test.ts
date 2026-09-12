@@ -13,7 +13,7 @@ describe('getStepInfoHistoryItem', () => {
       input: { initialLoopStepIds: ['step2'] },
       outputSchema: {},
       errorHandlingOptions: {
-        retryOnFailure: { value: false },
+        retryOnFailure: { value: 0 },
         continueOnFailure: { value: false },
       },
     },
@@ -32,7 +32,7 @@ describe('getStepInfoHistoryItem', () => {
       },
       outputSchema: {},
       errorHandlingOptions: {
-        retryOnFailure: { value: false },
+        retryOnFailure: { value: 0 },
         continueOnFailure: { value: false },
       },
     },
@@ -66,6 +66,35 @@ describe('getStepInfoHistoryItem', () => {
         iterationIndex: 1,
       })?.result,
     ).toBe('second');
+    expect(
+      getStepInfoHistoryItem({
+        stepInfo,
+        steps,
+        stepId: 'step2',
+        iterationIndex: 2,
+      })?.result,
+    ).toBe('final');
+  });
+
+  it('keeps iterations aligned when a descendant of iterator was retried', () => {
+    const stepInfo: WorkflowRunStepInfo = {
+      result: 'final',
+      status: StepStatus.SUCCESS,
+      history: [
+        { error: 'first attempt', status: StepStatus.FAILED, retryAttempt: 1 },
+        { result: 'first', status: StepStatus.SUCCESS },
+        { result: 'second', status: StepStatus.SUCCESS },
+      ],
+    };
+
+    expect(
+      getStepInfoHistoryItem({
+        stepInfo,
+        steps,
+        stepId: 'step2',
+        iterationIndex: 0,
+      })?.result,
+    ).toBe('first');
     expect(
       getStepInfoHistoryItem({
         stepInfo,

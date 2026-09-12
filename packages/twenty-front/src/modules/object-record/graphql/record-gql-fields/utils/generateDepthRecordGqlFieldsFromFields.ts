@@ -1,34 +1,13 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type GenerateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/types/GenerateDepthRecordGqlFieldsFromFields';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
-import { getReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import {
   computeMorphRelationGqlFieldName,
   isDefined,
 } from 'twenty-shared/utils';
-
-export type GenerateDepthRecordGqlFieldsFromFields = {
-  objectMetadataItems: Pick<
-    EnrichedObjectMetadataItem,
-    | 'id'
-    | 'fields'
-    | 'labelIdentifierFieldMetadataId'
-    | 'imageIdentifierFieldMetadataId'
-    | 'nameSingular'
-    | 'namePlural'
-  >[];
-  // Required to resolve the junction records held by the reverse side of a junction
-  sourceObjectMetadataItem?: Pick<EnrichedObjectMetadataItem, 'id'>;
-  fields: Pick<
-    FieldMetadataItem,
-    'id' | 'name' | 'type' | 'settings' | 'morphRelations' | 'relation'
-  >[];
-  depth: 0 | 1;
-  shouldOnlyLoadRelationIdentifiers?: boolean;
-};
 
 export const generateDepthRecordGqlFieldsFromFields = ({
   objectMetadataItems,
@@ -59,36 +38,28 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           );
         }
 
-        const reverseJunctionConfig = getReverseJunctionConfig({
-          junctionObjectMetadataId: targetObjectMetadataItem.id,
-          sourceObjectMetadataId: sourceObjectMetadataItem?.id,
+        const junctionConfig = resolveJunctionConfig({
+          settings: fieldMetadata.settings,
+          relationObjectMetadataId: targetObjectMetadataItem.id,
+          relationTargetFieldMetadataId:
+            fieldMetadata.relation?.targetFieldMetadata.id,
+          sourceObjectMetadataId:
+            sourceObjectMetadataItem?.id ??
+            fieldMetadata.relation?.sourceObjectMetadata.id,
           objectMetadataItems,
         });
 
-        if (isDefined(reverseJunctionConfig) && depth === 1) {
-          return {
-            ...recordGqlFields,
-            [fieldMetadata.name]: {
-              ...buildIdentifierGqlFields(
-                reverseJunctionConfig.junctionObjectMetadata,
-              ),
-              [reverseJunctionConfig.relationFieldName]:
-                buildIdentifierGqlFields(
-                  reverseJunctionConfig.relatedObjectMetadata,
-                ),
-            },
-          };
+        if (isDefined(junctionConfig) && !junctionConfig.isValid) {
+          return recordGqlFields;
         }
 
-        const junctionGqlFields = generateJunctionRelationGqlFields({
-          fieldMetadataItem: fieldMetadata,
-          objectMetadataItems,
-        });
-
-        if (isDefined(junctionGqlFields) && depth === 1) {
+        if (junctionConfig?.isValid === true && depth === 1) {
           return {
             ...recordGqlFields,
-            [fieldMetadata.name]: junctionGqlFields,
+            [fieldMetadata.name]: generateJunctionRelationGqlFields({
+              junctionConfig,
+              objectMetadataItems,
+            }),
           };
         }
 

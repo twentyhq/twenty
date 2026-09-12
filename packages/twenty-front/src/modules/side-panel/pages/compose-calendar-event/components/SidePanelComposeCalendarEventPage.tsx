@@ -48,7 +48,9 @@ export const SidePanelComposeCalendarEventPage = () => {
 
   const handleAddAccount = () => {
     closeSidePanelMenu();
-    navigateSettings(SettingsPath.NewAccount);
+    navigateSettings(SettingsPath.NewAccount, undefined, undefined, {
+      surface: 'main',
+    });
   };
 
   const handleReauthorize = async () => {

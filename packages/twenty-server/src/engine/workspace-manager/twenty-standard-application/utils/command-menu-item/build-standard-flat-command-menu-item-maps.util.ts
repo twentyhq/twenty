@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type FlatCommandMenuItemMaps } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item-maps.type';
-import { buildNavigationFlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
+import { buildObjectNavigationFlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-flat-command-menu-item.util';
 import { seedCompareObjectMetadataForNavigationPosition } from 'src/engine/metadata-modules/flat-command-menu-item/utils/seed-compare-object-metadata-for-navigation-position.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -69,7 +69,7 @@ export const buildStandardFlatCommandMenuItemMaps = ({
   for (const flatObject of activeObjects) {
     const position = nextPosition++;
 
-    const navigationItem = buildNavigationFlatCommandMenuItem({
+    const navigationItem = buildObjectNavigationFlatCommandMenuItem({
       objectMetadata: flatObject,
       commandMenuItemId: v4(),
       applicationId: twentyStandardApplicationId,

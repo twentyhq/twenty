@@ -150,19 +150,35 @@ export class CalendarEventsImportService {
               workspaceId,
             );
           }
-          const calendarChannelEventAssociationRepository =
-            this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-              'calendarChannelEventAssociation',
+          if (cancelledEventExternalIds.length > 0) {
+            const calendarChannelEventAssociationRepository =
+              this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+                'calendarChannelEventAssociation',
+              );
+
+            const associationsToDelete =
+              await calendarChannelEventAssociationRepository.find({
+                where: {
+                  eventExternalId: Any(cancelledEventExternalIds),
+                  calendarChannelId: calendarChannel.id,
+                },
+                select: { calendarEventId: true },
+              });
+
+            await calendarChannelEventAssociationRepository.delete({
+              eventExternalId: Any(cancelledEventExternalIds),
+              calendarChannelId: calendarChannel.id,
+            });
+
+            await this.calendarEventCleanerService.deleteOrphanedCalendarEvents(
+              {
+                calendarEventIds: associationsToDelete.map(
+                  ({ calendarEventId }) => calendarEventId,
+                ),
+                workspaceId,
+              },
             );
-
-          await calendarChannelEventAssociationRepository.delete({
-            eventExternalId: Any(cancelledEventExternalIds),
-            calendarChannelId: calendarChannel.id,
-          });
-
-          await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
-            workspaceId,
-          );
+          }
 
           if (eventIdsToFetch.length < CALENDAR_EVENT_IMPORT_BATCH_SIZE) {
             await this.calendarChannelSyncStatusService.markAsCalendarEventSyncCompleted(

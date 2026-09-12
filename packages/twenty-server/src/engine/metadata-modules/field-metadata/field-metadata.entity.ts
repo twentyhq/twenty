@@ -182,6 +182,8 @@ export class FieldMetadataEntity<
   // dropped by 1798300000000-drop-field-metadata-is-unique-column.ts.
   isUnique: boolean | null;
 
+  isSearchable: boolean;
+
   @Column({ default: false })
   isLabelSyncedWithName: boolean;
 

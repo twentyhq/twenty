@@ -7,6 +7,7 @@ import {
 } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import {
   SettingsTableCard,
   type TableItem,
@@ -73,13 +74,13 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
     },
   );
 
-  const { data: applicationSummaryData } = useQuery(
-    FindOneApplicationSummaryDocument,
-    {
+  const { data: applicationSummaryData, refetch: refetchApplicationSummary } =
+    useQuery(FindOneApplicationSummaryDocument, {
       variables: { universalIdentifier: registration.universalIdentifier },
       skip: !registration.universalIdentifier,
-    },
-  );
+    });
+
+  useRefetchOnApplicationOperation({ refetch: refetchApplicationSummary });
 
   const isApplicationInstalled = isDefined(
     applicationSummaryData?.findOneApplication,

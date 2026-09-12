@@ -36,8 +36,8 @@ import {
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 
 @Injectable()
-export class ImapSmtpCalDavAPIService {
-  private readonly logger = new Logger(ImapSmtpCalDavAPIService.name);
+export class ImapSmtpCalDavApiService {
+  private readonly logger = new Logger(ImapSmtpCalDavApiService.name);
 
   constructor(
     @InjectRepository(CalendarChannelEntity)
@@ -135,6 +135,7 @@ export class ImapSmtpCalDavAPIService {
           userWorkspaceId,
           workspaceId,
           authFailedAt: null,
+          authFailedReason: null,
           archivedAt: null,
         });
 

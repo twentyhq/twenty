@@ -1,5 +1,6 @@
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -113,7 +114,7 @@ export const WorkflowEditActionAiAgent = ({
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
-    componentInstanceId,
+    useWorkspaceSurfaceScopedComponentInstanceId(componentInstanceId),
   );
   const currentTabId =
     (activeTabId as WorkflowAiAgentTabId) ?? WORKFLOW_AI_AGENT_TABS.PROMPT;

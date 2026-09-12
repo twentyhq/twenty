@@ -55,7 +55,7 @@ export const SettingsDataModelFieldLinksVariantForm = ({
           <SettingsOptionCardContentSelect
             Icon={IconWorld}
             title={t`Link content`}
-            description={t`Domain links are stored as a bare domain name, so twenty.com and https://www.twenty.com are the same value`}
+            description={t`Store the full URL or just the domain`}
             disabled={disabled}
           >
             <Select<FieldLinksVariant>

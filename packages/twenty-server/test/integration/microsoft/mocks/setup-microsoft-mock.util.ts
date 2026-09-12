@@ -28,11 +28,12 @@ export type MicrosoftMock = {
   subscriptions: MicrosoftSubscriptionStore;
   createdMessages: Array<Record<string, unknown>>;
   patchedMessages: Array<Record<string, unknown>>;
+  createdAttachments: Array<Record<string, unknown>>;
   sentMessageIds: string[];
   createdCalendarEvents: Event[];
   serveCalendarEvents: (
     events: Event[],
-    options?: { deltaToken?: string },
+    options?: { deltaToken?: string; removedEventIds?: string[] },
   ) => void;
   failSubscriptionRenewal: () => void;
   failMessageDelta: (failure: MicrosoftGraphFailure) => void;
@@ -72,6 +73,7 @@ export const setupMicrosoftMock = ({
   const subscriptionStore = createMicrosoftSubscriptionStore();
   const createdMessages: Array<Record<string, unknown>> = [];
   const patchedMessages: Array<Record<string, unknown>> = [];
+  const createdAttachments: Array<Record<string, unknown>> = [];
   const sentMessageIds: string[] = [];
   const createdCalendarEvents: Event[] = [];
 
@@ -91,6 +93,22 @@ export const setupMicrosoftMock = ({
         conversationId: `microsoft-conversation-${createdMessages.length}`,
       });
     }),
+    http.post(
+      '*/me/messages/:messageId/attachments',
+      async ({ request, params }) => {
+        const attachment = (await request.json()) as Record<string, unknown>;
+
+        createdAttachments.push({
+          messageId: params.messageId as string,
+          ...attachment,
+        });
+
+        return HttpResponse.json({
+          id: `microsoft-attachment-${createdAttachments.length}`,
+          ...attachment,
+        });
+      },
+    ),
     http.post('*/me/messages/:messageId/send', ({ params }) => {
       sentMessageIds.push(params.messageId as string);
 
@@ -150,12 +168,16 @@ export const setupMicrosoftMock = ({
     subscriptions: subscriptionStore,
     createdMessages,
     patchedMessages,
+    createdAttachments,
     sentMessageIds,
     createdCalendarEvents,
     serveCalendarEvents: (
       events,
-      { deltaToken = 'mock-calendar-delta-token' } = {},
-    ) => httpMock.use(...microsoftCalendarEventsHandlers(events, deltaToken)),
+      { deltaToken = 'mock-calendar-delta-token', removedEventIds = [] } = {},
+    ) =>
+      httpMock.use(
+        ...microsoftCalendarEventsHandlers(events, deltaToken, removedEventIds),
+      ),
     failSubscriptionRenewal: () =>
       httpMock.use(
         ...microsoftWebhookSubscriptionHandlers(subscriptionStore, {

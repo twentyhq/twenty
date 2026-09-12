@@ -41,6 +41,7 @@ export default defineField({
 - `defineField()` is the only way to add fields to objects you didn't create with `defineObject()`.
 - File location is up to you. The convention is `src/fields/<name>.field.ts`, but the SDK detects fields anywhere in `src/`.
 - `writability` can also be set per field: `MetadataWritability.APPLICATION` restricts writes to your app's own logic functions, `MetadataWritability.SYSTEM` is reserved for platform-managed data. A field's writability can only be stricter than its object's level, and reads are unaffected. See [Objects](/developers/extend/apps/data/objects) for the full semantics.
+- `isSearchable: true` can be set on `defineField()` with the same constraints as inline fields (searchable target object, text-compatible field type), so records of the target object become findable through your field's values in full-text search.
 - To add a tab to a standard page layout (e.g. the Task or Company detail page), use [`definePageLayoutTab`](/developers/extend/apps/layout/page-layouts#definepagelayouttab) with `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` from `twenty-sdk/define`.
 
 ## Adding a relation to an existing object

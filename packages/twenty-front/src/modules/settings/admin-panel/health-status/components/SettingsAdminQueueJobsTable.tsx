@@ -70,6 +70,8 @@ const StyledButtonGroup = styled.div`
 const RETRY_MODAL_ID = 'retry-jobs-modal';
 const DELETE_MODAL_ID = 'delete-jobs-modal';
 const LIMIT = 50;
+const JOB_TABLE_GRID_COLUMNS =
+  '32px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) 32px';
 
 export const SettingsAdminQueueJobsTable = ({
   queueName,
@@ -265,7 +267,7 @@ export const SettingsAdminQueueJobsTable = ({
       ) : (
         <>
           <Table>
-            <TableRow gridAutoColumns="32px 2fr 1fr 2fr 32px">
+            <TableRow gridTemplateColumns={JOB_TABLE_GRID_COLUMNS}>
               <TableHeader
                 align="center"
                 padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
@@ -291,7 +293,7 @@ export const SettingsAdminQueueJobsTable = ({
                 return (
                   <StyledJobRowWrapper key={job.id}>
                     <TableRow
-                      gridAutoColumns="32px 2fr 1fr 2fr 32px"
+                      gridTemplateColumns={JOB_TABLE_GRID_COLUMNS}
                       onClick={() => handleRowClick(job.id)}
                       isExpanded={isExpanded}
                       cursor="pointer"

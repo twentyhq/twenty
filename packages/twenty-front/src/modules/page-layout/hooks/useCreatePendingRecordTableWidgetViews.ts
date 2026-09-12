@@ -3,15 +3,15 @@ import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayo
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { widgetUsesRecordTableView } from '@/page-layout/utils/widgetUsesRecordTableView';
-import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
+import { usePerformViewApiPersist } from '@/views/hooks/internal/usePerformViewApiPersist';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCreatePendingRecordTableWidgetViews = () => {
-  const { performViewAPICreate, performViewAPIDestroy } =
-    usePerformViewAPIPersist();
+  const { performViewApiCreate, performViewApiDestroy } =
+    usePerformViewApiPersist();
   const store = useStore();
 
   const createPendingRecordTableWidgetViews = useCallback(
@@ -72,7 +72,7 @@ export const useCreatePendingRecordTableWidgetViews = () => {
           isDefined(persistedViewId) &&
           existingViewIds.has(persistedViewId)
         ) {
-          await performViewAPIDestroy({ id: persistedViewId });
+          await performViewApiDestroy({ id: persistedViewId });
         }
 
         const widgetViewDraft = recordTableWidgetViewDraft[widget.id];
@@ -83,7 +83,7 @@ export const useCreatePendingRecordTableWidgetViews = () => {
 
         const { view } = widgetViewDraft;
 
-        const result = await performViewAPICreate(
+        const result = await performViewApiCreate(
           {
             input: {
               id: view.id,
@@ -125,11 +125,11 @@ export const useCreatePendingRecordTableWidgetViews = () => {
           isDefined(viewId) &&
           existingViewIds.has(viewId)
         ) {
-          await performViewAPIDestroy({ id: viewId });
+          await performViewApiDestroy({ id: viewId });
         }
       }
     },
-    [performViewAPICreate, performViewAPIDestroy, store],
+    [performViewApiCreate, performViewApiDestroy, store],
   );
 
   return { createPendingRecordTableWidgetViews };

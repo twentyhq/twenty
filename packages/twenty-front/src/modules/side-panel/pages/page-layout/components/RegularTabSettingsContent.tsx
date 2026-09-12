@@ -107,7 +107,7 @@ export const RegularTabSettingsContent = ({
           {isResetToDefaultDisabled && (
             <AppTooltip
               anchorSelect={`#${RESET_TAB_TO_DEFAULT_MENU_ITEM_ID}`}
-              content={t`No default configuration available for this tab`}
+              title={t`No default configuration available for this tab`}
               noArrow
               place="bottom"
             />

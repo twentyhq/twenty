@@ -231,7 +231,7 @@ describe('defineObject', () => {
     expect(result.config.fields[0].options).toHaveLength(2);
   });
 
-  it('should return error when labelIdentifierFieldMetadataUniversalIdentifier references non-existent field', () => {
+  it('should warn but accept a labelIdentifierFieldMetadataUniversalIdentifier that names an engine-derived field', () => {
     const config: ObjectManifest = {
       ...validConfig,
       labelIdentifierFieldMetadataUniversalIdentifier:
@@ -240,9 +240,10 @@ describe('defineObject', () => {
 
     const result = defineObject(config);
 
-    expect(result.success).toBe(false);
-    expect(result.errors).toContain(
-      'labelIdentifierFieldMetadataUniversalIdentifier must reference a field defined in the fields array',
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+    expect(result.warnings).toContain(
+      `labelIdentifierFieldMetadataUniversalIdentifier of "${validConfig.nameSingular}" names no field in its fields array; it must name a field the engine derives for this object, or the sync will fail to resolve it`,
     );
   });
 });

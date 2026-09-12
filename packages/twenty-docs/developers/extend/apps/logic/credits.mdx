@@ -1,0 +1,179 @@
+---
+title: Charging Credits
+description: Declare what your app bills for and charge workspace credits from a logic function.
+icon: "coins"
+---
+
+<Warning>
+  Not live yet. Credit charging for apps launches officially in October. This page is published early for partners who want to experiment with it.
+</Warning>
+
+Apps that cost money to run — a call recorder paying a transcription provider, an enrichment app paying per match — charge the workspace in **credits**. Everything an app bills for is declared in one `billing` block on your application config:
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  // ...identity, variables...
+  billing: {
+    description: '$20/month + $0.02 per minute recorded',
+    recurring: {
+      platformFee: {
+        period: 'MONTH',
+        amountMicroCredits: 20_000_000,
+        label: 'Platform fee',
+      },
+    },
+    operations: {
+      recordMeeting: {
+        operationType: 'CALL_RECORDING',
+        label: 'Meeting recording',
+      },
+    },
+  },
+});
+```
+
+- `recurring` — flat and per-member fees the **platform** raises for you, once per billing period.
+- `operations` — what you charge for as you use it, from a logic function.
+- `description` — one friendly line shown to buyers on your marketplace listing.
+
+All three land on the same credit meter and the same **Settings > Usage** breakdown, so a workspace sees one bill.
+
+## Recurring charges
+
+A recurring charge is a subscription fee: a flat monthly amount, an amount per workspace member, or both. You declare the amount and the platform charges it. Your app never calls `chargeCredits` for these.
+
+```ts src/application-config.ts
+billing: {
+  recurring: {
+    platformFee: {
+      period: 'MONTH',
+      amountMicroCredits: 20_000_000,
+      label: 'Platform fee',
+    },
+    seat: {
+      period: 'MONTH',
+      amountMicroCredits: 5_000_000,
+      per: 'WORKSPACE_MEMBER',
+      label: 'Per member',
+    },
+  },
+},
+```
+
+| Field | Description |
+|-------|-------------|
+| `period` | `MONTH` — the only period today |
+| `amountMicroCredits` | Amount in micro-credits (1 USD = 1,000,000), a positive integer up to 100,000,000 ($100). For a `WORKSPACE_MEMBER` charge this is the rate **per member**, not the total |
+| `per` | Omit for a flat fee. `WORKSPACE_MEMBER` multiplies the amount by the number of members in the workspace when the period is charged |
+| `label` | What admins read for that line in Usage |
+
+How they are raised:
+
+- Once per workspace billing period, on the workspace's own period boundary, not on the first of the month.
+- Not prorated. An app installed mid-period is charged the full amount for that period; uninstalling stops the next period, it does not refund the current one.
+- Per-member charges count all workspace members at the moment the charge is raised, so a workspace that grows mid-period pays the higher count from the next period.
+- Only on monthly subscriptions. A workspace on a yearly plan is not charged a `MONTH` fee, rather than being charged once for the whole year.
+- Bounded. A declared rate above $100, or a per-member charge whose rate multiplied by the member count would exceed $1,000 for the period, is refused and not raised. The platform raises these itself, so it will not write a debit it cannot justify.
+
+## Billable operations
+
+An operation is what your app charges for as it works. Each entry maps an operation name you choose onto the billing category the platform meters, plus the label shown to workspace admins in **Settings > Usage**.
+
+```ts src/application-config.ts
+billing: {
+  operations: {
+    recordMeeting: {
+      operationType: 'CALL_RECORDING',
+      label: 'Meeting recording',
+    },
+    summarizeMeeting: {
+      operationType: 'AI_CHAT_TOKEN',
+      label: 'Meeting summary',
+    },
+  },
+},
+```
+
+`operationType` must be one of the platform's billing categories: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`. It decides how the spend is metered and which counting unit applies (tokens, invocations, minutes) — it is not what admins read. The `label` is.
+
+The build rejects an unknown `operationType`, an empty `label`, and a name used by both a recurring charge and an operation.
+
+## Charging
+
+Charge against a declared operation by name:
+
+```ts
+import { chargeCredits } from 'twenty-sdk/billing';
+
+await chargeCredits({
+  operation: 'recordMeeting',
+  creditsUsedMicro: 250_000,
+  quantity: 12,
+});
+```
+
+`creditsUsedMicro` is the amount in micro-credits (1 USD = 1,000,000). `quantity` is how many units the charge covers, in the unit implied by the operation's category — minutes for `CALL_RECORDING`, invocations for `CODE_EXECUTION`, and so on.
+
+Notes:
+
+- Declaring operations is what lets Usage split your app's spend by what it charged for. An app that declares nothing is still reported, as a single slice under its display name.
+- Charging an operation your manifest does not declare is rejected. Add it to `billing.operations` and sync.
+- Several operations may share one `operationType`. Two enrichment operations both metered as `CODE_EXECUTION` still show as two labelled slices.
+- Without `operation`, name the billing category directly with `operationType`, optionally with a free-form `resourceContext`. The two forms are mutually exclusive: `operation` carries the label, `operationType` does not.
+- Charging never fails your function. A billing error is logged and swallowed, and the call no-ops outside the logic function runtime so local runs and tests do not crash.
+
+## Checking before you spend
+
+A workspace can run out of credits. Your app is not stopped when that happens, but some of the platform's own work is. `runAgent` returns an error instead of running, and the other AI entry points refuse outright. So an app that does its expensive work first and calls the platform at the end can fail late, on a call it did not write.
+
+Ask first:
+
+```ts
+import { getCreditAvailability } from 'twenty-sdk/billing';
+
+const { hasAvailableCredits } = await getCreditAvailability();
+
+if (!hasAvailableCredits) {
+  return;
+}
+```
+
+When credits are unavailable a `reason` comes with it: `no-credits`, `no-subscription`, or `workspace-suspended`.
+
+Notes:
+
+- It answers whether the workspace may spend, not how much it has left. Your app does not see the balance or the plan.
+- It fails open. If the check times out or the server is unreachable it reports credits available, so an infrastructure hiccup does not stop your app. Treat it as a hint worth honouring, not as an authorization decision.
+- It is a snapshot. Credits can run out between the check and the work.
+- The gate is not applied uniformly. Workflow runs are not credit-gated, and neither is every outbound email path, so a `false` here tells you the workspace is out of credits rather than predicting exactly which calls will fail.
+
+## Telling people what it costs
+
+Declaring charges tells the platform how to *meter* your app; it does not tell a buyer what they will pay. Set `billing.description` for that — one short, friendly line rendered next to the install button on your marketplace listing, before anyone installs.
+
+```ts src/application-config.ts
+billing: {
+  description: '$0.02 per minute recorded, billed to your Twenty credits',
+},
+```
+
+It is free text on purpose: real pricing has tiers, minimums and per-unit rates that a single number cannot express. Keep it to a line — it renders in a narrow column.
+
+## Attribution
+
+Spend is attributed to whoever triggered the run, so it shows up in **Usage by User**. Runs with nobody behind them (a webhook, a cron) have no triggering person — pass `userWorkspaceId` if your app knows who the spend belongs to. It must belong to the workspace the app is installed in, and it is ignored when the run does have a triggering user.
+
+```ts
+await chargeCredits({
+  operation: 'recordMeeting',
+  creditsUsedMicro: 250_000,
+  quantity: 12,
+  userWorkspaceId: ownerUserWorkspaceId,
+});
+```
+
+Where to get one: `context.userWorkspaceId` on a triggered run, or [`listConnections()`](/developers/extend/apps/logic/connections), which returns the `userWorkspaceId` of each connection's owner.
+
+Recurring charges have no triggering person, so they are reported against the app only, never against a member.

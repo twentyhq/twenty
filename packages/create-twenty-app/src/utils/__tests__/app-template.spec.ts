@@ -212,7 +212,7 @@ describe('copyBaseApplicationProject', () => {
     expect(content).toContain("APP_DESCRIPTION = ''");
   });
 
-  it.each(['CHANGELOG.md', 'SETUP.md'])(
+  it.each(['CHANGELOG.md', 'SETUP.md', 'locales/en.json'])(
     'should seed %s in the base template',
     async (seedFileName) => {
       const templateDirectory = join(

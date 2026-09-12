@@ -20,13 +20,11 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
 export type NavigationDrawerProps = {
   children?: ReactNode;
   className?: string;
-  title: string;
 };
 
 const StyledAnimatedContainer = styled.div<{
@@ -52,30 +50,42 @@ const StyledAnimatedContainer = styled.div<{
   }
 `;
 
+// The header takes a tighter gap than the sections below it so that the mode
+// switcher row starts where the page card header ends in the next column.
 const StyledContainer = styled.div<{
   isExpanded?: boolean;
 }>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[1]};
   height: 100%;
-  padding: ${themeCssVariables.spacing[2]} 0 ${themeCssVariables.spacing[4]}
+  padding: ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[4]}
     ${themeCssVariables.spacing[2]};
   width: ${({ isExpanded }) =>
     isExpanded ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})` : '100%'};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    gap: ${themeCssVariables.spacing[4]};
     width: 100%;
     padding-left: ${themeCssVariables.spacing[2]};
     padding-right: ${themeCssVariables.spacing[2]};
   }
 `;
 
+const StyledContent = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+  min-height: 0;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    gap: ${themeCssVariables.spacing[4]};
+  }
+`;
+
 export const NavigationDrawer = ({
   children,
   className,
-  title,
 }: NavigationDrawerProps) => {
   const [isResizing, setIsResizing] = useState(false);
   const isMobile = useIsMobile();
@@ -122,12 +132,10 @@ export const NavigationDrawer = ({
         isResizing={isResizing}
       >
         <StyledContainer isExpanded={isExpanded}>
-          {!isMobile && isSettingsDrawer && title ? (
-            <NavigationDrawerBackButton title={title} />
-          ) : (
-            <NavigationDrawerHeader showCollapseButton />
-          )}
-          {children}
+          <NavigationDrawerHeader
+            showCollapseButton={isMobile || !isSettingsDrawer}
+          />
+          <StyledContent>{children}</StyledContent>
         </StyledContainer>
 
         {isNavigationDrawerExpanded && !isMobile && !isSettingsDrawer && (

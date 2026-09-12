@@ -29,7 +29,7 @@ type CallRecordingTranscriptBodyProps = {
   loading: boolean;
   error: Error | undefined;
   restriction: WidgetAccessDenialInfo | undefined;
-  refetchCallRecording: () => Promise<unknown>;
+  refetchCallRecording: () => Promise<void>;
 };
 
 export const CallRecordingTranscriptBody = ({
@@ -65,7 +65,7 @@ export const CallRecordingTranscriptBody = ({
   if (!isDefined(callRecording)) {
     return (
       <CallRecordingWidgetEmptyStateDisplay
-        animatedPlaceholderType="noMatchRecord"
+        animatedPlaceholderType="noCallRecording"
         title={t`No Call Recording`}
         subTitle={t`No call recording exists for this calendar event yet.`}
       />

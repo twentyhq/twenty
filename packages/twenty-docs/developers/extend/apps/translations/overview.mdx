@@ -132,6 +132,12 @@ syncing is enough to see the new text. Front component catalogs are baked into
 each component bundle at build time, so changing one of those still means
 re-running `twenty dev:build` (and redeploying).
 
+A project without a `locales/` folder says nothing about translations, so a
+sync from it leaves whatever the app already published untouched. To remove
+published translations on purpose, keep the folder and delete the locale files
+inside it: a `locales/` folder that compiles to no locale is an explicit
+declaration, and the sync prunes accordingly.
+
 `Trans` text children may span multiple lines — whitespace is collapsed the
 same way JSX collapses it, so both of these extract to the key `Welcome back`:
 

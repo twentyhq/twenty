@@ -12,6 +12,7 @@ export const buildSlackAppConnection = (
   handle: 'twenty-test',
   visibility: 'workspace',
   userWorkspaceId: 'user-workspace-1',
+  workspaceMemberId: null,
   accessToken,
   scopes: ['chat:write', 'channels:read'],
   authFailedAt: null,

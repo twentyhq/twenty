@@ -440,7 +440,6 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       ),
       icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget
         .icon,
-      isUIEditable: false,
       isNullable: true,
       targetObjectName: 'taskTarget',
       targetFieldName: 'targetCompany',
@@ -472,7 +471,6 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       ),
       icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget
         .icon,
-      isUIEditable: false,
       isNullable: true,
       targetObjectName: 'noteTarget',
       targetFieldName: 'targetCompany',

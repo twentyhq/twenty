@@ -1,5 +1,6 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
+import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
@@ -10,6 +11,7 @@ import { useRecordTableWidgetViewFieldItems } from '@/page-layout/widgets/record
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import {
   getRecordTableWidgetLayoutViewType,
+  isRecordTableWidgetContentEditingSupported,
   RECORD_TABLE_WIDGET_LAYOUT_OPTIONS,
 } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -22,6 +24,7 @@ import { WidgetSettingsManageSection } from '@/side-panel/pages/page-layout/comp
 import { WidgetSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { useWidgetSettingsPlacementSelectableItemIds } from '@/side-panel/pages/page-layout/hooks/useWidgetSettingsPlacementSelectableItemIds';
 import { getWidgetViewLayoutSettingsItemIds } from '@/side-panel/pages/page-layout/utils/getWidgetViewLayoutSettingsItemIds';
@@ -31,7 +34,11 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLayoutSidebarRight, IconListDetails } from 'twenty-ui/icon';
+import {
+  IconLayoutSidebarRight,
+  IconListDetails,
+  IconPencil,
+} from 'twenty-ui/icon';
 import { FieldDisplayMode, ViewType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -101,6 +108,19 @@ export const SidePanelRecordPageFieldSettings = () => {
     ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem.id
     : currentFieldMetadataItem?.relation?.targetObjectMetadata.id;
 
+  const { updateCurrentWidgetConfig } =
+    useUpdateCurrentWidgetConfig(pageLayoutId);
+
+  const isUIEditable = fieldConfiguration?.isUIEditable ?? true;
+
+  const handleIsUIEditableChange = (nextIsUIEditable: boolean) => {
+    updateCurrentWidgetConfig({
+      configToUpdate: {
+        isUIEditable: nextIsUIEditable,
+      },
+    });
+  };
+
   const { view: embeddedWidgetView } = useRecordTableWidgetViewForDisplay({
     viewId: currentViewId ?? '',
     widgetId: widgetInEditMode?.id ?? '',
@@ -121,6 +141,8 @@ export const SidePanelRecordPageFieldSettings = () => {
   const embeddedViewLayoutViewType = getRecordTableWidgetLayoutViewType(
     embeddedWidgetView?.type,
   );
+  const isWidgetContentEditingSupported =
+    isRecordTableWidgetContentEditingSupported(embeddedWidgetView?.type);
   const isEmbeddedViewCalendarLayout =
     embeddedViewLayoutViewType === ViewType.CALENDAR_WIDGET;
   const embeddedViewHasGroupBy = isDefined(
@@ -173,6 +195,9 @@ export const SidePanelRecordPageFieldSettings = () => {
         })
       : []),
     ...(isTableDisplayMode ? ['fields'] : []),
+    ...(isTableDisplayMode && isWidgetContentEditingSupported
+      ? ['field-allow-editing']
+      : []),
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET,
@@ -241,6 +266,17 @@ export const SidePanelRecordPageFieldSettings = () => {
                   onClick={handleNavigateToFields}
                   description={t`${visibleFieldsCount} visible fields`}
                   contextualTextPosition="right"
+                />
+              </SelectableListItem>
+            )}
+            {isTableDisplayMode && isWidgetContentEditingSupported && (
+              <SelectableListItem itemId="field-allow-editing">
+                <CommandMenuItemToggle
+                  LeftIcon={IconPencil}
+                  text={t`Allow editing`}
+                  id="field-allow-editing"
+                  toggled={isUIEditable}
+                  onToggleChange={handleIsUIEditableChange}
                 />
               </SelectableListItem>
             )}

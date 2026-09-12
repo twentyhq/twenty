@@ -39,7 +39,6 @@ export const MergePreviewTab = ({
           targetObjectNameSingular: objectNameSingular,
         },
         layoutType: PageLayoutType.RECORD_PAGE,
-        isInSidePanel: true,
       }}
     >
       <PageLayoutSingleTabRenderer pageLayoutId={pageLayoutId} />

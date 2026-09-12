@@ -125,11 +125,12 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                   : [];
               });
 
-              await this.messageParticipantService.saveMessageParticipants(
-                participantsWithMessageId,
-                workspaceId,
-                transactionScope,
-              );
+              const savedMessageParticipants =
+                await this.messageParticipantService.saveMessageParticipants(
+                  participantsWithMessageId,
+                  workspaceId,
+                  transactionScope,
+                );
 
               const folderAssociations: MessageChannelMessageAssociationFolderAssociation[] =
                 messagesToSave.flatMap((message) => {
@@ -164,6 +165,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
               return {
                 participantsWithMessageId,
+                savedMessageParticipants,
                 messageExternalIdsAndIdsMap,
                 messageExternalIdToMessageThreadIdMap,
               };
@@ -194,6 +196,18 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     if (!isDefined(savedMessagesResult)) {
       return undefined;
     }
+
+    await this.messageParticipantService.matchMessageParticipants({
+      participants: savedMessagesResult.savedMessageParticipants,
+      messageIds: [
+        ...new Set(
+          savedMessagesResult.participantsWithMessageId.map(
+            ({ messageId }) => messageId,
+          ),
+        ),
+      ],
+      workspaceId,
+    });
 
     return {
       messageExternalIdsAndIdsMap:

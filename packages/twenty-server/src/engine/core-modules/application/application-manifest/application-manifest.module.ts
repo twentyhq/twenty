@@ -5,6 +5,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
+import { ApplicationManifestExportService } from 'src/engine/core-modules/application/application-manifest/services/application-manifest-export.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
@@ -43,12 +44,14 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationSyncService,
     ApplicationUninstallService,
     ComputeApplicationManifestAllUniversalFlatEntityMapsService,
+    ApplicationManifestExportService,
   ],
   exports: [
     ApplicationManifestApplyService,
     ApplicationManifestMigrationService,
     ApplicationSyncService,
     ApplicationUninstallService,
+    ApplicationManifestExportService,
   ],
 })
 export class ApplicationManifestModule {}

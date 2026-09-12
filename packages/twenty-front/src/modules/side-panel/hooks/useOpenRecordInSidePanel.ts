@@ -1,43 +1,26 @@
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
-import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
-import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
+import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
-import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
 import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
 import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell/states/newRecordTitleCellToOpenState';
 import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
-import {
-  AppPath,
-  ContextStorePageType,
-  CoreObjectNameSingular,
-  SidePanelPages,
-} from 'twenty-shared/types';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { useRunWorkflowRunOpeningInSidePanelEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInSidePanelEffects';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { v4 } from 'uuid';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useOpenRecordInSidePanel = () => {
   const store = useStore();
-  const { getIcon } = useIcons();
 
-  const { navigateSidePanelMenu, closeSidePanelMenu } = useSidePanelMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
+  const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
   const { runWorkflowRunOpeningInSidePanelEffects } =
     useRunWorkflowRunOpeningInSidePanelEffects();
   const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
@@ -59,16 +42,18 @@ export const useOpenRecordInSidePanel = () => {
       isNewRecord?: boolean;
       resetNavigationStack?: boolean;
     }) => {
-      if (isDefined(tab)) {
-        setRecordPageActiveTabId({
-          recordId,
-          objectNameSingular,
-          tabId: tab,
-          store,
-        });
-      }
-
       if (isMobile) {
+        // Mobile escapes the panel router and cannot hand its hash to the main
+        // navigator, so seed the main tab as a compatibility transition.
+        if (isDefined(tab)) {
+          setRecordPageActiveTabId({
+            recordId,
+            objectNameSingular,
+            tabId: tab,
+            store,
+          });
+        }
+
         const objectMetadataItemForRecordPage = store.get(
           objectMetadataItemFamilySelector.selectorFamily({
             objectName: objectNameSingular,
@@ -89,45 +74,48 @@ export const useOpenRecordInSidePanel = () => {
 
         closeSidePanelMenu();
 
-        navigate(AppPath.RecordShowPage, {
-          objectNameSingular,
-          objectRecordId: recordId,
-        });
+        // Deliberately the main outlet: on mobile the panel is the viewport, so
+        // hosting the record on the right would be the thing being escaped.
+        navigate(
+          AppPath.RecordShowPage,
+          {
+            objectNameSingular,
+            objectRecordId: recordId,
+          },
+          undefined,
+          { surface: 'main' },
+        );
 
-        return;
+        return null;
       }
 
       const navigationStack = store.get(sidePanelNavigationStackState.atom);
 
       const currentNavigationStackItem = navigationStack.at(-1);
-
-      if (isDefined(currentNavigationStackItem)) {
-        const currentRecordId = store.get(
-          viewableRecordIdComponentState.atomFamily({
-            instanceId: currentNavigationStackItem.pageId,
-          }),
-        );
-
-        if (currentRecordId === recordId) {
-          return;
-        }
-      }
-
-      const pageComponentInstanceId = v4();
-
-      store.set(
-        viewableRecordNameSingularComponentState.atomFamily({
-          instanceId: pageComponentInstanceId,
-        }),
+      const currentRoutedLocation = currentNavigationStackItem?.routedLocation;
+      const recordPath = getAppPath(AppPath.RecordShowPage, {
         objectNameSingular,
-      );
-      store.set(
-        viewableRecordIdComponentState.atomFamily({
-          instanceId: pageComponentInstanceId,
-        }),
-        recordId,
-      );
-      store.set(viewableRecordIdState.atom, recordId);
+        objectRecordId: recordId,
+      });
+      const recordPathWithTab = isDefined(tab)
+        ? `${recordPath}#${encodeURIComponent(tab)}`
+        : recordPath;
+
+      if (
+        isDefined(currentNavigationStackItem) &&
+        currentRoutedLocation?.pathname === recordPath
+      ) {
+        if (isDefined(tab) || resetNavigationStack) {
+          openRoutedPageInSidePanel({
+            path: recordPathWithTab,
+            pageTitle: currentNavigationStackItem.pageTitle,
+            replaceCurrent: true,
+            resetNavigationStack,
+          });
+        }
+
+        return currentNavigationStackItem.pageId;
+      }
 
       const objectMetadataItem = store.get(
         objectMetadataItemFamilySelector.selectorFamily({
@@ -142,85 +130,17 @@ export const useOpenRecordInSidePanel = () => {
         );
       }
 
-      store.set(
-        contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
-          instanceId: pageComponentInstanceId,
-        }),
-        objectMetadataItem.id,
-      );
-
-      store.set(
-        contextStoreTargetedRecordsRuleComponentState.atomFamily({
-          instanceId: pageComponentInstanceId,
-        }),
-        {
-          mode: 'selection',
-          selectedRecordIds: [recordId],
-        },
-      );
-
-      store.set(
-        contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-          instanceId: pageComponentInstanceId,
-        }),
-        1,
-      );
-
-      store.set(
-        contextStoreCurrentPageTypeComponentState.atomFamily({
-          instanceId: pageComponentInstanceId,
-        }),
-        ContextStorePageType.Record,
-      );
-
-      store.set(
-        contextStoreCurrentViewIdComponentState.atomFamily({
-          instanceId: pageComponentInstanceId,
-        }),
-        store.get(
-          contextStoreCurrentViewIdComponentState.atomFamily({
-            instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-          }),
-        ),
-      );
-
-      const currentMorphItems = store.get(
-        sidePanelNavigationMorphItemsByPageState.atom,
-      );
-
-      const morphItemToAdd = {
-        objectMetadataId: objectMetadataItem.id,
-        recordId,
-      };
-
-      const newMorphItemsMap = new Map(currentMorphItems);
-      newMorphItemsMap.set(pageComponentInstanceId, [morphItemToAdd]);
-
-      store.set(
-        sidePanelNavigationMorphItemsByPageState.atom,
-        newMorphItemsMap,
-      );
-
-      const Icon = objectMetadataItem?.icon
-        ? getIcon(objectMetadataItem.icon)
-        : getIcon('IconList');
-
-      const IconColor = getIconColorForObjectType(
-        objectMetadataItem.nameSingular,
-      );
-
-      const objectLabelSingular = objectMetadataItem.labelSingular;
-
-      navigateSidePanelMenu({
-        page: SidePanelPages.ViewRecord,
+      const pageComponentInstanceId = openRoutedPageInSidePanel({
+        path: recordPathWithTab,
         pageTitle: isNewRecord
-          ? t`New ${objectLabelSingular}`
-          : objectLabelSingular,
-        pageIcon: Icon,
-        pageIconColor: IconColor,
-        pageId: pageComponentInstanceId,
+          ? t`New ${objectMetadataItem.labelSingular}`
+          : undefined,
         resetNavigationStack,
       });
+
+      if (!isDefined(pageComponentInstanceId)) {
+        return null;
+      }
 
       if (objectNameSingular === CoreObjectNameSingular.WorkflowRun) {
         runWorkflowRunOpeningInSidePanelEffects({
@@ -240,14 +160,17 @@ export const useOpenRecordInSidePanel = () => {
           });
         }
       }
+
+      // The panel page owns its own context store, so a caller with state to
+      // hand the record needs to know which instance will read it.
+      return pageComponentInstanceId;
     },
     [
       closeSidePanelMenu,
-      getIcon,
       isMobile,
       navigate,
-      navigateSidePanelMenu,
       openNewRecordTitleCell,
+      openRoutedPageInSidePanel,
       runWorkflowRunOpeningInSidePanelEffects,
       store,
     ],

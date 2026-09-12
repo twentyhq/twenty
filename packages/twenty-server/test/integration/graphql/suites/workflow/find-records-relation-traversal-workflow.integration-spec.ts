@@ -10,6 +10,7 @@ import {
   waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -350,10 +351,23 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
 
     const result = workflowRun?.state?.stepInfos?.[findRecordsStepId!]
       ?.result as
-      | { all?: Array<{ id: string }>; totalCount?: number | string }
+      | {
+          all?: Array<{ id: string; companyId: string | null }>;
+          totalCount?: number | string;
+        }
       | undefined;
 
-    expect(result?.all).toEqual([]);
-    expect(Number(result?.totalCount)).toBe(0);
+    const returnedRecords = result?.all;
+
+    expect(Array.isArray(returnedRecords)).toBe(true);
+    expect(Number.isFinite(Number(result?.totalCount))).toBe(true);
+
+    // An empty filter value can only match people with no company, and other
+    // specs sharing the database seed those, so assert the shape rather than []
+    const returnedCompanyIds = (returnedRecords ?? []).map(
+      (record) => record.companyId,
+    );
+
+    expect(returnedCompanyIds.filter(isDefined)).toEqual([]);
   });
 });

@@ -15,4 +15,5 @@ export const BACKGROUND = {
   noDeletedRecord: '/images/placeholders/background/no_deleted_record_bg.png',
   noWidgets: '/images/placeholders/background/no_widgets_bg.png',
   notShared: '/images/placeholders/background/not_shared_bg.png',
+  noCallRecording: '/images/placeholders/background/no_call_recording_bg.png',
 };

@@ -4,6 +4,7 @@ import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
+import { getFieldRelations } from '@/object-record/record-field/ui/utils/junction/getFieldRelations';
 import { getJunctionObjectMetadataIds } from '@/object-record/record-field/ui/utils/junction/getJunctionObjectMetadataIds';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -66,6 +67,7 @@ export const useRelevantRecordsGqlFields = ({
 
   const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({
     objectMetadataItems,
+    sourceObjectMetadataItem: objectMetadataItem,
     fields: fieldMetadataItemsToUse,
     depth: 1,
   });
@@ -79,8 +81,8 @@ export const useRelevantRecordsGqlFields = ({
     objectMetadataItems,
     sourceObjectMetadataItem: objectMetadataItem,
     fields: objectMetadataItem.fields.filter((fieldMetadataItem) =>
-      junctionObjectMetadataIds.has(
-        fieldMetadataItem.relation?.targetObjectMetadata.id ?? '',
+      getFieldRelations(fieldMetadataItem).some((relation) =>
+        junctionObjectMetadataIds.has(relation.targetObjectMetadata.id),
       ),
     ),
     depth: 1,
@@ -102,8 +104,8 @@ export const useRelevantRecordsGqlFields = ({
       ? { [imageIdentifierFieldMetadataItem.name]: true }
       : {}),
     ...(hasPosition ? { position: true } : {}),
-    ...junctionRelationGqlFields,
     ...allDepthOneGqlFields,
+    ...junctionRelationGqlFields,
     createdAt: true,
     updatedAt: true,
     deletedAt: true,

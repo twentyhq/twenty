@@ -45,7 +45,7 @@ export const RecordGroupAggregateDropdownButton = ({
           {!isDropdownOpen && (
             <AppTooltip
               anchorSelect={`#${dropdownId}`}
-              content={tooltip ?? ''}
+              title={tooltip ?? ''}
               noArrow
               place="right"
               positionStrategy="fixed"

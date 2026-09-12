@@ -1,5 +1,6 @@
 import { Scope } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -43,17 +44,22 @@ export class ResumeDelayedWorkflowJob {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowRun = await this.workflowRunWorkspaceService.getWorkflowRun(
+        {
+          workflowRunId,
+          workspaceId,
+        },
+      );
+
+      if (!isDefined(workflowRun)) {
+        return;
+      }
+
+      if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
+        return;
+      }
+
       try {
-        const workflowRun =
-          await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
-            workflowRunId,
-            workspaceId,
-          });
-
-        if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
-          return;
-        }
-
         const step = workflowRun.state?.flow?.steps?.find(
           (step) => step.id === stepId,
         );

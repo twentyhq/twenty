@@ -1,21 +1,7 @@
 import { styled } from '@linaria/react';
-import { type Editor } from '@tiptap/react';
-import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/AiChatSuggestedPrompts';
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
-import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
-import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
-import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
-import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
-import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useShouldShowAiChatEmptyState } from '@/ai/hooks/useShouldShowAiChatEmptyState';
 
 const StyledEmptyState = styled.div`
   display: flex;
@@ -25,59 +11,21 @@ const StyledEmptyState = styled.div`
 `;
 
 type AiChatEmptyStateProps = {
-  editor: Editor | null;
+  isCentered?: boolean;
 };
 
-export const AiChatEmptyState = ({ editor }: AiChatEmptyStateProps) => {
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const agentChatError = useAtomComponentFamilyStateValue(
-    agentChatErrorComponentFamilyState,
-    { threadId: currentAiChatThread },
-  );
-  const agentChatIsAwaitingFirstChunk = useAtomComponentFamilyStateValue(
-    agentChatIsAwaitingFirstChunkComponentFamilyState,
-    { threadId: currentAiChatThread },
-  );
-  const agentChatIsStreaming = useAtomComponentFamilyStateValue(
-    agentChatIsStreamingComponentFamilyState,
-    { threadId: currentAiChatThread },
-  );
-  const agentChatThreadsLoading = useAtomStateValue(
-    agentChatThreadsLoadingState,
-  );
-  const agentChatMessagesLoading = useAtomStateValue(
-    agentChatMessagesLoadingState,
-  );
-  const skipMessagesSkeletonUntilLoaded = useAtomStateValue(
-    skipMessagesSkeletonUntilLoadedState,
-  );
+export const AiChatEmptyState = ({
+  isCentered = false,
+}: AiChatEmptyStateProps) => {
+  const shouldShowAiChatEmptyState = useShouldShowAiChatEmptyState();
 
-  const hasMessages = useAtomComponentSelectorValue(
-    agentChatHasMessageComponentSelector,
-  );
-
-  const isMobile = useIsMobile();
-
-  const isOnNewChatSlot =
-    currentAiChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
-  const skeletonShowing =
-    (agentChatThreadsLoading && isOnNewChatSlot) ||
-    (agentChatMessagesLoading && !skipMessagesSkeletonUntilLoaded);
-  const shouldRender =
-    !isMobile &&
-    !hasMessages &&
-    !isDefined(agentChatError) &&
-    !skeletonShowing &&
-    !agentChatIsAwaitingFirstChunk &&
-    !agentChatIsStreaming;
-
-  if (!shouldRender) {
+  if (!shouldShowAiChatEmptyState) {
     return null;
   }
 
   return (
     <StyledEmptyState>
-      <AiChatSuggestedPrompts editor={editor} />
+      <AiChatSuggestedPrompts isCentered={isCentered} />
     </StyledEmptyState>
   );
 };

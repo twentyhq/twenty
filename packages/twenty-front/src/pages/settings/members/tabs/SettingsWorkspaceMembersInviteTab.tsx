@@ -185,7 +185,7 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                       </StyledTextContainerWithEllipsis>
                       <AppTooltip
                         anchorSelect={`#invitation-email-${workspaceInvitation.id}`}
-                        content={workspaceInvitation.email}
+                        title={workspaceInvitation.email}
                         noArrow
                         place="top"
                         positionStrategy="fixed"

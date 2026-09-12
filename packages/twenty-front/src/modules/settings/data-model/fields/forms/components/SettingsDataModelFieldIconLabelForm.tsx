@@ -214,7 +214,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                                 />
                                 <AppTooltip
                                   anchorSelect="#info-circle-id-name"
-                                  content={apiNameTooltipText}
+                                  title={apiNameTooltipText}
                                   offset={5}
                                   noArrow
                                   place="bottom"

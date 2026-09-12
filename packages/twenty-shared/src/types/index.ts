@@ -172,6 +172,7 @@ export { MessageFolderImportPolicy } from './MessageFolderImportPolicy';
 export { MessageFolderPendingSyncAction } from './MessageFolderPendingSyncAction';
 export { MessageParticipantRole } from './MessageParticipantRole';
 export type { MetadataGqlOperationSignature } from './MetadataGqlOperationSignature';
+export { MetadataReadability } from './MetadataReadability';
 export { MetadataWritability } from './MetadataWritability';
 export type { ModifiedProperties } from './ModifiedProperties';
 export type { NavigateOptions } from './NavigateOptions';
@@ -265,7 +266,7 @@ export type {
   DateFilter,
   DateTimeFilter,
   CurrencyFilter,
-  URLFilter,
+  UrlFilter,
   FullNameFilter,
   AddressFilter,
   LinksFilter,
@@ -291,6 +292,9 @@ export type { RecordGqlOperationGqlRecordFields } from './RecordGqlOperationGqlR
 export type { RecordGqlOperationOrderBy } from './RecordGqlOperationOrderBy';
 export type { RecordGqlOperationSignature } from './RecordGqlOperationSignature';
 export type { RecordGqlOperationVariables } from './RecordGqlOperationVariables';
+export { RecordShareAccessLevel } from './RecordShareAccessLevel';
+export { RecordSharePrincipalType } from './RecordSharePrincipalType';
+export { RecordShareRowCause } from './RecordShareRowCause';
 export type { RelationAndMorphRelationFieldMetadataType } from './RelationAndMorphRelationFieldMetadataType';
 export type { RelationCreationPayload } from './RelationCreationPayload';
 export { RelationOnDeleteAction } from './RelationOnDeleteAction.type';

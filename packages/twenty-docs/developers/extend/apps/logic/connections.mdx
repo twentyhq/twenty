@@ -24,6 +24,9 @@ export default defineConnectionProvider({
   name: 'linear',
   displayName: 'Linear',
   icon: 'IconBrandLinear',
+  // Optional: a logo bundled in your app's public/ folder, shown next to the
+  // provider in the per-app settings tab.
+  logo: 'public/linear-logomark.svg',
   type: 'oauth',
   oauth: {
     authorizationEndpoint: 'https://linear.app/oauth/authorize',
@@ -80,6 +83,7 @@ Key points:
 
 - `name` is the unique identifier string used in `listConnections({ providerName })` (kebab-case, must match `^[a-z][a-z0-9-]*$`).
 - `displayName` shows in the per-app settings tab and in the AI tool list.
+- `logo` is a path to an asset bundled in your app's `public/` folder, served through the app's public assets. When omitted, the settings tab falls back to a placeholder built from `displayName`.
 - `clientIdVariable` / `clientSecretVariable` are **names**, not values — they must match keys declared in `defineApplication.serverVariables`. The actual `client_id` and `client_secret` are entered by the server admin through the app registration UI, never committed to your repo.
 - Use `serverVariables` (not `applicationVariables`) — OAuth credentials are server-wide and one OAuth app per Twenty server.
 - Until both `serverVariables` are filled in, the per-app settings tab shows a "needs server admin" hint and the "Add connection" button is disabled.
@@ -129,7 +133,7 @@ From there use `getConnection(connectedAccountId)` to read the fresh access toke
 
 <Accordion title="Run a logic function on disconnect" description="Clean up when a connection is removed">
 
-Anything an app claims at connect time has to be released when the connection goes away. A Slack integration that claims a `team_id` on connect, for instance, has to release that claim so another workspace can connect the same Slack team. Set `onDisconnectLogicFunction` to reference a logic function in the same app, and it runs right after the `ConnectedAccount` is deleted.
+Anything an app claims at connect time has to be released when the connection goes away. A Slack integration that claims a `team_id` on connect, for instance, has to release that claim so another workspace can connect the same Slack team. Set `onDisconnectLogicFunction` to reference a logic function in the same app, and it runs right before the `ConnectedAccount` and its token are deleted, so the handler can still call the provider with `getConnection` to release anything the on-connect hook set up remotely.
 
 ```ts src/connection-providers/slack-connection.ts
 export default defineConnectionProvider({
@@ -147,7 +151,7 @@ export default defineConnectionProvider({
 });
 ```
 
-Like the on-connect hook it runs **asynchronously in the disconnecting workspace** and never blocks the disconnect. The handler receives the same payload shape:
+Unlike the on-connect hook it runs **inline in the disconnecting workspace**, once, without retries: a failure is captured and the disconnect still completes. The handler receives the same payload shape:
 
 ```ts
 type OnDisconnectPayload = {
@@ -157,7 +161,7 @@ type OnDisconnectPayload = {
 };
 ```
 
-The `ConnectedAccount` is already gone when the hook runs, so `getConnection(connectedAccountId)` no longer resolves. Anything the cleanup needs (a `team_id`, an external subscription id) must have been written to the [key-value store](/developers/extend/apps/logic/key-value-store) at connect time, keyed by `connectedAccountId`.
+The `ConnectedAccount` and its token are still present when the hook runs, so `getConnection(connectedAccountId)` resolves with a fresh access token and the handler can delete whatever it registered remotely. State the provider cannot give back (a `team_id`, an external subscription id) still belongs in the [key-value store](/developers/extend/apps/logic/key-value-store), written at connect time and keyed by `connectedAccountId`. Keep the handler short: it runs inside the disconnect request, so its `timeoutSeconds` is the upper bound on how long that request can take.
 
 The hook fires when a connection is removed on its own. Uninstalling the app drops its connections through a database cascade instead, so the hook does not run there. Declare an `uninstallLogicFunction` on `defineApplication` for that path: it runs before the app's metadata is deleted, so it can still call `listConnections` and clean up whatever is left.
 
@@ -212,23 +216,46 @@ export const createLinearIssueHandler = async (input: {
 
 Each connection has:
 
-| Field             | Description                                                                                              |
-| ----------------- | -------------------------------------------------------------------------------------------------------- |
-| `id`              | Unique row id; pass to `getConnection(id)` to refetch a single one                                       |
-| `visibility`      | `'user'` (private to one workspace member) or `'workspace'` (shared with all members)                    |
-| `scopes`          | OAuth permissions granted by the upstream provider (distinct from `visibility` — those are unrelated)    |
-| `userWorkspaceId` | The owner's userWorkspace id — useful for picking "the request user's connection" in HTTP-route triggers |
-| `workspaceMemberId` | The owner's workspace member id, or `null` if they've since left the workspace                        |
-| `accessToken`     | Fresh OAuth access token (refreshed automatically if expired)                                            |
-| `name`            | The connection's display name (auto-derived at OAuth callback, user-renameable)                          |
-| `handle`          | The connected upstream account's email, refreshed on each reconnect; resolved from the OIDC `id_token` returned at token exchange, falling back to the connecting Twenty user's email when the provider doesn't return one |
-| `authFailedAt`    | Set when the most recent refresh failed; the user must reconnect                                         |
+| Field               | Description                                                                                                                                                                                                                |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                | Unique row id; pass to `getConnection(id)` to refetch a single one                                                                                                                                                         |
+| `visibility`        | `'user'` (private to one workspace member) or `'workspace'` (shared with all members)                                                                                                                                      |
+| `scopes`            | OAuth permissions granted by the upstream provider (distinct from `visibility` — those are unrelated)                                                                                                                      |
+| `userWorkspaceId`   | The owner's userWorkspace id — useful for picking "the request user's connection" in HTTP-route triggers                                                                                                                   |
+| `workspaceMemberId` | The owner's workspace member id, or `null` if they've since left the workspace                                                                                                                                             |
+| `accessToken`       | Fresh OAuth access token (refreshed automatically if expired)                                                                                                                                                              |
+| `name`              | The connection's display name (auto-derived at OAuth callback, user-renameable)                                                                                                                                            |
+| `handle`            | The connected upstream account's email, refreshed on each reconnect; resolved from the OIDC `id_token` returned at token exchange, falling back to the connecting Twenty user's email when the provider doesn't return one |
+| `authFailedAt`      | Set when the most recent refresh failed, or when the app reported the credential dead via `reportConnectionAuthFailure`; the user must reconnect                                                                           |
+| `authFailedReason`  | Human-readable explanation for `authFailedAt`, when the reporter gave one; shown on the connection detail page in settings                                                                                                 |
 
 Key points:
 
 - Pass `{ providerName }` to filter by provider; omit it to get all connections this app owns across all providers.
 - The server transparently refreshes the access token before returning. Your handler always sees a usable token (or `authFailedAt` set).
 - `getConnection(id)` is the single-row equivalent.
+
+</Accordion>
+
+<Accordion title="reportConnectionAuthFailure" description="Tell the platform a credential is dead">
+
+The platform sets `authFailedAt` on its own only when an OAuth refresh fails. Providers whose tokens are never refreshed (a Slack bot token, for example) fail only at call time inside your handlers, so the connection row in settings would keep showing **Connected** while every call dies. When your code hits a definitive auth rejection, report it:
+
+```ts
+import { reportConnectionAuthFailure } from 'twenty-sdk/logic-function';
+
+await reportConnectionAuthFailure({
+  connectionId: connection.id,
+  reason:
+    'Slack rejected the stored token (invalid_auth). Reconnect to restore the integration.',
+});
+```
+
+This sets `authFailedAt` and the optional reason on the connection. The settings row flips to **Reconnect needed** with a Reconnect button, the connection detail page shows the reason, and `getConnection` starts throwing `AppConnectionAuthFailedError` for that row. The flag and reason clear automatically when the user reconnects. A `reason` longer than 1000 characters is rejected, so truncate provider payloads before passing them.
+
+Only report failures that a reconnect would actually fix (an `invalid_auth`-class rejection from the provider), never transient network errors. An app can only report its own connections, and a request user can only report their own user-visibility credentials.
+
+The mutation behind this helper ships with Twenty 2.40.0, so calling it against an older server fails. If your app uses it, declare the dependency in your `package.json`: `"engines": { "twenty": ">=2.40.0" }`.
 
 </Accordion>
 

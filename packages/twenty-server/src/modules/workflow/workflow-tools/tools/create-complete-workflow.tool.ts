@@ -15,6 +15,7 @@ import {
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { workflowStepConnectionOptionsSchema } from 'src/modules/workflow/workflow-tools/tools/schemas/workflow-step-connection-options.schema';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
@@ -41,6 +42,7 @@ const createCompleteWorkflowSchema = z.object({
             'The ID of the source step (use "trigger" for trigger step)',
           ),
         target: z.string().describe('The ID of the target step'),
+        sourceConnectionOptions: workflowStepConnectionOptionsSchema.optional(),
       }),
     )
     .optional()
@@ -82,6 +84,11 @@ CRITICAL SCHEMA REQUIREMENTS:
 - Use "trigger" as the id for the trigger step in edges
 - Step positions are computed automatically; do not provide coordinates
 
+ITERATOR steps (loops):
+- An edge leaving an ITERATOR only enters the loop body when it carries sourceConnectionOptions: { connectedStepType: "ITERATOR", settings: { isConnectedToLoop: true } }. Without it the target is placed after the loop instead.
+- The last step of the loop body must have an edge back to the ITERATOR, otherwise the loop runs a single iteration.
+- An ITERATOR with an empty loop body does not fail: it completes immediately and {{<iterator-id>.currentItem}} resolves to undefined for every step downstream.
+
 Common mistakes to avoid:
 - Using "RECORD_CREATED" instead of "DATABASE_EVENT"
 - Missing the "name" and "valid" fields in steps
@@ -94,7 +101,7 @@ IMPORTANT: The tool schema provides comprehensive field descriptions, examples, 
 - Field requirements and data types
 - Common object patterns and field structures
 - Proper relationship field formats
-- Variable reference syntax: {{trigger.fieldName}} for trigger data, {{<step-id>.result.fieldName}} for step outputs (step-id is the step's UUID, not its name)
+- Variable reference syntax: {{trigger.fieldName}} for trigger data, {{<step-id>.fieldName}} for step outputs (step-id is the step's UUID, not its name). The path mirrors the step's output schema exactly and is addressed directly; Twenty does not add a "result" wrapper. A FIND_RECORDS step exposes {{<find-step-id>.all}} and {{<find-step-id>.first.id}}, not {{<find-step-id>.result.all}}.
 - Error handling options
 
 This is the most efficient way for AI to create workflows as it handles all the complexity in one call.
@@ -106,7 +113,13 @@ The response includes a compact validation summary. For the full validation repo
     description?: string;
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
-    edges?: Array<{ source: string; target: string }>;
+    edges?: Array<{
+      source: string;
+      target: string;
+      sourceConnectionOptions?: z.infer<
+        typeof workflowStepConnectionOptionsSchema
+      >;
+    }>;
     activate?: boolean;
   }) => {
     try {
@@ -150,6 +163,7 @@ The response includes a compact validation summary. For the full validation repo
           await deps.workflowVersionEdgeService.createWorkflowVersionEdge({
             source: edge.source === 'trigger' ? 'trigger' : edge.source,
             target: edge.target,
+            sourceConnectionOptions: edge.sourceConnectionOptions,
             workflowVersionId,
             workspaceId: context.workspaceId,
           });
@@ -176,10 +190,9 @@ The response includes a compact validation summary. For the full validation repo
       }
 
       const validation =
-        await deps.workflowValidationService.validateWorkflowDefinition({
+        await deps.workflowValidationService.validateWorkflowVersion({
           workspaceId: context.workspaceId,
-          trigger: parameters.trigger,
-          steps: parameters.steps,
+          workflowVersionId,
         });
 
       return {

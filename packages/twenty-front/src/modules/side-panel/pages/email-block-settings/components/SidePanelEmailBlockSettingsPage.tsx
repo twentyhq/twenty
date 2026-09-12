@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
-import { useEditorState } from '@tiptap/react';
 import {
   isDefined,
   resolveCanvasTheme,
@@ -13,6 +12,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { activeEmailEditorState } from '@/activities/emails/states/activeEmailEditorState';
 import { ADVANCED_TEXT_EDITOR_BLOCK_CATALOG } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog';
+import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
 import { type AdvancedTextEditorBlockSetting } from '@/advanced-text-editor/types/AdvancedTextEditorBlockCatalog';
 import { getBlockSelectionTarget } from '@/advanced-text-editor/utils/getBlockSelectionTarget';
 import { getBlockStyle } from '@/advanced-text-editor/utils/getBlockStyle';
@@ -71,11 +71,9 @@ const BOX_FIELD_SIDE_PROPERTIES: Record<
 
 const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   const { i18n, t } = useLingui();
-  const target = useEditorState({
-    editor,
-    selector: ({ editor: currentEditor }) =>
-      getBlockSelectionTarget(currentEditor),
-  });
+  const target = useLiveEditorState(editor, (currentEditor) =>
+    getBlockSelectionTarget(currentEditor),
+  );
 
   if (!isDefined(target)) {
     return <EmailPageStyleSection editor={editor} />;

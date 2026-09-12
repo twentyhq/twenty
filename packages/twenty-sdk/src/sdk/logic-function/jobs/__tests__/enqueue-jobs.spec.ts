@@ -9,6 +9,10 @@ import {
 } from 'vitest';
 
 const TARGET_UNIVERSAL_IDENTIFIER = '5a2f4d2a-1a1e-4c66-8a54-1f0a2b3c4d5e';
+const JOB_IDS = [
+  '0b9c8d7e-6f5a-4b3c-2d1e-0f9a8b7c6d5e',
+  '1c8b7a6d-5e4f-3a2b-1c0d-9e8f7a6b5c4d',
+];
 
 const importEnqueueJobs = async () => {
   const module = await import('@/sdk/logic-function/jobs/enqueue-jobs');
@@ -28,6 +32,7 @@ const successResponse = (enqueuedJobsCount: number) =>
       enqueued: true,
       logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
       enqueuedJobsCount,
+      jobIds: JOB_IDS.slice(0, enqueuedJobsCount),
     },
   });
 
@@ -63,6 +68,7 @@ describe('enqueueJobs', () => {
       enqueued: true,
       logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
       enqueuedJobsCount: 2,
+      jobIds: JOB_IDS,
     });
 
     const [url, requestInit] = fetchSpy.mock.calls[0];
@@ -72,7 +78,7 @@ describe('enqueueJobs', () => {
     const sentBody = JSON.parse(requestInit?.body as string);
 
     expect(sentBody.query).toContain(
-      'enqueueJobs(input:$v1){enqueued,logicFunctionUniversalIdentifier,enqueuedJobsCount}',
+      'enqueueJobs(input:$v1){enqueued,logicFunctionUniversalIdentifier,enqueuedJobsCount,jobIds}',
     );
     expect(Object.values(sentBody.variables)).toEqual([
       {

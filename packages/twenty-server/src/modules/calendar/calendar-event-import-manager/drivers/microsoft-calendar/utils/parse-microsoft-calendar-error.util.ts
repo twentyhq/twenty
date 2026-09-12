@@ -19,6 +19,7 @@ export const parseMicrosoftCalendarError = (
     return new CalendarEventImportDriverException(
       `Disabled, deleted, unlicensed or inaccessible Microsoft account - code:${code}`,
       CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      { cause: error },
     );
   }
 
@@ -26,6 +27,7 @@ export const parseMicrosoftCalendarError = (
     return new CalendarEventImportDriverException(
       message,
       CalendarEventImportDriverExceptionCode.UNKNOWN,
+      { cause: error },
     );
   }
 
@@ -33,6 +35,7 @@ export const parseMicrosoftCalendarError = (
     return new CalendarEventImportDriverException(
       message,
       CalendarEventImportDriverExceptionCode.NOT_FOUND,
+      { cause: error },
     );
   }
 
@@ -40,11 +43,13 @@ export const parseMicrosoftCalendarError = (
     return new CalendarEventImportDriverException(
       message,
       CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+      { cause: error },
     );
   }
 
   return new CalendarEventImportDriverException(
     `Microsoft Graph API ${code} ${statusCode} error: ${message}`,
     CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+    { cause: error },
   );
 };

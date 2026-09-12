@@ -21,6 +21,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
@@ -79,9 +80,14 @@ export const AdvancedFilterCompositeSubFieldSelectMenu = ({
   const { advancedFilterFieldSelectDropdownId } =
     useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
+  const scopedAdvancedFilterFieldSelectDropdownId =
+    useWorkspaceSurfaceScopedComponentInstanceId(
+      advancedFilterFieldSelectDropdownId,
+    );
+
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    advancedFilterFieldSelectDropdownId,
+    scopedAdvancedFilterFieldSelectDropdownId,
   );
 
   if (!isDefined(objectFilterDropdownSubMenuFieldType)) {

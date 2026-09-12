@@ -52,8 +52,8 @@ export const TWENTY_ICON_DICTIONARY = [
     key: 'field',
     label: 'Field',
     category: 'data-model',
-    iconName: 'IconListDetails',
-    tablerName: 'list-details',
+    iconName: 'IconListSearch',
+    tablerName: 'list-search',
     keywords: ['field metadata', 'property', 'attribute', 'column'],
     useWhen: 'Representing a field or field metadata.',
     avoidWhen: 'Representing a list of records or a generic menu.',
@@ -570,6 +570,17 @@ export const TWENTY_ICON_DICTIONARY = [
     useWhen: 'Representing attachments or an attachment relationship.',
     avoidWhen:
       'Representing a general file collection, import, or upload action.',
+  },
+  {
+    key: 'dictation',
+    label: 'Dictation',
+    category: 'general',
+    iconName: 'IconMicrophone',
+    tablerName: 'microphone',
+    keywords: ['dictation', 'voice input', 'speech to text', 'microphone'],
+    useWhen: 'Representing voice input or a dictation control.',
+    avoidWhen:
+      'Representing audio playback, a call recording, or a phone number.',
   },
   {
     key: 'app',

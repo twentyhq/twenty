@@ -179,4 +179,26 @@ describe('fromFieldManifestToUniversalFlatFieldMetadata', () => {
       expect(result.writability).toBe(MetadataWritability.APPLICATION);
     });
   });
+
+  describe('label sync', () => {
+    it('should default isLabelSyncedWithName to false', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({}),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.isLabelSyncedWithName).toBe(false);
+    });
+
+    it('should respect an explicit isLabelSyncedWithName', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({ isLabelSyncedWithName: true }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.isLabelSyncedWithName).toBe(true);
+    });
+  });
 });

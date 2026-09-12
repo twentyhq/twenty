@@ -6,6 +6,20 @@
   "tags": ["scope:shared"],
   "targets": {
     "build": { "dependsOn": ["^build"], "outputs": ["{projectRoot}/dist"] },
+    "generateTokens": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "tsx {projectRoot}/scripts/generateThemeTokens.ts"
+      }
+    },
+    "generate:check": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "tsx {projectRoot}/scripts/generateThemeTokens.ts --check"
+      }
+    },
     "generateBarrels": {
       "executor": "nx:run-commands",
       "cache": true,
@@ -83,7 +97,18 @@
     },
     "lint": {},
     "fmt": { "options": { "files": "src" }, "configurations": { "fix": {} } },
-    "test": {},
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "^default"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx vitest run --project unit"
+      },
+      "configurations": {
+        "watch": { "command": "npx vitest --project unit" }
+      }
+    },
     "typecheck": {},
     "storybook:build": { "configurations": { "test": {} } },
     "storybook:serve:dev": { "options": { "port": 6008 } },
@@ -91,8 +116,16 @@
       "options": { "buildTarget": "twenty-ui:storybook:build", "port": 6008 },
       "configurations": { "test": {} }
     },
-    "storybook:test": {},
-    "storybook:test:no-coverage": {},
+    "storybook:test": {
+      "options": {
+        "command": "vitest run --coverage --shard={args.shard} --project storybook"
+      }
+    },
+    "storybook:test:no-coverage": {
+      "options": {
+        "command": "vitest run --shard={args.shard} --project storybook"
+      }
+    },
     "storybook:visual-diff": {
       "executor": "nx:run-commands",
       "dependsOn": ["storybook:build"],

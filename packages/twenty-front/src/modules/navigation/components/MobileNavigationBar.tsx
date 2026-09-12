@@ -1,12 +1,14 @@
 import { MobileNavigationBarScrollEffect } from '@/navigation/components/MobileNavigationBarScrollEffect';
+import { MOBILE_NAVIGATION_BAR_PADDING } from '@/navigation/constants/MobileNavigationBarPadding';
 import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
 import { isMobileNavigationBarVisibleState } from '@/navigation/states/isMobileNavigationBarVisibleState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { useLocation } from 'react-router-dom';
 import { NavigationBar } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isAiChatPath } from '~/utils/isAiChatPath';
 
 // The bar floats over the page, so the container has to let taps through to
 // whatever is scrolling underneath it. flex-start rather than left so the bar
@@ -16,9 +18,9 @@ const StyledFloatingContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   left: 0;
-  padding: ${themeCssVariables.spacing[3]};
+  padding: ${MOBILE_NAVIGATION_BAR_PADDING};
   padding-bottom: calc(
-    ${themeCssVariables.spacing[3]} + env(safe-area-inset-bottom, 0px)
+    ${MOBILE_NAVIGATION_BAR_PADDING} + env(safe-area-inset-bottom, 0px)
   );
   pointer-events: none;
   position: absolute;
@@ -35,13 +37,19 @@ const StyledFloatingContainer = styled.div`
 `;
 
 export const MobileNavigationBar = () => {
+  const { pathname } = useLocation();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const isMobileNavigationBarVisible = useAtomStateValue(
     isMobileNavigationBarVisibleState,
   );
   const { items, activeItemName } = useMobileNavigationBarItems();
 
-  const isHidden = isSidePanelOpened || !isMobileNavigationBarVisible;
+  // The chat page keeps the keyboard up most of the time, which leaves no room
+  // for the bar, and it carries its own close button to leave by.
+  const isHidden =
+    isSidePanelOpened ||
+    !isMobileNavigationBarVisible ||
+    isAiChatPath(pathname);
 
   return (
     <>

@@ -12,4 +12,7 @@ export class EnqueueJobsResultDTO implements EnqueueJobsResult {
 
   @Field(() => Int)
   enqueuedJobsCount: number;
+
+  @Field(() => [String])
+  jobIds: string[];
 }

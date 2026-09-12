@@ -41,7 +41,7 @@ export const IconButtonWithTooltip = ({
       </div>
       <AppTooltip
         anchorSelect={`[data-tooltip-id='${tooltipId}'] > button`}
-        content={tooltipContent}
+        title={tooltipContent}
         delay={tooltipDelay}
         place={tooltipPlace}
         offset={tooltipOffset}

@@ -397,7 +397,6 @@ const renderFieldWidgetStory = ({
           <PageLayoutTestWrapper store={jotaiStore}>
             <LayoutRenderingProvider
               value={{
-                isInSidePanel: false,
                 layoutType: PageLayoutType.RECORD_PAGE,
                 targetRecordIdentifier: {
                   id: targetRecord.id,

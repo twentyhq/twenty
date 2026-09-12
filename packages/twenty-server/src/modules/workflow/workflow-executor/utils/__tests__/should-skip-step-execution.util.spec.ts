@@ -336,4 +336,27 @@ describe('shouldSkipStepExecution', () => {
 
     expect(result).toBe(false);
   });
+
+  it('should return false when a parent failed and continues on failure', () => {
+    const steps = [
+      createMockCodeStep('step-1', ['step-3'], {
+        continueOnFailure: true,
+      }),
+      createMockCodeStep('step-2', ['step-3']),
+      createMockCodeStep('step-3', []),
+    ];
+    const stepInfos = {
+      'step-1': { status: StepStatus.FAILED_SAFELY, error: 'some error' },
+      'step-2': { status: StepStatus.SKIPPED },
+      'step-3': { status: StepStatus.NOT_STARTED },
+    };
+
+    const result = shouldSkipStepExecution({
+      step: steps[2],
+      steps,
+      stepInfos,
+    });
+
+    expect(result).toBe(false);
+  });
 });

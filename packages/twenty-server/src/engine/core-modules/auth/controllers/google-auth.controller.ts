@@ -47,7 +47,7 @@ export class GoogleAuthController {
   @UseFilters(AuthOAuthExceptionFilter)
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
     return res.redirect(
-      await this.authService.signInUpWithSocialSSO(
+      await this.authService.signInUpWithSocialSso(
         req.user,
         AuthProviderEnum.Google,
       ),
