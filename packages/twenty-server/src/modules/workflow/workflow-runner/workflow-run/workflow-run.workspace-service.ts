@@ -417,18 +417,19 @@ export class WorkflowRunWorkspaceService {
           { shouldBypassPermissionChecks: true },
         );
 
-      const workflowRunToUpdate = await workflowRunRepository.findOneBy({
-        id: workflowRunId,
-      });
+      // The run state carries the whole flow definition, so an existence read
+      // here doubles the bytes fetched on a path every step takes twice
+      const { affected } = await workflowRunRepository.update(
+        workflowRunId,
+        partialUpdate,
+      );
 
-      if (!workflowRunToUpdate) {
+      if (affected === 0) {
         throw new WorkflowRunException(
           `workflowRun ${workflowRunId} not found`,
           WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
         );
       }
-
-      await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);
     }, authContext);
   }
 
