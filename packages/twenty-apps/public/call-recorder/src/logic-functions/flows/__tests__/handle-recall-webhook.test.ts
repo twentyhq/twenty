@@ -76,6 +76,7 @@ type CallRecordingNode = {
   externalRecordingId?: string | null;
   startedAt?: string | null;
   endedAt?: string | null;
+  mediaExpiresAt?: string | null;
   transcript?: unknown;
   audio?: unknown;
   video?: unknown;
@@ -227,6 +228,58 @@ describe('handleRecallWebhook', () => {
         },
       },
     ]);
+  });
+
+  it('stores the media expiry and queues both imports when Recall expires the media', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'PROCESSING',
+        externalBotId: 'recall-bot-1',
+        externalRecordingId: 'recall-recording-1',
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          status: {
+            code: 'media_expired',
+            created_at: '2026-09-11T12:17:33.159774Z',
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'bot.status_change',
+      callRecordingId: 'call-recording-1',
+      callRecordingStatus: 'PROCESSING',
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'PROCESSING',
+          externalBotId: 'recall-bot-1',
+          mediaExpiresAt: '2026-09-11T12:17:33.159Z',
+        },
+      },
+    ]);
+    expect(enqueueArtifactImportMock).toHaveBeenCalledExactlyOnceWith({
+      callRecordingId: 'call-recording-1',
+      scopes: ['transcript', 'media'],
+    });
   });
 
   it('keeps FAILED with the sub code as reason for non-benign fatal events', async () => {

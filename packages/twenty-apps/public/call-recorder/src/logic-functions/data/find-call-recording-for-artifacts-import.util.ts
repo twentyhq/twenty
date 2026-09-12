@@ -17,6 +17,7 @@ type CallRecordingForArtifactsImportNode = {
   externalBotId?: string | null;
   externalRecordingId?: string | null;
   callRecorderFailureReason?: string | null;
+  mediaExpiresAt?: string | null;
   transcript?: unknown;
   audio?: FilesFieldValue | null;
   video?: FilesFieldValue | null;
@@ -41,6 +42,7 @@ export const findCallRecordingForArtifactsImport = async (
           externalBotId: true,
           externalRecordingId: true,
           callRecorderFailureReason: true,
+          mediaExpiresAt: true,
           transcript: true,
           audio: { fileId: true },
           video: { fileId: true },
@@ -67,6 +69,7 @@ export const findCallRecordingForArtifactsImport = async (
     externalBotId: getString(node.externalBotId),
     externalRecordingId: getString(node.externalRecordingId),
     callRecorderFailureReason: getString(node.callRecorderFailureReason),
+    mediaExpiresAt: getString(node.mediaExpiresAt),
     transcript: node.transcript ?? undefined,
     audio: node.audio ?? undefined,
     video: node.video ?? undefined,

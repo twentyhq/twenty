@@ -16,4 +16,5 @@ export type CallRecordingRecord = {
   botScheduleIdempotencyKey?: string;
   externalRecordingId?: string;
   callRecorderFailureReason?: string;
+  mediaExpiresAt?: string;
 };

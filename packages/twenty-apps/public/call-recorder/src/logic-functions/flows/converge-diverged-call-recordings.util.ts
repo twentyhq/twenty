@@ -50,6 +50,7 @@ type DivergedCallRecordingNode = {
   externalBotId?: string | null;
   externalRecordingId?: string | null;
   callRecorderFailureReason?: string | null;
+  mediaExpiresAt?: string | null;
   transcript?: unknown;
   audio?: FilesFieldValue | null;
   video?: FilesFieldValue | null;
@@ -82,7 +83,11 @@ export const convergeDivergedCallRecordings = async ({
   > = [];
 
   for (const candidate of candidates) {
-    if (isOutsideConvergenceBound(candidate, convergenceLowerBound)) {
+    // Expired media settles from one bot read, so PROCESSING rows converge at any age.
+    if (
+      isOutsideConvergenceBound(candidate, convergenceLowerBound) &&
+      candidate.status !== CallRecordingStatus.PROCESSING
+    ) {
       console.warn(
         `[call-recorder] call recording ${candidate.id} diverged but its meeting ended more than ${CONVERGENCE_LOOKBACK_DAYS} days ago; it will not converge automatically`,
       );
@@ -201,6 +206,7 @@ const fetchDivergedCallRecordingCandidates = async (
               externalBotId: true,
               externalRecordingId: true,
               callRecorderFailureReason: true,
+              mediaExpiresAt: true,
               transcript: true,
               audio: { fileId: true },
               video: { fileId: true },
@@ -233,6 +239,9 @@ const fetchDivergedCallRecordingCandidates = async (
       : undefined,
     callRecorderFailureReason: isNonEmptyString(node.callRecorderFailureReason)
       ? node.callRecorderFailureReason
+      : undefined,
+    mediaExpiresAt: isNonEmptyString(node.mediaExpiresAt)
+      ? node.mediaExpiresAt
       : undefined,
     transcript: node.transcript ?? undefined,
     audio: node.audio ?? undefined,
@@ -323,6 +332,7 @@ const convergeCallRecording = async ({
             treatRecordingAsDone: false,
             requestedAt: artifactImportClaimedAt.toISOString(),
             artifactScope: artifactImportScope,
+            now: artifactImportClaimedAt,
           }),
       });
 
@@ -331,7 +341,7 @@ const convergeCallRecording = async ({
     }
   }
 
-  const hasCompletedImport = await settleCallRecordingImport(client, {
+  const settlementOutcome = await settleCallRecordingImport(client, {
     callRecordingId: candidate.id,
   });
   const hasUpdatedCallRecording = callRecordingSyncResults.some(
@@ -341,7 +351,7 @@ const convergeCallRecording = async ({
     (callRecordingSyncResult) => callRecordingSyncResult.requestedTranscript,
   );
 
-  if (hasUpdatedCallRecording || hasCompletedImport) {
+  if (hasUpdatedCallRecording || settlementOutcome !== 'pending') {
     result.updatedCallRecordingIds.push(candidate.id);
   }
 

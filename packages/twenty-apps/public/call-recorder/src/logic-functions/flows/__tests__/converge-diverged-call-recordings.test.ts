@@ -779,6 +779,168 @@ describe('convergeDivergedCallRecordings', () => {
     expect(console.warn).toHaveBeenCalled();
   });
 
+  it('settles a PROCESSING recording whose media expired at Recall instead of leaving it unconvergeable', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: {
+        statusChanges: [
+          { code: 'in_call_recording', createdAt: '2026-06-01T13:02:00.000Z' },
+          { code: 'call_ended', createdAt: '2026-06-01T14:00:00.000Z' },
+          { code: 'done', createdAt: '2026-06-01T14:05:00.000Z' },
+          { code: 'media_expired', createdAt: '2026-06-08T13:30:00.000Z' },
+        ],
+        recordings: [],
+      },
+    });
+    const client = buildClient([
+      buildStuckRecordingNode({
+        status: 'PROCESSING',
+        startedAt: '2026-06-01T13:02:00.000Z',
+        endedAt: '2026-06-01T14:00:00.000Z',
+        externalRecordingId: 'recall-recording-1',
+        calendarEvent: {
+          startsAt: '2026-06-01T13:00:00.000Z',
+          endsAt: '2026-06-01T14:00:00.000Z',
+        },
+      }),
+    ]);
+
+    const result = await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(getRecallBotMock).toHaveBeenCalledWith({
+      externalBotId: 'recall-bot-1',
+    });
+    expect(listRecallTranscriptsMock).toHaveBeenCalledWith({
+      externalRecordingId: 'recall-recording-1',
+    });
+    expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
+    expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          mediaExpiresAt: '2026-06-08T13:30:00.000Z',
+          transcript: {
+            recallTranscriptId: null,
+            status: 'EMPTY',
+            subCode: 'transcript_expired',
+          },
+        },
+      },
+      {
+        id: 'call-recording-1',
+        data: {
+          callRecorderFailureReason:
+            'video_import_expired,audio_import_expired',
+        },
+      },
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'FAILED',
+          callRecorderFailureReason:
+            'video_import_expired,audio_import_expired',
+        },
+      },
+    ]);
+    expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
+    expect(result.updatedCallRecordingIds).toEqual(['call-recording-1']);
+    expect(result.unconvergeableCallRecordingIds).toEqual([]);
+  });
+
+  it('does not report a recorded bot as NOT_RECORDED once Recall expired its media', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: {
+        statusChanges: [
+          { code: 'in_call_recording', createdAt: '2026-06-09T13:02:00.000Z' },
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
+          { code: 'media_expired', createdAt: '2026-06-10T11:00:00.000Z' },
+        ],
+        recordings: [],
+      },
+    });
+    const client = buildClient([
+      buildStuckRecordingNode({
+        status: 'PROCESSING',
+        startedAt: '2026-06-09T13:02:00.000Z',
+        endedAt: '2026-06-09T14:00:00.000Z',
+      }),
+    ]);
+
+    await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(listRecallTranscriptsMock).not.toHaveBeenCalled();
+    expect(client.mutations).not.toContainEqual(
+      expect.objectContaining({
+        data: expect.objectContaining({ status: 'NOT_RECORDED' }),
+      }),
+    );
+    expect(client.mutations).toContainEqual({
+      id: 'call-recording-1',
+      data: {
+        status: 'FAILED',
+        callRecorderFailureReason: 'video_import_expired,audio_import_expired',
+      },
+    });
+  });
+
+  it('completes and charges a recording whose remaining media expired at Recall', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: {
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
+          { code: 'media_expired', createdAt: '2026-06-10T11:00:00.000Z' },
+        ],
+        recordings: [],
+      },
+    });
+    const client = buildClient([
+      buildStuckRecordingNode({
+        status: 'PROCESSING',
+        startedAt: '2026-06-09T13:02:00.000Z',
+        endedAt: '2026-06-09T14:00:00.000Z',
+        externalRecordingId: 'recall-recording-1',
+        transcript: [{ participant: { id: 1 }, words: [] }],
+        audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+      }),
+    ]);
+
+    const result = await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: { mediaExpiresAt: '2026-06-10T11:00:00.000Z' },
+      },
+      {
+        id: 'call-recording-1',
+        data: { callRecorderFailureReason: 'video_import_expired' },
+      },
+      {
+        id: 'call-recording-1',
+        data: { status: 'COMPLETED' },
+      },
+    ]);
+    expect(chargeCompletedCallRecordingMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      startedAt: '2026-06-09T13:02:00.000Z',
+      endedAt: '2026-06-09T14:00:00.000Z',
+    });
+    expect(result.updatedCallRecordingIds).toEqual(['call-recording-1']);
+  });
+
   it('converges candidates created long before a recently ended meeting', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
