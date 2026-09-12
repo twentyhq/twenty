@@ -20,6 +20,7 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowStepFilterBuilder } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterBuilder';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
+import { WorkflowEditTriggerDatabaseEventTestRecord } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventTestRecord';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
@@ -281,6 +282,13 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             }
             readonly={triggerOptions.readonly ?? false}
             onFilterSettingsUpdate={handleFilterSettingsUpdate}
+          />
+        )}
+        {!triggerOptions.readonly && isDefined(selectedObjectMetadataItem) && (
+          <WorkflowEditTriggerDatabaseEventTestRecord
+            trigger={trigger}
+            objectNameSingular={selectedObjectMetadataItem.nameSingular}
+            onTriggerUpdate={triggerOptions.onTriggerUpdate}
           />
         )}
       </WorkflowStepBody>
