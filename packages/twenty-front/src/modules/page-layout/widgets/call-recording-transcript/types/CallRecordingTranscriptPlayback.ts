@@ -2,6 +2,6 @@ import { type CallRecordingTranscriptPlaybackPosition } from '@/page-layout/widg
 
 export type CallRecordingTranscriptPlayback = {
   position: CallRecordingTranscriptPlaybackPosition;
-  videoElement: HTMLVideoElement;
+  mediaElement: HTMLMediaElement;
   onSeek: (startSeconds: number) => void;
 };

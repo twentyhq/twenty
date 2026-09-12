@@ -5,6 +5,123 @@ import { type ReleaseNote } from './release-note';
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    release: '2.38.1',
+    date: '2026-09-06',
+    highlights: [
+      {
+        title: msg`More flexible record pages`,
+        description: (
+          <Trans>
+            Add shared instructions, playbooks, and other rich text with the new
+            Note widget. Insert widgets exactly where you want them, and unpin
+            the first tab when your layout needs more room.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Easier workflow editing`,
+        description: (
+          <Trans>
+            Insert actions into existing branches and drag connections to a
+            different step without losing your configuration. Find variables
+            faster by searching fields across all workflow steps.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`List view`,
+        description: (
+          <Trans>
+            Browse your records in a compact list, now available to everyone.
+            Group records and see the fields that matter in a layout that adapts
+            to desktop and mobile.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`More ways to work with AI`,
+        description: (
+          <Trans>
+            Dictate prompts in supported browsers, and get suggested actions
+            based on the page you are viewing.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.37.0',
+    date: '2026-08-28',
+    highlights: [
+      {
+        title: msg`Attach files to records with AI`,
+        description: (
+          <Trans>
+            Ask AI to attach files you upload in chat directly to records.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Day and week calendar views`,
+        description: (
+          <Trans>
+            Switch between day, week, and month views to explore your calendar.
+            Day and week views are now available by default.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.35.0',
+    date: '2026-08-26',
+    highlights: [
+      {
+        title: msg`Interactive call recordings`,
+        description: (
+          <Trans>
+            Watch recordings alongside their transcripts. Click a transcript
+            entry to jump to that moment, and follow along with highlighted
+            words and automatic scrolling during playback.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Schedule meetings from records`,
+        description: (
+          <Trans>
+            Create calendar events directly from a record’s timeline, with the
+            current contact prefilled as a guest.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Send email from aliases`,
+        description: (
+          <Trans>
+            Send outbound emails using a verified alias on your connected
+            account.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.28.0',
+    date: '2026-08-11',
+    highlights: [
+      {
+        title: msg`See related records across relationships`,
+        description: (
+          <Trans>
+            Display records two relationships away directly on a record page—for
+            example, opportunities associated with a company’s contacts.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
     release: '2.26.0',
     date: '2026-07-31',
     highlights: [

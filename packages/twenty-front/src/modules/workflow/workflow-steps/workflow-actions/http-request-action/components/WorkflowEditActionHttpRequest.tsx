@@ -8,7 +8,6 @@ import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { getBodyTypeFromHeaders } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/getBodyTypeFromHeaders';
@@ -92,9 +91,7 @@ export const WorkflowEditActionHttpRequest = ({
   const { theme } = useContext(ThemeContext);
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
-    useWorkspaceSurfaceScopedComponentInstanceId(
-      WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID,
-    ),
+    WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID,
   );
 
   const { formData, handleFieldChange, saveAction } = useHttpRequestForm({

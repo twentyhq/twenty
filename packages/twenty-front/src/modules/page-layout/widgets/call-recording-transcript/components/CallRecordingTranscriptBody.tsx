@@ -1,3 +1,5 @@
+import { CallRecordingAudioPlayer } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer';
+import { type CallRecordingPlaybackMedia } from '@/page-layout/widgets/call-recording/types/CallRecordingPlaybackMedia';
 import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetEmptyStateDisplay';
 import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetForbiddenDisplay';
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
@@ -25,7 +27,7 @@ const StyledRecordingLayout = styled.div`
 type CallRecordingTranscriptBodyProps = {
   callRecording: WidgetCallRecordingCandidate | undefined;
   transcriptEntries: CallRecordingParsedTranscriptEntry[] | undefined;
-  videoFileUrl: string | undefined;
+  playbackMedia: CallRecordingPlaybackMedia | undefined;
   loading: boolean;
   error: Error | undefined;
   restriction: WidgetAccessDenialInfo | undefined;
@@ -35,14 +37,14 @@ type CallRecordingTranscriptBodyProps = {
 export const CallRecordingTranscriptBody = ({
   callRecording,
   transcriptEntries,
-  videoFileUrl,
+  playbackMedia,
   loading,
   error,
   restriction,
   refetchCallRecording,
 }: CallRecordingTranscriptBodyProps) => {
   const widget = useCurrentWidget();
-  const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(
+  const [mediaElement, setMediaElement] = useState<HTMLMediaElement | null>(
     null,
   );
 
@@ -72,7 +74,7 @@ export const CallRecordingTranscriptBody = ({
     );
   }
 
-  if (!isDefined(videoFileUrl)) {
+  if (!isDefined(playbackMedia)) {
     return (
       <CallRecordingTranscriptContent
         callRecording={callRecording}
@@ -81,12 +83,12 @@ export const CallRecordingTranscriptBody = ({
     );
   }
 
-  const playback = isDefined(videoElement)
+  const playback = isDefined(mediaElement)
     ? {
         position: entryPlaybackPosition,
-        videoElement,
+        mediaElement,
         onSeek: (startSeconds: number) => {
-          videoElement.currentTime = startSeconds;
+          mediaElement.currentTime = startSeconds;
         },
       }
     : undefined;
@@ -94,16 +96,25 @@ export const CallRecordingTranscriptBody = ({
   return (
     <StyledRecordingLayout>
       <CallRecordingTranscriptPlaybackEffect
-        videoElement={videoElement}
+        mediaElement={mediaElement}
         timedItems={transcriptEntries}
         onPlaybackPositionChange={setEntryPlaybackPosition}
       />
-      <CallRecordingVideoPlayer
-        key={videoFileUrl}
-        ref={setVideoElement}
-        src={videoFileUrl}
-        onRetry={refetchCallRecording}
-      />
+      {playbackMedia.kind === 'video' ? (
+        <CallRecordingVideoPlayer
+          key={playbackMedia.url}
+          ref={setMediaElement}
+          src={playbackMedia.url}
+          onRetry={refetchCallRecording}
+        />
+      ) : (
+        <CallRecordingAudioPlayer
+          key={playbackMedia.url}
+          ref={setMediaElement}
+          src={playbackMedia.url}
+          onRetry={refetchCallRecording}
+        />
+      )}
       <CallRecordingTranscriptContent
         callRecording={callRecording}
         transcriptEntries={transcriptEntries}

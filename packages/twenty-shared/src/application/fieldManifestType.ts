@@ -26,6 +26,7 @@ type BaseRegularFieldManifest<
   isUnique?: boolean;
   isLabelSyncedWithName?: boolean;
   isSearchable?: boolean;
+  isAuditLogged?: boolean;
   objectUniversalIdentifier: string;
 };
 

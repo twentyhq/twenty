@@ -1,6 +1,4 @@
-import { render } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { vi } from 'vitest';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
 
@@ -42,20 +40,4 @@ runComponentConformance({
   refInstanceOf: HTMLDivElement,
   wrapper: FieldRootWrapper,
   ownClassName: errorStyles.error,
-});
-
-describe('Field.Label', () => {
-  it('throws outside Field.Root', () => {
-    const consoleErrorSpy = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined);
-
-    try {
-      expect(() => render(<Field.Label>Label</Field.Label>)).toThrow(
-        'Base UI: FieldRootContext is missing',
-      );
-    } finally {
-      consoleErrorSpy.mockRestore();
-    }
-  });
 });

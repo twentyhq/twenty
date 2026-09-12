@@ -1188,6 +1188,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "recipients": {
         "universalIdentifier": "05a3271c-5b91-493c-8f30-2d27b31d019e",
       },
+      "scheduledAt": {
+        "universalIdentifier": "0b281092-f5a5-4dd6-969b-5229f6620071",
+      },
       "searchVector": {
         "universalIdentifier": "f4cf203c-6ef6-561f-864c-5532e07f94ad",
       },
@@ -1262,6 +1265,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "recipients": {
             "universalIdentifier": "40f278c1-2716-5324-8035-c14ea62a4eb7",
           },
+          "scheduledAt": {
+            "universalIdentifier": "047b0a55-9d35-5679-9783-5b58db81d9fc",
+          },
           "sentAt": {
             "universalIdentifier": "a9389297-3927-5364-8c9d-4bcb8039020e",
           },
@@ -1298,6 +1304,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "failedCount": {
             "universalIdentifier": "a46efdb6-a451-5dfe-bd85-a5b9a6a0306a",
+          },
+          "scheduledAt": {
+            "universalIdentifier": "b4789064-9ec6-5200-8017-30c47583a7f1",
           },
           "sentAt": {
             "universalIdentifier": "4de342aa-3734-5dfd-9612-88d3e7f4b808",

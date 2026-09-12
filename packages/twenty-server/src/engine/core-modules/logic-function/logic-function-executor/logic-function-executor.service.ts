@@ -60,6 +60,7 @@ import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/ty
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
 
 export class LogicFunctionExecutionException extends Error {
@@ -83,6 +84,7 @@ export class LogicFunctionExecutorService {
 
   constructor(
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
+    private readonly logicFunctionPrebuiltWarmUpService: LogicFunctionPrebuiltWarmUpService,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -160,11 +162,12 @@ export class LogicFunctionExecutorService {
     });
 
     if (effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT) {
-      await this.ensurePrebuiltBundleInstalled({
-        driver,
-        flatLogicFunction,
-        flatApplication,
-      });
+      await this.logicFunctionPrebuiltWarmUpService.ensurePrebuiltBundleInstalled(
+        {
+          flatLogicFunction,
+          flatApplication,
+        },
+      );
     }
 
     let resultLogicFunction: LogicFunctionExecuteResult;
@@ -227,46 +230,6 @@ export class LogicFunctionExecutorService {
     }
 
     return flatLogicFunction.executionMode ?? LogicFunctionExecutionMode.LIVE;
-  }
-
-  private async ensurePrebuiltBundleInstalled({
-    driver,
-    flatLogicFunction,
-    flatApplication,
-  }: {
-    driver: ReturnType<LogicFunctionDriverFactory['getCurrentDriver']>;
-    flatLogicFunction: FlatLogicFunction;
-    flatApplication: FlatApplication;
-  }): Promise<void> {
-    const installedChecksum =
-      await driver.getInstalledBundleChecksum(flatLogicFunction);
-
-    if (installedChecksum === flatLogicFunction.checksum) {
-      return;
-    }
-
-    try {
-      await driver.installPrebuiltBundle({
-        flatLogicFunction,
-        flatApplication,
-        applicationUniversalIdentifier: flatApplication.universalIdentifier,
-      });
-    } catch (error) {
-      const cause = error instanceof Error ? error.message : String(error);
-
-      this.logger.error(
-        `Failed to install prebuilt bundle on-demand for function '${flatLogicFunction.id}' ` +
-          `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}): ` +
-          `${cause}`,
-        error instanceof Error ? error.stack : undefined,
-      );
-      throw new LogicFunctionException(
-        `Failed to install the prebuilt bundle for function '${flatLogicFunction.id}' ` +
-          `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}): ` +
-          `${cause}`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
-      );
-    }
   }
 
   async transpile(

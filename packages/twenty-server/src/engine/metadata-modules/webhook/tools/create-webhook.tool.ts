@@ -34,7 +34,7 @@ export const createCreateWebhookTool = (
 
 Operations are structured entries discriminated by 'kind':
 - {kind:'record', object:'person', event:'created'} → fires when a person is created (compiles to 'person.created').
-- {kind:'record', object:'*', event:'*'} → fires on every record event.
+- {kind:'record', object:'*', event:'*'} → fires on every record event except 'workflowRun.updated', which only matches an explicit {kind:'record', object:'workflowRun', event:'updated'} entry.
 - {kind:'metadata', metadataName:'workflow', operation:'updated'} → fires when a workflow definition is updated (compiles to 'metadata.workflow.updated').
 - {kind:'metadata', metadataName:'*', operation:'*'} → fires on every metadata change.
 

@@ -20,25 +20,18 @@ import {
   IconSquareNumber8,
   IconSquareNumber9,
 } from 'twenty-ui/icon';
-import {
-  LightIconButton,
-  RoundedIconButton,
-  type SelectOption,
-} from 'twenty-ui/input';
+import { LightIconButton, RoundedIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatQuestionOtherOption } from '@/ai/components/internal/AiChatQuestionOtherOption';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
-import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
-import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
+import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { useSubmitQuestionAnswer } from '@/ai/hooks/useSubmitQuestionAnswer';
-import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
-import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
-import { Select } from '@/ui/input/components/Select';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const NUMBER_ICONS: IconComponent[] = [
   IconSquareNumber1,
@@ -225,17 +218,8 @@ export const AiChatQuestionCard = ({
 
   const { submitAnswer } = useSubmitQuestionAnswer();
 
-  const { options: modelOptions, pinnedOption } = useAiModelOptions({
-    variant: 'pinned-default',
-  });
-  const { enabledModels } = useWorkspaceAiModelAvailability();
-  const hasNoEnabledModels = enabledModels.length === 0;
-  const { selectedModelId } = useAgentChatModelId();
-  const setAgentChatUserSelectedModel = useSetAtomState(
-    agentChatUserSelectedModelState,
-  );
-  const defaultPinnedOption: SelectOption<string | null> | undefined =
-    pinnedOption ? { ...pinnedOption, value: null } : undefined;
+  const aiModels = useAtomStateValue(aiModelsState);
+  const hasNoEnabledModels = aiModels.length === 0;
 
   const currentQuestion = questions[currentIndex];
   const hasMultipleQuestions = questions.length > 1;
@@ -515,17 +499,9 @@ export const AiChatQuestionCard = ({
             <AiChatContextUsageButton />
           </StyledLeftActions>
           <StyledRightActions>
-            <Select
-              dropdownId="ai-chat-question-model-select"
-              value={selectedModelId}
-              onChange={setAgentChatUserSelectedModel}
-              options={modelOptions}
-              pinnedOption={defaultPinnedOption}
+            <AiModelTierDropdown
+              dropdownId="ai-chat-question-model-tier-dropdown"
               disabled={hasNoEnabledModels}
-              selectSizeVariant="small"
-              showContextualTextInControl={false}
-              withSearchInput
-              dropdownOffset={{ x: 0, y: 8 }}
             />
             <RoundedIconButton
               Icon={IconArrowUp}

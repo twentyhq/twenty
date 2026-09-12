@@ -8,6 +8,7 @@ export type AiTranscriptionModelConfig = {
   label: string;
   description: string;
   dataResidency?: DataResidency;
+  zeroDataRetention?: boolean;
   costPerMinute: number;
   isDeprecated?: boolean;
 };

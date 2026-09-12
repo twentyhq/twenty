@@ -19,7 +19,7 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { useContext } from 'react';
 import { IconCalendar } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { Checkbox, CheckboxShape } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 
@@ -125,7 +125,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
         >
           <Checkbox
             checked={task.status === 'DONE'}
-            shape={CheckboxShape.Rounded}
+            shape={'round'}
             onCheckedChange={completeTask}
           />
         </StyledCheckboxContainer>

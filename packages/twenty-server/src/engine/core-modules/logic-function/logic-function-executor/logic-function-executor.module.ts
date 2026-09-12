@@ -16,6 +16,7 @@ import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.mod
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
+import { LogicFunctionPrebuiltWarmUpModule } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -27,6 +28,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     SecretEncryptionModule,
     SubscriptionsModule,
     WorkspaceCacheModule,
+    LogicFunctionPrebuiltWarmUpModule,
     BillingModule,
     FeatureFlagModule,
     WorkspaceDomainsModule,

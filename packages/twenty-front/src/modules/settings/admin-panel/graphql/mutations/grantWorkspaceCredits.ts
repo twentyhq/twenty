@@ -6,6 +6,7 @@ export const GRANT_WORKSPACE_CREDITS = gql`
     $amount: Float!
     $type: BillingCreditGrantType!
     $reason: String
+    $expiresInDays: Int
     $clientOperationId: UUID!
   ) {
     grantWorkspaceCredits(
@@ -13,6 +14,7 @@ export const GRANT_WORKSPACE_CREDITS = gql`
       amount: $amount
       type: $type
       reason: $reason
+      expiresInDays: $expiresInDays
       clientOperationId: $clientOperationId
     ) {
       id
@@ -21,6 +23,7 @@ export const GRANT_WORKSPACE_CREDITS = gql`
       effectiveAt
       expiresAt
       revokedAt
+      sourceGrantId
       reason
       isActive
       createdAt

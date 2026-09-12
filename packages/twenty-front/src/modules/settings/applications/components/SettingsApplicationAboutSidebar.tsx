@@ -167,11 +167,10 @@ export const SettingsApplicationAboutSidebar = ({
               <Tag
                 key={entry.one}
                 color="gray"
-                Icon={entry.icon}
-                text={`${entry.count} ${
-                  entry.count === 1 ? entry.one : entry.many
-                }`}
-              />
+                startIcon={<entry.icon />}
+              >{`${entry.count} ${
+                entry.count === 1 ? entry.one : entry.many
+              }`}</Tag>
             ))}
           </StyledContentList>
         </StyledSidebarSection>

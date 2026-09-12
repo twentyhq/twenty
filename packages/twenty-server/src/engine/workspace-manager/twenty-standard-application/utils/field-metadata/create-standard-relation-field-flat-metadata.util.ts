@@ -106,6 +106,7 @@ export const createStandardRelationFieldFlatMetadata = <
     isNullable,
     isUnique: false,
     isSearchable: false,
+    isAuditLogged: true,
     isUIEditable,
     writability: MetadataWritability.OPEN,
     isLabelSyncedWithName: false,
