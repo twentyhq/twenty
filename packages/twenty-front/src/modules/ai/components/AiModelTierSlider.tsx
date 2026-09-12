@@ -168,13 +168,20 @@ type TierMetric = {
   description: string;
 };
 
-// A tier backed by the same model as Balanced, or by one the sync has no
-// reading for, has nothing to compare: showing "0%" would read as a measured
-// tie rather than as a missing benchmark.
+const getComparison = (
+  delta: number,
+  labels: { multiplier: string; lower: string; higher: string; equal: string },
+) => {
+  if (delta >= 100) return labels.multiplier;
+  if (delta < 0) return labels.lower;
+  if (delta === 0) return labels.equal;
+  return labels.higher;
+};
+
 const hasDeltaToShow = (
   metric: TierMetric,
 ): metric is TierMetric & { deltaPercent: number } =>
-  isDefined(metric.deltaPercent) && metric.deltaPercent !== 0;
+  isDefined(metric.deltaPercent);
 
 type AiModelTierSliderProps = {
   selectedTier: AiModelTier;
@@ -206,20 +213,20 @@ export const AiModelTierSlider = ({
     : '';
 
   const intelligenceDelta = resolvedTier.intelligenceDeltaPercent ?? 0;
-  const intelligenceComparison =
-    intelligenceDelta >= 100
-      ? t`${formatMetricDelta(intelligenceDelta)} the score of Balanced`
-      : intelligenceDelta < 0
-        ? t`${formatNumber(Math.abs(intelligenceDelta))}% lower score than Balanced`
-        : t`${formatNumber(intelligenceDelta)}% higher score than Balanced`;
+  const intelligenceComparison = getComparison(intelligenceDelta, {
+    multiplier: t`${formatMetricDelta(intelligenceDelta)} the score of Balanced`,
+    lower: t`${formatNumber(Math.abs(intelligenceDelta))}% lower score than Balanced`,
+    higher: t`${formatNumber(intelligenceDelta)}% higher score than Balanced`,
+    equal: t`Same score as Balanced`,
+  });
   const intelligenceScore = t`Intelligence score: ${formatNumber(model?.intelligenceIndex ?? 0)}`;
   const costDelta = resolvedTier.costDeltaPercent ?? 0;
-  const costComparison =
-    costDelta >= 100
-      ? t`${formatMetricDelta(costDelta)} the cost of Balanced.`
-      : costDelta < 0
-        ? t`${formatNumber(Math.abs(costDelta))}% lower cost than Balanced.`
-        : t`${formatNumber(costDelta)}% higher cost than Balanced.`;
+  const costComparison = getComparison(costDelta, {
+    multiplier: t`${formatMetricDelta(costDelta)} the cost of Balanced.`,
+    lower: t`${formatNumber(Math.abs(costDelta))}% lower cost than Balanced.`,
+    higher: t`${formatNumber(costDelta)}% higher cost than Balanced.`,
+    equal: t`Same cost as Balanced.`,
+  });
   const modelEffort = model?.effort;
   const modelName = getAiModelModeDescription(resolvedTier, {
     showAutomatic: false,
@@ -227,8 +234,8 @@ export const AiModelTierSlider = ({
   });
   const reasoningEffort =
     isDefined(modelEffort) && isAiModelEffort(modelEffort)
-    ? getAiModelEffortLabel(modelEffort)
-    : t`Default`;
+      ? getAiModelEffortLabel(modelEffort)
+      : t`Default`;
 
   // Below Balanced the gain is speed, above it intelligence; cost moves with
   // both, so each side shows the two figures that explain the trade.
@@ -327,13 +334,7 @@ export const AiModelTierSlider = ({
           <AppTooltip
             key={key}
             anchorSelect={`#ai-model-tier-${key}-${tooltipId}`}
-            title={
-              tooltipTitle ??
-              getAiModelModeDescription(resolvedTier, {
-                showAutomatic: false,
-                showEffort: false,
-              })
-            }
+            title={tooltipTitle ?? modelName}
             description={`${description}${inheritedNote}`}
             delay={TooltipDelay.shortDelay}
             place="bottom"

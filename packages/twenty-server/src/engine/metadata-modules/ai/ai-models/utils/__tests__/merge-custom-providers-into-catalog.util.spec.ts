@@ -217,7 +217,7 @@ describe('inheritCatalogReadings', () => {
             },
           ],
         },
-      } as unknown as AiProvidersConfig,
+      },
     });
 
     expect(Object.keys(providers)).toEqual(['azure-foundry']);

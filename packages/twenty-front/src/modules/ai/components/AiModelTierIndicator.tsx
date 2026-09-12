@@ -25,13 +25,14 @@ type AiModelTierIndicatorProps = {
   tier: AiModelTier;
 };
 
-export const AiModelTierIndicator = ({ tier }: AiModelTierIndicatorProps) => (
-  <StyledIndicator aria-hidden="true">
-    {AI_MODEL_TIERS.map((modelTier, index) => (
-      <StyledBar
-        key={modelTier}
-        isReached={index <= AI_MODEL_TIERS.indexOf(tier)}
-      />
-    ))}
-  </StyledIndicator>
-);
+export const AiModelTierIndicator = ({ tier }: AiModelTierIndicatorProps) => {
+  const selectedStep = AI_MODEL_TIERS.indexOf(tier);
+
+  return (
+    <StyledIndicator aria-hidden="true">
+      {AI_MODEL_TIERS.map((modelTier, index) => (
+        <StyledBar key={modelTier} isReached={index <= selectedStep} />
+      ))}
+    </StyledIndicator>
+  );
+};

@@ -48,7 +48,8 @@ const formatIntelligence = (tier: ResolvedAiModelTier) =>
     : EMPTY_VALUE;
 
 const formatCost = (tier: ResolvedAiModelTier) =>
-  isDefined(tier.model?.outputCostPerMillionTokens)
+  isDefined(tier.model?.outputCostPerMillionTokens) &&
+  tier.model.outputCostPerMillionTokens > 0
     ? t`$${formatNumber(tier.model.outputCostPerMillionTokens, { decimals: 2 })} / 1M`
     : EMPTY_VALUE;
 

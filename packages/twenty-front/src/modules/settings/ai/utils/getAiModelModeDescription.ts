@@ -17,18 +17,19 @@ export const getAiModelModeDescription = (
   }
 
   const effort = model.effort;
-  let label = model.label;
-
-  if (isDefined(effort) && isAiModelEffort(effort)) {
-    const suffix = ` (${AI_MODEL_EFFORT_LABELS[effort]})`;
-    const modelName = label.endsWith(suffix)
-      ? label.slice(0, -suffix.length)
-      : label;
-
-    label = showEffort
-      ? `${modelName} · ${getAiModelEffortLabel(effort)}`
+  const validEffort =
+    isDefined(effort) && isAiModelEffort(effort) ? effort : undefined;
+  const suffix = isDefined(validEffort)
+    ? ` (${AI_MODEL_EFFORT_LABELS[validEffort]})`
+    : '';
+  const modelName =
+    suffix && model.label.endsWith(suffix)
+      ? model.label.slice(0, -suffix.length)
+      : model.label;
+  const label =
+    showEffort && isDefined(validEffort)
+      ? `${modelName} · ${getAiModelEffortLabel(validEffort)}`
       : modelName;
-  }
 
   return isPinned || !showAutomatic ? label : t`${label} (Auto)`;
 };
