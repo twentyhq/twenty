@@ -20,6 +20,7 @@ import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { getAiModelEffortLabel } from '@/ai/utils/getAiModelEffortLabel';
 import { formatMetricDelta } from '@/ai/utils/formatMetricDelta';
 import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
+import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
 import { formatNumber } from '~/utils/format/formatNumber';
 
 const TRACK_HEIGHT_PX = 24;
@@ -341,6 +342,7 @@ export const AiModelTierSlider = ({
       {isDefined(model) && (
         <AppTooltip
           anchorSelect={`#ai-model-tier-name-${tooltipId}`}
+          Icon={getModelIcon(model.modelFamily, model.providerName)}
           title={modelName}
           description={t`Reasoning effort: ${reasoningEffort}`}
           delay={TooltipDelay.shortDelay}
