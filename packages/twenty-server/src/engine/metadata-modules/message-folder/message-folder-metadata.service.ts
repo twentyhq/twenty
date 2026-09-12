@@ -66,7 +66,7 @@ export class MessageFolderMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<MessageFolderDTO[]> {
-    await this.messageChannelMetadataService.verifyOwnership({
+    await this.messageChannelMetadataService.verifyUsableByCaller({
       id: messageChannelId,
       userWorkspaceId,
       workspaceId,

@@ -46,7 +46,7 @@ export class CreateCalendarEventResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<CreateCalendarEventOutputDTO> {
     try {
-      await this.connectedAccountMetadataService.verifyOwnership({
+      await this.connectedAccountMetadataService.verifyUsableByCaller({
         id: input.connectedAccountId,
         userWorkspaceId,
         workspaceId: workspace.id,
