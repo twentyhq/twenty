@@ -1,5 +1,10 @@
 import { type CountryCode, parsePhoneNumberWithError } from 'libphonenumber-js';
 
+import {
+  isUrlOnOneOfDomains,
+  LINKEDIN_DOMAINS,
+  X_DOMAINS,
+} from 'src/logic-functions/data/link-domain.util';
 import { type Person, type PersonUrl, } from 'src/logic-functions/types/google-response.type';
 import {
   type TwentyLinkInput,
@@ -8,31 +13,6 @@ import {
 } from 'src/logic-functions/types/twenty-person.type';
 import { isDefined } from "twenty-sdk/utils";
 import { isNonEmptyString } from "@sniptt/guards";
-
-const X_DOMAINS = ['x.com', 'twitter.com'];
-const LINKEDIN_DOMAINS = ['linkedin.com'];
-
-const readHostname = (rawUrl: string): string | undefined => {
-  try {
-    return new URL(
-      rawUrl.includes('://') ? rawUrl : `https://${rawUrl}`,
-    ).hostname.toLowerCase();
-  } catch {
-    return undefined;
-  }
-};
-
-const isUrlOnOneOfDomains = (rawUrl: string, domains: string[]): boolean => {
-  const hostname = readHostname(rawUrl);
-
-  if (!isDefined(hostname)) {
-    return false;
-  }
-
-  return domains.some(
-    (domain) => hostname === domain || hostname.endsWith(`.${domain}`),
-  );
-};
 
 const findLink = (
   urls: PersonUrl[] | undefined,

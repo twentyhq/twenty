@@ -1,20 +1,20 @@
-type EmailAddress = {
+export type EmailAddress = {
   value?: string;
 };
 
-type Name = {
+export type Name = {
   givenName?: string;
   familyName?: string;
   displayName?: string;
   displayNameLastFirst?: string;
 };
 
-type Organization = {
+export type Organization = {
   name?: string;
   title?: string;
 };
 
-type PhoneNumber = {
+export type PhoneNumber = {
   value?: string;
   // Canonicalized ITU-T E.164 form
   canonicalForm?: string;
@@ -36,6 +36,8 @@ type PersonMetadata = {
 
 export type Person = {
   emailAddresses?: EmailAddress[];
+  // Required by updateContact to detect concurrent edits
+  etag?: string;
   metadata?: PersonMetadata;
   names?: Name[];
   organizations?: Organization[];
@@ -50,4 +52,14 @@ export type ListConnectionsResponse = {
   nextPageToken?: string;
   nextSyncToken?: string;
   totalItems?: number;
+};
+
+type PersonResponse = {
+  httpStatusCode?: number;
+  person?: Person;
+  requestedResourceName?: string;
+};
+
+export type BatchGetContactsResponse = {
+  responses?: PersonResponse[];
 };
