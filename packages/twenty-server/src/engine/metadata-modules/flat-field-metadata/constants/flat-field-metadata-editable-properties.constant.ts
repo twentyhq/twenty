@@ -34,4 +34,5 @@ export const FLAT_FIELD_METADATA_EDITABLE_PROPERTIES = {
 
 export const FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES = [
   'isActive',
+  'settings',
 ] as const satisfies MetadataEntityPropertyName<'fieldMetadata'>[];
