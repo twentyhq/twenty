@@ -10,6 +10,7 @@ import { AiModelTierIndicator } from '@/ai/components/AiModelTierIndicator';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
 import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
+import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -90,6 +91,14 @@ export const SettingsAiModelTiersPreview = () => {
               </StyledMode>
               <AppTooltip
                 anchorSelect={`[data-tooltip-id="ai-model-mode-${tier.tier}"]`}
+                Icon={
+                  isDefined(tier.model)
+                    ? getModelIcon(
+                        tier.model.modelFamily,
+                        tier.model.providerName,
+                      )
+                    : undefined
+                }
                 title={getAiModelModeDescription(tier, {
                   showAutomatic: false,
                 })}
