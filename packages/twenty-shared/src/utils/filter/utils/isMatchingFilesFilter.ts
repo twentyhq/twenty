@@ -13,7 +13,9 @@ export const isMatchingFilesFilter = ({
         /[.*+?^${}()|[\]\\]/g,
         '\\$&',
       );
-      const regexPattern = escapedPattern.replace(/%/g, '.*');
+      const regexPattern = escapedPattern
+        .replace(/%/g, '.*')
+        .replace(/_/g, '.');
       const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'is');
 
       const stringValue = JSON.stringify(value, null, 1);

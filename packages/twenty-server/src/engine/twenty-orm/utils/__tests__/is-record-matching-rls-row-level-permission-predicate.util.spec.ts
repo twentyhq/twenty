@@ -127,6 +127,11 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       FieldMetadataType.ADDRESS,
     ),
     createMockFlatFieldMetadata(
+      'description-id',
+      'description',
+      FieldMetadataType.RICH_TEXT,
+    ),
+    createMockFlatFieldMetadata(
       'company-id',
       'company',
       FieldMetadataType.RELATION,
@@ -150,6 +155,9 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     address: {
       addressStreet1: 'Main Street',
       addressCity: 'Paris',
+    },
+    description: {
+      markdown: 'Lead developer on CRM core modules',
     },
     companyId: 'company-1',
     deletedAt: null,
@@ -337,6 +345,38 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       isRecordMatchingRLSRowLevelPermissionPredicate({
         record: { ...baseRecord, company: { id: 'company-1' } } as ObjectRecord,
         filter: { company: { is: 'NULL' } },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(false);
+  });
+
+  it('matches rich text fields with SQL wildcards in ILIKE filter', () => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          description: {
+            markdown: {
+              ilike: '%dev_loper%core%',
+            },
+          },
+        },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(true);
+
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          description: {
+            markdown: {
+              ilike: '%manager%',
+            },
+          },
+        },
         flatObjectMetadata,
         flatFieldMetadataMaps,
       }),
