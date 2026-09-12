@@ -1,4 +1,5 @@
-import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { getObjectSortDropdownId } from '@/object-record/object-sort-dropdown/utils/getObjectSortDropdownId';
 import { useResetSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useResetSortDropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
@@ -6,9 +7,10 @@ export const useCloseSortDropdown = () => {
   const { resetSortDropdown } = useResetSortDropdown();
 
   const { closeDropdown } = useCloseDropdown();
+  const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const closeSortDropdown = () => {
-    closeDropdown(OBJECT_SORT_DROPDOWN_ID);
+    closeDropdown(getObjectSortDropdownId(recordIndexId));
     resetSortDropdown();
   };
 

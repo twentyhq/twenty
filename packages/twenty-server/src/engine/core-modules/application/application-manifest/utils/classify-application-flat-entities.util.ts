@@ -78,15 +78,6 @@ const classifyFlatEntity = ({
             reason: 'member or API key role assignment',
           }
         : { status: ApplicationExportCoverageStatus.UNSUPPORTED };
-    case 'navigationMenuItem':
-      return ('userWorkspaceId' in flatEntity &&
-        isDefined(flatEntity.userWorkspaceId)) ||
-        ('targetRecordId' in flatEntity && isDefined(flatEntity.targetRecordId))
-        ? {
-            status: ApplicationExportCoverageStatus.EXCLUDED,
-            reason: 'personal navigation item',
-          }
-        : { status: ApplicationExportCoverageStatus.UNSUPPORTED };
     case 'commandMenuItem':
       if (
         'workflowVersionId' in flatEntity &&

@@ -1,5 +1,4 @@
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,11 +10,9 @@ export const useSettingsActiveTabId = (
   componentInstanceId: string,
   tabIds: string[],
 ): string | null => {
-  const scopedComponentInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceId(componentInstanceId);
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
-    scopedComponentInstanceId,
+    componentInstanceId,
   );
   const { hash } = useLocation();
 

@@ -10,6 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { frontComponentHostCommunicationApi } from '@/remote/worker/thread/states/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomElementTag';
 import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
+import { installClassAttributeAccessors } from '@/polyfills/dom/utils/installClassAttributeAccessors';
 import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
@@ -27,6 +28,7 @@ import { installWindowAliasesPolyfill } from '@/polyfills/window-aliases/utils/i
 import { exposeGlobals } from '@/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/elements/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemoteElementAttributes';
+import { resolveRemoteElementPrototypes } from '@/remote/elements/utils/resolveRemoteElementPrototypes';
 import { buildFrontComponentHostCommunicationApiFromThreadImports } from '@/remote/worker/thread/utils/buildFrontComponentHostCommunicationApiFromThreadImports';
 import { handleCommandConfirmationModalResult } from '@/remote/worker/thread/utils/handleCommandConfirmationModalResult';
 import { installErrorEventBridge } from '@/remote/worker/thread/utils/installErrorEventBridge';
@@ -44,6 +46,10 @@ installErrorEventBridge();
 installDocumentGetElementById(document);
 installGetElementsByClassName(Element.prototype);
 installGetElementsByClassName(document);
+installClassAttributeAccessors({
+  elementPrototype: Element.prototype,
+  remoteElementPrototypes: resolveRemoteElementPrototypes(),
+});
 installLocalStyleOnBaseElements(Element.prototype);
 
 installGetComputedStyle(toGlobalScopeRecord(globalThis));

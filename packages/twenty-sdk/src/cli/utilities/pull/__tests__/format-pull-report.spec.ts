@@ -144,21 +144,20 @@ describe('formatPullReport', () => {
     expect(report).toContain('src/objects/unpushed.object.ts');
   });
 
-  it('should warn that published translations were not written and point at the locales folder', () => {
+  it('should list the locales whose entries stayed in compiled form', () => {
     const report = buildReport({
-      translations: {
-        'fr-FR': { greeting: 'Bonjour' },
-        en: { greeting: 'Hello' },
-      },
+      compiledTranslationEntryCountByLocale: { 'fr-FR': 3, en: 1 },
     });
 
-    expect(report).toMatch(/^Published translations \(en, fr-FR\).*locales\//m);
+    expect(report).toContain('locales/compiled/');
+    expect(report).toMatch(/^ {2}en {11}1 entry$/m);
+    expect(report).toMatch(/^ {2}fr-FR {8}3 entries$/m);
   });
 
-  it('should stay silent about translations when the workspace has none', () => {
-    expect(buildReport()).not.toContain('Published translations');
-    expect(buildReport({ translations: { en: {} } })).not.toContain(
-      'Published translations',
-    );
+  it('should stay silent about compiled translations when every entry was decoded', () => {
+    expect(buildReport()).not.toContain('compiled form');
+    expect(
+      buildReport({ compiledTranslationEntryCountByLocale: { 'fr-FR': 0 } }),
+    ).not.toContain('compiled form');
   });
 });

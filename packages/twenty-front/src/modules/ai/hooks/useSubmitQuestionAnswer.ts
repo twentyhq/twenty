@@ -11,11 +11,15 @@ import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChat
 import { ANSWER_AGENT_CHAT_QUESTION } from '@/ai/graphql/mutations/answerAgentChatQuestion';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import { markQuestionAnswered } from '@/ai/utils/markQuestionAnswered';
 import { markQuestionPending } from '@/ai/utils/markQuestionPending';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -65,6 +69,10 @@ export const useSubmitQuestionAnswer = () => {
           instanceId: AGENT_CHAT_INSTANCE_ID,
           familyKey: { threadId },
         });
+      const errorAtom = agentChatErrorComponentFamilyState.atomFamily({
+        instanceId: AGENT_CHAT_INSTANCE_ID,
+        familyKey: { threadId },
+      });
       const previousMessages = store.get(messagesAtom);
 
       const uploadedFiles = store.get(agentChatUploadedFilesState.atom);
@@ -101,6 +109,17 @@ export const useSubmitQuestionAnswer = () => {
           ...uploadedFiles,
           ...currentUploadedFiles,
         ]);
+
+        // The banner reads the workspace flag, then the thread error when no resource credit item carries that flag
+        if (isAiChatCreditsExhaustedError(error)) {
+          store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
+          store.set(
+            errorAtom,
+            CombinedGraphQLErrors.is(error) || error instanceof Error
+              ? error
+              : new Error('An unexpected error occurred'),
+          );
+        }
 
         if (isGraphqlErrorOfType(error, AiChatErrorCode.QUESTION_NOT_PENDING)) {
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);

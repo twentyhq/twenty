@@ -17,6 +17,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
@@ -73,6 +74,7 @@ export class EventStreamResolver {
     @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
+    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
@@ -113,6 +115,7 @@ export class EventStreamResolver {
       authContext: {
         userId: user?.id,
         userWorkspaceId,
+        workspaceMemberId,
         apiKeyId: apiKey?.id,
         applicationId: application?.id,
       },

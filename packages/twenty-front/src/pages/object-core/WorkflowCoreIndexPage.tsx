@@ -1,15 +1,26 @@
 import { useEffect } from 'react';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { useInView } from 'react-intersection-observer';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/icon';
 
+import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
+import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
-import { CoreWorkflowsSelectionToContextStoreEffect } from '@/object-core/workflows/components/CoreWorkflowsSelectionToContextStoreEffect';
-import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
-import { useHydrateSelectedWorkflowRecords } from '@/object-core/workflows/hooks/useHydrateSelectedWorkflowRecords';
-import { getDeletedRecordIdsFromOperation } from '@/object-core/utils/getDeletedRecordIdsFromOperation';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
+import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
+import { getDeletedRecordIdsFromOperation } from '@/object-core/utils/getDeletedRecordIdsFromOperation';
+import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
+import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
+import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
+import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
+import { RecordIndexEmptyStateDisplay } from '@/object-record/record-index/components/RecordIndexEmptyStateDisplay';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CoreWorkflowsFilterBar } from '@/object-core/workflows/components/CoreWorkflowsFilterBar';
 import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
 import {
@@ -53,21 +64,21 @@ export const WorkflowCoreIndexPage = () => {
     objectNameSingular: CoreObjectNameSingular.Workflow,
   });
 
-  const { coreWorkflows, hasNextPage, loading, fetchNextPage } =
+  const { coreWorkflows, hasNextPage, loading, error, fetchNextPage } =
     useCoreWorkflows({ tableId });
 
   const { ref: fetchMoreRef, inView } = useInView();
 
+  const { createCoreWorkflow, canCreateCoreWorkflow, isCreatingCoreWorkflow } =
+    useCreateCoreWorkflow();
+
   const {
     displayedCoreWorkflows,
     selectedRowIds,
-    selectedWorkspaceWorkflowIds,
     toggleRow,
     selectRows,
     forgetDeletedWorkspaceWorkflows,
   } = useCoreWorkflowsSelection({ coreWorkflows });
-
-  useHydrateSelectedWorkflowRecords(selectedWorkspaceWorkflowIds);
 
   useListenToObjectRecordOperationBrowserEvent({
     objectMetadataItemId: objectMetadataItem.id,
@@ -77,6 +88,22 @@ export const WorkflowCoreIndexPage = () => {
         getDeletedRecordIdsFromOperation(detail.operation),
       ),
   });
+
+  const coreWorkflowsFilterSettings = useAtomStateValue(
+    coreWorkflowsFilterSettingsState,
+  );
+
+  const hasAppliedFilters = (
+    coreWorkflowsFilterSettings.stepFilters ?? []
+  ).some(isUsableCoreWorkflowFilterRule);
+
+  const hasError = isDefined(error);
+
+  const isEmpty =
+    !loading &&
+    !hasError &&
+    !hasNextPage &&
+    displayedCoreWorkflows.length === 0;
 
   useEffect(() => {
     if (inView && hasNextPage && !loading) {
@@ -96,6 +123,18 @@ export const WorkflowCoreIndexPage = () => {
             title={objectMetadataItem.labelPlural}
             actionButton={
               <>
+                <CommandMenuComponentInstanceContext.Provider
+                  value={{
+                    instanceId: getCommandMenuIdFromRecordIndexId(tableId),
+                  }}
+                >
+                  <CommandMenuContextProvider
+                    displayType="button"
+                    containerType={CommandMenuItemContainerType.IndexPageHeader}
+                  >
+                    <PinnedCommandMenuItemButtons />
+                  </CommandMenuContextProvider>
+                </CommandMenuComponentInstanceContext.Provider>
                 <CoreWorkflowsFilterBar />
                 <SidePanelToggleButton />
               </>
@@ -104,25 +143,62 @@ export const WorkflowCoreIndexPage = () => {
         }
       >
         <StyledTableContainer>
-          <CoreObjectTable
-            tableId={tableId}
-            columns={WORKFLOW_CORE_TABLE_COLUMNS}
-            items={displayedCoreWorkflows}
-            getItemKey={(workflow) => workflow.id}
-            getItemLink={getCoreWorkflowLink}
-            initialSort={CORE_WORKFLOWS_INITIAL_SORT}
-            selection={{
-              selectedRowIds,
-              onToggleRow: toggleRow,
-              onToggleAllRows: selectRows,
-              isItemSelectable: (coreWorkflow) =>
-                isDefined(coreWorkflow.workspaceWorkflowId),
-            }}
-          />
-          {hasNextPage && <StyledFetchMoreSentinel ref={fetchMoreRef} />}
-          <CoreWorkflowsSelectionToContextStoreEffect
-            selectedWorkspaceWorkflowIds={selectedWorkspaceWorkflowIds}
-          />
+          {hasError && (
+            <RecordIndexEmptyStateDisplay
+              animatedPlaceholderType="errorIndex"
+              title={t`Something went wrong`}
+              subTitle={t`We could not load your ${objectMetadataItem.labelPlural}. Please try again later.`}
+            />
+          )}
+          {isEmpty && (
+            <RecordIndexEmptyStateDisplay
+              animatedPlaceholderType={
+                hasAppliedFilters ? 'noMatchRecord' : 'noRecord'
+              }
+              title={
+                hasAppliedFilters
+                  ? t`No ${objectMetadataItem.labelPlural} found`
+                  : t`Add your first ${objectMetadataItem.labelSingular}`
+              }
+              subTitle={
+                hasAppliedFilters
+                  ? t`No ${objectMetadataItem.labelPlural} match your filters. Try removing some of them.`
+                  : t`Create a ${objectMetadataItem.labelSingular} to automate your work.`
+              }
+              ButtonIcon={IconPlus}
+              buttonTitle={t`Add a ${objectMetadataItem.labelSingular}`}
+              onButtonClick={
+                canCreateCoreWorkflow ? createCoreWorkflow : undefined
+              }
+            />
+          )}
+          {!hasError && !isEmpty && (
+            <>
+              <CoreObjectTable
+                tableId={tableId}
+                columns={WORKFLOW_CORE_TABLE_COLUMNS}
+                items={displayedCoreWorkflows}
+                getItemKey={(workflow) => workflow.id}
+                getItemLink={getCoreWorkflowLink}
+                initialSort={CORE_WORKFLOWS_INITIAL_SORT}
+                selection={{
+                  selectedRowIds,
+                  onToggleRow: toggleRow,
+                  onToggleAllRows: selectRows,
+                  isItemSelectable: (coreWorkflow) =>
+                    isDefined(coreWorkflow.workspaceWorkflowId),
+                }}
+              />
+              {canCreateCoreWorkflow && (
+                <CoreObjectTableAddNewRow
+                  label={t`New ${objectMetadataItem.labelSingular}`}
+                  onClick={createCoreWorkflow}
+                  disabled={isCreatingCoreWorkflow}
+                />
+              )}
+              {hasNextPage && <StyledFetchMoreSentinel ref={fetchMoreRef} />}
+            </>
+          )}
         </StyledTableContainer>
       </PageCardLayout>
     </>

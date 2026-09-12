@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
 import { TintedIconTile } from 'twenty-ui/data-display';
 import { IconCube } from 'twenty-ui/icon';
-import { MenuItemSelectAvatar, MenuItemToggle } from 'twenty-ui/navigation';
+import { MenuItemSelectAvatar, MenuItemSwitch } from 'twenty-ui/navigation';
 
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
@@ -20,7 +20,6 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 const ALL_OBJECTS_ITEM_ID = 'all-objects';
 
@@ -67,13 +66,10 @@ export const SidePanelObjectFilterDropdownContent = ({
     ALL_OBJECTS_ITEM_ID,
     ...displayedObjects.map((item) => item.nameSingular),
   ];
-  const scopedSelectableListId = useWorkspaceSurfaceScopedComponentInstanceId(
-    OBJECT_FILTER_DROPDOWN_ID,
-  );
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedSelectableListId,
+    OBJECT_FILTER_DROPDOWN_ID,
   );
 
   return (
@@ -131,14 +127,14 @@ export const SidePanelObjectFilterDropdownContent = ({
       </SelectableList>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        <MenuItemToggle
+        <MenuItemSwitch
           LeftIcon={IconCube}
-          onToggleChange={() =>
+          onCheckedChange={() =>
             setSidePanelShowHiddenObjects(!sidePanelShowHiddenObjects)
           }
-          toggled={sidePanelShowHiddenObjects}
+          checked={sidePanelShowHiddenObjects}
           text={t`Show hidden objects`}
-          toggleSize="small"
+          size="sm"
         />
       </DropdownMenuItemsContainer>
     </DropdownContent>

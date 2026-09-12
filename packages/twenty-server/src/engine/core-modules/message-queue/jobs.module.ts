@@ -34,6 +34,7 @@ import { ReconcileWorkspaceCampaignStatsJob } from 'src/modules/emailing/jobs/re
 import { RefreshCampaignStatsJob } from 'src/modules/emailing/jobs/refresh-campaign-stats.job';
 import { SendCampaignEmailBatchJob } from 'src/modules/emailing/jobs/send-campaign-email-batch.job';
 import { SendCampaignEmailJob } from 'src/modules/emailing/jobs/send-campaign-email.job';
+import { SendScheduledCampaignJob } from 'src/modules/emailing/jobs/send-scheduled-campaign.job';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { EventLogIngestionModule } from 'src/engine/core-modules/event-logs/ingest/event-log-ingestion.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -49,6 +50,8 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-monitor/ai-agent-monitor.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
+import { LogicFunctionPrebuiltWarmUpModule } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.module';
+import { WarmUpApplicationLogicFunctionsJob } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-application-logic-functions.job';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -101,6 +104,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     AiAgentMonitorModule,
     AiChatModule,
     LogicFunctionModule,
+    LogicFunctionPrebuiltWarmUpModule,
     EnterpriseModule,
     EmailingModule,
     ApplicationInstallModule,
@@ -122,6 +126,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     SendCampaignEmailBatchJob,
     MaterializeCampaignJob,
     MaterializeCampaignChunkJob,
+    SendScheduledCampaignJob,
     RefreshCampaignStatsJob,
     ReconcileWorkspaceCampaignStatsJob,
     UpdateSubscriptionQuantityJob,
@@ -135,6 +140,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     InstallPreInstalledAppsJob,
     TriggerInstallApplicationJob,
     TriggerUninstallApplicationJob,
+    WarmUpApplicationLogicFunctionsJob,
   ],
 })
 export class JobsModule {

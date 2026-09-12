@@ -1,0 +1,71 @@
+.root {
+  backdrop-filter: var(--t-blur-medium);
+  background-color: var(--t-background-transparent-primary);
+  border-radius: var(--t-border-radius-md);
+  box-shadow: var(--t-box-shadow-strong);
+  box-sizing: border-box;
+  inline-size: 296px;
+  margin-block-start: var(--t-spacing-2);
+  padding: var(--t-spacing-2) var(--t-spacing-2) var(--t-spacing-1);
+  position: relative;
+
+  @include respond-to(mobile) {
+    border-radius: 0;
+    inline-size: 100%;
+  }
+}
+
+.progress {
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+
+  & > [role='progressbar'] {
+    height: 100%;
+  }
+}
+
+.header {
+  align-items: center;
+  color: var(--t-font-color-primary);
+  display: flex;
+  font-weight: var(--t-font-weight-medium);
+  gap: var(--t-spacing-2);
+  margin-block-end: var(--t-spacing-1);
+}
+
+.message {
+  color: var(--t-font-color-secondary);
+  font-size: var(--t-font-size-sm);
+}
+
+.icon {
+  align-items: center;
+  display: flex;
+}
+
+.actions {
+  align-items: center;
+  display: flex;
+  margin-inline-start: auto;
+}
+
+.description {
+  color: var(--t-font-color-tertiary);
+  font-size: var(--t-font-size-sm);
+  inline-size: 200px;
+  overflow: hidden;
+  padding-inline-start: var(--t-spacing-6);
+  text-overflow: ellipsis;
+}
+
+.footer {
+  margin-block-start: var(--t-spacing-2);
+}
+
+.footerAction {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  padding-block-start: var(--t-spacing-1);
+}

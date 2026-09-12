@@ -122,6 +122,20 @@ export class RowLevelPermissionPredicateGroupService {
   }
 
   public async deleteAllRowLevelPermissionPredicateGroups(workspaceId: string) {
+    // Callers reconcile a whole fleet, so most workspaces have nothing to
+    // delete. Checking first keeps that a read, and lets callers ask on every
+    // pass instead of only on the revoke transition, which is what makes the
+    // cleanup recover if a previous attempt failed after the revoke committed.
+    const hasPredicateGroups =
+      (await this.rowLevelPermissionPredicateGroupRepository.count(
+        workspaceId,
+        {},
+      )) > 0;
+
+    if (!hasPredicateGroups) {
+      return;
+    }
+
     await this.rowLevelPermissionPredicateGroupRepository.delete(
       workspaceId,
       {},

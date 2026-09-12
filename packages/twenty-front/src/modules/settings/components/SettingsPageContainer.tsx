@@ -1,5 +1,6 @@
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollRestoration } from '@/ui/utilities/scroll/hooks/useScrollRestoration';
 import { styled } from '@linaria/react';
@@ -63,7 +64,9 @@ export const SettingsPageContainer = ({
   const location = useLocation();
   const settingsPath = getMatchingSettingsPath(location.pathname);
 
-  const componentInstanceId = `scroll-wrapper-settings-page-container-${settingsPath}`;
+  const componentInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
+    `scroll-wrapper-settings-page-container-${settingsPath}`,
+  );
 
   useScrollRestoration(componentInstanceId);
 

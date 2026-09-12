@@ -38,3 +38,6 @@ export type { ProgressBarProps } from './ProgressBar/ProgressBar';
 export { ProgressBar } from './ProgressBar/ProgressBar';
 export type { SidePanelInformationBannerProps } from './SidePanelInformationBanner/SidePanelInformationBanner';
 export { SidePanelInformationBanner } from './SidePanelInformationBanner/SidePanelInformationBanner';
+export { Toast } from './Toast/Toast';
+export type { ToastProps } from './Toast/types/ToastProps';
+export type { ToastVariant } from './Toast/types/ToastVariant';

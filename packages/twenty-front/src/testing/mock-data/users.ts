@@ -2,10 +2,7 @@ import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceSta
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
-  AUTO_SELECT_FAST_MODEL_ID,
-  AUTO_SELECT_SMART_MODEL_ID,
-} from 'twenty-shared/constants';
-import {
+  AiModelTier,
   OnboardingStatus,
   PermissionFlagType,
   SubscriptionInterval,
@@ -89,11 +86,10 @@ export const mockCurrentWorkspace = {
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   metadataVersion: 1,
   trashRetentionDays: 14,
-  fastModel: AUTO_SELECT_FAST_MODEL_ID,
-  smartModel: AUTO_SELECT_SMART_MODEL_ID,
-  routerModel: 'auto',
-  enabledAiModelIds: [],
-  useRecommendedModels: true,
+  aiChatModelTier: AiModelTier.fast,
+  aiAgentModelTier: AiModelTier.fast,
+  isAutoModelSelectionEnabled: true,
+  aiModelIdByTier: {},
   isInternalMessagesImportEnabled: false,
   currentBillingSubscription: {
     __typename: 'BillingSubscription',
@@ -112,6 +108,8 @@ export const mockCurrentWorkspace = {
         hasReachedCurrentPeriodCap: false,
         quantity: 1,
         stripePriceId: PRO_BASE_MONTHLY_PRICE.stripePriceId,
+        unitAmount: PRO_BASE_MONTHLY_PRICE.unitAmount,
+        creditAmount: PRO_BASE_MONTHLY_PRICE.creditAmount,
         billingProduct: {
           name: PRO_BASE_LICENSED_PRODUCT.name,
           description: PRO_BASE_LICENSED_PRODUCT.description,
@@ -125,6 +123,8 @@ export const mockCurrentWorkspace = {
         hasReachedCurrentPeriodCap: false,
         quantity: null,
         stripePriceId: PRO_METERED_MONTHLY_PRICE.stripePriceId,
+        unitAmount: null,
+        creditAmount: null,
         billingProduct: {
           name: PRO_METERED_PRODUCT.name,
           description: PRO_METERED_PRODUCT.description,
@@ -149,6 +149,8 @@ export const mockCurrentWorkspace = {
           hasReachedCurrentPeriodCap: false,
           quantity: 1,
           stripePriceId: PRO_BASE_MONTHLY_PRICE.stripePriceId,
+          unitAmount: PRO_BASE_MONTHLY_PRICE.unitAmount,
+          creditAmount: PRO_BASE_MONTHLY_PRICE.creditAmount,
           billingProduct: {
             name: PRO_BASE_LICENSED_PRODUCT.name,
             description: PRO_BASE_LICENSED_PRODUCT.description,

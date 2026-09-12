@@ -24,6 +24,7 @@ export const getMockFieldMetadataEntity = <
 ): FieldMetadataEntity => {
   return {
     isSearchable: false,
+    isAuditLogged: true,
     isSystemSideEffect: false,
     workspace: {} as WorkspaceEntity,
     calendarViews: [],

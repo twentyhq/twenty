@@ -7,7 +7,7 @@ import { matchPath, useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { TabButton } from 'twenty-ui/input';
-import { IconColorSwatch, IconCreditCard } from 'twenty-ui/icon';
+import { IconColorSwatch, IconCreditCard, IconGauge } from 'twenty-ui/icon';
 
 const StyledTabBar = styled.div`
   display: flex;
@@ -30,6 +30,7 @@ export const SettingsBillingTabBar = () => {
 
   const billingPath = getSettingsPath(SettingsPath.Billing);
   const plansPath = getSettingsPath(SettingsPath.BillingPlans);
+  const limitsPath = getSettingsPath(SettingsPath.BillingLimits);
 
   const isTabActive = (path: string) =>
     matchPath({ path, end: true }, location.pathname) !== null;
@@ -49,6 +50,13 @@ export const SettingsBillingTabBar = () => {
         LeftIcon={IconColorSwatch}
         active={isTabActive(plansPath)}
         to={plansPath}
+      />
+      <TabButton
+        id="limits"
+        title={t`Limits`}
+        LeftIcon={IconGauge}
+        active={isTabActive(limitsPath)}
+        to={limitsPath}
       />
     </StyledTabBar>
   );

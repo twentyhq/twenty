@@ -6,6 +6,8 @@ import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-r
 import { commonQueryRunnerToRestApiExceptionHandler } from 'src/engine/api/common/common-query-runners/utils/common-query-runner-to-rest-api-exception-handler.util';
 import { RestInputRequestParserException } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
+import { RecordShareException } from 'src/engine/record-share/record-share.exception';
+import { recordShareRestApiExceptionHandler } from 'src/engine/record-share/utils/record-share-rest-api-exception-handler.util';
 import { throttlerToRestApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-rest-api-exception-handler.util';
 import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { usageLimitToRestApiExceptionHandler } from 'src/engine/core-modules/usage-limit/utils/usage-limit-to-rest-api-exception-handler.util';
@@ -22,6 +24,8 @@ export const workspaceQueryRunnerRestApiExceptionHandler = (
   switch (true) {
     case error instanceof CommonQueryRunnerException:
       return commonQueryRunnerToRestApiExceptionHandler(error);
+    case error instanceof RecordShareException:
+      return recordShareRestApiExceptionHandler(error);
     case error instanceof RestInputRequestParserException:
       throw new BadRequestException(error.message);
     case error instanceof UsageLimitException:

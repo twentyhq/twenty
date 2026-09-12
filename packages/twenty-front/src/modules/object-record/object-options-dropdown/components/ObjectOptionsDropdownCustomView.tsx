@@ -1,5 +1,4 @@
 import { ObjectOptionsDropdownMenuViewName } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuViewName';
-import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
@@ -25,7 +24,6 @@ import {
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -48,8 +46,13 @@ export const ObjectOptionsDropdownCustomView = ({
   onBackToDefault,
 }: ObjectOptionsDropdownCustomViewProps) => {
   const { t } = useLingui();
-  const { recordIndexId, objectMetadataItem, onContentChange, closeDropdown } =
-    useObjectOptionsDropdown();
+  const {
+    recordIndexId,
+    objectMetadataItem,
+    onContentChange,
+    closeDropdown,
+    dropdownId,
+  } = useObjectOptionsDropdown();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -121,12 +124,9 @@ export const ObjectOptionsDropdownCustomView = ({
     'Delete view',
   ];
 
-  const scopedObjectOptionsDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(OBJECT_OPTIONS_DROPDOWN_ID);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedObjectOptionsDropdownId,
+    dropdownId,
   );
 
   if (!customViewData) {
@@ -138,8 +138,8 @@ export const ObjectOptionsDropdownCustomView = ({
       <ObjectOptionsDropdownMenuViewName currentView={customViewData} />
       <DropdownMenuSeparator />
       <SelectableList
-        selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-        focusId={OBJECT_OPTIONS_DROPDOWN_ID}
+        selectableListInstanceId={dropdownId}
+        focusId={dropdownId}
         selectableItemIdArray={selectableItemIdArray}
       >
         <DropdownMenuItemsContainer scrollable={false}>

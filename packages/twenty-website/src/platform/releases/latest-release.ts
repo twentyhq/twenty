@@ -7,7 +7,7 @@ export const LATEST_RELEASE: {
   title: string;
   previewImage: string;
 } = {
-  release: '2.26.0',
-  title: 'Richer relation layouts',
+  release: '2.38.1',
+  title: 'More flexible record pages',
   previewImage: '/images/releases/2.0/2.0.0-custom-layouts.webp',
 };

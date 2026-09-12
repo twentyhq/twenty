@@ -148,12 +148,18 @@ export type {
 } from './logicFunctionManifestType';
 export type { TranslationsManifest, Manifest } from './manifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
+export type {
+  NormalizedPageLayoutWidgetManifest,
+  NormalizedPageLayoutTabManifest,
+} from './normalizedPageLayoutManifestType';
+export { normalizePageLayoutTabManifest } from './normalizePageLayoutTabManifest';
 export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderConfigType';
 export type { OAuthProviderTokenRequestContentType } from './oauthProviderTokenRequestContentType.type';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
 export type {
   PageLayoutWidgetManifest,
+  StandalonePageLayoutWidgetManifest,
   PageLayoutTabManifest,
   PageLayoutManifest,
 } from './pageLayoutManifestType';

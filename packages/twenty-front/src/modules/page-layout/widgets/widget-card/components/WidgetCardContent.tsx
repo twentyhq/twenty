@@ -43,6 +43,10 @@ const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
   &:empty {
     margin-top: 0;
     padding: 0;
+    padding-bottom: ${({ hasHeader, variant }) =>
+      hasHeader && variant === 'flush'
+        ? 'var(--widget-card-title-padding-top)'
+        : '0'};
   }
 `;
 

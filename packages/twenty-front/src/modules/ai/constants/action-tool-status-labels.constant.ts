@@ -11,6 +11,10 @@ export const ACTION_TOOL_STATUS_LABELS: Record<string, ToolStatusLabels> = {
     loading: msg`Drafting email`,
     completed: msg`Drafted email`,
   },
+  find_connected_accounts: {
+    loading: msg`Finding connected accounts`,
+    completed: msg`Found connected accounts`,
+  },
   search_help_center: {
     loading: msg`Searching the help center`,
     completed: msg`Searched the help center`,

@@ -6,6 +6,7 @@ import {
   tipTapDocumentToMarkdown,
 } from 'twenty-shared/utils';
 
+import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -19,22 +20,18 @@ import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/curren
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useApolloClient } from '@apollo/client/react';
-import {
-  GetChatThreadsDocument,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
+
+const AGENT_CHAT_THREADS_REFRESH_RETRY_DELAY_MS = 3000;
 
 export const AgentChatThreadInitializationEffect = () => {
-  const client = useApolloClient();
-  const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
@@ -64,20 +61,32 @@ export const AgentChatThreadInitializationEffect = () => {
       return;
     }
 
-    client
-      .query({
-        query: GetChatThreadsDocument,
-        fetchPolicy: 'network-only',
-      })
-      .then((result) => {
-        if (!isDefined(result.data?.chatThreads)) {
-          return;
-        }
+    let isActive = true;
+    let retryTimeoutId: number | undefined;
 
-        replaceDraft('agentChatThreads', result.data.chatThreads);
-        applyChanges();
-      });
-  }, [storeEntry.status, hasAiPermission, client, replaceDraft, applyChanges]);
+    const refreshUntilLoaded = async () => {
+      const agentChatThreads = await refreshAgentChatThreads();
+
+      if (!isActive || isDefined(agentChatThreads)) {
+        return;
+      }
+
+      retryTimeoutId = window.setTimeout(
+        () => void refreshUntilLoaded(),
+        AGENT_CHAT_THREADS_REFRESH_RETRY_DELAY_MS,
+      );
+    };
+
+    void refreshUntilLoaded();
+
+    return () => {
+      isActive = false;
+
+      if (isDefined(retryTimeoutId)) {
+        window.clearTimeout(retryTimeoutId);
+      }
+    };
+  }, [storeEntry.status, hasAiPermission, refreshAgentChatThreads]);
 
   useEffect(() => {
     setAgentChatThreadsLoading(

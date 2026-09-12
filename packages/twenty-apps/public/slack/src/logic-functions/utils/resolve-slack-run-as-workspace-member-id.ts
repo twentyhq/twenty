@@ -12,7 +12,8 @@ import { updateSlackUserLink } from 'src/logic-functions/data/update-slack-user-
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
 import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
-import { isConsentedSlackUserLink } from 'src/logic-functions/utils/is-consented-slack-user-link';
+import { isLinkableSlackIdentity } from 'src/logic-functions/utils/is-linkable-slack-identity';
+import { isManualConsentedSlackUserLink } from 'src/logic-functions/utils/is-manual-consented-slack-user-link';
 
 const resolveLinkableEmail = async ({
   slackClient,
@@ -21,20 +22,11 @@ const resolveLinkableEmail = async ({
   slackClient: WebClient;
   identity: SlackUserIdentity;
 }): Promise<string | undefined> => {
-  if (!identity.isRegularUserAccount || !isNonEmptyString(identity.email)) {
-    return undefined;
-  }
+  const installedSlackTeamId = await getInstalledSlackTeamId(slackClient);
 
-  const installedTeamId = await getInstalledSlackTeamId(slackClient);
-
-  if (
-    !isNonEmptyString(installedTeamId) ||
-    identity.slackTeamId !== installedTeamId
-  ) {
-    return undefined;
-  }
-
-  return identity.email;
+  return isLinkableSlackIdentity({ identity, installedSlackTeamId })
+    ? identity.email
+    : undefined;
 };
 
 export const resolveSlackRunAsWorkspaceMemberId = async ({
@@ -65,12 +57,16 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
 
   const isManualLink = existingLink?.source === SLACK_USER_LINK_SOURCE.MANUAL;
 
-  if (isManualLink) {
-    if (isConsentedSlackUserLink(existingLink?.consentState)) {
-      return isNonEmptyString(existingLink?.workspaceMemberId)
-        ? existingLink.workspaceMemberId
-        : undefined;
-    }
+  if (
+    isDefined(existingLink) &&
+    isManualConsentedSlackUserLink({
+      source: existingLink.source,
+      consentState: existingLink.consentState,
+    })
+  ) {
+    return isNonEmptyString(existingLink.workspaceMemberId)
+      ? existingLink.workspaceMemberId
+      : undefined;
   }
 
   const linkableEmail = await resolveLinkableEmail({ slackClient, identity });

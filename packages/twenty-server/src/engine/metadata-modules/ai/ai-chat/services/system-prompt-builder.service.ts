@@ -6,6 +6,7 @@ import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/cons
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { buildToolCatalogSection } from 'src/engine/core-modules/tool-provider/utils/build-tool-catalog-section.util';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import { AI_CHAT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-excluded-tool-names.const';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
 import { buildSkillCatalogSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-skill-catalog-section.util';
 import { buildUserContextSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-user-context-section.util';
@@ -48,7 +49,11 @@ export class SystemPromptBuilderService {
     const toolCatalog = await this.toolRegistry.buildToolIndex(
       workspaceId,
       roleId,
-      { userId, userWorkspaceId },
+      {
+        userId,
+        userWorkspaceId,
+        excludeTools: AI_CHAT_EXCLUDED_TOOL_NAMES,
+      },
     );
 
     const skillCatalog = await this.skillService.findAllFlatSkills(workspaceId);

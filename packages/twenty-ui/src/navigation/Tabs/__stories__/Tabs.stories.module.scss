@@ -1,0 +1,11 @@
+.panel {
+  padding: var(--t-spacing-4);
+}
+
+.count {
+  background: var(--t-background-tertiary);
+  border-radius: var(--t-border-radius-sm);
+  color: var(--t-font-color-secondary);
+  font-size: var(--t-font-size-sm);
+  padding-inline: var(--t-spacing-1);
+}
