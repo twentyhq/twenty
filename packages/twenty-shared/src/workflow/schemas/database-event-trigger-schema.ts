@@ -24,6 +24,13 @@ export const workflowDatabaseEventTriggerSchema = baseTriggerSchema
         ),
       objectType: z.string().optional(),
       fields: z.array(z.string()).optional().nullable(),
+      testRecordId: z
+        .uuid()
+        .optional()
+        .nullable()
+        .describe(
+          'Id of the record used to build the trigger payload when testing the workflow manually. Never used when the workflow runs for real.',
+        ),
       filter: z
         .object({
           stepFilterGroups: z.array(stepFilterGroupSchema),
