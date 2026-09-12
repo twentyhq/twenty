@@ -1,16 +1,22 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ActorMetadata } from 'twenty-shared/types';
+import { type ActorMetadata, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import {
   WorkflowRunStatus,
   type WorkflowRunState,
@@ -24,6 +30,10 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
+import {
+  buildMergeWorkflowRunStepInfosStatement,
+  type WorkflowRunStepInfoPatchByStepId,
+} from 'src/modules/workflow/workflow-runner/workflow-run/utils/build-merge-workflow-run-step-infos-statement.util';
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
@@ -238,7 +248,6 @@ export class WorkflowRunWorkspaceService {
     }
   }
 
-  @WithLock('workflowRunId')
   async updateWorkflowRunStepInfo({
     stepId,
     stepInfo,
@@ -250,30 +259,21 @@ export class WorkflowRunWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
   }) {
-    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+    await this.mergeWorkflowRunStepInfos({
       workflowRunId,
       workspaceId,
-    });
-
-    const partialUpdate = {
-      state: {
-        ...workflowRunToUpdate.state,
-        stepInfos: {
-          ...workflowRunToUpdate.state?.stepInfos,
-          [stepId]: {
-            ...workflowRunToUpdate.state?.stepInfos[stepId],
-            result: stepInfo?.result,
-            error: stepInfo?.error,
-            status: stepInfo.status,
-          },
+      // Only these three keys are the caller's to say; whatever else the step
+      // info already carries (history, retryAttempt) survives the merge
+      stepInfoPatchByStepId: {
+        [stepId]: {
+          result: stepInfo?.result,
+          error: stepInfo?.error,
+          status: stepInfo.status,
         },
       },
-    };
-
-    await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
+    });
   }
 
-  @WithLock('workflowRunId')
   async updateWorkflowRunStepInfos({
     stepInfos,
     workflowRunId,
@@ -283,33 +283,10 @@ export class WorkflowRunWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
   }) {
-    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+    await this.mergeWorkflowRunStepInfos({
       workflowRunId,
       workspaceId,
-    });
-
-    const existingStepInfos = workflowRunToUpdate.state?.stepInfos ?? {};
-
-    const mergedStepInfos = { ...existingStepInfos };
-
-    for (const [stepId, info] of Object.entries(stepInfos)) {
-      mergedStepInfos[stepId] = {
-        ...existingStepInfos[stepId],
-        ...info,
-      };
-    }
-
-    const partialUpdate = {
-      state: {
-        ...workflowRunToUpdate.state,
-        stepInfos: mergedStepInfos,
-      },
-    };
-
-    await this.updateWorkflowRun({
-      workflowRunId,
-      workspaceId,
-      partialUpdate,
+      stepInfoPatchByStepId: stepInfos,
     });
   }
 
@@ -431,6 +408,101 @@ export class WorkflowRunWorkspaceService {
         );
       }
     }, authContext);
+  }
+
+  // A step-status write used to read the run, rebuild the whole state column —
+  // flow definition included — and push it back under a run-wide mutex. The
+  // targeted jsonb merge below leaves the flow bytes untouched and lets
+  // Postgres serialise concurrent branches on the row itself.
+  private async mergeWorkflowRunStepInfos({
+    workflowRunId,
+    workspaceId,
+    stepInfoPatchByStepId,
+  }: {
+    workflowRunId: string;
+    workspaceId: string;
+    stepInfoPatchByStepId: WorkflowRunStepInfoPatchByStepId;
+  }) {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowRunRepository =
+        this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+          'workflowRun',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const { sql, parameters } = buildMergeWorkflowRunStepInfosStatement({
+        schemaName: getWorkspaceSchemaName(workspaceId),
+        workflowRunId,
+        stepInfoPatchByStepId,
+      });
+
+      const [mutatedRow] = await workflowRunRepository.executeRaw<
+        Record<string, unknown>
+      >(sql, parameters);
+
+      if (!isDefined(mutatedRow)) {
+        throw new WorkflowRunException(
+          `workflowRun ${workflowRunId} not found`,
+          WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
+        );
+      }
+
+      this.emitWorkflowRunUpdatedEvent({
+        workflowRunRepository,
+        mutatedRow,
+        authContext,
+      });
+    }, authContext);
+  }
+
+  // Writing outside the ORM skips the batch event it would have emitted, and
+  // the front-end's live run progress rides on that event
+  private emitWorkflowRunUpdatedEvent({
+    workflowRunRepository,
+    mutatedRow,
+    authContext,
+  }: {
+    workflowRunRepository: WorkspaceRepository<WorkflowRunWorkspaceEntity>;
+    mutatedRow: Record<string, unknown>;
+    authContext: RawAuthContext;
+  }) {
+    const { internalContext } = workflowRunRepository;
+
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: internalContext.objectIdByNameSingular.workflowRun,
+      flatEntityMaps: internalContext.flatObjectMetadataMaps,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      return;
+    }
+
+    const {
+      previousState,
+      previousUpdatedAt,
+      ...columnsAfter
+    }: Record<string, unknown> = mutatedRow;
+
+    const [recordBefore, recordAfter] = workflowRunRepository.formatResult<
+      ObjectRecord[]
+    >([
+      { ...columnsAfter, state: previousState, updatedAt: previousUpdatedAt },
+      columnsAfter,
+    ]);
+
+    internalContext.eventEmitterService.emitDatabaseBatchEvent(
+      formatTwentyOrmEventToDatabaseBatchEvent({
+        action: DatabaseEventAction.UPDATED,
+        objectMetadataItem: flatObjectMetadata,
+        flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,
+        workspaceId: internalContext.workspaceId,
+        authContext,
+        recordsBefore: [recordBefore],
+        recordsAfter: [recordAfter],
+      }),
+    );
   }
 
   private getInitState(
