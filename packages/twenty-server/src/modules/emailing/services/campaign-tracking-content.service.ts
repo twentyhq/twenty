@@ -92,7 +92,8 @@ export class CampaignTrackingContentService {
       return untracked;
     }
 
-    const { isCampaignClickTrackingEnabled, isCampaignOpenTrackingEnabled } = workspace;
+    const { isCampaignClickTrackingEnabled, isCampaignOpenTrackingEnabled } =
+      workspace;
 
     const urlTemplates = isCampaignClickTrackingEnabled
       ? collectTrackableLinkUrls(html)

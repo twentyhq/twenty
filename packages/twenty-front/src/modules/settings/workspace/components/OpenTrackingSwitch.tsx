@@ -22,10 +22,14 @@ export const OpenTrackingSwitch = () => {
       throw new Error('User is not logged in');
     }
 
-    const isCampaignOpenTrackingEnabled = !currentWorkspace.isCampaignOpenTrackingEnabled;
+    const isCampaignOpenTrackingEnabled =
+      !currentWorkspace.isCampaignOpenTrackingEnabled;
 
     try {
-      setCurrentWorkspace({ ...currentWorkspace, isCampaignOpenTrackingEnabled });
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        isCampaignOpenTrackingEnabled,
+      });
 
       await updateWorkspace({
         variables: { input: { isCampaignOpenTrackingEnabled } },
