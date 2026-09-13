@@ -99,6 +99,8 @@ export {
   workflowRunStepLogsSchema,
 } from './schemas/workflow-run-step-log-schema';
 export { workflowRunStepStatusSchema } from './schemas/workflow-run-step-status-schema';
+export { workflowRunWorkflowActionSchema } from './schemas/workflow-run-workflow-action-schema';
+export { workflowRunWorkflowActionSettingsSchema } from './schemas/workflow-run-workflow-action-settings-schema';
 export { workflowTriggerSchema } from './schemas/workflow-trigger-schema';
 export { workflowVariableReferenceSchema } from './schemas/workflow-variable-reference-schema';
 export type { EmailRecipients } from './types/EmailRecipients';
