@@ -579,27 +579,6 @@ export const STANDARD_OBJECT_FIELDS = {
     skippedCount: {
       universalIdentifier: 'a1f4c6d2-5e8b-4a37-9c60-31b7f0d2a984',
     },
-    clickedCount: {
-      universalIdentifier: '9c8a97b3-bcbd-45a5-8387-e4aeb462ec32',
-    },
-    openedCount: {
-      universalIdentifier: '165f336a-b626-48a5-9dcb-0a416ffceca1',
-    },
-    clickRate: {
-      universalIdentifier: 'd2a4f584-ba62-46f1-b6ea-816a7dd8dafe',
-    },
-    openRate: {
-      universalIdentifier: '8706eb94-7f1b-4073-8c78-633e7dace5f3',
-    },
-    isClickTrackingEnabled: {
-      universalIdentifier: '41a696f4-e811-45a5-b51a-5cdd2eb6a77c',
-    },
-    isOpenTrackingEnabled: {
-      universalIdentifier: '4cf0e822-428d-4295-8ba2-616f61eb76df',
-    },
-    engagementCalculatedAt: {
-      universalIdentifier: '95fbdaff-6083-490d-96ed-0ee8898673aa',
-    },
     unsubscribeTopicId: {
       universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c',
     },

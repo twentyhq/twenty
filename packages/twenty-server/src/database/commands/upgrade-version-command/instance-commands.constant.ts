@@ -188,7 +188,7 @@ import { AddAiModelTiersToWorkspaceFastInstanceCommand } from 'src/database/comm
 import { MigrateWorkspaceModelsToTiersSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1789000000001-migrate-workspace-models-to-tiers';
 import { AddIsSystemToSkillFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1789129759228-add-is-system-to-skill';
 import { MigrateCanvasTabsToVerticalListSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1789139070588-migrate-canvas-tabs-to-vertical-list';
-import { AddCampaignEngagementTrackingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788985903000-add-campaign-engagement-tracking';
+import { AddShortLinkAndMessageTrackingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1789310081842-add-short-link-and-message-tracking';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -379,5 +379,5 @@ export const INSTANCE_COMMANDS = [
   MigrateWorkspaceModelsToTiersSlowInstanceCommand,
   AddIsSystemToSkillFastInstanceCommand,
   MigrateCanvasTabsToVerticalListSlowInstanceCommand,
-  AddCampaignEngagementTrackingFastInstanceCommand,
+  AddShortLinkAndMessageTrackingFastInstanceCommand,
 ];
