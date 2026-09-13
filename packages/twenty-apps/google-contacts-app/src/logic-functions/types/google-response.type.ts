@@ -12,6 +12,7 @@ export type Name = {
 export type Organization = {
   name?: string;
   title?: string;
+  domain?: string;
 };
 
 export type PhoneNumber = {

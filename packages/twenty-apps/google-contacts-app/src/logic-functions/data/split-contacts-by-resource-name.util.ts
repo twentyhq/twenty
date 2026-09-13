@@ -1,9 +1,5 @@
 import { type ContactToUpdate } from 'src/logic-functions/types/contact-write.type';
 
-// batchUpdateContacts keys its request and its response by resource name, so
-// two people whose Google contacts were merged would collapse into one entry
-// and one update would be lost. Only the first of each name goes into the
-// request; the rest are reported by the caller.
 export const splitContactsByResourceName = (
   contactsToUpdate: ContactToUpdate[],
 ): {

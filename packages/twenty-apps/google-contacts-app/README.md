@@ -1,34 +1,48 @@
-# My Twenty App
+# Google Contacts
 
-Describe your app in one or two sentences.
+**Your Google contacts and your People list, always in step.**
 
-## Features
+## ✨ What you get
 
-List the top things your app does, for example:
+- **Contacts imported automatically**: every 30 minutes, with your whole address book imported the moment you connect
+- **People sent back to Google**: select anyone in the People list and pick **Send to Google Contacts** from the command menu
+- **Names, emails, phone numbers, job titles, employers, LinkedIn and X links** kept in step both ways, plus contact photos on the way in
+- **Your own account, not the workspace's**: each member connects their own Google account and syncs only their own contacts
+- **Edits in Twenty stick**: the more recent change wins, so a sync never reverts something you just typed
 
-- Feature one
-- Feature two
-- Feature three
+## 💳 Billing
+
+**Free to run**: no per-seat, per-contact or per-sync charge.
+
+## 📌 Heads up
+
+- **Deleting in Google is final.** A contact you delete there is not recreated by a later send, and that person cannot be sent again.
+- **People are matched on email.** A Google contact reuses an existing person with the same primary email instead of creating a duplicate. Contacts with neither a name nor an email are skipped.
+- **Companies are matched on domain, then name.** A contact's employer is linked to the Company with the same website, falling back to the same name, ignoring case either way. A new Company is created when nothing matches and Google gave a name. A contact with no employer leaves an existing link alone.
+- **Sending runs in the background**, so the confirmation means queued, not finished. Large selections keep working after you have moved on.
 
 ## Getting started
 
-Setup instructions live in [SETUP.md](SETUP.md).
+Open the Google Contacts app in Twenty, click **Add connection**, and complete the Google sign-in. Your contacts start importing right away.
 
-## Publishing
+> If you see a notice that Google OAuth is not yet set up by your server administrator, ask your Twenty admin to follow the **Self-hosting setup** below.
 
-The `Publish` workflow (`.github/workflows/publish.yml`) publishes the app to npm with provenance using [npm trusted publishing](https://docs.npmjs.com/trusted-publishers). To publish:
+---
 
-1. On npmjs.com register this repository as a trusted publisher of your package, pointing at the `publish.yml` workflow.
-2. Bump the version in `package.json`, then push a version tag (e.g. `git tag v1.0.0 && git push --tags`) or run the workflow manually from the Actions tab.
+## Self-hosting setup
 
-Publishing with provenance is also how you prove ownership when claiming your app in a Twenty marketplace.
+This section is for Twenty server admins. If you're on Twenty Cloud, skip this: the OAuth credentials are already configured.
 
-## Changelog
+### 1. Create a Google OAuth client
 
-Notable changes are documented in [CHANGELOG.md](CHANGELOG.md).
+1. Enable the **People API** on a Google Cloud project.
+2. Create an **OAuth 2.0 client** of type **Web application**.
+3. Set the **Authorized redirect URI** to `<SERVER_URL>/auth/apps/callback` (for local dev: `http://localhost:3000/auth/apps/callback`).
+4. Add the `https://www.googleapis.com/auth/contacts` scope to the consent screen. Reading and writing both come from this one scope.
 
-## Learn more
+### 2. Wire the credentials into Twenty
 
-- [Twenty Apps documentation](https://docs.twenty.com/developers/extend/apps/getting-started/quick-start)
-- [twenty-sdk CLI reference](https://www.npmjs.com/package/twenty-sdk)
-- [Discord](https://discord.gg/cx5n4Jzs57)
+1. In **Settings → Applications**, find **Google Contacts**, click into it, and go to the **Application registration** tab (admin-only).
+2. Paste your Google **Client ID** into `GOOGLE_CONTACTS_CLIENT_ID` and the **Client Secret** into `GOOGLE_CONTACTS_CLIENT_SECRET`.
+
+Workspace members will now be able to add their own Google Contacts connection.

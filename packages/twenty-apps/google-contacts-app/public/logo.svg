@@ -1,7 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
-  <rect width="80" height="80" rx="16" fill="#141414"/>
-  <rect x="20" y="20" width="16" height="16" rx="4" fill="#FAFAFA"/>
-  <rect x="44" y="20" width="16" height="16" rx="4" fill="#FAFAFA" opacity="0.6"/>
-  <rect x="20" y="44" width="16" height="16" rx="4" fill="#FAFAFA" opacity="0.6"/>
-  <rect x="44" y="44" width="16" height="16" rx="4" fill="#FAFAFA" opacity="0.3"/>
+<svg version="1.1" id="logo_x5F_contacts_x5F_192px_1_"
+     xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 500 500"
+     enable-background="new 0 0 500 500" xml:space="preserve">
+	<circle id="bg_circle" fill="#1A73E8" cx="250" cy="250" r="250"/>
+  <path id="body_shadow" fill="#185ABC" d="M332.4,375H170.5c-19.6,0-36.9-11.8-36.9-31.2V358c0,19.4,17.3,34.1,36.9,34.1h161.9
+		c19.6,0,36.9-14.7,36.9-34.1v-14.2C369.3,363.2,352,375,332.4,375z"/>
+  <path id="head_shadow" fill="#185ABC" d="M250,227.3c-29.3-0.1-52.4-20.4-54-48.3v11.4c0,28.9,24.2,54,54,54s54-25.1,54-54V179
+		C301.7,207.1,279.3,227.4,250,227.3z"/>
+		<path id="body" fill="#FFFFFF" d="M250,261.4c-57,0-116.5,27.8-116.5,65.3v17c0,19.4,15.9,34.1,35.5,34.1h164.7
+			c19.6,0,35.5-14.7,35.5-34.1v-17C369.3,289.1,307,261.4,250,261.4z"/>
+    <circle id="head" fill="#FFFFFF" cx="250" cy="176.1" r="54"/>
 </svg>

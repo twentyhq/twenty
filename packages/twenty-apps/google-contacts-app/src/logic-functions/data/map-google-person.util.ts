@@ -51,7 +51,6 @@ const parsePhone = (
       callingCode: `+${parsedPhone.countryCallingCode}`,
     };
   } catch {
-    // One unparseable number must not cost us the rest of the contact.
     return undefined;
   }
 };

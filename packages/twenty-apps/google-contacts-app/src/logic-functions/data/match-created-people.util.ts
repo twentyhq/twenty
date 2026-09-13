@@ -32,11 +32,6 @@ const isSameContact = (
   );
 };
 
-// Google does not document that createdPeople comes back in request order and
-// the entries carry no request key, so the index mapping is checked against the
-// fields we sent: pairing the wrong entries would write a resource name onto
-// the wrong person, and googleContactsId is unique. Entries Google could not
-// create carry a status instead of a person and stay on their own index.
 export const matchCreatedPeople = ({
   contactsToCreate,
   createdPeople,

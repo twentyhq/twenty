@@ -10,7 +10,7 @@ import {
 } from 'src/logic-functions/data/google-client.util';
 import { matchCreatedPeople } from 'src/logic-functions/data/match-created-people.util';
 import { readPersonResponseError } from 'src/logic-functions/data/read-person-response-error.util';
-import { WRITTEN_CONTACT_PERSON_FIELDS } from 'src/logic-functions/data/written-contact-person-fields.constant';
+import { WRITTEN_CONTACT_PERSON_FIELDS } from 'src/constants/written-contact-person-fields.constant';
 import {
   type ContactToCreate,
   type CreatedContact,

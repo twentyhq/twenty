@@ -12,6 +12,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SYNC_CONTACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { attachCompanyIds } from 'src/logic-functions/data/attach-company-ids.util';
 import { chunk } from 'src/logic-functions/data/chunk.util';
 import { executeWithRetry } from 'src/logic-functions/data/execute-with-retry.util';
 import { GoogleAuthFailedError } from 'src/logic-functions/data/google-auth-failed.error';
@@ -23,7 +24,9 @@ import {
 } from 'src/logic-functions/data/google-client.util';
 import { fetchPeopleForSync } from 'src/logic-functions/data/fetch-people-for-sync.util';
 import { mapGooglePerson } from 'src/logic-functions/data/map-google-person.util';
+import { readGoogleOrganization } from 'src/logic-functions/data/read-google-organization.util';
 import { readGoogleUpdateTime } from 'src/logic-functions/data/read-google-update-time.util';
+import { resolveCompanyIds } from 'src/logic-functions/data/resolve-company-ids.util';
 import {
   resolvePeopleToUpsert,
   type SyncCandidate,
@@ -69,6 +72,7 @@ const fetchAndUpsertPeople = async ({
       candidates.push({
         personInput,
         googleUpdatedAt: readGoogleUpdateTime(person),
+        organization: readGoogleOrganization(person),
       });
     }
 
@@ -82,9 +86,21 @@ const fetchAndUpsertPeople = async ({
         .filter(isNonEmptyString),
     });
 
-    const peopleToUpsert = resolvePeopleToUpsert({
+    const resolvedPeople = resolvePeopleToUpsert({
       candidates,
       existingPeople,
+    });
+
+    const companyIdsByKey = await resolveCompanyIds({
+      client,
+      organizations: resolvedPeople
+        .map(({ organization }) => organization)
+        .filter(isDefined),
+    });
+
+    const peopleToUpsert = attachCompanyIds({
+      resolvedPeople,
+      companyIdsByKey,
     });
 
     for (const peopleBatch of chunk(peopleToUpsert, BATCH_SIZE)) {

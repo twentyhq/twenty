@@ -11,15 +11,10 @@ import { EXPORT_CONTACTS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/consta
 import { EXPORT_CONTACTS_ROUTE_PATH } from 'src/constants/route-paths';
 
 type ExportContactsStatus =
-  | 'exported'
-  | 'auth-failed'
-  | 'no-connection'
-  | 'no-contacts-found'
-  | 'too-many-contacts';
+  'exported' | 'auth-failed' | 'no-connection' | 'no-contacts-found';
 
 type ExportContactsResponse = {
   status: ExportContactsStatus;
-  limit?: number;
 };
 
 const pluralizeContacts = (count: number): string =>
@@ -34,11 +29,6 @@ const describeResponse = (
       return {
         message: `Sending ${pluralizeContacts(records)} to Google Contacts.`,
         variant: 'success',
-      };
-    case 'too-many-contacts':
-      return {
-        message: `Select at most ${response.limit} people to send at once.`,
-        variant: 'error',
       };
     case 'no-connection':
       return {

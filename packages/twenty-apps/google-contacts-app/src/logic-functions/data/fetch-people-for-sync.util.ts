@@ -11,8 +11,6 @@ export type ExistingTwentyPeople = {
   byPrimaryEmail: Map<string, ExistingTwentyPerson>;
 };
 
-// `in` is case-sensitive, so both spellings are asked for: Google hands back
-// whatever the contact carries while Twenty may hold it lowercased.
 const buildEmailVariants = (primaryEmails: string[]): string[] => [
   ...new Set(primaryEmails.flatMap((email) => [email, email.toLowerCase()])),
 ];

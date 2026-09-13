@@ -61,8 +61,6 @@ export const linkCreatedContacts = async ({
         }),
       );
     } catch (error) {
-      // googleContactsId is unique, so one contact already linked to another
-      // person fails the whole upsert.
       console.error(
         '[google-contacts] Failed to link a batch of created contacts',
         describeError(error),

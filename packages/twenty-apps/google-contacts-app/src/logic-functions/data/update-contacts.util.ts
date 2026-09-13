@@ -10,7 +10,7 @@ import {
 import { groupByUpdateMask } from 'src/logic-functions/data/group-by-update-mask.util';
 import { readPersonResponseError } from 'src/logic-functions/data/read-person-response-error.util';
 import { splitContactsByResourceName } from 'src/logic-functions/data/split-contacts-by-resource-name.util';
-import { WRITTEN_CONTACT_PERSON_FIELDS } from 'src/logic-functions/data/written-contact-person-fields.constant';
+import { WRITTEN_CONTACT_PERSON_FIELDS } from 'src/constants/written-contact-person-fields.constant';
 import { type ContactToUpdate } from 'src/logic-functions/types/contact-write.type';
 import { type BatchUpdateContactsRequest } from 'src/logic-functions/types/google-request.type';
 import { type BatchUpdateContactsResponse } from 'src/logic-functions/types/google-response.type';

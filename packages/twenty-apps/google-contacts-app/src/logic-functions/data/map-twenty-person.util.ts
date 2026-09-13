@@ -68,8 +68,6 @@ const mapPhoneNumbers = (
     : phoneNumbers.map((phoneNumber) => ({ value: phoneNumber }));
 };
 
-// Google organizations carry fields Twenty does not model (department, dates),
-// so the first one is patched in place instead of being replaced.
 const mapOrganizations = (
   person: TwentyPersonRecord,
   existingContact: Person | undefined,
@@ -94,8 +92,6 @@ const mapOrganizations = (
   ];
 };
 
-// Twenty only models the LinkedIn and X links, so any other URL already in
-// Google is carried over untouched.
 const mapUrls = (
   person: TwentyPersonRecord,
   existingContact: Person | undefined,

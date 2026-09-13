@@ -53,9 +53,6 @@ const throwOnUnauthorized = async <TResult>(
   }
 };
 
-// An axios error carries the status, so retryability is read from it rather
-// than from the message. A request that never got a response failed at the
-// network or timeout level and is retried too.
 const GOOGLE_RETRY_POLICY: RetryPolicy = {
   isRetryable: (error) => {
     if (!axios.isAxiosError(error)) {
@@ -84,8 +81,6 @@ export const callGoogle = <TResult>(
 ): Promise<TResult> =>
   executeWithRetry(() => throwOnUnauthorized(request), GOOGLE_RETRY_POLICY);
 
-// The People API takes no idempotency key, so a retried request that timed out
-// after Google applied it would write the same contacts twice.
 export const callGoogleWithoutRetry = <TResult>(
   request: () => Promise<TResult>,
 ): Promise<TResult> => throwOnUnauthorized(request);

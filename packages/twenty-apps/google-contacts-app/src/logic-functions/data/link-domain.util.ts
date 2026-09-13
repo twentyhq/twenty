@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-sdk/utils';
 export const X_DOMAINS = ['x.com', 'twitter.com'];
 export const LINKEDIN_DOMAINS = ['linkedin.com'];
 
-const readHostname = (rawUrl: string): string | undefined => {
+export const readHostname = (rawUrl: string): string | undefined => {
   try {
     return new URL(
       rawUrl.includes('://') ? rawUrl : `https://${rawUrl}`,

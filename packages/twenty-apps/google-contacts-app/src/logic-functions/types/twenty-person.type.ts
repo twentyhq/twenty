@@ -43,6 +43,7 @@ export type TwentyPersonRecord = {
 
 export type TwentyPersonInput = {
   googleContactsId: string;
+  companyId?: string;
   name?: {
     firstName: string;
     lastName: string;

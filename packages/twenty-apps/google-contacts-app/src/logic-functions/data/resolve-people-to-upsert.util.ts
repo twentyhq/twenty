@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type ExistingTwentyPeople } from 'src/logic-functions/data/fetch-people-for-sync.util';
+import { type Organization } from 'src/logic-functions/types/google-response.type';
 import {
   type PersonToUpsert,
   type TwentyPersonInput,
@@ -10,11 +11,14 @@ import {
 export type SyncCandidate = {
   personInput: TwentyPersonInput;
   googleUpdatedAt: string | undefined;
+  organization: Organization | undefined;
 };
 
-// Google wins only when its copy is the newer one. Without this the cron would
-// revert any edit made in Twenty between two syncs. An unparseable or missing
-// timestamp on either side falls back to letting Google win.
+export type ResolvedPerson = {
+  personInput: PersonToUpsert;
+  organization: Organization | undefined;
+};
+
 const hasTwentyChangedSince = (
   twentyUpdatedAt: string | null | undefined,
   googleUpdatedAt: string | undefined,
@@ -42,25 +46,40 @@ export const resolvePeopleToUpsert = ({
 }: {
   candidates: SyncCandidate[];
   existingPeople: ExistingTwentyPeople;
-}): PersonToUpsert[] => {
-  const peopleToUpsert: PersonToUpsert[] = [];
+}): ResolvedPerson[] => {
+  const resolvedPeople: ResolvedPerson[] = [];
+  const claimedPrimaryEmails = new Set<string>();
 
-  for (const { personInput, googleUpdatedAt } of candidates) {
+  for (const { personInput, googleUpdatedAt, organization } of candidates) {
+    const primaryEmail = personInput.emails?.primaryEmail?.toLowerCase();
+
+    if (isNonEmptyString(primaryEmail)) {
+      if (claimedPrimaryEmails.has(primaryEmail)) {
+        console.log(
+          '[google-contacts] Skipping a contact sharing a primary email with another one',
+          personInput.googleContactsId,
+        );
+
+        continue;
+      }
+
+      claimedPrimaryEmails.add(primaryEmail);
+    }
+
     const linkedPerson = existingPeople.byGoogleContactsId.get(
       personInput.googleContactsId,
     );
 
     if (isDefined(linkedPerson)) {
       if (!hasTwentyChangedSince(linkedPerson.updatedAt, googleUpdatedAt)) {
-        peopleToUpsert.push(personInput);
+        resolvedPeople.push({ personInput, organization });
       }
 
       continue;
     }
 
-    const primaryEmail = personInput.emails?.primaryEmail;
     const personWithSameEmail = isNonEmptyString(primaryEmail)
-      ? existingPeople.byPrimaryEmail.get(primaryEmail.toLowerCase())
+      ? existingPeople.byPrimaryEmail.get(primaryEmail)
       : undefined;
 
     // An unlinked person reachable at the same address is the same human, so
@@ -70,13 +89,20 @@ export const resolvePeopleToUpsert = ({
       isDefined(personWithSameEmail) &&
       !isNonEmptyString(personWithSameEmail.googleContactsId)
     ) {
-      peopleToUpsert.push({ ...personInput, id: personWithSameEmail.id });
+      if (
+        !hasTwentyChangedSince(personWithSameEmail.updatedAt, googleUpdatedAt)
+      ) {
+        resolvedPeople.push({
+          personInput: { ...personInput, id: personWithSameEmail.id },
+          organization,
+        });
+      }
 
       continue;
     }
 
-    peopleToUpsert.push(personInput);
+    resolvedPeople.push({ personInput, organization });
   }
 
-  return peopleToUpsert;
+  return resolvedPeople;
 };
