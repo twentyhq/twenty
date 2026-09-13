@@ -49,7 +49,7 @@ export const ClickTrackingSwitch = () => {
           <SettingsOptionCardContentSwitch
             Icon={IconClick}
             title={t`Track link clicks`}
-            description={t`Each link in a campaign email is rewritten to pass through Twenty. When a recipient clicks it, the click is counted and they are sent straight to the original address.`}
+            description={t`Count clicks by routing campaign links through Twenty before the original page.`}
             checked={currentWorkspace.isClickTrackingEnabled}
             onChange={handleChange}
           />
