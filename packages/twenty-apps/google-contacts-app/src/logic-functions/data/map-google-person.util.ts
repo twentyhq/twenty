@@ -114,7 +114,7 @@ const mapEmails = (person: Person): TwentyPersonInput['emails'] => {
 
 const mapAvatarUrl = (person: Person): string | undefined => {
   const avatarUrl = person.photos?.find(
-    (photo) => photo.default !== true && isNonEmptyString(photo.url),
+    (photo) => !photo.default && isNonEmptyString(photo.url),
   )?.url;
 
   return isNonEmptyString(avatarUrl) ? avatarUrl : undefined;

@@ -59,7 +59,7 @@ const fetchAndUpsertPeople = async ({
     const candidates: SyncCandidate[] = [];
 
     for (const person of googleResponse.data.connections ?? []) {
-      if (person.metadata?.deleted === true) {
+      if (person.metadata?.deleted) {
         continue;
       }
 

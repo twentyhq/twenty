@@ -27,7 +27,7 @@ const handler = async (payload: RoutePayload<{ recordIds?: string[] }>) => {
     payload,
   );
 
-  if (isDefined(connection) === false) {
+  if (!isDefined(connection)) {
     return jsonResponse({ status: 'no-connection' }, 200);
   }
 
