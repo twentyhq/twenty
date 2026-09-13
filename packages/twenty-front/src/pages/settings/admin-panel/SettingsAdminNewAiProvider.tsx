@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { useMemo, useState } from 'react';
 
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -188,16 +190,19 @@ export const SettingsAdminNewAiProvider = () => {
 
       // Half a key pair is a slip, not a mode: role auth ignores both fields,
       // so accepting it would run under an identity nobody chose.
-      if (Boolean(accessKeyId) !== Boolean(secretAccessKey)) {
-        form.setError(accessKeyId ? 'secretAccessKey' : 'accessKeyId', {
-          type: 'manual',
-          message: t`Enter both keys, or neither to use the instance IAM role`,
-        });
+      if (isNonEmptyString(accessKeyId) !== isNonEmptyString(secretAccessKey)) {
+        form.setError(
+          isNonEmptyString(accessKeyId) ? 'secretAccessKey' : 'accessKeyId',
+          {
+            type: 'manual',
+            message: t`Enter both keys, or neither to use the instance IAM role`,
+          },
+        );
 
         return;
       }
 
-      if (accessKeyId) {
+      if (isNonEmptyString(accessKeyId)) {
         config.accessKeyId = accessKeyId;
         config.secretAccessKey = secretAccessKey;
       } else {
