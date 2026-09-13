@@ -26,6 +26,7 @@ import { getSlackAccessMode } from 'src/logic-functions/utils/get-slack-access-m
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { resolveSlackAssistantMentions } from 'src/logic-functions/utils/resolve-slack-assistant-mentions';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
+import { resolveSlackRunAsWorkspaceMemberId } from 'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id';
 import { runSlackAssistantAgentWithDeadline } from 'src/logic-functions/utils/run-slack-assistant-agent-with-deadline';
 import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
@@ -127,9 +128,23 @@ export const slackAssistantWorkerHandler = async (
 
     const accessMode = await getSlackAccessMode();
 
+    // run-as can be empty for a linked member whose request is not eligible for
+    // impersonation, so access asks the narrower question: is this Slack
+    // account linked at all.
+    const linkedWorkspaceMemberId =
+      accessMode === SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS &&
+      !isNonEmptyString(runAsWorkspaceMemberId) &&
+      isDefined(slackClient)
+        ? await resolveSlackRunAsWorkspaceMemberId({
+            client,
+            slackClient,
+            identity: requesterIdentity,
+          })
+        : runAsWorkspaceMemberId;
+
     if (
       accessMode === SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS &&
-      !isNonEmptyString(runAsWorkspaceMemberId)
+      !isNonEmptyString(linkedWorkspaceMemberId)
     ) {
       await stopStatusUpdates();
 

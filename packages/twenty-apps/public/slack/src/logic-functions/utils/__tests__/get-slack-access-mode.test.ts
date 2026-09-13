@@ -33,9 +33,9 @@ describe('getSlackAccessMode', () => {
     expect(await getSlackAccessMode()).toBe('ANYONE');
   });
 
-  it('should fall back to ANYONE when the read throws', async () => {
+  it('should keep the restriction on when the read throws', async () => {
     kvGetMock.mockRejectedValue(new Error('kv unavailable'));
 
-    expect(await getSlackAccessMode()).toBe('ANYONE');
+    expect(await getSlackAccessMode()).toBe('ONLY_LINKED_MEMBERS');
   });
 });

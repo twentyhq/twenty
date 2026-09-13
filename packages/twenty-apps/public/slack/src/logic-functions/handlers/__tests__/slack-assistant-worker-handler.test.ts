@@ -23,6 +23,7 @@ const {
   setSlackAssistantThreadTitleMock,
   subscribeSlackThreadMock,
   getSlackAccessModeMock,
+  resolveSlackRunAsWorkspaceMemberIdMock,
 } = vi.hoisted(() => ({
   callLog: [] as string[],
   coreApiClientMock: vi.fn(),
@@ -39,7 +40,15 @@ const {
   setSlackAssistantThreadTitleMock: vi.fn(),
   subscribeSlackThreadMock: vi.fn(),
   getSlackAccessModeMock: vi.fn(),
+  resolveSlackRunAsWorkspaceMemberIdMock: vi.fn(),
 }));
+
+vi.mock(
+  'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id',
+  () => ({
+    resolveSlackRunAsWorkspaceMemberId: resolveSlackRunAsWorkspaceMemberIdMock,
+  }),
+);
 
 vi.mock('src/logic-functions/utils/get-slack-access-mode', () => ({
   getSlackAccessMode: getSlackAccessModeMock,
@@ -138,6 +147,7 @@ describe('slackAssistantWorkerHandler', () => {
     fetchWorkspaceBaseUrlsMock.mockResolvedValue(['https://acme.twenty.com']);
     resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
     getSlackAccessModeMock.mockResolvedValue(SLACK_ACCESS_MODE.ANYONE);
+    resolveSlackRunAsWorkspaceMemberIdMock.mockResolvedValue(undefined);
     setSlackAssistantThreadTitleMock.mockResolvedValue(undefined);
     subscribeSlackThreadMock.mockResolvedValue(undefined);
 
@@ -197,6 +207,27 @@ describe('slackAssistantWorkerHandler', () => {
         responseText: SLACK_ACCESS_DENIED_TEXT,
       }),
     );
+  });
+
+  it('should answer a linked member whose request is not eligible for impersonation', async () => {
+    getSlackAccessModeMock.mockResolvedValue(
+      SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
+    );
+    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
+    resolveSlackRunAsWorkspaceMemberIdMock.mockResolvedValue(
+      'workspace-member-1',
+    );
+    fetchSlackAssistantContextMock.mockImplementation(async () => {
+      callLog.push('context:fetch');
+
+      return { ...SLACK_CONTEXT, slackClient: {} };
+    });
+
+    await expect(slackAssistantWorkerHandler(REQUEST_RECORD)).resolves.toEqual({
+      done: true,
+    });
+
+    expect(runSlackAssistantAgentWithDeadlineMock).toHaveBeenCalledTimes(1);
   });
 
   it('should answer a linked workspace member when access is restricted to linked members', async () => {
