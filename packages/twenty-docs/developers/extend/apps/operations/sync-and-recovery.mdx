@@ -107,7 +107,7 @@ A plan only previews **metadata** changes. It also works for an app that was nev
 yarn twenty pull -u <universalIdentifier>
 ```
 
-Pull needs an existing project — scaffold one with `npx create-twenty-app@latest` first, then pull into it. Without `-u`, pull targets the application your local `defineApplication()` file declares. Add `-v` to expand the coverage sections of the report, which then name up to 20 identifiers per metadata type instead of only the totals.
+Pull needs an existing project — scaffold one with `npx create-twenty-app@latest` first, then pull into it. Without `-u`, pull targets the application your local `defineApplication()` file declares. If `-u` names a different application than the one your project declares, pull refuses rather than leaving two applications in one tree: pull that one into its own directory. If the project has an application file whose identifier cannot be read, usually because dependencies are not installed, pull refuses too and asks you to run `yarn install` first. Add `-v` to expand the coverage sections of the report, which then name up to 20 identifiers per metadata type instead of only the totals.
 
 **What it writes:**
 
@@ -119,18 +119,20 @@ Pull needs an existing project — scaffold one with `npx create-twenty-app@late
 - view fields your app added to views it does not own, as standalone `defineViewField()` files;
 - page layouts, with their tabs and widgets inline;
 - tabs your app added to page layouts it does not own, as standalone `definePageLayoutTab()` files;
+- navigation menu items, as `defineNavigationMenuItem()` files, folders included;
+- widgets your app added to tabs it does not own, as standalone `definePageLayoutWidget()` files;
 - published translations, as `locales/<locale>.json` for the strings pull can read back from the pulled metadata and source, and `locales/compiled/<locale>.json` for the rest.
 
 Each entity goes to the file that already defines it, so a second pull rewrites only what changed on the server. New entities are placed beside existing files of their kind, and a generated name that would land on an unrelated file is qualified rather than overwriting it.
 
 **What it does not write:**
 
-- **Not exported yet** — roles and permissions, navigation, command menu items, logic functions and front components, and the stored source of your functions.
+- **Not exported yet** — roles and permissions, command menu items, logic functions and front components, skills and agents, connection providers, application variables, public assets, timeline activity types, and the stored source of your functions.
 - **Derived by the engine** — system fields, default relations, default views and backing indexes, and the default page layouts of each object. The server rebuilds them on apply. An object may still point its label identifier at one of them, as junction objects created in the UI do; the pointer is written and the build resolves it without adding a field.
 - **Placed on a default or foreign view** — filters, filter groups, sorts, groups and field groups added to an engine default view, or to a view owned by another application, have no source form yet and are reported. View fields added there are written as standalone files, since the view's identifier is known.
-- **Placed on a default or foreign page layout** — a widget added to a tab of an engine default page layout, or of a page layout owned by another application, has a source form, `definePageLayoutWidget()`, and the export carries it, but this version of pull does not write it to a file yet, so it is reported. Tabs added there are written as standalone files, since the layout's identifier is known.
+- **Placed on a default or foreign page layout** — tabs and widgets added to an engine default page layout, or to one owned by another application, are written as standalone `definePageLayoutTab()` and `definePageLayoutWidget()` files, since the identifier they attach to is known.
 - **Widgets the export cannot carry yet** — on any layout, including your own, a widget of the deprecated `VIEW` type, a widget showing one of your app's own front components or command menu items, or a widget without a position for its tab's layout mode is reported, and the layout or tab is written without it.
-- **Workspace runtime state** — member and API-key role assignments, webhooks and per-user navigation, all excluded by design.
+- **Workspace runtime state** — member and API-key role assignments, webhooks, per-user navigation and navigation items pinned to a record, all excluded by design.
 - **Owned by another application** — reported, never pulled.
 
 The report at the end of a pull lists all of it, grouped by reason. Everything it names as not written is still in your workspace, so push a pulled tree back with `yarn twenty apply --no-delete` until the missing kinds are covered. A pruning `yarn twenty apply` would delete them, and `yarn twenty plan` lists exactly which.

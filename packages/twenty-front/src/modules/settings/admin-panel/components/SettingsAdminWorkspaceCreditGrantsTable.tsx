@@ -130,10 +130,9 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
           {
             label: t`Type`,
             Cell: ({ item }) => (
-              <Tag
-                color={CREDIT_GRANT_TYPE_COLORS[item.current.type]}
-                text={t(CREDIT_GRANT_TYPE_LABELS[item.current.type])}
-              />
+              <Tag color={CREDIT_GRANT_TYPE_COLORS[item.current.type]}>
+                {t(CREDIT_GRANT_TYPE_LABELS[item.current.type])}
+              </Tag>
             ),
           },
           {
@@ -141,7 +140,7 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
             Cell: ({ item }) => {
               const status = getStatus(item.current);
 
-              return <Tag color={status.color} text={t(status.label)} />;
+              return <Tag color={status.color}>{t(status.label)}</Tag>;
             },
           },
           {

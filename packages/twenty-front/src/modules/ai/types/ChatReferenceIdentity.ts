@@ -5,4 +5,5 @@ export type ChatReferenceIdentity =
   | { kind: 'field'; objectNameSingular: string; fieldName: string }
   | { kind: 'view'; viewId: string }
   | { kind: 'role'; roleId: string }
-  | { kind: 'app'; applicationId: string };
+  | { kind: 'app'; applicationId: string }
+  | { kind: 'skill'; skillId: string };

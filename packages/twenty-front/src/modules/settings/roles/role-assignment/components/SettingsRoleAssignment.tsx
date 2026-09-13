@@ -187,13 +187,13 @@ export const SettingsRoleAssignment = ({
       entityType: entityType as 'member' | 'agent' | 'apiKey',
     });
 
-    openModal(ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID);
+    openModal(modalInstanceId);
   };
 
   const handleRoleClick = (roleId: string) => {
     navigateSettings(SettingsPath.RoleDetail, { roleId });
     handleModalClose();
-    closeModal(ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID);
+    closeModal(modalInstanceId);
   };
 
   if (!isDefined(settingsDraftRole)) {
@@ -224,6 +224,7 @@ export const SettingsRoleAssignment = ({
 
       {selectedRoleTarget && (
         <SettingsRoleAssignmentConfirmationModal
+          modalInstanceId={modalInstanceId}
           selectedRoleTarget={selectedRoleTarget}
           onClose={handleModalClose}
           onConfirm={handleConfirm}

@@ -23,7 +23,7 @@ import { useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { IconArchive, IconFilter, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { MenuItemSwitch } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -217,12 +217,12 @@ export const SettingsObjectRelationsTable = ({
           dropdownComponents={
             <DropdownContent>
               <DropdownMenuItemsContainer>
-                <MenuItemToggle
+                <MenuItemSwitch
                   LeftIcon={IconArchive}
-                  onToggleChange={() => setShowInactive(!showInactive)}
-                  toggled={showInactive}
+                  onCheckedChange={() => setShowInactive(!showInactive)}
+                  checked={showInactive}
                   text={t`Inactive`}
-                  toggleSize="small"
+                  size="sm"
                 />
               </DropdownMenuItemsContainer>
             </DropdownContent>

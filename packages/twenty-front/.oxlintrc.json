@@ -127,6 +127,7 @@
     "twenty/no-jotai-store-in-selector": "error",
     "twenty/no-direct-atom-family-in-selector": "error",
     "twenty/folder-structure": "error",
+    "twenty/no-icu-escaping-apostrophe": "error",
     "twenty/enforce-module-boundaries": [
       "error",
       {

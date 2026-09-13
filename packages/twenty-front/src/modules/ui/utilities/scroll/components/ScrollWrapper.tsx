@@ -5,7 +5,6 @@ import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/sta
 import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollBottomComponentState';
 import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { getScrollBottomInPx } from '@/ui/utilities/scroll/utils/getScrollBottomInPx';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
@@ -39,22 +38,19 @@ export const ScrollWrapper = ({
   defaultEnableYScroll = true,
   autoHeight = false,
 }: ScrollWrapperProps) => {
-  const scopedComponentInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceId(componentInstanceId);
-
   const setScrollWrapperScrollTop = useSetAtomComponentState(
     scrollWrapperScrollTopComponentState,
-    scopedComponentInstanceId,
+    componentInstanceId,
   );
 
   const setScrollWrapperScrollLeft = useSetAtomComponentState(
     scrollWrapperScrollLeftComponentState,
-    scopedComponentInstanceId,
+    componentInstanceId,
   );
 
   const setScrollWrapperScrollBottom = useSetAtomComponentState(
     scrollWrapperScrollBottomComponentState,
-    scopedComponentInstanceId,
+    componentInstanceId,
   );
 
   const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
@@ -66,14 +62,14 @@ export const ScrollWrapper = ({
 
   return (
     <ScrollWrapperComponentInstanceContext.Provider
-      value={{ instanceId: scopedComponentInstanceId }}
+      value={{ instanceId: componentInstanceId }}
     >
       <ScrollWrapperInitEffect
         defaultEnableXScroll={defaultEnableXScroll}
         defaultEnableYScroll={defaultEnableYScroll}
       />
       <StyledScrollWrapper
-        id={`scroll-wrapper-${scopedComponentInstanceId}`}
+        id={`scroll-wrapper-${componentInstanceId}`}
         className={className}
         autoHeight={autoHeight}
         onScroll={handleScroll}

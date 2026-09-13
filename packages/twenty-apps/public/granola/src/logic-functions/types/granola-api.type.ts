@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
-const GRANOLA_DATE_TIME_SCHEMA = z.string().datetime({ offset: true });
+import { GRANOLA_NOTE_ID_PATTERN } from 'src/constants/granola-api.constant';
+
+export const GRANOLA_DATE_TIME_SCHEMA = z.string().datetime({ offset: true });
 const GRANOLA_USER_SCHEMA = z.object({
   name: z.string().nullable(),
   email: z.string(),
@@ -63,6 +65,12 @@ export const GRANOLA_WEBHOOK_EVENT_SCHEMA = z.enum([
   'note.edited',
   'note.generated',
 ]);
+
+export const GRANOLA_WEBHOOK_PAYLOAD_SCHEMA = z.object({
+  event_id: z.string().min(1),
+  event_type: GRANOLA_WEBHOOK_EVENT_SCHEMA,
+  note_id: z.string().regex(GRANOLA_NOTE_ID_PATTERN),
+});
 
 export const GRANOLA_WEBHOOK_ENDPOINT_SCHEMA = z.object({
   id: z.string(),

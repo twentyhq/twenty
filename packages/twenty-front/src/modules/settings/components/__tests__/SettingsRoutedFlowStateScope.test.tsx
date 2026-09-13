@@ -109,11 +109,11 @@ const ScopedStateProbe = ({
       >
         {name} draft
       </button>
-      <button onClick={() => openModal(MODAL_ID)}>{name} modal</button>
-      <button onClick={() => toggleModal(MODAL_ID)}>{name} toggle modal</button>
+      <button onClick={() => openModal(modalId)}>{name} modal</button>
+      <button onClick={() => toggleModal(modalId)}>{name} toggle modal</button>
       <button
         onClick={() =>
-          openDropdown({ dropdownComponentInstanceIdFromProps: DROPDOWN_ID })
+          openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId })
         }
       >
         {name} dropdown

@@ -783,12 +783,6 @@ export class ApplicationRegistrationService {
       params.universalIdentifier,
     );
 
-    const vettedIdentifiers = new Set(
-      MARKETPLACE_VETTED_APPLICATIONS.map((entry) => entry.universalIdentifier),
-    );
-
-    const isVetted = vettedIdentifiers.has(params.universalIdentifier);
-
     if (isDefined(existing) && isDefined(params.manifest)) {
       const isNewVersion = await this.setLatestAvailableVersionIfChanged(
         existing.id,
@@ -805,7 +799,6 @@ export class ApplicationRegistrationService {
         additionalFields: {
           name: params.name,
           sourcePackage: params.sourcePackage,
-          isVetted,
         },
       });
 
@@ -846,7 +839,6 @@ export class ApplicationRegistrationService {
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
         isListed: existing.isListed || isRelistedFromLocalSource,
-        isVetted,
         manifest: params.manifest,
         ...fromManifestApplicationToDisplayFields(params.manifest?.application),
       });
@@ -880,7 +872,10 @@ export class ApplicationRegistrationService {
       sourcePackage: params.sourcePackage,
       latestAvailableVersion: params.latestAvailableVersion,
       isListed: true,
-      isVetted,
+      isVetted: MARKETPLACE_VETTED_APPLICATIONS.some(
+        ({ universalIdentifier }) =>
+          universalIdentifier === params.universalIdentifier,
+      ),
       manifest: params.manifest,
       ...fromManifestApplicationToDisplayFields(params.manifest?.application),
       oAuthClientId: v4(),

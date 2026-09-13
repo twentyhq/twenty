@@ -42,7 +42,6 @@ import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contex
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 export type IconPickerProps = {
@@ -412,9 +411,7 @@ export const IconPicker = ({
       );
 
   const iconColorPickerDropdownId = `${dropdownId}-icon-color-picker`;
-
-  const selectableListInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceId('icon-list');
+  const selectableListInstanceId = `${dropdownId}-icon-list`;
 
   const focusedIconKey =
     useAtomComponentStateValue(

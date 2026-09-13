@@ -27,6 +27,7 @@ export type CronTriggerSettings = {
 export type DatabaseEventTriggerSettings = {
   eventName: string;
   updatedFields?: string[];
+  batchMode?: boolean;
 };
 
 export type HttpRouteTriggerSettings = {

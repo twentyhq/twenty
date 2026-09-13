@@ -996,7 +996,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "status", "DRAFT") and noneDefined(selectedRecords, "deletedAt") and featureFlags.IS_EMAIL_GROUP_ENABLED',
+      'numberOfSelectedRecords == 1 and (everyEquals(selectedRecords, "status", "DRAFT") or everyEquals(selectedRecords, "status", "SCHEDULED")) and noneDefined(selectedRecords, "deletedAt") and featureFlags.IS_EMAIL_GROUP_ENABLED',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.messageCampaign.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -1016,7 +1016,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "status", "DRAFT") and noneDefined(selectedRecords, "deletedAt") and featureFlags.IS_EMAIL_GROUP_ENABLED',
+      'numberOfSelectedRecords == 1 and (everyEquals(selectedRecords, "status", "DRAFT") or everyEquals(selectedRecords, "status", "SCHEDULED")) and noneDefined(selectedRecords, "deletedAt") and featureFlags.IS_EMAIL_GROUP_ENABLED',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.messageCampaign.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -1036,7 +1036,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "status", "SENDING") and noneDefined(selectedRecords, "deletedAt") and featureFlags.IS_EMAIL_GROUP_ENABLED',
+      'numberOfSelectedRecords == 1 and (everyEquals(selectedRecords, "status", "SCHEDULED") or everyEquals(selectedRecords, "status", "SENDING")) and noneDefined(selectedRecords, "deletedAt") and featureFlags.IS_EMAIL_GROUP_ENABLED',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.messageCampaign.universalIdentifier,
     frontComponentUniversalIdentifier: null,
