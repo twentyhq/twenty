@@ -43,6 +43,16 @@ describe('WORDLESS_TRANSLATION_RULE', () => {
     expect(detect('{count}', '{count}')).toBe(false);
   });
 
+  // Ignoring placeholder names would catch a translation left as a bare
+  // {count}, but a dry run over ~200k strings found none of those and two
+  // Finnish translations that legitimately render a connector word as a
+  // symbol. Deleting a good translation is worse than keeping a thin one, so
+  // the rule reads the whole string.
+  it('keeps a translation that renders a connector word as a symbol', () => {
+    expect(detect('{0} / {1}', '{0} of {1}')).toBe(false);
+    expect(detect(' /{intervalLabel}', ' per {intervalLabel}')).toBe(false);
+  });
+
   it('stands down when the source is unknown, rather than deleting blind', () => {
     expect(detect('\\', undefined)).toBe(false);
   });
