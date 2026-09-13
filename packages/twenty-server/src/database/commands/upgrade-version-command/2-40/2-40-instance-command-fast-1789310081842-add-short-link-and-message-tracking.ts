@@ -9,7 +9,7 @@ export class AddShortLinkAndMessageTrackingFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ADD "isMessageTrackingEnabled" boolean NOT NULL DEFAULT false`,
+      `ALTER TABLE "core"."workspace" ADD "isClickTrackingEnabled" boolean NOT NULL DEFAULT false, ADD "isOpenTrackingEnabled" boolean NOT NULL DEFAULT false`,
     );
 
     await queryRunner.query(
@@ -39,7 +39,7 @@ export class AddShortLinkAndMessageTrackingFastInstanceCommand
     await queryRunner.query(`DROP TABLE "core"."shortLink"`);
 
     await queryRunner.query(
-      `ALTER TABLE "core"."workspace" DROP COLUMN "isMessageTrackingEnabled"`,
+      `ALTER TABLE "core"."workspace" DROP COLUMN "isOpenTrackingEnabled", DROP COLUMN "isClickTrackingEnabled"`,
     );
   }
 }
