@@ -111,7 +111,6 @@ export const rule = defineRule({
     };
 
     return {
-      // msg`Avatar Url`, t`ACS Url`, defineMessage`…`
       TaggedTemplateExpression: (node: any) => {
         const tagName = getTagName(node.tag);
 
@@ -128,8 +127,8 @@ export const rule = defineRule({
         });
       },
 
-      // msg({ message: `Avatar Url`, context: 'fieldMetadata.label' }) - the
-      // form the standard field metadata uses, and where this defect collected.
+      // The descriptor form the standard field metadata uses, and where this
+      // defect collected.
       CallExpression: (node: any) => {
         if (
           node.callee.type !== 'Identifier' ||
@@ -171,9 +170,8 @@ export const rule = defineRule({
         }
       },
 
-      // <Trans>Avatar Url</Trans>, and only that: plain JSX text is not a
-      // translatable string, so flagging it here would report a different
-      // problem under this rule's name.
+      // Trans children only: plain JSX text is not a translatable string, so
+      // flagging it here would report a different problem under this rule's name.
       JSXElement: (node: any) => {
         if (
           node.openingElement.name.type !== 'JSXIdentifier' ||
