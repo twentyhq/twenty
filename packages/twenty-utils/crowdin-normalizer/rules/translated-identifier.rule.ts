@@ -23,28 +23,27 @@ function looksLikeIdentifier(span: string): boolean {
   );
 }
 
-// Restores the source's identifiers into the translation position by position.
-// Counts that differ mean the two cannot be lined up, so the translation is
-// left alone rather than guessed at.
+// Only a message carrying exactly one span on each side is repaired. Lining
+// spans up by position looked obvious and is wrong: a translation reorders them
+// to suit its own grammar, so "the `twenty-app` keyword in your `package.json`
+// `keywords` array" comes back with keywords and package.json swapped, and
+// restoring by position writes package.json over both. With one span there is
+// no order to get wrong.
 function restoreIdentifiers(text: string, sourceText?: string): string {
   if (sourceText === undefined) return text;
 
   const sourceSpans = codeSpansIn(sourceText);
+  const targetSpans = codeSpansIn(text);
 
   if (
-    sourceSpans.length === 0 ||
-    sourceSpans.length !== codeSpansIn(text).length
+    sourceSpans.length !== 1 ||
+    targetSpans.length !== 1 ||
+    !looksLikeIdentifier(sourceSpans[0])
   ) {
     return text;
   }
 
-  let index = 0;
-
-  return text.replace(new RegExp(INLINE_CODE_REGEX), (match) => {
-    const sourceSpan = sourceSpans[index++];
-
-    return looksLikeIdentifier(sourceSpan) ? sourceSpan : match;
-  });
+  return text.replace(INLINE_CODE_REGEX, sourceSpans[0]);
 }
 
 function hasTranslatedIdentifier(text: string, sourceText?: string): boolean {

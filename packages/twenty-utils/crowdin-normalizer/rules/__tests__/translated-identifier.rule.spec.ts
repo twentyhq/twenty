@@ -15,13 +15,16 @@ describe('TRANSLATED_IDENTIFIER_RULE', () => {
     );
   });
 
-  it('restores each code span in order, leaving the prose alone', () => {
-    const sourceText = 'Call `useMemo` before `useEffect` runs.';
-    const translationText = 'Appelez `useMémo` avant que `useEffet` ne tourne.';
+  // A translation reorders spans to suit its own grammar, so position says
+  // nothing about which source span belongs in which slot.
+  it('stands down on more than one span, where order cannot be trusted', () => {
+    const sourceText =
+      'The `twenty-app` keyword in your `package.json` `keywords` array';
+    const translationText =
+      'Cuvântul cheie `twenty-app` din array-ul `keywords` al fișierului `package.json`';
 
-    expect(fix(translationText, sourceText)).toBe(
-      'Appelez `useMemo` avant que `useEffect` ne tourne.',
-    );
+    expect(detect(translationText, sourceText)).toBe(false);
+    expect(fix(translationText, sourceText)).toBe(translationText);
   });
 
   // Backticks in the docs mark UI labels as often as symbols, and the reader
