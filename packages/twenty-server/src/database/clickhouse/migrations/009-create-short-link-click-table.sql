@@ -10,5 +10,5 @@ CREATE TABLE IF NOT EXISTS shortLinkClick
 )
     ENGINE = MergeTree
     PARTITION BY toYYYYMM(occurredAt)
-    ORDER BY (workspaceId, shortLinkId, occurredAt)
+    ORDER BY (workspaceId, messageCampaignId, shortLinkId, occurredAt)
     TTL toDateTime(occurredAt) + INTERVAL 3 YEAR DELETE;
