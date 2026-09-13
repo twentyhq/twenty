@@ -1259,7 +1259,7 @@ msgstr "Afegeix una nota a aquest registre: "
 #. js-lingui-id: Ad+JsP
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add a person with an email to this company first"
-msgstr "Afegeix primer una persona amb una adreça electrònica a aquesta empresa."
+msgstr "Afegeix primer una persona amb una adreça electrònica a aquesta empresa"
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1311,17 +1311,17 @@ msgstr "Afegiu una clau d'API per habilitar la IA."
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to the point of contact first"
-msgstr "Afegeix primer una adreça electrònica a la persona de contacte."
+msgstr "Afegeix primer una adreça electrònica a la persona de contacte"
 
 #. js-lingui-id: LVzaHu
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to this person first"
-msgstr "Afegeix primer una adreça electrònica a aquesta persona."
+msgstr "Afegeix primer una adreça electrònica a aquesta persona"
 
 #. js-lingui-id: KD0hdw
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add an event title"
-msgstr "Afegeix un títol a l'esdeveniment."
+msgstr "Afegeix un títol a l'esdeveniment"
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -1397,7 +1397,7 @@ msgstr "Afegeix un proveïdor personalitzat"
 #. js-lingui-id: 094J9M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add details for guests"
-msgstr "Afegeix detalls per als convidats."
+msgstr "Afegeix detalls per als convidats"
 
 #. js-lingui-id: WT0Ie4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -3567,12 +3567,12 @@ msgstr "Calendari"
 #. js-lingui-id: x1X5mf
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Calendar access needs approval"
-msgstr "L'accés al calendari necessita aprovació."
+msgstr "L'accés al calendari necessita aprovació"
 
 #. js-lingui-id: 6kmXOY
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 msgid "Calendar event created successfully"
-msgstr "L'esdeveniment de calendari s'ha creat correctament."
+msgstr "L'esdeveniment de calendari s'ha creat correctament"
 
 #. js-lingui-id: l7HQ8A
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -3587,7 +3587,7 @@ msgstr "No s'ha trobat l'esdeveniment del calendari"
 #. js-lingui-id: rLQVsa
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Calendar events cannot be linked to this record type"
-msgstr "Els esdeveniments de calendari no es poden enllaçar a aquest tipus de registre."
+msgstr "Els esdeveniments de calendari no es poden enllaçar a aquest tipus de registre"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -4004,7 +4004,7 @@ msgstr "Comprova les execucions recents"
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
-msgstr "Comprova les dates de l'esdeveniment."
+msgstr "Comprova les dates de l'esdeveniment"
 
 #. js-lingui-id: PaKTa7
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -4803,7 +4803,7 @@ msgstr "Connectar {appName} al teu compte"
 #. js-lingui-id: bFJIPh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect a calendar account"
-msgstr "Connecta un compte de calendari."
+msgstr "Connecta un compte de calendari"
 
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -5446,7 +5446,7 @@ msgstr "Crear un espai de treball"
 #. js-lingui-id: dpwEnu
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Create an all-day event"
-msgstr "Crea un esdeveniment de tot el dia."
+msgstr "Crea un esdeveniment de tot el dia"
 
 #. js-lingui-id: /WlFSf
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -5491,7 +5491,7 @@ msgstr "Crea camp de data"
 #. js-lingui-id: PybJS2
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 msgid "Create event"
-msgstr "Crea un esdeveniment."
+msgstr "Crea un esdeveniment"
 
 #. js-lingui-id: vY2Gfm
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -7546,7 +7546,7 @@ msgstr "Editor de correu electrònic"
 #. js-lingui-id: 6iOHIG
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Email guests an invitation"
-msgstr "Envia una invitació als convidats per correu electrònic."
+msgstr "Envia una invitació als convidats per correu electrònic"
 
 #. js-lingui-id: ZsZeV2
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
@@ -8674,7 +8674,7 @@ msgstr "No s'ha pogut reclamar la propietat."
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 msgid "Failed to create calendar event"
-msgstr "No s'ha pogut crear l'esdeveniment de calendari."
+msgstr "No s'ha pogut crear l'esdeveniment de calendari"
 
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/record-list/components/RecordListAddNew.tsx
@@ -8822,7 +8822,7 @@ msgstr "No s'ha pogut analitzar el context: {contextValue}"
 #. js-lingui-id: 8l1diy
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 msgid "Failed to reconnect calendar account"
-msgstr "No s'ha pogut reconnectar el compte de calendari."
+msgstr "No s'ha pogut reconnectar el compte de calendari"
 
 #. js-lingui-id: 3m7+J/
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -12534,7 +12534,7 @@ msgstr "Menta"
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
-msgstr "El valor del minut no pot superar 60. Per a intervals superiors a 60 minuts, utilitza el tipus de disparador \"Hores\" o una expressió cron personalitzada."
+msgstr "El valor del minut no pot superar 60. Per a intervals superiors a 60 minuts, utilitza el tipus de disparador \"Hores\" o una expressió cron personalitzada"
 
 #. js-lingui-id: agRWc1
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -12776,7 +12776,7 @@ msgstr "Fes avançar la feina entre equips i agents"
 #. js-lingui-id: XXzjfC
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 msgid "Msgs"
-msgstr "Miss."
+msgstr "Miss"
 
 #. js-lingui-id: cT1jbf
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx

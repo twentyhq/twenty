@@ -233,7 +233,7 @@ msgstr "{0, plural, one {Nemate dozvolu za pristup polju {fieldsList}} few {Nema
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr "{0} vraćenih ili prijavljenih kao neželjenih poruka."
+msgstr "{0} vraćenih ili prijavljenih kao neželjenih poruka"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })

@@ -233,7 +233,7 @@ msgstr "{0, plural, one {Jy het nie toestemming om toegang tot die {fieldsList} 
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr "{0} het teruggespring of gekla."
+msgstr "{0} het teruggespring of gekla"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -1259,7 +1259,7 @@ msgstr "Voeg 'n nota by hierdie rekord: "
 #. js-lingui-id: Ad+JsP
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add a person with an email to this company first"
-msgstr "Voeg eers 'n persoon met 'n e-posadres by hierdie maatskappy."
+msgstr "Voeg eers 'n persoon met 'n e-posadres by hierdie maatskappy"
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1311,12 +1311,12 @@ msgstr "Voeg ’n API-sleutel by om KI te aktiveer."
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to the point of contact first"
-msgstr "Voeg eers 'n e-posadres by die kontakpersoon."
+msgstr "Voeg eers 'n e-posadres by die kontakpersoon"
 
 #. js-lingui-id: LVzaHu
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to this person first"
-msgstr "Voeg eers 'n e-posadres by hierdie persoon."
+msgstr "Voeg eers 'n e-posadres by hierdie persoon"
 
 #. js-lingui-id: KD0hdw
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -4625,7 +4625,7 @@ msgstr "Konfigurasie van hierdie opdragkieslysitem"
 #. js-lingui-id: +rVpsA
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Configuration of this timeline activity type"
-msgstr "Konfigurasie van hierdie tydlyn-aktiwiteitstipe."
+msgstr "Konfigurasie van hierdie tydlyn-aktiwiteitstipe"
 
 #. js-lingui-id: iAL9tI
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -12776,7 +12776,7 @@ msgstr "Beweeg werk vorentoe oor spanne en agente heen"
 #. js-lingui-id: XXzjfC
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 msgid "Msgs"
-msgstr "Boodsk."
+msgstr "Boodsk"
 
 #. js-lingui-id: cT1jbf
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
@@ -13519,12 +13519,12 @@ msgstr "Geen datum veld nie"
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "No default configuration available for this tab"
-msgstr "Geen verstekkonfigurasie beskikbaar vir hierdie oortjie nie."
+msgstr "Geen verstekkonfigurasie beskikbaar vir hierdie oortjie nie"
 
 #. js-lingui-id: B8I32S
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "No default configuration available for this widget"
-msgstr "Geen verstekkonfigurasie beskikbaar vir hierdie widget nie."
+msgstr "Geen verstekkonfigurasie beskikbaar vir hierdie widget nie"
 
 #. js-lingui-id: P4KXUa
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
@@ -22170,7 +22170,7 @@ msgstr "Breedte"
 #. js-lingui-id: j6ncOZ
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
 msgid "Will continue to the next iteration even if the current one fails"
-msgstr "Sal na die volgende iterasie voortgaan, selfs al misluk die huidige een."
+msgstr "Sal na die volgende iterasie voortgaan, selfs al misluk die huidige een"
 
 #. js-lingui-id: UcBL9G
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx

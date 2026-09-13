@@ -3266,7 +3266,7 @@ msgstr "Visningsnavn"
 #. js-lingui-id: IymH4t
 #: src/engine/core-modules/public-domain/public-domain.service.ts
 msgid "Domain already used for workspace custom domain"
-msgstr "Domæne bruges allerede til brugerdefineret arbejdsområde domæne."
+msgstr "Domæne bruges allerede til brugerdefineret arbejdsområde domæne"
 
 #. js-lingui-id: 2sIVDj
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
@@ -3567,7 +3567,7 @@ msgstr "Slutdato"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Ended At"
-msgstr "Sluttede kl."
+msgstr "Sluttede kl"
 
 #. js-lingui-id: g2om8o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -4114,7 +4114,7 @@ msgstr "Felttypen TS_VECTOR skal hedde \"searchVector\""
 #. js-lingui-id: VkSxbb
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr "Felttypen TS_VECTOR skal have SYSTEM-skriveadgang."
+msgstr "Felttypen TS_VECTOR skal have SYSTEM-skriveadgang"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -5925,7 +5925,7 @@ msgstr "Nøglen er påkrævet"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Kind of principal receiving the access"
-msgstr "Type sikkerhedsprincipal, der modtager adgangen."
+msgstr "Type sikkerhedsprincipal, der modtager adgangen"
 
 #. js-lingui-id: 6sFS+I
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
@@ -9365,7 +9365,7 @@ msgstr "Sendt"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Sent at"
-msgstr "Sendt kl."
+msgstr "Sendt kl"
 
 #. js-lingui-id: M8jvbm
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9624,7 +9624,7 @@ msgstr "Start på ugen"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Started At"
-msgstr "Startede kl."
+msgstr "Startede kl"
 
 #. js-lingui-id: WlLRwh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts

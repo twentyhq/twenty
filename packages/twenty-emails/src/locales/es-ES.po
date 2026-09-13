@@ -211,22 +211,22 @@ msgstr "Acceso de administrador del servidor modificado"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.fullAdmin"
-msgstr "Tienes acceso de administrador completo al servidor."
+msgstr "Tienes acceso de administrador completo al servidor"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.impersonation"
-msgstr "Podrás suplantar a usuarios para ayudarlos en la solución de problemas."
+msgstr "Podrás suplantar a usuarios para ayudarlos en la solución de problemas"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.summary"
-msgstr "Se ha cambiado el acceso de administrador del servidor."
+msgstr "Se ha cambiado el acceso de administrador del servidor"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.warning"
-msgstr "Advertencia: el acceso de administrador otorga permisos completos; úsalo con precaución."
+msgstr "Advertencia: el acceso de administrador otorga permisos completos; úsalo con precaución"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

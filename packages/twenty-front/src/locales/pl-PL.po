@@ -1249,7 +1249,7 @@ msgstr "Dodaj nową firmę, z którą mamy kontakt (np. nazwa, strona internetow
 #. js-lingui-id: 5xxrhm
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note"
-msgstr "Dodaj notatkę."
+msgstr "Dodaj notatkę"
 
 #. js-lingui-id: uza/B9
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -1259,7 +1259,7 @@ msgstr "Dodaj notatkę do tego rekordu: "
 #. js-lingui-id: Ad+JsP
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add a person with an email to this company first"
-msgstr "Najpierw dodaj do tej firmy osobę z adresem e-mail."
+msgstr "Najpierw dodaj do tej firmy osobę z adresem e-mail"
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1311,12 +1311,12 @@ msgstr "Dodaj klucz API, aby włączyć AI."
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to the point of contact first"
-msgstr "Najpierw dodaj adres e-mail do osoby kontaktowej."
+msgstr "Najpierw dodaj adres e-mail do osoby kontaktowej"
 
 #. js-lingui-id: LVzaHu
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to this person first"
-msgstr "Najpierw dodaj adres e-mail do tej osoby."
+msgstr "Najpierw dodaj adres e-mail do tej osoby"
 
 #. js-lingui-id: KD0hdw
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -3577,7 +3577,7 @@ msgstr "Wydarzenie kalendarzowe zostało utworzone pomyślnie"
 #. js-lingui-id: l7HQ8A
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Calendar event has no start date"
-msgstr "Zdarzenie kalendarza nie ma daty rozpoczęcia."
+msgstr "Zdarzenie kalendarza nie ma daty rozpoczęcia"
 
 #. js-lingui-id: xG4khu
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -7059,7 +7059,7 @@ msgstr "Nie twórz automatycznie kontaktów."
 #. js-lingui-id: Emrbzc
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don't create contacts from/to Gmail, Outlook emails"
-msgstr "Nie twórz kontaktów z/dla Gmail, Outlook emails."
+msgstr "Nie twórz kontaktów z/dla Gmail, Outlook emails"
 
 #. js-lingui-id: yjhBSV
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -9707,7 +9707,7 @@ msgstr "Uzyskaj klucz Enterprise"
 #. js-lingui-id: gRFvyL
 #: src/modules/onboarding/constants/OnboardingInstallableApps.ts
 msgid "Get last contact date with relations"
-msgstr "Uzyskaj ostatnią datę kontaktu z powiązaniami."
+msgstr "Uzyskaj ostatnią datę kontaktu z powiązaniami"
 
 #. js-lingui-id: Et23WT
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
@@ -16532,7 +16532,7 @@ msgstr "Resetuj 2FA"
 #. js-lingui-id: kw0Yv1
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Reset all overrides on this layout to return it to the app default"
-msgstr "Zresetuj wszystkie nadpisania w tym układzie, aby przywrócić go do domyślnego układu aplikacji."
+msgstr "Zresetuj wszystkie nadpisania w tym układzie, aby przywrócić go do domyślnego układu aplikacji"
 
 #. js-lingui-id: AASIAQ
 #: src/modules/layout-customization/components/LayoutCustomizationBarMenuDropdown.tsx
@@ -16942,7 +16942,7 @@ msgstr "Zapisz"
 #. js-lingui-id: nvUgnK
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Save 25% when billed yearly"
-msgstr "Oszczędź 25% przy rozliczeniu rocznym."
+msgstr "Oszczędź 25% przy rozliczeniu rocznym"
 
 #. js-lingui-id: apLRCm
 #: src/modules/views/components/UpdateViewButtonGroup.tsx

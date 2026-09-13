@@ -1259,7 +1259,7 @@ msgstr "Lisää muistiinpano tähän tietueeseen: "
 #. js-lingui-id: Ad+JsP
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add a person with an email to this company first"
-msgstr "Lisää ensin tähän yritykseen henkilö, jolla on sähköpostiosoite."
+msgstr "Lisää ensin tähän yritykseen henkilö, jolla on sähköpostiosoite"
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1311,12 +1311,12 @@ msgstr "Lisää API-avain ottaaksesi AI:n käyttöön."
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to the point of contact first"
-msgstr "Lisää yhteyshenkilölle ensin sähköpostiosoite."
+msgstr "Lisää yhteyshenkilölle ensin sähköpostiosoite"
 
 #. js-lingui-id: LVzaHu
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to this person first"
-msgstr "Lisää tälle henkilölle ensin sähköpostiosoite."
+msgstr "Lisää tälle henkilölle ensin sähköpostiosoite"
 
 #. js-lingui-id: KD0hdw
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -5204,7 +5204,7 @@ msgstr "Hinta per miljoona tokenia välimuistiin tallennetulle syötteelle (USD)
 #. js-lingui-id: T8ACay
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Could not claim this application"
-msgstr "Tätä sovellusta ei voitu ottaa omistukseen."
+msgstr "Tätä sovellusta ei voitu ottaa omistukseen"
 
 #. js-lingui-id: LpyyAM
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -5275,7 +5275,7 @@ msgstr "Hakua ei voitu suorittaa."
 #. js-lingui-id: p75IO8
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Could not start the GitHub claim"
-msgstr "GitHub-omistuksen vahvistusta ei voitu aloittaa."
+msgstr "GitHub-omistuksen vahvistusta ei voitu aloittaa"
 
 #. js-lingui-id: Yu3v/5
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
@@ -8984,7 +8984,7 @@ msgstr "Aikajanatapahtumatyypin päivittäminen epäonnistui."
 #. js-lingui-id: 16Z+3L
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
 msgid "Failed to update unsubscribe topic."
-msgstr "Tilauksen peruutusaiheen päivittäminen epäonnistui"
+msgstr "Tilauksen peruutusaiheen päivittäminen epäonnistui."
 
 #. js-lingui-id: 204Qo2
 #: src/modules/settings/billing/hooks/useCreditUpgradeAction.ts
@@ -22366,7 +22366,7 @@ msgstr "Työtilan päivitysten terveystila"
 #. js-lingui-id: QZi0YX
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Workspace views require manage views permission"
-msgstr "Työtilan näkymät vaativat oikeudet hallintaan."
+msgstr "Työtilan näkymät vaativat oikeudet hallintaan"
 
 #. js-lingui-id: pmt7u4
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx

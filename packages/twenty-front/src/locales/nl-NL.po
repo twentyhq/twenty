@@ -233,7 +233,7 @@ msgstr "{0, plural, one {U heeft geen toestemming om toegang te krijgen tot het 
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr "{0} gebounced of klacht ingediend."
+msgstr "{0} gebounced of klacht ingediend"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -1249,7 +1249,7 @@ msgstr "Voeg een nieuw bedrijf toe waarmee we contact hebben (bijv. naam, websit
 #. js-lingui-id: 5xxrhm
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note"
-msgstr "Een notitie toevoegen."
+msgstr "Een notitie toevoegen"
 
 #. js-lingui-id: uza/B9
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -1259,7 +1259,7 @@ msgstr "Een notitie toevoegen aan dit record: "
 #. js-lingui-id: Ad+JsP
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add a person with an email to this company first"
-msgstr "Voeg eerst een persoon met een e-mailadres toe aan dit bedrijf."
+msgstr "Voeg eerst een persoon met een e-mailadres toe aan dit bedrijf"
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1311,12 +1311,12 @@ msgstr "Voeg een API-sleutel toe om AI in te schakelen."
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to the point of contact first"
-msgstr "Voeg eerst een e-mailadres toe aan de contactpersoon."
+msgstr "Voeg eerst een e-mailadres toe aan de contactpersoon"
 
 #. js-lingui-id: LVzaHu
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to this person first"
-msgstr "Voeg eerst een e-mailadres toe aan deze persoon."
+msgstr "Voeg eerst een e-mailadres toe aan deze persoon"
 
 #. js-lingui-id: KD0hdw
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -5204,7 +5204,7 @@ msgstr "Kosten per miljoen tokens voor gecachede invoer (USD)"
 #. js-lingui-id: T8ACay
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Could not claim this application"
-msgstr "Deze applicatie kon niet worden geclaimd."
+msgstr "Deze applicatie kon niet worden geclaimd"
 
 #. js-lingui-id: LpyyAM
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -6035,7 +6035,7 @@ msgstr "Recordpagina aanpassen"
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Customize the workspace record page"
-msgstr "Pas de recordpagina van de werkruimte aan."
+msgstr "Pas de recordpagina van de werkruimte aan"
 
 #. js-lingui-id: ZBgSzH
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -13861,7 +13861,7 @@ msgstr "Geen resultaten gevonden"
 #. js-lingui-id: FVzmGK
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "No role assigned to this member"
-msgstr "Er is geen rol aan dit lid toegewezen."
+msgstr "Er is geen rol aan dit lid toegewezen"
 
 #. js-lingui-id: 9mcJ/7
 #: src/modules/settings/roles/components/SettingsRolesList.tsx

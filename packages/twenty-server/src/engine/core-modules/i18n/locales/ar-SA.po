@@ -4114,7 +4114,7 @@ msgstr "يجب تسمية نوع الحقل TS_VECTOR باسم \"searchVector\""
 #. js-lingui-id: VkSxbb
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr "يجب أن يتمتع نوع الحقل TS_VECTOR بقابلية الكتابة بواسطة SYSTEM."
+msgstr "يجب أن يتمتع نوع الحقل TS_VECTOR بقابلية الكتابة بواسطة SYSTEM"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -6247,7 +6247,7 @@ msgstr "الدالة المنطقية موجودة بالفعل"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Logic function cannot be in PREBUILT mode without a fresh build and a checksum"
-msgstr "لا يمكن أن تكون الدالة المنطقية في وضع PREBUILT من دون بناء جديد ومجموع اختباري."
+msgstr "لا يمكن أن تكون الدالة المنطقية في وضع PREBUILT من دون بناء جديد ومجموع اختباري"
 
 #. js-lingui-id: mZvaAV
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts

@@ -233,7 +233,7 @@ msgstr "{0, plural, one {Nu aveți permisiunea de a accesa câmpul {fieldsList}}
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr "{0} respinse sau cu reclamații."
+msgstr "{0} respinse sau cu reclamații"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -4014,7 +4014,7 @@ msgstr "Verifică rulările recente ale acestui flux de lucru și spune-mi dacă
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
 msgid "Check verification"
-msgstr "Verificare email."
+msgstr "Verificare email"
 
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -4625,7 +4625,7 @@ msgstr "Configurarea acestui element din meniul de comenzi"
 #. js-lingui-id: +rVpsA
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Configuration of this timeline activity type"
-msgstr "Configurarea acestui tip de activitate din cronologie."
+msgstr "Configurarea acestui tip de activitate din cronologie"
 
 #. js-lingui-id: iAL9tI
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -5316,12 +5316,12 @@ msgstr "Nu s-au putut încărca spațiile de lucru instalate"
 #. js-lingui-id: kjbTwZ
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController.ts
 msgid "Couldn't remove favorite"
-msgstr "Nu s-a putut elimina din favorite."
+msgstr "Nu s-a putut elimina din favorite"
 
 #. js-lingui-id: WSmI/y
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController.ts
 msgid "Couldn't update favorite"
-msgstr "Nu s-a putut actualiza elementul favorit."
+msgstr "Nu s-a putut actualiza elementul favorit"
 
 #. js-lingui-id: wBMjJ2
 #: src/modules/object-record/record-group/components/RecordGroupAggregateDropdownContent.tsx
@@ -9298,7 +9298,7 @@ msgstr "Filtrează această vizualizare pentru a afișa doar "
 #. js-lingui-id: 0i36a3
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 msgid "Filter timeline"
-msgstr "Filtrați cronologia."
+msgstr "Filtrați cronologia"
 
 #. js-lingui-id: j/O9Sh
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
@@ -9748,7 +9748,7 @@ msgstr "Înapoi"
 #. js-lingui-id: y0SPQU
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
 msgid "Go to billing"
-msgstr "Accesați facturarea."
+msgstr "Accesați facturarea"
 
 #. js-lingui-id: Hb4Cgz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -11222,7 +11222,7 @@ msgstr "Alătură-te echipei {workspaceName}"
 #. js-lingui-id: 31TuIx
 #: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Join our Discord"
-msgstr "Alăturați-vă pe Discord."
+msgstr "Alăturați-vă pe Discord"
 
 #. js-lingui-id: cIo6Vk
 #: src/pages/settings/community/SettingsCommunity.tsx

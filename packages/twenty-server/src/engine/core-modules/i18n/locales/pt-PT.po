@@ -1578,7 +1578,7 @@ msgstr "Posição do registo do evento de calendário"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Calendar Event Target"
-msgstr "Destino do Evento de Calendário."
+msgstr "Destino do Evento de Calendário"
 
 #. js-lingui-id: XSZPL4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
@@ -4294,7 +4294,7 @@ msgstr "Arquivos"
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
-msgstr "O campo Arquivos não é suportado para campos únicos."
+msgstr "O campo Arquivos não é suportado para campos únicos"
 
 #. js-lingui-id: PR/KbU
 #. placeholder {0}: referencedFieldMetadata.label

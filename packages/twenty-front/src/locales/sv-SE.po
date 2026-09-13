@@ -19682,7 +19682,7 @@ msgstr "Den här applikationen har redan gjorts anspråk på."
 #. js-lingui-id: X7w5n6
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "This application's registration is claimed by your workspace"
-msgstr "Den här applikationens registrering ägs av din arbetsyta."
+msgstr "Den här applikationens registrering ägs av din arbetsyta"
 
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

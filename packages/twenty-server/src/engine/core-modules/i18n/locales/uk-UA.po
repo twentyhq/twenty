@@ -374,7 +374,7 @@ msgstr "Тип активності хронології, спрямований
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type with this name already exists for this application"
-msgstr "Тип активності хронології з такою назвою вже існує для цього застосунку."
+msgstr "Тип активності хронології з такою назвою вже існує для цього застосунку"
 
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -1791,7 +1791,7 @@ msgstr "Не вдається підключитися до {connectFieldName}. 
 #. js-lingui-id: 2oVE+z
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "Can't impersonate user via api key"
-msgstr "Не можу імперсонувати користувача через ключ API."
+msgstr "Не можу імперсонувати користувача через ключ API"
 
 #. js-lingui-id: PpmWQv
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4294,7 +4294,7 @@ msgstr "Файли"
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
-msgstr "Поле «Файли» не підтримується як унікальне."
+msgstr "Поле «Файли» не підтримується як унікальне"
 
 #. js-lingui-id: PR/KbU
 #. placeholder {0}: referencedFieldMetadata.label
@@ -12401,17 +12401,17 @@ msgstr "Віджет виходить за межі ширини сітки"
 #. js-lingui-id: GE0fWY
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header actions must be unique"
-msgstr "Дії заголовка віджета мають бути унікальними."
+msgstr "Дії заголовка віджета мають бути унікальними"
 
 #. js-lingui-id: djzz9p
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header actions must belong to the same application as the widget"
-msgstr "Дії заголовка віджета мають належати тій самій програмі, що й віджет."
+msgstr "Дії заголовка віджета мають належати тій самій програмі, що й віджет"
 
 #. js-lingui-id: pjpuGA
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header command menu item references must be unique"
-msgstr "Посилання на елементи меню команд заголовка віджета мають бути унікальними."
+msgstr "Посилання на елементи меню команд заголовка віджета мають бути унікальними"
 
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts

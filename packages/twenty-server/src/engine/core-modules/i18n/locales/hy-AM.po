@@ -374,7 +374,7 @@ msgstr "Մեկ այլ հավելվածի օբյեկտը թիրախավորող �
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type with this name already exists for this application"
-msgstr "Այս հավելվածի համար այս անունով ժամանակագծի գործողության տեսակ արդեն գոյություն ունի."
+msgstr "Այս հավելվածի համար այս անունով ժամանակագծի գործողության տեսակ արդեն գոյություն ունի"
 
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -460,7 +460,7 @@ msgstr "Այս կարգավորումներով webhook արդեն գոյութ�
 #. js-lingui-id: I0rHKG
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "A widget header action was not found"
-msgstr "Վիջեթի վերնագրի գործողություն չի գտնվել."
+msgstr "Վիջեթի վերնագրի գործողություն չի գտնվել"
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2132,12 +2132,12 @@ msgstr "Գունային սխեմա"
 #. js-lingui-id: 8nN8qg
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
-msgstr "Վիջեթի վերնագրում նշված {commandMenuItemUniversalIdentifier} հրամանների ընտրացանկի տարրը պատկանում է մեկ այլ հավելվածի."
+msgstr "Վիջեթի վերնագրում նշված {commandMenuItemUniversalIdentifier} հրամանների ընտրացանկի տարրը պատկանում է մեկ այլ հավելվածի"
 
 #. js-lingui-id: fmk0Wo
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
-msgstr "Վիջեթի վերնագրում նշված {commandMenuItemUniversalIdentifier} հրամանների ընտրացանկի տարրը չի գտնվել."
+msgstr "Վիջեթի վերնագրում նշված {commandMenuItemUniversalIdentifier} հրամանների ընտրացանկի տարրը չի գտնվել"
 
 #. js-lingui-id: Lrx/M5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -7540,7 +7540,7 @@ msgstr "Միայն npm-ում հրապարակված հավելվածների ս
 #. js-lingui-id: FmMRCQ
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Only applications synced from local source can be exported."
-msgstr "Միայն տեղային աղբյուրից համաժամեցված հավելվածները կարող են արտահանվել。"
+msgstr "Միայն տեղային աղբյուրից համաժամեցված հավելվածները կարող են արտահանվել。."
 
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts

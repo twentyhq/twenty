@@ -369,12 +369,12 @@ msgstr "'n Tydelike netwerkfout het voorgekom."
 #. js-lingui-id: WzDeE/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
-msgstr "’n Tydlynaktiwiteitstipe wat ’n ander toepassing se objek teiken, moet die tydlynaktiwiteitstipe verklaar wat dit oorskryf."
+msgstr "’n Tydlynaktiwiteitstipe wat ’n ander toepassing se objek teiken, moet die tydlynaktiwiteitstipe verklaar wat dit oorskryf"
 
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type with this name already exists for this application"
-msgstr "'n Tydlynaktiwiteitstipe met hierdie naam bestaan reeds vir hierdie toepassing."
+msgstr "'n Tydlynaktiwiteitstipe met hierdie naam bestaan reeds vir hierdie toepassing"
 
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -3271,7 +3271,7 @@ msgstr "Domein reeds gebruik vir werksruimte pasgemaakte domein."
 #. js-lingui-id: 2sIVDj
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "Domain is already registered"
-msgstr "Domein is reeds geregistreer."
+msgstr "Domein is reeds geregistreer"
 
 #. js-lingui-id: PfJswy
 #: src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service.ts
@@ -3940,7 +3940,7 @@ msgstr "Veld kan nie as etiketidentifiseerder gebruik word nie weens die tipe da
 #. js-lingui-id: QMSXe6
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field cannot be used as label identifier due to its type: should be of type UUID, text or full name"
-msgstr "Veld kan nie as etiketidentifiseerder gebruik word nie weens die tipe daarvan: dit moet van tipe UUID, teks of volledige naam wees."
+msgstr "Veld kan nie as etiketidentifiseerder gebruik word nie weens die tipe daarvan: dit moet van tipe UUID, teks of volledige naam wees"
 
 #. js-lingui-id: F6OLoA
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
@@ -4084,7 +4084,7 @@ msgstr "Veld om by te werk nie gevind nie"
 #. js-lingui-id: 5cm5Hn
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Field to update object metadata not found"
-msgstr "Veld om objek metadata by te werk is nie gevind nie."
+msgstr "Veld om objek metadata by te werk is nie gevind nie"
 
 #. js-lingui-id: stY5BO
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
@@ -7567,7 +7567,7 @@ msgstr "Operand \"{operand}\" word nie vir veldtipe \"{filterType}\" ondersteun 
 #. js-lingui-id: iD+jGc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Operand \"{operand}\" requires a value, an empty predicate would remove the row restriction entirely"
-msgstr "Operand \"{operand}\" vereis ’n waarde; ’n leë predikaat sou die rybeperking heeltemal verwyder."
+msgstr "Operand \"{operand}\" vereis ’n waarde; ’n leë predikaat sou die rybeperking heeltemal verwyder"
 
 #. js-lingui-id: Rh2dh5
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -11433,7 +11433,7 @@ msgstr "Twee-faktor-outentikasie-verifikasie word vereis."
 #. js-lingui-id: Qx95XY
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Udpated field is not a morph relation or a relation"
-msgstr "Die bygewerkte veld is nie 'n polimorfiese verhouding of 'n verhouding nie."
+msgstr "Die bygewerkte veld is nie 'n polimorfiese verhouding of 'n verhouding nie"
 
 #. js-lingui-id: SpmRxi
 #: src/engine/core-modules/application/application.exception.ts

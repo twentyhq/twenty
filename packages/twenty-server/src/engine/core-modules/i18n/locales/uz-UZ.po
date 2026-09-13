@@ -1578,7 +1578,7 @@ msgstr "Kalendar hodisasi yozuvi pozitsiyasi"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Calendar Event Target"
-msgstr "Kalendar hodisasi maqsadi haqida maʼlumotlar bazasi yozuvi ixtiyoriy korxona maʻlumotlarining bir qismi sifatida saqlanishi mumkin."
+msgstr "Kalendar hodisasi maqsadi haqida maʼlumotlar bazasi yozuvi ixtiyoriy korxona maʻlumotlarining bir qismi sifatida saqlanishi mumkin"
 
 #. js-lingui-id: XSZPL4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
@@ -2020,7 +2020,7 @@ msgstr "Standart ruxsat flagi ta'rifini yangilab bo‘lmaydi"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
-msgstr "Standart ko‘nikma xususiyatlarini yangilab bo‘lmaydi (faqat faollashtirish/faolsizlantirishga ruxsat beriladi)."
+msgstr "Standart ko‘nikma xususiyatlarini yangilab bo‘lmaydi (faqat faollashtirish/faolsizlantirishga ruxsat beriladi)"
 
 #. js-lingui-id: YIzGJ8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -5480,7 +5480,7 @@ msgstr "Noto‘g‘ri obuna."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Invalid target URL provided"
-msgstr "Noto‘g‘ri maqsad URL kiritildi."
+msgstr "Noto‘g‘ri maqsad URL kiritildi"
 
 #. js-lingui-id: 9mW6V7
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -5857,22 +5857,22 @@ msgstr "Bog‘lanishning manba va maqsad maydonlari bir-biridan farq qilishi ker
 #. js-lingui-id: bpqhFq
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction target field must be a MANY_TO_ONE relation"
-msgstr "Junction maqsad maydoni MANY_TO_ONE munosabati bo‘lishi kerak."
+msgstr "Junction maqsad maydoni MANY_TO_ONE munosabati bo‘lishi kerak"
 
 #. js-lingui-id: hLEiPe
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction target field must be a relation field"
-msgstr "Junction maqsad maydoni munosabat (relation) maydoni bo‘lishi kerak."
+msgstr "Junction maqsad maydoni munosabat (relation) maydoni bo‘lishi kerak"
 
 #. js-lingui-id: P+Gspf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction target field must be on the junction object"
-msgstr "Junction maqsad maydoni junction obyektida bo‘lishi kerak."
+msgstr "Junction maqsad maydoni junction obyektida bo‘lishi kerak"
 
 #. js-lingui-id: qONLh7
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction target field not found"
-msgstr "Junction maqsad maydoni topilmadi."
+msgstr "Junction maqsad maydoni topilmadi"
 
 #. js-lingui-id: zeEQd/
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -9862,23 +9862,23 @@ msgstr "Maqsadli yozuv pozitsiyasi"
 #. js-lingui-id: 1ssKrE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Target relation field does not belong to the expected object"
-msgstr "Maqsadli munosabat maydoni kutilgan obyektga tegishli emas."
+msgstr "Maqsadli munosabat maydoni kutilgan obyektga tegishli emas"
 
 #. js-lingui-id: wG8PVB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Target relation field does not reference the source object"
-msgstr "Maqsadli munosabat maydoni manba obyektiga murojaat qilmaydi."
+msgstr "Maqsadli munosabat maydoni manba obyektiga murojaat qilmaydi"
 
 #. js-lingui-id: xLsFda
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Target relation field does not reference this field"
-msgstr "Maqsadli munosabat maydoni ushbu maydonga murojaat qilmaydi."
+msgstr "Maqsadli munosabat maydoni ushbu maydonga murojaat qilmaydi"
 
 #. js-lingui-id: /HKzKW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Target URL is required"
-msgstr "Maqsad URL talab qilinadi."
+msgstr "Maqsad URL talab qilinadi"
 
 #. js-lingui-id: g6X4T4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts

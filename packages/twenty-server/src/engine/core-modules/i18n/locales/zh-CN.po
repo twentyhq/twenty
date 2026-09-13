@@ -151,7 +151,7 @@ msgstr "此应用已存在同名的连接提供商"
 #. js-lingui-id: jzhZvB
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "A connection provider with this name already exists for this application."
-msgstr "此应用已存在同名的连接提供商。"
+msgstr "此应用已存在同名的连接提供商。."
 
 #. js-lingui-id: TjN8GI
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -337,7 +337,7 @@ msgstr "已存在同名技能"
 #. js-lingui-id: jX0IPx
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "A skill with this name already exists."
-msgstr "已存在同名技能。"
+msgstr "已存在同名技能。."
 
 #. js-lingui-id: IAfaPi
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service.ts
@@ -912,7 +912,7 @@ msgstr "未找到应用程序。"
 #. js-lingui-id: kuNcoR
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application post-install logic function failed."
-msgstr "应用程序安装后逻辑函数执行失败。"
+msgstr "应用程序安装后逻辑函数执行失败。."
 
 #. js-lingui-id: UTxpa1
 #: src/engine/core-modules/application/application.exception.ts
@@ -1162,12 +1162,12 @@ msgstr "纯音频录音"
 #. js-lingui-id: aepsXP
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "Audit logs require an Enterprise subscription."
-msgstr "审计日志需要企业版订阅。"
+msgstr "审计日志需要企业版订阅。."
 
 #. js-lingui-id: PKMDuT
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "Audit logs require ClickHouse to be configured."
-msgstr "审计日志需要配置 ClickHouse。"
+msgstr "审计日志需要配置 ClickHouse。."
 
 #. js-lingui-id: DBHTm/
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -1198,7 +1198,7 @@ msgstr "需要身份验证。"
 #. js-lingui-id: bWAwB6
 #: src/engine/core-modules/event-logs/filters/forbidden-exception-graphql.filter.ts
 msgid "Authentication required."
-msgstr "需要身份验证。"
+msgstr "需要身份验证。."
 
 #. js-lingui-id: hq1K5d
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
@@ -2089,7 +2089,7 @@ msgstr "检测到导航菜单项层级中的循环依赖"
 #. js-lingui-id: /WTI79
 #: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
 msgid "Circular dependency detected in navigation menu item hierarchy."
-msgstr "检测到导航菜单项层级中的循环依赖。"
+msgstr "检测到导航菜单项层级中的循环依赖。."
 
 #. js-lingui-id: 9uirl8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
@@ -4965,7 +4965,7 @@ msgstr "此问题的回答无效。"
 #. js-lingui-id: 56bSD0
 #: src/engine/core-modules/application/application-variable/application-variable.exception.ts
 msgid "Invalid application variable input."
-msgstr "应用程序变量输入无效。"
+msgstr "应用程序变量输入无效。."
 
 #. js-lingui-id: KNrRpL
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5449,7 +5449,7 @@ msgstr "计时触发器中提供的设置类型无效"
 #. js-lingui-id: TulNnA
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "Invalid skill input."
-msgstr "技能输入无效。"
+msgstr "技能输入无效。."
 
 #. js-lingui-id: U3r7gv
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
@@ -6733,13 +6733,13 @@ msgstr "消息"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Messages from the channel."
-msgstr "来自通道的消息"
+msgstr "来自通道的消息."
 
 #. js-lingui-id: fbDfth
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Messages from the thread."
-msgstr "来自线程的消息"
+msgstr "来自线程的消息."
 
 #. js-lingui-id: YPsYLa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -7603,7 +7603,7 @@ msgstr "按所有者的机会"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Opportunities linked to the company."
-msgstr "与公司相关的机会"
+msgstr "与公司相关的机会."
 
 #. js-lingui-id: I77mP4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -7975,7 +7975,7 @@ msgstr "此列表中的人员"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "People linked to the company."
-msgstr "与公司相关的人员"
+msgstr "与公司相关的人员."
 
 #. js-lingui-id: wHLbpa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -9459,7 +9459,7 @@ msgstr "未找到技能"
 #. js-lingui-id: 68ze54
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "Skill not found."
-msgstr "未找到技能。"
+msgstr "未找到技能。."
 
 #. js-lingui-id: e6udqn
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
@@ -9600,7 +9600,7 @@ msgstr "标准权限标志无法修改。"
 #. js-lingui-id: H8j7uw
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "Standard skills cannot be modified."
-msgstr "标准技能无法修改。"
+msgstr "标准技能无法修改。."
 
 #. js-lingui-id: ndAwoq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts

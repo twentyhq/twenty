@@ -369,7 +369,7 @@ msgstr "Geçici bir ağ hatası oluştu."
 #. js-lingui-id: WzDeE/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
-msgstr "Başka bir uygulamanın nesnesini hedefleyen bir zaman çizelgesi etkinlik türü, geçersiz kıldığı zaman çizelgesi etkinlik türünü belirtmelidir."
+msgstr "Başka bir uygulamanın nesnesini hedefleyen bir zaman çizelgesi etkinlik türü, geçersiz kıldığı zaman çizelgesi etkinlik türünü belirtmelidir"
 
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -715,7 +715,7 @@ msgstr "Bu isimle bir ajan zaten mevcut."
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "An application timeline activity emitter must target one of its objects"
-msgstr "Bir uygulamanın zaman çizelgesi etkinlik yayıcısı, kendi nesnelerinden birini hedeflemelidir."
+msgstr "Bir uygulamanın zaman çizelgesi etkinlik yayıcısı, kendi nesnelerinden birini hedeflemelidir"
 
 #. js-lingui-id: VID94s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -844,7 +844,7 @@ msgstr "Bu çalışma alanında başka bir uygulama bu anahtarla zaten bir izin 
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Another timeline activity type already handles this action, object, and target relation"
-msgstr "Başka bir zaman çizelgesi etkinlik türü bu eylem, nesne ve hedef ilişkisi kombinasyonunu zaten işler."
+msgstr "Başka bir zaman çizelgesi etkinlik türü bu eylem, nesne ve hedef ilişkisi kombinasyonunu zaten işler"
 
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2068,17 +2068,17 @@ msgstr "Sohbet dizisi başlığı boş olamaz."
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
-msgstr "Geçersiz kılmak için mevcut bir zaman çizelgesi etkinlik türü seçin."
+msgstr "Geçersiz kılmak için mevcut bir zaman çizelgesi etkinlik türü seçin"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the object that emits this timeline activity type"
-msgstr "Bu zaman çizelgesi etkinlik türünü yayan nesneyi seçin."
+msgstr "Bu zaman çizelgesi etkinlik türünü yayan nesneyi seçin"
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the relation used by this timeline activity type"
-msgstr "Bu zaman çizelgesi etkinlik türü tarafından kullanılan ilişkiyi seçin."
+msgstr "Bu zaman çizelgesi etkinlik türü tarafından kullanılan ilişkiyi seçin"
 
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -3271,7 +3271,7 @@ msgstr "Alan adı zaten çalışma alanı özel alanı için kullanılıyor."
 #. js-lingui-id: 2sIVDj
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "Domain is already registered"
-msgstr "Alan adı zaten kayıtlı."
+msgstr "Alan adı zaten kayıtlı"
 
 #. js-lingui-id: PfJswy
 #: src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service.ts
@@ -4104,7 +4104,7 @@ msgstr "Alan türü POSITION \"position\" olarak adlandırılmalıdır."
 #. js-lingui-id: 7cWO6W
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must be a system field"
-msgstr "Alan türü TS_VECTOR bir sistem alanı olmalıdır."
+msgstr "Alan türü TS_VECTOR bir sistem alanı olmalıdır"
 
 #. js-lingui-id: hoCDqQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
@@ -4114,7 +4114,7 @@ msgstr "Alan türü TS_VECTOR \"searchVector\" olarak adlandırılmalıdır"
 #. js-lingui-id: VkSxbb
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr "TS_VECTOR alan türü SYSTEM yazılabilirliğine sahip olmalıdır."
+msgstr "TS_VECTOR alan türü SYSTEM yazılabilirliğine sahip olmalıdır"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -4315,7 +4315,7 @@ msgstr "Filtre, var olmayan bir seçim seçeneği kullanıyor"
 #. js-lingui-id: NCkLG1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util.ts
 msgid "Filter value is not valid for this operand"
-msgstr "Bu işlenen için filtre değeri geçerli değil."
+msgstr "Bu işlenen için filtre değeri geçerli değil"
 
 #. js-lingui-id: 8oFGnQ
 #: src/engine/api/common/common-query-runners/common-find-many-query-runner.service.ts
@@ -5938,7 +5938,7 @@ msgstr "Etiket boş olamaz"
 #. js-lingui-id: ljUvzm
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Label identifier field cannot be deactivated"
-msgstr "Etiket tanıtıcı alanı devre dışı bırakılamaz."
+msgstr "Etiket tanıtıcı alanı devre dışı bırakılamaz"
 
 #. js-lingui-id: Qx822J
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -6102,7 +6102,7 @@ msgstr "ilgili bir görevi ilişkilendirdi"
 #. js-lingui-id: LXKHX6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Linked and unlinked timeline activity emitters require a target relation"
-msgstr "Bağlantılı ve bağlantısız zaman çizelgesi etkinlik yayıcıları bir hedef ilişkisi gerektirir."
+msgstr "Bağlantılı ve bağlantısız zaman çizelgesi etkinlik yayıcıları bir hedef ilişkisi gerektirir"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -8398,7 +8398,7 @@ msgstr "Genel alan adı bulunamadı."
 #. js-lingui-id: Capzni
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
-msgstr "Genel alan adı URL tanımlı değil. Lütfen PUBLIC_DOMAIN_URL ortam değişkenini ayarlayın."
+msgstr "Genel alan adı URL tanımlı değil. Lütfen PUBLIC_DOMAIN_URL ortam değişkenini ayarlayın"
 
 #. js-lingui-id: vVCf2E
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
@@ -10304,7 +10304,7 @@ msgstr "Dosya yükleme tamamlanmadı. Lütfen yüklemeyi yeniden deneyin."
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The front component used by this timeline activity type is not available"
-msgstr "Bu zaman çizelgesi etkinlik türü tarafından kullanılan ön bileşen kullanılamıyor."
+msgstr "Bu zaman çizelgesi etkinlik türü tarafından kullanılan ön bileşen kullanılamıyor"
 
 #. js-lingui-id: 840b8q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10387,7 +10387,7 @@ msgstr "Güncellenecek nesne, kayıt sayfasını uyumlu hale getirmek için bulu
 #. js-lingui-id: QaaKZQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The object used by this timeline activity type is not available"
-msgstr "Bu zaman çizelgesi etkinlik türü tarafından kullanılan nesne kullanılamıyor."
+msgstr "Bu zaman çizelgesi etkinlik türü tarafından kullanılan nesne kullanılamıyor"
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -10504,17 +10504,17 @@ msgstr "Abonelik artık sağlayıcıda mevcut değil."
 #. js-lingui-id: Eq5YMK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The target relation used by this timeline activity type is not available"
-msgstr "Bu zaman çizelgesi etkinlik türü tarafından kullanılan hedef ilişkisi kullanılamıyor."
+msgstr "Bu zaman çizelgesi etkinlik türü tarafından kullanılan hedef ilişkisi kullanılamıyor"
 
 #. js-lingui-id: PLlXuR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The timeline activity type override is not compatible with this event"
-msgstr "Zaman çizelgesi etkinlik türü geçersiz kılması bu olayla uyumlu değil."
+msgstr "Zaman çizelgesi etkinlik türü geçersiz kılması bu olayla uyumlu değil"
 
 #. js-lingui-id: IT44Du
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The trigger fields used by this timeline activity type are not available"
-msgstr "Bu zaman çizelgesi etkinlik türü tarafından kullanılan tetikleyici alanlar kullanılamıyor."
+msgstr "Bu zaman çizelgesi etkinlik türü tarafından kullanılan tetikleyici alanlar kullanılamıyor"
 
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -11234,7 +11234,7 @@ msgstr "Zaman çizelgesi etkinliği kaydının konumu"
 #. placeholder {0}: conflictingResolverType?.name ?? timelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type conflicts with {0} for the same action, object, and target relation"
-msgstr "Zaman çizelgesi etkinlik türü, aynı eylem, nesne ve hedef ilişkisi için {0} ile çakışıyor."
+msgstr "Zaman çizelgesi etkinlik türü, aynı eylem, nesne ve hedef ilişkisi için {0} ile çakışıyor"
 
 #. js-lingui-id: xFv7OI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -11281,17 +11281,17 @@ msgstr "Zaman çizelgesi etkinlik türü bulunamadı."
 #. js-lingui-id: 0VIqW4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type override must reference a compatible type owned by the target object's application"
-msgstr "Zaman çizelgesi etkinlik türü geçersiz kılması, hedef nesnenin uygulamasına ait uyumlu bir türü referans almalıdır."
+msgstr "Zaman çizelgesi etkinlik türü geçersiz kılması, hedef nesnenin uygulamasına ait uyumlu bir türü referans almalıdır"
 
 #. js-lingui-id: kfv1kx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references a front component that does not belong to its application"
-msgstr "Zaman çizelgesi etkinlik türü, uygulamasına ait olmayan bir ön bileşeni referans alıyor."
+msgstr "Zaman çizelgesi etkinlik türü, uygulamasına ait olmayan bir ön bileşeni referans alıyor"
 
 #. js-lingui-id: f7+vxa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references an object that does not exist"
-msgstr "Zaman çizelgesi etkinlik türü, mevcut olmayan bir nesneyi referans alıyor."
+msgstr "Zaman çizelgesi etkinlik türü, mevcut olmayan bir nesneyi referans alıyor"
 
 #. js-lingui-id: Y9ZQls
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11301,7 +11301,7 @@ msgstr "Zaman çizelgesi etkinlik türü hedef ilişkisi, kaynak nesnesi üzerin
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event"
-msgstr "Zaman çizelgesi etkinlik türü tetikleyici alanları, güncellenen bir ilişki olayının kaynak nesnesindeki boş olmayan alanlar olmalıdır."
+msgstr "Zaman çizelgesi etkinlik türü tetikleyici alanları, güncellenen bir ilişki olayının kaynak nesnesindeki boş olmayan alanlar olmalıdır"
 
 #. js-lingui-id: 8VTlb5
 #. placeholder {0}: timelineActivityType.name
@@ -11814,7 +11814,7 @@ msgstr "\"{stringifiedValue}\" değeri, \"{operand}\" işlenen için hiçbir kay
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
-msgstr "Değer \"{sanitizedValue}\" UPPER_CASE olmalı ve snake_case kurallarına uymalıdır."
+msgstr "Değer \"{sanitizedValue}\" UPPER_CASE olmalı ve snake_case kurallarına uymalıdır"
 
 #. js-lingui-id: NzhR7p
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -12080,7 +12080,7 @@ msgstr "Ebeveyn görünümü güncellenecek görünüm grubu bulunamadı"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
 msgid "View kanban aggregate field metadata not found"
-msgstr "Kanban toplu alanı meta verileri bulunamadı."
+msgstr "Kanban toplu alanı meta verileri bulunamadı"
 
 #. js-lingui-id: F4A9mL
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts

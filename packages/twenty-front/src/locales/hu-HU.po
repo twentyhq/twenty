@@ -233,7 +233,7 @@ msgstr "{0, plural, one {Nincs jogosultsága a(z) {fieldsList} mező eléréséh
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr "{0} visszapattant vagy panaszt jelzett."
+msgstr "{0} visszapattant vagy panaszt jelzett"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -1249,7 +1249,7 @@ msgstr "Adjon hozzá egy új céget, amellyel kapcsolatban állunk (pl. név, we
 #. js-lingui-id: 5xxrhm
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note"
-msgstr "Megjegyzés hozzáadása."
+msgstr "Megjegyzés hozzáadása"
 
 #. js-lingui-id: uza/B9
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -4100,7 +4100,7 @@ msgstr "Válassza ki, mi történjen, amikor egy e-mail-címre kattint!"
 #. js-lingui-id: kTDEu6
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Choose where records open by default. Some objects may use a workspace setting"
-msgstr "Válassza ki, hol nyíljanak meg a rekordok alapértelmezés szerint. Egyes objektumok a munkaterület beállítását használhatják."
+msgstr "Válassza ki, hol nyíljanak meg a rekordok alapértelmezés szerint. Egyes objektumok a munkaterület beállítását használhatják"
 
 #. js-lingui-id: EcjwmO
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -4971,7 +4971,7 @@ msgstr "Kontextusablak"
 #. js-lingui-id: uKvqU1
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window must be a positive integer"
-msgstr "A kontextusablaknak pozitív egész számnak kell lennie."
+msgstr "A kontextusablaknak pozitív egész számnak kell lennie"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -6040,7 +6040,7 @@ msgstr "Szabja testre a munkaterület rekordoldalát"
 #. js-lingui-id: ZBgSzH
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Customize what this user can view and perform"
-msgstr "Szabja testre, hogy ez a felhasználó mit láthat és mit tehet."
+msgstr "Szabja testre, hogy ez a felhasználó mit láthat és mit tehet"
 
 #. js-lingui-id: bCJa9l
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -12300,7 +12300,7 @@ msgstr "Maximális kimenet"
 #. js-lingui-id: D0Z4Jd
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Max output must be a positive integer"
-msgstr "A maximális kimenetnek pozitív egész számnak kell lennie."
+msgstr "A maximális kimenetnek pozitív egész számnak kell lennie"
 
 #. js-lingui-id: 2ICF9k
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -12776,7 +12776,7 @@ msgstr "Vigye előre a munkát csapatok és ügynökök között"
 #. js-lingui-id: XXzjfC
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 msgid "Msgs"
-msgstr "Üzen."
+msgstr "Üzen"
 
 #. js-lingui-id: cT1jbf
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
@@ -22546,7 +22546,7 @@ msgstr "Nem módosíthatja az e-mail-címét, mert 2 vagy több munkaterülethez
 #: src/modules/settings/admin-panel/hooks/useHandleImpersonate.ts
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "You cannot impersonate your own account"
-msgstr "Nem személyesítheti meg a saját fiókját."
+msgstr "Nem személyesítheti meg a saját fiókját"
 
 #. js-lingui-id: eqUj2Z
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx

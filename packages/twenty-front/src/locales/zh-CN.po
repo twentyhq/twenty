@@ -2699,7 +2699,7 @@ msgstr "存档"
 #. js-lingui-id: i19Zro
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "Archive files cannot be previewed. Please download the file to access its contents."
-msgstr "归档文件无法预览。请下载该文件以访问其内容。"
+msgstr "归档文件无法预览。请下载该文件以访问其内容。."
 
 #. js-lingui-id: TdfEV7
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
@@ -3040,7 +3040,7 @@ msgstr "身份验证器应用和浏览器扩展程序（例如1Password、Authy�
 #. js-lingui-id: SIFUTh
 #: src/pages/auth/Authorize.tsx
 msgid "Authorization failed. Please try again."
-msgstr "授权失败。请重试。"
+msgstr "授权失败。请重试。."
 
 #. js-lingui-id: yIVrHZ
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
@@ -3222,7 +3222,7 @@ msgstr "密件抄送"
 #. js-lingui-id: IQUZ9h
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there."
-msgstr "由于此工作流未使用手动触发器，表单不会在界面上方打开。要填写该表单，请打开相应的工作流运行并在其中完成表单。"
+msgstr "由于此工作流未使用手动触发器，表单不会在界面上方打开。要填写该表单，请打开相应的工作流运行并在其中完成表单。."
 
 #. js-lingui-id: +MqoSu
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -13257,7 +13257,7 @@ msgstr "无访问权限"
 #. js-lingui-id: glQp+P
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "No active subscription."
-msgstr "没有有效订阅。"
+msgstr "没有有效订阅。."
 
 #. js-lingui-id: LM+N3q
 #: src/modules/activities/timeline-activities/components/EventList.tsx
@@ -13352,7 +13352,7 @@ msgstr "没有可用的选项卡"
 #. js-lingui-id: 8whThc
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "No billing data is available for this workspace."
-msgstr "此工作区暂无可用的计费数据。"
+msgstr "此工作区暂无可用的计费数据。."
 
 #. js-lingui-id: V/RzSE
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -15996,7 +15996,7 @@ msgstr "记录（ID）"
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
-msgstr "记录创建已停止。 {formattedCreatedRecordsCount}  条记录已创建。"
+msgstr "记录创建已停止。 {formattedCreatedRecordsCount} 条记录已创建。"
 
 #. js-lingui-id: S2Kvcv
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown.tsx

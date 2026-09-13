@@ -151,7 +151,7 @@ msgstr "此應用程式中已存在具有此名稱的連線提供者"
 #. js-lingui-id: jzhZvB
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "A connection provider with this name already exists for this application."
-msgstr "此應用程式中已存在具有此名稱的連線提供者。"
+msgstr "此應用程式中已存在具有此名稱的連線提供者。."
 
 #. js-lingui-id: TjN8GI
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -337,7 +337,7 @@ msgstr "具有此名稱的技能已存在"
 #. js-lingui-id: jX0IPx
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "A skill with this name already exists."
-msgstr "具有此名稱的技能已存在。"
+msgstr "具有此名稱的技能已存在。."
 
 #. js-lingui-id: IAfaPi
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service.ts
@@ -5449,7 +5449,7 @@ msgstr "在排程觸發器提供的設定類型無效"
 #. js-lingui-id: TulNnA
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "Invalid skill input."
-msgstr "無效的技能輸入。"
+msgstr "無效的技能輸入。."
 
 #. js-lingui-id: U3r7gv
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
@@ -6733,13 +6733,13 @@ msgstr "訊息"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Messages from the channel."
-msgstr "來自通道的訊息"
+msgstr "來自通道的訊息."
 
 #. js-lingui-id: fbDfth
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Messages from the thread."
-msgstr "來自執行緒的訊息"
+msgstr "來自執行緒的訊息."
 
 #. js-lingui-id: YPsYLa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9459,7 +9459,7 @@ msgstr "找不到技能"
 #. js-lingui-id: 68ze54
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "Skill not found."
-msgstr "找不到技能。"
+msgstr "找不到技能。."
 
 #. js-lingui-id: e6udqn
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
@@ -9600,7 +9600,7 @@ msgstr "無法修改標準權限旗標。"
 #. js-lingui-id: H8j7uw
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "Standard skills cannot be modified."
-msgstr "無法修改標準技能。"
+msgstr "無法修改標準技能。."
 
 #. js-lingui-id: ndAwoq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts

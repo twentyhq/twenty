@@ -233,7 +233,7 @@ msgstr "{0, plural, one {Du har ikke tillatelse til å få tilgang til feltet {f
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr "{0} som returnerte eller klaget."
+msgstr "{0} som returnerte eller klaget"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -1259,7 +1259,7 @@ msgstr "Legg til et notat i denne oppføringen: "
 #. js-lingui-id: Ad+JsP
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add a person with an email to this company first"
-msgstr "Legg først til en person med en e-postadresse i dette selskapet."
+msgstr "Legg først til en person med en e-postadresse i dette selskapet"
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1311,12 +1311,12 @@ msgstr "Legg til en API-nøkkel for å aktivere AI."
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to the point of contact first"
-msgstr "Legg først til en e-postadresse for kontaktpersonen."
+msgstr "Legg først til en e-postadresse for kontaktpersonen"
 
 #. js-lingui-id: LVzaHu
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to this person first"
-msgstr "Legg først til en e-postadresse for denne personen."
+msgstr "Legg først til en e-postadresse for denne personen"
 
 #. js-lingui-id: KD0hdw
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -5204,7 +5204,7 @@ msgstr "Kostnad per million tokens for bufret inndata (USD)"
 #. js-lingui-id: T8ACay
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Could not claim this application"
-msgstr "Kunne ikke kreve eierskap til denne applikasjonen."
+msgstr "Kunne ikke kreve eierskap til denne applikasjonen"
 
 #. js-lingui-id: LpyyAM
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -5275,7 +5275,7 @@ msgstr "Kunne ikke kjøre oppslaget."
 #. js-lingui-id: p75IO8
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Could not start the GitHub claim"
-msgstr "Kunne ikke starte eierskapskravet via GitHub."
+msgstr "Kunne ikke starte eierskapskravet via GitHub"
 
 #. js-lingui-id: Yu3v/5
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
@@ -14927,7 +14927,7 @@ msgstr "Eierskap bekreftes gjennom npm trusted publishing: pakken må publiseres
 #. js-lingui-id: RWJnRQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Ownership transferred successfully"
-msgstr "Eierskapet ble overført vellykket."
+msgstr "Eierskapet ble overført vellykket"
 
 #. js-lingui-id: y3tCDg
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -21433,7 +21433,7 @@ msgstr "Valider data"
 #. js-lingui-id: PWZBIT
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Validity token refreshed successfully"
-msgstr "Gyldighetstokenet ble oppdatert."
+msgstr "Gyldighetstokenet ble oppdatert"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx

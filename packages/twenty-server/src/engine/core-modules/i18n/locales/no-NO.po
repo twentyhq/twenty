@@ -230,7 +230,7 @@ msgstr "Et navn er påkrevd for typen FOLDER"
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A navigation item cannot carry both a path and a navigation target object"
-msgstr "Et navigasjonselement kan ikke ha både en sti og et navigasjonsmålobjekt."
+msgstr "Et navigasjonselement kan ikke ha både en sti og et navigasjonsmålobjekt"
 
 #. js-lingui-id: 9er1TA
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
@@ -262,7 +262,7 @@ msgstr "Et navigasjonsmenyelement for sidelayout kan bare peke til en frittståe
 #. js-lingui-id: RMpFrA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A path or a navigation target object is required for navigation items"
-msgstr "En sti eller et navigasjonsmålobjekt er påkrevd for navigasjonselementer."
+msgstr "En sti eller et navigasjonsmålobjekt er påkrevd for navigasjonselementer"
 
 #. js-lingui-id: HC18ok
 #: src/engine/core-modules/file-storage/utils/validate-path-segments-safety.util.ts
@@ -369,7 +369,7 @@ msgstr "Det oppstod en midlertidig nettverksfeil."
 #. js-lingui-id: WzDeE/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
-msgstr "En tidslinjeaktivitetstype som er rettet mot et objekt i en annen applikasjon, må angi tidslinjeaktivitetstypen den overstyrer."
+msgstr "En tidslinjeaktivitetstype som er rettet mot et objekt i en annen applikasjon, må angi tidslinjeaktivitetstypen den overstyrer"
 
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -715,7 +715,7 @@ msgstr "En agent med dette navnet finnes allerede."
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "An application timeline activity emitter must target one of its objects"
-msgstr "En utsteder av tidslinjeaktivitet for en applikasjon må være rettet mot ett av objektene sine."
+msgstr "En utsteder av tidslinjeaktivitet for en applikasjon må være rettet mot ett av objektene sine"
 
 #. js-lingui-id: VID94s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -844,7 +844,7 @@ msgstr "En annen applikasjon i dette arbeidsområdet har allerede registrert et 
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Another timeline activity type already handles this action, object, and target relation"
-msgstr "En annen tidslinjeaktivitetstype håndterer allerede denne handlingen, dette objektet og denne målrelasjonen."
+msgstr "En annen tidslinjeaktivitetstype håndterer allerede denne handlingen, dette objektet og denne målrelasjonen"
 
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2068,17 +2068,17 @@ msgstr "Chat-trådens tittel kan ikke være tom."
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
-msgstr "Velg en eksisterende tidslinjeaktivitetstype som skal overstyres."
+msgstr "Velg en eksisterende tidslinjeaktivitetstype som skal overstyres"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the object that emits this timeline activity type"
-msgstr "Velg objektet som utsteder denne tidslinjeaktivitetstypen."
+msgstr "Velg objektet som utsteder denne tidslinjeaktivitetstypen"
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the relation used by this timeline activity type"
-msgstr "Velg relasjonen som brukes av denne tidslinjeaktivitetstypen."
+msgstr "Velg relasjonen som brukes av denne tidslinjeaktivitetstypen"
 
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -2142,7 +2142,7 @@ msgstr "Kommandomenyelementet {commandMenuItemUniversalIdentifier} som det refer
 #. js-lingui-id: Lrx/M5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Command menu item already exists"
-msgstr "Kommandomenyelementet finnes allerede."
+msgstr "Kommandomenyelementet finnes allerede"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -2160,7 +2160,7 @@ msgstr "Kommandomenyelement ikke funnet."
 #. js-lingui-id: xO/lDZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Command menu item with same universal identifier already exists"
-msgstr "Kommandomenyelement med samme universelle identifikator finnes allerede."
+msgstr "Kommandomenyelement med samme universelle identifikator finnes allerede"
 
 #. js-lingui-id: /SzXf6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2580,7 +2580,7 @@ msgstr "Kunne ikke finne det eksisterende objektet for å avstemme etikettidenti
 #. js-lingui-id: jx0Apr
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-navigation-command-on-update-side-effect-handler.service.ts
 msgid "Could not resolve the existing object to reconcile its navigation command menu item"
-msgstr "Kunne ikke finne det eksisterende objektet for å avstemme navigasjonskommandomenyelementet."
+msgstr "Kunne ikke finne det eksisterende objektet for å avstemme navigasjonskommandomenyelementet"
 
 #. js-lingui-id: TYpgQ/
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
@@ -3188,7 +3188,7 @@ msgstr "Slettet {objectLabelPlural}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Deleted at"
-msgstr "Slettet kl."
+msgstr "Slettet kl"
 
 #. js-lingui-id: bMSh++
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -3266,7 +3266,7 @@ msgstr "Visningsnavn"
 #. js-lingui-id: IymH4t
 #: src/engine/core-modules/public-domain/public-domain.service.ts
 msgid "Domain already used for workspace custom domain"
-msgstr "Domenet er allerede brukt for tilpasset arbeidsområde-domene."
+msgstr "Domenet er allerede brukt for tilpasset arbeidsområde-domene"
 
 #. js-lingui-id: 2sIVDj
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
@@ -5852,7 +5852,7 @@ msgstr "Koblingskonfigurasjon er bare gyldig for ONE_TO_MANY-relasjoner"
 #. js-lingui-id: JmUgZR
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction source and target fields must be different"
-msgstr "Koblingens kilde- og målfelt må være forskjellige."
+msgstr "Koblingens kilde- og målfelt må være forskjellige"
 
 #. js-lingui-id: bpqhFq
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
@@ -5925,7 +5925,7 @@ msgstr "Nøkkel er påkrevd"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Kind of principal receiving the access"
-msgstr "Type prinsipal som mottar tilgangen."
+msgstr "Type prinsipal som mottar tilgangen"
 
 #. js-lingui-id: 6sFS+I
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
@@ -6102,7 +6102,7 @@ msgstr "knyttet til en relatert oppgave"
 #. js-lingui-id: LXKHX6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Linked and unlinked timeline activity emitters require a target relation"
-msgstr "Tilknyttede og ikke-tilknyttede utstedere av tidslinjeaktivitet krever en målrelasjon."
+msgstr "Tilknyttede og ikke-tilknyttede utstedere av tidslinjeaktivitet krever en målrelasjon"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -6144,7 +6144,7 @@ msgstr "LinkedIn"
 #. js-lingui-id: 4yWmVP
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-links-flat-field-metadata.util.ts
 msgid "Links field type must be either a url or a domain"
-msgstr "Felttypen for lenker må være enten en URL eller et domene."
+msgstr "Felttypen for lenker må være enten en URL eller et domene"
 
 #. js-lingui-id: ++iNv7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9365,7 +9365,7 @@ msgstr "Sendt"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Sent at"
-msgstr "Sendt kl."
+msgstr "Sendt kl"
 
 #. js-lingui-id: M8jvbm
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10304,7 +10304,7 @@ msgstr "Filopplastingen er ikke fullført. Prøv å laste opp på nytt."
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The front component used by this timeline activity type is not available"
-msgstr "Frontkomponenten som brukes av denne tidslinjeaktivitetstypen, er ikke tilgjengelig."
+msgstr "Frontkomponenten som brukes av denne tidslinjeaktivitetstypen, er ikke tilgjengelig"
 
 #. js-lingui-id: 840b8q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10377,17 +10377,17 @@ msgstr "Objektet som skulle oppdateres, ble ikke funnet for å avstemme INDEX-vi
 #. js-lingui-id: uBRmyY
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-navigation-command-on-update-side-effect-handler.service.ts
 msgid "The object to update could not be found to reconcile its navigation command"
-msgstr "Objektet som skulle oppdateres, ble ikke funnet for å avstemme navigasjonskommandoen."
+msgstr "Objektet som skulle oppdateres, ble ikke funnet for å avstemme navigasjonskommandoen"
 
 #. js-lingui-id: /QTsIU
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
 msgid "The object to update could not be found to reconcile its record page"
-msgstr "Objektet som skulle oppdateres, ble ikke funnet for å avstemme oppføringssiden."
+msgstr "Objektet som skulle oppdateres, ble ikke funnet for å avstemme oppføringssiden"
 
 #. js-lingui-id: QaaKZQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The object used by this timeline activity type is not available"
-msgstr "Objektet som brukes av denne tidslinjeaktivitetstypen, er ikke tilgjengelig."
+msgstr "Objektet som brukes av denne tidslinjeaktivitetstypen, er ikke tilgjengelig"
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -10504,17 +10504,17 @@ msgstr "Abonnementet er ikke lenger tilgjengelig hos tilbyderen."
 #. js-lingui-id: Eq5YMK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The target relation used by this timeline activity type is not available"
-msgstr "Målrelasjonen som brukes av denne tidslinjeaktivitetstypen, er ikke tilgjengelig."
+msgstr "Målrelasjonen som brukes av denne tidslinjeaktivitetstypen, er ikke tilgjengelig"
 
 #. js-lingui-id: PLlXuR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The timeline activity type override is not compatible with this event"
-msgstr "Overstyringen av tidslinjeaktivitetstypen er ikke kompatibel med denne hendelsen."
+msgstr "Overstyringen av tidslinjeaktivitetstypen er ikke kompatibel med denne hendelsen"
 
 #. js-lingui-id: IT44Du
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The trigger fields used by this timeline activity type are not available"
-msgstr "Utløserfeltene som brukes av denne tidslinjeaktivitetstypen, er ikke tilgjengelige."
+msgstr "Utløserfeltene som brukes av denne tidslinjeaktivitetstypen, er ikke tilgjengelige"
 
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -11234,7 +11234,7 @@ msgstr "Tidslinjeaktivitetsoppføringens posisjon"
 #. placeholder {0}: conflictingResolverType?.name ?? timelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type conflicts with {0} for the same action, object, and target relation"
-msgstr "Tidslinjeaktivitetstypen er i konflikt med {0} for samme handling, objekt og målrelasjon."
+msgstr "Tidslinjeaktivitetstypen er i konflikt med {0} for samme handling, objekt og målrelasjon"
 
 #. js-lingui-id: xFv7OI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -11281,17 +11281,17 @@ msgstr "Tidslinjeaktivitetstype ble ikke funnet."
 #. js-lingui-id: 0VIqW4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type override must reference a compatible type owned by the target object's application"
-msgstr "Overstyringen av tidslinjeaktivitetstypen må referere til en kompatibel type som eies av målobjektets applikasjon."
+msgstr "Overstyringen av tidslinjeaktivitetstypen må referere til en kompatibel type som eies av målobjektets applikasjon"
 
 #. js-lingui-id: kfv1kx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references a front component that does not belong to its application"
-msgstr "Tidslinjeaktivitetstypen refererer til en frontkomponent som ikke tilhører applikasjonen."
+msgstr "Tidslinjeaktivitetstypen refererer til en frontkomponent som ikke tilhører applikasjonen"
 
 #. js-lingui-id: f7+vxa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references an object that does not exist"
-msgstr "Tidslinjeaktivitetstypen refererer til et objekt som ikke finnes."
+msgstr "Tidslinjeaktivitetstypen refererer til et objekt som ikke finnes"
 
 #. js-lingui-id: Y9ZQls
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11301,7 +11301,7 @@ msgstr "Målrelasjonen for tidslinjeaktivitetstypen må være en direkte relasjo
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event"
-msgstr "Utløserfeltene for tidslinjeaktivitetstypen må være ikke-tomme felt på kildeobjektet for en oppdatert relasjonshendelse."
+msgstr "Utløserfeltene for tidslinjeaktivitetstypen må være ikke-tomme felt på kildeobjektet for en oppdatert relasjonshendelse"
 
 #. js-lingui-id: 8VTlb5
 #. placeholder {0}: timelineActivityType.name
@@ -12537,25 +12537,25 @@ msgstr "Arbeidsflytkjøring"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workflow run ended at"
-msgstr "Arbeidsflytkjøring avsluttet kl."
+msgstr "Arbeidsflytkjøring avsluttet kl"
 
 #. js-lingui-id: 3a4HHd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Workflow run ended at"
-msgstr "Arbeidsflytkjøring avsluttet kl."
+msgstr "Arbeidsflytkjøring avsluttet kl"
 
 #. js-lingui-id: 4tP6XL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workflow run enqueued at"
-msgstr "Arbeidsflytkjøring satt i kø kl."
+msgstr "Arbeidsflytkjøring satt i kø kl"
 
 #. js-lingui-id: vX8fN0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Workflow run enqueued at"
-msgstr "Arbeidsflytkjøring satt i kø kl."
+msgstr "Arbeidsflytkjøring satt i kø kl"
 
 #. js-lingui-id: AzylSS
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
@@ -12577,13 +12577,13 @@ msgstr "Posisjon for arbeidsflytkjøring"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workflow run started at"
-msgstr "Arbeidsflytkjøring startet kl."
+msgstr "Arbeidsflytkjøring startet kl"
 
 #. js-lingui-id: CHUa/x
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Workflow run started at"
-msgstr "Arbeidsflytkjøring startet kl."
+msgstr "Arbeidsflytkjøring startet kl"
 
 #. js-lingui-id: Sndqu7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts

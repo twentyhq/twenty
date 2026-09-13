@@ -233,7 +233,7 @@ msgstr "{0, plural, one {Sizda {fieldsList} maydoniga kirish huquqi yo‘q} othe
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr "{0} ta qaytgan yoki shikoyat qilganlar."
+msgstr "{0} ta qaytgan yoki shikoyat qilganlar"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -2612,7 +2612,7 @@ msgstr "Ilova jurnallari"
 #. js-lingui-id: l/T809
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Application not listed on the marketplace. It was shared via a direct link"
-msgstr "Ilova bozorda ro‘yxatga olinmagan. U to‘g‘ridan-to‘g‘ri havola orqali ulashilgan."
+msgstr "Ilova bozorda ro‘yxatga olinmagan. U to‘g‘ridan-to‘g‘ri havola orqali ulashilgan"
 
 #. js-lingui-id: +tE2x9
 #: src/modules/settings/applications/hooks/useUninstallApplication.ts
@@ -3577,7 +3577,7 @@ msgstr "Kalendar hodisasi muvaffaqiyatli yaratildi"
 #. js-lingui-id: l7HQ8A
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Calendar event has no start date"
-msgstr "Taqvim hodisasida boshlanish sanasi yo‘q."
+msgstr "Taqvim hodisasida boshlanish sanasi yo‘q"
 
 #. js-lingui-id: xG4khu
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -4625,7 +4625,7 @@ msgstr "Ushbu buyruq menyusi elementining konfiguratsiyasi"
 #. js-lingui-id: +rVpsA
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Configuration of this timeline activity type"
-msgstr "Ushbu vaqt jadvali faoliyati turi konfiguratsiyasi."
+msgstr "Ushbu vaqt jadvali faoliyati turi konfiguratsiyasi"
 
 #. js-lingui-id: iAL9tI
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -5204,7 +5204,7 @@ msgstr "Keshga olingan kirish uchun bir million token narxi (AQSH dollari)"
 #. js-lingui-id: T8ACay
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Could not claim this application"
-msgstr "Ushbu ilovaga egalikni tasdiqlab bo‘lmadi."
+msgstr "Ushbu ilovaga egalikni tasdiqlab bo‘lmadi"
 
 #. js-lingui-id: LpyyAM
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -5275,7 +5275,7 @@ msgstr "Qidiruvni ishga tushirib bo‘lmadi."
 #. js-lingui-id: p75IO8
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Could not start the GitHub claim"
-msgstr "GitHub orqali egalikni tasdiqlash jarayonini boshlab bo‘lmadi."
+msgstr "GitHub orqali egalikni tasdiqlash jarayonini boshlab bo‘lmadi"
 
 #. js-lingui-id: Yu3v/5
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
@@ -12758,7 +12758,7 @@ msgstr "Jamoalar va agentlar bo‘ylab ish jarayonini oldinga siljiting"
 #. js-lingui-id: XXzjfC
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 msgid "Msgs"
-msgstr "Xab."
+msgstr "Xab"
 
 #. js-lingui-id: cT1jbf
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
@@ -15345,7 +15345,7 @@ msgstr "Tarif rejalar"
 #. js-lingui-id: XdRQm7
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 msgid "Playback failed"
-msgstr "Ijro muvaffaqiyatsiz tugadi."
+msgstr "Ijro muvaffaqiyatsiz tugadi"
 
 #. js-lingui-id: VUi6Nf
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
@@ -19633,7 +19633,7 @@ msgstr "Ushbu ilovaga allaqachon egalik tasdiqlangan."
 #. js-lingui-id: X7w5n6
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "This application's registration is claimed by your workspace"
-msgstr "Ushbu ilovaning ro‘yxatdan o‘tkazilishi sizning ish maydoningizga tegishli."
+msgstr "Ushbu ilovaning ro‘yxatdan o‘tkazilishi sizning ish maydoningizga tegishli"
 
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -21257,7 +21257,7 @@ msgstr "Indekslardan ehtiyotkorlik bilan foydalaning"
 #. js-lingui-id: oTTQsc
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
-msgstr "Faqat harf, raqam va tiredan foydalaning. Harf yoki raqam bilan boshlang va shunday tugating."
+msgstr "Faqat harf, raqam va tiredan foydalaning. Harf yoki raqam bilan boshlang va shunday tugating"
 
 #. js-lingui-id: oSORjU
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx

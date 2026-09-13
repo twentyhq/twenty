@@ -312,7 +312,7 @@ msgstr "Վեբկայք"
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
 msgid "What is Twenty?"
-msgstr "Ի՞նչ է Twenty-ը։"
+msgstr "Ի՞նչ է Twenty-ը։?"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

@@ -374,7 +374,7 @@ msgstr "Ein Timeline-Aktivitätstyp, der auf ein Objekt einer anderen Anwendung 
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type with this name already exists for this application"
-msgstr "Ein Timeline-Aktivitätstyp mit diesem Namen existiert bereits für diese Anwendung."
+msgstr "Ein Timeline-Aktivitätstyp mit diesem Namen existiert bereits für diese Anwendung"
 
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -1961,7 +1961,7 @@ msgstr "Die Prädikatgruppe kann nicht so geändert werden, dass ihre Rolle von 
 #. js-lingui-id: HDo5ie
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Cannot modify predicate to change its object"
-msgstr "Das Prädikat kann nicht so geändert werden, dass sein Objekt geändert wird."
+msgstr "Das Prädikat kann nicht so geändert werden, dass sein Objekt geändert wird"
 
 #. js-lingui-id: ku/9og
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -1971,7 +1971,7 @@ msgstr "Das Prädikat kann nicht so geändert werden, dass sein Objekt von {exis
 #. js-lingui-id: 7JaPm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Cannot modify predicate to change its role"
-msgstr "Das Prädikat kann nicht so geändert werden, dass seine Rolle geändert wird."
+msgstr "Das Prädikat kann nicht so geändert werden, dass seine Rolle geändert wird"
 
 #. js-lingui-id: uoi9Wy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -2043,12 +2043,12 @@ msgstr "Kanal-ID"
 #. js-lingui-id: z851aK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Chart filter operand is not supported for this field type"
-msgstr "Der Operand des Diagrammfilters wird für diesen Feldtyp nicht unterstützt."
+msgstr "Der Operand des Diagrammfilters wird für diesen Feldtyp nicht unterstützt"
 
 #. js-lingui-id: QHFBKw
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Chart filter value is not valid for this operand"
-msgstr "Der Wert des Diagrammfilters ist für diesen Operanden nicht gültig."
+msgstr "Der Wert des Diagrammfilters ist für diesen Operanden nicht gültig"
 
 #. js-lingui-id: erTWgO
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2271,12 +2271,12 @@ msgstr "Für das Felder-Widget \"{widgetTitle}\" ist eine Konfiguration erforder
 #. js-lingui-id: 3UUjIe
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for front component widget"
-msgstr "Für das Frontend-Komponenten-Widget ist eine Konfiguration erforderlich."
+msgstr "Für das Frontend-Komponenten-Widget ist eine Konfiguration erforderlich"
 
 #. js-lingui-id: tBK3H8
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for front component widget \"{title}\""
-msgstr "Für das Frontend-Komponenten-Widget \"{title}\" ist eine Konfiguration erforderlich."
+msgstr "Für das Frontend-Komponenten-Widget \"{title}\" ist eine Konfiguration erforderlich"
 
 #. js-lingui-id: wOVBIH
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-flat-page-layout-widget-for-creation.util.ts
@@ -2366,7 +2366,7 @@ msgstr "Widersprüchlicher Telefon-Ländercode."
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
-msgstr "Verbinden ist nicht erlaubt für {connectFieldName} bei {objectMetadataNameSingular}."
+msgstr "Verbinden ist nicht erlaubt für {connectFieldName} bei {objectMetadataNameSingular}"
 
 #. js-lingui-id: /OJTzk
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -5176,7 +5176,7 @@ msgstr "Ungültiger Filterwert"
 #. js-lingui-id: NOU3zh
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-string-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"{operator}\" operator requires a String"
-msgstr "Ungültiger Filter: Der Operator \"{operator}\" erfordert einen String."
+msgstr "Ungültiger Filter: Der Operator \"{operator}\" erfordert einen String"
 
 #. js-lingui-id: +GVjEm
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-array-operator-value-or-throw.util.ts
@@ -5186,7 +5186,7 @@ msgstr "Ungültiger Filter: Der Operator \"{operator}\" erfordert ein Array."
 #. js-lingui-id: 4eM03h
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-empty-array-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
-msgstr "Ungültiger Filter: Der Operator \"isEmptyArray\" erfordert einen booleschen Wert."
+msgstr "Ungültiger Filter: Der Operator \"isEmptyArray\" erfordert einen booleschen Wert"
 
 #. js-lingui-id: Np9Fvw
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
@@ -5201,12 +5201,12 @@ msgstr "Ungültiger Filter: Der Filterwert muss ein Objekt sein."
 #. js-lingui-id: rpkTUe
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
 msgid "Invalid filter: filtering by relation field \"{key}\" is not supported"
-msgstr "Ungültiger Filter: Das Filtern nach dem Relationsfeld \"{key}\" wird nicht unterstützt."
+msgstr "Ungültiger Filter: Das Filtern nach dem Relationsfeld \"{key}\" wird nicht unterstützt"
 
 #. js-lingui-id: bNNDED
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
 msgid "Invalid filter: use \"{joinColumnName}\" to filter by this relation field"
-msgstr "Ungültiger Filter: Verwenden Sie \"{joinColumnName}\", um nach diesem Relationsfeld zu filtern."
+msgstr "Ungültiger Filter: Verwenden Sie \"{joinColumnName}\", um nach diesem Relationsfeld zu filtern"
 
 #. js-lingui-id: rFH0az
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -8845,7 +8845,7 @@ msgstr "Rolle kann dieser Entität nicht zugewiesen werden."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 msgid "Role is not editable"
-msgstr "Die Rolle kann nicht bearbeitet werden."
+msgstr "Die Rolle kann nicht bearbeitet werden"
 
 #. js-lingui-id: zeffu9
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -11041,7 +11041,7 @@ msgstr "Diese SVG ist zu groß, um verarbeitet zu werden."
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
-msgstr "Diese Timeline-Aktivitätsaktion wird nicht unterstützt."
+msgstr "Diese Timeline-Aktivitätsaktion wird nicht unterstützt"
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -11252,7 +11252,7 @@ msgstr "Das Feld happensAt des Timeline-Aktivitätstyps muss ein Datumsfeld im Q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type label is required"
-msgstr "Die Bezeichnung des Timeline-Aktivitätstyps ist erforderlich."
+msgstr "Die Bezeichnung des Timeline-Aktivitätstyps ist erforderlich"
 
 #. js-lingui-id: jxz4n1
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
@@ -11263,7 +11263,7 @@ msgstr "Name des Timeline-Aktivitätstyps existiert bereits."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type name is required"
-msgstr "Der Name des Timeline-Aktivitätstyps ist erforderlich."
+msgstr "Der Name des Timeline-Aktivitätstyps ist erforderlich"
 
 #. js-lingui-id: kNsVJi
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11271,7 +11271,7 @@ msgstr "Der Name des Timeline-Aktivitätstyps ist erforderlich."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type not found"
-msgstr "Timeline-Aktivitätstyp nicht gefunden."
+msgstr "Timeline-Aktivitätstyp nicht gefunden"
 
 #. js-lingui-id: 1+EKCZ
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
@@ -11307,7 +11307,7 @@ msgstr "Die Auslösefelder des Timeline-Aktivitätstyps müssen nicht leere Feld
 #. placeholder {0}: timelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type with name {0} already exists for this application"
-msgstr "Ein Timeline-Aktivitätstyp mit dem Namen {0} existiert für diese Anwendung bereits."
+msgstr "Ein Timeline-Aktivitätstyp mit dem Namen {0} existiert für diese Anwendung bereits"
 
 #. js-lingui-id: o3xAcd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts

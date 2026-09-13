@@ -936,7 +936,7 @@ msgstr "Սևագիրն արդեն գոյություն ունի"
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
-msgstr "Այս աշխատանքահոսքի համար սևագիր արդեն գոյություն ունի։ Վստա՞հ եք, որ ցանկանում եք ջնջել այն։"
+msgstr "Այս աշխատանքահոսքի համար սևագիր արդեն գոյություն ունի։ Վստա՞հ եք, որ ցանկանում եք ջնջել այն։?"
 
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -2827,7 +2827,7 @@ msgstr "Տրվում են հարցեր..."
 #. js-lingui-id: OBqG7p
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 msgid "Assign {roleTargetName}?"
-msgstr "Նշանակե՞լ {roleTargetName}-ին։"
+msgstr "Նշանակե՞լ {roleTargetName}-ին։?"
 
 #. js-lingui-id: nerbkq
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -2933,7 +2933,7 @@ msgstr "Սահմանված ամսաթվին կամ ժամին"
 #. js-lingui-id: H8QGSx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpPasswordField.tsx
 msgid "At least 8 characters long."
-msgstr "Առնվազն 8 նիշ"
+msgstr "Առնվազն 8 նիշ."
 
 #. js-lingui-id: Y7Dx6e
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -3925,7 +3925,7 @@ msgstr "Անցնե՞լ ամսական փաթեթին?"
 #. js-lingui-id: C8G9Mq
 #: src/modules/settings/billing/components/internal/SettingsBillingPlansWithSubscription.tsx
 msgid "Change to Organization Plan?"
-msgstr "Անցնե՞լ Organization փաթեթին։"
+msgstr "Անցնե՞լ Organization փաթեթին։?"
 
 #. js-lingui-id: t7uUc+
 #: src/modules/settings/billing/components/internal/SettingsBillingPlansWithSubscription.tsx
@@ -3935,7 +3935,7 @@ msgstr "Անցնե՞լ Pro փաթեթին?"
 #. js-lingui-id: N8mUQE
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
 msgid "Change to Yearly?"
-msgstr "Անցնե՞լ տարեկան վճարման։"
+msgstr "Անցնե՞լ տարեկան վճարման։?"
 
 #. js-lingui-id: LhVon3
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -18039,7 +18039,7 @@ msgstr "Կարճ պիտակ"
 #. js-lingui-id: gWk8gY
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Should changing a field's label also change the API name?"
-msgstr "Դաշտի պիտակի փոփոխությունը արդյո՞ք պետք է փոխի նաև API-ի անունը։"
+msgstr "Դաշտի պիտակի փոփոխությունը արդյո՞ք պետք է փոխի նաև API-ի անունը։?"
 
 #. js-lingui-id: WFtdWr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -19668,7 +19668,7 @@ msgstr "Այս enterprise բանալին արդեն կապված է այլ սե�
 #. js-lingui-id: kPBk2h
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "This enterprise key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?"
-msgstr "Այս enterprise բանալին այս պահին կապված է այլ սերվերային instance-ի հետ։ Այն այստեղ փոխանցելը կազատի բանալին նախորդ սերվերից և այնտեղ կդադարի հաշվել տեղերը։ Վստա՞հ եք, որ ցանկանում եք շարունակել։"
+msgstr "Այս enterprise բանալին այս պահին կապված է այլ սերվերային instance-ի հետ։ Այն այստեղ փոխանցելը կազատի բանալին նախորդ սերվերից և այնտեղ կդադարի հաշվել տեղերը։ Վստա՞հ եք, որ ցանկանում եք շարունակել։?"
 
 #. js-lingui-id: 8IRnd6
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
@@ -20211,7 +20211,7 @@ msgstr "Փոխանցվում է..."
 #. js-lingui-id: 0DTqrp
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Translate or rename?"
-msgstr "Թարգմանե՞լ, թե՞ վերանվանել։"
+msgstr "Թարգմանե՞լ, թե՞ վերանվանել։?"
 
 #. js-lingui-id: kAy5R9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -22012,7 +22012,7 @@ msgstr "Ինչո՞վ կարող եմ օգնել ձեզ։"
 #. js-lingui-id: ivJ1Xk
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "What can you do?"
-msgstr "Ի՞նչ կարող ես անել։"
+msgstr "Ի՞նչ կարող ես անել։?"
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx

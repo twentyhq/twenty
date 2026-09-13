@@ -2602,7 +2602,7 @@ msgstr "アプリケーション詳細"
 #. js-lingui-id: lGEBD4
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Application installed successfully."
-msgstr "アプリケーションが正常にインストールされました。"
+msgstr "アプリケーションが正常にインストールされました。."
 
 #. js-lingui-id: LllWIc
 #: src/modules/settings/event-logs/components/EventLogTableSelector.tsx
@@ -2722,7 +2722,7 @@ msgstr "{topicName} を削除してもよろしいですか？受信者は今後
 #. js-lingui-id: 4CHeVx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 msgid "Are you sure you want to delete this evaluation input?"
-msgstr "評価入力を実行できませんでした"
+msgstr "評価入力を実行できませんでした?"
 
 #. js-lingui-id: Yz8PeY
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -2766,7 +2766,7 @@ msgstr "これらの{0}を復元してもよろしいですか？"
 #. placeholder {0}: objectMetadataItem.labelSingular
 #: src/modules/command-menu-item/engine-command/record/components/RestoreRecordsCommand.tsx
 msgid "Are you sure you want to restore this {0}?"
-msgstr "この{0}を復元してもよろしいですか？"
+msgstr "この{0}を復元してもよろしいですか？?"
 
 #. js-lingui-id: 9JFf0y
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -4753,7 +4753,7 @@ msgstr "確認"
 #. js-lingui-id: Gdj3Sa
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 msgid "Confirm changing to {selectedCreditAmountDisplay} credits for ${selectedPriceDisplay} per {intervalLabel}."
-msgstr "{intervalLabel} ごとに ${selectedPriceDisplay} で {selectedCreditAmountDisplay} クレジットに変更してよろしいですか？"
+msgstr "{intervalLabel} ごとに ${selectedPriceDisplay} で {selectedCreditAmountDisplay} クレジットに変更してよろしいですか？."
 
 #. js-lingui-id: q2rgqr
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -7757,7 +7757,7 @@ msgstr "終了日"
 #. js-lingui-id: Fqu/aC
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "End date must be after start date."
-msgstr "終了日は開始日より後である必要があります。"
+msgstr "終了日は開始日より後である必要があります。."
 
 #. js-lingui-id: k1i50B
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
@@ -8901,7 +8901,7 @@ msgstr "テストメールの送信に失敗しました"
 #. js-lingui-id: aj02T8
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "Failed to set maintenance mode."
-msgstr "メンテナンスモードの設定に失敗しました。"
+msgstr "メンテナンスモードの設定に失敗しました。."
 
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -10370,7 +10370,7 @@ msgstr "条件"
 #. js-lingui-id: bTDz/2
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "If there's no link, no button will appear."
-msgstr "リンクがない場合、ボタンは表示されません。"
+msgstr "リンクがない場合、ボタンは表示されません。."
 
 #. js-lingui-id: X4iihZ
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -11392,12 +11392,12 @@ msgstr "直近1時間（古い順 → 新しい順）"
 #. js-lingui-id: YoKFgq
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Last 10 users created. Click to impersonate."
-msgstr "最近作成されたユーザー10人。クリックして代理ログインします。"
+msgstr "最近作成されたユーザー10人。クリックして代理ログインします。."
 
 #. js-lingui-id: sgqwjE
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Last 10 users created. Click to manage feature flags or impersonate."
-msgstr "最近作成されたユーザー10人。クリックして機能フラグを管理するか、代理ログインします。"
+msgstr "最近作成されたユーザー10人。クリックして機能フラグを管理するか、代理ログインします。."
 
 #. js-lingui-id: XUlP/Y
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
@@ -13413,7 +13413,7 @@ msgstr "チャットなし"
 #. js-lingui-id: NjIy4U
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "No chat threads found."
-msgstr "チャットスレッドが見つかりません。"
+msgstr "チャットスレッドが見つかりません。."
 
 #. js-lingui-id: nU13WY
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsContent.tsx
@@ -13697,7 +13697,7 @@ msgstr "このターンのメッセージが見つかりません"
 #. js-lingui-id: IohPnt
 #: src/modules/settings/admin-panel/components/SettingsAdminChatThreadMessageList.tsx
 msgid "No messages found."
-msgstr "メッセージが見つかりません。"
+msgstr "メッセージが見つかりません。."
 
 #. js-lingui-id: 0NudpV
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -13975,7 +13975,7 @@ msgstr "ユーザーからの返信なし"
 #. js-lingui-id: EsP4NW
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "No users found matching your search criteria."
-msgstr "検索条件に一致するユーザーが見つかりません。"
+msgstr "検索条件に一致するユーザーが見つかりません。."
 
 #. js-lingui-id: wJwIUq
 #: src/modules/object-record/record-field/ui/form-types/components/FormSelectFieldInput.tsx
@@ -14049,7 +14049,7 @@ msgstr "ワークスペースが見つかりません"
 #. js-lingui-id: TiRphK
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "No workspaces found matching your search criteria."
-msgstr "検索条件に一致するワークスペースが見つかりません。"
+msgstr "検索条件に一致するワークスペースが見つかりません。."
 
 #. js-lingui-id: lYc235
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
@@ -15415,7 +15415,7 @@ msgstr "このアプリケーションをアンインストールするには、
 #. js-lingui-id: GbtYRD
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Please type \"yes\" to confirm you want to delete this webhook."
-msgstr "'' \"Yes\" は入力して、このWebhookを削除することを確認してください。\"\""
+msgstr "'' \"Yes\" は入力して、このWebhookを削除することを確認してください。\"\"."
 
 #. js-lingui-id: dzcUZq
 #: src/modules/settings/profile/components/DeleteAccount.tsx
@@ -18157,7 +18157,7 @@ msgstr "サインアップ"
 #. js-lingui-id: mHC57v
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign-up is temporarily unavailable during maintenance."
-msgstr "メンテナンス中はサインアップを一時的に利用できません。"
+msgstr "メンテナンス中はサインアップを一時的に利用できません。."
 
 #. js-lingui-id: a6TaW9
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx

@@ -135,7 +135,7 @@ msgstr "Een grafiekfilter heeft geen veld"
 #. js-lingui-id: bhuNSV
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "A chart filter of widget \"{widgetTitle}\" has no field metadata universal identifier"
-msgstr "Een grafiekfilter van widget \"{widgetTitle}\" heeft geen universele ID voor veldmetadata."
+msgstr "Een grafiekfilter van widget \"{widgetTitle}\" heeft geen universele ID voor veldmetadata"
 
 #. js-lingui-id: OaxxOp
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -369,7 +369,7 @@ msgstr "Er is een tijdelijke netwerkfout opgetreden."
 #. js-lingui-id: WzDeE/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
-msgstr "Een tijdlijnactiviteitstype dat gericht is op een object van een andere applicatie moet het tijdlijnactiviteitstype aangeven dat het overschrijft."
+msgstr "Een tijdlijnactiviteitstype dat gericht is op een object van een andere applicatie moet het tijdlijnactiviteitstype aangeven dat het overschrijft"
 
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -460,7 +460,7 @@ msgstr "Er bestaat al een webhook met deze configuratie."
 #. js-lingui-id: I0rHKG
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "A widget header action was not found"
-msgstr "Er is geen actie in de widgetkop gevonden."
+msgstr "Er is geen actie in de widgetkop gevonden"
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -715,7 +715,7 @@ msgstr "Er bestaat al een agent met deze naam."
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "An application timeline activity emitter must target one of its objects"
-msgstr "Een emitter van tijdlijnactiviteiten van een applicatie moet gericht zijn op een van zijn objecten."
+msgstr "Een emitter van tijdlijnactiviteiten van een applicatie moet gericht zijn op een van zijn objecten"
 
 #. js-lingui-id: VID94s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -844,7 +844,7 @@ msgstr "Een andere toepassing in deze werkruimte heeft al een machtigingsvlag me
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Another timeline activity type already handles this action, object, and target relation"
-msgstr "Een ander tijdlijnactiviteitstype verwerkt deze actie, dit object en deze doelrelatie al."
+msgstr "Een ander tijdlijnactiviteitstype verwerkt deze actie, dit object en deze doelrelatie al"
 
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2043,12 +2043,12 @@ msgstr "Kanaal-ID"
 #. js-lingui-id: z851aK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Chart filter operand is not supported for this field type"
-msgstr "De operand van een grafiekfilter wordt niet ondersteund voor dit veldtype."
+msgstr "De operand van een grafiekfilter wordt niet ondersteund voor dit veldtype"
 
 #. js-lingui-id: QHFBKw
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Chart filter value is not valid for this operand"
-msgstr "De waarde van een grafiekfilter is niet geldig voor deze operand."
+msgstr "De waarde van een grafiekfilter is niet geldig voor deze operand"
 
 #. js-lingui-id: erTWgO
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2068,17 +2068,17 @@ msgstr "Titel van de chatdraad mag niet leeg zijn."
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
-msgstr "Kies een bestaand tijdlijnactiviteitstype om te overschrijven."
+msgstr "Kies een bestaand tijdlijnactiviteitstype om te overschrijven"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the object that emits this timeline activity type"
-msgstr "Kies het object dat dit tijdlijnactiviteitstype genereert."
+msgstr "Kies het object dat dit tijdlijnactiviteitstype genereert"
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the relation used by this timeline activity type"
-msgstr "Kies de relatie die door dit tijdlijnactiviteitstype wordt gebruikt."
+msgstr "Kies de relatie die door dit tijdlijnactiviteitstype wordt gebruikt"
 
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -5925,7 +5925,7 @@ msgstr "Sleutel is vereist"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Kind of principal receiving the access"
-msgstr "Soort principal die de toegang ontvangt."
+msgstr "Soort principal die de toegang ontvangt"
 
 #. js-lingui-id: 6sFS+I
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
@@ -6102,7 +6102,7 @@ msgstr "heeft een gerelateerde taak gekoppeld"
 #. js-lingui-id: LXKHX6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Linked and unlinked timeline activity emitters require a target relation"
-msgstr "Gekoppelde en niet-gekoppelde emitters van tijdlijnactiviteiten vereisen een doelrelatie."
+msgstr "Gekoppelde en niet-gekoppelde emitters van tijdlijnactiviteiten vereisen een doelrelatie"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -8368,12 +8368,12 @@ msgstr "Voorstel"
 #. js-lingui-id: dtGxRz
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Provided and inferred calling code are conflicting"
-msgstr "Opgeheven en afgeleide belcode zijn in conflict."
+msgstr "Opgeheven en afgeleide belcode zijn in conflict"
 
 #. js-lingui-id: Vq/afT
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Provided and inferred country code are conflicting"
-msgstr "Opgeheven en afgeleide landcode zijn in conflict."
+msgstr "Opgeheven en afgeleide landcode zijn in conflict"
 
 #. js-lingui-id: HZ45ox
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -10304,7 +10304,7 @@ msgstr "Het uploaden van het bestand is niet voltooid. Probeer de upload opnieuw
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The front component used by this timeline activity type is not available"
-msgstr "De frontendcomponent die door dit tijdlijnactiviteitstype wordt gebruikt, is niet beschikbaar."
+msgstr "De frontendcomponent die door dit tijdlijnactiviteitstype wordt gebruikt, is niet beschikbaar"
 
 #. js-lingui-id: 840b8q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10387,7 +10387,7 @@ msgstr "Het object dat moet worden bijgewerkt, kon niet worden gevonden om de re
 #. js-lingui-id: QaaKZQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The object used by this timeline activity type is not available"
-msgstr "Het object dat door dit tijdlijnactiviteitstype wordt gebruikt, is niet beschikbaar."
+msgstr "Het object dat door dit tijdlijnactiviteitstype wordt gebruikt, is niet beschikbaar"
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -10504,17 +10504,17 @@ msgstr "Het abonnement is niet langer beschikbaar bij de provider."
 #. js-lingui-id: Eq5YMK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The target relation used by this timeline activity type is not available"
-msgstr "De doelrelatie die door dit tijdlijnactiviteitstype wordt gebruikt, is niet beschikbaar."
+msgstr "De doelrelatie die door dit tijdlijnactiviteitstype wordt gebruikt, is niet beschikbaar"
 
 #. js-lingui-id: PLlXuR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The timeline activity type override is not compatible with this event"
-msgstr "De overschrijving van het tijdlijnactiviteitstype is niet compatibel met deze gebeurtenis."
+msgstr "De overschrijving van het tijdlijnactiviteitstype is niet compatibel met deze gebeurtenis"
 
 #. js-lingui-id: IT44Du
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The trigger fields used by this timeline activity type are not available"
-msgstr "De triggervelden die door dit tijdlijnactiviteitstype worden gebruikt, zijn niet beschikbaar."
+msgstr "De triggervelden die door dit tijdlijnactiviteitstype worden gebruikt, zijn niet beschikbaar"
 
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -11234,7 +11234,7 @@ msgstr "Tijdlijnactiviteitrecordpositie"
 #. placeholder {0}: conflictingResolverType?.name ?? timelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type conflicts with {0} for the same action, object, and target relation"
-msgstr "Tijdlijnactiviteitstype conflicteert met {0} voor dezelfde actie, hetzelfde object en dezelfde doelrelatie."
+msgstr "Tijdlijnactiviteitstype conflicteert met {0} voor dezelfde actie, hetzelfde object en dezelfde doelrelatie"
 
 #. js-lingui-id: xFv7OI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -11281,17 +11281,17 @@ msgstr "Tijdlijnactiviteitstype niet gevonden."
 #. js-lingui-id: 0VIqW4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type override must reference a compatible type owned by the target object's application"
-msgstr "Overschrijving van tijdlijnactiviteitstype moet verwijzen naar een compatibel type dat eigendom is van de applicatie van het doelobject."
+msgstr "Overschrijving van tijdlijnactiviteitstype moet verwijzen naar een compatibel type dat eigendom is van de applicatie van het doelobject"
 
 #. js-lingui-id: kfv1kx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references a front component that does not belong to its application"
-msgstr "Tijdlijnactiviteitstype verwijst naar een frontendcomponent die niet bij zijn applicatie hoort."
+msgstr "Tijdlijnactiviteitstype verwijst naar een frontendcomponent die niet bij zijn applicatie hoort"
 
 #. js-lingui-id: f7+vxa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references an object that does not exist"
-msgstr "Tijdlijnactiviteitstype verwijst naar een object dat niet bestaat."
+msgstr "Tijdlijnactiviteitstype verwijst naar een object dat niet bestaat"
 
 #. js-lingui-id: Y9ZQls
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11301,7 +11301,7 @@ msgstr "De doelrelatie van het tijdlijnactiviteitstype moet een directe of koppe
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event"
-msgstr "De triggervelden van het tijdlijnactiviteitstype moeten niet-lege velden zijn op het bronobject van een gebeurtenis voor een bijgewerkte relatie."
+msgstr "De triggervelden van het tijdlijnactiviteitstype moeten niet-lege velden zijn op het bronobject van een gebeurtenis voor een bijgewerkte relatie"
 
 #. js-lingui-id: 8VTlb5
 #. placeholder {0}: timelineActivityType.name
@@ -11510,7 +11510,7 @@ msgstr "Niet-ondersteund configuratietype."
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
-msgstr "Ondersteund cron schema type niet."
+msgstr "Ondersteund cron schema type niet"
 
 #. js-lingui-id: crxihq
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts

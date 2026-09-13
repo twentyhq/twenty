@@ -1259,7 +1259,7 @@ msgstr "Προσθήκη σημείωσης σε αυτήν την εγγραφ�
 #. js-lingui-id: Ad+JsP
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add a person with an email to this company first"
-msgstr "Προσθέστε πρώτα ένα άτομο με διεύθυνση email σε αυτή την εταιρεία."
+msgstr "Προσθέστε πρώτα ένα άτομο με διεύθυνση email σε αυτή την εταιρεία"
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1311,12 +1311,12 @@ msgstr "Προσθέστε ένα κλειδί API για να ενεργοπο�
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to the point of contact first"
-msgstr "Προσθέστε πρώτα ένα email στο σημείο επαφής."
+msgstr "Προσθέστε πρώτα ένα email στο σημείο επαφής"
 
 #. js-lingui-id: LVzaHu
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to this person first"
-msgstr "Προσθέστε πρώτα ένα email σε αυτό το άτομο."
+msgstr "Προσθέστε πρώτα ένα email σε αυτό το άτομο"
 
 #. js-lingui-id: KD0hdw
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -3810,7 +3810,7 @@ msgstr "Δεν είναι δυνατή η αντιγραφή του επιλεγ
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/hooks/useOpenFilesFieldInput.tsx
 msgid "Cannot upload more than {maxNumberOfValues} files"
-msgstr "Δεν είναι δυνατή η μεταφόρτωση περισσότερων από {maxNumberOfValues} αρχείων."
+msgstr "Δεν είναι δυνατή η μεταφόρτωση περισσότερων από {maxNumberOfValues} αρχείων"
 
 #. js-lingui-id: Po5MgW
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
@@ -16532,7 +16532,7 @@ msgstr "Επαναφορά 2FA"
 #. js-lingui-id: kw0Yv1
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Reset all overrides on this layout to return it to the app default"
-msgstr "Επαναφέρετε όλες τις προσαρμογές αυτής της διάταξης ώστε να επανέλθει στην προεπιλογή της εφαρμογής."
+msgstr "Επαναφέρετε όλες τις προσαρμογές αυτής της διάταξης ώστε να επανέλθει στην προεπιλογή της εφαρμογής"
 
 #. js-lingui-id: AASIAQ
 #: src/modules/layout-customization/components/LayoutCustomizationBarMenuDropdown.tsx
@@ -18047,9 +18047,7 @@ msgstr "Ο σύνδεσμος κοινοποίησης αντιγράφηκε σ
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 #: src/modules/side-panel/pages/page-layout/utils/getChartNumberFormatLabel.ts
 msgid "Short"
-msgstr ""
-"\n"
-""
+msgstr ""
 
 #. js-lingui-id: 2rtIq8
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -18363,7 +18361,7 @@ msgstr "Ορισμένοι φάκελοι"
 #. js-lingui-id: hqUWge
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
 msgid "Some layout changes could not be saved"
-msgstr "Δεν ήταν δυνατή η αποθήκευση ορισμένων αλλαγών διάταξης."
+msgstr "Δεν ήταν δυνατή η αποθήκευση ορισμένων αλλαγών διάταξης"
 
 #. js-lingui-id: VOOhW/
 #. placeholder {0}: stepLog.truncated.droppedEntries
@@ -19768,7 +19766,7 @@ msgstr "Αυτό είναι το τρέχον κλειδί υπογραφής. �
 #. js-lingui-id: yLvOxg
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 msgid "This key should be set through body input"
-msgstr "Αυτό το κλειδί πρέπει να οριστεί στο σώμα του αιτήματος."
+msgstr "Αυτό το κλειδί πρέπει να οριστεί στο σώμα του αιτήματος"
 
 #. js-lingui-id: V6FP3d
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

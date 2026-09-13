@@ -4396,7 +4396,7 @@ msgstr "欄"
 #. js-lingui-id: P8gRog
 #: src/modules/spreadsheet-import/utils/setColumn.ts
 msgid "column data is not compatible with Multi-Select. Format required is '[\"option1\", \"option2\"]' or option1,option2."
-msgstr "欄位資料與多選不相容。所需格式為'[\\"
+msgstr "欄位資料與多選不相容。所需格式為'[\\."
 
 #. js-lingui-id: /xTbaM
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -8128,7 +8128,7 @@ msgstr "啟用企業授權時發生錯誤"
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error deleting api key."
-msgstr "刪除 API 密鑰時出錯："
+msgstr "刪除 API 密鑰時出錯：."
 
 #. js-lingui-id: gmjkzq
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -8194,7 +8194,7 @@ msgstr "重新整理有效性權杖時發生錯誤。請聯絡支援。"
 #. js-lingui-id: PfAip2
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error regenerating api key."
-msgstr "重新生成 API 密鑰時出錯："
+msgstr "重新生成 API 密鑰時出錯：."
 
 #. js-lingui-id: clfpgU
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -16251,7 +16251,7 @@ msgstr "要移除 {0} 個導覽選單項目嗎？"
 #. placeholder {0}: favoritesEdit.navigationMenuItemCount
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "Remove {0} navigation menu items?"
-msgstr "要移除 {0} 個導覽選單項目嗎？"
+msgstr "要移除 {0} 個導覽選單項目嗎？?"
 
 #. js-lingui-id: 1O32oy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx

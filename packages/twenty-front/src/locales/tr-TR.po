@@ -233,7 +233,7 @@ msgstr "{0, plural, one {{fieldsList} alanına erişim izniniz yok} other {{fiel
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr "{0} geri döndü veya şikayette bulundu."
+msgstr "{0} geri döndü veya şikayette bulundu"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -3683,7 +3683,7 @@ msgstr "Standart nesneler için API adları değiştirilemez"
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Can't scan? Copy the"
-msgstr "Tarayamaz mısınız? Kopyalayın."
+msgstr "Tarayamaz mısınız? Kopyalayın"
 
 #. js-lingui-id: dEgA5A
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
@@ -5466,7 +5466,7 @@ msgstr "API anahtarı oluştur"
 #. js-lingui-id: 0gp+cZ
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Create calendar event"
-msgstr "Takvim Etkinliği Oluşturur?"
+msgstr "Takvim Etkinliği Oluşturur"
 
 #. js-lingui-id: fbe2ik
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -7059,12 +7059,12 @@ msgstr "İletişim otomatik oluşturulmasın."
 #. js-lingui-id: Emrbzc
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don't create contacts from/to Gmail, Outlook emails"
-msgstr "Gmail'e, Outlook e-postalarına kişi oluşturma."
+msgstr "Gmail'e, Outlook e-postalarına kişi oluşturma"
 
 #. js-lingui-id: yjhBSV
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don't sync emails from team@ support@ noreply@..."
-msgstr "team@, support@, noreply@... adreslerinden e-postaları senkronize etme."
+msgstr "team@, support@, noreply@... adreslerinden e-postaları senkronize etme..."
 
 #. js-lingui-id: DPfwMq
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx

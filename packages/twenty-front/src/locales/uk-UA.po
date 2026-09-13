@@ -233,7 +233,7 @@ msgstr "{0, plural, one {Ви не маєте доступу до поля {fiel
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr "{0} — недоставлено або надійшла скарга."
+msgstr "{0} — недоставлено або надійшла скарга"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -15363,7 +15363,7 @@ msgstr "Плани"
 #. js-lingui-id: XdRQm7
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 msgid "Playback failed"
-msgstr "Не вдалося відтворити запис."
+msgstr "Не вдалося відтворити запис"
 
 #. js-lingui-id: VUi6Nf
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx

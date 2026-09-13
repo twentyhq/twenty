@@ -233,7 +233,7 @@ msgstr "{0, plural, one {Немате дозволу за приступ пољ�
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr "{0} са враћеном поруком или жалбом."
+msgstr "{0} са враћеном поруком или жалбом"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -1259,7 +1259,7 @@ msgstr "Додај белешку овом запису: "
 #. js-lingui-id: Ad+JsP
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add a person with an email to this company first"
-msgstr "Прво додајте особу са имејл адресом овој компанији."
+msgstr "Прво додајте особу са имејл адресом овој компанији"
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1311,12 +1311,12 @@ msgstr "Додајте API кључ да бисте омогућили АИ."
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to the point of contact first"
-msgstr "Прво додајте имејл адресу контакт особи."
+msgstr "Прво додајте имејл адресу контакт особи"
 
 #. js-lingui-id: LVzaHu
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to this person first"
-msgstr "Прво додајте имејл адресу овој особи."
+msgstr "Прво додајте имејл адресу овој особи"
 
 #. js-lingui-id: KD0hdw
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -13498,7 +13498,7 @@ msgstr "Нема доступних података за удаљену таб�
 #. js-lingui-id: VwYM0e
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
 msgid "No data available. Click edit to configure this widget."
-msgstr "Нема доступних података. Кликните на \\"
+msgstr "Нема доступних података. Кликните на \\."
 
 #. js-lingui-id: pxvJ9B
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -13609,7 +13609,7 @@ msgstr "Нема доступних фасцикли"
 #. js-lingui-id: 1jgsYC
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard.tsx
 msgid "No folders found for this account"
-msgstr "Није пронађен ниједан фолдер за овај налог."
+msgstr "Није пронађен ниједан фолдер за овај налог"
 
 #. js-lingui-id: 9kCSLK
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx

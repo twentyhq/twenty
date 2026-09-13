@@ -135,7 +135,7 @@ msgstr "Egy diagram szűrőnek nincs mezője"
 #. js-lingui-id: bhuNSV
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "A chart filter of widget \"{widgetTitle}\" has no field metadata universal identifier"
-msgstr "A(z) \"{widgetTitle}\" widget diagram szűrőjének nincs a mező metaadatához tartozó univerzális azonosítója."
+msgstr "A(z) \"{widgetTitle}\" widget diagram szűrőjének nincs a mező metaadatához tartozó univerzális azonosítója"
 
 #. js-lingui-id: OaxxOp
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -230,7 +230,7 @@ msgstr "A FOLDER típushoz a név megadása kötelező."
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A navigation item cannot carry both a path and a navigation target object"
-msgstr "Egy navigációs elem nem tartalmazhat egyszerre útvonalat és navigációs célobjektumot."
+msgstr "Egy navigációs elem nem tartalmazhat egyszerre útvonalat és navigációs célobjektumot"
 
 #. js-lingui-id: 9er1TA
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
@@ -262,7 +262,7 @@ msgstr "Egy oldalelrendezés navigációs menüeleme csak önálló oldalra muta
 #. js-lingui-id: RMpFrA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A path or a navigation target object is required for navigation items"
-msgstr "A navigációs elemekhez útvonal vagy navigációs célobjektum szükséges."
+msgstr "A navigációs elemekhez útvonal vagy navigációs célobjektum szükséges"
 
 #. js-lingui-id: HC18ok
 #: src/engine/core-modules/file-storage/utils/validate-path-segments-safety.util.ts
@@ -369,12 +369,12 @@ msgstr "Átmeneti hálózati hiba történt."
 #. js-lingui-id: WzDeE/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
-msgstr "Egy másik alkalmazás objektumát célzó idővonal-tevékenységtípusnak meg kell adnia az általa felülírt idővonal-tevékenységtípust."
+msgstr "Egy másik alkalmazás objektumát célzó idővonal-tevékenységtípusnak meg kell adnia az általa felülírt idővonal-tevékenységtípust"
 
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type with this name already exists for this application"
-msgstr "Ehhez az alkalmazáshoz már létezik ilyen nevű idővonal-tevékenységtípus."
+msgstr "Ehhez az alkalmazáshoz már létezik ilyen nevű idővonal-tevékenységtípus"
 
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -460,7 +460,7 @@ msgstr "Már létezik ilyen konfigurációjú webhook."
 #. js-lingui-id: I0rHKG
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "A widget header action was not found"
-msgstr "Nem található widgetfejléc-művelet."
+msgstr "Nem található widgetfejléc-művelet"
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -715,7 +715,7 @@ msgstr "Már létezik ilyen nevű ügynök."
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "An application timeline activity emitter must target one of its objects"
-msgstr "Egy alkalmazás idővonal-tevékenységkibocsátójának az egyik objektumát kell céloznia."
+msgstr "Egy alkalmazás idővonal-tevékenységkibocsátójának az egyik objektumát kell céloznia"
 
 #. js-lingui-id: VID94s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -844,7 +844,7 @@ msgstr "Egy másik alkalmazás ebben a munkaterületen már regisztrált egy jog
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Another timeline activity type already handles this action, object, and target relation"
-msgstr "Egy másik idővonal-tevékenységtípus már kezeli ezt a művelet-, objektum- és célkapcsolat-kombinációt."
+msgstr "Egy másik idővonal-tevékenységtípus már kezeli ezt a művelet-, objektum- és célkapcsolat-kombinációt"
 
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -1951,7 +1951,7 @@ msgstr "A predikátumcsoportot nem lehet úgy módosítani, hogy az objektuma {e
 #. js-lingui-id: jm1hwE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Cannot modify predicate group to change its role"
-msgstr "A predikátumcsoportot nem lehet úgy módosítani, hogy megváltozzon a szerepköre."
+msgstr "A predikátumcsoportot nem lehet úgy módosítani, hogy megváltozzon a szerepköre"
 
 #. js-lingui-id: yxykz2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -2068,17 +2068,17 @@ msgstr "A csevegési szál címe nem lehet üres."
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
-msgstr "Válasszon ki egy meglévő, felülírandó idővonal-tevékenységtípust."
+msgstr "Válasszon ki egy meglévő, felülírandó idővonal-tevékenységtípust"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the object that emits this timeline activity type"
-msgstr "Válassza ki az ezt az idővonal-tevékenységtípust kibocsátó objektumot."
+msgstr "Válassza ki az ezt az idővonal-tevékenységtípust kibocsátó objektumot"
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the relation used by this timeline activity type"
-msgstr "Válassza ki az ezen idővonal-tevékenységtípus által használt kapcsolatot."
+msgstr "Válassza ki az ezen idővonal-tevékenységtípus által használt kapcsolatot"
 
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -2132,17 +2132,17 @@ msgstr "Színséma"
 #. js-lingui-id: 8nN8qg
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
-msgstr "A widgetfejléc által hivatkozott {commandMenuItemUniversalIdentifier} parancsmenüelem egy másik alkalmazáshoz tartozik."
+msgstr "A widgetfejléc által hivatkozott {commandMenuItemUniversalIdentifier} parancsmenüelem egy másik alkalmazáshoz tartozik"
 
 #. js-lingui-id: fmk0Wo
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
-msgstr "A widgetfejléc által hivatkozott {commandMenuItemUniversalIdentifier} parancsmenüelem nem található."
+msgstr "A widgetfejléc által hivatkozott {commandMenuItemUniversalIdentifier} parancsmenüelem nem található"
 
 #. js-lingui-id: Lrx/M5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Command menu item already exists"
-msgstr "A parancsmenüelem már létezik."
+msgstr "A parancsmenüelem már létezik"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -2160,7 +2160,7 @@ msgstr "Parancsmenü-elem nem található."
 #. js-lingui-id: xO/lDZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Command menu item with same universal identifier already exists"
-msgstr "Ugyanazzal az univerzális azonosítóval rendelkező parancsmenüelem már létezik."
+msgstr "Ugyanazzal az univerzális azonosítóval rendelkező parancsmenüelem már létezik"
 
 #. js-lingui-id: /SzXf6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2575,17 +2575,17 @@ msgstr "Nem sikerült feloldani a meglévő „{0}” objektumot az alapértelme
 #. js-lingui-id: 5rS7nl
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-label-identifier-on-update-side-effect-handler.service.ts
 msgid "Could not resolve the existing object to reconcile its INDEX label identifier view field"
-msgstr "Nem sikerült feloldani a meglévő objektumot az INDEX nézet címkeazonosító mezőjének egyeztetéséhez."
+msgstr "Nem sikerült feloldani a meglévő objektumot az INDEX nézet címkeazonosító mezőjének egyeztetéséhez"
 
 #. js-lingui-id: jx0Apr
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-navigation-command-on-update-side-effect-handler.service.ts
 msgid "Could not resolve the existing object to reconcile its navigation command menu item"
-msgstr "Nem sikerült feloldani a meglévő objektumot a navigációs parancsmenüelemének egyeztetéséhez."
+msgstr "Nem sikerült feloldani a meglévő objektumot a navigációs parancsmenüelemének egyeztetéséhez"
 
 #. js-lingui-id: TYpgQ/
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
 msgid "Could not resolve the existing object to reconcile its record-page label identifier view field"
-msgstr "Nem sikerült feloldani a meglévő objektumot a rekordoldal címkeazonosító nézetmezőjének egyeztetéséhez."
+msgstr "Nem sikerült feloldani a meglévő objektumot a rekordoldal címkeazonosító nézetmezőjének egyeztetéséhez"
 
 #. js-lingui-id: hYgDIe
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -3392,7 +3392,7 @@ msgstr "Elrendezés szerkesztése"
 #. js-lingui-id: Csg2MU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "either a path payload or navigationTargetObjectMetadataId is required when engineComponentKey is NAVIGATION"
-msgstr "A NAVIGATION értékű engineComponentKey esetén path payload vagy navigationTargetObjectMetadataId szükséges."
+msgstr "A NAVIGATION értékű engineComponentKey esetén path payload vagy navigationTargetObjectMetadataId szükséges"
 
 #. js-lingui-id: n6jNyT
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
@@ -3940,7 +3940,7 @@ msgstr "A mező a típusa miatt nem használható címkeazonosítóként."
 #. js-lingui-id: QMSXe6
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field cannot be used as label identifier due to its type: should be of type UUID, text or full name"
-msgstr "A mező a típusa miatt nem használható címkeazonosítóként: UUID-, szöveg- vagy teljes név típusúnak kell lennie."
+msgstr "A mező a típusa miatt nem használható címkeazonosítóként: UUID-, szöveg- vagy teljes név típusúnak kell lennie"
 
 #. js-lingui-id: F6OLoA
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
@@ -4084,7 +4084,7 @@ msgstr "Frissítendő mező nem található"
 #. js-lingui-id: 5cm5Hn
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Field to update object metadata not found"
-msgstr "Az objektum metaadatainak frissítéséhez szükséges mező nem található."
+msgstr "Az objektum metaadatainak frissítéséhez szükséges mező nem található"
 
 #. js-lingui-id: stY5BO
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
@@ -4114,7 +4114,7 @@ msgstr "A TS_VECTOR típusú mező neve \"searchVector\" kell, hogy legyen."
 #. js-lingui-id: VkSxbb
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr "A TS_VECTOR típusú mezőnek SYSTEM írhatósággal kell rendelkeznie."
+msgstr "A TS_VECTOR típusú mezőnek SYSTEM írhatósággal kell rendelkeznie"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -4305,7 +4305,7 @@ msgstr "A(z) „{0}” mezőre alkalmazott szűrő nem létező {invalidValuesTe
 #. js-lingui-id: MkIaen
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util.ts
 msgid "Filter operand is not supported for this field type"
-msgstr "A szűrőoperandus nem támogatott ehhez a mezőtípushoz."
+msgstr "A szűrőoperandus nem támogatott ehhez a mezőtípushoz"
 
 #. js-lingui-id: dzteua
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
@@ -4315,7 +4315,7 @@ msgstr "A szűrő nem létező választási lehetőséget használ"
 #. js-lingui-id: NCkLG1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util.ts
 msgid "Filter value is not valid for this operand"
-msgstr "A szűrő értéke nem érvényes ehhez az operandushoz."
+msgstr "A szűrő értéke nem érvényes ehhez az operandushoz"
 
 #. js-lingui-id: 8oFGnQ
 #: src/engine/api/common/common-query-runners/common-find-many-query-runner.service.ts
@@ -4436,7 +4436,7 @@ msgstr "A frontComponentId megadása kötelező, amikor az engineComponentKey é
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId must not be set for engine component key {engineComponentKey}"
-msgstr "A frontComponentId nem állítható be, ha az engineComponentKey értéke {engineComponentKey}."
+msgstr "A frontComponentId nem állítható be, ha az engineComponentKey értéke {engineComponentKey}"
 
 #. js-lingui-id: z8/E1J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -5852,7 +5852,7 @@ msgstr "Az összekötő konfiguráció csak ONE_TO_MANY kapcsolatok esetén érv
 #. js-lingui-id: JmUgZR
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction source and target fields must be different"
-msgstr "A kapcsoló forrás- és célmezőjének különbözőnek kell lennie."
+msgstr "A kapcsoló forrás- és célmezőjének különbözőnek kell lennie"
 
 #. js-lingui-id: bpqhFq
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
@@ -6102,7 +6102,7 @@ msgstr "összekapcsolt egy kapcsolódó feladatot"
 #. js-lingui-id: LXKHX6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Linked and unlinked timeline activity emitters require a target relation"
-msgstr "A kapcsolt és nem kapcsolt idővonal-tevékenységkibocsátókhoz célkapcsolat szükséges."
+msgstr "A kapcsolt és nem kapcsolt idővonal-tevékenységkibocsátókhoz célkapcsolat szükséges"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -6144,7 +6144,7 @@ msgstr "LinkedIn"
 #. js-lingui-id: 4yWmVP
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-links-flat-field-metadata.util.ts
 msgid "Links field type must be either a url or a domain"
-msgstr "A hivatkozások mezőtípusának url-nek vagy domainnek kell lennie."
+msgstr "A hivatkozások mezőtípusának url-nek vagy domainnek kell lennie"
 
 #. js-lingui-id: ++iNv7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -7935,17 +7935,17 @@ msgstr "Jelszó túl gyenge"
 #. js-lingui-id: GisVJf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "payload and navigationTargetObjectMetadataId are mutually exclusive"
-msgstr "A payload és a navigationTargetObjectMetadataId kölcsönösen kizárják egymást."
+msgstr "A payload és a navigationTargetObjectMetadataId kölcsönösen kizárják egymást"
 
 #. js-lingui-id: yo0H/o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "payload must contain a non-empty \"path\" property"
-msgstr "A payloadnak nem üres \"path\" tulajdonságot kell tartalmaznia."
+msgstr "A payloadnak nem üres \"path\" tulajdonságot kell tartalmaznia"
 
 #. js-lingui-id: bfB+si
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Payload must contain a path"
-msgstr "A payloadnak útvonalat kell tartalmaznia."
+msgstr "A payloadnak útvonalat kell tartalmaznia"
 
 #. js-lingui-id: iJh5U7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -8254,7 +8254,7 @@ msgstr "Pozíció"
 #. js-lingui-id: c7uZDh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Position layoutMode \"{layoutMode}\" does not match tab layoutMode \"{tabLayoutMode}\""
-msgstr "A pozíció layoutMode-ja \"{layoutMode}\" nem egyezik a lap layoutMode-jával \"{tabLayoutMode}\"."
+msgstr "A pozíció layoutMode-ja \"{layoutMode}\" nem egyezik a lap layoutMode-jával \"{tabLayoutMode}\""
 
 #. js-lingui-id: rFj1tD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -8272,7 +8272,7 @@ msgstr "A függvény előre elkészített csomagja nincs telepítve. Építse ú
 #. js-lingui-id: OAanPr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicate is missing a value"
-msgstr "A predikátumból hiányzik egy érték."
+msgstr "A predikátumból hiányzik egy érték"
 
 #. js-lingui-id: a/WH2z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -10304,12 +10304,12 @@ msgstr "A fájl feltöltése nem fejeződött be. Próbálja meg újra a feltöl
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The front component used by this timeline activity type is not available"
-msgstr "Az ezen idővonal-tevékenységtípus által használt front-end komponens nem érhető el."
+msgstr "Az ezen idővonal-tevékenységtípus által használt front-end komponens nem érhető el"
 
 #. js-lingui-id: 840b8q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The happensAt field used by this timeline activity type is not available"
-msgstr "Az ezzel az idővonal-tevékenységtípussal használt happensAt mező nem érhető el."
+msgstr "Az ezzel az idővonal-tevékenységtípussal használt happensAt mező nem érhető el"
 
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -10377,7 +10377,7 @@ msgstr "A frissítendő objektum nem található az INDEX nézetének egyezteté
 #. js-lingui-id: uBRmyY
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-navigation-command-on-update-side-effect-handler.service.ts
 msgid "The object to update could not be found to reconcile its navigation command"
-msgstr "A frissítendő objektum nem található a navigációs parancs egyeztetéséhez."
+msgstr "A frissítendő objektum nem található a navigációs parancs egyeztetéséhez"
 
 #. js-lingui-id: /QTsIU
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
@@ -10387,7 +10387,7 @@ msgstr "A frissítendő objektum nem található a rekordoldalának egyeztetés�
 #. js-lingui-id: QaaKZQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The object used by this timeline activity type is not available"
-msgstr "Az ezen idővonal-tevékenységtípus által használt objektum nem érhető el."
+msgstr "Az ezen idővonal-tevékenységtípus által használt objektum nem érhető el"
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -10504,17 +10504,17 @@ msgstr "Az előfizetés már nem érhető el a szolgáltatónál."
 #. js-lingui-id: Eq5YMK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The target relation used by this timeline activity type is not available"
-msgstr "Az ezen idővonal-tevékenységtípus által használt célkapcsolat nem érhető el."
+msgstr "Az ezen idővonal-tevékenységtípus által használt célkapcsolat nem érhető el"
 
 #. js-lingui-id: PLlXuR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The timeline activity type override is not compatible with this event"
-msgstr "Az idővonal-tevékenységtípus felülírása nem kompatibilis ezzel az eseménnyel."
+msgstr "Az idővonal-tevékenységtípus felülírása nem kompatibilis ezzel az eseménnyel"
 
 #. js-lingui-id: IT44Du
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The trigger fields used by this timeline activity type are not available"
-msgstr "Az ezen idővonal-tevékenységtípus által használt indítómezők nem érhetők el."
+msgstr "Az ezen idővonal-tevékenységtípus által használt indítómezők nem érhetők el"
 
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -11234,7 +11234,7 @@ msgstr "Idővonal-tevékenység rekord pozíciója"
 #. placeholder {0}: conflictingResolverType?.name ?? timelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type conflicts with {0} for the same action, object, and target relation"
-msgstr "Az idővonal-tevékenységtípus ütközik a következővel: {0}, ugyanazon művelet, objektum és célkapcsolat esetén."
+msgstr "Az idővonal-tevékenységtípus ütközik a következővel: {0}, ugyanazon művelet, objektum és célkapcsolat esetén"
 
 #. js-lingui-id: xFv7OI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -11246,7 +11246,7 @@ msgstr "Az eseményt leíró idővonal-tevékenységtípus"
 #. js-lingui-id: yi1Kgg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type happensAt field must be a date field on the source object of a linked relation event"
-msgstr "Az idővonal-tevékenységtípus happensAt mezőjének egy kapcsolt kapcsolati esemény forrásobjektumán található dátummezőnek kell lennie."
+msgstr "Az idővonal-tevékenységtípus happensAt mezőjének egy kapcsolt kapcsolati esemény forrásobjektumán található dátummezőnek kell lennie"
 
 #. js-lingui-id: sqmSqj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11281,17 +11281,17 @@ msgstr "Az idővonal-tevékenységtípus nem található."
 #. js-lingui-id: 0VIqW4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type override must reference a compatible type owned by the target object's application"
-msgstr "Az idővonal-tevékenységtípus felülírásának a célobjektum alkalmazása által birtokolt kompatibilis típusra kell hivatkoznia."
+msgstr "Az idővonal-tevékenységtípus felülírásának a célobjektum alkalmazása által birtokolt kompatibilis típusra kell hivatkoznia"
 
 #. js-lingui-id: kfv1kx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references a front component that does not belong to its application"
-msgstr "Az idővonal-tevékenységtípus olyan front-end komponensre hivatkozik, amely nem az alkalmazásához tartozik."
+msgstr "Az idővonal-tevékenységtípus olyan front-end komponensre hivatkozik, amely nem az alkalmazásához tartozik"
 
 #. js-lingui-id: f7+vxa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references an object that does not exist"
-msgstr "Az idővonal-tevékenységtípus nem létező objektumra hivatkozik."
+msgstr "Az idővonal-tevékenységtípus nem létező objektumra hivatkozik"
 
 #. js-lingui-id: Y9ZQls
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11301,7 +11301,7 @@ msgstr "Az idővonal-tevékenységtípus célkapcsolatának közvetlen vagy kapc
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event"
-msgstr "Az idővonal-tevékenységtípus indítómezőinek nem üres mezőknek kell lenniük egy frissített kapcsolati esemény forrásobjektumán."
+msgstr "Az idővonal-tevékenységtípus indítómezőinek nem üres mezőknek kell lenniük egy frissített kapcsolati esemény forrásobjektumán"
 
 #. js-lingui-id: 8VTlb5
 #. placeholder {0}: timelineActivityType.name
@@ -11808,7 +11808,7 @@ msgstr "A(z) \"{widgetTitle}\" widget diagram szűrőjének \"{stringifiedValue}
 #. js-lingui-id: l+Dvh5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Value \"{stringifiedValue}\" resolves to no record for operand \"{operand}\", the current record is not available to a row level permission predicate"
-msgstr "A(z) \"{stringifiedValue}\" érték egyetlen rekordra sem mutat a(z) \"{operand}\" operandus esetében, az aktuális rekord nem érhető el sorszintű jogosultsági predikátum számára."
+msgstr "A(z) \"{stringifiedValue}\" érték egyetlen rekordra sem mutat a(z) \"{operand}\" operandus esetében, az aktuális rekord nem érhető el sorszintű jogosultsági predikátum számára"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -12361,7 +12361,7 @@ msgstr "Azt jelzi, hogy a jelenlegi résztvevői szabályok indokolják-e ezt a 
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether the handle is blocked for a single workspace member or for the whole workspace"
-msgstr "Azt jelzi, hogy az azonosító egyetlen munkaterületi tag vagy a teljes munkaterület számára van-e blokkolva."
+msgstr "Azt jelzi, hogy az azonosító egyetlen munkaterületi tag vagy a teljes munkaterület számára van-e blokkolva"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -12401,22 +12401,22 @@ msgstr "A widget meghaladja a rács szélességét."
 #. js-lingui-id: GE0fWY
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header actions must be unique"
-msgstr "A widget fejlécműveleteinek egyedieknek kell lenniük."
+msgstr "A widget fejlécműveleteinek egyedieknek kell lenniük"
 
 #. js-lingui-id: djzz9p
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header actions must belong to the same application as the widget"
-msgstr "A widget fejlécműveleteinek ugyanahhoz az alkalmazáshoz kell tartozniuk, mint a widgetnek."
+msgstr "A widget fejlécműveleteinek ugyanahhoz az alkalmazáshoz kell tartozniuk, mint a widgetnek"
 
 #. js-lingui-id: pjpuGA
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header command menu item references must be unique"
-msgstr "A widget fejlécparancsmenüelem-hivatkozásainak egyedieknek kell lenniük."
+msgstr "A widget fejlécparancsmenüelem-hivatkozásainak egyedieknek kell lenniük"
 
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
-msgstr "A widget indexének nem negatív egész számnak kell lennie."
+msgstr "A widget indexének nem negatív egész számnak kell lennie"
 
 #. js-lingui-id: znCTbL
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
@@ -12740,7 +12740,7 @@ msgstr "A workflowVersionId megadása kötelező, amikor az engineComponentKey �
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "workflowVersionId must not be set for engine component key {engineComponentKey}"
-msgstr "A workflowVersionId nem állítható be, ha az engineComponentKey értéke {engineComponentKey}."
+msgstr "A workflowVersionId nem állítható be, ha az engineComponentKey értéke {engineComponentKey}"
 
 #. js-lingui-id: lscvqN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts

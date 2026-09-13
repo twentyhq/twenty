@@ -114,7 +114,7 @@ msgstr "24시간"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "A bulk email send to an audience, with delivery stats"
-msgstr "전달 통계와 함께 대상에게 보내는 대량 이메일 발송입니다."
+msgstr "전달 통계와 함께 대상에게 보내는 대량 이메일 발송입니다"
 
 #. js-lingui-id: o0VLtQ
 #: src/engine/core-modules/cache-lock/exceptions/cache-lock.exception.ts
@@ -135,7 +135,7 @@ msgstr "차트 필터에 필드가 없습니다."
 #. js-lingui-id: bhuNSV
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "A chart filter of widget \"{widgetTitle}\" has no field metadata universal identifier"
-msgstr "위젯 \"{widgetTitle}\"의 차트 필터에 필드 메타데이터의 범용 식별자가 없습니다."
+msgstr "위젯 \"{widgetTitle}\"의 차트 필터에 필드 메타데이터의 범용 식별자가 없습니다"
 
 #. js-lingui-id: OaxxOp
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -193,7 +193,7 @@ msgstr "이 이름의 함수가 이미 존재합니다."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "A hand-picked audience of people"
-msgstr "선별된 사람들로 구성된 대상입니다."
+msgstr "선별된 사람들로 구성된 대상입니다"
 
 #. js-lingui-id: TF/ZV2
 #: src/engine/core-modules/billing/reminders/services/billing-reminder.service.ts
@@ -230,7 +230,7 @@ msgstr "FOLDER 유형에는 이름이 필요합니다."
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A navigation item cannot carry both a path and a navigation target object"
-msgstr "탐색 항목에는 path와 탐색 대상 객체를 모두 포함할 수 없습니다."
+msgstr "탐색 항목에는 path와 탐색 대상 객체를 모두 포함할 수 없습니다"
 
 #. js-lingui-id: 9er1TA
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
@@ -262,7 +262,7 @@ msgstr "페이지 레이아웃 내비게이션 메뉴 항목은 독립 실행형
 #. js-lingui-id: RMpFrA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A path or a navigation target object is required for navigation items"
-msgstr "탐색 항목에는 path 또는 탐색 대상 객체가 필요합니다."
+msgstr "탐색 항목에는 path 또는 탐색 대상 객체가 필요합니다"
 
 #. js-lingui-id: HC18ok
 #: src/engine/core-modules/file-storage/utils/validate-path-segments-safety.util.ts
@@ -290,7 +290,7 @@ msgstr "사람"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "A person's membership in a list"
-msgstr "사람이 목록에 속해 있는 멤버십입니다."
+msgstr "사람이 목록에 속해 있는 멤버십입니다"
 
 #. js-lingui-id: sieBE7
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -306,7 +306,7 @@ msgstr "이 값이 있는 레코드가 이미 존재합니다."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
-msgstr "회의 녹화본입니다."
+msgstr "회의 녹화본입니다"
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -369,7 +369,7 @@ msgstr "일시적인 네트워크 오류가 발생했습니다."
 #. js-lingui-id: WzDeE/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
-msgstr "다른 애플리케이션의 객체를 대상으로 하는 타임라인 활동 유형은 재정의하는 타임라인 활동 유형을 선언해야 합니다."
+msgstr "다른 애플리케이션의 객체를 대상으로 하는 타임라인 활동 유형은 재정의하는 타임라인 활동 유형을 선언해야 합니다"
 
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -715,7 +715,7 @@ msgstr "이 이름을 가진 에이전트가 이미 존재합니다."
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "An application timeline activity emitter must target one of its objects"
-msgstr "애플리케이션 타임라인 활동 이미터는 해당 애플리케이션의 객체 중 하나를 대상으로 해야 합니다."
+msgstr "애플리케이션 타임라인 활동 이미터는 해당 애플리케이션의 객체 중 하나를 대상으로 해야 합니다"
 
 #. js-lingui-id: VID94s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -844,7 +844,7 @@ msgstr "이 워크스페이스의 다른 애플리케이션에서 이미 이 키
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Another timeline activity type already handles this action, object, and target relation"
-msgstr "다른 타임라인 활동 유형이 이미 이 작업, 객체 및 대상 관계를 처리하고 있습니다."
+msgstr "다른 타임라인 활동 유형이 이미 이 작업, 객체 및 대상 관계를 처리하고 있습니다"
 
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -1047,7 +1047,7 @@ msgstr "하나 이상의 관계가 필요합니다."
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "attached a file"
-msgstr "파일을 첨부했습니다."
+msgstr "파일을 첨부했습니다"
 
 #. js-lingui-id: b1LFyn
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1477,24 +1477,24 @@ msgstr "캘린더 채널을 찾을 수 없음."
 #. js-lingui-id: 9uvvYS
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar end field metadata not found"
-msgstr "캘린더 종료 필드 메타데이터를 찾을 수 없습니다."
+msgstr "캘린더 종료 필드 메타데이터를 찾을 수 없습니다"
 
 #. js-lingui-id: 6BRvIC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar end field must be a date or date time field"
-msgstr "캘린더 종료 필드는 날짜 또는 날짜/시간 필드여야 합니다."
+msgstr "캘린더 종료 필드는 날짜 또는 날짜/시간 필드여야 합니다"
 
 #. js-lingui-id: PEXN0U
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar end field must belong to the view object"
-msgstr "캘린더 종료 필드는 뷰 객체에 속해야 합니다."
+msgstr "캘린더 종료 필드는 뷰 객체에 속해야 합니다"
 
 #. js-lingui-id: k6cK5J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar end field not found"
-msgstr "캘린더 종료 필드를 찾을 수 없습니다."
+msgstr "캘린더 종료 필드를 찾을 수 없습니다"
 
 #. js-lingui-id: D3hM1L
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
@@ -1639,24 +1639,24 @@ msgstr "기회에 연결된 캘린더 이벤트"
 #. js-lingui-id: Sn4xhy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar field metadata not found"
-msgstr "캘린더 필드 메타데이터를 찾을 수 없습니다."
+msgstr "캘린더 필드 메타데이터를 찾을 수 없습니다"
 
 #. js-lingui-id: J3xD/M
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar field must be a date or date time field"
-msgstr "캘린더 필드는 날짜 또는 날짜/시간 필드여야 합니다."
+msgstr "캘린더 필드는 날짜 또는 날짜/시간 필드여야 합니다"
 
 #. js-lingui-id: hUOMKq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar field must belong to the view object"
-msgstr "캘린더 필드는 뷰 객체에 속해야 합니다."
+msgstr "캘린더 필드는 뷰 객체에 속해야 합니다"
 
 #. js-lingui-id: 26b8pD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar field not found"
-msgstr "캘린더 필드를 찾을 수 없습니다."
+msgstr "캘린더 필드를 찾을 수 없습니다"
 
 #. js-lingui-id: GtrALl
 #: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
@@ -1667,13 +1667,13 @@ msgstr "캘린더 공급자가 지원되지 않습니다."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar start and end fields must be different"
-msgstr "캘린더 시작 및 종료 필드는 서로 달라야 합니다."
+msgstr "캘린더 시작 및 종료 필드는 서로 달라야 합니다"
 
 #. js-lingui-id: DRukEV
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar start and end fields must have the same type"
-msgstr "캘린더 시작 및 종료 필드는 동일한 유형이어야 합니다."
+msgstr "캘린더 시작 및 종료 필드는 동일한 유형이어야 합니다"
 
 #. js-lingui-id: CnNFfU
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
@@ -1684,13 +1684,13 @@ msgstr "캘린더 동기화 오류."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar view must have a calendar field"
-msgstr "캘린더 뷰에는 캘린더 필드가 있어야 합니다."
+msgstr "캘린더 뷰에는 캘린더 필드가 있어야 합니다"
 
 #. js-lingui-id: JhktJw
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar view must have a calendar layout"
-msgstr "캘린더 뷰에는 캘린더 레이아웃이 있어야 합니다."
+msgstr "캘린더 뷰에는 캘린더 레이아웃이 있어야 합니다"
 
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -1822,7 +1822,7 @@ msgstr "취소됨"
 #. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Cannot activate non-draft or non-last-published version"
-msgstr "초안 또는 마지막으로 게시된 버전이 아닌 버전을 활성화할 수 없습니다."
+msgstr "초안 또는 마지막으로 게시된 버전이 아닌 버전을 활성화할 수 없습니다"
 
 #. js-lingui-id: QYS2AB
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -1951,7 +1951,7 @@ msgstr "객체를 {existingObjectMetadataIdentifier}에서 {updatedObjectMetadat
 #. js-lingui-id: jm1hwE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Cannot modify predicate group to change its role"
-msgstr "역할을 변경하도록 프레디케이트 그룹을 수정할 수 없습니다."
+msgstr "역할을 변경하도록 프레디케이트 그룹을 수정할 수 없습니다"
 
 #. js-lingui-id: yxykz2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -2068,17 +2068,17 @@ msgstr ""
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
-msgstr "재정의할 기존 타임라인 활동 유형을 선택하세요."
+msgstr "재정의할 기존 타임라인 활동 유형을 선택하세요"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the object that emits this timeline activity type"
-msgstr "이 타임라인 활동 유형을 발생시키는 객체를 선택하세요."
+msgstr "이 타임라인 활동 유형을 발생시키는 객체를 선택하세요"
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the relation used by this timeline activity type"
-msgstr "이 타임라인 활동 유형에서 사용할 관계를 선택하세요."
+msgstr "이 타임라인 활동 유형에서 사용할 관계를 선택하세요"
 
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -2142,7 +2142,7 @@ msgstr "위젯 헤더에서 참조하는 명령 메뉴 항목 {commandMenuItemUn
 #. js-lingui-id: Lrx/M5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Command menu item already exists"
-msgstr "명령 메뉴 항목이 이미 존재합니다."
+msgstr "명령 메뉴 항목이 이미 존재합니다"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -2160,7 +2160,7 @@ msgstr ""
 #. js-lingui-id: xO/lDZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Command menu item with same universal identifier already exists"
-msgstr "같은 범용 식별자를 가진 명령 메뉴 항목이 이미 존재합니다."
+msgstr "같은 범용 식별자를 가진 명령 메뉴 항목이 이미 존재합니다"
 
 #. js-lingui-id: /SzXf6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2575,17 +2575,17 @@ msgstr "기본 관계의 이름을 바꾸기 위해 기존 객체 \"{0}\"을(를
 #. js-lingui-id: 5rS7nl
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-label-identifier-on-update-side-effect-handler.service.ts
 msgid "Could not resolve the existing object to reconcile its INDEX label identifier view field"
-msgstr "기존 객체를 확인할 수 없어 INDEX 보기의 레이블 식별자 필드를 조정할 수 없습니다."
+msgstr "기존 객체를 확인할 수 없어 INDEX 보기의 레이블 식별자 필드를 조정할 수 없습니다"
 
 #. js-lingui-id: jx0Apr
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-navigation-command-on-update-side-effect-handler.service.ts
 msgid "Could not resolve the existing object to reconcile its navigation command menu item"
-msgstr "기존 객체를 확인할 수 없어 해당 탐색 명령 메뉴 항목을 조정할 수 없습니다."
+msgstr "기존 객체를 확인할 수 없어 해당 탐색 명령 메뉴 항목을 조정할 수 없습니다"
 
 #. js-lingui-id: TYpgQ/
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
 msgid "Could not resolve the existing object to reconcile its record-page label identifier view field"
-msgstr "기존 객체를 확인할 수 없어 레코드 페이지의 레이블 식별자 보기 필드를 조정할 수 없습니다."
+msgstr "기존 객체를 확인할 수 없어 레코드 페이지의 레이블 식별자 보기 필드를 조정할 수 없습니다"
 
 #. js-lingui-id: hYgDIe
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -3392,7 +3392,7 @@ msgstr "레이아웃 편집"
 #. js-lingui-id: Csg2MU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "either a path payload or navigationTargetObjectMetadataId is required when engineComponentKey is NAVIGATION"
-msgstr "engineComponentKey가 NAVIGATION인 경우 path payload 또는 navigationTargetObjectMetadataId가 필요합니다."
+msgstr "engineComponentKey가 NAVIGATION인 경우 path payload 또는 navigationTargetObjectMetadataId가 필요합니다"
 
 #. js-lingui-id: n6jNyT
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
@@ -4114,7 +4114,7 @@ msgstr "필드 유형 TS_VECTOR의 이름은 \"searchVector\"이어야 합니다
 #. js-lingui-id: VkSxbb
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr "필드 유형 TS_VECTOR은 SYSTEM 쓰기 가능 상태여야 합니다."
+msgstr "필드 유형 TS_VECTOR은 SYSTEM 쓰기 가능 상태여야 합니다"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -4305,7 +4305,7 @@ msgstr "\"{0}\"에 대한 필터가 존재하지 않는 옵션 {invalidValuesTex
 #. js-lingui-id: MkIaen
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util.ts
 msgid "Filter operand is not supported for this field type"
-msgstr "이 필드 유형에서는 필터 연산자를 지원하지 않습니다."
+msgstr "이 필드 유형에서는 필터 연산자를 지원하지 않습니다"
 
 #. js-lingui-id: dzteua
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
@@ -5672,13 +5672,13 @@ msgstr "잘못된 위젯 설정입니다."
 #. js-lingui-id: NSpdub
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
 msgid "Invalid widget position"
-msgstr "잘못된 위젯 위치입니다."
+msgstr "잘못된 위젯 위치입니다"
 
 #. js-lingui-id: 8dS5h/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Invalid widget position layout mode"
-msgstr "잘못된 위젯 위치 레이아웃 모드입니다."
+msgstr "잘못된 위젯 위치 레이아웃 모드입니다"
 
 #. js-lingui-id: bznmUY
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
@@ -5852,7 +5852,7 @@ msgstr "Junction 구성은 ONE_TO_MANY 관계에만 유효합니다"
 #. js-lingui-id: JmUgZR
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction source and target fields must be different"
-msgstr "접합 소스 필드와 대상 필드는 서로 달라야 합니다."
+msgstr "접합 소스 필드와 대상 필드는 서로 달라야 합니다"
 
 #. js-lingui-id: bpqhFq
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
@@ -6102,7 +6102,7 @@ msgstr "관련 작업을 연결했습니다"
 #. js-lingui-id: LXKHX6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Linked and unlinked timeline activity emitters require a target relation"
-msgstr "연결된 및 연결 해제된 타임라인 활동 이미터에는 대상 관계가 필요합니다."
+msgstr "연결된 및 연결 해제된 타임라인 활동 이미터에는 대상 관계가 필요합니다"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -6144,7 +6144,7 @@ msgstr "링크드인"
 #. js-lingui-id: 4yWmVP
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-links-flat-field-metadata.util.ts
 msgid "Links field type must be either a url or a domain"
-msgstr "링크 필드 유형은 url 또는 domain이어야 합니다."
+msgstr "링크 필드 유형은 url 또는 domain이어야 합니다"
 
 #. js-lingui-id: ++iNv7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -6247,7 +6247,7 @@ msgstr "로직 함수가 이미 존재합니다"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Logic function cannot be in PREBUILT mode without a fresh build and a checksum"
-msgstr "Logic function은 신규 빌드와 checksum 없이는 PREBUILT 모드가 될 수 없습니다."
+msgstr "Logic function은 신규 빌드와 checksum 없이는 PREBUILT 모드가 될 수 없습니다"
 
 #. js-lingui-id: mZvaAV
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
@@ -6855,12 +6855,12 @@ msgstr "이름"
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
-msgstr "이름 \"{name}\"을 사용할 수 없습니다."
+msgstr "이름 \"{name}\"을 사용할 수 없습니다"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr "이름 \"{name}\"은 다른 필드에 이미 사용되었기 때문에 사용할 수 없습니다."
+msgstr "이름 \"{name}\"은 다른 필드에 이미 사용되었기 때문에 사용할 수 없습니다"
 
 #. js-lingui-id: dBDpp2
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
@@ -6908,7 +6908,7 @@ msgstr "워크플로 실행 이름"
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Names are not synced with labels"
-msgstr "이름이 레이블과 동기화되지 않았습니다."
+msgstr "이름이 레이블과 동기화되지 않았습니다"
 
 #. js-lingui-id: zL+3RN
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -7935,17 +7935,17 @@ msgstr "비밀번호가 너무 약합니다"
 #. js-lingui-id: GisVJf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "payload and navigationTargetObjectMetadataId are mutually exclusive"
-msgstr "payload와 navigationTargetObjectMetadataId는 함께 사용할 수 없습니다."
+msgstr "payload와 navigationTargetObjectMetadataId는 함께 사용할 수 없습니다"
 
 #. js-lingui-id: yo0H/o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "payload must contain a non-empty \"path\" property"
-msgstr "payload에는 비어 있지 않은 \"path\" 속성이 포함되어야 합니다."
+msgstr "payload에는 비어 있지 않은 \"path\" 속성이 포함되어야 합니다"
 
 #. js-lingui-id: bfB+si
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Payload must contain a path"
-msgstr "Payload에는 path가 포함되어야 합니다."
+msgstr "Payload에는 path가 포함되어야 합니다"
 
 #. js-lingui-id: iJh5U7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -8165,7 +8165,7 @@ msgstr ""
 #. js-lingui-id: Zm9s4F
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util.ts
 msgid "Please enter a domain name, like twenty.com"
-msgstr "twenty.com과 같은 도메인 이름을 입력하세요."
+msgstr "twenty.com과 같은 도메인 이름을 입력하세요"
 
 #. js-lingui-id: qgasuj
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -8278,7 +8278,7 @@ msgstr "조건에 값이 없습니다."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicate value is not valid for this operand"
-msgstr "이 피연산자에 대해 조건 값이 올바르지 않습니다."
+msgstr "이 피연산자에 대해 조건 값이 올바르지 않습니다"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8659,7 +8659,7 @@ msgstr "이 권한을 삭제하기 전에 모든 역할에서 제거하십시오
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "removed an attachment"
-msgstr "첨부 파일을 삭제했습니다."
+msgstr "첨부 파일을 삭제했습니다"
 
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -9590,7 +9590,7 @@ msgstr "표준 에이전트는 수정할 수 없습니다."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "Standard objects cannot be deleted"
-msgstr "표준 객체는 삭제할 수 없습니다."
+msgstr "표준 객체는 삭제할 수 없습니다"
 
 #. js-lingui-id: Xn/1qY
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
@@ -10304,12 +10304,12 @@ msgstr "파일 업로드가 완료되지 않았습니다. 다시 업로드해 �
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The front component used by this timeline activity type is not available"
-msgstr "이 타임라인 활동 유형에서 사용하는 프런트 컴포넌트를 사용할 수 없습니다."
+msgstr "이 타임라인 활동 유형에서 사용하는 프런트 컴포넌트를 사용할 수 없습니다"
 
 #. js-lingui-id: 840b8q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The happensAt field used by this timeline activity type is not available"
-msgstr "이 타임라인 활동 유형에서 사용하는 happensAt 필드를 사용할 수 없습니다."
+msgstr "이 타임라인 활동 유형에서 사용하는 happensAt 필드를 사용할 수 없습니다"
 
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -10377,7 +10377,7 @@ msgstr "업데이트할 객체를 찾을 수 없어 해당 INDEX 보기를 조�
 #. js-lingui-id: uBRmyY
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-navigation-command-on-update-side-effect-handler.service.ts
 msgid "The object to update could not be found to reconcile its navigation command"
-msgstr "업데이트할 객체를 찾을 수 없어 해당 탐색 명령을 조정할 수 없습니다."
+msgstr "업데이트할 객체를 찾을 수 없어 해당 탐색 명령을 조정할 수 없습니다"
 
 #. js-lingui-id: /QTsIU
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
@@ -10387,7 +10387,7 @@ msgstr "업데이트할 객체를 찾을 수 없어 해당 레코드 페이지�
 #. js-lingui-id: QaaKZQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The object used by this timeline activity type is not available"
-msgstr "이 타임라인 활동 유형에서 사용하는 객체를 사용할 수 없습니다."
+msgstr "이 타임라인 활동 유형에서 사용하는 객체를 사용할 수 없습니다"
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -10504,17 +10504,17 @@ msgstr "이 구독은 더 이상 제공자에서 사용할 수 없습니다."
 #. js-lingui-id: Eq5YMK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The target relation used by this timeline activity type is not available"
-msgstr "이 타임라인 활동 유형에서 사용하는 대상 관계를 사용할 수 없습니다."
+msgstr "이 타임라인 활동 유형에서 사용하는 대상 관계를 사용할 수 없습니다"
 
 #. js-lingui-id: PLlXuR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The timeline activity type override is not compatible with this event"
-msgstr "타임라인 활동 유형 재정의는 이 이벤트와 호환되지 않습니다."
+msgstr "타임라인 활동 유형 재정의는 이 이벤트와 호환되지 않습니다"
 
 #. js-lingui-id: IT44Du
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The trigger fields used by this timeline activity type are not available"
-msgstr "이 타임라인 활동 유형에서 사용하는 트리거 필드를 사용할 수 없습니다."
+msgstr "이 타임라인 활동 유형에서 사용하는 트리거 필드를 사용할 수 없습니다"
 
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -11186,13 +11186,13 @@ msgstr "대시보드에 연결된 타임라인 활동"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Timeline Activities linked to the note."
-msgstr "노트에 연결된 타임라인 활동"
+msgstr "노트에 연결된 타임라인 활동."
 
 #. js-lingui-id: UkwlVE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Timeline Activities linked to the opportunity."
-msgstr "기회에 연결된 타임라인 활동"
+msgstr "기회에 연결된 타임라인 활동."
 
 #. js-lingui-id: XXuJwA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -11204,7 +11204,7 @@ msgstr "실행에 연결된 타임라인 활동"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Timeline Activities linked to the task."
-msgstr "작업에 연결된 타임라인 활동"
+msgstr "작업에 연결된 타임라인 활동."
 
 #. js-lingui-id: klDmCR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -11234,7 +11234,7 @@ msgstr "타임라인 활동 레코드 위치"
 #. placeholder {0}: conflictingResolverType?.name ?? timelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type conflicts with {0} for the same action, object, and target relation"
-msgstr "타임라인 활동 유형이 동일한 작업, 객체 및 대상 관계에 대해 {0}과(와) 충돌합니다."
+msgstr "타임라인 활동 유형이 동일한 작업, 객체 및 대상 관계에 대해 {0}과(와) 충돌합니다"
 
 #. js-lingui-id: xFv7OI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -11246,7 +11246,7 @@ msgstr "이 이벤트를 설명하는 타임라인 활동 유형"
 #. js-lingui-id: yi1Kgg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type happensAt field must be a date field on the source object of a linked relation event"
-msgstr "타임라인 활동 유형의 happensAt 필드는 연결된 관계 이벤트의 소스 객체에 있는 날짜 필드여야 합니다."
+msgstr "타임라인 활동 유형의 happensAt 필드는 연결된 관계 이벤트의 소스 객체에 있는 날짜 필드여야 합니다"
 
 #. js-lingui-id: sqmSqj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11281,27 +11281,27 @@ msgstr "타임라인 활동 유형을 찾을 수 없습니다."
 #. js-lingui-id: 0VIqW4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type override must reference a compatible type owned by the target object's application"
-msgstr "타임라인 활동 유형 재정의는 대상 객체의 애플리케이션이 소유한 호환 가능한 유형을 참조해야 합니다."
+msgstr "타임라인 활동 유형 재정의는 대상 객체의 애플리케이션이 소유한 호환 가능한 유형을 참조해야 합니다"
 
 #. js-lingui-id: kfv1kx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references a front component that does not belong to its application"
-msgstr "타임라인 활동 유형이 해당 애플리케이션에 속하지 않는 프런트 컴포넌트를 참조합니다."
+msgstr "타임라인 활동 유형이 해당 애플리케이션에 속하지 않는 프런트 컴포넌트를 참조합니다"
 
 #. js-lingui-id: f7+vxa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references an object that does not exist"
-msgstr "타임라인 활동 유형이 존재하지 않는 객체를 참조합니다."
+msgstr "타임라인 활동 유형이 존재하지 않는 객체를 참조합니다"
 
 #. js-lingui-id: Y9ZQls
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type target relation must be a direct or junction relation on its source object"
-msgstr "타임라인 활동 유형 대상 관계는 소스 객체에서 직접 관계 또는 접합 관계여야 합니다."
+msgstr "타임라인 활동 유형 대상 관계는 소스 객체에서 직접 관계 또는 접합 관계여야 합니다"
 
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event"
-msgstr "타임라인 활동 유형 트리거 필드는 업데이트된 관계 이벤트의 소스 객체에 있는 비어 있지 않은 필드여야 합니다."
+msgstr "타임라인 활동 유형 트리거 필드는 업데이트된 관계 이벤트의 소스 객체에 있는 비어 있지 않은 필드여야 합니다"
 
 #. js-lingui-id: 8VTlb5
 #. placeholder {0}: timelineActivityType.name
@@ -11444,7 +11444,7 @@ msgstr "애플리케이션 패키지를 가져올 수 없습니다."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
-msgstr "필드 {fieldName}의 유형 {fieldType}에 대한 고유 인덱스를 생성할 수 없습니다."
+msgstr "필드 {fieldName}의 유형 {fieldType}에 대한 고유 인덱스를 생성할 수 없습니다"
 
 #. js-lingui-id: lIud+S
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts
@@ -12180,12 +12180,12 @@ msgstr "삭제할 뷰를 찾을 수 없습니다."
 #. js-lingui-id: NnD3Ti
 #: src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util.ts
 msgid "View to destroy not found"
-msgstr "삭제할 뷰를 찾을 수 없습니다."
+msgstr "삭제할 뷰를 찾을 수 없습니다"
 
 #. js-lingui-id: 3+GbNY
 #: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
 msgid "View to update not found"
-msgstr "업데이트할 뷰를 찾을 수 없습니다."
+msgstr "업데이트할 뷰를 찾을 수 없습니다"
 
 #. js-lingui-id: RvdHYC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts

@@ -374,7 +374,7 @@ msgstr "Um tipo de atividade da linha do tempo direcionado ao objeto de outro ap
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type with this name already exists for this application"
-msgstr "Já existe um tipo de atividade da linha do tempo com este nome para este aplicativo."
+msgstr "Já existe um tipo de atividade da linha do tempo com este nome para este aplicativo"
 
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -943,13 +943,13 @@ msgstr "Falha na atualização da aplicação."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable key is required"
-msgstr "A chave da variável do aplicativo é obrigatória."
+msgstr "A chave da variável do aplicativo é obrigatória"
 
 #. js-lingui-id: K+YEBR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable key must be unique"
-msgstr "A chave da variável do aplicativo deve ser única."
+msgstr "A chave da variável do aplicativo deve ser única"
 
 #. js-lingui-id: e6tjp1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
@@ -3099,7 +3099,7 @@ msgstr "O valor padrão deve ser uma string"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value should be as quoted string"
-msgstr "O valor padrão deve ser uma string entre aspas."
+msgstr "O valor padrão deve ser uma string entre aspas"
 
 #. js-lingui-id: 6pJV03
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -11433,7 +11433,7 @@ msgstr "É necessária a verificação da autenticação em duas etapas."
 #. js-lingui-id: Qx95XY
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Udpated field is not a morph relation or a relation"
-msgstr "O campo atualizado não é uma relação polimórfica nem uma relação."
+msgstr "O campo atualizado não é uma relação polimórfica nem uma relação"
 
 #. js-lingui-id: SpmRxi
 #: src/engine/core-modules/application/application.exception.ts
@@ -11953,7 +11953,7 @@ msgstr "Campo de visualização a ser destruído não encontrado"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "View field to update not found"
-msgstr "Campo a ser atualizado não encontrado no \"View\"."
+msgstr "Campo a ser atualizado não encontrado no \"View\""
 
 #. js-lingui-id: AprfQL
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
@@ -12072,7 +12072,7 @@ msgstr "Grupo de visualização a ser atualizado não encontrado."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
 msgid "View group to update parent view not found"
-msgstr "Grupo de visualização a ser atualizado para visualização pai não encontrado."
+msgstr "Grupo de visualização a ser atualizado para visualização pai não encontrado"
 
 #. js-lingui-id: M7KWZV
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts

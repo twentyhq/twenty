@@ -369,7 +369,7 @@ msgstr "Si è verificato un errore di rete temporaneo."
 #. js-lingui-id: WzDeE/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
-msgstr "Un tipo di attività della cronologia che ha come destinazione l'oggetto di un'altra applicazione deve dichiarare il tipo di attività della cronologia che sostituisce."
+msgstr "Un tipo di attività della cronologia che ha come destinazione l'oggetto di un'altra applicazione deve dichiarare il tipo di attività della cronologia che sostituisce"
 
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts

@@ -715,7 +715,7 @@ msgstr "Un agent portant ce nom existe déjà."
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "An application timeline activity emitter must target one of its objects"
-msgstr "Un émetteur d'activité de chronologie d'application doit cibler l'un de ses objets."
+msgstr "Un émetteur d'activité de chronologie d'application doit cibler l'un de ses objets"
 
 #. js-lingui-id: VID94s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -844,7 +844,7 @@ msgstr "Une autre application dans cet espace de travail a déjà enregistré un
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Another timeline activity type already handles this action, object, and target relation"
-msgstr "Un autre type d'activité de chronologie gère déjà cette action, cet objet et cette relation cible."
+msgstr "Un autre type d'activité de chronologie gère déjà cette action, cet objet et cette relation cible"
 
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -972,7 +972,7 @@ msgstr "Le domaine d'accès approuvé est déjà enregistré."
 #. js-lingui-id: DGW5iN
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approved access domain does not match email domain"
-msgstr "Le domaine d’accès approuvé ne correspond pas au domaine d’email."
+msgstr "Le domaine d’accès approuvé ne correspond pas au domaine d’email"
 
 #. js-lingui-id: BKvuAq
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -2068,17 +2068,17 @@ msgstr "Le titre du fil de discussion ne peut pas être vide."
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
-msgstr "Choisissez un type d'activité de chronologie existant à remplacer."
+msgstr "Choisissez un type d'activité de chronologie existant à remplacer"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the object that emits this timeline activity type"
-msgstr "Choisissez l'objet qui émet ce type d'activité de chronologie."
+msgstr "Choisissez l'objet qui émet ce type d'activité de chronologie"
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the relation used by this timeline activity type"
-msgstr "Choisissez la relation utilisée par ce type d'activité de chronologie."
+msgstr "Choisissez la relation utilisée par ce type d'activité de chronologie"
 
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -6102,7 +6102,7 @@ msgstr "a lié une tâche associée"
 #. js-lingui-id: LXKHX6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Linked and unlinked timeline activity emitters require a target relation"
-msgstr "Les émetteurs d'activité de chronologie liés et non liés nécessitent une relation cible."
+msgstr "Les émetteurs d'activité de chronologie liés et non liés nécessitent une relation cible"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -10304,7 +10304,7 @@ msgstr "Le téléversement du fichier n'a pas été terminé. Veuillez réessaye
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The front component used by this timeline activity type is not available"
-msgstr "Le composant frontal utilisé par ce type d'activité de chronologie n'est pas disponible."
+msgstr "Le composant frontal utilisé par ce type d'activité de chronologie n'est pas disponible"
 
 #. js-lingui-id: 840b8q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10387,7 +10387,7 @@ msgstr "L’objet à mettre à jour est introuvable pour réconcilier sa page d�
 #. js-lingui-id: QaaKZQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The object used by this timeline activity type is not available"
-msgstr "L'objet utilisé par ce type d'activité de chronologie n'est pas disponible."
+msgstr "L'objet utilisé par ce type d'activité de chronologie n'est pas disponible"
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -10504,17 +10504,17 @@ msgstr "L’abonnement n’est plus disponible chez le fournisseur."
 #. js-lingui-id: Eq5YMK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The target relation used by this timeline activity type is not available"
-msgstr "La relation cible utilisée par ce type d'activité de chronologie n'est pas disponible."
+msgstr "La relation cible utilisée par ce type d'activité de chronologie n'est pas disponible"
 
 #. js-lingui-id: PLlXuR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The timeline activity type override is not compatible with this event"
-msgstr "Le remplacement du type d'activité de chronologie n'est pas compatible avec cet événement."
+msgstr "Le remplacement du type d'activité de chronologie n'est pas compatible avec cet événement"
 
 #. js-lingui-id: IT44Du
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The trigger fields used by this timeline activity type are not available"
-msgstr "Les champs déclencheurs utilisés par ce type d'activité de chronologie ne sont pas disponibles."
+msgstr "Les champs déclencheurs utilisés par ce type d'activité de chronologie ne sont pas disponibles"
 
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -11234,7 +11234,7 @@ msgstr "Position de l'enregistrement de l'activité de la chronologie"
 #. placeholder {0}: conflictingResolverType?.name ?? timelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type conflicts with {0} for the same action, object, and target relation"
-msgstr "Le type d'activité de chronologie est en conflit avec {0} pour la même action, le même objet et la même relation cible."
+msgstr "Le type d'activité de chronologie est en conflit avec {0} pour la même action, le même objet et la même relation cible"
 
 #. js-lingui-id: xFv7OI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -11281,17 +11281,17 @@ msgstr "Type d'activité de chronologie introuvable."
 #. js-lingui-id: 0VIqW4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type override must reference a compatible type owned by the target object's application"
-msgstr "Le remplacement du type d'activité de chronologie doit référencer un type compatible appartenant à l'application de l'objet cible."
+msgstr "Le remplacement du type d'activité de chronologie doit référencer un type compatible appartenant à l'application de l'objet cible"
 
 #. js-lingui-id: kfv1kx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references a front component that does not belong to its application"
-msgstr "Le type d'activité de chronologie référence un composant frontal qui n'appartient pas à son application."
+msgstr "Le type d'activité de chronologie référence un composant frontal qui n'appartient pas à son application"
 
 #. js-lingui-id: f7+vxa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references an object that does not exist"
-msgstr "Le type d'activité de chronologie référence un objet qui n'existe pas."
+msgstr "Le type d'activité de chronologie référence un objet qui n'existe pas"
 
 #. js-lingui-id: Y9ZQls
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11301,7 +11301,7 @@ msgstr "La relation cible du type d’activité de la chronologie doit être une
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event"
-msgstr "Les champs déclencheurs du type d'activité de chronologie doivent être des champs non vides sur l'objet source d'un événement de relation mis à jour."
+msgstr "Les champs déclencheurs du type d'activité de chronologie doivent être des champs non vides sur l'objet source d'un événement de relation mis à jour"
 
 #. js-lingui-id: 8VTlb5
 #. placeholder {0}: timelineActivityType.name

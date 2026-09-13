@@ -369,7 +369,7 @@ msgstr "Tapahtui tilapäinen verkkovirhe."
 #. js-lingui-id: WzDeE/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
-msgstr "Toisen sovelluksen objektiin kohdistuvan aikajanatoimintotyypin on ilmoitettava aikajanatoimintotyyppi, jonka se korvaa."
+msgstr "Toisen sovelluksen objektiin kohdistuvan aikajanatoimintotyypin on ilmoitettava aikajanatoimintotyyppi, jonka se korvaa"
 
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -715,7 +715,7 @@ msgstr "Tämän niminen agentti on jo olemassa."
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "An application timeline activity emitter must target one of its objects"
-msgstr "Sovelluksen aikajanatoiminnon lähettäjän on kohdistuttava johonkin sen objekteista."
+msgstr "Sovelluksen aikajanatoiminnon lähettäjän on kohdistuttava johonkin sen objekteista"
 
 #. js-lingui-id: VID94s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -844,7 +844,7 @@ msgstr "Toinen sovellus tässä työtilassa on jo rekisteröinyt käyttöoikeusl
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Another timeline activity type already handles this action, object, and target relation"
-msgstr "Toinen aikajanatoimintotyyppi käsittelee jo tämän toiminnon, objektin ja kohdesuhteen."
+msgstr "Toinen aikajanatoimintotyyppi käsittelee jo tämän toiminnon, objektin ja kohdesuhteen"
 
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -2068,17 +2068,17 @@ msgstr "Keskusteluketjun otsikko ei saa olla tyhjä."
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
-msgstr "Valitse korvattava olemassa oleva aikajanatoimintotyyppi."
+msgstr "Valitse korvattava olemassa oleva aikajanatoimintotyyppi"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the object that emits this timeline activity type"
-msgstr "Valitse objekti, joka lähettää tämän aikajanatoimintotyypin."
+msgstr "Valitse objekti, joka lähettää tämän aikajanatoimintotyypin"
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the relation used by this timeline activity type"
-msgstr "Valitse tämän aikajanatoimintotyypin käyttämä suhde."
+msgstr "Valitse tämän aikajanatoimintotyypin käyttämä suhde"
 
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -2366,7 +2366,7 @@ msgstr "Ristiriitainen puhelimen maatunnus."
 #. js-lingui-id: 1fFL4B
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
-msgstr "Yhteyden muodostaminen ei ole sallittua kohteelle {connectFieldName} kohteeseen {objectMetadataNameSingular}."
+msgstr "Yhteyden muodostaminen ei ole sallittua kohteelle {connectFieldName} kohteeseen {objectMetadataNameSingular}"
 
 #. js-lingui-id: /OJTzk
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -4294,7 +4294,7 @@ msgstr "Tiedostot"
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
-msgstr "Files-kenttää ei tueta yksilöllisille kentille."
+msgstr "Files-kenttää ei tueta yksilöllisille kentille"
 
 #. js-lingui-id: PR/KbU
 #. placeholder {0}: referencedFieldMetadata.label
@@ -4305,7 +4305,7 @@ msgstr "Suodatin kentässä \"{0}\" käyttää vaihtoehtoja {invalidValuesText},
 #. js-lingui-id: MkIaen
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util.ts
 msgid "Filter operand is not supported for this field type"
-msgstr "Suodatusoperaattoria ei tueta tälle kenttätyypille."
+msgstr "Suodatusoperaattoria ei tueta tälle kenttätyypille"
 
 #. js-lingui-id: dzteua
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
@@ -5925,7 +5925,7 @@ msgstr "Avain vaaditaan"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Kind of principal receiving the access"
-msgstr "Käyttöoikeuden vastaanottavan päämiehen tyyppi."
+msgstr "Käyttöoikeuden vastaanottavan päämiehen tyyppi"
 
 #. js-lingui-id: 6sFS+I
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
@@ -6102,7 +6102,7 @@ msgstr "linkitti liittyvän tehtävän"
 #. js-lingui-id: LXKHX6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Linked and unlinked timeline activity emitters require a target relation"
-msgstr "Linkitetyt ja linkittämättömät aikajanatoimintojen lähettäjät edellyttävät kohdesuhdetta."
+msgstr "Linkitetyt ja linkittämättömät aikajanatoimintojen lähettäjät edellyttävät kohdesuhdetta"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -6772,7 +6772,7 @@ msgstr "Migraation suoritus epäonnistui."
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Minute value cannot exceed 60. For intervals greater than 60 minutes, use the \"Hours\" trigger type or a custom cron expression"
-msgstr "Minuuttiarvo ei voi olla yli 60. Yli 60 minuutin väleillä käytä \"Tunnit\"-laukaisintyyppiä tai mukautettua cron-lauseketta."
+msgstr "Minuuttiarvo ei voi olla yli 60. Yli 60 minuutin väleillä käytä \"Tunnit\"-laukaisintyyppiä tai mukautettua cron-lauseketta"
 
 #. js-lingui-id: lCnasH
 #: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
@@ -8388,7 +8388,7 @@ msgstr "Annettu puhelinnumero on virheellinen {number}"
 #. js-lingui-id: OL88cI
 #: src/engine/core-modules/public-domain/public-domain.service.ts
 msgid "Public domain already registered"
-msgstr "Julkinen domain on jo rekisteröity."
+msgstr "Julkinen domain on jo rekisteröity"
 
 #. js-lingui-id: Vr4xfK
 #: src/engine/core-modules/public-domain/public-domain.exception.ts
@@ -10304,7 +10304,7 @@ msgstr "Tiedoston latausta ei ole suoritettu loppuun. Yritä latausta uudelleen.
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The front component used by this timeline activity type is not available"
-msgstr "Tämän aikajanatoimintotyypin käyttämä frontend-komponentti ei ole käytettävissä."
+msgstr "Tämän aikajanatoimintotyypin käyttämä frontend-komponentti ei ole käytettävissä"
 
 #. js-lingui-id: 840b8q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10387,7 +10387,7 @@ msgstr "Päivitettävää objektia ei löytynyt sen tietuesivun täsmäyttämist
 #. js-lingui-id: QaaKZQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The object used by this timeline activity type is not available"
-msgstr "Tämän aikajanatoimintotyypin käyttämä objekti ei ole käytettävissä."
+msgstr "Tämän aikajanatoimintotyypin käyttämä objekti ei ole käytettävissä"
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -10504,17 +10504,17 @@ msgstr "Tilausta ei ole enää saatavilla palveluntarjoajalla."
 #. js-lingui-id: Eq5YMK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The target relation used by this timeline activity type is not available"
-msgstr "Tämän aikajanatoimintotyypin käyttämä kohdesuhde ei ole käytettävissä."
+msgstr "Tämän aikajanatoimintotyypin käyttämä kohdesuhde ei ole käytettävissä"
 
 #. js-lingui-id: PLlXuR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The timeline activity type override is not compatible with this event"
-msgstr "Aikajanatoimintotyypin korvaus ei ole yhteensopiva tämän tapahtuman kanssa."
+msgstr "Aikajanatoimintotyypin korvaus ei ole yhteensopiva tämän tapahtuman kanssa"
 
 #. js-lingui-id: IT44Du
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The trigger fields used by this timeline activity type are not available"
-msgstr "Tämän aikajanatoimintotyypin käyttämät laukaisukentät eivät ole käytettävissä."
+msgstr "Tämän aikajanatoimintotyypin käyttämät laukaisukentät eivät ole käytettävissä"
 
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -11234,7 +11234,7 @@ msgstr "Aikajanatapahtuman tietueen sijainti"
 #. placeholder {0}: conflictingResolverType?.name ?? timelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type conflicts with {0} for the same action, object, and target relation"
-msgstr "Aikajanatoimintotyyppi on ristiriidassa kohteen {0} kanssa saman toiminnon, objektin ja kohdesuhteen osalta."
+msgstr "Aikajanatoimintotyyppi on ristiriidassa kohteen {0} kanssa saman toiminnon, objektin ja kohdesuhteen osalta"
 
 #. js-lingui-id: xFv7OI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -11281,17 +11281,17 @@ msgstr "Aikajanatoimintotyyppiä ei löytynyt."
 #. js-lingui-id: 0VIqW4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type override must reference a compatible type owned by the target object's application"
-msgstr "Aikajanatoimintotyypin korvauksen on viitattava yhteensopivaan tyyppiin, joka kuuluu kohdeobjektin sovellukselle."
+msgstr "Aikajanatoimintotyypin korvauksen on viitattava yhteensopivaan tyyppiin, joka kuuluu kohdeobjektin sovellukselle"
 
 #. js-lingui-id: kfv1kx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references a front component that does not belong to its application"
-msgstr "Aikajanatoimintotyyppi viittaa frontend-komponenttiin, joka ei kuulu sen sovellukselle."
+msgstr "Aikajanatoimintotyyppi viittaa frontend-komponenttiin, joka ei kuulu sen sovellukselle"
 
 #. js-lingui-id: f7+vxa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references an object that does not exist"
-msgstr "Aikajanatoimintotyyppi viittaa objektiin, jota ei ole olemassa."
+msgstr "Aikajanatoimintotyyppi viittaa objektiin, jota ei ole olemassa"
 
 #. js-lingui-id: Y9ZQls
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11301,7 +11301,7 @@ msgstr "Aikajanan aktiviteettityypin kohderelaation on oltava suora tai liitosre
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event"
-msgstr "Aikajanatoimintotyypin laukaisukenttien on oltava ei-tyhjiä kenttiä suhteen päivitystapahtuman lähdeobjektissa."
+msgstr "Aikajanatoimintotyypin laukaisukenttien on oltava ei-tyhjiä kenttiä suhteen päivitystapahtuman lähdeobjektissa"
 
 #. js-lingui-id: 8VTlb5
 #. placeholder {0}: timelineActivityType.name
@@ -12401,17 +12401,17 @@ msgstr "Widget ulottuu ruudukon leveyden yli"
 #. js-lingui-id: GE0fWY
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header actions must be unique"
-msgstr "Pienoisohjelman otsaketoimintojen on oltava yksilöllisiä."
+msgstr "Pienoisohjelman otsaketoimintojen on oltava yksilöllisiä"
 
 #. js-lingui-id: djzz9p
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header actions must belong to the same application as the widget"
-msgstr "Pienoisohjelman otsaketoimintojen on kuuluttava samaan sovellukseen kuin pienoisohjelma."
+msgstr "Pienoisohjelman otsaketoimintojen on kuuluttava samaan sovellukseen kuin pienoisohjelma"
 
 #. js-lingui-id: pjpuGA
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header command menu item references must be unique"
-msgstr "Pienoisohjelman otsakkeen komentovalikkokohteiden viittausten on oltava yksilöllisiä."
+msgstr "Pienoisohjelman otsakkeen komentovalikkokohteiden viittausten on oltava yksilöllisiä"
 
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
