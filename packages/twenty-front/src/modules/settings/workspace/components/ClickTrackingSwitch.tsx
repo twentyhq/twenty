@@ -22,18 +22,22 @@ export const ClickTrackingSwitch = () => {
       throw new Error('User is not logged in');
     }
 
-    const isClickTrackingEnabled = !currentWorkspace.isClickTrackingEnabled;
+    const isCampaignClickTrackingEnabled =
+      !currentWorkspace.isCampaignClickTrackingEnabled;
 
     try {
-      setCurrentWorkspace({ ...currentWorkspace, isClickTrackingEnabled });
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        isCampaignClickTrackingEnabled,
+      });
 
       await updateWorkspace({
-        variables: { input: { isClickTrackingEnabled } },
+        variables: { input: { isCampaignClickTrackingEnabled } },
       });
     } catch (err: any) {
       setCurrentWorkspace({
         ...currentWorkspace,
-        isClickTrackingEnabled: !isClickTrackingEnabled,
+        isCampaignClickTrackingEnabled: !isCampaignClickTrackingEnabled,
       });
       enqueueErrorSnackBar({
         apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
@@ -50,7 +54,7 @@ export const ClickTrackingSwitch = () => {
             Icon={IconClick}
             title={t`Track link clicks`}
             description={t`Count clicks by routing campaign links through Twenty before the original page.`}
-            checked={currentWorkspace.isClickTrackingEnabled}
+            checked={currentWorkspace.isCampaignClickTrackingEnabled}
             onChange={handleChange}
           />
         </Card>

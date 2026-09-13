@@ -97,13 +97,14 @@ export class CampaignTrackingContentService {
       return untracked;
     }
 
-    const { isClickTrackingEnabled, isOpenTrackingEnabled } = workspace;
+    const { isCampaignClickTrackingEnabled, isCampaignOpenTrackingEnabled } =
+      workspace;
 
-    const urlTemplates = isClickTrackingEnabled
+    const urlTemplates = isCampaignClickTrackingEnabled
       ? collectTrackableLinkUrls(html)
       : [];
 
-    if (urlTemplates.length === 0 && !isOpenTrackingEnabled) {
+    if (urlTemplates.length === 0 && !isCampaignOpenTrackingEnabled) {
       return untracked;
     }
 
@@ -137,7 +138,7 @@ export class CampaignTrackingContentService {
         template,
         textPartHtml,
         urlTemplates,
-        withOpenPixel: isOpenTrackingEnabled,
+        withOpenPixel: isCampaignOpenTrackingEnabled,
       }),
       replacementsByDeliveryId: new Map(
         recipients.map((recipient) => [
@@ -150,13 +151,13 @@ export class CampaignTrackingContentService {
                   recipient,
                   urlTemplates,
                   shortLinkIdByUrl,
-                  withOpenPixel: isOpenTrackingEnabled,
+                  withOpenPixel: isCampaignOpenTrackingEnabled,
                 })
               : this.buildUntrackedReplacements({
                   baseUrl,
                   recipient,
                   urlTemplates,
-                  withOpenPixel: isOpenTrackingEnabled,
+                  withOpenPixel: isCampaignOpenTrackingEnabled,
                 })),
           },
         ]),

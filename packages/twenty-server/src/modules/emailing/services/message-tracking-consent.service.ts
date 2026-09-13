@@ -63,8 +63,8 @@ export class MessageTrackingConsentService {
     });
 
     if (
-      !workspace?.isClickTrackingEnabled &&
-      !workspace?.isOpenTrackingEnabled
+      !workspace?.isCampaignClickTrackingEnabled &&
+      !workspace?.isCampaignOpenTrackingEnabled
     ) {
       return undefined;
     }
@@ -84,8 +84,8 @@ export class MessageTrackingConsentService {
     });
 
     if (
-      !workspace?.isClickTrackingEnabled &&
-      !workspace?.isOpenTrackingEnabled
+      !workspace?.isCampaignClickTrackingEnabled &&
+      !workspace?.isCampaignOpenTrackingEnabled
     ) {
       return new Set();
     }

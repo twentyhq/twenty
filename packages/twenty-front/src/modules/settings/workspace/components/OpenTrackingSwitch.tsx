@@ -22,18 +22,22 @@ export const OpenTrackingSwitch = () => {
       throw new Error('User is not logged in');
     }
 
-    const isOpenTrackingEnabled = !currentWorkspace.isOpenTrackingEnabled;
+    const isCampaignOpenTrackingEnabled =
+      !currentWorkspace.isCampaignOpenTrackingEnabled;
 
     try {
-      setCurrentWorkspace({ ...currentWorkspace, isOpenTrackingEnabled });
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        isCampaignOpenTrackingEnabled,
+      });
 
       await updateWorkspace({
-        variables: { input: { isOpenTrackingEnabled } },
+        variables: { input: { isCampaignOpenTrackingEnabled } },
       });
     } catch (err: any) {
       setCurrentWorkspace({
         ...currentWorkspace,
-        isOpenTrackingEnabled: !isOpenTrackingEnabled,
+        isCampaignOpenTrackingEnabled: !isCampaignOpenTrackingEnabled,
       });
       enqueueErrorSnackBar({
         apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
@@ -50,7 +54,7 @@ export const OpenTrackingSwitch = () => {
             Icon={IconEye}
             title={t`Track opens`}
             description={t`Count opens with a hidden image. An estimate, since mail clients may block or preload it.`}
-            checked={currentWorkspace.isOpenTrackingEnabled}
+            checked={currentWorkspace.isCampaignOpenTrackingEnabled}
             onChange={handleChange}
           />
         </Card>
