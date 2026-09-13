@@ -99,7 +99,7 @@ which Microsoft documents as seven explicit checks for exactly this case.
 | Suggested prompts | `assistant.threads.setSuggestedPrompts` on `app_home_opened` | Manifest `commandLists` (static) | Small |
 | Channel welcome | `member_joined_channel` | `conversationUpdate` with `membersAdded` containing the bot | Yes |
 | Un-mentioned follow-ups | `message.channels` / `message.groups` events | RSC permission `ChannelMessage.Read.Group` / `ChatMessage.Read.Chat` in manifest, consented by the team owner at install | Partial, see Blocker 6 |
-| Who is asking | `user` id, `users.info` gives verified email | `from.aadObjectId`; `GET /v3/conversations/{id}/members/{userId}` returns `email` and `userPrincipalName` for same-tenant members, no Graph permission needed | Yes |
+| Who is asking | `user` id, `users.info` gives verified email | `from.aadObjectId`. Whether the bot member API still returns `email` is unresolved, see Blocker 2b | Unresolved |
 | Roster sweep | `users.list` paged | Paged members API per team; personal-scope installs have no roster, so a tenant-wide sweep needs Graph `User.ReadBasic.All` on the admin's delegated token | Partial |
 | Consent DM | `conversations.open` + `im:write` | `POST /v3/conversations` with `tenantId` and the member, then post | Yes |
 | Uninstall / revoke | `app_uninstalled`, `tokens_revoked` | `installationUpdate` with `action: remove` | Yes |
@@ -121,10 +121,28 @@ Consequences:
 
 - **Twenty Cloud** needs a Partner Center account, a Store submission, and a
   pass through the Teams Store and Agent Store validation guidelines (AI label
-  and feedback buttons are policy requirements for agents). Microsoft quotes
-  up to four weeks from first submission to approval, and every manifest change
-  (new permission, new scope) is a resubmission. From July 2026,
-  channel-enabled apps must use manifest schema 1.25 or later.
+  and feedback buttons are policy requirements for agents). Review is iterative
+  rather than one wait: Microsoft returns a test report within 24 working hours
+  of each submission, categorised into must-fix, good-to-fix and blockers, and
+  the cycle repeats until it passes, then at least one business day to appear.
+  Total time depends on how many rounds we need, so plan in weeks. Every
+  manifest change (new permission, new scope) is a resubmission. Since July 2026
+  channel-enabled apps must use manifest schema 1.25 or later, so that binds our
+  first submission rather than being a future deadline.
+- **Publisher verification is a prerequisite**, and it gates more than the store.
+  It needs a verified Microsoft AI Cloud Partner Program account that is the
+  partner global account (a location id will not do), the app registered from a
+  work account in a tenant associated with that account, and a publisher domain
+  that cannot be `*.onmicrosoft.com`, so a DNS-verified company domain is
+  required. Whoever runs it needs Application Administrator in Entra and Partner
+  Admin or Account Admin in Partner Center, with MFA. Microsoft charges nothing
+  and says verification takes minutes once the prerequisites are met; the
+  prerequisites are the slow part, with Partner Center account verification
+  running about two hours for employment and one to two business days for
+  business. This also matters if we skip the store: since November 2020, where
+  risk-based step-up consent is enabled, users cannot consent to newly
+  registered multi-tenant apps that are not publisher verified, which would
+  block the delegated sign-in our connection provider depends on.
 - **Self-hosters** cannot use Twenty's bot. Each must create their own Entra
   app registration and Azure Bot (an Azure subscription is required, though
   the Teams channel itself is free), then upload the app package to their own
@@ -157,6 +175,34 @@ and the token is ours, not the tenant's. Two ways through:
 One small platform nit: `extractEmailFromIdTokenClaims` reads `email` then
 `upn`. Entra v2 tokens carry `preferred_username` when `email` is absent.
 Adding that fallback is a one-line change.
+
+### 2b. Can the bot read a member's email at all? (unresolved, high impact)
+
+Automatic user linking is what makes the Slack app work without setup for most
+people: the bot reads the requester's verified email and matches it to a
+workspace member. Whether Teams allows the equivalent is genuinely unresolved.
+
+Microsoft's current guidance says bots cannot proactively retrieve
+`userPrincipalName` or `email` for members of a chat or team and must use Graph,
+a restriction announced for late 2021 alongside the paged members API. Against
+that, the member payload schema still documents both fields, the .NET
+`TeamsChannelAccount.UserPrincipalName` property still exists, and 2025 support
+answers state that `getMember` returns email so Graph is not needed for it. The
+archived v3 documentation showing `email` in the response predates the change and
+should not be trusted on this point.
+
+The two outcomes differ in install experience, not in feasibility:
+
+- **Email is available from the bot API.** Auto-linking ports from Slack almost
+  unchanged, and the install stays a single sign-in.
+- **Email requires Graph.** We either read it from the delegated token the
+  connecting admin already grants (works, but only covers directory lookups the
+  admin can perform) or request `User.Read.All` as an application permission,
+  which needs tenant admin consent at install and makes the app look heavier in
+  the store listing.
+
+Resolve this in Phase 0 with a live call in a dev tenant. It is a half-day test
+once a bot is reachable, and it decides the shape of the linking flow.
 
 ### 3. Inbound verification is a JWT, not an HMAC (medium)
 
@@ -244,9 +290,15 @@ Goal: retire the unknowns before writing product code.
   against a dev tenant: PKCE plus secret, `id_token` claims, refresh.
 - Bundle `@microsoft/teams.api` versus plain `fetch` through the SDK's esbuild
   step and pick one.
+- Confirm whether the bot member API returns `email` in a live tenant
+  (Blocker 2b). Half a day, and it decides the linking flow.
 - Decide the Cloud distribution path: confirm whether a pre-2025 multi-tenant
   registration exists, otherwise open the Partner Center account now so it is
   not on the critical path later.
+- Start publisher verification in parallel. It is free and fast once the
+  prerequisites are met, but those need a partner global account, a
+  DNS-verified company domain on the tenant, and someone holding both the Entra
+  and Partner Center admin roles.
 
 ### Phase 1: platform changes (1 to 2 weeks, `twenty-server`)
 
@@ -315,8 +367,15 @@ Same folder layout and file conventions as the Slack app.
   https://techcommunity.microsoft.com/discussions/teamsdeveloper/what-is-the-recommended-bot-type-for-multi-tenant-bots/4420239
 - RSC permissions for all channel and chat messages:
   https://learn.microsoft.com/en-us/microsoftteams/platform/bots/how-to/conversations/channel-messages-for-bots-and-agents
-- Member endpoint returning `email` and `userPrincipalName`:
+- Member endpoint response shape (archived v3 doc, predates the 2021 change, do
+  not rely on it for email availability):
   https://learn.microsoft.com/en-us/previous-versions/microsoftteams/platform/resources/bot-v3/bots-context
+- Bot member API changes removing proactive email and UPN:
+  https://learn.microsoft.com/en-us/microsoftteams/platform/resources/team-chat-member-api-changes
+- Publisher verification requirements and cost:
+  https://learn.microsoft.com/en-us/entra/identity-platform/publisher-verification-overview
+- Partner Center account verification timings:
+  https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/deploy-and-publish/appsource/prepare/create-partner-center-dev-account
 - AI label, citations, feedback buttons:
   https://learn.microsoft.com/en-us/microsoftteams/platform/bots/how-to/bot-messages-ai-generated-content
 - Streaming (personal chat only, REST contract):
