@@ -6,6 +6,11 @@ $base-transition-timing: 300ms;
   display: flex;
   height: 100%;
   justify-content: center;
+  // Flex items default to min-width:auto, so without this the wrapper keeps the
+  // label's full intrinsic width and .text never shrinks far enough for its own
+  // overflow to clip it. justify-content then centres the excess, and a label
+  // wider than the button spills past both of its edges.
+  min-width: 0;
   position: relative;
 }
 
@@ -18,6 +23,13 @@ $base-transition-timing: 300ms;
     clip-path $base-transition-timing ease;
   transition-delay: $base-transition-timing * 0.25;
   white-space: nowrap;
+
+  // A label that does not fit is cut mid-glyph without this. Scoped away from
+  // the loading state, where .ellipsis already renders its own dots at the same
+  // right edge and the two indicators would collide.
+  &:not([data-loading]) {
+    text-overflow: ellipsis;
+  }
 
   &[data-loading] {
     clip-path: inset(0 var(--t-spacing-12) 0 0);
