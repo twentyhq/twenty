@@ -43,10 +43,12 @@ type FieldMetadataTextSettings = {
 
 type FieldMetadataDateSettings = {
   displayFormat?: DateDisplayFormat;
+  customUnicodeDateFormat?: string;
 };
 
 type FieldMetadataDateTimeSettings = {
   displayFormat?: DateDisplayFormat;
+  customUnicodeDateFormat?: string;
 };
 
 type FieldMetadataRelationSettings = {

@@ -1,5 +1,11 @@
+import { format as formatDate } from 'date-fns';
+import {
+  DateDisplayFormat,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import {
   extractAndSanitizeObjectStringFields,
+  fastDeepEqual,
   isDefined,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -45,23 +51,43 @@ export const sanitizeRawUpdateFieldInput = ({
   );
 
   if (existingFlatFieldMetadata.isSystemSideEffect === true && !isSystemBuild) {
+    const isSystemSideEffectDateField =
+      existingFlatFieldMetadata.type === FieldMetadataType.DATE ||
+      existingFlatFieldMetadata.type === FieldMetadataType.DATE_TIME;
+
+    const allowedSystemSideEffectProperties: string[] = isSystemSideEffectDateField
+      ? [...FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES, 'settings']
+      : [...FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES];
+
     const forbiddenUpdatedProperties = [
       ...Object.keys(updatedEditableFieldProperties),
       ...(isDefined(rawUpdateFieldInput.morphRelationsUpdatePayload)
         ? ['morphRelationsUpdatePayload']
         : []),
-    ].filter(
-      (property) =>
-        !FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES.includes(
-          property as (typeof FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES)[number],
-        ),
-    );
+    ].filter((property) => !allowedSystemSideEffectProperties.includes(property));
 
     if (forbiddenUpdatedProperties.length > 0) {
       throw new FieldMetadataException(
         `Cannot edit system-managed field "${existingFlatFieldMetadata.name}" properties: ${forbiddenUpdatedProperties.join(', ')}`,
         FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
       );
+    }
+
+    if (
+      isSystemSideEffectDateField &&
+      isDefined(updatedEditableFieldProperties.settings)
+    ) {
+      const mergedSettings = mergeSystemSideEffectDateFieldSettings({
+        existingSettings: existingFlatFieldMetadata.settings,
+        incomingSettings: updatedEditableFieldProperties.settings,
+      });
+
+      if (mergedSettings === undefined) {
+        // No-op update: merged value matches the existing settings
+        delete updatedEditableFieldProperties.settings;
+      } else {
+        updatedEditableFieldProperties.settings = mergedSettings;
+      }
     }
   }
 
@@ -145,4 +171,96 @@ export const sanitizeRawUpdateFieldInput = ({
     }),
     updatedEditableFieldProperties: remainingProperties,
   };
+};
+
+const SYSTEM_SIDE_EFFECT_DATE_FIELD_SETTINGS_KEYS = [
+  'displayFormat',
+  'customUnicodeDateFormat',
+] as const;
+
+const DATE_DISPLAY_FORMAT_VALUES = new Set<string>([
+  DateDisplayFormat.RELATIVE,
+  DateDisplayFormat.USER_SETTINGS,
+  DateDisplayFormat.CUSTOM,
+]);
+
+const isDateDisplayFormatValue = (value: unknown): value is DateDisplayFormat =>
+  typeof value === 'string' && DATE_DISPLAY_FORMAT_VALUES.has(value);
+
+const isValidCustomDateFormat = (value: unknown): value is string => {
+  if (typeof value !== 'string' || value.length === 0) {
+    return false;
+  }
+
+  try {
+    formatDate(new Date(), value);
+
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const mergeSystemSideEffectDateFieldSettings = ({
+  existingSettings,
+  incomingSettings,
+}: {
+  existingSettings: FlatFieldMetadata['settings'];
+  incomingSettings: unknown;
+}): Record<string, unknown> | undefined => {
+  const rawIncoming = (incomingSettings ?? {}) as Record<string, unknown>;
+
+  const knownKeys = new Set<string>(
+    SYSTEM_SIDE_EFFECT_DATE_FIELD_SETTINGS_KEYS,
+  );
+
+  const unknownKeys = Object.keys(rawIncoming).filter(
+    (key) => !knownKeys.has(key),
+  );
+
+  if (unknownKeys.length > 0) {
+    throw new FieldMetadataException(
+      `Cannot edit system-managed date field settings: only ${SYSTEM_SIDE_EFFECT_DATE_FIELD_SETTINGS_KEYS.join(', ')} are allowed`,
+      FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+    );
+  }
+
+  const existingRecord = (existingSettings ?? {}) as Record<string, unknown>;
+
+  const merged: Record<string, unknown> = { ...existingRecord };
+
+  if ('displayFormat' in rawIncoming) {
+    const value = rawIncoming.displayFormat;
+
+    if (!isDateDisplayFormatValue(value)) {
+      throw new FieldMetadataException(
+        `Invalid displayFormat for system-managed date field: expected one of ${DateDisplayFormat.RELATIVE}, ${DateDisplayFormat.USER_SETTINGS}, or ${DateDisplayFormat.CUSTOM}`,
+        FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+      );
+    }
+
+    merged.displayFormat = value;
+  }
+
+  if ('customUnicodeDateFormat' in rawIncoming) {
+    const value = rawIncoming.customUnicodeDateFormat;
+
+    if (value === null) {
+      delete merged.customUnicodeDateFormat;
+    } else if (!isValidCustomDateFormat(value)) {
+      throw new FieldMetadataException(
+        `Invalid customUnicodeDateFormat for system-managed date field: not a valid date-fns format string`,
+        FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+      );
+    } else {
+      merged.customUnicodeDateFormat = value;
+    }
+  }
+
+  // Drop the no-op case: the request produced the same settings object as the current value
+  if (fastDeepEqual(merged, existingRecord)) {
+    return undefined;
+  }
+
+  return merged;
 };

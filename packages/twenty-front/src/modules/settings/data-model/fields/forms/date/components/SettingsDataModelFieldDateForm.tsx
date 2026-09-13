@@ -123,7 +123,7 @@ export const SettingsDataModelFieldDateForm = ({
                 placeholder={t`Format e.g. d-MMM-y (qqq''yy)`}
                 value={value}
                 onChange={(value) => onChange(value)}
-                disabled={false}
+                disabled={disabled ?? false}
                 fullWidth
               />
             </StyledTextInputContainer>
