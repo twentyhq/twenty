@@ -96,7 +96,7 @@ export const SettingsWorkspaceCommunications = () => {
         <Section>
           <H2Title
             title={t`Tracking`}
-            description={t`Measure opens and clicks on the campaigns this workspace sends`}
+            description={t`Measure engagement on the campaigns this workspace sends`}
           />
           <MessageTrackingSwitch />
         </Section>
