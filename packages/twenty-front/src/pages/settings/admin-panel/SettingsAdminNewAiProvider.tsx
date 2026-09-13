@@ -454,12 +454,16 @@ export const SettingsAdminNewAiProvider = () => {
                     <Controller
                       name="accessKeyId"
                       control={form.control}
-                      render={({ field: { onChange, value } }) => (
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
                         <TextInput
                           value={value}
                           onChange={onChange}
                           placeholder={t`AKIA...`}
                           fullWidth
+                          error={error?.message}
                         />
                       )}
                     />
@@ -473,12 +477,16 @@ export const SettingsAdminNewAiProvider = () => {
                     <Controller
                       name="secretAccessKey"
                       control={form.control}
-                      render={({ field: { onChange, value } }) => (
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
                         <TextInput
                           value={value}
                           onChange={onChange}
                           fullWidth
                           type="password"
+                          error={error?.message}
                         />
                       )}
                     />
