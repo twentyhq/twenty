@@ -24,3 +24,4 @@ export { HorizontalSeparator } from './HorizontalSeparator/HorizontalSeparator';
 export { useResizeHandle } from './ResizeHandle/hooks/useResizeHandle';
 export { ResizeHandle } from './ResizeHandle/ResizeHandle';
 export { SectionAlignment, SectionFontColor, Section } from './Section/Section';
+export { TextDirectionProvider } from './TextDirectionProvider/TextDirectionProvider';

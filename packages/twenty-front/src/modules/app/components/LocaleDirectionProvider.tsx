@@ -1,7 +1,7 @@
-import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { useLingui } from '@lingui/react';
 import { type ReactNode } from 'react';
 import { getLocaleTextDirection } from 'twenty-shared/translations';
+import { TextDirectionProvider } from 'twenty-ui/layout';
 
 type LocaleDirectionProviderProps = {
   children: ReactNode;
@@ -16,8 +16,8 @@ export const LocaleDirectionProvider = ({
   const { i18n } = useLingui();
 
   return (
-    <DirectionProvider direction={getLocaleTextDirection(i18n.locale)}>
+    <TextDirectionProvider direction={getLocaleTextDirection(i18n.locale)}>
       {children}
-    </DirectionProvider>
+    </TextDirectionProvider>
   );
 };

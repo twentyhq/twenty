@@ -15,8 +15,6 @@ export const dynamicActivate = async (locale: keyof typeof APP_LOCALES) => {
   i18n.load(locale, messages);
   i18n.activate(locale);
 
-  // Arabic and Hebrew are fully translated but were laid out left to right,
-  // because nothing ever told the document which way the script runs.
   document.documentElement.lang = locale;
   document.documentElement.dir = getLocaleTextDirection(locale);
 };
