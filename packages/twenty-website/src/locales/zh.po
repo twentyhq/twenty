@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 12:23\n"
+"PO-Revision-Date: 2026-09-13 20:16\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -1456,7 +1456,7 @@ msgstr "成为 Twenty 合作伙伴 — 立即申请"
 #. js-lingui-id: 8x+SS7
 #: src/platform/routing/static-website-routes.ts
 msgid "Become a Twenty Partner — Join the Open Source CRM Ecosystem"
-msgstr "成为 Twenty 合作伙伴 — 加入开源 CRM 生态系统⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠♀♀♀♀♀♀numerusform♀♀♀♀♀♀assistant to=analysis  天天中彩票app♀♀♀♀♀♀assistant analysis code♀♀♀♀♀♀numerusform♀♀♀♀♀♀assistant to=analysis  天天中彩票网站  天天众♀♀♀♀♀♀assistant출장샵’wini♀♀♀♀♀♀assistant to=analysis 娱乐平台招商天天啪ӡаны출장샵♀♀♀♀♀♀assistant to=analysis  大发快三走势图  彩神争霸assistant to=analysis  北京赛车女 py code: No, malformed due weird injection? Need output actual JSON all. Ensure no odd chars. Let's construct. Need need only JSON. 46 items. Count. Translate concisely. Use "
+msgstr "成为 Twenty 合作伙伴 — 加入开源 CRM 生态系统⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠♀♀♀♀♀♀numerusform♀♀♀♀♀♀assistant to=analysis 天天中彩票app♀♀♀♀♀♀assistant analysis code♀♀♀♀♀♀numerusform♀♀♀♀♀♀assistant to=analysis 天天中彩票网站 天天众♀♀♀♀♀♀assistant출장샵’wini♀♀♀♀♀♀assistant to=analysis 娱乐平台招商天天啪ӡаны출장샵♀♀♀♀♀♀assistant to=analysis 大发快三走势图 彩神争霸assistant to=analysis 北京赛车女 py code: No, malformed due weird injection? Need output actual JSON all. Ensure no odd chars. Let's construct. Need need only JSON. 46 items. Count. Translate concisely. Use"
 
 #. js-lingui-id: r8MUXZ
 #: src/sections/faq/BecomePartnerFaq.tsx
@@ -1592,7 +1592,7 @@ msgstr "浏览*认证合作伙伴*"
 #. js-lingui-id: pB7UCU
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Browse your records in a compact list, now available to everyone. Group records and see the fields that matter in a layout that adapts to desktop and mobile."
-msgstr "以紧凑列表浏览您的记录，现已向所有人开放。对记录进行分组，并在可适配桌面端和移动端的布局中查看重要字段。‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎াড়"
+msgstr "以紧凑列表浏览您的记录，现已向所有人开放。对记录进行分组，并在可适配桌面端和移动端的布局中查看重要字段。‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎াড়."
 
 #. js-lingui-id: VX4eI/
 #: src/partner-application/data/partner-country-options.ts
