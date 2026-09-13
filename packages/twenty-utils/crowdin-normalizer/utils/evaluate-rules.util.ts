@@ -15,12 +15,12 @@ export function evaluateRules({
         rule.sourceFilter !== undefined &&
         (sourceText === undefined || !rule.sourceFilter(sourceText));
 
-      if (isFilteredOut || !rule.detect(accumulator.fixedText)) {
+      if (isFilteredOut || !rule.detect(accumulator.fixedText, sourceText)) {
         return accumulator;
       }
 
       return {
-        fixedText: rule.fix(accumulator.fixedText),
+        fixedText: rule.fix(accumulator.fixedText, sourceText),
         ruleNames: [...accumulator.ruleNames, rule.name],
       };
     },
