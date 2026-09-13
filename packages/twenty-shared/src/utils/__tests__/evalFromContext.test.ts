@@ -38,12 +38,14 @@ describe('evalFromContext', () => {
     expect(evalFromContext('{{step.[key.with.dots]}}', context)).toBe('dotted');
   });
 
-  // Handlebars only indexed through a segment literal, so `list.0` never
-  // resolved and workflows were authored against `list.[0]`
-  it('should index arrays only through a segment literal', () => {
+  // A path ending in a number or a keyword read it as a value rather than a
+  // key, so it never resolved; mid-path the same segment is an ordinary key
+  it('should reject a trailing bare number but index through it mid-path', () => {
     expect(evalFromContext('{{list.[0]}}', context)).toBe('a');
     expect(evalFromContext('{{list.[1].x}}', context)).toBe('x1');
     expect(evalFromContext('{{list.0}}', context)).toBeUndefined();
+    expect(evalFromContext('{{list.1.x}}', context)).toBe('x1');
+    expect(evalFromContext('{{list.0.length}}', context)).toBe(1);
   });
 
   // Handlebars compiled each hop as `x != null ? x.key : x`, so walking through
@@ -113,6 +115,14 @@ describe('evalFromContext', () => {
       expect(evalFromContext('{{this.obj.p}}', prefixContext)).toBe(1);
     });
 
+    // The guard is a plain truthiness test, so NaN short-circuits like any other
+    // falsy value and JSON round-trips to null
+    it('should short-circuit an @root path on NaN', () => {
+      expect(
+        evalFromContext('{{@root.notANumber.missing}}', { notANumber: NaN }),
+      ).toBeNull();
+    });
+
     it('should short-circuit an @root path on a falsy value', () => {
       expect(evalFromContext('{{@root.zero.missing}}', prefixContext)).toBe(0);
       expect(
@@ -135,13 +145,14 @@ describe('evalFromContext', () => {
 
   // Keywords were only literals as a whole expression; as a path segment they
   // never resolved unless written as a segment literal
-  it('should not resolve a bare keyword segment', () => {
+  it('should not resolve a trailing bare keyword segment', () => {
     const keywordContext = { obj: { true: 'T', null: 'N' } };
 
     expect(evalFromContext('{{obj.true}}', keywordContext)).toBeUndefined();
     expect(evalFromContext('{{obj.null}}', keywordContext)).toBeUndefined();
     expect(evalFromContext('{{obj.[true]}}', keywordContext)).toBe('T');
     expect(evalFromContext('{{obj.[null]}}', keywordContext)).toBe('N');
+    expect(evalFromContext('{{obj.true.length}}', keywordContext)).toBe(1);
   });
 
   it('should support literals, as Handlebars path expressions did', () => {

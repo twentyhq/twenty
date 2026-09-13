@@ -229,6 +229,19 @@ export const evalFromContext = (
     return toJsonValue(context);
   }
 
+  // A number or a keyword read as a value rather than a key, so a path ending in
+  // one never resolved. Mid-path they are ordinary keys: `arr.0` is undefined
+  // but `arr.0.length` is not, and `[0]` works in either position
+  const lastSegment = segments[segments.length - 1];
+
+  if (
+    !lastSegment.isLiteralSegment &&
+    (NUMBER_LITERAL_PATTERN.test(lastSegment.value) ||
+      KEYWORD_LITERALS.includes(lastSegment.value))
+  ) {
+    return undefined;
+  }
+
   // A leading `[]` collapsed the whole path to the context in Handlebars, but
   // only for a bare path: under `@root.` it stayed an ordinary empty-string key
   if (
@@ -248,25 +261,14 @@ export const evalFromContext = (
   let resolved: unknown = context;
 
   for (const segment of segments) {
+    // Mirrors the compiled guard exactly rather than enumerating falsy values,
+    // which would miss NaN and anything else JavaScript counts as falsy
     const shortCircuits = shortCircuitsOnFalsy
-      ? !isDefined(resolved) ||
-        resolved === '' ||
-        resolved === 0 ||
-        resolved === false
+      ? !resolved
       : !isDefined(resolved);
 
     if (shortCircuits) {
       return toJsonValue(resolved);
-    }
-
-    // Handlebars allowed a number or a keyword only as a whole expression, so
-    // as a bare path segment they never resolved; `[0]` and `[true]` still do
-    if (
-      !segment.isLiteralSegment &&
-      (NUMBER_LITERAL_PATTERN.test(segment.value) ||
-        KEYWORD_LITERALS.includes(segment.value))
-    ) {
-      return undefined;
     }
 
     resolved = readOwnProperty(resolved, segment.value);
