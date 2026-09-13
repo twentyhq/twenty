@@ -18,6 +18,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { CampaignSendSlotService } from 'src/modules/emailing/services/campaign-send-slot.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { CampaignTrackingContentService } from 'src/modules/emailing/services/campaign-tracking-content.service';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { MessageCampaignBatchDeliveryService } from 'src/modules/emailing/services/message-campaign-batch-delivery.service';
@@ -201,6 +202,10 @@ const buildHarness = () => {
         {
           provide: CampaignTrackingContentService,
           useValue: campaignTrackingContentService,
+        },
+        {
+          provide: ExceptionHandlerService,
+          useValue: { captureExceptions: jest.fn() },
         },
         {
           provide: MessageCampaignLifecycleService,

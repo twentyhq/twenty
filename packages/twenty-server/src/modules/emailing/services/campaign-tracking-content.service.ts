@@ -35,7 +35,7 @@ type TrackingRecipient = {
   replacements: Record<string, string>;
 };
 
-const OPEN_PIXEL_HTML = `<img src="{{${CAMPAIGN_OPEN_PIXEL_TAG}}}" width="1" height="1" alt="" style="display:none;width:1px;height:1px;border:0" />`;
+const OPEN_PIXEL_PLACEHOLDER = `{{${CAMPAIGN_OPEN_PIXEL_TAG}}}`;
 
 type PrepareBatchArgs = {
   workspaceId: string;
@@ -182,10 +182,10 @@ export class CampaignTrackingContentService {
     const bodyEndIndex = html.lastIndexOf('</body>');
 
     if (bodyEndIndex === -1) {
-      return `${html}${OPEN_PIXEL_HTML}`;
+      return `${html}${OPEN_PIXEL_PLACEHOLDER}`;
     }
 
-    return `${html.slice(0, bodyEndIndex)}${OPEN_PIXEL_HTML}${html.slice(bodyEndIndex)}`;
+    return `${html.slice(0, bodyEndIndex)}${OPEN_PIXEL_PLACEHOLDER}${html.slice(bodyEndIndex)}`;
   }
 
   private async registerShortLinks({
@@ -268,13 +268,19 @@ export class CampaignTrackingContentService {
     });
 
     if (withOpenPixel) {
-      replacements[CAMPAIGN_OPEN_PIXEL_TAG] = this.buildTrackedUrl(baseUrl, {
-        purpose: 'OPEN',
-        deliveryId: recipient.deliveryId,
-      });
+      replacements[CAMPAIGN_OPEN_PIXEL_TAG] = this.buildOpenPixelTag(
+        this.buildTrackedUrl(baseUrl, {
+          purpose: 'OPEN',
+          deliveryId: recipient.deliveryId,
+        }),
+      );
     }
 
     return replacements;
+  }
+
+  private buildOpenPixelTag(pixelUrl: string): string {
+    return `<img src="${escapeHtml(pixelUrl)}" width="1" height="1" alt="" style="display:none;width:1px;height:1px;border:0" />`;
   }
 
   private buildTrackedUrl(

@@ -15,7 +15,6 @@ import {
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -54,7 +53,6 @@ export class CampaignFollowUpService {
     private readonly messageCampaignAccessService: MessageCampaignAccessService,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
     private readonly campaignEngagementEventService: CampaignEngagementEventService,
-    private readonly shortLinkService: ShortLinkService,
   ) {}
 
   async createDraftFromClickers({
@@ -114,19 +112,10 @@ export class CampaignFollowUpService {
     messageCampaignId: string;
     activityFilter: CampaignEngagementActivityFilter;
   }): Promise<string[]> {
-    const shortLinks = await this.shortLinkService.findCampaignLinks({
-      workspaceId,
-      messageCampaignId,
-    });
-
-    if (shortLinks.length === 0) {
-      return [];
-    }
-
     const deliveryIds =
       await this.campaignEngagementEventService.findClickerDeliveryIds({
         workspaceId,
-        shortLinkIds: shortLinks.map((shortLink) => shortLink.id),
+        messageCampaignId,
         activityFilter,
       });
 

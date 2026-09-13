@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { In } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type MessageCampaignEngagementBucketDTO } from 'src/engine/core-modules/emailing-domain/dtos/message-campaign-engagement-bucket.dto';
 import { type MessageCampaignEngagementLinkDTO } from 'src/engine/core-modules/emailing-domain/dtos/message-campaign-engagement-link.dto';
 import { type MessageCampaignEngagementRecipientDTO } from 'src/engine/core-modules/emailing-domain/dtos/message-campaign-engagement-recipient.dto';
@@ -44,6 +47,8 @@ export class CampaignEngagementReportService {
     private readonly shortLinkService: ShortLinkService,
     private readonly messageCampaignAccessService: MessageCampaignAccessService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   async getReport({
@@ -69,9 +74,16 @@ export class CampaignEngagementReportService {
     });
 
     const isAvailable = this.campaignEngagementEventService.isAvailable();
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
 
     const emptyReport: MessageCampaignEngagementDTO = {
       isAvailable,
+      isCampaignClickTrackingEnabled:
+        workspace?.isCampaignClickTrackingEnabled ?? false,
+      isCampaignOpenTrackingEnabled:
+        workspace?.isCampaignOpenTrackingEnabled ?? false,
       totalClicks: 0,
       uniqueClickers: 0,
       totalOpens: 0,
@@ -85,17 +97,7 @@ export class CampaignEngagementReportService {
       return emptyReport;
     }
 
-    const shortLinks = await this.shortLinkService.findCampaignLinks({
-      workspaceId,
-      messageCampaignId,
-    });
-
-    const scope = {
-      workspaceId,
-      messageCampaignId,
-      shortLinkIds: shortLinks.map((shortLink) => shortLink.id),
-      activityFilter,
-    };
+    const scope = { workspaceId, messageCampaignId, activityFilter };
     const bucket = this.resolveBucket(campaign.sentAt);
 
     const aggregates = await Promise.all([
@@ -130,7 +132,13 @@ export class CampaignEngagementReportService {
       totalOpens: totals.totalOpens,
       uniqueOpeners: totals.uniqueOpeners,
       series: this.fillSeries({ series, bucket, sentAt: campaign.sentAt }),
-      links: this.rollUpLinksByAuthoredUrl({ shortLinks, clicksByShortLink }),
+      links: this.rollUpLinksByAuthoredUrl({
+        shortLinks: await this.shortLinkService.findByIds({
+          workspaceId,
+          shortLinkIds: clicksByShortLink.map((clicks) => clicks.shortLinkId),
+        }),
+        clicksByShortLink,
+      }),
       recipients: await this.attachRecipients({
         workspaceId,
         messageCampaignId,
