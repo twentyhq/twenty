@@ -197,7 +197,7 @@ export const SettingsAdminAI = () => {
         <Section>
           <H2Title
             title={t`Default Models`}
-            description={t`The model behind each tier for every workspace. Workspaces can pin their own.`}
+            description={t`The model behind each mode for every workspace. Workspaces can pin their own.`}
           />
 
           <Card rounded>

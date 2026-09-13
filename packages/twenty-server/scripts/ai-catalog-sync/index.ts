@@ -12,10 +12,12 @@ import { buildCatalog } from './utils/build-catalog.util';
 import { carryOverCommittedFields } from './utils/carry-over-committed-fields.util';
 import { enrichCatalog } from './utils/enrich-catalog.util';
 import { fetchArtificialAnalysisBenchmarks } from './utils/fetch-artificial-analysis-benchmarks.util';
+import { projectCatalog } from './utils/project-catalog.util';
 import { readCommittedBenchmarks } from './utils/read-committed-benchmarks.util';
 import { buildCoverageReport } from './utils/build-coverage-report.util';
 import { renderCoverageReport } from './utils/render-coverage-report.util';
 import { type BenchmarkIndex } from './types/benchmark-index.type';
+import { type CatalogSpec } from './types/catalog-spec.type';
 import { type GeneratedCatalog } from './types/generated-catalog.type';
 
 const AI_MODELS_DIR = path.resolve(
@@ -29,6 +31,8 @@ const AI_MODELS_DIR = path.resolve(
   'ai-models',
 );
 
+const MODELS_PATH = path.join(AI_MODELS_DIR, 'ai-models.json');
+const SELF_HOST_SPEC_PATH = path.join(AI_MODELS_DIR, 'ai-self-host-spec.json');
 const CATALOG_PATH = path.join(AI_MODELS_DIR, 'ai-providers.json');
 const BENCHMARKS_PATH = path.join(AI_MODELS_DIR, 'ai-model-benchmarks.json');
 
@@ -43,7 +47,7 @@ const readArgument = (flag: string): string | undefined => {
   return index === -1 ? undefined : process.argv[index + 1];
 };
 
-const readCommittedCatalog = (filePath: string): GeneratedCatalog =>
+const readCommittedModels = (filePath: string): GeneratedCatalog =>
   fs.existsSync(filePath)
     ? (JSON.parse(fs.readFileSync(filePath, 'utf-8')) as GeneratedCatalog)
     : {};
@@ -131,7 +135,7 @@ const main = async (): Promise<void> => {
 
   carryOverCommittedFields({
     catalog,
-    committedCatalog: readCommittedCatalog(CATALOG_PATH),
+    committedCatalog: readCommittedModels(MODELS_PATH),
   });
 
   const overlay = enrichCatalog({
@@ -155,7 +159,18 @@ const main = async (): Promise<void> => {
     return;
   }
 
-  await writeJson(CATALOG_PATH, catalog);
+  await writeJson(MODELS_PATH, catalog);
+  // Self-host runs the same projection cloud does, from a spec that names the
+  // five direct routes and lets each serve its whole vendor.
+  await writeJson(
+    CATALOG_PATH,
+    projectCatalog({
+      canonicalCatalog: catalog,
+      spec: JSON.parse(
+        fs.readFileSync(SELF_HOST_SPEC_PATH, 'utf-8'),
+      ) as CatalogSpec,
+    }),
+  );
   await writeJson(BENCHMARKS_PATH, {
     source: 'artificialanalysis.ai',
     measuredAt,

@@ -1,8 +1,5 @@
 {
   "openai": {
-    "npm": "@ai-sdk/openai",
-    "label": "OpenAI",
-    "apiKey": "{{OPENAI_API_KEY}}",
     "models": [
       {
         "name": "gpt-5-nano",
@@ -918,9 +915,6 @@
     ]
   },
   "anthropic": {
-    "npm": "@ai-sdk/anthropic",
-    "label": "Anthropic",
-    "apiKey": "{{ANTHROPIC_API_KEY}}",
     "models": [
       {
         "name": "claude-sonnet-4-6",
@@ -1343,9 +1337,6 @@
     ]
   },
   "google": {
-    "npm": "@ai-sdk/google",
-    "label": "Google",
-    "apiKey": "{{GOOGLE_API_KEY}}",
     "models": [
       {
         "name": "gemini-3.1-pro-preview-customtools",
@@ -1785,9 +1776,6 @@
     ]
   },
   "mistral": {
-    "npm": "@ai-sdk/mistral",
-    "label": "Mistral",
-    "apiKey": "{{MISTRAL_API_KEY}}",
     "models": [
       {
         "name": "pixtral-12b",
@@ -2106,9 +2094,6 @@
     ]
   },
   "xai": {
-    "npm": "@ai-sdk/xai",
-    "label": "xAI",
-    "apiKey": "{{XAI_API_KEY}}",
     "models": [
       {
         "name": "grok-4.3",

@@ -177,7 +177,7 @@ const StyledLeftActions = styled.div`
 const StyledRightActions = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const areAllQuestionsAnswered = (
