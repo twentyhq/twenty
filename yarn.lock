@@ -33086,7 +33086,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"handlebars@npm:*, handlebars@npm:4.7.9, handlebars@npm:^4.7.7, handlebars@npm:^4.7.9":
+"handlebars@npm:*, handlebars@npm:4.7.9, handlebars@npm:^4.7.7":
   version: 4.7.9
   resolution: "handlebars@npm:4.7.9"
   dependencies:
@@ -50366,7 +50366,6 @@ __metadata:
     class-validator: "npm:^0.14.0"
     expr-eval-fork: "npm:3.0.3"
     glob: "npm:^11.1.0"
-    handlebars: "npm:^4.7.9"
     jest: "npm:29.7.0"
     jest-environment-jsdom: "npm:30.0.0-beta.3"
     libphonenumber-js: "npm:^1.10.26"
