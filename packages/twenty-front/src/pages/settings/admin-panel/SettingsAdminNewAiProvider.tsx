@@ -189,6 +189,11 @@ export const SettingsAdminNewAiProvider = () => {
       if (values.secretAccessKey.trim()) {
         config.secretAccessKey = values.secretAccessKey.trim();
       }
+      // Without static keys the provider takes the instance's own IAM role,
+      // which the server only reaches for when the config says so.
+      if (!values.accessKeyId.trim()) {
+        config.authType = 'role';
+      }
     }
 
     if (!isBedrock && !isOpenAiCompatible && !values.apiKey.trim()) {
