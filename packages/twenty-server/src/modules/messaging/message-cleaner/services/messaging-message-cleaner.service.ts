@@ -74,7 +74,9 @@ export class MessagingMessageCleanerService {
 
               const candidateMessageIds = [
                 ...new Set(
-                  associationsToDelete.map(({ messageId }) => messageId),
+                  associationsToDelete
+                    .map(({ messageId }) => messageId)
+                    .filter(isDefined),
                 ),
               ];
 
@@ -277,7 +279,7 @@ export class MessagingMessageCleanerService {
       select: { messageId: true },
     });
 
-    return associations.map(({ messageId }) => messageId);
+    return associations.map(({ messageId }) => messageId).filter(isDefined);
   }
 
   private async findReferencedThreadIds(

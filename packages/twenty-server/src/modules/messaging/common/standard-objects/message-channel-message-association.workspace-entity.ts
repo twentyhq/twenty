@@ -10,7 +10,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
   direction: MessageDirection;
   messageChannelId: string;
   message: EntityRelation<MessageWorkspaceEntity> | null;
-  messageId: string;
+  messageId: string | null;
   messageFolders: EntityRelation<
     MessageChannelMessageAssociationMessageFolderWorkspaceEntity[]
   >;
