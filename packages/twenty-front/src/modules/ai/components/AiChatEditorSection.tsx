@@ -141,7 +141,7 @@ const StyledLeftButtonsContainer = styled.div`
 const StyledRightButtonsContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const AiChatEditorSection = () => {

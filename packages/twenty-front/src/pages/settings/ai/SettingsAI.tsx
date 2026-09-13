@@ -21,6 +21,7 @@ import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { SettingsAgentSkillsTab } from '~/pages/settings/ai/components/SettingsAgentSkillsTab';
 import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
+import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/SettingsAiSystemPromptsSection';
 import { SettingsAiModelsTab } from '~/pages/settings/ai/components/SettingsAiModelsTab';
 import { SettingsAiOverviewTab } from '~/pages/settings/ai/components/SettingsAiOverviewTab';
 import { SettingsAiUsageTab } from '~/pages/settings/ai/components/SettingsAiUsageTab';
@@ -113,24 +114,31 @@ export const SettingsAI = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <SettingsDiscoveryHeroCard
-            lightSrc={AI_HERO_LIGHT}
-            darkSrc={AI_HERO_DARK}
-            instanceIdPrefix={SETTINGS_AI_HERO_INSTANCE_ID_PREFIX}
-            tabs={[
-              {
-                id: 'ai_walkthrough',
-                title: t`Walkthrough`,
-                Icon: IconSparkle2,
-                vimeoId: '1217964358',
-                hasSound: true,
-              },
-            ]}
-            playButtonAriaLabel={t`Watch AI demo`}
-          />
-        </Section>
-        {isOverviewTab && <SettingsAiOverviewTab />}
+        {!isModelsTab && (
+          <Section>
+            <SettingsDiscoveryHeroCard
+              lightSrc={AI_HERO_LIGHT}
+              darkSrc={AI_HERO_DARK}
+              instanceIdPrefix={SETTINGS_AI_HERO_INSTANCE_ID_PREFIX}
+              tabs={[
+                {
+                  id: 'ai_walkthrough',
+                  title: t`Walkthrough`,
+                  Icon: IconSparkle2,
+                  vimeoId: '1217964358',
+                  hasSound: true,
+                },
+              ]}
+              playButtonAriaLabel={t`Watch AI demo`}
+            />
+          </Section>
+        )}
+        {isOverviewTab && (
+          <>
+            <SettingsAiOverviewTab />
+            <SettingsAiSystemPromptsSection />
+          </>
+        )}
         {isModelsTab && <SettingsAiModelsTab />}
         {isSkillsTab && <SettingsAgentSkillsTab />}
         {isToolsTab && <SettingsAgentToolsTab />}

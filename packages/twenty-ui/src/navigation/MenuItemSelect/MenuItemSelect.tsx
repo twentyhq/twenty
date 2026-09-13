@@ -45,6 +45,7 @@ export const StyledMenuItemSelect = forwardRef<
 StyledMenuItemSelect.displayName = 'StyledMenuItemSelect';
 
 type MenuItemSelectProps = {
+  LeftComponent?: ReactNode;
   LeftIcon?: IconComponent | null | undefined;
   leftIconColor?: ThemeColor | null;
   withIconContainer?: boolean;
@@ -61,6 +62,7 @@ type MenuItemSelectProps = {
 };
 
 export const MenuItemSelect = ({
+  LeftComponent,
   LeftIcon,
   leftIconColor,
   withIconContainer = false,
@@ -88,6 +90,7 @@ export const MenuItemSelect = ({
       aria-disabled={disabled}
     >
       <MenuItemLeftContent
+        LeftComponent={LeftComponent}
         LeftIcon={LeftIcon}
         iconThemeColor={leftIconColor}
         text={text}

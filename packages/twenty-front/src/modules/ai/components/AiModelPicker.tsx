@@ -104,7 +104,7 @@ export const AiModelPicker = ({
         <AiModelPinSelect
           dropdownId="ai-model-picker-pinned-model"
           label={t`Pin a specific model`}
-          description={t`Overrides the tier above until you switch back to automatic`}
+          description={t`Overrides the mode above until you switch back to automatic`}
           modelId={hasPinnedModel ? modelId : null}
           onChange={(pinnedModelId) =>
             onModelIdChange(
