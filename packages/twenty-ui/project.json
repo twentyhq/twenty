@@ -106,7 +106,9 @@
         "cwd": "{projectRoot}",
         "command": "npx vitest run --project unit"
       },
-      "configurations": { "watch": { "command": "npx vitest --project unit" } }
+      "configurations": {
+        "watch": { "command": "npx vitest --project unit" }
+      }
     },
     "typecheck": {},
     "storybook:build": { "configurations": { "test": {} } },
