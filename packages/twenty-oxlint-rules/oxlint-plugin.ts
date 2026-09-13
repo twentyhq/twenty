@@ -45,6 +45,10 @@ import {
   RULE_NAME as noHardcodedColorsName,
 } from './rules/no-hardcoded-colors';
 import {
+  rule as noIcuEscapingApostrophe,
+  RULE_NAME as noIcuEscapingApostropheName,
+} from './rules/no-icu-escaping-apostrophe';
+import {
   rule as noJotaiStoreInSelector,
   RULE_NAME as noJotaiStoreInSelectorName,
 } from './rules/no-jotai-store-in-selector';
@@ -96,6 +100,7 @@ export default definePlugin({
       noDataMutationInFastInstanceCommand,
     [noDirectAtomFamilyInSelectorName]: noDirectAtomFamilyInSelector,
     [noHardcodedColorsName]: noHardcodedColors,
+    [noIcuEscapingApostropheName]: noIcuEscapingApostrophe,
     [noJotaiStoreInSelectorName]: noJotaiStoreInSelector,
     [noNavigatePreferLinkName]: noNavigatePreferLink,
     [noStateUserefName]: noStateUseref,
