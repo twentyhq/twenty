@@ -58,6 +58,7 @@ jobs:
       # Repair machine-translation damage in Crowdin before downloading, so the
       # catalogs that reach the repo are already correct rather than a cycle behind.
       - name: Normalize translations in Crowdin
+        if: inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: npx tsx packages/twenty-utils/crowdin-normalizer/normalize-crowdin-translations.ts --project=1 --format=po --apply || echo "::warning::translation normalization failed (non-blocking)"
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}

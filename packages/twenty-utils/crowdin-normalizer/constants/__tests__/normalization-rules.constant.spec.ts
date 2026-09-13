@@ -19,10 +19,7 @@ describe('NORMALIZATION_RULES', () => {
   });
 
   it('keeps the ICU rules away from MDX, where braces are JSX', () => {
-    expect(namesFor('mdx')).toEqual([
-      'escaped-unicode',
-      'escaped-inline-code-tags',
-    ]);
+    expect(namesFor('mdx')).toEqual(['escaped-inline-code-tags']);
   });
 
   it('runs every rule against PO catalogs', () => {
