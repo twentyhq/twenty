@@ -125,7 +125,11 @@ export class WorkspaceEntity {
 
   @Field()
   @Column({ default: false })
-  isMessageTrackingEnabled: boolean;
+  isClickTrackingEnabled: boolean;
+
+  @Field()
+  @Column({ default: false })
+  isOpenTrackingEnabled: boolean;
 
   @Field(() => WorkspaceDiscoverability)
   @WasIntroducedInUpgrade({
