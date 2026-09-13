@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
-import { MessageTrackingSwitch } from '@/settings/workspace/components/MessageTrackingSwitch';
+import { ClickTrackingSwitch } from '@/settings/workspace/components/ClickTrackingSwitch';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
@@ -98,7 +98,7 @@ export const SettingsWorkspaceCommunications = () => {
             title={t`Tracking`}
             description={t`Measure engagement on the campaigns this workspace sends`}
           />
-          <MessageTrackingSwitch />
+          <ClickTrackingSwitch />
         </Section>
         <Section>
           <H2Title

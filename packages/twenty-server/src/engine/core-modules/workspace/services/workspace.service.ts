@@ -142,7 +142,7 @@ export class WorkspaceService {
     aiModelIdByTier: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
-    isMessageTrackingEnabled: PermissionFlagType.WORKSPACE,
+    isClickTrackingEnabled: PermissionFlagType.WORKSPACE,
   };
 
   constructor(
