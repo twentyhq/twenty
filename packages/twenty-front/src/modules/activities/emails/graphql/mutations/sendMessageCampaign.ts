@@ -13,6 +13,7 @@ export const SEND_MESSAGE_CAMPAIGN = gql`
         hardSuppressed
         globallyUnsubscribed
         topicUnsubscribed
+        trackingRefused
         sendable
       }
     }

@@ -189,6 +189,7 @@ import { MigrateWorkspaceModelsToTiersSlowInstanceCommand } from 'src/database/c
 import { AddIsSystemToSkillFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1789129759228-add-is-system-to-skill';
 import { MigrateCanvasTabsToVerticalListSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1789139070588-migrate-canvas-tabs-to-vertical-list';
 import { AddShortLinkAndMessageTrackingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1789310081842-add-short-link-and-message-tracking';
+import { AddMessageTrackingConsentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1789311770161-add-message-tracking-consent';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -380,4 +381,5 @@ export const INSTANCE_COMMANDS = [
   AddIsSystemToSkillFastInstanceCommand,
   MigrateCanvasTabsToVerticalListSlowInstanceCommand,
   AddShortLinkAndMessageTrackingFastInstanceCommand,
+  AddMessageTrackingConsentFastInstanceCommand,
 ];

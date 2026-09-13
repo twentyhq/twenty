@@ -26,6 +26,7 @@ import { ShortLinkService } from 'src/engine/core-modules/short-link/services/sh
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { throttlerToRestApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-rest-api-exception-handler.util';
+import { CAMPAIGN_BLANK_PIXEL_PATH } from 'src/modules/emailing/constants/campaign-blank-pixel-path.constant';
 import { CAMPAIGN_OPEN_PIXEL_GIF } from 'src/modules/emailing/constants/campaign-open-pixel-gif.constant';
 import { CampaignEngagementCaptureService } from 'src/modules/emailing/services/campaign-engagement-capture.service';
 
@@ -83,6 +84,15 @@ export class CampaignTrackingController {
       userAgent: userAgent ?? null,
     });
 
+    this.sendPixel(response);
+  }
+
+  @Get(CAMPAIGN_BLANK_PIXEL_PATH)
+  blankPixel(@Res() response: Response): void {
+    this.sendPixel(response);
+  }
+
+  private sendPixel(response: Response): void {
     response
       .set({
         'Cache-Control': 'no-store',

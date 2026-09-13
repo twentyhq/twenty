@@ -10,6 +10,7 @@ export type CampaignAudienceResolution = {
     hardSuppressed: number;
     globallyUnsubscribed: number;
     topicUnsubscribed: number;
+    trackingRefused: number;
     sendable: number;
   };
 };

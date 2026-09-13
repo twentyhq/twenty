@@ -24,6 +24,9 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN } from 'src/modules/emailing/constants/campaign-batch-variable-tag-pattern.constant';
 import { CAMPAIGN_OPEN_PIXEL_TAG } from 'src/modules/emailing/constants/campaign-open-pixel-tag.constant';
+import { CAMPAIGN_BLANK_PIXEL_PATH } from 'src/modules/emailing/constants/campaign-blank-pixel-path.constant';
+import { MessageTrackingConsentService } from 'src/modules/emailing/services/message-tracking-consent.service';
+import { normalizeEmailAddress } from 'src/modules/emailing/utils/normalize-email-address.util';
 import { CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART } from 'src/modules/emailing/constants/campaign-tracking-tag.constant';
 import { type TrackedCampaignBatch } from 'src/modules/emailing/types/tracked-campaign-batch.type';
 import { collectTrackableLinkUrls } from 'src/modules/emailing/utils/collect-trackable-link-urls.util';
@@ -32,6 +35,7 @@ import { resolveTrackedLinkUrl } from 'src/modules/emailing/utils/resolve-tracke
 
 type TrackingRecipient = {
   deliveryId: string;
+  email: string;
   replacements: Record<string, string>;
 };
 
@@ -56,6 +60,7 @@ export class CampaignTrackingContentService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly shortLinkService: ShortLinkService,
     private readonly campaignTrackingTokenService: CampaignTrackingTokenService,
+    private readonly messageTrackingConsentService: MessageTrackingConsentService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -95,12 +100,20 @@ export class CampaignTrackingContentService {
       return untracked;
     }
 
+    const deniedEmailAddresses =
+      await this.messageTrackingConsentService.findDeniedEmailAddresses({
+        workspaceId,
+        emailAddresses: recipients.map((recipient) => recipient.email),
+      });
+    const isTracked = (recipient: TrackingRecipient) =>
+      !deniedEmailAddresses.has(normalizeEmailAddress(recipient.email));
+
     const shortLinkIdByUrl = await this.registerShortLinks({
       workspaceId,
       messageCampaignId,
       urlTemplates,
       variableNames,
-      recipients,
+      recipients: recipients.filter(isTracked),
     });
 
     return {
@@ -114,12 +127,18 @@ export class CampaignTrackingContentService {
           recipient.deliveryId,
           {
             ...recipient.replacements,
-            ...this.buildTrackingReplacements({
-              baseUrl,
-              recipient,
-              urlTemplates,
-              shortLinkIdByUrl,
-            }),
+            ...(isTracked(recipient)
+              ? this.buildTrackingReplacements({
+                  baseUrl,
+                  recipient,
+                  urlTemplates,
+                  shortLinkIdByUrl,
+                })
+              : this.buildUntrackedReplacements({
+                  baseUrl,
+                  recipient,
+                  urlTemplates,
+                })),
           },
         ]),
       ),
@@ -245,6 +264,34 @@ export class CampaignTrackingContentService {
       purpose: 'OPEN',
       deliveryId: recipient.deliveryId,
     });
+
+    return replacements;
+  }
+
+  private buildUntrackedReplacements({
+    baseUrl,
+    recipient,
+    urlTemplates,
+  }: {
+    baseUrl: string;
+    recipient: TrackingRecipient;
+    urlTemplates: string[];
+  }): Record<string, string> {
+    const replacements: Record<string, string> = {};
+
+    urlTemplates.forEach((urlTemplate, index) => {
+      const { url } = resolveTrackedLinkUrl({
+        urlTemplate,
+        replacements: recipient.replacements,
+      });
+
+      replacements[this.buildLinkTag({ messagePart: 'HTML', index })] =
+        escapeHtml(url);
+      replacements[this.buildLinkTag({ messagePart: 'TEXT', index })] = url;
+    });
+
+    replacements[CAMPAIGN_OPEN_PIXEL_TAG] =
+      `${baseUrl}/${ApiPath.Emailing}/${CAMPAIGN_BLANK_PIXEL_PATH}`;
 
     return replacements;
   }

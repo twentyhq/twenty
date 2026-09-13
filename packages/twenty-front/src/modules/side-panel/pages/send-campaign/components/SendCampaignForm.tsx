@@ -206,6 +206,11 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
                   {t`${formatNumber(audiencePreview.totalMembers)} in the list, skipping ${excludedReasons.join(', ')}`}
                 </StyledHint>
               )}
+              {audiencePreview.trackingRefused > 0 && (
+                <StyledHint>
+                  {t`${formatNumber(audiencePreview.trackingRefused)} asked not to be tracked, opens and clicks are not measured for them`}
+                </StyledHint>
+              )}
               {isScheduling && (
                 <StyledHint>
                   {t`Counted again when the campaign sends, so this can change.`}

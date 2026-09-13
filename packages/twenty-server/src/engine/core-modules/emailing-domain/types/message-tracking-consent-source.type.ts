@@ -1,0 +1,4 @@
+export enum MessageTrackingConsentSource {
+  PREFERENCES_PAGE = 'PREFERENCES_PAGE',
+  WORKSPACE_MEMBER = 'WORKSPACE_MEMBER',
+}

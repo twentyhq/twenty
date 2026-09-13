@@ -2336,6 +2336,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "deletedAt": {
         "universalIdentifier": "c5d6b3bf-094d-5b26-8007-81b4b668c9b2",
       },
+      "emailTrackingConsent": {
+        "universalIdentifier": "4f6d0a3e-9b1c-4c7a-8e21-6d3f5b2a9c10",
+      },
       "emails": {
         "universalIdentifier": "20202020-3c51-43fa-8b6e-af39e29368ab",
       },

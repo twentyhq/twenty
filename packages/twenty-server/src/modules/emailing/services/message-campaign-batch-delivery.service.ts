@@ -361,6 +361,7 @@ export class MessageCampaignBatchDeliveryService {
         variableNames,
         recipients: claimedRecipients.map((recipient) => ({
           deliveryId: recipient.messageId,
+          email: recipient.email,
           replacements: replacementsByDeliveryId.get(recipient.messageId) ?? {},
         })),
       })
