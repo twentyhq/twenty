@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 20:16\n"
+"PO-Revision-Date: 2026-09-13 21:09\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -3418,7 +3418,7 @@ msgstr "필드 단위 권한"
 #. js-lingui-id: kNlm1B
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field-Level Permissions"
-msgstr ""
+msgstr "필드 단위 권한"
 
 #. js-lingui-id: RnX5oc
 #: src/sections/product-stepper/DataModelVisual/DataModelVisual.tsx
@@ -8154,7 +8154,7 @@ msgstr "2단계 인증"
 #. js-lingui-id: C4pKXW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Two-Factor Authentication"
-msgstr ""
+msgstr "2단계 인증"
 
 #. js-lingui-id: O+vc/1
 #: src/partner-application/partner-application-copy.ts
