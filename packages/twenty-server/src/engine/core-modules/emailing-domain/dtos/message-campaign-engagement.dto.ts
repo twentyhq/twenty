@@ -9,6 +9,12 @@ export class MessageCampaignEngagementDTO {
   @Field(() => Boolean)
   isAvailable: boolean;
 
+  @Field(() => Boolean)
+  isCampaignClickTrackingEnabled: boolean;
+
+  @Field(() => Boolean)
+  isCampaignOpenTrackingEnabled: boolean;
+
   @Field(() => Int)
   totalClicks: number;
 

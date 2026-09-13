@@ -26,19 +26,19 @@ export const ClickTrackingSwitch = () => {
       !currentWorkspace.isCampaignClickTrackingEnabled;
 
     try {
-      setCurrentWorkspace({
-        ...currentWorkspace,
+      setCurrentWorkspace((workspace) => ({
+        ...workspace,
         isCampaignClickTrackingEnabled,
-      });
+      }));
 
       await updateWorkspace({
         variables: { input: { isCampaignClickTrackingEnabled } },
       });
     } catch (err: any) {
-      setCurrentWorkspace({
-        ...currentWorkspace,
+      setCurrentWorkspace((workspace) => ({
+        ...workspace,
         isCampaignClickTrackingEnabled: !isCampaignClickTrackingEnabled,
-      });
+      }));
       enqueueErrorSnackBar({
         apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
         message: err?.message,

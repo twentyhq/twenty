@@ -15,19 +15,17 @@ import { type CampaignEngagementBucket } from 'src/modules/emailing/types/campai
 import { type MessageViewEvent } from 'src/modules/emailing/types/message-view-event.type';
 import { type ShortLinkClickEvent } from 'src/modules/emailing/types/short-link-click-event.type';
 
-type ClickScope = {
+type CampaignScope = {
   workspaceId: string;
-  shortLinkIds: string[];
+  messageCampaignId: string;
   activityFilter: CampaignEngagementActivityFilter;
 };
-
-type CampaignScope = ClickScope & { messageCampaignId: string };
 
 const SCANNER_BURST_MIN_DISTINCT_LINKS = 3;
 const SCANNER_BURST_WINDOW_MS = 10_000;
 
 const CLICK_SCOPE_CONDITION = `workspaceId = {workspaceId:UUID}
-  AND shortLinkId IN {shortLinkIds:Array(UUID)}`;
+  AND messageCampaignId = {messageCampaignId:UUID}`;
 
 const VIEW_SCOPE_CONDITION = `workspaceId = {workspaceId:UUID}
   AND messageCampaignId = {messageCampaignId:UUID}`;
@@ -68,7 +66,7 @@ export class CampaignEngagementEventService {
     await this.insertOrThrow(MESSAGE_VIEW_TABLE, event);
   }
 
-  async findClickerDeliveryIds(scope: ClickScope): Promise<string[]> {
+  async findClickerDeliveryIds(scope: CampaignScope): Promise<string[]> {
     const rows = await this.select<{ deliveryId: string }>(
       `SELECT DISTINCT deliveryId
        FROM ${SHORT_LINK_CLICK_TABLE}
@@ -138,7 +136,7 @@ export class CampaignEngagementEventService {
   }
 
   async findClicksByShortLink(
-    scope: ClickScope,
+    scope: CampaignScope,
   ): Promise<
     { shortLinkId: string; uniqueClickers: number; totalClicks: number }[]
   > {
@@ -259,7 +257,7 @@ export class CampaignEngagementEventService {
 
   private select<TRow>(
     query: string,
-    params: Record<string, string | number | string[]>,
+    params: Record<string, string | number>,
   ): Promise<TRow[]> {
     return this.clickHouseService.selectOrThrow<TRow>(query, params);
   }

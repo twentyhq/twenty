@@ -23,16 +23,10 @@ import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/email
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
-import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { throttlerToRestApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-rest-api-exception-handler.util';
-import { CAMPAIGN_BLANK_PIXEL_PATH } from 'src/modules/emailing/constants/campaign-blank-pixel-path.constant';
 import { CAMPAIGN_OPEN_PIXEL_GIF } from 'src/modules/emailing/constants/campaign-open-pixel-gif.constant';
 import { CampaignEngagementCaptureService } from 'src/modules/emailing/services/campaign-engagement-capture.service';
 
 const FOUND_STATUS_CODE = 302;
-
-const REQUESTER_RATE_LIMIT = { maxRequests: 600, windowMs: 60_000 };
 
 @Controller(ApiPath.Emailing)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
@@ -41,7 +35,6 @@ export class CampaignTrackingController {
     private readonly campaignTrackingTokenService: CampaignTrackingTokenService,
     private readonly shortLinkService: ShortLinkService,
     private readonly campaignEngagementCaptureService: CampaignEngagementCaptureService,
-    private readonly throttlerService: ThrottlerService,
   ) {}
 
   @Get('c/:token')
@@ -53,8 +46,6 @@ export class CampaignTrackingController {
     @Headers('user-agent') userAgent: string | undefined,
     @Req() request: Request,
   ): Promise<{ url: string; statusCode: number }> {
-    await this.throttleByRequesterOrThrow(request);
-
     const payload = this.verifyTokenOrThrow(token, 'CLICK');
 
     const shortLink = await this.shortLinkService.findById(payload.shortLinkId);
@@ -66,6 +57,7 @@ export class CampaignTrackingController {
     await this.campaignEngagementCaptureService.capture({
       payload,
       userAgent: userAgent ?? null,
+      requesterIp: request.ip ?? null,
     });
 
     return { url: shortLink.url, statusCode: FOUND_STATUS_CODE };
@@ -75,6 +67,7 @@ export class CampaignTrackingController {
   async open(
     @Param('token') token: string,
     @Headers('user-agent') userAgent: string | undefined,
+    @Req() request: Request,
     @Res() response: Response,
   ): Promise<void> {
     const payload = this.verifyTokenOrThrow(token, 'OPEN');
@@ -82,17 +75,9 @@ export class CampaignTrackingController {
     await this.campaignEngagementCaptureService.capture({
       payload,
       userAgent: userAgent ?? null,
+      requesterIp: request.ip ?? null,
     });
 
-    this.sendPixel(response);
-  }
-
-  @Get(CAMPAIGN_BLANK_PIXEL_PATH)
-  blankPixel(@Res() response: Response): void {
-    this.sendPixel(response);
-  }
-
-  private sendPixel(response: Response): void {
     response
       .set({
         'Cache-Control': 'no-store',
@@ -101,23 +86,6 @@ export class CampaignTrackingController {
         'Content-Length': String(CAMPAIGN_OPEN_PIXEL_GIF.length),
       })
       .end(CAMPAIGN_OPEN_PIXEL_GIF);
-  }
-
-  private async throttleByRequesterOrThrow(request: Request): Promise<void> {
-    try {
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        `campaign-tracking:requester:${request.ip ?? 'unknown-requester'}`,
-        1,
-        REQUESTER_RATE_LIMIT.maxRequests,
-        REQUESTER_RATE_LIMIT.windowMs,
-      );
-    } catch (error) {
-      if (error instanceof ThrottlerException) {
-        throttlerToRestApiExceptionHandler(error);
-      }
-
-      throw error;
-    }
   }
 
   private verifyTokenOrThrow<

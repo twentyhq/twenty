@@ -24,7 +24,6 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN } from 'src/modules/emailing/constants/campaign-batch-variable-tag-pattern.constant';
 import { CAMPAIGN_OPEN_PIXEL_TAG } from 'src/modules/emailing/constants/campaign-open-pixel-tag.constant';
-import { CAMPAIGN_BLANK_PIXEL_PATH } from 'src/modules/emailing/constants/campaign-blank-pixel-path.constant';
 import { MessageTrackingConsentService } from 'src/modules/emailing/services/message-tracking-consent.service';
 import { normalizeEmailAddress } from 'src/modules/emailing/utils/normalize-email-address.util';
 import { CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART } from 'src/modules/emailing/constants/campaign-tracking-tag.constant';
@@ -39,7 +38,7 @@ type TrackingRecipient = {
   replacements: Record<string, string>;
 };
 
-const OPEN_PIXEL_HTML = `<img src="{{${CAMPAIGN_OPEN_PIXEL_TAG}}}" width="1" height="1" alt="" style="display:none;width:1px;height:1px;border:0" />`;
+const OPEN_PIXEL_PLACEHOLDER = `{{${CAMPAIGN_OPEN_PIXEL_TAG}}}`;
 
 type PrepareBatchArgs = {
   workspaceId: string;
@@ -154,7 +153,6 @@ export class CampaignTrackingContentService {
                   withOpenPixel: isCampaignOpenTrackingEnabled,
                 })
               : this.buildUntrackedReplacements({
-                  baseUrl,
                   recipient,
                   urlTemplates,
                   withOpenPixel: isCampaignOpenTrackingEnabled,
@@ -202,10 +200,10 @@ export class CampaignTrackingContentService {
     const bodyEndIndex = html.lastIndexOf('</body>');
 
     if (bodyEndIndex === -1) {
-      return `${html}${OPEN_PIXEL_HTML}`;
+      return `${html}${OPEN_PIXEL_PLACEHOLDER}`;
     }
 
-    return `${html.slice(0, bodyEndIndex)}${OPEN_PIXEL_HTML}${html.slice(bodyEndIndex)}`;
+    return `${html.slice(0, bodyEndIndex)}${OPEN_PIXEL_PLACEHOLDER}${html.slice(bodyEndIndex)}`;
   }
 
   private async registerShortLinks({
@@ -288,22 +286,22 @@ export class CampaignTrackingContentService {
     });
 
     if (withOpenPixel) {
-      replacements[CAMPAIGN_OPEN_PIXEL_TAG] = this.buildTrackedUrl(baseUrl, {
-        purpose: 'OPEN',
-        deliveryId: recipient.deliveryId,
-      });
+      replacements[CAMPAIGN_OPEN_PIXEL_TAG] = this.buildOpenPixelTag(
+        this.buildTrackedUrl(baseUrl, {
+          purpose: 'OPEN',
+          deliveryId: recipient.deliveryId,
+        }),
+      );
     }
 
     return replacements;
   }
 
   private buildUntrackedReplacements({
-    baseUrl,
     recipient,
     urlTemplates,
     withOpenPixel,
   }: {
-    baseUrl: string;
     recipient: TrackingRecipient;
     urlTemplates: string[];
     withOpenPixel: boolean;
@@ -322,11 +320,14 @@ export class CampaignTrackingContentService {
     });
 
     if (withOpenPixel) {
-      replacements[CAMPAIGN_OPEN_PIXEL_TAG] =
-        `${baseUrl}/${ApiPath.Emailing}/${CAMPAIGN_BLANK_PIXEL_PATH}`;
+      replacements[CAMPAIGN_OPEN_PIXEL_TAG] = '';
     }
 
     return replacements;
+  }
+
+  private buildOpenPixelTag(pixelUrl: string): string {
+    return `<img src="${escapeHtml(pixelUrl)}" width="1" height="1" alt="" style="display:none;width:1px;height:1px;border:0" />`;
   }
 
   private buildTrackedUrl(

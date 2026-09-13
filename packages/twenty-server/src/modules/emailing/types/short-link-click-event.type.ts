@@ -2,6 +2,7 @@ import { type CampaignEngagementActivityClass } from 'src/modules/emailing/types
 
 export type ShortLinkClickEvent = {
   workspaceId: string;
+  messageCampaignId: string;
   shortLinkId: string;
   deliveryId: string;
   eventId: string;

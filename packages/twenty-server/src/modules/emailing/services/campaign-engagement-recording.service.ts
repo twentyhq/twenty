@@ -41,13 +41,14 @@ export class CampaignEngagementRecordingService {
 
     const event = {
       workspaceId: delivery.workspaceId,
+      messageCampaignId: delivery.campaignId,
       deliveryId: delivery.id,
       eventId: observation.eventId,
       occurredAt: observation.occurredAt,
       activityClass: classifyEngagementUserAgent(observation.userAgent),
     };
 
-    switch (observation.eventType) {
+    switch (observation.eventType ?? 'CLICK') {
       case 'CLICK':
         if (!isDefined(observation.shortLinkId)) {
           return;
@@ -60,10 +61,7 @@ export class CampaignEngagementRecordingService {
 
         return;
       case 'OPEN':
-        await this.campaignEngagementEventService.insertViewOrThrow({
-          ...event,
-          messageCampaignId: delivery.campaignId,
-        });
+        await this.campaignEngagementEventService.insertViewOrThrow(event);
 
         return;
     }

@@ -2678,6 +2678,8 @@ export type MessageCampaignEngagementBucketDto = {
 export type MessageCampaignEngagementDto = {
   __typename?: 'MessageCampaignEngagementDTO';
   isAvailable: Scalars['Boolean']['output'];
+  isCampaignClickTrackingEnabled: Scalars['Boolean']['output'];
+  isCampaignOpenTrackingEnabled: Scalars['Boolean']['output'];
   links: Array<MessageCampaignEngagementLinkDto>;
   recipients: Array<MessageCampaignEngagementRecipientDto>;
   series: Array<MessageCampaignEngagementBucketDto>;
