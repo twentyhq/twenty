@@ -69,6 +69,16 @@ describe('TRANSLATED_IDENTIFIER_RULE', () => {
       'Apelați `client.rulează()`.',
       'Apelați `client.run()`.',
     ],
+    [
+      'Build the `twenty-emails` package first.',
+      'Vous devez construire le paquet `vingt-emails`.',
+      'Vous devez construire le paquet `twenty-emails`.',
+    ],
+    [
+      'Send the `x-slack-signature` header.',
+      'Trimiteți antetul `x-semnătură-slack`.',
+      'Trimiteți antetul `x-slack-signature`.',
+    ],
   ])(
     'restores an identifier-shaped span: %s',
     (sourceText, translationText, expected) => {

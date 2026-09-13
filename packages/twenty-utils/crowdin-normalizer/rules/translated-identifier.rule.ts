@@ -13,13 +13,22 @@ function codeSpansIn(text: string): string[] {
   );
 }
 
+// Package, command and header names are hyphenated lowercase, and that is the
+// shape translators actually broke: the French docs ship `vingt-emails` and the
+// Japanese `20-emails` for `twenty-emails`, each inside an npx command nobody
+// can run. Nothing in the English source has this shape without being a symbol.
+const KEBAB_CASE_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)+$/;
+
 function looksLikeIdentifier(span: string): boolean {
   const code = span.slice(1, -1);
 
   if (/\s/.test(code)) return false;
 
   return (
-    /[a-z][A-Z]/.test(code) || /[_./(]/.test(code) || /^[A-Z0-9_]+$/.test(code)
+    /[a-z][A-Z]/.test(code) ||
+    /[_./(]/.test(code) ||
+    /^[A-Z0-9_]+$/.test(code) ||
+    KEBAB_CASE_REGEX.test(code)
   );
 }
 
