@@ -1,5 +1,5 @@
 import { CAMPAIGN_JOB_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-job-retry-limit.constant';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
@@ -25,31 +25,13 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
-import { CampaignEngagementStatisticsService } from 'src/modules/emailing/services/campaign-engagement-statistics.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
-import { type CampaignEngagementCounts } from 'src/modules/emailing/types/campaign-engagement-counts.type';
-import { type CampaignTrackingFlags } from 'src/modules/emailing/types/campaign-tracking-flags.type';
 
 const RECONCILIATION_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
-const ENGAGEMENT_RECONCILIATION_WINDOW_MS = 25 * 60 * 60 * 1000;
 const REFRESH_LOCK_TTL_MS = CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS + 2_000;
-
-type StoredCampaignCounts = Pick<
-  MessageCampaignWorkspaceEntity,
-  | 'sentCount'
-  | 'deliveredCount'
-  | 'failedCount'
-  | 'skippedCount'
-  | 'bouncedCount'
-  | 'complainedCount'
-> &
-  CampaignEngagementCounts;
 
 @Injectable()
 export class MessageCampaignStatisticsService {
-  private readonly logger = new Logger(MessageCampaignStatisticsService.name);
-
   constructor(
     @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
     private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
@@ -58,8 +40,6 @@ export class MessageCampaignStatisticsService {
     private readonly messageQueueService: MessageQueueService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleEmailing)
     private readonly cacheStorageService: CacheStorageService,
-    private readonly campaignEngagementStatisticsService: CampaignEngagementStatisticsService,
-    private readonly campaignEngagementEventService: CampaignEngagementEventService,
   ) {}
 
   async scheduleRefresh({
@@ -145,10 +125,27 @@ export class MessageCampaignStatisticsService {
   }: {
     workspaceId: string;
   }): Promise<void> {
-    const campaignIds = new Set([
-      ...(await this.findRecentlySentCampaignIds({ workspaceId })),
-      ...(await this.findRecentlyEngagedCampaignIds({ workspaceId })),
-    ]);
+    const campaignIds =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const campaignRepository = this.workspaceOrmManager.getRepository(
+          MessageCampaignWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+        );
+
+        const campaigns = await campaignRepository.find({
+          where: [
+            { status: MessageCampaignStatus.SENDING },
+            {
+              sentAt: MoreThanOrEqual(
+                new Date(Date.now() - RECONCILIATION_WINDOW_MS),
+              ),
+            },
+          ],
+          select: { id: true },
+        });
+
+        return campaigns.map((campaign) => campaign.id);
+      }, buildSystemAuthContext(workspaceId));
 
     for (const campaignId of campaignIds) {
       await this.refreshCampaignCounts({ workspaceId, campaignId });
@@ -164,88 +161,13 @@ export class MessageCampaignStatisticsService {
     campaignId: string;
     counts: CampaignCounts;
   }): Promise<void> {
-    const campaign = await this.findCampaignCounts({ workspaceId, campaignId });
-
-    if (!isDefined(campaign)) {
-      return;
-    }
-
-    const engagementCounts =
-      await this.campaignEngagementStatisticsService.computeEngagementCounts({
-        workspaceId,
-        campaignId,
-        sentCount: counts.sentCount,
-        bouncedCount: counts.bouncedCount,
-        isClickTrackingEnabled: campaign.isClickTrackingEnabled,
-        isOpenTrackingEnabled: campaign.isOpenTrackingEnabled,
-      });
-
-    const storedCounts: StoredCampaignCounts = {
-      sentCount: campaign.sentCount,
-      deliveredCount: campaign.deliveredCount,
-      failedCount: campaign.failedCount,
-      skippedCount: campaign.skippedCount,
-      bouncedCount: campaign.bouncedCount,
-      complainedCount: campaign.complainedCount,
-      openedCount: campaign.openedCount,
-      clickedCount: campaign.clickedCount,
-      openRate: campaign.openRate,
-      clickRate: campaign.clickRate,
-    };
-
-    const nextCounts: StoredCampaignCounts = {
-      ...storedCounts,
-      sentCount: counts.sentCount,
-      deliveredCount: counts.deliveredCount,
-      failedCount: counts.failedCount,
-      skippedCount: counts.skippedCount,
-      bouncedCount: counts.bouncedCount,
-      complainedCount: counts.complainedCount,
-      ...(engagementCounts ?? {}),
-    };
-
-    if (
-      !isDefined(engagementCounts) &&
-      fastDeepEqual(storedCounts, nextCounts)
-    ) {
-      return;
-    }
-
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const campaignRepository = this.workspaceOrmManager.getRepository(
         MessageCampaignWorkspaceEntity,
         { shouldBypassPermissionChecks: true },
       );
 
-      await campaignRepository.update(
-        { id: campaignId },
-        {
-          ...nextCounts,
-          ...(isDefined(engagementCounts)
-            ? { engagementCalculatedAt: new Date() }
-            : {}),
-        },
-      );
-    }, buildSystemAuthContext(workspaceId));
-  }
-
-  private async findCampaignCounts({
-    workspaceId,
-    campaignId,
-  }: {
-    workspaceId: string;
-    campaignId: string;
-  }): Promise<Pick<
-    MessageCampaignWorkspaceEntity,
-    keyof StoredCampaignCounts | keyof CampaignTrackingFlags
-  > | null> {
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = this.workspaceOrmManager.getRepository(
-        MessageCampaignWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
-
-      return campaignRepository.findOne({
+      const campaign = await campaignRepository.findOne({
         where: { id: campaignId },
         select: {
           id: true,
@@ -255,64 +177,36 @@ export class MessageCampaignStatisticsService {
           skippedCount: true,
           bouncedCount: true,
           complainedCount: true,
-          openedCount: true,
-          clickedCount: true,
-          openRate: true,
-          clickRate: true,
-          isClickTrackingEnabled: true,
-          isOpenTrackingEnabled: true,
         },
       });
+
+      if (!isDefined(campaign)) {
+        return;
+      }
+
+      const nextCounts = {
+        sentCount: counts.sentCount,
+        deliveredCount: counts.deliveredCount,
+        failedCount: counts.failedCount,
+        skippedCount: counts.skippedCount,
+        bouncedCount: counts.bouncedCount,
+        complainedCount: counts.complainedCount,
+      };
+
+      const storedCounts = {
+        sentCount: campaign.sentCount,
+        deliveredCount: campaign.deliveredCount,
+        failedCount: campaign.failedCount,
+        skippedCount: campaign.skippedCount,
+        bouncedCount: campaign.bouncedCount,
+        complainedCount: campaign.complainedCount,
+      };
+
+      if (fastDeepEqual(storedCounts, nextCounts)) {
+        return;
+      }
+
+      await campaignRepository.update({ id: campaignId }, nextCounts);
     }, buildSystemAuthContext(workspaceId));
-  }
-
-  private async findRecentlySentCampaignIds({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<string[]> {
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = this.workspaceOrmManager.getRepository(
-        MessageCampaignWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
-
-      const campaigns = await campaignRepository.find({
-        where: [
-          { status: MessageCampaignStatus.SENDING },
-          {
-            sentAt: MoreThanOrEqual(
-              new Date(Date.now() - RECONCILIATION_WINDOW_MS),
-            ),
-          },
-        ],
-        select: { id: true },
-      });
-
-      return campaigns.map((campaign) => campaign.id);
-    }, buildSystemAuthContext(workspaceId));
-  }
-
-  private async findRecentlyEngagedCampaignIds({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<string[]> {
-    if (!this.campaignEngagementEventService.isAvailable()) {
-      return [];
-    }
-
-    return this.campaignEngagementEventService
-      .findRecentlyEngagedCampaignIds({
-        workspaceId,
-        since: new Date(Date.now() - ENGAGEMENT_RECONCILIATION_WINDOW_MS),
-      })
-      .catch((error) => {
-        this.logger.warn(
-          `Could not list recently engaged campaigns for workspace ${workspaceId}: ${error}`,
-        );
-
-        return [];
-      });
   }
 }

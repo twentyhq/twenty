@@ -15,13 +15,14 @@ import {
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
+import { type ShortLinkEntity } from 'src/engine/core-modules/short-link/short-link.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CampaignEngagementActivityFilter } from 'src/modules/emailing/constants/campaign-engagement-activity-filter.constant';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { MessageCampaignAccessService } from 'src/modules/emailing/services/message-campaign-access.service';
-import { MessageCampaignLinkService } from 'src/modules/emailing/services/message-campaign-link.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type CampaignEngagementBucket } from 'src/modules/emailing/types/campaign-engagement-bucket.type';
 
@@ -30,14 +31,7 @@ const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
 const RECIPIENTS_LIMIT = 50;
 
-type ReportedCampaign = Pick<
-  MessageCampaignWorkspaceEntity,
-  | 'id'
-  | 'sentAt'
-  | 'isClickTrackingEnabled'
-  | 'isOpenTrackingEnabled'
-  | 'engagementCalculatedAt'
->;
+type ReportedCampaign = Pick<MessageCampaignWorkspaceEntity, 'id' | 'sentAt'>;
 
 @Injectable()
 export class CampaignEngagementReportService {
@@ -47,7 +41,7 @@ export class CampaignEngagementReportService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
     private readonly campaignEngagementEventService: CampaignEngagementEventService,
-    private readonly messageCampaignLinkService: MessageCampaignLinkService,
+    private readonly shortLinkService: ShortLinkService,
     private readonly messageCampaignAccessService: MessageCampaignAccessService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
@@ -76,34 +70,39 @@ export class CampaignEngagementReportService {
 
     const isAvailable = this.campaignEngagementEventService.isAvailable();
 
-    const isTracked =
-      campaign.isClickTrackingEnabled || campaign.isOpenTrackingEnabled;
-
     const emptyReport: MessageCampaignEngagementDTO = {
       isAvailable,
-      isClickTrackingEnabled: campaign.isClickTrackingEnabled,
-      isOpenTrackingEnabled: campaign.isOpenTrackingEnabled,
-      calculatedAt: campaign.engagementCalculatedAt,
-      totalOpens: 0,
       totalClicks: 0,
-      uniqueOpeners: 0,
       uniqueClickers: 0,
       series: [],
       links: [],
       recipients: [],
     };
 
-    if (!isAvailable || !isTracked) {
+    if (!isAvailable) {
       return emptyReport;
     }
 
-    const scope = { workspaceId, messageCampaignId, activityFilter };
+    const shortLinks = await this.shortLinkService.findCampaignLinks({
+      workspaceId,
+      messageCampaignId,
+    });
+
+    if (shortLinks.length === 0) {
+      return emptyReport;
+    }
+
+    const scope = {
+      workspaceId,
+      shortLinkIds: shortLinks.map((shortLink) => shortLink.id),
+      activityFilter,
+    };
     const bucket = this.resolveBucket(campaign.sentAt);
 
     const aggregates = await Promise.all([
-      this.campaignEngagementEventService.countEngagement(scope),
-      this.campaignEngagementEventService.findSeries({ ...scope, bucket }),
-      this.campaignEngagementEventService.findClicksByDestination(scope),
+      this.campaignEngagementEventService.countClicks(scope),
+      this.campaignEngagementEventService.findClickSeries({ ...scope, bucket }),
+      this.campaignEngagementEventService.findClicksByShortLink(scope),
       this.campaignEngagementEventService.findEngagedDeliveries({
         ...scope,
         limit: RECIPIENTS_LIMIT,
@@ -120,20 +119,14 @@ export class CampaignEngagementReportService {
       return { ...emptyReport, isAvailable: false };
     }
 
-    const [totals, series, clicksByDestination, engagedDeliveries] = aggregates;
+    const [totals, series, clicksByShortLink, engagedDeliveries] = aggregates;
 
     return {
       ...emptyReport,
-      totalOpens: totals.totalOpens,
       totalClicks: totals.totalClicks,
-      uniqueOpeners: campaign.isOpenTrackingEnabled ? totals.uniqueOpeners : 0,
       uniqueClickers: totals.uniqueClickers,
       series: this.fillSeries({ series, bucket, sentAt: campaign.sentAt }),
-      links: await this.rollUpLinksByAuthoredUrl({
-        workspaceId,
-        messageCampaignId,
-        clicksByDestination,
-      }),
+      links: this.rollUpLinksByAuthoredUrl({ shortLinks, clicksByShortLink }),
       recipients: await this.attachRecipients({
         workspaceId,
         messageCampaignId,
@@ -165,13 +158,7 @@ export class CampaignEngagementReportService {
 
         return campaignRepository.findOne({
           where: { id: messageCampaignId },
-          select: {
-            id: true,
-            sentAt: true,
-            isClickTrackingEnabled: true,
-            isOpenTrackingEnabled: true,
-            engagementCalculatedAt: true,
-          },
+          select: { id: true, sentAt: true },
         });
       },
     );
@@ -221,7 +208,6 @@ export class CampaignEngagementReportService {
       filled.push(
         countsByBucketMs.get(bucketStartMs) ?? {
           bucketStart: new Date(bucketStartMs),
-          opens: 0,
           clicks: 0,
         },
       );
@@ -230,33 +216,27 @@ export class CampaignEngagementReportService {
     return filled;
   }
 
-  private async rollUpLinksByAuthoredUrl({
-    workspaceId,
-    messageCampaignId,
-    clicksByDestination,
+  private rollUpLinksByAuthoredUrl({
+    shortLinks,
+    clicksByShortLink,
   }: {
-    workspaceId: string;
-    messageCampaignId: string;
-    clicksByDestination: {
-      destinationId: string;
+    shortLinks: ShortLinkEntity[];
+    clicksByShortLink: {
+      shortLinkId: string;
       uniqueClickers: number;
       totalClicks: number;
     }[];
-  }): Promise<MessageCampaignEngagementLinkDTO[]> {
-    const links = await this.messageCampaignLinkService.findCampaignLinks({
-      workspaceId,
-      messageCampaignId,
-    });
-    const authoredUrlByDestinationId = new Map(
-      links.map((link) => [link.id, link.authoredUrl]),
+  }): MessageCampaignEngagementLinkDTO[] {
+    const authoredUrlByShortLinkId = new Map(
+      shortLinks.map((shortLink) => [shortLink.id, shortLink.authoredUrl]),
     );
     const totalsByAuthoredUrl = new Map<
       string,
       MessageCampaignEngagementLinkDTO
     >();
 
-    for (const clicks of clicksByDestination) {
-      const authoredUrl = authoredUrlByDestinationId.get(clicks.destinationId);
+    for (const clicks of clicksByShortLink) {
+      const authoredUrl = authoredUrlByShortLinkId.get(clicks.shortLinkId);
 
       if (!isDefined(authoredUrl)) {
         continue;
@@ -289,7 +269,6 @@ export class CampaignEngagementReportService {
     messageCampaignId: string;
     engagedDeliveries: {
       deliveryId: string;
-      firstOpenedAt: Date | null;
       firstClickedAt: Date | null;
       lastEngagedAt: Date;
     }[];

@@ -123,6 +123,10 @@ export class WorkspaceEntity {
   @Column({ default: true })
   isPublicInviteLinkEnabled: boolean;
 
+  @Field()
+  @Column({ default: false })
+  isMessageTrackingEnabled: boolean;
+
   @Field(() => WorkspaceDiscoverability)
   @WasIntroducedInUpgrade({
     upgradeCommandName:

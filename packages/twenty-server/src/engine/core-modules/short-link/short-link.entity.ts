@@ -8,17 +8,17 @@ import {
 
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
-@Entity({ name: 'messageCampaignLink', schema: 'core' })
+@Entity({ name: 'shortLink', schema: 'core' })
 @Index(
-  'IDX_MESSAGE_CAMPAIGN_LINK_URL_UNIQUE',
+  'IDX_SHORT_LINK_URL_UNIQUE',
   ['workspaceId', 'messageCampaignId', 'urlHash'],
   { unique: true },
 )
-@Index('IDX_MESSAGE_CAMPAIGN_LINK_CAMPAIGN_ID', [
+@Index('IDX_SHORT_LINK_MESSAGE_CAMPAIGN_ID', [
   'workspaceId',
   'messageCampaignId',
 ])
-export class MessageCampaignLinkEntity extends WorkspaceRelatedEntity {
+export class ShortLinkEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

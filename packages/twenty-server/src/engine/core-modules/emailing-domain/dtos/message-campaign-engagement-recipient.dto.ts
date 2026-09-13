@@ -11,9 +11,6 @@ export class MessageCampaignEngagementRecipientDTO {
   personId: string;
 
   @Field(() => Date, { nullable: true })
-  firstOpenedAt: Date | null;
-
-  @Field(() => Date, { nullable: true })
   firstClickedAt: Date | null;
 
   @Field(() => Date)

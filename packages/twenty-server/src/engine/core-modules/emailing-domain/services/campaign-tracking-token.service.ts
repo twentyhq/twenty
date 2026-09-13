@@ -6,10 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-byte-length.constant';
 import { CAMPAIGN_TRACKING_TOKEN_HMAC_PURPOSE } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-hmac-purpose.constant';
-import { CAMPAIGN_TRACKING_TOKEN_MESSAGE_PART_BYTE } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-message-part-byte.constant';
 import { CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-purpose-byte.constant';
 import { CAMPAIGN_TRACKING_TOKEN_VERSION } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-version.constant';
-import { type CampaignMessagePart } from 'src/engine/core-modules/emailing-domain/types/campaign-message-part.type';
 import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
 import { computeEncryptionKeyId } from 'src/engine/core-modules/secret-encryption/utils/compute-encryption-key-id.util';
 import { deriveInstanceHmacKey } from 'src/engine/core-modules/secret-encryption/utils/derive-instance-hmac-key.util';
@@ -17,11 +15,6 @@ import { resolveEncryptionKeysOrThrow } from 'src/engine/core-modules/secret-enc
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type SigningKey = { keyId: Buffer; key: Buffer };
-
-const PAYLOAD_BYTE_LENGTHS: number[] = [
-  CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.clickPayload,
-  CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.openPayload,
-];
 
 @Injectable()
 export class CampaignTrackingTokenService {
@@ -49,7 +42,9 @@ export class CampaignTrackingTokenService {
     const payloadByteLength =
       decodedToken.length - CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.signature;
 
-    if (!PAYLOAD_BYTE_LENGTHS.includes(payloadByteLength)) {
+    if (
+      payloadByteLength !== CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.clickPayload
+    ) {
       return null;
     }
 
@@ -93,18 +88,12 @@ export class CampaignTrackingTokenService {
       ...keyId,
       CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE[payload.purpose],
     ]);
-    const identifiers =
-      payload.purpose === 'CLICK'
-        ? Buffer.concat([
-            this.encodeUuid(payload.deliveryId),
-            this.encodeUuid(payload.destinationId),
-          ])
-        : this.encodeUuid(payload.deliveryId);
-    const messagePart = Buffer.from([
-      CAMPAIGN_TRACKING_TOKEN_MESSAGE_PART_BYTE[payload.messagePart],
+    const identifiers = Buffer.concat([
+      this.encodeUuid(payload.deliveryId),
+      this.encodeUuid(payload.shortLinkId),
     ]);
 
-    return Buffer.concat([header, identifiers, messagePart]);
+    return Buffer.concat([header, identifiers]);
   }
 
   private decodePayload(
@@ -113,57 +102,29 @@ export class CampaignTrackingTokenService {
     const purposeOffset = 1 + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.keyId;
     const purposeByte = encodedPayload.readUInt8(purposeOffset);
     const deliveryIdOffset = purposeOffset + 1;
-    const destinationIdOffset =
-      deliveryIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid;
     const deliveryId = this.decodeUuid(
-      encodedPayload.subarray(deliveryIdOffset, destinationIdOffset),
+      encodedPayload.subarray(
+        deliveryIdOffset,
+        deliveryIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid,
+      ),
     );
-    const messagePart = this.decodeMessagePart(
-      encodedPayload.readUInt8(encodedPayload.length - 1),
-    );
-
-    if (!isDefined(messagePart)) {
+    if (purposeByte !== CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE.CLICK) {
       return null;
     }
 
-    if (
-      purposeByte === CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE.CLICK &&
-      encodedPayload.length === CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.clickPayload
-    ) {
-      return {
-        purpose: 'CLICK',
-        deliveryId,
-        destinationId: this.decodeUuid(
-          encodedPayload.subarray(
-            destinationIdOffset,
-            destinationIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid,
-          ),
+    const shortLinkIdOffset =
+      deliveryIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid;
+
+    return {
+      purpose: 'CLICK',
+      deliveryId,
+      shortLinkId: this.decodeUuid(
+        encodedPayload.subarray(
+          shortLinkIdOffset,
+          shortLinkIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid,
         ),
-        messagePart,
-      };
-    }
-
-    if (
-      purposeByte === CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE.OPEN &&
-      encodedPayload.length ===
-        CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.openPayload &&
-      messagePart === 'HTML'
-    ) {
-      return { purpose: 'OPEN', deliveryId, messagePart };
-    }
-
-    return null;
-  }
-
-  private decodeMessagePart(byte: number): CampaignMessagePart | undefined {
-    switch (byte) {
-      case CAMPAIGN_TRACKING_TOKEN_MESSAGE_PART_BYTE.HTML:
-        return 'HTML';
-      case CAMPAIGN_TRACKING_TOKEN_MESSAGE_PART_BYTE.TEXT:
-        return 'TEXT';
-      default:
-        return undefined;
-    }
+      ),
+    };
   }
 
   private computeSignature(encodedPayload: Buffer, key: Buffer): Buffer {

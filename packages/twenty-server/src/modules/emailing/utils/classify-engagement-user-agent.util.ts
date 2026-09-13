@@ -3,94 +3,37 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS } from 'src/modules/emailing/constants/campaign-engagement-activity-class.constant';
 import { type CampaignEngagementActivityClass } from 'src/modules/emailing/types/campaign-engagement-activity-class.type';
 
-type UserAgentSignature = { pattern: RegExp; reason: string };
-
-const PRIVACY_PROXY_SIGNATURES: UserAgentSignature[] = [
-  { pattern: /GoogleImageProxy/i, reason: 'proxy:google' },
-  { pattern: /YahooMailProxy/i, reason: 'proxy:yahoo' },
-  { pattern: /^Mozilla\/5\.0$/, reason: 'proxy:apple' },
+const PRIVACY_PROXY_PATTERNS = [
+  /GoogleImageProxy/i,
+  /YahooMailProxy/i,
+  /^Mozilla\/5\.0$/,
 ];
 
-const AUTOMATION_SIGNATURES: UserAgentSignature[] = [
-  { pattern: /mimecast/i, reason: 'ua:mimecast' },
-  { pattern: /proofpoint/i, reason: 'ua:proofpoint' },
-  { pattern: /barracuda/i, reason: 'ua:barracuda' },
-  { pattern: /symantec|norton/i, reason: 'ua:symantec' },
-  { pattern: /Slackbot|Slack-ImgProxy/i, reason: 'ua:slack' },
-  {
-    pattern:
-      /Twitterbot|facebookexternalhit|LinkedInBot|WhatsApp|Discordbot|TelegramBot|Applebot/i,
-    reason: 'ua:link-preview',
-  },
-  {
-    pattern:
-      /curl|wget|python-requests|Go-http-client|okhttp|HeadlessChrome|PhantomJS|Java\//i,
-    reason: 'ua:script',
-  },
-  { pattern: /bot|crawler|spider|scanner/i, reason: 'ua:bot' },
-];
-
-const CLIENT_FAMILY_SIGNATURES: { pattern: RegExp; family: string }[] = [
-  { pattern: /GoogleImageProxy/i, family: 'gmail' },
-  {
-    pattern: /^Mozilla\/5\.0$|Mail\/.*AppleWebKit|iPhone Mail|iPad Mail/i,
-    family: 'apple-mail',
-  },
-  { pattern: /Outlook|Microsoft Office|MSOffice/i, family: 'outlook' },
-  { pattern: /Thunderbird/i, family: 'thunderbird' },
-  { pattern: /YahooMailProxy/i, family: 'yahoo' },
+const AUTOMATION_PATTERNS = [
+  /mimecast/i,
+  /proofpoint/i,
+  /barracuda/i,
+  /symantec|norton/i,
+  /Slackbot|Slack-ImgProxy/i,
+  /Twitterbot|facebookexternalhit|LinkedInBot|WhatsApp|Discordbot|TelegramBot|Applebot/i,
+  /curl|wget|python-requests|Go-http-client|okhttp|HeadlessChrome|PhantomJS|Java\//i,
+  /bot|crawler|spider|scanner/i,
 ];
 
 export const classifyEngagementUserAgent = (
   userAgent: string | null,
-): {
-  activityClass: CampaignEngagementActivityClass;
-  classificationReasons: string[];
-  clientFamily: string;
-} => {
+): CampaignEngagementActivityClass => {
   if (!isNonEmptyString(userAgent)) {
-    return {
-      activityClass: CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.UNCLASSIFIED,
-      classificationReasons: [],
-      clientFamily: 'unknown',
-    };
+    return CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.UNCLASSIFIED;
   }
 
-  const clientFamily =
-    CLIENT_FAMILY_SIGNATURES.find(({ pattern }) => pattern.test(userAgent))
-      ?.family ?? 'unknown';
-
-  const proxyReasons = matchReasons(PRIVACY_PROXY_SIGNATURES, userAgent);
-
-  if (proxyReasons.length > 0) {
-    return {
-      activityClass: CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.PRIVACY_PROXY,
-      classificationReasons: proxyReasons,
-      clientFamily,
-    };
+  if (PRIVACY_PROXY_PATTERNS.some((pattern) => pattern.test(userAgent))) {
+    return CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.PRIVACY_PROXY;
   }
 
-  const automationReasons = matchReasons(AUTOMATION_SIGNATURES, userAgent);
-
-  if (automationReasons.length > 0) {
-    return {
-      activityClass: CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.SUSPECTED_AUTOMATION,
-      classificationReasons: automationReasons,
-      clientFamily,
-    };
+  if (AUTOMATION_PATTERNS.some((pattern) => pattern.test(userAgent))) {
+    return CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.SUSPECTED_AUTOMATION;
   }
 
-  return {
-    activityClass: CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.UNCLASSIFIED,
-    classificationReasons: [],
-    clientFamily,
-  };
+  return CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.UNCLASSIFIED;
 };
-
-const matchReasons = (
-  signatures: UserAgentSignature[],
-  userAgent: string,
-): string[] =>
-  signatures
-    .filter(({ pattern }) => pattern.test(userAgent))
-    .map(({ reason }) => reason);

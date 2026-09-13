@@ -16,7 +16,7 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type CampaignEngagementObservation } from 'src/modules/emailing/types/campaign-engagement-observation.type';
 
-const CAPTURE_RATE_LIMIT_PER_TARGET = { maxRequests: 60, windowMs: 60_000 };
+const CAPTURE_RATE_LIMIT_PER_LINK = { maxRequests: 60, windowMs: 60_000 };
 
 const RESPONSE_RELEASE_BUDGET_MS = 100;
 
@@ -46,10 +46,8 @@ export class CampaignEngagementCaptureService {
     const observation: CampaignEngagementObservation = {
       eventId: v4(),
       occurredAt: new Date().toISOString(),
-      eventType: payload.purpose,
       deliveryId: payload.deliveryId,
-      destinationId: payload.purpose === 'CLICK' ? payload.destinationId : null,
-      messagePart: payload.messagePart,
+      shortLinkId: payload.shortLinkId,
       userAgent,
     };
 
@@ -67,10 +65,10 @@ export class CampaignEngagementCaptureService {
   }): Promise<void> {
     try {
       await this.throttlerService.tokenBucketThrottleOrThrow(
-        this.buildThrottleKey(payload),
+        `campaign-engagement:${payload.deliveryId}:${payload.shortLinkId}`,
         1,
-        CAPTURE_RATE_LIMIT_PER_TARGET.maxRequests,
-        CAPTURE_RATE_LIMIT_PER_TARGET.windowMs,
+        CAPTURE_RATE_LIMIT_PER_LINK.maxRequests,
+        CAPTURE_RATE_LIMIT_PER_LINK.windowMs,
       );
 
       await this.messageQueueService.add<CampaignEngagementObservation>(
@@ -96,17 +94,8 @@ export class CampaignEngagementCaptureService {
         amount: 1,
       });
       this.logger.warn(
-        `Dropped ${observation.eventType} event for delivery ${observation.deliveryId}: ${error}`,
+        `Dropped click event for delivery ${observation.deliveryId}: ${error}`,
       );
-    }
-  }
-
-  private buildThrottleKey(payload: CampaignTrackingTokenPayload): string {
-    switch (payload.purpose) {
-      case 'CLICK':
-        return `campaign-engagement:click:${payload.deliveryId}:${payload.destinationId}`;
-      case 'OPEN':
-        return `campaign-engagement:open:${payload.deliveryId}`;
     }
   }
 

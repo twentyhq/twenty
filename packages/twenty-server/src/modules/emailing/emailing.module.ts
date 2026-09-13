@@ -7,7 +7,7 @@ import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/em
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
-import { MessageCampaignLinkEntity } from 'src/engine/core-modules/emailing-domain/message-campaign-link.entity';
+import { ShortLinkModule } from 'src/engine/core-modules/short-link/short-link.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { MessageSuppressionEntity } from 'src/engine/core-modules/emailing-domain/message-suppression.entity';
 import { UnsubscribeTopicEntity } from 'src/engine/core-modules/emailing-domain/unsubscribe-topic.entity';
@@ -34,9 +34,7 @@ import { CampaignFollowUpService } from 'src/modules/emailing/services/campaign-
 import { MessageCampaignAccessService } from 'src/modules/emailing/services/message-campaign-access.service';
 import { MessageListAccessService } from 'src/modules/emailing/services/message-list-access.service';
 import { CampaignEngagementResolver } from 'src/modules/emailing/resolvers/campaign-engagement.resolver';
-import { CampaignEngagementStatisticsService } from 'src/modules/emailing/services/campaign-engagement-statistics.service';
 import { CampaignTrackingContentService } from 'src/modules/emailing/services/campaign-tracking-content.service';
-import { MessageCampaignLinkService } from 'src/modules/emailing/services/message-campaign-link.service';
 import { EmailingOngoingStaleCronCommand } from 'src/modules/emailing/crons/commands/emailing-ongoing-stale.cron.command';
 import { EmailingOngoingStaleCronJob } from 'src/modules/emailing/crons/jobs/emailing-ongoing-stale.cron.job';
 import { ReconcileCampaignStatsCronCommand } from 'src/modules/emailing/crons/commands/reconcile-campaign-stats.cron.command';
@@ -83,11 +81,11 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     UsageLimitModule,
     ClickHouseModule,
     MetricsModule,
+    ShortLinkModule,
     TypeOrmModule.forFeature([
       MessageChannelEntity,
       EmailingDomainEntity,
       MessageSuppressionEntity,
-      MessageCampaignLinkEntity,
       UnsubscribeTopicEntity,
       CampaignDeliveryEntity,
       WorkspaceEntity,
@@ -120,13 +118,10 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     UnsubscribeTopicResolver,
     provideWorkspaceScopedRepository(EmailingDomainEntity),
     provideWorkspaceScopedRepository(MessageSuppressionEntity),
-    provideWorkspaceScopedRepository(MessageCampaignLinkEntity),
-    MessageCampaignLinkService,
     CampaignTrackingContentService,
     CampaignEngagementCaptureService,
     CampaignEngagementRecordingService,
     CampaignEngagementEventService,
-    CampaignEngagementStatisticsService,
     CampaignEngagementReportService,
     CampaignFollowUpService,
     MessageCampaignAccessService,

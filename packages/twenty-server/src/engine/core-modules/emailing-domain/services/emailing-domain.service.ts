@@ -17,7 +17,7 @@ import {
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { DmarcRecordService } from 'src/engine/core-modules/emailing-domain/services/dmarc-record.service';
-import { EmailingHostnamesService } from 'src/engine/core-modules/emailing-domain/services/emailing-hostnames.service';
+import { UnsubscribeHostnameService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -34,7 +34,7 @@ export class EmailingDomainService {
     @InjectRepository(EmailingDomainEntity)
     private readonly globalEmailingDomainRepository: Repository<EmailingDomainEntity>,
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
-    private readonly emailingHostnamesService: EmailingHostnamesService,
+    private readonly unsubscribeHostnameService: UnsubscribeHostnameService,
     private readonly dmarcRecordService: DmarcRecordService,
   ) {}
 
@@ -42,7 +42,7 @@ export class EmailingDomainService {
     emailingDomain: EmailingDomainEntity,
   ): Promise<EmailingDomainEntity> {
     return this.dmarcRecordService.withDnsRecord(
-      await this.emailingHostnamesService.withDnsRecords(emailingDomain),
+      await this.unsubscribeHostnameService.withDnsRecords(emailingDomain),
     );
   }
 
@@ -88,9 +88,7 @@ export class EmailingDomainService {
         verifiedAt: isVerifiedOnCreation ? new Date() : null,
       });
 
-    await this.emailingHostnamesService.sync({
-      workspaceId,
-      emailingDomainId: emailingDomain.id,
+    await this.unsubscribeHostnameService.sync(workspaceId, emailingDomain.id, {
       provision: true,
     });
 
@@ -130,7 +128,7 @@ export class EmailingDomainService {
       return;
     }
 
-    await this.emailingHostnamesService.deprovision(emailingDomain);
+    await this.unsubscribeHostnameService.deprovision(emailingDomain);
     await this.deleteRemoteEmailingDomain(emailingDomain);
     await this.emailingDomainRepository.delete(workspaceId, {
       id: emailingDomain.id,
@@ -146,7 +144,7 @@ export class EmailingDomainService {
       emailingDomainId,
     );
 
-    await this.emailingHostnamesService.deprovision(emailingDomain);
+    await this.unsubscribeHostnameService.deprovision(emailingDomain);
     await this.deleteRemoteEmailingDomain(emailingDomain);
     await this.emailingDomainRepository.delete(workspace.id, {
       id: emailingDomain.id,
@@ -230,54 +228,13 @@ export class EmailingDomainService {
       },
     );
 
-    await this.emailingHostnamesService.sync({
-      workspaceId,
-      emailingDomainId: emailingDomain.id,
+    await this.unsubscribeHostnameService.sync(workspaceId, emailingDomain.id, {
       provision: true,
     });
 
     return this.withDnsRecords(
       await this.emailingDomainRepository.findOneOrFail(workspaceId, {
         where: { id: emailingDomain.id },
-      }),
-    );
-  }
-
-  async setTracking({
-    workspaceId,
-    emailingDomainId,
-    ...trackingFlags
-  }: {
-    workspaceId: string;
-    emailingDomainId: string;
-    isClickTrackingEnabled?: boolean;
-    isOpenTrackingEnabled?: boolean;
-  }): Promise<EmailingDomainEntity> {
-    await this.findEmailingDomainByIdOrThrow(workspaceId, emailingDomainId);
-
-    const changedFlags = Object.fromEntries(
-      Object.entries(trackingFlags).filter(([, value]) => isDefined(value)),
-    );
-
-    if (Object.keys(changedFlags).length > 0) {
-      await this.emailingDomainRepository.update(
-        workspaceId,
-        { id: emailingDomainId },
-        changedFlags,
-      );
-    }
-
-    if (Object.values(changedFlags).some((isEnabled) => isEnabled)) {
-      await this.emailingHostnamesService.sync({
-        workspaceId,
-        emailingDomainId,
-        provision: true,
-      });
-    }
-
-    return this.withDnsRecords(
-      await this.emailingDomainRepository.findOneOrFail(workspaceId, {
-        where: { id: emailingDomainId },
       }),
     );
   }
