@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { lazy, Suspense, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -23,6 +22,7 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { isDefined } from 'twenty-shared/utils';
+import { Loader } from 'twenty-ui/feedback';
 import { IconDownload, IconX } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -65,12 +65,6 @@ const StyledLoadingContainer = styled.div`
   height: calc(80vh / var(--t-zoom, 1));
   justify-content: center;
   width: 100%;
-`;
-
-const StyledLoadingText = styled.div`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.lg};
-  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledHeader = styled.div`
@@ -211,9 +205,7 @@ export const AttachmentList = ({
                 <Suspense
                   fallback={
                     <StyledLoadingContainer>
-                      <StyledLoadingText>
-                        {t`Loading document viewer...`}
-                      </StyledLoadingText>
+                      <Loader />
                     </StyledLoadingContainer>
                   }
                 >
