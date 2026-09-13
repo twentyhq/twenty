@@ -158,11 +158,29 @@ const assertNumbersAreUsable = ({
 // chains then fall through to a neighbouring rung in silence.
 const resolveModels = ({
   provider,
+  canonicalCatalog,
   canonicalModels,
 }: {
   provider: CatalogSpecProvider;
+  canonicalCatalog: CanonicalCatalog;
   canonicalModels: Map<string, CanonicalModel>;
 }): { canonicalModel: CanonicalModel; specModel: CatalogSpecModel }[] => {
+  if (!Array.isArray(provider.models)) {
+    const { vendor } = provider.models;
+    const vendorModels = canonicalCatalog[vendor]?.models ?? [];
+
+    if (vendorModels.length === 0) {
+      throw new Error(
+        `Provider "${provider.name}" serves every model from "${vendor}", which the catalog does not carry`,
+      );
+    }
+
+    return vendorModels.map((canonicalModel) => ({
+      canonicalModel,
+      specModel: { model: canonicalModel.name },
+    }));
+  }
+
   const specModels = provider.models.map(asSpecModel);
   const unknown = specModels
     .filter(({ model }) => !canonicalModels.has(model))
@@ -212,9 +230,11 @@ export const projectCatalog = ({
       npm: provider.npm,
       label: provider.label ?? provider.name,
       ...credentials,
-      models: resolveModels({ provider, canonicalModels }).map((resolved) =>
-        projectModel({ ...resolved, provider }),
-      ),
+      models: resolveModels({
+        provider,
+        canonicalCatalog,
+        canonicalModels,
+      }).map((resolved) => projectModel({ ...resolved, provider })),
     };
   }
 

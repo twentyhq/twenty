@@ -1,14 +1,24 @@
 # AI catalog
 
-Two entry points over the same committed data.
+Three files in `src/engine/metadata-modules/ai/ai-models`, and two entry points
+over them.
 
-## `index.ts` — sync the canonical catalog
+| File | What it is |
+| --- | --- |
+| `ai-models.json` | What every model is: identity, pricing, limits, modalities, efforts, benchmarks. No routes, no credentials. Synced daily. |
+| `ai-self-host-spec.json` | What a self-hosted deployment serves: the five direct routes and their key templates. Hand-maintained. |
+| `ai-providers.json` | The catalog the server bundles. Generated from the two above; a test fails if it is hand-edited. |
+
+Cloud works the same way, from a private spec in twenty-infra, so a deployment
+catalog is always a projection rather than a second copy of the truth.
+
+## `index.ts` — sync the model catalog
 
 Run daily by `.github/workflows/ci-ai-catalog-sync.yaml`. Reads models.dev for
 model identity, pricing, context windows and availability, overlays Artificial
-Analysis for intelligence, speed and cost per task, and writes
-`src/engine/metadata-modules/ai/ai-models/ai-providers.json` plus
-`ai-model-benchmarks.json`. Hand-maintained fields (`efforts`,
+Analysis for intelligence, speed and cost per task, and writes `ai-models.json`
+and `ai-model-benchmarks.json`, then projects the self-host spec over the first
+to write `ai-providers.json`. Hand-maintained fields (`efforts`,
 `dataResidency`, `zeroDataRetention`) survive the rebuild.
 
 ```bash
@@ -29,7 +39,7 @@ npx tsx ./scripts/ai-catalog-sync/project.ts \
   --out ./ai-catalog.json
 ```
 
-`--catalog` points at a different `ai-providers.json`; it defaults to the
+`--catalog` points at a different `ai-models.json`; it defaults to the
 committed one. The output has the same shape, so a server loads it through
 `AI_CATALOG_STORAGE_PATH` with no further processing.
 
@@ -61,6 +71,13 @@ A spec looks like this:
     }
   ]
 }
+```
+
+A route that serves a whole vendor says so instead of listing its models, which
+is how self-host picks up new models with the daily sync:
+
+```json
+{ "name": "openai", "npm": "@ai-sdk/openai", "models": { "vendor": "openai" } }
 ```
 
 A spec can rename a model for the route that deploys it (`as`) and override the

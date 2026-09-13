@@ -138,6 +138,44 @@ describe('projectCatalog', () => {
     });
   });
 
+  it('serves every model a vendor publishes when the spec names the vendor', () => {
+    const spec: CatalogSpec = {
+      providers: [
+        {
+          name: 'openai',
+          npm: '@ai-sdk/openai',
+          apiKey: '{{OPENAI_API_KEY}}',
+          models: { vendor: 'openai' },
+        },
+      ],
+    };
+
+    const projected = projectCatalog({ canonicalCatalog, spec });
+
+    expect(projected['openai'].models?.map((model) => model.name)).toEqual([
+      'gpt-5.6-luna',
+    ]);
+    expect(projected['openai'].models?.[0]).toMatchObject({
+      efforts: ['low', 'medium', 'high'],
+    });
+  });
+
+  it('refuses a spec naming a vendor the catalog does not carry', () => {
+    const spec: CatalogSpec = {
+      providers: [
+        {
+          name: 'openai',
+          npm: '@ai-sdk/openai',
+          models: { vendor: 'openai-imaginary' },
+        },
+      ],
+    };
+
+    expect(() => projectCatalog({ canonicalCatalog, spec })).toThrow(
+      'which the catalog does not carry',
+    );
+  });
+
   it('refuses a spec naming a model the catalog does not carry', () => {
     const spec: CatalogSpec = {
       providers: [

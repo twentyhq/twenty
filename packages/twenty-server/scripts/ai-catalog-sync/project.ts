@@ -22,7 +22,7 @@ const DEFAULT_CATALOG_PATH = resolve(
   'metadata-modules',
   'ai',
   'ai-models',
-  'ai-providers.json',
+  'ai-models.json',
 );
 
 // A flag whose value is missing would otherwise swallow the next flag and write
@@ -75,7 +75,12 @@ const assertSpecIsUsable = ({
       );
     }
 
-    if (!Array.isArray(provider.models) || provider.models.length === 0) {
+    const servesModels = Array.isArray(provider.models)
+      ? provider.models.length > 0
+      : typeof provider.models?.vendor === 'string' &&
+        provider.models.vendor.length > 0;
+
+    if (!servesModels) {
       throw new Error(`${path}: provider "${provider.name}" serves no models`);
     }
   }
@@ -97,7 +102,7 @@ const main = (): void => {
 
   if (specPath === undefined || outPath === undefined) {
     throw new Error(
-      'Usage: project.ts --spec <spec.json> --out <catalog.json> [--catalog <ai-providers.json>]',
+      'Usage: project.ts --spec <spec.json> --out <catalog.json> [--catalog <ai-models.json>]',
     );
   }
 

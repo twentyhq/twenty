@@ -24,6 +24,12 @@ export type CatalogSpecModel = CatalogSpecModelOverrides & {
   as?: string;
 };
 
+// Every model the vendor publishes, so a route that serves a whole vendor
+// picks up new models with the daily sync instead of waiting for an edit here.
+export type CatalogSpecModelSelector = {
+  vendor: string;
+};
+
 export type CatalogSpecProvider = {
   name: string;
   npm: string;
@@ -40,7 +46,7 @@ export type CatalogSpecProvider = {
   // Appended to every inherited label, so one route can read as
   // "GPT-5.6 Luna (Azure)" without restating the name of each model.
   labelSuffix?: string;
-  models: (string | CatalogSpecModel)[];
+  models: (string | CatalogSpecModel)[] | CatalogSpecModelSelector;
 };
 
 export type CatalogSpec = {
