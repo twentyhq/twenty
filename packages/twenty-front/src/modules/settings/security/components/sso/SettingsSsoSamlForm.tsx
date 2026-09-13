@@ -167,7 +167,7 @@ export const SettingsSsoSamlForm = () => {
               <SettingsTextInput
                 instanceId="sso-saml-acs-url"
                 disabled={true}
-                label={t`ACS Url`}
+                label={t`ACS URL`}
                 value={acsUrl}
                 fullWidth
               />
@@ -177,7 +177,7 @@ export const SettingsSsoSamlForm = () => {
                 Icon={IconCopy}
                 title={t`Copy`}
                 onClick={() => {
-                  copyToClipboard(acsUrl, t`ACS Url copied to clipboard`);
+                  copyToClipboard(acsUrl, t`ACS URL copied to clipboard`);
                 }}
                 type="button"
               />

@@ -53,6 +53,10 @@ import {
   RULE_NAME as noJotaiStoreInSelectorName,
 } from './rules/no-jotai-store-in-selector';
 import {
+  rule as noMiscasedAcronymInMessage,
+  RULE_NAME as noMiscasedAcronymInMessageName,
+} from './rules/no-miscased-acronym-in-message';
+import {
   rule as noNavigatePreferLink,
   RULE_NAME as noNavigatePreferLinkName,
 } from './rules/no-navigate-prefer-link';
@@ -102,6 +106,7 @@ export default definePlugin({
     [noHardcodedColorsName]: noHardcodedColors,
     [noIcuEscapingApostropheName]: noIcuEscapingApostrophe,
     [noJotaiStoreInSelectorName]: noJotaiStoreInSelector,
+    [noMiscasedAcronymInMessageName]: noMiscasedAcronymInMessage,
     [noNavigatePreferLinkName]: noNavigatePreferLink,
     [noStateUserefName]: noStateUseref,
     [noStorybookA11yDisableName]: noStorybookA11yDisable,
