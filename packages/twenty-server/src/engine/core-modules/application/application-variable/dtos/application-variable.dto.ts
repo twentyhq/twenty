@@ -33,6 +33,10 @@ export class ApplicationVariableEntityDTO {
 
   @IsBoolean()
   @Field()
+  isRequired: boolean;
+
+  @IsBoolean()
+  @Field()
   isDeprecated: boolean;
 
   @IsString()
