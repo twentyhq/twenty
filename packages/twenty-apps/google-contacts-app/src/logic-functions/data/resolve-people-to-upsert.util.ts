@@ -40,18 +40,25 @@ const hasTwentyChangedSince = (
   );
 };
 
+const logEmailOwnedByAnotherPerson = (googleContactsId: string): void =>
+  console.log(
+    '[google-contacts] Skipping a contact whose primary email belongs to another person',
+    googleContactsId,
+  );
+
 export const resolvePeopleToUpsert = ({
   candidates,
   existingPeople,
+  claimedPrimaryEmails,
 }: {
   candidates: SyncCandidate[];
   existingPeople: ExistingTwentyPeople;
+  claimedPrimaryEmails: Set<string>;
 }): ResolvedPerson[] => {
   const resolvedPeople: ResolvedPerson[] = [];
-  const claimedPrimaryEmails = new Set<string>();
 
   for (const { personInput, googleUpdatedAt, organization } of candidates) {
-    const primaryEmail = personInput.emails?.primaryEmail?.toLowerCase();
+    const primaryEmail = personInput.emails.primaryEmail?.toLowerCase();
 
     if (isNonEmptyString(primaryEmail)) {
       if (claimedPrimaryEmails.has(primaryEmail)) {
@@ -66,11 +73,24 @@ export const resolvePeopleToUpsert = ({
       claimedPrimaryEmails.add(primaryEmail);
     }
 
+    const personWithSameEmail = isNonEmptyString(primaryEmail)
+      ? existingPeople.byPrimaryEmail.get(primaryEmail)
+      : undefined;
+
     const linkedPerson = existingPeople.byGoogleContactsId.get(
       personInput.googleContactsId,
     );
 
     if (isDefined(linkedPerson)) {
+      if (
+        isDefined(personWithSameEmail) &&
+        personWithSameEmail.id !== linkedPerson.id
+      ) {
+        logEmailOwnedByAnotherPerson(personInput.googleContactsId);
+
+        continue;
+      }
+
       if (!hasTwentyChangedSince(linkedPerson.updatedAt, googleUpdatedAt)) {
         resolvedPeople.push({ personInput, organization });
       }
@@ -78,17 +98,13 @@ export const resolvePeopleToUpsert = ({
       continue;
     }
 
-    const personWithSameEmail = isNonEmptyString(primaryEmail)
-      ? existingPeople.byPrimaryEmail.get(primaryEmail)
-      : undefined;
+    if (isDefined(personWithSameEmail)) {
+      if (isNonEmptyString(personWithSameEmail.googleContactsId)) {
+        logEmailOwnedByAnotherPerson(personInput.googleContactsId);
 
-    // An unlinked person reachable at the same address is the same human, so
-    // they are adopted rather than duplicated. Someone already linked to a
-    // different Google contact is left alone.
-    if (
-      isDefined(personWithSameEmail) &&
-      !isNonEmptyString(personWithSameEmail.googleContactsId)
-    ) {
+        continue;
+      }
+
       if (
         !hasTwentyChangedSince(personWithSameEmail.updatedAt, googleUpdatedAt)
       ) {

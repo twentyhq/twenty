@@ -5,20 +5,40 @@ import {
   resolvePeopleToUpsert,
   type SyncCandidate,
 } from 'src/logic-functions/data/resolve-people-to-upsert.util';
+import { type TwentyPersonInput } from 'src/logic-functions/types/twenty-person.type';
+
+// The sync writes every field it owns, so the input always carries them all.
+const buildPersonInput = (
+  googleContactsId: string,
+  primaryEmail: string | null,
+): TwentyPersonInput => ({
+  googleContactsId,
+  name: { firstName: '', lastName: '' },
+  emails: { primaryEmail, additionalEmails: [] },
+  phones: {
+    primaryPhoneNumber: '',
+    primaryPhoneCallingCode: '',
+    primaryPhoneCountryCode: '',
+    additionalPhones: [],
+  },
+  jobTitle: '',
+  linkedinLink: {
+    primaryLinkUrl: '',
+    primaryLinkLabel: '',
+    secondaryLinks: null,
+  },
+  xLink: { primaryLinkUrl: '', primaryLinkLabel: '', secondaryLinks: null },
+  avatarUrl: '',
+});
 
 const buildCandidate = (
   googleContactsId: string,
   googleUpdatedAt: string | undefined,
-  primaryEmail?: string,
+  primaryEmail: string | null = null,
 ): SyncCandidate => ({
   googleUpdatedAt,
   organization: undefined,
-  personInput: {
-    googleContactsId,
-    ...(primaryEmail === undefined
-      ? {}
-      : { emails: { primaryEmail, additionalEmails: [] } }),
-  },
+  personInput: buildPersonInput(googleContactsId, primaryEmail),
 });
 
 const buildExistingPeople = (
@@ -29,11 +49,18 @@ const buildExistingPeople = (
   ...overrides,
 });
 
+const resolve = (
+  candidates: SyncCandidate[],
+  existingPeople: ExistingTwentyPeople,
+  claimedPrimaryEmails = new Set<string>(),
+) =>
+  resolvePeopleToUpsert({ candidates, existingPeople, claimedPrimaryEmails });
+
 const readIds = (
   candidates: SyncCandidate[],
   existingPeople: ExistingTwentyPeople,
 ) =>
-  resolvePeopleToUpsert({ candidates, existingPeople }).map(
+  resolve(candidates, existingPeople).map(
     ({ personInput }) => personInput.googleContactsId,
   );
 
@@ -45,12 +72,7 @@ describe('resolvePeopleToUpsert', () => {
   it('should upsert a contact Twenty has never seen', () => {
     const candidates = [buildCandidate('c1', '2024-01-02T00:00:00Z')];
 
-    expect(
-      resolvePeopleToUpsert({
-        candidates,
-        existingPeople: buildExistingPeople(),
-      }),
-    ).toEqual([
+    expect(resolve(candidates, buildExistingPeople())).toEqual([
       { personInput: candidates[0].personInput, organization: undefined },
     ]);
   });
@@ -98,9 +120,7 @@ describe('resolvePeopleToUpsert', () => {
       ]),
     });
 
-    expect(
-      resolvePeopleToUpsert({ candidates, existingPeople })[0].personInput.id,
-    ).toBe('p1');
+    expect(resolve(candidates, existingPeople)[0].personInput.id).toBe('p1');
   });
 
   it('should leave an adopted person edited in Twenty since Google last changed', () => {
@@ -123,7 +143,7 @@ describe('resolvePeopleToUpsert', () => {
     expect(readIds(candidates, existingPeople)).toEqual([]);
   });
 
-  it('should not adopt a person already linked to another Google contact', () => {
+  it('should skip a contact whose email belongs to a person linked elsewhere', () => {
     const candidates = [
       buildCandidate('c1', '2024-01-02T00:00:00Z', 'john@example.com'),
     ];
@@ -133,9 +153,49 @@ describe('resolvePeopleToUpsert', () => {
       ]),
     });
 
-    expect(
-      resolvePeopleToUpsert({ candidates, existingPeople })[0].personInput.id,
-    ).toBeUndefined();
+    expect(readIds(candidates, existingPeople)).toEqual([]);
+  });
+
+  it('should skip a linked contact that took over the email of another person', () => {
+    const candidates = [
+      buildCandidate('c1', '2024-01-02T00:00:00Z', 'john@example.com'),
+    ];
+    const existingPeople = buildExistingPeople({
+      byGoogleContactsId: new Map([['c1', { id: 'p1' }]]),
+      byPrimaryEmail: new Map([
+        ['john@example.com', { id: 'p2', googleContactsId: null }],
+      ]),
+    });
+
+    expect(readIds(candidates, existingPeople)).toEqual([]);
+  });
+
+  it('should keep a linked contact still holding its own email', () => {
+    const candidates = [
+      buildCandidate('c1', '2024-01-02T00:00:00Z', 'john@example.com'),
+    ];
+    const existingPeople = buildExistingPeople({
+      byGoogleContactsId: new Map([['c1', { id: 'p1' }]]),
+      byPrimaryEmail: new Map([
+        ['john@example.com', { id: 'p1', googleContactsId: 'c1' }],
+      ]),
+    });
+
+    expect(readIds(candidates, existingPeople)).toEqual(['c1']);
+  });
+
+  it('should keep only the first of two contacts sharing an email across pages', () => {
+    const claimedPrimaryEmails = new Set<string>();
+    const firstPage = [buildCandidate('c1', undefined, 'john@example.com')];
+    const secondPage = [buildCandidate('c2', undefined, 'JOHN@example.com')];
+
+    const readPage = (candidates: SyncCandidate[]) =>
+      resolve(candidates, buildExistingPeople(), claimedPrimaryEmails).map(
+        ({ personInput }) => personInput.googleContactsId,
+      );
+
+    expect(readPage(firstPage)).toEqual(['c1']);
+    expect(readPage(secondPage)).toEqual([]);
   });
 
   it('should keep only the first of two contacts sharing a primary email', () => {
@@ -158,7 +218,7 @@ describe('resolvePeopleToUpsert', () => {
       ]),
     });
 
-    const resolved = resolvePeopleToUpsert({ candidates, existingPeople });
+    const resolved = resolve(candidates, existingPeople);
 
     expect(resolved.map(({ personInput }) => personInput.id)).toEqual(['p1']);
   });

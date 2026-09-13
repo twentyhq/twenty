@@ -49,6 +49,10 @@ const fetchAndUpsertPeople = async ({
   let pageToken: string | undefined;
   let nextSyncToken: string | undefined;
 
+  // Held across pages: Google can spread two contacts sharing a primary email
+  // over several of them, and only one of the two can own it in Twenty.
+  const claimedPrimaryEmails = new Set<string>();
+
   do {
     const googleResponse = await callGoogle(() =>
       axiosInstance.get<ListConnectionsResponse>(
@@ -82,13 +86,14 @@ const fetchAndUpsertPeople = async ({
         ({ personInput }) => personInput.googleContactsId,
       ),
       primaryEmails: candidates
-        .map(({ personInput }) => personInput.emails?.primaryEmail)
+        .map(({ personInput }) => personInput.emails.primaryEmail)
         .filter(isNonEmptyString),
     });
 
     const resolvedPeople = resolvePeopleToUpsert({
       candidates,
       existingPeople,
+      claimedPrimaryEmails,
     });
 
     const companyIdsByKey = await resolveCompanyIds({

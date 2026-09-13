@@ -41,22 +41,26 @@ export type TwentyPersonRecord = {
   company?: { name?: string | null } | null;
 };
 
+export type TwentyNameInput = {
+  firstName: string;
+  lastName: string;
+};
+
+export type TwentyEmailsInput = {
+  primaryEmail: string | null;
+  additionalEmails: string[];
+};
+
 export type TwentyPersonInput = {
   googleContactsId: string;
   companyId?: string;
-  name?: {
-    firstName: string;
-    lastName: string;
-  };
-  emails?: {
-    primaryEmail: string;
-    additionalEmails: string[];
-  };
-  phones?: TwentyPhonesInput;
-  jobTitle?: string;
-  linkedinLink?: TwentyLinkInput;
-  xLink?: TwentyLinkInput;
-  avatarUrl?: string;
+  name: TwentyNameInput;
+  emails: TwentyEmailsInput;
+  phones: TwentyPhonesInput;
+  jobTitle: string;
+  linkedinLink: TwentyLinkInput;
+  xLink: TwentyLinkInput;
+  avatarUrl: string;
 };
 
 export type ExistingTwentyPerson = {

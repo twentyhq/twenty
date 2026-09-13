@@ -10,7 +10,9 @@ import {
   type PersonUrl,
 } from 'src/logic-functions/types/google-response.type';
 import {
+  type TwentyEmailsInput,
   type TwentyLinkInput,
+  type TwentyNameInput,
   type TwentyPersonInput,
   type TwentyPhonesInput,
 } from 'src/logic-functions/types/twenty-person.type';
@@ -76,7 +78,7 @@ const mapPhones = (person: Person): TwentyPhonesInput | undefined => {
   };
 };
 
-const mapName = (person: Person): TwentyPersonInput['name'] => {
+const mapName = (person: Person): TwentyNameInput | undefined => {
   const name = person.names?.[0];
 
   if (!isDefined(name)) {
@@ -97,7 +99,7 @@ const mapName = (person: Person): TwentyPersonInput['name'] => {
   return undefined;
 };
 
-const mapEmails = (person: Person): TwentyPersonInput['emails'] => {
+const mapEmails = (person: Person): TwentyEmailsInput | undefined => {
   const emails = (person.emailAddresses ?? [])
     .map((emailAddress) => emailAddress.value)
     .filter(isNonEmptyString)
@@ -120,6 +122,26 @@ const mapAvatarUrl = (person: Person): string | undefined => {
   return isNonEmptyString(avatarUrl) ? avatarUrl : undefined;
 };
 
+const emptyName = (): TwentyNameInput => ({ firstName: '', lastName: '' });
+
+const emptyEmails = (): TwentyEmailsInput => ({
+  primaryEmail: null,
+  additionalEmails: [],
+});
+
+const emptyPhones = (): TwentyPhonesInput => ({
+  primaryPhoneNumber: '',
+  primaryPhoneCallingCode: '',
+  primaryPhoneCountryCode: '',
+  additionalPhones: [],
+});
+
+const emptyLink = (): TwentyLinkInput => ({
+  primaryLinkUrl: '',
+  primaryLinkLabel: '',
+  secondaryLinks: null,
+});
+
 export const mapGooglePerson = (
   person: Person,
 ): TwentyPersonInput | undefined => {
@@ -138,12 +160,12 @@ export const mapGooglePerson = (
 
   return {
     googleContactsId: person.resourceName.replace('people/', ''),
-    ...(isDefined(name) ? { name } : {}),
-    ...(isDefined(emails) ? { emails } : {}),
-    ...(isDefined(phones) ? { phones } : {}),
-    ...(isNonEmptyString(jobTitle) ? { jobTitle: jobTitle.trim() } : {}),
-    ...(isDefined(linkedinLink) ? { linkedinLink } : {}),
-    ...(isDefined(xLink) ? { xLink } : {}),
-    ...(isDefined(avatarUrl) ? { avatarUrl } : {}),
+    name: name ?? emptyName(),
+    emails: emails ?? emptyEmails(),
+    phones: phones ?? emptyPhones(),
+    jobTitle: isNonEmptyString(jobTitle) ? jobTitle.trim() : '',
+    linkedinLink: linkedinLink ?? emptyLink(),
+    xLink: xLink ?? emptyLink(),
+    avatarUrl: avatarUrl ?? '',
   };
 };

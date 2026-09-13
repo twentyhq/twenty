@@ -48,7 +48,7 @@ describe('mapGooglePerson', () => {
     });
     const mappedPerson = mapGooglePerson(person);
 
-    expect(mappedPerson?.name).toBeUndefined();
+    expect(mappedPerson?.name).toEqual({ firstName: '', lastName: '' });
     expect(mappedPerson?.emails?.primaryEmail).toBe('john@example.com');
   });
 
@@ -70,8 +70,11 @@ describe('mapGooglePerson', () => {
     });
   });
 
-  it('should omit emails when the contact has none', () => {
-    expect(mapGooglePerson(buildPerson())?.emails).toBeUndefined();
+  it('should empty emails when the contact has none', () => {
+    expect(mapGooglePerson(buildPerson())?.emails).toEqual({
+      primaryEmail: null,
+      additionalEmails: [],
+    });
   });
 
   it('should keep every parseable phone number', () => {
@@ -105,10 +108,15 @@ describe('mapGooglePerson', () => {
     );
   });
 
-  it('should omit phones when none can be parsed', () => {
+  it('should empty phones when none can be parsed', () => {
     const person = buildPerson({ phoneNumbers: [{ value: 'n/a' }] });
 
-    expect(mapGooglePerson(person)?.phones).toBeUndefined();
+    expect(mapGooglePerson(person)?.phones).toEqual({
+      primaryPhoneNumber: '',
+      primaryPhoneCallingCode: '',
+      primaryPhoneCountryCode: '',
+      additionalPhones: [],
+    });
   });
 
   it('should map matching social links to their url', () => {
@@ -128,14 +136,19 @@ describe('mapGooglePerson', () => {
     expect(mappedPerson?.xLink?.primaryLinkUrl).toBe('https://x.com/johndoe');
   });
 
-  it('should not write empty links when no url matches', () => {
+  it('should empty the links when no url matches', () => {
     const person = buildPerson({
       urls: [{ value: 'https://github.com/johndoe' }],
     });
     const mappedPerson = mapGooglePerson(person);
+    const emptyLink = {
+      primaryLinkUrl: '',
+      primaryLinkLabel: '',
+      secondaryLinks: null,
+    };
 
-    expect(mappedPerson?.xLink).toBeUndefined();
-    expect(mappedPerson?.linkedinLink).toBeUndefined();
+    expect(mappedPerson?.xLink).toEqual(emptyLink);
+    expect(mappedPerson?.linkedinLink).toEqual(emptyLink);
   });
 
   it('should not treat a lookalike domain as a match', () => {
@@ -143,7 +156,7 @@ describe('mapGooglePerson', () => {
       urls: [{ value: 'https://box.com/johndoe' }],
     });
 
-    expect(mapGooglePerson(person)?.xLink).toBeUndefined();
+    expect(mapGooglePerson(person)?.xLink?.primaryLinkUrl).toBe('');
   });
 
   it('should map a legacy twitter.com url to xLink', () => {
@@ -164,10 +177,10 @@ describe('mapGooglePerson', () => {
     expect(mapGooglePerson(person)?.jobTitle).toBe('CTO');
   });
 
-  it('should omit the job title for an organization without one', () => {
+  it('should empty the job title for an organization without one', () => {
     const person = buildPerson({ organizations: [{ name: 'Acme' }] });
 
-    expect(mapGooglePerson(person)?.jobTitle).toBeUndefined();
+    expect(mapGooglePerson(person)?.jobTitle).toBe('');
   });
 
   it('should map an uploaded photo to the avatar url', () => {
@@ -192,13 +205,32 @@ describe('mapGooglePerson', () => {
       ],
     });
 
-    expect(mapGooglePerson(person)?.avatarUrl).toBeUndefined();
+    expect(mapGooglePerson(person)?.avatarUrl).toBe('');
   });
 
-  it('should only send the fields Google knows about', () => {
+  it('should clear every field the contact no longer carries', () => {
     expect(mapGooglePerson(buildPerson())).toEqual({
       googleContactsId: 'c123',
       name: { firstName: 'John', lastName: 'Doe' },
+      emails: { primaryEmail: null, additionalEmails: [] },
+      phones: {
+        primaryPhoneNumber: '',
+        primaryPhoneCallingCode: '',
+        primaryPhoneCountryCode: '',
+        additionalPhones: [],
+      },
+      jobTitle: '',
+      linkedinLink: {
+        primaryLinkUrl: '',
+        primaryLinkLabel: '',
+        secondaryLinks: null,
+      },
+      xLink: {
+        primaryLinkUrl: '',
+        primaryLinkLabel: '',
+        secondaryLinks: null,
+      },
+      avatarUrl: '',
     });
   });
 });

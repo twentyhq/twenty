@@ -61,6 +61,7 @@ const handler = async (payload: RoutePayload<{ recordIds?: string[] }>) => {
           connectionId: connection.id,
           recordIds: readableRecordIds,
         },
+        jobId: connection.id,
       },
     ],
   });
