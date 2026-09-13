@@ -355,7 +355,7 @@ export class MessageCampaignBatchDeliveryService {
       .prepareBatch({
         workspaceId,
         emailingDomainId,
-        campaign,
+        messageCampaignId: campaignId,
         template,
         textPartHtml,
         variableNames,

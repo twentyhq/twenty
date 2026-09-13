@@ -2,30 +2,19 @@ import { CHECK_EMAILING_DOMAIN_VERIFICATION_CRON_PATTERN } from 'src/engine/core
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, IsNull, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { NON_TERMINAL_EMAILING_DOMAIN_STATUSES } from 'src/engine/core-modules/emailing-domain/constants/non-terminal-emailing-domain-statuses.constant';
 import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
-import { ManagedHostnameStatus } from 'src/engine/core-modules/dns-manager/types/managed-hostname-status.type';
 import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
-import { EmailingHostnamesService } from 'src/engine/core-modules/emailing-domain/services/emailing-hostnames.service';
+import { UnsubscribeHostnameService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-
-const RETRYABLE_HOSTNAME_STATUSES = [
-  ManagedHostnameStatus.PENDING,
-  ManagedHostnameStatus.FAILED,
-];
-
-const RETRYABLE_UNSUBSCRIBE_HOSTNAME_STATUSES = [
-  UnsubscribeHostnameStatus.PENDING,
-  UnsubscribeHostnameStatus.FAILED,
-];
 
 @Processor(MessageQueue.cronQueue)
 export class CheckEmailingDomainVerificationCronJob {
@@ -37,7 +26,7 @@ export class CheckEmailingDomainVerificationCronJob {
     @InjectRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: Repository<EmailingDomainEntity>,
     private readonly emailingDomainService: EmailingDomainService,
-    private readonly emailingHostnamesService: EmailingHostnamesService,
+    private readonly unsubscribeHostnameService: UnsubscribeHostnameService,
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
   ) {}
 
@@ -48,7 +37,7 @@ export class CheckEmailingDomainVerificationCronJob {
   )
   async handle(): Promise<void> {
     await this.refreshUnverifiedDomains();
-    await this.reconcileHostnames();
+    await this.refreshPendingUnsubscribeHostnames();
     await this.reprovisionVerifiedWorkspaces();
   }
 
@@ -94,40 +83,22 @@ export class CheckEmailingDomainVerificationCronJob {
     }
   }
 
-  private async reconcileHostnames(): Promise<void> {
-    const domainsNeedingHostnameWork = await this.emailingDomainRepository.find(
-      {
-        where: [
-          {
-            status: EmailingDomainStatus.VERIFIED,
-            unsubscribeHostnameStatus: In(
-              RETRYABLE_UNSUBSCRIBE_HOSTNAME_STATUSES,
-            ),
-          },
-          {
-            status: EmailingDomainStatus.VERIFIED,
-            unsubscribeHostnameId: IsNull(),
-          },
-          {
-            status: EmailingDomainStatus.VERIFIED,
-            trackingHostnameStatus: In(RETRYABLE_HOSTNAME_STATUSES),
-          },
-          {
-            status: EmailingDomainStatus.VERIFIED,
-            isClickTrackingEnabled: true,
-            trackingHostnameId: IsNull(),
-          },
-        ],
+  private async refreshPendingUnsubscribeHostnames(): Promise<void> {
+    const verifiedDomainsWithPendingHostname =
+      await this.emailingDomainRepository.find({
+        where: {
+          status: EmailingDomainStatus.VERIFIED,
+          unsubscribeHostnameStatus: UnsubscribeHostnameStatus.PENDING,
+        },
         select: ['id', 'workspaceId'],
-      },
-    );
-
-    for (const emailingDomain of domainsNeedingHostnameWork) {
-      await this.emailingHostnamesService.sync({
-        workspaceId: emailingDomain.workspaceId,
-        emailingDomainId: emailingDomain.id,
-        provision: true,
       });
+
+    for (const emailingDomain of verifiedDomainsWithPendingHostname) {
+      await this.unsubscribeHostnameService.sync(
+        emailingDomain.workspaceId,
+        emailingDomain.id,
+        { provision: false },
+      );
     }
   }
 }

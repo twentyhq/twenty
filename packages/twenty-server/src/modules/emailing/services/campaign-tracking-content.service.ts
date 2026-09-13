@@ -9,22 +9,21 @@ import { toPlainText } from 'twenty-emails';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ManagedHostnameStatus } from 'src/engine/core-modules/dns-manager/types/managed-hostname-status.type';
-import { TRACKING_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/tracking-hostname-prefix.constant';
+import { buildLogDriverUnsubscribeBaseUrl } from 'src/engine/core-modules/emailing-domain/drivers/log/utils/build-log-driver-unsubscribe-base-url.util';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { CampaignTrackingTokenService } from 'src/engine/core-modules/emailing-domain/services/campaign-tracking-token.service';
 import { type CampaignMessagePart } from 'src/engine/core-modules/emailing-domain/types/campaign-message-part.type';
 import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
+import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
+import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN } from 'src/modules/emailing/constants/campaign-batch-variable-tag-pattern.constant';
 import { CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART } from 'src/modules/emailing/constants/campaign-tracking-tag.constant';
-import { MessageCampaignLinkService } from 'src/modules/emailing/services/message-campaign-link.service';
-import { type CampaignTrackingFlags } from 'src/modules/emailing/types/campaign-tracking-flags.type';
 import { type TrackedCampaignBatch } from 'src/modules/emailing/types/tracked-campaign-batch.type';
 import { collectTrackableLinkUrls } from 'src/modules/emailing/utils/collect-trackable-link-urls.util';
 import { replaceTrackableLinkUrls } from 'src/modules/emailing/utils/replace-trackable-link-urls.util';
@@ -38,7 +37,7 @@ type TrackingRecipient = {
 type PrepareBatchArgs = {
   workspaceId: string;
   emailingDomainId: string;
-  campaign: { id: string } & CampaignTrackingFlags;
+  messageCampaignId: string;
   template: EmailingDomainEmailTemplate;
   textPartHtml: string;
   variableNames: string[];
@@ -52,26 +51,15 @@ export class CampaignTrackingContentService {
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly messageCampaignLinkService: MessageCampaignLinkService,
+    private readonly shortLinkService: ShortLinkService,
     private readonly campaignTrackingTokenService: CampaignTrackingTokenService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  resolveTrackingFlagsForSend(
-    emailingDomain: EmailingDomainEntity,
-  ): CampaignTrackingFlags {
-    const canServeTrackedUrls = this.canServeTrackedUrls(emailingDomain);
-
-    return {
-      isClickTrackingEnabled:
-        emailingDomain.isClickTrackingEnabled && canServeTrackedUrls,
-    };
-  }
-
   async prepareBatch({
     workspaceId,
     emailingDomainId,
-    campaign,
+    messageCampaignId,
     template,
     textPartHtml,
     variableNames,
@@ -89,7 +77,7 @@ export class CampaignTrackingContentService {
 
     const html = template.html ?? '';
 
-    if (!campaign.isClickTrackingEnabled || html.trim() === '') {
+    if (html.trim() === '') {
       return untracked;
     }
 
@@ -108,9 +96,9 @@ export class CampaignTrackingContentService {
       return untracked;
     }
 
-    const destinationIdByUrl = await this.registerDestinations({
+    const shortLinkIdByUrl = await this.registerShortLinks({
       workspaceId,
-      messageCampaignId: campaign.id,
+      messageCampaignId,
       urlTemplates,
       variableNames,
       recipients,
@@ -131,7 +119,7 @@ export class CampaignTrackingContentService {
               baseUrl,
               recipient,
               urlTemplates,
-              destinationIdByUrl,
+              shortLinkIdByUrl,
             }),
           },
         ]),
@@ -165,7 +153,7 @@ export class CampaignTrackingContentService {
     };
   }
 
-  private async registerDestinations({
+  private async registerShortLinks({
     workspaceId,
     messageCampaignId,
     urlTemplates,
@@ -199,7 +187,7 @@ export class CampaignTrackingContentService {
       return new Map();
     }
 
-    return this.messageCampaignLinkService.registerDestinations({
+    return this.shortLinkService.registerCampaignLinks({
       workspaceId,
       messageCampaignId,
       links: [...linkByUrl.values()],
@@ -210,12 +198,12 @@ export class CampaignTrackingContentService {
     baseUrl,
     recipient,
     urlTemplates,
-    destinationIdByUrl,
+    shortLinkIdByUrl,
   }: {
     baseUrl: string;
     recipient: TrackingRecipient;
     urlTemplates: string[];
-    destinationIdByUrl: Map<string, string>;
+    shortLinkIdByUrl: Map<string, string>;
   }): Record<string, string> {
     const replacements: Record<string, string> = {};
 
@@ -224,20 +212,18 @@ export class CampaignTrackingContentService {
         urlTemplate,
         replacements: recipient.replacements,
       });
-      const destinationId = destinationIdByUrl.get(url);
+      const shortLinkId = shortLinkIdByUrl.get(url);
+      const linkUrl = isDefined(shortLinkId)
+        ? this.buildTrackedUrl(baseUrl, {
+            purpose: 'CLICK',
+            deliveryId: recipient.deliveryId,
+            shortLinkId,
+          })
+        : url;
 
-      for (const messagePart of ['HTML', 'TEXT'] as const) {
-        replacements[this.buildLinkTag({ messagePart, index })] = isDefined(
-          destinationId,
-        )
-          ? this.buildTrackedUrl(baseUrl, {
-              purpose: 'CLICK',
-              deliveryId: recipient.deliveryId,
-              destinationId,
-              messagePart,
-            })
-          : url;
-      }
+      replacements[this.buildLinkTag({ messagePart: 'HTML', index })] =
+        escapeHtml(linkUrl);
+      replacements[this.buildLinkTag({ messagePart: 'TEXT', index })] = linkUrl;
     });
 
     return replacements;
@@ -276,17 +262,6 @@ export class CampaignTrackingContentService {
     );
   }
 
-  private canServeTrackedUrls(emailingDomain: EmailingDomainEntity): boolean {
-    if (this.isLogDriver()) {
-      return true;
-    }
-
-    return (
-      emailingDomain.trackingHostnameStatus === ManagedHostnameStatus.ACTIVE &&
-      isNonEmptyString(emailingDomain.trackingHostname)
-    );
-  }
-
   private async findTrackingBaseUrl({
     workspaceId,
     emailingDomainId,
@@ -294,41 +269,35 @@ export class CampaignTrackingContentService {
     workspaceId: string;
     emailingDomainId: string;
   }): Promise<string | undefined> {
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (!workspace?.isMessageTrackingEnabled) {
+      return undefined;
+    }
+
     if (this.isLogDriver()) {
-      return this.buildLocalBaseUrl(workspaceId);
+      return isNonEmptyString(workspace.subdomain)
+        ? buildLogDriverUnsubscribeBaseUrl({
+            serverUrl: this.twentyConfigService.get('SERVER_URL'),
+            isMultiWorkspaceEnabled: this.twentyConfigService.get(
+              'IS_MULTIWORKSPACE_ENABLED',
+            ),
+            subdomain: workspace.subdomain,
+          })
+        : undefined;
     }
 
     const emailingDomain = await this.emailingDomainRepository.findOne(
       workspaceId,
       { where: { id: emailingDomainId } },
     );
-    const trackingHostname = emailingDomain?.trackingHostname;
+    const unsubscribeHostname = emailingDomain?.unsubscribeHostname;
 
-    if (!isNonEmptyString(trackingHostname)) {
-      return undefined;
-    }
-
-    return `https://${trackingHostname}`;
-  }
-
-  private async buildLocalBaseUrl(
-    workspaceId: string,
-  ): Promise<string | undefined> {
-    const workspace = await this.workspaceRepository.findOneBy({
-      id: workspaceId,
-    });
-
-    if (!isNonEmptyString(workspace?.subdomain)) {
-      return undefined;
-    }
-
-    const baseUrl = new URL(this.twentyConfigService.get('SERVER_URL'));
-
-    baseUrl.hostname = this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')
-      ? `${TRACKING_HOSTNAME_PREFIX}.${workspace.subdomain}.${baseUrl.hostname}`
-      : `${TRACKING_HOSTNAME_PREFIX}.${baseUrl.hostname}`;
-
-    return baseUrl.origin;
+    return isNonEmptyString(unsubscribeHostname)
+      ? `https://${unsubscribeHostname}`
+      : undefined;
   }
 
   private isLogDriver(): boolean {

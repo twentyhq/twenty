@@ -3,22 +3,17 @@ import { classifyEngagementUserAgent } from 'src/modules/emailing/utils/classify
 
 describe('classifyEngagementUserAgent', () => {
   it('treats the Apple Mail privacy proxy as a proxy, not a person', () => {
-    expect(classifyEngagementUserAgent('Mozilla/5.0')).toEqual({
-      activityClass: CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.PRIVACY_PROXY,
-      classificationReasons: ['proxy:apple'],
-      clientFamily: 'apple-mail',
-    });
+    expect(classifyEngagementUserAgent('Mozilla/5.0')).toBe(
+      CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.PRIVACY_PROXY,
+    );
   });
 
   it('flags a security scanner as automation', () => {
-    const result = classifyEngagementUserAgent(
-      'Mozilla/5.0 (compatible; Mimecast Link Scanner)',
-    );
-
-    expect(result.activityClass).toBe(
-      CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.SUSPECTED_AUTOMATION,
-    );
-    expect(result.classificationReasons).toContain('ua:mimecast');
+    expect(
+      classifyEngagementUserAgent(
+        'Mozilla/5.0 (compatible; Mimecast Link Scanner)',
+      ),
+    ).toBe(CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.SUSPECTED_AUTOMATION);
   });
 
   it('leaves a desktop mail client unclassified', () => {
@@ -26,15 +21,11 @@ describe('classifyEngagementUserAgent', () => {
       classifyEngagementUserAgent(
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15',
       ),
-    ).toEqual({
-      activityClass: CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.UNCLASSIFIED,
-      classificationReasons: [],
-      clientFamily: 'unknown',
-    });
+    ).toBe(CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.UNCLASSIFIED);
   });
 
   it('handles a missing user agent', () => {
-    expect(classifyEngagementUserAgent(null).activityClass).toBe(
+    expect(classifyEngagementUserAgent(null)).toBe(
       CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.UNCLASSIFIED,
     );
   });

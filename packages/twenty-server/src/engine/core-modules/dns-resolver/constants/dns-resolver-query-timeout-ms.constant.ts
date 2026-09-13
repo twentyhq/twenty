@@ -1,1 +1,0 @@
-export const DNS_RESOLVER_QUERY_TIMEOUT_MS = 3_000;

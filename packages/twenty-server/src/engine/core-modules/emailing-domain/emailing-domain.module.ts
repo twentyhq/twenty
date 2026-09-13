@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
-import { DnsResolverModule } from 'src/engine/core-modules/dns-resolver/dns-resolver.module';
 import { CheckEmailingDomainVerificationCronCommand } from 'src/engine/core-modules/emailing-domain/crons/commands/check-emailing-domain-verification.cron.command';
 import { CheckEmailingDomainVerificationCronJob } from 'src/engine/core-modules/emailing-domain/crons/jobs/check-emailing-domain-verification.cron.job';
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
@@ -25,10 +24,8 @@ import { EmailingDomainTenantStatusService } from 'src/engine/core-modules/email
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { UnsubscribeContentService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-content.service';
 import { DmarcRecordService } from 'src/engine/core-modules/emailing-domain/services/dmarc-record.service';
-import { CampaignTrackingHostnameService } from 'src/engine/core-modules/emailing-domain/services/campaign-tracking-hostname.service';
-import { CampaignTrackingTokenService } from 'src/engine/core-modules/emailing-domain/services/campaign-tracking-token.service';
-import { EmailingHostnamesService } from 'src/engine/core-modules/emailing-domain/services/emailing-hostnames.service';
 import { UnsubscribeHostnameService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service';
+import { CampaignTrackingTokenService } from 'src/engine/core-modules/emailing-domain/services/campaign-tracking-token.service';
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -44,17 +41,16 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     FeatureFlagModule,
     PermissionsModule,
     DnsManagerModule,
-    DnsResolverModule,
     SecretEncryptionModule,
     BillingModule,
     EnterpriseModule,
   ],
   exports: [
     EmailingDomainService,
-    CampaignTrackingTokenService,
     EmailingDomainTenantStatusService,
     EmailingDomainDriverFactory,
     UnsubscribeTokenService,
+    CampaignTrackingTokenService,
     EmailGroupAccessService,
     CheckEmailingDomainVerificationCronCommand,
   ],
@@ -68,8 +64,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     CampaignTrackingTokenService,
     UnsubscribeContentService,
     UnsubscribeHostnameService,
-    CampaignTrackingHostnameService,
-    EmailingHostnamesService,
     DmarcRecordService,
     EmailingDomainResolver,
     EmailingDomainDriverFactory,

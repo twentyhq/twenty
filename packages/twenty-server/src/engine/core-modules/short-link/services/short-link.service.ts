@@ -5,37 +5,37 @@ import { createHash } from 'node:crypto';
 
 import { In, Repository } from 'typeorm';
 
-import { MessageCampaignLinkEntity } from 'src/engine/core-modules/emailing-domain/message-campaign-link.entity';
+import { ShortLinkEntity } from 'src/engine/core-modules/short-link/short-link.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-type CampaignLinkToRegister = { url: string; authoredUrl: string };
+type ShortLinkToRegister = { url: string; authoredUrl: string };
 
 @Injectable()
-export class MessageCampaignLinkService {
+export class ShortLinkService {
   constructor(
-    @InjectWorkspaceScopedRepository(MessageCampaignLinkEntity)
-    private readonly messageCampaignLinkRepository: WorkspaceScopedRepository<MessageCampaignLinkEntity>,
+    @InjectWorkspaceScopedRepository(ShortLinkEntity)
+    private readonly shortLinkRepository: WorkspaceScopedRepository<ShortLinkEntity>,
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(MessageCampaignLinkEntity)
-    private readonly globalMessageCampaignLinkRepository: Repository<MessageCampaignLinkEntity>,
+    @InjectRepository(ShortLinkEntity)
+    private readonly globalShortLinkRepository: Repository<ShortLinkEntity>,
   ) {}
 
-  async registerDestinations({
+  async registerCampaignLinks({
     workspaceId,
     messageCampaignId,
     links,
   }: {
     workspaceId: string;
     messageCampaignId: string;
-    links: CampaignLinkToRegister[];
+    links: ShortLinkToRegister[];
   }): Promise<Map<string, string>> {
     const urlHashes = links.map((link) => this.hashUrl(link.url));
 
-    await this.messageCampaignLinkRepository
+    await this.shortLinkRepository
       .createQueryBuilder()
       .insert()
-      .into(MessageCampaignLinkEntity)
+      .into(ShortLinkEntity)
       .values(
         links.map((link, index) => ({
           workspaceId,
@@ -48,19 +48,16 @@ export class MessageCampaignLinkService {
       .orIgnore()
       .execute();
 
-    const persistedLinks = await this.messageCampaignLinkRepository.find(
-      workspaceId,
-      { where: { messageCampaignId, urlHash: In(urlHashes) } },
-    );
+    const persistedLinks = await this.shortLinkRepository.find(workspaceId, {
+      where: { messageCampaignId, urlHash: In(urlHashes) },
+    });
 
     return new Map(persistedLinks.map((link) => [link.url, link.id]));
   }
 
-  async findDestination(
-    destinationId: string,
-  ): Promise<MessageCampaignLinkEntity | null> {
-    return this.globalMessageCampaignLinkRepository.findOne({
-      where: { id: destinationId },
+  async findById(shortLinkId: string): Promise<ShortLinkEntity | null> {
+    return this.globalShortLinkRepository.findOne({
+      where: { id: shortLinkId },
     });
   }
 
@@ -70,8 +67,8 @@ export class MessageCampaignLinkService {
   }: {
     workspaceId: string;
     messageCampaignId: string;
-  }): Promise<MessageCampaignLinkEntity[]> {
-    return this.messageCampaignLinkRepository.find(workspaceId, {
+  }): Promise<ShortLinkEntity[]> {
+    return this.shortLinkRepository.find(workspaceId, {
       where: { messageCampaignId },
     });
   }
