@@ -51,7 +51,7 @@ export const FormPhoneFieldInput = ({
         <FormCallingCodeSelectInput
           label={t`Calling Code`}
           selectedCountryCode={defaultValue?.primaryPhoneCountryCode ?? ''}
-          selectedCallingCode={defaultValue?.primaryPhoneCallingCode}
+          selectedCallingCode={defaultValue?.primaryPhoneCallingCode ?? ''}
           onChange={handleCallingCodeChange}
           readonly={readonly}
           VariablePicker={VariablePicker}

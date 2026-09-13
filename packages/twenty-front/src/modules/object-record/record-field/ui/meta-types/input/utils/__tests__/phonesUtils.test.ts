@@ -126,4 +126,62 @@ describe('createPhonesFromFieldValue test suite', () => {
     const result = createPhonesFromFieldValue(fieldValue);
     expect(result).toEqual([]);
   });
+
+  it('should return an array with primary phone number if its country and calling codes are null', () => {
+    const fieldValue: FieldPhonesValue = {
+      primaryPhoneNumber: '123456789',
+      primaryPhoneCountryCode: null,
+      primaryPhoneCallingCode: null,
+      additionalPhones: null,
+    };
+    const result = createPhonesFromFieldValue(fieldValue);
+    expect(result).toEqual([
+      { number: '123456789', callingCode: '', countryCode: '' },
+    ]);
+  });
+
+  it('should return an empty array if the primary phone number is null', () => {
+    const fieldValue: FieldPhonesValue = {
+      primaryPhoneNumber: null,
+      primaryPhoneCountryCode: null,
+      primaryPhoneCallingCode: null,
+      additionalPhones: null,
+    };
+    const result = createPhonesFromFieldValue(fieldValue);
+    expect(result).toEqual([]);
+  });
+
+  it('should default the null subfields of an additional phone', () => {
+    const fieldValue: FieldPhonesValue = {
+      primaryPhoneNumber: '123456789',
+      primaryPhoneCountryCode: 'FR',
+      primaryPhoneCallingCode: '+33',
+      additionalPhones: [
+        { number: '987654321', callingCode: null, countryCode: null },
+      ],
+    };
+    const result = createPhonesFromFieldValue(fieldValue);
+    expect(result).toEqual([
+      { number: '123456789', callingCode: '+33', countryCode: 'FR' },
+      { number: '987654321', callingCode: '', countryCode: '' },
+    ]);
+  });
+
+  it('should drop additional phones that have no number', () => {
+    const fieldValue: FieldPhonesValue = {
+      primaryPhoneNumber: '123456789',
+      primaryPhoneCountryCode: 'FR',
+      primaryPhoneCallingCode: '+33',
+      additionalPhones: [
+        { number: '', callingCode: '', countryCode: '' },
+        { number: '987654321', callingCode: '+44', countryCode: 'GB' },
+        { number: null, callingCode: null, countryCode: null },
+      ],
+    };
+    const result = createPhonesFromFieldValue(fieldValue);
+    expect(result).toEqual([
+      { number: '123456789', callingCode: '+33', countryCode: 'FR' },
+      { number: '987654321', callingCode: '+44', countryCode: 'GB' },
+    ]);
+  });
 });

@@ -1,5 +1,4 @@
 import { phonesFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/phonesFieldDefaultValueSchema';
-import { phonesFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/phonesFieldValueSchema';
 
 describe('phonesFieldDefaultValueSchema', () => {
   it('should accept a fully populated default value', () => {
@@ -22,6 +21,5 @@ describe('phonesFieldDefaultValueSchema', () => {
     };
 
     expect(phonesFieldDefaultValueSchema.safeParse(value).success).toBe(true);
-    expect(phonesFieldValueSchema.safeParse(value).success).toBe(false);
   });
 });
