@@ -39,6 +39,7 @@ export const useLocaleOptions = (): LocaleOption[] => {
   const unsortedLocaleOptions: Array<Omit<LocaleOption, 'searchKeywords'>> = [
     { label: t`Afrikaans`, value: APP_LOCALES['af-ZA'] },
     { label: t`Arabic`, value: APP_LOCALES['ar-SA'] },
+    { label: t`Armenian`, value: APP_LOCALES['hy-AM'] },
     { label: t`Catalan`, value: APP_LOCALES['ca-ES'] },
     { label: t`Chinese — Simplified`, value: APP_LOCALES['zh-CN'] },
     { label: t`Chinese — Traditional`, value: APP_LOCALES['zh-TW'] },
@@ -62,10 +63,12 @@ export const useLocaleOptions = (): LocaleOption[] => {
     { label: t`Romanian`, value: APP_LOCALES['ro-RO'] },
     { label: t`Russian`, value: APP_LOCALES['ru-RU'] },
     { label: t`Serbian (Cyrillic)`, value: APP_LOCALES['sr-Cyrl'] },
+    { label: t`Serbian (Latin)`, value: APP_LOCALES['sr-Latn'] },
     { label: t`Spanish`, value: APP_LOCALES['es-ES'] },
     { label: t`Swedish`, value: APP_LOCALES['sv-SE'] },
     { label: t`Turkish`, value: APP_LOCALES['tr-TR'] },
     { label: t`Ukrainian`, value: APP_LOCALES['uk-UA'] },
+    { label: t`Uzbek`, value: APP_LOCALES['uz-UZ'] },
     { label: t`Vietnamese`, value: APP_LOCALES['vi-VN'] },
   ];
 
