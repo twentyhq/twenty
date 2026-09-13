@@ -11,6 +11,7 @@ import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
+import { SlackAccessModeSection } from 'src/front-components/components/SlackAccessModeSection';
 import { SlackUserLinkForm } from 'src/front-components/components/SlackUserLinkForm';
 import { SlackUserLinksList } from 'src/front-components/components/SlackUserLinksList';
 import { UnlinkedSlackUsersList } from 'src/front-components/components/UnlinkedSlackUsersList';
@@ -211,6 +212,7 @@ export const SlackUserLinksSettings = () => {
           description="The last automatic email match failed before linking everyone. Press Auto-link by email below to run it again."
         />
       )}
+      <SlackAccessModeSection canManage={canManage} />
       {canManage && (
         <Section>
           <H2Title
