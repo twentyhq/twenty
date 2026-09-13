@@ -24,7 +24,10 @@ export const slackConnectionStatusHandler =
     }
 
     const [connectionHealthReport, rosterMatchRunOutcome] = await Promise.all([
-      resolveSlackConnectionHealth(slackClientResult.client),
+      resolveSlackConnectionHealth({
+        slackClient: slackClientResult.client,
+        connectionId: slackClientResult.connectionId,
+      }),
       readSlackRosterMatchRunOutcome(),
     ]);
 
