@@ -22,10 +22,14 @@ export const ClickTrackingSwitch = () => {
       throw new Error('User is not logged in');
     }
 
-    const isCampaignClickTrackingEnabled = !currentWorkspace.isCampaignClickTrackingEnabled;
+    const isCampaignClickTrackingEnabled =
+      !currentWorkspace.isCampaignClickTrackingEnabled;
 
     try {
-      setCurrentWorkspace({ ...currentWorkspace, isCampaignClickTrackingEnabled });
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        isCampaignClickTrackingEnabled,
+      });
 
       await updateWorkspace({
         variables: { input: { isCampaignClickTrackingEnabled } },
