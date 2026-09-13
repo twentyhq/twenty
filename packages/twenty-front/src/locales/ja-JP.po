@@ -2525,7 +2525,7 @@ msgstr "API名（複数形）"
 #. js-lingui-id: KclpRp
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "API Name (Singular)"
-msgstr "API名<b>（</b>単数形<b>）</b>"
+msgstr "API名（単数形）"
 
 #. js-lingui-id: /eZE05
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -7049,7 +7049,7 @@ msgstr "ドメインセットアップ"
 #. js-lingui-id: 7kVRe6
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
-msgstr "ドメインは<b>256</b>文字未満でなければならず、スペースや特殊文字を含めることはできません。"
+msgstr "ドメインは256文字未満でなければならず、スペースや特殊文字を含めることはできません。"
 
 #. js-lingui-id: KUxVkp
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
@@ -9361,17 +9361,17 @@ msgstr "第一"
 #. js-lingui-id: ZyIk6Y
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "First 10 lines"
-msgstr "最初の<b>10</b>行"
+msgstr "最初の10行"
 
 #. js-lingui-id: I3hko2
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "First 2 lines"
-msgstr "最初の<b>2</b>行"
+msgstr "最初の2行"
 
 #. js-lingui-id: BDDkm3
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "First 5 lines"
-msgstr "最初の<b>5</b>行"
+msgstr "最初の5行"
 
 #. js-lingui-id: V1EGGU
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -11382,7 +11382,7 @@ msgstr "前回"
 #. js-lingui-id: DU27lO
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 1 hour"
-msgstr "過去<b>1</b>時間"
+msgstr "過去1時間"
 
 #. js-lingui-id: 0LzSIl
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -11402,7 +11402,7 @@ msgstr "最近作成されたユーザー10人。クリックして機能フラ�
 #. js-lingui-id: XUlP/Y
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 12 hours"
-msgstr "過去<b>12</b>時間"
+msgstr "過去12時間"
 
 #. js-lingui-id: n7EOpf
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -11422,7 +11422,7 @@ msgstr "過去30日間"
 #. js-lingui-id: gdAJ4I
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 4 hours"
-msgstr "過去<b>4</b>時間"
+msgstr "過去4時間"
 
 #. js-lingui-id: MjAVB0
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -12887,7 +12887,7 @@ msgstr "関数に名前を付けて説明"
 #. js-lingui-id: zaxmAs
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-msgstr "単数形<b>（</b>例えば、「Invoice」<b>）</b>および複数形<b>（</b>例えば、「Invoices」<b>）</b>の名前。"
+msgstr "単数形（例えば、「Invoice」）および複数形（例えば、「Invoices」）の名前。"
 
 #. js-lingui-id: z+6jaZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx

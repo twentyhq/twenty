@@ -11382,7 +11382,7 @@ msgstr "최근"
 #. js-lingui-id: DU27lO
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 1 hour"
-msgstr "지난 <b>1</b>시간"
+msgstr "지난 1시간"
 
 #. js-lingui-id: 0LzSIl
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -11402,7 +11402,7 @@ msgstr "최근 생성된 사용자 10명입니다. 클릭하면 기능 플래그
 #. js-lingui-id: XUlP/Y
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 12 hours"
-msgstr "지난 <b>12</b>시간"
+msgstr "지난 12시간"
 
 #. js-lingui-id: n7EOpf
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -11422,7 +11422,7 @@ msgstr "지난 30일"
 #. js-lingui-id: gdAJ4I
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 4 hours"
-msgstr "지난 <b>4</b>시간"
+msgstr "지난 4시간"
 
 #. js-lingui-id: MjAVB0
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx

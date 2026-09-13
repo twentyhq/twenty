@@ -1546,13 +1546,13 @@ msgstr "Pozycja rekordu uczestnika wydarzenia kalendarzowego"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Calendar event participants"
-msgstr "{count, plural, one {Uczestnik wydarzenia kalendarzowego} few {Uczestnicy wydarzenia kalendarzowego} many {Uczestników wydarzenia kalendarzowego} other {Uczestników wydarzeń kalendarzowych}}"
+msgstr ""
 
 #. js-lingui-id: J++KJc
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Calendar event participants"
-msgstr "{count, plural, one {Uczestnik wydarzenia kalendarzowego} few {Uczestnicy wydarzenia kalendarzowego} many {Uczestników wydarzenia kalendarzowego} other {Uczestników wydarzeń kalendarzowych}}"
+msgstr ""
 
 #. js-lingui-id: 4H8X9C
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -1604,19 +1604,19 @@ msgstr "Cele wydarzeń kalendarzowych"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Calendar events"
-msgstr "{count, plural, one {Wydarzenie kalendarzowe} few {Wydarzenia kalendarzowe} many {Wydarzeń kalendarzowych} other {Wydarzeń kalendarzowych}}"
+msgstr ""
 
 #. js-lingui-id: KfFFWa
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Calendar events"
-msgstr "{count, plural, one {Wydarzenie kalendarzowe} few {Wydarzenia kalendarzowe} many {Wydarzeń kalendarzowych} other {Wydarzeń kalendarzowych}}"
+msgstr ""
 
 #. js-lingui-id: qyMa3j
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Calendar events"
-msgstr "{count, plural, one {Wydarzenie kalendarzowe} few {Wydarzenia kalendarzowe} many {Wydarzeń kalendarzowych} other {Wydarzeń kalendarzowych}}"
+msgstr ""
 
 #. js-lingui-id: QfPEE0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

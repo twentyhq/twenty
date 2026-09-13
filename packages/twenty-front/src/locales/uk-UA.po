@@ -12887,7 +12887,7 @@ msgstr "Назвіть і опишіть свою функцію"
 #. js-lingui-id: zaxmAs
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-msgstr "Назва в однині <b>(</b>наприклад, 'Рахунок') та множині <b>(</b>наприклад, 'Рахунки')."
+msgstr "Назва в однині (наприклад, 'Рахунок') та множині (наприклад, 'Рахунки')."
 
 #. js-lingui-id: z+6jaZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -18853,7 +18853,7 @@ msgstr "Передплату переключено на помісячну."
 #. js-lingui-id: A5YO8f
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to Yearly."
-msgstr "Перехід на передплату <b>на рік</b> здійснено."
+msgstr "Перехід на передплату на рік здійснено."
 
 #. js-lingui-id: ulJRqh
 #. placeholder {0}: getTargetPlanLabel(targetPlanKey)

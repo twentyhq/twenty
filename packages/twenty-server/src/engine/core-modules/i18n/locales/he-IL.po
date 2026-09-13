@@ -3794,7 +3794,7 @@ msgstr "מזהה הקלטה חיצוני"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Failed"
-msgstr "<span dir=\"rtl\">נכשל</span>"
+msgstr "נכשל"
 
 #. js-lingui-id: JZUzbz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts

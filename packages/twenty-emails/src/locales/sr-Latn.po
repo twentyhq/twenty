@@ -130,7 +130,7 @@ msgstr "Ako ovu promenu niste pokrenuli vi, molimo vas da odmah kontaktirate vla
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
-msgstr "Ako ne preduzmete ništa, pauziraćemo vaš radni prostor i čuvati vaše podatke na bezbednom {dataRetentionDays} {dayOrDays}, u slučaju da se predomislite — kartica vam neće biti terećena."
+msgstr "Ako ne uradite ništa, pauziraćemo vaš radni prostor i čuvaćemo vaše podatke {dataRetentionDays} dana u slučaju da se predomislite — nijedna kartica neće biti naplaćena."
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -347,7 +347,7 @@ msgstr "Vaš probni period uskoro ističe"
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
-msgstr "Vaš radni prostor <0>{workspaceDisplayName}</0> sada je trajno obrisan — bio je pauziran pre {daysSinceInactive} {dayOrDays} i nije ponovo aktiviran na vreme."
+msgstr "Vaš radni prostor <0>{workspaceDisplayName}</0> je sada trajno izbrisan — pauziran je pre {daysSinceInactive} dana i nije ponovo aktiviran na vreme."
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx

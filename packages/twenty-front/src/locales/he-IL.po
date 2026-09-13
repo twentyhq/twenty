@@ -4014,7 +4014,7 @@ msgstr "בדוק את ההרצות האחרונות של זרימת העבודה
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
 msgid "Check verification"
-msgstr "<span dir=\"rtl\">בדוק אימות</span>"
+msgstr "בדוק אימות"
 
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -8618,7 +8618,7 @@ msgstr "הוארך"
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Failed"
-msgstr "<span dir=\"rtl\">נכשל</span>"
+msgstr "נכשל"
 
 #. js-lingui-id: tKcbYd
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -15130,7 +15130,7 @@ msgstr "PDF"
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Pending"
-msgstr "<span dir=\"rtl\">ממתין</span>"
+msgstr "ממתין"
 
 #. js-lingui-id: PxBA+g
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
@@ -15582,7 +15582,7 @@ msgstr "מועדפות"
 #. js-lingui-id: 1hKEom
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 msgid "Priority"
-msgstr "<span dir=\"rtl\">עדיפות</span>"
+msgstr "עדיפות"
 
 #. js-lingui-id: k62X/2
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -18197,7 +18197,7 @@ msgstr "שדה יחיד עם פורמטים חכמים"
 #. js-lingui-id: 5v3IHX
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithSso.tsx
 msgid "Single sign-on (SSO)"
-msgstr "כניסה אחידה <b>(</b>SSO)"
+msgstr "כניסה אחידה (SSO)"
 
 #. js-lingui-id: maCaRp
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -18582,7 +18582,7 @@ msgstr "התחל את המנוי שלך"
 #. js-lingui-id: hTX65V
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
 msgid "Started verification process"
-msgstr "<span dir=\"rtl\"><span dir=\"ltr\">התחלת תהליך אימות</span></span>"
+msgstr "התחלת תהליך אימות"
 
 #. js-lingui-id: rCIXU9
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
@@ -19172,7 +19172,7 @@ msgstr "חבר צוות"
 #. js-lingui-id: lKXcJz
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Temporary Failure"
-msgstr "<span dir=\"rtl\"><span dir=\"ltr\">כשל זמני</span></span>"
+msgstr "כשל זמני"
 
 #. js-lingui-id: h0xgxg
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -20388,7 +20388,7 @@ msgstr "נסה עם דוא\"ל אחר"
 #. js-lingui-id: ouRvqq
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 msgid "TTL"
-msgstr "<span dir=\"rtl\"><span dir=\"ltr\">TTL</span></span>"
+msgstr "TTL"
 
 #. js-lingui-id: Kz91g/
 #: src/localization/hooks/useLocaleOptions.ts
@@ -21493,7 +21493,7 @@ msgstr "משתנים"
 #. js-lingui-id: QDEWii
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Verified"
-msgstr "<span dir=\"rtl\">מאומת</span>"
+msgstr "מאומת"
 
 #. js-lingui-id: uSMfoN
 #: src/utils/title-utils.ts
