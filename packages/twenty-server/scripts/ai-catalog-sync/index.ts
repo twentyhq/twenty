@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as prettier from 'prettier';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { MODELS_DEV_API_URL } from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.const';
 import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-data.type';
@@ -65,7 +65,7 @@ const readVendors = (spec: CatalogSpec): string[] => {
 
   // An empty list would fetch nothing, assert nothing and write an empty
   // catalog over the real one, and the sync PR automerges.
-  if (vendors.length === 0) {
+  if (!isNonEmptyArray(vendors)) {
     throw new Error(
       `${SELF_HOST_SPEC_PATH} names no vendor to carry: every route lists models explicitly`,
     );
