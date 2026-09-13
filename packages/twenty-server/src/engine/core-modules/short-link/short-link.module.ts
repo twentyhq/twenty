@@ -7,7 +7,10 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 
 @Module({
   imports: [TypeOrmModule.forFeature([ShortLinkEntity])],
-  providers: [provideWorkspaceScopedRepository(ShortLinkEntity), ShortLinkService],
+  providers: [
+    provideWorkspaceScopedRepository(ShortLinkEntity),
+    ShortLinkService,
+  ],
   exports: [ShortLinkService],
 })
 export class ShortLinkModule {}
