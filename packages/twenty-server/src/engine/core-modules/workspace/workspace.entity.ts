@@ -125,11 +125,11 @@ export class WorkspaceEntity {
 
   @Field()
   @Column({ default: false })
-  isClickTrackingEnabled: boolean;
+  isCampaignClickTrackingEnabled: boolean;
 
   @Field()
   @Column({ default: false })
-  isOpenTrackingEnabled: boolean;
+  isCampaignOpenTrackingEnabled: boolean;
 
   @Field(() => WorkspaceDiscoverability)
   @WasIntroducedInUpgrade({

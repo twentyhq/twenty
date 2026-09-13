@@ -12,8 +12,8 @@ export const UPDATE_WORKSPACE = gql`
       logo
       allowImpersonation
       isPublicInviteLinkEnabled
-      isClickTrackingEnabled
-      isOpenTrackingEnabled
+      isCampaignClickTrackingEnabled
+      isCampaignOpenTrackingEnabled
       workspaceDiscoverability
       isGoogleAuthEnabled
       isMicrosoftAuthEnabled

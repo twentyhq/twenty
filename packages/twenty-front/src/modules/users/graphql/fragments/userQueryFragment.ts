@@ -55,8 +55,8 @@ export const USER_QUERY_FRAGMENT = gql`
       allowImpersonation
       activationStatus
       isPublicInviteLinkEnabled
-      isClickTrackingEnabled
-      isOpenTrackingEnabled
+      isCampaignClickTrackingEnabled
+      isCampaignOpenTrackingEnabled
       workspaceDiscoverability
       isGoogleAuthEnabled
       isMicrosoftAuthEnabled
