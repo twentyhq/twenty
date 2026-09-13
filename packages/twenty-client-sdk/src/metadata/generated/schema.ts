@@ -588,12 +588,11 @@ export interface Workspace {
     isInternalMessagesImportEnabled: Scalars['Boolean']
     editableProfileFields?: Scalars['String'][]
     defaultRole?: Role
-    fastModel: Scalars['String']
-    smartModel: Scalars['String']
+    aiChatModelTier: AiModelTier
+    aiAgentModelTier: AiModelTier
+    isAutoModelSelectionEnabled: Scalars['Boolean']
+    aiModelIdByTier: Scalars['JSON']
     aiAdditionalInstructions?: Scalars['String']
-    enabledAiModelIds?: Scalars['String'][]
-    useRecommendedModels: Scalars['Boolean']
-    routerModel: Scalars['String']
     workspaceCustomApplication?: Application
     featureFlags?: FeatureFlag[]
     billingSubscriptions: BillingSubscription[]
@@ -611,6 +610,8 @@ export interface Workspace {
 export type WorkspaceDiscoverability = 'PUBLIC' | 'MEMBERS_AND_INVITEES' | 'HIDDEN'
 
 export type WorkspaceActivationStatus = 'ONGOING_CREATION' | 'PENDING_CREATION' | 'CREATED' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED'
+
+export type AiModelTier = 'extraFast' | 'fast' | 'balanced' | 'smart' | 'extraSmart'
 
 export interface User {
     id: Scalars['UUID']
@@ -736,8 +737,11 @@ export type PageLayoutTabLayoutMode = 'GRID' | 'VERTICAL_LIST' | 'CANVAS'
 export interface PageLayoutWidgetVerticalListPosition {
     layoutMode: PageLayoutTabLayoutMode
     index: Scalars['Int']
+    heightBehavior?: PageLayoutWidgetVerticalListHeightBehavior
     __typename: 'PageLayoutWidgetVerticalListPosition'
 }
+
+export type PageLayoutWidgetVerticalListHeightBehavior = 'FIT_CONTENT' | 'TAB_VIEWPORT'
 
 export interface PageLayoutWidgetCanvasPosition {
     layoutMode: PageLayoutTabLayoutMode
@@ -1428,6 +1432,50 @@ export interface UsageAnalytics {
     __typename: 'UsageAnalytics'
 }
 
+export interface UsageQuotaDefinition {
+    resourceType: UsageResourceType
+    allowedOperationTypes: UsageOperationType[]
+    allowedSpenderTypes: Scalars['String'][]
+    allowedMeters: Scalars['String'][]
+    __typename: 'UsageQuotaDefinition'
+}
+
+export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL' | 'WEBHOOK'
+
+export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'API_REQUEST' | 'WEBHOOK_CALL' | 'SUBSCRIPTION'
+
+export interface UsageQuotaDefinitions {
+    definitions: UsageQuotaDefinition[]
+    isIntraWorkspaceLimitEntitled: Scalars['Boolean']
+    hasAllowancePeriod: Scalars['Boolean']
+    __typename: 'UsageQuotaDefinitions'
+}
+
+export interface UsageQuotaWithConsumption {
+    id: Scalars['UUID']
+    resourceType: UsageResourceType
+    operationType: UsageOperationType
+    spenderType: Scalars['String']
+    spenderId?: Scalars['String']
+    spenderLabel?: Scalars['String']
+    periodUnit: Scalars['String']
+    meter: Scalars['String']
+    limitValue: Scalars['BigInt']
+    isEnforced: Scalars['Boolean']
+    consumedValue?: Scalars['BigInt']
+    remainingValue?: Scalars['BigInt']
+    periodStart?: Scalars['DateTime']
+    periodEnd?: Scalars['DateTime']
+    __typename: 'UsageQuotaWithConsumption'
+}
+
+export interface UsageQuotaScopeConsumption {
+    consumedValue?: Scalars['BigInt']
+    periodStart: Scalars['DateTime']
+    periodEnd: Scalars['DateTime']
+    __typename: 'UsageQuotaScopeConsumption'
+}
+
 export interface UsageLimit {
     id: Scalars['UUID']
     resourceType: UsageResourceType
@@ -1444,10 +1492,6 @@ export interface UsageLimit {
     updatedAt: Scalars['DateTime']
     __typename: 'UsageLimit'
 }
-
-export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL' | 'WEBHOOK'
-
-export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'API_REQUEST' | 'WEBHOOK_CALL' | 'SUBSCRIPTION'
 
 export interface ApprovedAccessDomain {
     id: Scalars['UUID']
@@ -1667,16 +1711,27 @@ export interface ClientAiModelConfig {
     outputCostPerMillionTokens?: Scalars['Float']
     nativeCapabilities?: NativeModelCapabilities
     isDeprecated?: Scalars['Boolean']
-    isRecommended?: Scalars['Boolean']
     providerName?: Scalars['String']
     providerLabel?: Scalars['String']
     contextWindowTokens?: Scalars['Float']
     maxOutputTokens?: Scalars['Float']
     dataResidency?: Scalars['String']
+    intelligenceIndex?: Scalars['Float']
+    outputTokensPerSecond?: Scalars['Float']
+    costPerTask?: Scalars['Float']
+    efforts?: Scalars['String'][]
+    effort?: Scalars['String']
+    isBenchmarkInherited?: Scalars['Boolean']
     __typename: 'ClientAiModelConfig'
 }
 
 export type ModelFamily = 'GPT' | 'CLAUDE' | 'GEMINI' | 'MISTRAL' | 'GROK'
+
+export interface ClientAiModelTierConfig {
+    tier: AiModelTier
+    modelId: Scalars['String']
+    __typename: 'ClientAiModelTierConfig'
+}
 
 export interface Billing {
     isBillingEnabled: Scalars['Boolean']
@@ -1741,6 +1796,7 @@ export interface ClientConfig {
     authProviders: AuthProviders
     billing: Billing
     aiModels: ClientAiModelConfig[]
+    aiModelTiers: ClientAiModelTierConfig[]
     signInPrefilled: Scalars['Boolean']
     isMultiWorkspaceEnabled: Scalars['Boolean']
     isEmailVerificationRequired: Scalars['Boolean']
@@ -2839,6 +2895,7 @@ export interface Skill {
     description?: Scalars['String']
     content: Scalars['String']
     isCustom: Scalars['Boolean']
+    isSystem: Scalars['Boolean']
     isActive: Scalars['Boolean']
     applicationId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -3114,6 +3171,9 @@ export interface Query {
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTO
     getUsageAnalytics: UsageAnalytics
     usageLimits: UsageLimit[]
+    usageQuotasWithConsumption: UsageQuotaWithConsumption[]
+    usageQuotaDefinitions: UsageQuotaDefinitions
+    usageQuotaScopeConsumption?: UsageQuotaScopeConsumption
     getViewFilterGroups: ViewFilterGroup[]
     getViewFilterGroup?: ViewFilterGroup
     getViewFilters: ViewFilter[]
@@ -3252,7 +3312,8 @@ export interface Mutation {
     uploadWorkspaceLogo: FileWithSignedUrl
     uploadWorkspaceMemberProfilePicture: FileWithSignedUrl
     uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl
-    upsertUsageLimit: UsageLimit
+    createUsageLimit: UsageLimit
+    updateUsageLimit: UsageLimit
     deleteUsageLimit: Scalars['Boolean']
     createViewFilterGroup: ViewFilterGroup
     updateViewFilterGroup: ViewFilterGroup
@@ -4096,12 +4157,11 @@ export interface WorkspaceGenqlSelection{
     isInternalMessagesImportEnabled?: boolean | number
     editableProfileFields?: boolean | number
     defaultRole?: RoleGenqlSelection
-    fastModel?: boolean | number
-    smartModel?: boolean | number
+    aiChatModelTier?: boolean | number
+    aiAgentModelTier?: boolean | number
+    isAutoModelSelectionEnabled?: boolean | number
+    aiModelIdByTier?: boolean | number
     aiAdditionalInstructions?: boolean | number
-    enabledAiModelIds?: boolean | number
-    useRecommendedModels?: boolean | number
-    routerModel?: boolean | number
     workspaceCustomApplication?: ApplicationGenqlSelection
     featureFlags?: FeatureFlagGenqlSelection
     billingSubscriptions?: BillingSubscriptionGenqlSelection
@@ -4246,6 +4306,7 @@ export interface PageLayoutWidgetGridPositionGenqlSelection{
 export interface PageLayoutWidgetVerticalListPositionGenqlSelection{
     layoutMode?: boolean | number
     index?: boolean | number
+    heightBehavior?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4972,6 +5033,50 @@ export interface UsageAnalyticsGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface UsageQuotaDefinitionGenqlSelection{
+    resourceType?: boolean | number
+    allowedOperationTypes?: boolean | number
+    allowedSpenderTypes?: boolean | number
+    allowedMeters?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageQuotaDefinitionsGenqlSelection{
+    definitions?: UsageQuotaDefinitionGenqlSelection
+    isIntraWorkspaceLimitEntitled?: boolean | number
+    hasAllowancePeriod?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageQuotaWithConsumptionGenqlSelection{
+    id?: boolean | number
+    resourceType?: boolean | number
+    operationType?: boolean | number
+    spenderType?: boolean | number
+    spenderId?: boolean | number
+    spenderLabel?: boolean | number
+    periodUnit?: boolean | number
+    meter?: boolean | number
+    limitValue?: boolean | number
+    isEnforced?: boolean | number
+    consumedValue?: boolean | number
+    remainingValue?: boolean | number
+    periodStart?: boolean | number
+    periodEnd?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageQuotaScopeConsumptionGenqlSelection{
+    consumedValue?: boolean | number
+    periodStart?: boolean | number
+    periodEnd?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface UsageLimitGenqlSelection{
     id?: boolean | number
     resourceType?: boolean | number
@@ -5222,12 +5327,24 @@ export interface ClientAiModelConfigGenqlSelection{
     outputCostPerMillionTokens?: boolean | number
     nativeCapabilities?: NativeModelCapabilitiesGenqlSelection
     isDeprecated?: boolean | number
-    isRecommended?: boolean | number
     providerName?: boolean | number
     providerLabel?: boolean | number
     contextWindowTokens?: boolean | number
     maxOutputTokens?: boolean | number
     dataResidency?: boolean | number
+    intelligenceIndex?: boolean | number
+    outputTokensPerSecond?: boolean | number
+    costPerTask?: boolean | number
+    efforts?: boolean | number
+    effort?: boolean | number
+    isBenchmarkInherited?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ClientAiModelTierConfigGenqlSelection{
+    tier?: boolean | number
+    modelId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5299,6 +5416,7 @@ export interface ClientConfigGenqlSelection{
     authProviders?: AuthProvidersGenqlSelection
     billing?: BillingGenqlSelection
     aiModels?: ClientAiModelConfigGenqlSelection
+    aiModelTiers?: ClientAiModelTierConfigGenqlSelection
     signInPrefilled?: boolean | number
     isMultiWorkspaceEnabled?: boolean | number
     isEmailVerificationRequired?: boolean | number
@@ -6467,6 +6585,7 @@ export interface SkillGenqlSelection{
     description?: boolean | number
     content?: boolean | number
     isCustom?: boolean | number
+    isSystem?: boolean | number
     isActive?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
@@ -6746,6 +6865,9 @@ export interface QueryGenqlSelection{
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
     getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     usageLimits?: UsageLimitGenqlSelection
+    usageQuotasWithConsumption?: UsageQuotaWithConsumptionGenqlSelection
+    usageQuotaDefinitions?: UsageQuotaDefinitionsGenqlSelection
+    usageQuotaScopeConsumption?: (UsageQuotaScopeConsumptionGenqlSelection & { __args: {input: UsageQuotaScopeInput} })
     getViewFilterGroups?: (ViewFilterGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
     getViewFilterGroup?: (ViewFilterGroupGenqlSelection & { __args: {id: Scalars['String']} })
     getViewFilters?: (ViewFilterGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
@@ -6880,6 +7002,8 @@ export interface QueryGenqlSelection{
 
 export interface UsageAnalyticsInput {periodStart?: (Scalars['DateTime'] | null),periodEnd?: (Scalars['DateTime'] | null),userWorkspaceId?: (Scalars['String'] | null),operationTypes?: (UsageOperationType[] | null)}
 
+export interface UsageQuotaScopeInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),periodUnit: Scalars['String'],meter: Scalars['String']}
+
 export interface GetApiKeyInput {id: Scalars['UUID']}
 
 export interface AgentIdInput {
@@ -6929,7 +7053,8 @@ export interface MutationGenqlSelection{
     uploadWorkspaceLogo?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     uploadWorkspaceMemberProfilePicture?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     uploadFilesFieldFileByUniversalIdentifier?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload'], fieldMetadataUniversalIdentifier: Scalars['String']} })
-    upsertUsageLimit?: (UsageLimitGenqlSelection & { __args: {input: UpsertUsageLimitInput} })
+    createUsageLimit?: (UsageLimitGenqlSelection & { __args: {input: CreateUsageLimitInput} })
+    updateUsageLimit?: (UsageLimitGenqlSelection & { __args: {input: UpdateUsageLimitInput} })
     deleteUsageLimit?: { __args: {usageLimitId: Scalars['UUID']} }
     createViewFilterGroup?: (ViewFilterGroupGenqlSelection & { __args: {input: CreateViewFilterGroupInput} })
     updateViewFilterGroup?: (ViewFilterGroupGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewFilterGroupInput} })
@@ -7184,7 +7309,9 @@ update: UpdateNavigationMenuItemInput}
 
 export interface UpdateNavigationMenuItemInput {folderId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null)}
 
-export interface UpsertUsageLimitInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),limitKind: Scalars['String'],periodCount: Scalars['Int'],periodUnit: Scalars['String'],meter: Scalars['String'],limitValue: Scalars['BigInt'],burstValue?: (Scalars['BigInt'] | null)}
+export interface CreateUsageLimitInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),limitKind: Scalars['String'],periodCount: Scalars['Int'],periodUnit: Scalars['String'],meter: Scalars['String'],limitValue: Scalars['BigInt'],burstValue?: (Scalars['BigInt'] | null)}
+
+export interface UpdateUsageLimitInput {id: Scalars['UUID'],payload: CreateUsageLimitInput}
 
 export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
@@ -7416,7 +7543,7 @@ export interface ActivateWorkspaceInput {
 /** Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility. */
 displayName?: (Scalars['String'] | null)}
 
-export interface UpdateWorkspaceInput {subdomain?: (Scalars['String'] | null),customDomain?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),logo?: (Scalars['String'] | null),inviteHash?: (Scalars['String'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null),allowImpersonation?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),defaultRoleId?: (Scalars['UUID'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),trashRetentionDays?: (Scalars['Float'] | null),eventLogRetentionDays?: (Scalars['Float'] | null),fastModel?: (Scalars['String'] | null),smartModel?: (Scalars['String'] | null),aiAdditionalInstructions?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),enabledAiModelIds?: (Scalars['String'][] | null),useRecommendedModels?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null)}
+export interface UpdateWorkspaceInput {subdomain?: (Scalars['String'] | null),customDomain?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),logo?: (Scalars['String'] | null),inviteHash?: (Scalars['String'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null),allowImpersonation?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),defaultRoleId?: (Scalars['UUID'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),trashRetentionDays?: (Scalars['Float'] | null),eventLogRetentionDays?: (Scalars['Float'] | null),aiChatModelTier?: (AiModelTier | null),aiAgentModelTier?: (AiModelTier | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),aiAdditionalInstructions?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null)}
 
 export interface CreateApplicationRegistrationInput {name: Scalars['String'],universalIdentifier?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null)}
 
@@ -8508,6 +8635,38 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const UsageQuotaDefinition_possibleTypes: string[] = ['UsageQuotaDefinition']
+    export const isUsageQuotaDefinition = (obj?: { __typename?: any } | null): obj is UsageQuotaDefinition => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageQuotaDefinition"')
+      return UsageQuotaDefinition_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageQuotaDefinitions_possibleTypes: string[] = ['UsageQuotaDefinitions']
+    export const isUsageQuotaDefinitions = (obj?: { __typename?: any } | null): obj is UsageQuotaDefinitions => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageQuotaDefinitions"')
+      return UsageQuotaDefinitions_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageQuotaWithConsumption_possibleTypes: string[] = ['UsageQuotaWithConsumption']
+    export const isUsageQuotaWithConsumption = (obj?: { __typename?: any } | null): obj is UsageQuotaWithConsumption => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageQuotaWithConsumption"')
+      return UsageQuotaWithConsumption_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageQuotaScopeConsumption_possibleTypes: string[] = ['UsageQuotaScopeConsumption']
+    export const isUsageQuotaScopeConsumption = (obj?: { __typename?: any } | null): obj is UsageQuotaScopeConsumption => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageQuotaScopeConsumption"')
+      return UsageQuotaScopeConsumption_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const UsageLimit_possibleTypes: string[] = ['UsageLimit']
     export const isUsageLimit = (obj?: { __typename?: any } | null): obj is UsageLimit => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageLimit"')
@@ -8696,6 +8855,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isClientAiModelConfig = (obj?: { __typename?: any } | null): obj is ClientAiModelConfig => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientAiModelConfig"')
       return ClientAiModelConfig_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ClientAiModelTierConfig_possibleTypes: string[] = ['ClientAiModelTierConfig']
+    export const isClientAiModelTierConfig = (obj?: { __typename?: any } | null): obj is ClientAiModelTierConfig => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isClientAiModelTierConfig"')
+      return ClientAiModelTierConfig_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10226,6 +10393,14 @@ export const enumWorkspaceActivationStatus = {
    SUSPENDED: 'SUSPENDED' as const
 }
 
+export const enumAiModelTier = {
+   extraFast: 'extraFast' as const,
+   fast: 'fast' as const,
+   balanced: 'balanced' as const,
+   smart: 'smart' as const,
+   extraSmart: 'extraSmart' as const
+}
+
 export const enumOnboardingStatus = {
    PLAN_REQUIRED: 'PLAN_REQUIRED' as const,
    WORKSPACE_ACTIVATION: 'WORKSPACE_ACTIVATION' as const,
@@ -10268,6 +10443,11 @@ export const enumPageLayoutTabLayoutMode = {
    GRID: 'GRID' as const,
    VERTICAL_LIST: 'VERTICAL_LIST' as const,
    CANVAS: 'CANVAS' as const
+}
+
+export const enumPageLayoutWidgetVerticalListHeightBehavior = {
+   FIT_CONTENT: 'FIT_CONTENT' as const,
+   TAB_VIEWPORT: 'TAB_VIEWPORT' as const
 }
 
 export const enumWidgetConfigurationType = {

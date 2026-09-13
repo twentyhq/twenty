@@ -37,10 +37,7 @@ export const SubMatchingSelectDropdownButton = ({
   const value = options.find((opt) => opt.value === option.value);
   return (
     <SubMatchingSelectControlContainer cursor="pointer" id="control">
-      <Tag
-        text={value?.label ?? placeholder}
-        color={value?.color as TagColor}
-      />
+      <Tag color={value?.color as TagColor}>{value?.label ?? placeholder}</Tag>
       <StyledIconChevronDownContainer>
         <IconChevronDown size={theme.icon.size.md} />
       </StyledIconChevronDownContainer>
