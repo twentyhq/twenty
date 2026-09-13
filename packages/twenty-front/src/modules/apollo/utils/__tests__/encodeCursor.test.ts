@@ -48,13 +48,22 @@ describe('encodeCursor', () => {
     expect(decoded).toEqual({ id: '123', position: 1 });
   });
 
-  it('should emit a cursor in the URL-safe alphabet, unpadded', () => {
+  // The server mints its own cursors with Buffer.toString('base64url'), so the
+  // bytes are pinned rather than only the shape of the alphabet: for this
+  // payload the two alphabets coincide and only the padding differs
+  it('should emit the same bytes the server would for the same payload', () => {
     const record: ObjectRecord = {
       __typename: 'ObjectRecord',
-      id: '123',
-      position: 1,
+      id: '81285b87-91e3-48ea-82ee-256b379f83d9',
+      position: 0,
     };
 
+    expect(encodeCursor(record)).toBe(
+      Buffer.from(
+        JSON.stringify({ position: record.position, id: record.id }),
+        'utf-8',
+      ).toString('base64url'),
+    );
     expect(encodeCursor(record)).toMatch(/^[A-Za-z0-9_-]+$/);
   });
 
