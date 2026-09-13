@@ -48,6 +48,37 @@ describe('encodeCursor', () => {
     expect(decoded).toEqual({ id: '123', position: 1 });
   });
 
+  it('should emit a cursor in the URL-safe alphabet, unpadded', () => {
+    const record: ObjectRecord = {
+      __typename: 'ObjectRecord',
+      id: '123',
+      position: 1,
+    };
+
+    expect(encodeCursor(record)).toMatch(/^[A-Za-z0-9_-]+$/);
+  });
+
+  // Jest resolves 'buffer' to Node's builtin, which implements 'base64url';
+  // the browser build gets the polyfill, which throws on it. Without this the
+  // suite would stay green while every optimistic cache write broke in the app
+  it('should only use encodings the browser Buffer polyfill implements', async () => {
+    jest.resetModules();
+    jest.doMock('buffer', () => jest.requireActual('buffer/'));
+
+    const { encodeCursor: encodeCursorWithPolyfill } =
+      await import('@/apollo/utils/encodeCursor');
+    const record: ObjectRecord = {
+      __typename: 'ObjectRecord',
+      id: '123',
+      position: 1,
+    };
+
+    expect(encodeCursorWithPolyfill(record)).toBe(encodeCursor(record));
+
+    jest.dontMock('buffer');
+    jest.resetModules();
+  });
+
   it('should throw an error if record does not have an id', () => {
     const record = { position: 1 } as any;
 

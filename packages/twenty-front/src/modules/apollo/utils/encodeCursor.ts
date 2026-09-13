@@ -16,5 +16,12 @@ export const encodeCursor = (record: ObjectRecord) => {
     id: record.id,
   };
 
-  return Buffer.from(JSON.stringify(payload), 'utf-8').toString('base64');
+  // Mirrors the server's base64url cursors so both sides mint the same bytes for
+  // a record. Translated by hand rather than encoded with 'base64url': the browser
+  // Buffer polyfill only implements the standard alphabet and throws on that name
+  return Buffer.from(JSON.stringify(payload), 'utf-8')
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
 };
