@@ -3,22 +3,6 @@ import { TRANSLATED_IDENTIFIER_RULE } from '../translated-identifier.rule';
 const { detect, fix } = TRANSLATED_IDENTIFIER_RULE;
 
 describe('TRANSLATED_IDENTIFIER_RULE', () => {
-  it('restores a route translated into the target language', () => {
-    const sourceText = '/user-guide/billing/capabilities/pricing-plans';
-    const translationText = '/user-guide/billing/القدرات/خطط التسعير';
-
-    expect(detect(translationText, sourceText)).toBe(true);
-    expect(fix(translationText, sourceText)).toBe(sourceText);
-  });
-
-  it('restores a route the translation misspelled', () => {
-    const sourceText = '/user-guide/billing/how-tos/billing-faq';
-
-    expect(fix('/userer-guide/billing/how-tos/billing-faq', sourceText)).toBe(
-      sourceText,
-    );
-  });
-
   it('restores a code identifier translated inside backticks', () => {
     const sourceText =
       'Re-renders are often caused by unnecessary `useEffect`.';
@@ -37,16 +21,6 @@ describe('TRANSLATED_IDENTIFIER_RULE', () => {
 
     expect(fix(translationText, sourceText)).toBe(
       'Appelez `useMemo` avant que `useEffect` ne tourne.',
-    );
-  });
-
-  it('restores a link target while keeping the translated link text', () => {
-    const sourceText = 'See the [billing guide](/user-guide/billing) for more.';
-    const translationText =
-      'Consultez le [guide de facturation](/guide-utilisateur/facturation) pour en savoir plus.';
-
-    expect(fix(translationText, sourceText)).toBe(
-      'Consultez le [guide de facturation](/user-guide/billing) pour en savoir plus.',
     );
   });
 
@@ -116,13 +90,20 @@ describe('TRANSLATED_IDENTIFIER_RULE', () => {
     expect(detect(translationText, sourceText)).toBe(false);
   });
 
-  it('does not treat translated prose as a path', () => {
-    expect(detect('Facturation', 'Billing')).toBe(false);
+  // Translated pages live under /l/<lang>/ and link to each other there, so a
+  // locale-prefixed target is the translation being right, not wrong. Paths and
+  // link targets are left to a human.
+  it('leaves link targets alone, including locale-prefixed ones', () => {
+    const sourceText = 'See [the guide](/user-guide/billing).';
+    const translationText = 'Vezi [ghidul](/l/ro/user-guide/billing).';
+
+    expect(detect(translationText, sourceText)).toBe(false);
+    expect(fix(translationText, sourceText)).toBe(translationText);
   });
 
   it('stands down when the source is unknown', () => {
-    expect(detect('/traduit', undefined)).toBe(false);
-    expect(fix('/traduit', undefined)).toBe('/traduit');
+    expect(detect('`useEffect`', undefined)).toBe(false);
+    expect(fix('`useEffect`', undefined)).toBe('`useEffect`');
   });
 
   it('runs against MDX catalogs only', () => {
