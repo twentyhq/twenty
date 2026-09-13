@@ -130,9 +130,11 @@ export const rule = defineRule({
       // The descriptor form the standard field metadata uses, and where this
       // defect collected.
       CallExpression: (node: any) => {
+        const calleeName = getTagName(node.callee);
+
         if (
-          node.callee.type !== 'Identifier' ||
-          !MESSAGE_TAG_NAMES.includes(node.callee.name)
+          calleeName === undefined ||
+          !MESSAGE_TAG_NAMES.includes(calleeName)
         ) {
           return;
         }

@@ -69,6 +69,11 @@ ruleTester.run(RULE_NAME, rule, {
       filename: 'compute-workflow-version.ts',
     },
     {
+      code: 'const label = i18n.t({ message: `Avatar Url` });',
+      errors: [{ messageId: 'miscasedAcronym' }],
+      filename: 'avatar.ts',
+    },
+    {
       code: 'const label = msg`Json value for event Id`;',
       errors: [
         { messageId: 'miscasedAcronym' },
