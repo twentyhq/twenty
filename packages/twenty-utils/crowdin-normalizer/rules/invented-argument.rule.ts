@@ -80,6 +80,7 @@ function repairInventedArgument(text: string, sourceText?: string): string {
 
 export const INVENTED_ARGUMENT_RULE: NormalizationRule = {
   name: 'invented-argument',
+  formats: ['po'],
   needsSourceText: true,
   detect: hasInventedArgument,
   fix: repairInventedArgument,
