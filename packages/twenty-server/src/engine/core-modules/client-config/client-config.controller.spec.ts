@@ -115,6 +115,7 @@ describe('ClientConfigController', () => {
         isClickHouseConfigured: false,
         isWorkspaceSchemaDDLLocked: false,
         isOnboardingAiChatEnabled: false,
+        recordGroupPageSize: 8,
         enterpriseInstanceType: ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
       };
 

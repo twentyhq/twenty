@@ -1,3 +1,4 @@
+import { recordGroupPageSizeState } from '@/client-config/states/recordGroupPageSizeState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
@@ -11,6 +12,7 @@ import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useReco
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { DEFAULT_RECORD_GROUP_PAGE_SIZE } from 'twenty-shared/constants';
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
@@ -31,6 +33,8 @@ export const useFindManyRecordIndexTableParams = (
   );
 
   const currentRecordGroupDefinition = useCurrentRecordGroupDefinition();
+
+  const recordGroupPageSize = useAtomStateValue(recordGroupPageSizeState);
 
   const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
@@ -87,7 +91,10 @@ export const useFindManyRecordIndexTableParams = (
     objectNameSingular,
     filter: combinedFilter,
     orderBy,
-    // If we have a current record group definition, we only want to fetch 8 records by page
-    ...(currentRecordGroupDefinition ? { limit: 8 } : {}),
+    // Grouped tables paginate behind a "Load more" button instead of scrolling
+    // infinitely, so each group fetches a small page rather than the table one
+    ...(currentRecordGroupDefinition
+      ? { limit: recordGroupPageSize ?? DEFAULT_RECORD_GROUP_PAGE_SIZE }
+      : {}),
   };
 };

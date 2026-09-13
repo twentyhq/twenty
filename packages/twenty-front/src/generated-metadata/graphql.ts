@@ -1106,6 +1106,7 @@ export type ClientConfig = {
   maintenance?: Maybe<ClientConfigMaintenanceMode>;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   publicFunctionDomain?: Maybe<Scalars['String']['output']>;
+  recordGroupPageSize: Scalars['Int']['output'];
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean']['output'];
   support: Support;

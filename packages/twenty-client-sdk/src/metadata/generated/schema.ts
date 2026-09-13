@@ -1827,6 +1827,7 @@ export interface ClientConfig {
     isClickHouseConfigured: Scalars['Boolean']
     isWorkspaceSchemaDDLLocked: Scalars['Boolean']
     isOnboardingAiChatEnabled: Scalars['Boolean']
+    recordGroupPageSize: Scalars['Int']
     enterpriseInstanceType: Scalars['String']
     maintenance?: ClientConfigMaintenanceMode
     __typename: 'ClientConfig'
@@ -5447,6 +5448,7 @@ export interface ClientConfigGenqlSelection{
     isClickHouseConfigured?: boolean | number
     isWorkspaceSchemaDDLLocked?: boolean | number
     isOnboardingAiChatEnabled?: boolean | number
+    recordGroupPageSize?: boolean | number
     enterpriseInstanceType?: boolean | number
     maintenance?: ClientConfigMaintenanceModeGenqlSelection
     __typename?: boolean | number

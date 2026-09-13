@@ -29,6 +29,7 @@ import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicro
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
+import { recordGroupPageSizeState } from '@/client-config/states/recordGroupPageSizeState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { type ClientConfig } from '@/client-config/types/ClientConfig';
@@ -151,6 +152,8 @@ export const useClientConfig = (): UseClientConfigResult => {
 
   const setAppVersion = useSetAtomState(appVersionState);
 
+  const setRecordGroupPageSize = useSetAtomState(recordGroupPageSizeState);
+
   const fetchClientConfig = useCallback(async () => {
     setClientConfigApiStatus((prev) => ({
       ...prev,
@@ -243,6 +246,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       setIsOnboardingAiChatEnabled(
         clientConfig?.isOnboardingAiChatEnabled ?? false,
       );
+      setRecordGroupPageSize(clientConfig?.recordGroupPageSize ?? null);
       setMaintenanceMode(clientConfig?.maintenance ?? null);
       setEnterpriseInstanceType(
         clientConfig?.enterpriseInstanceType ??
@@ -290,6 +294,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsOnboardingAiChatEnabled,
     setLabPublicFeatureFlags,
     setMaintenanceMode,
+    setRecordGroupPageSize,
     setEnterpriseInstanceType,
     setIsMicrosoftCalendarEnabled,
     setIsMicrosoftMessagingEnabled,
