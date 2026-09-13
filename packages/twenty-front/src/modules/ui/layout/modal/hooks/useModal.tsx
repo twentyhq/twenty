@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { useWorkspaceSurfaceScopedComponentInstanceIdResolver } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -13,15 +12,12 @@ export const useModal = () => {
     useRemoveFocusItemFromFocusStackById();
 
   const store = useStore();
-  const resolveComponentInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceIdResolver();
 
   const closeModal = useCallback(
     (modalInstanceId: string) => {
-      const scopedModalInstanceId = resolveComponentInstanceId(modalInstanceId);
       const isModalOpen = store.get(
         isModalOpenedComponentState.atomFamily({
-          instanceId: scopedModalInstanceId,
+          instanceId: modalInstanceId,
         }),
       );
 
@@ -30,25 +26,24 @@ export const useModal = () => {
       }
 
       removeFocusItemFromFocusStackById({
-        focusId: scopedModalInstanceId,
+        focusId: modalInstanceId,
       });
 
       store.set(
         isModalOpenedComponentState.atomFamily({
-          instanceId: scopedModalInstanceId,
+          instanceId: modalInstanceId,
         }),
         false,
       );
     },
-    [store, removeFocusItemFromFocusStackById, resolveComponentInstanceId],
+    [store, removeFocusItemFromFocusStackById],
   );
 
   const openModal = useCallback(
     (modalInstanceId: string) => {
-      const scopedModalInstanceId = resolveComponentInstanceId(modalInstanceId);
       const isModalOpened = store.get(
         isModalOpenedComponentState.atomFamily({
-          instanceId: scopedModalInstanceId,
+          instanceId: modalInstanceId,
         }),
       );
 
@@ -58,16 +53,16 @@ export const useModal = () => {
 
       store.set(
         isModalOpenedComponentState.atomFamily({
-          instanceId: scopedModalInstanceId,
+          instanceId: modalInstanceId,
         }),
         true,
       );
 
       pushFocusItemToFocusStack({
-        focusId: scopedModalInstanceId,
+        focusId: modalInstanceId,
         component: {
           type: FocusComponentType.MODAL,
-          instanceId: scopedModalInstanceId,
+          instanceId: modalInstanceId,
         },
         globalHotkeysConfig: {
           enableGlobalHotkeysWithModifiers: false,
@@ -75,15 +70,14 @@ export const useModal = () => {
         },
       });
     },
-    [store, pushFocusItemToFocusStack, resolveComponentInstanceId],
+    [store, pushFocusItemToFocusStack],
   );
 
   const toggleModal = useCallback(
     (modalInstanceId: string) => {
-      const scopedModalInstanceId = resolveComponentInstanceId(modalInstanceId);
       const isModalOpen = store.get(
         isModalOpenedComponentState.atomFamily({
-          instanceId: scopedModalInstanceId,
+          instanceId: modalInstanceId,
         }),
       );
 
@@ -93,7 +87,7 @@ export const useModal = () => {
         openModal(modalInstanceId);
       }
     },
-    [store, closeModal, openModal, resolveComponentInstanceId],
+    [store, closeModal, openModal],
   );
 
   return {

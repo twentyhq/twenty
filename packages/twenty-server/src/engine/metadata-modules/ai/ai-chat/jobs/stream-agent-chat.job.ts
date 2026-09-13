@@ -2,11 +2,15 @@ import { Logger, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { createUIMessageStream, readUIMessageStream } from 'ai';
-import type {
-  CodeExecutionData,
-  ExtendedUIMessage,
-  ExtendedUIMessagePart,
+import {
+  createUIMessageStream,
+  readUIMessageStream,
+  toUIMessageStream,
+} from 'ai';
+import {
+  type CodeExecutionData,
+  type ExtendedUIMessage,
+  type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -53,6 +57,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 
 import { STREAM_AGENT_CHAT_JOB_NAME } from './stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from './stream-agent-chat-job.types';
+import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 
 export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
 
@@ -251,15 +256,19 @@ export class StreamAgentChatJob {
     requestedModelId: string | undefined,
     workspace: WorkspaceEntity | null,
   ): string {
-    const modelId = requestedModelId ?? workspace?.smartModel;
+    const modelId = isDefined(workspace)
+      ? getChatModelId({ requestedModelId, workspace })
+      : requestedModelId;
 
     if (!isNonEmptyString(modelId)) {
       return 'unknown';
     }
 
     try {
-      return this.aiModelRegistryService.getEffectiveModelConfig(modelId)
-        .modelId;
+      return this.aiModelRegistryService.getEffectiveModelConfig(
+        modelId,
+        workspace ?? undefined,
+      ).modelId;
     } catch {
       return modelId;
     }
@@ -405,7 +414,7 @@ export class StreamAgentChatJob {
         return persistChain;
       };
 
-      // onFinish fires before the uiStream is fully drained. We use this
+      // onEnd fires before the uiStream is fully drained. We use this
       // promise to coordinate: the IIFE waits for DB persist to complete
       // before publishing message-persisted (after all chunks).
       let resolveStreamFinished: () => void;
@@ -478,7 +487,8 @@ export class StreamAgentChatJob {
           });
 
           writer.merge(
-            stream.toUIMessageStream({
+            toUIMessageStream({
+              stream: stream.stream,
               onError: (error) => {
                 streamError = error;
 
@@ -503,7 +513,7 @@ export class StreamAgentChatJob {
                   },
                 });
               },
-              onFinish: async ({ responseMessage, isAborted }) => {
+              onEnd: async ({ responseMessage, isAborted }) => {
                 // Rejecting here would race chunks still draining.
                 try {
                   isFinalizingPersist = true;
@@ -536,7 +546,7 @@ export class StreamAgentChatJob {
             }),
           );
         },
-        // Errors thrown before the model stream merges never reach onFinish.
+        // Errors thrown before the model stream merges never reach onEnd.
         onError: (error) => {
           streamError = error;
           resolveStreamFinished();

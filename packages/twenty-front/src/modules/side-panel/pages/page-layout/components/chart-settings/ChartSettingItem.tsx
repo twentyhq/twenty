@@ -2,7 +2,7 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMenuItemNumberInput';
 import { CommandMenuItemTextInput } from '@/command-menu/components/CommandMenuItemTextInput';
-import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
+import { CommandMenuItemSwitch } from '@/command-menu/components/CommandMenuItemSwitch';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { useChartSettingsValues } from '@/side-panel/pages/page-layout/hooks/useChartSettingsValues';
@@ -59,7 +59,7 @@ export const ChartSettingItem = ({
   const { updateChartSettingTextInput } =
     useUpdateChartSettingTextInput(pageLayoutId);
 
-  const handleToggleChange = () => {
+  const handleCheckedChange = () => {
     setSelectedItemId(item.id);
     updateChartSettingToggle(item.id);
   };
@@ -160,14 +160,14 @@ export const ChartSettingItem = ({
       <SelectableListItem
         key={item.id}
         itemId={item.id}
-        onEnter={handleToggleChange}
+        onEnter={handleCheckedChange}
       >
-        <CommandMenuItemToggle
+        <CommandMenuItemSwitch
           LeftIcon={item.Icon}
           text={t(item.label)}
           id={item.id}
-          toggled={getChartSettingsValues(item.id) as boolean}
-          onToggleChange={handleToggleChange}
+          checked={getChartSettingsValues(item.id) as boolean}
+          onCheckedChange={handleCheckedChange}
         />
       </SelectableListItem>
     );

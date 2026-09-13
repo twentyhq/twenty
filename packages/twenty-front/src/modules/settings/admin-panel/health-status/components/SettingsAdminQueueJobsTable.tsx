@@ -276,7 +276,7 @@ export const SettingsAdminQueueJobsTable = ({
                   <Checkbox
                     checked={allJobsSelected}
                     indeterminate={someJobsSelected}
-                    onChange={handleToggleAll}
+                    onCheckedChange={() => handleToggleAll()}
                   />
                 )}
               </TableHeader>

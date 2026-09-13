@@ -26,7 +26,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type RowsChangeData } from 'react-data-grid';
 import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
-import { Button, Toggle } from 'twenty-ui/input';
+import { Button, Switch } from 'twenty-ui/input';
 import { generateColumns } from './components/columns';
 import { type ImportedStructuredRowMetadata } from './types';
 
@@ -61,13 +61,13 @@ const StyledButtonContainer = styled.div`
   }
 `;
 
-const StyledErrorToggle = styled.div`
+const StyledErrorSwitch = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
 `;
 
-const StyledErrorToggleDescription = styled.span`
+const StyledErrorSwitchDescription = styled.span`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
@@ -317,16 +317,17 @@ export const ValidationStep = ({
             </StyledScrollContainer>
           )}
           <StyledToolbar>
-            <StyledErrorToggle>
-              <Toggle
-                value={filterByErrors}
-                onChange={() => setFilterByErrors(!filterByErrors)}
-                toggleSize="small"
+            <StyledErrorSwitch>
+              <Switch
+                aria-label={t`Show only rows with errors`}
+                checked={filterByErrors}
+                onCheckedChange={() => setFilterByErrors(!filterByErrors)}
+                size="sm"
               />
-              <StyledErrorToggleDescription>
+              <StyledErrorSwitchDescription>
                 <Trans>Show only rows with errors</Trans>
-              </StyledErrorToggleDescription>
-            </StyledErrorToggle>
+              </StyledErrorSwitchDescription>
+            </StyledErrorSwitch>
             <StyledButtonContainer>
               <Button
                 Icon={IconTrash}

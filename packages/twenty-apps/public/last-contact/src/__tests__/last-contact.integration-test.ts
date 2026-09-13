@@ -190,11 +190,8 @@ const createCalendarEventParticipant = async (
 };
 
 let cachedWorkspaceMemberId: string | undefined;
-let cachedMessageChannelId: string | undefined;
 
-const getWorkspaceMemberId = async (
-  client: CoreApiClient,
-): Promise<string> => {
+const getWorkspaceMemberId = async (client: CoreApiClient): Promise<string> => {
   if (cachedWorkspaceMemberId) {
     return cachedWorkspaceMemberId;
   }
@@ -206,8 +203,7 @@ const getWorkspaceMemberId = async (
     },
   });
 
-  const workspaceMemberId =
-    result.workspaceMembers?.edges?.[0]?.node?.id;
+  const workspaceMemberId = result.workspaceMembers?.edges?.[0]?.node?.id;
 
   if (!workspaceMemberId) {
     throw new Error('No workspace member found in the test workspace');
@@ -216,35 +212,6 @@ const getWorkspaceMemberId = async (
   cachedWorkspaceMemberId = workspaceMemberId;
 
   return workspaceMemberId;
-};
-
-const getAnyMessageChannelId = async (
-  client: CoreApiClient,
-): Promise<string> => {
-  if (cachedMessageChannelId) {
-    return cachedMessageChannelId;
-  }
-
-  const result = await client.query({
-    messageChannelMessageAssociations: {
-      __args: { first: 1 },
-      edges: { node: { id: true, messageChannelId: true } },
-    },
-  });
-
-  const messageChannelId =
-    result.messageChannelMessageAssociations?.edges?.[0]?.node
-      ?.messageChannelId;
-
-  if (!messageChannelId) {
-    throw new Error(
-      'No message channel found — run against a workspace with seeded messaging data',
-    );
-  }
-
-  cachedMessageChannelId = messageChannelId;
-
-  return messageChannelId;
 };
 
 const createMessage = async (
@@ -264,23 +231,6 @@ const createMessage = async (
   });
 
   return requireId(result.createMessage?.id, 'createMessage');
-};
-
-const createMessageChannelAssociation = async (
-  client: CoreApiClient,
-  { messageId, messageChannelId }: { messageId: string; messageChannelId: string },
-): Promise<string> => {
-  const result = await client.mutation({
-    createMessageChannelMessageAssociation: {
-      __args: { data: { messageId, messageChannelId } },
-      id: true,
-    },
-  });
-
-  return requireId(
-    result.createMessageChannelMessageAssociation?.id,
-    'createMessageChannelMessageAssociation',
-  );
 };
 
 const createMessageParticipant = async (
@@ -423,7 +373,6 @@ describe('last contact handlers', () => {
   const createdParticipantIds: string[] = [];
   const createdMessageParticipantIds: string[] = [];
   const createdCalendarEventIds: string[] = [];
-  const createdMessageAssociationIds: string[] = [];
   const createdMessageIds: string[] = [];
   const createdPersonIds: string[] = [];
   const createdOpportunityIds: string[] = [];
@@ -435,12 +384,6 @@ describe('last contact handlers', () => {
   ): Promise<string> => {
     const messageId = await createMessage(client, { receivedAt });
     createdMessageIds.push(messageId);
-    const messageChannelId = await getAnyMessageChannelId(client);
-    const associationId = await createMessageChannelAssociation(client, {
-      messageId,
-      messageChannelId,
-    });
-    createdMessageAssociationIds.push(associationId);
     const participantId = await createMessageParticipant(client, {
       messageId,
       personId,
@@ -558,15 +501,6 @@ describe('last contact handlers', () => {
         .catch(() => {});
     }
     createdCalendarEventIds.length = 0;
-
-    for (const id of createdMessageAssociationIds) {
-      await client
-        .mutation({
-          destroyMessageChannelMessageAssociation: { __args: { id }, id: true },
-        })
-        .catch(() => {});
-    }
-    createdMessageAssociationIds.length = 0;
 
     for (const id of createdMessageIds) {
       await client
@@ -1091,7 +1025,7 @@ describe('last contact handlers', () => {
     expect(opportunityContact.lastContactItemMessageId).toBe(messageId);
   });
 
-  it("recomputes a company last contact when a person joins it after being contacted", async () => {
+  it('recomputes a company last contact when a person joins it after being contacted', async () => {
     const workspaceMemberId = await getWorkspaceMemberId(client);
     const companyId = await createCompany(client);
     createdCompanyIds.push(companyId);

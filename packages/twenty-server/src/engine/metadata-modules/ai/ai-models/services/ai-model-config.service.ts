@@ -4,10 +4,8 @@ import { type ProviderOptions } from '@ai-sdk/provider-utils';
 import { type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import {
   AI_SDK_ANTHROPIC,
-  AI_SDK_BEDROCK,
   AI_SDK_OPENAI,
   AI_SDK_XAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
@@ -17,6 +15,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
+import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai-models/utils/build-reasoning-provider-options.util';
 import { getNativeModelToolsForSdkPackage } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-tools-for-sdk-package.util';
 
 @Injectable()
@@ -27,14 +26,7 @@ export class AiModelConfigService {
   ) {}
 
   getReasoningProviderOptions(model: RegisteredAiModel): ProviderOptions {
-    switch (model.sdkPackage) {
-      case AI_SDK_ANTHROPIC:
-        return this.getAnthropicProviderOptions(model);
-      case AI_SDK_BEDROCK:
-        return this.getBedrockProviderOptions(model);
-      default:
-        return {};
-    }
+    return buildReasoningProviderOptions(model);
   }
 
   getNativeModelTools(
@@ -103,37 +95,5 @@ export class AiModelConfigService {
     }
 
     return tools as ToolSet;
-  }
-
-  private getAnthropicProviderOptions(
-    model: RegisteredAiModel,
-  ): ProviderOptions {
-    if (!model.supportsReasoning) {
-      return {};
-    }
-
-    return {
-      anthropic: {
-        thinking: {
-          type: 'enabled',
-          budgetTokens: AGENT_CONFIG.REASONING_BUDGET_TOKENS,
-        },
-      },
-    };
-  }
-
-  private getBedrockProviderOptions(model: RegisteredAiModel): ProviderOptions {
-    if (!model.supportsReasoning) {
-      return {};
-    }
-
-    return {
-      bedrock: {
-        thinking: {
-          type: 'enabled',
-          budgetTokens: AGENT_CONFIG.REASONING_BUDGET_TOKENS,
-        },
-      },
-    };
   }
 }

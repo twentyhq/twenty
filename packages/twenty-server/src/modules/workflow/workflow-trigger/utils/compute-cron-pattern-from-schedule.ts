@@ -15,7 +15,7 @@ const validatePattern = (pattern: string) => {
       `Cron pattern '${pattern}' is invalid: ${error.message}`,
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
       {
-        userFriendlyMessage: msg`Cron pattern '${pattern}' is invalid`,
+        userFriendlyMessage: msg`Cron pattern "${pattern}" is invalid`,
       },
     );
   }

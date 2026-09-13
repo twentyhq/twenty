@@ -47,8 +47,8 @@ export const useRetryJobs = (queueName: string, onSuccess?: () => void) => {
             });
             enqueueErrorSnackBar({
               message: plural(failedResults.length, {
-                one: `${failedResults.length} job could not be retried`,
-                other: `${failedResults.length} jobs could not be retried`,
+                one: `# job could not be retried`,
+                other: `# jobs could not be retried`,
               }),
             });
           } else {

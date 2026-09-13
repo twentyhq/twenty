@@ -1,7 +1,7 @@
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
 import { type SettingsDataModelObjectAboutFormValues } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -364,7 +364,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   defaultValue={objectMetadataItem?.isLabelSyncedWithName}
                   render={({ field: { onChange, value } }) => (
                     <Card rounded>
-                      <SettingsOptionCardContentToggle
+                      <SettingsOptionCardContentSwitch
                         Icon={IconRefresh}
                         title={t`Synchronize Objects Labels and API Names`}
                         description={t`Should changing an object's label also change the API?`}
@@ -400,7 +400,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   defaultValue={false}
                   render={({ field: { onChange, value } }) => (
                     <Card rounded>
-                      <SettingsOptionCardContentToggle
+                      <SettingsOptionCardContentSwitch
                         Icon={IconLink}
                         title={t`Skip creating a Name field `}
                         description={t`Useful for pivot/junction tables`}

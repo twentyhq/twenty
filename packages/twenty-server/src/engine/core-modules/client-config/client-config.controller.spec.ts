@@ -47,6 +47,7 @@ describe('ClientConfigController', () => {
             },
           ],
         },
+        aiModelTiers: [],
         aiModels: [
           {
             modelId: 'openai/gpt-4o' as ModelId,

@@ -1,4 +1,6 @@
 import { GoToHotkeyItemEffect } from '@/app/effect-components/GoToHotkeyItemEffect';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
@@ -13,9 +15,13 @@ export const GotoHotkeysEffectsProvider = () => {
     useFilteredObjectMetadataItems();
 
   const store = useStore();
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
 
   useGoToHotkeys({
     key: 's',
+    isEnabled: !isLayoutCustomizationModeEnabled,
     location: getSettingsPath(SettingsPath.ProfilePage),
     preNavigateFunction: useCallback(() => {
       store.set(isNavigationDrawerExpandedState.atom, true);

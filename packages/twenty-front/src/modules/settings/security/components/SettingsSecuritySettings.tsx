@@ -10,7 +10,7 @@ import { Separator } from '@/settings/components/Separator';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { SettingsRoleDefaultRole } from '@/settings/roles/components/SettingsRolesDefaultRole';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
@@ -19,7 +19,7 @@ import { SettingsSecurityAuthBypassOptionsList } from '@/settings/security/compo
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
 import { SettingsSecurityEditableProfileFields } from '@/settings/security/components/SettingsSecurityEditableProfileFields';
 import { ssoIdentitiesProvidersState } from '@/settings/security/states/ssoIdentitiesProvidersState';
-import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
+import { ImpersonationSwitch } from '@/settings/workspace/components/ImpersonationSwitch';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -232,7 +232,7 @@ export const SettingsSecuritySettings = () => {
               title={t`Support`}
               description={t`Manage support access settings`}
             />
-            <ToggleImpersonate />
+            <ImpersonationSwitch />
           </Section>
         )}
         <Section>
@@ -283,7 +283,7 @@ export const SettingsSecuritySettings = () => {
               showButtons={false}
             />
             <Separator />
-            <SettingsOptionCardContentToggle
+            <SettingsOptionCardContentSwitch
               Icon={IconMail}
               title={t`Sync Internal Emails`}
               description={t`Include emails where all participants share the same domain.`}

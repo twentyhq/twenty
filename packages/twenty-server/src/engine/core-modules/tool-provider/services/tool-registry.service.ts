@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { type ToolSet, jsonSchema } from 'ai';
+import { type ToolCategory } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -31,9 +32,20 @@ export class ToolRegistryService {
     private readonly toolOutputSpillService: ToolOutputSpillService,
   ) {}
 
-  async getCatalog(context: ToolProviderContext): Promise<ToolIndexEntry[]> {
+  async getCatalog(
+    context: ToolProviderContext,
+    options?: { categories?: ToolCategory[]; excludeTools?: Set<string> },
+  ): Promise<ToolIndexEntry[]> {
+    const categorySet = options?.categories
+      ? new Set(options.categories)
+      : undefined;
+
     const results = await Promise.all(
       this.providers.map(async (provider) => {
+        if (categorySet && !categorySet.has(provider.category)) {
+          return [];
+        }
+
         if (await provider.isAvailable(context)) {
           return provider.generateDescriptors(context, {
             includeSchemas: false,
@@ -44,7 +56,9 @@ export class ToolRegistryService {
       }),
     );
 
-    return results.flat();
+    const excludeTools = options?.excludeTools;
+
+    return results.flat().filter((entry) => !excludeTools?.has(entry.name));
   }
 
   async resolveSchemas({
@@ -159,6 +173,8 @@ export class ToolRegistryService {
       userWorkspaceId?: string;
       locale?: keyof typeof APP_LOCALES;
       rolePermissionConfig?: RolePermissionConfig;
+      categories?: ToolCategory[];
+      excludeTools?: Set<string>;
     },
   ): Promise<ToolIndexEntry[]> {
     const context = this.buildContextFromToolContext({
@@ -170,7 +186,10 @@ export class ToolRegistryService {
       locale: options?.locale,
     });
 
-    return this.getCatalog(context);
+    return this.getCatalog(context, {
+      categories: options?.categories,
+      excludeTools: options?.excludeTools,
+    });
   }
 
   async getToolsByName(
