@@ -34,6 +34,7 @@ const FLAT_VIEW_ROWS_REQUIREMENT = {
   viewSort: {
     columns: ['id', 'universalIdentifier'],
     groupBy: ['viewId'],
+    order: { createdAt: 'ASC', id: 'ASC' },
   },
   viewFieldGroup: {
     columns: ['id', 'universalIdentifier'],
