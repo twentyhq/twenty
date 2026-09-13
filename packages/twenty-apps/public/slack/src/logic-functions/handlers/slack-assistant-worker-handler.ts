@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { SLACK_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-access-denied-text';
 import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
+import { SLACK_ACCESS_UNVERIFIABLE_ERROR } from 'src/logic-functions/constants/slack-access-unverifiable-error';
 import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
@@ -131,16 +132,29 @@ export const slackAssistantWorkerHandler = async (
     // run-as can be empty for a linked member whose request is not eligible for
     // impersonation, so access asks the narrower question: is this Slack
     // account linked at all.
-    const linkedWorkspaceMemberId =
+    let linkedWorkspaceMemberId = runAsWorkspaceMemberId;
+
+    if (
       accessMode === SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS &&
-      !isNonEmptyString(runAsWorkspaceMemberId) &&
-      isDefined(slackClient)
-        ? await resolveSlackRunAsWorkspaceMemberId({
-            client,
-            slackClient,
-            identity: requesterIdentity,
-          })
-        : runAsWorkspaceMemberId;
+      !isNonEmptyString(linkedWorkspaceMemberId)
+    ) {
+      if (!isDefined(slackClient)) {
+        await stopStatusUpdates();
+
+        // Unverifiable is not the same as unlinked: fail the request so it
+        // stays retryable instead of telling a linked member to get linked.
+        return await finishSlackAssistantRequestWithFailure({
+          ...failureContext,
+          errorMessage: SLACK_ACCESS_UNVERIFIABLE_ERROR,
+        });
+      }
+
+      linkedWorkspaceMemberId = await resolveSlackRunAsWorkspaceMemberId({
+        client,
+        slackClient,
+        identity: requesterIdentity,
+      });
+    }
 
     if (
       accessMode === SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS &&
