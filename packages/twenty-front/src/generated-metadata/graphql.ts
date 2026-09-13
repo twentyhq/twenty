@@ -5686,7 +5686,13 @@ export type RunAgentInput = {
   runAsWorkspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
+export type RunAgentMessageAttachmentInput = {
+  fileId: Scalars['String']['input'];
+  filename?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type RunAgentMessageInput = {
+  attachments?: InputMaybe<Array<RunAgentMessageAttachmentInput>>;
   content: Scalars['String']['input'];
   role: RunAgentMessageRole;
 };

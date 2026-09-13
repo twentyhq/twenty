@@ -178,6 +178,7 @@ export type {
 } from './roleManifestType';
 export type {
   RunAgentMessageRole,
+  RunAgentMessageAttachment,
   RunAgentMessage,
   RunAgentInput,
   RunAgentResult,
