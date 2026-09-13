@@ -9,7 +9,7 @@ const LEGACY_COLUMN_NAME = 'readabilityParentFieldUniversalIdentifiers';
 // carrying OR semantics, so every entry becomes one branch of an ANY policy.
 // Deployments that never carried that column have nothing to migrate; the
 // workspace command that follows lifts the morph variants to their morph group.
-@RegisteredInstanceCommand('2.41.0', 1789153800001, { type: 'slow' })
+@RegisteredInstanceCommand('2.41.0', 1789343528001, { type: 'slow' })
 export class MigrateLegacyReadabilityParentFieldsSlowInstanceCommand
   implements SlowInstanceCommand
 {

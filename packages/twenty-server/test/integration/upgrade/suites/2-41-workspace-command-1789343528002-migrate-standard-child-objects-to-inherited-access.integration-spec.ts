@@ -13,7 +13,7 @@ import {
 } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
-import { type MigrateStandardChildObjectsToInheritedAccessCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789153800002-migrate-standard-child-objects-to-inherited-access.command';
+import { type MigrateStandardChildObjectsToInheritedAccessCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789343528002-migrate-standard-child-objects-to-inherited-access.command';
 import { STANDARD_CHILD_OBJECT_INHERITANCES } from 'src/database/commands/upgrade-version-command/2-41/standard-child-object-inheritances.constant';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -71,7 +71,7 @@ const LEGACY_ATTACHMENT_INHERITANCE: ObjectAccessInheritance = {
   ],
 };
 
-describe('2-41 workspace command 1789153800002 - MigrateStandardChildObjectsToInheritedAccessCommand (integration)', () => {
+describe('2-41 workspace command 1789343528002 - MigrateStandardChildObjectsToInheritedAccessCommand (integration)', () => {
   let command: MigrateStandardChildObjectsToInheritedAccessCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
   let objectMetadataIds: string[];

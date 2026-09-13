@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 import { DataSource } from 'typeorm';
 
-import { MigrateLegacyReadabilityParentFieldsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-slow-1789153800001-migrate-legacy-readability-parent-fields';
+import { MigrateLegacyReadabilityParentFieldsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-slow-1789343528001-migrate-legacy-readability-parent-fields';
 
 jest.useRealTimers();
 

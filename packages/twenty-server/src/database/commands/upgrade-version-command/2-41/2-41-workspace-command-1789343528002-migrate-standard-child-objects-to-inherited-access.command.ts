@@ -89,7 +89,7 @@ const dedupeRefs = (
   });
 };
 
-@RegisteredWorkspaceCommand('2.41.0', 1789153800002)
+@RegisteredWorkspaceCommand('2.41.0', 1789343528002)
 @Command({
   name: 'upgrade:2-41:migrate-standard-child-objects-to-inherited-access',
   description:

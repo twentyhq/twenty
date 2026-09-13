@@ -1,2 +1,2 @@
 export const ADD_OBJECT_METADATA_INHERITANCE_UPGRADE_COMMAND_NAME =
-  '2.41.0_AddObjectMetadataInheritanceFastInstanceCommand_1789153800000';
+  '2.41.0_AddObjectMetadataInheritanceFastInstanceCommand_1789343528000';
