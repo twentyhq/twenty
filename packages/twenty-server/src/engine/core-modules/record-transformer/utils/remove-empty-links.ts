@@ -7,24 +7,10 @@ import {
   RecordTransformerExceptionCode,
 } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
 
-export const removeEmptyLinks = ({
-  primaryLinkUrl,
-  secondaryLinks,
-  primaryLinkLabel,
-}: {
-  secondaryLinks: LinkMetadataNullable[] | null;
-  primaryLinkUrl: string | null;
-  primaryLinkLabel: string | null;
-}) => {
-  const filteredLinks = [
-    isNonEmptyString(primaryLinkUrl)
-      ? {
-          url: primaryLinkUrl,
-          label: primaryLinkLabel,
-        }
-      : null,
-    ...(secondaryLinks ?? []),
-  ]
+export const removeEmptyAndValidateLinks = (
+  links: (LinkMetadataNullable | null)[],
+) => {
+  const filteredLinks = links
     .filter(isDefined)
     .map((link) => {
       if (!isNonEmptyString(link.url)) {
@@ -46,6 +32,28 @@ export const removeEmptyLinks = ({
       );
     }
   }
+
+  return filteredLinks;
+};
+
+export const removeEmptyLinks = ({
+  primaryLinkUrl,
+  secondaryLinks,
+  primaryLinkLabel,
+}: {
+  secondaryLinks: LinkMetadataNullable[] | null;
+  primaryLinkUrl: string | null;
+  primaryLinkLabel: string | null;
+}) => {
+  const filteredLinks = removeEmptyAndValidateLinks([
+    isNonEmptyString(primaryLinkUrl)
+      ? {
+          url: primaryLinkUrl,
+          label: primaryLinkLabel,
+        }
+      : null,
+    ...(secondaryLinks ?? []),
+  ]);
 
   const firstLink = filteredLinks[0];
   const otherLinks = filteredLinks.slice(1);
