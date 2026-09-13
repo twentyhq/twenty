@@ -138,7 +138,7 @@ describe('SettingsApplicationConnectionDetail', () => {
     mockedUseApplicationConnectedAccounts.mockReturnValue({
       accounts: [
         {
-          __typename: 'ApplicationConnectedAccountDTO',
+          __typename: 'ConnectedAccountPublicDTO',
           id: 'account-1',
           handle: 'workspace@example.com',
           authFailedAt: null,
@@ -147,7 +147,6 @@ describe('SettingsApplicationConnectionDetail', () => {
           connectionProviderId: 'provider-1',
           name: 'Original name',
           visibility: 'user',
-          isOwnedByCurrentUser: true,
           lastCredentialsRefreshedAt: null,
           createdAt: '2026-05-01T00:00:00.000Z',
           updatedAt: '2026-05-01T00:00:00.000Z',
@@ -186,11 +185,11 @@ describe('SettingsApplicationConnectionDetail', () => {
     });
   });
 
-  it('hides connection actions for a workspace shared connection owned by someone else', () => {
+  it('offers reconnect and disconnect on a failed workspace shared connection', () => {
     mockedUseApplicationConnectedAccounts.mockReturnValue({
       accounts: [
         {
-          __typename: 'ApplicationConnectedAccountDTO',
+          __typename: 'ConnectedAccountPublicDTO',
           id: 'account-1',
           handle: 'workspace@example.com',
           authFailedAt: '2026-05-01T00:00:00.000Z',
@@ -199,7 +198,6 @@ describe('SettingsApplicationConnectionDetail', () => {
           connectionProviderId: 'provider-1',
           name: 'Shared connection',
           visibility: 'workspace',
-          isOwnedByCurrentUser: false,
           lastCredentialsRefreshedAt: null,
           createdAt: '2026-05-01T00:00:00.000Z',
           updatedAt: '2026-05-01T00:00:00.000Z',
@@ -213,36 +211,10 @@ describe('SettingsApplicationConnectionDetail', () => {
 
     expect(screen.getByText('Workspace shared')).toBeVisible();
     expect(screen.getByText('Reconnect needed')).toBeVisible();
-    expect(screen.queryByText('Reconnect')).not.toBeInTheDocument();
-  });
-
-  it('shows the reconnect action to the owner of a failed connection', () => {
-    mockedUseApplicationConnectedAccounts.mockReturnValue({
-      accounts: [
-        {
-          __typename: 'ApplicationConnectedAccountDTO',
-          id: 'account-1',
-          handle: 'workspace@example.com',
-          authFailedAt: '2026-05-01T00:00:00.000Z',
-          scopes: ['calendar.readonly'],
-          lastSignedInAt: null,
-          connectionProviderId: 'provider-1',
-          name: 'Shared connection',
-          visibility: 'workspace',
-          isOwnedByCurrentUser: true,
-          lastCredentialsRefreshedAt: null,
-          createdAt: '2026-05-01T00:00:00.000Z',
-          updatedAt: '2026-05-01T00:00:00.000Z',
-        },
-      ],
-      loading: false,
-      refetch: jest.fn(),
-    });
-
-    renderDetailPage();
 
     fireEvent.click(screen.getByText('Reconnect'));
 
+    expect(mockTriggerAppOAuth).toHaveBeenCalledTimes(1);
     expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
       applicationId: 'app-1',
       providerName: 'google-calendar',
@@ -250,5 +222,14 @@ describe('SettingsApplicationConnectionDetail', () => {
       reconnectingConnectedAccountId: 'account-1',
       redirectLocation: '/settings/applications/app-1/connections/account-1',
     });
+
+    const [disconnectButton] = screen.getAllByText('Disconnect');
+
+    fireEvent.click(disconnectButton);
+
+    expect(mockOpenModal).toHaveBeenCalledTimes(1);
+    expect(mockOpenModal).toHaveBeenCalledWith(
+      'delete-application-connection-modal-account-1',
+    );
   });
 });

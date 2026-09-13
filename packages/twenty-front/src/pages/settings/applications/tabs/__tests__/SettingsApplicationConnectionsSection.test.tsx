@@ -68,7 +68,7 @@ describe('SettingsApplicationConnectionsSection', () => {
     mockedUseApplicationConnectedAccounts.mockReturnValue({
       accounts: [
         {
-          __typename: 'ApplicationConnectedAccountDTO',
+          __typename: 'ConnectedAccountPublicDTO',
           id: 'account-1',
           handle: 'workspace@example.com',
           authFailedAt: '2026-05-01T00:00:00.000Z',
@@ -77,7 +77,6 @@ describe('SettingsApplicationConnectionsSection', () => {
           connectionProviderId: 'provider-1',
           name: 'Main connection',
           visibility: 'workspace',
-          isOwnedByCurrentUser: true,
           lastCredentialsRefreshedAt: null,
           createdAt: '2026-05-01T00:00:00.000Z',
           updatedAt: '2026-05-01T00:00:00.000Z',

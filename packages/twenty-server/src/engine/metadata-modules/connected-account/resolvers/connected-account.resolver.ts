@@ -5,6 +5,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { AppConnectionAccessService } from 'src/engine/core-modules/application/connection-provider/app-connection-access.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -12,7 +13,6 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
-import { ApplicationConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/application-connected-account.dto';
 import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
 import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
 import { ConnectedAccountGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/connected-account/interceptors/connected-account-graphql-api-exception.interceptor';
@@ -24,6 +24,7 @@ import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connect
 export class ConnectedAccountResolver {
   constructor(
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
+    private readonly appConnectionAccessService: AppConnectionAccessService,
   ) {}
 
   @Query(() => [ConnectedAccountPublicDTO])
@@ -41,14 +42,14 @@ export class ConnectedAccountResolver {
     return accounts.map((account) => buildPublicConnectedAccount(account));
   }
 
-  @Query(() => [ApplicationConnectedAccountDTO])
+  @Query(() => [ConnectedAccountPublicDTO])
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async applicationConnectedAccounts(
     @Args('applicationId', { type: () => UUIDScalarType })
     applicationId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-  ): Promise<ApplicationConnectedAccountDTO[]> {
+  ): Promise<ConnectedAccountPublicDTO[]> {
     const accounts =
       await this.connectedAccountMetadataService.findApplicationConnectedAccountsUsableByCaller(
         {
@@ -58,10 +59,7 @@ export class ConnectedAccountResolver {
         },
       );
 
-    return accounts.map((account) => ({
-      ...buildPublicConnectedAccount(account),
-      isOwnedByCurrentUser: account.userWorkspaceId === userWorkspaceId,
-    }));
+    return accounts.map((account) => buildPublicConnectedAccount(account));
   }
 
   @Mutation(() => ConnectedAccountPublicDTO)
@@ -71,10 +69,17 @@ export class ConnectedAccountResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ConnectedAccountPublicDTO> {
-    await this.connectedAccountMetadataService.verifyOwnership({
-      id,
-      userWorkspaceId,
+    const connectedAccount =
+      await this.connectedAccountMetadataService.verifyOwnership({
+        id,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+      });
+
+    await this.appConnectionAccessService.validateCallerCanManageConnection({
+      isWorkspaceShared: connectedAccount.visibility === 'workspace',
       workspaceId: workspace.id,
+      userWorkspaceId,
     });
 
     const deleted = await this.connectedAccountMetadataService.delete({
