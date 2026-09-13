@@ -20,6 +20,7 @@ describe('NORMALIZATION_RULES', () => {
 
   it('keeps the ICU rules away from MDX, where braces are JSX', () => {
     expect(namesFor('mdx')).toEqual([
+      'escaped-every-character',
       'escaped-inline-code-tags',
       'translated-identifier',
     ]);
