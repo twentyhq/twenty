@@ -273,7 +273,7 @@ export class CampaignTrackingContentService {
       id: workspaceId,
     });
 
-    if (!workspace?.isClickTrackingEnabled) {
+    if (!workspace?.isCampaignClickTrackingEnabled) {
       return undefined;
     }
 

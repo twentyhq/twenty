@@ -20,7 +20,7 @@ export type CurrentWorkspace = Pick<
   | 'currentBillingSubscription'
   | 'workspaceMembersCount'
   | 'isPublicInviteLinkEnabled'
-  | 'isClickTrackingEnabled'
+  | 'isCampaignClickTrackingEnabled'
   | 'workspaceDiscoverability'
   | 'isGoogleAuthEnabled'
   | 'isGoogleAuthBypassEnabled'

@@ -59,7 +59,7 @@ export class UpdateWorkspaceInput {
   @Field({ nullable: true })
   @IsBoolean()
   @IsOptional()
-  isClickTrackingEnabled?: boolean;
+  isCampaignClickTrackingEnabled?: boolean;
 
   @Field(() => WorkspaceDiscoverability, { nullable: true })
   @IsEnum(WorkspaceDiscoverability)
