@@ -14,7 +14,7 @@ import { type ShortLinkClickEvent } from 'src/modules/emailing/types/short-link-
 
 type CampaignScope = {
   workspaceId: string;
-  shortLinkIds: string[];
+  messageCampaignId: string;
   activityFilter: CampaignEngagementActivityFilter;
 };
 
@@ -22,7 +22,7 @@ const SCANNER_BURST_MIN_DISTINCT_LINKS = 3;
 const SCANNER_BURST_WINDOW_MS = 10_000;
 
 const CLICK_SCOPE_CONDITION = `workspaceId = {workspaceId:UUID}
-  AND shortLinkId IN {shortLinkIds:Array(UUID)}`;
+  AND messageCampaignId = {messageCampaignId:UUID}`;
 
 const SCANNER_BURST_EVENT_SUBQUERY = `SELECT eventId
   FROM (
@@ -203,7 +203,7 @@ export class CampaignEngagementEventService {
 
   private select<TRow>(
     query: string,
-    params: Record<string, string | number | string[]>,
+    params: Record<string, string | number>,
   ): Promise<TRow[]> {
     return this.clickHouseService.selectOrThrow<TRow>(query, params);
   }

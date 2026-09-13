@@ -22,14 +22,9 @@ import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/email
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
-import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { throttlerToRestApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-rest-api-exception-handler.util';
 import { CampaignEngagementCaptureService } from 'src/modules/emailing/services/campaign-engagement-capture.service';
 
 const FOUND_STATUS_CODE = 302;
-
-const REQUESTER_RATE_LIMIT = { maxRequests: 600, windowMs: 60_000 };
 
 @Controller(ApiPath.Emailing)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
@@ -38,7 +33,6 @@ export class CampaignTrackingController {
     private readonly campaignTrackingTokenService: CampaignTrackingTokenService,
     private readonly shortLinkService: ShortLinkService,
     private readonly campaignEngagementCaptureService: CampaignEngagementCaptureService,
-    private readonly throttlerService: ThrottlerService,
   ) {}
 
   @Get('c/:token')
@@ -50,8 +44,6 @@ export class CampaignTrackingController {
     @Headers('user-agent') userAgent: string | undefined,
     @Req() request: Request,
   ): Promise<{ url: string; statusCode: number }> {
-    await this.throttleByRequesterOrThrow(request);
-
     const payload = this.verifyTokenOrThrow(token);
 
     const shortLink = await this.shortLinkService.findById(payload.shortLinkId);
@@ -63,26 +55,10 @@ export class CampaignTrackingController {
     await this.campaignEngagementCaptureService.capture({
       payload,
       userAgent: userAgent ?? null,
+      requesterIp: request.ip ?? null,
     });
 
     return { url: shortLink.url, statusCode: FOUND_STATUS_CODE };
-  }
-
-  private async throttleByRequesterOrThrow(request: Request): Promise<void> {
-    try {
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        `campaign-tracking:requester:${request.ip ?? 'unknown-requester'}`,
-        1,
-        REQUESTER_RATE_LIMIT.maxRequests,
-        REQUESTER_RATE_LIMIT.windowMs,
-      );
-    } catch (error) {
-      if (error instanceof ThrottlerException) {
-        throttlerToRestApiExceptionHandler(error);
-      }
-
-      throw error;
-    }
   }
 
   private verifyTokenOrThrow(token: string): CampaignTrackingTokenPayload {

@@ -83,20 +83,7 @@ export class CampaignEngagementReportService {
       return emptyReport;
     }
 
-    const shortLinks = await this.shortLinkService.findCampaignLinks({
-      workspaceId,
-      messageCampaignId,
-    });
-
-    if (shortLinks.length === 0) {
-      return emptyReport;
-    }
-
-    const scope = {
-      workspaceId,
-      shortLinkIds: shortLinks.map((shortLink) => shortLink.id),
-      activityFilter,
-    };
+    const scope = { workspaceId, messageCampaignId, activityFilter };
     const bucket = this.resolveBucket(campaign.sentAt);
 
     const aggregates = await Promise.all([
@@ -126,7 +113,13 @@ export class CampaignEngagementReportService {
       totalClicks: totals.totalClicks,
       uniqueClickers: totals.uniqueClickers,
       series: this.fillSeries({ series, bucket, sentAt: campaign.sentAt }),
-      links: this.rollUpLinksByAuthoredUrl({ shortLinks, clicksByShortLink }),
+      links: this.rollUpLinksByAuthoredUrl({
+        shortLinks: await this.shortLinkService.findByIds({
+          workspaceId,
+          shortLinkIds: clicksByShortLink.map((clicks) => clicks.shortLinkId),
+        }),
+        clicksByShortLink,
+      }),
       recipients: await this.attachRecipients({
         workspaceId,
         messageCampaignId,

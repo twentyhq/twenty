@@ -29,6 +29,7 @@ export class CampaignEngagementRecordingService {
 
     await this.campaignEngagementEventService.insertClickOrThrow({
       workspaceId: delivery.workspaceId,
+      messageCampaignId: delivery.campaignId,
       shortLinkId: observation.shortLinkId,
       deliveryId: delivery.id,
       eventId: observation.eventId,

@@ -36,6 +36,7 @@ import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-ob
 import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
 import { type CampaignDeliverySettlement } from 'src/modules/emailing/types/campaign-delivery-settlement.type';
 import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { CampaignTrackingContentService } from 'src/modules/emailing/services/campaign-tracking-content.service';
 import { buildCampaignBatchReplacements } from 'src/modules/emailing/utils/build-campaign-batch-replacements.util';
 import { buildCampaignDeliverySettleQuery } from 'src/modules/emailing/utils/build-campaign-delivery-settle-query.util';
@@ -68,6 +69,7 @@ export class MessageCampaignBatchDeliveryService {
     private readonly emailBillingService: EmailBillingService,
     private readonly campaignVariableService: CampaignVariableService,
     private readonly campaignTrackingContentService: CampaignTrackingContentService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly campaignSendSlotService: CampaignSendSlotService,
@@ -365,6 +367,9 @@ export class MessageCampaignBatchDeliveryService {
         })),
       })
       .catch((error) => {
+        this.exceptionHandlerService.captureExceptions([error], {
+          additionalData: { workspaceId, campaignId },
+        });
         this.logger.warn(
           `Campaign ${campaignId} of workspace ${workspaceId} is sending a batch without tracking: ${error}`,
         );
