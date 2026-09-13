@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "{actorName} updated server administrator access for {targetName} ({targetEmail})."
-msgstr ""
+msgstr "{actorName} je ažurirao/la pristup administratora servera za {targetName} ({targetEmail})."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -96,7 +96,7 @@ msgstr "Omogućeno"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Full admin panel access: {fullAdminStatus}"
-msgstr ""
+msgstr "Potpuni pristup administratorskom panelu: {fullAdminStatus}"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -135,7 +135,7 @@ msgstr "Ako vam Twenty odgovara, sve je spremno — ne morate ništa da radite. 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "If you did not expect this change, review your server administrators immediately."
-msgstr ""
+msgstr "Ako niste očekivali ovu promenu, odmah proverite administratore svog servera."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -145,7 +145,7 @@ msgstr "Ako ovu promenu niste pokrenuli vi, molimo vas da odmah kontaktirate vla
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
-msgstr "Ako ne preduzmete ništa, pauziraćemo vaš radni prostor i čuvati vaše podatke na bezbednom {dataRetentionDays} {dayOrDays}, u slučaju da se predomislite — kartica vam neće biti terećena."
+msgstr "Ako ne uradite ništa, pauziraćemo vaš radni prostor i čuvaćemo vaše podatke {dataRetentionDays} dana u slučaju da se predomislite — nijedna kartica neće biti naplaćena."
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -155,7 +155,7 @@ msgstr "Ako ikada poželite da Twenty date još jednu šansu, možete za nekolik
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Impersonation: {impersonateStatus}"
-msgstr ""
+msgstr "Lažno predstavljanje: {impersonateStatus}"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
@@ -347,7 +347,7 @@ msgstr "Vaš probni period uskoro ističe"
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
-msgstr "Vaš radni prostor <0>{workspaceDisplayName}</0> sada je trajno obrisan — bio je pauziran pre {daysSinceInactive} {dayOrDays} i nije ponovo aktiviran na vreme."
+msgstr "Vaš radni prostor <0>{workspaceDisplayName}</0> je sada trajno izbrisan — pauziran je pre {daysSinceInactive} dana i nije ponovo aktiviran na vreme."
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx

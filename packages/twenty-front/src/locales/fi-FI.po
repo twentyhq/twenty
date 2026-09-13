@@ -34,7 +34,7 @@ msgstr " on oltava yksi {ratingValues} arvoista"
 #. js-lingui-id: b2GdxK
 #: src/modules/ai/components/AiModelTierSlider.tsx
 msgid " Not measured at this effort yet, so this is the base model's reading."
-msgstr ""
+msgstr " Ei vielä mitattu tällä ponnistustasolla, joten tämä on perusmallin lukema."
 
 #. js-lingui-id: nA/hWD
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -169,7 +169,7 @@ msgstr "[tyhjä merkkijono]"
 #. placeholder {2}: formatNumber(counts.duplicateEmails)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
-msgstr ""
+msgstr "{0, plural, one {{1} kaksoiskappale} other {{2} kaksoiskappaletta}}"
 
 #. js-lingui-id: 5pucMh
 #. placeholder {0}: audiencePreview.sendable
@@ -177,7 +177,7 @@ msgstr ""
 #. placeholder {2}: formatNumber(audiencePreview.sendable)
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "{0, plural, one {{1} recipient} other {{2} recipients}}"
-msgstr ""
+msgstr "{0, plural, one {{1} vastaanottaja} other {{2} vastaanottajaa}}"
 
 #. js-lingui-id: 0LMb5P
 #. placeholder {0}: Math.abs(days)
@@ -195,13 +195,13 @@ msgstr "{0, plural, one {{years} vuosi} other {{years} vuotta}}"
 #. placeholder {0}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
-msgstr ""
+msgstr "{0, plural, one {# tehtävää ei voitu poistaa} other {# tehtävää ei voitu poistaa}}"
 
 #. js-lingui-id: AHhuJj
 #. placeholder {0}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
-msgstr ""
+msgstr "{0, plural, one {# tehtävää ei voitu yrittää uudelleen} other {# tehtävää ei voitu yrittää uudelleen}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -222,13 +222,13 @@ msgstr "{0, plural, one {# työtila epäonnistui tai on jäljessä} other {# ty�
 #. placeholder {2}: canceled.canceledMessageCount
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "{0, plural, one {Campaign canceled, {1} pending email stopped} other {Campaign canceled, {2} pending emails stopped}}"
-msgstr ""
+msgstr "{0, plural, one {Kampanja peruutettu, {1} odottava sähköposti pysäytetty} other {Kampanja peruutettu, {2} odottavaa sähköpostia pysäytetty}}"
 
 #. js-lingui-id: xEqptn
 #. placeholder {0}: item.includedCredits
 #: src/modules/settings/admin-panel/utils/formatSubscriptionItemValue.ts
 msgid "{0, plural, one {credit/period} other {credits/period}}"
-msgstr ""
+msgstr "{0, plural, one {krediittiä/jakso} other {krediittiä/jakso}}"
 
 #. js-lingui-id: AkeiJW
 #. placeholder {0}: item.quantity
@@ -246,7 +246,7 @@ msgstr "{0, plural, one {Sinulla ei ole oikeuksia käyttää kenttää {fieldsLi
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr ""
+msgstr "{0} palautunutta tai valituksen aiheuttanutta"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -277,7 +277,7 @@ msgstr "{0} ei liity kohteeseen {loadBalancePoolObjectLabel}. Valitse toinen obj
 #. placeholder {1}: excludedReasons.join(', ')
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "{0} in the list, skipping {1}"
-msgstr ""
+msgstr "{0} luettelossa, ohitetaan {1}"
 
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
@@ -314,7 +314,7 @@ msgstr "{0} on kieltäytynyt tästä aiheesta"
 #. placeholder {0}: formatNumber(counts.overCap)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} over the recipient limit"
-msgstr ""
+msgstr "{0} yli vastaanottajarajan"
 
 #. js-lingui-id: 55frRG
 #. placeholder {0}: index + 1
@@ -344,33 +344,33 @@ msgstr "{0, plural, one {# näkyvissä} other {# näkyvissä}}"
 #. placeholder {0}: formatMetricDelta(costDelta)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0} the cost of Balanced."
-msgstr ""
+msgstr "{0} Balanced-tilan kustannus."
 
 #. js-lingui-id: UWEjMJ
 #. placeholder {0}: formatMetricDelta(intelligenceDelta)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0} the score of Balanced"
-msgstr ""
+msgstr "{0} Balanced-tilan pisteytys"
 
 #. js-lingui-id: 0PXtku
 #. placeholder {0}: formatNumber(tier.model.outputTokensPerSecond, { decimals: 0 })
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "{0} tokens/s"
-msgstr ""
+msgstr "{0} tokenia/s"
 
 #. js-lingui-id: jSMnoW
 #. placeholder {0}: formatNumber(model?.outputTokensPerSecond ?? 0)
 #. placeholder {1}: formatMetricDelta(resolvedTier.speedDeltaPercent ?? 0)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0} tokens/s, {1} the speed of Balanced Mode."
-msgstr ""
+msgstr "{0} tokenia/s, {1} Balanced-tilan nopeus."
 
 #. js-lingui-id: NLWHJB
 #. placeholder {0}: formatNumber(model?.outputTokensPerSecond ?? 0)
 #. placeholder {1}: formatMetricDelta(resolvedTier.speedDeltaPercent ?? 0)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0} tokens/s, a {1} change in speed compared with Balanced Mode."
-msgstr ""
+msgstr "{0} tokenia/s, nopeus on {1} verrattuna Balanced-tilaan."
 
 #. js-lingui-id: nZUq+6
 #. placeholder {0}: formatNumber(counts.globallyUnsubscribed)
@@ -400,7 +400,7 @@ msgstr "{0} widgettiä"
 #. placeholder {0}: formatNumber(counts.withoutEmail)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} without an email address"
-msgstr ""
+msgstr "{0} ilman sähköpostiosoitetta"
 
 #. js-lingui-id: 2UKfhY
 #. placeholder {0}: selectedItemNames.length
@@ -413,31 +413,31 @@ msgstr "{0} työtilan jäsentä"
 #. placeholder {1}: selectedResolvedTier.model.label
 #: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "{0}: {1}"
-msgstr ""
+msgstr "{0}: {1}"
 
 #. js-lingui-id: EAdDH3
 #. placeholder {0}: formatNumber(costDelta)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0}% higher cost than Balanced."
-msgstr ""
+msgstr "{0} % suuremmat kustannukset kuin Balanced-tilassa."
 
 #. js-lingui-id: c8VH5D
 #. placeholder {0}: formatNumber(intelligenceDelta)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0}% higher score than Balanced"
-msgstr ""
+msgstr "{0} % parempi pisteytys kuin Balanced-tilassa"
 
 #. js-lingui-id: nRAomq
 #. placeholder {0}: formatNumber(Math.abs(costDelta))
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0}% lower cost than Balanced."
-msgstr ""
+msgstr "{0} % pienemmät kustannukset kuin Balanced-tilassa."
 
 #. js-lingui-id: wq2vL5
 #. placeholder {0}: formatNumber(Math.abs(intelligenceDelta))
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0}% lower score than Balanced"
-msgstr ""
+msgstr "{0} % heikompi pisteytys kuin Balanced-tilassa"
 
 #. js-lingui-id: qdQhzv
 #: src/modules/views/advanced-filter-chip/components/AdvancedFilterChip.tsx
@@ -482,7 +482,7 @@ msgstr "{appName} haluaa tehdä seuraavaa:"
 #. js-lingui-id: wXviUj
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobStateBadge.tsx
 msgid "{attemptsMade, plural, one {{attemptsMade} attempt} other {{attemptsMade} attempts}}"
-msgstr ""
+msgstr "{attemptsMade, plural, one {{attemptsMade} yritys} other {{attemptsMade} yritystä}}"
 
 #. js-lingui-id: y9covz
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
@@ -503,7 +503,7 @@ msgstr "{cachedPercent}% välimuistissa"
 #. js-lingui-id: M9lDqR
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "{count, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr ""
+msgstr "{count, plural, one {Esim. {example} # desimaalilla} other {Esim. {example} # desimaalilla}}"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -518,7 +518,7 @@ msgstr "{days, plural, one {{days} päivä} other {{days} päivää}}"
 #. js-lingui-id: 7o03+8
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr ""
+msgstr "{decimals, plural, one {Esim. {example} # desimaalilla} other {Esim. {example} # desimaalilla}}"
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -620,12 +620,12 @@ msgstr "{jobCount, plural, one {Tämä yrittää valittua työtä uudelleen. Se 
 #. js-lingui-id: Xs84Pv
 #: src/modules/settings/ai/utils/getAiModelModeDescription.ts
 msgid "{label} (Auto)"
-msgstr ""
+msgstr "{label} (automaattinen)"
 
 #. js-lingui-id: Oq2RUh
 #: src/modules/settings/ai/utils/getAiModelPinOptions.ts
 msgid "{label} (deprecated)"
-msgstr ""
+msgstr "{label} (vanhentunut)"
 
 #. js-lingui-id: FdY/eP
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -645,7 +645,7 @@ msgstr "{messagesLength, plural, =1 {# sähköposti} other {# sähköpostia}}"
 #. js-lingui-id: Pfatg8
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{minutes, plural, one {# minute} other {# minutes}}"
-msgstr ""
+msgstr "{minutes, plural, one {# minuutti} other {# minuuttia}}"
 
 #. js-lingui-id: Koe99p
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -683,12 +683,12 @@ msgstr "Tietue {positionLabel} on etusijalla"
 #. placeholder {1}: formatNumber(queuedCount)
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedCount, plural, one {Campaign queued to {0} recipient} other {Campaign queued to {1} recipients}}"
-msgstr ""
+msgstr "{queuedCount, plural, one {Kampanja asetettu jonoon {0} vastaanottajalle} other {Kampanja asetettu jonoon {1} vastaanottajalle}}"
 
 #. js-lingui-id: cMTWxR
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedMessage}, skipping {skipReasons}"
-msgstr ""
+msgstr "{queuedMessage}, ohitetaan {skipReasons}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -724,7 +724,7 @@ msgstr "{scopeCount} käyttöoikeutta"
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{seconds, plural, one {# second} other {# seconds}}"
-msgstr ""
+msgstr "{seconds, plural, one {# sekunti} other {# sekuntia}}"
 
 #. js-lingui-id: kvVMdH
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -749,7 +749,7 @@ msgstr "Palveluun {serviceLabel} ei saada yhteyttä"
 #. js-lingui-id: CQxE7h
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{spokenMinutes} {spokenSeconds}"
-msgstr ""
+msgstr "{spokenMinutes} {spokenSeconds}"
 
 #. js-lingui-id: 8vJ+2V
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -885,7 +885,7 @@ msgstr "~ {0} tokenia"
 #. placeholder {0}: formatNumber(tier.model.outputCostPerMillionTokens, { decimals: 2 })
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "${0} / 1M"
-msgstr ""
+msgstr "${0} / 1M"
 
 #. js-lingui-id: Cx0xl3
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -1052,7 +1052,7 @@ msgstr "Maksutapa tarvitaan, jotta työtilasi pysyy aktiivisena."
 #. js-lingui-id: 5WwDyx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "A payment on your subscription failed. Your enterprise features stay active while we retry it."
-msgstr ""
+msgstr "Tilauksesi maksu epäonnistui. Enterprise-ominaisuutesi pysyvät aktiivisina, kun yritämme maksua uudelleen."
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1205,12 +1205,12 @@ msgstr "Acme GmbH"
 #. js-lingui-id: qrbojL
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "ACS URL"
-msgstr ""
+msgstr "ACS-URL"
 
 #. js-lingui-id: 4FQd0Y
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "ACS URL copied to clipboard"
-msgstr ""
+msgstr "ACS-URL kopioitu leikepöydälle"
 
 #. js-lingui-id: r6Y4GL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -1328,7 +1328,7 @@ msgstr "Lisää \"{trimmedName}\" valintoihin"
 #. placeholder {0}: objectMetadataItem.labelSingular
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Add a {0}"
-msgstr ""
+msgstr "Lisää {0}"
 
 #. js-lingui-id: 9CHcSG
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
@@ -1423,7 +1423,7 @@ msgstr "Lisää käyttäjätili"
 #. js-lingui-id: dGjQL8
 #: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "Add an API key to enable AI."
-msgstr ""
+msgstr "Lisää API-avain ottaaksesi AI:n käyttöön."
 
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
@@ -1524,7 +1524,7 @@ msgstr "Lisää sähköpostikanava"
 #. js-lingui-id: Va3xJe
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Add field"
-msgstr ""
+msgstr "Lisää kenttä"
 
 #. js-lingui-id: DpV70M
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -1830,7 +1830,7 @@ msgstr "Lisää luottokorttisi alle. Kun se on lisätty, tilauksesi alkaa automa
 #. placeholder {0}: objectMetadataItem.labelSingular
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Add your first {0}"
-msgstr ""
+msgstr "Lisää ensimmäinen {0}"
 
 #. js-lingui-id: m2qDV8
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
@@ -1961,22 +1961,22 @@ msgstr "afrikaans"
 #. js-lingui-id: WlItll
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 msgid "After 180 days"
-msgstr ""
+msgstr "180 päivän kuluttua"
 
 #. js-lingui-id: I6lVwB
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 msgid "After 30 days"
-msgstr ""
+msgstr "30 päivän kuluttua"
 
 #. js-lingui-id: yPZL9v
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 msgid "After 60 days"
-msgstr ""
+msgstr "60 päivän kuluttua"
 
 #. js-lingui-id: E5fxqI
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 msgid "After 90 days"
-msgstr ""
+msgstr "90 päivän kuluttua"
 
 #. js-lingui-id: 5wZlI9
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -1986,7 +1986,7 @@ msgstr "Tietyn ajan kuluttua"
 #. js-lingui-id: 5uLUiv
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 msgid "After a year"
-msgstr ""
+msgstr "Vuoden kuluttua"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -2090,7 +2090,7 @@ msgstr "AI-agentit"
 #. js-lingui-id: n2fhCy
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "AI chat"
-msgstr ""
+msgstr "AI-keskustelu"
 
 #. js-lingui-id: V+Qj+q
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -2178,12 +2178,12 @@ msgstr "Tekoälyn käyttö työtiloittain"
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
-msgstr ""
+msgstr "AI-käyttöraja on saavutettu. Pyydä ylläpitäjää päivittämään suunnitelma."
 
 #. js-lingui-id: wBA/cx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
-msgstr ""
+msgstr "AI-käyttöraja on saavutettu. Ota yhteyttä tukeen päivittääksesi suunnitelman."
 
 #. js-lingui-id: KLyZ6L
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -2243,12 +2243,12 @@ msgstr "Kaikkien toimintojen käyttöoikeus"
 #. js-lingui-id: iKzPQM
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All agents"
-msgstr ""
+msgstr "Kaikki agentit"
 
 #. js-lingui-id: Aapaa8
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All API keys"
-msgstr ""
+msgstr "Kaikki API-avaimet"
 
 #. js-lingui-id: s1C/cR
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -2263,7 +2263,7 @@ msgstr "Kaikki sovellusrekisteröinnit koko alustalla, mukaan lukien orvot markk
 #. js-lingui-id: G6DTnD
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All applications"
-msgstr ""
+msgstr "Kaikki sovellukset"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -2311,7 +2311,7 @@ msgstr "Kaikki rivit"
 #. js-lingui-id: FIlQ3z
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All logic functions"
-msgstr ""
+msgstr "Kaikki logiikkafunktiot"
 
 #. js-lingui-id: c3lkKf
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
@@ -2321,7 +2321,7 @@ msgstr "Kaikki jäsenet"
 #. js-lingui-id: dtwyLS
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
 msgid "All messages"
-msgstr ""
+msgstr "Kaikki viestit"
 
 #. js-lingui-id: ypSiuQ
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
@@ -2394,12 +2394,12 @@ msgstr "Kaikki aiheet"
 #. js-lingui-id: UBpkWM
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All users"
-msgstr ""
+msgstr "Kaikki käyttäjät"
 
 #. js-lingui-id: qf6r3X
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All workflows"
-msgstr ""
+msgstr "Kaikki työnkulut"
 
 #. js-lingui-id: XLzFVD
 #: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
@@ -2670,7 +2670,7 @@ msgstr "API-kutsut"
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 msgid "API key"
-msgstr ""
+msgstr "API-avain"
 
 #. js-lingui-id: yRnk5W
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -2865,7 +2865,7 @@ msgstr "Alla olevia sovelluksia ei ole tarkastettu. Käytä omalla vastuullasi."
 #. js-lingui-id: p98xmP
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Applies to"
-msgstr ""
+msgstr "Koskee"
 
 #. js-lingui-id: DB8zMK
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -2995,7 +2995,7 @@ msgstr "Oletko varma? Tietojasi ei tallenneta."
 #. js-lingui-id: AkeObK
 #: src/localization/hooks/useLocaleOptions.ts
 msgid "Armenian"
-msgstr ""
+msgstr "armenia"
 
 #. js-lingui-id: cybVUo
 #: src/modules/settings/members/components/MemberInfosTab.tsx
@@ -3022,7 +3022,7 @@ msgstr "Nouseva"
 #. js-lingui-id: LfkDyR
 #: src/modules/ai/components/AiChatErrorRenderer.tsx
 msgid "Ask a workspace admin to raise the limit."
-msgstr ""
+msgstr "Pyydä työtilan ylläpitäjää korottamaan rajoitusta."
 
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
@@ -3035,7 +3035,7 @@ msgstr "Kysy AI:lta"
 #. js-lingui-id: cmkudK
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Ask anything, @ a record or / a skill..."
-msgstr ""
+msgstr "Kysy mitä tahansa, @ mainitse tietue tai / taito..."
 
 #. js-lingui-id: QVL/hg
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
@@ -3233,7 +3233,7 @@ msgstr "Todennuksen epäonnistumisen ajankohta"
 #. js-lingui-id: sgXsd0
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Auth failure reason"
-msgstr ""
+msgstr "Todennuksen epäonnistumisen syy"
 
 #. js-lingui-id: P8fBlG
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -3309,7 +3309,7 @@ msgstr "Automaattinen päivitys"
 #: src/modules/ai/components/AiModelPicker.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Automatic"
-msgstr ""
+msgstr "Automaattinen"
 
 #. js-lingui-id: YRT7ZW
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -3334,7 +3334,7 @@ msgstr "Asenna tämä sovellus automaattisesti jokaiseen uuteen työtilaan"
 #. js-lingui-id: MHsVk5
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Automatically selected by Twenty for this mode."
-msgstr ""
+msgstr "Twenty valitsee automaattisesti tälle tilalle."
 
 #. js-lingui-id: XFGV21
 #: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
@@ -3418,7 +3418,7 @@ msgstr "Tasapainota kentän mukaan"
 #. js-lingui-id: kJygHz
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Balanced"
-msgstr ""
+msgstr "Tasapainoinen"
 
 #. js-lingui-id: b2ghLW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -3913,17 +3913,17 @@ msgstr "Puhelut"
 #. js-lingui-id: YKJ+pg
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "Campaign moved to {sendTime}"
-msgstr ""
+msgstr "Kampanja siirretty ajankohtaan {sendTime}"
 
 #. js-lingui-id: ANWhqH
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "Campaign scheduled for {sendTime}"
-msgstr ""
+msgstr "Kampanja ajastettu ajankohtaan {sendTime}"
 
 #. js-lingui-id: gL6+M4
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Campaign unscheduled and back in your drafts"
-msgstr ""
+msgstr "Kampanjan ajastus poistettu, ja se on jälleen luonnoksissasi"
 
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -3959,7 +3959,7 @@ msgstr "Peruuta"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Cancel Campaign"
-msgstr ""
+msgstr "Peruuta kampanja"
 
 #. js-lingui-id: J8nuSF
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -4065,7 +4065,7 @@ msgstr "Et voi ladata enempää kuin {maxNumberOfValues} tiedostoa"
 #. js-lingui-id: n1zTaJ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Caps on what your workspace can spend and who they apply to"
-msgstr ""
+msgstr "Työtilasi kulutusrajat ja kohteet, joihin ne koskevat"
 
 #. js-lingui-id: Po5MgW
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
@@ -4297,22 +4297,22 @@ msgstr "Valitse {intervalAdjective} krediitit"
 #. js-lingui-id: n5pcaT
 #: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "Choose a model mode"
-msgstr ""
+msgstr "Valitse mallitila"
 
 #. js-lingui-id: sHa2Dg
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 msgid "Choose a spender"
-msgstr ""
+msgstr "Valitse kuluttaja"
 
 #. js-lingui-id: RGUZK1
 #: src/modules/settings/billing/components/SettingsBillingLimitUsageSelect.tsx
 msgid "Choose a usage"
-msgstr ""
+msgstr "Valitse käyttö"
 
 #. js-lingui-id: qJwqET
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "Choose a usage first"
-msgstr ""
+msgstr "Valitse ensin käyttö"
 
 #. js-lingui-id: NFfUic
 #: src/pages/auth/SignInUp.tsx
@@ -4322,7 +4322,7 @@ msgstr "Valitse työtila"
 #. js-lingui-id: KsP4Tg
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Choose automatically"
-msgstr ""
+msgstr "Valitse automaattisesti"
 
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -4337,7 +4337,7 @@ msgstr "Valitse lyhyen ja täyden välillä"
 #. js-lingui-id: NaiAqg
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
 msgid "Choose folders to sync"
-msgstr ""
+msgstr "Valitse synkronoitavat kansiot"
 
 #. js-lingui-id: 5EMoSo
 #: src/modules/settings/billing/components/internal/SettingsBillingPlansWithoutSubscription.tsx
@@ -4352,7 +4352,7 @@ msgstr "Valitse käytettävä oletusvaluutta"
 #. js-lingui-id: KoXi44
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Choose the default modes for people and agents"
-msgstr ""
+msgstr "Valitse oletustilat ihmisille ja agenteille"
 
 #. js-lingui-id: LHce7q
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -5331,7 +5331,7 @@ msgstr "Kopioi"
 #. js-lingui-id: 6gAr5+
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "Copy audio download link"
-msgstr ""
+msgstr "Kopioi äänen latauslinkki"
 
 #. js-lingui-id: NmPNJJ
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
@@ -5642,12 +5642,12 @@ msgstr "Laske yksilölliset arvot"
 #. js-lingui-id: GV0ZB5
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Counted again when the campaign sends, so this can change."
-msgstr ""
+msgstr "Lasketaan uudelleen, kun kampanja lähetetään, joten tämä voi muuttua."
 
 #. js-lingui-id: tKTq/b
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Counting recipients..."
-msgstr ""
+msgstr "Lasketaan vastaanottajia..."
 
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -5673,7 +5673,7 @@ msgstr "Luo"
 #. placeholder {0}: objectMetadataItem.labelSingular
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a {0} to automate your work."
-msgstr ""
+msgstr "Luo {0} automatisoidaksesi työsi."
 
 #. js-lingui-id: fQFALn
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -5989,7 +5989,7 @@ msgstr "Krediitit"
 #. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 msgid "Credits are added on top of the plan allowance and are spent only once it runs out. They carry over in full from one billing period to the next, and stay available until they are used up or, where an expiry is set, until the end of the billing period that expiry falls in."
-msgstr ""
+msgstr "Krediitit lisätään suunnitelman käyttöoikeuden lisäksi, ja niitä käytetään vasta, kun käyttöoikeus on käytetty loppuun. Ne siirtyvät kokonaisuudessaan laskutuskaudelta seuraavalle ja ovat käytettävissä, kunnes ne on käytetty loppuun tai, jos niille on asetettu voimassaolon päättyminen, sen laskutuskauden loppuun, johon voimassaolon päättyminen osuu."
 
 #. js-lingui-id: 0o2LpE
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -6009,7 +6009,7 @@ msgstr "krediittiä käytettävissä kokeilujakson aikana"
 #. js-lingui-id: nbyiz/
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Credits handed out on top of the plan allowance. They stay spendable until used up."
-msgstr ""
+msgstr "Suunnitelman käyttöoikeuden lisäksi myönnetyt krediitit. Niitä voi käyttää, kunnes ne on käytetty loppuun."
 
 #. js-lingui-id: iSuLEw
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
@@ -6341,7 +6341,7 @@ msgstr "Tšekki"
 #. js-lingui-id: U0sC6H
 #: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 msgid "Daily"
-msgstr ""
+msgstr "Päivittäin"
 
 #. js-lingui-id: ShUrwO
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -6867,7 +6867,7 @@ msgstr "Poista ryhmä"
 #. js-lingui-id: dPwNDl
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Delete limit"
-msgstr ""
+msgstr "Poista rajoitus"
 
 #. js-lingui-id: Wk+A9S
 #: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
@@ -6922,7 +6922,7 @@ msgstr "Poista tämä integraatio"
 #. js-lingui-id: uvgDyK
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Delete this limit?"
-msgstr ""
+msgstr "Poistetaanko tämä rajoitus?"
 
 #. js-lingui-id: c0vHQI
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -6973,12 +6973,12 @@ msgstr "Poista pienoisohjelma"
 #. js-lingui-id: D+Bgvi
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 msgid "Delete Workflow"
-msgstr ""
+msgstr "Poista työnkulku"
 
 #. js-lingui-id: Z299hR
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 msgid "Delete Workflows"
-msgstr ""
+msgstr "Poista työnkulut"
 
 #. js-lingui-id: kYu0eF
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -7025,7 +7025,7 @@ msgstr "Tämän menetelmän poistaminen poistaa sen pysyvästi tililtäsi."
 #. js-lingui-id: si+vZD
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Delivery"
-msgstr ""
+msgstr "Toimitus"
 
 #. js-lingui-id: Ssdrw4
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
@@ -7690,7 +7690,7 @@ msgstr "Muokkaa iFrame"
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Edit limit"
-msgstr ""
+msgstr "Muokkaa rajoitusta"
 
 #. js-lingui-id: /PoNoq
 #: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
@@ -7939,7 +7939,7 @@ msgstr "Sähköpostit ja kalenteri"
 #. js-lingui-id: VJ5blF
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Emails already handed to the provider cannot be recalled. This stops everything still waiting to be sent."
-msgstr ""
+msgstr "Palveluntarjoajalle jo luovutettuja sähköposteja ei voi peruuttaa. Tämä pysäyttää kaiken, mikä vielä odottaa lähettämistä."
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -8179,7 +8179,7 @@ msgstr "Syötä piilokopion sähköpostiosoitteet, pilkuilla eroteltuina"
 #. js-lingui-id: lcPZCR
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Enter both keys, or neither to use the instance IAM role"
-msgstr ""
+msgstr "Anna molemmat avaimet tai älä kumpaakaan käyttääksesi instanssin IAM-roolia"
 
 #. js-lingui-id: mPsuKh
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -8919,12 +8919,12 @@ msgstr "Laajennettu"
 #. js-lingui-id: 4NR4Ja
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Extra Fast"
-msgstr ""
+msgstr "Erittäin nopea"
 
 #. js-lingui-id: Y64TrM
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Extra Smart"
-msgstr ""
+msgstr "Erittäin älykäs"
 
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -8978,12 +8978,12 @@ msgstr "Tarjoajan lisääminen epäonnistui"
 #. js-lingui-id: ScvpVb
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow.tsx
 msgid "Failed to add record"
-msgstr ""
+msgstr "Tietueen lisääminen epäonnistui"
 
 #. js-lingui-id: Y9Y+x3
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Failed to cancel campaign"
-msgstr ""
+msgstr "Kampanjan peruuttaminen epäonnistui"
 
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -9004,7 +9004,7 @@ msgstr "Tietueen luominen epäonnistui"
 #. js-lingui-id: 7xz1r9
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 msgid "Failed to create the limit."
-msgstr ""
+msgstr "Rajoituksen luominen epäonnistui."
 
 #. js-lingui-id: ITWxKI
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -9015,7 +9015,7 @@ msgstr "Tilausaiheen luominen epäonnistui."
 #: src/modules/object-core/workflows/hooks/useCreateCoreWorkflow.ts
 #: src/modules/object-core/workflows/hooks/useCreateCoreWorkflow.ts
 msgid "Failed to create workflow"
-msgstr ""
+msgstr "Työnkulun luominen epäonnistui"
 
 #. js-lingui-id: AXveCw
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -9035,7 +9035,7 @@ msgstr "Taidon poistaminen epäonnistui"
 #. js-lingui-id: YVct3Q
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Failed to delete the limit."
-msgstr ""
+msgstr "Rajoituksen poistaminen epäonnistui."
 
 #. js-lingui-id: AUprM8
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -9050,7 +9050,7 @@ msgstr "Tilausaiheen poistaminen epäonnistui."
 #. js-lingui-id: UUBrJf
 #: src/modules/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows.ts
 msgid "Failed to delete workflows"
-msgstr ""
+msgstr "Työnkulkujen poistaminen epäonnistui"
 
 #. js-lingui-id: NUmmdc
 #: src/modules/dashboards/hooks/useDuplicateDashboard.ts
@@ -9060,7 +9060,7 @@ msgstr "Hallintapaneelin monistaminen epäonnistui"
 #. js-lingui-id: 6e1GS3
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/hooks/useDuplicateMessageList.ts
 msgid "Failed to duplicate list"
-msgstr ""
+msgstr "Luettelon monistaminen epäonnistui"
 
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
@@ -9128,7 +9128,7 @@ msgstr "Palvelinylläpitäjien lataaminen epäonnistui."
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to load the application."
-msgstr ""
+msgstr "Sovelluksen lataaminen epäonnistui."
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -9272,7 +9272,7 @@ msgstr "Mallin saatavuuden päivittäminen epäonnistui"
 #. js-lingui-id: mDyyo1
 #: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
 msgid "Failed to update model settings"
-msgstr ""
+msgstr "Malliasetusten päivittäminen epäonnistui"
 
 #. js-lingui-id: J7vly7
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
@@ -9302,7 +9302,7 @@ msgstr "Palvelinylläpitäjän käyttöoikeuksien päivittäminen epäonnistui."
 #. js-lingui-id: hADObV
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Failed to update the limit."
-msgstr ""
+msgstr "Rajoituksen päivittäminen epäonnistui."
 
 #. js-lingui-id: 6TG/SY
 #: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
@@ -9375,7 +9375,7 @@ msgstr "Väärä"
 #. js-lingui-id: KziH2K
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Fast"
-msgstr ""
+msgstr "Nopea"
 
 #. js-lingui-id: X9kySA
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -9401,7 +9401,7 @@ msgstr "Ominaisuudet"
 #. js-lingui-id: WHjLqG
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Features active until"
-msgstr ""
+msgstr "Ominaisuudet aktiivisia asti"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -9428,7 +9428,7 @@ msgstr "Kenttä"
 #. js-lingui-id: 0Ractl
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Field added to search"
-msgstr ""
+msgstr "Kenttä lisätty hakuun"
 
 #. js-lingui-id: LX8Pu1
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -9453,7 +9453,7 @@ msgstr "kentän käyttöoikeus"
 #. js-lingui-id: YZK9mj
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Field removed from search"
-msgstr ""
+msgstr "Kenttä poistettu hausta"
 
 #. js-lingui-id: lcNTiF
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
@@ -9630,7 +9630,7 @@ msgstr "Suodatinryhmän säännön valinnat"
 #. js-lingui-id: JIOvqZ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Filter limits"
-msgstr ""
+msgstr "Suodata rajoituksia"
 
 #. js-lingui-id: FG3LyE
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -9678,7 +9678,7 @@ msgstr "Etsitään {objectLabel}"
 #. js-lingui-id: DWUicC
 #: src/modules/ai/constants/action-tool-status-labels.constant.ts
 msgid "Finding connected accounts"
-msgstr ""
+msgstr "Etsitään yhdistettyjä tilejä"
 
 #. js-lingui-id: JmZ/+d
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
@@ -9688,17 +9688,17 @@ msgstr "Lopeta"
 #. js-lingui-id: O9Sink
 #: src/modules/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage.ts
 msgid "Finish editing the layout to expand chat"
-msgstr ""
+msgstr "Viimeistele asettelun muokkaus laajentaaksesi keskustelun"
 
 #. js-lingui-id: yJoako
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "Finish editing the layout to open AI"
-msgstr ""
+msgstr "Viimeistele asettelun muokkaus avataksesi AI:n"
 
 #. js-lingui-id: 6cOXRd
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "Finish editing the layout to open Settings"
-msgstr ""
+msgstr "Viimeistele asettelun muokkaus avataksesi Asetukset"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -9767,7 +9767,7 @@ msgstr "Korjaa maksuongelma pitääksesi Enterprise-ominaisuudet aktiivisina."
 #. js-lingui-id: UNHbhD
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Fix the payment issue to restore your enterprise features."
-msgstr ""
+msgstr "Korjaa maksuongelma palauttaaksesi Enterprise-ominaisuutesi."
 
 #. js-lingui-id: Xgkhyj
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
@@ -9812,7 +9812,7 @@ msgstr "Seuraa meitä X:ssä"
 #. js-lingui-id: M0vOQ6
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Follows the workspace default for agents"
-msgstr ""
+msgstr "Noudattaa työtilan agenttien oletusasetusta"
 
 #. js-lingui-id: q3il6U
 #: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
@@ -9874,7 +9874,7 @@ msgstr "Löydettiin {objectLabel}"
 #. js-lingui-id: 5Vg0Q7
 #: src/modules/ai/constants/action-tool-status-labels.constant.ts
 msgid "Found connected accounts"
-msgstr ""
+msgstr "Yhdistettyjä tilejä löytyi"
 
 #. js-lingui-id: 1hxId5
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -10216,7 +10216,7 @@ msgstr "Myönnä täydet oikeudet"
 #. js-lingui-id: E0rSFg
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Granted"
-msgstr ""
+msgstr "Myönnetty"
 
 #. js-lingui-id: Tbxf45
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -10515,7 +10515,7 @@ msgstr "Piilota järjestelmäindeksit"
 #. js-lingui-id: yx/fMc
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "High"
-msgstr ""
+msgstr "Korkea"
 
 #. js-lingui-id: 1ETc0T
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -10608,7 +10608,7 @@ msgstr "Miten krediitit toimivat"
 #. js-lingui-id: nHmYga
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "How much can be spent, and how often it resets."
-msgstr ""
+msgstr "Kuinka paljon voi käyttää ja kuinka usein se nollautuu."
 
 #. js-lingui-id: WC32k6
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -11233,13 +11233,13 @@ msgstr "Integraatiot - Asetukset"
 #. js-lingui-id: Gzw2pq
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Intelligence"
-msgstr ""
+msgstr "Älykkyys"
 
 #. js-lingui-id: EYz4Ok
 #. placeholder {0}: formatNumber(model?.intelligenceIndex ?? 0)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "Intelligence score: {0}"
-msgstr ""
+msgstr "Älykkyyspisteet: {0}"
 
 #. js-lingui-id: GfnKOF
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -11294,7 +11294,7 @@ msgstr "Virheellinen cron-muoto: {errorMessage}"
 #. js-lingui-id: CGivIJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
-msgstr ""
+msgstr "Virheellinen päiväarvo \"{newDay}\". Sen tulee olla kokonaisluku, joka on suurempi kuin 1"
 
 #. js-lingui-id: u3hwhx
 #: src/modules/settings/domains/utils/getDomainValidationSchema.ts
@@ -11336,23 +11336,23 @@ msgstr "Virheellinen tiedosto: {0}"
 #. js-lingui-id: 1ccYjl
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid hour value \"{newHour}\". Should be integer between 0 and 23"
-msgstr ""
+msgstr "Virheellinen tuntiarvo \"{newHour}\". Sen tulee olla kokonaisluku välillä 0 ja 23"
 
 #. js-lingui-id: e3cT9e
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid hour value \"{newHour}\". Should be integer greater than 1"
-msgstr ""
+msgstr "Virheellinen tuntiarvo \"{newHour}\". Sen tulee olla kokonaisluku, joka on suurempi kuin 1"
 
 #. js-lingui-id: jw4O7y
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid minute value \"{newMinute}\". Should be integer between 0 and 59"
-msgstr ""
+msgstr "Virheellinen minuuttiarvo \"{newMinute}\". Sen tulee olla kokonaisluku välillä 0 ja 59"
 
 #. js-lingui-id: SfvOlw
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
-msgstr ""
+msgstr "Virheellinen minuuttiarvo \"{newMinute}\". Sen tulee olla kokonaisluku, joka on suurempi kuin 1"
 
 #. js-lingui-id: WY8amq
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
@@ -12154,12 +12154,12 @@ msgstr ""
 #. js-lingui-id: lvAOAE
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 msgid "Limit created."
-msgstr ""
+msgstr "Rajoitus luotu."
 
 #. js-lingui-id: 1r7WdP
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Limit deleted."
-msgstr ""
+msgstr "Rajoitus poistettu."
 
 #. js-lingui-id: g3YJC1
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
@@ -12179,7 +12179,7 @@ msgstr ""
 #. js-lingui-id: GrFbIR
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Limit updated."
-msgstr ""
+msgstr "Rajoitus päivitetty."
 
 #. js-lingui-id: 6BDqha
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
@@ -12194,12 +12194,12 @@ msgstr "Rajoitukset"
 #. js-lingui-id: rtN0nI
 #: src/modules/settings/billing/components/SettingsBillingLimitsContent.tsx
 msgid "Limits could not be loaded."
-msgstr ""
+msgstr "Rajoituksia ei voitu ladata."
 
 #. js-lingui-id: iGG0MA
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Limits on members, API keys and apps require the Organization plan."
-msgstr ""
+msgstr "Jäsenten, API-avainten ja sovellusten rajoitukset edellyttävät Organization-suunnitelmaa."
 
 #. js-lingui-id: DXCDta
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -12284,7 +12284,7 @@ msgstr "Lista"
 #. js-lingui-id: Wfj8PH
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand.tsx
 msgid "List duplicated with {memberCount, plural, one {# member} other {# members}}"
-msgstr ""
+msgstr "Luettelo monistettu, sisältää {memberCount, plural, one {# jäsenen} other {# jäsentä}}"
 
 #. js-lingui-id: 3xTn5L
 #: src/modules/views/types/ViewType.ts
@@ -12426,7 +12426,7 @@ msgstr "Ladataan..."
 #. js-lingui-id: Pwqkdw
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 msgid "Loading…"
-msgstr ""
+msgstr "Ladataan…"
 
 #. js-lingui-id: 7VBQ2j
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -12495,7 +12495,7 @@ msgstr "logiikkafunktio"
 #. js-lingui-id: U/kVJF
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 msgid "Logic function"
-msgstr ""
+msgstr "Logiikkafunktio"
 
 #. js-lingui-id: qqnB9E
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -12553,7 +12553,7 @@ msgstr "silmukka"
 #. js-lingui-id: nTWWCZ
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Low"
-msgstr ""
+msgstr "Matala"
 
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -12701,7 +12701,7 @@ msgstr "Manuaalinen määritys"
 #. js-lingui-id: ospBFm
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Manually selected for this mode."
-msgstr ""
+msgstr "Valittu manuaalisesti tälle tilalle."
 
 #. js-lingui-id: lkcAoj
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -12847,7 +12847,7 @@ msgstr "Minä (käyttäjän tunnus)"
 #. js-lingui-id: agPptk
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Medium"
-msgstr ""
+msgstr "Keskitaso"
 
 #. js-lingui-id: IAcjOi
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -12962,7 +12962,7 @@ msgstr "Metatiedostotiedoston luonti epäonnistui"
 #. js-lingui-id: zsKJ2q
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "Meter"
-msgstr ""
+msgstr "Mittari"
 
 #. js-lingui-id: fiPesM
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -12995,7 +12995,7 @@ msgstr "Minimirajoitus"
 #. js-lingui-id: 8GG+Pa
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Minimal"
-msgstr ""
+msgstr "Vähäinen"
 
 #. js-lingui-id: 5IrCQY
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -13041,7 +13041,7 @@ msgstr "Mobiili"
 #. js-lingui-id: zz/Wd/
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Mode"
-msgstr ""
+msgstr "Tila"
 
 #. js-lingui-id: scu3wk
 #: src/modules/ai/components/AiModelTierSlider.tsx
@@ -13063,7 +13063,7 @@ msgstr "Malli \"{0}\" poistettu"
 #. js-lingui-id: 8jgO3g
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Model agents use when they run on their own"
-msgstr ""
+msgstr "Malli, jota agentit käyttävät toimiessaan itsenäisesti"
 
 #. js-lingui-id: IzB3v0
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -13078,7 +13078,7 @@ msgstr "Mallin tunnus on pakollinen"
 #. js-lingui-id: iaurWj
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Model used when you chat with Twenty"
-msgstr ""
+msgstr "Malli, jota käytetään keskustellessasi Twentyn kanssa"
 
 #. js-lingui-id: //nm2/
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -13602,7 +13602,7 @@ msgstr "Uusi avain"
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 msgid "New limit"
-msgstr ""
+msgstr "Uusi rajoitus"
 
 #. js-lingui-id: K2wBR9
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
@@ -13746,13 +13746,13 @@ msgstr "Ei"
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "No {0} found"
-msgstr ""
+msgstr "Kohdetta {0} ei löytynyt"
 
 #. js-lingui-id: uZ8YLp
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "No {0} match your filters. Try removing some of them."
-msgstr ""
+msgstr "Mitkään kohteet {0} eivät vastaa suodattimiasi. Yritä poistaa joitakin niistä."
 
 #. js-lingui-id: 7YGRoE
 #: src/modules/ui/input/components/SelectInput.tsx
@@ -13824,7 +13824,7 @@ msgstr "Tälle käyttäjälle ei ole kirjattu tekoälyn kulutusta."
 #: src/modules/ai/hooks/useAgentChat.ts
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "No AI provider is configured on this instance."
-msgstr ""
+msgstr "Tälle instanssille ei ole määritetty AI-palveluntarjoajaa."
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -14160,7 +14160,7 @@ msgstr "Ei rajoitusta"
 #. js-lingui-id: Y9FJQX
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "No limit matches your search."
-msgstr ""
+msgstr "Yksikään rajoitus ei vastaa hakuasi."
 
 #. js-lingui-id: nivaRq
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
@@ -14221,12 +14221,12 @@ msgstr "Mikrofonia ei ole käytettävissä. Yhdistä mikrofoni ja yritä uudelle
 #. js-lingui-id: WGQJB3
 #: src/modules/settings/ai/utils/getAiModelModeDescription.ts
 msgid "No model available"
-msgstr ""
+msgstr "Mallia ei ole saatavilla"
 
 #. js-lingui-id: xo340M
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "No model is available for this mode."
-msgstr ""
+msgstr "Tälle tilalle ei ole saatavilla mallia."
 
 #. js-lingui-id: 9VrTfZ
 #: src/modules/activities/notes/components/NotesCardContent.tsx
@@ -14289,7 +14289,7 @@ msgstr "Tälle paketille ei löytynyt provenance-todennetta. Julkaise se GitHub 
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "No recipients to send to ({skipReasons})"
-msgstr ""
+msgstr "Ei vastaanottajia, joille lähettää ({skipReasons})"
 
 #. js-lingui-id: V/+aTW
 #: src/modules/object-record/record-field/ui/form-types/components/FormMorphRelationToOneFieldInput.tsx
@@ -14401,7 +14401,7 @@ msgstr "Ei lähettäjää"
 #. js-lingui-id: dRi20n
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "No sending address. Connect a verified domain in Settings."
-msgstr ""
+msgstr "Ei lähetysosoitetta. Yhdistä vahvistettu toimialue Asetuksissa."
 
 #. js-lingui-id: JkPTT8
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -14543,7 +14543,7 @@ msgstr "Ei työnkulun versioita vielä"
 #. js-lingui-id: 0R8Pxd
 #: src/modules/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows.ts
 msgid "No workflows were deleted"
-msgstr ""
+msgstr "Yhtään työnkulkua ei poistettu"
 
 #. js-lingui-id: Q4dFjT
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
@@ -14669,7 +14669,7 @@ msgstr "Ei luettelossa"
 #. js-lingui-id: AjdrYY
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Not measured at this effort yet. Showing the base model's reading."
-msgstr ""
+msgstr "Ei vielä mitattu tällä päättelytasolla. Näytetään perusmallin lukema."
 
 #. js-lingui-id: iXlml9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -14724,12 +14724,12 @@ msgstr "Muistiinpano"
 #. js-lingui-id: 543eQ7
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "Nothing counted against this scope yet"
-msgstr ""
+msgstr "Tähän laajuuteen ei ole vielä laskettu mitään"
 
 #. js-lingui-id: yBYKk1
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Nothing has gone out yet. The campaign returns to your drafts and you can edit or schedule it again."
-msgstr ""
+msgstr "Mitään ei ole vielä lähetetty. Kampanja palaa luonnoksiisi, ja voit muokata tai ajastaa sen uudelleen."
 
 #. js-lingui-id: VngD1z
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -15245,12 +15245,12 @@ msgstr "Toiminnassa"
 #. js-lingui-id: Wfz6Xv
 #: src/modules/settings/billing/hooks/useUsageLimitFormatter.ts
 msgid "operations"
-msgstr ""
+msgstr "toimenpiteet"
 
 #. js-lingui-id: B1MDds
 #: src/modules/settings/billing/constants/UsageLimitMeterLabels.ts
 msgid "Operations"
-msgstr ""
+msgstr "Toimenpiteet"
 
 #. js-lingui-id: lVa1Xn
 #: src/modules/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues.ts
@@ -15429,7 +15429,7 @@ msgstr "Tulos"
 #. js-lingui-id: J7aOlM
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Output cost"
-msgstr ""
+msgstr "Tulostuskustannus"
 
 #. js-lingui-id: i1+tKD
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
@@ -15446,7 +15446,7 @@ msgstr "Ohita luonnos"
 #. js-lingui-id: RQCK56
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Overrides the mode above until you switch back to automatic"
-msgstr ""
+msgstr "Ohittaa yllä olevan tilan, kunnes vaihdat takaisin automaattiseen"
 
 #. js-lingui-id: 6/dCYd
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -15816,7 +15816,7 @@ msgstr "Valitse {0} tietue"
 #. js-lingui-id: T1yaeQ
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
 msgid "Pick a send time in the future."
-msgstr ""
+msgstr "Valitse lähetysaika tulevaisuudesta."
 
 #. js-lingui-id: JqqNlC
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -15865,7 +15865,7 @@ msgstr "Ympyräkaavio"
 #. js-lingui-id: 6U8nJN
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Pin a specific model"
-msgstr ""
+msgstr "Kiinnitä tietty malli"
 
 #. js-lingui-id: 3pU8e+
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -15892,7 +15892,7 @@ msgstr "Kiinnitetty välilehti, joka näkyy aina vasemmalla"
 #. js-lingui-id: Iaw5/y
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Pinned to a specific model"
-msgstr ""
+msgstr "Kiinnitetty tiettyyn malliin"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -15936,7 +15936,7 @@ msgstr "Paketit"
 #. js-lingui-id: T91vKp
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Play"
-msgstr ""
+msgstr "Toista"
 
 #. js-lingui-id: XdRQm7
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -16483,18 +16483,18 @@ msgstr "Päättely"
 #. js-lingui-id: 49IkcQ
 #: src/modules/ai/components/AiModelTierSlider.tsx
 msgid "Reasoning effort: {reasoningEffort}"
-msgstr ""
+msgstr "Päättelytaso: {reasoningEffort}"
 
 #. js-lingui-id: PG5XPp
 #. placeholder {0}: getAiModelEffortLabel(availableEffort)
 #: src/modules/settings/ai/components/AiModelPinSelect.tsx
 msgid "Reasoning: {0}"
-msgstr ""
+msgstr "Päättely: {0}"
 
 #. js-lingui-id: nVOD/+
 #: src/modules/settings/ai/components/AiModelPinSelect.tsx
 msgid "Reasoning: Default"
-msgstr ""
+msgstr "Päättely: Oletus"
 
 #. js-lingui-id: W+ApAD
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -16535,7 +16535,7 @@ msgstr "Vastaanottaja"
 #. js-lingui-id: F+BB7w
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Recipient count unavailable"
-msgstr ""
+msgstr "Vastaanottajien määrä ei ole saatavilla"
 
 #. js-lingui-id: p8GO5h
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -16571,7 +16571,7 @@ msgstr "Yhdistä uudelleen"
 #. js-lingui-id: PrI9jr
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect and share"
-msgstr ""
+msgstr "Yhdistä uudelleen ja jaa"
 
 #. js-lingui-id: XsIxsL
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -16694,7 +16694,7 @@ msgstr "Tietueet"
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Records selected"
-msgstr ""
+msgstr "Valitut tietueet"
 
 #. js-lingui-id: wRTiSD
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -16714,7 +16714,7 @@ msgstr "Uudelleenohjaus-URI:t päivitetty"
 #. js-lingui-id: ix5Jyh
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
 msgid "Redirect URL copied to clipboard"
-msgstr ""
+msgstr "Ohjaus-URL kopioitu leikepöydälle"
 
 #. js-lingui-id: RZjynQ
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -17089,7 +17089,7 @@ msgstr "Pakollinen"
 #. js-lingui-id: r38Vo4
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
 msgid "Reschedule campaign"
-msgstr ""
+msgstr "Ajasta kampanja uudelleen"
 
 #. js-lingui-id: Vae65A
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -17504,7 +17504,7 @@ msgstr "Suoritetaan..."
 #: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
 msgid "runs"
-msgstr ""
+msgstr "suoritukset"
 
 #. js-lingui-id: nji0/X
 #: src/localization/hooks/useLocaleOptions.ts
@@ -17519,12 +17519,12 @@ msgstr "Myynti"
 #. js-lingui-id: 342JYO
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "Same cost as Balanced."
-msgstr ""
+msgstr "Samat kustannukset kuin Balanced-tilassa."
 
 #. js-lingui-id: wQnd1t
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "Same score as Balanced"
-msgstr ""
+msgstr "Sama pisteytys kuin Balanced-tilassa"
 
 #. js-lingui-id: QeF0zb
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -17581,7 +17581,7 @@ msgstr "Aikatauluta huoltoikkuna ja ilmoita kaikille käyttäjille"
 #. js-lingui-id: MGaW9O
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
 msgid "Schedule campaign"
-msgstr ""
+msgstr "Ajasta kampanja"
 
 #. js-lingui-id: 4ba0NE
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -17592,7 +17592,7 @@ msgstr "Ajastettu"
 #. js-lingui-id: JizhXE
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 msgid "Scheduled at"
-msgstr ""
+msgstr "Ajastettu ajankohtaan"
 
 #. js-lingui-id: 7oCJuI
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
@@ -17686,7 +17686,7 @@ msgstr ""
 #. js-lingui-id: owAIq9
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Search a limit"
-msgstr ""
+msgstr "Etsi rajaa."
 
 #. js-lingui-id: 8J0e5B
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -17855,7 +17855,7 @@ msgstr "Etsi kenttiä"
 #. js-lingui-id: IQAn53
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Search fields..."
-msgstr ""
+msgstr "Etsi kenttiä..."
 
 #. js-lingui-id: rXrG+N
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
@@ -17937,7 +17937,7 @@ msgstr "Haettiin verkosta hakusanalla {query}"
 #. js-lingui-id: kSEiZD
 #: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
 msgid "searches"
-msgstr ""
+msgstr "hakuja"
 
 #. js-lingui-id: EvDUJy
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
@@ -18120,7 +18120,7 @@ msgstr "Esitäytetty"
 #. js-lingui-id: AhNP40
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Seek"
-msgstr ""
+msgstr "Siirry kohtaan"
 
 #. js-lingui-id: 5iyrla
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem.tsx
@@ -18234,7 +18234,7 @@ msgstr "Valitse toiminto"
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
 msgid "Select all loaded rows"
-msgstr ""
+msgstr "Valitse kaikki ladatut rivit"
 
 #. js-lingui-id: /fhMKz
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
@@ -18377,7 +18377,7 @@ msgstr "Valitse kieli ja säädä käyttöliittymän kokoa"
 #. js-lingui-id: AM0pWl
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
 msgid "Selected folders"
-msgstr ""
+msgstr "Valitut kansiot"
 
 #. js-lingui-id: JlFcis
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -18393,17 +18393,17 @@ msgstr "Lähetä kutsusähköposti tiimillesi"
 #. js-lingui-id: S147dq
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Send at"
-msgstr ""
+msgstr "Lähetä klo"
 
 #. js-lingui-id: WRLt0i
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
 msgid "Send campaign"
-msgstr ""
+msgstr "Lähetä kampanja"
 
 #. js-lingui-id: b7hiQs
 #: src/modules/side-panel/hooks/useOpenSendCampaignInSidePanel.ts
 msgid "Send Campaign"
-msgstr ""
+msgstr "Lähetä kampanja"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -18430,12 +18430,12 @@ msgstr "Lähetä kutsut"
 #. js-lingui-id: RmmhAh
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Send later"
-msgstr ""
+msgstr "Lähetä myöhemmin"
 
 #. js-lingui-id: NpEm3p
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Send now"
-msgstr ""
+msgstr "Lähetä nyt"
 
 #. js-lingui-id: doZzL7
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -18471,17 +18471,17 @@ msgstr "Lähetetään pyyntöä..."
 #. js-lingui-id: YguCRV
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
 msgid "Sending starts {formattedSendTime}. You can cancel before then."
-msgstr ""
+msgstr "Lähetys alkaa {formattedSendTime}. Voit peruuttaa ennen sitä."
 
 #. js-lingui-id: 2l+PSH
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
 msgid "Sending starts right away and cannot be undone."
-msgstr ""
+msgstr "Lähetys alkaa heti, eikä sitä voi peruuttaa."
 
 #. js-lingui-id: w+ywgn
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
 msgid "Sending starts right away, ahead of the time this campaign is holding."
-msgstr ""
+msgstr "Lähetys alkaa heti, ennen kampanjalle varattua aikaa."
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -18518,7 +18518,7 @@ msgstr "Serbia (kyrillinen)"
 #. js-lingui-id: lWKtaU
 #: src/localization/hooks/useLocaleOptions.ts
 msgid "Serbian (Latin)"
-msgstr ""
+msgstr "Serbia (latinalainen)"
 
 #. js-lingui-id: hjUUtd
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -18573,12 +18573,12 @@ msgstr "Aseta sähköpostin näkyvyys, hallinnoi estolistaa ja muuta."
 #. js-lingui-id: qFjlHh
 #: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilitySwitch.tsx
 msgid "Set fields created in the future as \"visible\""
-msgstr "Aseta tulevaisuudessa luotavat kentät \"näkyviksi\"}]}``` }]} } } } } ``` }]} } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } }``` }]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } }```}]} } }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }]} }}```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]+}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]+}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]+}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]+}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]+}]} }```}]} }```}]} }```}]} }```}]} }```}]+}]} }```}]} }```}]} }```}]} }```}]+}]} }```}]} }```}]} }```}]+}]} }```}]} }```}]+}]} }```}]} }```}]+}]} }```}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} } ```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]+}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]} }```}]+}]} }```}]} }```}]} }```}]} }```}]+}]} }```}]} }```}]} }```}]+}]} }```}]} }```}]+}]} }```}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]]}]} }```}]} }```}]} }```}]+}]} }```}]+}]} }```}]+}]} }```}]]}]} }```}]]}]} }```}]]}]} }```}]]}]} }```}]]}]} }```}]]}]} }```}]]}]} }```}]]}]} }```}]]}]+}]} }```}]]}]+}]} }```}]]}]+}]} }```}]]}]+}]} }```}]]}]+}]} }```}]]}]+}]} }```}]]}]+}]} }```}]]}]+}]} }```}]]}]+}]} }```}]]}]+}]} }```}]]}]+}]} }```}]]}]+}]} }```}]]}]+}]} }```}]]}]+}]} }```}]]}]+}]+}]+}]+}]+}]]}]]}]]}]]}]]}]]}}}]} }```}]]}]+}]} }```}]]}]+}]} }```}]]}]+}]+}]+} ]}]} }```}]]}]+}]+}]+} ]}]} }```}]]}]+}]+}]+} ]}]} }```}]]}]+}]+}]+} ]}]} }```}]]}]+}]+}]+} ]}]} }```}]]}]+}]+}]+} ]}]} }```}]]}]+}]+}]+} ]}]} }```}]]}]+}]+}]+} ]}]} }```}]]}]+}]+}]+} ]}]} }```}]]}]+}]+}]+} ]}], "
+msgstr "Aseta tulevaisuudessa luotavat kentät \"näkyviksi\""
 
 #. js-lingui-id: u5nAtE
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Set for this agent only"
-msgstr ""
+msgstr "Aseta vain tälle agentille"
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -18701,7 +18701,7 @@ msgstr "Jaa työtilan kanssa"
 #. js-lingui-id: lX0SIS
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Share with workspace?"
-msgstr ""
+msgstr "Jaa työtilan kanssa?"
 
 #. js-lingui-id: gaJRur
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
@@ -18721,7 +18721,7 @@ msgstr "Jakolinkki kopioitu leikepöydälle"
 #. js-lingui-id: Xzq3Vx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Sharing this connection with the workspace requires reconnecting it. You will be redirected to authorize it again."
-msgstr ""
+msgstr "Tämän yhteyden jakaminen työtilan kanssa edellyttää sen yhdistämistä uudelleen. Sinut ohjataan valtuuttamaan se uudelleen."
 
 #. js-lingui-id: RRXpo1
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -18990,7 +18990,7 @@ msgstr "Pienempi"
 #. js-lingui-id: ZKXQ0a
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Smart"
-msgstr ""
+msgstr "Älykäs"
 
 #. js-lingui-id: w+rJId
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -19173,7 +19173,7 @@ msgstr "Puheentunnistusta ei tavoitettu. Tarkista yhteytesi."
 #. js-lingui-id: l9wI00
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Speed"
-msgstr ""
+msgstr "Nopeus"
 
 #. js-lingui-id: pyfee5
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -19185,17 +19185,17 @@ msgstr "Nopeuta lukua kentille, joita käytät useimmin suodatukseen tai lajitte
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 msgid "Spender"
-msgstr ""
+msgstr "Kuluttaja"
 
 #. js-lingui-id: ctM+rp
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Spending stays capped by your plan allowance and the other limits."
-msgstr ""
+msgstr "Kulutus pysyy suunnitelmasi kiintiön ja muiden rajojen rajoittamana."
 
 #. js-lingui-id: p7JFjT
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Spending will only be capped by your plan allowance and the other limits."
-msgstr ""
+msgstr "Kulutusta rajoittavat vain suunnitelmasi kiintiö ja muut rajat."
 
 #. js-lingui-id: gsifzp
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -19377,7 +19377,7 @@ msgstr "Lopeta käyttäjän teeskentely"
 #. js-lingui-id: BrrIs8
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 msgid "Storage"
-msgstr ""
+msgstr "Tallennus"
 
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
@@ -19717,7 +19717,7 @@ msgstr "Synkronoi sähköposti- ja kalenteritilit"
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
 msgid "Sync every message"
-msgstr ""
+msgstr "Synkronoi jokainen viesti"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -19808,7 +19808,7 @@ msgstr "Järjestelmäasetukset"
 #. js-lingui-id: GXNLgO
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 msgid "System skills"
-msgstr ""
+msgstr "Järjestelmätaidot"
 
 #. js-lingui-id: HuA3RU
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
@@ -20106,7 +20106,7 @@ msgstr "Kuvake, jonka työnkulun laukaisin näyttää komennossa"
 #. js-lingui-id: 4m3QoL
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "The model behind each mode for every workspace. Workspaces can pin their own."
-msgstr ""
+msgstr "Jokaisen työtilan kunkin tilan taustalla oleva malli. Työtilat voivat kiinnittää oman mallinsa."
 
 #. js-lingui-id: HiI1Lo
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -20116,7 +20116,7 @@ msgstr "Tarjoajan API:n käyttämä mallin tunniste"
 #. js-lingui-id: 3o2gOg
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "The modes people and agents choose between"
-msgstr ""
+msgstr "Tilat, joiden välillä ihmiset ja agentit valitsevat"
 
 #. js-lingui-id: h8mvCd
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -20208,7 +20208,7 @@ msgstr "Transkriptiota valmistellaan…"
 #. js-lingui-id: qMTT4Z
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "The usage this limit applies to."
-msgstr ""
+msgstr "Käyttö, johon tätä rajaa sovelletaan."
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -20228,7 +20228,7 @@ msgstr "Koko tapahtuman tiedot jaetaan tiimisi kanssa."
 #. js-lingui-id: RmDTQ6
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "The whole workspace"
-msgstr ""
+msgstr "Koko työtila"
 
 #. js-lingui-id: bEXHAZ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -20274,7 +20274,7 @@ msgstr "Laskutuksessa on ongelma. Ota yhteyttä ylläpitäjääsi."
 #. js-lingui-id: ezuu4B
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "There is a payment issue with your subscription. Your enterprise features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one."
-msgstr ""
+msgstr "Tilauksessasi on maksuongelma. Enterprise-ominaisuutesi on poistettu käytöstä. Maksa avoin lasku palauttaaksesi ne käyttöön ennen tilauksen peruuttamista: peruutettua tilausta ei voi aktivoida uudelleen, ja sinun on aloitettava uusi tilaus."
 
 #. js-lingui-id: WQk7Cf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
@@ -20413,7 +20413,7 @@ msgstr "Työtilasi on ottanut tämän sovelluksen rekisteröinnin omistukseensa"
 #. js-lingui-id: kciPHv
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This billing period"
-msgstr ""
+msgstr "Tämä laskutusjakso"
 
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -20518,7 +20518,7 @@ msgstr "Tämä malli poistetaan tarjoajalta. Voit lisätä sen uudelleen myöhem
 #. js-lingui-id: oW3yYY
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This month"
-msgstr ""
+msgstr "Tässä kuussa"
 
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
@@ -21053,7 +21053,7 @@ msgstr "Kokeilujakso"
 #. js-lingui-id: mXdcsR
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Trial plan"
-msgstr ""
+msgstr "Kokeilusuunnitelma"
 
 #. js-lingui-id: H2Sfhg
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
@@ -21187,7 +21187,7 @@ msgstr "Twenty-kentät"
 #. js-lingui-id: pNo8xt
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Twenty fills each level with the best model that meets your requirements"
-msgstr ""
+msgstr "Twenty täyttää jokaisen tason parhaalla vaatimuksiasi vastaavalla mallilla"
 
 #. js-lingui-id: YIjS4q
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -21546,7 +21546,7 @@ msgstr "Poista välilehden kiinnitys"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Unschedule Campaign"
-msgstr ""
+msgstr "Poista kampanjan ajoitus"
 
 #. js-lingui-id: SMaFdc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -21748,7 +21748,7 @@ msgstr "Päivitä maksutapasi"
 #. js-lingui-id: Uq5zVf
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Update your payment method before {licenseExpiresAtDate} to avoid losing access."
-msgstr ""
+msgstr "Päivitä maksutapasi ennen {licenseExpiresAtDate}, jotta et menetä käyttöoikeutta."
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -22096,7 +22096,7 @@ msgstr "Käytä tätä sähköpostiosoitetta"
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Used"
-msgstr ""
+msgstr "Käytetty"
 
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -22193,7 +22193,7 @@ msgstr "Käytetään oletusarvoa. Aseta mukautettu arvo ohittaaksesi."
 #. js-lingui-id: b1dG47
 #: src/localization/hooks/useLocaleOptions.ts
 msgid "Uzbek"
-msgstr ""
+msgstr "Uzbekki"
 
 #. js-lingui-id: Clr4qp
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -22319,7 +22319,7 @@ msgstr ""
 #. js-lingui-id: Psyj/F
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Very High"
-msgstr ""
+msgstr "Erittäin korkea"
 
 #. js-lingui-id: Shfac6
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
@@ -22656,7 +22656,7 @@ msgstr "Tässä sovelluksessa ilmenee parhaillaan ongelmia, ja sen toiminta voi 
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "We could not load your {0}. Please try again later."
-msgstr ""
+msgstr "Kohteitasi ({0}) ei voitu ladata. Yritä myöhemmin uudelleen."
 
 #. js-lingui-id: icGmU/
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -22765,7 +22765,7 @@ msgstr "Webhook {targetUrl} päivitettiin onnistuneesti"
 #. js-lingui-id: k1illW
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Webhook Call"
-msgstr ""
+msgstr "Webhook-kutsu"
 
 #. js-lingui-id: 2X4ecw
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -22811,7 +22811,7 @@ msgstr "Viikko"
 #. js-lingui-id: 4XSc4l
 #: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 msgid "Weekly"
-msgstr ""
+msgstr "Viikoittain"
 
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -22984,7 +22984,7 @@ msgstr "Työntekijä"
 #. js-lingui-id: bLt/0J
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 msgid "Workflow"
-msgstr ""
+msgstr "Työnkulku"
 
 #. js-lingui-id: eQ/LA/
 #: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
@@ -23421,7 +23421,7 @@ msgstr "Olet muuttamassa työtilan aliavaa. Tämä toimenpide kirjautuu ulos kai
 #. js-lingui-id: 6x8lJe
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "You’ve reached your AI usage limit."
-msgstr ""
+msgstr "Olet saavuttanut tekoälyn käyttörajasi."
 
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts
