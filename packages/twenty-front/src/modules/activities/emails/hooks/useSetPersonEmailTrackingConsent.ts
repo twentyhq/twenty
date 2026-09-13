@@ -33,7 +33,9 @@ export const useSetPersonEmailTrackingConsent = () => {
       });
 
       if (result.data?.setPersonEmailTrackingConsent !== true) {
-        enqueueErrorSnackBar({ message: t`Failed to update email tracking` });
+        enqueueErrorSnackBar({
+          message: t`Could not update the email tracking preference`,
+        });
 
         return false;
       }
@@ -51,8 +53,8 @@ export const useSetPersonEmailTrackingConsent = () => {
       enqueueSuccessSnackBar({
         message:
           decision === MessageTrackingConsentDecision.DENIED
-            ? t`Opens and clicks are no longer measured for this person`
-            : t`Opens and clicks are measured again for this person`,
+            ? t`Opted out of email tracking`
+            : t`Opted in to email tracking`,
       });
 
       return true;

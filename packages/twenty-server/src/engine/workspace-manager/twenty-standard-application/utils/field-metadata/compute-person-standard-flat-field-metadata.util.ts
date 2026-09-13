@@ -741,7 +741,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       ),
       description: i18nLabel(
         msg({
-          message: `Whether opens and clicks on campaign emails sent to this person may be measured. Empty means they never answered`,
+          message: `Whether this person has opted in to or out of open and click tracking on campaign emails. Empty means no preference was recorded`,
           context: 'fieldMetadata.description',
         }),
       ),
@@ -754,7 +754,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
           id: 'c1d2e3f4-5a6b-4c7d-8e9f-0a1b2c3d4e5f',
           value: 'GRANTED',
           label: i18nLabel(
-            msg({ message: `Allowed`, context: 'fieldMetadata.label' }),
+            msg({ message: `Opted in`, context: 'fieldMetadata.label' }),
           ),
           position: 0,
           color: 'green',
@@ -763,7 +763,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
           id: 'd2e3f4a5-6b7c-4d8e-9f0a-1b2c3d4e5f60',
           value: 'DENIED',
           label: i18nLabel(
-            msg({ message: `Refused`, context: 'fieldMetadata.label' }),
+            msg({ message: `Opted out`, context: 'fieldMetadata.label' }),
           ),
           position: 1,
           color: 'red',

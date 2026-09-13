@@ -208,7 +208,7 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
               )}
               {audiencePreview.trackingRefused > 0 && (
                 <StyledHint>
-                  {t`${formatNumber(audiencePreview.trackingRefused)} asked not to be tracked, opens and clicks are not measured for them`}
+                  {t`${formatNumber(audiencePreview.trackingRefused)} opted out of email tracking, their opens and clicks are not recorded`}
                 </StyledHint>
               )}
               {isScheduling && (

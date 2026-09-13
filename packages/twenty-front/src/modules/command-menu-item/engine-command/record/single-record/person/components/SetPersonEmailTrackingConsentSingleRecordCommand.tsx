@@ -17,26 +17,28 @@ export const SetPersonEmailTrackingConsentSingleRecordCommand = () => {
     throw new Error('Record ID is required to set email tracking');
   }
 
-  const isTrackingRefused =
+  const isOptedOut =
     selectedRecord.emailTrackingConsent ===
     MessageTrackingConsentDecision.DENIED;
 
-  const decision = isTrackingRefused
+  const decision = isOptedOut
     ? MessageTrackingConsentDecision.GRANTED
     : MessageTrackingConsentDecision.DENIED;
 
   return (
     <HeadlessConfirmationModalEngineCommandEffect
-      title={isTrackingRefused ? t`Measure again` : t`Stop measuring`}
+      title={
+        isOptedOut
+          ? t`Opt this person back in to email tracking`
+          : t`Opt this person out of email tracking`
+      }
       subtitle={
-        isTrackingRefused
-          ? t`Opens and clicks on campaign emails sent to this person's addresses will be measured again.`
-          : t`Opens and clicks on campaign emails sent to this person's addresses will no longer be measured. Past data is kept.`
+        isOptedOut
+          ? t`Starting with the next campaign, opens and clicks on emails sent to this person will be recorded again.`
+          : t`This person keeps receiving campaign emails. Starting with the next campaign, opens and clicks on their emails will not be recorded. Opens and clicks already recorded are kept.`
       }
-      confirmButtonText={
-        isTrackingRefused ? t`Measure again` : t`Stop measuring`
-      }
-      confirmButtonAccent={isTrackingRefused ? 'blue' : 'danger'}
+      confirmButtonText={isOptedOut ? t`Opt in` : t`Opt out`}
+      confirmButtonAccent={isOptedOut ? 'blue' : 'danger'}
       execute={() => setPersonEmailTrackingConsent({ personId, decision })}
     />
   );
