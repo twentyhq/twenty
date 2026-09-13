@@ -62,7 +62,10 @@ export class MessageTrackingConsentService {
       id: workspaceId,
     });
 
-    if (!workspace?.isMessageTrackingEnabled) {
+    if (
+      !workspace?.isClickTrackingEnabled &&
+      !workspace?.isOpenTrackingEnabled
+    ) {
       return undefined;
     }
 
@@ -80,7 +83,10 @@ export class MessageTrackingConsentService {
       id: workspaceId,
     });
 
-    if (!workspace?.isMessageTrackingEnabled) {
+    if (
+      !workspace?.isClickTrackingEnabled &&
+      !workspace?.isOpenTrackingEnabled
+    ) {
       return new Set();
     }
 

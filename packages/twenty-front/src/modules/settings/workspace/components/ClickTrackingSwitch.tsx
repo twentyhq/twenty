@@ -5,11 +5,11 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { IconEye } from 'twenty-ui/icon';
+import { IconClick } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/surfaces';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
-export const MessageTrackingSwitch = () => {
+export const ClickTrackingSwitch = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -22,18 +22,18 @@ export const MessageTrackingSwitch = () => {
       throw new Error('User is not logged in');
     }
 
-    const isMessageTrackingEnabled = !currentWorkspace.isMessageTrackingEnabled;
+    const isClickTrackingEnabled = !currentWorkspace.isClickTrackingEnabled;
 
     try {
-      setCurrentWorkspace({ ...currentWorkspace, isMessageTrackingEnabled });
+      setCurrentWorkspace({ ...currentWorkspace, isClickTrackingEnabled });
 
       await updateWorkspace({
-        variables: { input: { isMessageTrackingEnabled } },
+        variables: { input: { isClickTrackingEnabled } },
       });
     } catch (err: any) {
       setCurrentWorkspace({
         ...currentWorkspace,
-        isMessageTrackingEnabled: !isMessageTrackingEnabled,
+        isClickTrackingEnabled: !isClickTrackingEnabled,
       });
       enqueueErrorSnackBar({
         apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
@@ -47,10 +47,10 @@ export const MessageTrackingSwitch = () => {
       {currentWorkspace && (
         <Card rounded>
           <SettingsOptionCardContentSwitch
-            Icon={IconEye}
-            title={t`Track opens and clicks`}
-            description={t`Rewrite campaign links and add an invisible image to count clicks and opens. Mail clients that load images automatically can inflate opens.`}
-            checked={currentWorkspace.isMessageTrackingEnabled}
+            Icon={IconClick}
+            title={t`Track link clicks`}
+            description={t`Each link in a campaign email is rewritten to pass through Twenty. When a recipient clicks it, the click is counted and they are sent straight to the original address.`}
+            checked={currentWorkspace.isClickTrackingEnabled}
             onChange={handleChange}
           />
         </Card>
