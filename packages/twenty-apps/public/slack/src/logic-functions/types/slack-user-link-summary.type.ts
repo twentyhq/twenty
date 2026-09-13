@@ -2,6 +2,7 @@ import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-
 import { type SlackUserLinkSource } from 'src/logic-functions/types/slack-user-link-source.type';
 
 export type SlackUserLinkSummary = {
+  id: string;
   slackUserId: string;
   slackTeamId: string;
   name: string | undefined;
