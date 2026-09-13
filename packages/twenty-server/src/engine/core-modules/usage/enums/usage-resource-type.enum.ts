@@ -10,6 +10,7 @@ export enum UsageResourceType {
   API = 'API',
   LOGIC_FUNCTION = 'LOGIC_FUNCTION',
   EMAIL = 'EMAIL',
+  WEBHOOK = 'WEBHOOK',
 }
 
 registerEnumType(UsageResourceType, {

@@ -15,6 +15,7 @@ const GET_APP_CONNECTION_QUERY = `
       accessToken
       scopes
       authFailedAt
+      authFailedReason
     }
   }
 `;

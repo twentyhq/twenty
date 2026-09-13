@@ -246,6 +246,7 @@ export type { PageLayoutWidgetUniversalConfiguration } from './page-layout/page-
 export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
 export { PageLayoutType } from './page-layout/PageLayoutType';
 export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
+export { PageLayoutWidgetVerticalListHeightBehavior } from './page-layout/PageLayoutWidgetVerticalListHeightBehavior';
 export type { RatioAggregateConfig } from './page-layout/ratio-aggregate-config.type';
 export { WidgetType } from './page-layout/WidgetType';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
@@ -292,6 +293,9 @@ export type { RecordGqlOperationGqlRecordFields } from './RecordGqlOperationGqlR
 export type { RecordGqlOperationOrderBy } from './RecordGqlOperationOrderBy';
 export type { RecordGqlOperationSignature } from './RecordGqlOperationSignature';
 export type { RecordGqlOperationVariables } from './RecordGqlOperationVariables';
+export { RecordShareAccessLevel } from './RecordShareAccessLevel';
+export { RecordSharePrincipalType } from './RecordSharePrincipalType';
+export { RecordShareRowCause } from './RecordShareRowCause';
 export type { RelationAndMorphRelationFieldMetadataType } from './RelationAndMorphRelationFieldMetadataType';
 export type { RelationCreationPayload } from './RelationCreationPayload';
 export { RelationOnDeleteAction } from './RelationOnDeleteAction.type';

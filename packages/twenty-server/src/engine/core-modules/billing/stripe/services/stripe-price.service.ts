@@ -30,14 +30,20 @@ export class StripePriceService {
     });
   }
 
+  // Superseding a price leaves the old one on the product forever, so the page
+  // this returns is not a safe bound on how many a product accumulates.
   async getPricesByProductId(productId: string) {
-    const prices = await this.stripe.prices.list({
+    const prices: Stripe.Price[] = [];
+
+    for await (const price of this.stripe.prices.list({
       product: productId,
       type: 'recurring',
       limit: 100,
       expand: ['data.currency_options', 'data.tiers'],
-    });
+    })) {
+      prices.push(price);
+    }
 
-    return prices.data;
+    return prices;
   }
 }

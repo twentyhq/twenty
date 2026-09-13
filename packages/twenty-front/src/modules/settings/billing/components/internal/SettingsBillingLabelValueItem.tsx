@@ -60,7 +60,7 @@ export const SettingsBillingLabelValueItem = ({
             <StyledInfoIcon id={tooltipId} size={12} />
             <AppTooltip
               anchorSelect={`#${tooltipId}`}
-              content={tooltipText}
+              title={tooltipText}
               noArrow={false}
               place="top"
               delay={TooltipDelay.shortDelay}

@@ -65,6 +65,7 @@ export const formatPullReport = ({
   coverage,
   localOnlyRelativePaths,
   unreadableRelativePaths = [],
+  compiledTranslationEntryCountByLocale = {},
   verbose = false,
 }: {
   writes: PullWrite[];
@@ -74,6 +75,7 @@ export const formatPullReport = ({
   coverage: ApplicationExportCoverageEntry[];
   localOnlyRelativePaths: string[];
   unreadableRelativePaths?: string[];
+  compiledTranslationEntryCountByLocale?: Record<string, number>;
   verbose?: boolean;
 }): string => {
   const lines: string[] = [
@@ -160,6 +162,21 @@ export const formatPullReport = ({
         }
       }
     }
+  }
+
+  const compiledLocales = Object.entries(compiledTranslationEntryCountByLocale)
+    .filter(([, count]) => count > 0)
+    .sort(([left], [right]) => left.localeCompare(right));
+
+  if (compiledLocales.length > 0) {
+    lines.push(
+      '',
+      'Translations kept in compiled form until their source strings are in this tree (see locales/compiled/):',
+      ...compiledLocales.map(
+        ([locale, count]) =>
+          `  ${locale.padEnd(13)}${count} ${count === 1 ? 'entry' : 'entries'}`,
+      ),
+    );
   }
 
   return lines.join('\n');

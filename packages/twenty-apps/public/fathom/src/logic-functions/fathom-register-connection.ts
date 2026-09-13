@@ -1,16 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import {
-  getConnection,
-  kv,
-  RetryableLogicFunctionError,
-} from 'twenty-sdk/logic-function';
+import { getConnection, kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'src/utils/is-defined';
 
 import { FATHOM_INITIAL_BACKFILL_DAYS } from 'src/constants/fathom.constant';
 import { FATHOM_REGISTER_CONNECTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type FathomConnectionHookPayload } from 'src/logic-functions/types/fathom-connection-hook-payload.type';
 import { type FathomWebhookRegistration } from 'src/logic-functions/types/fathom-webhook-registration.type';
+import { buildRetryableFathomError } from 'src/logic-functions/utils/build-retryable-fathom-error.util';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { deleteStaleFathomWebhook } from 'src/logic-functions/utils/delete-stale-fathom-webhook.util';
 import { enqueueFathomBackfillWorker } from 'src/logic-functions/utils/enqueue-fathom-backfill-worker.util';
@@ -19,7 +16,6 @@ import { getFathomWebhookDestinationUrl } from 'src/logic-functions/utils/get-fa
 import { getFathomWebhookRegistrationKey } from 'src/logic-functions/utils/get-fathom-webhook-registration-key.util';
 import { isTransientFathomError } from 'src/logic-functions/utils/is-transient-fathom-error.util';
 import { storeFathomWebhookRegistration } from 'src/logic-functions/utils/store-fathom-webhook-registration.util';
-import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 // The hook retries as a whole, so the flag keeps a retry after a failed enqueue
 // from skipping the import behind the already active registration.
@@ -107,7 +103,10 @@ export const fathomRegisterConnectionHandler = async (
     })
     .catch((error: unknown) => {
       if (isTransientFathomError(error)) {
-        throw new RetryableLogicFunctionError(toErrorMessage(error));
+        throw buildRetryableFathomError({
+          operation: 'webhook registration',
+          error,
+        });
       }
 
       throw error;

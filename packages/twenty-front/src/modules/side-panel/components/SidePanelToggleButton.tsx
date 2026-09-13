@@ -91,7 +91,7 @@ export const SidePanelToggleButton = () => {
       <StyledTooltipWrapper>
         <AppTooltip
           anchorSelect="#toggle-side-panel-button"
-          content={tooltipContent}
+          title={tooltipContent}
           delay={TooltipDelay.longDelay}
           place={TooltipPosition.Bottom}
           offset={5}

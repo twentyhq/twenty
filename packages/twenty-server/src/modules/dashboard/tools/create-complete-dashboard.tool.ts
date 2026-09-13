@@ -14,7 +14,7 @@ import {
   widgetTypeSchema,
 } from 'src/modules/dashboard/tools/schemas/widget.schema';
 import {
-  type DashboardToolContext,
+  type DashboardToolContextWithPermissions,
   type DashboardToolDependencies,
 } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 import { type WidgetConfigurationInput } from 'src/modules/dashboard/tools/types/widget-configuration-input.type';
@@ -56,7 +56,7 @@ const createCompleteDashboardSchema = z.object({
 
 export const createCreateCompleteDashboardTool = (
   deps: DashboardToolDependencies,
-  context: DashboardToolContext,
+  context: DashboardToolContextWithPermissions,
 ) => ({
   name: 'create_complete_dashboard' as const,
   description: `Create a dashboard with layout, tab, and widgets.
@@ -177,12 +177,12 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
         }
       }
 
-      const dashboardId = await createDashboardRecord(
+      const dashboardId = await createDashboardRecordOrRollBackLayout({
         deps,
         context,
-        parameters.title,
-        pageLayout.id,
-      );
+        title: parameters.title,
+        pageLayoutId: pageLayout.id,
+      });
 
       const result = {
         dashboardId,
@@ -230,20 +230,43 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
   },
 });
 
-const createDashboardRecord = async (
-  deps: DashboardToolDependencies,
-  context: DashboardToolContext,
-  title: string,
-  pageLayoutId: string,
+type CreateDashboardRecordParams = {
+  deps: DashboardToolDependencies;
+  context: DashboardToolContextWithPermissions;
+  title: string;
+  pageLayoutId: string;
+};
+
+const createDashboardRecordOrRollBackLayout = async (
+  params: CreateDashboardRecordParams,
 ): Promise<string> => {
+  try {
+    return await createDashboardRecord(params);
+  } catch (error) {
+    await params.deps.pageLayoutService
+      .destroy({
+        id: params.pageLayoutId,
+        workspaceId: params.context.workspaceId,
+        isLinkedDashboardAlreadyDestroyed: true,
+      })
+      .catch(() => undefined);
+
+    throw error;
+  }
+};
+
+const createDashboardRecord = async ({
+  deps,
+  context,
+  title,
+  pageLayoutId,
+}: CreateDashboardRecordParams): Promise<string> => {
   const authContext = buildSystemAuthContext(context.workspaceId);
 
   return deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
     const dashboardRepository = deps.workspaceOrmManager.getRepository(
       'dashboard',
-      {
-        shouldBypassPermissionChecks: true,
-      },
+      context.rolePermissionConfig,
     );
 
     const position = await deps.recordPositionService.buildRecordPosition({

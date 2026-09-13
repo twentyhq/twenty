@@ -2,8 +2,10 @@ import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { SLACK_RATE_LIMIT_RETRY_BUDGET_MS } from 'src/logic-functions/constants/slack-rate-limit-retry-budget-ms';
 import { type LinkableSlackRosterMember } from 'src/logic-functions/types/slack-roster-member.type';
 import { isLinkableSlackRosterMember } from 'src/logic-functions/utils/is-linkable-slack-roster-member';
+import { retrySlackCallWhenRateLimited } from 'src/logic-functions/utils/retry-slack-call-when-rate-limited';
 
 const MEMBERS_PER_PAGE = 200;
 const DEFAULT_MAX_PAGES = 5;
@@ -18,20 +20,28 @@ export const collectSlackRosterMembers = async ({
   shouldCollectMember,
   maxMembers,
   maxPages = DEFAULT_MAX_PAGES,
+  rateLimitRetryBudgetMs = SLACK_RATE_LIMIT_RETRY_BUDGET_MS,
 }: {
   slackClient: WebClient;
   shouldCollectMember?: (member: LinkableSlackRosterMember) => boolean;
   maxMembers?: number;
   maxPages?: number;
+  rateLimitRetryBudgetMs?: number;
 }): Promise<CollectSlackRosterMembersResult> => {
   const members: LinkableSlackRosterMember[] = [];
   const seenSlackUserIds = new Set<string>();
+  // one window for every page, so five rate limited pages cannot wait five times
+  const rateLimitDeadlineAtMs = Date.now() + rateLimitRetryBudgetMs;
   let cursor: string | undefined;
 
   for (let page = 0; page < maxPages; page += 1) {
-    const response = await slackClient.users.list({
-      limit: MEMBERS_PER_PAGE,
-      cursor,
+    const response = await retrySlackCallWhenRateLimited({
+      call: async () =>
+        slackClient.users.list({
+          limit: MEMBERS_PER_PAGE,
+          cursor,
+        }),
+      budgetMs: Math.max(rateLimitDeadlineAtMs - Date.now(), 0),
     });
 
     const collectiblePageMembers = (response.members ?? [])

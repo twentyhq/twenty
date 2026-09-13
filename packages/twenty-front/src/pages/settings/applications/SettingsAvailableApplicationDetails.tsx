@@ -12,6 +12,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type Manifest } from 'twenty-shared/application';
@@ -51,8 +52,19 @@ export const SettingsAvailableApplicationDetails = () => {
   }>();
 
   const navigateSettings = useNavigateSettings();
+  const handleInstallCompleted = useCallback(
+    (installedApplication: { id: string }) => {
+      navigateSettings(SettingsPath.ApplicationDetail, {
+        applicationId: installedApplication.id,
+      });
+    },
+    [navigateSettings],
+  );
   const { requestInstall, install, isInstalling, modalInstanceId } =
-    useInstallMarketplaceAppWithPermissionValidation();
+    useInstallMarketplaceAppWithPermissionValidation({
+      universalIdentifier: availableApplicationId,
+      onCompleted: handleInstallCompleted,
+    });
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
@@ -108,22 +120,6 @@ export const SettingsAvailableApplicationDetails = () => {
     isDefined(latestAvailableVersion) &&
     isDefined(currentVersion) &&
     isNewerSemver(latestAvailableVersion, currentVersion);
-
-  const handleInstall = async () => {
-    if (isDefined(detail)) {
-      const data = await install({
-        universalIdentifier: detail.universalIdentifier,
-      });
-
-      const applicationId = data?.installApplication?.id;
-
-      if (isDefined(applicationId)) {
-        navigateSettings(SettingsPath.ApplicationDetail, {
-          applicationId,
-        });
-      }
-    }
-  };
 
   const handleUpgrade = async () => {
     if (!isDefined(registrationId) || !isDefined(latestAvailableVersion)) {
@@ -247,7 +243,6 @@ export const SettingsAvailableApplicationDetails = () => {
             hasUpdate={hasUpdate}
             onUpgrade={handleUpgrade}
             isUpgrading={isUpgrading}
-            state={application?.state}
           />
         );
       case 'content':
@@ -327,7 +322,7 @@ export const SettingsAvailableApplicationDetails = () => {
         appDisplayName={displayName}
         appLogoUrl={detail?.logoUrl ?? undefined}
         defaultRole={defaultRole}
-        onAuthorize={handleInstall}
+        onAuthorize={install}
         isInstalling={isInstalling}
       />
     </CurrentApplicationContext.Provider>

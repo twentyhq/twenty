@@ -14,10 +14,30 @@ const preview: Preview = {
       test: 'error',
     },
   },
+  globalTypes: {
+    colorScheme: {
+      description: 'Color scheme applied by ThemeProvider',
+      toolbar: {
+        title: 'Color scheme',
+        icon: 'circlehollow',
+        items: [
+          { value: 'light', title: 'Light', icon: 'sun' },
+          { value: 'dark', title: 'Dark', icon: 'moon' },
+        ],
+        dynamicTitle: true,
+      },
+    },
+  },
+  initialGlobals: {
+    colorScheme: 'light',
+  },
   decorators: [
-    (Story) => {
+    (Story, context) => {
+      const colorScheme =
+        context.globals.colorScheme === 'dark' ? 'dark' : 'light';
+
       return (
-        <ThemeProvider colorScheme="light">
+        <ThemeProvider colorScheme={colorScheme}>
           <Story />
         </ThemeProvider>
       );

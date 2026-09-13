@@ -47,11 +47,13 @@ const StyledErrorMessage = styled.div`
 
 type AiChatErrorMessageProps = {
   error: AiChatError;
+  hint?: string;
   onRetry?: () => void;
 };
 
 export const AiChatErrorMessage = ({
   error,
+  hint,
   onRetry,
 }: AiChatErrorMessageProps) => {
   const { theme } = useContext(ThemeContext);
@@ -69,6 +71,7 @@ export const AiChatErrorMessage = ({
         <StyledErrorMessage>
           {errorMessage || t`An error occurred while processing your message`}
         </StyledErrorMessage>
+        {isDefined(hint) && <StyledErrorMessage>{hint}</StyledErrorMessage>}
       </StyledErrorContent>
       {isDefined(onRetry) && (
         <Button

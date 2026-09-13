@@ -29,7 +29,7 @@ exports[`Application version progression gate rejects re-installing the already 
   "extensions": {
     "code": "BAD_USER_INPUT",
     "subCode": "APP_ALREADY_INSTALLED",
-    "userFriendlyMessage": "This version of the application is already installed in this workspace.",
+    "userFriendlyMessage": "This version of the application is already installed in this organization.",
   },
   "message": "20202020-6b0e-4b1e-9d3a-000000002931@<version> is already installed in this workspace.",
   "name": "UserInputError",

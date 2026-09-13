@@ -1,4 +1,5 @@
 export type CallRecorderPolicyNotRequiredReason =
+  | 'CALENDAR_BOT_SCHEDULING_DISABLED'
   | 'EVENT_CANCELED'
   | 'PREFERENCE_OFF'
   | 'MISSING_CONFERENCE_LINK'

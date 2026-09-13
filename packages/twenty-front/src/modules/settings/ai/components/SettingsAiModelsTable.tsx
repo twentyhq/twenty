@@ -114,7 +114,7 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
               <Checkbox
                 checked={allChecked}
                 indeterminate={!allChecked && !noneChecked}
-                onChange={() => onToggleAll(!allChecked)}
+                onCheckedChange={() => onToggleAll(!allChecked)}
               />
             )}
           </TableHeader>
@@ -187,7 +187,7 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
                   <Checkbox
                     checked={checked}
                     disabled={disabled}
-                    onChange={() => onToggle(model.modelId, checked)}
+                    onCheckedChange={() => onToggle(model.modelId, checked)}
                   />
                 </TableCell>
                 {hasRemove && (
@@ -218,7 +218,7 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
           offset={8}
           delay={TooltipDelay.noDelay}
           className={hoverCardTooltipClass}
-          width="320px"
+          maxWidth="320px"
           isOpen={true}
         >
           <SettingsAiModelHoverCard model={hoveredModel} />

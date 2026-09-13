@@ -92,7 +92,7 @@ export const SettingsUnsubscribePreview = () => {
                     <StyledTopicRow key={topic.id}>
                       <Checkbox
                         checked
-                        onChange={() => {}}
+                        onCheckedChange={() => {}}
                         aria-label={topic.name ?? t`Untitled topic`}
                       />
                       {topic.name ?? t`Untitled topic`}

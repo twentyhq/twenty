@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import defaultAiProviders from 'src/engine/metadata-modules/ai/ai-models/ai-providers.json';
 import { aiProvidersConfigSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.schema';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
@@ -43,6 +45,16 @@ describe('ai-providers.json integrity', () => {
     });
   });
 
+  it('should declare efforts only on reasoning models', () => {
+    Object.values(PROVIDERS).forEach((config) => {
+      (config.models ?? []).forEach((model) => {
+        if (isDefined(model.efforts)) {
+          expect(model.supportsReasoning).toBe(true);
+        }
+      });
+    });
+  });
+
   it('should have unique composite model IDs across all providers', () => {
     const allCompositeIds: string[] = [];
 
@@ -70,6 +82,19 @@ describe('ai-providers.json integrity', () => {
     Object.values(PROVIDERS).forEach((config) => {
       (config.models ?? []).forEach((model) => {
         expect(model.source).toBe('catalog');
+      });
+    });
+  });
+
+  // Where a self-hosted instance processes and retains data depends on its own
+  // provider accounts, so the shipped catalog states neither on its behalf.
+  it('should not assert data residency or zero data retention', () => {
+    Object.values(PROVIDERS).forEach((config) => {
+      expect(config.dataResidency).toBeUndefined();
+
+      (config.models ?? []).forEach((model) => {
+        expect(model.dataResidency).toBeUndefined();
+        expect(model.zeroDataRetention).toBeUndefined();
       });
     });
   });

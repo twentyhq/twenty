@@ -99,7 +99,7 @@ export const OverridableCheckbox = ({
             <Checkbox
               checked={checked}
               disabled={disabled}
-              onChange={onChange}
+              onCheckedChange={() => onChange()}
             />
           </AnimatedRotate>
         </StyledOverridableCheckboxContainerItem>

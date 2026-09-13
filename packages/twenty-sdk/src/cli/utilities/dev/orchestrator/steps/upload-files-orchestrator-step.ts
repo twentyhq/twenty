@@ -3,6 +3,7 @@ import {
   type OrchestratorStateBuiltFileInfo,
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
+import { formatUploadFailures } from '@/cli/utilities/file/format-upload-failures';
 import { type FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -147,12 +148,10 @@ export class UploadFilesOrchestratorStep {
         files.map(({ builtPath, fileFolder }) => ({ builtPath, fileFolder })),
       )
       .then((failures) => {
-        for (const failure of failures) {
-          this.failedCount++;
-          this.state.addEvent({
-            message: `Failed to upload ${failure.builtPath}: ${failure.error}`,
-            status: 'error',
-          });
+        this.failedCount += failures.length;
+
+        for (const message of formatUploadFailures(failures)) {
+          this.state.addEvent({ message, status: 'error' });
         }
 
         for (const { builtPath, sourcePath } of files) {

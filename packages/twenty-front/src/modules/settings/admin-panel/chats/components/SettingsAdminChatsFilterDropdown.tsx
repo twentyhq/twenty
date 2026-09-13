@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 
 import { IconAlertTriangle, IconMessage, IconSparkles } from 'twenty-ui/icon';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { MenuItemSwitch } from 'twenty-ui/navigation';
 
 import { type AdminChatsFilterState } from '@/settings/admin-panel/chats/types/AdminChatsFilterState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -29,41 +29,41 @@ export const SettingsAdminChatsFilterDropdown = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItemToggle
+            <MenuItemSwitch
               LeftIcon={IconSparkles}
-              onToggleChange={() =>
+              onCheckedChange={() =>
                 onFiltersChange({
                   ...filters,
                   onboardingOnly: !filters.onboardingOnly,
                 })
               }
-              toggled={filters.onboardingOnly}
+              checked={filters.onboardingOnly}
               text={t`Onboarding only`}
-              toggleSize="small"
+              size="sm"
             />
-            <MenuItemToggle
+            <MenuItemSwitch
               LeftIcon={IconAlertTriangle}
-              onToggleChange={() =>
+              onCheckedChange={() =>
                 onFiltersChange({
                   ...filters,
                   hasErrorOnly: !filters.hasErrorOnly,
                 })
               }
-              toggled={filters.hasErrorOnly}
+              checked={filters.hasErrorOnly}
               text={t`Has error`}
-              toggleSize="small"
+              size="sm"
             />
-            <MenuItemToggle
+            <MenuItemSwitch
               LeftIcon={IconMessage}
-              onToggleChange={() =>
+              onCheckedChange={() =>
                 onFiltersChange({
                   ...filters,
                   userNeverEngagedOnly: !filters.userNeverEngagedOnly,
                 })
               }
-              toggled={filters.userNeverEngagedOnly}
+              checked={filters.userNeverEngagedOnly}
               text={t`No user reply`}
-              toggleSize="small"
+              size="sm"
             />
           </DropdownMenuItemsContainer>
         </DropdownContent>

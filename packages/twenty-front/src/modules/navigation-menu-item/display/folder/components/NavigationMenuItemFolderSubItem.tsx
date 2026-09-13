@@ -1,11 +1,11 @@
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { FeatureFlagKey, NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
+import { useNavigateToNavigationMenuItemLink } from '@/navigation-menu-item/common/hooks/useNavigateToNavigationMenuItemLink';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
@@ -61,7 +61,8 @@ export const NavigationMenuItemFolderSubItem = ({
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
   );
-  const navigate = useNavigate();
+  const { navigateToNavigationMenuItemLink } =
+    useNavigateToNavigationMenuItemLink();
   const setLastClickedNavigationMenuItemId = useSetAtomState(
     lastClickedNavigationMenuItemIdState,
   );
@@ -114,7 +115,7 @@ export const NavigationMenuItemFolderSubItem = ({
           })
       : () => {
           setLastClickedNavigationMenuItemId(navigationMenuItem.id);
-          navigate(computedLink);
+          navigateToNavigationMenuItemLink(computedLink);
         });
 
   const isCoreWorkflowsIndexItem = isCoreWorkflowsObjectNavigationMenuItem({

@@ -28,7 +28,7 @@ import { Elements, PaymentElement } from '@stripe/react-stripe-js';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Info, Loader } from 'twenty-ui/feedback';
-import { MainButton } from 'twenty-ui/input';
+import { MainButton, RadioGroup } from 'twenty-ui/input';
 import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -162,7 +162,7 @@ const UpgradeFreeTrialContent = ({
     void handleCheckoutSession();
   };
 
-  const selectTrialPeriod = (withCreditCard: boolean) => () => {
+  const selectTrialPeriod = (withCreditCard: boolean) => {
     if (
       isDefined(baseProductPrice) &&
       billingCheckoutSession.requirePaymentMethod !== withCreditCard
@@ -180,13 +180,17 @@ const UpgradeFreeTrialContent = ({
   return (
     <>
       <OnboardingStepAnimatedItem index={3}>
-        <StyledCards>
+        <RadioGroup
+          render={<StyledCards />}
+          aria-label={t`Trial plan`}
+          value={requirePaymentMethod}
+          onValueChange={selectTrialPeriod}
+        >
           <OnboardingPlanCard
             title={t`Upgraded`}
             titleSuffix={t`· FREE`}
             note={t`No charge will be made. You'll receive an email reminder 7 days before it ends.`}
-            selected={requirePaymentMethod}
-            onSelect={selectTrialPeriod(true)}
+            value={true}
           >
             {requirePaymentMethod &&
               (isPaymentAvailable ? (
@@ -212,11 +216,10 @@ const UpgradeFreeTrialContent = ({
               title={t`Basic`}
               titleSuffix={t`without credit card`}
               badge={t`${withoutCreditCardTrialPeriod.duration} days`}
-              selected={!requirePaymentMethod}
-              onSelect={selectTrialPeriod(false)}
+              value={false}
             />
           )}
-        </StyledCards>
+        </RadioGroup>
       </OnboardingStepAnimatedItem>
 
       <OnboardingStepAnimatedItem index={4}>

@@ -2,9 +2,12 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
-import { addDays } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { type BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
 import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
@@ -13,16 +16,11 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { alignGrantExpiryToPeriodEnd } from 'src/engine/core-modules/billing/utils/align-grant-expiry-to-period-end.util';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
-import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-// Used when a workspace has no subscription yet, which happens for rewards
-// granted during signup. The next period transition re-emits the unspent part
-// aligned on the real billing period.
-const PROVISIONAL_GRANT_VALIDITY_IN_DAYS = 31;
 
 type GrantCreditsParams = {
   workspaceId: string;
@@ -32,7 +30,11 @@ type GrantCreditsParams = {
   grantedByUserId?: string | null;
   idempotencyKey?: string | null;
   effectiveAt?: Date;
-  expiresAt?: Date;
+  // Only set for a deliberately time-boxed grant. Left out, the credits stay
+  // spendable until a period transition settles them. Taken as the operator's
+  // intent rather than a date so that the alignment onto a period end happens
+  // here, where the invariant belongs, whoever the caller is.
+  expiresInDays?: number | null;
   sourceGrantId?: string | null;
 };
 
@@ -76,18 +78,36 @@ export class BillingCreditService {
         workspaceId,
       });
 
-    const { effectiveAt, expiresAt } = computeGrantValidity(
-      params,
-      subscription,
-    );
+    const effectiveAt = params.effectiveAt ?? new Date();
 
-    const grant = await this.billingCreditGrantService.createGrant({
-      ...params,
-      effectiveAt,
-      expiresAt,
-    });
+    // A replay answers with what the first attempt wrote, so the operator's
+    // intent is never re-derived: the subscription that anchored the original
+    // expiry may have been canceled since, and the insert would discard the
+    // answer anyway.
+    const knownGrant = await this.findGrantByIdempotencyKey(params);
 
+    const grant = isDefined(knownGrant)
+      ? null
+      : await this.billingCreditGrantService.createGrant({
+          ...params,
+          effectiveAt,
+          expiresAt: resolveGrantExpiry({
+            effectiveAt,
+            expiresInDays: params.expiresInDays,
+            subscription,
+            workspaceId,
+          }),
+        });
+
+    // Answers with the row that already exists rather than null, so a caller
+    // recovering from a lost response does not have to look it up again. Read
+    // again when the check above came back empty: the insert still reported a
+    // duplicate, so another attempt won the key between the two, and only the
+    // second read can see it.
     if (!isDefined(grant)) {
+      const alreadyWrittenGrant =
+        knownGrant ?? (await this.findGrantByIdempotencyKey(params));
+
       this.logger.log(
         `Replayed credit grant for workspace ${workspaceId} (idempotency key ${params.idempotencyKey}), repairing derived state`,
       );
@@ -99,7 +119,7 @@ export class BillingCreditService {
         subscription,
       });
 
-      return null;
+      return alreadyWrittenGrant;
     }
 
     await this.refreshWorkspaceCreditState({
@@ -109,6 +129,20 @@ export class BillingCreditService {
     });
 
     return grant;
+  }
+
+  private async findGrantByIdempotencyKey({
+    workspaceId,
+    idempotencyKey,
+  }: GrantCreditsParams): Promise<BillingCreditGrantEntity | null> {
+    if (!isDefined(idempotencyKey)) {
+      return null;
+    }
+
+    return this.billingCreditGrantService.findGrantByIdempotencyKey(
+      workspaceId,
+      idempotencyKey,
+    );
   }
 
   async revokeGrant({
@@ -163,7 +197,7 @@ export class BillingCreditService {
     const revokedAtMs = (grant.revokedAt ?? new Date()).getTime();
     const wasActiveWhenRevoked =
       grant.effectiveAt.getTime() <= revokedAtMs &&
-      grant.expiresAt.getTime() > revokedAtMs;
+      (!isDefined(grant.expiresAt) || grant.expiresAt.getTime() > revokedAtMs);
 
     await this.refreshWorkspaceCreditState({
       workspaceId,
@@ -213,6 +247,16 @@ export class BillingCreditService {
         availableDeltaMicro,
         isReplay,
         adjustmentKey,
+        // Incrementing a warm counter leaves its lifetime in place, so credits
+        // lapsing before the period ends would stay spendable through the
+        // cache. Checked here rather than at each call site so that the
+        // rollover, which carries deadlines forward too, cannot miss it.
+        mustRebuildCounter: isDefined(
+          await this.billingCreditGrantService.findEarliestExpiryBefore({
+            workspaceId,
+            boundary: subscription.currentPeriodEnd,
+          }),
+        ),
       });
     }
 
@@ -234,6 +278,7 @@ export class BillingCreditService {
     availableDeltaMicro,
     isReplay,
     adjustmentKey,
+    mustRebuildCounter,
   }: {
     workspaceId: string;
     periodStart: Date;
@@ -241,14 +286,16 @@ export class BillingCreditService {
     availableDeltaMicro: number;
     isReplay: boolean;
     adjustmentKey?: string;
+    mustRebuildCounter: boolean;
   }): Promise<void> {
     const rebuildCounter =
-      isReplay &&
-      (!isDefined(adjustmentKey) ||
-        !(await this.billingUsageCacheService.hasCounterAdjustmentBeenApplied(
-          workspaceId,
-          adjustmentKey,
-        )));
+      mustRebuildCounter ||
+      (isReplay &&
+        (!isDefined(adjustmentKey) ||
+          !(await this.billingUsageCacheService.hasCounterAdjustmentBeenApplied(
+            workspaceId,
+            adjustmentKey,
+          ))));
 
     await this.applyCounterWrite({
       workspaceId,
@@ -310,33 +357,50 @@ export class BillingCreditService {
   }
 }
 
+// Exact 24-hour days rather than calendar ones: the result is only ever
+// compared against UTC period boundaries, and local-time day arithmetic drifts
+// by an hour across a DST change.
+const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+
 const buildRevocationAdjustmentKey = (grantId: string): string =>
   `revoke:${grantId}`;
 
-const computeGrantValidity = (
-  params: GrantCreditsParams,
-  subscription: BillingSubscriptionEntity | undefined,
-): { effectiveAt: Date; expiresAt: Date } => {
-  const effectiveAt = params.effectiveAt ?? new Date();
-
-  if (isDefined(params.expiresAt)) {
-    return { effectiveAt, expiresAt: params.expiresAt };
+// Null unless the caller asked for a time-boxed grant, and then a period end
+// rather than the exact day, for the reasons alignGrantExpiryToPeriodEnd
+// documents.
+//
+// Refuses rather than falling back to null when there is no period to align to:
+// returning null there would read as "no expiry" and hand out credits that
+// never lapse, which is the opposite of what was asked for and cannot be
+// noticed from the result.
+const resolveGrantExpiry = ({
+  effectiveAt,
+  expiresInDays,
+  subscription,
+  workspaceId,
+}: {
+  effectiveAt: Date;
+  expiresInDays: number | null | undefined;
+  subscription: BillingSubscriptionEntity | undefined;
+  workspaceId: string;
+}): Date | null => {
+  if (!isDefined(expiresInDays)) {
+    return null;
   }
 
-  // A lapsed subscription still carries the period that just ended, and that is
-  // exactly the workspace someone is most likely to be granting credits to.
-  // Falling back keeps the grant from expiring on creation.
-  const currentPeriodEnd = isDefined(subscription)
-    ? getBillingSubscriptionPeriod(subscription).periodEnd
-    : null;
-  const hasUsablePeriodEnd =
-    isDefined(currentPeriodEnd) &&
-    currentPeriodEnd.getTime() > effectiveAt.getTime();
+  if (!isDefined(subscription)) {
+    throw new BillingException(
+      `Cannot grant credits to workspace ${workspaceId} expiring in ${expiresInDays} days: it has no subscription, so there is no billing period to expire them at`,
+      BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+    );
+  }
 
-  return {
-    effectiveAt,
-    expiresAt: hasUsablePeriodEnd
-      ? currentPeriodEnd
-      : addDays(effectiveAt, PROVISIONAL_GRANT_VALIDITY_IN_DAYS),
-  };
+  return alignGrantExpiryToPeriodEnd({
+    requestedExpiresAt: new Date(
+      effectiveAt.getTime() + expiresInDays * MILLISECONDS_PER_DAY,
+    ),
+    currentPeriodStart: subscription.currentPeriodStart,
+    currentPeriodEnd: subscription.currentPeriodEnd,
+    interval: subscription.interval,
+  });
 };

@@ -5,7 +5,7 @@ exports[`signUpInWorkspace with an expired personal invitation (integration) den
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "User does not have access to this workspace",
+    "userFriendlyMessage": "User does not have access to this organization",
   },
   "message": "User does not have access to this workspace",
   "name": "ForbiddenError",

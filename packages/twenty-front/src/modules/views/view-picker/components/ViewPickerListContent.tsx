@@ -18,7 +18,6 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useOpenCreateViewDropdown } from '@/views/hooks/useOpenCreateViewDropown';
 import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
 import { ViewPickerOptionDropdown } from '@/views/view-picker/components/ViewPickerOptionDropdown';
-import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
@@ -70,7 +69,7 @@ export const ViewPickerListContent = () => {
 
   const handleViewSelect = (viewId: string) => {
     changeView(viewId);
-    closeDropdown(VIEW_PICKER_DROPDOWN_ID);
+    closeDropdown();
   };
 
   const { openCreateViewDropdown } = useOpenCreateViewDropdown();

@@ -88,7 +88,7 @@ export const TabButton = ({
       {tooltipContent && (
         <AppTooltip
           anchorSelect={`#${tabElementId}`}
-          content={tooltipContent}
+          title={tooltipContent}
           noArrow
           place="bottom"
           positionStrategy="fixed"

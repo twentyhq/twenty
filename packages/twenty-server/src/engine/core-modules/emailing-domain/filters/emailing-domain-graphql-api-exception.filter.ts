@@ -28,6 +28,7 @@ export class EmailingDomainGraphqlApiExceptionFilter implements ExceptionFilter 
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS:
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE:
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE:
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE:
       case EmailingDomainExceptionCode.EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY:
       case EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED:
         throw new UserInputError(exception);

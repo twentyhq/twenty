@@ -47,8 +47,8 @@ jest.mock('@/ui/layout/dropdown/components/DropdownContent', () => ({
 jest.mock('@/ui/layout/selectable-list/components/SelectableListItem', () => ({
   SelectableListItem: ({ children }: { children: React.ReactNode }) => children,
 }));
-jest.mock('@/command-menu/components/CommandMenuItemToggle', () => ({
-  CommandMenuItemToggle: () => null,
+jest.mock('@/command-menu/components/CommandMenuItemSwitch', () => ({
+  CommandMenuItemSwitch: () => null,
 }));
 jest.mock('@/command-menu/components/CommandMenuItemDropdown', () => ({
   CommandMenuItemDropdown: ({

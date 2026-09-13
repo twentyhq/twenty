@@ -71,6 +71,7 @@ const createValidManifest = (universalIdentifier: string) =>
     navigationMenuItems: [],
     pageLayouts: [],
     pageLayoutTabs: [],
+    pageLayoutWidgets: [],
   });
 
 const insertRegistrationWithSource = async (

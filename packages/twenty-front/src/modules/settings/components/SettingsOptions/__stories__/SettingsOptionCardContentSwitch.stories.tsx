@@ -1,0 +1,92 @@
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
+import { styled } from '@linaria/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
+import { IconBell, IconLock, IconRobot, IconUsers } from 'twenty-ui/icon';
+import { ComponentDecorator } from 'twenty-ui/testing';
+
+const StyledContainer = styled.div`
+  width: 480px;
+`;
+
+const SettingsOptionCardContentSwitchWrapper = (
+  args: React.ComponentProps<typeof SettingsOptionCardContentSwitch>,
+) => {
+  const [checked, setChecked] = useState(args.checked);
+
+  return (
+    <StyledContainer>
+      <SettingsOptionCardContentSwitch
+        checked={checked}
+        onChange={setChecked}
+        Icon={args.Icon}
+        title={args.title}
+        description={args.description}
+        divider={args.divider}
+        disabled={args.disabled}
+        advancedMode={args.advancedMode}
+      />
+    </StyledContainer>
+  );
+};
+
+const meta: Meta<typeof SettingsOptionCardContentSwitchWrapper> = {
+  title: 'Modules/Settings/SettingsOptionCardContentSwitch',
+  component: SettingsOptionCardContentSwitchWrapper,
+  decorators: [ComponentDecorator],
+  parameters: {
+    maxWidth: 800,
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof SettingsOptionCardContentSwitchWrapper>;
+
+export const Default: Story = {
+  args: {
+    Icon: IconBell,
+    title: 'Notifications',
+    description: 'Receive notifications about important updates',
+    checked: true,
+  },
+  argTypes: {
+    Icon: { control: false },
+    onChange: { control: false },
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    Icon: IconLock,
+    title: 'Locked Setting',
+    description: 'This setting is currently unavailable',
+    checked: false,
+    disabled: true,
+  },
+};
+
+export const AdvancedMode: Story = {
+  args: {
+    Icon: IconRobot,
+    title: 'Advanced Features',
+    description: 'Enable experimental features',
+    checked: true,
+    advancedMode: true,
+  },
+};
+
+export const WithoutIcon: Story = {
+  args: {
+    title: 'Simple Switch',
+    description: 'A basic switch without an icon',
+    checked: true,
+  },
+};
+
+export const WithoutDescription: Story = {
+  args: {
+    Icon: IconUsers,
+    title: 'Team Access',
+    checked: false,
+  },
+};

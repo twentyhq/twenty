@@ -1,3 +1,4 @@
+import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
 
 import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
@@ -10,7 +11,7 @@ import { IconX } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledQueueContainer = styled.div`
+const StyledQueueContainer = styled(StyledAiChatContentContainer)`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};

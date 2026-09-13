@@ -17,7 +17,6 @@ export const EXPECTED_MANIFEST: Manifest = {
   },
   permissionFlags: [],
   skills: [],
-  translations: {},
   agents: [],
   publicAssets: [],
   indexes: [],
@@ -87,6 +86,7 @@ export const EXPECTED_MANIFEST: Manifest = {
   navigationMenuItems: [],
   pageLayouts: [],
   pageLayoutTabs: [],
+  pageLayoutWidgets: [],
   roles: [
     {
       universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000040',

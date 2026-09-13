@@ -3,7 +3,10 @@ import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 
 import {
   type Manifest,
+  type PageLayoutManifest,
+  type PageLayoutTabManifest,
   type PageLayoutWidgetManifest,
+  normalizePageLayoutTabManifest,
 } from 'twenty-shared/application';
 import {
   GRAPH_WIDGET_CONFIGURATION_TYPES,
@@ -18,6 +21,7 @@ import {
   MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
   isRelationFieldManifest,
 } from '@/cli/utilities/build/manifest/utils/manifest-validation-helpers';
+import { getPageLayoutDeprecationWarnings } from '@/cli/utilities/build/manifest/utils/get-page-layout-deprecation-warnings';
 import { validateTimelineActivityTypes } from '@/cli/utilities/build/manifest/utils/validate-timeline-activity-types';
 
 const VALID_RELATION_TYPES: string[] = [
@@ -113,7 +117,7 @@ const validateRelationFields = (fields: ManifestField[]): string[] => {
 };
 
 const collectPageLayoutWidgets = (
-  manifest: Pick<Manifest, 'pageLayouts' | 'pageLayoutTabs'>,
+  manifest: Pick<Manifest, 'pageLayouts' | 'pageLayoutTabs' | 'pageLayoutWidgets'>,
 ): PageLayoutWidgetManifest[] => {
   const widgetsFromPageLayouts = manifest.pageLayouts.flatMap(
     (pageLayout) => pageLayout.tabs?.flatMap((tab) => tab.widgets ?? []) ?? [],
@@ -123,7 +127,11 @@ const collectPageLayoutWidgets = (
     (tab) => tab.widgets ?? [],
   );
 
-  return [...widgetsFromPageLayouts, ...widgetsFromStandaloneTabs];
+  return [
+    ...widgetsFromPageLayouts,
+    ...widgetsFromStandaloneTabs,
+    ...(manifest.pageLayoutWidgets ?? []),
+  ];
 };
 
 const validateGraphWidgets = (
@@ -154,6 +162,54 @@ const validateGraphWidgets = (
   }
 
   return errors;
+};
+
+const validatePageLayoutTab = ({
+  pageLayoutTab,
+  pageLayoutType,
+}: {
+  pageLayoutTab: PageLayoutTabManifest;
+  pageLayoutType: PageLayoutManifest['type'] | undefined;
+}): string[] => {
+  const result = normalizePageLayoutTabManifest({
+    pageLayoutTabManifest: pageLayoutTab,
+    pageLayoutType,
+  });
+
+  return result.status === 'fail' ? result.errors : [];
+};
+
+const validatePageLayoutTabs = (
+  manifest: Pick<Manifest, 'pageLayouts' | 'pageLayoutTabs'>,
+): string[] => {
+  const pageLayoutTypeByUniversalIdentifier = new Map(
+    manifest.pageLayouts.map((pageLayout) => [
+      pageLayout.universalIdentifier,
+      pageLayout.type,
+    ]),
+  );
+
+  const nestedTabErrors = manifest.pageLayouts.flatMap((pageLayout) =>
+    (pageLayout.tabs ?? []).flatMap((pageLayoutTab) =>
+      validatePageLayoutTab({
+        pageLayoutTab,
+        pageLayoutType: pageLayout.type,
+      }),
+    ),
+  );
+
+  const standaloneTabErrors = manifest.pageLayoutTabs.flatMap((pageLayoutTab) =>
+    validatePageLayoutTab({
+      pageLayoutTab,
+      pageLayoutType: isDefined(pageLayoutTab.pageLayoutUniversalIdentifier)
+        ? pageLayoutTypeByUniversalIdentifier.get(
+            pageLayoutTab.pageLayoutUniversalIdentifier,
+          )
+        : undefined,
+    }),
+  );
+
+  return [...nestedTabErrors, ...standaloneTabErrors];
 };
 
 const invalidUniversalIdentifierVersions = (
@@ -188,7 +244,7 @@ const invalidUniversalIdentifierVersions = (
 
 export const manifestValidate = (manifest: Manifest) => {
   const errors: string[] = [];
-  const warnings: string[] = [];
+  const warnings = getPageLayoutDeprecationWarnings(manifest);
 
   const universalIdentifiers = findUniversalIdentifiers(manifest);
 
@@ -213,6 +269,8 @@ export const manifestValidate = (manifest: Manifest) => {
   ];
 
   errors.push(...validateRelationFields(allFields));
+
+  errors.push(...validatePageLayoutTabs(manifest));
 
   errors.push(...validateGraphWidgets(collectPageLayoutWidgets(manifest)));
 

@@ -7,6 +7,7 @@ import {
 } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import {
   SettingsTableCard,
   type TableItem,
@@ -73,13 +74,13 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
     },
   );
 
-  const { data: applicationSummaryData } = useQuery(
-    FindOneApplicationSummaryDocument,
-    {
+  const { data: applicationSummaryData, refetch: refetchApplicationSummary } =
+    useQuery(FindOneApplicationSummaryDocument, {
       variables: { universalIdentifier: registration.universalIdentifier },
       skip: !registration.universalIdentifier,
-    },
-  );
+    });
+
+  useRefetchOnApplicationOperation({ refetch: refetchApplicationSummary });
 
   const isApplicationInstalled = isDefined(
     applicationSummaryData?.findOneApplication,
@@ -125,7 +126,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
           label={ownerWorkspace.displayName}
         />
       ) : (
-        <Tag color="orange" text={t`Unclaimed`} />
+        <Tag color="orange">{t`Unclaimed`}</Tag>
       ),
     });
 
@@ -186,9 +187,9 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
       Icon: IconDownload,
       label: t`Installed`,
       value: isApplicationInstalled ? (
-        <Tag color="green" text={t`Yes`} />
+        <Tag color="green">{t`Yes`}</Tag>
       ) : (
-        <Tag color="orange" text={t`No`} />
+        <Tag color="orange">{t`No`}</Tag>
       ),
     });
 

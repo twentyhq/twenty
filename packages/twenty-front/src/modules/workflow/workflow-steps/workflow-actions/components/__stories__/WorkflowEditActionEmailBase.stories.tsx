@@ -23,6 +23,7 @@ const mockedConnectedAccounts = [
     handle: 'tim@apple.dev',
     provider: 'google',
     authFailedAt: null,
+    authFailedReason: null,
     archivedAt: null,
     scopes: ['email', 'calendar'],
     handleAliases: ['sales@apple.dev'],

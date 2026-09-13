@@ -29,6 +29,8 @@ type CampaignStatusTransition = {
   from: MessageCampaignStatus;
   to: MessageCampaignStatus;
   roleId?: string;
+  scheduledAt?: Date | null;
+  fromScheduledAt?: Date;
 };
 
 @Injectable()
@@ -47,7 +49,24 @@ export class MessageCampaignLifecycleService {
     from,
     to,
     roleId,
+    scheduledAt,
+    fromScheduledAt,
   }: CampaignStatusTransition): Promise<boolean> {
+    const update: Partial<MessageCampaignWorkspaceEntity> = { status: to };
+
+    if (scheduledAt !== undefined) {
+      update.scheduledAt = scheduledAt;
+    }
+
+    const criteria: FindOptionsWhere<MessageCampaignWorkspaceEntity> = {
+      id: campaignId,
+      status: from,
+    };
+
+    if (isDefined(fromScheduledAt)) {
+      criteria.scheduledAt = fromScheduledAt;
+    }
+
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const campaignRepository = this.workspaceOrmManager.getRepository(
@@ -57,15 +76,35 @@ export class MessageCampaignLifecycleService {
             : { shouldBypassPermissionChecks: true },
         );
 
-        const { affected } = await campaignRepository.update(
-          { id: campaignId, status: from },
-          { status: to },
-        );
+        const { affected } = await campaignRepository.update(criteria, update);
 
         return affected === 1;
       },
       isDefined(roleId) ? undefined : buildSystemAuthContext(workspaceId),
     );
+  }
+
+  async isCampaignScheduledFor({
+    workspaceId,
+    campaignId,
+    scheduledAt,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+    scheduledAt: Date;
+  }): Promise<boolean> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const campaignRepository = this.workspaceOrmManager.getRepository(
+        MessageCampaignWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
+
+      return campaignRepository.existsBy({
+        id: campaignId,
+        status: MessageCampaignStatus.SCHEDULED,
+        scheduledAt,
+      });
+    }, buildSystemAuthContext(workspaceId));
   }
 
   // Returns null once the campaign is gone or canceled, which is how the send
@@ -106,6 +145,19 @@ export class MessageCampaignLifecycleService {
       userWorkspaceId,
     });
 
+    const unscheduled = await this.transitionCampaignStatus({
+      workspaceId,
+      campaignId,
+      roleId,
+      from: MessageCampaignStatus.SCHEDULED,
+      to: MessageCampaignStatus.DRAFT,
+      scheduledAt: null,
+    });
+
+    if (unscheduled) {
+      return { campaignId, canceledMessageCount: 0 };
+    }
+
     const canceled = await this.transitionCampaignStatus({
       workspaceId,
       campaignId,
@@ -116,7 +168,7 @@ export class MessageCampaignLifecycleService {
 
     if (!canceled) {
       throw new EmailingDomainException(
-        `Campaign ${campaignId} is not sending`,
+        `Campaign ${campaignId} is neither scheduled nor sending`,
         EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE,
       );
     }

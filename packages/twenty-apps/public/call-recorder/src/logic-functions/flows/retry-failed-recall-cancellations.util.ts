@@ -6,9 +6,8 @@ import { hasMeetingEnded } from 'src/logic-functions/domain/has-meeting-ended.ut
 import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
-import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { replaceCanceledCallRecordingExternalBotId } from 'src/logic-functions/data/replace-canceled-call-recording-external-bot-id.util';
-import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
+import { cancelRecallBotForCanceledCallRecording } from 'src/logic-functions/flows/cancel-recall-bot-for-canceled-call-recording.util';
 import { findScheduledRecallBotIdsByCallRecordingId } from 'src/logic-functions/recall-api/find-scheduled-recall-bot-ids-by-call-recording-id.util';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
@@ -80,30 +79,14 @@ export const retryFailedRecallCancellations = async ({
       continue;
     }
 
-    // Calendar reconciliation can reactivate the request while this job is running.
-    const latestCallRecording = (
-      await findCallRecordingsByIds(client, [callRecording.id])
-    )[0];
+    const outcome = await cancelRecallBotForCanceledCallRecording({
+      client,
+      callRecordingId: callRecording.id,
+      externalBotId,
+    });
 
-    if (
-      latestCallRecording?.recordingRequestStatus !==
-        CallRecordingRequestStatus.CANCELED ||
-      (!isUndefined(latestCallRecording.externalBotId) &&
-        latestCallRecording.externalBotId !== externalBotId)
-    ) {
+    if (outcome !== 'canceled') {
       continue;
-    }
-
-    if (!(await cancelOrEjectRecallBot(externalBotId))) {
-      continue;
-    }
-
-    if (latestCallRecording.externalBotId === externalBotId) {
-      await replaceCanceledCallRecordingExternalBotId(client, {
-        id: callRecording.id,
-        expectedExternalBotId: externalBotId,
-        nextExternalBotId: null,
-      });
     }
 
     canceledExternalBotCallRecordingIds.push(callRecording.id);

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID } from '@/object-record/record-group/constants/RecordGroupReorderConfirmationModalId';
+import { getRecordGroupReorderConfirmationModalId } from '@/object-record/record-group/utils/getRecordGroupReorderConfirmationModalId';
 import { useReorderRecordGroups } from '@/object-record/record-group/hooks/useReorderRecordGroups';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
@@ -127,7 +127,7 @@ export const useRecordBoardColumnDndKit = (): {
         fromIndex: sourceIndex,
         toIndex: destinationIndex,
       });
-      openModal(RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID);
+      openModal(getRecordGroupReorderConfirmationModalId(recordIndexId));
       return;
     }
 

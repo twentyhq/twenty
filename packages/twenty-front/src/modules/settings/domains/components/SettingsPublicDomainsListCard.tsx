@@ -74,7 +74,7 @@ export const SettingsPublicDomainsListCard = ({
       RowRightComponent={({ item: publicDomain }) => (
         <>
           {!publicDomain.isValidated && (
-            <Status color="orange" text={t`Pending`} />
+            <Status color="orange">{t`Pending`}</Status>
           )}
           <SettingPublicDomainRowDropdownMenu publicDomain={publicDomain} />
         </>

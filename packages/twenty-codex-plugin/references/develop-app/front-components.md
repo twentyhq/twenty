@@ -33,7 +33,7 @@ Keep imports narrow:
 
 - Use `twenty-sdk/front-component` for front component hooks and host APIs.
 - Use `twenty-client-sdk/core` or `twenty-client-sdk/metadata` for data access.
-- Install `twenty-ui@1.0.0-alpha.1` from npm and import Twenty UI components, icons, and theme tokens from its subpaths (`twenty-ui/input`, `twenty-ui/data-display`, `twenty-ui/icon`, `twenty-ui/typography`, `twenty-ui/theme-constants`, and others) before adding external UI libraries.
+- Install `twenty-ui` from npm at the same version as `twenty-sdk` and `twenty-client-sdk` and import Twenty UI components, icons, and theme tokens from its subpaths (`twenty-ui/input`, `twenty-ui/data-display`, `twenty-ui/icon`, `twenty-ui/typography`, `twenty-ui/theme-constants`, and others) before adding external UI libraries.
 
 The front component renderer provides a Twenty `ThemeProvider` around the remote root. For isolated examples or local story-style verification, wrapping the component in `ThemeProvider` from `twenty-ui/theme-constants` is also acceptable.
 

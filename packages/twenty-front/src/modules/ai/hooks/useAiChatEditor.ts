@@ -18,6 +18,8 @@ import { dispatchAgentChatEnsureThreadForDraftEvent } from '@/ai/utils/dispatchA
 import { dispatchAgentChatSendMessageEvent } from '@/ai/utils/dispatchAgentChatSendMessageEvent';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
+import { SKILL_SUGGESTION_PLUGIN_KEY } from '@/skill-suggestion/constants/SkillSuggestionPluginKey';
+import { useSkillSuggestionSearch } from '@/skill-suggestion/hooks/useSkillSuggestionSearch';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -33,6 +35,7 @@ export const useAiChatEditor = () => {
   const [agentChatDraftsByThreadId, setAgentChatDraftsByThreadId] =
     useAtomState(agentChatDraftsByThreadIdState);
   const { searchMentionRecords } = useMentionSearch();
+  const { searchSkills } = useSkillSuggestionSearch();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
@@ -41,16 +44,19 @@ export const useAiChatEditor = () => {
   const initialDraft = agentChatDraftsByThreadId[draftKey] ?? '';
   const editor = useAdvancedTextEditor({
     profile: AI_CHAT_EDITOR_PROFILE,
-    placeholder: t`Ask, search or make anything...`,
+    placeholder: t`Ask anything, @ a record or / a skill...`,
     readonly: false,
     defaultValue: initialDraft,
     editorProps: {
       handleKeyDown: (view, event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
-          const suggestionState = MENTION_SUGGESTION_PLUGIN_KEY.getState(
-            view.state,
+          const isSuggestionMenuOpen = [
+            MENTION_SUGGESTION_PLUGIN_KEY,
+            SKILL_SUGGESTION_PLUGIN_KEY,
+          ].some(
+            (pluginKey) => pluginKey.getState(view.state)?.active === true,
           );
-          if (suggestionState?.active === true) {
+          if (isSuggestionMenuOpen) {
             return false;
           }
 
@@ -97,7 +103,7 @@ export const useAiChatEditor = () => {
     },
   });
 
-  // Keep search function in sync via Tiptap extension storage,
+  // Keep search functions in sync via Tiptap extension storage,
   // avoiding stale closures without useRef
   if (isDefined(editor)) {
     const storage = editor.extensionStorage as unknown as Record<
@@ -108,6 +114,11 @@ export const useAiChatEditor = () => {
       searchMentionRecords: typeof searchMentionRecords;
     };
     mentionStorage.searchMentionRecords = searchMentionRecords;
+
+    const skillStorage = storage['skill-suggestion'] as {
+      searchSkills: typeof searchSkills;
+    };
+    skillStorage.searchSkills = searchSkills;
   }
 
   const handleRestoreEditorContent = useCallback(

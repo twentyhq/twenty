@@ -152,7 +152,7 @@ const RelationFieldDiffValue = ({
       )}
       <AppTooltip
         anchorSelect={`#${tooltipAnchorId}`}
-        content={tooltipContent}
+        title={tooltipContent}
         delay={TooltipDelay.shortDelay}
         place={TooltipPosition.Bottom}
         positionStrategy="fixed"

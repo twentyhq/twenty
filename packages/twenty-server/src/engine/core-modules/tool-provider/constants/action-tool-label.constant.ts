@@ -7,11 +7,14 @@ export const ACTION_TOOL_IDS = [
   'http_request',
   'send_email',
   'draft_email',
+  'find_connected_accounts',
   'create_calendar_event',
   'search_help_center',
   'code_interpreter',
   'navigate_app',
   'save_campaign',
+  'create_file_upload',
+  'complete_file_upload',
 ] as const;
 
 export type ActionToolId = (typeof ACTION_TOOL_IDS)[number];
@@ -25,6 +28,9 @@ export const ACTION_TOOL_LABELS: Record<ActionToolId, ActionToolLabel> = {
   },
   draft_email: {
     label: i18nLabel(msg`Draft Email`),
+  },
+  find_connected_accounts: {
+    label: i18nLabel(msg`Find Connected Accounts`),
   },
   create_calendar_event: {
     label: i18nLabel(msg`Create Calendar Event`),
@@ -40,5 +46,11 @@ export const ACTION_TOOL_LABELS: Record<ActionToolId, ActionToolLabel> = {
   },
   save_campaign: {
     label: i18nLabel(msg`Save Campaign`),
+  },
+  create_file_upload: {
+    label: i18nLabel(msg`Create File Upload`),
+  },
+  complete_file_upload: {
+    label: i18nLabel(msg`Complete File Upload`),
   },
 };

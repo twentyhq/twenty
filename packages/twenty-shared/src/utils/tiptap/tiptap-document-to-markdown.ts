@@ -1,4 +1,5 @@
 import { formatRecordReference } from '@/ai/utils/format-record-reference.util';
+import { formatSkillReference } from '@/ai/utils/format-skill-reference.util';
 
 import { parseTipTapJsonDocument } from './parse-tiptap-json-document';
 import { type TipTapDocument } from './tiptap-document';
@@ -76,6 +77,17 @@ const renderMention = (node: TipTapNode): string => {
   return '';
 };
 
+const renderSkillTag = (node: TipTapNode): string => {
+  const skillId = node.attrs?.skillId;
+  const label = node.attrs?.label;
+
+  if (typeof skillId === 'string' && typeof label === 'string') {
+    return formatSkillReference({ skillId, label });
+  }
+
+  return typeof label === 'string' ? label : '';
+};
+
 const renderListItem = (item: TipTapNode, marker: string): string => {
   const [firstLine = '', ...continuationLines] = renderChildren(item)
     .trim()
@@ -111,6 +123,8 @@ const renderTipTapNodeToMarkdown = (node: TipTapNode): string => {
         : '';
     case TIPTAP_NODE_TYPES.MENTION_TAG:
       return renderMention(node);
+    case TIPTAP_NODE_TYPES.SKILL_TAG:
+      return renderSkillTag(node);
     case TIPTAP_NODE_TYPES.HEADING: {
       const level =
         typeof node.attrs?.level === 'number' ? node.attrs.level : 1;

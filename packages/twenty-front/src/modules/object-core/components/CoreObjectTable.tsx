@@ -5,7 +5,11 @@ import {
   CoreObjectTableBody,
   CoreObjectTableRow,
 } from '@/object-core/components/CoreObjectTableRow';
+import { CoreObjectTableCheckboxCell } from '@/object-core/components/CoreObjectTableCheckboxCell';
+import { CORE_OBJECT_TABLE_CHECKBOX_COLUMN_GRID_TRACK } from '@/object-core/constants/CoreObjectTableCheckboxColumnGridTrack';
 import { type CoreObjectTableColumn } from '@/object-core/types/CoreObjectTableColumn';
+import { type CoreObjectTableSelection } from '@/object-core/types/CoreObjectTableSelection';
+import { getCoreObjectTableSelectionStatus } from '@/object-core/utils/getCoreObjectTableSelectionStatus';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -22,6 +26,7 @@ type CoreObjectTableProps<TItem> = {
   getItemKey: (item: TItem) => string;
   getItemLink?: (item: TItem) => string | undefined;
   initialSort?: TableMetadata<TItem>['initialSort'];
+  selection?: CoreObjectTableSelection<TItem>;
 };
 
 const isSortableColumn = <TItem,>(
@@ -36,16 +41,46 @@ export const CoreObjectTable = <TItem,>({
   getItemKey,
   getItemLink,
   initialSort,
+  selection,
 }: CoreObjectTableProps<TItem>) => {
   const { t } = useLingui();
 
-  const gridTemplateColumns = columns
-    .map((column) => column.gridTrack)
-    .join(' ');
+  const isSelectable = isDefined(selection);
+
+  const selectableRowIds = isSelectable
+    ? items
+        .filter((item) => selection.isItemSelectable?.(item) ?? true)
+        .map(getItemKey)
+    : [];
+
+  const { areAllRowsSelected, areSomeRowsSelected } =
+    getCoreObjectTableSelectionStatus({
+      rowIds: selectableRowIds,
+      selectedRowIds: selection?.selectedRowIds ?? [],
+    });
+
+  const gridTemplateColumns = [
+    ...(isSelectable ? [CORE_OBJECT_TABLE_CHECKBOX_COLUMN_GRID_TRACK] : []),
+    ...columns.map((column) => column.gridTrack),
+  ].join(' ');
 
   return (
     <Table>
       <TableRow gridTemplateColumns={gridTemplateColumns}>
+        {isSelectable && (
+          <TableHeader align="center" padding="0">
+            <CoreObjectTableCheckboxCell
+              checked={areAllRowsSelected || areSomeRowsSelected}
+              indeterminate={areSomeRowsSelected}
+              ariaLabel={t`Select all loaded rows`}
+              onToggle={() =>
+                selection.onToggleAllRows(
+                  areAllRowsSelected ? [] : selectableRowIds,
+                )
+              }
+            />
+          </TableHeader>
+        )}
         {columns.map((column) =>
           isSortableColumn(column) ? (
             <SortableTableHeader
@@ -66,19 +101,34 @@ export const CoreObjectTable = <TItem,>({
         )}
       </TableRow>
       <CoreObjectTableBody>
-        {items.map((item) => (
-          <CoreObjectTableRow
-            key={getItemKey(item)}
-            gridTemplateColumns={gridTemplateColumns}
-            to={getItemLink?.(item)}
-          >
-            {columns.map((column) => (
-              <TableCell key={column.fieldName} align={column.align}>
-                {column.renderCell(item)}
-              </TableCell>
-            ))}
-          </CoreObjectTableRow>
-        ))}
+        {items.map((item) => {
+          const rowId = getItemKey(item);
+
+          return (
+            <CoreObjectTableRow
+              key={rowId}
+              gridTemplateColumns={gridTemplateColumns}
+              to={getItemLink?.(item)}
+            >
+              {isSelectable && (
+                <TableCell align="center" padding="0">
+                  {(selection.isItemSelectable?.(item) ?? true) && (
+                    <CoreObjectTableCheckboxCell
+                      checked={selection.selectedRowIds.includes(rowId)}
+                      ariaLabel={t`Select row`}
+                      onToggle={() => selection.onToggleRow(rowId)}
+                    />
+                  )}
+                </TableCell>
+              )}
+              {columns.map((column) => (
+                <TableCell key={column.fieldName} align={column.align}>
+                  {column.renderCell(item)}
+                </TableCell>
+              ))}
+            </CoreObjectTableRow>
+          );
+        })}
       </CoreObjectTableBody>
     </Table>
   );

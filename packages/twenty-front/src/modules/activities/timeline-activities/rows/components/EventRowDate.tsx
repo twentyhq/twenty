@@ -53,7 +53,7 @@ export const EventRowDate = ({ happensAt }: EventRowDateProps) => {
       </StyledEventRowDate>
       <AppTooltip
         anchorSelect={`#${dateElementId}`}
-        content={exactHappensAt}
+        title={exactHappensAt}
         delay={TooltipDelay.mediumDelay}
         noArrow
         place="left"

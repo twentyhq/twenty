@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useNavigate } from 'react-router-dom';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical } from 'twenty-ui/icon';
@@ -8,6 +7,7 @@ import { IconDotsVertical } from 'twenty-ui/icon';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { type PendingInsertionNavigationMenuItem } from '@/navigation-menu-item/common/types/PendingInsertionNavigationMenuItem';
+import { useNavigateToNavigationMenuItemLink } from '@/navigation-menu-item/common/hooks/useNavigateToNavigationMenuItemLink';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
@@ -49,7 +49,8 @@ const computeInsertionPosition = (
 export const useNavigationMenuItemEditOrganizeActions =
   (): OrganizeActionsProps => {
     const { t } = useLingui();
-    const navigate = useNavigate();
+    const { navigateToNavigationMenuItemLink } =
+      useNavigateToNavigationMenuItemLink();
     const { closeSidePanelMenu } = useSidePanelMenu();
     const { navigateSidePanel } = useNavigateSidePanel();
     const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
@@ -127,7 +128,7 @@ export const useNavigationMenuItemEditOrganizeActions =
           lastVisitedViewPerObjectMetadataItem,
         });
         if (isNonEmptyString(link)) {
-          navigate(link);
+          navigateToNavigationMenuItemLink(link);
         }
         navigateSidePanel({
           page: SidePanelPages.NavigationMenuItemEdit,

@@ -18,12 +18,14 @@ import { TABLE_TOKENS } from './table';
 import { TAG_TOKENS } from './tag';
 import { TEXT_TOKENS } from './text';
 import { token } from './token';
+import { TOOLTIP_TOKENS } from './tooltip';
 import { type DesignTokenNode } from './types/DesignTokenNode';
 
 export const DESIGN_TOKENS: DesignTokenNode = {
   icon: ICON_TOKENS,
   modal: MODAL_TOKENS,
   text: TEXT_TOKENS,
+  tooltip: TOOLTIP_TOKENS,
   animation: ANIMATION_TOKENS,
   spacingMultiplicator: token('4', { unit: 'number' }),
   spacing: SPACING_TOKENS,
