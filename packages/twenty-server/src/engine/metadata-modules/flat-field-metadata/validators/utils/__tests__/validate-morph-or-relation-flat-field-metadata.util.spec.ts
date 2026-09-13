@@ -17,19 +17,20 @@ const createObject = (
     universalIdentifier,
   }) as UniversalFlatObjectMetadata;
 
-const createManyToOneField = (): UniversalFlatFieldMetadata<FieldMetadataType.RELATION> =>
-  ({
-    universalIdentifier: FORWARD_FIELD_ID,
-    objectMetadataUniversalIdentifier: CUSTOM_OBJECT_ID,
-    type: FieldMetadataType.RELATION,
-    name: 'opportunity',
-    relationTargetObjectMetadataUniversalIdentifier: OPPORTUNITY_OBJECT_ID,
-    relationTargetFieldMetadataUniversalIdentifier: REVERSE_FIELD_ID,
-    universalSettings: {
-      relationType: RelationType.MANY_TO_ONE,
-      joinColumnName: 'opportunityId',
-    },
-  }) as UniversalFlatFieldMetadata<FieldMetadataType.RELATION>;
+const createManyToOneField =
+  (): UniversalFlatFieldMetadata<FieldMetadataType.RELATION> =>
+    ({
+      universalIdentifier: FORWARD_FIELD_ID,
+      objectMetadataUniversalIdentifier: CUSTOM_OBJECT_ID,
+      type: FieldMetadataType.RELATION,
+      name: 'opportunity',
+      relationTargetObjectMetadataUniversalIdentifier: OPPORTUNITY_OBJECT_ID,
+      relationTargetFieldMetadataUniversalIdentifier: REVERSE_FIELD_ID,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        joinColumnName: 'opportunityId',
+      },
+    }) as UniversalFlatFieldMetadata<FieldMetadataType.RELATION>;
 
 const createReverseOneToManyField =
   (): UniversalFlatFieldMetadata<FieldMetadataType.RELATION> =>
@@ -76,7 +77,8 @@ describe('validateMorphOrRelationFlatFieldMetadata missing reverse (issue #25820
     } as never);
 
     const missingTargetError = errors.find(
-      (error) => error.code === FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+      (error) =>
+        error.code === FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
     );
 
     expect(missingTargetError).toBeDefined();
