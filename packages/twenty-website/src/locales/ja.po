@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 12:23\n"
+"PO-Revision-Date: 2026-09-13 21:09\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -3420,7 +3420,7 @@ msgstr "フィールドレベル権限"
 #. js-lingui-id: kNlm1B
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field-Level Permissions"
-msgstr ""
+msgstr "フィールドレベル権限"
 
 #. js-lingui-id: RnX5oc
 #: src/sections/product-stepper/DataModelVisual/DataModelVisual.tsx
@@ -8156,7 +8156,7 @@ msgstr "二要素認証"
 #. js-lingui-id: C4pKXW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Two-Factor Authentication"
-msgstr ""
+msgstr "二要素認証"
 
 #. js-lingui-id: O+vc/1
 #: src/partner-application/partner-application-copy.ts

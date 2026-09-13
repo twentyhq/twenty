@@ -8,7 +8,7 @@ msgstr ""
 "Language: ro\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 12:23\n"
+"PO-Revision-Date: 2026-09-13 21:09\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
@@ -3420,7 +3420,7 @@ msgstr "Permisiuni la nivel de câmp"
 #. js-lingui-id: kNlm1B
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field-Level Permissions"
-msgstr ""
+msgstr "Permisiuni la nivel de câmp"
 
 #. js-lingui-id: RnX5oc
 #: src/sections/product-stepper/DataModelVisual/DataModelVisual.tsx
@@ -8156,7 +8156,7 @@ msgstr "Autentificare cu doi factori"
 #. js-lingui-id: C4pKXW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Two-Factor Authentication"
-msgstr ""
+msgstr "Autentificare cu doi factori"
 
 #. js-lingui-id: O+vc/1
 #: src/partner-application/partner-application-copy.ts
