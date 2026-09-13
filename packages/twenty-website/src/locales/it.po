@@ -8,7 +8,7 @@ msgstr ""
 "Language: it\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 20:16\n"
+"PO-Revision-Date: 2026-09-13 21:09\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2996,11 +2996,6 @@ msgstr "Elevate Consulting usa Twenty come backbone API che collega fatturazione
 msgid "Elevate's CEO was so impressed with Twenty he started recommending it to clients before the internal setup was even complete. The team is exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs."
 msgstr "Il CEO di Elevate è rimasto così colpito da Twenty che ha iniziato a consigliarlo ai clienti ancora prima che il setup interno fosse completo. Il team sta valutando di portare Twenty nei progetti per i clienti come parte della pratica di consulenza, anche come backend per prodotti personalizzati costruiti su misura per specifiche esigenze operative."
 
-#. js-lingui-id: FNyrb0
-#: src/sections/product-feature/data/feature-tiles.ts
-msgid "Email & Calendar"
-msgstr "Email e Calendario"
-
 #. js-lingui-id: jTgK6B
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Email and calendar Blocklist"
@@ -3042,6 +3037,7 @@ msgid "Emails"
 msgstr "Email"
 
 #. js-lingui-id: XGd8Wo
+#: src/sections/product-feature/data/feature-tiles.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Emails & Calendar"
 msgstr "Email e Calendario"
@@ -3401,11 +3397,6 @@ msgstr "App in evidenza"
 msgid "Feb"
 msgstr "Feb"
 
-#. js-lingui-id: hXRm6J
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Field Level Permission"
-msgstr "Permission a livello di campo"
-
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets"
@@ -3424,6 +3415,11 @@ msgstr "I widget di campo ora supportano più tipi di relazione, così i layout 
 #. js-lingui-id: e6BgMV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Field-level permissions"
+msgstr "Permessi a livello di campo"
+
+#. js-lingui-id: kNlm1B
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Field-Level Permissions"
 msgstr "Permessi a livello di campo"
 
 #. js-lingui-id: RnX5oc
@@ -6818,6 +6814,7 @@ msgstr "I workspace self-hosted ora possono tracciare l'utilizzo in modo più ac
 
 #. js-lingui-id: GrBvv/
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
+#: src/sections/pricing-plans/SelfHostToggle.tsx
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 #: src/client-brief/client-brief-copy.ts
@@ -6840,11 +6837,6 @@ msgstr "Self-onboarding"
 #: src/sections/compare/compare-data.ts
 msgid "Self-serve, partners optional"
 msgstr "Self-service, partner opzionali"
-
-#. js-lingui-id: NaHz2o
-#: src/sections/pricing-plans/SelfHostToggle.tsx
-msgid "Selfhosting"
-msgstr "Selfhosting"
 
 #. js-lingui-id: i/TzEU
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
@@ -8154,14 +8146,14 @@ msgstr "Twenty vs SAP Sales Cloud"
 msgid "Twenty vs SAP Sales Cloud Pricing — The Real Cost Compared"
 msgstr "Prezzi Twenty vs SAP Sales Cloud — Il confronto del costo reale"
 
-#. js-lingui-id: tuvLv1
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Two Factor Authentication"
-msgstr "Autenticazione a due fattori"
-
 #. js-lingui-id: EIU345
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Two-factor authentication"
+msgstr "Autenticazione a due fattori"
+
+#. js-lingui-id: C4pKXW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Two-Factor Authentication"
 msgstr "Autenticazione a due fattori"
 
 #. js-lingui-id: O+vc/1
@@ -8516,14 +8508,10 @@ msgid "We could not submit your brief. Please try again in a moment."
 msgstr "Non siamo riusciti a inviare il tuo brief. Riprova tra qualche istante."
 
 #. js-lingui-id: ofRgSN
+#: src/sections/testimonials/testimonials.data.ts
 #: src/case-studies/case-study-stories.ts
 msgid "We did not want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr "Non volevamo mettere una pezza al problema. Volevamo costruire qualcosa su cui le istituzioni potessero contare su larga scala, e questo significava partire da fondamenta abbastanza solide da supportare tutta la complessità di ciò che avevamo in mente."
-
-#. js-lingui-id: MjWeUE
-#: src/sections/testimonials/testimonials.data.ts
-msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
-msgstr "Non volevamo mettere una pezza al problema. Volevamo costruire qualcosa su cui le istituzioni potessero fare affidamento su larga scala, e questo significava partire da fondamenta abbastanza solide da supportare tutta la complessità di ciò che avevamo in mente."
 
 #. js-lingui-id: GVxbgf
 #: src/platform/releases/ReleaseNotes.tsx

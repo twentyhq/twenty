@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 20:16\n"
+"PO-Revision-Date: 2026-09-13 21:09\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -2994,11 +2994,6 @@ msgstr "Elevate Consulting은 Twenty를 청구, Teams, 리소스 관리, 그리�
 msgid "Elevate's CEO was so impressed with Twenty he started recommending it to clients before the internal setup was even complete. The team is exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs."
 msgstr "Elevate의 CEO는 Twenty에 깊은 인상을 받아 내부 설정이 완료되기도 전에 고객에게 추천하기 시작했습니다. 팀은 Twenty를 컨설팅 실무의 일부로 고객 프로젝트에 도입하는 방안을 모색 중이며, 특정 운영 니즈에 맞춘 커스텀 제품의 백엔드로 Twenty를 활용하는 것도 포함됩니다."
 
-#. js-lingui-id: FNyrb0
-#: src/sections/product-feature/data/feature-tiles.ts
-msgid "Email & Calendar"
-msgstr "이메일 및 캘린더"
-
 #. js-lingui-id: jTgK6B
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Email and calendar Blocklist"
@@ -3040,6 +3035,7 @@ msgid "Emails"
 msgstr "이메일"
 
 #. js-lingui-id: XGd8Wo
+#: src/sections/product-feature/data/feature-tiles.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Emails & Calendar"
 msgstr "이메일 및 캘린더"
@@ -3399,11 +3395,6 @@ msgstr "추천 앱"
 msgid "Feb"
 msgstr "2월"
 
-#. js-lingui-id: hXRm6J
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Field Level Permission"
-msgstr "필드 수준 권한"
-
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets"
@@ -3422,6 +3413,11 @@ msgstr "필드 위젯이 더 많은 관계 유형을 지원하여, 사용자 지
 #. js-lingui-id: e6BgMV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Field-level permissions"
+msgstr "필드 단위 권한"
+
+#. js-lingui-id: kNlm1B
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Field-Level Permissions"
 msgstr "필드 단위 권한"
 
 #. js-lingui-id: RnX5oc
@@ -6818,6 +6814,7 @@ msgstr "이제 자체 호스팅 워크스페이스는 사용량 기반 과금을
 
 #. js-lingui-id: GrBvv/
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
+#: src/sections/pricing-plans/SelfHostToggle.tsx
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 #: src/client-brief/client-brief-copy.ts
@@ -6840,11 +6837,6 @@ msgstr "셀프 온보딩"
 #: src/sections/compare/compare-data.ts
 msgid "Self-serve, partners optional"
 msgstr "셀프 서비스, 파트너는 선택 사항"
-
-#. js-lingui-id: NaHz2o
-#: src/sections/pricing-plans/SelfHostToggle.tsx
-msgid "Selfhosting"
-msgstr "자체 호스팅"
 
 #. js-lingui-id: i/TzEU
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
@@ -8154,14 +8146,14 @@ msgstr "Twenty vs SAP Sales Cloud"
 msgid "Twenty vs SAP Sales Cloud Pricing — The Real Cost Compared"
 msgstr "Twenty vs SAP Sales Cloud 요금 — 실제 비용 비교"
 
-#. js-lingui-id: tuvLv1
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Two Factor Authentication"
-msgstr "2단계 인증"
-
 #. js-lingui-id: EIU345
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Two-factor authentication"
+msgstr "2단계 인증"
+
+#. js-lingui-id: C4pKXW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Two-Factor Authentication"
 msgstr "2단계 인증"
 
 #. js-lingui-id: O+vc/1
@@ -8516,14 +8508,10 @@ msgid "We could not submit your brief. Please try again in a moment."
 msgstr "요청서를 제출할 수 없습니다. 잠시 후 다시 시도해 주세요."
 
 #. js-lingui-id: ofRgSN
+#: src/sections/testimonials/testimonials.data.ts
 #: src/case-studies/case-study-stories.ts
 msgid "We did not want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr "우리는 문제를 임시방편으로 덮어두고 싶지 않았습니다. 기관들이 대규모로 신뢰할 수 있는 무언가를 만들고 싶었고, 그건 우리가 구상한 모든 복잡성을 제대로 떠받칠 수 있을 만큼 견고한 기반에서 시작해야 한다는 뜻이었습니다."
-
-#. js-lingui-id: MjWeUE
-#: src/sections/testimonials/testimonials.data.ts
-msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
-msgstr "우리는 문제를 땜질식으로 덮어두고 싶지 않았습니다. 기관들이 대규모로 신뢰할 수 있는 무언가를 만들고 싶었고, 그것은 우리가 구상한 전체 복잡성을 떠받칠 만큼 견고한 기반에서 출발해야 한다는 뜻이었습니다."
 
 #. js-lingui-id: GVxbgf
 #: src/platform/releases/ReleaseNotes.tsx
