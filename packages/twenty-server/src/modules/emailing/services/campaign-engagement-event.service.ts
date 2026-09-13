@@ -7,22 +7,30 @@ import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/forma
 import { parseClickHouseDateTime } from 'src/database/clickhouse/utils/parse-clickhouse-date-time.util';
 import { CampaignEngagementActivityFilter } from 'src/modules/emailing/constants/campaign-engagement-activity-filter.constant';
 import { CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS } from 'src/modules/emailing/constants/campaign-engagement-activity-class.constant';
+import { CAMPAIGN_ENGAGEMENT_EVENT_TYPE } from 'src/modules/emailing/constants/campaign-engagement-event-type.constant';
 import { CAMPAIGN_ENGAGEMENT_INSERT_BUSY_TIMEOUT_MS } from 'src/modules/emailing/constants/campaign-engagement-insert-busy-timeout-ms.constant';
+import { MESSAGE_VIEW_TABLE } from 'src/modules/emailing/constants/message-view-table.constant';
 import { SHORT_LINK_CLICK_TABLE } from 'src/modules/emailing/constants/short-link-click-table.constant';
 import { type CampaignEngagementBucket } from 'src/modules/emailing/types/campaign-engagement-bucket.type';
+import { type MessageViewEvent } from 'src/modules/emailing/types/message-view-event.type';
 import { type ShortLinkClickEvent } from 'src/modules/emailing/types/short-link-click-event.type';
 
-type CampaignScope = {
+type ClickScope = {
   workspaceId: string;
   shortLinkIds: string[];
   activityFilter: CampaignEngagementActivityFilter;
 };
+
+type CampaignScope = ClickScope & { messageCampaignId: string };
 
 const SCANNER_BURST_MIN_DISTINCT_LINKS = 3;
 const SCANNER_BURST_WINDOW_MS = 10_000;
 
 const CLICK_SCOPE_CONDITION = `workspaceId = {workspaceId:UUID}
   AND shortLinkId IN {shortLinkIds:Array(UUID)}`;
+
+const VIEW_SCOPE_CONDITION = `workspaceId = {workspaceId:UUID}
+  AND messageCampaignId = {messageCampaignId:UUID}`;
 
 const SCANNER_BURST_EVENT_SUBQUERY = `SELECT eventId
   FROM (
@@ -39,7 +47,9 @@ const SCANNER_BURST_EVENT_SUBQUERY = `SELECT eventId
   )
   WHERE distinctLinksInWindow >= ${SCANNER_BURST_MIN_DISTINCT_LINKS}`;
 
-const FILTERED_CLICK_CONDITION = `AND activityClass != '${CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.SUSPECTED_AUTOMATION}'
+const HUMAN_ACTIVITY_CONDITION = `AND activityClass != '${CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.SUSPECTED_AUTOMATION}'`;
+
+const FILTERED_CLICK_CONDITION = `${HUMAN_ACTIVITY_CONDITION}
   AND eventId NOT IN (${SCANNER_BURST_EVENT_SUBQUERY})`;
 
 @Injectable()
@@ -51,20 +61,14 @@ export class CampaignEngagementEventService {
   }
 
   async insertClickOrThrow(event: ShortLinkClickEvent): Promise<void> {
-    const result = await this.clickHouseService.insert(
-      SHORT_LINK_CLICK_TABLE,
-      [{ ...event, occurredAt: formatDateTimeForClickHouse(event.occurredAt) }],
-      {
-        asyncInsertBusyTimeoutMaxMs: CAMPAIGN_ENGAGEMENT_INSERT_BUSY_TIMEOUT_MS,
-      },
-    );
-
-    if (!result.success) {
-      throw result.error;
-    }
+    await this.insertOrThrow(SHORT_LINK_CLICK_TABLE, event);
   }
 
-  async findClickerDeliveryIds(scope: CampaignScope): Promise<string[]> {
+  async insertViewOrThrow(event: MessageViewEvent): Promise<void> {
+    await this.insertOrThrow(MESSAGE_VIEW_TABLE, event);
+  }
+
+  async findClickerDeliveryIds(scope: ClickScope): Promise<string[]> {
     const rows = await this.select<{ deliveryId: string }>(
       `SELECT DISTINCT deliveryId
        FROM ${SHORT_LINK_CLICK_TABLE}
@@ -76,45 +80,51 @@ export class CampaignEngagementEventService {
     return rows.map((row) => row.deliveryId);
   }
 
-  async countClicks(scope: CampaignScope): Promise<{
+  async countEngagement(scope: CampaignScope): Promise<{
     totalClicks: number;
     uniqueClickers: number;
+    totalOpens: number;
+    uniqueOpeners: number;
   }> {
     const [row] = await this.select<{
       totalClicks: string | number;
       uniqueClickers: string | number;
+      totalOpens: string | number;
+      uniqueOpeners: string | number;
     }>(
       `SELECT
-         uniqExact(eventId) AS totalClicks,
-         uniqExact(deliveryId) AS uniqueClickers
-       FROM ${SHORT_LINK_CLICK_TABLE}
-       WHERE ${CLICK_SCOPE_CONDITION}
-         ${this.buildClickActivityCondition(scope.activityFilter)}`,
+         uniqExactIf(eventId, eventType = '${CAMPAIGN_ENGAGEMENT_EVENT_TYPE.CLICK}') AS totalClicks,
+         uniqExactIf(deliveryId, eventType = '${CAMPAIGN_ENGAGEMENT_EVENT_TYPE.CLICK}') AS uniqueClickers,
+         uniqExactIf(eventId, eventType = '${CAMPAIGN_ENGAGEMENT_EVENT_TYPE.OPEN}') AS totalOpens,
+         uniqExact(deliveryId) AS uniqueOpeners
+       FROM (${this.buildEngagementSubquery(scope.activityFilter)})`,
       scope,
     );
 
     return {
       totalClicks: Number(row?.totalClicks ?? 0),
       uniqueClickers: Number(row?.uniqueClickers ?? 0),
+      totalOpens: Number(row?.totalOpens ?? 0),
+      uniqueOpeners: Number(row?.uniqueOpeners ?? 0),
     };
   }
 
-  async findClickSeries({
+  async findEngagementSeries({
     bucket,
     ...scope
   }: CampaignScope & { bucket: CampaignEngagementBucket }): Promise<
-    { bucketStart: Date; clicks: number }[]
+    { bucketStart: Date; clicks: number; opens: number }[]
   > {
     const rows = await this.select<{
       bucketStart: string;
       clicks: string | number;
+      opens: string | number;
     }>(
       `SELECT
          ${this.bucketFunction(bucket)}(occurredAt) AS bucketStart,
-         uniqExact(eventId) AS clicks
-       FROM ${SHORT_LINK_CLICK_TABLE}
-       WHERE ${CLICK_SCOPE_CONDITION}
-         ${this.buildClickActivityCondition(scope.activityFilter)}
+         uniqExactIf(eventId, eventType = '${CAMPAIGN_ENGAGEMENT_EVENT_TYPE.CLICK}') AS clicks,
+         uniqExactIf(eventId, eventType = '${CAMPAIGN_ENGAGEMENT_EVENT_TYPE.OPEN}') AS opens
+       FROM (${this.buildEngagementSubquery(scope.activityFilter)})
        GROUP BY bucketStart
        ORDER BY bucketStart`,
       scope,
@@ -123,11 +133,12 @@ export class CampaignEngagementEventService {
     return rows.map((row) => ({
       bucketStart: parseClickHouseDateTime(row.bucketStart),
       clicks: Number(row.clicks),
+      opens: Number(row.opens),
     }));
   }
 
   async findClicksByShortLink(
-    scope: CampaignScope,
+    scope: ClickScope,
   ): Promise<
     { shortLinkId: string; uniqueClickers: number; totalClicks: number }[]
   > {
@@ -160,22 +171,23 @@ export class CampaignEngagementEventService {
   }: CampaignScope & { limit: number }): Promise<
     {
       deliveryId: string;
+      firstOpenedAt: Date | null;
       firstClickedAt: Date | null;
       lastEngagedAt: Date;
     }[]
   > {
     const rows = await this.select<{
       deliveryId: string;
-      firstClickedAt: string;
+      firstOpenedAt: string | null;
+      firstClickedAt: string | null;
       lastEngagedAt: string;
     }>(
       `SELECT
          deliveryId,
-         min(occurredAt) AS firstClickedAt,
+         minIfOrNull(occurredAt, eventType = '${CAMPAIGN_ENGAGEMENT_EVENT_TYPE.OPEN}') AS firstOpenedAt,
+         minIfOrNull(occurredAt, eventType = '${CAMPAIGN_ENGAGEMENT_EVENT_TYPE.CLICK}') AS firstClickedAt,
          max(occurredAt) AS lastEngagedAt
-       FROM ${SHORT_LINK_CLICK_TABLE}
-       WHERE ${CLICK_SCOPE_CONDITION}
-         ${this.buildClickActivityCondition(scope.activityFilter)}
+       FROM (${this.buildEngagementSubquery(scope.activityFilter)})
        GROUP BY deliveryId
        ORDER BY lastEngagedAt DESC
        LIMIT {limit:UInt32}`,
@@ -184,9 +196,45 @@ export class CampaignEngagementEventService {
 
     return rows.map((row) => ({
       deliveryId: row.deliveryId,
-      firstClickedAt: parseClickHouseDateTime(row.firstClickedAt),
+      firstOpenedAt: isDefined(row.firstOpenedAt)
+        ? parseClickHouseDateTime(row.firstOpenedAt)
+        : null,
+      firstClickedAt: isDefined(row.firstClickedAt)
+        ? parseClickHouseDateTime(row.firstClickedAt)
+        : null,
       lastEngagedAt: parseClickHouseDateTime(row.lastEngagedAt),
     }));
+  }
+
+  private async insertOrThrow(
+    table: string,
+    event: ShortLinkClickEvent | MessageViewEvent,
+  ): Promise<void> {
+    const result = await this.clickHouseService.insert(
+      table,
+      [{ ...event, occurredAt: formatDateTimeForClickHouse(event.occurredAt) }],
+      {
+        asyncInsertBusyTimeoutMaxMs: CAMPAIGN_ENGAGEMENT_INSERT_BUSY_TIMEOUT_MS,
+      },
+    );
+
+    if (!result.success) {
+      throw result.error;
+    }
+  }
+
+  private buildEngagementSubquery(
+    activityFilter: CampaignEngagementActivityFilter,
+  ): string {
+    return `SELECT eventId, deliveryId, occurredAt, '${CAMPAIGN_ENGAGEMENT_EVENT_TYPE.OPEN}' AS eventType
+      FROM ${MESSAGE_VIEW_TABLE}
+      WHERE ${VIEW_SCOPE_CONDITION}
+        ${this.buildViewActivityCondition(activityFilter)}
+      UNION ALL
+      SELECT eventId, deliveryId, occurredAt, '${CAMPAIGN_ENGAGEMENT_EVENT_TYPE.CLICK}' AS eventType
+      FROM ${SHORT_LINK_CLICK_TABLE}
+      WHERE ${CLICK_SCOPE_CONDITION}
+        ${this.buildClickActivityCondition(activityFilter)}`;
   }
 
   private bucketFunction(bucket: CampaignEngagementBucket): string {
@@ -198,6 +246,14 @@ export class CampaignEngagementEventService {
   ): string {
     return activityFilter === CampaignEngagementActivityFilter.FILTERED
       ? FILTERED_CLICK_CONDITION
+      : '';
+  }
+
+  private buildViewActivityCondition(
+    activityFilter: CampaignEngagementActivityFilter,
+  ): string {
+    return activityFilter === CampaignEngagementActivityFilter.FILTERED
+      ? HUMAN_ACTIVITY_CONDITION
       : '';
   }
 

@@ -46,8 +46,9 @@ export class CampaignEngagementCaptureService {
     const observation: CampaignEngagementObservation = {
       eventId: v4(),
       occurredAt: new Date().toISOString(),
+      eventType: payload.purpose,
       deliveryId: payload.deliveryId,
-      shortLinkId: payload.shortLinkId,
+      shortLinkId: payload.purpose === 'CLICK' ? payload.shortLinkId : null,
       userAgent,
     };
 
@@ -65,7 +66,7 @@ export class CampaignEngagementCaptureService {
   }): Promise<void> {
     try {
       await this.throttlerService.tokenBucketThrottleOrThrow(
-        `campaign-engagement:${payload.deliveryId}:${payload.shortLinkId}`,
+        this.buildThrottleKey(payload),
         1,
         CAPTURE_RATE_LIMIT_PER_LINK.maxRequests,
         CAPTURE_RATE_LIMIT_PER_LINK.windowMs,
@@ -94,8 +95,17 @@ export class CampaignEngagementCaptureService {
         amount: 1,
       });
       this.logger.warn(
-        `Dropped click event for delivery ${observation.deliveryId}: ${error}`,
+        `Dropped ${observation.eventType} event for delivery ${observation.deliveryId}: ${error}`,
       );
+    }
+  }
+
+  private buildThrottleKey(payload: CampaignTrackingTokenPayload): string {
+    switch (payload.purpose) {
+      case 'CLICK':
+        return `campaign-engagement:click:${payload.deliveryId}:${payload.shortLinkId}`;
+      case 'OPEN':
+        return `campaign-engagement:open:${payload.deliveryId}`;
     }
   }
 

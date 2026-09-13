@@ -2670,6 +2670,7 @@ export type MessageCampaignEngagementBucketDto = {
   __typename?: 'MessageCampaignEngagementBucketDTO';
   bucketStart: Scalars['DateTime']['output'];
   clicks: Scalars['Int']['output'];
+  opens: Scalars['Int']['output'];
 };
 
 export type MessageCampaignEngagementDto = {
@@ -2679,7 +2680,9 @@ export type MessageCampaignEngagementDto = {
   recipients: Array<MessageCampaignEngagementRecipientDto>;
   series: Array<MessageCampaignEngagementBucketDto>;
   totalClicks: Scalars['Int']['output'];
+  totalOpens: Scalars['Int']['output'];
   uniqueClickers: Scalars['Int']['output'];
+  uniqueOpeners: Scalars['Int']['output'];
 };
 
 export type MessageCampaignEngagementInput = {
@@ -2698,6 +2701,7 @@ export type MessageCampaignEngagementRecipientDto = {
   __typename?: 'MessageCampaignEngagementRecipientDTO';
   deliveryId: Scalars['UUID']['output'];
   firstClickedAt?: Maybe<Scalars['DateTime']['output']>;
+  firstOpenedAt?: Maybe<Scalars['DateTime']['output']>;
   lastEngagedAt: Scalars['DateTime']['output'];
   personId: Scalars['UUID']['output'];
 };

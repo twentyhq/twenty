@@ -8,11 +8,12 @@ import {
   Param,
   Redirect,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type Request } from 'express';
+import { type Request, type Response } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -25,6 +26,7 @@ import { ShortLinkService } from 'src/engine/core-modules/short-link/services/sh
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { throttlerToRestApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-rest-api-exception-handler.util';
+import { CAMPAIGN_OPEN_PIXEL_GIF } from 'src/modules/emailing/constants/campaign-open-pixel-gif.constant';
 import { CampaignEngagementCaptureService } from 'src/modules/emailing/services/campaign-engagement-capture.service';
 
 const FOUND_STATUS_CODE = 302;
@@ -52,7 +54,7 @@ export class CampaignTrackingController {
   ): Promise<{ url: string; statusCode: number }> {
     await this.throttleByRequesterOrThrow(request);
 
-    const payload = this.verifyTokenOrThrow(token);
+    const payload = this.verifyTokenOrThrow(token, 'CLICK');
 
     const shortLink = await this.shortLinkService.findById(payload.shortLinkId);
 
@@ -66,6 +68,29 @@ export class CampaignTrackingController {
     });
 
     return { url: shortLink.url, statusCode: FOUND_STATUS_CODE };
+  }
+
+  @Get('o/:token')
+  async open(
+    @Param('token') token: string,
+    @Headers('user-agent') userAgent: string | undefined,
+    @Res() response: Response,
+  ): Promise<void> {
+    const payload = this.verifyTokenOrThrow(token, 'OPEN');
+
+    await this.campaignEngagementCaptureService.capture({
+      payload,
+      userAgent: userAgent ?? null,
+    });
+
+    response
+      .set({
+        'Cache-Control': 'no-store',
+        'Referrer-Policy': 'no-referrer',
+        'Content-Type': 'image/gif',
+        'Content-Length': String(CAMPAIGN_OPEN_PIXEL_GIF.length),
+      })
+      .end(CAMPAIGN_OPEN_PIXEL_GIF);
   }
 
   private async throttleByRequesterOrThrow(request: Request): Promise<void> {
@@ -85,7 +110,12 @@ export class CampaignTrackingController {
     }
   }
 
-  private verifyTokenOrThrow(token: string): CampaignTrackingTokenPayload {
+  private verifyTokenOrThrow<
+    TPurpose extends CampaignTrackingTokenPayload['purpose'],
+  >(
+    token: string,
+    purpose: TPurpose,
+  ): Extract<CampaignTrackingTokenPayload, { purpose: TPurpose }> {
     if (
       !isNonEmptyString(token) ||
       !CAMPAIGN_TRACKING_TOKEN_FORMAT.test(token)
@@ -95,10 +125,13 @@ export class CampaignTrackingController {
 
     const payload = this.campaignTrackingTokenService.verify(token);
 
-    if (!isDefined(payload)) {
+    if (!isDefined(payload) || payload.purpose !== purpose) {
       throw new BadRequestException('Invalid tracking token');
     }
 
-    return payload;
+    return payload as Extract<
+      CampaignTrackingTokenPayload,
+      { purpose: TPurpose }
+    >;
   }
 }

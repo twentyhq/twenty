@@ -15,6 +15,12 @@ export class MessageCampaignEngagementDTO {
   @Field(() => Int)
   uniqueClickers: number;
 
+  @Field(() => Int)
+  totalOpens: number;
+
+  @Field(() => Int)
+  uniqueOpeners: number;
+
   @Field(() => [MessageCampaignEngagementBucketDTO])
   series: MessageCampaignEngagementBucketDTO[];
 

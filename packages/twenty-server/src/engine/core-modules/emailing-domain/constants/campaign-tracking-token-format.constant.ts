@@ -1,1 +1,2 @@
-export const CAMPAIGN_TRACKING_TOKEN_FORMAT = /^[A-Za-z0-9_-]{72}$/;
+export const CAMPAIGN_TRACKING_TOKEN_FORMAT =
+  /^(?:[A-Za-z0-9_-]{51}|[A-Za-z0-9_-]{72})$/;

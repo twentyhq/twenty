@@ -27,13 +27,33 @@ export class CampaignEngagementRecordingService {
       return;
     }
 
-    await this.campaignEngagementEventService.insertClickOrThrow({
+    const event = {
       workspaceId: delivery.workspaceId,
-      shortLinkId: observation.shortLinkId,
       deliveryId: delivery.id,
       eventId: observation.eventId,
       occurredAt: observation.occurredAt,
       activityClass: classifyEngagementUserAgent(observation.userAgent),
-    });
+    };
+
+    switch (observation.eventType) {
+      case 'CLICK':
+        if (!isDefined(observation.shortLinkId)) {
+          return;
+        }
+
+        await this.campaignEngagementEventService.insertClickOrThrow({
+          ...event,
+          shortLinkId: observation.shortLinkId,
+        });
+
+        return;
+      case 'OPEN':
+        await this.campaignEngagementEventService.insertViewOrThrow({
+          ...event,
+          messageCampaignId: delivery.campaignId,
+        });
+
+        return;
+    }
   }
 }

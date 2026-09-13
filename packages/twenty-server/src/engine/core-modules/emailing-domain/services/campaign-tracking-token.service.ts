@@ -43,7 +43,8 @@ export class CampaignTrackingTokenService {
       decodedToken.length - CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.signature;
 
     if (
-      payloadByteLength !== CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.clickPayload
+      payloadByteLength !== CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.clickPayload &&
+      payloadByteLength !== CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.openPayload
     ) {
       return null;
     }
@@ -88,12 +89,15 @@ export class CampaignTrackingTokenService {
       ...keyId,
       CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE[payload.purpose],
     ]);
-    const identifiers = Buffer.concat([
-      this.encodeUuid(payload.deliveryId),
-      this.encodeUuid(payload.shortLinkId),
-    ]);
+    const deliveryId = this.encodeUuid(payload.deliveryId);
 
-    return Buffer.concat([header, identifiers]);
+    return payload.purpose === 'CLICK'
+      ? Buffer.concat([
+          header,
+          deliveryId,
+          this.encodeUuid(payload.shortLinkId),
+        ])
+      : Buffer.concat([header, deliveryId]);
   }
 
   private decodePayload(
@@ -108,23 +112,40 @@ export class CampaignTrackingTokenService {
         deliveryIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid,
       ),
     );
-    if (purposeByte !== CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE.CLICK) {
-      return null;
-    }
-
     const shortLinkIdOffset =
       deliveryIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid;
 
-    return {
-      purpose: 'CLICK',
-      deliveryId,
-      shortLinkId: this.decodeUuid(
-        encodedPayload.subarray(
-          shortLinkIdOffset,
-          shortLinkIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid,
-        ),
-      ),
-    };
+    switch (purposeByte) {
+      case CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE.CLICK:
+        if (
+          encodedPayload.length !==
+          CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.clickPayload
+        ) {
+          return null;
+        }
+
+        return {
+          purpose: 'CLICK',
+          deliveryId,
+          shortLinkId: this.decodeUuid(
+            encodedPayload.subarray(
+              shortLinkIdOffset,
+              shortLinkIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid,
+            ),
+          ),
+        };
+      case CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE.OPEN:
+        if (
+          encodedPayload.length !==
+          CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.openPayload
+        ) {
+          return null;
+        }
+
+        return { purpose: 'OPEN', deliveryId };
+      default:
+        return null;
+    }
   }
 
   private computeSignature(encodedPayload: Buffer, key: Buffer): Buffer {

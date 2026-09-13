@@ -74,6 +74,8 @@ export class CampaignEngagementReportService {
       isAvailable,
       totalClicks: 0,
       uniqueClickers: 0,
+      totalOpens: 0,
+      uniqueOpeners: 0,
       series: [],
       links: [],
       recipients: [],
@@ -88,20 +90,20 @@ export class CampaignEngagementReportService {
       messageCampaignId,
     });
 
-    if (shortLinks.length === 0) {
-      return emptyReport;
-    }
-
     const scope = {
       workspaceId,
+      messageCampaignId,
       shortLinkIds: shortLinks.map((shortLink) => shortLink.id),
       activityFilter,
     };
     const bucket = this.resolveBucket(campaign.sentAt);
 
     const aggregates = await Promise.all([
-      this.campaignEngagementEventService.countClicks(scope),
-      this.campaignEngagementEventService.findClickSeries({ ...scope, bucket }),
+      this.campaignEngagementEventService.countEngagement(scope),
+      this.campaignEngagementEventService.findEngagementSeries({
+        ...scope,
+        bucket,
+      }),
       this.campaignEngagementEventService.findClicksByShortLink(scope),
       this.campaignEngagementEventService.findEngagedDeliveries({
         ...scope,
@@ -125,6 +127,8 @@ export class CampaignEngagementReportService {
       ...emptyReport,
       totalClicks: totals.totalClicks,
       uniqueClickers: totals.uniqueClickers,
+      totalOpens: totals.totalOpens,
+      uniqueOpeners: totals.uniqueOpeners,
       series: this.fillSeries({ series, bucket, sentAt: campaign.sentAt }),
       links: this.rollUpLinksByAuthoredUrl({ shortLinks, clicksByShortLink }),
       recipients: await this.attachRecipients({
@@ -209,6 +213,7 @@ export class CampaignEngagementReportService {
         countsByBucketMs.get(bucketStartMs) ?? {
           bucketStart: new Date(bucketStartMs),
           clicks: 0,
+          opens: 0,
         },
       );
     }
@@ -269,6 +274,7 @@ export class CampaignEngagementReportService {
     messageCampaignId: string;
     engagedDeliveries: {
       deliveryId: string;
+      firstOpenedAt: Date | null;
       firstClickedAt: Date | null;
       lastEngagedAt: Date;
     }[];
