@@ -37,6 +37,10 @@ import {
 import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';
 import { seedEmailingDomains } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-emailing-domains.util';
 import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-feature-flags.util';
+import {
+  type InboxReferenceIds,
+  seedInbox,
+} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-inbox.util';
 import { seedMessageSuppressions } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-message-suppressions.util';
 import { seedMetadataEntities } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-metadata-entities.util';
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
@@ -219,7 +223,7 @@ export class DevSeederService {
       light,
     });
 
-    await this.seedAgentChat({
+    await this.seedAgentChatAndInbox({
       workspaceId,
       chatReferenceIds: {
         applicationId: twentyStandardFlatApplication.id,
@@ -227,17 +231,26 @@ export class DevSeederService {
         roleId: adminRole.id,
         viewId: allCompaniesView.id,
       },
+      inboxReferenceIds: {
+        applicationId: twentyStandardFlatApplication.id,
+        adminRoleId: adminRole.id,
+        companyObjectMetadataId: companyObjectMetadataItem.id,
+      },
     });
 
     await this.workspaceCacheStorageService.flush(workspaceId);
   }
 
-  private async seedAgentChat({
+  // The inbox seeds reference the seeded chat thread, so both land in one
+  // transaction.
+  private async seedAgentChatAndInbox({
     workspaceId,
     chatReferenceIds,
+    inboxReferenceIds,
   }: {
     workspaceId: SeededWorkspacesIds;
     chatReferenceIds: ChatReferenceIds;
+    inboxReferenceIds: InboxReferenceIds;
   }) {
     const queryRunner = this.coreDataSource.createQueryRunner();
 
@@ -250,6 +263,13 @@ export class DevSeederService {
         schemaName: 'core',
         workspaceId,
         chatReferenceIds,
+      });
+
+      await seedInbox({
+        queryRunner,
+        schemaName: 'core',
+        workspaceId,
+        inboxReferenceIds,
       });
 
       await queryRunner.commitTransaction();

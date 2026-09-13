@@ -4,6 +4,8 @@ import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { LazyRoute } from '@/app/components/LazyRoute';
+import { DEFAULT_INBOX_SECTION } from '@/inbox/constants/DefaultInboxSection';
+import { getInboxSectionPath } from '@/inbox/utils/getInboxSectionPath';
 import {
   createSettingsRouteObjects,
   SettingsRouteOutlet,
@@ -32,6 +34,12 @@ const RecordShowPage = lazy(() =>
 const StandalonePageLayoutPage = lazy(() =>
   import('~/pages/page-layout/StandalonePageLayoutPage').then((module) => ({
     default: module.StandalonePageLayoutPage,
+  })),
+);
+
+const InboxPage = lazy(() =>
+  import('~/pages/inbox/InboxPage').then((module) => ({
+    default: module.InboxPage,
   })),
 );
 
@@ -116,6 +124,46 @@ export const createWorkspaceRouteObjects = ({
       element: (
         <LazyRoute>
           <StandalonePageLayoutPage />
+        </LazyRoute>
+      ),
+    },
+    {
+      path: AppPath.InboxPage,
+      element: (
+        <Navigate to={getInboxSectionPath(DEFAULT_INBOX_SECTION)} replace />
+      ),
+    },
+    {
+      path: AppPath.InboxSectionPage,
+      element: (
+        <LazyRoute>
+          <InboxPage />
+        </LazyRoute>
+      ),
+    },
+    // Static "q" outranks the item route's dynamic segments, so a shared inbox
+    // is never mistaken for an item id.
+    {
+      path: AppPath.InboxQueuePage,
+      element: (
+        <LazyRoute>
+          <InboxPage />
+        </LazyRoute>
+      ),
+    },
+    {
+      path: AppPath.InboxQueueItemPage,
+      element: (
+        <LazyRoute>
+          <InboxPage />
+        </LazyRoute>
+      ),
+    },
+    {
+      path: AppPath.InboxItemPage,
+      element: (
+        <LazyRoute>
+          <InboxPage />
         </LazyRoute>
       ),
     },
