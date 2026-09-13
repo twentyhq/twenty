@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "{actorName} updated server administrator access for {targetName} ({targetEmail})."
-msgstr ""
+msgstr "{actorName} het bedieneradministrateurtoegang vir {targetName} ({targetEmail}) opgedateer."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -96,7 +96,7 @@ msgstr "Geaktiveer"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Full admin panel access: {fullAdminStatus}"
-msgstr ""
+msgstr "Volledige toegang tot die administrasiepaneel: {fullAdminStatus}"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -135,7 +135,7 @@ msgstr "As Twenty vir jou werk, is jy reg — daar is niks om te doen nie. As di
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "If you did not expect this change, review your server administrators immediately."
-msgstr ""
+msgstr "As jy nie hierdie verandering verwag het nie, hersien jou bedieneradministrateurs onmiddellik."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -155,7 +155,7 @@ msgstr "As jy Twenty ooit weer wil probeer, kan jy binne minute ’n nuwe werksr
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Impersonation: {impersonateStatus}"
-msgstr ""
+msgstr "Nabootsing: {impersonateStatus}"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx

@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "{actorName} updated server administrator access for {targetName} ({targetEmail})."
-msgstr ""
+msgstr "{actorName}님이 {targetName}({targetEmail})의 서버 관리자 액세스를 업데이트했습니다."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -96,7 +96,7 @@ msgstr "활성화됨"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Full admin panel access: {fullAdminStatus}"
-msgstr ""
+msgstr "전체 관리자 패널 액세스: {fullAdminStatus}"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -135,7 +135,7 @@ msgstr "Twenty가 만족스러우시다면, 이미 모두 준비된 상태이므
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "If you did not expect this change, review your server administrators immediately."
-msgstr ""
+msgstr "이 변경 사항을 예상하지 못했다면 즉시 서버 관리자를 검토하세요."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -155,7 +155,7 @@ msgstr "언제든 Twenty를 다시 사용해 보고 싶으시다면, 몇 분 안
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Impersonation: {impersonateStatus}"
-msgstr ""
+msgstr "가장: {impersonateStatus}"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx

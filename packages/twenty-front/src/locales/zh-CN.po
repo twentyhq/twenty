@@ -34,7 +34,7 @@ msgstr " 必须是 {ratingValues} 之一"
 #. js-lingui-id: b2GdxK
 #: src/modules/ai/components/AiModelTierSlider.tsx
 msgid " Not measured at this effort yet, so this is the base model's reading."
-msgstr ""
+msgstr "尚未以此工作量进行测量，因此这是基础模型的读数。"
 
 #. js-lingui-id: nA/hWD
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -177,7 +177,7 @@ msgstr ""
 #. placeholder {2}: formatNumber(audiencePreview.sendable)
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "{0, plural, one {{1} recipient} other {{2} recipients}}"
-msgstr ""
+msgstr "{0, plural, other {{2} 位收件人}}"
 
 #. js-lingui-id: 0LMb5P
 #. placeholder {0}: Math.abs(days)
@@ -195,13 +195,13 @@ msgstr "{0, plural, one {{years} 年} other {{years} 年}}"
 #. placeholder {0}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
-msgstr ""
+msgstr "{0, plural, other {# 个任务无法删除}}"
 
 #. js-lingui-id: AHhuJj
 #. placeholder {0}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
-msgstr ""
+msgstr "{0, plural, other {# 个任务无法重试}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -222,13 +222,13 @@ msgstr "{0, plural, one {# 个工作区失败或落后} other {# 个工作区失
 #. placeholder {2}: canceled.canceledMessageCount
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "{0, plural, one {Campaign canceled, {1} pending email stopped} other {Campaign canceled, {2} pending emails stopped}}"
-msgstr ""
+msgstr "{0, plural, other {营销活动已取消，已停止 {2} 封待发送电子邮件}}"
 
 #. js-lingui-id: xEqptn
 #. placeholder {0}: item.includedCredits
 #: src/modules/settings/admin-panel/utils/formatSubscriptionItemValue.ts
 msgid "{0, plural, one {credit/period} other {credits/period}}"
-msgstr ""
+msgstr "{0, plural, other {积分/周期}}"
 
 #. js-lingui-id: AkeiJW
 #. placeholder {0}: item.quantity
@@ -246,7 +246,7 @@ msgstr "{0, plural, other {您无权访问 {fieldsList} 字段}}"
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr ""
+msgstr "{0} 个退信或投诉的收件人被跳过了。￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼􏿿"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -277,7 +277,7 @@ msgstr "{0} 与 {loadBalancePoolObjectLabel} 无关联。请选择另一个对�
 #. placeholder {1}: excludedReasons.join(', ')
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "{0} in the list, skipping {1}"
-msgstr ""
+msgstr "列表中有 {0} 位，跳过 {1}"
 
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
@@ -314,7 +314,7 @@ msgstr "{0} 个已退出此主题订阅"
 #. placeholder {0}: formatNumber(counts.overCap)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} over the recipient limit"
-msgstr ""
+msgstr "超出收件人上限 {0} 位"
 
 #. js-lingui-id: 55frRG
 #. placeholder {0}: index + 1
@@ -344,33 +344,33 @@ msgstr "已显示 {0} 项"
 #. placeholder {0}: formatMetricDelta(costDelta)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0} the cost of Balanced."
-msgstr ""
+msgstr "{0} Balanced 的成本。"
 
 #. js-lingui-id: UWEjMJ
 #. placeholder {0}: formatMetricDelta(intelligenceDelta)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0} the score of Balanced"
-msgstr ""
+msgstr "{0} Balanced 的评分"
 
 #. js-lingui-id: 0PXtku
 #. placeholder {0}: formatNumber(tier.model.outputTokensPerSecond, { decimals: 0 })
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "{0} tokens/s"
-msgstr ""
+msgstr "{0} 个标记/秒"
 
 #. js-lingui-id: jSMnoW
 #. placeholder {0}: formatNumber(model?.outputTokensPerSecond ?? 0)
 #. placeholder {1}: formatMetricDelta(resolvedTier.speedDeltaPercent ?? 0)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0} tokens/s, {1} the speed of Balanced Mode."
-msgstr ""
+msgstr "{0} 个标记/秒，{1} Balanced 模式的速度。"
 
 #. js-lingui-id: NLWHJB
 #. placeholder {0}: formatNumber(model?.outputTokensPerSecond ?? 0)
 #. placeholder {1}: formatMetricDelta(resolvedTier.speedDeltaPercent ?? 0)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0} tokens/s, a {1} change in speed compared with Balanced Mode."
-msgstr ""
+msgstr "{0} 个标记/秒，与 Balanced 模式相比速度{1}。"
 
 #. js-lingui-id: nZUq+6
 #. placeholder {0}: formatNumber(counts.globallyUnsubscribed)
@@ -400,7 +400,7 @@ msgstr "{0} 个小部件"
 #. placeholder {0}: formatNumber(counts.withoutEmail)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} without an email address"
-msgstr ""
+msgstr "没有电子邮件地址的 {0} 位"
 
 #. js-lingui-id: 2UKfhY
 #. placeholder {0}: selectedItemNames.length
@@ -413,31 +413,31 @@ msgstr "{0} 位工作区成员"
 #. placeholder {1}: selectedResolvedTier.model.label
 #: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "{0}: {1}"
-msgstr ""
+msgstr "{0}: {1}"
 
 #. js-lingui-id: EAdDH3
 #. placeholder {0}: formatNumber(costDelta)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0}% higher cost than Balanced."
-msgstr ""
+msgstr "成本比 Balanced 高 {0}%。"
 
 #. js-lingui-id: c8VH5D
 #. placeholder {0}: formatNumber(intelligenceDelta)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0}% higher score than Balanced"
-msgstr ""
+msgstr "评分比 Balanced 高 {0}%"
 
 #. js-lingui-id: nRAomq
 #. placeholder {0}: formatNumber(Math.abs(costDelta))
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0}% lower cost than Balanced."
-msgstr ""
+msgstr "成本比 Balanced 低 {0}%。"
 
 #. js-lingui-id: wq2vL5
 #. placeholder {0}: formatNumber(Math.abs(intelligenceDelta))
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0}% lower score than Balanced"
-msgstr ""
+msgstr "评分比 Balanced 低 {0}%"
 
 #. js-lingui-id: qdQhzv
 #: src/modules/views/advanced-filter-chip/components/AdvancedFilterChip.tsx
@@ -620,12 +620,12 @@ msgstr ""
 #. js-lingui-id: Xs84Pv
 #: src/modules/settings/ai/utils/getAiModelModeDescription.ts
 msgid "{label} (Auto)"
-msgstr ""
+msgstr "{label}（自动）"
 
 #. js-lingui-id: Oq2RUh
 #: src/modules/settings/ai/utils/getAiModelPinOptions.ts
 msgid "{label} (deprecated)"
-msgstr ""
+msgstr "{label}（已弃用）"
 
 #. js-lingui-id: FdY/eP
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -645,7 +645,7 @@ msgstr "{messagesLength} 封邮件"
 #. js-lingui-id: Pfatg8
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{minutes, plural, one {# minute} other {# minutes}}"
-msgstr ""
+msgstr "{minutes, plural, other {# 分钟}}"
 
 #. js-lingui-id: Koe99p
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -683,12 +683,12 @@ msgstr "{positionLabel} 记录具有优先级"
 #. placeholder {1}: formatNumber(queuedCount)
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedCount, plural, one {Campaign queued to {0} recipient} other {Campaign queued to {1} recipients}}"
-msgstr ""
+msgstr "{queuedCount, plural, other {营销活动已加入队列，将发送给 {1} 位收件人}}"
 
 #. js-lingui-id: cMTWxR
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedMessage}, skipping {skipReasons}"
-msgstr ""
+msgstr "{queuedMessage}，跳过 {skipReasons}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -724,7 +724,7 @@ msgstr "{scopeCount} 个权限范围"
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{seconds, plural, one {# second} other {# seconds}}"
-msgstr ""
+msgstr "{seconds, plural, other {# 秒}}"
 
 #. js-lingui-id: kvVMdH
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -749,7 +749,7 @@ msgstr "{serviceLabel} 服务不可访问"
 #. js-lingui-id: CQxE7h
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{spokenMinutes} {spokenSeconds}"
-msgstr ""
+msgstr "{spokenMinutes} {spokenSeconds}"
 
 #. js-lingui-id: 8vJ+2V
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -885,7 +885,7 @@ msgstr "~ {0} 个标记"
 #. placeholder {0}: formatNumber(tier.model.outputCostPerMillionTokens, { decimals: 2 })
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "${0} / 1M"
-msgstr ""
+msgstr "${0} / 1M"
 
 #. js-lingui-id: Cx0xl3
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -1052,7 +1052,7 @@ msgstr "需要付款方式才能使您的工作区保持活跃。"
 #. js-lingui-id: 5WwDyx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "A payment on your subscription failed. Your enterprise features stay active while we retry it."
-msgstr ""
+msgstr "您的订阅付款失败。我们重试期间，您的企业功能将保持启用状态。"
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1205,12 +1205,12 @@ msgstr "Acme GmbH"
 #. js-lingui-id: qrbojL
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "ACS URL"
-msgstr ""
+msgstr "ACS URL"
 
 #. js-lingui-id: 4FQd0Y
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "ACS URL copied to clipboard"
-msgstr ""
+msgstr "ACS URL 已复制到剪贴板"
 
 #. js-lingui-id: r6Y4GL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -1328,7 +1328,7 @@ msgstr "将 \"{trimmedName}\" 添加到选项中"
 #. placeholder {0}: objectMetadataItem.labelSingular
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Add a {0}"
-msgstr ""
+msgstr "添加一个 {0}"
 
 #. js-lingui-id: 9CHcSG
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
@@ -1423,7 +1423,7 @@ msgstr "添加账户"
 #. js-lingui-id: dGjQL8
 #: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "Add an API key to enable AI."
-msgstr ""
+msgstr "添加 API 密钥以启用 AI。"
 
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
@@ -1524,7 +1524,7 @@ msgstr "添加电子邮件渠道"
 #. js-lingui-id: Va3xJe
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Add field"
-msgstr ""
+msgstr "添加字段"
 
 #. js-lingui-id: DpV70M
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -1830,7 +1830,7 @@ msgstr "在下方添加您的信用卡。添加后，您的订阅将自动开始
 #. placeholder {0}: objectMetadataItem.labelSingular
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Add your first {0}"
-msgstr ""
+msgstr "添加您的第一个 {0}"
 
 #. js-lingui-id: m2qDV8
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
@@ -1961,22 +1961,22 @@ msgstr "南非荷兰语"
 #. js-lingui-id: WlItll
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 msgid "After 180 days"
-msgstr ""
+msgstr "180 天后"
 
 #. js-lingui-id: I6lVwB
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 msgid "After 30 days"
-msgstr ""
+msgstr "30 天后"
 
 #. js-lingui-id: yPZL9v
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 msgid "After 60 days"
-msgstr ""
+msgstr "60 天后"
 
 #. js-lingui-id: E5fxqI
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 msgid "After 90 days"
-msgstr ""
+msgstr "90 天后"
 
 #. js-lingui-id: 5wZlI9
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -1986,7 +1986,7 @@ msgstr "在特定时间后"
 #. js-lingui-id: 5uLUiv
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 msgid "After a year"
-msgstr ""
+msgstr "一年后"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -2090,7 +2090,7 @@ msgstr "AI 代理"
 #. js-lingui-id: n2fhCy
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "AI chat"
-msgstr ""
+msgstr "AI 聊天"
 
 #. js-lingui-id: V+Qj+q
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -2178,12 +2178,12 @@ msgstr "按工作区的 AI 用量"
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
-msgstr ""
+msgstr "已达到 AI 使用上限。请联系管理员升级方案。"
 
 #. js-lingui-id: wBA/cx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
-msgstr ""
+msgstr "已达到 AI 使用上限。请联系支持团队进行升级。"
 
 #. js-lingui-id: KLyZ6L
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -2243,12 +2243,12 @@ msgstr "所有操作权限"
 #. js-lingui-id: iKzPQM
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All agents"
-msgstr ""
+msgstr "所有代理"
 
 #. js-lingui-id: Aapaa8
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All API keys"
-msgstr ""
+msgstr "所有 API 密钥"
 
 #. js-lingui-id: s1C/cR
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -2263,7 +2263,7 @@ msgstr "整个平台上的所有应用注册，包括孤立的应用市场应用
 #. js-lingui-id: G6DTnD
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All applications"
-msgstr ""
+msgstr "所有应用程序"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -2311,7 +2311,7 @@ msgstr "所有行"
 #. js-lingui-id: FIlQ3z
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All logic functions"
-msgstr ""
+msgstr "所有逻辑函数"
 
 #. js-lingui-id: c3lkKf
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
@@ -2321,7 +2321,7 @@ msgstr "所有成员"
 #. js-lingui-id: dtwyLS
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
 msgid "All messages"
-msgstr ""
+msgstr "所有消息"
 
 #. js-lingui-id: ypSiuQ
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
@@ -2394,12 +2394,12 @@ msgstr "所有主题"
 #. js-lingui-id: UBpkWM
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All users"
-msgstr ""
+msgstr "所有用户"
 
 #. js-lingui-id: qf6r3X
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All workflows"
-msgstr ""
+msgstr "所有工作流"
 
 #. js-lingui-id: XLzFVD
 #: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
@@ -2670,7 +2670,7 @@ msgstr "API 调用"
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 msgid "API key"
-msgstr ""
+msgstr "API 密钥"
 
 #. js-lingui-id: yRnk5W
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -2865,7 +2865,7 @@ msgstr "以下应用未经审核，请自行承担使用风险。"
 #. js-lingui-id: p98xmP
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Applies to"
-msgstr ""
+msgstr "适用于"
 
 #. js-lingui-id: DB8zMK
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -2995,7 +2995,7 @@ msgstr "确定吗？您当前的信息将不会被保存。"
 #. js-lingui-id: AkeObK
 #: src/localization/hooks/useLocaleOptions.ts
 msgid "Armenian"
-msgstr ""
+msgstr "亚美尼亚语"
 
 #. js-lingui-id: cybVUo
 #: src/modules/settings/members/components/MemberInfosTab.tsx
@@ -3022,7 +3022,7 @@ msgstr "升序"
 #. js-lingui-id: LfkDyR
 #: src/modules/ai/components/AiChatErrorRenderer.tsx
 msgid "Ask a workspace admin to raise the limit."
-msgstr ""
+msgstr "请让工作区管理员提高限额。"
 
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
@@ -3035,7 +3035,7 @@ msgstr "询问 AI"
 #. js-lingui-id: cmkudK
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Ask anything, @ a record or / a skill..."
-msgstr ""
+msgstr "询问任何问题，使用 @ 提及记录或使用 / 调用技能……"
 
 #. js-lingui-id: QVL/hg
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
@@ -3233,7 +3233,7 @@ msgstr "认证失败于"
 #. js-lingui-id: sgXsd0
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Auth failure reason"
-msgstr ""
+msgstr "身份验证失败原因"
 
 #. js-lingui-id: P8fBlG
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -3309,7 +3309,7 @@ msgstr "自动升级"
 #: src/modules/ai/components/AiModelPicker.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Automatic"
-msgstr ""
+msgstr "自动"
 
 #. js-lingui-id: YRT7ZW
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -3334,7 +3334,7 @@ msgstr "在每个新建的工作区中自动安装此应用"
 #. js-lingui-id: MHsVk5
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Automatically selected by Twenty for this mode."
-msgstr ""
+msgstr "Twenty 会自动为此模式选择。"
 
 #. js-lingui-id: XFGV21
 #: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
@@ -3418,7 +3418,7 @@ msgstr "均衡依据"
 #. js-lingui-id: kJygHz
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Balanced"
-msgstr ""
+msgstr "均衡"
 
 #. js-lingui-id: b2ghLW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -3913,17 +3913,17 @@ msgstr "通话"
 #. js-lingui-id: YKJ+pg
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "Campaign moved to {sendTime}"
-msgstr ""
+msgstr "营销活动已移至 {sendTime}"
 
 #. js-lingui-id: ANWhqH
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "Campaign scheduled for {sendTime}"
-msgstr ""
+msgstr "营销活动计划于 {sendTime} 发送"
 
 #. js-lingui-id: gL6+M4
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Campaign unscheduled and back in your drafts"
-msgstr ""
+msgstr "营销活动已取消计划并返回到您的草稿"
 
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -3959,7 +3959,7 @@ msgstr "取消"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Cancel Campaign"
-msgstr ""
+msgstr "取消营销活动"
 
 #. js-lingui-id: J8nuSF
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -4065,7 +4065,7 @@ msgstr "无法上传超过 {maxNumberOfValues} 个文件"
 #. js-lingui-id: n1zTaJ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Caps on what your workspace can spend and who they apply to"
-msgstr ""
+msgstr "工作区可支出的上限及其适用对象"
 
 #. js-lingui-id: Po5MgW
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
@@ -4297,22 +4297,22 @@ msgstr "选择 {intervalAdjective} 积分"
 #. js-lingui-id: n5pcaT
 #: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "Choose a model mode"
-msgstr ""
+msgstr "选择模型模式"
 
 #. js-lingui-id: sHa2Dg
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 msgid "Choose a spender"
-msgstr ""
+msgstr "选择支出方"
 
 #. js-lingui-id: RGUZK1
 #: src/modules/settings/billing/components/SettingsBillingLimitUsageSelect.tsx
 msgid "Choose a usage"
-msgstr ""
+msgstr "选择用量"
 
 #. js-lingui-id: qJwqET
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "Choose a usage first"
-msgstr ""
+msgstr "请先选择用量"
 
 #. js-lingui-id: NFfUic
 #: src/pages/auth/SignInUp.tsx
@@ -4322,7 +4322,7 @@ msgstr "选择工作区"
 #. js-lingui-id: KsP4Tg
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Choose automatically"
-msgstr ""
+msgstr "自动选择"
 
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -4337,7 +4337,7 @@ msgstr "选择简短或完整"
 #. js-lingui-id: NaiAqg
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
 msgid "Choose folders to sync"
-msgstr ""
+msgstr "选择要同步的文件夹"
 
 #. js-lingui-id: 5EMoSo
 #: src/modules/settings/billing/components/internal/SettingsBillingPlansWithoutSubscription.tsx
@@ -4352,7 +4352,7 @@ msgstr "选择将应用的默认货币"
 #. js-lingui-id: KoXi44
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Choose the default modes for people and agents"
-msgstr ""
+msgstr "选择人员和代理的默认模式"
 
 #. js-lingui-id: LHce7q
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -5331,7 +5331,7 @@ msgstr "复制"
 #. js-lingui-id: 6gAr5+
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "Copy audio download link"
-msgstr ""
+msgstr "复制音频下载链接"
 
 #. js-lingui-id: NmPNJJ
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
@@ -5642,12 +5642,12 @@ msgstr "计算唯一值"
 #. js-lingui-id: GV0ZB5
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Counted again when the campaign sends, so this can change."
-msgstr ""
+msgstr "营销活动发送时会再次计数，因此此项可能会变化。"
 
 #. js-lingui-id: tKTq/b
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Counting recipients..."
-msgstr ""
+msgstr "正在统计收件人数量..."
 
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -5673,7 +5673,7 @@ msgstr "创建"
 #. placeholder {0}: objectMetadataItem.labelSingular
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a {0} to automate your work."
-msgstr ""
+msgstr "创建一个 {0} 以自动化您的工作。"
 
 #. js-lingui-id: fQFALn
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -5989,7 +5989,7 @@ msgstr "额度"
 #. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 msgid "Credits are added on top of the plan allowance and are spent only once it runs out. They carry over in full from one billing period to the next, and stay available until they are used up or, where an expiry is set, until the end of the billing period that expiry falls in."
-msgstr ""
+msgstr "积分是在套餐额度之外添加的，只有套餐额度用尽后才会使用。积分会从一个计费周期全额结转至下一个计费周期，并会一直可用，直至用完；若设置了到期日，则可用至该到期日所在计费周期结束。"
 
 #. js-lingui-id: 0o2LpE
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -6009,7 +6009,7 @@ msgstr "试用期内可用的积分"
 #. js-lingui-id: nbyiz/
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Credits handed out on top of the plan allowance. They stay spendable until used up."
-msgstr ""
+msgstr "在套餐额度之外发放的积分。它们在用完前始终可用于支出。"
 
 #. js-lingui-id: iSuLEw
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
@@ -6341,7 +6341,7 @@ msgstr "捷克语"
 #. js-lingui-id: U0sC6H
 #: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 msgid "Daily"
-msgstr ""
+msgstr "每天"
 
 #. js-lingui-id: ShUrwO
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -6867,7 +6867,7 @@ msgstr "删除组"
 #. js-lingui-id: dPwNDl
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Delete limit"
-msgstr ""
+msgstr "删除限额"
 
 #. js-lingui-id: Wk+A9S
 #: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
@@ -6922,7 +6922,7 @@ msgstr "删除此集成"
 #. js-lingui-id: uvgDyK
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Delete this limit?"
-msgstr ""
+msgstr "删除此限额？"
 
 #. js-lingui-id: c0vHQI
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -6973,12 +6973,12 @@ msgstr "删除小部件"
 #. js-lingui-id: D+Bgvi
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 msgid "Delete Workflow"
-msgstr ""
+msgstr "删除工作流"
 
 #. js-lingui-id: Z299hR
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 msgid "Delete Workflows"
-msgstr ""
+msgstr "删除工作流"
 
 #. js-lingui-id: kYu0eF
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -7025,7 +7025,7 @@ msgstr "删除此方法将永久从您的账户中移除。"
 #. js-lingui-id: si+vZD
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Delivery"
-msgstr ""
+msgstr "发送"
 
 #. js-lingui-id: Ssdrw4
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
@@ -7690,7 +7690,7 @@ msgstr "编辑 iFrame"
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Edit limit"
-msgstr ""
+msgstr "编辑限额"
 
 #. js-lingui-id: /PoNoq
 #: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
@@ -7939,7 +7939,7 @@ msgstr "电子邮件和日历"
 #. js-lingui-id: VJ5blF
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Emails already handed to the provider cannot be recalled. This stops everything still waiting to be sent."
-msgstr ""
+msgstr "已交给服务提供商的电子邮件无法撤回。这将停止所有仍在等待发送的电子邮件。"
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -8179,7 +8179,7 @@ msgstr "输入密件抄送邮箱，用逗号分隔"
 #. js-lingui-id: lcPZCR
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Enter both keys, or neither to use the instance IAM role"
-msgstr ""
+msgstr "输入两个密钥，或者均不输入以使用实例 IAM 角色"
 
 #. js-lingui-id: mPsuKh
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -8919,12 +8919,12 @@ msgstr "已延长"
 #. js-lingui-id: 4NR4Ja
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Extra Fast"
-msgstr ""
+msgstr "极快"
 
 #. js-lingui-id: Y64TrM
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Extra Smart"
-msgstr ""
+msgstr "极智能"
 
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -8978,12 +8978,12 @@ msgstr "添加提供商失败"
 #. js-lingui-id: ScvpVb
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow.tsx
 msgid "Failed to add record"
-msgstr ""
+msgstr "添加记录失败"
 
 #. js-lingui-id: Y9Y+x3
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Failed to cancel campaign"
-msgstr ""
+msgstr "取消营销活动失败"
 
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -9004,7 +9004,7 @@ msgstr "创建记录失败"
 #. js-lingui-id: 7xz1r9
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 msgid "Failed to create the limit."
-msgstr ""
+msgstr "创建限额失败。"
 
 #. js-lingui-id: ITWxKI
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -9015,7 +9015,7 @@ msgstr "创建退订主题失败。"
 #: src/modules/object-core/workflows/hooks/useCreateCoreWorkflow.ts
 #: src/modules/object-core/workflows/hooks/useCreateCoreWorkflow.ts
 msgid "Failed to create workflow"
-msgstr ""
+msgstr "创建工作流失败"
 
 #. js-lingui-id: AXveCw
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -9035,7 +9035,7 @@ msgstr "删除技能失败。"
 #. js-lingui-id: YVct3Q
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Failed to delete the limit."
-msgstr ""
+msgstr "删除限额失败。"
 
 #. js-lingui-id: AUprM8
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -9050,7 +9050,7 @@ msgstr "删除退订主题失败。"
 #. js-lingui-id: UUBrJf
 #: src/modules/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows.ts
 msgid "Failed to delete workflows"
-msgstr ""
+msgstr "删除工作流失败"
 
 #. js-lingui-id: NUmmdc
 #: src/modules/dashboards/hooks/useDuplicateDashboard.ts
@@ -9060,7 +9060,7 @@ msgstr "复制仪表板失败"
 #. js-lingui-id: 6e1GS3
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/hooks/useDuplicateMessageList.ts
 msgid "Failed to duplicate list"
-msgstr ""
+msgstr "复制列表失败"
 
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
@@ -9128,7 +9128,7 @@ msgstr "加载服务器管理员失败。"
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to load the application."
-msgstr ""
+msgstr "加载应用失败。"
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -9272,7 +9272,7 @@ msgstr "更新模型可用性失败"
 #. js-lingui-id: mDyyo1
 #: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
 msgid "Failed to update model settings"
-msgstr ""
+msgstr "更新模型设置失败"
 
 #. js-lingui-id: J7vly7
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
@@ -9302,7 +9302,7 @@ msgstr "更新服务器管理员访问权限失败。"
 #. js-lingui-id: hADObV
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Failed to update the limit."
-msgstr ""
+msgstr "更新限额失败。"
 
 #. js-lingui-id: 6TG/SY
 #: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
@@ -9375,7 +9375,7 @@ msgstr "假"
 #. js-lingui-id: KziH2K
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Fast"
-msgstr ""
+msgstr "快速"
 
 #. js-lingui-id: X9kySA
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -9401,7 +9401,7 @@ msgstr "功能"
 #. js-lingui-id: WHjLqG
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Features active until"
-msgstr ""
+msgstr "功能启用至"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -9428,7 +9428,7 @@ msgstr "字段"
 #. js-lingui-id: 0Ractl
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Field added to search"
-msgstr ""
+msgstr "字段已添加到搜索"
 
 #. js-lingui-id: LX8Pu1
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -9453,7 +9453,7 @@ msgstr "字段权限"
 #. js-lingui-id: YZK9mj
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Field removed from search"
-msgstr ""
+msgstr "字段已从搜索中移除"
 
 #. js-lingui-id: lcNTiF
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
@@ -9630,7 +9630,7 @@ msgstr "筛选规则组选项"
 #. js-lingui-id: JIOvqZ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Filter limits"
-msgstr ""
+msgstr "筛选限额"
 
 #. js-lingui-id: FG3LyE
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -9678,7 +9678,7 @@ msgstr "正在查找 {objectLabel}"
 #. js-lingui-id: DWUicC
 #: src/modules/ai/constants/action-tool-status-labels.constant.ts
 msgid "Finding connected accounts"
-msgstr ""
+msgstr "正在查找已连接的账户"
 
 #. js-lingui-id: JmZ/+d
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
@@ -9688,17 +9688,17 @@ msgstr "完成"
 #. js-lingui-id: O9Sink
 #: src/modules/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage.ts
 msgid "Finish editing the layout to expand chat"
-msgstr ""
+msgstr "完成布局编辑以展开聊天"
 
 #. js-lingui-id: yJoako
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "Finish editing the layout to open AI"
-msgstr ""
+msgstr "完成布局编辑以打开 AI"
 
 #. js-lingui-id: 6cOXRd
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "Finish editing the layout to open Settings"
-msgstr ""
+msgstr "完成布局编辑以打开设置"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -9767,7 +9767,7 @@ msgstr "请解决付款问题以保持您的企业功能处于启用状态。"
 #. js-lingui-id: UNHbhD
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Fix the payment issue to restore your enterprise features."
-msgstr ""
+msgstr "请解决付款问题以恢复您的企业功能。"
 
 #. js-lingui-id: Xgkhyj
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
@@ -9812,7 +9812,7 @@ msgstr "在 X 上关注我们"
 #. js-lingui-id: M0vOQ6
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Follows the workspace default for agents"
-msgstr ""
+msgstr "遵循工作区的代理默认设置"
 
 #. js-lingui-id: q3il6U
 #: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
@@ -9874,7 +9874,7 @@ msgstr "已找到 {objectLabel}"
 #. js-lingui-id: 5Vg0Q7
 #: src/modules/ai/constants/action-tool-status-labels.constant.ts
 msgid "Found connected accounts"
-msgstr ""
+msgstr "已找到已连接的账户"
 
 #. js-lingui-id: 1hxId5
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -10216,7 +10216,7 @@ msgstr "授予完全访问权限"
 #. js-lingui-id: E0rSFg
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Granted"
-msgstr ""
+msgstr "已授予"
 
 #. js-lingui-id: Tbxf45
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -10515,7 +10515,7 @@ msgstr "隐藏系统索引"
 #. js-lingui-id: yx/fMc
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "High"
-msgstr ""
+msgstr "高"
 
 #. js-lingui-id: 1ETc0T
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -10585,7 +10585,7 @@ msgstr "积分如何运作"
 #. js-lingui-id: nHmYga
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "How much can be spent, and how often it resets."
-msgstr ""
+msgstr "可支出的金额及其重置频率。"
 
 #. js-lingui-id: WC32k6
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -11210,13 +11210,13 @@ msgstr "集成 - 设置"
 #. js-lingui-id: Gzw2pq
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Intelligence"
-msgstr ""
+msgstr "智能"
 
 #. js-lingui-id: EYz4Ok
 #. placeholder {0}: formatNumber(model?.intelligenceIndex ?? 0)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "Intelligence score: {0}"
-msgstr ""
+msgstr "智能评分：{0}"
 
 #. js-lingui-id: GfnKOF
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -11271,7 +11271,7 @@ msgstr "无效的 cron 表达式：{errorMessage}"
 #. js-lingui-id: CGivIJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
-msgstr ""
+msgstr "无效的日期值 \"{newDay}\"。应为大于 1 的整数"
 
 #. js-lingui-id: u3hwhx
 #: src/modules/settings/domains/utils/getDomainValidationSchema.ts
@@ -11313,23 +11313,23 @@ msgstr "无效的文件：{0}"
 #. js-lingui-id: 1ccYjl
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid hour value \"{newHour}\". Should be integer between 0 and 23"
-msgstr ""
+msgstr "无效的小时值 \"{newHour}\"。应为 0 到 23 之间的整数"
 
 #. js-lingui-id: e3cT9e
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid hour value \"{newHour}\". Should be integer greater than 1"
-msgstr ""
+msgstr "无效的小时值 \"{newHour}\"。应为大于 1 的整数"
 
 #. js-lingui-id: jw4O7y
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid minute value \"{newMinute}\". Should be integer between 0 and 59"
-msgstr ""
+msgstr "无效的分钟值 \"{newMinute}\"。应为 0 到 59 之间的整数"
 
 #. js-lingui-id: SfvOlw
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
-msgstr ""
+msgstr "无效的分钟值 \"{newMinute}\"。应为大于 1 的整数"
 
 #. js-lingui-id: WY8amq
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
@@ -12131,12 +12131,12 @@ msgstr ""
 #. js-lingui-id: lvAOAE
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 msgid "Limit created."
-msgstr ""
+msgstr "限额已创建。"
 
 #. js-lingui-id: 1r7WdP
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Limit deleted."
-msgstr ""
+msgstr "限额已删除。"
 
 #. js-lingui-id: g3YJC1
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
@@ -12156,7 +12156,7 @@ msgstr ""
 #. js-lingui-id: GrFbIR
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Limit updated."
-msgstr ""
+msgstr "限额已更新。"
 
 #. js-lingui-id: 6BDqha
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
@@ -12171,12 +12171,12 @@ msgstr "限制"
 #. js-lingui-id: rtN0nI
 #: src/modules/settings/billing/components/SettingsBillingLimitsContent.tsx
 msgid "Limits could not be loaded."
-msgstr ""
+msgstr "无法加载限额。"
 
 #. js-lingui-id: iGG0MA
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Limits on members, API keys and apps require the Organization plan."
-msgstr ""
+msgstr "成员、API 密钥和应用的限额需要 Organization 套餐。"
 
 #. js-lingui-id: DXCDta
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -12261,7 +12261,7 @@ msgstr "列表"
 #. js-lingui-id: Wfj8PH
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand.tsx
 msgid "List duplicated with {memberCount, plural, one {# member} other {# members}}"
-msgstr ""
+msgstr "列表已复制，包含 {memberCount, plural, other {# 位成员}}"
 
 #. js-lingui-id: 3xTn5L
 #: src/modules/views/types/ViewType.ts
@@ -12403,7 +12403,7 @@ msgstr "加载中……"
 #. js-lingui-id: Pwqkdw
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 msgid "Loading…"
-msgstr ""
+msgstr "正在加载…"
 
 #. js-lingui-id: 7VBQ2j
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -12472,7 +12472,7 @@ msgstr "逻辑函数"
 #. js-lingui-id: U/kVJF
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 msgid "Logic function"
-msgstr ""
+msgstr "逻辑函数"
 
 #. js-lingui-id: qqnB9E
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -12530,7 +12530,7 @@ msgstr "循环"
 #. js-lingui-id: nTWWCZ
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Low"
-msgstr ""
+msgstr "低"
 
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -12678,7 +12678,7 @@ msgstr "手动配置"
 #. js-lingui-id: ospBFm
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Manually selected for this mode."
-msgstr ""
+msgstr "已为此模式手动选择。"
 
 #. js-lingui-id: lkcAoj
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -12824,7 +12824,7 @@ msgstr "我 (用户 ID)"
 #. js-lingui-id: agPptk
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Medium"
-msgstr ""
+msgstr "中"
 
 #. js-lingui-id: IAcjOi
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -12939,7 +12939,7 @@ msgstr "元数据文件生成失败"
 #. js-lingui-id: zsKJ2q
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "Meter"
-msgstr ""
+msgstr "计量项"
 
 #. js-lingui-id: fiPesM
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -12972,7 +12972,7 @@ msgstr "最小范围"
 #. js-lingui-id: 8GG+Pa
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Minimal"
-msgstr ""
+msgstr "极少"
 
 #. js-lingui-id: 5IrCQY
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -13018,7 +13018,7 @@ msgstr "移动端"
 #. js-lingui-id: zz/Wd/
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Mode"
-msgstr ""
+msgstr "模式"
 
 #. js-lingui-id: scu3wk
 #: src/modules/ai/components/AiModelTierSlider.tsx
@@ -13040,7 +13040,7 @@ msgstr "已移除模型 \"{0}\""
 #. js-lingui-id: 8jgO3g
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Model agents use when they run on their own"
-msgstr ""
+msgstr "代理自行运行时使用的模型"
 
 #. js-lingui-id: IzB3v0
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -13055,7 +13055,7 @@ msgstr "模型 ID 为必填项"
 #. js-lingui-id: iaurWj
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Model used when you chat with Twenty"
-msgstr ""
+msgstr "与 Twenty 聊天时使用的模型"
 
 #. js-lingui-id: //nm2/
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -13579,7 +13579,7 @@ msgstr "新密钥"
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 msgid "New limit"
-msgstr ""
+msgstr "新建限额"
 
 #. js-lingui-id: K2wBR9
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
@@ -13723,13 +13723,13 @@ msgstr "不"
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "No {0} found"
-msgstr ""
+msgstr "未找到 {0}"
 
 #. js-lingui-id: uZ8YLp
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "No {0} match your filters. Try removing some of them."
-msgstr ""
+msgstr "没有 {0} 与您的筛选条件匹配。请尝试移除其中一些。"
 
 #. js-lingui-id: 7YGRoE
 #: src/modules/ui/input/components/SelectInput.tsx
@@ -13801,7 +13801,7 @@ msgstr "未记录到该用户的 AI 消耗。"
 #: src/modules/ai/hooks/useAgentChat.ts
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "No AI provider is configured on this instance."
-msgstr ""
+msgstr "此实例未配置 AI 提供商。"
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -14137,7 +14137,7 @@ msgstr "无限制"
 #. js-lingui-id: Y9FJQX
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "No limit matches your search."
-msgstr ""
+msgstr "没有限额与您的搜索匹配。"
 
 #. js-lingui-id: nivaRq
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
@@ -14198,12 +14198,12 @@ msgstr "没有可用的麦克风。请连接一个麦克风后重试。"
 #. js-lingui-id: WGQJB3
 #: src/modules/settings/ai/utils/getAiModelModeDescription.ts
 msgid "No model available"
-msgstr ""
+msgstr "没有可用模型"
 
 #. js-lingui-id: xo340M
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "No model is available for this mode."
-msgstr ""
+msgstr "此模式没有可用模型。"
 
 #. js-lingui-id: 9VrTfZ
 #: src/modules/activities/notes/components/NotesCardContent.tsx
@@ -14266,7 +14266,7 @@ msgstr "未找到此软件包的来源证明。请使用 npm 可信发布从 Git
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "No recipients to send to ({skipReasons})"
-msgstr ""
+msgstr "没有可发送的收件人（{skipReasons}）"
 
 #. js-lingui-id: V/+aTW
 #: src/modules/object-record/record-field/ui/form-types/components/FormMorphRelationToOneFieldInput.tsx
@@ -14378,7 +14378,7 @@ msgstr "无发件人"
 #. js-lingui-id: dRi20n
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "No sending address. Connect a verified domain in Settings."
-msgstr ""
+msgstr "没有发送地址。请在设置中连接已验证的域名。"
 
 #. js-lingui-id: JkPTT8
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -14520,7 +14520,7 @@ msgstr "尚无工作流版本"
 #. js-lingui-id: 0R8Pxd
 #: src/modules/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows.ts
 msgid "No workflows were deleted"
-msgstr ""
+msgstr "未删除任何工作流"
 
 #. js-lingui-id: Q4dFjT
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
@@ -14646,7 +14646,7 @@ msgstr "未列出"
 #. js-lingui-id: AjdrYY
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Not measured at this effort yet. Showing the base model's reading."
-msgstr ""
+msgstr "尚未以此推理强度进行测量。正在显示基础模型的读数。"
 
 #. js-lingui-id: iXlml9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -14701,12 +14701,12 @@ msgstr "备注"
 #. js-lingui-id: 543eQ7
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "Nothing counted against this scope yet"
-msgstr ""
+msgstr "此范围尚未计入任何用量"
 
 #. js-lingui-id: yBYKk1
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Nothing has gone out yet. The campaign returns to your drafts and you can edit or schedule it again."
-msgstr ""
+msgstr "尚未发送任何内容。营销活动将返回您的草稿，您可以再次编辑或安排发送。"
 
 #. js-lingui-id: VngD1z
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -15222,12 +15222,12 @@ msgstr "运行正常"
 #. js-lingui-id: Wfz6Xv
 #: src/modules/settings/billing/hooks/useUsageLimitFormatter.ts
 msgid "operations"
-msgstr ""
+msgstr "操作"
 
 #. js-lingui-id: B1MDds
 #: src/modules/settings/billing/constants/UsageLimitMeterLabels.ts
 msgid "Operations"
-msgstr ""
+msgstr "操作"
 
 #. js-lingui-id: lVa1Xn
 #: src/modules/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues.ts
@@ -15406,7 +15406,7 @@ msgstr "输出"
 #. js-lingui-id: J7aOlM
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Output cost"
-msgstr ""
+msgstr "输出成本"
 
 #. js-lingui-id: i1+tKD
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
@@ -15423,7 +15423,7 @@ msgstr "覆盖草稿"
 #. js-lingui-id: RQCK56
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Overrides the mode above until you switch back to automatic"
-msgstr ""
+msgstr "覆盖上述模式，直到您切换回自动模式"
 
 #. js-lingui-id: 6/dCYd
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -15793,7 +15793,7 @@ msgstr "选择一个 {0} 记录"
 #. js-lingui-id: T1yaeQ
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
 msgid "Pick a send time in the future."
-msgstr ""
+msgstr "请选择未来的发送时间。"
 
 #. js-lingui-id: JqqNlC
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -15842,7 +15842,7 @@ msgstr "饼图"
 #. js-lingui-id: 6U8nJN
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Pin a specific model"
-msgstr ""
+msgstr "固定到特定模型"
 
 #. js-lingui-id: 3pU8e+
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -15869,7 +15869,7 @@ msgstr "固定选项卡，始终显示在左侧"
 #. js-lingui-id: Iaw5/y
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Pinned to a specific model"
-msgstr ""
+msgstr "已固定到特定模型"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -15913,7 +15913,7 @@ msgstr "方案"
 #. js-lingui-id: T91vKp
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Play"
-msgstr ""
+msgstr "播放"
 
 #. js-lingui-id: XdRQm7
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -16460,18 +16460,18 @@ msgstr "推理过程"
 #. js-lingui-id: 49IkcQ
 #: src/modules/ai/components/AiModelTierSlider.tsx
 msgid "Reasoning effort: {reasoningEffort}"
-msgstr ""
+msgstr "推理强度：{reasoningEffort}"
 
 #. js-lingui-id: PG5XPp
 #. placeholder {0}: getAiModelEffortLabel(availableEffort)
 #: src/modules/settings/ai/components/AiModelPinSelect.tsx
 msgid "Reasoning: {0}"
-msgstr ""
+msgstr "推理：{0}"
 
 #. js-lingui-id: nVOD/+
 #: src/modules/settings/ai/components/AiModelPinSelect.tsx
 msgid "Reasoning: Default"
-msgstr ""
+msgstr "推理：默认"
 
 #. js-lingui-id: W+ApAD
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -16512,7 +16512,7 @@ msgstr "收件人"
 #. js-lingui-id: F+BB7w
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Recipient count unavailable"
-msgstr ""
+msgstr "无法获取收件人数量"
 
 #. js-lingui-id: p8GO5h
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -16548,7 +16548,7 @@ msgstr "重新连接"
 #. js-lingui-id: PrI9jr
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect and share"
-msgstr ""
+msgstr "重新连接并共享"
 
 #. js-lingui-id: XsIxsL
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -16671,7 +16671,7 @@ msgstr "记录"
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Records selected"
-msgstr ""
+msgstr "已选择的记录"
 
 #. js-lingui-id: wRTiSD
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -16691,7 +16691,7 @@ msgstr "重定向 URI 已更新"
 #. js-lingui-id: ix5Jyh
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
 msgid "Redirect URL copied to clipboard"
-msgstr ""
+msgstr "重定向 URL 已复制到剪贴板"
 
 #. js-lingui-id: RZjynQ
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -17066,7 +17066,7 @@ msgstr "必填"
 #. js-lingui-id: r38Vo4
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
 msgid "Reschedule campaign"
-msgstr ""
+msgstr "重新安排营销活动"
 
 #. js-lingui-id: Vae65A
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -17481,7 +17481,7 @@ msgstr "正在运行..."
 #: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
 msgid "runs"
-msgstr ""
+msgstr "运行"
 
 #. js-lingui-id: nji0/X
 #: src/localization/hooks/useLocaleOptions.ts
@@ -17496,12 +17496,12 @@ msgstr "销售"
 #. js-lingui-id: 342JYO
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "Same cost as Balanced."
-msgstr ""
+msgstr "与 Balanced 成本相同。"
 
 #. js-lingui-id: wQnd1t
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "Same score as Balanced"
-msgstr ""
+msgstr "与 Balanced 评分相同"
 
 #. js-lingui-id: QeF0zb
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -17558,7 +17558,7 @@ msgstr "安排维护窗口并通知所有用户"
 #. js-lingui-id: MGaW9O
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
 msgid "Schedule campaign"
-msgstr ""
+msgstr "安排营销活动"
 
 #. js-lingui-id: 4ba0NE
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -17569,7 +17569,7 @@ msgstr "已计划"
 #. js-lingui-id: JizhXE
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 msgid "Scheduled at"
-msgstr ""
+msgstr "计划时间"
 
 #. js-lingui-id: 7oCJuI
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
@@ -17663,7 +17663,7 @@ msgstr "搜索文件夹..."
 #. js-lingui-id: owAIq9
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Search a limit"
-msgstr ""
+msgstr "搜索限额"
 
 #. js-lingui-id: 8J0e5B
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -17832,7 +17832,7 @@ msgstr "搜索字段"
 #. js-lingui-id: IQAn53
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Search fields..."
-msgstr ""
+msgstr "搜索字段..."
 
 #. js-lingui-id: rXrG+N
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
@@ -17914,7 +17914,7 @@ msgstr "已在网络上搜索 {query}"
 #. js-lingui-id: kSEiZD
 #: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
 msgid "searches"
-msgstr ""
+msgstr "搜索次数"
 
 #. js-lingui-id: EvDUJy
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
@@ -18097,7 +18097,7 @@ msgstr "已预置"
 #. js-lingui-id: AhNP40
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Seek"
-msgstr ""
+msgstr "跳转"
 
 #. js-lingui-id: 5iyrla
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem.tsx
@@ -18211,7 +18211,7 @@ msgstr "选择操作"
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
 msgid "Select all loaded rows"
-msgstr ""
+msgstr "选择所有已加载的行"
 
 #. js-lingui-id: /fhMKz
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
@@ -18354,7 +18354,7 @@ msgstr "选择你的语言并调整界面大小"
 #. js-lingui-id: AM0pWl
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
 msgid "Selected folders"
-msgstr ""
+msgstr "已选择的文件夹"
 
 #. js-lingui-id: JlFcis
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -18370,17 +18370,17 @@ msgstr "向您的团队发送邀请电子邮件"
 #. js-lingui-id: S147dq
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Send at"
-msgstr ""
+msgstr "发送时间"
 
 #. js-lingui-id: WRLt0i
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
 msgid "Send campaign"
-msgstr ""
+msgstr "发送营销活动"
 
 #. js-lingui-id: b7hiQs
 #: src/modules/side-panel/hooks/useOpenSendCampaignInSidePanel.ts
 msgid "Send Campaign"
-msgstr ""
+msgstr "发送营销活动"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -18407,12 +18407,12 @@ msgstr "发送邀请"
 #. js-lingui-id: RmmhAh
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Send later"
-msgstr ""
+msgstr "稍后发送"
 
 #. js-lingui-id: NpEm3p
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Send now"
-msgstr ""
+msgstr "立即发送"
 
 #. js-lingui-id: doZzL7
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -18448,17 +18448,17 @@ msgstr "正在发送请求…"
 #. js-lingui-id: YguCRV
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
 msgid "Sending starts {formattedSendTime}. You can cancel before then."
-msgstr ""
+msgstr "将于 {formattedSendTime} 开始发送。您可以在此之前取消。"
 
 #. js-lingui-id: 2l+PSH
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
 msgid "Sending starts right away and cannot be undone."
-msgstr ""
+msgstr "发送将立即开始，且无法撤销。"
 
 #. js-lingui-id: w+ywgn
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
 msgid "Sending starts right away, ahead of the time this campaign is holding."
-msgstr ""
+msgstr "发送将立即开始，早于此营销活动预定的时间。"
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -18495,7 +18495,7 @@ msgstr "塞尔维亚语（西里尔文）"
 #. js-lingui-id: lWKtaU
 #: src/localization/hooks/useLocaleOptions.ts
 msgid "Serbian (Latin)"
-msgstr ""
+msgstr "塞尔维亚语（拉丁文）"
 
 #. js-lingui-id: hjUUtd
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -18555,7 +18555,7 @@ msgstr "将未来创建的字段设为 \"可见\""
 #. js-lingui-id: u5nAtE
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Set for this agent only"
-msgstr ""
+msgstr "仅为此代理设置"
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -18678,7 +18678,7 @@ msgstr "与工作区共享"
 #. js-lingui-id: lX0SIS
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Share with workspace?"
-msgstr ""
+msgstr "与工作区共享?"
 
 #. js-lingui-id: gaJRur
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
@@ -18698,7 +18698,7 @@ msgstr "分享链接已复制到剪贴板"
 #. js-lingui-id: Xzq3Vx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Sharing this connection with the workspace requires reconnecting it. You will be redirected to authorize it again."
-msgstr ""
+msgstr "与工作区共享此连接需要重新连接。您将被重定向以再次授权。"
 
 #. js-lingui-id: RRXpo1
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -18967,7 +18967,7 @@ msgstr "更小"
 #. js-lingui-id: ZKXQ0a
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Smart"
-msgstr ""
+msgstr "智能"
 
 #. js-lingui-id: w+rJId
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -19150,7 +19150,7 @@ msgstr "无法连接到语音识别服务。请检查您的连接。"
 #. js-lingui-id: l9wI00
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Speed"
-msgstr ""
+msgstr "速度"
 
 #. js-lingui-id: pyfee5
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -19162,17 +19162,17 @@ msgstr "加快对您最常用于筛选或排序的字段的读取速度。每个
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 msgid "Spender"
-msgstr ""
+msgstr "消费方"
 
 #. js-lingui-id: ctM+rp
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Spending stays capped by your plan allowance and the other limits."
-msgstr ""
+msgstr "支出仍将受您的方案额度和其他限额的限制。"
 
 #. js-lingui-id: p7JFjT
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Spending will only be capped by your plan allowance and the other limits."
-msgstr ""
+msgstr "支出将仅受您的方案额度和其他限额的限制。"
 
 #. js-lingui-id: gsifzp
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -19354,7 +19354,7 @@ msgstr "停止假装"
 #. js-lingui-id: BrrIs8
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 msgid "Storage"
-msgstr ""
+msgstr "存储"
 
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
@@ -19694,7 +19694,7 @@ msgstr "同步电子邮件和日历账户"
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
 msgid "Sync every message"
-msgstr ""
+msgstr "同步每条消息"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -19785,7 +19785,7 @@ msgstr "系统设置"
 #. js-lingui-id: GXNLgO
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 msgid "System skills"
-msgstr ""
+msgstr "系统技能"
 
 #. js-lingui-id: HuA3RU
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
@@ -20053,7 +20053,7 @@ msgstr "你的工作流触发器将在命令菜单中显示的图标"
 #. js-lingui-id: 4m3QoL
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "The model behind each mode for every workspace. Workspaces can pin their own."
-msgstr ""
+msgstr "每个工作区中每种模式所使用的模型。工作区可以固定自己的模型。"
 
 #. js-lingui-id: HiI1Lo
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -20063,7 +20063,7 @@ msgstr "提供商 API 使用的模型标识符"
 #. js-lingui-id: 3o2gOg
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "The modes people and agents choose between"
-msgstr ""
+msgstr "用户和代理可选择的模式"
 
 #. js-lingui-id: h8mvCd
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -20155,7 +20155,7 @@ msgstr "正在准备转录内容…"
 #. js-lingui-id: qMTT4Z
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "The usage this limit applies to."
-msgstr ""
+msgstr "此限额适用的用量。"
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -20175,7 +20175,7 @@ msgstr "整个事件详情将与您的团队分享。"
 #. js-lingui-id: RmDTQ6
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "The whole workspace"
-msgstr ""
+msgstr "整个工作区"
 
 #. js-lingui-id: bEXHAZ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -20221,7 +20221,7 @@ msgstr "账单出现问题。请联系您的管理员。"
 #. js-lingui-id: ezuu4B
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "There is a payment issue with your subscription. Your enterprise features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one."
-msgstr ""
+msgstr "您的订阅存在付款问题。您的企业功能已被禁用。请在订阅取消前结清未付发票以恢复这些功能：已取消的订阅无法重新激活，您需要重新开始订阅。"
 
 #. js-lingui-id: WQk7Cf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
@@ -20360,7 +20360,7 @@ msgstr "此应用的注册已由你的工作区认领"
 #. js-lingui-id: kciPHv
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This billing period"
-msgstr ""
+msgstr "此计费周期"
 
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -20465,7 +20465,7 @@ msgstr "此模型将从该提供商中移除。您可稍后重新添加。"
 #. js-lingui-id: oW3yYY
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This month"
-msgstr ""
+msgstr "本月"
 
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
@@ -21000,7 +21000,7 @@ msgstr "试用期"
 #. js-lingui-id: mXdcsR
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Trial plan"
-msgstr ""
+msgstr "试用方案"
 
 #. js-lingui-id: H2Sfhg
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
@@ -21134,7 +21134,7 @@ msgstr "Twenty 字段"
 #. js-lingui-id: pNo8xt
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Twenty fills each level with the best model that meets your requirements"
-msgstr ""
+msgstr "Twenty 会为每个级别配置满足您要求的最佳模型"
 
 #. js-lingui-id: YIjS4q
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -21493,7 +21493,7 @@ msgstr "取消固定选项卡"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Unschedule Campaign"
-msgstr ""
+msgstr "取消排期营销活动"
 
 #. js-lingui-id: SMaFdc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -21695,7 +21695,7 @@ msgstr "更新您的付款方式"
 #. js-lingui-id: Uq5zVf
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Update your payment method before {licenseExpiresAtDate} to avoid losing access."
-msgstr ""
+msgstr "请在 {licenseExpiresAtDate} 前更新您的付款方式，以免失去访问权限。"
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -22043,7 +22043,7 @@ msgstr "使用此邮箱地址"
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Used"
-msgstr ""
+msgstr "已使用"
 
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -22140,7 +22140,7 @@ msgstr "使用默认值。设置自定义值以覆盖。"
 #. js-lingui-id: b1dG47
 #: src/localization/hooks/useLocaleOptions.ts
 msgid "Uzbek"
-msgstr ""
+msgstr "乌兹别克语"
 
 #. js-lingui-id: Clr4qp
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -22266,7 +22266,7 @@ msgstr ""
 #. js-lingui-id: Psyj/F
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Very High"
-msgstr ""
+msgstr "非常高"
 
 #. js-lingui-id: Shfac6
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
@@ -22603,7 +22603,7 @@ msgstr "该应用目前出现一些问题，我们正在修复，期间其功能
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "We could not load your {0}. Please try again later."
-msgstr ""
+msgstr "无法加载您的 {0}。请稍后再试。"
 
 #. js-lingui-id: icGmU/
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -22712,7 +22712,7 @@ msgstr "Webhook {targetUrl} 更新成功"
 #. js-lingui-id: k1illW
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Webhook Call"
-msgstr ""
+msgstr "Webhook 调用"
 
 #. js-lingui-id: 2X4ecw
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -22758,7 +22758,7 @@ msgstr "周"
 #. js-lingui-id: 4XSc4l
 #: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 msgid "Weekly"
-msgstr ""
+msgstr "每周"
 
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -22931,7 +22931,7 @@ msgstr "工人"
 #. js-lingui-id: bLt/0J
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 msgid "Workflow"
-msgstr ""
+msgstr "工作流"
 
 #. js-lingui-id: eQ/LA/
 #: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
@@ -23368,7 +23368,7 @@ msgstr "您即将更改工作区子域名。这一操作将会注销所有用户
 #. js-lingui-id: 6x8lJe
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "You’ve reached your AI usage limit."
-msgstr ""
+msgstr "您已达到 AI 使用限额。"
 
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts

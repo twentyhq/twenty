@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "{actorName} updated server administrator access for {targetName} ({targetEmail})."
-msgstr ""
+msgstr "{actorName} {targetName} ({targetEmail}) uchun server administratori ruxsatini yangiladi."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -96,7 +96,7 @@ msgstr "Yoqilgan"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Full admin panel access: {fullAdminStatus}"
-msgstr ""
+msgstr "To‘liq administrator paneliga kirish: {fullAdminStatus}"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -135,7 +135,7 @@ msgstr "Agar Twenty siz uchun mos boʻlsa, hammasi tayyor — siz hech narsa qil
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "If you did not expect this change, review your server administrators immediately."
-msgstr ""
+msgstr "Agar bu o‘zgarishni kutmagan bo‘lsangiz, server administratorlaringizni darhol tekshiring."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -155,7 +155,7 @@ msgstr "Agar qachondir Twentyʼga yana bir bor imkon berishni istasangiz, bir ne
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Impersonation: {impersonateStatus}"
-msgstr ""
+msgstr "Boshqa foydalanuvchi nomidan kirish: {impersonateStatus}"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx

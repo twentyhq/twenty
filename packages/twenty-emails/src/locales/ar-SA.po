@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "{actorName} updated server administrator access for {targetName} ({targetEmail})."
-msgstr ""
+msgstr "قام {actorName} بتحديث صلاحية مسؤول الخادم لـ {targetName} ({targetEmail})."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -96,7 +96,7 @@ msgstr "مفعَّل"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Full admin panel access: {fullAdminStatus}"
-msgstr ""
+msgstr "الوصول الكامل إلى لوحة الإدارة: {fullAdminStatus}"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -135,7 +135,7 @@ msgstr "إذا كانت Twenty مناسبة لك، فأنت جاهز تمامً�
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "If you did not expect this change, review your server administrators immediately."
-msgstr ""
+msgstr "إذا لم تكن تتوقع هذا التغيير، فراجع مسؤولي الخادم لديك فورًا."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -155,7 +155,7 @@ msgstr "إذا رغبت في تجربة Twenty مرة أخرى في أي وقت�
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Impersonation: {impersonateStatus}"
-msgstr ""
+msgstr "انتحال الهوية: {impersonateStatus}"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx

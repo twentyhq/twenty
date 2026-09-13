@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "{actorName} updated server administrator access for {targetName} ({targetEmail})."
-msgstr ""
+msgstr "{actorName} 已更新 {targetName} ({targetEmail}) 的服务器管理员访问权限。"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -96,7 +96,7 @@ msgstr "已启用"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Full admin panel access: {fullAdminStatus}"
-msgstr ""
+msgstr "完整管理员面板访问权限：{fullAdminStatus}"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -135,7 +135,7 @@ msgstr "如果 Twenty 很适合您，那就一切就绪——您无需做任何�
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "If you did not expect this change, review your server administrators immediately."
-msgstr ""
+msgstr "如果您未预期此更改，请立即检查您的服务器管理员。"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -155,7 +155,7 @@ msgstr "如果您想再次尝试 Twenty，您可以在几分钟内创建一个�
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Impersonation: {impersonateStatus}"
-msgstr ""
+msgstr "模拟：{impersonateStatus}"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx

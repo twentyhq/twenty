@@ -34,7 +34,7 @@ msgstr " має бути одним із значень {ratingValues}"
 #. js-lingui-id: b2GdxK
 #: src/modules/ai/components/AiModelTierSlider.tsx
 msgid " Not measured at this effort yet, so this is the base model's reading."
-msgstr ""
+msgstr " Ще не виміряно за цього рівня зусиль, тож це показник базової моделі."
 
 #. js-lingui-id: nA/hWD
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -177,7 +177,7 @@ msgstr ""
 #. placeholder {2}: formatNumber(audiencePreview.sendable)
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "{0, plural, one {{1} recipient} other {{2} recipients}}"
-msgstr ""
+msgstr "{0, plural, one {{1} одержувач} few {{2} одержувачі} many {{2} одержувачів} other {{2} одержувача}}"
 
 #. js-lingui-id: 0LMb5P
 #. placeholder {0}: Math.abs(days)
@@ -195,13 +195,13 @@ msgstr "{0, plural, one {{years} рік} few {{years} роки} many {{years} р
 #. placeholder {0}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
-msgstr ""
+msgstr "{0, plural, one {# завдання не вдалося видалити} few {# завдання не вдалося видалити} many {# завдань не вдалося видалити} other {# завдання не вдалося видалити}}"
 
 #. js-lingui-id: AHhuJj
 #. placeholder {0}: failedResults.length
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
-msgstr ""
+msgstr "{0, plural, one {# завдання не вдалося повторити} few {# завдання не вдалося повторити} many {# завдань не вдалося повторити} other {# завдання не вдалося повторити}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -222,19 +222,19 @@ msgstr "{0, plural, one {# робочий простір із помилкою �
 #. placeholder {2}: canceled.canceledMessageCount
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "{0, plural, one {Campaign canceled, {1} pending email stopped} other {Campaign canceled, {2} pending emails stopped}}"
-msgstr ""
+msgstr "{0, plural, one {Кампанію скасовано, {1} електронний лист в очікуванні зупинено} few {Кампанію скасовано, {2} електронні листи в очікуванні зупинено} many {Кампанію скасовано, {2} електронних листів в очікуванні зупинено} other {Кампанію скасовано, {2} електронного листа в очікуванні зупинено}}"
 
 #. js-lingui-id: xEqptn
 #. placeholder {0}: item.includedCredits
 #: src/modules/settings/admin-panel/utils/formatSubscriptionItemValue.ts
 msgid "{0, plural, one {credit/period} other {credits/period}}"
-msgstr ""
+msgstr "{0, plural, one {кредит/період} few {кредити/період} many {кредитів/період} other {кредиту/період}}"
 
 #. js-lingui-id: AkeiJW
 #. placeholder {0}: item.quantity
 #: src/modules/settings/admin-panel/utils/formatSubscriptionItemValue.ts
 msgid "{0, plural, one {seat} other {seats}}"
-msgstr ""
+msgstr "{0, plural, one {місце} few {місця} many {місць} other {місця}}"
 
 #. js-lingui-id: WTc9VY
 #. placeholder {0}: restriction.fieldNames.length
@@ -246,7 +246,7 @@ msgstr "{0, plural, one {Ви не маєте доступу до поля {fiel
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr ""
+msgstr "{0} — недоставлено або надійшла скарга"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -277,7 +277,7 @@ msgstr "{0} не мають зв’язку з {loadBalancePoolObjectLabel}. В�
 #. placeholder {1}: excludedReasons.join(', ')
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "{0} in the list, skipping {1}"
-msgstr ""
+msgstr "{0} у списку, пропущено {1}"
 
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
@@ -314,7 +314,7 @@ msgstr "{0} відмовилися від цієї теми"
 #. placeholder {0}: formatNumber(counts.overCap)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} over the recipient limit"
-msgstr ""
+msgstr "{0} понад ліміт одержувачів"
 
 #. js-lingui-id: 55frRG
 #. placeholder {0}: index + 1
@@ -344,33 +344,33 @@ msgstr "Показано {0}"
 #. placeholder {0}: formatMetricDelta(costDelta)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0} the cost of Balanced."
-msgstr ""
+msgstr "{0} вартості Збалансованого."
 
 #. js-lingui-id: UWEjMJ
 #. placeholder {0}: formatMetricDelta(intelligenceDelta)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0} the score of Balanced"
-msgstr ""
+msgstr "{0} оцінки Збалансованого"
 
 #. js-lingui-id: 0PXtku
 #. placeholder {0}: formatNumber(tier.model.outputTokensPerSecond, { decimals: 0 })
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "{0} tokens/s"
-msgstr ""
+msgstr "{0} токенів/с"
 
 #. js-lingui-id: jSMnoW
 #. placeholder {0}: formatNumber(model?.outputTokensPerSecond ?? 0)
 #. placeholder {1}: formatMetricDelta(resolvedTier.speedDeltaPercent ?? 0)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0} tokens/s, {1} the speed of Balanced Mode."
-msgstr ""
+msgstr "{0} токенів/с, {1} швидкості збалансованого режиму."
 
 #. js-lingui-id: NLWHJB
 #. placeholder {0}: formatNumber(model?.outputTokensPerSecond ?? 0)
 #. placeholder {1}: formatMetricDelta(resolvedTier.speedDeltaPercent ?? 0)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0} tokens/s, a {1} change in speed compared with Balanced Mode."
-msgstr ""
+msgstr "{0} токенів/с, зміна швидкості на {1} порівняно зі збалансованим режимом."
 
 #. js-lingui-id: nZUq+6
 #. placeholder {0}: formatNumber(counts.globallyUnsubscribed)
@@ -400,7 +400,7 @@ msgstr "{0, plural, one {# віджет} few {# віджети} many {# відж
 #. placeholder {0}: formatNumber(counts.withoutEmail)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} without an email address"
-msgstr ""
+msgstr "{0} без адреси електронної пошти"
 
 #. js-lingui-id: 2UKfhY
 #. placeholder {0}: selectedItemNames.length
@@ -413,31 +413,31 @@ msgstr "{0} членів робочого простору"
 #. placeholder {1}: selectedResolvedTier.model.label
 #: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "{0}: {1}"
-msgstr ""
+msgstr "{0}: {1}"
 
 #. js-lingui-id: EAdDH3
 #. placeholder {0}: formatNumber(costDelta)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0}% higher cost than Balanced."
-msgstr ""
+msgstr "вартість на {0}% вища, ніж у Збалансованого."
 
 #. js-lingui-id: c8VH5D
 #. placeholder {0}: formatNumber(intelligenceDelta)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0}% higher score than Balanced"
-msgstr ""
+msgstr "оцінка на {0}% вища, ніж у Збалансованого"
 
 #. js-lingui-id: nRAomq
 #. placeholder {0}: formatNumber(Math.abs(costDelta))
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0}% lower cost than Balanced."
-msgstr ""
+msgstr "вартість на {0}% нижча, ніж у Збалансованого."
 
 #. js-lingui-id: wq2vL5
 #. placeholder {0}: formatNumber(Math.abs(intelligenceDelta))
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "{0}% lower score than Balanced"
-msgstr ""
+msgstr "оцінка на {0}% нижча, ніж у Збалансованого"
 
 #. js-lingui-id: qdQhzv
 #: src/modules/views/advanced-filter-chip/components/AdvancedFilterChip.tsx
@@ -482,7 +482,7 @@ msgstr "{appName} хоче:"
 #. js-lingui-id: wXviUj
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobStateBadge.tsx
 msgid "{attemptsMade, plural, one {{attemptsMade} attempt} other {{attemptsMade} attempts}}"
-msgstr ""
+msgstr "{attemptsMade, plural, one {{attemptsMade} спроба} few {{attemptsMade} спроби} many {{attemptsMade} спроб} other {{attemptsMade} спроби}}"
 
 #. js-lingui-id: y9covz
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
@@ -503,7 +503,7 @@ msgstr "{cachedPercent}% кешовано"
 #. js-lingui-id: M9lDqR
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "{count, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr ""
+msgstr "{count, plural, one {Напр., {example} для # десяткового знака} few {Напр., {example} для # десяткових знаків} many {Напр., {example} для # десяткових знаків} other {Напр., {example} для # десяткового знака}}"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -518,7 +518,7 @@ msgstr "{days, plural, one {{days} день} few {{days} дні} many {{days} д
 #. js-lingui-id: 7o03+8
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
-msgstr ""
+msgstr "{decimals, plural, one {Напр., {example} для # десяткового знака} few {Напр., {example} для # десяткових знаків} many {Напр., {example} для # десяткових знаків} other {Напр., {example} для # десяткового знака}}"
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -620,12 +620,12 @@ msgstr "{jobCount, plural, one {Це повторить обране завда�
 #. js-lingui-id: Xs84Pv
 #: src/modules/settings/ai/utils/getAiModelModeDescription.ts
 msgid "{label} (Auto)"
-msgstr ""
+msgstr "{label} (Автоматично)"
 
 #. js-lingui-id: Oq2RUh
 #: src/modules/settings/ai/utils/getAiModelPinOptions.ts
 msgid "{label} (deprecated)"
-msgstr ""
+msgstr "{label} (застаріле)"
 
 #. js-lingui-id: FdY/eP
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -645,7 +645,7 @@ msgstr "{messagesLength, plural, one {# лист} few {# листи} many {# л�
 #. js-lingui-id: Pfatg8
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{minutes, plural, one {# minute} other {# minutes}}"
-msgstr ""
+msgstr "{minutes, plural, one {# хвилина} few {# хвилини} many {# хвилин} other {# хвилини}}"
 
 #. js-lingui-id: Koe99p
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -683,12 +683,12 @@ msgstr "Запис {positionLabel} має пріоритет"
 #. placeholder {1}: formatNumber(queuedCount)
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedCount, plural, one {Campaign queued to {0} recipient} other {Campaign queued to {1} recipients}}"
-msgstr ""
+msgstr "{queuedCount, plural, one {Кампанію поставлено в чергу для {0} одержувача} few {Кампанію поставлено в чергу для {1} одержувачів} many {Кампанію поставлено в чергу для {1} одержувачів} other {Кампанію поставлено в чергу для {1} одержувачів}}"
 
 #. js-lingui-id: cMTWxR
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedMessage}, skipping {skipReasons}"
-msgstr ""
+msgstr "{queuedMessage}, пропущено {skipReasons}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -724,7 +724,7 @@ msgstr "{scopeCount, plural, one {# область доступу} few {# обл
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{seconds, plural, one {# second} other {# seconds}}"
-msgstr ""
+msgstr "{seconds, plural, one {# секунда} few {# секунди} many {# секунд} other {# секунди}}"
 
 #. js-lingui-id: kvVMdH
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -749,7 +749,7 @@ msgstr "Сервіс {serviceLabel} недоступний"
 #. js-lingui-id: CQxE7h
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{spokenMinutes} {spokenSeconds}"
-msgstr ""
+msgstr "{spokenMinutes} {spokenSeconds}"
 
 #. js-lingui-id: 8vJ+2V
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -885,7 +885,7 @@ msgstr "~ {0} токенів"
 #. placeholder {0}: formatNumber(tier.model.outputCostPerMillionTokens, { decimals: 2 })
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "${0} / 1M"
-msgstr ""
+msgstr "${0} / 1 млн"
 
 #. js-lingui-id: Cx0xl3
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -1052,7 +1052,7 @@ msgstr "Щоб ваше робоче середовище залишалося �
 #. js-lingui-id: 5WwDyx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "A payment on your subscription failed. Your enterprise features stay active while we retry it."
-msgstr ""
+msgstr "Платіж за вашу підписку не пройшов. Ваші функції Enterprise залишатимуться активними, поки ми повторюємо спробу."
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1205,12 +1205,12 @@ msgstr "Acme GmbH"
 #. js-lingui-id: qrbojL
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "ACS URL"
-msgstr ""
+msgstr "URL ACS"
 
 #. js-lingui-id: 4FQd0Y
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "ACS URL copied to clipboard"
-msgstr ""
+msgstr "URL ACS скопійовано в буфер обміну"
 
 #. js-lingui-id: r6Y4GL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -1328,7 +1328,7 @@ msgstr "Додати \"{trimmedName}\" до параметрів"
 #. placeholder {0}: objectMetadataItem.labelSingular
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Add a {0}"
-msgstr ""
+msgstr "Додати {0}"
 
 #. js-lingui-id: 9CHcSG
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
@@ -1423,7 +1423,7 @@ msgstr "Додати обліковий запис"
 #. js-lingui-id: dGjQL8
 #: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "Add an API key to enable AI."
-msgstr ""
+msgstr "Додайте ключ API, щоб увімкнути ШІ."
 
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
@@ -1524,7 +1524,7 @@ msgstr "Додати канал електронної пошти"
 #. js-lingui-id: Va3xJe
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Add field"
-msgstr ""
+msgstr "Додати поле"
 
 #. js-lingui-id: DpV70M
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -1830,7 +1830,7 @@ msgstr "Додайте нижче свою кредитну картку. Піс
 #. placeholder {0}: objectMetadataItem.labelSingular
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Add your first {0}"
-msgstr ""
+msgstr "Додайте свій перший {0}"
 
 #. js-lingui-id: m2qDV8
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
@@ -1941,7 +1941,7 @@ msgstr "Розширені"
 #. js-lingui-id: cBdysG
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Advanced Encryption"
-msgstr "Розширене шифрування}]} }]}```? Wait need ensure formatting correct. I will correct. JSON must be valid. Let's output correct: {"
+msgstr "Розширене шифрування"
 
 #. js-lingui-id: tMFFwF
 #: src/modules/views/components/ViewBarFilterDropdownAdvancedFilterButton.tsx
@@ -1961,22 +1961,22 @@ msgstr "Африкаанс"
 #. js-lingui-id: WlItll
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 msgid "After 180 days"
-msgstr ""
+msgstr "Через 180 днів"
 
 #. js-lingui-id: I6lVwB
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 msgid "After 30 days"
-msgstr ""
+msgstr "Через 30 днів"
 
 #. js-lingui-id: yPZL9v
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 msgid "After 60 days"
-msgstr ""
+msgstr "Через 60 днів"
 
 #. js-lingui-id: E5fxqI
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 msgid "After 90 days"
-msgstr ""
+msgstr "Через 90 днів"
 
 #. js-lingui-id: 5wZlI9
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -1986,7 +1986,7 @@ msgstr "Після заданого часу"
 #. js-lingui-id: 5uLUiv
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 msgid "After a year"
-msgstr ""
+msgstr "Через рік"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -2090,7 +2090,7 @@ msgstr "ШІ-агенти"
 #. js-lingui-id: n2fhCy
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "AI chat"
-msgstr ""
+msgstr "Чат ШІ"
 
 #. js-lingui-id: V+Qj+q
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -2178,12 +2178,12 @@ msgstr "Використання ШІ за робочим простором"
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
-msgstr ""
+msgstr "Досягнуто ліміту використання ШІ. Попросіть адміністратора оновити план."
 
 #. js-lingui-id: wBA/cx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
-msgstr ""
+msgstr "Досягнуто ліміту використання ШІ. Зверніться до служби підтримки, щоб оновити план."
 
 #. js-lingui-id: KLyZ6L
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -2243,12 +2243,12 @@ msgstr "Доступ до всіх дій"
 #. js-lingui-id: iKzPQM
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All agents"
-msgstr ""
+msgstr "Усі агенти"
 
 #. js-lingui-id: Aapaa8
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All API keys"
-msgstr ""
+msgstr "Усі API-ключі"
 
 #. js-lingui-id: s1C/cR
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -2263,7 +2263,7 @@ msgstr "Усі реєстрації додатків на платформі, в
 #. js-lingui-id: G6DTnD
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All applications"
-msgstr ""
+msgstr "Усі застосування"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -2311,7 +2311,7 @@ msgstr "Всі рядки"
 #. js-lingui-id: FIlQ3z
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All logic functions"
-msgstr ""
+msgstr "Усі функції логіки"
 
 #. js-lingui-id: c3lkKf
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
@@ -2321,7 +2321,7 @@ msgstr "Усі члени"
 #. js-lingui-id: dtwyLS
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
 msgid "All messages"
-msgstr ""
+msgstr "Усі повідомлення"
 
 #. js-lingui-id: ypSiuQ
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
@@ -2394,12 +2394,12 @@ msgstr "Усі теми"
 #. js-lingui-id: UBpkWM
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All users"
-msgstr ""
+msgstr "Усі користувачі"
 
 #. js-lingui-id: qf6r3X
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "All workflows"
-msgstr ""
+msgstr "Усі робочі процеси"
 
 #. js-lingui-id: XLzFVD
 #: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
@@ -2670,7 +2670,7 @@ msgstr "Виклики API"
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 msgid "API key"
-msgstr ""
+msgstr "API-ключ"
 
 #. js-lingui-id: yRnk5W
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -2865,7 +2865,7 @@ msgstr "Наведені нижче застосунки не перевірен
 #. js-lingui-id: p98xmP
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Applies to"
-msgstr ""
+msgstr "Застосовується до"
 
 #. js-lingui-id: DB8zMK
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -2995,7 +2995,7 @@ msgstr "Ви впевнені? Ваша поточна інформація не
 #. js-lingui-id: AkeObK
 #: src/localization/hooks/useLocaleOptions.ts
 msgid "Armenian"
-msgstr ""
+msgstr "Вірменська"
 
 #. js-lingui-id: cybVUo
 #: src/modules/settings/members/components/MemberInfosTab.tsx
@@ -3022,7 +3022,7 @@ msgstr "За зростанням"
 #. js-lingui-id: LfkDyR
 #: src/modules/ai/components/AiChatErrorRenderer.tsx
 msgid "Ask a workspace admin to raise the limit."
-msgstr ""
+msgstr "Попросіть адміністратора робочого простору збільшити ліміт."
 
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
@@ -3035,7 +3035,7 @@ msgstr "Запитати AI"
 #. js-lingui-id: cmkudK
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Ask anything, @ a record or / a skill..."
-msgstr ""
+msgstr "Запитайте будь-що, @ запис або / навичку..."
 
 #. js-lingui-id: QVL/hg
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
@@ -3233,7 +3233,7 @@ msgstr "Помилка автентифікації на"
 #. js-lingui-id: sgXsd0
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Auth failure reason"
-msgstr ""
+msgstr "Причина помилки автентифікації"
 
 #. js-lingui-id: P8fBlG
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -3309,7 +3309,7 @@ msgstr "Автоматичне оновлення"
 #: src/modules/ai/components/AiModelPicker.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Automatic"
-msgstr ""
+msgstr "Автоматично"
 
 #. js-lingui-id: YRT7ZW
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -3334,7 +3334,7 @@ msgstr "Автоматично встановлювати цей застосу�
 #. js-lingui-id: MHsVk5
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Automatically selected by Twenty for this mode."
-msgstr ""
+msgstr "Автоматично вибрано Twenty для цього режиму."
 
 #. js-lingui-id: XFGV21
 #: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
@@ -3418,7 +3418,7 @@ msgstr "Балансувати за"
 #. js-lingui-id: kJygHz
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Balanced"
-msgstr ""
+msgstr "Збалансований"
 
 #. js-lingui-id: b2ghLW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -3913,17 +3913,17 @@ msgstr "Дзвінки"
 #. js-lingui-id: YKJ+pg
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "Campaign moved to {sendTime}"
-msgstr ""
+msgstr "Кампанію перенесено на {sendTime}"
 
 #. js-lingui-id: ANWhqH
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "Campaign scheduled for {sendTime}"
-msgstr ""
+msgstr "Кампанію заплановано на {sendTime}"
 
 #. js-lingui-id: gL6+M4
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Campaign unscheduled and back in your drafts"
-msgstr ""
+msgstr "Кампанію скасовано та повернуто до ваших чернеток"
 
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -3959,7 +3959,7 @@ msgstr "Скасувати"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Cancel Campaign"
-msgstr ""
+msgstr "Скасувати кампанію"
 
 #. js-lingui-id: J8nuSF
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -4065,7 +4065,7 @@ msgstr "Не можна завантажити більше ніж {maxNumberOfV
 #. js-lingui-id: n1zTaJ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Caps on what your workspace can spend and who they apply to"
-msgstr ""
+msgstr "Обмеження витрат робочого простору та коло осіб, яких вони стосуються"
 
 #. js-lingui-id: Po5MgW
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
@@ -4297,22 +4297,22 @@ msgstr "Виберіть {intervalAdjective} кредити"
 #. js-lingui-id: n5pcaT
 #: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "Choose a model mode"
-msgstr ""
+msgstr "Виберіть режим моделі"
 
 #. js-lingui-id: sHa2Dg
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 msgid "Choose a spender"
-msgstr ""
+msgstr "Виберіть платника"
 
 #. js-lingui-id: RGUZK1
 #: src/modules/settings/billing/components/SettingsBillingLimitUsageSelect.tsx
 msgid "Choose a usage"
-msgstr ""
+msgstr "Виберіть використання"
 
 #. js-lingui-id: qJwqET
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "Choose a usage first"
-msgstr ""
+msgstr "Спочатку виберіть використання"
 
 #. js-lingui-id: NFfUic
 #: src/pages/auth/SignInUp.tsx
@@ -4322,7 +4322,7 @@ msgstr "Виберіть робочий простір"
 #. js-lingui-id: KsP4Tg
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Choose automatically"
-msgstr ""
+msgstr "Вибирати автоматично"
 
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -4337,7 +4337,7 @@ msgstr "Вибрати між скороченим та повним"
 #. js-lingui-id: NaiAqg
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
 msgid "Choose folders to sync"
-msgstr ""
+msgstr "Виберіть папки для синхронізації"
 
 #. js-lingui-id: 5EMoSo
 #: src/modules/settings/billing/components/internal/SettingsBillingPlansWithoutSubscription.tsx
@@ -4352,7 +4352,7 @@ msgstr "Виберіть валюту за замовчуванням, яку б
 #. js-lingui-id: KoXi44
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Choose the default modes for people and agents"
-msgstr ""
+msgstr "Виберіть режими за замовчуванням для людей і агентів"
 
 #. js-lingui-id: LHce7q
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -5331,7 +5331,7 @@ msgstr "Копіювати"
 #. js-lingui-id: 6gAr5+
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "Copy audio download link"
-msgstr ""
+msgstr "Копіювати посилання для завантаження аудіо"
 
 #. js-lingui-id: NmPNJJ
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
@@ -5642,12 +5642,12 @@ msgstr "Підрахунок унікальних значень"
 #. js-lingui-id: GV0ZB5
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Counted again when the campaign sends, so this can change."
-msgstr ""
+msgstr "Підрахунок буде виконано повторно під час надсилання кампанії, тому значення може змінитися."
 
 #. js-lingui-id: tKTq/b
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Counting recipients..."
-msgstr ""
+msgstr "Підрахунок одержувачів..."
 
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -5673,7 +5673,7 @@ msgstr "Створити"
 #. placeholder {0}: objectMetadataItem.labelSingular
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a {0} to automate your work."
-msgstr ""
+msgstr "Створіть {0}, щоб автоматизувати свою роботу."
 
 #. js-lingui-id: fQFALn
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -5989,7 +5989,7 @@ msgstr "Кредити"
 #. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 msgid "Credits are added on top of the plan allowance and are spent only once it runs out. They carry over in full from one billing period to the next, and stay available until they are used up or, where an expiry is set, until the end of the billing period that expiry falls in."
-msgstr ""
+msgstr "Кредити додаються понад ліміт плану та витрачаються лише після його вичерпання. Вони повністю переносяться з одного розрахункового періоду до наступного й залишаються доступними, доки їх не буде витрачено або, якщо встановлено строк дії, до кінця розрахункового періоду, на який припадає цей строк."
 
 #. js-lingui-id: 0o2LpE
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -6009,7 +6009,7 @@ msgstr "кредити, доступні під час пробного пері
 #. js-lingui-id: nbyiz/
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Credits handed out on top of the plan allowance. They stay spendable until used up."
-msgstr ""
+msgstr "Кредити, надані понад ліміт плану. Їх можна витрачати, доки їх не буде вичерпано."
 
 #. js-lingui-id: iSuLEw
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
@@ -6341,7 +6341,7 @@ msgstr "Чеська"
 #. js-lingui-id: U0sC6H
 #: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 msgid "Daily"
-msgstr ""
+msgstr "Щодня"
 
 #. js-lingui-id: ShUrwO
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -6867,7 +6867,7 @@ msgstr "Видалити групу"
 #. js-lingui-id: dPwNDl
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Delete limit"
-msgstr ""
+msgstr "Видалити ліміт"
 
 #. js-lingui-id: Wk+A9S
 #: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
@@ -6922,7 +6922,7 @@ msgstr "Видалити цю інтеграцію"
 #. js-lingui-id: uvgDyK
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Delete this limit?"
-msgstr ""
+msgstr "Видалити цей ліміт?"
 
 #. js-lingui-id: c0vHQI
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -6973,12 +6973,12 @@ msgstr "Видалити віджет"
 #. js-lingui-id: D+Bgvi
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 msgid "Delete Workflow"
-msgstr ""
+msgstr "Видалити робочий процес"
 
 #. js-lingui-id: Z299hR
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 msgid "Delete Workflows"
-msgstr ""
+msgstr "Видалити робочі процеси"
 
 #. js-lingui-id: kYu0eF
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -7025,7 +7025,7 @@ msgstr "Видалення цього методу назавжди усуне �
 #. js-lingui-id: si+vZD
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Delivery"
-msgstr ""
+msgstr "Доставка"
 
 #. js-lingui-id: Ssdrw4
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
@@ -7690,7 +7690,7 @@ msgstr "Редагувати iFrame"
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Edit limit"
-msgstr ""
+msgstr "Редагувати ліміт"
 
 #. js-lingui-id: /PoNoq
 #: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
@@ -7939,7 +7939,7 @@ msgstr "Електронні листи та календар"
 #. js-lingui-id: VJ5blF
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Emails already handed to the provider cannot be recalled. This stops everything still waiting to be sent."
-msgstr ""
+msgstr "Електронні листи, уже передані постачальнику, не можна відкликати. Це зупинить усе, що ще очікує на надсилання."
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -8179,7 +8179,7 @@ msgstr "Введіть адреси електронної пошти для п�
 #. js-lingui-id: lcPZCR
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Enter both keys, or neither to use the instance IAM role"
-msgstr ""
+msgstr "Введіть обидва ключі або не вводьте жодного, щоб використовувати роль IAM екземпляра"
 
 #. js-lingui-id: mPsuKh
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -8919,12 +8919,12 @@ msgstr "Подовжено"
 #. js-lingui-id: 4NR4Ja
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Extra Fast"
-msgstr ""
+msgstr "Надзвичайно швидкий"
 
 #. js-lingui-id: Y64TrM
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Extra Smart"
-msgstr ""
+msgstr "Надзвичайно розумний"
 
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -8978,12 +8978,12 @@ msgstr "Не вдалося додати провайдера"
 #. js-lingui-id: ScvpVb
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow.tsx
 msgid "Failed to add record"
-msgstr ""
+msgstr "Не вдалося додати запис"
 
 #. js-lingui-id: Y9Y+x3
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Failed to cancel campaign"
-msgstr ""
+msgstr "Не вдалося скасувати кампанію"
 
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -9004,7 +9004,7 @@ msgstr "Не вдалося створити запис"
 #. js-lingui-id: 7xz1r9
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 msgid "Failed to create the limit."
-msgstr ""
+msgstr "Не вдалося створити ліміт."
 
 #. js-lingui-id: ITWxKI
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -9015,7 +9015,7 @@ msgstr "Не вдалося створити тему відписки."
 #: src/modules/object-core/workflows/hooks/useCreateCoreWorkflow.ts
 #: src/modules/object-core/workflows/hooks/useCreateCoreWorkflow.ts
 msgid "Failed to create workflow"
-msgstr ""
+msgstr "Не вдалося створити робочий процес"
 
 #. js-lingui-id: AXveCw
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -9035,7 +9035,7 @@ msgstr "Не вдалося видалити навичку"
 #. js-lingui-id: YVct3Q
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Failed to delete the limit."
-msgstr ""
+msgstr "Не вдалося видалити ліміт."
 
 #. js-lingui-id: AUprM8
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -9050,7 +9050,7 @@ msgstr "Не вдалося видалити тему відписки."
 #. js-lingui-id: UUBrJf
 #: src/modules/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows.ts
 msgid "Failed to delete workflows"
-msgstr ""
+msgstr "Не вдалося видалити робочі процеси"
 
 #. js-lingui-id: NUmmdc
 #: src/modules/dashboards/hooks/useDuplicateDashboard.ts
@@ -9060,7 +9060,7 @@ msgstr "Не вдалося продублювати інформаційну п
 #. js-lingui-id: 6e1GS3
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/hooks/useDuplicateMessageList.ts
 msgid "Failed to duplicate list"
-msgstr ""
+msgstr "Не вдалося продублювати список"
 
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
@@ -9128,7 +9128,7 @@ msgstr "Не вдалося завантажити адміністраторі�
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to load the application."
-msgstr ""
+msgstr "Не вдалося завантажити застосунок."
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -9272,7 +9272,7 @@ msgstr "Не вдалося оновити доступність моделі"
 #. js-lingui-id: mDyyo1
 #: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
 msgid "Failed to update model settings"
-msgstr ""
+msgstr "Не вдалося оновити налаштування моделі"
 
 #. js-lingui-id: J7vly7
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
@@ -9302,7 +9302,7 @@ msgstr "Не вдалося оновити доступ адміністрато
 #. js-lingui-id: hADObV
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Failed to update the limit."
-msgstr ""
+msgstr "Не вдалося оновити ліміт."
 
 #. js-lingui-id: 6TG/SY
 #: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
@@ -9375,7 +9375,7 @@ msgstr "Хибно"
 #. js-lingui-id: KziH2K
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Fast"
-msgstr ""
+msgstr "Швидкий"
 
 #. js-lingui-id: X9kySA
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -9401,7 +9401,7 @@ msgstr "Можливості"
 #. js-lingui-id: WHjLqG
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Features active until"
-msgstr ""
+msgstr "Функції активні до"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -9428,7 +9428,7 @@ msgstr "Поле"
 #. js-lingui-id: 0Ractl
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Field added to search"
-msgstr ""
+msgstr "Поле додано до пошуку"
 
 #. js-lingui-id: LX8Pu1
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -9453,7 +9453,7 @@ msgstr "дозвіл на поле"
 #. js-lingui-id: YZK9mj
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Field removed from search"
-msgstr ""
+msgstr "Поле видалено з пошуку"
 
 #. js-lingui-id: lcNTiF
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
@@ -9630,7 +9630,7 @@ msgstr "Параметри правила групи фільтра"
 #. js-lingui-id: JIOvqZ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Filter limits"
-msgstr ""
+msgstr "Фільтрувати ліміти"
 
 #. js-lingui-id: FG3LyE
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -9678,7 +9678,7 @@ msgstr "Пошук {objectLabel}"
 #. js-lingui-id: DWUicC
 #: src/modules/ai/constants/action-tool-status-labels.constant.ts
 msgid "Finding connected accounts"
-msgstr ""
+msgstr "Пошук підключених облікових записів"
 
 #. js-lingui-id: JmZ/+d
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
@@ -9688,17 +9688,17 @@ msgstr "Завершити"
 #. js-lingui-id: O9Sink
 #: src/modules/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage.ts
 msgid "Finish editing the layout to expand chat"
-msgstr ""
+msgstr "Завершіть редагування макета, щоб розгорнути чат"
 
 #. js-lingui-id: yJoako
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "Finish editing the layout to open AI"
-msgstr ""
+msgstr "Завершіть редагування макета, щоб відкрити ШІ"
 
 #. js-lingui-id: 6cOXRd
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "Finish editing the layout to open Settings"
-msgstr ""
+msgstr "Завершіть редагування макета, щоб відкрити Налаштування"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -9767,7 +9767,7 @@ msgstr "Усуньте проблему з оплатою, щоб зберегт
 #. js-lingui-id: UNHbhD
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Fix the payment issue to restore your enterprise features."
-msgstr ""
+msgstr "Усуньте проблему з оплатою, щоб відновити функції Enterprise."
 
 #. js-lingui-id: Xgkhyj
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
@@ -9812,7 +9812,7 @@ msgstr "Підписуйтеся на нас у X"
 #. js-lingui-id: M0vOQ6
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Follows the workspace default for agents"
-msgstr ""
+msgstr "Використовує налаштування робочого простору за замовчуванням для агентів"
 
 #. js-lingui-id: q3il6U
 #: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
@@ -9874,7 +9874,7 @@ msgstr "Знайдено {objectLabel}"
 #. js-lingui-id: 5Vg0Q7
 #: src/modules/ai/constants/action-tool-status-labels.constant.ts
 msgid "Found connected accounts"
-msgstr ""
+msgstr "Підключені облікові записи знайдено"
 
 #. js-lingui-id: 1hxId5
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -10216,7 +10216,7 @@ msgstr "Надати повний доступ"
 #. js-lingui-id: E0rSFg
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Granted"
-msgstr ""
+msgstr "Надано"
 
 #. js-lingui-id: Tbxf45
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -10515,7 +10515,7 @@ msgstr "Приховати системні індекси"
 #. js-lingui-id: yx/fMc
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "High"
-msgstr ""
+msgstr "Високий"
 
 #. js-lingui-id: 1ETc0T
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -10608,7 +10608,7 @@ msgstr "Як працюють кредити"
 #. js-lingui-id: nHmYga
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "How much can be spent, and how often it resets."
-msgstr ""
+msgstr "Скільки можна витратити та як часто ліміт скидається."
 
 #. js-lingui-id: WC32k6
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -11233,13 +11233,13 @@ msgstr "Інтеграції - Налаштування"
 #. js-lingui-id: Gzw2pq
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Intelligence"
-msgstr ""
+msgstr "Інтелект"
 
 #. js-lingui-id: EYz4Ok
 #. placeholder {0}: formatNumber(model?.intelligenceIndex ?? 0)
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "Intelligence score: {0}"
-msgstr ""
+msgstr "Оцінка інтелекту: {0}"
 
 #. js-lingui-id: GfnKOF
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -11294,7 +11294,7 @@ msgstr "Неправильний шаблон cron: {errorMessage}"
 #. js-lingui-id: CGivIJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
-msgstr ""
+msgstr "Недійсне значення дня \"{newDay}\". Має бути цілим числом, більшим за 1"
 
 #. js-lingui-id: u3hwhx
 #: src/modules/settings/domains/utils/getDomainValidationSchema.ts
@@ -11336,23 +11336,23 @@ msgstr "Некоректний файл: {0}"
 #. js-lingui-id: 1ccYjl
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid hour value \"{newHour}\". Should be integer between 0 and 23"
-msgstr ""
+msgstr "Недійсне значення години \"{newHour}\". Має бути цілим числом від 0 до 23"
 
 #. js-lingui-id: e3cT9e
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid hour value \"{newHour}\". Should be integer greater than 1"
-msgstr ""
+msgstr "Недійсне значення години \"{newHour}\". Має бути цілим числом, більшим за 1"
 
 #. js-lingui-id: jw4O7y
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid minute value \"{newMinute}\". Should be integer between 0 and 59"
-msgstr ""
+msgstr "Недійсне значення хвилин \"{newMinute}\". Має бути цілим числом від 0 до 59"
 
 #. js-lingui-id: SfvOlw
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
-msgstr ""
+msgstr "Недійсне значення хвилин \"{newMinute}\". Має бути цілим числом, більшим за 1"
 
 #. js-lingui-id: WY8amq
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
@@ -12154,12 +12154,12 @@ msgstr ""
 #. js-lingui-id: lvAOAE
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 msgid "Limit created."
-msgstr ""
+msgstr "Ліміт створено."
 
 #. js-lingui-id: 1r7WdP
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Limit deleted."
-msgstr ""
+msgstr "Ліміт видалено."
 
 #. js-lingui-id: g3YJC1
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
@@ -12179,7 +12179,7 @@ msgstr ""
 #. js-lingui-id: GrFbIR
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Limit updated."
-msgstr ""
+msgstr "Ліміт оновлено."
 
 #. js-lingui-id: 6BDqha
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
@@ -12194,12 +12194,12 @@ msgstr "Обмеження"
 #. js-lingui-id: rtN0nI
 #: src/modules/settings/billing/components/SettingsBillingLimitsContent.tsx
 msgid "Limits could not be loaded."
-msgstr ""
+msgstr "Не вдалося завантажити ліміти."
 
 #. js-lingui-id: iGG0MA
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Limits on members, API keys and apps require the Organization plan."
-msgstr ""
+msgstr "Ліміти для учасників, API-ключів і застосунків потребують плану Organization."
 
 #. js-lingui-id: DXCDta
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -12284,7 +12284,7 @@ msgstr "Список"
 #. js-lingui-id: Wfj8PH
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand.tsx
 msgid "List duplicated with {memberCount, plural, one {# member} other {# members}}"
-msgstr ""
+msgstr "Список продубльовано з {memberCount, plural, one {# учасником} few {# учасниками} many {# учасниками} other {# учасниками}}"
 
 #. js-lingui-id: 3xTn5L
 #: src/modules/views/types/ViewType.ts
@@ -12426,7 +12426,7 @@ msgstr "Завантаження..."
 #. js-lingui-id: Pwqkdw
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 msgid "Loading…"
-msgstr ""
+msgstr "Завантаження…"
 
 #. js-lingui-id: 7VBQ2j
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -12495,7 +12495,7 @@ msgstr "функція логіки"
 #. js-lingui-id: U/kVJF
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 msgid "Logic function"
-msgstr ""
+msgstr "Функція логіки"
 
 #. js-lingui-id: qqnB9E
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -12553,7 +12553,7 @@ msgstr "цикл"
 #. js-lingui-id: nTWWCZ
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Low"
-msgstr ""
+msgstr "Низький"
 
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -12701,7 +12701,7 @@ msgstr "Ручна конфігурація"
 #. js-lingui-id: ospBFm
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Manually selected for this mode."
-msgstr ""
+msgstr "Вибрано вручну для цього режиму."
 
 #. js-lingui-id: lkcAoj
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -12847,7 +12847,7 @@ msgstr "Я (ідентифікатор користувача)"
 #. js-lingui-id: agPptk
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Medium"
-msgstr ""
+msgstr "Середній"
 
 #. js-lingui-id: IAcjOi
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -12962,7 +12962,7 @@ msgstr "Не вдалося згенерувати файл метаданих"
 #. js-lingui-id: zsKJ2q
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "Meter"
-msgstr ""
+msgstr "Лічильник"
 
 #. js-lingui-id: fiPesM
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -12995,7 +12995,7 @@ msgstr "Мінімальний діапазон"
 #. js-lingui-id: 8GG+Pa
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Minimal"
-msgstr ""
+msgstr "Мінімальний"
 
 #. js-lingui-id: 5IrCQY
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -13041,7 +13041,7 @@ msgstr "Мобільний"
 #. js-lingui-id: zz/Wd/
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Mode"
-msgstr ""
+msgstr "Режим"
 
 #. js-lingui-id: scu3wk
 #: src/modules/ai/components/AiModelTierSlider.tsx
@@ -13063,7 +13063,7 @@ msgstr "Модель \"{0}\" видалено"
 #. js-lingui-id: 8jgO3g
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Model agents use when they run on their own"
-msgstr ""
+msgstr "Модель, яку агенти використовують, коли працюють самостійно"
 
 #. js-lingui-id: IzB3v0
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -13078,7 +13078,7 @@ msgstr "Потрібно вказати ID моделі"
 #. js-lingui-id: iaurWj
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Model used when you chat with Twenty"
-msgstr ""
+msgstr "Модель, що використовується, коли ви спілкуєтеся з Twenty"
 
 #. js-lingui-id: //nm2/
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -13371,7 +13371,7 @@ msgstr "Назвіть і опишіть свою функцію"
 #. js-lingui-id: zaxmAs
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-msgstr "Назва в однині <b>(</b>наприклад, 'Рахунок') та множині <b>(</b>наприклад, 'Рахунки')."
+msgstr "Назва в однині (наприклад, 'Рахунок') та множині (наприклад, 'Рахунки')."
 
 #. js-lingui-id: z+6jaZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -13602,7 +13602,7 @@ msgstr "Новий ключ"
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 msgid "New limit"
-msgstr ""
+msgstr "Новий ліміт"
 
 #. js-lingui-id: K2wBR9
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
@@ -13746,13 +13746,13 @@ msgstr "Ні"
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "No {0} found"
-msgstr ""
+msgstr "{0} не знайдено"
 
 #. js-lingui-id: uZ8YLp
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "No {0} match your filters. Try removing some of them."
-msgstr ""
+msgstr "Жоден {0} не відповідає вашим фільтрам. Спробуйте видалити деякі з них."
 
 #. js-lingui-id: 7YGRoE
 #: src/modules/ui/input/components/SelectInput.tsx
@@ -13824,7 +13824,7 @@ msgstr "Для цього користувача не зафіксовано с�
 #: src/modules/ai/hooks/useAgentChat.ts
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "No AI provider is configured on this instance."
-msgstr ""
+msgstr "Для цього екземпляра не налаштовано постачальника ШІ."
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -14160,7 +14160,7 @@ msgstr "Без обмежень"
 #. js-lingui-id: Y9FJQX
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "No limit matches your search."
-msgstr ""
+msgstr "Жоден ліміт не відповідає вашому пошуку."
 
 #. js-lingui-id: nivaRq
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
@@ -14221,12 +14221,12 @@ msgstr "Немає доступного мікрофона. Підключіть
 #. js-lingui-id: WGQJB3
 #: src/modules/settings/ai/utils/getAiModelModeDescription.ts
 msgid "No model available"
-msgstr ""
+msgstr "Немає доступної моделі"
 
 #. js-lingui-id: xo340M
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "No model is available for this mode."
-msgstr ""
+msgstr "Для цього режиму немає доступної моделі."
 
 #. js-lingui-id: 9VrTfZ
 #: src/modules/activities/notes/components/NotesCardContent.tsx
@@ -14289,7 +14289,7 @@ msgstr "Для цього пакета не знайдено жодного пі
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "No recipients to send to ({skipReasons})"
-msgstr ""
+msgstr "Немає одержувачів для надсилання ({skipReasons})"
 
 #. js-lingui-id: V/+aTW
 #: src/modules/object-record/record-field/ui/form-types/components/FormMorphRelationToOneFieldInput.tsx
@@ -14401,7 +14401,7 @@ msgstr "Немає відправника"
 #. js-lingui-id: dRi20n
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "No sending address. Connect a verified domain in Settings."
-msgstr ""
+msgstr "Немає адреси відправника. Підключіть підтверджений домен у Налаштуваннях."
 
 #. js-lingui-id: JkPTT8
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -14543,7 +14543,7 @@ msgstr "Версій Workflow поки що немає"
 #. js-lingui-id: 0R8Pxd
 #: src/modules/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows.ts
 msgid "No workflows were deleted"
-msgstr ""
+msgstr "Жоден робочий процес не було видалено"
 
 #. js-lingui-id: Q4dFjT
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
@@ -14669,7 +14669,7 @@ msgstr "Не вказано"
 #. js-lingui-id: AjdrYY
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Not measured at this effort yet. Showing the base model's reading."
-msgstr ""
+msgstr "Для цього рівня міркувань ще немає вимірювань. Показано дані базової моделі."
 
 #. js-lingui-id: iXlml9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -14724,12 +14724,12 @@ msgstr "Примітка"
 #. js-lingui-id: 543eQ7
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "Nothing counted against this scope yet"
-msgstr ""
+msgstr "Для цієї області ще нічого не враховано"
 
 #. js-lingui-id: yBYKk1
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Nothing has gone out yet. The campaign returns to your drafts and you can edit or schedule it again."
-msgstr ""
+msgstr "Ще нічого не було надіслано. Кампанію буде повернено до ваших чернеток, і ви зможете відредагувати або запланувати її знову."
 
 #. js-lingui-id: VngD1z
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -15245,12 +15245,12 @@ msgstr "Працездатний"
 #. js-lingui-id: Wfz6Xv
 #: src/modules/settings/billing/hooks/useUsageLimitFormatter.ts
 msgid "operations"
-msgstr ""
+msgstr "операції"
 
 #. js-lingui-id: B1MDds
 #: src/modules/settings/billing/constants/UsageLimitMeterLabels.ts
 msgid "Operations"
-msgstr ""
+msgstr "Операції"
 
 #. js-lingui-id: lVa1Xn
 #: src/modules/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues.ts
@@ -15429,7 +15429,7 @@ msgstr "Вивід"
 #. js-lingui-id: J7aOlM
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Output cost"
-msgstr ""
+msgstr "Вартість вихідних даних"
 
 #. js-lingui-id: i1+tKD
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
@@ -15446,7 +15446,7 @@ msgstr "Перезаписати нарис"
 #. js-lingui-id: RQCK56
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Overrides the mode above until you switch back to automatic"
-msgstr ""
+msgstr "Замінює вказаний вище режим, доки ви не повернетеся до автоматичного"
 
 #. js-lingui-id: 6/dCYd
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -15816,7 +15816,7 @@ msgstr "Виберіть запис {0}"
 #. js-lingui-id: T1yaeQ
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
 msgid "Pick a send time in the future."
-msgstr ""
+msgstr "Виберіть час надсилання в майбутньому."
 
 #. js-lingui-id: JqqNlC
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -15865,7 +15865,7 @@ msgstr "Кругова діаграма"
 #. js-lingui-id: 6U8nJN
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Pin a specific model"
-msgstr ""
+msgstr "Закріпити конкретну модель"
 
 #. js-lingui-id: 3pU8e+
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -15892,7 +15892,7 @@ msgstr "Закріплена вкладка, яка завжди відобра�
 #. js-lingui-id: Iaw5/y
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Pinned to a specific model"
-msgstr ""
+msgstr "Закріплено за конкретною моделлю"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -15936,7 +15936,7 @@ msgstr "Плани"
 #. js-lingui-id: T91vKp
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Play"
-msgstr ""
+msgstr "Відтворити"
 
 #. js-lingui-id: XdRQm7
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -16483,18 +16483,18 @@ msgstr "Міркування"
 #. js-lingui-id: 49IkcQ
 #: src/modules/ai/components/AiModelTierSlider.tsx
 msgid "Reasoning effort: {reasoningEffort}"
-msgstr ""
+msgstr "Рівень міркувань: {reasoningEffort}"
 
 #. js-lingui-id: PG5XPp
 #. placeholder {0}: getAiModelEffortLabel(availableEffort)
 #: src/modules/settings/ai/components/AiModelPinSelect.tsx
 msgid "Reasoning: {0}"
-msgstr ""
+msgstr "Міркування: {0}"
 
 #. js-lingui-id: nVOD/+
 #: src/modules/settings/ai/components/AiModelPinSelect.tsx
 msgid "Reasoning: Default"
-msgstr ""
+msgstr "Міркування: за замовчуванням"
 
 #. js-lingui-id: W+ApAD
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -16535,7 +16535,7 @@ msgstr "Одержувач"
 #. js-lingui-id: F+BB7w
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Recipient count unavailable"
-msgstr ""
+msgstr "Кількість одержувачів недоступна"
 
 #. js-lingui-id: p8GO5h
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -16571,7 +16571,7 @@ msgstr "Перепідключити"
 #. js-lingui-id: PrI9jr
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect and share"
-msgstr ""
+msgstr "Повторно підключити та надати доступ"
 
 #. js-lingui-id: XsIxsL
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -16694,7 +16694,7 @@ msgstr "Записи"
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Records selected"
-msgstr ""
+msgstr "Вибрані записи"
 
 #. js-lingui-id: wRTiSD
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -16714,7 +16714,7 @@ msgstr "URI переадресації оновлено"
 #. js-lingui-id: ix5Jyh
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
 msgid "Redirect URL copied to clipboard"
-msgstr ""
+msgstr "URL перенаправлення скопійовано в буфер обміну"
 
 #. js-lingui-id: RZjynQ
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -17089,7 +17089,7 @@ msgstr "Обов'язково"
 #. js-lingui-id: r38Vo4
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
 msgid "Reschedule campaign"
-msgstr ""
+msgstr "Перепланувати кампанію"
 
 #. js-lingui-id: Vae65A
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -17504,7 +17504,7 @@ msgstr "Виконується..."
 #: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
 msgid "runs"
-msgstr ""
+msgstr "запуски"
 
 #. js-lingui-id: nji0/X
 #: src/localization/hooks/useLocaleOptions.ts
@@ -17519,12 +17519,12 @@ msgstr "Продажі"
 #. js-lingui-id: 342JYO
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "Same cost as Balanced."
-msgstr ""
+msgstr "Така сама вартість, як у Збалансованого."
 
 #. js-lingui-id: wQnd1t
 #: src/modules/ai/utils/getAiModelTierMetrics.ts
 msgid "Same score as Balanced"
-msgstr ""
+msgstr "Така сама оцінка, як у Збалансованого"
 
 #. js-lingui-id: QeF0zb
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -17581,7 +17581,7 @@ msgstr "Запланувати вікно технічного обслугов�
 #. js-lingui-id: MGaW9O
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
 msgid "Schedule campaign"
-msgstr ""
+msgstr "Запланувати кампанію"
 
 #. js-lingui-id: 4ba0NE
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -17592,7 +17592,7 @@ msgstr "Заплановано"
 #. js-lingui-id: JizhXE
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 msgid "Scheduled at"
-msgstr ""
+msgstr "Заплановано на"
 
 #. js-lingui-id: 7oCJuI
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
@@ -17855,7 +17855,7 @@ msgstr "Пошук полів"
 #. js-lingui-id: IQAn53
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Search fields..."
-msgstr ""
+msgstr "Пошук полів..."
 
 #. js-lingui-id: rXrG+N
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
@@ -18234,7 +18234,7 @@ msgstr "Виберіть дію"
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
 msgid "Select all loaded rows"
-msgstr ""
+msgstr "Вибрати всі завантажені рядки"
 
 #. js-lingui-id: /fhMKz
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
@@ -18377,7 +18377,7 @@ msgstr "Виберіть мову та налаштуйте масштаб ін�
 #. js-lingui-id: AM0pWl
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
 msgid "Selected folders"
-msgstr ""
+msgstr "Вибрані папки"
 
 #. js-lingui-id: JlFcis
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -18398,12 +18398,12 @@ msgstr ""
 #. js-lingui-id: WRLt0i
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
 msgid "Send campaign"
-msgstr ""
+msgstr "Надіслати кампанію"
 
 #. js-lingui-id: b7hiQs
 #: src/modules/side-panel/hooks/useOpenSendCampaignInSidePanel.ts
 msgid "Send Campaign"
-msgstr ""
+msgstr "Надіслати кампанію"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -18476,7 +18476,7 @@ msgstr ""
 #. js-lingui-id: 2l+PSH
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
 msgid "Sending starts right away and cannot be undone."
-msgstr ""
+msgstr "Надсилання почнеться негайно, і його не можна буде скасувати."
 
 #. js-lingui-id: w+ywgn
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
@@ -18701,7 +18701,7 @@ msgstr "Поділитися з робочою областю"
 #. js-lingui-id: lX0SIS
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Share with workspace?"
-msgstr ""
+msgstr "Поділитися з робочою областю?"
 
 #. js-lingui-id: gaJRur
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
@@ -19377,7 +19377,7 @@ msgstr "Зупинити імітацію"
 #. js-lingui-id: BrrIs8
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 msgid "Storage"
-msgstr ""
+msgstr "Сховище"
 
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
@@ -19561,7 +19561,7 @@ msgstr "Передплату переключено на помісячну."
 #. js-lingui-id: A5YO8f
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to Yearly."
-msgstr "Перехід на передплату <b>на рік</b> здійснено."
+msgstr "Перехід на передплату на рік здійснено."
 
 #. js-lingui-id: ulJRqh
 #. placeholder {0}: getTargetPlanLabel(targetPlanKey)
@@ -22986,7 +22986,7 @@ msgstr "Працівник"
 #. js-lingui-id: bLt/0J
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 msgid "Workflow"
-msgstr ""
+msgstr "Робочий процес"
 
 #. js-lingui-id: eQ/LA/
 #: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
@@ -23423,7 +23423,7 @@ msgstr "Ви збираєтесь змінити піддомен вашого �
 #. js-lingui-id: 6x8lJe
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "You’ve reached your AI usage limit."
-msgstr ""
+msgstr "Ви досягли ліміту використання ШІ."
 
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts
