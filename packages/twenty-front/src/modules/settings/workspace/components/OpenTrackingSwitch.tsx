@@ -49,7 +49,7 @@ export const OpenTrackingSwitch = () => {
           <SettingsOptionCardContentSwitch
             Icon={IconEye}
             title={t`Track opens`}
-            description={t`A 1x1 transparent image is added to each campaign email. When a recipient's mail client loads it, an open is counted. Open counts are an estimate: some mail clients load images automatically and some never load them.`}
+            description={t`Count opens with a hidden image. An estimate, since mail clients may block or preload it.`}
             checked={currentWorkspace.isOpenTrackingEnabled}
             onChange={handleChange}
           />
