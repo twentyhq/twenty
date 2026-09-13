@@ -20584,15 +20584,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/handlebars@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "@types/handlebars@npm:4.1.0"
-  dependencies:
-    handlebars: "npm:*"
-  checksum: 10c0/50e85efb4a9306c8b2278dd1570714e9021f201ef317a259ce2d63406057e6575f3066b862bed3d192828d1cc32b80d3a0d2e18d0cd9cda98ec5f1f69038e342
-  languageName: node
-  linkType: hard
-
 "@types/har-format@npm:^1.2.16":
   version: 1.2.16
   resolution: "@types/har-format@npm:1.2.16"
@@ -33086,7 +33077,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"handlebars@npm:*, handlebars@npm:4.7.9, handlebars@npm:^4.7.7":
+"handlebars@npm:4.7.9, handlebars@npm:^4.7.7":
   version: 4.7.9
   resolution: "handlebars@npm:4.7.9"
   dependencies:
@@ -50353,7 +50344,6 @@ __metadata:
     "@swc/jest": "npm:^0.2.39"
     "@types/addressparser": "npm:^1.0.3"
     "@types/babel__preset-env": "npm:^7"
-    "@types/handlebars": "npm:^4.1.0"
     "@types/jest": "npm:^30.0.0"
     "@types/lodash.camelcase": "npm:^4.3.7"
     "@types/lodash.escaperegexp": "npm:^4.1.9"

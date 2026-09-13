@@ -23,7 +23,6 @@
     "@swc/jest": "^0.2.39",
     "@types/addressparser": "^1.0.3",
     "@types/babel__preset-env": "^7",
-    "@types/handlebars": "^4.1.0",
     "@types/jest": "^30.0.0",
     "@types/lodash.camelcase": "^4.3.7",
     "@types/lodash.escaperegexp": "^4.1.9",

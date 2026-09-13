@@ -143,16 +143,19 @@ describe('evalFromContext', () => {
     });
   });
 
-  // Keywords were only literals as a whole expression; as a path segment they
-  // never resolved unless written as a segment literal
+  // A keyword read as a value rather than a key, which Handlebars only did
+  // where a value was expected: the whole expression, or the last segment of a
+  // path. Anywhere else it is an ordinary key, so `obj.true.length` resolves
   it('should not resolve a trailing bare keyword segment', () => {
-    const keywordContext = { obj: { true: 'T', null: 'N' } };
+    const keywordContext = { obj: { true: 'T', null: 'N' }, null: { x: 1 } };
 
     expect(evalFromContext('{{obj.true}}', keywordContext)).toBeUndefined();
     expect(evalFromContext('{{obj.null}}', keywordContext)).toBeUndefined();
     expect(evalFromContext('{{obj.[true]}}', keywordContext)).toBe('T');
     expect(evalFromContext('{{obj.[null]}}', keywordContext)).toBe('N');
     expect(evalFromContext('{{obj.true.length}}', keywordContext)).toBe(1);
+    expect(evalFromContext('{{null.x}}', keywordContext)).toBe(1);
+    expect(evalFromContext('{{@root.null.x}}', keywordContext)).toBe(1);
   });
 
   it('should support literals, as Handlebars path expressions did', () => {
