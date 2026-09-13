@@ -53,6 +53,13 @@ const StyledMainContent = styled.div`
   overflow: hidden;
 `;
 
+const StyledActionButtons = styled.div`
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 const StyledMarkdownContent = styled.div`
   .markdown-section {
     margin: 0;
@@ -127,7 +134,7 @@ export const SettingsApplicationDetailAboutTab = ({
     description ??
     t`No description available for this application`;
 
-  const getActionButton = () => {
+  const getActionButtons = () => {
     if (!canInstallMarketplaceApps) {
       return null;
     }
@@ -145,44 +152,45 @@ export const SettingsApplicationDetailAboutTab = ({
       );
     }
 
-    if (hasUpdate) {
+    if (!hasUpdate && !canBeUninstalled) {
       return (
         <Button
-          Icon={IconUpload}
-          title={
-            isUpgrading
-              ? t`Upgrading...`
-              : t`Upgrade to ${latestAvailableVersion ?? ''}`
-          }
+          Icon={IconCheck}
+          title={t`Installed`}
           variant={'secondary'}
-          accent={'blue'}
-          onClick={onUpgrade}
-          disabled={isUpgrading}
-        />
-      );
-    }
-
-    if (canBeUninstalled) {
-      return (
-        <Button
-          Icon={IconTrash}
-          title={isUninstalling ? t`Uninstalling...` : t`Uninstall`}
-          variant={'secondary'}
-          accent={'danger'}
-          onClick={() => openModal(UNINSTALL_APPLICATION_MODAL_ID)}
-          disabled={isUninstalling}
+          accent={'default'}
+          disabled={true}
         />
       );
     }
 
     return (
-      <Button
-        Icon={IconCheck}
-        title={t`Installed`}
-        variant={'secondary'}
-        accent={'default'}
-        disabled={true}
-      />
+      <StyledActionButtons>
+        {hasUpdate && (
+          <Button
+            Icon={IconUpload}
+            title={
+              isUpgrading
+                ? t`Upgrading...`
+                : t`Upgrade to ${latestAvailableVersion ?? ''}`
+            }
+            variant={'secondary'}
+            accent={'blue'}
+            onClick={onUpgrade}
+            disabled={isUpgrading}
+          />
+        )}
+        {canBeUninstalled && (
+          <Button
+            Icon={IconTrash}
+            title={isUninstalling ? t`Uninstalling...` : t`Uninstall`}
+            variant={'secondary'}
+            accent={'danger'}
+            onClick={() => openModal(UNINSTALL_APPLICATION_MODAL_ID)}
+            disabled={isUninstalling}
+          />
+        )}
+      </StyledActionButtons>
     );
   };
 
@@ -207,7 +215,7 @@ export const SettingsApplicationDetailAboutTab = ({
         </StyledMainContent>
 
         <SettingsApplicationAboutSidebar
-          actionButton={getActionButton()}
+          actionButton={getActionButtons()}
           pricingDescription={pricingDescription}
           author={author}
           category={category}
