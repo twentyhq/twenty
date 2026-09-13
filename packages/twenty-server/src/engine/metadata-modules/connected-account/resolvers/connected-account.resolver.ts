@@ -5,6 +5,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { AppConnectionAccessService } from 'src/engine/core-modules/application/connection-provider/app-connection-access.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -23,6 +24,7 @@ import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connect
 export class ConnectedAccountResolver {
   constructor(
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
+    private readonly appConnectionAccessService: AppConnectionAccessService,
   ) {}
 
   @Query(() => [ConnectedAccountPublicDTO])
@@ -67,10 +69,17 @@ export class ConnectedAccountResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ConnectedAccountPublicDTO> {
-    await this.connectedAccountMetadataService.verifyOwnership({
-      id,
-      userWorkspaceId,
+    const connectedAccount =
+      await this.connectedAccountMetadataService.verifyOwnership({
+        id,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+      });
+
+    await this.appConnectionAccessService.validateCallerCanManageConnection({
+      isWorkspaceShared: connectedAccount.visibility === 'workspace',
       workspaceId: workspace.id,
+      userWorkspaceId,
     });
 
     const deleted = await this.connectedAccountMetadataService.delete({

@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AppConnectionAccessService } from 'src/engine/core-modules/application/connection-provider/app-connection-access.service';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
@@ -66,6 +67,7 @@ export class ConnectionProviderOAuthFlowService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
+    private readonly appConnectionAccessService: AppConnectionAccessService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserEntity)
@@ -82,8 +84,10 @@ export class ConnectionProviderOAuthFlowService {
     // Reconnect overwrites the stored credentials, so the caller must be
     // allowed to use the target: same workspace, same provider, and either
     // workspace-shared or their own.
+    let reconnectTarget: ConnectedAccountEntity | null = null;
+
     if (isDefined(args.reconnectingConnectedAccountId)) {
-      const reconnectTarget = await this.connectedAccountRepository.findOne({
+      reconnectTarget = await this.connectedAccountRepository.findOne({
         where: buildConnectedAccountUsableByCallerWhere({
           baseWhere: {
             id: args.reconnectingConnectedAccountId,
@@ -101,6 +105,18 @@ export class ConnectionProviderOAuthFlowService {
         );
       }
     }
+
+    // The signed state carries the visibility decision for the next ten
+    // minutes, so the permission has to be checked here rather than on the
+    // callback. Reconnecting a shared connection is also a management action,
+    // even when the request does not ask for workspace visibility itself.
+    await this.appConnectionAccessService.validateCallerCanManageConnection({
+      isWorkspaceShared:
+        args.visibility === 'workspace' ||
+        reconnectTarget?.visibility === 'workspace',
+      workspaceId,
+      userWorkspaceId,
+    });
 
     const { clientId } =
       await this.oauthProviderService.getClientCredentials(connectionProvider);
@@ -315,10 +331,12 @@ export class ConnectionProviderOAuthFlowService {
 
     if (isDefined(reconnectingConnectedAccountId)) {
       // Workspace-scope both the update and the read so a foreign id can't
-      // leak through findOneByOrFail.
+      // leak through findOneByOrFail. userWorkspaceId is reassigned because
+      // off-boarding archives and revokes by it: the stored credentials now
+      // belong to whoever completed this flow.
       await this.connectedAccountRepository.update(
         { id: reconnectingConnectedAccountId, workspaceId },
-        sharedFields,
+        { ...sharedFields, userWorkspaceId },
       );
 
       return this.connectedAccountRepository.findOneByOrFail({
