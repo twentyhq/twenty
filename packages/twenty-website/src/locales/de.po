@@ -2996,11 +2996,6 @@ msgstr "Elevate Consulting nutzt Twenty als API‑Rückgrat, das Billing, Teams,
 msgid "Elevate's CEO was so impressed with Twenty he started recommending it to clients before the internal setup was even complete. The team is exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs."
 msgstr "Der CEO von Elevate war von Twenty so beeindruckt, dass er es Kunden empfahl, noch bevor das interne Setup abgeschlossen war. Das Team prüft, Twenty in Kundenprojekten als Teil ihrer Beratungspraxis einzusetzen – auch als Backend für maßgeschneiderte Produkte, die auf spezifische operative Anforderungen zugeschnitten sind."
 
-#. js-lingui-id: FNyrb0
-#: src/sections/product-feature/data/feature-tiles.ts
-msgid "Email & Calendar"
-msgstr "E‑Mail & Kalender"
-
 #. js-lingui-id: jTgK6B
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Email and calendar Blocklist"
@@ -3042,6 +3037,7 @@ msgid "Emails"
 msgstr "E-Mails"
 
 #. js-lingui-id: XGd8Wo
+#: src/sections/product-feature/data/feature-tiles.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Emails & Calendar"
 msgstr "E‑Mails & Kalender"
@@ -3401,11 +3397,6 @@ msgstr "Empfohlene Apps"
 msgid "Feb"
 msgstr "Feb"
 
-#. js-lingui-id: hXRm6J
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Field Level Permission"
-msgstr "Berechtigungen auf Feldebene"
-
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets"
@@ -3425,6 +3416,11 @@ msgstr "Feld-Widgets unterstützen jetzt mehr Beziehungstypen, sodass benutzerde
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Field-level permissions"
 msgstr "Berechtigungen auf Feldebene"
+
+#. js-lingui-id: kNlm1B
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Field-Level Permissions"
+msgstr ""
 
 #. js-lingui-id: RnX5oc
 #: src/sections/product-stepper/DataModelVisual/DataModelVisual.tsx
@@ -6820,6 +6816,7 @@ msgstr "Self-hosted-Workspaces können ihre Nutzung jetzt mit nutzungsbasierter 
 
 #. js-lingui-id: GrBvv/
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
+#: src/sections/pricing-plans/SelfHostToggle.tsx
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 #: src/client-brief/client-brief-copy.ts
@@ -6842,11 +6839,6 @@ msgstr "Self-Onboarding"
 #: src/sections/compare/compare-data.ts
 msgid "Self-serve, partners optional"
 msgstr "Self-Service, Partner optional"
-
-#. js-lingui-id: NaHz2o
-#: src/sections/pricing-plans/SelfHostToggle.tsx
-msgid "Selfhosting"
-msgstr "Selfhosting"
 
 #. js-lingui-id: i/TzEU
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
@@ -8156,15 +8148,15 @@ msgstr "Twenty vs SAP Sales Cloud"
 msgid "Twenty vs SAP Sales Cloud Pricing — The Real Cost Compared"
 msgstr "Twenty vs SAP Sales Cloud Preise – der Vergleich der tatsächlichen Kosten"
 
-#. js-lingui-id: tuvLv1
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Two Factor Authentication"
-msgstr "Zwei-Faktor-Authentifizierung"
-
 #. js-lingui-id: EIU345
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Two-factor authentication"
 msgstr "Zwei‑Faktor‑Authentifizierung"
+
+#. js-lingui-id: C4pKXW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Two-Factor Authentication"
+msgstr ""
 
 #. js-lingui-id: O+vc/1
 #: src/partner-application/partner-application-copy.ts
@@ -8518,14 +8510,10 @@ msgid "We could not submit your brief. Please try again in a moment."
 msgstr "Wir konnten Ihre Kurzbeschreibung nicht übermitteln. Bitte versuchen Sie es in einem Moment erneut."
 
 #. js-lingui-id: ofRgSN
+#: src/sections/testimonials/testimonials.data.ts
 #: src/case-studies/case-study-stories.ts
 msgid "We did not want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr "Wir wollten das Problem nicht einfach überkleben. Wir wollten etwas bauen, auf das sich Institutionen in großem Maßstab verlassen können, und dafür brauchte es ein Fundament, das stabil genug ist, um die gesamte Komplexität dessen zu tragen, was wir vorhatten."
-
-#. js-lingui-id: MjWeUE
-#: src/sections/testimonials/testimonials.data.ts
-msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
-msgstr "Wir wollten das Problem nicht nur übertünchen. Wir wollten etwas bauen, auf das sich Institutionen im großen Maßstab verlassen können – und das bedeutete, mit einer Basis zu beginnen, die stabil genug ist, um die volle Komplexität dessen zu tragen, was wir im Sinn hatten."
 
 #. js-lingui-id: GVxbgf
 #: src/platform/releases/ReleaseNotes.tsx

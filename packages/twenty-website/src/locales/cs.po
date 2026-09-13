@@ -2996,11 +2996,6 @@ msgstr "Elevate Consulting používá Twenty jako API páteř, která propojuje 
 msgid "Elevate's CEO was so impressed with Twenty he started recommending it to clients before the internal setup was even complete. The team is exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs."
 msgstr "CEO Elevate byl z Twenty tak nadšený, že jej začal doporučovat klientům ještě před dokončením interní implementace. Tým zkoumá, jak Twenty zapojit do klientských projektů jako součást své konzultační praxe, včetně využití jako backendu pro vlastnoručně vyvinuté produkty šité na konkrétní provozní potřeby."
 
-#. js-lingui-id: FNyrb0
-#: src/sections/product-feature/data/feature-tiles.ts
-msgid "Email & Calendar"
-msgstr "E‑mail a kalendář"
-
 #. js-lingui-id: jTgK6B
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Email and calendar Blocklist"
@@ -3042,6 +3037,7 @@ msgid "Emails"
 msgstr "E-maily"
 
 #. js-lingui-id: XGd8Wo
+#: src/sections/product-feature/data/feature-tiles.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Emails & Calendar"
 msgstr "E‑maily a kalendář"
@@ -3401,11 +3397,6 @@ msgstr "Doporučené aplikace"
 msgid "Feb"
 msgstr "Úno"
 
-#. js-lingui-id: hXRm6J
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Field Level Permission"
-msgstr "Oprávnění na úrovni pole"
-
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets"
@@ -3425,6 +3416,11 @@ msgstr "Widgety pole nyní podporují více typů relací, takže vlastní rozlo
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Field-level permissions"
 msgstr "Oprávnění na úrovni polí"
+
+#. js-lingui-id: kNlm1B
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Field-Level Permissions"
+msgstr ""
 
 #. js-lingui-id: RnX5oc
 #: src/sections/product-stepper/DataModelVisual/DataModelVisual.tsx
@@ -6820,6 +6816,7 @@ msgstr "Self‑hostované workspace teď mohou přesněji sledovat využití dí
 
 #. js-lingui-id: GrBvv/
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
+#: src/sections/pricing-plans/SelfHostToggle.tsx
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 #: src/client-brief/client-brief-copy.ts
@@ -6842,11 +6839,6 @@ msgstr "Self-onboarding"
 #: src/sections/compare/compare-data.ts
 msgid "Self-serve, partners optional"
 msgstr "Self‑service, partneři volitelní"
-
-#. js-lingui-id: NaHz2o
-#: src/sections/pricing-plans/SelfHostToggle.tsx
-msgid "Selfhosting"
-msgstr "Selfhosting"
 
 #. js-lingui-id: i/TzEU
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
@@ -8156,15 +8148,15 @@ msgstr "Twenty vs SAP Sales Cloud"
 msgid "Twenty vs SAP Sales Cloud Pricing — The Real Cost Compared"
 msgstr "Twenty vs SAP Sales Cloud – porovnání skutečných nákladů"
 
-#. js-lingui-id: tuvLv1
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Two Factor Authentication"
-msgstr "Dvoufaktorová autentizace"
-
 #. js-lingui-id: EIU345
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Two-factor authentication"
 msgstr "Dvoufaktorová autentizace"
+
+#. js-lingui-id: C4pKXW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Two-Factor Authentication"
+msgstr ""
 
 #. js-lingui-id: O+vc/1
 #: src/partner-application/partner-application-copy.ts
@@ -8518,13 +8510,9 @@ msgid "We could not submit your brief. Please try again in a moment."
 msgstr "Vaše zadání se nepodařilo odeslat. Zkuste to prosím za chvíli znovu."
 
 #. js-lingui-id: ofRgSN
+#: src/sections/testimonials/testimonials.data.ts
 #: src/case-studies/case-study-stories.ts
 msgid "We did not want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
-msgstr "Nechtěli jsme problém jen zalepit. Chtěli jsme postavit něco, na co se instituce mohou ve velkém spolehnout, a to znamenalo začít na dostatečně pevném základu, který unese veškerou složitost toho, co jsme měli v hlavě."
-
-#. js-lingui-id: MjWeUE
-#: src/sections/testimonials/testimonials.data.ts
-msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr "Nechtěli jsme problém jen zalepit. Chtěli jsme postavit něco, na co se instituce mohou ve velkém spolehnout, a to znamenalo začít na dostatečně pevném základu, který unese veškerou složitost toho, co jsme měli v hlavě."
 
 #. js-lingui-id: GVxbgf
