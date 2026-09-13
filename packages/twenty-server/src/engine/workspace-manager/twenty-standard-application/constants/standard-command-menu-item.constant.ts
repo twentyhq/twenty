@@ -1047,7 +1047,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: 'e3f4a5b6-7c8d-4e9f-a0b1-2c3d4e5f6071',
     label: i18nLabel(
       msg({
-        message: `Email Tracking Opt-Out`,
+        message: `Email Tracking`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -1055,7 +1055,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     isPinned: false,
     position: 73,
     shortLabel: i18nLabel(
-      msg({ message: `Opt-out`, context: 'commandMenuItem.shortLabel' }),
+      msg({ message: `Tracking`, context: 'commandMenuItem.shortLabel' }),
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:

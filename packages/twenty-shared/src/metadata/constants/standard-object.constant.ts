@@ -941,6 +941,7 @@ export const STANDARD_OBJECTS = {
           'messageParticipants',
           'calendarEventParticipants',
           'timelineActivities',
+          'emailTrackingConsent',
         ],
         viewFieldGroupNames: {
           general: 'General',
