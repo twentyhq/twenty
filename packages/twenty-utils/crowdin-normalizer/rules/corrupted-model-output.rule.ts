@@ -124,6 +124,7 @@ function salvage(text: string, sourceText?: string): string {
 
 export const CORRUPTED_MODEL_OUTPUT_RULE: NormalizationRule = {
   name: 'corrupted-model-output',
+  formats: ['po'],
   needsSourceText: true,
   detect: isCorrupted,
   fix: salvage,

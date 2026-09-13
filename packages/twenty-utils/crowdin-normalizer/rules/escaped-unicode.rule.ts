@@ -10,6 +10,7 @@ function unescapeUnicode(text: string): string {
 
 export const ESCAPED_UNICODE_RULE: NormalizationRule = {
   name: 'escaped-unicode',
+  formats: ['po', 'mdx'],
   detect: (text) => ESCAPED_UNICODE_REGEX.test(text),
   fix: unescapeUnicode,
 };

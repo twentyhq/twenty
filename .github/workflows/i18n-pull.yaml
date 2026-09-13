@@ -55,6 +55,13 @@ jobs:
           git add .
           git stash
 
+      # Repair machine-translation damage in Crowdin before downloading, so the
+      # catalogs that reach the repo are already correct rather than a cycle behind.
+      - name: Normalize translations in Crowdin
+        run: npx tsx packages/twenty-utils/crowdin-normalizer/normalize-crowdin-translations.ts --project=1 --format=po --apply || echo "::warning::translation normalization failed (non-blocking)"
+        env:
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
       - name: Pull translations from Crowdin
         if: inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         uses: crowdin/github-action@8868a33591d21088edfc398968173a3b98d51706 # v2
@@ -86,14 +93,6 @@ jobs:
       # We need to fix this before the next steps
       - name: Fix file permissions
         run: sudo chown -R runner:docker .
-
-      # Fix encoding issues (escaped Unicode like \u62db -> 招) and translations carrying a
-      # leaked response envelope, then push the fixes back to Crowdin so they
-      # survive the next sync.
-      - name: Normalize translations in Crowdin
-        run: npx tsx packages/twenty-utils/crowdin-normalizer/normalize-crowdin-translations.ts --project=1 --apply --rules=escaped-unicode,corrupted-model-output,invented-markup,invented-argument || echo "::warning::translation normalization failed (non-blocking)"
-        env:
-          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
       - name: Normalize downloaded catalogs to lingui format
         run: |

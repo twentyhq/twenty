@@ -25,6 +25,7 @@ function removeInventedMarkup(text: string): string {
 
 export const INVENTED_MARKUP_RULE: NormalizationRule = {
   name: 'invented-markup',
+  formats: ['po'],
   needsSourceText: true,
   detect: hasInventedMarkup,
   fix: removeInventedMarkup,
