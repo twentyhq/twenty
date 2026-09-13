@@ -1,29 +1,29 @@
 # Fathom
 
-**Bring Fathom meeting recordings, transcripts, and insights into Twenty.**
+**Every Fathom recording, transcript, and summary, right inside your CRM.**
 
-## What you get
+## ✨ What you get
 
-- Fathom recordings saved as Call Recordings
-- Transcripts, summaries, and action items
-- Links to matching calendar events when the match is unambiguous
-- Automatic sync for new recordings
-- A 31-day import when a Fathom account is connected, and manual imports of
-  older history
-- Workflow and AI actions to sync one recording or list recordings by
-  participant
+- **Fathom transcripts, summaries, and action items saved when available**
+- **Recording video, or audio for audio-only calls, on the same record**
+- **Saved to a Call Recording, with calendar links for clear matches**
+- **New meetings synced as they happen**
+- **Your last 31 days imported the moment you connect**
+- **Built for AI & automation**
 
-## Requirements
+## 💳 Billing
 
-Each person connects their Fathom account to Twenty. The connected Fathom
-account decides which recordings Twenty can import; the Fathom and Twenty login
-emails do not need to match.
+**Free to run**: no per-seat, per-recording or per-import charge. AI actions use
+AI credits on the model's token usage.
 
-## Heads up
+## 📌 Heads up
 
-- Twenty only links a recording to a calendar event when its meeting URL and
-  scheduled time identify one clear match.
-- Disconnect and reconnect Fathom after changing the webhook URL or webhook
-  scopes so Fathom receives the new registration.
-
-Development setup lives in [SETUP.md](SETUP.md).
+- **Everything you import is shared with your workspace.** Transcripts,
+  summaries, and media land on Call Recording records that every member with
+  access can read. Private syncing is coming later.
+- **Media arrives after the transcript, and not always.** A recording stays in
+  Processing while Fathom prepares the download. Anything over 500 MB, and
+  view-only shares, never get media.
+- **Calendar links need one clear match.** A Call Recording is linked to a
+  calendar event only when its meeting link and scheduled time point to exactly
+  one event.

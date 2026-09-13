@@ -1,6 +1,6 @@
 import { getMissingCreateCalendarEventScopes } from '@/accounts/utils/hasMissingCreateCalendarEventScopes';
 import { isCalendarCreationEnabledForAccount } from '@/activities/calendar/utils/isCalendarCreationEnabledForAccount';
-import { FormBooleanFieldToggleInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldToggleInput';
+import { FormBooleanFieldSwitchInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldSwitchInput';
 import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateTimeFieldInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
@@ -180,7 +180,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
           readonly={actionOptions.readonly}
           VariablePicker={WorkflowVariablePicker}
         />
-        <FormBooleanFieldToggleInput
+        <FormBooleanFieldSwitchInput
           label={t`All day`}
           description={t`Create the event as an all-day event`}
           value={formData.isFullDay}
@@ -195,7 +195,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
           onChange={(value) => handleFieldChange('attendees', value)}
           VariablePicker={WorkflowVariablePicker}
         />
-        <FormBooleanFieldToggleInput
+        <FormBooleanFieldSwitchInput
           label={t`Send invitations`}
           description={t`Email the attendees an invitation`}
           hint={t`When off, the event is created with no attendees and nobody is notified.`}
@@ -203,7 +203,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
           onChange={(value) => handleFieldChange('sendInvitations', value)}
           disabled={actionOptions.readonly}
         />
-        <FormBooleanFieldToggleInput
+        <FormBooleanFieldSwitchInput
           label={t`Add conferencing`}
           description={t`Add a video conferencing link`}
           hint={t`Generates a Google Meet or Microsoft Teams link depending on the account.`}

@@ -9,6 +9,7 @@ import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-rec
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
+import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-calendar-bot-scheduling-enabled.util';
 import {
   computeRecallBotCreationIdempotencyKey,
   scheduleRecallBot,
@@ -24,6 +25,10 @@ export const scheduleRecallBotForCallRecording = async (
   const meetingStartsAt = calendarEvent.startsAt;
 
   if (isUndefined(meetingUrl) || isUndefined(meetingStartsAt)) {
+    return false;
+  }
+
+  if (!isCalendarBotSchedulingEnabled()) {
     return false;
   }
 

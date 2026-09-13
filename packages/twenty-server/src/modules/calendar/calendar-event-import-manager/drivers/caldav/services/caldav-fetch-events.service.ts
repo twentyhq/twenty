@@ -11,15 +11,18 @@ import {
 } from 'tsdav';
 import { isDefined } from 'twenty-shared/utils';
 
+import { CALDAV_UNVERSIONED_RESOURCE } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/constants/caldav-unversioned-resource.constant';
 import { type CalDavSyncCursor } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/types/caldav-sync-cursor';
 import { extractICalData } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/extract-ical-data.util';
 import { isCalDavCollectionHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-caldav-collection-href.util';
+import { isEventCalendar } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-event-calendar.util';
 import { isEventInTimeRange } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-event-in-time-range.util';
 import { isInvalidSyncTokenResponse } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-invalid-sync-token-response.util';
 import { isSameCalDavResource } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-same-caldav-resource.util';
 import { isValidCalDavHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-valid-caldav-href.util';
 import { mapCalDavStatusToExceptionCode } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/map-caldav-status-to-exception-code.util';
 import { parseICalEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-ical-event.util';
+import { resolveCalDavResourceVersion } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/resolve-caldav-resource-version.util';
 import { CalendarEventImportDriverException } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
@@ -42,9 +45,7 @@ export class CalDavFetchEventsService {
   async listEventCalendars(client: DAVClient): Promise<DAVCalendar[]> {
     const calendars = await client.fetchCalendars();
 
-    return calendars.filter((calendar) =>
-      calendar.components?.includes('VEVENT'),
-    );
+    return calendars.filter(isEventCalendar);
   }
 
   async fetchChangedEventHrefs(
@@ -315,18 +316,22 @@ export class CalDavFetchEventsService {
     const currentEtags = await this.fetchEtagsByHref(client, calendar.url);
 
     const changedHrefs = Object.keys(currentEtags).filter(
-      (href) => storedEtags[href] !== currentEtags[href],
+      (href) =>
+        currentEtags[href] === CALDAV_UNVERSIONED_RESOURCE ||
+        storedEtags[href] !== currentEtags[href],
     );
     const cancelledHrefs = Object.keys(storedEtags).filter(
       (href) =>
         !(href in currentEtags) && !isCalDavCollectionHref(href, calendar.url),
     );
 
+    const listedResources = Object.keys(currentEtags).length > 0;
+
     return {
       calendarUrl: calendar.url,
       changedHrefs,
       cancelledHrefs,
-      newCtag,
+      newCtag: listedResources ? newCtag : undefined,
       newEtags: currentEtags,
     };
   }
@@ -356,24 +361,25 @@ export class CalDavFetchEventsService {
   ): Promise<Record<string, string>> {
     const responses = await client.propfind({
       url: calendarUrl,
-      props: { [`${DAVNamespaceShort.DAV}:getetag`]: {} },
+      props: {
+        [`${DAVNamespaceShort.DAV}:getetag`]: {},
+        [`${DAVNamespaceShort.DAV}:getlastmodified`]: {},
+      },
       depth: '1',
     });
 
-    return responses.reduce<Record<string, string>>((map, response) => {
-      const href = response.href;
-      const etag = response.props?.getetag;
+    const memberResponses = responses.filter(
+      (response): response is DAVResponse & { href: string } =>
+        isNonEmptyString(response.href) &&
+        !isCalDavCollectionHref(response.href, calendarUrl),
+    );
 
-      if (
-        !isNonEmptyString(href) ||
-        !isNonEmptyString(etag) ||
-        !isValidCalDavHref(href) ||
-        isCalDavCollectionHref(href, calendarUrl)
-      ) {
+    return memberResponses.reduce<Record<string, string>>((map, response) => {
+      if (!isValidCalDavHref(response.href)) {
         return map;
       }
 
-      map[href] = etag;
+      map[response.href] = resolveCalDavResourceVersion(response);
 
       return map;
     }, {});

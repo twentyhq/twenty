@@ -5,7 +5,7 @@ exports[`Publish application is gated by the instance server version rejects pub
   "extensions": {
     "code": "BAD_USER_INPUT",
     "subCode": "SERVER_VERSION_INCOMPATIBLE",
-    "userFriendlyMessage": "This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version.",
+    "userFriendlyMessage": "This app requires a newer version of the Crove server. Please upgrade your server or use a compatible app version.",
   },
   "message": "App requires Twenty server >=<version> but this server is <version>.",
   "name": "UserInputError",

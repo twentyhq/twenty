@@ -156,7 +156,7 @@ export const SettingsToolParameterTable = ({
                         />
                         <AppTooltip
                           anchorSelect={`#${infoIconId}`}
-                          content={property.description}
+                          title={property.description}
                           offset={5}
                           noArrow
                           place="bottom"

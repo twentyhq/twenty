@@ -8,7 +8,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { bullMQToJobStateEnum } from 'src/engine/core-modules/message-queue/enums/job-state.enum';
+import { buildJobStatus } from 'src/engine/core-modules/message-queue/utils/build-job-status.util';
 import { ENQUEUE_JOB_DEFAULT_RETRY_LIMIT } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-default-retry-limit.constant';
 import { ENQUEUE_JOB_PRIORITY } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-priority.constant';
 import { MAX_JOBS_PER_STATUS_READ } from 'src/engine/core-modules/application/application-job/constants/max-jobs-per-status-read.constant';
@@ -163,17 +163,7 @@ export class ApplicationJobService {
         return [];
       }
 
-      return [
-        {
-          jobId,
-          state: bullMQToJobStateEnum[job.state],
-          attemptsMade: job.attemptsMade,
-          failedReason: job.failedReason,
-          enqueuedAt: job.timestamp,
-          startedAt: job.processedOn,
-          finishedAt: job.finishedOn,
-        },
-      ];
+      return [buildJobStatus({ jobId, job })];
     });
   }
 

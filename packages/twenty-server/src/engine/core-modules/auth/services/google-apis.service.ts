@@ -42,7 +42,7 @@ import {
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
-import { WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-creation-retry-limit.constant';
+import { WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-job-retry-limit.constant';
 import {
   CreateWebhookSubscriptionJob,
   type CreateWebhookSubscriptionJobData,
@@ -435,7 +435,7 @@ export class GoogleAPIsService {
       await this.webhookQueueService.add<CreateWebhookSubscriptionJobData>(
         CreateWebhookSubscriptionJob.name,
         { channelType, channelId, workspaceId },
-        { retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT },
+        { retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT },
       );
     } catch (error) {
       this.logger.warn(

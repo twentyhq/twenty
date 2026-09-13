@@ -12,6 +12,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
+import { isOwningApplicationAuthContext } from 'src/engine/twenty-orm/utils/is-owning-application-auth-context.util';
 
 const isWritePermittedByWritability = ({
   writability,
@@ -34,13 +35,9 @@ const isWritePermittedByWritability = ({
   }
 
   if (writability === MetadataWritability.APPLICATION) {
-    // Only APPLICATION_ACCESS tokens ever carry an application, so reading it
-    // off a user-bound context cannot let an ordinary session through.
     return (
       isDefined(authContext) &&
-      isDefined(owningApplicationId) &&
-      (authContext.type === 'application' || authContext.type === 'user') &&
-      authContext.application?.id === owningApplicationId
+      isOwningApplicationAuthContext({ authContext, owningApplicationId })
     );
   }
 

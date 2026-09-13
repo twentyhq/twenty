@@ -4,7 +4,6 @@ import { getFieldDefaultValueWarnings } from '@/sdk/define/fields/get-field-defa
 import { validateFields } from '@/sdk/define/fields/validate-fields';
 import { isEngineDerivedLabelIdentifier } from '@/sdk/define/objects/is-engine-derived-label-identifier';
 import { type ObjectConfig } from '@/sdk/define/objects/object-config';
-import { isDefined } from 'twenty-shared/utils';
 
 export const defineObject: DefineEntity<ObjectConfig> = (config) => {
   const errors = [];

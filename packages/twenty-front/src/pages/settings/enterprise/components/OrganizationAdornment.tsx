@@ -76,11 +76,11 @@ export const OrganizationAdornment = ({
       {adornment}
       <AppTooltip
         anchorSelect={`#${anchorId}`}
-        content={tooltipContent}
+        title={tooltipContent}
         delay={TooltipDelay.shortDelay}
         place="top"
-        width="260px"
-        clickable
+        maxWidth="260px"
+        interactive
       />
     </>
   );

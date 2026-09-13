@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   SLACK_ENTITY_DETAILS_UNIVERSAL_IDENTIFIER,
-  SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
+  SLACK_ASSISTANT_REQUEST_UNIVERSAL_IDENTIFIER,
   SLACK_INSTALL_REVOKED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   SLACK_LINK_UNFURL_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
@@ -220,7 +220,7 @@ describe('slackEventsResolverHandler', () => {
 
     expect(result).toMatchObject({
       targetLogicFunctionUniversalIdentifier:
-        SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
+        SLACK_ASSISTANT_REQUEST_UNIVERSAL_IDENTIFIER,
     });
     expect(findClaimedWorkspaceMock).not.toHaveBeenCalled();
   });

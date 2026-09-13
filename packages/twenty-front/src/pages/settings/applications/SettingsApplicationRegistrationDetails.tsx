@@ -106,7 +106,7 @@ export const SettingsApplicationRegistrationDetails = () => {
           placeholderColorSeed={registration.name}
         />
       }
-      tag={<Tag text={t`Owner`} color={'gray'} />}
+      tag={<Tag color="gray">{t`Owner`}</Tag>}
       links={[
         {
           children: t`Workspace`,

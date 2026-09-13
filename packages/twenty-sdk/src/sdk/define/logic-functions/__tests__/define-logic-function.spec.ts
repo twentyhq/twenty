@@ -1,4 +1,5 @@
 import { defineLogicFunction } from '@/sdk/define';
+import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 
 const mockHandler = async () => ({ success: true });
 
@@ -50,6 +51,23 @@ describe('defineLogicFunction', () => {
     const result = defineLogicFunction(config as any);
 
     expect(result.config.databaseEventTriggerSettings?.eventName).toBeDefined();
+  });
+
+  it('should accept databaseEventTriggerSettings with batchMode enabled', () => {
+    const config: LogicFunctionConfig = {
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Contact Created',
+      handler: mockHandler,
+      databaseEventTriggerSettings: {
+        eventName: 'contact.created',
+        batchMode: true,
+      },
+    };
+
+    const result = defineLogicFunction(config);
+
+    expect(result.errors).toEqual([]);
+    expect(result.config.databaseEventTriggerSettings?.batchMode).toBe(true);
   });
 
   it('should pass through optional fields', () => {

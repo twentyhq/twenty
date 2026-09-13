@@ -13,6 +13,7 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { formatDate } from '~/utils/date-utils';
+import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
 
 type SettingsBillingTrialNoPaymentMethodBannerProps = {
   currentBillingSubscription: NonNullable<
@@ -45,7 +46,7 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
   };
 
   const planName =
-    currentBillingSubscription.metadata?.['plan'] === BillingPlanKey.PRO
+    getSubscriptionPlanKey(currentBillingSubscription) === BillingPlanKey.PRO
       ? t`pro plan`
       : t`organization plan`;
 

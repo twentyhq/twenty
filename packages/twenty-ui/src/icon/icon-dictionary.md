@@ -127,4 +127,4 @@ import { IconHierarchy } from 'twenty-ui/icon';
 2. Confirm the visual choice in the linked Figma dictionary.
 3. Run `npx nx generateIconDictionary twenty-ui`.
 4. Review the `UI/Icon/Icon Dictionary` Storybook story.
-5. Run `npx jest packages/twenty-ui/src/icon/__tests__/TwentyIconDictionary.test.ts --config=packages/twenty-ui/jest.config.mjs`.
+5. Run `npx vitest run --root packages/twenty-ui --project unit src/icon/__tests__/TwentyIconDictionary.test.ts`.

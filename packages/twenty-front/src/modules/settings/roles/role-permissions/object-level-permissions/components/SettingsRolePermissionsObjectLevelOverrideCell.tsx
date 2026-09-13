@@ -74,7 +74,7 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
       </StyledContainer>
       <AppTooltip
         anchorSelect={`#${containerId}`}
-        content={
+        title={
           permissionValue === false
             ? t`${roleLabel} can't ${humanReadableAction} ${objectLabel} records`
             : t`${roleLabel} can ${humanReadableAction} ${objectLabel} records`

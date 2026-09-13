@@ -5,7 +5,7 @@ exports[`signUpInWorkspace into a non-active workspace (integration) rejects a b
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "Workspace is not ready to welcome new members",
+    "userFriendlyMessage": "Organization is not ready to welcome new members",
   },
   "message": "Workspace is not ready to welcome new members",
   "name": "ForbiddenError",
@@ -17,7 +17,7 @@ exports[`signUpInWorkspace into a non-active workspace (integration) rejects an 
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "Workspace is not ready to welcome new members",
+    "userFriendlyMessage": "Organization is not ready to welcome new members",
   },
   "message": "Workspace is not ready to welcome new members",
   "name": "ForbiddenError",

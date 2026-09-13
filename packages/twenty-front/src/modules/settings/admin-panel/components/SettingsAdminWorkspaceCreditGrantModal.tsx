@@ -10,6 +10,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { CREDIT_GRANT_EXPIRY_OPTIONS } from '@/settings/admin-panel/constants/CreditGrantExpiryOptions';
 import { CREDIT_GRANT_TYPE_LABELS } from '@/settings/admin-panel/constants/CreditGrantTypeLabels';
 import { GRANTABLE_CREDIT_GRANT_TYPES } from '@/settings/admin-panel/constants/GrantableCreditGrantTypes';
 import { GRANT_WORKSPACE_CREDITS } from '@/settings/admin-panel/graphql/mutations/grantWorkspaceCredits';
@@ -64,6 +65,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
     BillingCreditGrantType.COMPENSATION,
   );
   const [reason, setReason] = useState('');
+  const [expiresInDays, setExpiresInDays] = useState<number | null>(null);
   // Identifies one intended grant, so a RetryLink retry or a resubmit after a
   // lost response is answered with the grant the first attempt wrote rather
   // than crediting the workspace twice. Keyed on the submitted values, since
@@ -91,6 +93,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
     setAmount('');
     setType(BillingCreditGrantType.COMPENSATION);
     setReason('');
+    setExpiresInDays(null);
     setSubmittedGrant(null);
     closeModal(modalInstanceId);
   };
@@ -101,7 +104,12 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
     }
 
     const trimmedReason = reason.trim();
-    const payload = JSON.stringify([parsedAmount, type, trimmedReason]);
+    const payload = JSON.stringify([
+      parsedAmount,
+      type,
+      trimmedReason,
+      expiresInDays,
+    ]);
 
     const clientOperationId =
       submittedGrant?.payload === payload
@@ -117,6 +125,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
           amount: parsedAmount,
           type,
           reason: trimmedReason || null,
+          expiresInDays,
           clientOperationId,
         },
       });
@@ -157,7 +166,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
           alignment={SectionAlignment.Center}
           fontColor={SectionFontColor.Primary}
         >
-          {t`Credits are added on top of the plan allowance and expire at the end of the current billing period. Unused granted credits carry over in full.`}
+          {t`Credits are added on top of the plan allowance and are spent only once it runs out. They carry over in full from one billing period to the next, and stay available until they are used up or, where an expiry is set, until the end of the billing period that expiry falls in.`}
         </Section>
       </StyledSectionContainer>
 
@@ -184,6 +193,19 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
             label: t(CREDIT_GRANT_TYPE_LABELS[grantType]),
           }))}
           onChange={setType}
+          isDropdownInModal
+          fullWidth
+        />
+
+        <Select
+          dropdownId={`${modalInstanceId}-expires-in-days`}
+          label={t`Expires`}
+          value={expiresInDays}
+          options={CREDIT_GRANT_EXPIRY_OPTIONS.map((option) => ({
+            value: option.value,
+            label: t(option.label),
+          }))}
+          onChange={setExpiresInDays}
           isDropdownInModal
           fullWidth
         />

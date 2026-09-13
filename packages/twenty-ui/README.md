@@ -6,6 +6,8 @@
 
 Twenty's open-source React UI component library: components, icons, and design tokens built on a zero-runtime, CSS-variable styling layer.
 
+> **Alpha:** `twenty-ui` is still in alpha. Its version number follows the Twenty SDK release cycle. APIs and component behavior may change between releases.
+
 # Installation
 
 ```bash
@@ -49,7 +51,7 @@ import { Button } from 'twenty-ui/input';
 | `twenty-ui/data-display` | Avatars, chips, tags, and other display components |
 | `twenty-ui/feedback` | Progress bars, loaders, and status feedback |
 | `twenty-ui/icon` | Icon components and the icon provider |
-| `twenty-ui/input` | Buttons, toggles, and form inputs |
+| `twenty-ui/input` | Buttons, switches, and form inputs |
 | `twenty-ui/json-visualizer` | JSON tree viewer |
 | `twenty-ui/layout` | Layout primitives |
 | `twenty-ui/navigation` | Menus, links, and navigation components |
@@ -68,10 +70,13 @@ import { Button } from 'twenty-ui/input';
 
 # Development
 
+Component interaction and behavior tests belong in Storybook stories (`*.stories.tsx`) using `play` functions. Component unit tests are reserved for conformance (native props, refs, class names, rendering, and prop types). Keep non-interactive utility, hook, and token tests in the Vitest unit project; avoid duplicating story coverage there.
+
 ```bash
 npx nx build twenty-ui                 # Build the library (dual ESM/CJS + types)
 npx nx storybook:serve:dev twenty-ui   # Run Storybook
 npx nx test twenty-ui                  # Run unit tests
+npx vitest run --root packages/twenty-ui --project unit <file>   # Run a single test file
 ```
 
 # License

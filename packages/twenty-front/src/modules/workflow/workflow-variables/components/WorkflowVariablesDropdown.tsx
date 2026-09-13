@@ -106,7 +106,7 @@ export const WorkflowVariablesDropdown = ({
         </StyledDropdownVariableButtonContainer>
         <AppTooltip
           anchorSelect={`[data-variable-picker-disabled-anchor="${dropdownId}"]`}
-          content={t`No variables are available yet. Variables come from the workflow trigger and previous steps.`}
+          title={t`No variables are available yet. Variables come from the workflow trigger and previous steps.`}
           place={TooltipPosition.Top}
           delay={TooltipDelay.mediumDelay}
           offset={5}

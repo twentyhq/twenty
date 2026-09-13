@@ -251,10 +251,9 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
               description={t`Outbound mail from this channel is sent through this domain. It must be verified before email can be delivered.`}
               adornment={
                 <StyledSendingDomainAdornment>
-                  <Status
-                    color={getColorByEmailingDomainStatus(domainStatus)}
-                    text={getTextByEmailingDomainStatus(domainStatus)}
-                  />
+                  <Status color={getColorByEmailingDomainStatus(domainStatus)}>
+                    {getTextByEmailingDomainStatus(domainStatus)}
+                  </Status>
                   {!isDomainVerified && (
                     <SettingsEmailingDomainVerifyButton
                       emailingDomainId={emailingDomain.id}

@@ -3,8 +3,10 @@ import { gql } from '@apollo/client';
 export const GET_ADMIN_AI_MODELS = gql`
   query GetAdminAiModels {
     getAdminAiModels {
-      defaultSmartModelId
-      defaultFastModelId
+      defaultModelByTier {
+        tier
+        modelId
+      }
       models {
         modelId
         label
@@ -13,7 +15,6 @@ export const GET_ADMIN_AI_MODELS = gql`
         isAvailable
         isAdminEnabled
         isDeprecated
-        isRecommended
         contextWindowTokens
         maxOutputTokens
         inputCostPerMillionTokens
@@ -22,6 +23,7 @@ export const GET_ADMIN_AI_MODELS = gql`
         providerLabel
         name
         dataResidency
+        efforts
       }
     }
   }

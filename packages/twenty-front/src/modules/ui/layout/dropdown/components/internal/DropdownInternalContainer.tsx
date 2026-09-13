@@ -156,6 +156,7 @@ export const DropdownInternalContainer = ({
 
       <FloatingPortal>
         <StyledDropdownContentContainer
+          data-floating-ui-viewport
           ref={floatingUiRefs.setFloating}
           style={dropdownMenuStyles}
           role="listbox"

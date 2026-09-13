@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-28 16:20\n"
+"PO-Revision-Date: 2026-09-08 16:21\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -897,6 +897,11 @@ msgstr "Fügen Sie Rich Text direkt in Layouts ein – mit dem neuen dedizierten
 msgid "Add Several emails for one contact"
 msgstr "Mehrere E‑Mails für einen Kontakt hinzufügen"
 
+#. js-lingui-id: /01kre
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Add shared instructions, playbooks, and other rich text with the new Note widget. Insert widgets exactly where you want them, and unpin the first tab when your layout needs more room."
+msgstr "Fügen Sie mit dem neuen Notiz-Widget gemeinsame Anweisungen, Playbooks und andere Rich-Text-Inhalte hinzu. Platzieren Sie Widgets genau dort, wo Sie sie benötigen, und lösen Sie die Fixierung des ersten Tabs, wenn Ihr Layout mehr Platz benötigt."
+
 #. js-lingui-id: hWkQMS
 #: src/sections/product-feature/TasksVisual/components/AddTaskButton.tsx
 msgid "Add task"
@@ -1287,6 +1292,11 @@ msgstr "Argentinien 🇦🇷"
 msgid "Armenia 🇦🇲"
 msgstr "Armenien 🇦🇲"
 
+#. js-lingui-id: hgvS2c
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Ask AI to attach files you upload in chat directly to records."
+msgstr "Bitten Sie die KI, Dateien, die Sie im Chat hochladen, direkt an Datensätze anzuhängen."
+
 #. js-lingui-id: GYKCBW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Ask AI to build or reconfigure dashboards and views from your workspace data."
@@ -1311,6 +1321,11 @@ msgstr "Verantwortliche und Fälligkeiten zuweisen"
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "At least one shipped Twenty implementation — customer or internal — with a link that shows the work. Solo freelancers and agencies both qualify."
 msgstr "Mindestens eine abgeschlossene Twenty-Implementierung – für einen Kunden oder intern – mit einem Link, der die Arbeit zeigt. Sowohl selbstständige Freelancer als auch Agenturen erfüllen die Voraussetzungen."
+
+#. js-lingui-id: PbTDQ4
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Attach files to records with AI"
+msgstr "Dateien mit KI an Datensätze anhängen"
 
 #. js-lingui-id: awzjg/
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1573,6 +1588,11 @@ msgstr "Partner durchsuchen"
 #: src/sections/partner-lead/PartnerDirectory.tsx
 msgid "Browse the *certified partners*"
 msgstr "Die *zertifizierten Partner* durchsuchen"
+
+#. js-lingui-id: pB7UCU
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Browse your records in a compact list, now available to everyone. Group records and see the fields that matter in a layout that adapts to desktop and mobile."
+msgstr "Durchsuchen Sie Ihre Datensätze in einer kompakten Liste, die jetzt für alle verfügbar ist. Gruppieren Sie Datensätze und sehen Sie die wichtigen Felder in einem Layout, das sich an Desktop und Mobilgeräte anpasst."
 
 #. js-lingui-id: VX4eI/
 #: src/partner-application/data/partner-country-options.ts
@@ -2197,6 +2217,11 @@ msgstr "Erstellen und organisieren Sie Sidebar-Elemente einfacher mit einem übe
 msgid "Create apps on Twenty"
 msgstr "Apps auf Twenty erstellen"
 
+#. js-lingui-id: CA2rtv
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Create calendar events directly from a record’s timeline, with the current contact prefilled as a guest."
+msgstr "Erstellen Sie Kalenderereignisse direkt aus der Zeitleiste eines Datensatzes, wobei der aktuelle Kontakt als Gast vorausgefüllt wird."
+
 #. js-lingui-id: yAL7FY
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
@@ -2593,6 +2618,11 @@ msgstr "Datum & Uhrzeit"
 msgid "Datetime Field"
 msgstr "Datetime-Feld"
 
+#. js-lingui-id: oLDLdM
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Day and week calendar views"
+msgstr "Kalenderansichten für Tag und Woche"
+
 #. js-lingui-id: xqKvBR
 #: src/sections/product-feature/DashboardVisual/DashboardVisual.tsx
 msgid "Deals by month"
@@ -2682,6 +2712,11 @@ msgstr "Entwickler können jetzt den neuen Array-Feldtyp nutzen, um nicht vordef
 msgid "Developers can now use webhooks to synchronize customer data updates in real-time across applications."
 msgstr "Entwickler können jetzt Webhooks verwenden, um Aktualisierungen von Kundendaten in Echtzeit über Anwendungen hinweg zu synchronisieren."
 
+#. js-lingui-id: SxCLpb
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Dictate prompts in supported browsers, and get suggested actions based on the page you are viewing."
+msgstr "Diktieren Sie Eingabeaufforderungen in unterstützten Browsern und erhalten Sie vorgeschlagene Aktionen basierend auf der angezeigten Seite."
+
 #. js-lingui-id: C39swB
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
 msgid "Didn't find the *right partner*?"
@@ -2727,6 +2762,11 @@ msgstr "Entdecken Sie die neuesten Funktionen und Verbesserungen von Twenty, dem
 #: src/sections/menu/data/menu.ts
 msgid "Discover what's new"
 msgstr "Entdecken Sie, was neu ist"
+
+#. js-lingui-id: EVc4nZ
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Display records two relationships away directly on a record page—for example, opportunities associated with a company’s contacts."
+msgstr "Zeigen Sie Datensätze, die über zwei Beziehungen hinweg verknüpft sind, direkt auf einer Datensatzseite an – zum Beispiel Verkaufschancen, die mit den Kontakten eines Unternehmens verknüpft sind."
 
 #. js-lingui-id: /Gu7LB
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2895,6 +2935,11 @@ msgstr "Einfacheres Bearbeiten von Feldern"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Easier layouts"
 msgstr "Einfachere Layouts"
+
+#. js-lingui-id: CgFsbd
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Easier workflow editing"
+msgstr "Einfacheres Bearbeiten von Workflows"
 
 #. js-lingui-id: hEtClO
 #: src/partner-application/data/partner-country-options.ts
@@ -4283,6 +4328,11 @@ msgstr "Unendliches Scrollen ist immer noch „Kommt bald“ – im Gegensatz zu
 msgid "Inline image previews"
 msgstr "Inline-Bildvorschauen"
 
+#. js-lingui-id: IWtI58
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Insert actions into existing branches and drag connections to a different step without losing your configuration. Find variables faster by searching fields across all workflow steps."
+msgstr "Fügen Sie Aktionen in bestehende Verzweigungen ein und ziehen Sie Verbindungen zu einem anderen Schritt, ohne Ihre Konfiguration zu verlieren. Finden Sie Variablen schneller, indem Sie Felder in allen Workflow-Schritten durchsuchen."
+
 #. js-lingui-id: /eL+82
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Inspect AI calls, code output, HTTP requests, and emails for every step of a workflow run."
@@ -4314,6 +4364,11 @@ msgstr "Geteilte Tarball‑App installieren"
 #: src/case-studies/case-study-stories.ts
 msgid "Integration"
 msgstr "Integration"
+
+#. js-lingui-id: mQhHfc
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Interactive call recordings"
+msgstr "Interaktive Anrufaufzeichnungen"
 
 #. js-lingui-id: OChKCc
 #: src/platform/routing/static-website-routes.ts
@@ -4746,6 +4801,11 @@ msgstr "Listenpreise von Pipedrives öffentlicher Preisseite, jährlich abgerech
 msgid "List prices from Salesforce's public pricing page, billed annually, checked on July 30, 2026."
 msgstr "Listenpreise von Salesforces öffentlicher Preisseite, jährlich abgerechnet, geprüft am 30. Juli 2026."
 
+#. js-lingui-id: 5NZpX8
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "List view"
+msgstr "Listenansicht"
+
 #. js-lingui-id: 2WIZYd
 #: src/partner-application/data/partner-country-options.ts
 msgid "Lithuania 🇱🇹"
@@ -5077,6 +5137,11 @@ msgstr "Mehr Feldbeziehungen"
 msgid "More Field Types, More Power"
 msgstr "Mehr Feldtypen, mehr Power"
 
+#. js-lingui-id: qlt+dy
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "More flexible record pages"
+msgstr "Flexiblere Datensatzseiten"
+
 #. js-lingui-id: VqXuUv
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "More options available!"
@@ -5091,6 +5156,11 @@ msgstr "Leistungsstärkere Suche"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "More visual dashboard views"
 msgstr "Visuellere Dashboard-Ansichten"
+
+#. js-lingui-id: QsVNSj
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "More ways to work with AI"
+msgstr "Mehr Möglichkeiten, mit KI zu arbeiten"
 
 #. js-lingui-id: LAFO4Y
 #: src/partner-application/data/partner-country-options.ts
@@ -6594,6 +6664,11 @@ msgstr "Skalieren, ohne *den Betrieb zu gefährden*"
 msgid "Scale without breaking operations"
 msgstr "Skalieren, ohne den Betrieb zu gefährden"
 
+#. js-lingui-id: e7Ajb1
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Schedule meetings from records"
+msgstr "Besprechungen aus Datensätzen planen"
+
 #. js-lingui-id: sQOyAb
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
 msgid "Schedule security review"
@@ -6654,6 +6729,11 @@ msgstr ""
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "See more features"
 msgstr "Weitere Features anzeigen"
+
+#. js-lingui-id: zn1p6c
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "See related records across relationships"
+msgstr "Verknüpfte Datensätze über Beziehungen hinweg anzeigen"
 
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
@@ -6773,6 +6853,11 @@ msgstr "Selfhosting"
 msgid "Send Email"
 msgstr "E-Mail senden"
 
+#. js-lingui-id: ig4Kg0
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Send email from aliases"
+msgstr "E-Mails über Aliasse senden"
+
 #. js-lingui-id: pi1oME
 #: src/app-preview/terminal/TerminalSendButton.tsx
 msgid "Send message"
@@ -6782,6 +6867,11 @@ msgstr "Nachricht senden"
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
 msgid "Send NDA"
 msgstr "NDA senden"
+
+#. js-lingui-id: FK/sMg
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Send outbound emails using a verified alias on your connected account."
+msgstr "Senden Sie ausgehende E-Mails über einen verifizierten Alias in Ihrem verbundenen Konto."
 
 #. js-lingui-id: uW79Hr
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -7256,6 +7346,11 @@ msgstr "Schweden 🇸🇪"
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Swedish"
 msgstr "Schwedisch"
+
+#. js-lingui-id: VRCum/
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Switch between day, week, and month views to explore your calendar. Day and week views are now available by default."
+msgstr "Wechseln Sie zwischen Tages-, Wochen- und Monatsansicht, um Ihren Kalender zu erkunden. Tages- und Wochenansichten sind jetzt standardmäßig verfügbar."
 
 #. js-lingui-id: IImT5c
 #: src/partner-application/data/partner-country-options.ts
@@ -8396,6 +8491,11 @@ msgstr "W3villa nutzte Twenty als produktionsreifes Framework für das Datenmode
 #: src/sections/partner-lead/PartnerBecomeStrip.tsx
 msgid "Want to *offer* Twenty services?"
 msgstr "Möchten Sie Twenty-Dienstleistungen *anbieten*?"
+
+#. js-lingui-id: 9cL2b3
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Watch recordings alongside their transcripts. Click a transcript entry to jump to that moment, and follow along with highlighted words and automatic scrolling during playback."
+msgstr "Sehen Sie sich Aufzeichnungen zusammen mit ihren Transkripten an. Klicken Sie auf einen Transkripteintrag, um zu diesem Zeitpunkt zu springen, und folgen Sie während der Wiedergabe den hervorgehobenen Wörtern und dem automatischen Scrollen."
 
 #. js-lingui-id: k1Pevc
 #: src/platform/releases/ReleaseNotes.tsx

@@ -8,6 +8,7 @@ import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entitie
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
+import { isSellableBillingPrice } from 'src/engine/core-modules/billing/utils/is-sellable-billing-price.util';
 import {
   INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
   toDisplayCredits,
@@ -77,5 +78,6 @@ const formatBillingDatabasePriceToLicensedPriceDTO = (
       ? Number(billingPrice?.metadata?.credit_amount) /
         INTERNAL_CREDITS_PER_DISPLAY_CREDIT
       : null,
+    isSellable: isSellableBillingPrice(billingPrice),
   };
 };

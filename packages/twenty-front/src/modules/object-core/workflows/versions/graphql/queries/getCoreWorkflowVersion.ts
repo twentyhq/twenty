@@ -13,6 +13,7 @@ export const GET_CORE_WORKFLOW_VERSION = gql`
       trigger
       steps
       createdAt
+      updatedAt
     }
   }
 `;

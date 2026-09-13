@@ -14,7 +14,7 @@ Where this repo differs from your defaults:
 - Named exports only. Functional components only.
 - Prefer event handlers over `useEffect` for state updates.
 - No abbreviations in names (`fieldMetadata`, not `fm`); constants in SCREAMING_SNAKE_CASE; component props types suffixed `Props`.
-- Use `twenty-shared/utils` guards (`isDefined`, `assertIsDefinedOrThrow`, …) and other existing helpers before writing your own — reimplementing an existing util is the most common AI-authored defect here. `isNonEmptyString`/`isDate`/`isNumber`/`isString`/`isFunction` are NOT exported by `twenty-shared/utils`; import them from `@sniptt/guards` (which `twenty-shared/utils` does not re-export).
+- Use existing guards and helpers before writing your own: `isDefined`, `isNonEmptyArray`, `isPlainObject`, … from `twenty-shared/utils`; `isNonEmptyString`, `isString`, `isNull`, `isObject`, … from `@sniptt/guards`. Reimplementing an existing util is the most common AI-authored defect here.
 - Lingui for user-facing strings; Linaria (zero-runtime, styled-components pattern) for twenty-front styling.
 - For Twenty product concepts, consult `packages/twenty-ui/src/icon/icon-dictionary.md` and use the canonical icon.
 - Import icons from `twenty-ui/icon`, never directly from `@tabler/icons-react`; action and status concepts should use their action or status icons.
@@ -29,6 +29,7 @@ bash packages/twenty-utils/setup-dev-env.sh   # Postgres/Redis + DB init; only f
 yarn start                                    # front + server + worker
 
 npx jest path/to/file.spec.ts --config=packages/<pkg>/jest.config.mjs   # single test file (preferred)
+npx vitest run --root packages/twenty-ui --project unit <file>          # twenty-ui runs on vitest, not jest
 npx nx test twenty-server                     # package unit tests (same for twenty-front, ...)
 npx nx run twenty-server:test:integration:with-db-reset
 npx nx storybook:build twenty-front && npx nx storybook:test twenty-front

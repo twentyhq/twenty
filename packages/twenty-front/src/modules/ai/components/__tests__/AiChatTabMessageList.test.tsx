@@ -65,12 +65,6 @@ jest.mock(
     AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect: () => null,
   }),
 );
-jest.mock(
-  '@/ai/components/AgentChatPinScrollToBottomOnMountLayoutEffect',
-  () => ({
-    AgentChatPinScrollToBottomOnMountLayoutEffect: () => null,
-  }),
-);
 jest.mock('@/ai/components/AgentChatStreamingAutoScrollEffect', () => ({
   AgentChatStreamingAutoScrollEffect: () => null,
 }));

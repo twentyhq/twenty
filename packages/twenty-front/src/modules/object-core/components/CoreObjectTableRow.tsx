@@ -6,6 +6,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 const StyledCoreObjectTableBody = styled(TableBody)`
   gap: 0;
+  padding: 0;
 `;
 
 const StyledCoreObjectTableRow = styled(TableRow)`

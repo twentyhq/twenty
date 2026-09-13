@@ -535,7 +535,6 @@ type Application {
   logoFileId: UUID
   version: String
   universalIdentifier: String!
-  state: ApplicationState!
   packageJsonChecksum: String
   packageJsonFileId: UUID
   yarnLockChecksum: String
@@ -555,13 +554,6 @@ type Application {
   applicationVariables: [ApplicationVariable!]!
   applicationRegistration: ApplicationRegistrationSummary
   logoUrl: String
-}
-
-enum ApplicationState {
-  INSTALLING
-  INSTALLED
-  UPGRADING
-  UNINSTALLING
 }
 
 type TwoFactorAuthenticationMethodSummary {
@@ -853,12 +845,11 @@ type Workspace {
   isInternalMessagesImportEnabled: Boolean!
   editableProfileFields: [String!]
   defaultRole: Role
-  fastModel: String!
-  smartModel: String!
+  aiChatModelTier: AiModelTier!
+  aiAgentModelTier: AiModelTier!
+  isAutoModelSelectionEnabled: Boolean!
+  aiModelIdByTier: JSON!
   aiAdditionalInstructions: String
-  enabledAiModelIds: [String!]
-  useRecommendedModels: Boolean!
-  routerModel: String!
   workspaceCustomApplication: Application
   featureFlags: [FeatureFlag!]
   billingSubscriptions: [BillingSubscription!]!
@@ -885,6 +876,14 @@ enum WorkspaceActivationStatus {
   ACTIVE
   INACTIVE
   SUSPENDED
+}
+
+enum AiModelTier {
+  extraFast
+  fast
+  balanced
+  smart
+  extraSmart
 }
 
 type User {
@@ -1037,12 +1036,18 @@ type PageLayoutWidgetGridPosition {
 enum PageLayoutTabLayoutMode {
   GRID
   VERTICAL_LIST
-  CANVAS
+  CANVAS @deprecated(reason: "Use VERTICAL_LIST with TAB_VIEWPORT widget height behavior.")
 }
 
 type PageLayoutWidgetVerticalListPosition {
   layoutMode: PageLayoutTabLayoutMode!
   index: Int!
+  heightBehavior: PageLayoutWidgetVerticalListHeightBehavior
+}
+
+enum PageLayoutWidgetVerticalListHeightBehavior {
+  FIT_CONTENT
+  TAB_VIEWPORT
 }
 
 type PageLayoutWidgetCanvasPosition {
@@ -1423,6 +1428,7 @@ type BillingProductMetadata {
   planKey: BillingPlanKey!
   priceUsageBased: BillingUsageType!
   productKey: BillingProductKey!
+  isLegacy: String
 }
 
 """The different billing plans available"""
@@ -1448,6 +1454,7 @@ type BillingPriceLicensed {
   stripePriceId: String!
   priceUsageType: BillingUsageType!
   creditAmount: Float
+  isSellable: Boolean!
 }
 
 enum SubscriptionInterval {
@@ -1496,6 +1503,8 @@ type BillingSubscriptionItem {
   hasReachedCurrentPeriodCap: Boolean!
   quantity: Float
   stripePriceId: String!
+  unitAmount: Float
+  creditAmount: Float
   billingProduct: BillingProductDTO!
 }
 
@@ -1808,6 +1817,7 @@ enum UsageResourceType {
   API
   LOGIC_FUNCTION
   EMAIL
+  WEBHOOK
 }
 
 enum UsageOperationType {
@@ -1820,6 +1830,7 @@ enum UsageOperationType {
   CALL_RECORDING
   EMAIL_SEND
   API_REQUEST
+  WEBHOOK_CALL
   SUBSCRIPTION
 }
 
@@ -1892,6 +1903,7 @@ type ConnectedAccountPublicDTO {
   provider: String!
   lastCredentialsRefreshedAt: DateTime
   authFailedAt: DateTime
+  authFailedReason: String
   archivedAt: DateTime
   handleAliases: [String!]
   scopes: [String!]
@@ -1906,6 +1918,28 @@ type ConnectedAccountPublicDTO {
   connectionParameters: PublicImapSmtpCaldavConnectionParameters
 }
 
+type ApplicationConnectedAccountDTO {
+  id: UUID!
+  handle: String!
+  provider: String!
+  lastCredentialsRefreshedAt: DateTime
+  authFailedAt: DateTime
+  authFailedReason: String
+  archivedAt: DateTime
+  handleAliases: [String!]
+  scopes: [String!]
+  lastSignedInAt: DateTime
+  userWorkspaceId: UUID!
+  connectionProviderId: UUID
+  applicationId: UUID
+  name: String
+  visibility: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  connectionParameters: PublicImapSmtpCaldavConnectionParameters
+  isOwnedByCurrentUser: Boolean!
+}
+
 type FeatureFlag {
   key: FeatureFlagKey!
   value: Boolean!
@@ -1914,6 +1948,7 @@ type FeatureFlag {
 enum FeatureFlagKey {
   IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
+  IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_JSON_FILTER_ENABLED
   IS_EMAIL_GROUP_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
@@ -1923,6 +1958,9 @@ enum FeatureFlagKey {
   IS_API_RATE_LIMIT_V2_ENABLED
   IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED
   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED
+  IS_RECORD_CREATION_FORM_ENABLED
+  IS_RECORD_SHARING_ENABLED
+  IS_WEBHOOK_RATE_LIMIT_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2025,12 +2063,17 @@ type ClientAiModelConfig {
   outputCostPerMillionTokens: Float
   nativeCapabilities: NativeModelCapabilities
   isDeprecated: Boolean
-  isRecommended: Boolean
   providerName: String
   providerLabel: String
   contextWindowTokens: Float
   maxOutputTokens: Float
   dataResidency: String
+  intelligenceIndex: Float
+  outputTokensPerSecond: Float
+  costPerTask: Float
+  efforts: [String!]
+  effort: String
+  isBenchmarkInherited: Boolean
 }
 
 enum ModelFamily {
@@ -2039,6 +2082,11 @@ enum ModelFamily {
   GEMINI
   MISTRAL
   GROK
+}
+
+type ClientAiModelTierConfig {
+  tier: AiModelTier!
+  modelId: String!
 }
 
 type Billing {
@@ -2102,6 +2150,7 @@ type ClientConfig {
   authProviders: AuthProviders!
   billing: Billing!
   aiModels: [ClientAiModelConfig!]!
+  aiModelTiers: [ClientAiModelTierConfig!]!
   signInPrefilled: Boolean!
   isMultiWorkspaceEnabled: Boolean!
   isEmailVerificationRequired: Boolean!
@@ -2175,6 +2224,7 @@ type AppConnection {
   accessToken: String!
   scopes: [String!]!
   authFailedAt: String
+  authFailedReason: String
 }
 
 type ResendEmailVerificationToken {
@@ -2317,6 +2367,14 @@ type MarketplaceAppDetail {
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
 }
 
+type TriggerInstallApplicationJobResult {
+  jobId: String!
+}
+
+type TriggerUninstallApplicationJobResult {
+  jobId: String!
+}
+
 type WorkspaceCompanyEnrichmentResult {
   outcome: WorkspaceCompanyEnrichmentOutcome!
   enrichment: JSON
@@ -2352,6 +2410,8 @@ type Field {
   isUIReadOnly: Boolean @deprecated(reason: "Use isUIEditable")
   isNullable: Boolean
   isUnique: Boolean
+  isSearchable: Boolean
+  isAuditLogged: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -3199,6 +3259,7 @@ type Skill {
   description: String
   content: String!
   isCustom: Boolean!
+  isSystem: Boolean!
   isActive: Boolean!
   applicationId: UUID
   createdAt: DateTime!
@@ -3536,6 +3597,7 @@ type Query {
   apiKey(input: GetApiKeyInput!): ApiKey
   currentUserSessions: [UserSession!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
+  applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
   listPlans: [BillingPlan!]!
@@ -3586,6 +3648,8 @@ type Query {
   githubClaimAuthorizationUrl(applicationRegistrationId: String!): String!
   findManyApplications: [Application!]!
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
+  findInstallApplicationJobStatus(universalIdentifier: String!): JobStatus
+  findUninstallApplicationJobStatus(universalIdentifier: String!): JobStatus
   findManyMarketplaceApps(universalIdentifiers: [String!]): [MarketplaceApp!]!
   findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
@@ -3880,6 +3944,8 @@ type Mutation {
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   installApplication(universalIdentifier: String!, version: String): Application!
+  triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult!
+  triggerUninstallApplicationJob(input: TriggerUninstallApplicationJobInput!): TriggerUninstallApplicationJobResult!
   updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
   uninstallApplication(universalIdentifier: String!): Boolean!
   syncMarketplaceCatalog: Boolean!
@@ -3930,6 +3996,7 @@ type Mutation {
   deleteAppKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): Boolean!
   enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
+  reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
@@ -4728,12 +4795,12 @@ input UpdateWorkspaceInput {
   isTwoFactorAuthenticationEnforced: Boolean
   trashRetentionDays: Float
   eventLogRetentionDays: Float
-  fastModel: String
-  smartModel: String
+  aiChatModelTier: AiModelTier
+  aiAgentModelTier: AiModelTier
+  isAutoModelSelectionEnabled: Boolean
+  aiModelIdByTier: JSON
   aiAdditionalInstructions: String
   editableProfileFields: [String!]
-  enabledAiModelIds: [String!]
-  useRecommendedModels: Boolean
   isInternalMessagesImportEnabled: Boolean
 }
 
@@ -4777,6 +4844,14 @@ input UpdateApplicationRegistrationVariablePayload {
   description: String
 }
 
+input TriggerInstallApplicationJobInput {
+  universalIdentifier: String!
+}
+
+input TriggerUninstallApplicationJobInput {
+  universalIdentifier: String!
+}
+
 input UpdateApplicationInput {
   autoUpgrade: Boolean
 }
@@ -4798,6 +4873,8 @@ input CreateFieldInput {
   isUIReadOnly: Boolean
   isNullable: Boolean
   isUnique: Boolean
+  isSearchable: Boolean
+  isAuditLogged: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -4828,6 +4905,8 @@ input UpdateFieldInput {
   isUIReadOnly: Boolean
   isNullable: Boolean
   isUnique: Boolean
+  isSearchable: Boolean
+  isAuditLogged: Boolean
   defaultValue: JSON
   options: JSON
   settings: JSON
@@ -4984,6 +5063,7 @@ input SendEmailViaDomainInput {
 
 input SendMessageCampaignInput {
   campaignId: String!
+  scheduledAt: DateTime
 }
 
 input CancelMessageCampaignInput {
@@ -5136,6 +5216,11 @@ input EnqueueJobsInput {
 input EnqueueJobItemInput {
   payload: JSON
   jobId: String
+}
+
+input ReportAppConnectionAuthFailureInput {
+  id: ID!
+  reason: String
 }
 
 input FileAttachmentInput {

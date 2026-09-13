@@ -14,6 +14,7 @@ const SYSTEM_WRITABILITY_STANDARD_OBJECT_NAMES = [
   'calendarChannelEventAssociation',
   'messageChannelMessageAssociation',
   'messageChannelMessageAssociationMessageFolder',
+  'recordShare',
   'workflowAutomatedTrigger',
 ];
 

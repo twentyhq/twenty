@@ -25,6 +25,7 @@ export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
   isUIEditable?: boolean;
   isUICreatable?: boolean;
   writability?: MetadataWritability;
+  readability?: MetadataReadability;
   openRecordIn?: ObjectOpenRecordIn;
   shortcut?: string | null;
   duplicateCriteria?: string[][] | null;
@@ -56,6 +57,7 @@ export const createStandardObjectFlatMetadata = <
     isUIEditable = true,
     isUICreatable = true,
     writability = MetadataWritability.OPEN,
+    readability = MetadataReadability.OPEN,
     openRecordIn = ObjectOpenRecordIn.USER_CHOICE,
     shortcut = null,
     duplicateCriteria = null,
@@ -100,7 +102,7 @@ export const createStandardObjectFlatMetadata = <
     isUIEditable,
     isUICreatable,
     writability,
-    readability: MetadataReadability.OPEN,
+    readability,
     openRecordIn,
     isLabelSyncedWithName: false,
     overrides: null,

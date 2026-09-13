@@ -9,12 +9,13 @@
     "moduleResolution": "bundler",
     "esModuleInterop": true,
     "noEmit": true,
-    "types": ["node", "jest"],
+    "types": ["node", "vitest/globals"],
     "outDir": "../../.cache/tsc",
     "paths": {
       "@ui/*": ["./src/*"],
       "@assets/*": ["./src/assets/*"],
-      "@styles/*": ["./src/styles/*"]
+      "@styles/*": ["./src/styles/*"],
+      "@test-utilities/*": ["./test-utilities/*"]
     }
   },
   "include": [
@@ -25,7 +26,9 @@
     "scripts/generateThemeTokens.ts",
     ".storybook/*.ts",
     ".storybook/*.tsx",
-    "jest.config.mjs",
+    "test-utilities/**/*.ts",
+    "test-utilities/**/*.tsx",
+    "vitest.config.ts",
     "setupTests.ts",
     "vite.config.ts"
   ]

@@ -1,29 +1,18 @@
 import { type WebClient } from '@slack/web-api';
+import { isDefined } from 'twenty-sdk/utils';
 
-import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
-
-const BEST_EFFORT_TIMEOUT_MS = 5000;
+import { resolveBestEffortSlackClient } from 'src/logic-functions/utils/resolve-best-effort-slack-client';
+import { runBestEffortSlackCallWithClient } from 'src/logic-functions/utils/run-best-effort-slack-call-with-client';
 
 export const runBestEffortSlackCall = async (
   description: string,
   call: (client: WebClient) => Promise<unknown>,
 ): Promise<void> => {
-  const slackClientResult = await getSlackClient({
-    retryConfig: { retries: 0 },
-    timeout: BEST_EFFORT_TIMEOUT_MS,
-  });
+  const client = await resolveBestEffortSlackClient(description);
 
-  if (!slackClientResult.success) {
-    console.warn(`[slack] ${description} skipped: ${slackClientResult.error}`);
-
+  if (!isDefined(client)) {
     return;
   }
 
-  try {
-    await call(slackClientResult.client);
-  } catch (error) {
-    console.warn(
-      `[slack] ${description} failed: ${error instanceof Error ? error.message : String(error)}`,
-    );
-  }
+  await runBestEffortSlackCallWithClient(description, client, call);
 };

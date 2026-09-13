@@ -5,7 +5,7 @@ exports[`Sync application is gated by the workspace completed upgrade version re
   "extensions": {
     "code": "BAD_USER_INPUT",
     "subCode": "WORKSPACE_VERSION_INCOMPATIBLE",
-    "userFriendlyMessage": "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes.",
+    "userFriendlyMessage": "This app requires a newer version than this organization has finished upgrading to. Please try again once the organization upgrade completes.",
   },
   "message": "App requires Twenty server >=<version> but this workspace has only completed the upgrade to <version>.",
   "name": "UserInputError",
@@ -17,7 +17,7 @@ exports[`Sync application is gated by the workspace completed upgrade version re
   "extensions": {
     "code": "BAD_USER_INPUT",
     "subCode": "INVALID_WORKSPACE_VERSION",
-    "userFriendlyMessage": "This workspace's upgrade state could not be determined. Please try again once the workspace has finished upgrading.",
+    "userFriendlyMessage": "This organization's upgrade state could not be determined. Please try again once the organization has finished upgrading.",
   },
   "message": "Cannot determine the completed upgrade version for workspace 20202020-1c25-4d02-bf25-6aeccf7ea419: no interpretable upgrade cursor found.",
   "name": "UserInputError",

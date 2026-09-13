@@ -1,14 +1,14 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import {
   CoreObjectNameSingular,
   MessageChannelType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconAlertTriangle } from 'twenty-ui/icon';
+import { InlineBanner } from 'twenty-ui/feedback';
 import { type SelectOption } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
   CampaignEnvelopeBox,
@@ -34,18 +34,8 @@ const StyledSubjectInput = styled.input`
   width: 100%;
 `;
 
-const StyledWarning = styled.div`
-  align-items: flex-start;
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.xs};
-  gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
-`;
-
-const StyledWarningIcon = styled(IconAlertTriangle)`
-  color: ${themeCssVariables.color.yellow};
-  flex-shrink: 0;
+const StyledWarningContainer = styled.div`
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 type CampaignDetailsFieldsProps = {
@@ -57,7 +47,6 @@ export const CampaignDetailsFields = ({
   campaign,
   width,
 }: CampaignDetailsFieldsProps) => {
-  const { theme } = useContext(ThemeContext);
   const detailsState = useCampaignDetailsState({ campaign });
 
   const { channels } = useMyMessageChannels();
@@ -99,10 +88,14 @@ export const CampaignDetailsFields = ({
       onBlur={() => detailsState.flush()}
       below={
         !hasSenderOptions && (
-          <StyledWarning>
-            <StyledWarningIcon size={theme.icon.size.sm} />
-            {t`No sending address is available. Connect a verified sending domain in Settings before this campaign can go out.`}
-          </StyledWarning>
+          <StyledWarningContainer>
+            <InlineBanner
+              embedded
+              color="danger"
+              LeftIcon={IconAlertTriangle}
+              message={t`No sending address. Connect a verified domain in Settings.`}
+            />
+          </StyledWarningContainer>
         )
       }
     >

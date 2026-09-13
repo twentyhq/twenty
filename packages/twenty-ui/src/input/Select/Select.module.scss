@@ -1,0 +1,102 @@
+.trigger {
+  align-items: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-flex;
+  gap: var(--t-spacing-2);
+  text-align: start;
+
+  &[data-popup-open] {
+    --tw-input-border-color: var(--t-color-blue);
+  }
+
+  &[data-placeholder] .value {
+    color: var(--t-font-color-light);
+  }
+
+  &[aria-invalid='true'],
+  &[data-invalid] {
+    --tw-input-border-color: var(--t-border-color-danger);
+  }
+
+  &[data-disabled] {
+    color: var(--t-font-color-tertiary);
+    cursor: not-allowed;
+  }
+}
+
+.value {
+  flex: 1;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.icon {
+  align-items: center;
+  display: inline-flex;
+  flex: none;
+
+  > svg {
+    block-size: calc(var(--t-icon-size-md) * 1px);
+    inline-size: calc(var(--t-icon-size-md) * 1px);
+    stroke-width: var(--t-icon-stroke-sm);
+  }
+}
+
+.positioner {
+  z-index: var(--t-last-layer-z-index);
+}
+
+.popup {
+  backdrop-filter: var(--t-blur-medium);
+  background: var(--t-background-transparent-primary);
+  border: 1px solid var(--t-border-color-medium);
+  border-radius: var(--t-border-radius-md);
+  box-shadow: var(--t-box-shadow-strong);
+  box-sizing: border-box;
+  color: var(--t-font-color-primary);
+  min-inline-size: var(--anchor-width);
+  max-inline-size: var(--available-width);
+  max-block-size: var(--available-height);
+  margin: 0;
+  outline: none;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: var(--t-spacing-1);
+  transition: opacity duration(fast) ease-out;
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+  }
+
+  &[data-ending-style] {
+    transition-timing-function: ease-in;
+  }
+}
+
+.item {
+  box-sizing: border-box;
+}
+
+.indicator {
+  align-items: center;
+  display: inline-flex;
+  flex: none;
+}
+
+.groupLabel {
+  color: var(--t-font-color-secondary);
+  font-family: var(--t-font-family);
+  font-size: var(--t-font-size-sm);
+  font-weight: var(--t-font-weight-medium);
+  padding: var(--t-spacing-1);
+}
+
+.separator {
+  background: var(--t-border-color-light);
+  block-size: 1px;
+  margin-block: var(--t-spacing-1);
+}

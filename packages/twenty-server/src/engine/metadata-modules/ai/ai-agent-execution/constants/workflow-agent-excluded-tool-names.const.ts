@@ -3,4 +3,6 @@ import { type ActionToolId } from 'src/engine/core-modules/tool-provider/constan
 export const WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES = [
   'search_help_center',
   'navigate_app',
+  'create_file_upload',
+  'complete_file_upload',
 ] as const satisfies readonly ActionToolId[];

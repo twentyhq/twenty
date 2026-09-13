@@ -4,7 +4,6 @@ import { ALLOWED_HTML_ELEMENTS } from '@/constants/AllowedHtmlElements';
 import { isAriaOrDataAttribute } from '@/remote/elements/utils/isAriaOrDataAttribute';
 
 const PROPERTY_MAPPED_ATTRIBUTES = [
-  { attributeName: 'class', elementPropertyName: 'className' },
   { attributeName: 'for', elementPropertyName: 'htmlFor' },
   { attributeName: 'tabindex', elementPropertyName: 'tabIndex' },
   { attributeName: 'srcdoc', elementPropertyName: 'srcDoc' },
@@ -22,6 +21,7 @@ const ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME = new Map<string, string>(
 type RemoteElementWithAttributeUpdater = Element &
   Record<string, unknown> & {
     updateRemoteAttribute: (attributeName: string, value?: string) => void;
+    updateRemoteProperty: (propertyName: string, value?: unknown) => void;
   };
 
 type RemoteElementConstructor = CustomElementConstructor & {
@@ -116,6 +116,10 @@ export const patchRemoteElementAttributes = (): void => {
 
       originalSetAttribute.call(this, attributeName, attributeValue);
 
+      if (attributeName === 'class') {
+        this.updateRemoteProperty('className', attributeValue);
+      }
+
       if (shouldForwardAttributeAcrossBoundary(attributeName)) {
         this.updateRemoteAttribute(attributeName, attributeValue);
       }
@@ -138,6 +142,10 @@ export const patchRemoteElementAttributes = (): void => {
       }
 
       originalRemoveAttribute.call(this, attributeName);
+
+      if (attributeName === 'class') {
+        this.updateRemoteProperty('className', undefined);
+      }
 
       if (shouldForwardAttributeAcrossBoundary(attributeName)) {
         this.updateRemoteAttribute(attributeName);

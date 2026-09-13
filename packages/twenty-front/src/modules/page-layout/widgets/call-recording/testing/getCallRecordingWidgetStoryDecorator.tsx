@@ -38,6 +38,7 @@ const CALL_RECORDING_FIELD_METADATA_IDS = {
   summary: '20202020-0000-0000-0000-000000000014',
   video: '20202020-0000-0000-0000-000000000015',
   createdAt: '20202020-0000-0000-0000-000000000016',
+  audio: '20202020-0000-0000-0000-000000000017',
 } as const;
 
 const getFieldMetadataItemByTypeOrThrow = (
@@ -127,6 +128,12 @@ export const getCallRecordingWidgetStoryDecorator =
         id: CALL_RECORDING_FIELD_METADATA_IDS.video,
         name: 'video',
         label: 'Video',
+        type: FieldMetadataType.FILES,
+      }),
+      createCallRecordingFieldMetadataItem({
+        id: CALL_RECORDING_FIELD_METADATA_IDS.audio,
+        name: 'audio',
+        label: 'Audio',
         type: FieldMetadataType.FILES,
       }),
       createCallRecordingFieldMetadataItem({

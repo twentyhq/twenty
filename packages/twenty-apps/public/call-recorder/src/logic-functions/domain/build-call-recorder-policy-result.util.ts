@@ -3,6 +3,7 @@ import { type CallRecorderPolicyCalendarEventInput } from 'src/logic-functions/t
 import { type CallRecorderPolicyResultForCalendarEvent } from 'src/logic-functions/types/call-recorder-policy-result-for-calendar-event.type';
 import { computeRealMeetingKey } from 'src/logic-functions/domain/compute-real-meeting-key.util';
 import { resolveCallRecorderPolicyResult } from 'src/logic-functions/domain/resolve-call-recorder-policy-result.util';
+import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-calendar-bot-scheduling-enabled.util';
 
 export const buildCallRecorderPolicyResult = (
   calendarEvent: CallRecorderPolicyCalendarEventInput,
@@ -21,6 +22,7 @@ export const buildCallRecorderPolicyResult = (
 
   const policyResult = resolveCallRecorderPolicyResult({
     input: {
+      isCalendarBotSchedulingEnabled: isCalendarBotSchedulingEnabled(),
       callRecorderPreference,
       isCanceled: calendarEvent.isCanceled,
       startsAt: calendarEvent.startsAt,

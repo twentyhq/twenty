@@ -23,9 +23,13 @@ export const useCancelMessageCampaign = () => {
 
   const cancelMessageCampaign = async ({
     campaignId,
+    campaignStatus,
   }: {
     campaignId: string;
+    campaignStatus: MessageCampaignStatus;
   }): Promise<boolean> => {
+    const wasScheduled = campaignStatus === MessageCampaignStatus.SCHEDULED;
+
     try {
       const result = await cancelMessageCampaignMutation({
         variables: { input: { campaignId } },
@@ -44,10 +48,21 @@ export const useCancelMessageCampaign = () => {
           {
             __typename: 'MessageCampaign',
             id: campaignId,
-            status: MessageCampaignStatus.CANCELED,
+            status: wasScheduled
+              ? MessageCampaignStatus.DRAFT
+              : MessageCampaignStatus.CANCELED,
+            scheduledAt: null,
           },
         ],
       });
+
+      if (wasScheduled) {
+        enqueueSuccessSnackBar({
+          message: t`Campaign unscheduled and back in your drafts`,
+        });
+
+        return true;
+      }
 
       enqueueSuccessSnackBar({
         message: plural(canceled.canceledMessageCount, {
