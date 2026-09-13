@@ -486,7 +486,7 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
 }
 
 function isSelectMatch(leftValue: unknown, rightValue: unknown): boolean {
-  if (leftValue === null || leftValue === undefined) {
+  if (!isDefined(leftValue)) {
     return false;
   }
 

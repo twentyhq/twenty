@@ -513,7 +513,7 @@ describe('evaluateFilterConditions', () => {
         expect(result).toBe(true);
       });
 
-      it('should return false when value is a substring of filter option for IS', () => {
+      it('should return false when value contains filter option as a substring for IS', () => {
         const filter = createFilter(
           ViewFilterOperand.IS,
           'INVALID',
@@ -537,7 +537,7 @@ describe('evaluateFilterConditions', () => {
         expect(result).toBe(true);
       });
 
-      it('should return true when value is a substring of filter option for IS_NOT', () => {
+      it('should return true when value contains filter option as a substring for IS_NOT', () => {
         const filter = createFilter(
           ViewFilterOperand.IS_NOT,
           'INVALID',
@@ -561,7 +561,7 @@ describe('evaluateFilterConditions', () => {
         expect(result).toBe(false);
       });
 
-      it('should return false when value is a substring of filter option array for IS', () => {
+      it('should return false when value contains filter option array element as a substring for IS', () => {
         const filter = createFilter(
           ViewFilterOperand.IS,
           'INVALID',
