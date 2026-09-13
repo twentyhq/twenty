@@ -1,3 +1,4 @@
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import {
   enqueueJobs,
@@ -9,6 +10,7 @@ import {
 import { isDefined } from 'twenty-sdk/utils';
 
 import { EXPORT_CONTACTS_ROUTE_PATH } from 'src/constants/route-paths';
+import { fetchReadablePersonIds } from 'src/logic-functions/data/fetch-readable-person-ids.util';
 import { readRecordIds } from 'src/logic-functions/data/read-record-ids.util';
 import {
   EXPORT_CONTACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
@@ -27,7 +29,7 @@ const handler = async (payload: RoutePayload<{ recordIds?: string[] }>) => {
     payload,
   );
 
-  if (!isDefined(connection)) {
+  if (!isDefined(connection) || connection.visibility === 'workspace') {
     return jsonResponse({ status: 'no-connection' }, 200);
   }
 
@@ -41,6 +43,15 @@ const handler = async (payload: RoutePayload<{ recordIds?: string[] }>) => {
     return jsonResponse({ status: 'no-contacts-found' }, 200);
   }
 
+  const readableRecordIds = await fetchReadablePersonIds({
+    client: new CoreApiClient(),
+    personIds: recordIds,
+  });
+
+  if (readableRecordIds.length === 0) {
+    return jsonResponse({ status: 'no-contacts-found' }, 200);
+  }
+
   await enqueueJobs({
     logicFunctionUniversalIdentifier:
       EXPORT_CONTACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
@@ -48,7 +59,7 @@ const handler = async (payload: RoutePayload<{ recordIds?: string[] }>) => {
       {
         payload: {
           connectionId: connection.id,
-          recordIds,
+          recordIds: readableRecordIds,
         },
       },
     ],
