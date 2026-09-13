@@ -8,18 +8,19 @@ function escapesIn(text: string): string[] {
 
 // A source that writes the escape itself - a code sample, a string about
 // escaping - means the translation is right to carry it through. Only an escape
-// the translator introduced is a decoding failure.
+// the translator introduced is a decoding failure, and without the source there
+// is no way to tell the two apart, so the rule stands down as its peers do.
 function hasEscapedUnicode(text: string, sourceText?: string): boolean {
-  const source = sourceText ?? '';
+  if (sourceText === undefined) return false;
 
-  return escapesIn(text).some((escape) => !source.includes(escape));
+  return escapesIn(text).some((escape) => !sourceText.includes(escape));
 }
 
 function unescapeUnicode(text: string, sourceText?: string): string {
-  const source = sourceText ?? '';
+  if (sourceText === undefined) return text;
 
   return text.replace(ESCAPED_UNICODE_REGEX, (escape, hex) =>
-    source.includes(escape) ? escape : String.fromCharCode(parseInt(hex, 16)),
+    sourceText.includes(escape) ? escape : String.fromCharCode(parseInt(hex, 16)),
   );
 }
 
