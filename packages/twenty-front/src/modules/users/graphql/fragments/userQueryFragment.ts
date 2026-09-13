@@ -56,6 +56,7 @@ export const USER_QUERY_FRAGMENT = gql`
       activationStatus
       isPublicInviteLinkEnabled
       isClickTrackingEnabled
+      isOpenTrackingEnabled
       workspaceDiscoverability
       isGoogleAuthEnabled
       isMicrosoftAuthEnabled

@@ -12,6 +12,7 @@ export const fromWorkspaceEntityToFlat = (
   allowImpersonation: entity.allowImpersonation,
   isPublicInviteLinkEnabled: entity.isPublicInviteLinkEnabled,
   isClickTrackingEnabled: entity.isClickTrackingEnabled,
+  isOpenTrackingEnabled: entity.isOpenTrackingEnabled,
   workspaceDiscoverability: entity.workspaceDiscoverability,
   trashRetentionDays: entity.trashRetentionDays,
   eventLogRetentionDays: entity.eventLogRetentionDays,

@@ -84,10 +84,26 @@ export class CampaignTrackingContentService {
       return untracked;
     }
 
-    const urlTemplates = collectTrackableLinkUrls(html);
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (!isDefined(workspace)) {
+      return untracked;
+    }
+
+    const { isClickTrackingEnabled, isOpenTrackingEnabled } = workspace;
+
+    const urlTemplates = isClickTrackingEnabled
+      ? collectTrackableLinkUrls(html)
+      : [];
+
+    if (urlTemplates.length === 0 && !isOpenTrackingEnabled) {
+      return untracked;
+    }
 
     const baseUrl = await this.findTrackingBaseUrl({
-      workspaceId,
+      workspace,
       emailingDomainId,
     });
 
@@ -108,6 +124,7 @@ export class CampaignTrackingContentService {
         template,
         textPartHtml,
         urlTemplates,
+        withOpenPixel: isOpenTrackingEnabled,
       }),
       replacementsByDeliveryId: new Map(
         recipients.map((recipient) => [
@@ -119,6 +136,7 @@ export class CampaignTrackingContentService {
               recipient,
               urlTemplates,
               shortLinkIdByUrl,
+              withOpenPixel: isOpenTrackingEnabled,
             }),
           },
         ]),
@@ -130,10 +148,12 @@ export class CampaignTrackingContentService {
     template,
     textPartHtml,
     urlTemplates,
+    withOpenPixel,
   }: {
     template: EmailingDomainEmailTemplate;
     textPartHtml: string;
     urlTemplates: string[];
+    withOpenPixel: boolean;
   }): EmailingDomainEmailTemplate {
     const tagByUrl = (messagePart: CampaignMessagePart) =>
       new Map(
@@ -143,11 +163,14 @@ export class CampaignTrackingContentService {
         ]),
       );
 
+    const html = replaceTrackableLinkUrls(
+      template.html ?? '',
+      tagByUrl('HTML'),
+    );
+
     return {
       ...template,
-      html: this.appendOpenPixel(
-        replaceTrackableLinkUrls(template.html ?? '', tagByUrl('HTML')),
-      ),
+      html: withOpenPixel ? this.appendOpenPixel(html) : html,
       text: toPlainText(
         replaceTrackableLinkUrls(textPartHtml, tagByUrl('TEXT')),
       ),
@@ -214,11 +237,13 @@ export class CampaignTrackingContentService {
     recipient,
     urlTemplates,
     shortLinkIdByUrl,
+    withOpenPixel,
   }: {
     baseUrl: string;
     recipient: TrackingRecipient;
     urlTemplates: string[];
     shortLinkIdByUrl: Map<string, string>;
+    withOpenPixel: boolean;
   }): Record<string, string> {
     const replacements: Record<string, string> = {};
 
@@ -241,10 +266,12 @@ export class CampaignTrackingContentService {
       replacements[this.buildLinkTag({ messagePart: 'TEXT', index })] = linkUrl;
     });
 
-    replacements[CAMPAIGN_OPEN_PIXEL_TAG] = this.buildTrackedUrl(baseUrl, {
-      purpose: 'OPEN',
-      deliveryId: recipient.deliveryId,
-    });
+    if (withOpenPixel) {
+      replacements[CAMPAIGN_OPEN_PIXEL_TAG] = this.buildTrackedUrl(baseUrl, {
+        purpose: 'OPEN',
+        deliveryId: recipient.deliveryId,
+      });
+    }
 
     return replacements;
   }
@@ -284,20 +311,12 @@ export class CampaignTrackingContentService {
   }
 
   private async findTrackingBaseUrl({
-    workspaceId,
+    workspace,
     emailingDomainId,
   }: {
-    workspaceId: string;
+    workspace: WorkspaceEntity;
     emailingDomainId: string;
   }): Promise<string | undefined> {
-    const workspace = await this.workspaceRepository.findOneBy({
-      id: workspaceId,
-    });
-
-    if (!workspace?.isClickTrackingEnabled) {
-      return undefined;
-    }
-
     if (this.isLogDriver()) {
       return isNonEmptyString(workspace.subdomain)
         ? buildLogDriverUnsubscribeBaseUrl({
@@ -311,7 +330,7 @@ export class CampaignTrackingContentService {
     }
 
     const emailingDomain = await this.emailingDomainRepository.findOne(
-      workspaceId,
+      workspace.id,
       { where: { id: emailingDomainId } },
     );
     const unsubscribeHostname = emailingDomain?.unsubscribeHostname;

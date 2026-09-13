@@ -143,6 +143,7 @@ export class WorkspaceService {
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
     isClickTrackingEnabled: PermissionFlagType.WORKSPACE,
+    isOpenTrackingEnabled: PermissionFlagType.WORKSPACE,
   };
 
   constructor(

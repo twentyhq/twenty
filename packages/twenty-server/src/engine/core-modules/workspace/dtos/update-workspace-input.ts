@@ -61,6 +61,11 @@ export class UpdateWorkspaceInput {
   @IsOptional()
   isClickTrackingEnabled?: boolean;
 
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isOpenTrackingEnabled?: boolean;
+
   @Field(() => WorkspaceDiscoverability, { nullable: true })
   @IsEnum(WorkspaceDiscoverability)
   @IsOptional()

@@ -13,6 +13,7 @@ export const UPDATE_WORKSPACE = gql`
       allowImpersonation
       isPublicInviteLinkEnabled
       isClickTrackingEnabled
+      isOpenTrackingEnabled
       workspaceDiscoverability
       isGoogleAuthEnabled
       isMicrosoftAuthEnabled
