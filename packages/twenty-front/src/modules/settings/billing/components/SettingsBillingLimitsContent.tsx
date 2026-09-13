@@ -1,12 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { Navigate } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/typography';
 
 import { SettingsBillingLimitsTable } from '@/settings/billing/components/SettingsBillingLimitsTable';
 import { useUsageQuotasWithConsumption } from '@/settings/billing/hooks/useUsageQuotasWithConsumption';
 import { hasKnownUsageLimitSpender } from '@/settings/billing/utils/hasKnownUsageLimitSpender';
-import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 
 export const SettingsBillingLimitsContent = () => {
@@ -35,17 +36,7 @@ export const SettingsBillingLimitsContent = () => {
 
   if (quotas.length === 0) {
     return (
-      <SettingsPageContainer>
-        <Section>
-          <H2Title
-            title={t`Limits`}
-            description={t`Caps on what your workspace can spend and who they apply to`}
-          />
-          <SettingsEmptyPlaceholder>
-            {t`No limit yet.`}
-          </SettingsEmptyPlaceholder>
-        </Section>
-      </SettingsPageContainer>
+      <Navigate to={getSettingsPath(SettingsPath.BillingNewLimit)} replace />
     );
   }
 

@@ -31,6 +31,11 @@ msgstr " faktureras årligen"
 msgid " must be one of {ratingValues} values"
 msgstr " måste vara ett av {ratingValues} värden"
 
+#. js-lingui-id: b2GdxK
+#: src/modules/ai/components/AiModelTierSlider.tsx
+msgid " Not measured at this effort yet, so this is the base model's reading."
+msgstr " Har ännu inte mätts vid denna ansträngning, så detta är basmodellens avläsning."
+
 #. js-lingui-id: nA/hWD
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 msgid " per {intervalLabel}"
@@ -164,31 +169,15 @@ msgstr "[empty string]"
 #. placeholder {2}: formatNumber(counts.duplicateEmails)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
-msgstr ""
-
-#. js-lingui-id: Z2fCN4
-#. placeholder {0}: failedResults.length
-#. placeholder {1}: failedResults.length
-#. placeholder {2}: failedResults.length
-#: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
-msgid "{0, plural, one {{1} job could not be deleted} other {{2} jobs could not be deleted}}"
-msgstr "{0, plural, one {{1} jobb kunde inte raderas} other {{2} jobb kunde inte raderas}}"
-
-#. js-lingui-id: VjPlMz
-#. placeholder {0}: failedResults.length
-#. placeholder {1}: failedResults.length
-#. placeholder {2}: failedResults.length
-#: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
-msgid "{0, plural, one {{1} job could not be retried} other {{2} jobs could not be retried}}"
-msgstr "{0, plural, one {{1} jobb kunde inte upprepas} other {{2} jobb kunde inte upprepas}}"
+msgstr "{0, plural, one {{1} dubblett} other {{2} dubbletter}}"
 
 #. js-lingui-id: 5pucMh
 #. placeholder {0}: audiencePreview.sendable
 #. placeholder {1}: formatNumber(audiencePreview.sendable)
 #. placeholder {2}: formatNumber(audiencePreview.sendable)
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "{0, plural, one {{1} recipient} other {{2} recipients}}"
-msgstr ""
+msgstr "{0, plural, one {{1} mottagare} other {{2} mottagare}}"
 
 #. js-lingui-id: 0LMb5P
 #. placeholder {0}: Math.abs(days)
@@ -201,6 +190,18 @@ msgstr "{0, plural, one {{days} dag} other {{days} dagar}}"
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} year} other {{years} years}}"
 msgstr "{0, plural, one {{years} år} other {{years} år}}"
+
+#. js-lingui-id: XHO5F1
+#. placeholder {0}: failedResults.length
+#: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
+msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
+msgstr "{0, plural, one {# jobb kunde inte raderas} other {# jobb kunde inte raderas}}"
+
+#. js-lingui-id: AHhuJj
+#. placeholder {0}: failedResults.length
+#: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
+msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
+msgstr "{0, plural, one {# jobb kunde inte försökas igen} other {# jobb kunde inte försökas igen}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -221,7 +222,19 @@ msgstr "{0, plural, one {# arbetsyta har misslyckats eller ligger efter} other {
 #. placeholder {2}: canceled.canceledMessageCount
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "{0, plural, one {Campaign canceled, {1} pending email stopped} other {Campaign canceled, {2} pending emails stopped}}"
-msgstr ""
+msgstr "{0, plural, one {Kampanjen avbröts, {1} väntande e-postmeddelande stoppades} other {Kampanjen avbröts, {2} väntande e-postmeddelanden stoppades}}"
+
+#. js-lingui-id: xEqptn
+#. placeholder {0}: item.includedCredits
+#: src/modules/settings/admin-panel/utils/formatSubscriptionItemValue.ts
+msgid "{0, plural, one {credit/period} other {credits/period}}"
+msgstr "{0, plural, one {kredit/period} other {krediter/period}}"
+
+#. js-lingui-id: AkeiJW
+#. placeholder {0}: item.quantity
+#: src/modules/settings/admin-panel/utils/formatSubscriptionItemValue.ts
+msgid "{0, plural, one {seat} other {seats}}"
+msgstr "{0, plural, one {plats} other {platser}}"
 
 #. js-lingui-id: WTc9VY
 #. placeholder {0}: restriction.fieldNames.length
@@ -233,7 +246,7 @@ msgstr "{0, plural, one {Du har inte behörighet att komma åt {fieldsList} fäl
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr ""
+msgstr "{0} studsade eller klagade"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -262,9 +275,9 @@ msgstr "{0} har ingen relation till {loadBalancePoolObjectLabel}. Välj ett anna
 #. js-lingui-id: crgYwP
 #. placeholder {0}: formatNumber(audiencePreview.totalMembers)
 #. placeholder {1}: excludedReasons.join(', ')
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "{0} in the list, skipping {1}"
-msgstr ""
+msgstr "{0} i listan, hoppar över {1}"
 
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
@@ -301,7 +314,7 @@ msgstr "{0} har avanmält sig från det här ämnet"
 #. placeholder {0}: formatNumber(counts.overCap)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} over the recipient limit"
-msgstr ""
+msgstr "{0} över mottagargränsen"
 
 #. js-lingui-id: 55frRG
 #. placeholder {0}: index + 1
@@ -326,6 +339,38 @@ msgstr "{0} valda"
 #: src/modules/side-panel/pages/page-layout/hooks/useRecordTableSettingsDescriptions.ts
 msgid "{0} shown"
 msgstr "{0} visas"
+
+#. js-lingui-id: k+VWlm
+#. placeholder {0}: formatMetricDelta(costDelta)
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "{0} the cost of Balanced."
+msgstr "{0} kostnaden för Balanserad."
+
+#. js-lingui-id: UWEjMJ
+#. placeholder {0}: formatMetricDelta(intelligenceDelta)
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "{0} the score of Balanced"
+msgstr "{0} poängen för Balanserad"
+
+#. js-lingui-id: 0PXtku
+#. placeholder {0}: formatNumber(tier.model.outputTokensPerSecond, { decimals: 0 })
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "{0} tokens/s"
+msgstr "{0} token/s"
+
+#. js-lingui-id: jSMnoW
+#. placeholder {0}: formatNumber(model?.outputTokensPerSecond ?? 0)
+#. placeholder {1}: formatMetricDelta(resolvedTier.speedDeltaPercent ?? 0)
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "{0} tokens/s, {1} the speed of Balanced Mode."
+msgstr "{0} token/s, {1} hastigheten för Balanserat läge."
+
+#. js-lingui-id: NLWHJB
+#. placeholder {0}: formatNumber(model?.outputTokensPerSecond ?? 0)
+#. placeholder {1}: formatMetricDelta(resolvedTier.speedDeltaPercent ?? 0)
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "{0} tokens/s, a {1} change in speed compared with Balanced Mode."
+msgstr "{0} token/s, en ändring på {1} i hastighet jämfört med Balanserat läge."
 
 #. js-lingui-id: nZUq+6
 #. placeholder {0}: formatNumber(counts.globallyUnsubscribed)
@@ -355,13 +400,44 @@ msgstr "{0} widgetar"
 #. placeholder {0}: formatNumber(counts.withoutEmail)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} without an email address"
-msgstr ""
+msgstr "{0} utan e-postadress"
 
 #. js-lingui-id: 2UKfhY
 #. placeholder {0}: selectedItemNames.length
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput.tsx
 msgid "{0} workspace members"
 msgstr "{0} medlemmar i arbetsytan"
+
+#. js-lingui-id: kofqAN
+#. placeholder {0}: selectedResolvedTier.label
+#. placeholder {1}: selectedResolvedTier.model.label
+#: src/modules/ai/components/AiModelTierDropdown.tsx
+msgid "{0}: {1}"
+msgstr "{0}: {1}"
+
+#. js-lingui-id: EAdDH3
+#. placeholder {0}: formatNumber(costDelta)
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "{0}% higher cost than Balanced."
+msgstr "{0}% högre kostnad än Balanserad."
+
+#. js-lingui-id: c8VH5D
+#. placeholder {0}: formatNumber(intelligenceDelta)
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "{0}% higher score than Balanced"
+msgstr "{0}% högre poäng än Balanserad"
+
+#. js-lingui-id: nRAomq
+#. placeholder {0}: formatNumber(Math.abs(costDelta))
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "{0}% lower cost than Balanced."
+msgstr "{0}% lägre kostnad än Balanserad."
+
+#. js-lingui-id: wq2vL5
+#. placeholder {0}: formatNumber(Math.abs(intelligenceDelta))
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "{0}% lower score than Balanced"
+msgstr "{0}% lägre poäng än Balanserad"
 
 #. js-lingui-id: qdQhzv
 #: src/modules/views/advanced-filter-chip/components/AdvancedFilterChip.tsx
@@ -403,6 +479,11 @@ msgstr "{appDisplayName} vill göra följande:"
 msgid "{appName} would like to:"
 msgstr "{appName} vill göra följande:"
 
+#. js-lingui-id: wXviUj
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobStateBadge.tsx
+msgid "{attemptsMade, plural, one {{attemptsMade} attempt} other {{attemptsMade} attempts}}"
+msgstr "{attemptsMade, plural, one {{attemptsMade} försök} other {{attemptsMade} försök}}"
+
 #. js-lingui-id: y9covz
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
@@ -419,14 +500,10 @@ msgstr "{browser} på {operatingSystem}"
 msgid "{cachedPercent}% cached"
 msgstr "{cachedPercent}% cachelagrat"
 
-#. js-lingui-id: 8SynPU
-#. placeholder {0}: (type === 'percentage' ? 99 : 1000).toFixed(count)
-#. placeholder {1}: type === 'percentage' ? '%' : ''
-#. placeholder {2}: (type === 'percentage' ? 99 : 1000).toFixed(count)
-#. placeholder {3}: type === 'percentage' ? '%' : ''
+#. js-lingui-id: M9lDqR
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
-msgstr "{count, plural, one {Exempel: {0}{1} för {count} decimal} other {Exempel: {2}{3} för {count} decimaler}}"
+msgid "{count, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
+msgstr "{count, plural, one {Exempel: {example} för # decimal} other {Exempel: {example} för # decimaler}}"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -438,12 +515,10 @@ msgstr "{currentCreditAmountDisplay} krediter "
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} dag} other {{days} dagar}}"
 
-#. js-lingui-id: 0KwX9P
-#. placeholder {0}: (1000).toFixed(decimals)
-#. placeholder {1}: (1000).toFixed(decimals)
+#. js-lingui-id: 7o03+8
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
-msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
-msgstr "{decimals, plural, one {Exempel: {0} för {decimals} decimal} other {Exempel: {1} för {decimals} decimaler}}"
+msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
+msgstr "{decimals, plural, one {Exempel: {example} för # decimal} other {Exempel: {example} för # decimaler}}"
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -542,6 +617,16 @@ msgstr "{jobCount, plural, one {Detta kommer permanent ta bort det från kön. D
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
 msgstr "{jobCount, plural, one {Detta kommer att försöka igen det valda arbetet. Det kommer att köras om från början.} other {Detta kommer att försöka igen de valda arbetena. De kommer att köras om från början.}}"
 
+#. js-lingui-id: Xs84Pv
+#: src/modules/settings/ai/utils/getAiModelModeDescription.ts
+msgid "{label} (Auto)"
+msgstr "{label} (Automatiskt)"
+
+#. js-lingui-id: Oq2RUh
+#: src/modules/settings/ai/utils/getAiModelPinOptions.ts
+msgid "{label} (deprecated)"
+msgstr "{label} (föråldrad)"
+
 #. js-lingui-id: FdY/eP
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 msgid "{label} list"
@@ -556,6 +641,11 @@ msgstr "{memberCount, plural, one {{memberCount} medlem} other {{memberCount} me
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages.tsx
 msgid "{messagesLength} emails"
 msgstr "{messagesLength, plural, one {# e-postmeddelande} other {# e-postmeddelanden}}"
+
+#. js-lingui-id: Pfatg8
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
+msgid "{minutes, plural, one {# minute} other {# minutes}}"
+msgstr "{minutes, plural, one {# minut} other {# minuter}}"
 
 #. js-lingui-id: Koe99p
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -593,12 +683,12 @@ msgstr "{positionLabel}-posten har prioritet"
 #. placeholder {1}: formatNumber(queuedCount)
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedCount, plural, one {Campaign queued to {0} recipient} other {Campaign queued to {1} recipients}}"
-msgstr ""
+msgstr "{queuedCount, plural, one {Kampanjen har köats för {0} mottagare} other {Kampanjen har köats för {1} mottagare}}"
 
 #. js-lingui-id: cMTWxR
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedMessage}, skipping {skipReasons}"
-msgstr ""
+msgstr "{queuedMessage}, hoppar över {skipReasons}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -631,6 +721,11 @@ msgstr "{roleTargetName} kommer att tilldelas rollen \"{newRoleName}\"."
 msgid "{scopeCount} scopes"
 msgstr "{scopeCount} behörigheter"
 
+#. js-lingui-id: iL/HBr
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
+msgid "{seconds, plural, one {# second} other {# seconds}}"
+msgstr "{seconds, plural, one {# sekund} other {# sekunder}}"
+
 #. js-lingui-id: kvVMdH
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "{selectedCount, plural, one {Delete {selectedCount} Job} other {Delete {selectedCount} Jobs}}"
@@ -650,6 +745,11 @@ msgstr "{selectedCount} källtyper"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 msgid "{serviceLabel} service is unreachable"
 msgstr "Tjänsten {serviceLabel} kan inte nås"
+
+#. js-lingui-id: CQxE7h
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
+msgid "{spokenMinutes} {spokenSeconds}"
+msgstr "{spokenMinutes} {spokenSeconds}"
 
 #. js-lingui-id: 8vJ+2V
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -780,6 +880,12 @@ msgstr "<0>{0}</0> och alla dess meddelanden kommer att tas bort."
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 msgid "~ {0} tokens"
 msgstr "~ {0} token"
+
+#. js-lingui-id: w++m8p
+#. placeholder {0}: formatNumber(tier.model.outputCostPerMillionTokens, { decimals: 2 })
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "${0} / 1M"
+msgstr "${0} / 1M"
 
 #. js-lingui-id: Cx0xl3
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -943,6 +1049,11 @@ msgstr "Ett utkast finns redan för den här arbetsflödet. Är du säker på at
 msgid "A payment method is needed to keep your workspace active."
 msgstr "En betalningsmetod behövs för att hålla din arbetsyta aktiv."
 
+#. js-lingui-id: 5WwDyx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "A payment on your subscription failed. Your enterprise features stay active while we retry it."
+msgstr "En betalning för din prenumeration misslyckades. Dina Enterprise-funktioner förblir aktiva medan vi försöker igen."
+
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1007,7 +1118,7 @@ msgstr "Avbryt"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -1091,14 +1202,14 @@ msgstr "Konton"
 msgid "Acme GmbH"
 msgstr "Acme GmbH"
 
-#. js-lingui-id: X5unbK
+#. js-lingui-id: qrbojL
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
-msgid "ACS Url"
+msgid "ACS URL"
 msgstr "ACS-URL"
 
-#. js-lingui-id: GGcxJO
+#. js-lingui-id: 4FQd0Y
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
-msgid "ACS Url copied to clipboard"
+msgid "ACS URL copied to clipboard"
 msgstr "ACS-URL kopierad till urklipp"
 
 #. js-lingui-id: r6Y4GL
@@ -1150,8 +1261,8 @@ msgstr "Åtgärder användare kan utföra på det här objektet"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 #: src/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Activate"
@@ -1212,6 +1323,12 @@ msgstr "Lägg till"
 #: src/modules/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem.tsx
 msgid "Add \"{trimmedName}\" to options"
 msgstr "Lägg till \"{trimmedName}\" i alternativ"
+
+#. js-lingui-id: AOKHWb
+#. placeholder {0}: objectMetadataItem.labelSingular
+#: src/pages/object-core/WorkflowCoreIndexPage.tsx
+msgid "Add a {0}"
+msgstr "Lägg till en {0}"
 
 #. js-lingui-id: 9CHcSG
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
@@ -1306,7 +1423,7 @@ msgstr "Lägg till konto"
 #. js-lingui-id: dGjQL8
 #: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "Add an API key to enable AI."
-msgstr ""
+msgstr "Lägg till en API-nyckel för att aktivera AI."
 
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
@@ -1403,6 +1520,11 @@ msgstr "Lägg till information för gäster"
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Add email channel"
 msgstr "Lägg till e-postkanal"
+
+#. js-lingui-id: Va3xJe
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
+msgid "Add field"
+msgstr "Lägg till fält"
 
 #. js-lingui-id: DpV70M
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -1704,6 +1826,12 @@ msgstr "Lägg till ditt kreditkort"
 msgid "Add your credit card below. Once added, your subscription will start automatically."
 msgstr "Lägg till ditt kreditkort nedan. När det har lagts till startar din prenumeration automatiskt."
 
+#. js-lingui-id: K2c8dN
+#. placeholder {0}: objectMetadataItem.labelSingular
+#: src/pages/object-core/WorkflowCoreIndexPage.tsx
+msgid "Add your first {0}"
+msgstr "Lägg till din första {0}"
+
 #. js-lingui-id: m2qDV8
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "Add your first {objectLabel}"
@@ -1803,8 +1931,10 @@ msgid "Administrators"
 msgstr "Administratörer"
 
 #. js-lingui-id: sxkWRg
+#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawerContent.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
+#: src/modules/ui/input/components/AdvancedSettingsSwitch.tsx
 msgid "Advanced"
 msgstr "Avancerat"
 
@@ -1828,10 +1958,35 @@ msgstr "Avancerade alternativ"
 msgid "Afrikaans"
 msgstr "Afrikaans"
 
+#. js-lingui-id: WlItll
+#: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
+msgid "After 180 days"
+msgstr "Efter 180 dagar"
+
+#. js-lingui-id: I6lVwB
+#: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
+msgid "After 30 days"
+msgstr "Efter 30 dagar"
+
+#. js-lingui-id: yPZL9v
+#: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
+msgid "After 60 days"
+msgstr "Efter 60 dagar"
+
+#. js-lingui-id: E5fxqI
+#: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
+msgid "After 90 days"
+msgstr "Efter 90 dagar"
+
 #. js-lingui-id: 5wZlI9
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 msgid "After a set amount of time"
 msgstr "Efter en viss tid"
+
+#. js-lingui-id: 5uLUiv
+#: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
+msgid "After a year"
+msgstr "Efter ett år"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -1841,6 +1996,7 @@ msgid "agent"
 msgstr "agent"
 
 #. js-lingui-id: iEQQyu
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -1882,6 +2038,7 @@ msgstr "agenter"
 
 #. js-lingui-id: 8Uv5e6
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Agents"
 msgstr "Agent"
@@ -1895,12 +2052,12 @@ msgstr ""
 #. js-lingui-id: jsQZMk
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
+#: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-#: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -1908,8 +2065,8 @@ msgstr ""
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
+#: src/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks.ts
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 msgid "AI"
@@ -1930,6 +2087,11 @@ msgstr "AI-agentkörning"
 msgid "AI agents"
 msgstr "AI‑agenter"
 
+#. js-lingui-id: n2fhCy
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "AI chat"
+msgstr "AI-chatt"
+
 #. js-lingui-id: V+Qj+q
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "AI Chat"
@@ -1949,11 +2111,6 @@ msgstr "AI-förbrukning över alla arbetsytor."
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI consumption over time."
 msgstr "AI-förbrukning över tid."
-
-#. js-lingui-id: kNfr85
-#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
-msgid "AI Model"
-msgstr "AI-modell"
 
 #. js-lingui-id: jwOWhc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -2021,12 +2178,12 @@ msgstr "AI-användning per arbetsyta"
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
-msgstr ""
+msgstr "AI-användningsgränsen har nåtts. Be en admin att uppgradera planen."
 
 #. js-lingui-id: wBA/cx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
-msgstr ""
+msgstr "AI-användningsgränsen har nåtts. Kontakta supporten för att uppgradera."
 
 #. js-lingui-id: KLyZ6L
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -2061,6 +2218,10 @@ msgstr "Justering"
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/ai/constants/AgentChatThreadLastActivityFilterLabels.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
@@ -2079,6 +2240,16 @@ msgstr "Alla ({relationRecordsCount})"
 msgid "All Actions Access"
 msgstr "Alla åtgärder åtkomst"
 
+#. js-lingui-id: iKzPQM
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
+msgid "All agents"
+msgstr "Alla agenter"
+
+#. js-lingui-id: Aapaa8
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
+msgid "All API keys"
+msgstr "Alla API-nycklar"
+
 #. js-lingui-id: s1C/cR
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "All App Registrations"
@@ -2088,6 +2259,11 @@ msgstr "Alla appregistreringar"
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "All application registrations across the platform, including orphaned marketplace apps ({totalCount} matching)"
 msgstr "Alla appregistreringar på hela plattformen, inklusive föräldralösa appar på marknadsplatsen ({totalCount} matchande)"
+
+#. js-lingui-id: G6DTnD
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
+msgid "All applications"
+msgstr "Alla applikationer"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -2132,10 +2308,20 @@ msgstr "Alla grupper"
 msgid "All lines"
 msgstr "Alla rader"
 
+#. js-lingui-id: FIlQ3z
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
+msgid "All logic functions"
+msgstr "Alla logikfunktioner"
+
 #. js-lingui-id: c3lkKf
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
 msgid "All Members"
 msgstr "Alla medlemmar"
+
+#. js-lingui-id: dtwyLS
+#: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
+msgid "All messages"
+msgstr "Alla meddelanden"
 
 #. js-lingui-id: ypSiuQ
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
@@ -2160,6 +2346,7 @@ msgid "All objects are already in the sidebar"
 msgstr "Alla objekt finns redan i sidofältet"
 
 #. js-lingui-id: /D217u
+#: src/modules/settings/billing/components/SettingsBillingLimitUsageSelect.tsx
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "All operations"
 msgstr "Alla åtgärder"
@@ -2203,6 +2390,16 @@ msgstr "Alla standardobjekt"
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 msgid "All topics"
 msgstr "Alla ämnen"
+
+#. js-lingui-id: UBpkWM
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
+msgid "All users"
+msgstr "Alla användare"
+
+#. js-lingui-id: qf6r3X
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
+msgid "All workflows"
+msgstr "Alla arbetsflöden"
 
 #. js-lingui-id: XLzFVD
 #: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
@@ -2251,7 +2448,7 @@ msgid "Allow importing data from CSV files"
 msgstr "Tillåt import av data från CSV-filer"
 
 #. js-lingui-id: irI8Y5
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Allow installation"
 msgstr "Tillåt installation"
 
@@ -2271,7 +2468,7 @@ msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "Tillåt Microsoft-baserad inloggning för användare med SSO-överhoppningsbehörigheter."
 
 #. js-lingui-id: U6bnfj
-#: src/modules/settings/workspace/components/ToggleImpersonate.tsx
+#: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
 msgstr "Tillåt Support Team åtkomst"
 
@@ -2324,6 +2521,7 @@ msgstr "Bärnsten"
 #. js-lingui-id: hehnjM
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "Amount"
 msgstr "Belopp"
 
@@ -2457,6 +2655,7 @@ msgid "Anyone with an email address at these domains is allowed to sign up for t
 msgstr "Alla med en e-postadress på dessa domäner har tillåtelse att registrera sig för denna arbetsyta."
 
 #. js-lingui-id: OZtEcz
+#: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/mcp-and-apis/components/PlaygroundSetupForm.tsx
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "API"
@@ -2466,6 +2665,12 @@ msgstr "API"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "API calls"
 msgstr "API-anrop"
+
+#. js-lingui-id: iq3W+B
+#: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
+msgid "API key"
+msgstr "API-nyckel"
 
 #. js-lingui-id: yRnk5W
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -2513,7 +2718,7 @@ msgstr "API-nycklar"
 
 #. js-lingui-id: kAtj+q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "API Name"
 msgstr "API-namn"
 
@@ -2545,6 +2750,7 @@ msgstr "Apostrof och punkt"
 #. js-lingui-id: LMUw1U
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTable.tsx
+#: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "App"
@@ -2589,6 +2795,8 @@ msgid "Applicability"
 msgstr "Tillämpbarhet"
 
 #. js-lingui-id: IrC12v
+#: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Application"
@@ -2654,6 +2862,11 @@ msgstr "Appar - Utvecklare"
 msgid "Applications below are not vetted. Use at your own risk."
 msgstr "Applikationerna nedan är inte granskade. Använd på egen risk."
 
+#. js-lingui-id: p98xmP
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+msgid "Applies to"
+msgstr "Gäller för"
+
 #. js-lingui-id: DB8zMK
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply"
@@ -2676,6 +2889,7 @@ msgstr "Godkända domäner"
 
 #. js-lingui-id: VDvaN2
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
+#: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Apps"
@@ -2730,7 +2944,7 @@ msgid "Are you sure you want to delete this related {relationObjectLabelSingular
 msgstr "Är du säker på att du vill ta bort denna relaterade {relationObjectLabelSingular}?<0/>Denna åtgärd kommer att bryta alla dess relationer med andra objekt."
 
 #. js-lingui-id: 4Li0Pw
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 msgid "Are you sure you want to delete this skill? This action cannot be undone."
 msgstr "Är du säker på att du vill ta bort den här färdigheten? Den här åtgärden kan inte ångras."
 
@@ -2778,6 +2992,11 @@ msgstr "Är du säker på att du vill uppdatera den här användarens roll från
 msgid "Are you sure? Your current information will not be saved."
 msgstr "Är du säker? Din nuvarande information kommer inte att sparas."
 
+#. js-lingui-id: AkeObK
+#: src/localization/hooks/useLocaleOptions.ts
+msgid "Armenian"
+msgstr "Armeniska"
+
 #. js-lingui-id: cybVUo
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "As it will be displayed in the workspace"
@@ -2800,8 +3019,12 @@ msgstr "stigande"
 msgid "Ascending"
 msgstr "Stigande"
 
+#. js-lingui-id: LfkDyR
+#: src/modules/ai/components/AiChatErrorRenderer.tsx
+msgid "Ask a workspace admin to raise the limit."
+msgstr "Be en arbetsyteadministratör att höja gränsen."
+
 #. js-lingui-id: xWEvuo
-#: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
@@ -2809,15 +3032,10 @@ msgstr "Stigande"
 msgid "Ask AI"
 msgstr "Fråga AI"
 
-#. js-lingui-id: HiVVqo
-#: src/modules/ai/components/AiChatEditorSection.tsx
-msgid "Ask your workspace admin to enable an AI model."
-msgstr ""
-
-#. js-lingui-id: mc9nK2
+#. js-lingui-id: cmkudK
 #: src/modules/ai/hooks/useAiChatEditor.ts
-msgid "Ask, search or make anything..."
-msgstr "Fråga, sök eller skapa vad som helst..."
+msgid "Ask anything, @ a record or / a skill..."
+msgstr "Fråga vad som helst, @ en post eller / en färdighet..."
 
 #. js-lingui-id: QVL/hg
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
@@ -3012,6 +3230,11 @@ msgstr "Autentisering"
 msgid "Auth failed at"
 msgstr "Autentisering misslyckades klockan"
 
+#. js-lingui-id: sgXsd0
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Auth failure reason"
+msgstr "Orsak till autentiseringsfel"
+
 #. js-lingui-id: P8fBlG
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Authentication"
@@ -3082,6 +3305,12 @@ msgstr ""
 msgid "Auto-upgrade"
 msgstr "Automatisk uppgradering"
 
+#. js-lingui-id: Dnn2XG
+#: src/modules/ai/components/AiModelPicker.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "Automatic"
+msgstr "Automatisk"
+
 #. js-lingui-id: YRT7ZW
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people you've participated in an event with."
@@ -3098,9 +3327,14 @@ msgid "Automatically create People records when receiving or sending emails"
 msgstr "Skapa automatiskt personposter när du tar emot eller skickar e-post"
 
 #. js-lingui-id: rHeTee
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Automatically install this app on every newly created workspace"
 msgstr "Installera automatiskt den här appen på varje ny arbetsyta som skapas"
+
+#. js-lingui-id: MHsVk5
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "Automatically selected by Twenty for this mode."
+msgstr "Väljs automatiskt av Twenty för detta läge."
 
 #. js-lingui-id: XFGV21
 #: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
@@ -3117,11 +3351,6 @@ msgstr "Automation, AI och åtkomst som den här appen tillhandahåller"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Availability"
 msgstr "Tillgänglighet"
-
-#. js-lingui-id: STA+22
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Available models"
-msgstr "Tillgängliga modeller"
 
 #. js-lingui-id: oD38t2
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3186,6 +3415,11 @@ msgstr "Bakgrundsfärger"
 msgid "Balance by"
 msgstr "Balansera efter"
 
+#. js-lingui-id: kJygHz
+#: src/modules/ai/utils/getAiModelTierLabel.ts
+msgid "Balanced"
+msgstr "Balanserad"
+
 #. js-lingui-id: b2ghLW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Base credits"
@@ -3230,11 +3464,6 @@ msgstr "Eftersom det här arbetsflödet inte använder en manuell utlösare öpp
 msgid "Behind"
 msgstr "Släpar efter"
 
-#. js-lingui-id: KYr9vA
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Best"
-msgstr "Bäst"
-
 #. js-lingui-id: YBt9YP
 #: src/pages/onboarding/InstallAppsContent.tsx
 msgid "Beta"
@@ -3267,12 +3496,14 @@ msgstr "Faktureras månadsvis"
 
 #. js-lingui-id: R+w/Va
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
 #: src/modules/settings/billing/components/SettingsBillingTabBar.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+#: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 msgid "Billing"
@@ -3285,6 +3516,7 @@ msgstr "Fakturering - Inställningar"
 
 #. js-lingui-id: dSjFxR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Billing history"
 msgstr "Faktureringshistorik"
 
@@ -3292,11 +3524,14 @@ msgstr "Faktureringshistorik"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Billing interval"
 msgstr "Faktureringsintervall"
 
 #. js-lingui-id: 8tzR0k
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
+#: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
+#: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
 msgid "Billing period"
 msgstr "Faktureringsperiod"
 
@@ -3675,6 +3910,21 @@ msgstr "Uppringningskod"
 msgid "Calls"
 msgstr "Samtal"
 
+#. js-lingui-id: YKJ+pg
+#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
+msgid "Campaign moved to {sendTime}"
+msgstr "Kampanjen flyttades till {sendTime}"
+
+#. js-lingui-id: ANWhqH
+#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
+msgid "Campaign scheduled for {sendTime}"
+msgstr "Kampanjen är schemalagd till {sendTime}"
+
+#. js-lingui-id: gL6+M4
+#: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
+msgid "Campaign unscheduled and back in your drafts"
+msgstr "Kampanjens schemaläggning har avbrutits och den är tillbaka i dina utkast"
+
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Can't change API names for standard objects"
@@ -3709,7 +3959,7 @@ msgstr "Avbryt"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Cancel Campaign"
-msgstr ""
+msgstr "Avbryt kampanj"
 
 #. js-lingui-id: J8nuSF
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -3811,6 +4061,11 @@ msgstr "Kan inte efterlikna vald användare"
 #: src/modules/object-record/record-field/ui/meta-types/input/hooks/useOpenFilesFieldInput.tsx
 msgid "Cannot upload more than {maxNumberOfValues} files"
 msgstr "Det går inte att ladda upp fler än {maxNumberOfValues} filer"
+
+#. js-lingui-id: n1zTaJ
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+msgid "Caps on what your workspace can spend and who they apply to"
+msgstr "Gränser för vad din arbetsyta kan spendera och vem de gäller för"
 
 #. js-lingui-id: Po5MgW
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
@@ -3937,16 +4192,6 @@ msgstr "Ändra till Pro Plan?"
 msgid "Change to Yearly?"
 msgstr "Byt till årligen?"
 
-#. js-lingui-id: LhVon3
-#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
-msgid "Change visibility?"
-msgstr "Ändra synlighet?"
-
-#. js-lingui-id: rnTfap
-#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
-msgid "Changing visibility requires reconnecting this OAuth connection. You will be redirected to authorize it again."
-msgstr "Om du ändrar synligheten måste du ansluta den här OAuth-anslutningen på nytt. Du kommer att omdirigeras för att godkänna den igen."
-
 #. js-lingui-id: lfFsZ4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Channels"
@@ -3959,6 +4204,7 @@ msgid "Chart"
 msgstr "Diagram"
 
 #. js-lingui-id: rlwve5
+#: src/modules/ai/components/AiChatPageThreadHeader.tsx
 #: src/modules/ai/components/AiChatThreadItemMenu.tsx
 msgid "Chat actions"
 msgstr "Chattåtgärder"
@@ -3969,6 +4215,7 @@ msgid "Chat conversation"
 msgstr "Chattkonversation"
 
 #. js-lingui-id: tDlhkF
+#: src/modules/ai/components/AiChatPageThreadHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 msgid "Chat name"
 msgstr "Chattnamn"
@@ -4047,10 +4294,35 @@ msgstr "Kinesiska — Traditionell"
 msgid "Choose {intervalAdjective} credits"
 msgstr "Välj {intervalAdjective} krediter"
 
+#. js-lingui-id: n5pcaT
+#: src/modules/ai/components/AiModelTierDropdown.tsx
+msgid "Choose a model mode"
+msgstr "Välj ett modelläge"
+
+#. js-lingui-id: sHa2Dg
+#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
+msgid "Choose a spender"
+msgstr "Välj en spenderare"
+
+#. js-lingui-id: RGUZK1
+#: src/modules/settings/billing/components/SettingsBillingLimitUsageSelect.tsx
+msgid "Choose a usage"
+msgstr "Välj en användning"
+
+#. js-lingui-id: qJwqET
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
+msgid "Choose a usage first"
+msgstr "Välj först en användning"
+
 #. js-lingui-id: NFfUic
 #: src/pages/auth/SignInUp.tsx
 msgid "Choose a Workspace"
 msgstr "Välj en arbetsyta"
+
+#. js-lingui-id: KsP4Tg
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "Choose automatically"
+msgstr "Välj automatiskt"
 
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -4062,6 +4334,11 @@ msgstr "Välj mellan OIDC och SAML-protokoll"
 msgid "Choose between Short and Full"
 msgstr "Välj mellan Kort och Fullständig"
 
+#. js-lingui-id: NaiAqg
+#: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
+msgid "Choose folders to sync"
+msgstr "Välj mappar att synkronisera"
+
 #. js-lingui-id: 5EMoSo
 #: src/modules/settings/billing/components/internal/SettingsBillingPlansWithoutSubscription.tsx
 msgid "Choose plan"
@@ -4071,6 +4348,11 @@ msgstr "Välj plan"
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose the default currency that will apply"
 msgstr "Välj standardvalutan som kommer att användas"
+
+#. js-lingui-id: KoXi44
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "Choose the default modes for people and agents"
+msgstr "Välj standardlägen för personer och agenter"
 
 #. js-lingui-id: LHce7q
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -4175,6 +4457,7 @@ msgstr "Rensa filter"
 
 #. js-lingui-id: u8JHrO
 #: src/modules/ai/components/AiChatThreadFilterDropdownRootMenu.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterMenuContent.tsx
 msgid "Clear filters"
 msgstr "Rensa filter"
@@ -4371,11 +4654,6 @@ msgstr "Fäll ihop mapp"
 #: src/modules/navigation/hooks/useNavigationDrawerTogglePresentation.ts
 msgid "Collapse sidebar"
 msgstr "Fäll ihop sidofältet"
-
-#. js-lingui-id: OQTRMK
-#: src/modules/ai/components/AiChatCollapseButton.tsx
-msgid "Collapse to side panel"
-msgstr "Fäll in i sidopanelen"
 
 #. js-lingui-id: jZlrte
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -4673,20 +4951,10 @@ msgstr "Konfigurera hur det här objektet visas i sökresultaten"
 msgid "Configure IMAP settings to receive and sync your emails."
 msgstr "Konfigurera IMAP-inställningar för att ta emot och synkronisera dina e-postmeddelanden."
 
-#. js-lingui-id: pE9JCI
-#: src/modules/ai/components/AiChatEditorSection.tsx
-msgid "Configure models"
-msgstr ""
-
 #. js-lingui-id: gk/8eh
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Configure SMTP settings to send emails from your account."
 msgstr "Konfigurera SMTP-inställningar för att skicka e-post från ditt konto."
-
-#. js-lingui-id: TiCmQz
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Configure the default AI models for all workspaces"
-msgstr "Konfigurera standard-AI-modeller för alla arbetsytor"
 
 #. js-lingui-id: CcCy4C
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -5060,6 +5328,11 @@ msgstr "Kopierad till urklipp"
 msgid "Copy"
 msgstr "Kopiera"
 
+#. js-lingui-id: 6gAr5+
+#: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
+msgid "Copy audio download link"
+msgstr "Kopiera nedladdningslänk för ljud"
+
 #. js-lingui-id: NmPNJJ
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #: src/modules/ai/components/MarkdownCodeBlock.tsx
@@ -5366,10 +5639,15 @@ msgstr "Räkna alla"
 msgid "Count unique values"
 msgstr "Räkna unika värden"
 
+#. js-lingui-id: GV0ZB5
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
+msgid "Counted again when the campaign sends, so this can change."
+msgstr "Räknas igen när kampanjen skickas, så detta kan ändras."
+
 #. js-lingui-id: tKTq/b
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Counting recipients..."
-msgstr ""
+msgstr "Räknar mottagare..."
 
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -5390,6 +5668,12 @@ msgstr "skapa"
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 msgid "Create"
 msgstr "Skapa"
+
+#. js-lingui-id: QMLXwt
+#. placeholder {0}: objectMetadataItem.labelSingular
+#: src/pages/object-core/WorkflowCoreIndexPage.tsx
+msgid "Create a {0} to automate your work."
+msgstr "Skapa ett {0} för att automatisera ditt arbete."
 
 #. js-lingui-id: fQFALn
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -5694,16 +5978,18 @@ msgstr "krediter"
 #. js-lingui-id: lDIOek
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/constants/UsageLimitMeterLabels.ts
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 msgid "Credits"
 msgstr "Krediter"
 
-#. js-lingui-id: AaNZqp
+#. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
-msgid "Credits are added on top of the plan allowance and expire at the end of the current billing period. Unused granted credits carry over in full."
-msgstr "Krediter läggs till utöver planens tilldelning och förfaller vid slutet av den aktuella faktureringsperioden. Oanvända beviljade krediter förs över i sin helhet."
+msgid "Credits are added on top of the plan allowance and are spent only once it runs out. They carry over in full from one billing period to the next, and stay available until they are used up or, where an expiry is set, until the end of the billing period that expiry falls in."
+msgstr "Krediter läggs till utöver planens tilldelning och används först när den tar slut. De förs över i sin helhet från en faktureringsperiod till nästa och är tillgängliga tills de används upp eller, om ett utgångsdatum har angetts, till slutet av den faktureringsperiod då utgångsdatumet infaller."
 
 #. js-lingui-id: 0o2LpE
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -5720,10 +6006,10 @@ msgstr "tillgängliga krediter (inklusive {extraCreditsDisplay} utöver din plan
 msgid "credits available during the trial period"
 msgstr "tillgängliga krediter under provperioden"
 
-#. js-lingui-id: MnLFOj
+#. js-lingui-id: nbyiz/
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
-msgid "Credits handed out on top of the plan allowance"
-msgstr "Krediter som delas ut utöver planens tilldelning"
+msgid "Credits handed out on top of the plan allowance. They stay spendable until used up."
+msgstr "Krediter som delas ut utöver planens tilldelning. De kan användas tills de är slut."
 
 #. js-lingui-id: iSuLEw
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
@@ -5744,11 +6030,6 @@ msgstr "förbrukade krediter"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Credits used"
 msgstr "Förbrukade krediter"
-
-#. js-lingui-id: 5oMPMN
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
-msgid "credits/period"
-msgstr "krediter/period"
 
 #. js-lingui-id: e73uuf
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -5858,7 +6139,7 @@ msgid "custom"
 msgstr "anpassad"
 
 #. js-lingui-id: 8Tg/JR
-#: src/modules/applications/hooks/useApplicationChipData.ts
+#: src/modules/applications/utils/getApplicationDisplayName.ts
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
@@ -6057,6 +6338,11 @@ msgstr "Cyan"
 msgid "Czech"
 msgstr "Czech"
 
+#. js-lingui-id: U0sC6H
+#: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
+msgid "Daily"
+msgstr "Dagligen"
+
 #. js-lingui-id: ShUrwO
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -6070,6 +6356,7 @@ msgid "Daily Usage"
 msgstr "Daglig användning"
 
 #. js-lingui-id: Zz6Cxn
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
@@ -6078,7 +6365,7 @@ msgstr "Daglig användning"
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -6250,6 +6537,7 @@ msgstr "Datum Granularitet Y"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+#: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows.tsx
@@ -6286,13 +6574,13 @@ msgstr "dagars provperiod"
 #. js-lingui-id: 5y3O+A
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Deactivate"
 msgstr "Inaktivera"
 
 #. js-lingui-id: 7OGvrU
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Deactivate \"Synchronize Label and API Name\" to set a custom API name"
 msgstr "Inaktivera \"Synkronisera etikett och API-namn\" för att ange ett anpassat API-namn"
 
@@ -6308,7 +6596,7 @@ msgid "Deactivate object"
 msgstr "Inaktivera objekt"
 
 #. js-lingui-id: OFJYGS
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 msgid "Deactivate or delete this skill"
 msgstr "Inaktivera eller ta bort den här färdigheten"
 
@@ -6320,6 +6608,7 @@ msgstr "Inaktivera detta fält"
 #. js-lingui-id: yAT3be
 #: src/modules/object-core/workflows/constants/CoreWorkflowStatusFilterOptions.ts
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusTagProps.ts
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectItemTableRow.tsx
@@ -6340,12 +6629,9 @@ msgstr "Felsökningsinfo"
 msgid "Decide which Sub-address fields you want to display"
 msgstr "Bestäm vilka deladressfält du vill visa"
 
-#. js-lingui-id: Bn9+El
-#: src/modules/ai/hooks/useAiModelOptions.ts
-msgid "default"
-msgstr "standard"
-
 #. js-lingui-id: ovBPCi
+#: src/modules/ai/components/AiModelTierSlider.tsx
+#: src/modules/settings/ai/components/AiModelPinSelect.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -6363,21 +6649,6 @@ msgstr "Standardland"
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "Default Country Code"
 msgstr "Standardlandskod"
-
-#. js-lingui-id: OtTlfU
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Default model"
-msgstr "Standardmodell"
-
-#. js-lingui-id: hUWaAk
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Default model for chats and complex reasoning"
-msgstr "Standardmodell för chattar och komplext resonemang"
-
-#. js-lingui-id: NTzYp2
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Default model for lightweight tasks"
-msgstr "Standardmodell för lätta uppgifter"
 
 #. js-lingui-id: Zrez13
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -6418,7 +6689,7 @@ msgid "Define the name and description of your object"
 msgstr "Definiera namnet och beskrivningen av ditt objekt"
 
 #. js-lingui-id: xQXPRn
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Define the name and instructions for this skill"
 msgstr "Definiera namnet och instruktionerna för den här färdigheten"
 
@@ -6466,6 +6737,7 @@ msgstr "ta bort"
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -6485,9 +6757,9 @@ msgstr "ta bort"
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+#: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
+#: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 #: src/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -6592,6 +6864,11 @@ msgstr "Ta bort mapp"
 msgid "Delete group"
 msgstr "Ta bort grupp"
 
+#. js-lingui-id: dPwNDl
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Delete limit"
+msgstr "Radera gräns"
+
 #. js-lingui-id: Wk+A9S
 #: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
 msgid "Delete node"
@@ -6623,7 +6900,7 @@ msgid "Delete Role Permanently"
 msgstr "Radera rollen permanent"
 
 #. js-lingui-id: rvJGTw
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 msgid "Delete Skill"
 msgstr "Ta bort färdighet"
 
@@ -6641,6 +6918,11 @@ msgstr "Ta bort detta index?"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
 msgstr "Ta bort denna integration"
+
+#. js-lingui-id: uvgDyK
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Delete this limit?"
+msgstr "Radera denna gräns?"
 
 #. js-lingui-id: c0vHQI
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -6688,6 +6970,16 @@ msgstr "Ta bort webhook"
 msgid "Delete widget"
 msgstr "Radera widget"
 
+#. js-lingui-id: D+Bgvi
+#: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
+msgid "Delete Workflow"
+msgstr "Ta bort arbetsflöde"
+
+#. js-lingui-id: Z299hR
+#: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
+msgid "Delete Workflows"
+msgstr "Ta bort arbetsflöden"
+
 #. js-lingui-id: kYu0eF
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -6729,6 +7021,11 @@ msgstr "Tar bort {objectLabel}"
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "Deleting this method will remove it permanently from your account."
 msgstr "Genom att radera denna metod kommer den permanent att tas bort från ditt konto."
+
+#. js-lingui-id: si+vZD
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
+msgid "Delivery"
+msgstr "Leverans"
 
 #. js-lingui-id: Ssdrw4
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
@@ -6900,7 +7197,7 @@ msgstr "Inaktivera användarimitation"
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Disabled"
-msgstr "Inaktiverad}]} }]}? Wait this not correct. Let's rewrite. We'll output exactly correct JSON. Let's produce: {"
+msgstr "Inaktiverad"
 
 #. js-lingui-id: bzSI52
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
@@ -6966,7 +7263,7 @@ msgid "Display text on multiple lines"
 msgstr "Visa text på flera rader"
 
 #. js-lingui-id: ljWYXA
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Display this app in the NPM packages list"
 msgstr "Visa den här appen i listan över NPM-paket"
 
@@ -7389,6 +7686,12 @@ msgstr "Redigera diagram"
 msgid "Edit iFrame"
 msgstr "Redigera iFrame"
 
+#. js-lingui-id: 74qJhc
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Edit limit"
+msgstr "Redigera gräns"
+
 #. js-lingui-id: /PoNoq
 #: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
@@ -7485,6 +7788,7 @@ msgstr "annars om"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpEmailField.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
@@ -7635,7 +7939,7 @@ msgstr "E-post och kalender"
 #. js-lingui-id: VJ5blF
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Emails already handed to the provider cannot be recalled. This stops everything still waiting to be sent."
-msgstr ""
+msgstr "E-postmeddelanden som redan har överlämnats till leverantören kan inte återkallas. Detta stoppar allt som fortfarande väntar på att skickas."
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -7791,7 +8095,7 @@ msgid "Ends at"
 msgstr "Slutar kl."
 
 #. js-lingui-id: Vv4JVS
-#: src/modules/settings/security/components/Toggle2FA.tsx
+#: src/modules/settings/security/components/TwoFactorAuthenticationSwitch.tsx
 msgid "Enforce two-step verification for every user login."
 msgstr "Tvinga tvåstegsverifiering för varje användarinloggning."
 
@@ -7871,6 +8175,11 @@ msgstr "Ange array av objekt eller variabeluttryck"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Enter BCC emails, comma-separated"
 msgstr "Ange BCC-e-postadresser, separerade med kommatecken"
+
+#. js-lingui-id: lcPZCR
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "Enter both keys, or neither to use the instance IAM role"
+msgstr "Ange båda nycklarna, eller ingen av dem för att använda instansens IAM-roll"
 
 #. js-lingui-id: mPsuKh
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -8280,7 +8589,7 @@ msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Skapa webhook-slutpunkter för notiser om asynkrona händelser."
 
 #. js-lingui-id: 4ASb34
-#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentFormContent.tsx
 msgid "Evals"
 msgstr ""
 
@@ -8540,6 +8849,7 @@ msgid "Expired"
 msgstr "Utgången"
 
 #. js-lingui-id: KnN1Tu
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Expires"
@@ -8606,6 +8916,16 @@ msgstr "Uttryck"
 msgid "Extended"
 msgstr "Förlängd"
 
+#. js-lingui-id: 4NR4Ja
+#: src/modules/ai/utils/getAiModelTierLabel.ts
+msgid "Extra Fast"
+msgstr "Extra snabb"
+
+#. js-lingui-id: Y64TrM
+#: src/modules/ai/utils/getAiModelTierLabel.ts
+msgid "Extra Smart"
+msgstr "Extra smart"
+
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
@@ -8658,12 +8978,12 @@ msgstr "Det gick inte att lägga till leverantören"
 #. js-lingui-id: ScvpVb
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow.tsx
 msgid "Failed to add record"
-msgstr ""
+msgstr "Det gick inte att lägga till post"
 
 #. js-lingui-id: Y9Y+x3
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Failed to cancel campaign"
-msgstr ""
+msgstr "Det gick inte att avbryta kampanj"
 
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -8681,10 +9001,21 @@ msgstr "Det gick inte att skapa kalenderhändelsen"
 msgid "Failed to create record"
 msgstr "Det gick inte att skapa posten"
 
+#. js-lingui-id: 7xz1r9
+#: src/pages/settings/billing/SettingsBillingNewLimit.tsx
+msgid "Failed to create the limit."
+msgstr "Det gick inte att skapa gränsen."
+
 #. js-lingui-id: ITWxKI
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 msgid "Failed to create unsubscribe topic."
 msgstr "Det gick inte att skapa avregistreringsämne."
+
+#. js-lingui-id: atCmiF
+#: src/modules/object-core/workflows/hooks/useCreateCoreWorkflow.ts
+#: src/modules/object-core/workflows/hooks/useCreateCoreWorkflow.ts
+msgid "Failed to create workflow"
+msgstr "Det gick inte att skapa arbetsflödet"
 
 #. js-lingui-id: AXveCw
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -8701,6 +9032,11 @@ msgstr "Det gick inte att radera jobben. Försök igen senare."
 msgid "Failed to delete skill"
 msgstr "Det gick inte att ta bort färdigheten"
 
+#. js-lingui-id: YVct3Q
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Failed to delete the limit."
+msgstr "Det gick inte att ta bort gränsen."
+
 #. js-lingui-id: AUprM8
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 msgid "Failed to delete tool"
@@ -8711,6 +9047,11 @@ msgstr "Det gick inte att ta bort verktyget"
 msgid "Failed to delete unsubscribe topic."
 msgstr "Det gick inte att ta bort avregistreringsämne."
 
+#. js-lingui-id: UUBrJf
+#: src/modules/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows.ts
+msgid "Failed to delete workflows"
+msgstr "Det gick inte att ta bort arbetsflödena"
+
 #. js-lingui-id: NUmmdc
 #: src/modules/dashboards/hooks/useDuplicateDashboard.ts
 msgid "Failed to duplicate dashboard"
@@ -8719,7 +9060,7 @@ msgstr "Det gick inte att duplicera instrumentpanelen"
 #. js-lingui-id: 6e1GS3
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/hooks/useDuplicateMessageList.ts
 msgid "Failed to duplicate list"
-msgstr ""
+msgstr "Det gick inte att duplicera lista"
 
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
@@ -8787,7 +9128,7 @@ msgstr "Det gick inte att läsa in serveradministratörer."
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to load the application."
-msgstr ""
+msgstr "Det gick inte att läsa in applikationen."
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -8867,8 +9208,7 @@ msgid "Failed to save layout customization"
 msgstr "Det gick inte att spara layoutanpassningen"
 
 #. js-lingui-id: y3HIOa
-#: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/hooks/useSettingsAgentSave.ts
 msgid "Failed to save role permissions: {errorMessage}"
 msgstr ""
 
@@ -8923,33 +9263,16 @@ msgstr "Det gick inte att uppdatera inställningen för automatisk uppgradering.
 msgid "Failed to update default model"
 msgstr "Det gick inte att uppdatera standardmodellen"
 
-#. js-lingui-id: 1R13Ov
-#: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
-msgid "Failed to update model"
-msgstr ""
-
 #. js-lingui-id: W7Ff/4
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
-#: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
-#: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
 msgid "Failed to update model availability"
 msgstr ""
 
-#. js-lingui-id: A1sMrV
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Failed to update model recommendation"
-msgstr "Det gick inte att uppdatera modellrekommendationen"
-
-#. js-lingui-id: q1MtjM
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Failed to update model recommendations"
-msgstr "Det gick inte att uppdatera modellrekommendationerna"
-
-#. js-lingui-id: rCUG3c
+#. js-lingui-id: mDyyo1
 #: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
-msgid "Failed to update model selection mode"
-msgstr ""
+msgid "Failed to update model settings"
+msgstr "Det gick inte att uppdatera modellinställningarna"
 
 #. js-lingui-id: J7vly7
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
@@ -8975,6 +9298,11 @@ msgstr "Det gick inte att uppdatera avsändarnamnet."
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Failed to update server administrator access."
 msgstr "Det gick inte att uppdatera serveradministratörsåtkomst."
+
+#. js-lingui-id: hADObV
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Failed to update the limit."
+msgstr "Det gick inte att uppdatera gränsen."
 
 #. js-lingui-id: 6TG/SY
 #: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
@@ -9044,11 +9372,10 @@ msgstr "Reservalternativ"
 msgid "False"
 msgstr "Falskt"
 
-#. js-lingui-id: XVIZ7v
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Fast Model"
-msgstr ""
+#. js-lingui-id: KziH2K
+#: src/modules/ai/utils/getAiModelTierLabel.ts
+msgid "Fast"
+msgstr "Snabb"
 
 #. js-lingui-id: X9kySA
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -9070,6 +9397,11 @@ msgstr "Funktionsflaggor"
 #: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Features"
 msgstr "Funktioner"
+
+#. js-lingui-id: WHjLqG
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Features active until"
+msgstr "Funktioner aktiva till"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -9093,6 +9425,11 @@ msgstr "fält"
 msgid "Field"
 msgstr "Fält"
 
+#. js-lingui-id: 0Ractl
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
+msgid "Field added to search"
+msgstr "Fält har lagts till i sökningen"
+
 #. js-lingui-id: LX8Pu1
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Field deleted"
@@ -9112,6 +9449,11 @@ msgstr "Fält på destinationen"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field permission"
 msgstr "fältbehörighet"
+
+#. js-lingui-id: YZK9mj
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
+msgid "Field removed from search"
+msgstr "Fält har tagits bort från sökningen"
 
 #. js-lingui-id: lcNTiF
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
@@ -9285,6 +9627,11 @@ msgstr "Filtrera chattar"
 msgid "Filter group rule options"
 msgstr "Alternativ för filterregelgrupp"
 
+#. js-lingui-id: JIOvqZ
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+msgid "Filter limits"
+msgstr "Filtrera gränser"
+
 #. js-lingui-id: FG3LyE
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view"
@@ -9328,10 +9675,30 @@ msgstr "Filter"
 msgid "Finding {objectLabel}"
 msgstr "Söker efter {objectLabel}"
 
+#. js-lingui-id: DWUicC
+#: src/modules/ai/constants/action-tool-status-labels.constant.ts
+msgid "Finding connected accounts"
+msgstr "Söker efter anslutna konton"
+
 #. js-lingui-id: JmZ/+d
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "Finish"
 msgstr "Avsluta"
+
+#. js-lingui-id: O9Sink
+#: src/modules/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage.ts
+msgid "Finish editing the layout to expand chat"
+msgstr "Slutför redigeringen av layouten för att expandera chatten"
+
+#. js-lingui-id: yJoako
+#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+msgid "Finish editing the layout to open AI"
+msgstr "Slutför redigeringen av layouten för att öppna AI"
+
+#. js-lingui-id: 6cOXRd
+#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+msgid "Finish editing the layout to open Settings"
+msgstr "Slutför redigeringen av layouten för att öppna Inställningar"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -9397,6 +9764,11 @@ msgstr "Förnamn får inte vara tomt"
 msgid "Fix the payment issue to keep your enterprise features active."
 msgstr "Åtgärda betalningsproblemet för att dina Enterprise-funktioner ska fortsätta vara aktiva."
 
+#. js-lingui-id: UNHbhD
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Fix the payment issue to restore your enterprise features."
+msgstr "Åtgärda betalningsproblemet för att återställa dina Enterprise-funktioner."
+
 #. js-lingui-id: Xgkhyj
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 msgid "Flags"
@@ -9436,6 +9808,11 @@ msgstr "Mappar"
 #: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Follow us on X"
 msgstr "Följ oss på X"
+
+#. js-lingui-id: M0vOQ6
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Follows the workspace default for agents"
+msgstr "Följer arbetsytans standardinställning för agenter"
 
 #. js-lingui-id: q3il6U
 #: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
@@ -9494,6 +9871,11 @@ msgstr "Vidarebefordringsadress kopierad till urklipp"
 msgid "Found {objectLabel}"
 msgstr "Hittade {objectLabel}"
 
+#. js-lingui-id: 5Vg0Q7
+#: src/modules/ai/constants/action-tool-status-labels.constant.ts
+msgid "Found connected accounts"
+msgstr "Hittade anslutna konton"
+
 #. js-lingui-id: 1hxId5
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "fourth"
@@ -9529,7 +9911,7 @@ msgstr "Franska"
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "From"
@@ -9811,7 +10193,7 @@ msgid "Grant access"
 msgstr "Bevilja åtkomst"
 
 #. js-lingui-id: 6eo66Q
-#: src/modules/settings/workspace/components/ToggleImpersonate.tsx
+#: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Grant access to your workspace so we can troubleshoot problems."
 msgstr "Ge åtkomst till din arbetsyta så att vi kan lösa problem."
 
@@ -9830,6 +10212,11 @@ msgstr "Bevilja krediter"
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Grant full access"
 msgstr "Bevilja full åtkomst"
+
+#. js-lingui-id: E0rSFg
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+msgid "Granted"
+msgstr "Beviljad"
 
 #. js-lingui-id: Tbxf45
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -10125,6 +10512,11 @@ msgstr "Dölj etiketten"
 msgid "Hide system indexes"
 msgstr "Dölj systemindex"
 
+#. js-lingui-id: yx/fMc
+#: src/modules/ai/utils/getAiModelEffortLabel.ts
+msgid "High"
+msgstr "Hög"
+
 #. js-lingui-id: 1ETc0T
 #: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Hire a partner to help you implement and customize Twenty."
@@ -10212,6 +10604,11 @@ msgstr "Timmar mellan triggers"
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "How credits work"
 msgstr "Hur krediter fungerar"
+
+#. js-lingui-id: nHmYga
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
+msgid "How much can be spent, and how often it resets."
+msgstr "Hur mycket som kan spenderas och hur ofta det återställs."
 
 #. js-lingui-id: WC32k6
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -10681,7 +11078,7 @@ msgstr "Indata (prompt)"
 #. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Input must be in camel case and cannot start with a number"
 msgstr "Inmatningen måste vara i kamelnotering och får inte börja med en siffra"
 
@@ -10779,7 +11176,7 @@ msgid "Install your first apps"
 msgstr "Installera dina första appar"
 
 #. js-lingui-id: Xry+oU
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Installation"
 msgstr "Installation"
 
@@ -10819,12 +11216,12 @@ msgid "Instruction for AI"
 msgstr "Instruktion för AI"
 
 #. js-lingui-id: NxHkkp
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Instructions"
 msgstr "Instruktioner"
 
 #. js-lingui-id: 77QeTr
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Instructions Editor"
 msgstr "Instruktionsredigerare"
 
@@ -10832,6 +11229,17 @@ msgstr "Instruktionsredigerare"
 #: src/utils/title-utils.ts
 msgid "Integrations - Settings"
 msgstr "Integrationer - Inställningar"
+
+#. js-lingui-id: Gzw2pq
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "Intelligence"
+msgstr "Intelligens"
+
+#. js-lingui-id: EYz4Ok
+#. placeholder {0}: formatNumber(model?.intelligenceIndex ?? 0)
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "Intelligence score: {0}"
+msgstr "Intelligenspoäng: {0}"
 
 #. js-lingui-id: GfnKOF
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -10883,10 +11291,10 @@ msgstr "Ogiltigt cron-uttryck"
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "Ogiltigt cron-mönster: {errorMessage}"
 
-#. js-lingui-id: jhbsV/
+#. js-lingui-id: CGivIJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
-msgstr "Ogiltigt dagvärde '{newDay}'. Ska vara ett heltal större än 1"
+msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
+msgstr "Ogiltigt dagvärde \"{newDay}\". Ska vara ett heltal större än 1"
 
 #. js-lingui-id: u3hwhx
 #: src/modules/settings/domains/utils/getDomainValidationSchema.ts
@@ -10925,26 +11333,26 @@ msgstr "Ogiltig e-postverifieringslänk."
 msgid "Invalid file: {0}"
 msgstr "Ogiltig fil: {0}"
 
-#. js-lingui-id: 04zLGG
+#. js-lingui-id: 1ccYjl
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
-msgstr "Ogiltigt timvärde '{newHour}'. Borde vara heltal mellan 0 och 23"
+msgid "Invalid hour value \"{newHour}\". Should be integer between 0 and 23"
+msgstr "Ogiltigt timvärde \"{newHour}\". Ska vara ett heltal mellan 0 och 23"
 
-#. js-lingui-id: fLMLtY
+#. js-lingui-id: e3cT9e
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value '{newHour}'. Should be integer greater than 1"
-msgstr "Ogiltigt timvärde '{newHour}'. Borde vara heltal större än 1"
+msgid "Invalid hour value \"{newHour}\". Should be integer greater than 1"
+msgstr "Ogiltigt timvärde \"{newHour}\". Ska vara ett heltal större än 1"
 
-#. js-lingui-id: +Yi3bs
+#. js-lingui-id: jw4O7y
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
-msgstr "Ogiltigt minutvärde '{newMinute}'. Borde vara heltal mellan 0 och 59"
+msgid "Invalid minute value \"{newMinute}\". Should be integer between 0 and 59"
+msgstr "Ogiltigt minutvärde \"{newMinute}\". Ska vara ett heltal mellan 0 och 59"
 
-#. js-lingui-id: 942L1w
+#. js-lingui-id: SfvOlw
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
-msgstr "Ogiltigt minutvärde '{newMinute}'. Borde vara heltal större än 1"
+msgid "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
+msgstr "Ogiltigt minutvärde \"{newMinute}\". Ska vara ett heltal större än 1"
 
 #. js-lingui-id: WY8amq
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
@@ -11247,7 +11655,6 @@ msgstr "Hoppa till aktuell"
 
 #. js-lingui-id: UpNpMK
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 msgid "Just for me"
 msgstr "Endast för mig"
@@ -11732,6 +12139,8 @@ msgid "Lime"
 msgstr "Lime"
 
 #. js-lingui-id: yRkqG9
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit"
@@ -11741,6 +12150,16 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit cannot exceed {maxRecordsFormatted} records."
 msgstr ""
+
+#. js-lingui-id: lvAOAE
+#: src/pages/settings/billing/SettingsBillingNewLimit.tsx
+msgid "Limit created."
+msgstr "Gräns skapad."
+
+#. js-lingui-id: 1r7WdP
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Limit deleted."
+msgstr "Gräns raderad."
 
 #. js-lingui-id: g3YJC1
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
@@ -11757,10 +12176,30 @@ msgstr "Begränsa hur många värden som kan läggas till i detta fält"
 msgid "Limit must be greater than 0."
 msgstr ""
 
+#. js-lingui-id: GrFbIR
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Limit updated."
+msgstr "Gräns uppdaterad."
+
 #. js-lingui-id: 6BDqha
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+#: src/modules/settings/billing/components/SettingsBillingTabBar.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+#: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 msgid "Limits"
 msgstr "Begränsningar"
+
+#. js-lingui-id: rtN0nI
+#: src/modules/settings/billing/components/SettingsBillingLimitsContent.tsx
+msgid "Limits could not be loaded."
+msgstr "Det gick inte att läsa in gränserna."
+
+#. js-lingui-id: iGG0MA
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+msgid "Limits on members, API keys and apps require the Organization plan."
+msgstr "Gränser för medlemmar, API-nycklar och appar kräver Organization-planen."
 
 #. js-lingui-id: DXCDta
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -11837,7 +12276,7 @@ msgstr ""
 
 #. js-lingui-id: 2BBAbc
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/views/types/ViewType.ts
 msgid "List"
 msgstr "Lista"
@@ -11845,7 +12284,7 @@ msgstr "Lista"
 #. js-lingui-id: Wfj8PH
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand.tsx
 msgid "List duplicated with {memberCount, plural, one {# member} other {# members}}"
-msgstr ""
+msgstr "Listan duplicerades med {memberCount, plural, one {# medlem} other {# medlemmar}}"
 
 #. js-lingui-id: 3xTn5L
 #: src/modules/views/types/ViewType.ts
@@ -11984,6 +12423,11 @@ msgstr "Laddar tråd"
 msgid "Loading..."
 msgstr "Laddar..."
 
+#. js-lingui-id: Pwqkdw
+#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
+msgid "Loading…"
+msgstr "Laddar…"
+
 #. js-lingui-id: 7VBQ2j
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -12048,6 +12492,11 @@ msgstr "Logik"
 msgid "logic function"
 msgstr "logikfunktion"
 
+#. js-lingui-id: U/kVJF
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
+msgid "Logic function"
+msgstr "Logikfunktion"
+
 #. js-lingui-id: qqnB9E
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -12055,6 +12504,7 @@ msgid "logic functions"
 msgstr "logikfunktioner"
 
 #. js-lingui-id: QTVVDd
+#: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
@@ -12075,7 +12525,7 @@ msgstr "Logga ut"
 #: src/modules/logic-functions/components/LogicFunctionLogs.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
-#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentFormContent.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 msgid "Logs"
 msgstr "Loggar"
@@ -12100,6 +12550,11 @@ msgstr "Sök"
 msgid "loop"
 msgstr "loop"
 
+#. js-lingui-id: nTWWCZ
+#: src/modules/ai/utils/getAiModelEffortLabel.ts
+msgid "Low"
+msgstr "Låg"
+
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Mail Account"
@@ -12119,11 +12574,6 @@ msgstr "Underhållsläge"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Make HTTP requests to external APIs"
 msgstr ""
-
-#. js-lingui-id: icpEdc
-#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
-msgid "Make private"
-msgstr "Gör privat"
 
 #. js-lingui-id: wckWOP
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -12248,13 +12698,18 @@ msgstr "Manuell"
 msgid "Manual configuration"
 msgstr "Manuell konfiguration"
 
+#. js-lingui-id: ospBFm
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "Manually selected for this mode."
+msgstr "Vald manuellt för detta läge."
+
 #. js-lingui-id: lkcAoj
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Margin"
 msgstr "Marginal"
 
 #. js-lingui-id: fI1Tll
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Mark this app as reviewed and approved"
 msgstr "Markera den här appen som granskad och godkänd"
 
@@ -12280,6 +12735,7 @@ msgid "Match Columns"
 msgstr "Matcha kolumner"
 
 #. js-lingui-id: CK1KXz
+#: src/modules/ai/utils/getAiModelEffortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/side-panel/pages/page-layout/constants/settings/RangeMaxSetting.ts
@@ -12387,6 +12843,11 @@ msgstr "Jag"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
 msgid "Me (User ID)"
 msgstr "Jag (Användar-ID)"
+
+#. js-lingui-id: agPptk
+#: src/modules/ai/utils/getAiModelEffortLabel.ts
+msgid "Medium"
+msgstr "Mellan"
 
 #. js-lingui-id: IAcjOi
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -12498,6 +12959,11 @@ msgstr "Metadata"
 msgid "Metadata file generation failed"
 msgstr "Generering av metadatafilen misslyckades"
 
+#. js-lingui-id: zsKJ2q
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
+msgid "Meter"
+msgstr "Mätare"
+
 #. js-lingui-id: fiPesM
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Method"
@@ -12525,6 +12991,11 @@ msgstr "Minsta"
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Min range"
 msgstr "Minimalområde"
+
+#. js-lingui-id: 8GG+Pa
+#: src/modules/ai/utils/getAiModelEffortLabel.ts
+msgid "Minimal"
+msgstr "Minimal"
 
 #. js-lingui-id: 5IrCQY
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -12567,8 +13038,13 @@ msgstr "Uppdrag slutfört!"
 msgid "Mobile"
 msgstr "Mobil"
 
+#. js-lingui-id: zz/Wd/
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "Mode"
+msgstr "Läge"
+
 #. js-lingui-id: scu3wk
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
+#: src/modules/ai/components/AiModelTierSlider.tsx
 msgid "Model"
 msgstr "Modell"
 
@@ -12584,6 +13060,11 @@ msgstr "Modellen \"{0}\" har lagts till"
 msgid "Model \"{0}\" removed"
 msgstr "Modellen \"{0}\" har tagits bort"
 
+#. js-lingui-id: 8jgO3g
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "Model agents use when they run on their own"
+msgstr "Modell som agenter använder när de kör på egen hand"
+
 #. js-lingui-id: IzB3v0
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Model ID"
@@ -12594,16 +13075,17 @@ msgstr "Modell-ID"
 msgid "Model ID is required"
 msgstr "Modell-ID krävs"
 
+#. js-lingui-id: iaurWj
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "Model used when you chat with Twenty"
+msgstr "Modell som används när du chattar med Twenty"
+
 #. js-lingui-id: //nm2/
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Models"
 msgstr "Modeller"
-
-#. js-lingui-id: uG84sm
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Models available in the agent node and chat model pickers"
-msgstr "Modeller som är tillgängliga i agentnoden och i väljarna för chattmodeller"
 
 #. js-lingui-id: tNFUgB
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -12640,6 +13122,7 @@ msgstr "månad"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+#: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows.tsx
@@ -12660,6 +13143,7 @@ msgstr "månadsvis"
 #. js-lingui-id: +8Nek/
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
+#: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Monthly"
 msgstr "Månadsvis"
@@ -12816,7 +13300,7 @@ msgid "My unlisted views"
 msgstr "Mina olistade vyer"
 
 #. js-lingui-id: JUrq94
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "mySkill"
 msgstr "mySkill"
 
@@ -12954,6 +13438,8 @@ msgid "Network error"
 msgstr "Nätverksfel"
 
 #. js-lingui-id: qqeAJM
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+#: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Never"
 msgstr "Aldrig"
@@ -12984,6 +13470,7 @@ msgstr "Ny"
 #: src/modules/object-record/record-form/components/RecordCreationFormProvider.tsx
 #: src/modules/object-record/record-form/components/RecordCreationFormProvider.tsx
 #: src/modules/side-panel/hooks/useOpenRecordInSidePanel.ts
+#: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "New {0}"
 msgstr "Ny {0}"
 
@@ -13000,8 +13487,7 @@ msgid "New Account"
 msgstr "Nytt Konto"
 
 #. js-lingui-id: mJIA0/
-#: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentFormContent.tsx
 msgid "New Agent"
 msgstr "Ny agent"
 
@@ -13028,6 +13514,9 @@ msgid "New calendar event"
 msgstr "Ny kalenderhändelse"
 
 #. js-lingui-id: hIQkLb
+#: src/modules/ai/components/AiChatPageHeader.tsx
+#: src/modules/ai/components/AiChatPageThreadHeader.tsx
+#: src/modules/ai/components/AiChatPageThreadHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 msgid "New chat"
 msgstr "Ny chatt"
@@ -13038,7 +13527,6 @@ msgid "New Company"
 msgstr "Nytt företag"
 
 #. js-lingui-id: +HY5kX
-#: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/side-panel/components/SidePanelTopBarRightCornerIcon.tsx
 msgid "New conversation"
 msgstr "Ny konversation"
@@ -13111,6 +13599,13 @@ msgstr "Ny nyckel"
 msgid "New Key"
 msgstr "Ny Nyckel"
 
+#. js-lingui-id: +7nlzA
+#: src/pages/settings/billing/SettingsBillingLimits.tsx
+#: src/pages/settings/billing/SettingsBillingNewLimit.tsx
+#: src/pages/settings/billing/SettingsBillingNewLimit.tsx
+msgid "New limit"
+msgstr "Ny gräns"
+
 #. js-lingui-id: K2wBR9
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 #: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
@@ -13146,9 +13641,9 @@ msgid "New rollover limit"
 msgstr "Ny gräns för överföring"
 
 #. js-lingui-id: gWnSyg
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
 msgid "New Skill"
 msgstr "Ny färdighet"
 
@@ -13249,6 +13744,18 @@ msgstr "Nionde"
 msgid "No"
 msgstr "Nej"
 
+#. js-lingui-id: AZa0Mm
+#. placeholder {0}: objectMetadataItem.labelPlural
+#: src/pages/object-core/WorkflowCoreIndexPage.tsx
+msgid "No {0} found"
+msgstr "Inga {0} hittades"
+
+#. js-lingui-id: uZ8YLp
+#. placeholder {0}: objectMetadataItem.labelPlural
+#: src/pages/object-core/WorkflowCoreIndexPage.tsx
+msgid "No {0} match your filters. Try removing some of them."
+msgstr "Inga {0} matchar dina filter. Försök att ta bort några av dem."
+
 #. js-lingui-id: 7YGRoE
 #: src/modules/ui/input/components/SelectInput.tsx
 #: src/modules/ui/input/components/SelectInput.tsx
@@ -13314,15 +13821,12 @@ msgstr "Inga agenter matchar din sökning"
 msgid "No AI consumption recorded for this user."
 msgstr "Ingen AI-förbrukning har registrerats för den här användaren."
 
-#. js-lingui-id: 1GMOHe
-#: src/modules/ai/hooks/useAgentChat.ts
-msgid "No AI models are enabled in this workspace."
-msgstr "Inga AI-modeller är aktiverade i den här arbetsytan."
-
-#. js-lingui-id: zcsNvp
+#. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
-msgid "No AI models are enabled."
-msgstr ""
+#: src/modules/ai/hooks/useAgentChat.ts
+#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
+msgid "No AI provider is configured on this instance."
+msgstr "Ingen AI-leverantör är konfigurerad på denna instans."
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -13655,9 +14159,14 @@ msgstr "Ingen senaste version hittad"
 msgid "No limit"
 msgstr "Ingen gräns"
 
+#. js-lingui-id: Y9FJQX
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+msgid "No limit matches your search."
+msgstr "Ingen gräns matchar din sökning."
+
 #. js-lingui-id: nivaRq
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "No list"
 msgstr "Ingen lista"
 
@@ -13711,10 +14220,15 @@ msgstr "Ingen metrikdata tillgänglig"
 msgid "No microphone is available. Connect one and try again."
 msgstr "Ingen mikrofon är tillgänglig. Anslut en och försök igen."
 
-#. js-lingui-id: UWZZdQ
-#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
-msgid "No models available. Please configure AI models in your workspace settings."
-msgstr "Inga modeller tillgängliga. Vänligen konfigurera AI-modeller i dina arbetsinställningar."
+#. js-lingui-id: WGQJB3
+#: src/modules/settings/ai/utils/getAiModelModeDescription.ts
+msgid "No model available"
+msgstr "Ingen modell tillgänglig"
+
+#. js-lingui-id: xo340M
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "No model is available for this mode."
+msgstr "Ingen modell är tillgänglig för detta läge."
 
 #. js-lingui-id: 9VrTfZ
 #: src/modules/activities/notes/components/NotesCardContent.tsx
@@ -13777,7 +14291,7 @@ msgstr "Inget proveniensintyg hittades för det här paketet. Publicera det frå
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "No recipients to send to ({skipReasons})"
-msgstr ""
+msgstr "Inga mottagare att skicka till ({skipReasons})"
 
 #. js-lingui-id: V/+aTW
 #: src/modules/object-record/record-field/ui/form-types/components/FormMorphRelationToOneFieldInput.tsx
@@ -13882,14 +14396,14 @@ msgstr "Inget valfält"
 
 #. js-lingui-id: Ylz+jb
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "No sender"
 msgstr "Ingen avsändare"
 
-#. js-lingui-id: 5UEIxk
+#. js-lingui-id: dRi20n
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "No sending address is available. Connect a verified sending domain in Settings before this campaign can go out."
-msgstr ""
+msgid "No sending address. Connect a verified domain in Settings."
+msgstr "Ingen avsändaradress. Anslut en verifierad domän i Inställningar."
 
 #. js-lingui-id: JkPTT8
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -13898,7 +14412,7 @@ msgstr "Inga serveradministratörer hittades."
 
 #. js-lingui-id: eeoVfm
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "No subject"
 msgstr "Inget ämne"
 
@@ -14028,6 +14542,11 @@ msgstr "Inga arbetsflödeskörningar än"
 msgid "No workflow versions yet"
 msgstr "Inga arbetsflödesversioner än"
 
+#. js-lingui-id: 0R8Pxd
+#: src/modules/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows.ts
+msgid "No workflows were deleted"
+msgstr "Inga arbetsflöden raderades"
+
 #. js-lingui-id: Q4dFjT
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "No workspace behind"
@@ -14076,6 +14595,7 @@ msgstr "Nodinställningar"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
+#: src/modules/ai/utils/getAiModelEffortLabel.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -14148,6 +14668,11 @@ msgstr "Inte inkluderad"
 msgid "Not listed"
 msgstr "Inte listad"
 
+#. js-lingui-id: AjdrYY
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "Not measured at this effort yet. Showing the base model's reading."
+msgstr "Ännu inte uppmätt vid denna ansträngningsnivå. Visar basmodellens värde."
+
 #. js-lingui-id: iXlml9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 msgid "Not recorded"
@@ -14197,6 +14722,16 @@ msgstr "Inte synkroniserad"
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Note"
 msgstr "Anteckning"
+
+#. js-lingui-id: 543eQ7
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
+msgid "Nothing counted against this scope yet"
+msgstr "Inget har ännu räknats mot detta omfång"
+
+#. js-lingui-id: yBYKk1
+#: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
+msgid "Nothing has gone out yet. The campaign returns to your drafts and you can edit or schedule it again."
+msgstr "Inget har skickats ännu. Kampanjen återgår till dina utkast och du kan redigera eller schemalägga den igen."
 
 #. js-lingui-id: VngD1z
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -14502,7 +15037,6 @@ msgid "On which object(s) should this trigger be available"
 msgstr "På vilken(a) objekt ska denna trigger vara tillgänglig"
 
 #. js-lingui-id: gukxZ5
-#: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTableRow.tsx
 msgid "Onboarding"
 msgstr "Introduktion"
@@ -14710,6 +15244,16 @@ msgstr "Operand"
 msgid "Operational"
 msgstr "I drift"
 
+#. js-lingui-id: Wfz6Xv
+#: src/modules/settings/billing/hooks/useUsageLimitFormatter.ts
+msgid "operations"
+msgstr "operationer"
+
+#. js-lingui-id: B1MDds
+#: src/modules/settings/billing/constants/UsageLimitMeterLabels.ts
+msgid "Operations"
+msgstr "Operationer"
+
 #. js-lingui-id: lVa1Xn
 #: src/modules/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues.ts
 msgid "Option 1"
@@ -14791,6 +15335,7 @@ msgid "organization plan"
 msgstr "organisationsplan"
 
 #. js-lingui-id: zi/p7n
+#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Organization plan"
 msgstr "Organisationsplan"
@@ -14883,6 +15428,11 @@ msgstr "Utgående e-post från den här kanalen skickas via den här domänen. D
 msgid "Output"
 msgstr "Utdata"
 
+#. js-lingui-id: J7aOlM
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "Output cost"
+msgstr "Kostnad för utdata"
+
 #. js-lingui-id: i1+tKD
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
@@ -14894,6 +15444,11 @@ msgstr "Tokens för utdata"
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
 msgid "Override Draft"
 msgstr "Åsidosätt Utkast"
+
+#. js-lingui-id: RQCK56
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Overrides the mode above until you switch back to automatic"
+msgstr "Åsidosätter läget ovan tills du växlar tillbaka till automatiskt"
 
 #. js-lingui-id: 6/dCYd
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -15093,6 +15648,7 @@ msgid "Path"
 msgstr "Sökväg"
 
 #. js-lingui-id: IgrLD/
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 msgid "Pause"
 msgstr "Pausa"
@@ -15184,6 +15740,8 @@ msgid "Perform administrative actions or permanently delete this user"
 msgstr ""
 
 #. js-lingui-id: NtQvjo
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
 msgid "Period"
 msgstr "Period"
@@ -15257,6 +15815,11 @@ msgstr "Telefonnummer kopierat till urklipp"
 msgid "Pick a {0} record"
 msgstr "Välj en {0}-post"
 
+#. js-lingui-id: T1yaeQ
+#: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
+msgid "Pick a send time in the future."
+msgstr "Välj en sändningstid i framtiden."
+
 #. js-lingui-id: JqqNlC
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 msgid "Pick a view"
@@ -15301,6 +15864,11 @@ msgstr "Bild"
 msgid "Pie Chart"
 msgstr "Cirkeldiagram"
 
+#. js-lingui-id: 6U8nJN
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Pin a specific model"
+msgstr "Fäst en specifik modell"
+
 #. js-lingui-id: 3pU8e+
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
 msgid "Pin tab"
@@ -15322,6 +15890,11 @@ msgstr "Fäst"
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Pinned tab, always shown on the left"
 msgstr "Fäst flik, visas alltid till vänster"
+
+#. js-lingui-id: Iaw5/y
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Pinned to a specific model"
+msgstr "Fäst vid en specifik modell"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -15362,7 +15935,13 @@ msgstr "Planerat till {formattedStartDate}"
 msgid "Plans"
 msgstr "Planer"
 
+#. js-lingui-id: T91vKp
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
+msgid "Play"
+msgstr "Spela upp"
+
 #. js-lingui-id: XdRQm7
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 msgid "Playback failed"
 msgstr "Uppspelningen misslyckades"
@@ -15484,7 +16063,7 @@ msgid "Pre-install"
 msgstr "Före installation"
 
 #. js-lingui-id: iVFTRM
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Pre-install on new workspaces"
 msgstr "Förhandsinstallera på nya arbetsytor"
 
@@ -15521,6 +16100,7 @@ msgstr "Förhindra användare från att tilldela samma värde till olika poster"
 #. js-lingui-id: rdUucN
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "Preview"
@@ -15851,18 +16431,18 @@ msgid "Read documentation"
 msgstr "Läs dokumentationen"
 
 #. js-lingui-id: U26cMX
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
 msgstr "Läs systeminstruktionerna"
 
 #. js-lingui-id: EKsFda
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read the system prompts to understand how the AI works"
 msgstr "Läs systeminstruktionerna för att förstå hur AI:n fungerar"
 
 #. js-lingui-id: 0URVx8
 #. placeholder {0}: formatNumber( systemPromptTokenCount, { abbreviate: true, decimals: 1 }, )
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
 msgstr "Läs systeminstruktionerna för att förstå hur AI:n fungerar (~{0} token)"
 
@@ -15902,6 +16482,22 @@ msgstr "Orsak"
 msgid "Reasoning"
 msgstr "Resonemang"
 
+#. js-lingui-id: 49IkcQ
+#: src/modules/ai/components/AiModelTierSlider.tsx
+msgid "Reasoning effort: {reasoningEffort}"
+msgstr "Resonemangsansträngning: {reasoningEffort}"
+
+#. js-lingui-id: PG5XPp
+#. placeholder {0}: getAiModelEffortLabel(availableEffort)
+#: src/modules/settings/ai/components/AiModelPinSelect.tsx
+msgid "Reasoning: {0}"
+msgstr "Resonemang: {0}"
+
+#. js-lingui-id: nVOD/+
+#: src/modules/settings/ai/components/AiModelPinSelect.tsx
+msgid "Reasoning: Default"
+msgstr "Resonemang: Standard"
+
 #. js-lingui-id: W+ApAD
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -15939,9 +16535,9 @@ msgid "Recipient"
 msgstr "Mottagare"
 
 #. js-lingui-id: F+BB7w
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Recipient count unavailable"
-msgstr ""
+msgstr "Antal mottagare är inte tillgängligt"
 
 #. js-lingui-id: p8GO5h
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -15949,7 +16545,7 @@ msgid "recipient@example.com"
 msgstr "recipient@example.com"
 
 #. js-lingui-id: yPrbsy
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
 msgstr "Mottagare"
@@ -15965,11 +16561,6 @@ msgstr "Mottagare kan bara avsluta prenumerationen på allt. Lägg till ett offe
 msgid "Recommended"
 msgstr "Rekommenderad"
 
-#. js-lingui-id: b2+5uV
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Recommended Models"
-msgstr "Rekommenderade modeller"
-
 #. js-lingui-id: gcoiFh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
@@ -15979,10 +16570,10 @@ msgstr "Rekommenderade modeller"
 msgid "Reconnect"
 msgstr "Återanslut"
 
-#. js-lingui-id: NSOx3j
+#. js-lingui-id: PrI9jr
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
-msgid "Reconnect and change visibility"
-msgstr "Återanslut och ändra synlighet"
+msgid "Reconnect and share"
+msgstr "Återanslut och dela"
 
 #. js-lingui-id: XsIxsL
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -16072,12 +16663,6 @@ msgstr "Spela in dina samtal och få transkriberingar"
 msgid "Record-level"
 msgstr "Postnivå"
 
-#. js-lingui-id: X5BjmT
-#: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
-#: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
-msgid "Record(s) selected"
-msgstr "Valda poster"
-
 #. js-lingui-id: 3esxl/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Recorder Joining"
@@ -16107,6 +16692,12 @@ msgstr "Inspelning schemalagd"
 msgid "Records"
 msgstr "Poster"
 
+#. js-lingui-id: J+Qyf2
+#: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
+#: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
+msgid "Records selected"
+msgstr "Valda poster"
+
 #. js-lingui-id: wRTiSD
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Red"
@@ -16122,10 +16713,10 @@ msgstr "Omdirigerings-URI:er"
 msgid "Redirect URIs updated"
 msgstr "Omdirigerings-URI:er har uppdaterats"
 
-#. js-lingui-id: LfH+Ea
+#. js-lingui-id: ix5Jyh
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
-msgid "Redirect Url copied to clipboard"
-msgstr "Omdirigerings-url kopierad till urklipp"
+msgid "Redirect URL copied to clipboard"
+msgstr "Omdirigerings-URL kopierad till urklipp"
 
 #. js-lingui-id: RZjynQ
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -16488,6 +17079,7 @@ msgstr "Begäran misslyckades"
 
 #. js-lingui-id: +gFBV8
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Require authentication"
 msgstr "Kräv autentisering"
 
@@ -16495,6 +17087,11 @@ msgstr "Kräv autentisering"
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 msgid "Required"
 msgstr "Obligatoriskt"
+
+#. js-lingui-id: r38Vo4
+#: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
+msgid "Reschedule campaign"
+msgstr "Schemalägg om kampanj"
 
 #. js-lingui-id: Vae65A
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -16632,11 +17229,6 @@ msgstr "Återställ {objectLabel}"
 msgid "Restore the activity type settings defined by the application"
 msgstr "Återställ inställningarna för aktivitetstypen som definierats av applikationen"
 
-#. js-lingui-id: hO3AfV
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Restrict available models to a curated list"
-msgstr ""
-
 #. js-lingui-id: RD6AE9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
@@ -16657,6 +17249,7 @@ msgstr "Återuppta"
 
 #. js-lingui-id: 6gRgw8
 #: src/modules/ai/components/AiChatErrorMessage.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
@@ -16747,8 +17340,8 @@ msgstr "roll"
 #. js-lingui-id: GDvlUT
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
+#: src/pages/settings/ai/components/SettingsAgentFormContent.tsx
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
-#: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -16909,6 +17502,12 @@ msgstr "Funktionen körs"
 msgid "Running..."
 msgstr "Körs..."
 
+#. js-lingui-id: cAUlDL
+#: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
+#: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
+msgid "runs"
+msgstr "körningar"
+
 #. js-lingui-id: nji0/X
 #: src/localization/hooks/useLocaleOptions.ts
 msgid "Russian"
@@ -16918,6 +17517,16 @@ msgstr "Russian"
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Sales"
 msgstr "Försäljning"
+
+#. js-lingui-id: 342JYO
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "Same cost as Balanced."
+msgstr "Samma kostnad som Balanserad."
+
+#. js-lingui-id: wQnd1t
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "Same score as Balanced"
+msgstr "Samma poäng som Balanserad"
 
 #. js-lingui-id: QeF0zb
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -16973,11 +17582,21 @@ msgstr "Schema"
 msgid "Schedule a maintenance window and notify all users"
 msgstr "Schemalägg ett underhållsfönster och meddela alla användare"
 
+#. js-lingui-id: MGaW9O
+#: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
+msgid "Schedule campaign"
+msgstr "Schemalägg kampanj"
+
 #. js-lingui-id: 4ba0NE
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Scheduled"
 msgstr "Schemalagd"
+
+#. js-lingui-id: JizhXE
+#: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
+msgid "Scheduled at"
+msgstr "Schemalagd till"
 
 #. js-lingui-id: 7oCJuI
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
@@ -17005,6 +17624,7 @@ msgid "Schema this app contributes to your workspace"
 msgstr "Schema som den här appen bidrar med till din arbetsyta"
 
 #. js-lingui-id: aBgwis
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Scope"
 msgstr "Behörighet"
@@ -17067,9 +17687,13 @@ msgstr "Sök ett fält..."
 msgid "Search a folder..."
 msgstr "Sök efter en mapp..."
 
+#. js-lingui-id: owAIq9
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+msgid "Search a limit"
+msgstr ""
+
 #. js-lingui-id: 8J0e5B
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Search a model..."
 msgstr ""
 
@@ -17113,11 +17737,6 @@ msgstr "Sök en typ"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 msgid "Search a view..."
 msgstr "Sök efter en vy..."
-
-#. js-lingui-id: N7Z3jc
-#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
-msgid "Search across indexed fields..."
-msgstr "Sök i indexerade fält..."
 
 #. js-lingui-id: +7s4fw
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
@@ -17237,6 +17856,11 @@ msgstr "sök fältmetadata"
 msgid "Search fields"
 msgstr "Sök fält"
 
+#. js-lingui-id: IQAn53
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
+msgid "Search fields..."
+msgstr ""
+
 #. js-lingui-id: rXrG+N
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
 msgid "Search folders..."
@@ -17314,6 +17938,11 @@ msgstr "Sökte på webben"
 msgid "Searched the web for {query}"
 msgstr "Sökte på webben efter {query}"
 
+#. js-lingui-id: kSEiZD
+#: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
+msgid "searches"
+msgstr ""
+
 #. js-lingui-id: EvDUJy
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
 msgid "Searching {objectLabel}"
@@ -17352,7 +17981,6 @@ msgid "seat / month - billed yearly"
 msgstr "plats / månad - faktureras årligen"
 
 #. js-lingui-id: MpFIca
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "seats"
 msgstr "platser"
@@ -17493,6 +18121,11 @@ msgstr "Visa din datastruktur som ett interaktivt diagram"
 msgid "Seeded"
 msgstr "Fördefinierad"
 
+#. js-lingui-id: AhNP40
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
+msgid "Seek"
+msgstr ""
+
 #. js-lingui-id: 5iyrla
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem.tsx
 msgid "Seek recording to {formattedStartTimestamp}"
@@ -17502,7 +18135,7 @@ msgstr "Sök i inspelningen till {formattedStartTimestamp}"
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordFieldChips.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputTrigger.tsx
-#: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
+#: src/modules/spreadsheet-import/components/internal/getSpreadsheetImportSingleSelectColumn.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
 msgid "Select"
 msgstr "Välj"
@@ -17605,7 +18238,7 @@ msgstr "Välj åtgärd"
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
 msgid "Select all loaded rows"
-msgstr ""
+msgstr "Välj alla inlästa rader"
 
 #. js-lingui-id: /fhMKz
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
@@ -17661,6 +18294,7 @@ msgid "Select Group"
 msgstr "Välj grupp"
 
 #. js-lingui-id: ljSvAs
+#: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectHeaderTable.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 msgid "Select header row"
 msgstr "Välj rubrikrad"
@@ -17725,6 +18359,7 @@ msgstr "Välj de händelser du vill skicka till denna slutpunkt"
 
 #. js-lingui-id: +xn1pe
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
+#: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
 msgid "Select the sheet to use"
 msgstr "Välj arket du vill använda"
 
@@ -17738,15 +18373,15 @@ msgstr "Välj typ"
 msgid "Select value"
 msgstr "Välj värde"
 
-#. js-lingui-id: RKE3bT
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Select which models appear as recommended in the workspace model picker"
-msgstr "Välj vilka modeller som ska visas som rekommenderade i arbetsytans modellväljare"
-
 #. js-lingui-id: 7c7atJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Select your language and adjust the size of the interface"
 msgstr "Välj ditt språk och justera storleken på gränssnittet"
+
+#. js-lingui-id: AM0pWl
+#: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
+msgid "Selected folders"
+msgstr "Valda mappar"
 
 #. js-lingui-id: JlFcis
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -17759,15 +18394,20 @@ msgstr "Skicka"
 msgid "Send an invite email to your team"
 msgstr "Skicka en inbjudnings-e-post till ditt team"
 
-#. js-lingui-id: WRLt0i
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
-msgid "Send campaign"
+#. js-lingui-id: S147dq
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
+msgid "Send at"
 msgstr ""
+
+#. js-lingui-id: WRLt0i
+#: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
+msgid "Send campaign"
+msgstr "Skicka kampanj"
 
 #. js-lingui-id: b7hiQs
 #: src/modules/side-panel/hooks/useOpenSendCampaignInSidePanel.ts
 msgid "Send Campaign"
-msgstr ""
+msgstr "Skicka kampanj"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -17790,6 +18430,16 @@ msgstr "Tillåt att skicka e-post via anslutna konton"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Send invitations"
 msgstr "Skicka inbjudningar"
+
+#. js-lingui-id: RmmhAh
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
+msgid "Send later"
+msgstr ""
+
+#. js-lingui-id: NpEm3p
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
+msgid "Send now"
+msgstr ""
 
 #. js-lingui-id: doZzL7
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -17822,9 +18472,19 @@ msgstr "Skickar e-post"
 msgid "Sending request..."
 msgstr "Skickar begäran..."
 
+#. js-lingui-id: YguCRV
+#: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
+msgid "Sending starts {formattedSendTime}. You can cancel before then."
+msgstr ""
+
 #. js-lingui-id: 2l+PSH
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
 msgid "Sending starts right away and cannot be undone."
+msgstr "Skickandet startar direkt och kan inte ångras."
+
+#. js-lingui-id: w+ywgn
+#: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
+msgid "Sending starts right away, ahead of the time this campaign is holding."
 msgstr ""
 
 #. js-lingui-id: IoAuJG
@@ -17858,6 +18518,11 @@ msgstr "avgränsare"
 #: src/localization/hooks/useLocaleOptions.ts
 msgid "Serbian (Cyrillic)"
 msgstr "Serbian (Cyrillic)"
+
+#. js-lingui-id: lWKtaU
+#: src/localization/hooks/useLocaleOptions.ts
+msgid "Serbian (Latin)"
+msgstr ""
 
 #. js-lingui-id: hjUUtd
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -17910,9 +18575,14 @@ msgid "Set email visibility, manage your blocklist and more."
 msgstr "Ställ in e-postns synlighet, hantera din blocklista och mer."
 
 #. js-lingui-id: qFjlHh
-#: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilityToggle.tsx
+#: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilitySwitch.tsx
 msgid "Set fields created in the future as \"visible\""
 msgstr "Ställ in fält som skapas framöver som \"synliga\""
+
+#. js-lingui-id: u5nAtE
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Set for this agent only"
+msgstr ""
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -17978,7 +18648,7 @@ msgstr "Konfigurerar din <0>databas</0>..."
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
-#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentFormContent.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -18032,6 +18702,11 @@ msgstr "Dela denna länk för att bjuda in användare till din arbetsyta"
 msgid "Share with workspace"
 msgstr "Dela med arbetsytan"
 
+#. js-lingui-id: lX0SIS
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Share with workspace?"
+msgstr "Dela med arbetsytan?"
+
 #. js-lingui-id: gaJRur
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Share your app to other workspaces without pushing it on the marketplace"
@@ -18046,6 +18721,11 @@ msgstr "Delad e-post"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "Sharing link copied to clipboard"
 msgstr "Delningslänk kopierad till urklipp"
+
+#. js-lingui-id: Xzq3Vx
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Sharing this connection with the workspace requires reconnecting it. You will be redirected to authorize it again."
+msgstr ""
 
 #. js-lingui-id: RRXpo1
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -18069,7 +18749,7 @@ msgid "Should changing an object's label also change the API?"
 msgstr "Bör ändring av ett objekts etikett också ändra APIet?"
 
 #. js-lingui-id: zasxcV
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Should changing the label also change the API name?"
 msgstr "Bör en ändring av etiketten även ändra API-namnet?"
 
@@ -18107,6 +18787,7 @@ msgid "Show more"
 msgstr "Visa mer"
 
 #. js-lingui-id: qi+g0a
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Show only rows with errors"
 msgstr "Visa endast rader med fel"
@@ -18235,7 +18916,7 @@ msgid "skill"
 msgstr "färdighet"
 
 #. js-lingui-id: OZJeTZ
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 msgid "Skill"
@@ -18252,8 +18933,8 @@ msgid "Skill deleted"
 msgstr "Färdighet raderad"
 
 #. js-lingui-id: GXEku+
-#: src/pages/settings/ai/SettingsSkillForm.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Skill name"
 msgstr "Färdighetsnamn"
 
@@ -18310,10 +18991,9 @@ msgstr ""
 msgid "Smaller"
 msgstr "Mindre"
 
-#. js-lingui-id: 5J8ZFl
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Smart Model"
+#. js-lingui-id: ZKXQ0a
+#: src/modules/ai/utils/getAiModelTierLabel.ts
+msgid "Smart"
 msgstr ""
 
 #. js-lingui-id: w+rJId
@@ -18376,6 +19056,7 @@ msgstr "Viss loggdata togs bort för att rymmas inom storleksgränsen ({0} poste
 
 #. js-lingui-id: nwtY4N
 #: src/pages/auth/Authorize.tsx
+#: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Something went wrong"
 msgstr "Något gick fel"
 
@@ -18493,10 +19174,32 @@ msgstr "Spanska"
 msgid "Speech recognition could not be reached. Check your connection."
 msgstr "Taligenkänning kunde inte nås. Kontrollera din anslutning."
 
+#. js-lingui-id: l9wI00
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "Speed"
+msgstr ""
+
 #. js-lingui-id: pyfee5
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Speed up reads on the fields you filter or sort by most. Each index also slows down writes and uses disk space, so add them with intent."
 msgstr "Snabba upp läsningar på de fält du oftast filtrerar eller sorterar på. Varje index saktar också ned skrivningar och använder diskutrymme, så lägg till dem med eftertanke."
+
+#. js-lingui-id: wwdak+
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
+msgid "Spender"
+msgstr ""
+
+#. js-lingui-id: ctM+rp
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Spending stays capped by your plan allowance and the other limits."
+msgstr ""
+
+#. js-lingui-id: p7JFjT
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Spending will only be capped by your plan allowance and the other limits."
+msgstr ""
 
 #. js-lingui-id: gsifzp
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -18544,7 +19247,7 @@ msgid "Stages"
 msgstr "Stadier"
 
 #. js-lingui-id: TJBHlP
-#: src/modules/applications/hooks/useApplicationChipData.ts
+#: src/modules/applications/utils/getApplicationDisplayName.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Standard"
@@ -18675,6 +19378,11 @@ msgstr "Stoppa diktering"
 msgid "Stop impersonating"
 msgstr "Sluta imitera"
 
+#. js-lingui-id: BrrIs8
+#: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
+msgid "Storage"
+msgstr "Lagring"
+
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Store the full URL or just the domain"
@@ -18780,7 +19488,7 @@ msgstr ""
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Subject"
 msgstr "Ämne"
@@ -18967,6 +19675,7 @@ msgstr "Stödda indataformat"
 
 #. js-lingui-id: Gw5WrN
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Supports reasoning"
 msgstr "Stöder resonemang"
 
@@ -19011,6 +19720,11 @@ msgstr "Synkronisera katalogen"
 msgid "Sync email and calendar accounts"
 msgstr "Synkronisera e-post och kalenderkonton"
 
+#. js-lingui-id: phtAw0
+#: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
+msgid "Sync every message"
+msgstr ""
+
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Sync failed"
@@ -19042,7 +19756,7 @@ msgid "Synchronize Field Label and API Name"
 msgstr "Synkronisera fältetikett och API-namn"
 
 #. js-lingui-id: PJAeaq
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Synchronize Label and API Name"
 msgstr "Synkronisera etikett och API-namn"
 
@@ -19079,8 +19793,8 @@ msgstr ""
 
 #. js-lingui-id: FHPe8O
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
+#: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
@@ -19096,6 +19810,11 @@ msgstr "Systemuppmaning"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "System settings"
 msgstr "Systeminställningar"
+
+#. js-lingui-id: GXNLgO
+#: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
+msgid "System skills"
+msgstr ""
 
 #. js-lingui-id: HuA3RU
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
@@ -19345,11 +20064,6 @@ msgstr "Samtalsinspelningen bearbetas…"
 msgid "The Data Processing Agreement could not be loaded. Please try again."
 msgstr "Databehandlingsavtalet kunde inte laddas. Försök igen."
 
-#. js-lingui-id: n+CCXl
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "The default AI model used for chats, agents, and workflows"
-msgstr "Standardmodellen för AI som används för chattar, agenter och arbetsflöden"
-
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
@@ -19395,10 +20109,20 @@ msgstr "Det fullständiga avtalet med fält ifyllda för din driftsättning."
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "Ikonen som din arbetsflödesutlösare visar i kommandomenyn"
 
+#. js-lingui-id: 4m3QoL
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "The model behind each mode for every workspace. Workspaces can pin their own."
+msgstr ""
+
 #. js-lingui-id: HiI1Lo
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "The model identifier used by the provider API"
 msgstr "Modellidentifieraren som används av leverantörens API"
+
+#. js-lingui-id: 3o2gOg
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "The modes people and agents choose between"
+msgstr ""
 
 #. js-lingui-id: h8mvCd
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -19487,6 +20211,11 @@ msgstr "Transkriptionen kunde inte genereras."
 msgid "The transcript is being prepared…"
 msgstr "Transkriptionen förbereds…"
 
+#. js-lingui-id: qMTT4Z
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
+msgid "The usage this limit applies to."
+msgstr ""
+
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field"
@@ -19501,6 +20230,11 @@ msgstr "Värdena för detta fält måste vara unika"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "The whole event details will be shared with your team."
 msgstr "Hela händelsedetaljerna kommer att delas med ditt team."
+
+#. js-lingui-id: RmDTQ6
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
+msgid "The whole workspace"
+msgstr ""
 
 #. js-lingui-id: bEXHAZ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -19543,10 +20277,10 @@ msgstr "Det finns fortfarande några rader som innehåller fel. Rader med fel ko
 msgid "There is a billing issue. Please contact your admin."
 msgstr "Det finns ett faktureringsproblem. Kontakta din administratör."
 
-#. js-lingui-id: CA9PTn
+#. js-lingui-id: ezuu4B
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "There is a payment issue with your subscription. Please update your payment method."
-msgstr "Det finns ett betalningsproblem med ditt abonnemang. Uppdatera din betalningsmetod."
+msgid "There is a payment issue with your subscription. Your enterprise features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one."
+msgstr ""
 
 #. js-lingui-id: WQk7Cf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
@@ -19684,6 +20418,11 @@ msgstr "Den här applikationen har redan gjorts anspråk på."
 msgid "This application's registration is claimed by your workspace"
 msgstr "Den här applikationens registrering ägs av din arbetsyta."
 
+#. js-lingui-id: kciPHv
+#: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
+msgid "This billing period"
+msgstr ""
+
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "This call is being recorded…"
@@ -19784,6 +20523,11 @@ msgstr "Det här mötet spelades inte in."
 msgid "This model will be removed from the provider. You can re-add it later."
 msgstr "Den här modellen tas bort från leverantören. Du kan lägga till den igen senare."
 
+#. js-lingui-id: oW3yYY
+#: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
+msgid "This month"
+msgstr ""
+
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
 msgid "This page has no content"
@@ -19875,6 +20619,7 @@ msgstr "Den här vyn använder {usageLabel} på objektet \"{0}\" som inte är å
 
 #. js-lingui-id: yByRxz
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
+#: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This week"
 msgstr "Denna vecka"
 
@@ -20058,6 +20803,7 @@ msgstr "Till"
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
+#: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 #: src/utils/date-utils.ts
 msgid "Today"
 msgstr "Idag"
@@ -20312,6 +21058,11 @@ msgstr "Testperioden har löpt ut. Vänligen uppdatera dina faktureringsuppgifte
 msgid "Trial period"
 msgstr "Provperiod"
 
+#. js-lingui-id: mXdcsR
+#: src/pages/onboarding/UpgradeFreeTrial.tsx
+msgid "Trial plan"
+msgstr ""
+
 #. js-lingui-id: H2Sfhg
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
@@ -20441,6 +21192,11 @@ msgstr "Turkos"
 msgid "Twenty fields"
 msgstr "Twenty-fält"
 
+#. js-lingui-id: pNo8xt
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "Twenty fills each level with the best model that meets your requirements"
+msgstr ""
+
 #. js-lingui-id: YIjS4q
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
 msgid "Twitter/X Search"
@@ -20457,7 +21213,7 @@ msgid "Two columns side by side"
 msgstr "Två kolumner sida vid sida"
 
 #. js-lingui-id: tuvLv1
-#: src/modules/settings/security/components/Toggle2FA.tsx
+#: src/modules/settings/security/components/TwoFactorAuthenticationSwitch.tsx
 #: src/pages/settings/profile/SettingsProfile.tsx
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Two Factor Authentication"
@@ -20494,7 +21250,6 @@ msgstr "Tvåfaktorsautentisering uppsättning genomförd lyckades!"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputFieldTypeSelector.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
-#: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -20632,6 +21387,7 @@ msgstr "Avinstallerar..."
 
 #. js-lingui-id: wSXm5S
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 msgid "Unique"
@@ -20793,6 +21549,12 @@ msgstr "Obetald"
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
 msgid "Unpin tab"
 msgstr "Ta bort fästning av flik"
+
+#. js-lingui-id: 1rXqkB
+#: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
+msgid "Unschedule Campaign"
+msgstr ""
 
 #. js-lingui-id: SMaFdc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -20990,6 +21752,11 @@ msgstr "Uppdatera ditt konto's konfiguration. Konfigurera valfri kombination av 
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Update your payment method"
 msgstr "Uppdatera din betalningsmetod"
+
+#. js-lingui-id: Uq5zVf
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Update your payment method before {licenseExpiresAtDate} to avoid losing access."
+msgstr ""
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -21223,6 +21990,10 @@ msgstr "us-east-1"
 #. js-lingui-id: 7FaY4u
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitUsageSelect.tsx
 #: src/modules/settings/usage/components/UsageByUserTableSection.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
@@ -21283,11 +22054,6 @@ msgstr "Användningsperiod"
 msgid "Use authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator to generate one-time passwords"
 msgstr "Använd autentiseringsappar och webbläsartillägg som 1Password, Authy, Microsoft Authenticator för att generera engångslösenord"
 
-#. js-lingui-id: hCZsJ0
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Use best models only"
-msgstr ""
-
 #. js-lingui-id: 5ZehS/
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 msgid "Use filter to see existing skills or create your own"
@@ -21333,14 +22099,11 @@ msgstr "Använd hela listan"
 msgid "Use this email"
 msgstr "Använd denna e-postadress"
 
-#. js-lingui-id: 664z2C
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Used for chats, agents, and complex reasoning"
-msgstr ""
-
-#. js-lingui-id: C41qgx
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Used for lightweight tasks like title generation"
+#. js-lingui-id: aL1w5Z
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+msgid "Used"
 msgstr ""
 
 #. js-lingui-id: AQVj2A
@@ -21352,6 +22115,8 @@ msgstr "Användbart för pivot-/kopplingstabeller"
 #: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
+#: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -21432,6 +22197,11 @@ msgstr "Använder standardapplikationsvärde. Konfigurera via miljövariabler."
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Using default value. Set a custom value to override."
 msgstr "Använder standardvärde. Ange ett anpassat värde för att åsidosätta."
+
+#. js-lingui-id: b1dG47
+#: src/localization/hooks/useLocaleOptions.ts
+msgid "Uzbek"
+msgstr ""
 
 #. js-lingui-id: Clr4qp
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -21554,8 +22324,13 @@ msgstr "Versioner"
 msgid "Vertical Bar Chart"
 msgstr ""
 
+#. js-lingui-id: Psyj/F
+#: src/modules/ai/utils/getAiModelEffortLabel.ts
+msgid "Very High"
+msgstr ""
+
 #. js-lingui-id: Shfac6
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Vetted"
 msgstr "Granskad"
 
@@ -21671,6 +22446,7 @@ msgid "view group"
 msgstr "view group"
 
 #. js-lingui-id: B02hom
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "View invoices"
 msgstr "Visa fakturor"
@@ -21884,6 +22660,12 @@ msgstr "Titta på medlemsdemo"
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "Vi upplever för närvarande problem med den här appen; den kan fungera sämre medan vi arbetar på en lösning."
 
+#. js-lingui-id: Pk5zT3
+#. placeholder {0}: objectMetadataItem.labelPlural
+#: src/pages/object-core/WorkflowCoreIndexPage.tsx
+msgid "We could not load your {0}. Please try again later."
+msgstr ""
+
 #. js-lingui-id: icGmU/
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "We could not reach the package registry to verify the package provenance. Please try again in a few minutes."
@@ -21988,6 +22770,11 @@ msgstr "Webhook {targetUrl} skapad framgångsrikt"
 msgid "Webhook {targetUrl} updated successfully"
 msgstr "Webhook {targetUrl} uppdaterad framgångsrikt"
 
+#. js-lingui-id: k1illW
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "Webhook Call"
+msgstr ""
+
 #. js-lingui-id: 2X4ecw
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
 msgid "Webhook deleted successfully"
@@ -22005,6 +22792,7 @@ msgstr "Webhook-ID krävs för uppdateringar"
 
 #. js-lingui-id: v1kQyJ
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "Webhooks"
@@ -22020,6 +22808,7 @@ msgstr "Webbplats"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+#: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows.tsx
@@ -22027,15 +22816,15 @@ msgstr "Webbplats"
 msgid "Week"
 msgstr "Vecka"
 
+#. js-lingui-id: 4XSc4l
+#: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
+msgid "Weekly"
+msgstr ""
+
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "weeks"
 msgstr ""
-
-#. js-lingui-id: WKHqM+
-#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
-msgid "Weight"
-msgstr "Vikt"
 
 #. js-lingui-id: nTuObL
 #: src/pages/auth/SignInUp.tsx
@@ -22200,6 +22989,11 @@ msgstr "utan kreditkort"
 msgid "Worker"
 msgstr "Arbetare"
 
+#. js-lingui-id: bLt/0J
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
+msgid "Workflow"
+msgstr "Arbetsflöde"
+
 #. js-lingui-id: eQ/LA/
 #: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionWorkflowActionTriggerSection.tsx
@@ -22223,6 +23017,7 @@ msgstr "Arbetsflödesversioner"
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Workflows"
 msgstr "Arbetsflöden"
@@ -22236,8 +23031,14 @@ msgstr "Arbetsflöden"
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
@@ -22250,15 +23051,14 @@ msgstr "Arbetsflöden"
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
-#: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
+#: src/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks.ts
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
@@ -22269,6 +23069,7 @@ msgstr "Arbetsflöden"
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -22362,7 +23163,6 @@ msgstr "Arbetsytamedlemmar"
 #. js-lingui-id: PHF7zj
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 msgid "Workspace shared"
 msgstr "Delad arbetsyta"
 
@@ -22403,7 +23203,7 @@ msgstr "Omslag på inspelningssidor"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 msgid "Write a description"
 msgstr "Skriv en beskrivning"
@@ -22629,7 +23429,7 @@ msgstr "Du håller på att ändra din arbetsytas subdomän. Denna åtgärd komme
 #. js-lingui-id: 6x8lJe
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "You’ve reached your AI usage limit."
-msgstr ""
+msgstr "Du har nått din användningsgräns för AI."
 
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts
