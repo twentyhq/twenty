@@ -48,8 +48,8 @@ export const MessageTrackingSwitch = () => {
         <Card rounded>
           <SettingsOptionCardContentSwitch
             Icon={IconEye}
-            title={t`Track opens and clicks`}
-            description={t`Rewrite campaign links and add an invisible image to count clicks and opens. Mail clients that load images automatically can inflate opens.`}
+            title={t`Track clicks`}
+            description={t`Rewrite campaign links so clicks are counted before the reader is sent on`}
             checked={currentWorkspace.isMessageTrackingEnabled}
             onChange={handleChange}
           />
