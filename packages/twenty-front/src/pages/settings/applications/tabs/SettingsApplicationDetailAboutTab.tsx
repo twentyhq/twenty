@@ -164,6 +164,9 @@ export const SettingsApplicationDetailAboutTab = ({
       );
     }
 
+    // Both actions serialize on the same server-side lifecycle lock, which waits
+    // instead of failing, so an upgrade started during an uninstall job would
+    // reinstall the app that was just removed.
     return (
       <StyledActionButtons>
         {hasUpdate && (
@@ -177,7 +180,7 @@ export const SettingsApplicationDetailAboutTab = ({
             variant={'secondary'}
             accent={'blue'}
             onClick={onUpgrade}
-            disabled={isUpgrading}
+            disabled={isUpgrading || isUninstalling}
           />
         )}
         {canBeUninstalled && (
@@ -187,7 +190,7 @@ export const SettingsApplicationDetailAboutTab = ({
             variant={'secondary'}
             accent={'danger'}
             onClick={() => openModal(UNINSTALL_APPLICATION_MODAL_ID)}
-            disabled={isUninstalling}
+            disabled={isUninstalling || isUpgrading}
           />
         )}
       </StyledActionButtons>
