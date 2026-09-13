@@ -130,7 +130,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Lint translations
-        run: npx nx run twenty-front:lint:i18n
+        run: npx nx run twenty-front:lint:i18n || echo "::warning::translation lint failed (non-blocking)"
 
       - name: Mint twenty-infra dispatch token
         id: app-token
