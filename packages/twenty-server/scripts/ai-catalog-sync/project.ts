@@ -1,8 +1,8 @@
 // Projects the canonical catalog through a deployment spec. See README.md.
 //
-// This entry point and the files it imports deliberately use nothing from the
-// workspace, so a repository holding a private spec can run them straight from
-// a sparse checkout without installing the monorepo.
+// This entry point and the files it imports resolve through node builtins and
+// source paths only, so a repository holding a private spec can run them
+// straight from a sparse checkout without installing the monorepo.
 
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';

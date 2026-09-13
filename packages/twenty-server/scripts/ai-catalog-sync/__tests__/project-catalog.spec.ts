@@ -1,11 +1,7 @@
-import { AI_SDK_PACKAGES, DATA_RESIDENCY_KEYS } from 'twenty-shared/ai';
-
 import { type CatalogSpec } from '../types/catalog-spec.type';
 import {
   type CanonicalCatalog,
   projectCatalog,
-  SUPPORTED_DATA_RESIDENCIES,
-  SUPPORTED_SDK_PACKAGES,
 } from '../utils/project-catalog.util';
 
 const canonicalCatalog: CanonicalCatalog = {
@@ -254,21 +250,5 @@ describe('projectCatalog', () => {
     const projected = projectCatalog({ canonicalCatalog, spec });
 
     expect(projected['azure-foundry'].models?.[0]?.label).toBe('Luna (Azure)');
-  });
-});
-
-// The projector cannot import these and stay runnable outside the monorepo, so
-// the copies are held in step here instead.
-describe('the vocabularies the projector copies', () => {
-  it('lists every SDK package the server accepts', () => {
-    expect([...SUPPORTED_SDK_PACKAGES].sort()).toEqual(
-      [...AI_SDK_PACKAGES].sort(),
-    );
-  });
-
-  it('lists every data residency the server accepts', () => {
-    expect([...SUPPORTED_DATA_RESIDENCIES].sort()).toEqual(
-      [...DATA_RESIDENCY_KEYS].sort(),
-    );
   });
 });

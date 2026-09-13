@@ -1,3 +1,9 @@
+// twenty-shared by source path rather than by package name: the consuming
+// repository runs this from a sparse checkout with no workspace install, so
+// 'twenty-shared/ai' would not resolve there.
+import { isAiSdkPackage } from '../../../../twenty-shared/src/ai/utils/is-ai-sdk-package.util';
+import { isDataResidency } from '../../../../twenty-shared/src/ai/utils/is-data-residency.util';
+
 import {
   type CatalogSpec,
   type CatalogSpecModel,
@@ -5,7 +11,7 @@ import {
   type CatalogSpecProvider,
 } from '../types/catalog-spec.type';
 
-// Structural, so this file stays free of workspace imports and can run from a
+// Structural, so the catalog needs no schema here and this file can run from a
 // checkout that has not installed the monorepo.
 type CanonicalModel = { name: string; label?: string } & Record<
   string,
@@ -47,34 +53,6 @@ const PROVIDER_CREDENTIAL_FIELDS = [
   'secretAccessKey',
   'sessionToken',
 ] as const;
-
-// Mirrors AI_SDK_PACKAGES and DATA_RESIDENCY_KEYS in twenty-shared, which this
-// file cannot import and stay runnable outside the monorepo. A spec test holds
-// the two in step; a value the server's schema rejects would otherwise leave a
-// deployment with no catalog at all.
-export const SUPPORTED_SDK_PACKAGES = [
-  '@ai-sdk/openai',
-  '@ai-sdk/openai-compatible',
-  '@ai-sdk/anthropic',
-  '@ai-sdk/google',
-  '@ai-sdk/mistral',
-  '@ai-sdk/xai',
-  '@ai-sdk/azure',
-  '@ai-sdk/amazon-bedrock',
-];
-
-export const SUPPORTED_DATA_RESIDENCIES = [
-  'us',
-  'eu',
-  'global',
-  'uk',
-  'ap',
-  'jp',
-  'au',
-  'ca',
-  'de',
-  'fr',
-];
 
 const asSpecModel = (entry: string | CatalogSpecModel): CatalogSpecModel =>
   typeof entry === 'string' ? { model: entry } : entry;
@@ -141,7 +119,7 @@ const assertProviderIsUsable = ({
     throw new Error(`Provider "${provider.name}" is repeated or reserved`);
   }
 
-  if (!SUPPORTED_SDK_PACKAGES.includes(provider.npm)) {
+  if (!isAiSdkPackage(provider.npm)) {
     throw new Error(
       `Provider "${provider.name}" names an unsupported SDK package: ${provider.npm}`,
     );
@@ -149,7 +127,7 @@ const assertProviderIsUsable = ({
 
   if (
     provider.dataResidency !== undefined &&
-    !SUPPORTED_DATA_RESIDENCIES.includes(provider.dataResidency)
+    !isDataResidency(provider.dataResidency)
   ) {
     throw new Error(
       `Provider "${provider.name}" names an unsupported data residency: ${provider.dataResidency}`,

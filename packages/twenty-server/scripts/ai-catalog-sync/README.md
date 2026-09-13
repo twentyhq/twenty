@@ -70,6 +70,7 @@ benchmarks always come from the catalog, which is what keeps a deployment from d
 measured truth. Naming a model the catalog does not carry fails the run rather
 than publishing a route to nothing.
 
-`project.ts` imports nothing from the workspace, so a repository holding a
-private spec can run it from a sparse checkout of these files without
-installing the monorepo and without any API key.
+`project.ts` resolves everything it needs by source path, so a repository
+holding a private spec can run it from a sparse checkout of these files and
+`packages/twenty-shared/src/ai` without installing the monorepo and without any
+API key.
