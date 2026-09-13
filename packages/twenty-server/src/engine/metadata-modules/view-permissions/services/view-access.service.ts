@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ViewVisibility } from 'twenty-shared/types';
 
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type ViewAccessContext } from 'src/engine/metadata-modules/view-permissions/types/view-permissions.types';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import {
   ViewException,
@@ -24,9 +25,7 @@ export class ViewAccessService {
 
   async canUserModifyView(
     viewId: string | null,
-    userWorkspaceId: string | undefined,
-    workspaceId: string,
-    apiKeyId?: string,
+    accessContext: ViewAccessContext,
   ): Promise<boolean> {
     // If viewId is null, the entity doesn't exist - allow the operation
     // so the service can handle the NOT_FOUND error properly
@@ -36,7 +35,7 @@ export class ViewAccessService {
 
     const view = await this.viewService.findByIdIncludingDeleted(
       viewId,
-      workspaceId,
+      accessContext.workspaceId,
     );
 
     // If view doesn't exist, allow through to service for proper error message
@@ -44,14 +43,12 @@ export class ViewAccessService {
       return true;
     }
 
-    return this.checkViewAccess(view, userWorkspaceId, workspaceId, apiKeyId);
+    return this.checkViewAccess(view, accessContext);
   }
 
   async canUserModifyViewByChildEntity(
     viewId: string | null,
-    userWorkspaceId: string | undefined,
-    workspaceId: string,
-    apiKeyId?: string,
+    accessContext: ViewAccessContext,
   ): Promise<boolean> {
     // If viewId is null, the child entity doesn't exist
     // Allow through so the service can throw the proper entity-specific error
@@ -62,7 +59,7 @@ export class ViewAccessService {
 
     const view = await this.viewService.findByIdIncludingDeleted(
       viewId,
-      workspaceId,
+      accessContext.workspaceId,
     );
 
     // If view doesn't exist, allow through to service for proper error message
@@ -70,29 +67,24 @@ export class ViewAccessService {
       return true;
     }
 
-    return this.checkViewAccess(view, userWorkspaceId, workspaceId, apiKeyId);
+    return this.checkViewAccess(view, accessContext);
   }
 
   async canUserCreateView(
     visibility: ViewVisibility,
-    userWorkspaceId: string | undefined,
-    workspaceId: string,
-    apiKeyId?: string,
+    accessContext: ViewAccessContext,
   ): Promise<boolean> {
-    // UNLISTED views can only be created by users (not API keys)
+    // An UNLISTED view belongs to the user who created it, so a principal that
+    // is not a user - an API key or an application - has no owner to record
     if (visibility === ViewVisibility.UNLISTED) {
-      if (!isDefined(userWorkspaceId)) {
+      if (!isDefined(accessContext.userWorkspaceId)) {
         this.throwCreatePermissionDenied();
       }
 
       return true;
     }
 
-    const hasPermission = await this.hasViewsPermission(
-      userWorkspaceId,
-      workspaceId,
-      apiKeyId,
-    );
+    const hasPermission = await this.hasViewsPermission(accessContext);
 
     if (!hasPermission) {
       this.throwCreatePermissionDenied();
@@ -103,15 +95,9 @@ export class ViewAccessService {
 
   private async checkViewAccess(
     view: ViewEntity,
-    userWorkspaceId: string | undefined,
-    workspaceId: string,
-    apiKeyId?: string,
+    accessContext: ViewAccessContext,
   ): Promise<boolean> {
-    const hasPermission = await this.hasViewsPermission(
-      userWorkspaceId,
-      workspaceId,
-      apiKeyId,
-    );
+    const hasPermission = await this.hasViewsPermission(accessContext);
 
     if (hasPermission) {
       return true;
@@ -120,7 +106,8 @@ export class ViewAccessService {
     // Users without VIEWS permission can only manipulate their own unlisted views
     const isOwnUnlistedView =
       view.visibility === ViewVisibility.UNLISTED &&
-      view.createdByUserWorkspaceId === userWorkspaceId;
+      isDefined(accessContext.userWorkspaceId) &&
+      view.createdByUserWorkspaceId === accessContext.userWorkspaceId;
 
     if (isOwnUnlistedView) {
       return true;
@@ -129,30 +116,25 @@ export class ViewAccessService {
     this.throwModifyPermissionDenied();
   }
 
-  private async hasViewsPermission(
-    userWorkspaceId: string | undefined,
-    workspaceId: string,
-    apiKeyId?: string,
-  ): Promise<boolean> {
-    if (isDefined(userWorkspaceId)) {
-      const permissions =
-        await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId,
-        });
-
-      return permissions.permissionFlags[PermissionFlagType.VIEWS] ?? false;
+  private async hasViewsPermission({
+    workspaceId,
+    userWorkspaceId,
+    apiKeyId,
+    applicationId,
+  }: ViewAccessContext): Promise<boolean> {
+    // An unauthenticated request must surface the view-specific denial below
+    // rather than the generic one userHasWorkspaceSettingPermission throws
+    if (![userWorkspaceId, apiKeyId, applicationId].some(isDefined)) {
+      return false;
     }
 
-    if (isDefined(apiKeyId)) {
-      return this.permissionsService.userHasWorkspaceSettingPermission({
-        workspaceId,
-        apiKeyId,
-        setting: PermissionFlagType.VIEWS,
-      });
-    }
-
-    return false;
+    return this.permissionsService.userHasWorkspaceSettingPermission({
+      workspaceId,
+      userWorkspaceId,
+      apiKeyId,
+      applicationId,
+      setting: PermissionFlagType.VIEWS,
+    });
   }
 
   private throwCreatePermissionDenied(): never {
