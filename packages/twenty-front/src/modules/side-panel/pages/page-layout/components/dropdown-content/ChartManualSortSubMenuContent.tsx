@@ -104,11 +104,9 @@ export const ChartManualSortSubMenuContent = ({
                       gripMode="always"
                       isDragDisabled={sortedOptions.length === 1}
                       text={
-                        <Tag
-                          preventShrink
-                          color={option.color}
-                          text={option.label}
-                        />
+                        <Tag preventShrink color={option.color}>
+                          {option.label}
+                        </Tag>
                       }
                     />
                   }

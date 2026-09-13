@@ -8,6 +8,7 @@ import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/con
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { getWidgetContentPadding } from '@/page-layout/widgets/utils/getWidgetContentPadding';
+import { isViewportFillingWidget } from '@/page-layout/widgets/utils/isViewportFillingWidget';
 import { isWidgetCardFlushInViewMode } from '@/page-layout/widgets/utils/isWidgetCardFlushInViewMode';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
@@ -68,7 +69,8 @@ export const WidgetCardShell = ({
   const isFixedHeightIframe =
     currentPageLayout.type === PageLayoutType.RECORD_PAGE &&
     isVerticalList &&
-    widget.type === WidgetType.IFRAME;
+    widget.type === WidgetType.IFRAME &&
+    !isViewportFillingWidget(widget);
   const contentPadding = isWidgetCardFlushInViewMode({
     isEditable,
     variant,

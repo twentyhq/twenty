@@ -414,6 +414,7 @@ export const STANDARD_OBJECTS = {
           'status',
           'list',
           'fromAddress',
+          'scheduledAt',
           'sentAt',
           'sentCount',
           'deliveredCount',
@@ -435,6 +436,7 @@ export const STANDARD_OBJECTS = {
         fields: STANDARD_OBJECT_FIELDS.messageCampaign,
         viewFieldNames: [
           'status',
+          'scheduledAt',
           'sentAt',
           'sentCount',
           'deliveredCount',

@@ -42,7 +42,7 @@ export const SettingsApplicationRegistrationDistributionTab = ({
             title={t`Ownership`}
             description={t`This application's registration is claimed by your workspace`}
           />
-          <Tag text={t`Claimed by this workspace`} color="green" />
+          <Tag color="green">{t`Claimed by this workspace`}</Tag>
         </Section>
       )}
       <Section>

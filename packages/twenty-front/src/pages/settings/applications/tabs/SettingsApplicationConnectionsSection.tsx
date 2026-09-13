@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
@@ -16,7 +17,7 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
-import { useMyAppConnectedAccounts } from '~/pages/settings/applications/hooks/useMyAppConnectedAccounts';
+import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -44,9 +45,10 @@ export const SettingsApplicationConnectionsSection = ({
   const { triggerAppOAuth } = useTriggerAppOAuth();
   const { connectionProviders, loading } =
     useFindApplicationConnectionProviders(applicationId);
-  const { accounts: connectedAccounts } = useMyAppConnectedAccounts();
+  const { accounts: connectedAccounts, loading: accountsLoading } =
+    useApplicationConnectedAccounts(applicationId);
 
-  if (loading || connectionProviders.length === 0) {
+  if (loading || accountsLoading || connectionProviders.length === 0) {
     return null;
   }
 
@@ -67,11 +69,13 @@ export const SettingsApplicationConnectionsSection = ({
               title={provider.displayName}
               description={t`Manage connections used by this app to call ${provider.displayName}.`}
               adornment={
-                <Avatar
-                  type="app"
-                  avatarUrl={getAbsoluteImageUrl(provider.logoUrl)}
-                  placeholder={provider.displayName}
-                />
+                isNonEmptyString(provider.logoUrl) ? (
+                  <Avatar
+                    type="app"
+                    avatarUrl={getAbsoluteImageUrl(provider.logoUrl)}
+                    placeholder={provider.displayName}
+                  />
+                ) : undefined
               }
             />
             {isOAuth && !isClientCredentialsConfigured && (
@@ -118,9 +122,9 @@ export const SettingsApplicationConnectionsSection = ({
                       </TableCell>
                       <TableCell clickable>
                         {connection.authFailedAt ? (
-                          <Status color="red" text={t`Reconnect needed`} />
+                          <Status color="red">{t`Reconnect needed`}</Status>
                         ) : (
-                          <Status color="green" text={t`Connected`} />
+                          <Status color="green">{t`Connected`}</Status>
                         )}
                       </TableCell>
                       <TableCell clickable>
@@ -130,12 +134,11 @@ export const SettingsApplicationConnectionsSection = ({
                               ? 'blue'
                               : 'gray'
                           }
-                          text={
-                            connection.visibility === 'workspace'
-                              ? t`Workspace shared`
-                              : t`Just for me`
-                          }
-                        />
+                        >
+                          {connection.visibility === 'workspace'
+                            ? t`Workspace shared`
+                            : t`Just for me`}
+                        </Status>
                       </TableCell>
                       <TableCell
                         align="right"

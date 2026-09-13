@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { useMemo, useState } from 'react';
 
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -183,11 +185,28 @@ export const SettingsAdminNewAiProvider = () => {
       }
       config.region = values.region.trim();
 
-      if (values.accessKeyId.trim()) {
-        config.accessKeyId = values.accessKeyId.trim();
+      const accessKeyId = values.accessKeyId.trim();
+      const secretAccessKey = values.secretAccessKey.trim();
+
+      // Half a key pair is a slip, not a mode: role auth ignores both fields,
+      // so accepting it would run under an identity nobody chose.
+      if (isNonEmptyString(accessKeyId) !== isNonEmptyString(secretAccessKey)) {
+        form.setError(
+          isNonEmptyString(accessKeyId) ? 'secretAccessKey' : 'accessKeyId',
+          {
+            type: 'manual',
+            message: t`Enter both keys, or neither to use the instance IAM role`,
+          },
+        );
+
+        return;
       }
-      if (values.secretAccessKey.trim()) {
-        config.secretAccessKey = values.secretAccessKey.trim();
+
+      if (isNonEmptyString(accessKeyId)) {
+        config.accessKeyId = accessKeyId;
+        config.secretAccessKey = secretAccessKey;
+      } else {
+        config.authType = 'role';
       }
     }
 
@@ -435,12 +454,16 @@ export const SettingsAdminNewAiProvider = () => {
                     <Controller
                       name="accessKeyId"
                       control={form.control}
-                      render={({ field: { onChange, value } }) => (
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
                         <TextInput
                           value={value}
                           onChange={onChange}
                           placeholder={t`AKIA...`}
                           fullWidth
+                          error={error?.message}
                         />
                       )}
                     />
@@ -454,12 +477,16 @@ export const SettingsAdminNewAiProvider = () => {
                     <Controller
                       name="secretAccessKey"
                       control={form.control}
-                      render={({ field: { onChange, value } }) => (
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
                         <TextInput
                           value={value}
                           onChange={onChange}
                           fullWidth
                           type="password"
+                          error={error?.message}
                         />
                       )}
                     />

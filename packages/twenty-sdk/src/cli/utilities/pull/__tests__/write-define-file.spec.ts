@@ -1,6 +1,7 @@
 import {
   FIELD_ENUM_BINDINGS,
   INDEX_ENUM_BINDINGS,
+  NAVIGATION_MENU_ITEM_ENUM_BINDINGS,
   OBJECT_ENUM_BINDINGS,
   PAGE_LAYOUT_ENUM_BINDINGS,
   PAGE_LAYOUT_TAB_ENUM_BINDINGS,
@@ -412,6 +413,62 @@ describe('writeDefineFile', () => {
         '      },\n' +
         '    },\n' +
         '  ],\n' +
+        '});\n',
+    );
+  });
+
+  it('should write a nameless object navigation menu item with its type as a NavigationMenuItemType member', () => {
+    const file = writeDefineFile({
+      definer: 'defineNavigationMenuItem',
+      config: {
+        universalIdentifier: 'ad199fde-d4f4-4634-a94c-95b52fa32567',
+        type: 'OBJECT',
+        position: 8,
+        targetObjectUniversalIdentifier: '5c5822f2-9efa-4cb7-8101-98f5c25765b9',
+      },
+      enumBindings: NAVIGATION_MENU_ITEM_ENUM_BINDINGS,
+    });
+
+    expect(file).toBe(
+      'import {\n' +
+        '  defineNavigationMenuItem,\n' +
+        '  NavigationMenuItemType,\n' +
+        "} from 'twenty-sdk/define';\n" +
+        '\n' +
+        'export default defineNavigationMenuItem({\n' +
+        "  universalIdentifier: 'ad199fde-d4f4-4634-a94c-95b52fa32567',\n" +
+        '  type: NavigationMenuItemType.OBJECT,\n' +
+        '  position: 8,\n' +
+        "  targetObjectUniversalIdentifier: '5c5822f2-9efa-4cb7-8101-98f5c25765b9',\n" +
+        '});\n',
+    );
+  });
+
+  it('should write a folder navigation menu item with its name and icon', () => {
+    const file = writeDefineFile({
+      definer: 'defineNavigationMenuItem',
+      config: {
+        universalIdentifier: 'navigation-menu-item-uid',
+        type: 'FOLDER',
+        position: 2,
+        name: 'Operations',
+        icon: 'IconFolder',
+      },
+      enumBindings: NAVIGATION_MENU_ITEM_ENUM_BINDINGS,
+    });
+
+    expect(file).toBe(
+      'import {\n' +
+        '  defineNavigationMenuItem,\n' +
+        '  NavigationMenuItemType,\n' +
+        "} from 'twenty-sdk/define';\n" +
+        '\n' +
+        'export default defineNavigationMenuItem({\n' +
+        "  universalIdentifier: 'navigation-menu-item-uid',\n" +
+        '  type: NavigationMenuItemType.FOLDER,\n' +
+        '  position: 2,\n' +
+        "  name: 'Operations',\n" +
+        "  icon: 'IconFolder',\n" +
         '});\n',
     );
   });

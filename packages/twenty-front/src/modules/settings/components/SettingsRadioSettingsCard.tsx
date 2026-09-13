@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { type MessageDescriptor } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
-import { type KeyboardEvent, type ReactNode } from 'react';
+import { type ReactNode, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Radio } from 'twenty-ui/input';
+import { Radio, RadioGroup } from 'twenty-ui/input';
 import { Card, CardContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -24,7 +24,7 @@ const StyledCardContentContainer = styled.div`
   }
 `;
 
-const StyledOptionHeader = styled.div`
+const StyledOptionHeader = styled.label`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[4]};
@@ -70,63 +70,58 @@ export const SettingsRadioSettingsCard = <
   options,
   value,
 }: SettingsRadioSettingsCardProps<Option>) => {
+  const groupId = useId();
   const { i18n } = useLingui();
 
-  const handleKeyDown = (
-    event: KeyboardEvent<HTMLDivElement>,
-    optionValue: Option['value'],
-  ) => {
-    if (event.key !== 'Enter' && event.key !== ' ') {
-      return;
-    }
-
-    event.preventDefault();
-    onChange(optionValue);
-  };
-
   return (
-    <Card fullWidth rounded role="radiogroup">
-      {options.map((option, index) => {
-        const isSelected = value === option.value;
+    <RadioGroup
+      name={name}
+      value={value}
+      onValueChange={onChange}
+      onKeyDown={(event) => {
+        if (
+          !(event.target instanceof HTMLElement) ||
+          event.target.getAttribute('role') !== 'radio'
+        ) {
+          event.preventBaseUIHandler();
+        }
+      }}
+    >
+      <Card fullWidth rounded>
+        {options.map((option, index) => {
+          const isSelected = value === option.value;
 
-        return (
-          <StyledCardContentContainer key={option.value}>
-            <CardContent
-              aria-checked={isSelected}
-              divider={index < options.length - 1}
-              onClick={() => onChange(option.value)}
-              onKeyDown={(event) => handleKeyDown(event, option.value)}
-              role="radio"
-              tabIndex={0}
-            >
-              <StyledOptionHeader>
-                {option.cardMedia}
-                <StyledTextContainer>
-                  <StyledTitle>{i18n._(option.title)}</StyledTitle>
-                  <StyledDescription>
-                    {i18n._(option.description)}
-                  </StyledDescription>
-                </StyledTextContainer>
-                <StyledRadioContainer
-                  onClick={(event) => event.stopPropagation()}
-                >
-                  <Radio
-                    checked={isSelected}
-                    name={name}
-                    onCheckedChange={() => onChange(option.value)}
-                    value={option.value}
-                  />
-                </StyledRadioContainer>
-              </StyledOptionHeader>
-              {isDefined(option.cardContentExpanded) && isSelected && (
-                <StyledExpandedContent>
-                  {option.cardContentExpanded}
-                </StyledExpandedContent>
-              )}
-            </CardContent>
-          </StyledCardContentContainer>
-        );
-      })}
-    </Card>
+          return (
+            <StyledCardContentContainer key={option.value}>
+              <CardContent divider={index < options.length - 1}>
+                <StyledOptionHeader>
+                  {option.cardMedia}
+                  <StyledTextContainer>
+                    <StyledTitle id={`${groupId}-${index}-title`}>
+                      {i18n._(option.title)}
+                    </StyledTitle>
+                    <StyledDescription id={`${groupId}-${index}-description`}>
+                      {i18n._(option.description)}
+                    </StyledDescription>
+                  </StyledTextContainer>
+                  <StyledRadioContainer>
+                    <Radio
+                      aria-labelledby={`${groupId}-${index}-title`}
+                      aria-describedby={`${groupId}-${index}-description`}
+                      value={option.value}
+                    />
+                  </StyledRadioContainer>
+                </StyledOptionHeader>
+                {isDefined(option.cardContentExpanded) && isSelected && (
+                  <StyledExpandedContent>
+                    {option.cardContentExpanded}
+                  </StyledExpandedContent>
+                )}
+              </CardContent>
+            </StyledCardContentContainer>
+          );
+        })}
+      </Card>
+    </RadioGroup>
   );
 };

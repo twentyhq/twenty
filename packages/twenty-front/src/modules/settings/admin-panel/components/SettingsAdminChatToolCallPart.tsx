@@ -126,7 +126,7 @@ export const SettingsAdminChatToolCallPart = ({
         <StyledToolLabel>
           <IconTool size={14} />
           {toolName}
-          {hasToolError && <Tag color="red" text={t`Failed`} />}
+          {hasToolError && <Tag color="red">{t`Failed`}</Tag>}
         </StyledToolLabel>
         <StyledRightContent>
           {isExpanded ? (

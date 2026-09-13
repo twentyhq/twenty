@@ -14,7 +14,8 @@ import { getRecordFilterOperands } from '@/object-record/record-filter/utils/get
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -55,6 +56,9 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
       useUpsertObjectFilterDropdownCurrentFilter();
 
     const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+    const filterDropdownId = useAvailableComponentInstanceIdOrThrow(
+      ObjectFilterDropdownComponentInstanceContext,
+    );
     const { getInitialFilterValue } = useGetInitialFilterValue();
 
     const store = useStore();
@@ -75,7 +79,7 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
 
           if (filterType === 'RELATION' || filterType === 'SELECT') {
             pushFocusItemToFocusStack({
-              focusId: ViewBarFilterDropdownIds.MAIN,
+              focusId: filterDropdownId,
               component: {
                 type: FocusComponentType.DROPDOWN,
                 instanceId: fieldMetadataItem.id,
@@ -144,6 +148,7 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
         },
         [
           store,
+          filterDropdownId,
           fieldMetadataItemUsedInDropdownCallbackState,
           currentRecordFiltersCallbackState,
           objectFilterDropdownFilterIsSelectedCallbackState,

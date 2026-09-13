@@ -1,7 +1,10 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  MessageCampaignStatus,
+} from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -11,8 +14,12 @@ import {
 } from '@/activities/emails/components/CampaignEnvelopeBox';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
+import { formatCampaignSendTime } from '@/activities/emails/utils/formatCampaignSendTime';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 const StyledValue = styled.span`
   color: ${themeCssVariables.font.color.primary};
@@ -41,6 +48,8 @@ export const CampaignSentEnvelope = ({
 }: CampaignSentEnvelopeProps) => {
   const { unsubscribeTopics, loading: areTopicsLoading } =
     useUnsubscribeTopics();
+  const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   // withSoftDeleted so a list deleted after the send still names what the
   // campaign went to.
@@ -78,6 +87,17 @@ export const CampaignSentEnvelope = ({
   // deleted or may simply be one this role cannot read, and the two look alike.
   const isTopicUnresolved =
     hasUnsubscribeTopic && !isDefined(unsubscribeTopic) && !areTopicsLoading;
+
+  const scheduledSendTime =
+    campaign.status === MessageCampaignStatus.SCHEDULED
+      ? formatCampaignSendTime({
+          value: campaign.scheduledAt,
+          timeZone,
+          dateFormat,
+          timeFormat,
+          localeCatalog,
+        })
+      : '';
 
   return (
     <CampaignEnvelopeBox width={width}>
@@ -122,6 +142,11 @@ export const CampaignSentEnvelope = ({
           <StyledEmptyValue>{t`No subject`}</StyledEmptyValue>
         )}
       </CampaignEnvelopeRow>
+      {isNonEmptyString(scheduledSendTime) && (
+        <CampaignEnvelopeRow label={t`Scheduled at`}>
+          <StyledValue>{scheduledSendTime}</StyledValue>
+        </CampaignEnvelopeRow>
+      )}
     </CampaignEnvelopeBox>
   );
 };

@@ -18,7 +18,6 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
@@ -57,6 +56,7 @@ export type SelectProps<Value extends SelectValue> = {
   dropdownOffset?: DropdownOffset;
   hasRightElement?: boolean;
   showContextualTextInControl?: boolean;
+  showIconInControl?: boolean;
   isDropdownInModal?: boolean;
   variant?: FormFieldInputVariant;
 };
@@ -100,6 +100,7 @@ export const Select = <Value extends SelectValue>({
   dropdownOffset,
   hasRightElement,
   showContextualTextInControl = true,
+  showIconInControl = true,
   isDropdownInModal = false,
   variant = 'default',
 }: SelectProps<Value>) => {
@@ -162,25 +163,26 @@ export const Select = <Value extends SelectValue>({
 
   const selectableItemIdArray = filteredOptions.map((option) => option.label);
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const { setSelectedItemId } = useSelectableList(dropdownId);
 
   const controlSelectedOption = useMemo(() => {
-    if (!isDefined(selectedOption) || showContextualTextInControl) {
+    if (!isDefined(selectedOption)) {
       return selectedOption;
     }
 
-    const { contextualText: _, ...rest } = selectedOption;
-
-    return rest;
-  }, [selectedOption, showContextualTextInControl]);
+    return {
+      ...selectedOption,
+      contextualText: showContextualTextInControl
+        ? selectedOption.contextualText
+        : undefined,
+      Icon: showIconInControl ? selectedOption.Icon : undefined,
+    };
+  }, [selectedOption, showContextualTextInControl, showIconInControl]);
 
   const handleDropdownOpen = () => {
     if (
@@ -244,6 +246,7 @@ export const Select = <Value extends SelectValue>({
                 <DropdownMenuItemsContainer scrollable={false}>
                   <MenuItemSelect
                     LeftIcon={pinnedOption.Icon}
+                    LeftComponent={pinnedOption.LeftComponent}
                     leftIconColor={pinnedOption.iconThemeColor}
                     text={pinnedOption.label}
                     contextualText={pinnedOption.contextualText}
@@ -281,6 +284,7 @@ export const Select = <Value extends SelectValue>({
                       >
                         <MenuItemSelect
                           LeftIcon={option.Icon}
+                          LeftComponent={option.LeftComponent}
                           leftIconColor={option.iconThemeColor}
                           text={option.label}
                           contextualText={option.contextualText}

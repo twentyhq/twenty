@@ -7,7 +7,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import { SettingsApplicationConnectionDetail } from '~/pages/settings/applications/SettingsApplicationConnectionDetail';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
-import { useMyAppConnectedAccounts } from '~/pages/settings/applications/hooks/useMyAppConnectedAccounts';
+import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 
 const mockTriggerAppOAuth = jest.fn();
 const mockDeleteConnectedAccount = jest.fn();
@@ -27,9 +27,9 @@ jest.mock(
 );
 
 jest.mock(
-  '~/pages/settings/applications/hooks/useMyAppConnectedAccounts',
+  '~/pages/settings/applications/hooks/useApplicationConnectedAccounts',
   () => ({
-    useMyAppConnectedAccounts: jest.fn(),
+    useApplicationConnectedAccounts: jest.fn(),
   }),
 );
 
@@ -79,9 +79,9 @@ const mockedUseFindApplicationConnectionProviders =
   useFindApplicationConnectionProviders as jest.MockedFunction<
     typeof useFindApplicationConnectionProviders
   >;
-const mockedUseMyAppConnectedAccounts =
-  useMyAppConnectedAccounts as jest.MockedFunction<
-    typeof useMyAppConnectedAccounts
+const mockedUseApplicationConnectedAccounts =
+  useApplicationConnectedAccounts as jest.MockedFunction<
+    typeof useApplicationConnectedAccounts
   >;
 
 const renderDetailPage = () =>
@@ -135,23 +135,20 @@ describe('SettingsApplicationConnectionDetail', () => {
       loading: false,
       refetch: jest.fn(),
     });
-    mockedUseMyAppConnectedAccounts.mockReturnValue({
+    mockedUseApplicationConnectedAccounts.mockReturnValue({
       accounts: [
         {
-          __typename: 'ConnectedAccountPublicDTO',
+          __typename: 'ApplicationConnectedAccountDTO',
           id: 'account-1',
           handle: 'workspace@example.com',
-          provider: 'app',
           authFailedAt: null,
           scopes: ['calendar.readonly'],
-          handleAliases: [],
           lastSignedInAt: null,
-          userWorkspaceId: 'user-workspace-1',
           connectionProviderId: 'provider-1',
           name: 'Original name',
           visibility: 'user',
+          isOwnedByCurrentUser: true,
           lastCredentialsRefreshedAt: null,
-          connectionParameters: null,
           createdAt: '2026-05-01T00:00:00.000Z',
           updatedAt: '2026-05-01T00:00:00.000Z',
         },
@@ -179,6 +176,72 @@ describe('SettingsApplicationConnectionDetail', () => {
         name: 'Reconnect and share',
       }),
     );
+
+    expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
+      applicationId: 'app-1',
+      providerName: 'google-calendar',
+      visibility: 'workspace',
+      reconnectingConnectedAccountId: 'account-1',
+      redirectLocation: '/settings/applications/app-1/connections/account-1',
+    });
+  });
+
+  it('hides connection actions for a workspace shared connection owned by someone else', () => {
+    mockedUseApplicationConnectedAccounts.mockReturnValue({
+      accounts: [
+        {
+          __typename: 'ApplicationConnectedAccountDTO',
+          id: 'account-1',
+          handle: 'workspace@example.com',
+          authFailedAt: '2026-05-01T00:00:00.000Z',
+          scopes: ['calendar.readonly'],
+          lastSignedInAt: null,
+          connectionProviderId: 'provider-1',
+          name: 'Shared connection',
+          visibility: 'workspace',
+          isOwnedByCurrentUser: false,
+          lastCredentialsRefreshedAt: null,
+          createdAt: '2026-05-01T00:00:00.000Z',
+          updatedAt: '2026-05-01T00:00:00.000Z',
+        },
+      ],
+      loading: false,
+      refetch: jest.fn(),
+    });
+
+    renderDetailPage();
+
+    expect(screen.getByText('Workspace shared')).toBeVisible();
+    expect(screen.getByText('Reconnect needed')).toBeVisible();
+    expect(screen.queryByText('Reconnect')).not.toBeInTheDocument();
+  });
+
+  it('shows the reconnect action to the owner of a failed connection', () => {
+    mockedUseApplicationConnectedAccounts.mockReturnValue({
+      accounts: [
+        {
+          __typename: 'ApplicationConnectedAccountDTO',
+          id: 'account-1',
+          handle: 'workspace@example.com',
+          authFailedAt: '2026-05-01T00:00:00.000Z',
+          scopes: ['calendar.readonly'],
+          lastSignedInAt: null,
+          connectionProviderId: 'provider-1',
+          name: 'Shared connection',
+          visibility: 'workspace',
+          isOwnedByCurrentUser: true,
+          lastCredentialsRefreshedAt: null,
+          createdAt: '2026-05-01T00:00:00.000Z',
+          updatedAt: '2026-05-01T00:00:00.000Z',
+        },
+      ],
+      loading: false,
+      refetch: jest.fn(),
+    });
+
+    renderDetailPage();
+
+    fireEvent.click(screen.getByText('Reconnect'));
 
     expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
       applicationId: 'app-1',

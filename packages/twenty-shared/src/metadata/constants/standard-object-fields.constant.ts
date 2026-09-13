@@ -557,6 +557,9 @@ export const STANDARD_OBJECT_FIELDS = {
       universalIdentifier: '91e1a33c-c1ff-411a-b720-9085e13c05db',
     },
     status: { universalIdentifier: 'c7117256-3de6-48e1-87df-c99c32bad610' },
+    scheduledAt: {
+      universalIdentifier: '0b281092-f5a5-4dd6-969b-5229f6620071',
+    },
     sentAt: { universalIdentifier: 'e2315b4f-9edf-4df2-96b9-961e76368671' },
     sentCount: {
       universalIdentifier: '2f333d2b-37b8-4ddc-ad0d-c07c6ce066ad',

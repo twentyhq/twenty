@@ -1,7 +1,11 @@
 import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
+import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
 import { buildSlackUserLinkConsentBlocks } from 'src/logic-functions/utils/build-slack-user-link-consent-blocks';
+import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-slack-message-delivery';
+import { postSlackMessage } from 'src/logic-functions/utils/post-slack-message';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const sendSlackUserLinkConsentDm = async (
@@ -34,19 +38,40 @@ export const sendSlackUserLinkConsentDm = async (
       };
     }
 
-    await slackClient.chat.postMessage({
-      channel: channelId,
-      text: 'A Twenty admin asked to link your Slack account. Approve or decline it here.',
-      blocks: buildSlackUserLinkConsentBlocks({
+    const consentMessage: SlackPostMessageInput = {
+      slackChannelId: channelId,
+      messageText:
+        'A Twenty admin asked to link your Slack account. Approve or decline it here.',
+      messageBlocks: buildSlackUserLinkConsentBlocks({
         memberName,
         slackTeamId,
         slackUserId,
         workspaceMemberId,
         slackUserLinkId,
       }),
+    };
+
+    const deliveryResult = await postSlackMessage(slackClient, consentMessage, {
+      waitOutRateLimit: false,
     });
 
-    return { success: true };
+    if (deliveryResult.success) {
+      return { success: true };
+    }
+
+    if (isDefined(deliveryResult.retryAfterSeconds)) {
+      await enqueueSlackMessageDelivery({
+        payload: consentMessage,
+        retryAfterSeconds: deliveryResult.retryAfterSeconds,
+      });
+
+      return { success: true };
+    }
+
+    return {
+      success: false,
+      error: deliveryResult.error ?? deliveryResult.message,
+    };
   } catch (error) {
     return {
       success: false,

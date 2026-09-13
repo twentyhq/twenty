@@ -6,15 +6,9 @@ import { type GeneratedCatalog } from '../types/generated-catalog.type';
 
 const MEASURED_AT = '2026-09-09';
 
-const catalogOf = (...modelNames: string[]): GeneratedCatalog =>
-  ({
-    openai: {
-      npm: '@ai-sdk/openai',
-      label: 'OpenAI',
-      apiKey: '',
-      models: modelNames.map((name) => ({ name, label: name })),
-    },
-  }) as GeneratedCatalog;
+const catalogOf = (...modelNames: string[]): GeneratedCatalog => ({
+  openai: { models: modelNames.map((name) => ({ name, label: name })) },
+});
 
 const enrich = (catalog: GeneratedCatalog, benchmarkIndex: BenchmarkIndex) =>
   enrichCatalog({
@@ -76,5 +70,62 @@ describe('enrichCatalog', () => {
       'benchmark',
       'isDeprecated',
     ]);
+  });
+
+  it('embeds per-effort readings in the catalog and mirrors them, with aliases, into the overlay', () => {
+    const catalog = catalogOf('gpt-x');
+
+    catalog.openai.models[0].efforts = ['low', 'high'];
+
+    const overlay = enrich(
+      catalog,
+      new Map([
+        [
+          'gptx',
+          { intelligenceIndex: 41, effort: 'high', aliases: ['GPT X (high)'] },
+        ],
+        [
+          'gptx@high',
+          { intelligenceIndex: 41, effort: 'high', aliases: ['GPT X (high)'] },
+        ],
+        [
+          'gptx@low',
+          { intelligenceIndex: 30, effort: 'low', aliases: ['GPT X (low)'] },
+        ],
+      ]),
+    );
+
+    expect(catalog.openai.models[0].benchmark?.effort).toBe('high');
+    expect(catalog.openai.models[0].benchmarkByEffort).toEqual({
+      low: { intelligenceIndex: 30, effort: 'low', measuredAt: MEASURED_AT },
+      high: { intelligenceIndex: 41, effort: 'high', measuredAt: MEASURED_AT },
+    });
+    expect(overlay['gpt-x'].benchmarkByEffort?.low).toEqual({
+      intelligenceIndex: 30,
+      effort: 'low',
+      measuredAt: MEASURED_AT,
+      aliases: ['GPT X (low)'],
+    });
+    expect(Object.keys(catalog.openai.models[0])).toEqual([
+      'name',
+      'label',
+      'efforts',
+      'benchmark',
+      'benchmarkByEffort',
+    ]);
+  });
+
+  it('writes no effort map for a model whose declared efforts have no rows', () => {
+    const catalog = catalogOf('gpt-x');
+
+    catalog.openai.models[0].efforts = ['low', 'high'];
+
+    const overlay = enrich(
+      catalog,
+      new Map([['gptx', { intelligenceIndex: 41, aliases: ['gpt-x'] }]]),
+    );
+
+    expect(catalog.openai.models[0].benchmarkByEffort).toBeUndefined();
+    expect(overlay['gpt-x'].benchmarkByEffort).toBeUndefined();
   });
 });

@@ -26,6 +26,12 @@ const STANDARD_FIELD_LOCATION_BY_UNIVERSAL_IDENTIFIER = new Map<
   ),
 );
 
+export const isUsableFileNameSegment = (
+  value: string | undefined,
+): value is string =>
+  isNonEmptyString(value) &&
+  isNonEmptyString(kebabCase(value).replace(/-+/g, ''));
+
 export const capFileBaseName = (fileBaseName: string): string =>
   fileBaseName.slice(0, MAX_FILE_BASE_NAME_LENGTH).replace(/-+$/g, '');
 

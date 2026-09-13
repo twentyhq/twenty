@@ -1,0 +1,1 @@
+export const SKILL_SUGGESTION_PREVIEW_WIDTH = 320;

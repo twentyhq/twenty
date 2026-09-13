@@ -1,25 +1,19 @@
-import React from 'react';
+import { Radio } from '@ui/input/Radio/Radio';
+import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from './CardPicker.module.scss';
-import { Radio } from '@ui/input/Radio/Radio';
+import { type CardPickerProps } from './types/CardPickerProps';
 
-type CardPickerProps = {
-  children: React.ReactNode;
-  handleChange?: () => void;
-  checked?: boolean;
-};
-
-export const CardPicker = ({
+export const CardPicker = <TValue,>({
   children,
-  checked,
-  handleChange,
-}: CardPickerProps) => {
-  return (
-    <button className={styles.container} onClick={handleChange}>
-      <div className={styles.radioContainer}>
-        <Radio checked={checked} />
-      </div>
-      <div className={styles.cardInner}>{children}</div>
-    </button>
-  );
-};
+  className,
+  ...props
+}: CardPickerProps<TValue>) => (
+  <Radio
+    render={<div />}
+    {...props}
+    className={mergeClassNames(styles.container, className)}
+  >
+    <div className={styles.cardInner}>{children}</div>
+  </Radio>
+);

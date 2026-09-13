@@ -3,6 +3,7 @@ import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 
 import { buildGranolaNote } from 'src/__tests__/utils/build-granola-note.util';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
+import { GranolaInvalidResponseError } from 'src/logic-functions/types/granola-invalid-response-error';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 
 const API_KEY = 'grn_test_secret';
@@ -107,9 +108,11 @@ describe('createGranolaClientOrThrow', () => {
         .fn<typeof fetch>()
         .mockResolvedValue(Response.json({ folders: API_KEY })),
     );
-    await expect(
-      createGranolaClientOrThrow({ apiKey: API_KEY }).listFolders(),
-    ).rejects.toThrow('Granola returned an unexpected response.');
+    const promise = createGranolaClientOrThrow({
+      apiKey: API_KEY,
+    }).listFolders();
+    await expect(promise).rejects.toBeInstanceOf(GranolaInvalidResponseError);
+    await expect(promise).rejects.not.toThrow(API_KEY);
   });
 
   it('rejects blank keys before making a request', () => {

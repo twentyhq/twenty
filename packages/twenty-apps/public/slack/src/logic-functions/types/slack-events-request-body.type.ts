@@ -1,3 +1,5 @@
+import { type SlackMessageFile } from 'src/logic-functions/types/slack-message-file.type';
+
 type SlackEventAuthorization = {
   user_id?: string;
   is_bot?: boolean;
@@ -20,6 +22,7 @@ type SlackInboundEvent = {
   bot_id?: string;
   user?: string;
   text?: string;
+  files?: SlackMessageFile[];
   ts?: string;
   thread_ts?: string;
   channel?: string;
