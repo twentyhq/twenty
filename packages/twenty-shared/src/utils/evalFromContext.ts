@@ -1,3 +1,7 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { isDefined } from '@/utils/validation/isDefined';
+
 // Resolves a single `{{ path }}` token against a context object.
 //
 // This replaces a Handlebars `{{{ json <path> }}}` compile whose only purpose
@@ -15,6 +19,8 @@
 const TOKEN_PATTERN = /^\{\{([^{}]*)\}\}$/;
 const NUMBER_LITERAL_PATTERN = /^-?\d+(\.\d+)?$/;
 const WHOLE_CONTEXT_PATHS = ['.', 'this', '@root'];
+const CONTEXT_PREFIXES = ['./', 'this.', '@root.'];
+const KEYWORD_LITERALS = ['true', 'false', 'null', 'undefined'];
 
 type PathSegment = { value: string; isLiteralSegment: boolean };
 
@@ -149,13 +155,13 @@ export const evalFromContext = (
 
   const expression = tokenMatch[1].trim();
 
-  if (expression === '') {
+  if (!isNonEmptyString(expression)) {
     return undefined;
   }
 
   const param = readFirstParam(expression);
 
-  if (param === undefined || param === '') {
+  if (!isNonEmptyString(param)) {
     return undefined;
   }
 
@@ -163,27 +169,9 @@ export const evalFromContext = (
     return toJsonValue(context);
   }
 
-  if (param.startsWith('@') || param.includes('../')) {
-    return undefined;
-  }
-
-  if (param === 'true') return true;
-  if (param === 'false') return false;
-  if (param === 'null') return null;
-  if (param === 'undefined') return undefined;
-
-  if (NUMBER_LITERAL_PATTERN.test(param)) {
-    return Number(param);
-  }
-
-  if (
-    (param.startsWith('"') && param.endsWith('"') && param.length > 1) ||
-    (param.startsWith("'") && param.endsWith("'") && param.length > 1)
-  ) {
-    return param.slice(1, -1);
-  }
-
-  const contextPrefix = ['./', 'this.', '@root.'].find((prefix) =>
+  // Stripped before the `@` guard below, so `@root.foo` stays a path rooted at
+  // the context rather than being rejected as an unsupported data variable
+  const contextPrefix = CONTEXT_PREFIXES.find((prefix) =>
     param.startsWith(prefix),
   );
   const normalizedPath =
@@ -192,6 +180,43 @@ export const evalFromContext = (
   // `this..foo` truncated at the repeated dot in Handlebars, leaving the context
   if (contextPrefix !== undefined && normalizedPath.startsWith('.')) {
     return toJsonValue(context);
+  }
+
+  if (contextPrefix === undefined) {
+    if (param.startsWith('@')) {
+      return undefined;
+    }
+
+    if (param === 'true') {
+      return true;
+    }
+
+    if (param === 'false') {
+      return false;
+    }
+
+    if (param === 'null') {
+      return null;
+    }
+
+    if (param === 'undefined') {
+      return undefined;
+    }
+
+    if (NUMBER_LITERAL_PATTERN.test(param)) {
+      return Number(param);
+    }
+
+    if (
+      (param.startsWith('"') && param.endsWith('"') && param.length > 1) ||
+      (param.startsWith("'") && param.endsWith("'") && param.length > 1)
+    ) {
+      return param.slice(1, -1);
+    }
+  }
+
+  if (param.includes('../')) {
+    return undefined;
   }
 
   const segments = parsePathSegments(normalizedPath);
@@ -204,23 +229,42 @@ export const evalFromContext = (
     return toJsonValue(context);
   }
 
-  // A leading `[]` collapsed the whole path to the context in Handlebars
-  if (segments[0].isLiteralSegment && segments[0].value === '') {
+  // A leading `[]` collapsed the whole path to the context in Handlebars, but
+  // only for a bare path: under `@root.` it stayed an ordinary empty-string key
+  if (
+    contextPrefix !== '@root.' &&
+    segments[0].isLiteralSegment &&
+    segments[0].value === ''
+  ) {
     return toJsonValue(context);
   }
+
+  // Handlebars guarded each hop, but with a different test depending on how the
+  // path started: `x != null ? x.key : x` for a bare or `this.` path, and a
+  // plain truthiness check for an `@root.` data lookup, so walking through 0 or
+  // '' yields that value there rather than undefined
+  const shortCircuitsOnFalsy = contextPrefix === '@root.';
 
   let resolved: unknown = context;
 
   for (const segment of segments) {
-    // Handlebars compiled each hop as `x != null ? x.key : x`, so a nullish
-    // container short-circuits to itself rather than to undefined
-    if (resolved === null || resolved === undefined) {
+    const shortCircuits = shortCircuitsOnFalsy
+      ? !isDefined(resolved) ||
+        resolved === '' ||
+        resolved === 0 ||
+        resolved === false
+      : !isDefined(resolved);
+
+    if (shortCircuits) {
       return toJsonValue(resolved);
     }
 
+    // Handlebars allowed a number or a keyword only as a whole expression, so
+    // as a bare path segment they never resolved; `[0]` and `[true]` still do
     if (
       !segment.isLiteralSegment &&
-      NUMBER_LITERAL_PATTERN.test(segment.value)
+      (NUMBER_LITERAL_PATTERN.test(segment.value) ||
+        KEYWORD_LITERALS.includes(segment.value))
     ) {
       return undefined;
     }

@@ -97,6 +97,53 @@ describe('evalFromContext', () => {
     expect(evalFromContext('not a token', context)).toBeUndefined();
   });
 
+  // `@root.` was a data lookup in Handlebars and compiled to a different guard
+  // from a bare path, so these two families are pinned separately
+  describe('context-prefixed paths', () => {
+    const prefixContext = {
+      zero: 0,
+      emptyString: '',
+      truthy: 'hi',
+      obj: { p: 1 },
+    };
+
+    it('should resolve a path rooted at the context', () => {
+      expect(evalFromContext('{{@root.obj.p}}', prefixContext)).toBe(1);
+      expect(evalFromContext('{{./obj.p}}', prefixContext)).toBe(1);
+      expect(evalFromContext('{{this.obj.p}}', prefixContext)).toBe(1);
+    });
+
+    it('should short-circuit an @root path on a falsy value', () => {
+      expect(evalFromContext('{{@root.zero.missing}}', prefixContext)).toBe(0);
+      expect(
+        evalFromContext('{{@root.emptyString.missing}}', prefixContext),
+      ).toBe('');
+      expect(
+        evalFromContext('{{@root.truthy.missing}}', prefixContext),
+      ).toBeUndefined();
+    });
+
+    it('should short-circuit a bare path only on a nullish value', () => {
+      expect(
+        evalFromContext('{{zero.missing}}', prefixContext),
+      ).toBeUndefined();
+      expect(
+        evalFromContext('{{this.zero.missing}}', prefixContext),
+      ).toBeUndefined();
+    });
+  });
+
+  // Keywords were only literals as a whole expression; as a path segment they
+  // never resolved unless written as a segment literal
+  it('should not resolve a bare keyword segment', () => {
+    const keywordContext = { obj: { true: 'T', null: 'N' } };
+
+    expect(evalFromContext('{{obj.true}}', keywordContext)).toBeUndefined();
+    expect(evalFromContext('{{obj.null}}', keywordContext)).toBeUndefined();
+    expect(evalFromContext('{{obj.[true]}}', keywordContext)).toBe('T');
+    expect(evalFromContext('{{obj.[null]}}', keywordContext)).toBe('N');
+  });
+
   it('should support literals, as Handlebars path expressions did', () => {
     expect(evalFromContext('{{true}}', context)).toBe(true);
     expect(evalFromContext('{{null}}', context)).toBeNull();
