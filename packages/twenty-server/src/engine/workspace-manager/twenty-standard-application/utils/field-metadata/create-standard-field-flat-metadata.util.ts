@@ -36,6 +36,7 @@ export type CreateStandardFieldArgs<
     isUnique?: boolean;
     isUIEditable?: boolean;
     isAuditLogged?: boolean;
+    writability?: MetadataWritability;
     defaultValue?: FieldMetadataDefaultValue<T>;
     settings?: FieldMetadataSettings<T>;
     options?:
@@ -62,6 +63,7 @@ export const createStandardFieldFlatMetadata = <
     isUnique = false,
     isUIEditable = true,
     isAuditLogged = isAuditLoggableFieldType(type),
+    writability,
     defaultValue,
     settings,
     options: fieldOptions = null,
@@ -98,11 +100,12 @@ export const createStandardFieldFlatMetadata = <
     isAuditLogged,
     isUIEditable,
     writability:
-      name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
+      writability ??
+      (name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
         ? PARTIAL_SYSTEM_FLAT_FIELD_METADATAS[
             name as keyof typeof PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
           ].writability
-        : MetadataWritability.OPEN,
+        : MetadataWritability.OPEN),
     isLabelSyncedWithName: false,
     overrides: null,
     defaultValue: defaultValue ?? null,

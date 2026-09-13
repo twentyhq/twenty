@@ -47,6 +47,7 @@ type UnsubscribeFormBody = {
   t?: string;
   unsubscribeTopicId?: string | string[];
   tracking?: string;
+  trackingBefore?: string;
 };
 
 const RATE_LIMIT = { maxRequests: 120, windowMs: 60_000 };
@@ -174,7 +175,7 @@ export class UnsubscribeController {
 
     const trackingDecision = this.parseTrackingDecision(body.tracking);
 
-    if (isDefined(trackingDecision)) {
+    if (isDefined(trackingDecision) && body.tracking !== body.trackingBefore) {
       await this.messageTrackingConsentService.recordDecision({
         workspaceId: payload.workspaceId,
         emailAddress: payload.emailAddress,

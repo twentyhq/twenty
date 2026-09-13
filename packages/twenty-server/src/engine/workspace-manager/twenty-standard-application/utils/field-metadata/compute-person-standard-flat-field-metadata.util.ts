@@ -5,6 +5,7 @@ import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-applicat
 import {
   DateDisplayFormat,
   FieldMetadataType,
+  MetadataWritability,
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
@@ -749,6 +750,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIEditable: false,
       isAuditLogged: false,
+      writability: MetadataWritability.SYSTEM,
       options: [
         {
           id: 'c1d2e3f4-5a6b-4c7d-8e9f-0a1b2c3d4e5f',

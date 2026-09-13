@@ -17,7 +17,6 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
   ['workspaceId', 'emailAddress'],
   { unique: true },
 )
-@Index('IDX_MESSAGE_TRACKING_CONSENT_PERSON_ID', ['workspaceId', 'personId'])
 export class MessageTrackingConsentEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -44,7 +43,4 @@ export class MessageTrackingConsentEntity extends WorkspaceRelatedEntity {
     nullable: false,
   })
   source: MessageTrackingConsentSource;
-
-  @Column({ type: 'uuid', nullable: true })
-  personId: string | null;
 }

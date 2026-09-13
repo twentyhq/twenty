@@ -25,7 +25,6 @@ export class AddMessageTrackingConsentFastInstanceCommand
          "emailAddress" character varying NOT NULL,
          "decision" "core"."messageTrackingConsent_decision_enum" NOT NULL,
          "source" "core"."messageTrackingConsent_source_enum" NOT NULL,
-         "personId" uuid,
          CONSTRAINT "PK_messageTrackingConsent_id" PRIMARY KEY ("id"),
          CONSTRAINT "FK_messageTrackingConsent_workspaceId" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION
        )`,
@@ -33,10 +32,6 @@ export class AddMessageTrackingConsentFastInstanceCommand
 
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_MESSAGE_TRACKING_CONSENT_EMAIL_UNIQUE" ON "core"."messageTrackingConsent" ("workspaceId", "emailAddress")`,
-    );
-
-    await queryRunner.query(
-      `CREATE INDEX "IDX_MESSAGE_TRACKING_CONSENT_PERSON_ID" ON "core"."messageTrackingConsent" ("workspaceId", "personId")`,
     );
   }
 

@@ -22,6 +22,7 @@ export class EmailingDomainGraphqlApiExceptionFilter implements ExceptionFilter 
       case EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_FOUND:
         throw new NotFoundError(exception);
       case EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_REMOVABLE:
+      case EmailingDomainExceptionCode.MESSAGE_TRACKING_CONSENT_REFUSED_BY_RECIPIENT:
         throw new ForbiddenError(exception);
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_FOUND:
         throw new NotFoundError(exception);

@@ -31,8 +31,9 @@ const buildTrackingSection = ({ decision }: TrackingPreference): string => {
   const isDenied = decision === MessageTrackingConsentDecision.DENIED;
   const grantedAttribute = isDenied ? '' : ' checked';
   const deniedAttribute = isDenied ? ' checked' : '';
+  const trackingBeforeField = `<input type="hidden" name="trackingBefore" value="${decision ?? ''}" />`;
 
-  return `<div class="topics"><p class="section-title">Email tracking</p><p class="hint">This sender records when you open its emails and which links you click. You can opt out for this email address.</p><label class="topic"><input type="radio" name="tracking" value="${MessageTrackingConsentDecision.GRANTED}"${grantedAttribute} />Keep tracking my opens and clicks</label><label class="topic"><input type="radio" name="tracking" value="${MessageTrackingConsentDecision.DENIED}"${deniedAttribute} />Opt out of open and click tracking</label></div>`;
+  return `<div class="topics">${trackingBeforeField}<p class="section-title">Email tracking</p><p class="hint">This sender records when you open its emails and which links you click. You can opt out for this email address.</p><label class="topic"><input type="radio" name="tracking" value="${MessageTrackingConsentDecision.GRANTED}"${grantedAttribute} />Keep tracking my opens and clicks</label><label class="topic"><input type="radio" name="tracking" value="${MessageTrackingConsentDecision.DENIED}"${deniedAttribute} />Opt out of open and click tracking</label></div>`;
 };
 
 export const buildUnsubscribePreferencesPage = ({

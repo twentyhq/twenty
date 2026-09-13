@@ -2,12 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { In, Repository } from 'typeorm';
+import { In, QueryFailedError, Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
+import {
+  EmailingDomainException,
+  EmailingDomainExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { MessageTrackingConsentEntity } from 'src/engine/core-modules/emailing-domain/message-tracking-consent.entity';
 import { MessageTrackingConsentDecision } from 'src/engine/core-modules/emailing-domain/types/message-tracking-consent-decision.type';
-import { type MessageTrackingConsentSource } from 'src/engine/core-modules/emailing-domain/types/message-tracking-consent-source.type';
+import { MessageTrackingConsentSource } from 'src/engine/core-modules/emailing-domain/types/message-tracking-consent-source.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -16,7 +22,6 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { type TrackingPreference } from 'src/modules/emailing/types/tracking-preference.type';
 import { collectPersonEmailAddresses } from 'src/modules/emailing/utils/collect-person-email-addresses.util';
 import { normalizeEmailAddress } from 'src/modules/emailing/utils/normalize-email-address.util';
-import { resolvePersonEmailTrackingConsent } from 'src/modules/emailing/utils/resolve-person-email-tracking-consent.util';
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
@@ -131,17 +136,16 @@ export class MessageTrackingConsentService {
       return;
     }
 
-    const people = await this.findPeopleByEmailAddresses({
-      workspaceId,
-      emailAddresses: [normalizedEmailAddress],
-    });
-
     await this.upsertDecision({
       workspaceId,
       emailAddress: normalizedEmailAddress,
       decision,
       source,
-      personId: people[0]?.id ?? null,
+    });
+
+    const people = await this.findPeopleByEmailAddresses({
+      workspaceId,
+      emailAddresses: [normalizedEmailAddress],
     });
 
     await this.refreshPersonFields({ workspaceId, people });
@@ -167,13 +171,22 @@ export class MessageTrackingConsentService {
       return false;
     }
 
-    for (const emailAddress of collectPersonEmailAddresses(person.emails)) {
+    const emailAddresses = collectPersonEmailAddresses(person.emails);
+
+    if (emailAddresses.length === 0) {
+      return false;
+    }
+
+    if (decision === MessageTrackingConsentDecision.GRANTED) {
+      await this.assertNotRefusedByRecipient({ workspaceId, emailAddresses });
+    }
+
+    for (const emailAddress of emailAddresses) {
       await this.upsertDecision({
         workspaceId,
         emailAddress,
         decision,
         source,
-        personId: person.id,
       });
     }
 
@@ -182,7 +195,7 @@ export class MessageTrackingConsentService {
     return true;
   }
 
-  async linkPeople({
+  async refreshPeople({
     workspaceId,
     personIds,
   }: {
@@ -191,45 +204,31 @@ export class MessageTrackingConsentService {
   }): Promise<void> {
     const people = await this.findPeopleByIds({ workspaceId, personIds });
 
-    if (people.length === 0) {
-      return;
-    }
-
-    await this.unlinkPeople({ workspaceId, personIds });
-
-    for (const person of people) {
-      const emailAddresses = collectPersonEmailAddresses(person.emails);
-
-      if (emailAddresses.length === 0) {
-        continue;
-      }
-
-      await this.consentRepository.update(
-        workspaceId,
-        { emailAddress: In(emailAddresses) },
-        { personId: person.id },
-      );
-    }
-
     await this.refreshPersonFields({ workspaceId, people });
   }
 
-  async unlinkPeople({
+  private async assertNotRefusedByRecipient({
     workspaceId,
-    personIds,
+    emailAddresses,
   }: {
     workspaceId: string;
-    personIds: string[];
+    emailAddresses: string[];
   }): Promise<void> {
-    if (personIds.length === 0) {
-      return;
-    }
-
-    await this.consentRepository.update(
+    const recipientRefusal = await this.consentRepository.findOneBy(
       workspaceId,
-      { personId: In(personIds) },
-      { personId: null },
+      {
+        emailAddress: In(emailAddresses),
+        decision: MessageTrackingConsentDecision.DENIED,
+        source: MessageTrackingConsentSource.PREFERENCES_PAGE,
+      },
     );
+
+    if (isDefined(recipientRefusal)) {
+      throw new EmailingDomainException(
+        `Recipient ${recipientRefusal.emailAddress} opted out of tracking themselves`,
+        EmailingDomainExceptionCode.MESSAGE_TRACKING_CONSENT_REFUSED_BY_RECIPIENT,
+      );
+    }
   }
 
   private async upsertDecision({
@@ -237,29 +236,46 @@ export class MessageTrackingConsentService {
     emailAddress,
     decision,
     source,
-    personId,
-  }: RecordDecisionArgs & { personId: string | null }): Promise<void> {
-    const existingConsent = await this.consentRepository.findOneBy(
-      workspaceId,
-      { emailAddress },
-    );
+  }: RecordDecisionArgs): Promise<void> {
+    const updateExisting = async (): Promise<boolean> => {
+      const existingConsent = await this.consentRepository.findOneBy(
+        workspaceId,
+        { emailAddress },
+      );
 
-    if (isDefined(existingConsent)) {
+      if (!isDefined(existingConsent)) {
+        return false;
+      }
+
       await this.consentRepository.update(
         workspaceId,
         { id: existingConsent.id },
-        { decision, source, personId },
+        { decision, source },
       );
 
+      return true;
+    };
+
+    if (await updateExisting()) {
       return;
     }
 
-    await this.consentRepository.insert(workspaceId, {
-      emailAddress,
-      decision,
-      source,
-      personId,
-    });
+    try {
+      await this.consentRepository.insert(workspaceId, {
+        emailAddress,
+        decision,
+        source,
+      });
+    } catch (error) {
+      const isUniqueViolation =
+        error instanceof QueryFailedError &&
+        (error as QueryFailedErrorWithCode).code ===
+          POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION;
+
+      if (!isUniqueViolation || !(await updateExisting())) {
+        throw error;
+      }
+    }
   }
 
   private async refreshPersonFields({
@@ -269,11 +285,16 @@ export class MessageTrackingConsentService {
     workspaceId: string;
     people: PersonWorkspaceEntity[];
   }): Promise<void> {
+    const primaryEmailAddressByPersonId = new Map(
+      people.map((person) => [
+        person.id,
+        normalizeEmailAddress(person.emails?.primaryEmail ?? ''),
+      ]),
+    );
+
     const emailAddresses = [
-      ...new Set(
-        people.flatMap((person) => collectPersonEmailAddresses(person.emails)),
-      ),
-    ];
+      ...new Set(primaryEmailAddressByPersonId.values()),
+    ].filter(isNonEmptyString);
 
     const consents =
       emailAddresses.length > 0
@@ -293,12 +314,12 @@ export class MessageTrackingConsentService {
       );
 
       for (const person of people) {
-        const emailTrackingConsent = resolvePersonEmailTrackingConsent({
-          emailAddresses: collectPersonEmailAddresses(person.emails),
-          decisionByEmailAddress,
-        });
+        const emailTrackingConsent =
+          decisionByEmailAddress.get(
+            primaryEmailAddressByPersonId.get(person.id) ?? '',
+          ) ?? null;
 
-        if (person.emailTrackingConsent === emailTrackingConsent) {
+        if ((person.emailTrackingConsent ?? null) === emailTrackingConsent) {
           continue;
         }
 

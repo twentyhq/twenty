@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import {
   type ObjectRecordCreateEvent,
-  type ObjectRecordDeleteEvent,
   type ObjectRecordUpdateEvent,
 } from 'twenty-shared/database-events';
 
@@ -33,7 +32,7 @@ export class MessageTrackingConsentPersonListener {
       )
       .map((event) => event.recordId);
 
-    await this.messageTrackingConsentService.linkPeople({
+    await this.messageTrackingConsentService.refreshPeople({
       workspaceId: payload.workspaceId,
       personIds,
     });
@@ -54,21 +53,9 @@ export class MessageTrackingConsentPersonListener {
       )
       .map((event) => event.recordId);
 
-    await this.messageTrackingConsentService.linkPeople({
+    await this.messageTrackingConsentService.refreshPeople({
       workspaceId: payload.workspaceId,
       personIds,
-    });
-  }
-
-  @OnDatabaseBatchEvent('person', DatabaseEventAction.DESTROYED)
-  async handleDestroyedEvent(
-    payload: WorkspaceEventBatch<
-      ObjectRecordDeleteEvent<PersonWorkspaceEntity>
-    >,
-  ): Promise<void> {
-    await this.messageTrackingConsentService.unlinkPeople({
-      workspaceId: payload.workspaceId,
-      personIds: payload.events.map((event) => event.recordId),
     });
   }
 }
