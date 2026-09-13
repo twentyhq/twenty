@@ -125,9 +125,9 @@ import {
 } from 'twenty-sdk/define';
 import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
 
+// Both identifiers live here so imports stay one-way (the reverse field imports from this file)
 export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';
-// Imported from the reverse field below
-import { SELF_HOSTING_USER_REVERSE_FIELD_ID } from './self-hosting-users-on-person.field';
+export const SELF_HOSTING_USER_REVERSE_FIELD_ID = 'd4444444-4444-4444-4444-444444444444';
 
 export default defineField({
   universalIdentifier: PERSON_FIELD_ID,
@@ -158,9 +158,10 @@ import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
-import { PERSON_FIELD_ID } from './person-on-self-hosting-user.field';
-
-export const SELF_HOSTING_USER_REVERSE_FIELD_ID = 'd4444444-4444-4444-4444-444444444444';
+import {
+  PERSON_FIELD_ID,
+  SELF_HOSTING_USER_REVERSE_FIELD_ID,
+} from './person-on-self-hosting-user.field';
 
 export default defineField({
   universalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,

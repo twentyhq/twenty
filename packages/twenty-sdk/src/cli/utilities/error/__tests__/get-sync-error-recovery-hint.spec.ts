@@ -46,6 +46,14 @@ describe('getSyncErrorRecoveryHint', () => {
     expect(hint).toContain('bidirectional');
   });
 
+  it('does not suggest a missing reverse field when the target exists but has the wrong type', () => {
+    expect(
+      getSyncErrorRecoveryHint(
+        'INVALID_FIELD_INPUT: Relation target field must be a RELATION field',
+      ),
+    ).toBeUndefined();
+  });
+
   it('returns undefined for an unrecognized error', () => {
     expect(getSyncErrorRecoveryHint('Network request failed')).toBeUndefined();
     expect(getSyncErrorRecoveryHint(undefined)).toBeUndefined();

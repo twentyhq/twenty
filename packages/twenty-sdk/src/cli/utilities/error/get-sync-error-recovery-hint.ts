@@ -9,7 +9,8 @@ export const getSyncErrorRecoveryHint = (
 
   if (
     normalizedMessage.includes('relation field target metadata not found') ||
-    normalizedMessage.includes('relation target field')
+    (normalizedMessage.includes('relation target field') &&
+      normalizedMessage.includes('not found'))
   ) {
     return 'Hint: relations are bidirectional. Declare the reverse relation field (ONE_TO_MANY on the target object, including standard objects) and cross-reference both universal identifiers. See developers/extend/apps/data/relations.';
   }
