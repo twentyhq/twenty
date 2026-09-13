@@ -149,9 +149,25 @@ Consequences:
   tenant via the Teams admin center. That is heavier than pasting a Slack
   manifest, but it is the same shape as our current `SETUP.md`, and it mirrors
   how every self-hosted Teams bot works.
-- Worth checking whether Twenty already owns a multi-tenant app registration
-  created before the cutoff. Existing multi-tenant bots keep working and would
-  let Cloud customers sideload a package without waiting on the Store.
+- **Sideloading is not a shortcut to cloud customers, for our architecture in
+  particular.** The distribution overview documents only two routes, publishing
+  within your own organization and publishing to the Store; uploading a package
+  by hand is described as being for personal use, teamwork and debugging, not as
+  a customer channel. Beyond that framing, a Microsoft moderator answering this
+  exact question reports that a customer *can* upload our zip and the bot *can*
+  receive messages, but that outbound calls into another tenant fail with 401
+  because a single-tenant bot's token is issued by our tenant and is not valid
+  for theirs. Our worker answers asynchronously by posting to `serviceUrl` after
+  the fact, which is precisely the call that fails, so inbound working is not
+  enough for us. Treat sideloading as unusable for customers until tested.
+- **A multi-tenant Azure Bot is not the same as a multi-tenant Entra
+  registration.** The same moderator reports that pairing a multi-tenant Entra
+  app with a single-tenant Azure Bot gives inconsistent cross-tenant behaviour,
+  because bot runtime auth stays scoped to one tenant, and that an admin consent
+  URL does not fix it. So the thing worth hunting for is specifically an Azure
+  Bot resource of type MultiTenant created before 2025-07-31, not just an old
+  multi-tenant app registration. Existing multi-tenant bots keep working, and one
+  would let cloud customers install without waiting on the Store.
 
 ### 2. Connection model: the platform only knows `oauth` (medium)
 
@@ -387,6 +403,11 @@ Same folder layout and file conventions as the Slack app.
   https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/overview-custom-engine-agent
 - Store publishing timelines and the 1.25 manifest requirement:
   https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/deploy-and-publish/appsource/publish
+- The two documented distribution routes (own organization, or the Store):
+  https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/deploy-and-publish/apps-publish-overview
+- Cross-tenant behaviour of a single-tenant bot, including the 401 on outbound
+  calls into another tenant. Microsoft moderator answer, not first-party docs:
+  https://learn.microsoft.com/en-us/answers/questions/5882874/clarification-on-multi-tenant-support-for-single-t
 - Custom app upload: https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/deploy-and-publish/apps-upload
 - Bot Framework SDK retirement and successor SDKs:
   https://learn.microsoft.com/en-us/azure/bot-service/bot-service-overview
