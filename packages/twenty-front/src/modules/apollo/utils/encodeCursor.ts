@@ -16,7 +16,5 @@ export const encodeCursor = (record: ObjectRecord) => {
     id: record.id,
   };
 
-  // Mirrors the server's base64url cursors so both sides mint the same bytes
-  // for a record
   return base64UrlEncode(Buffer.from(JSON.stringify(payload), 'utf-8'));
 };
