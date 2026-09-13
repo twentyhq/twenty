@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 12:23\n"
+"PO-Revision-Date: 2026-09-13 20:16\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -723,7 +723,7 @@ msgstr "Yeni bir bakım modu, yöneticilerin hassas işlemler sırasında çalı
 #. js-lingui-id: iIggw/
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A new onboarding experience"
-msgstr "Yeni bir ilk kullanım deneyimi."
+msgstr "Yeni bir ilk kullanım deneyimi"
 
 #. js-lingui-id: P5BDuh
 #: src/case-studies/case-study-stories.ts
@@ -1632,7 +1632,7 @@ msgstr "Canlı CRM verilerinden özel panolar oluşturun. Anlaşmalar, hesaplar,
 #. js-lingui-id: IQcVFZ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Build dashboards with AI"
-msgstr "Yapay zekâ ile panolar oluşturun."
+msgstr "Yapay zekâ ile panolar oluşturun"
 
 #. js-lingui-id: rdvFK9
 #: src/sections/why-twenty-editorial/editorials.data.ts

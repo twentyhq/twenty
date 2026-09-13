@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 12:23\n"
+"PO-Revision-Date: 2026-09-13 20:16\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -723,7 +723,7 @@ msgstr "Un nouveau mode maintenance aide les administrateurs à suspendre les mo
 #. js-lingui-id: iIggw/
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A new onboarding experience"
-msgstr "Une nouvelle expérience d'onboarding."
+msgstr "Une nouvelle expérience d'onboarding"
 
 #. js-lingui-id: P5BDuh
 #: src/case-studies/case-study-stories.ts
@@ -2040,7 +2040,7 @@ msgstr "Congo 🇨🇬"
 #. js-lingui-id: iSLIjg
 #: src/sections/footer/footer.data.ts
 msgid "Connect"
-msgstr "Contact"
+msgstr "Nous suivre"
 
 #. js-lingui-id: 90KBr0
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -4656,7 +4656,7 @@ msgstr "Laos 🇱🇦"
 #. js-lingui-id: 1ZaQUH
 #: src/client-brief/client-brief-copy.ts
 msgid "Last name"
-msgstr "Nom"
+msgstr "Nom de famille"
 
 #. js-lingui-id: 2lrGbG
 #: src/partners-marketplace/served-geo-labels.ts
