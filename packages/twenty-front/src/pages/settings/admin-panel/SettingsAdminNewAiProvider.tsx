@@ -183,15 +183,24 @@ export const SettingsAdminNewAiProvider = () => {
       }
       config.region = values.region.trim();
 
-      if (values.accessKeyId.trim()) {
-        config.accessKeyId = values.accessKeyId.trim();
+      const accessKeyId = values.accessKeyId.trim();
+      const secretAccessKey = values.secretAccessKey.trim();
+
+      // Half a key pair is a slip, not a mode: role auth ignores both fields,
+      // so accepting it would run under an identity nobody chose.
+      if (Boolean(accessKeyId) !== Boolean(secretAccessKey)) {
+        form.setError(accessKeyId ? 'secretAccessKey' : 'accessKeyId', {
+          type: 'manual',
+          message: t`Enter both keys, or neither to use the instance IAM role`,
+        });
+
+        return;
       }
-      if (values.secretAccessKey.trim()) {
-        config.secretAccessKey = values.secretAccessKey.trim();
-      }
-      // Without static keys the provider takes the instance's own IAM role,
-      // which the server only reaches for when the config says so.
-      if (!values.accessKeyId.trim()) {
+
+      if (accessKeyId) {
+        config.accessKeyId = accessKeyId;
+        config.secretAccessKey = secretAccessKey;
+      } else {
         config.authType = 'role';
       }
     }
