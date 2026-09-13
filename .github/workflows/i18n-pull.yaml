@@ -91,7 +91,7 @@ jobs:
       # leaked response envelope, then push the fixes back to Crowdin so they
       # survive the next sync.
       - name: Normalize translations in Crowdin
-        run: npx tsx packages/twenty-utils/crowdin-normalizer/normalize-crowdin-translations.ts --project=1 --apply --rules=escaped-unicode,corrupted-model-output || echo "::warning::translation normalization failed (non-blocking)"
+        run: npx tsx packages/twenty-utils/crowdin-normalizer/normalize-crowdin-translations.ts --project=1 --apply --rules=escaped-unicode,corrupted-model-output,invented-markup,invented-argument || echo "::warning::translation normalization failed (non-blocking)"
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
