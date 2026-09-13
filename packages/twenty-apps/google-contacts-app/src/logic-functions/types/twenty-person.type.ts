@@ -57,3 +57,11 @@ export type TwentyPersonInput = {
   xLink?: TwentyLinkInput;
   avatarUrl?: string;
 };
+
+export type ExistingTwentyPerson = {
+  id: string;
+  googleContactsId?: string | null;
+  updatedAt?: string | null;
+};
+
+export type PersonToUpsert = TwentyPersonInput & { id?: string };

@@ -4,14 +4,18 @@ import {
   findConnectionForRequest,
   listConnections,
   Response,
-  RoutePayload
+  RoutePayload,
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { EXPORT_CONTACTS_ROUTE_PATH } from 'src/constants/route-paths';
 import {
+  MAX_EXPORTED_CONTACTS,
+  readRecordIds,
+} from 'src/logic-functions/data/read-record-ids.util';
+import {
   EXPORT_CONTACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-  EXPORT_CONTACTS_SCHEDULER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
+  EXPORT_CONTACTS_SCHEDULER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 const jsonResponse = (body: unknown, status: number): Response =>
@@ -34,19 +38,40 @@ const handler = async (payload: RoutePayload<{ recordIds?: string[] }>) => {
     return jsonResponse({ status: 'auth-failed' }, 200);
   }
 
-  if (isDefined(payload.body?.recordIds) === false || payload.body?.recordIds.length === 0) {
+  const recordIds = readRecordIds(payload.body?.recordIds);
+
+  if (recordIds.length === 0) {
     return jsonResponse({ status: 'no-contacts-found' }, 200);
   }
 
+  if (recordIds.length > MAX_EXPORTED_CONTACTS) {
+    return jsonResponse(
+      { status: 'too-many-contacts', limit: MAX_EXPORTED_CONTACTS },
+      200,
+    );
+  }
+
+  // Only the id: the job mints its own access token, so a queued job cannot run
+  // with one that expired while it waited.
   await enqueueJobs({
-    logicFunctionUniversalIdentifier: EXPORT_CONTACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-    jobs: [{payload: {connection: connection, recordIds: payload.body?.recordIds }}]
-  })
+    logicFunctionUniversalIdentifier:
+      EXPORT_CONTACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+    jobs: [
+      {
+        payload: {
+          connectionId: connection.id,
+          recordIds,
+        },
+      },
+    ],
+  });
+
   return jsonResponse({ status: 'exported' }, 200);
 };
 
 export default defineLogicFunction({
-  universalIdentifier: EXPORT_CONTACTS_SCHEDULER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  universalIdentifier:
+    EXPORT_CONTACTS_SCHEDULER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'export-contacts-scheduler',
   description:
     'Creates or updates the Google contacts matching the Twenty people the user selected.',

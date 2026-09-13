@@ -1,4 +1,8 @@
-import { defineCommandMenuItem, isSelectAll, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+import {
+  defineCommandMenuItem,
+  isSelectAll,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
 
 import {
   EXPORT_CONTACTS_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
@@ -15,5 +19,5 @@ export default defineCommandMenuItem({
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
   frontComponentUniversalIdentifier:
     EXPORT_CONTACTS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-  conditionalAvailabilityExpression: !isSelectAll
+  conditionalAvailabilityExpression: !isSelectAll,
 });

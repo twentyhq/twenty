@@ -3,7 +3,8 @@ import { type AxiosInstance } from 'axios';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import {
-  type AppConnection,
+  AppConnectionAuthFailedError,
+  getConnection,
   reportConnectionAuthFailure,
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
@@ -87,31 +88,48 @@ const exportPeople = async ({
 };
 
 const handler = async ({
-  connection,
+  connectionId,
   recordIds,
 }: {
-  connection: AppConnection;
+  connectionId: string;
   recordIds: string[];
 }) => {
+  let accessToken: string;
+
+  try {
+    accessToken = (await getConnection(connectionId)).accessToken;
+  } catch (error) {
+    if (error instanceof AppConnectionAuthFailedError) {
+      console.error(
+        '[google-contacts] Skipping connection flagged as auth failed',
+        connectionId,
+      );
+
+      return;
+    }
+
+    throw error;
+  }
+
   const client = new CoreApiClient();
   const people = await fetchPeople({ client, personIds: recordIds });
-  const axiosInstance = createGoogleClient(connection.accessToken);
+  const axiosInstance = createGoogleClient(accessToken);
 
   try {
     await exportPeople({ axiosInstance, client, people });
 
-    console.log('[google-contacts] Export finished', connection.id);
+    console.log('[google-contacts] Export finished', connectionId);
   } catch (error) {
     if (error instanceof GoogleAuthFailedError) {
       await reportConnectionAuthFailure({
-        connectionId: connection.id,
+        connectionId,
         reason: error.message,
       });
     }
 
     console.error(
       '[google-contacts] Export failed',
-      connection.id,
+      connectionId,
       describeGoogleError(error),
     );
 

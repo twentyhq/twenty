@@ -6,14 +6,12 @@ import {
   getConnection,
   kv,
   reportConnectionAuthFailure,
-  RoutePayload,
 } from 'twenty-sdk/logic-function';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SYNC_CONTACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { SYNC_CONTACTS_ROUTE_PATH } from 'src/constants/route-paths';
 import { chunk } from 'src/logic-functions/data/chunk.util';
 import { executeWithRetry } from 'src/logic-functions/data/execute-with-retry.util';
 import { GoogleAuthFailedError } from 'src/logic-functions/data/google-auth-failed.error';
@@ -23,11 +21,16 @@ import {
   describeGoogleError,
   readGoogleErrorStatus,
 } from 'src/logic-functions/data/google-client.util';
+import { fetchPeopleForSync } from 'src/logic-functions/data/fetch-people-for-sync.util';
 import { mapGooglePerson } from 'src/logic-functions/data/map-google-person.util';
+import { readGoogleUpdateTime } from 'src/logic-functions/data/read-google-update-time.util';
+import {
+  resolvePeopleToUpsert,
+  type SyncCandidate,
+} from 'src/logic-functions/data/resolve-people-to-upsert.util';
 import { prepareUrl } from 'src/logic-functions/data/prepare-url.util';
 import { type ListConnectionsResponse } from 'src/logic-functions/types/google-response.type';
-import { type TwentyPersonInput } from 'src/logic-functions/types/twenty-person.type';
-import { BATCH_SIZE } from "src/constants/batch-sizes.constant";
+import { BATCH_SIZE } from 'src/constants/batch-sizes.constant';
 
 const SYNC_TOKEN_EXPIRED_STATUS = 410;
 
@@ -50,21 +53,39 @@ const fetchAndUpsertPeople = async ({
       ),
     );
 
-    const peopleToUpsert: TwentyPersonInput[] = [];
+    const candidates: SyncCandidate[] = [];
 
     for (const person of googleResponse.data.connections ?? []) {
       if (person.metadata?.deleted === true) {
         continue;
       }
 
-      const personToUpsert = mapGooglePerson(person);
+      const personInput = mapGooglePerson(person);
 
-      if (!isDefined(personToUpsert)) {
+      if (!isDefined(personInput)) {
         continue;
       }
 
-      peopleToUpsert.push(personToUpsert);
+      candidates.push({
+        personInput,
+        googleUpdatedAt: readGoogleUpdateTime(person),
+      });
     }
+
+    const existingPeople = await fetchPeopleForSync({
+      client,
+      googleContactsIds: candidates.map(
+        ({ personInput }) => personInput.googleContactsId,
+      ),
+      primaryEmails: candidates
+        .map(({ personInput }) => personInput.emails?.primaryEmail)
+        .filter(isNonEmptyString),
+    });
+
+    const peopleToUpsert = resolvePeopleToUpsert({
+      candidates,
+      existingPeople,
+    });
 
     for (const peopleBatch of chunk(peopleToUpsert, BATCH_SIZE)) {
       await executeWithRetry(() =>
@@ -84,13 +105,7 @@ const fetchAndUpsertPeople = async ({
   return nextSyncToken;
 };
 
-const handler = async (payload: RoutePayload<{ connectionId: string }>) => {
-  const connectionId = payload.body?.connectionId;
-
-  if (isNonEmptyString(connectionId) === false) {
-    return;
-  }
-
+const handler = async ({ connectionId }: { connectionId: string }) => {
   let accessToken: string;
 
   try {
@@ -175,9 +190,4 @@ export default defineLogicFunction({
     'Upserts the Google contacts of one connection into Twenty people, incrementally once a sync token is stored.',
   timeoutSeconds: 900,
   handler,
-  httpRouteTriggerSettings: {
-    path: SYNC_CONTACTS_ROUTE_PATH,
-    httpMethod: 'POST',
-    isAuthRequired: true,
-  }
 });

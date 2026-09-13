@@ -1,9 +1,11 @@
-import { isNonEmptyString } from "@sniptt/guards";
+import { isNonEmptyString } from '@sniptt/guards';
 
 const GOOGLE_PAGE_SIZE = 1000;
 
 const PERSON_FIELDS = [
   'emailAddresses',
+  // Carries the source updateTime the sync compares against Twenty's updatedAt
+  'metadata',
   'names',
   'organizations',
   'phoneNumbers',

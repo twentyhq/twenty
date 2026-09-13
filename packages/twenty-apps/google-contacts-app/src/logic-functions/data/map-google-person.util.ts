@@ -5,14 +5,17 @@ import {
   LINKEDIN_DOMAINS,
   X_DOMAINS,
 } from 'src/logic-functions/data/link-domain.util';
-import { type Person, type PersonUrl, } from 'src/logic-functions/types/google-response.type';
+import {
+  type Person,
+  type PersonUrl,
+} from 'src/logic-functions/types/google-response.type';
 import {
   type TwentyLinkInput,
   type TwentyPersonInput,
   type TwentyPhonesInput,
 } from 'src/logic-functions/types/twenty-person.type';
-import { isDefined } from "twenty-sdk/utils";
-import { isNonEmptyString } from "@sniptt/guards";
+import { isDefined } from 'twenty-sdk/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 const findLink = (
   urls: PersonUrl[] | undefined,
@@ -36,7 +39,9 @@ const findLink = (
 
 const parsePhone = (
   rawPhoneNumber: string,
-): { number: string; countryCode: CountryCode | ''; callingCode: string } | undefined => {
+):
+  | { number: string; countryCode: CountryCode | ''; callingCode: string }
+  | undefined => {
   try {
     const parsedPhone = parsePhoneNumberWithError(rawPhoneNumber);
 
@@ -53,10 +58,10 @@ const parsePhone = (
 
 const mapPhones = (person: Person): TwentyPhonesInput | undefined => {
   const parsedPhones = (person.phoneNumbers ?? [])
-  .map((phoneNumber) => phoneNumber.canonicalForm ?? phoneNumber.value)
-  .filter(isNonEmptyString)
-  .map(parsePhone)
-  .filter(isDefined);
+    .map((phoneNumber) => phoneNumber.canonicalForm ?? phoneNumber.value)
+    .filter(isNonEmptyString)
+    .map(parsePhone)
+    .filter(isDefined);
 
   const [primaryPhone, ...additionalPhones] = parsedPhones;
 
@@ -95,9 +100,9 @@ const mapName = (person: Person): TwentyPersonInput['name'] => {
 
 const mapEmails = (person: Person): TwentyPersonInput['emails'] => {
   const emails = (person.emailAddresses ?? [])
-  .map((emailAddress) => emailAddress.value)
-  .filter(isNonEmptyString)
-  .map((email) => email.trim());
+    .map((emailAddress) => emailAddress.value)
+    .filter(isNonEmptyString)
+    .map((email) => email.trim());
 
   const [primaryEmail, ...additionalEmails] = emails;
 

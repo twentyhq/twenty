@@ -23,7 +23,7 @@ describe('executeWithRetry', () => {
   it('should retry rate-limited requests until they succeed', async () => {
     const execute = vi
       .fn()
-      .mockRejectedValueOnce(new Error('Request failed with status code 429'))
+      .mockRejectedValueOnce(new Error('Too Many Requests: {"message":"slow"}'))
       .mockResolvedValue('ok');
 
     const promise = executeWithRetry(execute);
@@ -42,13 +42,52 @@ describe('executeWithRetry', () => {
     expect(execute).toHaveBeenCalledTimes(1);
   });
 
+  it('should retry a rate limit reported only in the response body', async () => {
+    const execute = vi
+      .fn()
+      .mockRejectedValueOnce(new Error(': {"statusCode":429,"message":"slow"}'))
+      .mockResolvedValue('ok');
+
+    const promise = executeWithRetry(execute);
+    await vi.advanceTimersByTimeAsync(2_000);
+
+    await expect(promise).resolves.toBe('ok');
+    expect(execute).toHaveBeenCalledTimes(2);
+  });
+
+  it('should not retry a client error whose body merely contains a status-like number', async () => {
+    const execute = vi
+      .fn()
+      .mockRejectedValue(
+        new Error(
+          'Bad Request: {"errors":[{"message":"Phone +1 502 555 0199 is invalid"}]}',
+        ),
+      );
+
+    await expect(executeWithRetry(execute)).rejects.toThrow('Bad Request');
+    expect(execute).toHaveBeenCalledTimes(1);
+  });
+
+  it('should retry a network failure that never produced a response', async () => {
+    const execute = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('fetch failed'))
+      .mockResolvedValue('ok');
+
+    const promise = executeWithRetry(execute);
+    await vi.advanceTimersByTimeAsync(2_000);
+
+    await expect(promise).resolves.toBe('ok');
+    expect(execute).toHaveBeenCalledTimes(2);
+  });
+
   it('should give up after exhausting retries', async () => {
     const execute = vi
       .fn()
-      .mockRejectedValue(new Error('Request failed with status code 503'));
+      .mockRejectedValue(new Error('Service Unavailable: {"message":"down"}'));
 
     const promise = executeWithRetry(execute);
-    const assertion = expect(promise).rejects.toThrow('status code 503');
+    const assertion = expect(promise).rejects.toThrow('Service Unavailable');
     await vi.advanceTimersByTimeAsync(60_000);
 
     await assertion;

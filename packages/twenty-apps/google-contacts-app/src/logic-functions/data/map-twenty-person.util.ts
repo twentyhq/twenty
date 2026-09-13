@@ -46,7 +46,7 @@ const formatPhoneNumber = (
   }
 
   return isNonEmptyString(callingCode)
-    ? `${callingCode}${number}`
+    ? `${callingCode}${number.trim()}`
     : number.trim();
 };
 

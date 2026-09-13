@@ -4,7 +4,7 @@ import { chunk } from 'src/logic-functions/data/chunk.util';
 import { executeWithRetry } from 'src/logic-functions/data/execute-with-retry.util';
 import { isTwentyPersonRecord } from 'src/logic-functions/data/is-twenty-person-record.util';
 import { type TwentyPersonRecord } from 'src/logic-functions/types/twenty-person.type';
-import { BATCH_SIZE } from "src/constants/batch-sizes.constant";
+import { BATCH_SIZE } from 'src/constants/batch-sizes.constant';
 
 export const fetchPeople = async ({
   client,
@@ -37,7 +37,7 @@ export const fetchPeople = async ({
                   callingCode: true,
                   countryCode: true,
                   number: true,
-                }
+                },
               },
               linkedinLink: { primaryLinkUrl: true },
               xLink: { primaryLinkUrl: true },

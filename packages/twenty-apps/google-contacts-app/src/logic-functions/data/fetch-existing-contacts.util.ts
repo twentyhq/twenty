@@ -9,7 +9,7 @@ import {
   type BatchGetContactsResponse,
   type Person,
 } from 'src/logic-functions/types/google-response.type';
-import { BATCH_SIZE } from "src/constants/batch-sizes.constant";
+import { BATCH_SIZE } from 'src/constants/batch-sizes.constant';
 
 const EXISTING_CONTACT_PERSON_FIELDS = 'organizations,urls';
 

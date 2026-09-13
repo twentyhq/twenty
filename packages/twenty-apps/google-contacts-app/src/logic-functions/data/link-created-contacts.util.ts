@@ -2,9 +2,9 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { chunk } from 'src/logic-functions/data/chunk.util';
 import { executeWithRetry } from 'src/logic-functions/data/execute-with-retry.util';
-import { describeGoogleError } from 'src/logic-functions/data/google-client.util';
+import { describeError } from 'src/logic-functions/data/describe-error.util';
 import { type CreatedContact } from 'src/logic-functions/types/contact-write.type';
-import { BATCH_SIZE } from "src/constants/batch-sizes.constant";
+import { BATCH_SIZE } from 'src/constants/batch-sizes.constant';
 
 const toPersonLink = (
   createdContact: CreatedContact,
@@ -37,7 +37,7 @@ const linkCreatedContactsOneByOne = async ({
         '[google-contacts] Failed to link a created contact',
         id,
         googleContactsId,
-        describeGoogleError(error),
+        describeError(error),
       );
     }
   }
@@ -65,7 +65,7 @@ export const linkCreatedContacts = async ({
       // person fails the whole upsert.
       console.error(
         '[google-contacts] Failed to link a batch of created contacts',
-        describeGoogleError(error),
+        describeError(error),
       );
 
       await linkCreatedContactsOneByOne({ client, createdContacts: batch });

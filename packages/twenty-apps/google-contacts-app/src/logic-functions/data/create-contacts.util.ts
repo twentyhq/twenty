@@ -8,6 +8,7 @@ import {
   callGoogleWithoutRetry,
   describeGoogleError,
 } from 'src/logic-functions/data/google-client.util';
+import { matchCreatedPeople } from 'src/logic-functions/data/match-created-people.util';
 import { readPersonResponseError } from 'src/logic-functions/data/read-person-response-error.util';
 import { WRITTEN_CONTACT_PERSON_FIELDS } from 'src/logic-functions/data/written-contact-person-fields.constant';
 import {
@@ -19,7 +20,7 @@ import {
   type BatchCreateContactsResponse,
   type PersonResponse,
 } from 'src/logic-functions/types/google-response.type';
-import { BATCH_SIZE } from "src/constants/batch-sizes.constant";
+import { BATCH_SIZE } from 'src/constants/batch-sizes.constant';
 
 export const createContacts = async ({
   axiosInstance,
@@ -65,25 +66,32 @@ export const createContacts = async ({
         requested: batch.length,
         received: createdPeople.length,
       });
-
-      continue;
     }
 
-    for (const [index, personResponse] of createdPeople.entries()) {
+    const matchedPeople = matchCreatedPeople({
+      contactsToCreate: batch,
+      createdPeople,
+    });
+
+    for (const [index, contactToCreate] of batch.entries()) {
+      const personResponse = matchedPeople[index];
       const error = readPersonResponseError(personResponse);
-      const resourceName = personResponse.person?.resourceName;
+      const resourceName = personResponse?.person?.resourceName;
 
       if (isDefined(error) || !isNonEmptyString(resourceName)) {
         console.error(
           '[google-contacts] Failed to create a contact',
-          batch[index].person.id,
+          contactToCreate.person.id,
           error ?? 'no resource name returned',
         );
 
         continue;
       }
 
-      createdContacts.push({ personId: batch[index].person.id, resourceName });
+      createdContacts.push({
+        personId: contactToCreate.person.id,
+        resourceName,
+      });
     }
   }
 

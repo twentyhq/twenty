@@ -14,10 +14,12 @@ type ExportContactsStatus =
   | 'exported'
   | 'auth-failed'
   | 'no-connection'
-  | 'no-contacts-found';
+  | 'no-contacts-found'
+  | 'too-many-contacts';
 
 type ExportContactsResponse = {
   status: ExportContactsStatus;
+  limit?: number;
 };
 
 const pluralizeContacts = (count: number): string =>
@@ -25,13 +27,18 @@ const pluralizeContacts = (count: number): string =>
 
 const describeResponse = (
   response: ExportContactsResponse,
-  records: number
+  records: number,
 ): EnqueueSnackbarParams => {
   switch (response.status) {
     case 'exported':
       return {
-        message: `Sent ${pluralizeContacts(records)}`,
+        message: `Sending ${pluralizeContacts(records)} to Google Contacts.`,
         variant: 'success',
+      };
+    case 'too-many-contacts':
+      return {
+        message: `Select at most ${response.limit} people to send at once.`,
+        variant: 'error',
       };
     case 'no-connection':
       return {
@@ -43,7 +50,7 @@ const describeResponse = (
         message: 'Reconnect your Google account before sending contacts.',
         variant: 'error',
       };
-    case "no-contacts-found":
+    case 'no-contacts-found':
     default:
       return {
         message: 'No contact to send to Google Contacts.',
@@ -62,7 +69,9 @@ const ExportContacts = () => {
         { recordIds: selectedRecordIds },
       );
 
-      await enqueueSnackbar(describeResponse(response, selectedRecordIds.length));
+      await enqueueSnackbar(
+        describeResponse(response, selectedRecordIds.length),
+      );
     } catch (error) {
       console.error('[google-contacts] Export request failed', error);
 

@@ -3,12 +3,31 @@ const INITIAL_RETRY_DELAY_MS = 2_000;
 const MAX_RETRY_DELAY_MS = 30_000;
 const MAX_JITTER_MS = 1_000;
 
-// The client SDK surfaces HTTP failures as plain Error messages built from the
-// status text and raw response body, so retryability has to be detected from
-// the message text. Covers rate limiting (429, Cloudflare 1015), transient
-// gateway errors (502/503/504) and network-level failures.
-const RETRYABLE_ERROR_PATTERN =
-  /\b(429|1015|too many requests|rate ?limit\w*|502|503|504|bad gateway|gateway time-?out|service unavailable|timed? ?out|fetch failed|econnreset|econnrefused|socket hang up)\b/i;
+// The generated core client throws `${statusText}: ${rawBody}`, so retryability
+// has to be read out of the message. Only the status text prefix and an
+// explicit status field in the body count: a bare number anywhere in the body
+// would match record data such as a phone number. Callers holding a richer
+// error pass their own policy instead.
+const RETRYABLE_STATUS_TEXT_PATTERN =
+  /^\s*(too many requests|internal server error|bad gateway|service unavailable|gateway time-?out)\b/i;
+
+const RETRYABLE_BODY_STATUS_PATTERN =
+  /"(?:status|statusCode|code)"\s*:\s*"?(?:429|500|502|503|504)\b/i;
+
+// Cloudflare rate limiting and the fetch-level failures the runtime raises
+// before any response exists.
+const RETRYABLE_NETWORK_ERROR_PATTERN =
+  /\b(error code: 1015|fetch failed|network error|econnreset|econnrefused|econnaborted|etimedout|socket hang up|timed? ?out)\b/i;
+
+const isRetryableCoreApiError = (message: string): boolean =>
+  RETRYABLE_STATUS_TEXT_PATTERN.test(message) ||
+  RETRYABLE_BODY_STATUS_PATTERN.test(message) ||
+  RETRYABLE_NETWORK_ERROR_PATTERN.test(message);
+
+export type RetryPolicy = {
+  isRetryable: (error: unknown) => boolean;
+  readRetryAfterMs?: (error: unknown) => number | undefined;
+};
 
 const sleep = (durationMs: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, durationMs));
@@ -16,22 +35,19 @@ const sleep = (durationMs: number): Promise<void> =>
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
 
-const isRetryableError = (error: unknown): boolean =>
-  RETRYABLE_ERROR_PATTERN.test(getErrorMessage(error));
-
-const parseRetryAfterMs = (error: unknown): number | undefined => {
-  const match = getErrorMessage(error).match(/"retry_after"\s*:\s*(\d+)/);
-  return match ? Number(match[1]) * 1_000 : undefined;
+const CORE_API_RETRY_POLICY: RetryPolicy = {
+  isRetryable: (error) => isRetryableCoreApiError(getErrorMessage(error)),
 };
 
 export const executeWithRetry = async <TResult>(
   execute: () => TResult,
+  policy: RetryPolicy = CORE_API_RETRY_POLICY,
 ): Promise<Awaited<TResult>> => {
   for (let attempt = 1; ; attempt += 1) {
     try {
       return await execute();
     } catch (error) {
-      if (attempt >= MAX_ATTEMPTS || !isRetryableError(error)) {
+      if (attempt >= MAX_ATTEMPTS || !policy.isRetryable(error)) {
         throw error;
       }
 
@@ -40,7 +56,7 @@ export const executeWithRetry = async <TResult>(
         MAX_RETRY_DELAY_MS,
       );
       const retryAfterMs = Math.min(
-        parseRetryAfterMs(error) ?? 0,
+        policy.readRetryAfterMs?.(error) ?? 0,
         MAX_RETRY_DELAY_MS,
       );
       const jitterMs = Math.random() * MAX_JITTER_MS;

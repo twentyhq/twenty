@@ -1,38 +1,11 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { listConnections } from 'twenty-sdk/logic-function';
-import { RestApiClient } from 'twenty-client-sdk/rest';
+import { enqueueJobs, listConnections } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { SYNC_CONTACTS_SCHEDULER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { SYNC_CONTACTS_ROUTE_PATH } from 'src/constants/route-paths';
-
-const DISPATCH_TIMEOUT_MILLISECONDS = 2_000;
-
-const isDispatchTimeout = (error: unknown): boolean =>
-  error instanceof Error && error.name === 'TimeoutError';
-
-const dispatchSync = async (
-  client: RestApiClient,
-  connectionId: string,
-): Promise<void> => {
-  try {
-    await client.post(
-      `/s${SYNC_CONTACTS_ROUTE_PATH}`,
-      { connectionId },
-      { signal: AbortSignal.timeout(DISPATCH_TIMEOUT_MILLISECONDS) },
-    );
-  } catch (error) {
-    if (isDispatchTimeout(error)) {
-      return;
-    }
-
-    console.error(
-      '[google-contacts] Failed to dispatch sync',
-      connectionId,
-      error,
-    );
-  }
-};
+import {
+  SYNC_CONTACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  SYNC_CONTACTS_SCHEDULER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 
 const handler = async () => {
   const connections = await listConnections({
@@ -47,16 +20,19 @@ const handler = async () => {
   if (connectionsToSync.length === 0) {
     return;
   }
-  const client = new RestApiClient();
 
-  await Promise.all(
-    connectionsToSync.map((connection) => dispatchSync(client, connection.id)),
-  );
+  await enqueueJobs({
+    logicFunctionUniversalIdentifier:
+      SYNC_CONTACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+    jobs: connectionsToSync.map((connection) => ({
+      payload: { connectionId: connection.id },
+    })),
+  });
 };
 
 export default defineLogicFunction({
   universalIdentifier:
-  SYNC_CONTACTS_SCHEDULER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+    SYNC_CONTACTS_SCHEDULER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'sync-contacts-scheduler',
   description:
     'Enqueues one Google contacts sync job per connected user every 30 minutes.',

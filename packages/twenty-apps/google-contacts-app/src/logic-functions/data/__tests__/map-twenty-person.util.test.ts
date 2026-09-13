@@ -130,8 +130,8 @@ describe('mapTwentyPerson', () => {
   });
 
   it('should map an empty person to an empty contact', () => {
-    expect(mapTwentyPerson({ id: 'c9a0e1f2-3b4c-4d5e-8f90-123456789abc' })).toEqual(
-      {},
-    );
+    expect(
+      mapTwentyPerson({ id: 'c9a0e1f2-3b4c-4d5e-8f90-123456789abc' }),
+    ).toEqual({});
   });
 });

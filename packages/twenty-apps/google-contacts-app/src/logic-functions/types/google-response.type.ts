@@ -29,9 +29,14 @@ export type PersonUrl = {
   value?: string;
 };
 
+type PersonSource = {
+  updateTime?: string;
+};
+
 type PersonMetadata = {
   deleted?: boolean;
   previousResourceNames?: string[];
+  sources?: PersonSource[];
 };
 
 export type Person = {

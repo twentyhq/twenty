@@ -1,6 +1,8 @@
 import { type GoogleContactWriteInput } from 'src/logic-functions/types/google-request.type';
 
-export const groupByUpdateMask = <TContact extends { contact: GoogleContactWriteInput }>(
+export const groupByUpdateMask = <
+  TContact extends { contact: GoogleContactWriteInput },
+>(
   contacts: TContact[],
 ): Map<string, TContact[]> => {
   const contactsByUpdateMask = new Map<string, TContact[]>();
