@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance } from 'axios';
+import { type AxiosInstance } from 'axios';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import {
@@ -9,36 +9,33 @@ import {
   RoutePayload,
 } from 'twenty-sdk/logic-function';
 
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
+
 import { SYNC_CONTACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { SYNC_CONTACTS_ROUTE_PATH } from 'src/constants/route-paths';
 import { chunk } from 'src/logic-functions/data/chunk.util';
+import { executeWithRetry } from 'src/logic-functions/data/execute-with-retry.util';
+import { GoogleAuthFailedError } from 'src/logic-functions/data/google-auth-failed.error';
+import {
+  callGoogle,
+  createGoogleClient,
+  describeGoogleError,
+  readGoogleErrorStatus,
+} from 'src/logic-functions/data/google-client.util';
 import { mapGooglePerson } from 'src/logic-functions/data/map-google-person.util';
 import { prepareUrl } from 'src/logic-functions/data/prepare-url.util';
 import { type ListConnectionsResponse } from 'src/logic-functions/types/google-response.type';
 import { type TwentyPersonInput } from 'src/logic-functions/types/twenty-person.type';
-import { isDefined } from "twenty-sdk/utils";
-import { isNonEmptyString } from "@sniptt/guards";
+import { BATCH_SIZE } from "src/constants/batch-sizes.constant";
 
-const GOOGLE_PEOPLE_BASE_URL = 'https://people.googleapis.com/v1/people/me';
-const GOOGLE_REQUEST_TIMEOUT_MILLISECONDS = 30_000;
-const PEOPLE_UPSERT_BATCH_SIZE = 200;
 const SYNC_TOKEN_EXPIRED_STATUS = 410;
-const UNAUTHORIZED_STATUSES = [401, 403];
-
-const readGoogleErrorStatus = (error: unknown): number | undefined =>
-  axios.isAxiosError(error) ? error.response?.status : undefined;
-
-const describeError = (error: unknown): unknown =>
-  axios.isAxiosError(error)
-    ? (error.response?.data ?? error.message)
-    : error instanceof Error
-      ? error.message
-      : error;
 
 const fetchAndUpsertPeople = async ({
-                                      axiosInstance,
-                                      client,
-                                      syncToken,
-                                    }: {
+  axiosInstance,
+  client,
+  syncToken,
+}: {
   axiosInstance: AxiosInstance;
   client: CoreApiClient;
   syncToken: string | null;
@@ -47,8 +44,10 @@ const fetchAndUpsertPeople = async ({
   let nextSyncToken: string | undefined;
 
   do {
-    const googleResponse = await axiosInstance.get<ListConnectionsResponse>(
-      prepareUrl(syncToken, pageToken),
+    const googleResponse = await callGoogle(() =>
+      axiosInstance.get<ListConnectionsResponse>(
+        prepareUrl({ syncToken, pageToken }),
+      ),
     );
 
     const peopleToUpsert: TwentyPersonInput[] = [];
@@ -67,13 +66,15 @@ const fetchAndUpsertPeople = async ({
       peopleToUpsert.push(personToUpsert);
     }
 
-    for (const peopleBatch of chunk(peopleToUpsert, PEOPLE_UPSERT_BATCH_SIZE)) {
-      await client.mutation({
-        createPeople: {
-          __args: { data: peopleBatch, upsert: true },
-          id: true,
-        },
-      });
+    for (const peopleBatch of chunk(peopleToUpsert, BATCH_SIZE)) {
+      await executeWithRetry(() =>
+        client.mutation({
+          createPeople: {
+            __args: { data: peopleBatch, upsert: true },
+            id: true,
+          },
+        }),
+      );
     }
 
     pageToken = googleResponse.data.nextPageToken;
@@ -110,13 +111,7 @@ const handler = async (payload: RoutePayload<{ connectionId: string }>) => {
   const syncToken = await kv.get<string>(connectionId);
 
   const client = new CoreApiClient();
-  const axiosInstance = axios.create({
-    baseURL: GOOGLE_PEOPLE_BASE_URL,
-    timeout: GOOGLE_REQUEST_TIMEOUT_MILLISECONDS,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  const axiosInstance = createGoogleClient(accessToken);
 
   let nextSyncToken: string | undefined;
 
@@ -127,38 +122,38 @@ const handler = async (payload: RoutePayload<{ connectionId: string }>) => {
       syncToken,
     });
   } catch (error) {
-    const status = readGoogleErrorStatus(error);
-
-    if (status === SYNC_TOKEN_EXPIRED_STATUS) {
-      await kv.delete(connectionId);
-
-      nextSyncToken = await fetchAndUpsertPeople({
-        axiosInstance,
-        client,
-        syncToken: null,
-      });
-    } else if (isDefined(status) && UNAUTHORIZED_STATUSES.includes(status)) {
+    if (error instanceof GoogleAuthFailedError) {
       console.error(
         '[google-contacts] Connection needs to be reconnected',
         connectionId,
-        describeError(error),
+        error.message,
       );
 
       await reportConnectionAuthFailure({
         connectionId,
-        reason: `Google People API returned ${status}`,
+        reason: error.message,
       });
 
       return { status: 'auth-failed' };
-    } else {
+    }
+
+    if (readGoogleErrorStatus(error) !== SYNC_TOKEN_EXPIRED_STATUS) {
       console.error(
         '[google-contacts] Sync failed',
         connectionId,
-        describeError(error),
+        describeGoogleError(error),
       );
 
       throw error;
     }
+
+    await kv.delete(connectionId);
+
+    nextSyncToken = await fetchAndUpsertPeople({
+      axiosInstance,
+      client,
+      syncToken: null,
+    });
   }
 
   if (isNonEmptyString(nextSyncToken)) {
@@ -181,7 +176,7 @@ export default defineLogicFunction({
   timeoutSeconds: 900,
   handler,
   httpRouteTriggerSettings: {
-    path: '/sync-google-contacts',
+    path: SYNC_CONTACTS_ROUTE_PATH,
     httpMethod: 'POST',
     isAuthRequired: true,
   }

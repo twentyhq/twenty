@@ -11,10 +11,13 @@ const PERSON_FIELDS = [
   'urls',
 ].join(',');
 
-export const prepareUrl = (
-  syncToken: string | null,
-  pageToken: string | undefined,
-): string => {
+export const prepareUrl = ({
+  syncToken,
+  pageToken,
+}: {
+  syncToken: string | null;
+  pageToken: string | undefined;
+}): string => {
   const searchParams = new URLSearchParams({
     pageSize: String(GOOGLE_PAGE_SIZE),
     requestSyncToken: 'true',
@@ -29,5 +32,5 @@ export const prepareUrl = (
     searchParams.set('pageToken', pageToken);
   }
 
-  return `/connections?${searchParams.toString()}`;
+  return `/people/me/connections?${searchParams.toString()}`;
 };

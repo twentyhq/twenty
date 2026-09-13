@@ -54,12 +54,26 @@ export type ListConnectionsResponse = {
   totalItems?: number;
 };
 
-type PersonResponse = {
-  httpStatusCode?: number;
+type GoogleRpcStatus = {
+  code?: number;
+  message?: string;
+};
+
+export type PersonResponse = {
   person?: Person;
   requestedResourceName?: string;
+  // Per-contact outcome of a batch mutation: absent or zero means success
+  status?: GoogleRpcStatus;
 };
 
 export type BatchGetContactsResponse = {
   responses?: PersonResponse[];
+};
+
+export type BatchCreateContactsResponse = {
+  createdPeople?: PersonResponse[];
+};
+
+export type BatchUpdateContactsResponse = {
+  updateResult?: Record<string, PersonResponse>;
 };

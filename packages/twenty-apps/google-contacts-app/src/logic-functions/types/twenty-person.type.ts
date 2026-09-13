@@ -19,9 +19,6 @@ export type TwentyPhonesInput = {
   additionalPhones: TwentyAdditionalPhoneInput[];
 };
 
-// What the Core API returns for an exportable person. Every leaf is nullable
-// because the generated core client is untyped and unset composites come back
-// as null rather than missing.
 export type TwentyPersonRecord = {
   id: string;
   googleContactsId?: string | null;

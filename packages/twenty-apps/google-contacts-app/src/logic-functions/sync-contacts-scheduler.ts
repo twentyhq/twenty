@@ -1,11 +1,11 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { listConnections } from 'twenty-sdk/logic-function';
+import { RestApiClient } from 'twenty-client-sdk/rest';
+import { isDefined } from 'twenty-sdk/utils';
 
-import { SYNC_CONTACTS_SCHEDULER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER, } from 'src/constants/universal-identifiers';
-import { RestApiClient } from "twenty-client-sdk/rest";
-import { isDefined } from "twenty-sdk/utils";
+import { SYNC_CONTACTS_SCHEDULER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { SYNC_CONTACTS_ROUTE_PATH } from 'src/constants/route-paths';
 
-const SYNC_CONTACTS_ROUTE_PATH = '/s/sync-google-contacts';
 const DISPATCH_TIMEOUT_MILLISECONDS = 2_000;
 
 const isDispatchTimeout = (error: unknown): boolean =>
@@ -17,7 +17,7 @@ const dispatchSync = async (
 ): Promise<void> => {
   try {
     await client.post(
-      SYNC_CONTACTS_ROUTE_PATH,
+      `/s${SYNC_CONTACTS_ROUTE_PATH}`,
       { connectionId },
       { signal: AbortSignal.timeout(DISPATCH_TIMEOUT_MILLISECONDS) },
     );

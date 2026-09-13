@@ -1,4 +1,4 @@
-import { defineField, FieldType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS, } from 'twenty-sdk/define';
+import { defineField, FieldType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 import { GOOGLE_CONTACTS_ID_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 export default defineField({

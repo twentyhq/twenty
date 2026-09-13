@@ -11,10 +11,7 @@ export default defineConnectionProvider({
     authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
     tokenEndpoint: 'https://oauth2.googleapis.com/token',
     revokeEndpoint: 'https://oauth2.googleapis.com/revoke',
-    scopes: [
-      'https://www.googleapis.com/auth/contacts',
-      'https://www.googleapis.com/auth/contacts.readonly',
-    ],
+    scopes: ['https://www.googleapis.com/auth/contacts'],
     clientIdVariable: 'GOOGLE_CONTACTS_CLIENT_ID',
     clientSecretVariable: 'GOOGLE_CONTACTS_CLIENT_SECRET',
     authorizationParams: {

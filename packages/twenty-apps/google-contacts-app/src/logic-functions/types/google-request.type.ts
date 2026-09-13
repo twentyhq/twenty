@@ -6,12 +6,25 @@ import {
   type PhoneNumber,
 } from 'src/logic-functions/types/google-response.type';
 
-// Only the fields Twenty owns. Keys left out stay untouched in Google because
-// they are also left out of the updatePersonFields mask.
 export type GoogleContactWriteInput = {
   emailAddresses?: EmailAddress[];
   names?: Name[];
   organizations?: Organization[];
   phoneNumbers?: PhoneNumber[];
   urls?: PersonUrl[];
+};
+
+export type GoogleContactUpdateInput = GoogleContactWriteInput & {
+  etag?: string;
+};
+
+export type BatchCreateContactsRequest = {
+  contacts: { contactPerson: GoogleContactWriteInput }[];
+  readMask: string;
+};
+
+export type BatchUpdateContactsRequest = {
+  contacts: Record<string, GoogleContactUpdateInput>;
+  updateMask: string;
+  readMask: string;
 };

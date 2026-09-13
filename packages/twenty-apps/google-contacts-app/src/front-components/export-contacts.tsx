@@ -2,62 +2,37 @@ import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   Command,
-  CommandModal,
   enqueueSnackbar,
   useSelectedRecordIds,
   type EnqueueSnackbarParams,
 } from 'twenty-sdk/front-component';
 
 import { EXPORT_CONTACTS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-
-const EXPORT_CONTACTS_ROUTE_PATH = '/s/export-google-contacts';
+import { EXPORT_CONTACTS_ROUTE_PATH } from 'src/constants/route-paths';
 
 type ExportContactsStatus =
   | 'exported'
   | 'auth-failed'
   | 'no-connection'
-  | 'no-contacts-found'
-  | 'too-many-contacts';
+  | 'no-contacts-found';
 
 type ExportContactsResponse = {
   status: ExportContactsStatus;
-  created?: number;
-  updated?: number;
-  failed?: number;
-  limit?: number;
 };
 
 const pluralizeContacts = (count: number): string =>
   count === 1 ? '1 contact' : `${count} contacts`;
 
-const describeExport = ({
-  created = 0,
-  updated = 0,
-  failed = 0,
-}: ExportContactsResponse): EnqueueSnackbarParams => {
-  if (created + updated === 0) {
-    return {
-      message: 'No contact could be sent to Google Contacts.',
-      variant: 'error',
-    };
-  }
-
-  const sentMessage = `Sent ${pluralizeContacts(created + updated)} to Google Contacts (${created} created, ${updated} updated).`;
-
-  return failed === 0
-    ? { message: sentMessage, variant: 'success' }
-    : {
-        message: `${sentMessage} ${pluralizeContacts(failed)} failed.`,
-        variant: 'warning',
-      };
-};
-
 const describeResponse = (
   response: ExportContactsResponse,
+  records: number
 ): EnqueueSnackbarParams => {
   switch (response.status) {
     case 'exported':
-      return describeExport(response);
+      return {
+        message: `Sent ${pluralizeContacts(records)}`,
+        variant: 'success',
+      };
     case 'no-connection':
       return {
         message: 'Connect your Google account before sending contacts.',
@@ -68,11 +43,7 @@ const describeResponse = (
         message: 'Reconnect your Google account before sending contacts.',
         variant: 'error',
       };
-    case 'too-many-contacts':
-      return {
-        message: `Select at most ${response.limit} people to send at once.`,
-        variant: 'error',
-      };
+    case "no-contacts-found":
     default:
       return {
         message: 'No contact to send to Google Contacts.',
@@ -84,27 +55,14 @@ const describeResponse = (
 const ExportContacts = () => {
   const selectedRecordIds = useSelectedRecordIds();
 
-  if (selectedRecordIds.length === 0) {
-    return (
-      <Command
-        execute={() =>
-          enqueueSnackbar({
-            message: 'Select at least one person to send to Google Contacts.',
-            variant: 'error',
-          })
-        }
-      />
-    );
-  }
-
   const execute = async () => {
     try {
       const response = await new RestApiClient().post<ExportContactsResponse>(
-        EXPORT_CONTACTS_ROUTE_PATH,
-        { personIds: selectedRecordIds },
+        `/s${EXPORT_CONTACTS_ROUTE_PATH}`,
+        { recordIds: selectedRecordIds },
       );
 
-      await enqueueSnackbar(describeResponse(response));
+      await enqueueSnackbar(describeResponse(response, selectedRecordIds.length));
     } catch (error) {
       console.error('[google-contacts] Export request failed', error);
 
@@ -115,14 +73,7 @@ const ExportContacts = () => {
     }
   };
 
-  return (
-    <CommandModal
-      title="Send to Google Contacts"
-      subtitle={`${pluralizeContacts(selectedRecordIds.length)} will be created or updated in the Google account you connected.`}
-      confirmButtonText="Send"
-      execute={execute}
-    />
-  );
+  return <Command execute={execute} />;
 };
 
 export default defineFrontComponent({
