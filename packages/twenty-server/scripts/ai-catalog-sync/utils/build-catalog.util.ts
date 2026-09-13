@@ -1,4 +1,3 @@
-import { NATIVE_AI_SDK_PROVIDER_IDS } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-data.type';
@@ -123,10 +122,18 @@ const buildModel = ({
   return model;
 };
 
-export const buildCatalog = (data: ModelsDevData): GeneratedCatalog => {
+// Which vendors we carry is a deployment decision, so it is read from the
+// spec that states it rather than inferred from how the SDK names a package.
+export const buildCatalog = ({
+  data,
+  vendors,
+}: {
+  data: ModelsDevData;
+  vendors: string[];
+}): GeneratedCatalog => {
   const catalog: GeneratedCatalog = {};
 
-  for (const providerName of NATIVE_AI_SDK_PROVIDER_IDS) {
+  for (const providerName of vendors) {
     const providerData = data[providerName];
 
     if (!isDefined(providerData)) {
