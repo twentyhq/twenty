@@ -162,6 +162,7 @@ import {
   PERSON_FIELD_ID,
   SELF_HOSTING_USER_REVERSE_FIELD_ID,
 } from './person-on-self-hosting-user.field';
+// Keep imports one-way: field manifests execute eagerly, so mutual imports can read an uninitialized identifier.
 
 export default defineField({
   universalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
