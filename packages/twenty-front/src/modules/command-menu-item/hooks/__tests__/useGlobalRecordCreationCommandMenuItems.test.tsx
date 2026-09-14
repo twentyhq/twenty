@@ -1,3 +1,4 @@
+import { MetadataWritability } from '~/generated-metadata/graphql';
 import { useGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems';
 import { mockedCommandMenuItems } from '~/testing/mock-data/generated/metadata/command-menu-items/mock-command-menu-items-data';
 import { i18n } from '@lingui/core';
@@ -13,7 +14,18 @@ const mockObjects = [
   { id: 'remote', labelSingular: 'remote', isRemote: true },
   { id: 'readonly', labelSingular: 'readonly', isUIEditable: false },
   { id: 'internal', labelSingular: 'internal', isUICreatable: false },
+  {
+    id: 'system',
+    labelSingular: 'system',
+    writability: MetadataWritability.SYSTEM,
+  },
+  {
+    id: 'application',
+    labelSingular: 'application',
+    writability: MetadataWritability.APPLICATION,
+  },
 ].map((objectMetadataItem) => ({
+  writability: MetadataWritability.OPEN,
   isUICreatable: true,
   isUIEditable: true,
   isRemote: false,
@@ -50,7 +62,7 @@ it('offers every creatable object with its label, icon, and creation target', ()
     { wrapper },
   );
 
-  expect(result.current).toEqual([
+  expect(result.current.globalRecordCreationCommandMenuItems).toEqual([
     expect.objectContaining({
       label: 'Create Company',
       icon: 'IconBuildingSkyscraper',
@@ -64,7 +76,13 @@ it('offers every creatable object with its label, icon, and creation target', ()
       isPinned: false,
     }),
   ]);
-  expect(new Set(result.current.map((item) => item.id)).size).toBe(2);
+  expect(
+    new Set(
+      result.current.globalRecordCreationCommandMenuItems.map(
+        (item) => item.id,
+      ),
+    ).size,
+  ).toBe(2);
 });
 
 it('does not offer objects without read or write permissions', () => {
@@ -79,7 +97,7 @@ it('does not offer objects without read or write permissions', () => {
     { wrapper },
   );
 
-  expect(result.current).toEqual([]);
+  expect(result.current.globalRecordCreationCommandMenuItems).toEqual([]);
 });
 
 it('keeps global creation disabled when the form flag is off', () => {
@@ -89,5 +107,5 @@ it('keeps global creation disabled when the form flag is off', () => {
     { wrapper },
   );
 
-  expect(result.current).toEqual([]);
+  expect(result.current.globalRecordCreationCommandMenuItems).toEqual([]);
 });

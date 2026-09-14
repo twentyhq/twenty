@@ -1,3 +1,4 @@
+import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
@@ -27,10 +28,13 @@ export const useGlobalRecordCreationCommandMenuItems = (
   );
 
   if (!isRecordCreationFormEnabled || !isDefined(createRecordCommand)) {
-    return [];
+    return {
+      isRecordCreationFormEnabled,
+      globalRecordCreationCommandMenuItems: [],
+    };
   }
 
-  return activeObjectMetadataItems
+  const globalRecordCreationCommandMenuItems = activeObjectMetadataItems
     .filter((objectMetadataItem) => {
       const permissions = getObjectPermissionsForObject(
         objectPermissionsByObjectMetadataId,
@@ -38,11 +42,11 @@ export const useGlobalRecordCreationCommandMenuItems = (
       );
 
       return (
-        objectMetadataItem.isUICreatable &&
-        objectMetadataItem.isUIEditable &&
-        !objectMetadataItem.isRemote &&
         permissions.canReadObjectRecords &&
-        permissions.canUpdateObjectRecords
+        canCreateRecordsForObjectMetadataItem({
+          objectMetadataItem,
+          objectPermissions: permissions,
+        })
       );
     })
     .map((objectMetadataItem): CommandMenuItemDefinition => {
@@ -64,4 +68,6 @@ export const useGlobalRecordCreationCommandMenuItems = (
         creationTargetObjectMetadataId: objectMetadataItem.id,
       };
     });
+
+  return { isRecordCreationFormEnabled, globalRecordCreationCommandMenuItems };
 };

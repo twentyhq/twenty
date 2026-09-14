@@ -1,9 +1,13 @@
 import { CreateNewRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/CreateNewRecordCommand';
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 
 const mockUseHeadlessCommandContextApi = jest.fn();
 const mockUseCreateNewIndexRecord = jest.fn();
 const mockUseCreateNewRecord = jest.fn();
+const mockCreateNewRecord = jest.fn();
+const mockCreateNewIndexRecord = jest.fn();
+const mockUnmountCommand = jest.fn();
+const mockEnqueueErrorSnackBar = jest.fn();
 const mockCompany = { id: 'company', nameSingular: 'company' };
 const mockTask = { id: 'task', nameSingular: 'task' };
 
@@ -30,15 +34,26 @@ jest.mock('@/object-core/workflows/hooks/useCreateCoreWorkflow', () => ({
   useCreateCoreWorkflow: () => ({ createCoreWorkflow: jest.fn() }),
 }));
 jest.mock(
-  '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect',
-  () => ({ HeadlessEngineCommandWrapperEffect: () => null }),
+  '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow',
+  () => ({ useAvailableComponentInstanceIdOrThrow: () => 'create-command' }),
 );
+jest.mock(
+  '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand',
+  () => ({ useUnmountCommand: () => mockUnmountCommand }),
+);
+jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
+  useSnackBar: () => ({ enqueueErrorSnackBar: mockEnqueueErrorSnackBar }),
+}));
 
 beforeEach(() => {
   jest.clearAllMocks();
-  mockUseCreateNewRecord.mockReturnValue({ createNewRecord: jest.fn() });
+  mockCreateNewRecord.mockResolvedValue({ id: 'created-record' });
+  mockCreateNewIndexRecord.mockResolvedValue({ id: 'created-index-record' });
+  mockUseCreateNewRecord.mockReturnValue({
+    createNewRecord: mockCreateNewRecord,
+  });
   mockUseCreateNewIndexRecord.mockReturnValue({
-    createNewIndexRecord: jest.fn(),
+    createNewIndexRecord: mockCreateNewIndexRecord,
   });
 });
 
@@ -48,7 +63,7 @@ it.each([
   [null, mockCompany],
 ])(
   'creates the target object independently of the current page (%j to %j)',
-  (currentObject, targetObject) => {
+  async (currentObject, targetObject) => {
     mockUseHeadlessCommandContextApi.mockReturnValue({
       objectMetadataItem: currentObject,
       recordIndexId: 'current-view',
@@ -61,10 +76,17 @@ it.each([
       objectMetadataItem: targetObject,
     });
     expect(mockUseCreateNewIndexRecord).not.toHaveBeenCalled();
+    await waitFor(() =>
+      expect(mockUnmountCommand).toHaveBeenCalledWith('create-command'),
+    );
+    expect(mockCreateNewRecord).toHaveBeenCalledTimes(1);
+    expect(mockCreateNewRecord).toHaveBeenCalledWith({ position: 'first' });
+    expect(mockCreateNewIndexRecord).not.toHaveBeenCalled();
+    expect(mockEnqueueErrorSnackBar).not.toHaveBeenCalled();
   },
 );
 
-it('preserves the current view for the existing index command', () => {
+it('preserves the current view for the existing index command', async () => {
   mockUseHeadlessCommandContextApi.mockReturnValue({
     objectMetadataItem: mockCompany,
     recordIndexId: 'company-view',
@@ -77,4 +99,11 @@ it('preserves the current view for the existing index command', () => {
     objectMetadataItem: mockCompany,
     instanceId: 'company-view',
   });
+  await waitFor(() =>
+    expect(mockUnmountCommand).toHaveBeenCalledWith('create-command'),
+  );
+  expect(mockCreateNewIndexRecord).toHaveBeenCalledTimes(1);
+  expect(mockCreateNewIndexRecord).toHaveBeenCalledWith({ position: 'first' });
+  expect(mockCreateNewRecord).not.toHaveBeenCalled();
+  expect(mockEnqueueErrorSnackBar).not.toHaveBeenCalled();
 });
