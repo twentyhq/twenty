@@ -7098,6 +7098,11 @@ msgstr "検索に使用できる識別子が見つかりませんでした。"
 msgid "No input provided in form step"
 msgstr "フォームステップに入力が提供されていません"
 
+#. js-lingui-id: jNd9S2
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "No mailbox is connected for this action. Connect one in Settings."
+msgstr ""
+
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No pattern provided in CUSTOM cron trigger"
@@ -10846,6 +10851,11 @@ msgstr "このキャンペーンのメール内容が不正です。"
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
 msgstr "このカラムはすでに一意としてマークされています。ここで制約を管理する場合は、先にフィールドの \"Unique\" をオフにしてください。"
+
+#. js-lingui-id: /abJpu
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "This connected account cannot be used for this action."
+msgstr ""
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts

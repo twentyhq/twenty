@@ -7098,6 +7098,11 @@ msgstr "Δεν βρέθηκε αναγνωριστικό για αναζήτησ
 msgid "No input provided in form step"
 msgstr "Δεν παρέχεται εισαγωγή στο βήμα φόρμας"
 
+#. js-lingui-id: jNd9S2
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "No mailbox is connected for this action. Connect one in Settings."
+msgstr ""
+
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No pattern provided in CUSTOM cron trigger"
@@ -10846,6 +10851,11 @@ msgstr "Το περιεχόμενο του email αυτής της καμπάν�
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
 msgstr "Αυτή η στήλη έχει ήδη επισημανθεί ως μοναδική. Απενεργοποιήστε πρώτα το \"Unique\" του πεδίου αν θέλετε να διαχειριστείτε τον περιορισμό από εδώ."
+
+#. js-lingui-id: /abJpu
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "This connected account cannot be used for this action."
+msgstr ""
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
