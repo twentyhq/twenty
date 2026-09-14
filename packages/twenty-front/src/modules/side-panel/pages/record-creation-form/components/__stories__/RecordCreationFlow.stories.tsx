@@ -239,7 +239,9 @@ const submitCompany = async (canvasElement: HTMLElement, shortcut?: string) => {
     await canvas.findByRole('button', { name: /Create company/ }),
   );
   const nameInput = await canvas.findByRole('textbox');
+  await expect(nameInput).toHaveTextContent('Filter default');
   await userEvent.click(nameInput);
+  await userEvent.clear(nameInput);
   await userEvent.type(nameInput, 'Acme');
   const createButton = canvas.getByTestId('record-creation-form-create-button');
   await expect(createButton).toHaveTextContent(getOsControlSymbol());

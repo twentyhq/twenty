@@ -146,14 +146,24 @@ export const useCreateNewRecord = ({
       }
 
       const createdRecord = await requestRecordCreation({
-        initialDraftRecord: recordInput,
+        initialDraftRecord: {
+          ...buildRecordInputFromRLSPredicates(),
+          ...buildRecordInput?.(),
+          ...recordInput,
+        },
         createRecord: (draftRecord) =>
           createRecord({ ...recordInput, ...draftRecord }),
       });
 
       return createdRecord ?? undefined;
     },
-    [createRecord, requestRecordCreation, shouldOpenRecordCreationForm],
+    [
+      buildRecordInputFromRLSPredicates,
+      buildRecordInput,
+      createRecord,
+      requestRecordCreation,
+      shouldOpenRecordCreationForm,
+    ],
   );
 
   return {
