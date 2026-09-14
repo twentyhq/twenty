@@ -67,18 +67,21 @@ test('Create and update record', async ({ page }) => {
   });
   await expect(firstNameInput).toBeVisible();
   await firstNameInput.click();
+  await expect(firstNameInput).toBeFocused();
   await page.keyboard.type('John');
 
   const lastNameInput = page.locator('[contenteditable]').filter({
     has: page.locator('p[data-placeholder="L‌‌ast name"]'),
   });
   await lastNameInput.click();
+  await expect(lastNameInput).toBeFocused();
   await page.keyboard.type('Doe');
 
   const emailInput = page.locator('[contenteditable]').filter({
     has: page.locator('p[data-placeholder="Primary Email"]'),
   });
   await emailInput.click();
+  await expect(emailInput).toBeFocused();
   await page.keyboard.type(randomEmail);
 
   await page.getByTestId('record-creation-form-create-button').click();
@@ -133,7 +136,10 @@ test('Create and update record', async ({ page }) => {
     .click({ force: true });
   const options = page.getByRole('listbox');
   await options.getByText('Hybrid').first().click({ force: true });
-  recordFieldList.getByText('Work Preference', { exact: true }).first().click({ force: true });
+  await recordFieldList
+    .getByText('Work Preference', { exact: true })
+    .first()
+    .click({ force: true });
 
   // Open full record page to get person ID
   await page.getByRole('button', { name: 'Expand record' }).click();
