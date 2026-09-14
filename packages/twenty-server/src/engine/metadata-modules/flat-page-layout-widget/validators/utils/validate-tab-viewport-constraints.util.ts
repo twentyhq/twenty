@@ -10,7 +10,7 @@ import {
   PageLayoutWidgetExceptionCode,
   PageLayoutWidgetExceptionMessageKey,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
-import { resolveEffectiveEntity } from 'src/engine/metadata-modules/utils/resolve-effective-entity.util';
+import { resolveEffectiveUniversalFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity.util';
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -18,6 +18,7 @@ import { type FlatEntityValidationError } from 'src/engine/workspace-manager/wor
 type PageLayoutWidgetForViewportValidation = Pick<
   UniversalFlatPageLayoutWidget,
   | 'universalIdentifier'
+  | 'applicationUniversalIdentifier'
   | 'title'
   | 'type'
   | 'isActive'
@@ -58,17 +59,10 @@ export const validateTabViewportConstraints = ({
   const isTabViewportWidget = isViewportFillingWidget(widget);
 
   const activeSiblingWidgets = relatedWidgets
-    .filter(
-      (relatedWidget) =>
-        relatedWidget.pageLayoutTabUniversalIdentifier ===
-          widget.pageLayoutTabUniversalIdentifier ||
-        relatedWidget.universalOverrides?.pageLayoutTabUniversalIdentifier ===
-          widget.pageLayoutTabUniversalIdentifier,
-    )
     .map((relatedWidget) =>
-      resolveEffectiveEntity({
-        ...relatedWidget,
-        overrides: relatedWidget.universalOverrides,
+      resolveEffectiveUniversalFlatEntity({
+        metadataName: 'pageLayoutWidget',
+        universalFlatEntity: relatedWidget,
       }),
     )
     .filter(

@@ -28,6 +28,7 @@ import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entiti
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
 
 export type CommandMenuItemOverrides = {
+  isActive?: boolean;
   label?: string;
   icon?: string | null;
   shortLabel?: string | null;

@@ -34,6 +34,7 @@ import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entiti
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @Entity('objectMetadata')
@@ -91,7 +92,7 @@ export class ObjectMetadataEntity
     upgradeCommandName: ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME,
   })
   @Column({ type: 'jsonb', nullable: true })
-  overrides: JsonbProperty<ObjectMetadataOverrides> | null;
+  overrides: JsonbProperty<AuthoredOverrides<ObjectMetadataOverrides>> | null;
 
   /**
    * @deprecated Please use `overrides` instead.
