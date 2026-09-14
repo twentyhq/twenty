@@ -71,7 +71,7 @@ export type {
   IngestedMessage,
   IngestMessage,
   IngestMessageParticipant,
-} from '@/sdk/logic-function/messaging/ingest-messages';
+} from '@/sdk/logic-function/messaging/types/ingest-message.type';
 export type { AppMessageChannel } from '@/sdk/logic-function/messaging/types/app-message-channel.type';
 
 export { runAgent } from '@/sdk/logic-function/agents/run-agent';
