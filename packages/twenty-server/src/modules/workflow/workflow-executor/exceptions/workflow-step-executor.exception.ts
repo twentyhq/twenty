@@ -11,6 +11,8 @@ export enum WorkflowStepExecutorExceptionCode {
   INVALID_STEP_INPUT = 'INVALID_STEP_INPUT',
   STEP_NOT_FOUND = 'STEP_NOT_FOUND',
   INTERNAL_ERROR = 'INTERNAL_ERROR',
+  NO_ACTIVE_WORKFLOW_VERSION = 'NO_ACTIVE_WORKFLOW_VERSION',
+  WORKFLOW_RUN_DEPTH_EXCEEDED = 'WORKFLOW_RUN_DEPTH_EXCEEDED',
 }
 
 const getWorkflowStepExecutorExceptionUserFriendlyMessage = (
@@ -25,6 +27,10 @@ const getWorkflowStepExecutorExceptionUserFriendlyMessage = (
       return msg`Workflow step not found.`;
     case WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT:
       return msg`Invalid workflow step input.`;
+    case WorkflowStepExecutorExceptionCode.NO_ACTIVE_WORKFLOW_VERSION:
+      return msg`The selected workflow has no active version.`;
+    case WorkflowStepExecutorExceptionCode.WORKFLOW_RUN_DEPTH_EXCEEDED:
+      return msg`Workflow run depth limit exceeded.`;
     case WorkflowStepExecutorExceptionCode.INTERNAL_ERROR:
       return STANDARD_ERROR_MESSAGE;
     default:
