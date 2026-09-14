@@ -15,6 +15,7 @@ export const SystemPermissionFlag = {
   LAYOUTS: '458d1ee5-ba12-5f4e-9d17-6f8c11fcd7fd',
   BILLING: '24b66701-ed97-51e4-aa63-794e1b31414c',
   AI_SETTINGS: 'e8cc4a30-c120-5925-8f5d-73d6a2247fee',
+  MONITORING: 'ecf87180-a8f4-424d-99e1-4fb9fe75fd3e',
   AI: '1c7f09a7-367d-568b-a0e8-c274eccd6ee3',
   VIEWS: 'c68354c4-535d-53a9-848a-e3a6774b5fb8',
   UPLOAD_FILE: 'dc6931a9-44bd-5164-a983-3db5db837f54',

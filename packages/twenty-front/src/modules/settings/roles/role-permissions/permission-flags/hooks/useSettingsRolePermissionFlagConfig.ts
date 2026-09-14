@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import {
   IconApps,
   IconCreditCard,
+  IconGauge,
   IconHierarchy,
   IconKey,
   IconAppWindow,
@@ -152,6 +153,15 @@ export const useSettingsRolePermissionFlagConfig = ({
         name: t`AI`,
         description: t`Create and configure AI agents`,
         Icon: IconSparkles,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
+      },
+      {
+        key: PermissionFlagType.MONITORING,
+        name: t`Monitoring`,
+        description: t`Read instance health and worker queue telemetry`,
+        Icon: IconGauge,
         isRelevantForAgents: true,
         isRelevantForApiKeys: true,
         isRelevantForUsers: true,

@@ -14,7 +14,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @CoreResolver()
 @UseGuards(
   WorkspaceAuthGuard,
-  SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  SettingsPermissionGuard(PermissionFlagType.MONITORING),
 )
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class WorkerQueueStatusResolver {

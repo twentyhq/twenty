@@ -74,6 +74,11 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
     description: 'Install and manage applications',
     icon: 'IconApps',
   },
+  [PermissionFlagType.MONITORING]: {
+    label: 'Monitoring',
+    description: 'Read instance health and worker queue telemetry',
+    icon: 'IconGauge',
+  },
   [PermissionFlagType.MARKETPLACE_APPS]: {
     label: 'Marketplace Apps',
     description: 'Browse and install marketplace apps',

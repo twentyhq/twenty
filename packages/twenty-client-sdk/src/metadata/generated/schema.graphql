@@ -592,6 +592,7 @@ enum PermissionFlagType {
   LAYOUTS
   BILLING
   AI_SETTINGS
+  MONITORING
   AI
   VIEWS
   UPLOAD_FILE
