@@ -88,13 +88,22 @@ export const CommandMenuContextProviderContent = ({
       )
       .map((item) =>
         resolveCommandMenuItemPinning(item, commandMenuContextApi),
-      );
+      )
+      .sort((firstItem, secondItem) => firstItem.position - secondItem.position);
+
+    if (!shouldDisplayGlobalRecordCreationCommands) {
+      return contextCommandMenuItems;
+    }
+
     return [
-      ...contextCommandMenuItems,
-      ...(shouldDisplayGlobalRecordCreationCommands
-        ? globalRecordCreationCommandMenuItems
-        : []),
-    ].sort((firstItem, secondItem) => firstItem.position - secondItem.position);
+      ...contextCommandMenuItems.filter(
+        (item) => item.engineComponentKey !== EngineComponentKey.NAVIGATION,
+      ),
+      ...globalRecordCreationCommandMenuItems,
+      ...contextCommandMenuItems.filter(
+        (item) => item.engineComponentKey === EngineComponentKey.NAVIGATION,
+      ),
+    ];
   }, [
     commandMenuContextApi,
     globalRecordCreationCommandMenuItems,

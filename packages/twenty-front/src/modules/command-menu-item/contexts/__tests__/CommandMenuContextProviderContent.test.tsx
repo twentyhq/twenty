@@ -81,6 +81,19 @@ it.each([
 
     expect(screen.getByText('Create Company')).toBeInTheDocument();
     expect(screen.getByText('Create Task')).toBeInTheDocument();
+    expect(
+      screen
+        .getByText('Create Task')
+        .compareDocumentPosition(screen.getByText('Go to Settings')),
+    ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+
+    if (context.pageType === ContextStorePageType.Index) {
+      expect(
+        screen
+          .getByText('Create View')
+          .compareDocumentPosition(screen.getByText('Create Company')),
+      ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    }
   },
 );
 
