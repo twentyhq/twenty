@@ -242,8 +242,10 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
 
       expect(attachmentsResponse.body.errors).toBeUndefined();
       expect(
-        collectIds(attachmentsResponse.body.data.attachments.edges).sort(),
-      ).toEqual([...ATTACHMENT_IDS].sort());
+        collectIds(attachmentsResponse.body.data.attachments.edges),
+      ).toEqual(
+        [NOTE_ATTACHMENT_ID, PERSON_ATTACHMENT_ID, ORPHAN_ATTACHMENT_ID].sort(),
+      );
       expect(noteTargetsResponse.body.errors).toBeUndefined();
       expect(
         collectIds(noteTargetsResponse.body.data.noteTargets.edges),
