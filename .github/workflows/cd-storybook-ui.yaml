@@ -15,8 +15,7 @@ on:
       - packages/twenty-shared/**
       - packages/twenty-docs/**
 
-permissions:
-  contents: read
+permissions: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -24,6 +23,8 @@ concurrency:
 
 jobs:
   build:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 30
     outputs:
@@ -54,6 +55,7 @@ jobs:
 
   dispatch:
     needs: build
+    permissions: {}
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
