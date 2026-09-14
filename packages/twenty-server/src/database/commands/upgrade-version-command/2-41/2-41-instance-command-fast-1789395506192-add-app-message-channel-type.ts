@@ -13,6 +13,10 @@ export class AddAppMessageChannelTypeFastInstanceCommand implements FastInstance
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    // Narrowing the enum casts every existing row into it, so an APP channel
+    // left behind makes the rollback itself fail. Rolling back removes the
+    // code that can read these channels, so the rows are already dead.
+    await queryRunner.query('DELETE FROM "core"."messageChannel" WHERE "type" = \'APP\'');
     await queryRunner.query('CREATE TYPE "core"."messageChannel_type_enum_old" AS ENUM(\'EMAIL\', \'SMS\', \'EMAIL_GROUP\')');
     await queryRunner.query('ALTER TABLE "core"."messageChannel" ALTER COLUMN "type" TYPE "core"."messageChannel_type_enum_old" USING "type"::"text"::"core"."messageChannel_type_enum_old"');
     await queryRunner.query('DROP TYPE "core"."messageChannel_type_enum"');
