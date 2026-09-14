@@ -14,11 +14,13 @@ import { getPickRecordLoadBalanceConfigError } from 'src/modules/workflow/workfl
 import { getRecordCrudRichTextIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-record-crud-rich-text-issues.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-const RECORD_CRUD_ACTION_TYPES_WITH_OBJECT_RECORD = new Set<string>([
-  WorkflowActionType.CREATE_RECORD,
-  WorkflowActionType.UPDATE_RECORD,
-  WorkflowActionType.UPSERT_RECORD,
-]);
+const RECORD_CRUD_ACTION_TYPES_WITH_OBJECT_RECORD = new Set<WorkflowActionType>(
+  [
+    WorkflowActionType.CREATE_RECORD,
+    WorkflowActionType.UPDATE_RECORD,
+    WorkflowActionType.UPSERT_RECORD,
+  ],
+);
 
 export const getWorkflowRecordStepMetadataIssues = ({
   steps,
