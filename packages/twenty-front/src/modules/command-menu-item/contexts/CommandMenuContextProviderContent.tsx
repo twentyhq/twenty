@@ -1,3 +1,5 @@
+import { useGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems';
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import {
   CommandMenuContext,
   type CommandMenuContextType,
@@ -36,6 +38,11 @@ export const CommandMenuContextProviderContent = ({
   isInPreviewMode,
 }: CommandMenuContextProviderContentProps) => {
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
+  const globalRecordCreationCommandMenuItems =
+    useGlobalRecordCreationCommandMenuItems(commandMenuItems);
+  const shouldDisplayGlobalRecordCreationCommands =
+    containerType === CommandMenuItemContainerType.CommandMenuList &&
+    globalRecordCreationCommandMenuItems.length > 0;
   const isLayoutCustomizationAllowedOnCurrentPage =
     useIsLayoutCustomizationAllowedOnCurrentPage();
   const commandMenuItemsDraft = useAtomStateValue(commandMenuItemsDraftState);
@@ -55,7 +62,12 @@ export const CommandMenuContextProviderContent = ({
       ? (commandMenuItemsDraft ?? commandMenuItems)
       : commandMenuItems;
 
-    return commandMenuItemsToDisplay
+    const contextCommandMenuItems = commandMenuItemsToDisplay
+      .filter(
+        (item) =>
+          !shouldDisplayGlobalRecordCreationCommands ||
+          item.engineComponentKey !== EngineComponentKey.CREATE_NEW_RECORD,
+      )
       .filter(
         (item) =>
           item.engineComponentKey !==
@@ -74,12 +86,19 @@ export const CommandMenuContextProviderContent = ({
           commandMenuContextApi,
         ),
       )
-      .map((item) => resolveCommandMenuItemPinning(item, commandMenuContextApi))
-      .sort(
-        (firstItem, secondItem) => firstItem.position - secondItem.position,
+      .map((item) =>
+        resolveCommandMenuItemPinning(item, commandMenuContextApi),
       );
+    return [
+      ...contextCommandMenuItems,
+      ...(shouldDisplayGlobalRecordCreationCommands
+        ? globalRecordCreationCommandMenuItems
+        : []),
+    ].sort((firstItem, secondItem) => firstItem.position - secondItem.position);
   }, [
     commandMenuContextApi,
+    globalRecordCreationCommandMenuItems,
+    shouldDisplayGlobalRecordCreationCommands,
     commandMenuItems,
     commandMenuItemsDraft,
     effectivePageLayoutId,
