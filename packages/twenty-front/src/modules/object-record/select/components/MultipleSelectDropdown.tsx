@@ -108,11 +108,11 @@ export const MultipleSelectDropdown = ({
                 text={item.name}
                 avatar={
                   <Avatar
-                    avatarUrl={getAbsoluteImageUrl(item.avatarUrl)}
-                    placeholderColorSeed={item.id}
-                    placeholder={item.name}
+                    src={getAbsoluteImageUrl(item.avatarUrl)}
+                    colorSeed={item.id}
+                    name={item.name}
                     size="md"
-                    type={item.avatarType}
+                    shape={item.avatarShape}
                   />
                 }
               />

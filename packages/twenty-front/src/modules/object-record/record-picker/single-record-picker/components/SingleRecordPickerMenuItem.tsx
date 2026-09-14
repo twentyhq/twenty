@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
+import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchableObjectMetadataItemsComponentState';
@@ -89,11 +89,11 @@ export const SingleRecordPickerMenuItem = ({
         focused={isSelectedItemId}
         avatar={
           <Avatar
-            avatarUrl={getAbsoluteImageUrl(searchRecordStore.imageUrl)}
-            placeholderColorSeed={morphItem.recordId}
-            placeholder={searchRecordStore.label}
+            src={getAbsoluteImageUrl(searchRecordStore.imageUrl)}
+            colorSeed={morphItem.recordId}
+            name={searchRecordStore.label}
             size="md"
-            type={getAvatarType(objectMetadataItem)}
+            shape={getAvatarShape(objectMetadataItem)}
           />
         }
         contextualText={
