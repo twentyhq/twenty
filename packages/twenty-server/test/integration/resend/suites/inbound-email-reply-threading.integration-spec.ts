@@ -153,9 +153,13 @@ describe('Inbound email reply threading (integration)', () => {
     inWorkspace(async (workspaceOrmManager) => {
       const message = await workspaceOrmManager
         .getRepository<MessageWorkspaceEntity>('message')
-        .findOneOrFail({ where: { headerMessageId } });
+        .createQueryBuilder('message')
+        .where('message.headerMessageId = :headerMessageId', {
+          headerMessageId,
+        })
+        .getOne<MessageWorkspaceEntity>();
 
-      return message.messageThreadId;
+      return message?.messageThreadId;
     });
 
   beforeAll(async () => {
