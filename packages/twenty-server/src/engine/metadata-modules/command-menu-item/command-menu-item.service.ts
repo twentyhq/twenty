@@ -14,7 +14,7 @@ import {
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { type CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
-import { type CreateCommandMenuItemArgs } from 'src/engine/metadata-modules/command-menu-item/dtos/types/create-command-menu-item-args.type';
+import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/create-command-menu-item.input';
 import { type UpdateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/update-command-menu-item.input';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { interpolateNavigationCommandMenuItemField } from 'src/engine/metadata-modules/command-menu-item/utils/interpolate-navigation-command-menu-item-field.util';
@@ -97,7 +97,7 @@ export class CommandMenuItemService {
   }
 
   async create(
-    input: CreateCommandMenuItemArgs,
+    input: CreateCommandMenuItemInput,
     workspaceId: string,
   ): Promise<CommandMenuItemDTO> {
     const {

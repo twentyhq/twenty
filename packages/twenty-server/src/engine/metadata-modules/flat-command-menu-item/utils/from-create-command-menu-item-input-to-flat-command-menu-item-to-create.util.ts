@@ -8,7 +8,7 @@ import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modu
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
-import { type CreateCommandMenuItemArgs } from 'src/engine/metadata-modules/command-menu-item/dtos/types/create-command-menu-item-args.type';
+import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/create-command-menu-item.input';
 
 export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   createCommandMenuItemInput,
@@ -18,7 +18,7 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   flatFrontComponentMaps,
   flatPageLayoutMaps,
 }: {
-  createCommandMenuItemInput: CreateCommandMenuItemArgs;
+  createCommandMenuItemInput: CreateCommandMenuItemInput;
   workspaceId: string;
   flatApplication: FlatApplication;
 } & Pick<
