@@ -159,7 +159,7 @@
     "redis": "^4.7.0",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.1",
-    "sanitize-html": "2.17.5",
+    "sanitize-html": "2.17.7",
     "semver": "7.6.3",
     "sns-payload-validator": "^2.1.0",
     "stripe": "20.4.1",
