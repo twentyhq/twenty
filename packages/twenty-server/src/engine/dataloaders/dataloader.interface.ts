@@ -10,7 +10,7 @@ import {
   type SearchFieldMetadataLoaderPayload,
   type IsConfiguredLoaderPayload,
   type MorphRelationLoaderPayload,
-  type StandardApplicationIdLoaderPayload,
+  type ApplicationAuthorIdentifiersLoaderPayload,
   type ObjectMetadataLoaderPayload,
   type RelationLoaderPayload,
   type ViewFieldGroupsByViewIdLoaderPayload,
@@ -21,6 +21,7 @@ import {
   type ViewGroupsByViewIdLoaderPayload,
   type ViewSortsByViewIdLoaderPayload,
 } from 'src/engine/dataloaders/dataloader.service';
+import { type ApplicationAuthorIdentifiers } from 'src/engine/metadata-modules/application-translation-catalog/types/application-author-identifiers.type';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
@@ -115,9 +116,9 @@ export interface IDataloaders {
 
   isConfiguredLoader: DataLoader<IsConfiguredLoaderPayload, boolean>;
 
-  standardApplicationIdLoader: DataLoader<
-    StandardApplicationIdLoaderPayload,
-    string
+  applicationAuthorIdentifiersLoader: DataLoader<
+    ApplicationAuthorIdentifiersLoaderPayload,
+    ApplicationAuthorIdentifiers
   >;
 
   applicationTranslationCatalogLoader: DataLoader<

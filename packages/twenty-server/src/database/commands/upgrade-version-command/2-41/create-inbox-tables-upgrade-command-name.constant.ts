@@ -2,4 +2,4 @@
 // running below 2.41.0 do not query the tables before this command creates
 // them.
 export const CREATE_INBOX_TABLES_UPGRADE_COMMAND_NAME =
-  '2.41.0_CreateInboxTablesFastInstanceCommand_1789344039566';
+  '2.41.0_CreateInboxTablesFastInstanceCommand_1789392529393';
