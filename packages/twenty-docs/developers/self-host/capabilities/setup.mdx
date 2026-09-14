@@ -263,6 +263,37 @@ yarn command:prod cron:calendar:ongoing-stale
 yarn command:prod cron:workflow:automated-cron-trigger
 ```
 
+## Slack Integration
+
+Twenty's Slack app connects to a Slack app that you create and own. Unlike the integrations above, its credentials live on the app's registration rather than in the admin panel's configuration variables.
+
+### Create the Slack app
+
+Create it at [api.slack.com/apps](https://api.slack.com/apps) with **Create New App → From a manifest**, pasting the [manifest](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/slack/slack-app-manifest.json) shipped with the app and replacing its host placeholders with your own. The manifest is the source of truth for scopes, event subscriptions and the agent surface.
+
+The OAuth redirect URL points at your **server** origin, not the front-end:
+- `https://{your-domain}/auth/apps/callback`
+
+<Warning>
+Leave Slack's PKCE opt-in off. It marks the app a public client, which only Slack support can undo, and it breaks bot scopes on `localhost` redirects.
+</Warning>
+
+### Configure in Twenty
+
+1. Install the **Slack** app from the app store
+2. Go to **Settings → Applications → Slack → Application registration** (admin only)
+3. Set these variables:
+   - `SLACK_CLIENT_ID={client-id}`
+   - `SLACK_CLIENT_SECRET={client-secret}`
+   - `SLACK_WEBHOOK_SECRET={signing-secret}` (conversational assistant only)
+4. Go to **Connections → Add connection** and complete the Slack sign-in
+
+The client ID, client secret and signing secret are all on the Slack app's **Basic Information → App Credentials** page.
+
+### Conversational assistant
+
+The assistant reuses the same connection, and additionally needs event subscriptions and interactivity pointed back at your deployment. The [Slack self-hosting guide](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/slack/SETUP.md) covers those request URLs, the full scope table, record link previews, linking Slack accounts to workspace members, and troubleshooting.
+
 ## Outbound Connections to Internal Hosts
 
 By default, Twenty refuses outbound connections to private/internal IP addresses (SSRF protection). This covers HTTP workflow actions, webhooks, SSO identity providers and IMAP/SMTP/CalDAV connections. If your identity provider, mail or calendar server runs on a private network, list its hostname or IP literal:

@@ -14,3 +14,5 @@
 ## 📌 Getting started
 
 Open the Slack app in Twenty, click **Add connection**, and complete the Slack sign-in. You're all set.
+
+**Self-hosting?** Your admin creates the Slack app and sets its credentials first: see [SETUP.md](SETUP.md).
