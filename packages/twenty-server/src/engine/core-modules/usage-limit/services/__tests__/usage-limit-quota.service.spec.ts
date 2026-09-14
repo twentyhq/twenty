@@ -20,7 +20,7 @@ import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/serv
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
-import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
+import { type UsageConsumptionWindowRow } from 'src/engine/core-modules/usage/types/usage-consumption-window-row.type';
 import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
 import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
@@ -45,6 +45,26 @@ const ALLOWANCE_PERIOD = {
   periodStart: new Date('2026-08-15T09:00:00.000Z'),
   periodEnd: new Date('2100-09-15T09:00:00.000Z'),
 };
+
+const buildWindowKey = (periodUnit: string, period: UsagePeriod): string =>
+  `${periodUnit}:${period.periodStart.getTime()}`;
+
+const buildWindowRow = (
+  overrides: Partial<UsageConsumptionWindowRow> = {},
+): UsageConsumptionWindowRow => ({
+  windowKey: buildWindowKey('month', MONTH_PERIOD),
+  resourceType: UsageResourceType.AI,
+  operationType: UsageOperationType.AI_CHAT_TOKEN,
+  userWorkspaceId: '',
+  apiKeyId: '',
+  applicationId: '',
+  agentId: '',
+  workflowId: '',
+  logicFunctionId: '',
+  creditsUsedMicro: '0',
+  quantity: '0',
+  ...overrides,
+});
 
 class TestCreditAllowanceProvider extends CreditAllowanceProvider {
   isCreditAllowanceEnabled = jest.fn().mockResolvedValue(true);
@@ -108,7 +128,7 @@ describe('UsageLimitQuotaService', () => {
   };
 
   const usageAnalyticsService = {
-    getConsumptionRowsForAllScopes: jest.fn().mockResolvedValue([]),
+    getConsumptionRowsByWindow: jest.fn().mockResolvedValue([]),
     getCreditsUsedMicroForBillingPeriod: jest.fn().mockResolvedValue(0),
   };
 
@@ -167,7 +187,7 @@ describe('UsageLimitQuotaService', () => {
     );
     cacheStorage.mget.mockResolvedValue([]);
     cacheStorage.runScript.mockResolvedValue([]);
-    usageAnalyticsService.getConsumptionRowsForAllScopes.mockResolvedValue([]);
+    usageAnalyticsService.getConsumptionRowsByWindow.mockResolvedValue([]);
     usageAnalyticsService.getCreditsUsedMicroForBillingPeriod.mockResolvedValue(
       0,
     );
@@ -219,7 +239,7 @@ describe('UsageLimitQuotaService', () => {
 
     await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
     expect(
-      usageAnalyticsService.getConsumptionRowsForAllScopes,
+      usageAnalyticsService.getConsumptionRowsByWindow,
     ).not.toHaveBeenCalled();
   });
 
@@ -243,16 +263,20 @@ describe('UsageLimitQuotaService', () => {
 
     await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
     expect(
-      usageAnalyticsService.getConsumptionRowsForAllScopes,
+      usageAnalyticsService.getConsumptionRowsByWindow,
     ).toHaveBeenCalledWith(
       expect.objectContaining({
-        periodAnchor: 'calendar',
-        periodStart: MONTH_PERIOD.periodStart,
+        windows: [
+          expect.objectContaining({
+            periodAnchor: 'calendar',
+            periodStart: MONTH_PERIOD.periodStart,
+          }),
+        ],
       }),
     );
   });
 
-  it('runs one warm query per distinct period', async () => {
+  it('asks for every distinct period window in a single query', async () => {
     setLimits([
       buildLimit({ id: 'monthly' }),
       buildLimit({ id: 'weekly', periodUnit: 'week' }),
@@ -262,8 +286,40 @@ describe('UsageLimitQuotaService', () => {
     await assertQuotaNotExhausted();
 
     expect(
-      usageAnalyticsService.getConsumptionRowsForAllScopes,
-    ).toHaveBeenCalledTimes(2);
+      usageAnalyticsService.getConsumptionRowsByWindow,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      usageAnalyticsService.getConsumptionRowsByWindow,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        windows: [
+          expect.objectContaining({ periodStart: MONTH_PERIOD.periodStart }),
+          expect.objectContaining({ periodStart: WEEK_PERIOD.periodStart }),
+        ],
+      }),
+    );
+  });
+
+  it('merges the resource types of a window into one query branch', async () => {
+    setLimits([
+      buildLimit({ id: 'ai' }),
+      buildLimit({ id: 'app', resourceType: UsageResourceType.APP }),
+    ]);
+    cacheStorage.mget.mockResolvedValue([undefined, undefined]);
+
+    await assertQuotaNotExhausted();
+
+    expect(
+      usageAnalyticsService.getConsumptionRowsByWindow,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        windows: [
+          expect.objectContaining({
+            resourceTypes: [UsageResourceType.AI, UsageResourceType.APP],
+          }),
+        ],
+      }),
+    );
   });
 
   it('warms a cold allowance counter from the live allowance minus the stamped consumption', async () => {
@@ -351,29 +407,27 @@ describe('UsageLimitQuotaService', () => {
       setAllowance(2_000);
       creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
       cacheStorage.mget.mockResolvedValue([undefined]);
-      usageAnalyticsService.getConsumptionRowsForAllScopes.mockResolvedValue([
-        {
-          operationType: UsageOperationType.AI_CHAT_TOKEN,
+      usageAnalyticsService.getConsumptionRowsByWindow.mockResolvedValue([
+        buildWindowRow({
           userWorkspaceId: 'user-1',
-          apiKeyId: '',
-          applicationId: '',
-          agentId: '',
-          workflowId: '',
-          logicFunctionId: '',
           creditsUsedMicro: '150',
-          quantity: '0',
-        },
+          windowKey: buildWindowKey('allowancePeriod', ALLOWANCE_PERIOD),
+        }),
       ]);
 
       await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
 
       expect(
-        usageAnalyticsService.getConsumptionRowsForAllScopes,
+        usageAnalyticsService.getConsumptionRowsByWindow,
       ).toHaveBeenCalledWith(
         expect.objectContaining({
-          periodAnchor: 'billing',
-          periodStart: ALLOWANCE_PERIOD.periodStart,
-          periodEnd: ALLOWANCE_PERIOD.periodEnd,
+          windows: [
+            expect.objectContaining({
+              periodAnchor: 'billing',
+              periodStart: ALLOWANCE_PERIOD.periodStart,
+              periodEnd: ALLOWANCE_PERIOD.periodEnd,
+            }),
+          ],
         }),
       );
       expect(cacheStorage.mset).toHaveBeenCalledWith([
@@ -423,7 +477,7 @@ describe('UsageLimitQuotaService', () => {
   it('admits when the warm query fails instead of granting a fresh budget', async () => {
     setLimits([buildLimit({})]);
     cacheStorage.mget.mockResolvedValue([undefined]);
-    usageAnalyticsService.getConsumptionRowsForAllScopes.mockRejectedValue(
+    usageAnalyticsService.getConsumptionRowsByWindow.mockRejectedValue(
       new Error('clickhouse unreachable'),
     );
 
@@ -752,21 +806,6 @@ describe('UsageLimitQuotaService', () => {
     const readLimitConsumptions = (limits: FlatUsageLimit[]) =>
       service.readLimitConsumptions({ workspaceId: 'workspace-1', limits });
 
-    const buildConsumptionRow = (
-      overrides: Partial<UsageConsumptionRow> = {},
-    ): UsageConsumptionRow => ({
-      operationType: UsageOperationType.AI_CHAT_TOKEN,
-      userWorkspaceId: '',
-      apiKeyId: '',
-      applicationId: '',
-      agentId: '',
-      workflowId: '',
-      logicFunctionId: '',
-      creditsUsedMicro: '0',
-      quantity: '0',
-      ...overrides,
-    });
-
     it('reads the consumption of each warm counter', async () => {
       cacheStorage.mget.mockResolvedValue([700]);
 
@@ -810,9 +849,9 @@ describe('UsageLimitQuotaService', () => {
 
     it('reads a cold counter from the consumption rows without warming it', async () => {
       cacheStorage.mget.mockResolvedValue([undefined]);
-      usageAnalyticsService.getConsumptionRowsForAllScopes.mockResolvedValue([
-        buildConsumptionRow({ creditsUsedMicro: '150' }),
-        buildConsumptionRow({ creditsUsedMicro: '90' }),
+      usageAnalyticsService.getConsumptionRowsByWindow.mockResolvedValue([
+        buildWindowRow({ creditsUsedMicro: '150' }),
+        buildWindowRow({ creditsUsedMicro: '90' }),
       ]);
 
       await expect(
@@ -836,8 +875,11 @@ describe('UsageLimitQuotaService', () => {
 
     it('reads the warm counters from the cache and only the cold ones from ClickHouse', async () => {
       cacheStorage.mget.mockResolvedValue([700, undefined]);
-      usageAnalyticsService.getConsumptionRowsForAllScopes.mockResolvedValue([
-        buildConsumptionRow({ creditsUsedMicro: '120' }),
+      usageAnalyticsService.getConsumptionRowsByWindow.mockResolvedValue([
+        buildWindowRow({
+          creditsUsedMicro: '120',
+          windowKey: buildWindowKey('week', WEEK_PERIOD),
+        }),
       ]);
 
       await expect(
@@ -868,18 +910,22 @@ describe('UsageLimitQuotaService', () => {
         ]),
       );
       expect(
-        usageAnalyticsService.getConsumptionRowsForAllScopes,
+        usageAnalyticsService.getConsumptionRowsByWindow,
       ).toHaveBeenCalledTimes(1);
       expect(
-        usageAnalyticsService.getConsumptionRowsForAllScopes,
+        usageAnalyticsService.getConsumptionRowsByWindow,
       ).toHaveBeenCalledWith(
-        expect.objectContaining({ periodStart: WEEK_PERIOD.periodStart }),
+        expect.objectContaining({
+          windows: [
+            expect.objectContaining({ periodStart: WEEK_PERIOD.periodStart }),
+          ],
+        }),
       );
     });
 
     it('answers a null consumption when ClickHouse cannot be read', async () => {
       cacheStorage.mget.mockResolvedValue([undefined]);
-      usageAnalyticsService.getConsumptionRowsForAllScopes.mockRejectedValue(
+      usageAnalyticsService.getConsumptionRowsByWindow.mockRejectedValue(
         new Error('ClickHouse unreachable'),
       );
 

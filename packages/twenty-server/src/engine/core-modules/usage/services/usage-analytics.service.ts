@@ -11,10 +11,12 @@ import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/forma
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
+import { type UsageConsumptionWindow } from 'src/engine/core-modules/usage/types/usage-consumption-window.type';
+import { type UsageConsumptionWindowRow } from 'src/engine/core-modules/usage/types/usage-consumption-window-row.type';
 import { type UsageConsumptionTotals } from 'src/engine/core-modules/usage/types/usage-consumption-totals.type';
 import { type UsagePeriodAnchor } from 'src/engine/core-modules/usage/types/usage-period-anchor.type';
 import { buildRecurringChargeKey } from 'src/engine/core-modules/usage/utils/build-recurring-charge-key.util';
+import { buildConsumptionRowsByWindowQuery } from 'src/engine/core-modules/usage/utils/build-consumption-rows-by-window-query.util';
 import { buildUsagePeriodClause } from 'src/engine/core-modules/usage/utils/build-usage-period-clause.util';
 import { buildUsageScopeFilter } from 'src/engine/core-modules/usage/utils/build-usage-scope-filter.util';
 import { fillUsageTimeSeriesGaps } from 'src/engine/core-modules/usage/utils/fill-usage-time-series-gaps.util';
@@ -75,40 +77,22 @@ const DECLARED_OPERATION_KEY_SEPARATOR = ':';
 export class UsageAnalyticsService {
   constructor(private readonly clickHouseService: ClickHouseService) {}
 
-  async getConsumptionRowsForAllScopes({
+  async getConsumptionRowsByWindow({
     workspaceId,
-    resourceType,
-    periodStart,
-    periodEnd,
-    periodAnchor,
+    windows,
   }: {
     workspaceId: string;
-    resourceType: UsageResourceType;
-    periodStart: Date;
-    periodEnd: Date;
-    periodAnchor: UsagePeriodAnchor;
-  }): Promise<UsageConsumptionRow[]> {
-    const periodClause = buildUsagePeriodClause(periodAnchor);
+    windows: UsageConsumptionWindow[];
+  }): Promise<UsageConsumptionWindowRow[]> {
+    if (!isNonEmptyArray(windows)) {
+      return [];
+    }
 
-    // The filtered keys are grouped again so the shape matches the
-    // consumption_by_scope projection, which is only picked on a full key match.
-    return this.clickHouseService.selectOrThrow<UsageConsumptionRow>(
-      `SELECT operationType, userWorkspaceId, apiKeyId, applicationId, agentId,
-              workflowId, logicFunctionId,
-              sum(creditsUsedMicro) AS creditsUsedMicro,
-              sum(quantity) AS quantity
-       FROM usageEvent
-       WHERE workspaceId = {workspaceId:String}
-         AND resourceType = {resourceType:String}
-         ${periodClause}
-       GROUP BY operationType, userWorkspaceId, apiKeyId, applicationId,
-                agentId, workflowId, logicFunctionId`,
-      {
-        workspaceId,
-        resourceType,
-        periodStart: formatDateTimeForClickHouse(periodStart),
-        periodEnd: formatDateTimeForClickHouse(periodEnd),
-      },
+    const { query, params } = buildConsumptionRowsByWindowQuery(windows);
+
+    return this.clickHouseService.selectOrThrow<UsageConsumptionWindowRow>(
+      query,
+      { workspaceId, ...params },
     );
   }
 

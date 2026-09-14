@@ -34,6 +34,7 @@ import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/ut
 import { buildIntraWorkspaceLimitCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-intra-workspace-limit-counter-keys.util';
 import { buildLimitQuotaCounter } from 'src/engine/core-modules/usage-limit/utils/build-limit-quota-counter.util';
 import { buildLimitWarmedEntries } from 'src/engine/core-modules/usage-limit/utils/build-limit-warmed-entries.util';
+import { buildConsumptionWindows } from 'src/engine/core-modules/usage-limit/utils/build-consumption-windows.util';
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
@@ -45,7 +46,6 @@ import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { fromConsumeResultsToRemainings } from 'src/engine/core-modules/usage-limit/utils/from-consume-results-to-remainings.util';
-import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
@@ -850,39 +850,21 @@ export class UsageLimitQuotaService implements OnModuleInit {
     workspaceId: string;
     coldLimitCounters: LimitQuotaCounter[];
   }): Promise<Map<string, UsageConsumptionRow[]>> {
-    const countersByPeriod = new Map<string, LimitQuotaCounter>();
-
-    for (const counter of coldLimitCounters) {
-      countersByPeriod.set(buildPeriodGroupKey(counter), counter);
-    }
+    const rows = await this.usageAnalyticsService.getConsumptionRowsByWindow({
+      workspaceId,
+      windows: buildConsumptionWindows(coldLimitCounters),
+    });
 
     const rowsByPeriod = new Map<string, UsageConsumptionRow[]>();
 
-    await Promise.all(
-      [...countersByPeriod.entries()].map(async ([periodGroupKey, counter]) => {
-        rowsByPeriod.set(
-          periodGroupKey,
-          await this.fetchConsumptionRows({ workspaceId, counter }),
-        );
-      }),
-    );
+    for (const counter of coldLimitCounters) {
+      rowsByPeriod.set(buildPeriodGroupKey(counter), []);
+    }
+
+    for (const { windowKey, resourceType, ...row } of rows) {
+      rowsByPeriod.get(`${resourceType}:${windowKey}`)?.push(row);
+    }
 
     return rowsByPeriod;
-  }
-
-  private fetchConsumptionRows({
-    workspaceId,
-    counter,
-  }: {
-    workspaceId: string;
-    counter: LimitQuotaCounter;
-  }): Promise<UsageConsumptionRow[]> {
-    return this.usageAnalyticsService.getConsumptionRowsForAllScopes({
-      workspaceId,
-      resourceType: counter.resourceType,
-      periodStart: counter.periodStart,
-      periodEnd: counter.periodEnd,
-      periodAnchor: getPeriodAnchor(counter.periodUnit),
-    });
   }
 }
