@@ -96,7 +96,7 @@ msgstr "{fullMessage}"
 #. js-lingui-id: 7PhDJp
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "{hostnameCount} hostnames found for domain \"{domainName}\". Expect 1"
-msgstr ""
+msgstr "Пронађено је {hostnameCount} назива хоста за домен \"{domainName}\". Очекује се 1."
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1036,7 +1036,7 @@ msgstr "Извршилац"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Associated User ID"
-msgstr ""
+msgstr "Идентификациони број повезаног корисника"
 
 #. js-lingui-id: IlaQdj
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -1234,7 +1234,7 @@ msgstr "Датотека аватара"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Avatar URL"
-msgstr ""
+msgstr "URL аватара"
 
 #. js-lingui-id: Cei2D0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -2219,7 +2219,7 @@ msgstr "Број жалби"
 #. js-lingui-id: c9jNCJ
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
 msgid "Complete File Upload"
-msgstr ""
+msgstr "Доврши отпремање датотеке"
 
 #. js-lingui-id: DjvRWr
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -2611,7 +2611,7 @@ msgstr "Креирај догађај у календару"
 #. js-lingui-id: AIGOKT
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
 msgid "Create File Upload"
-msgstr ""
+msgstr "Креирај отпремање датотеке"
 
 #. js-lingui-id: fOgbeX
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -2679,7 +2679,7 @@ msgstr "Креиран метаподатак поља, метаподатак �
 #. js-lingui-id: tpPGe6
 #: src/engine/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
-msgstr ""
+msgstr "Креирање записа приватног објекта захтева аргумент shareWith"
 
 #. js-lingui-id: ezEYQZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -2795,7 +2795,7 @@ msgstr "Крон"
 #. js-lingui-id: bK9ya1
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Cron pattern \"{pattern}\" is invalid"
-msgstr ""
+msgstr "Крон шаблон \"{pattern}\" није валидан"
 
 #. js-lingui-id: DIjcDc
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
@@ -3388,7 +3388,7 @@ msgstr "Дуплирана опција {field}"
 #. js-lingui-id: nTBzmZ
 #: src/engine/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
-msgstr ""
+msgstr "Сваки унос shareWith мора циљати тачно једно од workspaceMemberId, roleId или everyone"
 
 #. js-lingui-id: zhhpvr
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3574,7 +3574,7 @@ msgstr "Празне дозволе поља нису дозвољене."
 #. js-lingui-id: xFJpEE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util.ts
 msgid "Enable search on this object before adding searchable fields"
-msgstr ""
+msgstr "Омогућите претрагу овог објекта пре додавања поља која се могу претраживати"
 
 #. js-lingui-id: ovnbNI
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
@@ -3955,12 +3955,12 @@ msgstr "Фебруар"
 #. js-lingui-id: joINBp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
-msgstr ""
+msgstr "Поље \"{fieldName}\" није релација више-према-један и нема колону спајања са којом би се упоредило"
 
 #. js-lingui-id: CJF9q0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
-msgstr ""
+msgstr "Поље \"{workspaceMemberFieldName}\" није поље објекта члана радног простора, предикат се никада не би применио"
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -4255,7 +4255,7 @@ msgstr "Поља"
 #. js-lingui-id: 3txiAO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Fields \"{fieldName}\" and \"{workspaceMemberFieldName}\" must be relations pointing to the same object to be compared"
-msgstr ""
+msgstr "Поља \"{fieldName}\" и \"{workspaceMemberFieldName}\" морају бити релације које указују на исти објекат да би се могла упоредити"
 
 #. js-lingui-id: 9HjeLQ
 #: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
@@ -4375,7 +4375,7 @@ msgstr "Пронађи"
 #. js-lingui-id: klz9oi
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
 msgid "Find Connected Accounts"
-msgstr ""
+msgstr "Пронађи повезане налоге"
 
 #. js-lingui-id: 4GaFCQ
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -4508,7 +4508,7 @@ msgstr "Пуна путања"
 #. js-lingui-id: oj6EVd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util.ts
 msgid "Full-height widgets must be placed after fit-content widgets"
-msgstr ""
+msgstr "Виџети пуне висине морају бити постављени након виџета који се прилагођавају садржају"
 
 #. js-lingui-id: yQDBsf
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -4763,7 +4763,7 @@ msgstr "handlerName мора бити исправан JavaScript идентиф
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Header message ID"
-msgstr ""
+msgstr "Идентификатор поруке у заглављу"
 
 #. js-lingui-id: YXvdC2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4873,7 +4873,7 @@ msgstr "ИД"
 #. js-lingui-id: pSd/U1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util.ts
 msgid "ID field cannot be searched"
-msgstr ""
+msgstr "Поље ID се не може претраживати"
 
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -5309,7 +5309,7 @@ msgstr "Дат је неважећи унос."
 #. js-lingui-id: vtBwCe
 #: src/engine/core-modules/sso/services/sso.service.ts
 msgid "Invalid issuer URL: {reason}"
-msgstr ""
+msgstr "Неважећи URL издавача: {reason}"
 
 #. js-lingui-id: 4MWDA2
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -5886,13 +5886,13 @@ msgstr "Придруживање"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "JSON object to provide steps"
-msgstr ""
+msgstr "JSON објекат за пружање корака"
 
 #. js-lingui-id: aXjVR4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "JSON object to provide trigger"
-msgstr ""
+msgstr "JSON објекат за дефинисање окидача"
 
 #. js-lingui-id: eCBMag
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
@@ -5903,7 +5903,7 @@ msgstr "JSON формат одговора захтева шему"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "JSON value for event details"
-msgstr ""
+msgstr "JSON вредност за детаље догађаја"
 
 #. js-lingui-id: u4ex5r
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -6009,7 +6009,7 @@ msgstr "Поље за идентификатор ознаке не може би
 #. js-lingui-id: +LPcfA
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util.ts
 msgid "Label identifier field cannot be removed from search"
-msgstr ""
+msgstr "Поље за идентификатор ознаке не може бити уклоњено из претраге"
 
 #. js-lingui-id: Qx822J
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -6071,7 +6071,7 @@ msgstr "Језик"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last published Version ID"
-msgstr ""
+msgstr "Идентификатор последње објављене верзије"
 
 #. js-lingui-id: OBGY97
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -6179,13 +6179,13 @@ msgstr "Повезани и неповезани емитери активнос
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Linked Object Metadata ID"
-msgstr ""
+msgstr "Идентификатор метаподатака повезаног објекта"
 
 #. js-lingui-id: mx/sVd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Linked Object Metadata ID"
-msgstr ""
+msgstr "Идентификатор метаподатака повезаног објекта"
 
 #. js-lingui-id: Vo3NrU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -6510,13 +6510,13 @@ msgstr "Асоцијација канала порука"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message Channel ID"
-msgstr ""
+msgstr "Идентификатор канала порука"
 
 #. js-lingui-id: W7U+3U
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Message Channel ID"
-msgstr ""
+msgstr "Идентификатор канала порука"
 
 #. js-lingui-id: pFC0xF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
@@ -6581,7 +6581,7 @@ msgstr "Смер поруке"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Message External ID"
-msgstr ""
+msgstr "Спољни идентификатор поруке"
 
 #. js-lingui-id: 4+wqNB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
@@ -6616,13 +6616,13 @@ msgstr "Фасцикле порука (подржава више фасцикл�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message ID"
-msgstr ""
+msgstr "Идентификатор поруке"
 
 #. js-lingui-id: R9kqg9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Message ID"
-msgstr ""
+msgstr "Идентификатор поруке"
 
 #. js-lingui-id: u/Q/SE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -6711,14 +6711,14 @@ msgstr "Тема порука"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message Thread ID"
-msgstr ""
+msgstr "Идентификатор теме порука"
 
 #. js-lingui-id: EUVVrl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Message Thread ID"
-msgstr ""
+msgstr "Идентификатор теме порука"
 
 #. js-lingui-id: qgC2Dq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
@@ -6863,7 +6863,7 @@ msgstr "Недостаје тело захтева."
 #. js-lingui-id: gwIXRX
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for \"{connectFieldName}\"."
-msgstr ""
+msgstr "Недостају обавезна поља: најмање једно јединствено ограничење мора бити у потпуности попуњено за \"{connectFieldName}\"."
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
@@ -7596,7 +7596,7 @@ msgstr "Један или више захтеваних опсега су нев
 #. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Only a scheduled or sending campaign can be canceled."
-msgstr ""
+msgstr "Само заказана кампања или кампања у току слања може бити отказана."
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -7626,7 +7626,7 @@ msgstr "Дозвољена су само ограничења поља."
 #. js-lingui-id: xzfBXd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util.ts
 msgid "Only one full-height widget is allowed per tab"
-msgstr ""
+msgstr "Дозвољен је само један виџет пуне висине по картици"
 
 #. js-lingui-id: lWLaJ5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -7637,7 +7637,7 @@ msgstr "Отвори записе у"
 #. js-lingui-id: j1We5+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Operand \"{operand}\" is not supported on a relation field, use IS or IS_NOT"
-msgstr ""
+msgstr "Операнд \"{operand}\" није подржан за релационо поље, користите IS или IS_NOT"
 
 #. js-lingui-id: e/+ykp
 #. placeholder {0}: allowedOperands.join(', ')
@@ -8214,7 +8214,7 @@ msgstr "Телефони"
 #. js-lingui-id: T1yaeQ
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Pick a send time in the future."
-msgstr ""
+msgstr "Изаберите време слања у будућности."
 
 #. js-lingui-id: RrxR7k
 #. placeholder {0}: flatField.label
@@ -9187,7 +9187,7 @@ msgstr "Заказано"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Scheduled at"
-msgstr ""
+msgstr "Заказано за"
 
 #. js-lingui-id: V1y7Hg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -9533,17 +9533,17 @@ msgstr "Дељени запис"
 #. js-lingui-id: 4FadYd
 #: src/engine/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
-msgstr ""
+msgstr "shareWith наводи улогу која не припада овом радном простору"
 
 #. js-lingui-id: 4PQnEW
 #: src/engine/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
-msgstr ""
+msgstr "shareWith наводи члана радног простора који не припада овом радном простору"
 
 #. js-lingui-id: qTLqMS
 #: src/engine/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
-msgstr ""
+msgstr "shareWith наводи истог главног субјекта више пута"
 
 #. js-lingui-id: e1k+No
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -10752,7 +10752,7 @@ msgstr "Ова поља не могу бити ажурирана пре нег�
 #. js-lingui-id: YZk5x6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "These two relation fields do not point to the same object"
-msgstr ""
+msgstr "Ова два релациона поља не указују на исти објекат"
 
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -10931,7 +10931,7 @@ msgstr "Ово поље не може бити директно ажуриран
 #. js-lingui-id: NDBu6g
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field does not belong to the workspace member object"
-msgstr ""
+msgstr "Ово поље не припада објекту члана радног простора"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -10952,7 +10952,7 @@ msgstr "Ово поље референцира објекат који није 
 #. js-lingui-id: CIqMf4
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util.ts
 msgid "This field type cannot be searched"
-msgstr ""
+msgstr "Овај тип поља се не може претраживати"
 
 #. js-lingui-id: 5F02zD
 #: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
@@ -11012,7 +11012,7 @@ msgstr "Овај метод није дозвољен."
 #. js-lingui-id: +AQIHh
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This model cannot be used for this tier."
-msgstr ""
+msgstr "Овај модел се не може користити за овај ниво."
 
 #. js-lingui-id: /XKGep
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -11045,7 +11045,7 @@ msgstr "Овај објекат није могуће изменити."
 #. js-lingui-id: I8RhBL
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util.ts
 msgid "This object has no search vector"
-msgstr ""
+msgstr "Овај објекат нема вектор претраге"
 
 #. js-lingui-id: X2Xp8v
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
@@ -11056,7 +11056,7 @@ msgstr "Ова дозвола објекта је већ додељена уло
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported on a relation field"
-msgstr ""
+msgstr "Овај операнд није подржан за релационо поље"
 
 #. js-lingui-id: 7ZdJO2
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -11117,7 +11117,7 @@ msgstr "Овај запис не постоји или је избрисан."
 #. js-lingui-id: 9F8Ddo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This relation field cannot be used in a record rule"
-msgstr ""
+msgstr "Ово релационо поље се не може користити у правилу записа"
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -11234,7 +11234,7 @@ msgstr "Овај радни простор је суспендован."
 #. js-lingui-id: L7DDtt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This workspace member field cannot be compared"
-msgstr ""
+msgstr "Ово поље члана радног простора се не може упоређивати"
 
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts
@@ -11251,7 +11251,7 @@ msgstr "Нит"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Thread External ID"
-msgstr ""
+msgstr "Спољни идентификатор конверзације"
 
 #. js-lingui-id: lMbT9y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
@@ -12485,7 +12485,7 @@ msgstr "Када је кампања завршила слање"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "When the campaign is due to start sending"
-msgstr ""
+msgstr "Када кампања треба да започне слање"
 
 #. js-lingui-id: Kx3ltI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -12564,7 +12564,7 @@ msgstr "Референце ставки командног менија у за�
 #. js-lingui-id: makoF6
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget height behavior is not supported"
-msgstr ""
+msgstr "Понашање висине виџета није подржано"
 
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
@@ -12996,13 +12996,13 @@ msgstr "Члан радног простора се не може ажурира
 #. js-lingui-id: w/yUkA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member field \"{workspaceMemberFieldName}\" is not a many-to-one relation, its value cannot be resolved for the current user"
-msgstr ""
+msgstr "Поље члана радног простора \"{workspaceMemberFieldName}\" није релација више-према-један, његова вредност се не може разрешити за тренутног корисника"
 
 #. js-lingui-id: y0vEqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member field metadata not found"
-msgstr ""
+msgstr "Метаподаци поља члана радног простора нису пронађени"
 
 #. js-lingui-id: YvE7G6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
