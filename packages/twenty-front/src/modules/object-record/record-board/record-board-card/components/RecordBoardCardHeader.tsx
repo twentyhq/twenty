@@ -21,7 +21,6 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
-import { ChipVariant } from 'twenty-ui/data-display';
 import { IconEye, IconEyeOff } from 'twenty-ui/icon';
 import { Checkbox, LightIconButton } from 'twenty-ui/input';
 import { useIsMobile, useIsTouchDevice } from 'twenty-ui/utilities';
@@ -89,7 +88,7 @@ export const RecordBoardCardHeader = () => {
             <RecordChip
               objectNameSingular={objectMetadataItem.nameSingular}
               record={recordStore}
-              variant={ChipVariant.Transparent}
+              variant="ghost"
               onClick={() => {
                 activateBoardCard({ rowIndex, columnIndex });
                 unfocusBoardCard();
@@ -124,7 +123,7 @@ export const RecordBoardCardHeader = () => {
                 setIsRecordBoardCardSelected(isChecked);
                 checkIfLastUnselectAndCloseDropdown();
               }}
-              variant={'outline'}
+              variant="outline"
             />
           </StopPropagationContainer>
         </StyledCheckboxContainer>

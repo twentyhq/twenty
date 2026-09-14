@@ -93,13 +93,13 @@ const CategoryCard = ({
 
   const CategoryIcon = () => {
     if (title === 'Data model') {
-      return <IconHierarchy color={color} size={'20px'} />;
+      return <IconHierarchy color={color} size="20px" />;
     }
     if (title === 'Logic') {
-      return <IconSettingsAutomation color={color} size={'20px'} />;
+      return <IconSettingsAutomation color={color} size="20px" />;
     }
     if (title === 'Layout') {
-      return <IconLayout color={color} size={'20px'} />;
+      return <IconLayout color={color} size="20px" />;
     }
   };
 
@@ -168,7 +168,7 @@ const CategoryCard = ({
                 transition: 'background 0.15s',
               }}
             >
-              <IconBox color={color} size={'20px'} />
+              <IconBox color={color} size="20px" />
               <span
                 style={{
                   fontSize: '13px',
@@ -204,11 +204,7 @@ const MainPage = () => {
         padding: '40px',
       }}
     >
-      <Avatar
-        placeholder={APP_DISPLAY_NAME}
-        placeholderColorSeed={APP_DISPLAY_NAME}
-        size="xl"
-      />
+      <Avatar name={APP_DISPLAY_NAME} colorSeed={APP_DISPLAY_NAME} size="xl" />
       <span
         style={{
           fontSize: '24px',

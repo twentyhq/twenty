@@ -280,6 +280,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    readabilityParentFieldUniversalIdentifiers: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     isUICreatable: {
       toCompare: true,
       toStringify: false,
@@ -1313,6 +1318,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       isOverridable: true,
     },
     workflowVersionId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    coreWorkflowVersionId: {
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,

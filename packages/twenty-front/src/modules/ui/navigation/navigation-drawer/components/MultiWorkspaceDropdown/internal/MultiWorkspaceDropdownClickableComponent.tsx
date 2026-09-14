@@ -34,8 +34,8 @@ export const MultiWorkspaceDropdownClickableComponent = ({
       disabled={disabled}
     >
       <Avatar
-        placeholder={currentWorkspace?.displayName || ''}
-        avatarUrl={getAbsoluteImageUrl(
+        name={currentWorkspace?.displayName || ''}
+        src={getAbsoluteImageUrl(
           currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
         )}
       />

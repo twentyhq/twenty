@@ -1285,6 +1285,7 @@ export type CreateCommandMenuItemInput = {
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
   conditionalPinnedExpression?: InputMaybe<Scalars['String']['input']>;
+  coreWorkflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
   engineComponentKey: EngineComponentKey;
   frontComponentId?: InputMaybe<Scalars['UUID']['input']>;
   hotKeys?: InputMaybe<Array<Scalars['String']['input']>>;
@@ -4472,6 +4473,7 @@ export type Object = {
   nameSingular: Scalars['String']['output'];
   openRecordIn: ObjectOpenRecordIn;
   readability: MetadataReadability;
+  readabilityParentFieldUniversalIdentifiers?: Maybe<Array<Scalars['UUID']['output']>>;
   searchFieldMetadataList: Array<SearchField>;
   shortcut?: Maybe<Scalars['String']['output']>;
   universalIdentifier: Scalars['String']['output'];
