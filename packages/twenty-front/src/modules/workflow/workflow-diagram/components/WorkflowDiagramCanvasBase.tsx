@@ -680,7 +680,7 @@ export const WorkflowDiagramCanvasBase = ({
       )}
 
       <StyledStatusTagContainer data-testid={tagContainerTestId}>
-        <Tag color={tagColor} text={tagText} />
+        <Tag color={tagColor}>{tagText}</Tag>
       </StyledStatusTagContainer>
     </StyledResetReactflowStyles>
   );

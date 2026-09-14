@@ -15,17 +15,20 @@ export class SmtpDriver implements EmailDriverInterface {
   private transport: Transporter;
 
   constructor(options: SMTPConnection.Options) {
-    this.transport = createTransport(options);
+    this.transport = createTransport({ ...options, pool: true });
+  }
+
+  close(): void {
+    this.transport.close();
   }
 
   async send(sendMailOptions: SendMailOptions): Promise<void> {
-    this.transport
-      .sendMail(sendMailOptions)
-      .then(() =>
-        this.logger.log(`Email to '${sendMailOptions.to}' successfully sent`),
-      )
-      .catch((err) =>
-        this.logger.error(`sending email to '${sendMailOptions.to}': ${err}`),
-      );
+    await this.transport.sendMail(sendMailOptions).catch((err) => {
+      this.logger.error(`sending email to '${sendMailOptions.to}': ${err}`);
+
+      throw err;
+    });
+
+    this.logger.log(`Email to '${sendMailOptions.to}' successfully sent`);
   }
 }

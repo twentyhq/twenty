@@ -5,7 +5,7 @@ import {
   type PullEntityKind,
 } from '@/cli/utilities/pull/build-pull-entities';
 import { capFileBaseName } from '@/cli/utilities/pull/pull-file-base-name';
-import { type ScannedDefineFile } from '@/cli/utilities/pull/scan-project-define-files';
+import { type ScannedSourceFile } from '@/cli/utilities/pull/scan-project-source-files';
 import { writeDefineFile } from '@/cli/utilities/pull/write-define-file';
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
 import { dirname, posix } from 'node:path';
@@ -47,6 +47,7 @@ const ENTITY_KEY_BY_KIND: Record<PullEntityKind, ManifestEntityKey> = {
   pageLayout: ManifestEntityKey.PageLayouts,
   pageLayoutTab: ManifestEntityKey.PageLayoutTabs,
   navigationMenuItem: ManifestEntityKey.NavigationMenuItems,
+  pageLayoutWidget: ManifestEntityKey.PageLayoutWidgets,
 };
 
 const toPosixPath = (value: string): string => value.split('\\').join('/');
@@ -55,7 +56,7 @@ const findExistingFolderForKind = ({
   scannedFiles,
   entityKey,
 }: {
-  scannedFiles: ScannedDefineFile[];
+  scannedFiles: ScannedSourceFile[];
   entityKey: ManifestEntityKey;
 }): string | null => {
   const folderCounts = new Map<string, number>();
@@ -169,7 +170,7 @@ const findExistingPath = ({
   pathByUniversalIdentifier,
 }: {
   entity: PullEntity;
-  applicationFile: ScannedDefineFile | undefined;
+  applicationFile: ScannedSourceFile | undefined;
   pathByUniversalIdentifier: Map<string, string>;
 }): string | undefined => {
   if (entity.kind !== 'application') {
@@ -200,10 +201,12 @@ export const planPullWrites = ({
   manifest,
   baseManifest,
   scannedFiles,
+  workspaceUniversalIdentifiers,
 }: {
   manifest: Manifest;
   baseManifest: Manifest | null;
-  scannedFiles: ScannedDefineFile[];
+  scannedFiles: ScannedSourceFile[];
+  workspaceUniversalIdentifiers: ReadonlySet<string>;
 }): PullWritePlan & {
   skipped: ReturnType<typeof buildPullEntities>['skipped'];
 } => {
@@ -317,6 +320,7 @@ export const planPullWrites = ({
         isDefined(scannedFile.universalIdentifier) &&
         !exportedUniversalIdentifiers.has(scannedFile.universalIdentifier) &&
         !baseConfigByUniversalIdentifier.has(scannedFile.universalIdentifier) &&
+        !workspaceUniversalIdentifiers.has(scannedFile.universalIdentifier) &&
         !usedRelativePaths.has(toPosixPath(scannedFile.relativePath)),
     )
     .map((scannedFile) => toPosixPath(scannedFile.relativePath));

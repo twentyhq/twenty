@@ -227,8 +227,7 @@ export const SettingsAgentTurnDetail = () => {
                       <TableCell gap={themeCssVariables.spacing[2]}>
                         <Status
                           color={getScoreColor(evaluation.score)}
-                          text={`${evaluation.score}`}
-                        />
+                        >{`${evaluation.score}`}</Status>
                       </TableCell>
                       <TableCell
                         overflow="hidden"
