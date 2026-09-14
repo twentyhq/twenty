@@ -824,16 +824,15 @@ export class BillingSubscriptionUpdateService {
     const currentResourceCreditPrice =
       await this.billingPriceRepository.findOneOrFail({
         where: { stripePriceId: currentPrices.resourceCreditPriceId },
-        relations: ['billingProduct', 'billingProduct.billingPrices'],
+        relations: ['billingProduct'],
       });
 
     billingValidator.assertIsLicensedResourceCreditPrice(
       currentResourceCreditPrice,
     );
 
-    // A resource-credit product carries one price per credit package, so there
-    // is no single billable price at an interval to find. The equivalent is the
-    // package that matches the current one, scaled across the interval change.
+    // Resource credit has one price per package, not per interval, so match the
+    // equivalent package scaled for the interval change.
     const targetResourceCreditPrice =
       await this.billingPriceService.findEquivalentResourceCreditPrice({
         referencePrice: currentResourceCreditPrice,
