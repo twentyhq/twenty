@@ -25,6 +25,7 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
   UsageLimitGraphqlApiExceptionFilter,
   BillingGraphqlApiExceptionFilter,
 )
+// TODO: install ResolverValidationPipe here; without it every class-validator decorator on RunAgentInputDTO is inert
 @MetadataResolver()
 export class AgentRunResolver {
   constructor(private readonly agentRunService: AgentRunService) {}

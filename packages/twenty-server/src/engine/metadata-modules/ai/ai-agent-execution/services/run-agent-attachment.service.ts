@@ -1,30 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
-import { type FilePart, type ModelMessage } from 'ai';
+import { type ModelMessage } from 'ai';
 import { type RunAgentMessage } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Like } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
-import {
-  MAX_RUN_AGENT_ATTACHMENT_FILENAME_LENGTH,
-  MAX_RUN_AGENT_MESSAGE_ATTACHMENTS,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-attachment.const';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
+import { type ResolvedRunAgentAttachment } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-run-agent-attachment.type';
+import { buildRunAgentModelMessageOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-run-agent-model-message.util';
+import { extractRunAgentAttachmentFileIdsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/extract-run-agent-attachment-file-ids.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
-type ResolvedAttachment = {
-  mediaType: string;
-  url: string;
-};
 
 @Injectable()
 export class RunAgentAttachmentService {
@@ -34,102 +23,22 @@ export class RunAgentAttachmentService {
     private readonly fileUrlService: FileUrlService,
   ) {}
 
-  async buildModelMessages({
+  async buildModelMessagesOrThrow({
     messages,
     workspaceId,
   }: {
     messages: RunAgentMessage[];
     workspaceId: string;
   }): Promise<ModelMessage[]> {
-    const fileIds = this.collectFileIds(messages);
+    const fileIds = extractRunAgentAttachmentFileIdsOrThrow(messages);
 
-    if (!isNonEmptyArray(fileIds)) {
-      return messages.map(toTextModelMessage);
-    }
+    const attachmentsByFileId = isNonEmptyArray(fileIds)
+      ? await this.resolveAttachments({ fileIds, workspaceId })
+      : new Map<string, ResolvedRunAgentAttachment>();
 
-    const attachmentsByFileId = await this.resolveAttachments({
-      fileIds,
-      workspaceId,
-    });
-
-    return messages.map((message) => {
-      const fileParts = (message.attachments ?? []).map(
-        (attachment): FilePart => {
-          const resolved = attachmentsByFileId.get(attachment.fileId);
-
-          if (!isDefined(resolved)) {
-            throw new AiException(
-              `Attachment ${attachment.fileId} is not an uploaded ${FileFolder.AgentChat} file in this workspace`,
-              AiExceptionCode.INVALID_AGENT_INPUT,
-            );
-          }
-
-          return {
-            type: 'file',
-            data: resolved.url,
-            mediaType: resolved.mediaType,
-            filename: attachment.filename,
-          };
-        },
-      );
-
-      if (!isNonEmptyArray(fileParts)) {
-        return toTextModelMessage(message);
-      }
-
-      return {
-        role: 'user',
-        content: [
-          ...(isNonEmptyString(message.content)
-            ? [{ type: 'text' as const, text: message.content }]
-            : []),
-          ...fileParts,
-        ],
-      };
-    });
-  }
-
-  // runAgent's resolver installs no ResolverValidationPipe, so the input DTO's
-  // decorators never run and these limits have to hold here.
-  private collectFileIds(messages: RunAgentMessage[]): string[] {
-    for (const message of messages) {
-      const attachments = message.attachments ?? [];
-
-      if (message.role !== 'user' && isNonEmptyArray(attachments)) {
-        throw new AiException(
-          'Only user messages can carry attachments',
-          AiExceptionCode.INVALID_AGENT_INPUT,
-        );
-      }
-
-      if (attachments.length > MAX_RUN_AGENT_MESSAGE_ATTACHMENTS) {
-        throw new AiException(
-          `A message carries ${attachments.length} attachments, more than the ${MAX_RUN_AGENT_MESSAGE_ATTACHMENTS} allowed`,
-          AiExceptionCode.INVALID_AGENT_INPUT,
-        );
-      }
-
-      const overlongFilename = attachments.find(
-        (attachment) =>
-          (attachment.filename?.length ?? 0) >
-          MAX_RUN_AGENT_ATTACHMENT_FILENAME_LENGTH,
-      );
-
-      if (isDefined(overlongFilename)) {
-        throw new AiException(
-          `An attachment filename is longer than the ${MAX_RUN_AGENT_ATTACHMENT_FILENAME_LENGTH} characters allowed`,
-          AiExceptionCode.INVALID_AGENT_INPUT,
-        );
-      }
-    }
-
-    return [
-      ...new Set(
-        messages.flatMap((message) =>
-          (message.attachments ?? []).map((attachment) => attachment.fileId),
-        ),
-      ),
-    ];
+    return messages.map((message) =>
+      buildRunAgentModelMessageOrThrow({ message, attachmentsByFileId }),
+    );
   }
 
   private async resolveAttachments({
@@ -138,7 +47,7 @@ export class RunAgentAttachmentService {
   }: {
     fileIds: string[];
     workspaceId: string;
-  }): Promise<Map<string, ResolvedAttachment>> {
+  }): Promise<Map<string, ResolvedRunAgentAttachment>> {
     const files = await this.fileRepository.find(workspaceId, {
       where: {
         id: In(fileIds),
@@ -149,7 +58,7 @@ export class RunAgentAttachmentService {
 
     const resolvedEntries = await Promise.all(
       files.map(
-        async (file): Promise<[string, ResolvedAttachment]> => [
+        async (file): Promise<[string, ResolvedRunAgentAttachment]> => [
           file.id,
           {
             mediaType: file.mimeType,
@@ -166,8 +75,3 @@ export class RunAgentAttachmentService {
     return new Map(resolvedEntries);
   }
 }
-
-const toTextModelMessage = (message: RunAgentMessage): ModelMessage => ({
-  role: message.role,
-  content: message.content,
-});
