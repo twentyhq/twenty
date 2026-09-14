@@ -24,11 +24,10 @@ export const createValidateWorkflowTool = (
   inputSchema: validateWorkflowSchema,
   execute: async (parameters: ValidateWorkflowInput) => {
     try {
-      const result =
-        await deps.workflowHintsService.getWorkflowVersionHints({
-          workspaceId: context.workspaceId,
-          workflowVersionId: parameters.workflowVersionId,
-        });
+      const result = await deps.workflowHintsService.getWorkflowVersionHints({
+        workspaceId: context.workspaceId,
+        workflowVersionId: parameters.workflowVersionId,
+      });
 
       return {
         success: true,

@@ -35,11 +35,11 @@ export class WorkflowVersionValidationWorkspaceService {
     trigger: WorkflowTrigger | null | undefined;
     steps: WorkflowAction[] | null | undefined;
   }): Promise<void> {
-    const malformedIssues = (
-      await this.getMalformedIssues({ workspaceId, trigger, steps })
-    ).filter((issue) =>
-      MALFORMED_WORKFLOW_VALIDATION_ISSUE_CODES.has(issue.code),
-    );
+    const malformedIssues = await this.getMalformedIssues({
+      workspaceId,
+      trigger,
+      steps,
+    });
 
     if (malformedIssues.length === 0) {
       return;
@@ -92,6 +92,8 @@ export class WorkflowVersionValidationWorkspaceService {
         flatFieldMetadataMaps,
         objectIdByNameSingular,
       }),
-    ];
+    ].filter((issue) =>
+      MALFORMED_WORKFLOW_VALIDATION_ISSUE_CODES.has(issue.code),
+    );
   }
 }
