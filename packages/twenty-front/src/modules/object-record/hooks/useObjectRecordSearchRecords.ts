@@ -50,7 +50,7 @@ export const useObjectRecordSearchRecords = ({
     client: apolloCoreClient,
   });
 
-  useToastOnQueryError(error);
+  useToastOnQueryError({ error });
 
   const effectiveData = loading ? previousData : data;
 

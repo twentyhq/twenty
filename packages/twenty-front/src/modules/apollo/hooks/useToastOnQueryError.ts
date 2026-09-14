@@ -1,14 +1,18 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { type ErrorLike } from '@apollo/client';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/feedback';
 
 // Apollo v4 queries no longer support an onError callback.
-export const useToastOnQueryError = (
-  error: ErrorLike | undefined,
-  message?: string,
-) => {
+export const useToastOnQueryError = ({
+  error,
+  message,
+}: {
+  error: ErrorLike | undefined;
+  message?: string;
+}) => {
   const { enqueueToast } = useToast();
 
   useEffect(() => {
@@ -19,7 +23,7 @@ export const useToastOnQueryError = (
     enqueueToast(
       getToastOptionsFromError({
         error,
-        ...(message ? { children: message } : undefined),
+        ...(isNonEmptyString(message) ? { children: message } : undefined),
       }),
     );
   }, [error, enqueueToast, message]);

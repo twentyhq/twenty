@@ -35,7 +35,10 @@ export const SettingsBillingPageLayout = ({
     refetch: refetchPlans,
   } = usePlans({ skip: !isBillingEnabled });
 
-  useToastOnQueryError(plansError, t`Failed to load billing plans`);
+  useToastOnQueryError({
+    error: plansError,
+    message: t`Failed to load billing plans`,
+  });
 
   if (isBillingLoaded && !isBillingEnabled) {
     return <Navigate to={getSettingsPath(SettingsPath.General)} replace />;

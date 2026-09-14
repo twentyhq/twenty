@@ -61,7 +61,7 @@ export const SettingsAdminWorkerMetricsGraph = ({
     fetchPolicy: 'no-cache',
   });
 
-  useToastOnQueryError(error);
+  useToastOnQueryError({ error });
 
   const metricsData = data?.getQueueMetrics?.data || [];
   const hasData =

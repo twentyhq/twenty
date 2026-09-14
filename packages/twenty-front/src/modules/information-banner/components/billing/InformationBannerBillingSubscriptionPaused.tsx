@@ -24,7 +24,7 @@ export const InformationBannerBillingSubscriptionPaused = () => {
     skip: !hasPermissionToUpdateBillingDetails,
   });
 
-  useToastOnQueryError(error);
+  useToastOnQueryError({ error });
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {

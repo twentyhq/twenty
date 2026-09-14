@@ -62,7 +62,7 @@ export const useCustomResolver = <
 
   const firstQueryLoading = loading && !data;
 
-  useToastOnQueryError(error);
+  useToastOnQueryError({ error });
 
   const fetchMoreRecords = async () => {
     if (page.hasNextPage && !isFetchingMore && !firstQueryLoading) {

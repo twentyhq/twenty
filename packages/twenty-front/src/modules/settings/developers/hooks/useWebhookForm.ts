@@ -87,7 +87,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     }
   }, [webhookData, formConfig]);
 
-  useToastOnQueryError(error, t`Failed to load webhook`);
+  useToastOnQueryError({ error, message: t`Failed to load webhook` });
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isCreationMode

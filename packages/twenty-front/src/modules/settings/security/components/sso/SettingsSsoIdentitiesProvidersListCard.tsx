@@ -51,7 +51,7 @@ export const SettingsSsoIdentitiesProvidersListCard = () => {
     }
   }, [ssoData, setSsoIdentitiesProviders]);
 
-  useToastOnQueryError(ssoError);
+  useToastOnQueryError({ error: ssoError });
 
   return loading || !ssoIdentitiesProviders.length ? (
     <StyledLinkContainer

@@ -47,7 +47,7 @@ export const SettingsProfileDevicesSection = () => {
     { fetchPolicy: 'network-only' },
   );
 
-  useToastOnQueryError(error);
+  useToastOnQueryError({ error });
 
   const [revokeAllOtherUserSessions] = useMutation(
     RevokeAllOtherUserSessionsDocument,

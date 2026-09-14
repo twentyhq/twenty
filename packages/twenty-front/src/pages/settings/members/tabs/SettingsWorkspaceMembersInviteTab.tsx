@@ -89,7 +89,7 @@ export const SettingsWorkspaceMembersInviteTab = () => {
     GetWorkspaceInvitationsDocument,
   );
 
-  useToastOnQueryError(invitationsError);
+  useToastOnQueryError({ error: invitationsError });
 
   const workspaceInvitations = invitationsData?.findWorkspaceInvitations ?? [];
 

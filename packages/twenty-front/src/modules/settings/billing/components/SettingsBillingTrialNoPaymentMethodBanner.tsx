@@ -37,7 +37,7 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
     skip: !hasPermissionToManageBilling,
   });
 
-  useToastOnQueryError(error);
+  useToastOnQueryError({ error });
 
   const openPaymentMethodUpdate = () => {
     if (isDefined(data?.billingPortalSession.url)) {

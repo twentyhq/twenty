@@ -49,7 +49,7 @@ export const SettingsApprovedAccessDomainsListCard = () => {
     }
   }, [domainsData, setApprovedAccessDomains]);
 
-  useToastOnQueryError(domainsError);
+  useToastOnQueryError({ error: domainsError });
 
   return loading || !approvedAccessDomains.length ? (
     <StyledLinkContainer>

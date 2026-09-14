@@ -49,7 +49,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
       },
     );
 
-  useToastOnQueryError(error);
+  useToastOnQueryError({ error });
 
   const objectResults = data?.[queryResponseField];
 
