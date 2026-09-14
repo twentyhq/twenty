@@ -1,0 +1,211 @@
+// Generates the yarn.lock shipped inside the scaffold template.
+//
+// Without it, a generated project resolves every dependency from scratch on its
+// first install, which fails outright when the user's package manager enforces a
+// minimum release age (Yarn's npmMinimalAgeGate, pnpm's minimumReleaseAge, npm's
+// min-release-age): the first-party packages are only minutes old at that point,
+// and an exact pin leaves the resolver no older candidate to fall back to. A
+// lockfile removes the resolution step entirely, so the gate never applies — and
+// unlike loosening the pins or disabling the gate, it leaves the user's policy
+// in force for every dependency they add later.
+//
+// Run this AFTER `nx build create-twenty-app` and AFTER the libraries are live on
+// the registry, then publish. See packages/create-twenty-app/RELEASE.md.
+import { execFileSync } from 'child_process';
+import * as fs from 'fs-extra';
+import { tmpdir } from 'os';
+import { basename, dirname, join, resolve } from 'path';
+
+import { TEMPLATE_FIRST_PARTY_PACKAGES } from '@/constants/template-packages';
+import createTwentyAppPackageJson from 'package.json';
+
+const PACKAGE_ROOT = resolve(__dirname, '..', '..');
+const REPO_ROOT = resolve(PACKAGE_ROOT, '..', '..');
+const TEMPLATE_MANIFEST_PATH = join(
+  PACKAGE_ROOT,
+  'src/constants/template/package.json',
+);
+const DEFAULT_OUTPUT_PATH = join(
+  PACKAGE_ROOT,
+  'dist/constants/template/yarn.lock',
+);
+const PUBLIC_REGISTRY = 'https://registry.npmjs.org';
+
+type Options = {
+  version: string;
+  registry: string;
+  outputPath: string;
+};
+
+const parseOptions = (argv: string[]): Options => {
+  const read = (name: string) => {
+    const prefix = `--${name}=`;
+    const flag = argv.find((argument) => argument.startsWith(prefix));
+    const value = flag?.slice(prefix.length);
+
+    // nx interpolates an unsupplied {args.foo} to an empty string.
+    return value === '' ? undefined : value;
+  };
+
+  return {
+    version: read('version') ?? createTwentyAppPackageJson.version,
+    registry: (read('registry') ?? PUBLIC_REGISTRY).replace(/\/$/, ''),
+    outputPath: read('out') ?? DEFAULT_OUTPUT_PATH,
+  };
+};
+
+// The generated project runs the Yarn its package.json pins. Generating the
+// lockfile with a different Yarn can produce a lockfile that release pins reject
+// with YN0028 on the user's first CI run, so refuse to guess.
+const resolveYarnBinary = (templatePackageManager: string) => {
+  const yarnrc = fs.readFileSync(join(REPO_ROOT, '.yarnrc.yml'), 'utf8');
+  const yarnPath = /^yarnPath:\s*(.+)$/m.exec(yarnrc)?.[1]?.trim();
+
+  if (yarnPath === undefined) {
+    throw new Error('No yarnPath found in the monorepo .yarnrc.yml');
+  }
+
+  const repoYarnVersion = /yarn-(.+)\.cjs$/.exec(basename(yarnPath))?.[1];
+  const templateYarnVersion = templatePackageManager.replace(/^yarn@/, '');
+
+  if (repoYarnVersion !== templateYarnVersion) {
+    throw new Error(
+      `The scaffold template pins yarn@${templateYarnVersion} but the monorepo runs yarn ${repoYarnVersion}. ` +
+        'Align them before generating the template lockfile.',
+    );
+  }
+
+  return join(REPO_ROOT, yarnPath);
+};
+
+const buildTemplateManifest = (version: string) => {
+  const manifest = fs.readJsonSync(TEMPLATE_MANIFEST_PATH);
+
+  for (const packageName of TEMPLATE_FIRST_PARTY_PACKAGES) {
+    manifest.devDependencies[packageName] = version;
+  }
+
+  return manifest;
+};
+
+const buildYarnrc = (registry: string) => {
+  const isLocalRegistry = /^http:\/\//.test(registry);
+
+  return [
+    'nodeLinker: node-modules',
+    'enableTelemetry: false',
+    'enableScripts: false',
+    `npmRegistryServer: "${registry}"`,
+    ...(isLocalRegistry ? ['unsafeHttpWhitelist:', '  - localhost'] : []),
+    // The monorepo enforces its own age gate. Waive it for the packages this
+    // release just published rather than turning the gate off, so a genuinely
+    // suspicious third-party version still stops the release.
+    'npmPreapprovedPackages:',
+    ...TEMPLATE_FIRST_PARTY_PACKAGES.map((name) => `  - ${name}`),
+    '',
+  ].join('\n');
+};
+
+const assertResolvedWithIntegrity = (
+  lockfile: string,
+  packageName: string,
+  version: string,
+) => {
+  const header = `"${packageName}@npm:${version}":`;
+  const headerIndex = lockfile.indexOf(header);
+
+  if (headerIndex === -1) {
+    throw new Error(
+      `${packageName}@${version} is missing from the generated lockfile. Is it published yet?`,
+    );
+  }
+
+  const entryEnd = lockfile.indexOf('\n\n', headerIndex);
+  const entry = lockfile.slice(
+    headerIndex,
+    entryEnd === -1 ? undefined : entryEnd,
+  );
+
+  if (!entry.includes('checksum:')) {
+    throw new Error(
+      `${packageName}@${version} resolved without an integrity checksum.`,
+    );
+  }
+};
+
+const assertNoLocalRegistryLeak = (lockfile: string, registry: string) => {
+  if (/^http:\/\//.test(registry)) {
+    return;
+  }
+
+  if (/localhost|127\.0\.0\.1/.test(lockfile)) {
+    throw new Error(
+      'The generated lockfile references a local registry. Regenerate it against the public registry.',
+    );
+  }
+};
+
+const generateTemplateLock = async ({
+  version,
+  registry,
+  outputPath,
+}: Options) => {
+  const manifest = buildTemplateManifest(version);
+  const yarnBinary = resolveYarnBinary(manifest.packageManager);
+  const workingDirectory = await fs.mkdtemp(
+    join(tmpdir(), 'twenty-template-lock-'),
+  );
+
+  try {
+    await fs.writeJson(join(workingDirectory, 'package.json'), manifest, {
+      spaces: 2,
+    });
+    await fs.writeFile(
+      join(workingDirectory, '.yarnrc.yml'),
+      buildYarnrc(registry),
+    );
+
+    // YARN_* variables outrank the .yarnrc.yml written above, so a registry or
+    // gate exported by the surrounding CI job would silently change the result.
+    const environment = Object.fromEntries(
+      Object.entries(process.env).filter(([key]) => !key.startsWith('YARN_')),
+    );
+
+    execFileSync(
+      process.execPath,
+      [yarnBinary, 'install', '--mode=update-lockfile'],
+      { cwd: workingDirectory, stdio: 'inherit', env: environment },
+    );
+
+    const lockfile = await fs.readFile(
+      join(workingDirectory, 'yarn.lock'),
+      'utf8',
+    );
+
+    for (const packageName of TEMPLATE_FIRST_PARTY_PACKAGES) {
+      assertResolvedWithIntegrity(lockfile, packageName, version);
+    }
+
+    assertNoLocalRegistryLeak(lockfile, registry);
+
+    await fs.ensureDir(dirname(outputPath));
+    await fs.writeFile(outputPath, lockfile);
+
+    const resolutionCount = lockfile.match(/^ {2}resolution:/gm)?.length ?? 0;
+
+    console.log(
+      `Wrote ${outputPath} (${resolutionCount} resolutions, ${TEMPLATE_FIRST_PARTY_PACKAGES.join(', ')} @ ${version})`,
+    );
+  } finally {
+    await fs.remove(workingDirectory);
+  }
+};
+
+generateTemplateLock(parseOptions(process.argv.slice(2))).catch(
+  (error: unknown) => {
+    console.error(
+      `Failed to generate the template lockfile: ${error instanceof Error ? error.message : error}`,
+    );
+    process.exit(1);
+  },
+);

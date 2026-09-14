@@ -16,6 +16,11 @@ Follow these steps to get your app running locally.
    yarn install
    ```
 
+   This project ships a `yarn.lock` pinning every dependency to an exact,
+   integrity-checked version. If you would rather resolve the tree yourself —
+   for example because you enforce a minimum release age on new packages —
+   delete `yarn.lock` before the first install.
+
 2. Start the local Twenty server:
 
    ```bash
