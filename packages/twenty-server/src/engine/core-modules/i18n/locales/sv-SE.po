@@ -7760,7 +7760,7 @@ msgstr "Affärsmöjlighetens skede"
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
-msgstr ""
+msgstr "Alternativet \"{optionLabel}\" har en färg som inte stöds"
 
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts

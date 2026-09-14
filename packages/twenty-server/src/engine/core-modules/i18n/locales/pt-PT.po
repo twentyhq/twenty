@@ -7758,7 +7758,7 @@ msgstr "Fase da Oportunidade"
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
-msgstr ""
+msgstr "A opção \"{optionLabel}\" tem uma cor não compatível"
 
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
