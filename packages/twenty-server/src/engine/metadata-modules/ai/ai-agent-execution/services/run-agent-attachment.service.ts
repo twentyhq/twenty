@@ -11,6 +11,10 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import {
+  MAX_RUN_AGENT_ATTACHMENT_FILENAME_LENGTH,
+  MAX_RUN_AGENT_MESSAGE_ATTACHMENTS,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-attachment.const';
+import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -85,17 +89,38 @@ export class RunAgentAttachmentService {
     });
   }
 
+  // runAgent's resolver installs no ResolverValidationPipe, so the input DTO's
+  // decorators never run and these limits have to hold here.
   private collectFileIds(messages: RunAgentMessage[]): string[] {
-    const messageWithUnsupportedAttachments = messages.find(
-      (message) =>
-        message.role !== 'user' && isNonEmptyArray(message.attachments),
-    );
+    for (const message of messages) {
+      const attachments = message.attachments ?? [];
 
-    if (isDefined(messageWithUnsupportedAttachments)) {
-      throw new AiException(
-        'Only user messages can carry attachments',
-        AiExceptionCode.INVALID_AGENT_INPUT,
+      if (message.role !== 'user' && isNonEmptyArray(attachments)) {
+        throw new AiException(
+          'Only user messages can carry attachments',
+          AiExceptionCode.INVALID_AGENT_INPUT,
+        );
+      }
+
+      if (attachments.length > MAX_RUN_AGENT_MESSAGE_ATTACHMENTS) {
+        throw new AiException(
+          `A message carries ${attachments.length} attachments, more than the ${MAX_RUN_AGENT_MESSAGE_ATTACHMENTS} allowed`,
+          AiExceptionCode.INVALID_AGENT_INPUT,
+        );
+      }
+
+      const overlongFilename = attachments.find(
+        (attachment) =>
+          (attachment.filename?.length ?? 0) >
+          MAX_RUN_AGENT_ATTACHMENT_FILENAME_LENGTH,
       );
+
+      if (isDefined(overlongFilename)) {
+        throw new AiException(
+          `An attachment filename is longer than the ${MAX_RUN_AGENT_ATTACHMENT_FILENAME_LENGTH} characters allowed`,
+          AiExceptionCode.INVALID_AGENT_INPUT,
+        );
+      }
     }
 
     return [

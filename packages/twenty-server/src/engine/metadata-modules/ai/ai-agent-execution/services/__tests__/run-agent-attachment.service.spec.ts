@@ -1,6 +1,10 @@
 import { type RunAgentMessage } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
+import {
+  MAX_RUN_AGENT_ATTACHMENT_FILENAME_LENGTH,
+  MAX_RUN_AGENT_MESSAGE_ATTACHMENTS,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-attachment.const';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 
 const WORKSPACE_ID = 'workspace-id';
@@ -157,6 +161,52 @@ describe('RunAgentAttachmentService', () => {
     });
 
     expect(fileUrlService.signFileByIdUrl).toHaveBeenCalledTimes(2);
+  });
+
+  it('rejects more attachments than a message may carry', async () => {
+    const { service } = buildService();
+
+    await expect(
+      service.buildModelMessages({
+        messages: [
+          {
+            role: 'user',
+            content: 'hi',
+            attachments: Array.from(
+              { length: MAX_RUN_AGENT_MESSAGE_ATTACHMENTS + 1 },
+              () => ({ fileId: FILE_ID }),
+            ),
+          },
+        ],
+        workspaceId: WORKSPACE_ID,
+      }),
+    ).rejects.toThrow(`${MAX_RUN_AGENT_MESSAGE_ATTACHMENTS} allowed`);
+  });
+
+  it('rejects a filename longer than the cap', async () => {
+    const { service } = buildService();
+
+    await expect(
+      service.buildModelMessages({
+        messages: [
+          {
+            role: 'user',
+            content: 'hi',
+            attachments: [
+              {
+                fileId: FILE_ID,
+                filename: 'a'.repeat(
+                  MAX_RUN_AGENT_ATTACHMENT_FILENAME_LENGTH + 1,
+                ),
+              },
+            ],
+          },
+        ],
+        workspaceId: WORKSPACE_ID,
+      }),
+    ).rejects.toThrow(
+      `${MAX_RUN_AGENT_ATTACHMENT_FILENAME_LENGTH} characters allowed`,
+    );
   });
 
   it('omits the text part when an attachment arrives with no caption', async () => {

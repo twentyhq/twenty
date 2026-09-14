@@ -8,9 +8,11 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { type RunAgentMessage } from 'twenty-shared/application';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { MAX_RUN_AGENT_MESSAGE_ATTACHMENTS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-attachment.const';
 import { RunAgentMessageAttachmentInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/run-agent-message-attachment.input';
@@ -23,6 +25,9 @@ export class RunAgentMessageInputDTO implements RunAgentMessage {
   role: RunAgentMessageRole;
 
   @IsString()
+  @ValidateIf(
+    (message: RunAgentMessageInputDTO) => !isNonEmptyArray(message.attachments),
+  )
   @IsNotEmpty()
   @Field()
   content: string;
