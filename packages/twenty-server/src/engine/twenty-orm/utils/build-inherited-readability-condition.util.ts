@@ -35,10 +35,6 @@ export const buildInheritedReadabilityCondition = ({
   principalIds: string[];
   accessLevels: RecordShareAccessLevel[];
 }): { sql: string; parameters: ObjectLiteral } | undefined => {
-  if (parents.every(({ gate }) => gate.kind === 'open')) {
-    return undefined;
-  }
-
   const parameters: ObjectLiteral = {};
   const quotedTableAlias = escapeIdentifier(tableAlias);
   const quoteColumn = (joinColumnName: string) =>

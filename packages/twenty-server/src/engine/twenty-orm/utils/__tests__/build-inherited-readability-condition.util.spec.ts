@@ -23,13 +23,16 @@ const build = (parents: InheritedReadabilityParentCondition[]) =>
   });
 
 describe('buildInheritedReadabilityCondition', () => {
-  it('should return nothing when every parent is OPEN', () => {
-    expect(
-      build([
-        { joinColumnName: 'targetPersonId', gate: { kind: 'open' } },
-        { joinColumnName: 'targetCompanyId', gate: { kind: 'open' } },
-      ]),
-    ).toBeUndefined();
+  it('should gate on parent presence alone when every parent is OPEN', () => {
+    const condition = build([
+      { joinColumnName: 'targetPersonId', gate: { kind: 'open' } },
+      { joinColumnName: 'targetCompanyId', gate: { kind: 'open' } },
+    ]);
+
+    expect(condition).toEqual({
+      sql: '("attachment"."targetPersonId" IS NOT NULL OR "attachment"."targetCompanyId" IS NOT NULL)',
+      parameters: {},
+    });
   });
 
   it('should gate an OPEN parent on presence and a PRIVATE parent on one record share EXISTS', () => {

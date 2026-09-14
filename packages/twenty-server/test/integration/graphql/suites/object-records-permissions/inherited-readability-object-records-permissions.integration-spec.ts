@@ -223,6 +223,34 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     });
   });
 
+  describe('with record sharing disabled', () => {
+    beforeAll(async () => {
+      await setRecordSharingEnabled(false);
+    });
+
+    afterAll(async () => {
+      await setRecordSharingEnabled(true);
+    });
+
+    it('should show every attachment and note target as if the note were OPEN', async () => {
+      const attachmentsResponse = await makeGraphqlAPIRequestWithMemberRole(
+        findAttachmentsOperation,
+      );
+      const noteTargetsResponse = await makeGraphqlAPIRequestWithMemberRole(
+        findNoteTargetsOperation,
+      );
+
+      expect(attachmentsResponse.body.errors).toBeUndefined();
+      expect(
+        collectIds(attachmentsResponse.body.data.attachments.edges).sort(),
+      ).toEqual([...ATTACHMENT_IDS].sort());
+      expect(noteTargetsResponse.body.errors).toBeUndefined();
+      expect(
+        collectIds(noteTargetsResponse.body.data.noteTargets.edges),
+      ).toEqual([NOTE_TARGET_ID]);
+    });
+  });
+
   describe('without a share row on the note', () => {
     it('should hide the attachment and the note target hanging off the note', async () => {
       const attachmentsResponse = await makeGraphqlAPIRequestWithMemberRole(

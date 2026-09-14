@@ -1756,7 +1756,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       case MetadataReadability.OPEN:
         return;
       case MetadataReadability.INHERITED:
-        if (isOwningApplication) {
+        if (!isRecordSharingEnabled || isOwningApplication) {
           return;
         }
 
