@@ -76,7 +76,7 @@ export const getWorkflowRecordStepMetadataIssues = ({
       if (isDefined(loadBalanceError)) {
         issues.push({
           severity: 'error',
-          code: 'INVALID_PICK_RECORD_CONFIG',
+          code: 'INCOMPLETE_PICK_RECORD_CONFIG',
           message: loadBalanceError,
           stepId: step.id,
         });

@@ -46,10 +46,10 @@ export class WorkflowVersionValidationGateService {
     }
 
     throw new WorkflowQueryValidationException(
-      `Workflow version is invalid: ${malformedIssues
+      `Workflow version is malformed: ${malformedIssues
         .map((issue) => issue.message)
         .join('; ')}`,
-      WorkflowQueryValidationExceptionCode.INVALID_WORKFLOW_VERSION,
+      WorkflowQueryValidationExceptionCode.MALFORMED_WORKFLOW_VERSION,
     );
   }
 

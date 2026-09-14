@@ -135,7 +135,7 @@ describe('Workflow version malformed validation (e2e)', () => {
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
     expect(response.body.errors[0].extensions.subCode).toBe(
-      'INVALID_WORKFLOW_VERSION',
+      'MALFORMED_WORKFLOW_VERSION',
     );
     expect(response.body.errors[0].message).toMatch(/rich text/i);
   });
@@ -148,7 +148,7 @@ describe('Workflow version malformed validation (e2e)', () => {
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].extensions.subCode).toBe(
-      'INVALID_WORKFLOW_VERSION',
+      'MALFORMED_WORKFLOW_VERSION',
     );
     expect(response.body.errors[0].message).toContain('does not exist');
   });

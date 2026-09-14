@@ -15,7 +15,7 @@ export const workflowQueryValidationGraphqlApiExceptionHandler = (
   switch (exception.code) {
     case WorkflowQueryValidationExceptionCode.FORBIDDEN:
       throw new ForbiddenError(exception);
-    case WorkflowQueryValidationExceptionCode.INVALID_WORKFLOW_VERSION:
+    case WorkflowQueryValidationExceptionCode.MALFORMED_WORKFLOW_VERSION:
       throw new UserInputError(exception);
     default: {
       assertUnreachable(exception.code);

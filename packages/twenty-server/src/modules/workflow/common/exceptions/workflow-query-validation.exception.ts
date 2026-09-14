@@ -6,7 +6,7 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export enum WorkflowQueryValidationExceptionCode {
   FORBIDDEN = 'FORBIDDEN',
-  INVALID_WORKFLOW_VERSION = 'INVALID_WORKFLOW_VERSION',
+  MALFORMED_WORKFLOW_VERSION = 'MALFORMED_WORKFLOW_VERSION',
 }
 
 const getWorkflowQueryValidationExceptionUserFriendlyMessage = (
@@ -15,8 +15,8 @@ const getWorkflowQueryValidationExceptionUserFriendlyMessage = (
   switch (code) {
     case WorkflowQueryValidationExceptionCode.FORBIDDEN:
       return msg`You do not have permission to perform this workflow action.`;
-    case WorkflowQueryValidationExceptionCode.INVALID_WORKFLOW_VERSION:
-      return msg`This workflow version is invalid.`;
+    case WorkflowQueryValidationExceptionCode.MALFORMED_WORKFLOW_VERSION:
+      return msg`This workflow version contains malformed data and cannot be saved.`;
     default:
       assertUnreachable(code);
   }
