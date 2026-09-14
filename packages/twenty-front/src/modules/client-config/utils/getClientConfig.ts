@@ -2,9 +2,7 @@ import { type ClientConfig } from '@/client-config/types/ClientConfig';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 export const getClientConfig = async (): Promise<ClientConfig> => {
-  const response = await fetch(`${REACT_APP_SERVER_BASE_URL}/client-config`, {
-    cache: 'no-store',
-  });
+  const response = await fetch(`${REACT_APP_SERVER_BASE_URL}/client-config`);
 
   if (!response.ok) {
     throw new Error(
