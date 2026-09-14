@@ -52,12 +52,16 @@ jobs:
         ports:
           - 6379:6379
     env:
+      # All four get the CI version and are built. Only the three libraries are
+      # published before the template lockfile is generated; create-twenty-app is
+      # published after it, carrying that lockfile in its tarball.
       PUBLISHABLE_PACKAGES: twenty-client-sdk twenty-ui twenty-sdk create-twenty-app
-      # Published before create-twenty-app so the template lockfile can resolve them.
       LIBRARY_PACKAGES: twenty-client-sdk twenty-ui twenty-sdk
-      # Packages published here are seconds old. Installing them under a gate this
-      # long only works because the template ships a lockfile, so this is the
-      # regression test for the release-day quarantine failure.
+      # Deliberately beyond any realistic policy rather than a value anyone would
+      # set. With a working template lockfile nothing is resolved, so no gate of
+      # any length applies and this number is inert; it only bites if the lockfile
+      # stops shipping, and picking a large one means this job still catches that
+      # however long a real consumer's gate happens to be.
       SCAFFOLD_AGE_GATE: 30d
       TWENTY_API_URL: http://localhost:3000
       TWENTY_API_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ1c2VySWQiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtNDYzZi00MzViLTgyOGMtMTA3ZTAwN2EyNzExIiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWU3Yy00M2Q5LWE1ZGItNjg1YjUwNjlkODE2IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjIwNjY4NTc3MDR9.HMGqCsVlOAPVUBhKSGlD1X86VoHKt4LIUtET3CGIdik
