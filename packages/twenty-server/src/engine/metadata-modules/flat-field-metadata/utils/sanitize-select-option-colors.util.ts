@@ -1,7 +1,6 @@
+import { DEFAULT_SELECT_OPTION_COLOR } from 'twenty-shared/constants';
 import { type FieldMetadataComplexOption } from 'twenty-shared/types';
 import { extractAndSanitizeObjectStringFields } from 'twenty-shared/utils';
-
-import { DEFAULT_SELECT_OPTION_COLOR } from 'src/engine/metadata-modules/flat-field-metadata/constants/default-select-option-color.constant';
 
 type SelectOptionWithOptionalColor<TColor extends string> = Omit<
   FieldMetadataComplexOption,

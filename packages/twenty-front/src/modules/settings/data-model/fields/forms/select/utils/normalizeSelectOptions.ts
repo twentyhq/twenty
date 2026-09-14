@@ -1,5 +1,6 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { parseThemeColor } from 'twenty-ui/utilities';
+import { DEFAULT_SELECT_OPTION_COLOR } from 'twenty-shared/constants';
+import { isTagColor } from 'twenty-shared/utils';
 
 type SelectOptionWithOptionalColor = Omit<FieldMetadataItemOption, 'color'> & {
   color?: string | null;
@@ -11,6 +12,8 @@ export const normalizeSelectOptions = (
   options
     .map((option) => ({
       ...option,
-      color: parseThemeColor(option.color),
+      color: isTagColor(option.color)
+        ? option.color
+        : DEFAULT_SELECT_OPTION_COLOR,
     }))
     .sort((optionA, optionB) => optionA.position - optionB.position);

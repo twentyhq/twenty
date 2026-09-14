@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
-import { FIELD_TYPE_DEFAULT_ICONS, TAG_COLORS } from 'twenty-shared/constants';
+import {
+  DEFAULT_SELECT_OPTION_COLOR,
+  FIELD_TYPE_DEFAULT_ICONS,
+  TAG_COLORS,
+} from 'twenty-shared/constants';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { z } from 'zod';
 
@@ -11,7 +15,6 @@ import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/ut
 import { normalizeIconName } from 'src/engine/core-modules/tool-provider/utils/normalize-icon-name.util';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { DEFAULT_SELECT_OPTION_COLOR } from 'src/engine/metadata-modules/flat-field-metadata/constants/default-select-option-color.constant';
 import { getObjectMetadataIdByName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-object-metadata-id-by-name.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { isDefined } from 'twenty-shared/utils';

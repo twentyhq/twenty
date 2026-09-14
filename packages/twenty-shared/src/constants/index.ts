@@ -19,6 +19,7 @@ export { CURRENCY_CODE_LABELS } from './CurrencyCodeLabels';
 export { DATE_TYPE_FORMAT } from './DateTypeFormat';
 export { DEFAULT_NUMBER_OF_GROUPS_LIMIT } from './DefaultNumberOfGroupsLimit';
 export { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from './DefaultRelativeDateFilterValue';
+export { DEFAULT_SELECT_OPTION_COLOR } from './DefaultSelectOptionColor';
 export { DEFAULT_VISIBLE_ADDRESS_SUBFIELDS } from './DefaultVisibleAddressSubfields';
 export { DEFAULT_WIDGET_SIZE } from './DefaultWidgetSize';
 export { DOCUMENTATION_BASE_URL } from './DocumentationBaseUrl';
