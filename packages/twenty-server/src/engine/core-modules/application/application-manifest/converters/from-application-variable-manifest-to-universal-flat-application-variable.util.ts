@@ -15,6 +15,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     label,
     encryptedValue,
     isSecret,
+    isRequired,
     isDeprecated,
     type,
     options,
@@ -27,6 +28,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     label?: string;
     encryptedValue: EncryptedString;
     isSecret?: boolean;
+    isRequired?: boolean;
     isDeprecated?: boolean;
     type?: ApplicationVariableType;
     options?: ApplicationVariableOption[];
@@ -41,6 +43,9 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
       description: description ?? '',
       label: label ?? '',
       isSecret: isSecret ?? false,
+      // A deprecated variable is excluded from the configuration check, so it can never be
+      // required — same precedence the server variables already apply.
+      isRequired: (isRequired ?? false) && !(isDeprecated ?? false),
       isDeprecated: isDeprecated ?? false,
       type: type ?? FieldMetadataType.TEXT,
       options: options ?? null,

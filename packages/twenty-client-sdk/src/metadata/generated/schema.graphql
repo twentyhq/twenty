@@ -44,6 +44,7 @@ type ApplicationVariable {
   description: String!
   label: String!
   isSecret: Boolean!
+  isRequired: Boolean!
   isDeprecated: Boolean!
   type: String!
   options: JSON

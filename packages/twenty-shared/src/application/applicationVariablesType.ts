@@ -35,6 +35,15 @@ type TypedApplicationVariable = {
   label?: string;
   type?: ApplicationVariableType;
   options?: ApplicationVariableOption[];
+  /**
+   * The application is not usable in a workspace until this variable has a value. Mirrors
+   * `isRequired` on server variables, which are instance-wide: this one marks what each
+   * workspace has to capture for itself (its own tenant id, its own credentials) — precisely
+   * the values an application cannot ship a default for.
+   *
+   * Ignored when `isDeprecated` is true: a deprecated variable is excluded from the check.
+   */
+  isRequired?: boolean;
   isDeprecated?: boolean;
 };
 
