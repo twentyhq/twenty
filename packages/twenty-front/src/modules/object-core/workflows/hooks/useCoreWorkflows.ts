@@ -40,11 +40,10 @@ export const useCoreWorkflows = ({
   tableId?: string;
 } = {}) => {
   const apolloCoreClient = useApolloCoreClient();
-  const scopedTableId = useWorkspaceSurfaceScopedComponentInstanceId(tableId);
 
   const sortedFieldByTable = useAtomFamilyStateValue(
     sortedFieldByTableFamilyState,
-    { tableId: scopedTableId },
+    { tableId: tableId },
   );
 
   const sortValue = sortedFieldByTable ?? CORE_WORKFLOWS_INITIAL_SORT;

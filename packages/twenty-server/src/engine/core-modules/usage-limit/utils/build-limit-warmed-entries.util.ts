@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
-import { type QuotaConsumptionRow } from 'src/engine/core-modules/usage-limit/types/quota-consumption-row.type';
+import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 
@@ -11,7 +11,7 @@ export const buildLimitWarmedEntries = ({
   now,
 }: {
   coldLimitCounters: LimitQuotaCounter[];
-  rowsByPeriod: Map<string, QuotaConsumptionRow[]>;
+  rowsByPeriod: Map<string, UsageConsumptionRow[]>;
   now: number;
 }): { key: string; value: number; ttl: number }[] =>
   coldLimitCounters.flatMap((counter) => {
@@ -25,7 +25,8 @@ export const buildLimitWarmedEntries = ({
     return [
       {
         key: counter.key,
-        value: counter.limitValue - computeQuotaConsumed({ rows, counter }),
+        value:
+          counter.limitValue - computeQuotaConsumed({ rows, scope: counter }),
         ttl,
       },
     ];

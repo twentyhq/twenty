@@ -8,7 +8,13 @@ import { useToast } from 'twenty-ui/feedback';
 import { RetryJobsDocument } from '~/generated-admin/graphql';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
-export const useRetryJobs = (queueName: string, onSuccess?: () => void) => {
+export const useRetryJobs = ({
+  queueName,
+  onSuccess,
+}: {
+  queueName: string;
+  onSuccess?: () => void;
+}) => {
   const apolloAdminClient = useApolloAdminClient();
   const { enqueueToast } = useToast();
   const [isRetrying, setIsRetrying] = useState(false);
@@ -50,8 +56,8 @@ export const useRetryJobs = (queueName: string, onSuccess?: () => void) => {
             enqueueToast({
               variant: 'error',
               children: plural(failedResults.length, {
-                one: `${failedResults.length} job could not be retried`,
-                other: `${failedResults.length} jobs could not be retried`,
+                one: `# job could not be retried`,
+                other: `# jobs could not be retried`,
               }),
             });
           } else {

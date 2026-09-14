@@ -13,6 +13,10 @@ import {
   sliderTest,
   toastTest,
 } from '@/__stories__/twenty-ui-gallery/utils/componentInteractionTests';
+import {
+  statusControlsTest,
+  tagControlsTest,
+} from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
 import {
   codeEditorTest,
@@ -353,4 +357,28 @@ export const CardPickerPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-radio-group',
   runtime: 'preact',
   play: createRadioGroupPreactTest({ optionName: 'Pro plan' }),
+});
+
+export const StatusControlsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-status-controls',
+  runtime: 'react',
+  play: statusControlsTest,
+});
+
+export const StatusControlsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-status-controls',
+  runtime: 'preact',
+  play: statusControlsTest,
+});
+
+export const TagControlsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-tag-controls',
+  runtime: 'react',
+  play: tagControlsTest,
+});
+
+export const TagControlsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-tag-controls',
+  runtime: 'preact',
+  play: tagControlsTest,
 });

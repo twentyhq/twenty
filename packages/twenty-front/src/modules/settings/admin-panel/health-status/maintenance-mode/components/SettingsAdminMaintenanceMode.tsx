@@ -243,10 +243,7 @@ export const SettingsAdminMaintenanceMode = () => {
               </div>
               {isScheduled && (
                 <StyledStatusRow>
-                  <Status
-                    color="orange"
-                    text={t`Planned for ${formattedStartDate}`}
-                  />
+                  <Status color="orange">{t`Planned for ${formattedStartDate}`}</Status>
                 </StyledStatusRow>
               )}
             </StyledFormContainer>

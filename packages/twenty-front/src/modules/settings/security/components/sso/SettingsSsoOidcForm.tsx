@@ -92,7 +92,7 @@ export const SettingsSsoOidcForm = () => {
                 onClick={() => {
                   copyToClipboard(
                     redirectionUrl,
-                    t`Redirect Url copied to clipboard`,
+                    t`Redirect URL copied to clipboard`,
                   );
                 }}
                 type="button"

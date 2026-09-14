@@ -1,6 +1,6 @@
 import { useStore } from 'jotai';
 
-import { useOpenAiChatPage } from '@/ai/hooks/useOpenAiChatPage';
+import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
@@ -22,7 +22,7 @@ export const useSwitchToNewAiChat = ({
   const { selectAiChatThread } = useSelectAiChatThread();
   const store = useStore();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
-  const { openAiChatPage } = useOpenAiChatPage();
+  const { navigateToAiChatPage } = useNavigateToAiChatPage();
 
   const switchToNewChat = () => {
     setThreadIdCreatedFromDraft(null);
@@ -30,7 +30,7 @@ export const useSwitchToNewAiChat = ({
     selectAiChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
 
     if (shouldOpenInFullPage) {
-      openAiChatPage();
+      navigateToAiChatPage();
     } else {
       openAskAiPage();
     }

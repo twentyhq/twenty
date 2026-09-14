@@ -8,7 +8,13 @@ import { useToast } from 'twenty-ui/feedback';
 import { DeleteJobsDocument } from '~/generated-admin/graphql';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
-export const useDeleteJobs = (queueName: string, onSuccess?: () => void) => {
+export const useDeleteJobs = ({
+  queueName,
+  onSuccess,
+}: {
+  queueName: string;
+  onSuccess?: () => void;
+}) => {
   const apolloAdminClient = useApolloAdminClient();
   const { enqueueToast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -45,8 +51,8 @@ export const useDeleteJobs = (queueName: string, onSuccess?: () => void) => {
             enqueueToast({
               variant: 'error',
               children: plural(failedResults.length, {
-                one: `${failedResults.length} job could not be deleted`,
-                other: `${failedResults.length} jobs could not be deleted`,
+                one: `# job could not be deleted`,
+                other: `# jobs could not be deleted`,
               }),
             });
           } else {

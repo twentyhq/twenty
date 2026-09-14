@@ -107,14 +107,20 @@ export const SettingsAdminQueueJobsTable = ({
     fetchPolicy: 'network-only',
   });
 
-  const { retryJobs, isRetrying } = useRetryJobs(queueName, () => {
-    refetch();
-    setSelectedJobIds(new Set());
+  const { retryJobs, isRetrying } = useRetryJobs({
+    queueName,
+    onSuccess: () => {
+      refetch();
+      setSelectedJobIds(new Set());
+    },
   });
 
-  const { deleteJobs, isDeleting } = useDeleteJobs(queueName, () => {
-    refetch();
-    setSelectedJobIds(new Set());
+  const { deleteJobs, isDeleting } = useDeleteJobs({
+    queueName,
+    onSuccess: () => {
+      refetch();
+      setSelectedJobIds(new Set());
+    },
   });
 
   const jobs = data?.getQueueJobs?.jobs || [];
