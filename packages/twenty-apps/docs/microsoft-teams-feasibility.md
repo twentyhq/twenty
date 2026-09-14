@@ -160,6 +160,19 @@ Consequences:
   for theirs. Our worker answers asynchronously by posting to `serviceUrl` after
   the fact, which is precisely the call that fails, so inbound working is not
   enough for us. Treat sideloading as unusable for customers until tested.
+- **Settled 2026-09-14: there is no pre-existing Azure Bot.** A check of both
+  Azure subscriptions found no Azure Bot or Bot Channels Registration, so there
+  is no pre-2025-07-31 multi-tenant bot to inherit. The Teams Store is therefore
+  the only route to cloud customers, and the Store submission sits on the
+  critical path from day one rather than being one option among two. Self-hosted
+  customers are the only ones reachable before the listing clears.
+- **Partner Center status, same date.** The account exists but is not yet
+  enrolled in the Microsoft 365 and Copilot program, which is the documented
+  prerequisite for submitting a Teams app (Settings, Account settings, Programs,
+  then the Microsoft 365 and Copilot tile). Enrolment links a Partner ID to a
+  publisher account and requires accepting the Microsoft Publisher Agreement,
+  so it needs someone authorised to act for the company. Entra publisher
+  verification is a further, separate step on top of that.
 - **A multi-tenant Azure Bot is not the same as a multi-tenant Entra
   registration.** The same moderator reports that pairing a multi-tenant Entra
   app with a single-tenant Azure Bot gives inconsistent cross-tenant behaviour,
