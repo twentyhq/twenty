@@ -9,13 +9,16 @@ import {
   type FieldMetadataOptions,
   type NonNullableRequired,
 } from 'twenty-shared/types';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  isDefined,
+  isFieldMetadataSelectKind,
+} from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
-import { isFlatFieldMetadataOfTypes } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-types.util';
 import { validateMetadataOptionColor } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util';
 import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { IDENTIFIER_MIN_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-min-char-length.constants';
@@ -229,12 +232,7 @@ const validateFieldMetadataInputOptions = (
 const validateSelectOptionColors = (
   universalFlatFieldMetadata: UniversalFlatFieldMetadata<EnumFieldMetadataType>,
 ): FlatFieldMetadataValidationError[] => {
-  if (
-    !isFlatFieldMetadataOfTypes(universalFlatFieldMetadata, [
-      FieldMetadataType.SELECT,
-      FieldMetadataType.MULTI_SELECT,
-    ])
-  ) {
+  if (!isFieldMetadataSelectKind(universalFlatFieldMetadata.type)) {
     return [];
   }
 
