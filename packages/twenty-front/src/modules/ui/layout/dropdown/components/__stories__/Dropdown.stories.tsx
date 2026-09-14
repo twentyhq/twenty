@@ -475,8 +475,7 @@ export const SixItemsWithScrollCue: Story = {
     const visibleHeight =
       scrollContainer.getBoundingClientRect().bottom - rowBounds.top;
 
-    expect(visibleHeight).toBeGreaterThan(0);
-    expect(visibleHeight).toBeLessThan(rowBounds.height);
+    expect(Math.abs(visibleHeight - rowBounds.height / 2)).toBeLessThan(1);
     expect(scrollContainer.scrollHeight).toBeGreaterThan(
       scrollContainer.clientHeight,
     );
