@@ -130,10 +130,10 @@ export const CallRecordingTranscriptEntryListItem = ({
           variant={ChipVariant.Transparent}
           leftComponent={
             <Avatar
-              placeholder={speakerName}
-              placeholderColorSeed={speakerName}
+              name={speakerName}
+              colorSeed={speakerName}
               size="sm"
-              type="rounded"
+              shape="circle"
             />
           }
         />

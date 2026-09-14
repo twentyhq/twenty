@@ -43,12 +43,7 @@ export const WithLeftAvatar: Story = {
     clickable: true,
     variant: ChipVariant.Regular,
     leftComponent: (
-      <Avatar
-        placeholder="JD"
-        placeholderColorSeed="John Doe"
-        size="sm"
-        type="rounded"
-      />
+      <Avatar name="JD" colorSeed="John Doe" size="sm" shape="circle" />
     ),
   },
   decorators: [ComponentDecorator],
@@ -70,9 +65,7 @@ export const EmptyLabel: Story = {
     label: '',
     clickable: true,
     variant: ChipVariant.Regular,
-    leftComponent: (
-      <Avatar placeholder="?" placeholderColorSeed="empty" size="sm" />
-    ),
+    leftComponent: <Avatar name="?" colorSeed="empty" size="sm" />,
   },
   decorators: [ComponentDecorator],
 };
@@ -134,12 +127,7 @@ export const WithAvatarCatalog: CatalogStory<Story, typeof Chip> = {
     clickable: true,
     label: 'John Doe',
     leftComponent: (
-      <Avatar
-        placeholder="JD"
-        placeholderColorSeed="John Doe"
-        size="sm"
-        type="rounded"
-      />
+      <Avatar name="JD" colorSeed="John Doe" size="sm" shape="circle" />
     ),
   },
   argTypes: {
@@ -193,12 +181,7 @@ export const WithRightComponentDivider: Story = {
     variant: ChipVariant.Static,
     clickable: false,
     leftComponent: (
-      <Avatar
-        placeholder="D"
-        placeholderColorSeed="document"
-        size="sm"
-        type="squared"
-      />
+      <Avatar name="D" colorSeed="document" size="sm" shape="square" />
     ),
     rightComponent: <IconX size={14} />,
     rightComponentDivider: true,
