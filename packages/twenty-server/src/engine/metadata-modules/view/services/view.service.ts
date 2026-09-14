@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { ViewType, ViewVisibility } from 'twenty-shared/types';
+import { FeatureFlagKey, ViewType, ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { HiddenSeededViewService } from 'src/engine/metadata-modules/view/services/hidden-seeded-view.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { isSeededObjectView } from 'src/engine/metadata-modules/view/utils/is-seeded-object-view.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -15,7 +16,7 @@ import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modul
 import { fromDeleteViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util';
 import { fromDestroyViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util';
 import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util';
-import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
 import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
 import { fromFlatViewFilterGroupToViewFilterGroupDto } from 'src/engine/metadata-modules/view-filter-group/utils/from-flat-view-filter-group-to-view-filter-group-dto.util';
@@ -36,6 +37,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
 
 @Injectable()
 export class ViewService {
@@ -45,7 +47,7 @@ export class ViewService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly hiddenSeededViewService: HiddenSeededViewService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async createOne({
@@ -334,6 +336,18 @@ export class ViewService {
     });
 
     const now = new Date().toISOString();
+    const deactivatedFlatView = {
+      ...dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'view',
+        flatEntity: existingFlatView,
+        isActive: false,
+        authorUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      }),
+      updatedAt: now,
+    };
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -344,9 +358,7 @@ export class ViewService {
               flatEntityToDelete: shouldDeactivate
                 ? []
                 : [flatViewFromDestroyInput],
-              flatEntityToUpdate: shouldDeactivate
-                ? [{ ...existingFlatView, isActive: false, updatedAt: now }]
-                : [],
+              flatEntityToUpdate: shouldDeactivate ? [deactivatedFlatView] : [],
             },
           },
           workspaceId,
@@ -364,11 +376,7 @@ export class ViewService {
     }
 
     if (shouldDeactivate) {
-      return fromFlatViewToViewDto({
-        ...existingFlatView,
-        isActive: false,
-        updatedAt: now,
-      });
+      return fromFlatViewToViewDto(deactivatedFlatView);
     }
 
     return fromFlatViewToViewDto({
@@ -414,8 +422,9 @@ export class ViewService {
         },
       );
 
-    const hiddenSeededViewUniversalIdentifiers =
-      await this.hiddenSeededViewService.getHiddenSeededViewUniversalIdentifiers(
+    const isSeededDefaultViewEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
         workspaceId,
       );
 
@@ -423,9 +432,7 @@ export class ViewService {
       .filter(isDefined)
       .filter(
         (flatView) =>
-          !hiddenSeededViewUniversalIdentifiers.has(
-            flatView.universalIdentifier,
-          ),
+          isSeededDefaultViewEnabled || !isSeededObjectView(flatView),
       )
       .filter((flatView) => flatView.workspaceId === workspaceId)
       .filter(

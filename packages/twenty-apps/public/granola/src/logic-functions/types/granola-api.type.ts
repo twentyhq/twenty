@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { GRANOLA_NOTE_ID_PATTERN } from 'src/constants/granola-api.constant';
 
-const GRANOLA_DATE_TIME_SCHEMA = z.string().datetime({ offset: true });
+export const GRANOLA_DATE_TIME_SCHEMA = z.string().datetime({ offset: true });
 const GRANOLA_USER_SCHEMA = z.object({
   name: z.string().nullable(),
   email: z.string(),

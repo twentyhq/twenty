@@ -23,8 +23,8 @@ export const PlansTags = ({ plan, isTrialPeriod = false }: PlansTagsProps) => {
 
   return (
     <StyledTagsWrapper>
-      <Tag color={planDescriptor.color} text={planDescriptor.label} />
-      {isTrialPeriod && <Tag color="blue" text={t`Trial`} preventShrink />}
+      <Tag color={planDescriptor.color}>{planDescriptor.label}</Tag>
+      {isTrialPeriod && <Tag color="blue" preventShrink>{t`Trial`}</Tag>}
     </StyledTagsWrapper>
   );
 };

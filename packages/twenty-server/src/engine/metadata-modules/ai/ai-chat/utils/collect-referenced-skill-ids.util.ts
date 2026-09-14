@@ -1,0 +1,37 @@
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
+
+// Matches the [[skill:<uuid>:<label>]] references the composer inserts when a
+// user picks a skill from the / menu. Only the id prefix is matched so a label
+// containing brackets cannot break the lookup.
+const SKILL_REFERENCE_REGEX =
+  /\[\[skill:([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}):/g;
+
+export type ReferencedSkillSourceMessage = Pick<
+  ExtendedUIMessage,
+  'role' | 'parts'
+>;
+
+export const collectReferencedSkillIds = (
+  messages: ReferencedSkillSourceMessage[],
+): string[] => {
+  const skillIds = new Set<string>();
+
+  for (const message of messages) {
+    if (message.role !== 'user' || !isDefined(message.parts)) {
+      continue;
+    }
+
+    for (const part of message.parts) {
+      if (part.type !== 'text') {
+        continue;
+      }
+
+      for (const match of part.text.matchAll(SKILL_REFERENCE_REGEX)) {
+        skillIds.add(match[1]);
+      }
+    }
+  }
+
+  return [...skillIds];
+};

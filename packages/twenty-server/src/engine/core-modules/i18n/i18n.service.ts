@@ -23,6 +23,7 @@ import { messages as fiMessages } from 'src/engine/core-modules/i18n/locales/gen
 import { messages as frMessages } from 'src/engine/core-modules/i18n/locales/generated/fr-FR';
 import { messages as heMessages } from 'src/engine/core-modules/i18n/locales/generated/he-IL';
 import { messages as huMessages } from 'src/engine/core-modules/i18n/locales/generated/hu-HU';
+import { messages as hyMessages } from 'src/engine/core-modules/i18n/locales/generated/hy-AM';
 import { messages as itMessages } from 'src/engine/core-modules/i18n/locales/generated/it-IT';
 import { messages as jaMessages } from 'src/engine/core-modules/i18n/locales/generated/ja-JP';
 import { messages as koMessages } from 'src/engine/core-modules/i18n/locales/generated/ko-KR';
@@ -34,10 +35,12 @@ import { messages as ptBRMessages } from 'src/engine/core-modules/i18n/locales/g
 import { messages as ptPTMessages } from 'src/engine/core-modules/i18n/locales/generated/pt-PT';
 import { messages as roMessages } from 'src/engine/core-modules/i18n/locales/generated/ro-RO';
 import { messages as ruMessages } from 'src/engine/core-modules/i18n/locales/generated/ru-RU';
-import { messages as srMessages } from 'src/engine/core-modules/i18n/locales/generated/sr-Cyrl';
+import { messages as srCyrlMessages } from 'src/engine/core-modules/i18n/locales/generated/sr-Cyrl';
+import { messages as srLatnMessages } from 'src/engine/core-modules/i18n/locales/generated/sr-Latn';
 import { messages as svMessages } from 'src/engine/core-modules/i18n/locales/generated/sv-SE';
 import { messages as trMessages } from 'src/engine/core-modules/i18n/locales/generated/tr-TR';
 import { messages as ukMessages } from 'src/engine/core-modules/i18n/locales/generated/uk-UA';
+import { messages as uzMessages } from 'src/engine/core-modules/i18n/locales/generated/uz-UZ';
 import { messages as viMessages } from 'src/engine/core-modules/i18n/locales/generated/vi-VN';
 import { messages as zhHansMessages } from 'src/engine/core-modules/i18n/locales/generated/zh-CN';
 import { messages as zhHantMessages } from 'src/engine/core-modules/i18n/locales/generated/zh-TW';
@@ -71,6 +74,7 @@ export class I18nService implements OnModuleInit {
       'fr-FR': frMessages,
       'he-IL': heMessages,
       'hu-HU': huMessages,
+      'hy-AM': hyMessages,
       'it-IT': itMessages,
       'ja-JP': jaMessages,
       'ko-KR': koMessages,
@@ -81,10 +85,12 @@ export class I18nService implements OnModuleInit {
       'pt-PT': ptPTMessages,
       'ro-RO': roMessages,
       'ru-RU': ruMessages,
-      'sr-Cyrl': srMessages,
+      'sr-Cyrl': srCyrlMessages,
+      'sr-Latn': srLatnMessages,
       'sv-SE': svMessages,
       'tr-TR': trMessages,
       'uk-UA': ukMessages,
+      'uz-UZ': uzMessages,
       'vi-VN': viMessages,
       'zh-CN': zhHansMessages,
       'zh-TW': zhHantMessages,

@@ -61,6 +61,8 @@ export const computeSystemViewToCreate = ({
       viewKey,
     }),
     name: computeName(objectMetadata),
+    // Only INDEX is a persisted key; FIELDS_WIDGET exists solely in the
+    // universal identifier derivation.
     key: viewKey === SYSTEM_VIEW_KEYS.INDEX ? ViewKey.INDEX : null,
     icon,
     type,

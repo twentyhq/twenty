@@ -252,7 +252,7 @@ const hasReachableTranscript = (transcript: unknown): boolean => {
 
   const transcriptMarker = parseTranscriptMarker(transcript);
 
-  return isUndefined(transcriptMarker) || transcriptMarker.status === 'PENDING';
+  return isUndefined(transcriptMarker) || transcriptMarker.status !== 'FAILED';
 };
 
 // A media size marker must not overwrite the failure reason of a FAILED recording.

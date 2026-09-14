@@ -40,7 +40,7 @@ const jestConfig: JestConfigWithTsJest = {
   setupFilesAfterEnv: [
     '<rootDir>/test/integration/utils/setup-wait-for-all-jobs-between-tests.ts',
   ],
-  testTimeout: 30000,
+  testTimeout: 20000,
   maxWorkers: 1,
   // jsdom 29 and msw ship ESM-only transitive deps (parse5, entities,
   // tough-cookie, @exodus/bytes via html-encoding-sniffer, @csstools/@asamuzakjp

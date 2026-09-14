@@ -1,63 +1,62 @@
 .tag {
+  @include focus-ring;
   box-sizing: content-box;
   align-items: center;
-  background: var(--tag-background);
+  background: var(--tw-tag-background);
   border-radius: var(--t-border-radius-sm-round);
   corner-shape: round;
-  color: var(--tag-text);
+  color: var(--tw-tag-text);
   display: inline-flex;
+  font-family: inherit;
   font-size: var(--t-font-size-md);
-  font-style: normal;
   font-weight: var(--t-font-weight-regular);
-  height: var(--t-spacing-5);
+  block-size: var(--t-spacing-5);
   margin: 0;
   overflow: hidden;
   padding: 0 var(--t-spacing-2);
   border: none;
   gap: var(--t-spacing-1);
-  // 'none' is not a valid min-width value; kept for byte-equivalence with the
-  // deprecated Linaria styles where the declaration was equally inert.
-  min-width: none;
-}
-
-.interactive {
-  appearance: none;
-  cursor: pointer;
-  font-family: inherit;
+  min-inline-size: 0;
   text-align: inherit;
-}
 
-.weightMedium {
-  font-weight: var(--t-font-weight-medium);
+  &[data-interactive] {
+    cursor: pointer;
+  }
+  &[data-weight='medium'] {
+    font-weight: var(--t-font-weight-medium);
+  }
+  &[data-variant='outline'] {
+    border: 1px var(--tw-tag-border-style) var(--t-border-color-strong);
+  }
+  &[data-variant='ghost'] {
+    background: transparent;
+  }
+  &[data-variant='solid'] {
+    background: var(--tw-tag-text);
+    color: var(--t-background-primary);
+  }
+  &[data-prevent-shrink] {
+    min-inline-size: fit-content;
+  }
+  &[data-prevent-padding] {
+    padding: 0;
+  }
+  &[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 }
-
-.variantOutline {
-  border: 1px dashed var(--t-border-color-strong);
-}
-
-.variantBorder {
-  border: 1px solid var(--t-border-color-strong);
-}
-
-.preventShrink {
-  min-width: fit-content;
-}
-
-.preventPadding {
-  padding: 0;
-}
-
 .content {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-.nonShrinkableText {
-  white-space: nowrap;
-  width: fit-content;
-}
-
 .iconContainer {
   display: flex;
+  flex-shrink: 0;
+  & > svg {
+    inline-size: calc(var(--t-icon-size-sm) * 1px);
+    block-size: calc(var(--t-icon-size-sm) * 1px);
+    stroke-width: var(--t-icon-stroke-sm);
+  }
 }

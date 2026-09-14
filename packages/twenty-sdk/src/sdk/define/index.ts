@@ -108,6 +108,7 @@ export type {
 export type { ServerRouteDispatchResult } from 'twenty-shared/application';
 export type { CronPayload } from '@/sdk/define/logic-functions/triggers/cron-payload-type';
 export type {
+  DatabaseEventBatchPayload,
   DatabaseEventPayload,
   ObjectRecordBaseEvent,
   ObjectRecordCreateEvent,
@@ -206,6 +207,7 @@ export {
   ObjectOpenRecordIn,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
   PageLayoutType,
   ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,

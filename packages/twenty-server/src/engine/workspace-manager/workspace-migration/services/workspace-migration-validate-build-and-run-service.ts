@@ -39,7 +39,6 @@ type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
   allFlatEntityOperationByMetadataName: AllFlatEntityOperationByMetadataName;
   isSystemBuild?: boolean;
   applicationUniversalIdentifier: string;
-  isWorkspaceCustomApplicationBuild?: boolean;
   dryRun?: boolean;
 };
 
@@ -48,7 +47,6 @@ type ValidateBuildAndRunWorkspaceMigrationFromRecordArgs = {
   allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
   isSystemBuild?: boolean;
   applicationUniversalIdentifier: string;
-  isWorkspaceCustomApplicationBuild?: boolean;
   dryRun?: boolean;
 };
 
@@ -213,7 +211,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
-    isWorkspaceCustomApplicationBuild,
     dryRun,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
@@ -229,7 +226,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       workspaceId,
       isSystemBuild,
       applicationUniversalIdentifier,
-      isWorkspaceCustomApplicationBuild,
       dryRun,
     });
   }
@@ -285,7 +281,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
-    isWorkspaceCustomApplicationBuild,
     dryRun,
     skipSideEffectExpandEngine,
   }: ValidateBuildAndRunWorkspaceMigrationFromRecordInternalArgs): Promise<
@@ -322,7 +317,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
             buildOptions: {
               isSystemBuild,
               applicationUniversalIdentifier,
-              isWorkspaceCustomApplicationBuild,
             },
           },
         });

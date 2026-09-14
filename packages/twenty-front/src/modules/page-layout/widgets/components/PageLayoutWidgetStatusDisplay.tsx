@@ -25,7 +25,7 @@ export const PageLayoutWidgetStatusDisplay = ({
   return (
     <StyledContainer>
       <div id={tooltipId}>
-        <Status color={color} text={text} />
+        <Status color={color}>{text}</Status>
       </div>
       <AppTooltip
         anchorSelect={`#${tooltipId}`}
