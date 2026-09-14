@@ -26,6 +26,10 @@ registerEnumType(MessageParticipantRole, { name: 'MessageParticipantRole' });
 // timeout, so a provider backfill has to page rather than send everything.
 export const INGEST_APP_MESSAGES_MAX_BATCH_SIZE = 100;
 
+// Comfortably above a long plain-text conversation message, well below what
+// would threaten the row or the transaction at full batch size.
+export const MAX_APP_MESSAGE_TEXT_LENGTH = 262_144;
+
 @InputType('AppMessageParticipantInput')
 export class AppMessageParticipantInput {
   @Field(() => MessageParticipantRole)
@@ -70,8 +74,12 @@ export class AppMessageInput {
   @MaxLength(998)
   subject?: string;
 
+  // Bounded like every other string here. One call is already 100 messages in
+  // a single workspace transaction, and unlike email import nothing upstream
+  // caps this, so an unbounded body would make the batch limit meaningless.
   @Field()
   @IsString()
+  @MaxLength(MAX_APP_MESSAGE_TEXT_LENGTH)
   text: string;
 
   @Field(() => Date)

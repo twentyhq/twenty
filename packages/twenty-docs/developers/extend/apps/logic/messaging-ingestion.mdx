@@ -41,13 +41,13 @@ export const linkedinInboundHandler = async (payload: LinkedinWebhookPayload) =>
 
 ## What the server does for you
 
-**De-duplication.** `externalId` is the key. Ingesting the same one twice creates nothing and changes nothing, so a redelivered webhook is safe to replay and a backfill may overlap a live stream. The returned `messageId` is stable across replays.
+**De-duplication.** `externalId` is the key. Ingesting the same one twice creates nothing and changes nothing, so a redelivered webhook is safe to replay and a backfill may overlap a live stream. The returned `messageId` is stable across replays. Calls against one channel are serialised, so a redelivery arriving while its original is still being written waits rather than racing it.
 
 **Threading.** Messages sharing a `threadExternalId` land in one Message Thread, which then appears on the Person, Company and Opportunity records of its participants.
 
 **Direction.** Derived, not declared: the message is outgoing when the `FROM` participant's handle equals the channel's handle, incoming otherwise. Exactly one participant must carry `FROM` — direction, the thread's sender column and the timeline preview all read it, so a message without one is rejected rather than rendering as an empty conversation.
 
-**Convergence across members.** Two members of the same workspace in the same conversation, each with their own channel, converge on one Message with one association per channel — the same way one email to two synced mailboxes does. Different apps never collide, whatever external ids they use.
+**De-duplication is scoped to the channel.** `externalId` only has to be unique within one channel, which is what most providers actually guarantee — plenty number messages per conversation or per account. The consequence is that two members in the same provider conversation each get their own Message rather than a shared one. That is deliberate: merging them would require every app to guarantee a global namespace it does not control, and getting it wrong would attach one member's body to another member's channel.
 
 **Privacy.** Each message inherits its channel's `visibility`. Nothing you ingest is more visible than the channel you ingest it into.
 
@@ -61,7 +61,7 @@ for (const page of chunk(allHistoricalMessages, 100)) {
 }
 ```
 
-A batch is all-or-nothing, and repeating one `externalId` inside a single batch is rejected — de-duplicate before you send.
+A batch is all-or-nothing, and repeating one `externalId` inside a single batch is rejected — de-duplicate before you send. A message body is capped at 256KB.
 
 ## Linking participants to People
 
