@@ -24,6 +24,7 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { RecordAccessPolicyService } from 'src/engine/record-share/services/record-access-policy.service';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
@@ -318,6 +319,14 @@ describe('ObjectRecordEventPublisher', () => {
         {
           provide: RecordShareService,
           useValue: mockRecordShareService,
+        },
+        {
+          provide: RecordAccessPolicyService,
+          useValue: {
+            resolveRecordIdsReadableThroughParents: jest
+              .fn()
+              .mockResolvedValue(new Set()),
+          },
         },
       ],
     }).compile();

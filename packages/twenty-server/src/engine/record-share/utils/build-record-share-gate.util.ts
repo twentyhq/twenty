@@ -6,18 +6,21 @@ import { type RecordShare } from 'src/engine/record-share/types/record-share.typ
 import { type RecordShareGate } from 'src/engine/record-share/types/record-share-gate.type';
 import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
 
-// The share rows are only worth fetching and indexing for a PRIVATE object, so
-// the caller hands over how to get them and the gate kind decides whether to ask
+// The share rows are only worth fetching for a gated object and the parents
+// only worth asking for an INHERITED one, so the caller hands over how to get
+// them and the gate kind decides whether to ask
 export const buildRecordShareGate = async ({
   readability,
   isOwningApplication,
   principalIds,
   fetchRecordSharesByRecordId,
+  resolveRecordIdsReadableThroughParents,
 }: {
   readability: MetadataReadability;
   isOwningApplication: boolean;
   principalIds: (string | null | undefined)[];
   fetchRecordSharesByRecordId: () => Promise<Map<string, RecordShare[]>>;
+  resolveRecordIdsReadableThroughParents: () => Promise<Set<string>>;
 }): Promise<RecordShareGate | null> => {
   const gateKind = resolveRecordShareGateKind({
     readability,
@@ -30,6 +33,7 @@ export const buildRecordShareGate = async ({
     case 'deny':
       return DENY_ALL_RECORD_SHARE_GATE;
     case 'private':
+    case 'inherited':
       return {
         recordSharesByRecordId: await fetchRecordSharesByRecordId(),
         principalIds: [
@@ -40,6 +44,10 @@ export const buildRecordShareGate = async ({
             ),
           ),
         ],
+        recordIdsReadableThroughParents:
+          gateKind === 'inherited'
+            ? await resolveRecordIdsReadableThroughParents()
+            : new Set(),
       };
     default:
       return assertUnreachable(gateKind);

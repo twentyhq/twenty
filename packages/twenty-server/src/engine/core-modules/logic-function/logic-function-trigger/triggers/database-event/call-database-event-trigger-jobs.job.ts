@@ -21,11 +21,14 @@ import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { RecordAccessPolicyService } from 'src/engine/record-share/services/record-access-policy.service';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
 import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
 import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
-import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
+import { isRecordAdmittedByRecordShareGate } from 'src/engine/record-share/utils/is-record-admitted-by-record-share-gate.util';
+import { resolveEventRecordSnapshots } from 'src/engine/record-share/utils/resolve-event-record-snapshots.util';
+import { buildRoleRowAccessPolicySubject } from 'src/engine/record-share/utils/build-role-row-access-policy-subject.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -40,15 +43,31 @@ export class CallDatabaseEventTriggerJobsJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
     private readonly recordShareService: RecordShareService,
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
   async handle(workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>) {
-    const { flatLogicFunctionMaps, flatApplicationMaps, featureFlagsMap } =
-      await this.workspaceCacheService.getOrRecompute(
-        workspaceEventBatch.workspaceId,
-        ['flatLogicFunctionMaps', 'flatApplicationMaps', 'featureFlagsMap'],
-      );
+    const {
+      flatLogicFunctionMaps,
+      flatApplicationMaps,
+      featureFlagsMap,
+      rolesPermissions,
+      flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
+      flatFieldMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(
+      workspaceEventBatch.workspaceId,
+      [
+        'flatLogicFunctionMaps',
+        'flatApplicationMaps',
+        'featureFlagsMap',
+        'rolesPermissions',
+        'flatRowLevelPermissionPredicateMaps',
+        'flatRowLevelPermissionPredicateGroupMaps',
+        'flatFieldMetadataMaps',
+      ],
+    );
 
     const logicFunctionsWithDatabaseEventTrigger = Object.values(
       flatLogicFunctionMaps.byUniversalIdentifier,
@@ -126,6 +145,24 @@ export class CallDatabaseEventTriggerJobsJob {
           application,
           isRecordShareGated,
           fetchRecordSharesByRecordId,
+          resolveRecordIdsReadableThroughParents: () =>
+            this.recordAccessPolicyService.resolveRecordIdsReadableThroughParents(
+              {
+                workspaceId: workspaceEventBatch.workspaceId,
+                objectMetadata: workspaceEventBatch.objectMetadata,
+                records: resolveEventRecordSnapshots(
+                  workspaceEventBatch.events,
+                ),
+                subject: buildRoleRowAccessPolicySubject({
+                  roleId: application.defaultRoleId ?? undefined,
+                  owningApplicationId: application.id,
+                  rolesPermissions,
+                  flatRowLevelPermissionPredicateMaps,
+                  flatRowLevelPermissionPredicateGroupMaps,
+                  flatFieldMetadataMaps,
+                }),
+              },
+            ),
         }),
       });
 
@@ -169,11 +206,13 @@ export class CallDatabaseEventTriggerJobsJob {
     application,
     isRecordShareGated,
     fetchRecordSharesByRecordId,
+    resolveRecordIdsReadableThroughParents,
   }: {
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
     application: FlatApplication;
     isRecordShareGated: boolean;
     fetchRecordSharesByRecordId: () => Promise<Map<string, RecordShare[]>>;
+    resolveRecordIdsReadableThroughParents: () => Promise<Set<string>>;
   }): Promise<WorkspaceEventBatch<ObjectRecordEvent>> {
     const recordShareGate = isRecordShareGated
       ? await buildRecordShareGate({
@@ -182,6 +221,7 @@ export class CallDatabaseEventTriggerJobsJob {
             workspaceEventBatch.objectMetadata.applicationId === application.id,
           principalIds: [EVERYONE_PRINCIPAL_ID, application.defaultRoleId],
           fetchRecordSharesByRecordId,
+          resolveRecordIdsReadableThroughParents,
         })
       : null;
 
@@ -192,7 +232,7 @@ export class CallDatabaseEventTriggerJobsJob {
     return {
       ...workspaceEventBatch,
       events: workspaceEventBatch.events.filter((event) =>
-        isRecordSharedWithPrincipals({
+        isRecordAdmittedByRecordShareGate({
           recordShareGate,
           recordId: event.recordId,
           accessLevels: resolveRequiredRecordShareAccessLevels('select'),

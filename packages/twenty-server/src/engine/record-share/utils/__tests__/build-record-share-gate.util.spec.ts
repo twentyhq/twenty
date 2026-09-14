@@ -33,6 +33,7 @@ describe('buildRecordShareGate', () => {
       isOwningApplication: false,
       principalIds: ['member-1'],
       fetchRecordSharesByRecordId,
+      resolveRecordIdsReadableThroughParents: async () => new Set(),
     });
 
     expect(gate).toBeNull();
@@ -49,6 +50,7 @@ describe('buildRecordShareGate', () => {
       isOwningApplication: false,
       principalIds: ['member-1'],
       fetchRecordSharesByRecordId,
+      resolveRecordIdsReadableThroughParents: async () => new Set(),
     });
 
     expect(gate).toBe(DENY_ALL_RECORD_SHARE_GATE);
@@ -61,12 +63,16 @@ describe('buildRecordShareGate', () => {
       isOwningApplication: true,
       principalIds: [],
       fetchRecordSharesByRecordId: async () => new Map(),
+      resolveRecordIdsReadableThroughParents: async () => new Set(),
     });
 
     expect(gate).toBeNull();
   });
 
   it('fetches the rows of a PRIVATE object and keeps each principal once', async () => {
+    const resolveRecordIdsReadableThroughParents = jest.fn(
+      async () => new Set<string>(),
+    );
     const gate = await buildRecordShareGate({
       readability: MetadataReadability.PRIVATE,
       isOwningApplication: false,
@@ -79,11 +85,52 @@ describe('buildRecordShareGate', () => {
       ],
       fetchRecordSharesByRecordId: async () =>
         indexRecordSharesByRecordId([RECORD_SHARE]),
+      resolveRecordIdsReadableThroughParents,
     });
 
     expect(gate).toEqual({
       recordSharesByRecordId: indexRecordSharesByRecordId([RECORD_SHARE]),
       principalIds: [EVERYONE_PRINCIPAL_ID, 'role-1'],
+      recordIdsReadableThroughParents: new Set(),
     });
+    expect(resolveRecordIdsReadableThroughParents).not.toHaveBeenCalled();
+  });
+
+  it('asks the parents of an INHERITED object on top of its own rows', async () => {
+    const resolveRecordIdsReadableThroughParents = jest.fn(
+      async () => new Set(['record-2']),
+    );
+
+    const gate = await buildRecordShareGate({
+      readability: MetadataReadability.INHERITED,
+      isOwningApplication: false,
+      principalIds: [EVERYONE_PRINCIPAL_ID, 'member-1'],
+      fetchRecordSharesByRecordId: async () =>
+        indexRecordSharesByRecordId([RECORD_SHARE]),
+      resolveRecordIdsReadableThroughParents,
+    });
+
+    expect(gate).toEqual({
+      recordSharesByRecordId: indexRecordSharesByRecordId([RECORD_SHARE]),
+      principalIds: [EVERYONE_PRINCIPAL_ID, 'member-1'],
+      recordIdsReadableThroughParents: new Set(['record-2']),
+    });
+  });
+
+  it('lets the owning application through an INHERITED object without asking', async () => {
+    const resolveRecordIdsReadableThroughParents = jest.fn(
+      async () => new Set(['record-2']),
+    );
+
+    const gate = await buildRecordShareGate({
+      readability: MetadataReadability.INHERITED,
+      isOwningApplication: true,
+      principalIds: [],
+      fetchRecordSharesByRecordId: async () => new Map(),
+      resolveRecordIdsReadableThroughParents,
+    });
+
+    expect(gate).toBeNull();
+    expect(resolveRecordIdsReadableThroughParents).not.toHaveBeenCalled();
   });
 });

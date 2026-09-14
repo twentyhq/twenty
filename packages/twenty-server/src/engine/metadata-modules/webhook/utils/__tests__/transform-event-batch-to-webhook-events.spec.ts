@@ -317,6 +317,7 @@ describe('transformEventBatchToWebhookEvents', () => {
       recordShareGate: {
         recordSharesByRecordId: indexRecordSharesByRecordId(recordShares),
         principalIds: [EVERYONE_PRINCIPAL_ID],
+        recordIdsReadableThroughParents: new Set(),
       },
     });
 

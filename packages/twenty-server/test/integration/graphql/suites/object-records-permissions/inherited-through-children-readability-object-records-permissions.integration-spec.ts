@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
+import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
+
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
@@ -22,8 +24,11 @@ import {
   RecordShareRowCause,
 } from 'twenty-shared/types';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type RecordAccessPolicyService } from 'src/engine/record-share/services/record-access-policy.service';
 import { type RecordShareService } from 'src/engine/record-share/services/record-share.service';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -443,6 +448,48 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       expect(
         collectIds(attachmentsResponse.body.data.attachments.edges),
       ).toEqual(ATTACHMENT_IDS.sort());
+    });
+
+    it('should let the event gate see the same notes as the query gate', async () => {
+      const memberRole = await findOneRoleByLabel({ label: 'Member' });
+      const { rolesPermissions, flatObjectMetadataMaps } =
+        await getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
+        ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
+          'rolesPermissions',
+          'flatObjectMetadataMaps',
+        ]);
+      const noteObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: noteObjectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+
+      expect(noteObjectMetadata).toBeDefined();
+
+      const recordIdsReadableThroughParents =
+        await getAppProviderByClassName<RecordAccessPolicyService>(
+          'RecordAccessPolicyService',
+        ).resolveRecordIdsReadableThroughParents({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          objectMetadata: noteObjectMetadata!,
+          records: NOTE_IDS.map((id) => ({ id })),
+          subject: {
+            objectsPermissions: rolesPermissions[memberRole.id],
+            principalIds: [
+              EVERYONE_PRINCIPAL_ID,
+              WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+              memberRole.id,
+            ],
+            isOwningApplication: () => false,
+            resolveRowLevelPermissionRecordFilter: () => null,
+          },
+        });
+      const notesResponse =
+        await makeGraphqlAPIRequestWithMemberRole(findNotesOperation);
+
+      expect([...recordIdsReadableThroughParents].sort()).toEqual(
+        collectIds(notesResponse.body.data.notes.edges),
+      );
     });
 
     it('should hide what is reached through the person from a role that cannot read people', async () => {
