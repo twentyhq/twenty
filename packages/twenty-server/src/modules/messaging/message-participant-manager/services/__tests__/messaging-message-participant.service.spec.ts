@@ -1,5 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
@@ -167,7 +168,10 @@ describe('MessagingMessageParticipantService', () => {
     ]);
   });
 
-  it('links the existing participant when the display name is omitted', async () => {
+  // An omitted name reaches the service as an empty string, and this is the
+  // only branch that writes the column, so the stored one has to survive: an
+  // app adding a person link should not have to resend the name to keep it.
+  it('keeps the stored display name when the caller omits it', async () => {
     givenAnExistingParticipant(null);
 
     await service.saveMessageParticipants(
@@ -177,7 +181,58 @@ describe('MessagingMessageParticipantService', () => {
     );
 
     expect(participantRepository.insert).toHaveBeenCalledWith([]);
-    expect(participantRepository.updateMany).toHaveBeenCalledTimes(1);
+    expect(participantRepository.updateMany).toHaveBeenCalledWith([
+      {
+        criteria: PARTICIPANT_ID,
+        partialEntity: {
+          personId: PERSON_ID,
+          workspaceMemberId: null,
+          displayName: 'Ada',
+        },
+      },
+    ]);
+  });
+
+  // A batch is capped by messages, not participants, so one conversation with
+  // many people in it can produce more updates than updateMany accepts.
+  it('chunks identity updates past the single-call limit', async () => {
+    const participantCount = QUERY_MAX_RECORDS + 50;
+    const existingParticipants = Array.from(
+      { length: participantCount },
+      (_unused, index) => ({
+        id: `participant-${index}`,
+        messageId: MESSAGE_ID,
+        handle: `member-${index}`,
+        displayName: 'Ada',
+        role: MessageParticipantRole.FROM,
+        personId: null,
+        workspaceMemberId: null,
+      }),
+    );
+
+    participantRepository.find.mockResolvedValueOnce(existingParticipants);
+
+    await service.saveMessageParticipants(
+      existingParticipants.map(({ handle }) => ({
+        ...anEmailParticipant(),
+        handle,
+        personId: PERSON_ID,
+      })),
+      WORKSPACE_ID,
+      transactionScope,
+    );
+
+    expect(participantRepository.updateMany).toHaveBeenCalledTimes(2);
+
+    const updatedCount = participantRepository.updateMany.mock.calls.reduce(
+      (total, [updates]) => total + updates.length,
+      0,
+    );
+
+    expect(updatedCount).toBe(participantCount);
+    participantRepository.updateMany.mock.calls.forEach(([updates]) => {
+      expect(updates.length).toBeLessThanOrEqual(QUERY_MAX_RECORDS);
+    });
   });
 
   it('corrects a wrong person link without leaving the old one behind', async () => {

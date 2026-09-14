@@ -7,6 +7,9 @@ export type IngestMessageParticipant = {
   // The participant's identity on the provider, in the same namespace as the
   // channel's own handle.
   handle: string;
+  // Omitting it on a later delivery keeps whatever name is already stored,
+  // so enriching a participant with an identity does not require resending
+  // the rest of the row.
   displayName?: string;
   // Twenty resolves email participants to People by email address, which
   // cannot match a provider handle. Supply the record yourself when you know

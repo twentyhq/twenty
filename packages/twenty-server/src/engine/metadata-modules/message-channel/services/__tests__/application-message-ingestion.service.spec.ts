@@ -27,6 +27,7 @@ describe('ApplicationMessageIngestionService', () => {
   let channelsService: jest.Mocked<ApplicationMessageChannelsService>;
   let saveMessagesService: jest.Mocked<MessagingSaveMessagesAndEnqueueContactCreationService>;
   let existingRecordIds: string[];
+  let recordLookup: jest.Mock;
   let cacheLockService: { withLock: jest.Mock };
 
   const scope = {
@@ -55,6 +56,9 @@ describe('ApplicationMessageIngestionService', () => {
 
   beforeEach(async () => {
     existingRecordIds = [];
+    recordLookup = jest
+      .fn()
+      .mockImplementation(async () => existingRecordIds.map((id) => ({ id })));
     cacheLockService = { withLock: jest.fn((fn: () => unknown) => fn()) };
 
     channelsService = {
@@ -99,13 +103,7 @@ describe('ApplicationMessageIngestionService', () => {
           provide: WorkspaceOrmManager,
           useValue: {
             executeInWorkspaceContext: (callback: () => unknown) => callback(),
-            getRepository: () => ({
-              find: jest
-                .fn()
-                .mockImplementation(async () =>
-                  existingRecordIds.map((id) => ({ id })),
-                ),
-            }),
+            getRepository: () => ({ find: recordLookup }),
           },
         },
       ],
@@ -356,9 +354,12 @@ describe('ApplicationMessageIngestionService', () => {
       ).not.toHaveBeenCalled();
     });
 
+    // The assertion that matters is the absence of the lookup: without it the
+    // test passes just as well with the early return deleted.
     it('does not query for records when no identity is supplied', async () => {
       await service.ingest({ ...scope, messages: [aMessage()] });
 
+      expect(recordLookup).not.toHaveBeenCalled();
       expect(
         saveMessagesService.saveMessagesAndEnqueueContactCreation,
       ).toHaveBeenCalled();

@@ -150,7 +150,7 @@ Once a participant is linked, Twenty builds the thread's targets, and the conver
 `workspaceMemberId` is also accepted, for a participant who is a member of this workspace rather than a contact. It is **attribution only**: thread targets are built from `personId` alone — the same as for email — so a participant linked only to a workspace member shows in the thread but pulls the conversation onto no record page. Pass `personId` when you want the thread to land somewhere.
 
 <Note>
-A late match is not lost. Re-ingesting a message with an identity you have since resolved links the participant that is already there — matched on the message, handle and role, so a display name that changed or was omitted in the meantime does not split it in two. Sending a different `personId` corrects an earlier link rather than adding a second one.
+A late match is not lost. Re-ingesting a message with an identity you have since resolved links the participant that is already there — matched on the message, handle and role, so a display name that changed or was omitted in the meantime does not split it in two. An omitted name keeps the one already stored; a new one replaces it. Sending a different `personId` corrects an earlier link rather than adding a second one.
 
 There is no way to *clear* an identity yet: a null is treated as "leave it alone", not "unlink". Correcting a wrong link means supplying the right one.
 </Note>

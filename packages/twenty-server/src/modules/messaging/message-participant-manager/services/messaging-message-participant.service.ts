@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+import chunk from 'lodash.chunk';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -115,7 +118,14 @@ export class MessagingMessageParticipantService {
               existingParticipant.workspaceMemberId;
             // Carried along because the row is no longer matched on it: without
             // this a rename would be silently dropped on every later delivery.
-            const displayName = participant.displayName;
+            // An omitted name arrives as an empty string though, and this is
+            // the only branch that writes the column back, so taking that
+            // literally would erase whatever an earlier delivery supplied — a
+            // caller adding a person link should not have to resend the rest
+            // of the row to keep it.
+            const displayName = isNonEmptyString(participant.displayName)
+              ? participant.displayName
+              : existingParticipant.displayName;
 
             if (
               personId === existingParticipant.personId &&
@@ -134,8 +144,14 @@ export class MessagingMessageParticipantService {
           },
         );
 
-        if (identityUpdates.length > 0) {
-          await messageParticipantRepository.updateMany(identityUpdates);
+        // One ingested batch is bounded by messages, not by participants, so
+        // a conversation with many people in it can exceed what updateMany
+        // accepts in a single call.
+        for (const identityUpdatesChunk of chunk(
+          identityUpdates,
+          QUERY_MAX_RECORDS,
+        )) {
+          await messageParticipantRepository.updateMany(identityUpdatesChunk);
         }
 
         const { identifiers } =
