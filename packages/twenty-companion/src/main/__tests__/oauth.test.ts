@@ -8,6 +8,17 @@ import {
 } from '../oauth';
 
 const servers: ReturnType<typeof createServer>[] = [];
+const listen = async (server: ReturnType<typeof createServer>) => {
+  servers.push(server);
+  await new Promise<void>((resolve) =>
+    server.listen(0, '127.0.0.1', resolve),
+  );
+  const address = server.address();
+  if (!address || typeof address === 'string')
+    throw new Error('Missing address');
+
+  return `http://127.0.0.1:${address.port}`;
+};
 afterEach(async () => {
   vi.unstubAllGlobals();
   await Promise.all(
@@ -117,14 +128,7 @@ describe('Twenty OAuth', () => {
         );
       } else response.writeHead(404).end('{}');
     });
-    servers.push(server);
-    await new Promise<void>((resolve) =>
-      server.listen(0, '127.0.0.1', resolve),
-    );
-    const address = server.address();
-    if (!address || typeof address === 'string')
-      throw new Error('Missing address');
-    origin = `http://127.0.0.1:${address.port}`;
+    origin = await listen(server);
     const credentials = await connectOAuth(origin, async (value) => {
       const authorization = new URL(value);
       expect(authorization.pathname).toBe('/authorize');
@@ -190,14 +194,7 @@ it.each(['discovery', 'token'])(
         }),
       );
     });
-    servers.push(server);
-    await new Promise<void>((resolve) =>
-      server.listen(0, '127.0.0.1', resolve),
-    );
-    const address = server.address();
-    if (!address || typeof address === 'string')
-      throw new Error('Missing address');
-    origin = `http://127.0.0.1:${address.port}`;
+    origin = await listen(server);
     const openBrowser = vi.fn(async (url: string) => {
       const authorization = new URL(url);
       const callback = new URL(authorization.searchParams.get('redirect_uri')!);
@@ -225,14 +222,10 @@ it('keeps a request deadline when a caller supplies its own signal', async () =>
   const server = createServer(() =>
     timeout.abort(new DOMException('Timed out', 'TimeoutError')),
   );
-  servers.push(server);
-  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
-  const address = server.address();
-  if (!address || typeof address === 'string')
-    throw new Error('Missing address');
+  const origin = await listen(server);
   try {
     await expect(
-      requestJson(`http://127.0.0.1:${address.port}`, {
+      requestJson(origin, {
         signal: caller.signal,
       }),
     ).rejects.toMatchObject({ name: 'TimeoutError' });
