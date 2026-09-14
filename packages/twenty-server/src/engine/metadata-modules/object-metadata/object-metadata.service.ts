@@ -97,6 +97,8 @@ export class ObjectMetadataService {
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps: existingFlatViewMaps,
       flatSearchFieldMetadataMaps: existingFlatSearchFieldMetadataMaps,
+      workspaceCustomApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
     });
 
     const isActiveChangeDefined = isDefined(updateObjectInput.update.isActive);
