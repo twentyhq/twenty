@@ -287,6 +287,17 @@ export const computeStepOutputSchema = ({
       };
     }
 
+    case 'RUN_WORKFLOW': {
+      return {
+        workflowRunId: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Workflow Run ID',
+          value: '',
+        },
+      };
+    }
+
     case 'FILTER':
     case 'DELAY':
     case 'EMPTY': {

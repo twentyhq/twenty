@@ -30,6 +30,7 @@ export const getActionIcon = (actionType: WorkflowActionType) => {
     case 'DELAY':
     case 'FILTER':
     case 'IF_ELSE':
+    case 'RUN_WORKFLOW':
       return FLOW_ACTIONS.find((item) => item.type === actionType)?.icon;
     case 'EMPTY':
       return 'IconSettingsAutomation';
