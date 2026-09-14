@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
+import { isNull } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -89,6 +91,16 @@ export class ApiKeyService {
 
     if (!apiKey) {
       return null;
+    }
+
+    if (isDefined(apiKey.revokedAt) && isNull(updateData.revokedAt)) {
+      throw new ApiKeyException(
+        `API Key with id ${id} is revoked and cannot be reactivated`,
+        ApiKeyExceptionCode.API_KEY_REVOKED,
+        {
+          userFriendlyMessage: msg`This API key has been revoked and cannot be reactivated. Please create a new API key.`,
+        },
+      );
     }
 
     await this.apiKeyRepository.update(workspaceId, { id }, updateData);
