@@ -4,7 +4,7 @@ import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-commo
 import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.module';
 import { WorkflowSchemaModule } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.module';
 
-import { WorkflowValidationWorkspaceService } from './workflow-validation.workspace-service';
+import { WorkflowHintsWorkspaceService } from './workflow-hints.workspace-service';
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { WorkflowValidationWorkspaceService } from './workflow-validation.worksp
     WorkflowMetadataReadModule,
     WorkflowSchemaModule,
   ],
-  providers: [WorkflowValidationWorkspaceService],
-  exports: [WorkflowValidationWorkspaceService],
+  providers: [WorkflowHintsWorkspaceService],
+  exports: [WorkflowHintsWorkspaceService],
 })
-export class WorkflowValidationModule {}
+export class WorkflowHintsModule {}

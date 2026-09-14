@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { type WorkflowValidationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-validation.workspace-service';
+import { type WorkflowHintsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-hints.workspace-service';
 import { type WorkflowToolContext } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
 const validateWorkflowSchema = z.object({
@@ -14,7 +14,7 @@ type ValidateWorkflowInput = z.infer<typeof validateWorkflowSchema>;
 
 export const createValidateWorkflowTool = (
   deps: {
-    workflowValidationService: WorkflowValidationWorkspaceService;
+    workflowHintsService: WorkflowHintsWorkspaceService;
   },
   context: WorkflowToolContext,
 ) => ({
@@ -25,7 +25,7 @@ export const createValidateWorkflowTool = (
   execute: async (parameters: ValidateWorkflowInput) => {
     try {
       const result =
-        await deps.workflowValidationService.validateWorkflowVersion({
+        await deps.workflowHintsService.getWorkflowVersionHints({
           workspaceId: context.workspaceId,
           workflowVersionId: parameters.workflowVersionId,
         });
