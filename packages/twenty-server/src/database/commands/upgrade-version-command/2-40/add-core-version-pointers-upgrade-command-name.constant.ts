@@ -1,2 +1,2 @@
 export const ADD_CORE_VERSION_POINTERS_UPGRADE_COMMAND_NAME =
-  '2.40.0_AddCoreVersionPointersFastInstanceCommand_1789056077008';
+  '2.40.0_AddCoreVersionPointersFastInstanceCommand_1789370101008';

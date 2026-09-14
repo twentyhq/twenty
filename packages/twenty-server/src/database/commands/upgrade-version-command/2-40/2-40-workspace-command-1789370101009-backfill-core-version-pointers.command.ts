@@ -8,7 +8,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
-@RegisteredWorkspaceCommand('2.40.0', 1789056077009)
+@RegisteredWorkspaceCommand('2.40.0', 1789370101009)
 @Command({
   name: 'upgrade:2-40:backfill-core-version-pointers',
   description:

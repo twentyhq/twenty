@@ -1,7 +1,7 @@
 import { type DataSource } from 'typeorm';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { BackfillCoreVersionPointersCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789056077009-backfill-core-version-pointers.command';
+import { BackfillCoreVersionPointersCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789370101009-backfill-core-version-pointers.command';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 
