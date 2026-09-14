@@ -127,6 +127,8 @@ export const DOCUMENTATION_PATHS = {
   GETTING_STARTED_QUICKSTART: '/getting-started/quickstart',
   UI_ACCESSIBILITY: '/ui/accessibility',
   UI_COMPONENTS_FEEDBACK_TOAST: '/ui/components/feedback/toast',
+  UI_COMPONENTS_INPUT_BUTTON: '/ui/components/input/button',
+  UI_COMPONENTS_INPUT_BUTTON_GROUP: '/ui/components/input/button-group',
   UI_COMPONENTS_INPUT_CHECKBOX: '/ui/components/input/checkbox',
   UI_COMPONENTS_INPUT_FIELD: '/ui/components/input/field',
   UI_COMPONENTS_INPUT_INPUT: '/ui/components/input/input',
