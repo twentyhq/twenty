@@ -3,6 +3,7 @@ import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { getWidgetGridPosition } from '@/page-layout/utils/getWidgetGridPosition';
+import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
   type UpdatePageLayoutWithTabsInput,
@@ -19,10 +20,15 @@ const buildWidgetPosition = (
         widget.position?.__typename === 'PageLayoutWidgetVerticalListPosition'
           ? widget.position.index
           : widgetIndex;
+      const heightBehavior =
+        widget.position?.__typename === 'PageLayoutWidgetVerticalListPosition'
+          ? widget.position.heightBehavior
+          : undefined;
 
       return {
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
         index,
+        ...(isDefined(heightBehavior) ? { heightBehavior } : {}),
       };
     }
     case PageLayoutTabLayoutMode.CANVAS:

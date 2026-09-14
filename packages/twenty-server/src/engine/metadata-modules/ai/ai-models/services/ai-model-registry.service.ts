@@ -126,7 +126,7 @@ export class AiModelRegistryService {
     });
 
     this.registerModelsFromProviders(providers);
-    this.registerConfiguredVariants();
+    this.registerSupportedVariants();
   }
 
   private registerModelsFromProviders(providers: AiProvidersConfig): void {
@@ -187,12 +187,12 @@ export class AiModelRegistryService {
     }
   }
 
-  private registerConfiguredVariants(): void {
-    for (const tier of AI_MODEL_TIERS) {
-      for (const variantId of this.preferencesService.getDefaultModelIdsForTier(
-        tier,
-      )) {
-        this.registerVariant(variantId);
+  private registerSupportedVariants(): void {
+    // The client catalog must resolve every selectable effort before a pin is
+    // saved, not only variants that have already been used by the server.
+    for (const modelConfig of Array.from(this.modelConfigCache.values())) {
+      for (const effort of getAvailableEfforts(modelConfig)) {
+        this.registerVariant(`${modelConfig.modelId}@${effort}`);
       }
     }
   }
@@ -636,18 +636,21 @@ export class AiModelRegistryService {
   }> {
     this.ensureFresh();
 
-    return Array.from(this.modelConfigCache.values()).map((modelConfig) => {
-      const registered = this.modelRegistry.get(modelConfig.modelId);
-      const cached = this.providerModelDefCache.get(modelConfig.modelId);
+    // Effort variants share the base model's management and deletion target.
+    return Array.from(this.modelConfigCache.values())
+      .filter((modelConfig) => !isDefined(modelConfig.effort))
+      .map((modelConfig) => {
+        const registered = this.modelRegistry.get(modelConfig.modelId);
+        const cached = this.providerModelDefCache.get(modelConfig.modelId);
 
-      return {
-        modelConfig,
-        isAvailable: !!registered,
-        isAdminEnabled: this.isModelAdminAllowed(modelConfig.modelId),
-        providerName: registered?.providerName ?? cached?.providerName,
-        name: cached?.modelDef.name,
-      };
-    });
+        return {
+          modelConfig,
+          isAvailable: !!registered,
+          isAdminEnabled: this.isModelAdminAllowed(modelConfig.modelId),
+          providerName: registered?.providerName ?? cached?.providerName,
+          name: cached?.modelDef.name,
+        };
+      });
   }
 
   async setModelAdminEnabled(modelId: string, enabled: boolean): Promise<void> {

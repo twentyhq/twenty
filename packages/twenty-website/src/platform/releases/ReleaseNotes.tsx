@@ -974,7 +974,7 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     date: '2025-08-29',
     highlights: [
       {
-        title: msg`Field Level Permission`,
+        title: msg`Field-Level Permissions`,
         description: (
           <Trans>
             You can now control which fields a role can view or edit. This adds
@@ -995,7 +995,7 @@ export const RELEASE_NOTES: ReleaseNote[] = [
         image: '/images/releases/1.4/1.4-workflow-filters.webp',
       },
       {
-        title: msg`Two Factor Authentication`,
+        title: msg`Two-Factor Authentication`,
         description: (
           <Trans>
             Enabled two-factor authentication with authenticator apps like
