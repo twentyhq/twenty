@@ -1,8 +1,6 @@
 import { exec } from 'child_process';
 
-import { TEMPLATE_FIRST_PARTY_PACKAGES } from '@/constants/template-packages';
 import { install } from '@/utils/install';
-import createTwentyAppPackageJson from 'package.json';
 
 jest.mock('child_process', () => ({ exec: jest.fn() }));
 
@@ -37,7 +35,16 @@ const mockCommands = (outcomes: Record<string, CommandOutcome>) => {
   );
 };
 
+const quarantineOutput = (descriptor: string, selector: string) =>
+  `➤ YN0016: │ ${descriptor}@npm:${selector}: All versions satisfying "${selector}" are quarantined`;
+
 const APP_DIRECTORY = '/tmp/some-scaffolded-app';
+
+const installAndCatch = () =>
+  install(APP_DIRECTORY).then(
+    () => '',
+    (error: Error) => error.message,
+  );
 
 describe('install', () => {
   beforeEach(() => {
@@ -71,30 +78,66 @@ describe('install', () => {
     );
   });
 
-  it('explains how to proceed when a minimum release age quarantines the packages', async () => {
+  it('names the packages the gate actually quarantined', async () => {
     mockCommands({
       'yarn install': {
         fails: true,
-        stdout: `➤ YN0016: │ twenty-ui@npm:${createTwentyAppPackageJson.version}: All versions satisfying "${createTwentyAppPackageJson.version}" are quarantined`,
+        stdout: quarantineOutput('twenty-ui', '2.41.0'),
       },
     });
 
-    const error = await install(APP_DIRECTORY).catch(
-      (thrown: Error) => thrown.message,
-    );
+    const message = await installAndCatch();
 
-    expect(error).toContain('minimum');
-    expect(error).toContain(APP_DIRECTORY);
-    expect(error).toContain('npmPreapprovedPackages');
+    expect(message).toContain('minimum');
+    expect(message).toContain(APP_DIRECTORY);
+    expect(message).toContain('npmPreapprovedPackages');
+    expect(message).toContain('- twenty-ui@2.41.0');
+    // Never advise lowering the gate itself.
+    expect(message).not.toContain('npmMinimalAgeGate');
+  });
 
-    // The suggested waiver must be scoped to the packages this release pins,
-    // never a blanket instruction to lower the gate.
-    for (const packageName of TEMPLATE_FIRST_PARTY_PACKAGES) {
-      expect(error).toContain(
-        `${packageName}@${createTwentyAppPackageJson.version}`,
-      );
-    }
-    expect(error).not.toContain('npmMinimalAgeGate: 0');
+  it('waives the third-party package Yarn named, not the first-party ones', async () => {
+    mockCommands({
+      'yarn install': {
+        fails: true,
+        stdout: quarantineOutput('@scope/some-tool', '^1.2.3'),
+      },
+    });
+
+    const message = await installAndCatch();
+
+    expect(message).toContain('- @scope/some-tool@^1.2.3');
+    expect(message).not.toContain('twenty-ui');
+    expect(message).not.toContain('twenty-sdk');
+  });
+
+  it('waives a quarantined dist-tag by name, since a tag is not a usable range', async () => {
+    mockCommands({
+      'yarn install': {
+        fails: true,
+        stdout:
+          '➤ YN0016: │ twenty-ui@npm:latest: The version for tag "latest" is quarantined, and no lower version is available',
+      },
+    });
+
+    const message = await installAndCatch();
+
+    expect(message).toContain('- twenty-ui\n');
+    expect(message).not.toContain('twenty-ui@latest');
+  });
+
+  it('falls back to the yarn output when no package can be identified', async () => {
+    mockCommands({
+      'yarn install': {
+        fails: true,
+        stdout: '➤ YN0016: │ something unparseable happened',
+      },
+    });
+
+    const message = await installAndCatch();
+
+    expect(message).toContain('something unparseable happened');
+    expect(message).not.toContain('npmPreapprovedPackages');
   });
 
   it('tolerates corepack being unavailable when yarn still installs', async () => {

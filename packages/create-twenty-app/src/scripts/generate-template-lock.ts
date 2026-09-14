@@ -89,14 +89,18 @@ const buildTemplateManifest = (version: string) => {
 };
 
 const buildYarnrc = (registry: string) => {
-  const isLocalRegistry = /^http:\/\//.test(registry);
+  const { protocol, hostname } = new URL(registry);
 
   return [
     'nodeLinker: node-modules',
     'enableTelemetry: false',
     'enableScripts: false',
     `npmRegistryServer: "${registry}"`,
-    ...(isLocalRegistry ? ['unsafeHttpWhitelist:', '  - localhost'] : []),
+    // Yarn refuses plain HTTP unless the host is whitelisted by name, so take it
+    // from the registry rather than assuming localhost.
+    ...(protocol === 'http:'
+      ? ['unsafeHttpWhitelist:', `  - ${hostname}`]
+      : []),
     // The monorepo enforces its own age gate. Waive it for the packages this
     // release just published rather than turning the gate off, so a genuinely
     // suspicious third-party version still stops the release.
@@ -135,14 +139,17 @@ const assertResolvedWithIntegrity = (
   }
 };
 
-const assertNoLocalRegistryLeak = (lockfile: string, registry: string) => {
-  if (/^http:\/\//.test(registry)) {
+// A registry serving tarballs from non-conventional URLs makes Yarn pin each
+// entry to that exact host via __archiveUrl, which would not resolve for anyone
+// else. Only the public registry produces a lockfile we can ship.
+const assertNoRegistryPinning = (lockfile: string, registry: string) => {
+  if (registry !== PUBLIC_REGISTRY) {
     return;
   }
 
-  if (/localhost|127\.0\.0\.1/.test(lockfile)) {
+  if (lockfile.includes('__archiveUrl')) {
     throw new Error(
-      'The generated lockfile references a local registry. Regenerate it against the public registry.',
+      'The generated lockfile pins entries to a specific registry host. Regenerate it against the public registry.',
     );
   }
 };
@@ -188,7 +195,7 @@ const generateTemplateLock = async ({
       assertResolvedWithIntegrity(lockfile, packageName, version);
     }
 
-    assertNoLocalRegistryLeak(lockfile, registry);
+    assertNoRegistryPinning(lockfile, registry);
 
     await fs.ensureDir(dirname(outputPath));
     await fs.writeFile(outputPath, lockfile);
