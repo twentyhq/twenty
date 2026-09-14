@@ -3,7 +3,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { t } from '@lingui/core/macro';
 import { CircularProgressBar } from 'twenty-ui/feedback';
-import { MainButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { ModalFooter } from 'twenty-ui/surfaces';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -36,21 +36,33 @@ export const StepNavigationButton = ({
     <StyledFooterContainer>
       <ModalFooter autoHeight>
         {!isUndefinedOrNull(onBack) && (
-          <MainButton
-            Icon={isLoading ? CircularProgressBar : undefined}
-            title={backTitle}
+          <Button
+            startIcon={isLoading ? <CircularProgressBar /> : undefined}
             onClick={!isLoading ? onBack : undefined}
-            variant="secondary"
-          />
+            elevated
+            variant="outline"
+            style={{
+              fontWeight: 'var(--t-font-weight-semi-bold)',
+              paddingInline: 'var(--t-spacing-3)',
+            }}
+          >
+            {backTitle}
+          </Button>
         )}
         {!isUndefinedOrNull(onContinue) && (
-          <MainButton
-            Icon={isLoading ? CircularProgressBar : undefined}
-            title={continueTitle}
+          <Button
+            startIcon={isLoading ? <CircularProgressBar /> : undefined}
             onClick={!isLoading ? onContinue : undefined}
-            variant="primary"
             disabled={isContinueDisabled}
-          />
+            elevated
+            variant="solid"
+            style={{
+              fontWeight: 'var(--t-font-weight-semi-bold)',
+              paddingInline: 'var(--t-spacing-3)',
+            }}
+          >
+            {continueTitle}
+          </Button>
         )}
       </ModalFooter>
     </StyledFooterContainer>

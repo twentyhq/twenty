@@ -159,11 +159,8 @@ export const SettingsApplicationConnectionsSection = ({
             {isClientCredentialsConfigured && (
               <StyledFooter>
                 <Button
-                  title={t`Add connection`}
-                  Icon={IconPlus}
-                  variant="secondary"
-                  accent="default"
-                  size="small"
+                  startIcon={<IconPlus />}
+                  size="sm"
                   onClick={() =>
                     triggerAppOAuth({
                       applicationId,
@@ -171,7 +168,8 @@ export const SettingsApplicationConnectionsSection = ({
                       visibility: 'workspace',
                     })
                   }
-                />
+                  variant="outline"
+                >{t`Add connection`}</Button>
               </StyledFooter>
             )}
           </Section>

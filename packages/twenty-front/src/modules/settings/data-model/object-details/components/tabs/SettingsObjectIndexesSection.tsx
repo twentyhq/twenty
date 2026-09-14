@@ -1,3 +1,4 @@
+import { Link as ButtonRouterLink } from 'react-router-dom';
 import { useDeleteOneIndexMetadataItem } from '@/object-metadata/hooks/useDeleteOneIndexMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -196,26 +197,27 @@ export const SettingsObjectIndexesSection = ({
       {!isReadOnly && (
         <StyledButtonContainer>
           {canCreate ? (
-            <UndecoratedLink
-              to={getSettingsPath(SettingsPath.ObjectNewIndex, {
-                objectNamePlural: objectMetadataItem.namePlural,
-              })}
-            >
-              <Button
-                Icon={IconPlus}
-                title={t`Add Index`}
-                size="small"
-                variant="secondary"
-              />
-            </UndecoratedLink>
+            <Button
+              render={
+                <ButtonRouterLink
+                  to={getSettingsPath(SettingsPath.ObjectNewIndex, {
+                    objectNamePlural: objectMetadataItem.namePlural,
+                  })}
+                />
+              }
+              nativeButton={false}
+              role="link"
+              startIcon={<IconPlus />}
+              size="sm"
+              variant="outline"
+            >{t`Add Index`}</Button>
           ) : (
             <Button
-              Icon={IconPlus}
-              title={t`Add Index`}
-              size="small"
-              variant="secondary"
+              startIcon={<IconPlus />}
+              size="sm"
               disabled
-            />
+              variant="outline"
+            >{t`Add Index`}</Button>
           )}
         </StyledButtonContainer>
       )}

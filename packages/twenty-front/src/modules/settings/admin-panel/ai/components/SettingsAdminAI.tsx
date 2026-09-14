@@ -1,3 +1,4 @@
+import { Link as ButtonRouterLink } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -7,7 +8,6 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { IconMessage } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { Card } from 'twenty-ui/surfaces';
@@ -234,14 +234,18 @@ export const SettingsAdminAI = () => {
           title={t`Chats`}
           description={t`Browse AI chat threads across all workspaces, including onboarding chats`}
         />
-        <UndecoratedLink to={getSettingsPath(SettingsPath.AdminPanelChats)}>
-          <Button
-            Icon={IconMessage}
-            title={t`View all chats`}
-            size="small"
-            variant="secondary"
-          />
-        </UndecoratedLink>
+        <Button
+          render={
+            <ButtonRouterLink
+              to={getSettingsPath(SettingsPath.AdminPanelChats)}
+            />
+          }
+          nativeButton={false}
+          role="link"
+          startIcon={<IconMessage />}
+          size="sm"
+          variant="outline"
+        >{t`View all chats`}</Button>
       </Section>
 
       <Section>

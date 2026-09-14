@@ -1,7 +1,8 @@
+import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { Button, LightButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { getAiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/getAiChatSuggestedPrompts';
@@ -85,19 +86,31 @@ export const AiChatSuggestedPrompts = ({
           isCentered ? (
             <Button
               key={suggestedPrompt.id}
-              Icon={suggestedPrompt.Icon}
-              title={resolveMessage(suggestedPrompt.label)}
-              variant="secondary"
+              startIcon={
+                isDefined(suggestedPrompt.Icon) ? (
+                  <suggestedPrompt.Icon />
+                ) : undefined
+              }
               onClick={() => handleClick(suggestedPrompt)}
-            />
+              variant="outline"
+            >
+              {resolveMessage(suggestedPrompt.label)}
+            </Button>
           ) : (
-            <LightButton
+            <Button
               key={suggestedPrompt.id}
-              Icon={suggestedPrompt.Icon}
-              title={resolveMessage(suggestedPrompt.label)}
-              accent="secondary"
+              startIcon={
+                isDefined(suggestedPrompt.Icon) ? (
+                  <suggestedPrompt.Icon />
+                ) : undefined
+              }
               onClick={() => handleClick(suggestedPrompt)}
-            />
+              size="sm"
+              variant="ghost"
+              style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+            >
+              {resolveMessage(suggestedPrompt.label)}
+            </Button>
           ),
         )}
       </StyledPromptList>

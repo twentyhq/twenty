@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { InformationBannerComponentInstanceContext } from '@/information-banner/states/contexts/InformationBannerComponentInstanceContext';
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -36,7 +37,7 @@ export const InformationBanner = ({
   color = 'blue',
   variant = 'primary',
   buttonTitle,
-  buttonIcon,
+  buttonIcon: ButtonIcon,
   buttonOnClick,
   isButtonDisabled = false,
   onClose,
@@ -78,15 +79,18 @@ export const InformationBanner = ({
             </StyledText>
             {buttonTitle && buttonOnClick && (
               <Button
-                variant="secondary"
-                accent={buttonAccent}
-                title={buttonTitle}
-                Icon={buttonIcon}
-                size="small"
-                inverted={isPrimary}
+                startIcon={isDefined(ButtonIcon) ? <ButtonIcon /> : undefined}
+                size="sm"
                 onClick={buttonOnClick}
                 disabled={isButtonDisabled}
-              />
+                variant="outline"
+                color={buttonAccent === 'blue' ? 'accent' : 'danger'}
+                style={{
+                  color: isPrimary ? 'var(--t-font-color-inverted)' : undefined,
+                }}
+              >
+                {buttonTitle}
+              </Button>
             )}
           </StyledContent>
           {onClose &&

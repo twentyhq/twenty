@@ -15,7 +15,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { LightButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 
@@ -83,9 +83,15 @@ export const BookCall = () => {
           {isOnboardingStep ? (
             <BookCallOnboardingStepActions />
           ) : (
-            <Link to={AppPath.PlanRequired}>
-              <LightButton Icon={IconChevronLeft} title={t`Back`} />
-            </Link>
+            <Button
+              render={<Link to={AppPath.PlanRequired} />}
+              nativeButton={false}
+              role="link"
+              startIcon={<IconChevronLeft />}
+              size="sm"
+              variant="ghost"
+              style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+            >{t`Back`}</Button>
           )}
         </StyledFooter>
       </OnboardingStepAnimatedItem>

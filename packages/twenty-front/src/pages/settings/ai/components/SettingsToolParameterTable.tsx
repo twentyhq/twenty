@@ -1,3 +1,4 @@
+import { Link as ButtonRouterLink } from 'react-router-dom';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -25,7 +26,6 @@ import {
   TooltipDelay,
 } from 'twenty-ui/surfaces';
 import { Button } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SchemaProperty = {
@@ -174,14 +174,14 @@ export const SettingsToolParameterTable = ({
       )}
       {functionLink && (
         <StyledFooter>
-          <UndecoratedLink to={functionLink}>
-            <Button
-              Icon={IconArrowUpRight}
-              title={t`See function`}
-              size="small"
-              variant="secondary"
-            />
-          </UndecoratedLink>
+          <Button
+            render={<ButtonRouterLink to={functionLink} />}
+            nativeButton={false}
+            role="link"
+            startIcon={<IconArrowUpRight />}
+            size="sm"
+            variant="outline"
+          >{t`See function`}</Button>
         </StyledFooter>
       )}
     </Table>

@@ -203,26 +203,25 @@ export const RecordCalendarTopBar = () => {
       <StyledNavigationSection>
         <StyledNavigationButtonContainer>
           <Button
-            ariaLabel={t`Previous period`}
-            size="small"
-            variant="tertiary"
-            Icon={IconChevronLeft}
+            aria-label={t`Previous period`}
+            size="sm"
+            startIcon={<IconChevronLeft />}
             onClick={handlePreviousPeriod}
+            variant="ghost"
           />
         </StyledNavigationButtonContainer>
         <Button
-          size="small"
-          variant="tertiary"
-          title={t`Today`}
+          size="sm"
           onClick={handleTodayClick}
-        />
+          variant="ghost"
+        >{t`Today`}</Button>
         <StyledNavigationButtonContainer>
           <Button
-            ariaLabel={t`Next period`}
-            size="small"
-            variant="tertiary"
-            Icon={IconChevronRight}
+            aria-label={t`Next period`}
+            size="sm"
+            startIcon={<IconChevronRight />}
             onClick={handleNextPeriod}
+            variant="ghost"
           />
         </StyledNavigationButtonContainer>
       </StyledNavigationSection>

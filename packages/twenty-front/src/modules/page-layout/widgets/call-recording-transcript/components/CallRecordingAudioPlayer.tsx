@@ -173,13 +173,12 @@ export const CallRecordingAudioPlayer = ({
         <>
           <StyledTrack role="status">{t`Playback failed`}</StyledTrack>
           <Button
-            title={t`Retry`}
-            variant="secondary"
-            size="small"
+            size="sm"
             disabled={isRetrying}
-            isLoading={isRetrying}
+            loading={isRetrying}
             onClick={handleRetry}
-          />
+            variant="outline"
+          >{t`Retry`}</Button>
         </>
       ) : (
         <>

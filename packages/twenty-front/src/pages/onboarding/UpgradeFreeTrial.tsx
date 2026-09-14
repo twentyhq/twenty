@@ -28,7 +28,7 @@ import { Elements, PaymentElement } from '@stripe/react-stripe-js';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Info, Loader } from 'twenty-ui/feedback';
-import { MainButton, RadioGroup } from 'twenty-ui/input';
+import { RadioGroup, Button } from 'twenty-ui/input';
 import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -101,13 +101,18 @@ const UpgradeFreeTrialSubmitButton = ({
   };
 
   return (
-    <MainButton
-      title={t`Continue`}
+    <Button
       onClick={handleSubmit}
       fullWidth
-      Icon={() => (isSubmitting ? <Loader /> : null)}
+      startIcon={isSubmitting ? <Loader /> : null}
       disabled={!isStripeReady || isSubmitting}
-    />
+      elevated
+      variant="solid"
+      style={{
+        fontWeight: 'var(--t-font-weight-semi-bold)',
+        paddingInline: 'var(--t-spacing-3)',
+      }}
+    >{t`Continue`}</Button>
   );
 };
 
@@ -231,16 +236,30 @@ const UpgradeFreeTrialContent = ({
                 recurringInterval={billingCheckoutSession.interval}
               />
             ) : (
-              <MainButton title={t`Continue`} fullWidth disabled />
+              <Button
+                fullWidth
+                disabled
+                elevated
+                variant="solid"
+                style={{
+                  fontWeight: 'var(--t-font-weight-semi-bold)',
+                  paddingInline: 'var(--t-spacing-3)',
+                }}
+              >{t`Continue`}</Button>
             )
           ) : (
-            <MainButton
-              title={t`Continue`}
+            <Button
               onClick={handleCheckoutSessionClick}
               fullWidth
-              Icon={() => (isCheckoutSubmitting ? <Loader /> : null)}
+              startIcon={isCheckoutSubmitting ? <Loader /> : null}
               disabled={isCheckoutSubmitting}
-            />
+              elevated
+              variant="solid"
+              style={{
+                fontWeight: 'var(--t-font-weight-semi-bold)',
+                paddingInline: 'var(--t-spacing-3)',
+              }}
+            >{t`Continue`}</Button>
           )}
           <StyledLinkGroup>
             <ClickToActionLink onClick={signOut}>

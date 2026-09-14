@@ -102,15 +102,14 @@ export const SidePanelComposeCalendarEventPage = () => {
           />,
           <Button
             key="create"
-            size="small"
-            variant="primary"
-            accent="blue"
-            title={t`Create event`}
-            Icon={IconCalendarEvent}
+            size="sm"
+            startIcon={<IconCalendarEvent />}
             hotkeys={[getOsControlSymbol(), '⏎']}
             onClick={composerState.handleCreate}
             disabled={!composerState.canCreate}
-          />,
+            variant="solid"
+            color="accent"
+          >{t`Create event`}</Button>,
         ]}
       />
     </StyledContainer>

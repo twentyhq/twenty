@@ -10,7 +10,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type RoleManifest } from 'twenty-shared/application';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { LightButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { StyledAppModal } from '~/pages/settings/applications/components/SettingsAppModalLayout';
 
@@ -34,7 +34,7 @@ const StyledFullscreenContainer = styled.div`
   width: 100%;
 `;
 
-const StyledLightButton = styled(LightButton)`
+const StyledLightButton = styled(Button)`
   left: ${themeCssVariables.spacing[4]};
   position: absolute;
   top: ${themeCssVariables.spacing[4]};
@@ -126,10 +126,12 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
     >
       <StyledFullscreenContainer>
         <StyledLightButton
-          Icon={IconChevronLeft}
-          title={t`Back to settings`}
+          startIcon={<IconChevronLeft />}
           onClick={handleClose}
-        />
+          size="sm"
+          variant="ghost"
+          style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+        >{t`Back to settings`}</StyledLightButton>
 
         <StyledContent>
           <StyledAppConnectionHeaderContainer>

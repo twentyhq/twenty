@@ -134,12 +134,11 @@ export const CallRecordingVideoPlayer = ({
             {t`The recording could not be loaded.`}
           </StyledPlaybackErrorDescription>
           <Button
-            title={t`Retry`}
-            variant="secondary"
             disabled={isRetrying}
-            isLoading={isRetrying}
+            loading={isRetrying}
             onClick={handleRetry}
-          />
+            variant="outline"
+          >{t`Retry`}</Button>
         </StyledPlaybackErrorState>
       </StyledVideoViewport>
     );

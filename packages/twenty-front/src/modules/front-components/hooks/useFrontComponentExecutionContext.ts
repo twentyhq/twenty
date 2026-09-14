@@ -399,7 +399,12 @@ export const useFrontComponentExecutionContext = ({
         title,
         subtitle,
         confirmButtonText,
-        confirmButtonAccent,
+        confirmButtonColor:
+          confirmButtonAccent === 'blue'
+            ? 'accent'
+            : confirmButtonAccent === 'default'
+              ? 'neutral'
+              : 'danger',
       });
     };
 

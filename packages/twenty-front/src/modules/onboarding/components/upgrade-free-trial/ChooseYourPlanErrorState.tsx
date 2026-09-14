@@ -7,7 +7,7 @@ import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnbo
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { MainButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -43,7 +43,16 @@ export const ChooseYourPlanErrorState = ({
 
       <OnboardingStepAnimatedItem index={2}>
         <StyledFooter>
-          <MainButton title={t`Try again`} onClick={onRetry} fullWidth />
+          <Button
+            onClick={onRetry}
+            fullWidth
+            elevated
+            variant="solid"
+            style={{
+              fontWeight: 'var(--t-font-weight-semi-bold)',
+              paddingInline: 'var(--t-spacing-3)',
+            }}
+          >{t`Try again`}</Button>
           <ClickToActionLink onClick={signOut}>
             <Trans>Log out</Trans>
           </ClickToActionLink>

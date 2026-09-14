@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link as ButtonRouterLink, useParams } from 'react-router-dom';
 
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
@@ -35,7 +35,6 @@ import {
   IconSettings,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
@@ -168,25 +167,30 @@ export const SettingsObjectDetailPage = () => {
       actionButton={
         <>
           <Button
-            Icon={IconArrowUpRight}
-            title={t`See records`}
-            variant="tertiary"
-            size="small"
-            to={getAppPath(AppPath.RecordIndexPage, {
-              objectNamePlural: objectMetadataItem.namePlural,
-            })}
-          />
+            role="link"
+            startIcon={<IconArrowUpRight />}
+            size="sm"
+            render={
+              <ButtonRouterLink
+                to={getAppPath(AppPath.RecordIndexPage, {
+                  objectNamePlural: objectMetadataItem.namePlural,
+                })}
+              />
+            }
+            nativeButton={false}
+            variant="ghost"
+          >{t`See records`}</Button>
           {!readonly &&
             activeTabId === SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
-              <UndecoratedLink to="./new-field/select">
-                <Button
-                  title={t`New Field`}
-                  variant="primary"
-                  size="small"
-                  accent="blue"
-                  Icon={IconPlus}
-                />
-              </UndecoratedLink>
+              <Button
+                render={<ButtonRouterLink to="./new-field/select" />}
+                nativeButton={false}
+                role="link"
+                size="sm"
+                startIcon={<IconPlus />}
+                variant="solid"
+                color="accent"
+              >{t`New Field`}</Button>
             )}
         </>
       }

@@ -11,7 +11,7 @@ import { useDownloadFakeRecords } from '@/spreadsheet-import/steps/components/Up
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { MainButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -190,13 +190,26 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
             <Trans>Upload .xlsx, .xls or .csv file</Trans>
           </StyledText>
           <StyledButtonsContainer>
-            <MainButton onClick={open} title={t`Select file`} fullWidth />
-            <MainButton
-              onClick={downloadSample}
-              title={t`Download sample`}
-              variant="secondary"
+            <Button
+              onClick={open}
               fullWidth
-            />
+              elevated
+              variant="solid"
+              style={{
+                fontWeight: 'var(--t-font-weight-semi-bold)',
+                paddingInline: 'var(--t-spacing-3)',
+              }}
+            >{t`Select file`}</Button>
+            <Button
+              onClick={downloadSample}
+              fullWidth
+              elevated
+              variant="outline"
+              style={{
+                fontWeight: 'var(--t-font-weight-semi-bold)',
+                paddingInline: 'var(--t-spacing-3)',
+              }}
+            >{t`Download sample`}</Button>
           </StyledButtonsContainer>
           <StyledFooterText>
             {t`Max import capacity: ${formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API.`}

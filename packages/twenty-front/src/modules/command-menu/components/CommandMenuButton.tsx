@@ -1,3 +1,4 @@
+import { Link as ButtonRouterLink } from 'react-router-dom';
 import { styled } from '@linaria/react';
 import { type MouseEvent } from 'react';
 import { type Nullable } from 'twenty-shared/types';
@@ -46,16 +47,19 @@ export const CommandMenuButton = ({
     <>
       {resolvedShortLabel !== undefined ? (
         <Button
-          Icon={command.Icon}
-          size="small"
-          variant="primary"
-          accent={buttonAccent}
-          to={to}
+          startIcon={isDefined(command.Icon) ? <command.Icon /> : undefined}
+          size="sm"
+          render={isDefined(to) ? <ButtonRouterLink to={to} /> : undefined}
+          role={isDefined(to) ? 'link' : undefined}
+          nativeButton={!isDefined(to)}
           onClick={onClick}
           disabled={disabled}
-          title={resolvedShortLabel}
-          ariaLabel={command.label}
-        />
+          aria-label={command.label}
+          variant={buttonAccent === 'blue' ? 'solid' : 'outline'}
+          color={buttonAccent === 'blue' ? 'accent' : 'neutral'}
+        >
+          {resolvedShortLabel}
+        </Button>
       ) : (
         <div id={`command-menu-item-entry-${command.key}`} key={command.key}>
           <IconButton

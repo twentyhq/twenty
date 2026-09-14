@@ -101,11 +101,10 @@ export const SettingsRolesList = () => {
           dropdownOffset={{ x: 0, y: 8 }}
           clickableComponent={
             <Button
-              Icon={IconFilter}
-              size="medium"
-              variant="secondary"
-              accent="default"
-              ariaLabel={t`Filter`}
+              startIcon={<IconFilter />}
+              size="md"
+              aria-label={t`Filter`}
+              variant="outline"
             />
           }
           dropdownComponents={
@@ -148,12 +147,11 @@ export const SettingsRolesList = () => {
       <StyledCreateRoleSectionContainer>
         <Section>
           <Button
-            Icon={IconPlus}
-            title={t`Create Role`}
-            variant="secondary"
-            size="small"
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={() => navigateSettings(SettingsPath.RoleCreate)}
-          />
+            variant="outline"
+          >{t`Create Role`}</Button>
         </Section>
       </StyledCreateRoleSectionContainer>
     </Section>

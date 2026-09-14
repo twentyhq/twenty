@@ -97,16 +97,18 @@ export const SettingsUsageAnalyticsSection = () => {
         showAvatar
       />
       <Section>
-        <Link
-          to={`${getSettingsPath(SettingsPath.AI)}#${SETTINGS_AI_TABS.TABS_IDS.USAGE}`}
-          style={{ textDecoration: 'none' }}
-        >
-          <Button
-            Icon={IconSparkles}
-            title={t`View AI usage breakdown`}
-            variant="secondary"
-          />
-        </Link>
+        <Button
+          render={
+            <Link
+              to={`${getSettingsPath(SettingsPath.AI)}#${SETTINGS_AI_TABS.TABS_IDS.USAGE}`}
+              style={{ textDecoration: 'none' }}
+            />
+          }
+          nativeButton={false}
+          role="link"
+          startIcon={<IconSparkles />}
+          variant="outline"
+        >{t`View AI usage breakdown`}</Button>
       </Section>
     </>
   );

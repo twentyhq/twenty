@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const SUBSCRIPTION_CONFIRMATION_POLL_INTERVAL_MS = 2000;
@@ -108,7 +108,16 @@ export const PaymentSuccess = () => {
       </AnimatePresence>
       <OnboardingAnimatedReveal isVisible={hasTimedOut}>
         <StyledRetryButtonContainer>
-          <MainButton title={t`Retry`} onClick={handleRetry} fullWidth />
+          <Button
+            onClick={handleRetry}
+            fullWidth
+            elevated
+            variant="solid"
+            style={{
+              fontWeight: 'var(--t-font-weight-semi-bold)',
+              paddingInline: 'var(--t-spacing-3)',
+            }}
+          >{t`Retry`}</Button>
         </StyledRetryButtonContainer>
       </OnboardingAnimatedReveal>
     </OnboardingVerifyLayout>

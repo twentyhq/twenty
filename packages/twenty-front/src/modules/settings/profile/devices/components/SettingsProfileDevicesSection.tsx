@@ -114,11 +114,10 @@ export const SettingsProfileDevicesSection = () => {
         {hasOtherSessions && (
           <StyledButtonContainer>
             <Button
-              Icon={IconLogout}
-              title={t`Log out all other devices`}
-              size="small"
+              startIcon={<IconLogout />}
+              size="sm"
               onClick={() => void handleRevokeAllOtherSessions()}
-            />
+            >{t`Log out all other devices`}</Button>
           </StyledButtonContainer>
         )}
       </StyledContainer>

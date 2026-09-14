@@ -20,7 +20,7 @@ import { useMutation } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
 
@@ -148,14 +148,19 @@ export const WorkspaceActivation = () => {
       </OnboardingStepAnimatedItem>
       <OnboardingStepAnimatedItem index={3}>
         <StyledButtonContainer>
-          <MainButton
-            title={t`Retry`}
+          <Button
             onClick={() => {
               void activate();
             }}
             disabled={isActivating}
             fullWidth
-          />
+            elevated
+            variant="solid"
+            style={{
+              fontWeight: 'var(--t-font-weight-semi-bold)',
+              paddingInline: 'var(--t-spacing-3)',
+            }}
+          >{t`Retry`}</Button>
         </StyledButtonContainer>
       </OnboardingStepAnimatedItem>
     </StyledContainer>

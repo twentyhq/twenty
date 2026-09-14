@@ -36,7 +36,7 @@ import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpande
 import { t } from '@lingui/core/macro';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { LightButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type ViewBarDetailsProps = {
@@ -280,12 +280,16 @@ export const ViewBarDetails = ({
       </StyledFilterContainer>
       <StyledActionButtonContainer>
         {canResetView && (
-          <LightButton
+          <Button
             data-testid="cancel-button"
-            accent="tertiary"
-            title={t`Reset`}
             onClick={handleCancelClick}
-          />
+            size="sm"
+            variant="ghost"
+            style={{
+              fontWeight: 'var(--t-font-weight-regular)',
+              color: 'var(--t-font-color-tertiary)',
+            }}
+          >{t`Reset`}</Button>
         )}
         {rightComponent}
       </StyledActionButtonContainer>

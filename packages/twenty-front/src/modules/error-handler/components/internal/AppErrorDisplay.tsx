@@ -24,11 +24,10 @@ export const AppErrorDisplay = ({
         </AnimatedPlaceholderEmptySubTitle>
       </AnimatedPlaceholderEmptyTextContainer>
       <Button
-        Icon={IconRefresh}
-        title={t`Reload`}
-        variant="secondary"
+        startIcon={<IconRefresh />}
         onClick={resetErrorBoundary}
-      />
+        variant="outline"
+      >{t`Reload`}</Button>
     </AnimatedPlaceholderEmptyContainer>
   );
 };

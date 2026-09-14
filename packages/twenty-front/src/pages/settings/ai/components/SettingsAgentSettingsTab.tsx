@@ -160,12 +160,11 @@ export const SettingsAgentSettingsTab = ({
         <Section>
           <H2Title title={t`Danger zone`} description={t`Delete this agent`} />
           <Button
-            accent="danger"
-            variant="secondary"
-            title={t`Delete Agent`}
-            Icon={IconTrash}
+            startIcon={<IconTrash />}
             onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
-          />
+            variant="outline"
+            color="danger"
+          >{t`Delete Agent`}</Button>
         </Section>
       )}
       {!disabled && agent && (

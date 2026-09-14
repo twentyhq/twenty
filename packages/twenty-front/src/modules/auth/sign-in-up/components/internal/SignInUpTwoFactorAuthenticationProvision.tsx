@@ -16,7 +16,7 @@ import QRCodeModule from 'react-qr-code';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { IconCopy } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/feedback';
-import { MainButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -90,12 +90,16 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
             </StyledCopySetupKeyLink>
           )}
         </StyledTwoFactorMainContent>
-        <MainButton
-          title={t`Next`}
+        <Button
           onClick={handleClick}
-          variant="primary"
           fullWidth
-        />
+          elevated
+          variant="solid"
+          style={{
+            fontWeight: 'var(--t-font-weight-semi-bold)',
+            paddingInline: 'var(--t-spacing-3)',
+          }}
+        >{t`Next`}</Button>
       </StyledForm>
     </>
   );

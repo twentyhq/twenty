@@ -29,7 +29,7 @@ import { useParams } from 'react-router-dom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { AppPath } from 'twenty-shared/types';
-import { MainButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/layout';
 import { z } from 'zod';
@@ -296,13 +296,19 @@ export const PasswordReset = () => {
                 </StyledFullWidthContainer>
 
                 <StyledMainButtonContainer>
-                  <MainButton
-                    variant="secondary"
-                    title={passwordActionLabel}
+                  <Button
                     type="submit"
                     fullWidth
                     disabled={isUpdatingPassword}
-                  />
+                    elevated
+                    variant="outline"
+                    style={{
+                      fontWeight: 'var(--t-font-weight-semi-bold)',
+                      paddingInline: 'var(--t-spacing-3)',
+                    }}
+                  >
+                    {passwordActionLabel}
+                  </Button>
                 </StyledMainButtonContainer>
               </StyledForm>
             )}

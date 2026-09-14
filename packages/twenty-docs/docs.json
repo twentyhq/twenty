@@ -519,6 +519,8 @@
               {
                 "group": "Forms",
                 "pages": [
+                  "ui/components/input/button",
+                  "ui/components/input/button-group",
                   "ui/components/input/field",
                   "ui/components/input/input",
                   "ui/components/input/input-group",

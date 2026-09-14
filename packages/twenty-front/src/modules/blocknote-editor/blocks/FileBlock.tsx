@@ -113,10 +113,7 @@ export const FileBlock = createReactBlockSpec(
             onChange={handleFileChange}
             type="file"
           />
-          <Button
-            onClick={handleUploadFileClick}
-            title={t`Upload File`}
-          ></Button>
+          <Button onClick={handleUploadFileClick}>{t`Upload File`}</Button>
         </StyledUploadFileContainer>
       );
     },

@@ -1,3 +1,4 @@
+import { type DialogProps } from '@/ui/feedback/dialog-manager/types/DialogProps';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { Key } from 'ts-key-enum';
@@ -60,25 +61,6 @@ const StyledDialogButtonContainer = styled.div`
   justify-content: center;
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
-
-export type DialogButtonOptions = Omit<
-  React.ComponentProps<typeof Button>,
-  'fullWidth'
-> & {
-  onClick?: (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent,
-  ) => void;
-  role?: 'confirm';
-};
-
-export type DialogProps = React.ComponentPropsWithoutRef<typeof motion.div> & {
-  title?: string;
-  message?: string;
-  buttons?: DialogButtonOptions[];
-  children?: React.ReactNode;
-  className?: string;
-  onClose?: () => void;
-};
 
 export const Dialog = ({
   title,
@@ -157,7 +139,7 @@ export const Dialog = ({
         {title && <StyledDialogTitle>{title}</StyledDialogTitle>}
         {message && <StyledDialogMessage>{message}</StyledDialogMessage>}
         {children}
-        {buttons.map(({ accent, onClick, role, title: key, variant }) => (
+        {buttons.map(({ color, onClick, title: key, variant }) => (
           <StyledDialogButtonContainer key={key}>
             <Button
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -165,10 +147,11 @@ export const Dialog = ({
                 onClick?.(event);
               }}
               fullWidth={true}
-              variant={variant ?? 'secondary'}
-              title={key}
-              {...{ accent, role }}
-            />
+              color={color}
+              variant={variant ?? 'outline'}
+            >
+              {key}
+            </Button>
           </StyledDialogButtonContainer>
         ))}
       </StyledDialogContainer>

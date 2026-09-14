@@ -1,3 +1,4 @@
+import { Link as ButtonRouterLink } from 'react-router-dom';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ResourceCreditPriceSelector } from '@/settings/billing/components/internal/ResourceCreditPriceSelector';
@@ -30,7 +31,6 @@ import {
 import { ProgressBar } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import { H2Title } from 'twenty-ui/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import {
@@ -304,19 +304,17 @@ export const SettingsBillingCreditsSection = ({
         </StyledCreditsCardBody>
       </StyledSettingsBillingCard>
       <StyledCreditUsageFooterActions>
-        <UndecoratedLink to={getSettingsPath(SettingsPath.Usage)}>
-          <Button
-            Icon={IconChartBar}
-            title={t`View usage`}
-            variant="secondary"
-            size="small"
-          />
-        </UndecoratedLink>
         <Button
-          Icon={IconExternalLink}
-          title={t`How credits work`}
-          variant="secondary"
-          size="small"
+          render={<ButtonRouterLink to={getSettingsPath(SettingsPath.Usage)} />}
+          nativeButton={false}
+          role="link"
+          startIcon={<IconChartBar />}
+          size="sm"
+          variant="outline"
+        >{t`View usage`}</Button>
+        <Button
+          startIcon={<IconExternalLink />}
+          size="sm"
           onClick={() =>
             window.open(
               creditsDocumentationUrl,
@@ -324,7 +322,8 @@ export const SettingsBillingCreditsSection = ({
               'noopener,noreferrer',
             )
           }
-        />
+          variant="outline"
+        >{t`How credits work`}</Button>
       </StyledCreditUsageFooterActions>
     </Section>
   );

@@ -43,16 +43,14 @@ export const ViewPickerCreateButton = () => {
   if (viewPickerMode === 'edit') {
     return (
       <Button
-        title={t`Delete`}
         onClick={destroyViewFromCurrentState}
-        accent="danger"
         fullWidth
-        size="small"
-        justify="center"
-        focus={false}
-        variant="secondary"
+        size="sm"
         disabled={viewPickerIsPersisting}
-      />
+        variant="outline"
+        color="danger"
+        style={{ justifyContent: 'center' }}
+      >{t`Delete`}</Button>
     );
   }
 
@@ -62,13 +60,13 @@ export const ViewPickerCreateButton = () => {
   ) {
     return (
       <Button
-        title={t`Go to Settings`}
         onClick={navigateToSelectSettings}
-        size="small"
-        accent="blue"
+        size="sm"
         fullWidth
-        justify="center"
-      />
+        variant="solid"
+        color="accent"
+        style={{ justifyContent: 'center' }}
+      >{t`Go to Settings`}</Button>
     );
   }
 
@@ -78,13 +76,13 @@ export const ViewPickerCreateButton = () => {
   ) {
     return (
       <Button
-        title={t`Go to Settings`}
         onClick={navigateToDateFieldSettings}
-        size="small"
-        accent="blue"
+        size="sm"
         fullWidth
-        justify="center"
-      />
+        variant="solid"
+        color="accent"
+        style={{ justifyContent: 'center' }}
+      >{t`Go to Settings`}</Button>
     );
   }
 
@@ -94,13 +92,10 @@ export const ViewPickerCreateButton = () => {
   ) {
     return (
       <Button
-        title={t`Create`}
         onClick={handleCreateButtonClick}
-        ariaLabel={t`Create new view`}
-        accent="blue"
+        aria-label={t`Create new view`}
         fullWidth
-        size="small"
-        justify="center"
+        size="sm"
         disabled={
           viewPickerIsPersisting ||
           (viewPickerType === ViewType.KANBAN &&
@@ -108,7 +103,10 @@ export const ViewPickerCreateButton = () => {
           (viewPickerType === ViewType.CALENDAR &&
             viewPickerCalendarFieldMetadataId === '')
         }
-      />
+        variant="solid"
+        color="accent"
+        style={{ justifyContent: 'center' }}
+      >{t`Create`}</Button>
     );
   }
 };

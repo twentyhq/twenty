@@ -14,7 +14,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLock } from 'twenty-ui/icon';
 import { HorizontalSeparator } from 'twenty-ui/layout';
-import { MainButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
 import { useContext } from 'react';
@@ -50,13 +50,17 @@ export const SignInUpWithSso = () => {
   return (
     <>
       <StyledSsoButtonContainer>
-        <MainButton
-          Icon={() => <IconLock size={theme.icon.size.md} />}
-          title={t`Single sign-on (SSO)`}
+        <Button
+          startIcon={<IconLock size={theme.icon.size.md} />}
           onClick={signInWithSso}
-          variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
           fullWidth
-        />
+          elevated
+          variant={signInUpStep === SignInUpStep.Init ? 'solid' : 'outline'}
+          style={{
+            fontWeight: 'var(--t-font-weight-semi-bold)',
+            paddingInline: 'var(--t-spacing-3)',
+          }}
+        >{t`Single sign-on (SSO)`}</Button>
         {isLastUsed && hasMultipleAuthMethods && <LastUsedPill />}
       </StyledSsoButtonContainer>
       <HorizontalSeparator visible={false} />

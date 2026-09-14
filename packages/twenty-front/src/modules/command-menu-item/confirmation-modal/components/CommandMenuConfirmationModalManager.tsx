@@ -1,3 +1,5 @@
+import { StyledCenteredButton } from '@/ui/layout/modal/components/StyledCenteredButton';
+import { Link as ButtonRouterLink } from 'react-router-dom';
 import { COMMAND_MENU_CONFIRMATION_MODAL_INSTANCE_ID } from '@/command-menu-item/confirmation-modal/constants/CommandMenuItemConfirmationModalId';
 import { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from 'twenty-shared/constants';
 import { commandMenuItemConfirmationModalConfigState } from '@/command-menu-item/confirmation-modal/states/commandMenuItemConfirmationModalState';
@@ -5,10 +7,7 @@ import {
   type CommandMenuConfirmationModalResult,
   type CommandMenuConfirmationModalResultBrowserEventDetail,
 } from 'twenty-shared/types';
-import {
-  ConfirmationModal,
-  StyledCenteredButton,
-} from '@/ui/layout/modal/components/ConfirmationModal';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -67,19 +66,22 @@ export const CommandMenuConfirmationModalManager = () => {
       confirmButtonText={
         commandMenuItemConfirmationModalConfig.confirmButtonText
       }
-      confirmButtonAccent={
-        commandMenuItemConfirmationModalConfig.confirmButtonAccent
+      confirmButtonColor={
+        commandMenuItemConfirmationModalConfig.confirmButtonColor
       }
       AdditionalButtons={
         isDefined(linkButton) ? (
           <StyledCenteredButton
-            to={linkButton.to}
+            render={<ButtonRouterLink to={linkButton.to} />}
+            role="link"
+            nativeButton={false}
             onClick={() => emitConfirmationResult('cancel')}
-            variant="secondary"
-            title={linkButton.title}
             fullWidth
-            justify="center"
-          />
+            variant="outline"
+            style={{ justifyContent: 'center' }}
+          >
+            {linkButton.title}
+          </StyledCenteredButton>
         ) : undefined
       }
     />

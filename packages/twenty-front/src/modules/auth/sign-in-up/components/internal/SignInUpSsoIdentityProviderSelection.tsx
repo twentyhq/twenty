@@ -5,10 +5,10 @@ import { useSso } from '@/auth/sign-in-up/hooks/useSso';
 import { guessSsoIdentityProviderIconByUrl } from '@/settings/security/utils/guessSsoIdentityProviderIconByUrl';
 
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import React from 'react';
+import React, { createElement } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator } from 'twenty-ui/layout';
-import { MainButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const SignInUpSsoIdentityProviderSelection = () => {
@@ -22,12 +22,21 @@ export const SignInUpSsoIdentityProviderSelection = () => {
         {isDefined(workspaceAuthProviders?.sso) &&
           workspaceAuthProviders?.sso.map((idp) => (
             <React.Fragment key={idp.id}>
-              <MainButton
-                title={idp.name}
+              <Button
                 onClick={() => redirectToSsoLoginPage(idp.id)}
-                Icon={guessSsoIdentityProviderIconByUrl(idp.issuer)}
+                startIcon={createElement(
+                  guessSsoIdentityProviderIconByUrl(idp.issuer),
+                )}
                 fullWidth
-              />
+                elevated
+                variant="solid"
+                style={{
+                  fontWeight: 'var(--t-font-weight-semi-bold)',
+                  paddingInline: 'var(--t-spacing-3)',
+                }}
+              >
+                {idp.name}
+              </Button>
               <HorizontalSeparator visible={false} />
             </React.Fragment>
           ))}

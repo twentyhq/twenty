@@ -13,7 +13,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
-import { MainButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
 const StyledOnboardingStep = styled(StyledOnboardingStepPage)`
@@ -95,20 +95,30 @@ export const ImportContacts = ({
         <StyledFooter>
           <StyledButtons>
             {isDefined(onContinueWithMicrosoft) && (
-              <MainButton
-                title={t`Continue with Microsoft`}
+              <Button
                 fullWidth
                 onClick={onContinueWithMicrosoft}
-                Icon={() => <IconMicrosoft size={theme.icon.size.md} />}
-              />
+                startIcon={<IconMicrosoft size={theme.icon.size.md} />}
+                elevated
+                variant="solid"
+                style={{
+                  fontWeight: 'var(--t-font-weight-semi-bold)',
+                  paddingInline: 'var(--t-spacing-3)',
+                }}
+              >{t`Continue with Microsoft`}</Button>
             )}
             {isDefined(onContinueWithGoogle) && (
-              <MainButton
-                title={t`Continue with Google`}
+              <Button
                 fullWidth
                 onClick={onContinueWithGoogle}
-                Icon={() => <IconGoogle size={theme.icon.size.md} />}
-              />
+                startIcon={<IconGoogle size={theme.icon.size.md} />}
+                elevated
+                variant="solid"
+                style={{
+                  fontWeight: 'var(--t-font-weight-semi-bold)',
+                  paddingInline: 'var(--t-spacing-3)',
+                }}
+              >{t`Continue with Google`}</Button>
             )}
           </StyledButtons>
           {isDefined(onSkip) && <OnboardingSkipButton onClick={onSkip} />}

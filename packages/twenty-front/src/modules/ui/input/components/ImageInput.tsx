@@ -152,28 +152,25 @@ export const ImageInput = ({
           />
           {isUploading && onAbort ? (
             <Button
-              Icon={IconX}
+              startIcon={<IconX />}
               onClick={onAbort}
-              variant="secondary"
-              title={t`Abort`}
               disabled={!pictureURI || disabled}
-            />
+              variant="outline"
+            >{t`Abort`}</Button>
           ) : (
             <Button
-              Icon={IconUpload}
+              startIcon={<IconUpload />}
               onClick={onUploadButtonClick}
-              variant="secondary"
-              title={t`Upload`}
               disabled={disabled}
-            />
+              variant="outline"
+            >{t`Upload`}</Button>
           )}
           <Button
-            Icon={IconTrash}
+            startIcon={<IconTrash />}
             onClick={onRemove}
-            variant="secondary"
-            title={t`Remove`}
             disabled={!pictureURI || disabled}
-          />
+            variant="outline"
+          >{t`Remove`}</Button>
         </StyledButtonContainer>
         <StyledText>
           <Trans>We support your square PNGs, JPEGs and GIFs under 10MB</Trans>

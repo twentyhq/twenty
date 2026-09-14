@@ -1,5 +1,9 @@
 import { useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import {
+  Link as ButtonRouterLink,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -395,13 +399,13 @@ export const SettingsAdminAiProviderDetail = () => {
           )}
 
           {isCustomProvider && newModelPath && (
-            <UndecoratedLink to={newModelPath}>
-              <Button
-                Icon={IconPlus}
-                title={t`Add Model`}
-                variant="secondary"
-              />
-            </UndecoratedLink>
+            <Button
+              render={<ButtonRouterLink to={newModelPath} />}
+              nativeButton={false}
+              role="link"
+              startIcon={<IconPlus />}
+              variant="outline"
+            >{t`Add Model`}</Button>
           )}
         </Section>
 
@@ -412,12 +416,11 @@ export const SettingsAdminAiProviderDetail = () => {
               description={t`Remove this provider and disconnect all its models`}
             />
             <Button
-              Icon={IconTrash}
-              title={t`Remove provider`}
-              variant="secondary"
-              accent="danger"
+              startIcon={<IconTrash />}
               onClick={() => openModal(REMOVE_PROVIDER_MODAL_ID)}
-            />
+              variant="outline"
+              color="danger"
+            >{t`Remove provider`}</Button>
           </Section>
         )}
       </SettingsPageContainer>
@@ -428,7 +431,7 @@ export const SettingsAdminAiProviderDetail = () => {
         subtitle={t`This will disconnect all models from this provider. Models will no longer be available until a new provider is configured.`}
         onConfirmClick={handleRemoveProvider}
         confirmButtonText={t`Remove`}
-        confirmButtonAccent="danger"
+        confirmButtonColor="danger"
       />
 
       <ConfirmationModal
@@ -437,7 +440,7 @@ export const SettingsAdminAiProviderDetail = () => {
         subtitle={t`This model will be removed from the provider. You can re-add it later.`}
         onConfirmClick={handleRemoveModel}
         confirmButtonText={t`Remove`}
-        confirmButtonAccent="danger"
+        confirmButtonColor="danger"
       />
     </SettingsPageLayout>
   );

@@ -29,7 +29,7 @@ import 'twenty-ui/theme-light.css';
 
 export const App = () => (
   <ThemeProvider colorScheme="light">
-    <Button title="Click me" />
+    <Button>Click me</Button>
   </ThemeProvider>
 );
 ```

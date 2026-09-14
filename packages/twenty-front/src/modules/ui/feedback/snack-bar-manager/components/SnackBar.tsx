@@ -1,11 +1,11 @@
+import { Link as ButtonRouterLink } from 'react-router-dom';
 import { sanitizeMessageToRenderInSnackbar } from '@/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { type ComponentPropsWithoutRef, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Toast } from 'twenty-ui/feedback';
-import { LightButton } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { Button } from 'twenty-ui/input';
 
 export enum SnackBarVariant {
   Default = 'default',
@@ -68,11 +68,25 @@ export const SnackBar = ({
   const hasAction =
     isDefined(buttonLabel) && (isDefined(buttonOnClick) || isDefined(buttonTo));
   const action = isDefined(buttonTo) ? (
-    <UndecoratedLink to={buttonTo}>
-      <LightButton title={buttonLabel} />
-    </UndecoratedLink>
+    <Button
+      render={<ButtonRouterLink to={buttonTo} />}
+      nativeButton={false}
+      role="link"
+      size="sm"
+      variant="ghost"
+      style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+    >
+      {buttonLabel}
+    </Button>
   ) : (
-    <LightButton title={buttonLabel} onClick={buttonOnClick} />
+    <Button
+      onClick={buttonOnClick}
+      size="sm"
+      variant="ghost"
+      style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+    >
+      {buttonLabel}
+    </Button>
   );
 
   return (

@@ -23,7 +23,7 @@ import { OTPInput, type SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { AppPath } from 'twenty-shared/types';
-import { MainButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -263,13 +263,17 @@ export const SignInUpTOTPVerification = () => {
           )}
         />
       </StyledTwoFactorMainContent>
-      <MainButton
-        title={t`Submit`}
+      <Button
         type="submit"
-        variant="primary"
         fullWidth
         disabled={isLoading}
-      />
+        elevated
+        variant="solid"
+        style={{
+          fontWeight: 'var(--t-font-weight-semi-bold)',
+          paddingInline: 'var(--t-spacing-3)',
+        }}
+      >{t`Submit`}</Button>
       <StyledActionBackLinkContainer>
         <ClickToActionLink onClick={handleBack}>
           <Trans>Back</Trans>

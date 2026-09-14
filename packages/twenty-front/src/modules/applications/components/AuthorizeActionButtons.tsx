@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { MainButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AuthorizeActionButtonsProps = {
@@ -20,11 +20,11 @@ const StyledButtonContainer = styled.div`
   width: 100%;
 `;
 
-const StyledAuthorizeButton = styled(MainButton)`
+const StyledAuthorizeButton = styled(Button)`
   box-shadow: none;
 `;
 
-const StyledCancelButton = styled(MainButton)`
+const StyledCancelButton = styled(Button)`
   box-shadow: none;
 `;
 
@@ -38,18 +38,29 @@ export const AuthorizeActionButtons = ({
   return (
     <StyledButtonContainer>
       <StyledCancelButton
-        title={t`Cancel`}
-        variant="secondary"
         onClick={onCancel}
         fullWidth
         disabled={isLoading}
-      />
+        elevated
+        variant="outline"
+        style={{
+          fontWeight: 'var(--t-font-weight-semi-bold)',
+          paddingInline: 'var(--t-spacing-3)',
+        }}
+      >{t`Cancel`}</StyledCancelButton>
       <StyledAuthorizeButton
-        title={isLoading ? t`Authorizing...` : t`Authorize`}
         onClick={onAuthorize}
         disabled={isLoading}
         fullWidth
-      />
+        elevated
+        variant="solid"
+        style={{
+          fontWeight: 'var(--t-font-weight-semi-bold)',
+          paddingInline: 'var(--t-spacing-3)',
+        }}
+      >
+        {isLoading ? t`Authorizing...` : t`Authorize`}
+      </StyledAuthorizeButton>
     </StyledButtonContainer>
   );
 };

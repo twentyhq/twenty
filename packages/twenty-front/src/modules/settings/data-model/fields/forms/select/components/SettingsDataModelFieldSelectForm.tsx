@@ -40,7 +40,7 @@ import {
   IconPoint,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightButton, LightIconButton } from 'twenty-ui/input';
+import { LightIconButton, Button } from 'twenty-ui/input';
 import { CardContent, CardFooter } from 'twenty-ui/surfaces';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -528,11 +528,13 @@ export const SettingsDataModelFieldSelectForm = ({
               <StyledFooterContainer>
                 <CardFooter>
                   <StyledButtonContainer>
-                    <LightButton
-                      title={t`Add option`}
-                      Icon={IconPlus}
+                    <Button
+                      startIcon={<IconPlus />}
                       onClick={handleAddOption}
-                    />
+                      size="sm"
+                      variant="ghost"
+                      style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+                    >{t`Add option`}</Button>
                   </StyledButtonContainer>
                 </CardFooter>
               </StyledFooterContainer>

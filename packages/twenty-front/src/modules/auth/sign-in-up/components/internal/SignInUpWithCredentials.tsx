@@ -22,7 +22,7 @@ import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
-import { MainButton, InputHint } from 'twenty-ui/input';
+import { InputHint, Button } from 'twenty-ui/input';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -161,16 +161,20 @@ export const SignInUpWithCredentials = ({
             />
           )}
           <StyledSsoButtonContainer>
-            <MainButton
-              title={buttonTitle}
+            <Button
               type="submit"
-              variant={
-                signInUpStep === SignInUpStep.Init ? 'secondary' : 'primary'
-              }
-              Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}
+              startIcon={form.formState.isSubmitting ? <Loader /> : null}
               disabled={isSubmitButtonDisabled}
               fullWidth
-            />
+              elevated
+              variant={signInUpStep === SignInUpStep.Init ? 'outline' : 'solid'}
+              style={{
+                fontWeight: 'var(--t-font-weight-semi-bold)',
+                paddingInline: 'var(--t-spacing-3)',
+              }}
+            >
+              {buttonTitle}
+            </Button>
             {isLastUsed && <LastUsedPill />}
             {isSignUpBlockedByDDLLock && (
               <InputHint>{t`Sign-up is temporarily unavailable during maintenance.`}</InputHint>

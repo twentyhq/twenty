@@ -1,3 +1,4 @@
+import { Link as ButtonRouterLink } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -5,7 +6,6 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import { H2Title } from 'twenty-ui/typography';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -53,14 +53,17 @@ export const SettingsLegalDpa = () => {
         { children: t`Legal` },
       ]}
       actionButton={
-        <UndecoratedLink to={getSettingsPath(SettingsPath.LegalDpaNew)}>
-          <Button
-            Icon={IconPlus}
-            title={t`Generate DPA`}
-            accent="blue"
-            size="small"
-          />
-        </UndecoratedLink>
+        <Button
+          render={
+            <ButtonRouterLink to={getSettingsPath(SettingsPath.LegalDpaNew)} />
+          }
+          nativeButton={false}
+          role="link"
+          startIcon={<IconPlus />}
+          size="sm"
+          variant="solid"
+          color="accent"
+        >{t`Generate DPA`}</Button>
       }
     >
       <SettingsPageContainer>

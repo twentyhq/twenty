@@ -100,28 +100,25 @@ export const SettingsUnsubscribePreview = () => {
                   ))}
                 </StyledTopics>
                 <Button
-                  title={t`Update`}
-                  variant="primary"
-                  accent="blue"
                   fullWidth
-                  justify="center"
-                />
+                  variant="solid"
+                  color="accent"
+                  style={{ justifyContent: 'center' }}
+                >{t`Update`}</Button>
                 <HorizontalSeparator text={t`Or`} noMargin />
                 <Button
-                  title={t`Unsubscribe all`}
-                  variant="secondary"
                   fullWidth
-                  justify="center"
-                />
+                  variant="outline"
+                  style={{ justifyContent: 'center' }}
+                >{t`Unsubscribe all`}</Button>
               </>
             ) : (
               <Button
-                title={t`Unsubscribe`}
-                variant="primary"
-                accent="blue"
                 fullWidth
-                justify="center"
-              />
+                variant="solid"
+                color="accent"
+                style={{ justifyContent: 'center' }}
+              >{t`Unsubscribe`}</Button>
             )}
           </StyledCard>
         )}

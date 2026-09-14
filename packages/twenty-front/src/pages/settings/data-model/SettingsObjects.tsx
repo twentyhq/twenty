@@ -1,3 +1,4 @@
+import { Link as ButtonRouterLink } from 'react-router-dom';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -12,7 +13,6 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { IconEye, IconPlus, IconSparkle2 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import { H2Title } from 'twenty-ui/typography';
 import { SettingsObjectTable } from '~/pages/settings/data-model/SettingsObjectTable';
 
@@ -40,21 +40,24 @@ export const SettingsObjects = () => {
       actionButton={
         isDDLLocked ? (
           <Button
-            Icon={IconPlus}
-            title={t`Add object`}
-            accent="blue"
-            size="small"
+            startIcon={<IconPlus />}
+            size="sm"
             disabled
-          />
+            variant="solid"
+            color="accent"
+          >{t`Add object`}</Button>
         ) : (
-          <UndecoratedLink to={getSettingsPath(SettingsPath.NewObject)}>
-            <Button
-              Icon={IconPlus}
-              title={t`Add object`}
-              accent="blue"
-              size="small"
-            />
-          </UndecoratedLink>
+          <Button
+            render={
+              <ButtonRouterLink to={getSettingsPath(SettingsPath.NewObject)} />
+            }
+            nativeButton={false}
+            role="link"
+            startIcon={<IconPlus />}
+            size="sm"
+            variant="solid"
+            color="accent"
+          >{t`Add object`}</Button>
         )
       }
       links={[
@@ -87,14 +90,18 @@ export const SettingsObjects = () => {
             title={t`Visualize data model`}
             description={t`See your data structure as an interactive diagram`}
           />
-          <UndecoratedLink to={getSettingsPath(SettingsPath.ObjectOverview)}>
-            <Button
-              title={t`Visualize`}
-              variant="secondary"
-              size="medium"
-              Icon={IconEye}
-            />
-          </UndecoratedLink>
+          <Button
+            render={
+              <ButtonRouterLink
+                to={getSettingsPath(SettingsPath.ObjectOverview)}
+              />
+            }
+            nativeButton={false}
+            role="link"
+            size="md"
+            startIcon={<IconEye />}
+            variant="outline"
+          >{t`Visualize`}</Button>
         </Section>
       </SettingsPageContainer>
     </SettingsPageLayout>

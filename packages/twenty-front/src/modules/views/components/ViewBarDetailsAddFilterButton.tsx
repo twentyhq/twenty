@@ -5,7 +5,7 @@ import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/h
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/icon';
-import { LightButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 
 export const ViewBarDetailsAddFilterButton = () => {
   const { toggleDropdown } = useToggleDropdown();
@@ -22,11 +22,15 @@ export const ViewBarDetailsAddFilterButton = () => {
   };
 
   return (
-    <LightButton
+    <Button
       onClick={handleClick}
-      Icon={IconPlus}
-      title={t`Add filter`}
-      accent="tertiary"
-    />
+      startIcon={<IconPlus />}
+      size="sm"
+      variant="ghost"
+      style={{
+        fontWeight: 'var(--t-font-weight-regular)',
+        color: 'var(--t-font-color-tertiary)',
+      }}
+    >{t`Add filter`}</Button>
   );
 };

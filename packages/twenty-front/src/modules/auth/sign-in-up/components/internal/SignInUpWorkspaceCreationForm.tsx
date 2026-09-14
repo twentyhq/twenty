@@ -17,7 +17,7 @@ import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 import { IconTrash, IconUpload } from 'twenty-ui/icon';
-import { Button, LightIconButton, MainButton } from 'twenty-ui/input';
+import { Button, LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContentContainer = styled.div`
@@ -273,11 +273,10 @@ export const SignInUpWorkspaceCreationForm = () => {
             />
             <StyledLogoButtons>
               <Button
-                Icon={IconUpload}
-                title={t`Upload logo`}
-                variant="secondary"
+                startIcon={<IconUpload />}
                 onClick={openFilePicker}
-              />
+                variant="outline"
+              >{t`Upload logo`}</Button>
               <LightIconButton
                 Icon={IconTrash}
                 accent="tertiary"
@@ -344,12 +343,17 @@ export const SignInUpWorkspaceCreationForm = () => {
         )}
       </StyledFormSection>
       <OnboardingStepAnimatedItem index={isMultiWorkspaceEnabled ? 5 : 4}>
-        <MainButton
-          title={t`Create workspace`}
+        <Button
           onClick={handleSubmit}
           disabled={isContinueDisabled}
           fullWidth
-        />
+          elevated
+          variant="solid"
+          style={{
+            fontWeight: 'var(--t-font-weight-semi-bold)',
+            paddingInline: 'var(--t-spacing-3)',
+          }}
+        >{t`Create workspace`}</Button>
       </OnboardingStepAnimatedItem>
     </StyledContentContainer>
   );

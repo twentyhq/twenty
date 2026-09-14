@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Loader } from 'twenty-ui/feedback';
-import { CardPicker, MainButton, RadioGroup } from 'twenty-ui/input';
+import { CardPicker, RadioGroup, Button } from 'twenty-ui/input';
 import { ModalContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -183,13 +183,18 @@ export const EnterprisePlanModal = () => {
           </CardPicker>
         </RadioGroup>
 
-        <MainButton
-          title={t`Continue`}
+        <Button
           onClick={handleContinue}
-          width={200}
-          Icon={() => isLoading && <Loader />}
+          startIcon={isLoading && <Loader />}
           disabled={isLoading}
-        />
+          elevated
+          variant="solid"
+          style={{
+            width: 200,
+            fontWeight: 'var(--t-font-weight-semi-bold)',
+            paddingInline: 'var(--t-spacing-3)',
+          }}
+        >{t`Continue`}</Button>
       </ModalContent>
     </ModalStatefulWrapper>
   );

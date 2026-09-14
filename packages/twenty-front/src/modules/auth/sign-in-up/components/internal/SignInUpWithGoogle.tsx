@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
@@ -11,7 +12,7 @@ import { useLingui } from '@lingui/react/macro';
 import { memo, useContext } from 'react';
 import { IconGoogle } from 'twenty-ui/icon';
 import { HorizontalSeparator } from 'twenty-ui/layout';
-import { MainButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
@@ -47,13 +48,17 @@ export const SignInUpWithGoogle = ({
   return (
     <>
       <StyledSsoButtonContainer>
-        <MainButton
-          Icon={GoogleIcon}
-          title={t`Continue with Google`}
+        <Button
+          startIcon={isDefined(GoogleIcon) ? <GoogleIcon /> : undefined}
           onClick={handleClick}
-          variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
           fullWidth
-        />
+          elevated
+          variant={signInUpStep === SignInUpStep.Init ? 'solid' : 'outline'}
+          style={{
+            fontWeight: 'var(--t-font-weight-semi-bold)',
+            paddingInline: 'var(--t-spacing-3)',
+          }}
+        >{t`Continue with Google`}</Button>
         {isLastUsed && (isGlobalScope || hasMultipleAuthMethods) && (
           <LastUsedPill />
         )}

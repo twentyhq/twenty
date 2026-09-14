@@ -11,7 +11,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { LightButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 
 type AddRecordGroupButtonProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -58,7 +58,15 @@ export const AddRecordGroupButton = ({
       dropdownPlacement="bottom-start"
       dropdownOffset={dropdownOffset}
       clickableComponent={
-        <LightButton Icon={IconPlus} title={t`New group`} accent="tertiary" />
+        <Button
+          startIcon={<IconPlus />}
+          size="sm"
+          variant="ghost"
+          style={{
+            fontWeight: 'var(--t-font-weight-regular)',
+            color: 'var(--t-font-color-tertiary)',
+          }}
+        >{t`New group`}</Button>
       }
       dropdownComponents={
         <SingleRecordPicker

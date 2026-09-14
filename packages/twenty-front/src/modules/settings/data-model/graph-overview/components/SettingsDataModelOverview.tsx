@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+import { Link as ButtonRouterLink } from 'react-router-dom';
 import { SettingsDataModelOverviewEffect } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewEffect';
 import { SettingsDataModelOverviewObject } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewObject';
 import { SettingsDataModelOverviewRelationMarkers } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewRelationMarkers';
@@ -187,8 +189,13 @@ export const SettingsDataModelOverview = () => {
     <StyledContainer>
       <StyledCloseButton>
         <Button
-          Icon={IconX}
-          to={getSettingsPath(SettingsPath.Objects)}
+          startIcon={<IconX />}
+          aria-label={t`Close overview`}
+          render={
+            <ButtonRouterLink to={getSettingsPath(SettingsPath.Objects)} />
+          }
+          role="link"
+          nativeButton={false}
         ></Button>
       </StyledCloseButton>
       <SettingsDataModelOverviewEffect

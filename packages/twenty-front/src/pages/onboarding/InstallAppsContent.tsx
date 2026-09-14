@@ -13,7 +13,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
-import { IconButton, MainButton } from 'twenty-ui/input';
+import { IconButton, Button } from 'twenty-ui/input';
 import { AnimatedIconCrossfade } from 'twenty-ui/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -201,14 +201,19 @@ export const InstallAppsContent = ({
         <StyledFooter>
           {hasApps && (
             <StyledInstallButton>
-              <MainButton
-                title={t`Install`}
+              <Button
                 onClick={onInstall}
                 disabled={
                   isCompleting || !isNonEmptyArray(selectedUniversalIdentifiers)
                 }
                 fullWidth
-              />
+                elevated
+                variant="solid"
+                style={{
+                  fontWeight: 'var(--t-font-weight-semi-bold)',
+                  paddingInline: 'var(--t-spacing-3)',
+                }}
+              >{t`Install`}</Button>
             </StyledInstallButton>
           )}
           <OnboardingSkipButton onClick={onSkip} disabled={isCompleting} />

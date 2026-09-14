@@ -40,12 +40,13 @@ const renderCard = (colorScheme: 'light' | 'dark') => (
             description="Customize how your record page looks."
             action={
               <Button
-                title="Customize"
-                variant="primary"
-                accent="blue"
-                size="small"
-                Icon={IconPencil}
-              />
+                size="sm"
+                startIcon={<IconPencil />}
+                variant="solid"
+                color="accent"
+              >
+                {'Customize'}
+              </Button>
             }
           />
         }

@@ -10,7 +10,11 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWizardStepBar';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { t } from '@lingui/core/macro';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import {
+  Link as ButtonRouterLink,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import {
@@ -158,13 +162,14 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           onBack={() => navigate(previousStepPath)}
           trailing={
             <Button
-              title={t`Finish`}
-              variant="primary"
-              size="small"
-              accent="blue"
-              to={isFinishDisabled ? undefined : finishButtonPath}
+              size="sm"
+              render={<ButtonRouterLink to={finishButtonPath} />}
+              role="link"
+              nativeButton={false}
               disabled={isFinishDisabled}
-            />
+              variant="solid"
+              color="accent"
+            >{t`Finish`}</Button>
           }
         />
       }

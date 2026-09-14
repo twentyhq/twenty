@@ -1,3 +1,4 @@
+import { Link as ButtonRouterLink } from 'react-router-dom';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { WORKER_QUEUE_METRICS_SELECT_OPTIONS } from '@/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions';
 import { Select } from '@/ui/input/components/Select';
@@ -56,14 +57,19 @@ export const SettingsAdminWorkerQueueMetricsSection = ({
           <H2Title title={queue.queueName} description={t`Queue performance`} />
           <StyledRightControls>
             <Button
-              Icon={IconList}
-              title={t`View Jobs`}
-              size="small"
-              variant="secondary"
-              to={getSettingsPath(SettingsPath.AdminPanelQueueDetail, {
-                queueName: queue.queueName,
-              })}
-            />
+              role="link"
+              startIcon={<IconList />}
+              size="sm"
+              render={
+                <ButtonRouterLink
+                  to={getSettingsPath(SettingsPath.AdminPanelQueueDetail, {
+                    queueName: queue.queueName,
+                  })}
+                />
+              }
+              nativeButton={false}
+              variant="outline"
+            >{t`View Jobs`}</Button>
             <Select
               dropdownId={`timerange-${queue.queueName}`}
               value={timeRange}

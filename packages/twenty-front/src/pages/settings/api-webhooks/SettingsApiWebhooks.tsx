@@ -1,3 +1,4 @@
+import { Link as ButtonRouterLink } from 'react-router-dom';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
@@ -142,12 +143,17 @@ export const SettingsApiWebhooks = () => {
                 <SettingsApiKeysTable />
                 <StyledButtonContainer>
                   <Button
-                    Icon={IconPlus}
-                    title={t`Create API key`}
-                    size="small"
-                    variant="secondary"
-                    to={getSettingsPath(SettingsPath.NewApiKey)}
-                  />
+                    role="link"
+                    startIcon={<IconPlus />}
+                    size="sm"
+                    render={
+                      <ButtonRouterLink
+                        to={getSettingsPath(SettingsPath.NewApiKey)}
+                      />
+                    }
+                    nativeButton={false}
+                    variant="outline"
+                  >{t`Create API key`}</Button>
                 </StyledButtonContainer>
               </StyledTableContainer>
             </Section>
@@ -171,12 +177,17 @@ export const SettingsApiWebhooks = () => {
                 <SettingsWebhooksTable />
                 <StyledButtonContainer>
                   <Button
-                    Icon={IconPlus}
-                    title={t`Create webhook`}
-                    size="small"
-                    variant="secondary"
-                    to={getSettingsPath(SettingsPath.NewWebhook)}
-                  />
+                    role="link"
+                    startIcon={<IconPlus />}
+                    size="sm"
+                    render={
+                      <ButtonRouterLink
+                        to={getSettingsPath(SettingsPath.NewWebhook)}
+                      />
+                    }
+                    nativeButton={false}
+                    variant="outline"
+                  >{t`Create webhook`}</Button>
                 </StyledButtonContainer>
               </StyledTableContainer>
             </Section>

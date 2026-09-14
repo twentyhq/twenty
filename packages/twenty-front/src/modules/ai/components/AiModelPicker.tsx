@@ -6,7 +6,7 @@ import {
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { LightButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiModelTierSlider } from '@/ai/components/AiModelTierSlider';
@@ -93,11 +93,15 @@ export const AiModelPicker = ({
               : t`Set for this agent only`}
         </StyledHint>
         {!isAdvancedOpen && !disabled && (
-          <LightButton
-            title={t`Advanced`}
-            accent="tertiary"
+          <Button
             onClick={() => setIsAdvancedOpen(true)}
-          />
+            size="sm"
+            variant="ghost"
+            style={{
+              fontWeight: 'var(--t-font-weight-regular)',
+              color: 'var(--t-font-color-tertiary)',
+            }}
+          >{t`Advanced`}</Button>
         )}
       </StyledFooter>
       {isAdvancedOpen && (

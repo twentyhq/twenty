@@ -11,7 +11,7 @@ import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingM
 import { t } from '@lingui/core/macro';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { IconGmail, IconMail, IconMailX, IconMicrosoft } from 'twenty-ui/icon';
-import { MainButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/layout';
 
@@ -118,35 +118,54 @@ export const EmailVerificationSent = ({
 
   const mainButtons = isError ? (
     <>
-      <MainButton
-        title={t`Try with another email`}
+      <Button
         onClick={handleChangeEmail}
-        variant="secondary"
         fullWidth
-      />
-      <MainButton
-        title={isLoading ? t`Sending...` : t`Resend email`}
+        elevated
+        variant="outline"
+        style={{
+          fontWeight: 'var(--t-font-weight-semi-bold)',
+          paddingInline: 'var(--t-spacing-3)',
+        }}
+      >{t`Try with another email`}</Button>
+      <Button
         onClick={handleResendEmailVerificationToken(email)}
         disabled={isLoading}
         fullWidth
-      />
+        elevated
+        variant="solid"
+        style={{
+          fontWeight: 'var(--t-font-weight-semi-bold)',
+          paddingInline: 'var(--t-spacing-3)',
+        }}
+      >
+        {isLoading ? t`Sending...` : t`Resend email`}
+      </Button>
     </>
   ) : (
     <>
-      <MainButton
-        title={t`Open Gmail`}
+      <Button
         onClick={handleOpenGmail}
-        Icon={IconGmail}
-        variant="secondary"
+        startIcon={<IconGmail />}
         fullWidth
-      />
-      <MainButton
-        title={t`Open Outlook`}
+        elevated
+        variant="outline"
+        style={{
+          fontWeight: 'var(--t-font-weight-semi-bold)',
+          paddingInline: 'var(--t-spacing-3)',
+        }}
+      >{t`Open Gmail`}</Button>
+      <Button
         onClick={handleOpenOutlook}
-        Icon={IconMicrosoft}
-        variant="secondary"
+        startIcon={<IconMicrosoft />}
         fullWidth
-      />
+        elevated
+        variant="outline"
+        style={{
+          fontWeight: 'var(--t-font-weight-semi-bold)',
+          paddingInline: 'var(--t-spacing-3)',
+        }}
+      >{t`Open Outlook`}</Button>
     </>
   );
 

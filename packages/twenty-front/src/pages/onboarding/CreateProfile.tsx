@@ -27,7 +27,7 @@ import { useCallback, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
 
@@ -285,12 +285,17 @@ export const CreateProfile = () => {
 
       <OnboardingStepAnimatedItem index={3}>
         <StyledButtonContainer>
-          <MainButton
-            title={t`Continue`}
+          <Button
             onClick={handleSubmit(onSubmit)}
             disabled={!isValid || isSubmitting || isNavigating}
             fullWidth
-          />
+            elevated
+            variant="solid"
+            style={{
+              fontWeight: 'var(--t-font-weight-semi-bold)',
+              paddingInline: 'var(--t-spacing-3)',
+            }}
+          >{t`Continue`}</Button>
         </StyledButtonContainer>
       </OnboardingStepAnimatedItem>
     </StyledOnboardingStepPage>

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconBell } from '@ui/icon';
-import { LightButton } from '@ui/input/LightButton/LightButton';
+import { Button } from '@ui/input/Button/Button';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -50,7 +50,16 @@ export const WithDescriptionAndAction: Story = {
   render: (args) => (
     <Toast
       {...args}
-      action={<LightButton title="Undo" onClick={args.onCancel} />}
+      action={
+        <Button
+          onClick={args.onCancel}
+          size="sm"
+          variant="ghost"
+          style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+        >
+          {'Undo'}
+        </Button>
+      }
     />
   ),
   play: async ({ canvasElement, args }) => {
