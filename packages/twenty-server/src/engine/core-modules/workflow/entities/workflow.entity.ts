@@ -35,6 +35,8 @@ export class WorkflowEntity extends SyncableEntity {
   })
   @Column({ type: 'uuid', nullable: true })
   workspaceWorkflowId: string | null;
+
+  @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_CORE_VERSION_POINTERS_UPGRADE_COMMAND_NAME,
   })
   @Column({ type: 'uuid', nullable: true })
