@@ -73,15 +73,18 @@ it('creates and opens the submitted record without an index context', async () =
     await result.current.createNewRecord();
   });
 
+  expect(mockCreateOneRecord).toHaveBeenCalledTimes(1);
   expect(mockCreateOneRecord).toHaveBeenCalledWith({
     id: expect.any(String),
     name: 'Acme',
   });
+  expect(mockOpenRecordInSidePanel).toHaveBeenCalledTimes(1);
   expect(mockOpenRecordInSidePanel).toHaveBeenCalledWith({
     recordId: expect.any(String),
     objectNameSingular: 'company',
     isNewRecord: false,
   });
+  expect(mockUpsertRecordsInStore).toHaveBeenCalledTimes(1);
   expect(mockUpsertRecordsInStore).toHaveBeenCalledWith({
     partialRecords: [expect.objectContaining({ name: 'Acme' })],
   });
@@ -117,12 +120,14 @@ it('preserves index defaults and notifies the index after form submission', asyn
     await result.current.createNewRecord({ position: 'first' });
   });
 
+  expect(mockCreateOneRecord).toHaveBeenCalledTimes(1);
   expect(mockCreateOneRecord).toHaveBeenCalledWith({
     id: expect.any(String),
     name: 'Acme',
     employees: 10,
     position: 'first',
   });
+  expect(onRecordCreated).toHaveBeenCalledTimes(1);
   expect(onRecordCreated).toHaveBeenCalledWith(
     expect.objectContaining({ name: 'Acme', employees: 10 }),
     { name: 'Acme', position: 'first' },
@@ -140,6 +145,7 @@ it('creates directly with permission defaults when no form is available', async 
   });
 
   expect(mockRequestRecordCreation).not.toHaveBeenCalled();
+  expect(mockCreateOneRecord).toHaveBeenCalledTimes(1);
   expect(mockCreateOneRecord).toHaveBeenCalledWith({
     id: expect.any(String),
     name: 'Permission default',
