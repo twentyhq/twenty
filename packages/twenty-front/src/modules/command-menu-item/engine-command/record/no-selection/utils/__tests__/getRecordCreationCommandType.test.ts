@@ -1,0 +1,54 @@
+import { getRecordCreationCommandType } from '@/command-menu-item/engine-command/record/no-selection/utils/getRecordCreationCommandType';
+
+it.each([
+  {
+    objectNameSingular: 'company',
+    creationTargetObjectMetadataId: 'company-id',
+    isWorkflowCoreIndexPageEnabled: false,
+    expected: 'global',
+  },
+  {
+    objectNameSingular: 'task',
+    creationTargetObjectMetadataId: 'task-id',
+    isWorkflowCoreIndexPageEnabled: true,
+    expected: 'global',
+  },
+  {
+    objectNameSingular: 'company',
+    creationTargetObjectMetadataId: null,
+    isWorkflowCoreIndexPageEnabled: true,
+    expected: 'index',
+  },
+  {
+    objectNameSingular: 'task',
+    creationTargetObjectMetadataId: undefined,
+    isWorkflowCoreIndexPageEnabled: false,
+    expected: 'index',
+  },
+  {
+    objectNameSingular: 'workflow',
+    creationTargetObjectMetadataId: 'workflow-id',
+    isWorkflowCoreIndexPageEnabled: true,
+    expected: 'workflow',
+  },
+  {
+    objectNameSingular: 'workflow',
+    creationTargetObjectMetadataId: null,
+    isWorkflowCoreIndexPageEnabled: true,
+    expected: 'workflow',
+  },
+  {
+    objectNameSingular: 'workflow',
+    creationTargetObjectMetadataId: 'workflow-id',
+    isWorkflowCoreIndexPageEnabled: false,
+    expected: 'global',
+  },
+  {
+    objectNameSingular: 'workflow',
+    creationTargetObjectMetadataId: null,
+    isWorkflowCoreIndexPageEnabled: false,
+    expected: 'index',
+  },
+])('dispatches record creation to $expected: %j', ({ expected, ...params }) => {
+  expect(getRecordCreationCommandType(params)).toBe(expected);
+});
