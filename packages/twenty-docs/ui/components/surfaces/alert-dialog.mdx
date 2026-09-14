@@ -1,0 +1,74 @@
+---
+title: AlertDialog
+description: Ask for confirmation before an action that needs an explicit decision.
+---
+
+import AlertDialogReference from '/snippets/ui/generated/surfaces/alert-dialog.mdx';
+
+Use `AlertDialog` for a decision that interrupts the current workflow, such as confirming deletion. It provides an accessible modal with a backdrop and focus management.
+
+## Confirmation
+
+```tsx
+import { useState } from 'react';
+import { AlertDialog } from 'twenty-ui/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <AlertDialog.Root open={open} onOpenChange={setOpen}>
+      <AlertDialog.Trigger>Delete record</AlertDialog.Trigger>
+      <AlertDialog.Popup>
+        <AlertDialog.Header>
+          <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+          <AlertDialog.Description>
+            This action cannot be undone.
+          </AlertDialog.Description>
+        </AlertDialog.Header>
+        <AlertDialog.Footer>
+          <AlertDialog.Close>Cancel</AlertDialog.Close>
+          <button
+            type="button"
+            onClick={() => {
+              onDelete();
+              setOpen(false);
+            }}
+          >
+            Delete
+          </button>
+        </AlertDialog.Footer>
+      </AlertDialog.Popup>
+    </AlertDialog.Root>
+  );
+};
+```
+
+`Root` owns open state. Run the confirmed action in its event handler and close the dialog when it completes. For asynchronous actions, keep it open while pending and show an error if the action fails.
+
+## Parts and sizing
+
+| Part                   | Purpose                                                      |
+| ---------------------- | ------------------------------------------------------------ |
+| `Root`                 | Coordinates open state and modal behavior.                   |
+| `Trigger`              | Opens the dialog.                                            |
+| `Popup`                | Includes the portal, backdrop, viewport, and dialog content. |
+| `Title`, `Description` | Name the dialog and explain the decision.                    |
+| `Header`               | Groups the title and description.                            |
+| `Body`                 | Holds optional additional content.                           |
+| `Footer`               | Groups confirmation and cancellation actions.                |
+| `Close`                | Closes the dialog without running the confirmation action.   |
+
+`Popup.size` defaults to `md`; see the reference for supported sizes. Use `container` to override the theme's portal container and `keepMounted` to retain mounted content when closed.
+
+## Focus and dismissal
+
+The dialog traps focus while open. Escape can dismiss it; clicking the backdrop does not. Always provide a visible Cancel or Close action. Keep the initial focus on the least destructive action, and preserve a meaningful return focus target when the action removes its trigger. Use `Popup.initialFocus` and `Popup.finalFocus` to customize focus behavior.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<AlertDialogReference />

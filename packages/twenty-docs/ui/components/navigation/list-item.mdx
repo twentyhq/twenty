@@ -1,0 +1,64 @@
+---
+title: ListItem
+description: Compose consistent rows with icons, descriptions, indicators, and actions.
+---
+
+import ListItemReference from '/snippets/ui/generated/navigation/list-item.mdx';
+
+`ListItem` supplies the visual layout shared by list and menu rows. Use [Menu](/ui/components/surfaces/menu) or [Select](/ui/components/input/select) when you need their selection and keyboard behavior.
+
+## Action row
+
+```tsx
+import { IconCopy } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/navigation';
+
+type DuplicateActionProps = { onDuplicate: () => void };
+
+export const DuplicateAction = ({ onDuplicate }: DuplicateActionProps) => (
+  <ListItem
+    render={<button type="button" />}
+    startIcon={<IconCopy aria-hidden />}
+    description="Create a copy"
+    onClick={onDuplicate}
+  >
+    Duplicate
+  </ListItem>
+);
+```
+
+The default element is a `div`. Use `render` to give an interactive row appropriate semantics, such as a button or link. `hotkeys` displays shortcut hints; your application must register the shortcuts.
+
+## Selection indicator
+
+```tsx
+import { useState } from 'react';
+import { ListItem } from 'twenty-ui/navigation';
+
+export const ShowArchivedToggle = () => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItem
+      render={<button type="button" aria-pressed={selected} />}
+      selected={selected}
+      indicator="check"
+      onClick={() => setSelected(!selected)}
+    >
+      Show archived records
+    </ListItem>
+  );
+};
+```
+
+`selected`, `focused`, and `disabled` control row styling. The `check` and `checkbox` indicators are visual; use a real [Checkbox](/ui/components/input/checkbox) for a form control. When using a disabled button or link through `render`, also supply the element's appropriate disabled behavior and semantics.
+
+## Slots
+
+Use `startIcon` and `endIcon` for icons, `description` for supporting text, `actions` for trailing content, and `hasSubmenu` for a submenu indicator. `descriptionPlacement` accepts `inline` or `end`. `color="danger"` styles a destructive action. Avoid nesting interactive controls inside a row rendered as a button.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<ListItemReference />
