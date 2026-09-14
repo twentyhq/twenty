@@ -102,7 +102,6 @@ describe('Inbound email reply threading (integration)', () => {
           headerMessageId,
           subject: 'Spring offer',
           text: 'Our spring offer',
-          receivedAt: new Date(),
           messageThreadId,
         });
 
