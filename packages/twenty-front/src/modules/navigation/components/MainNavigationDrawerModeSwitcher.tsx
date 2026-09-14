@@ -32,6 +32,7 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
       : themeCssVariables.betweenSiblingsGap};
   height: ${({ isExpanded }) =>
     isExpanded ? themeCssVariables.spacing[10] : 'auto'};
+  min-width: 0;
 `;
 
 const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
@@ -50,7 +51,11 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   corner-shape: round;
   cursor: pointer;
   display: flex;
-  flex-shrink: 0;
+  // Only the mode showing a label may give ground. "AI" is two characters in
+  // English and eighteen in Hebrew, and with every mode refusing to shrink the
+  // row overflowed and pushed the last one - Settings - off the drawer.
+  flex-shrink: ${({ isActive, isExpanded }) =>
+    isActive && isExpanded ? 1 : 0};
   font-family: inherit;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
@@ -59,6 +64,9 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   height: ${themeCssVariables.spacing[7]};
   justify-content: ${({ isExpanded }) =>
     isExpanded ? 'flex-start' : 'center'};
+  // A flex item will not shrink past its content without this, so flex-shrink
+  // above would have nothing to act on.
+  min-width: 0;
   padding: ${({ isExpanded }) =>
     isExpanded ? `0 ${themeCssVariables.spacing['1.5']}` : '0'};
   transition:
@@ -93,7 +101,9 @@ const StyledModeIcon = styled.span`
 
 const StyledModeLabelBase = styled.span`
   display: block;
+  min-width: 0;
   overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 `;
 

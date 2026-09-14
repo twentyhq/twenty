@@ -1,0 +1,39 @@
+---
+title: Accessibility
+description: Label controls, preserve keyboard behavior, and test accessible Twenty UI interfaces.
+---
+
+Migrated interactive components use Base UI primitives for semantics and keyboard behavior. Your application still supplies meaningful labels, descriptions, error messages, and focus order.
+
+## Label every control
+
+Use `Field.Label` with an input to associate a visible label with the control. `Field.Description` supplies supporting text:
+
+```tsx
+import { Field, Input } from 'twenty-ui/input';
+
+export const EmailField = () => (
+  <Field.Root>
+    <Field.Label>Email</Field.Label>
+    <Input type="email" name="email" required />
+    <Field.Description>
+      We send account updates to this address.
+    </Field.Description>
+    <Field.Error>Enter a valid email address.</Field.Error>
+  </Field.Root>
+);
+```
+
+Placeholders supplement labels; they do not replace them. For a control without visible text, supply an accessible name using `aria-label` or `aria-labelledby`.
+
+## Preserve native behavior
+
+Use the component's state and change props, such as `checked` and `onCheckedChange` on `Switch`. Keep focus indicators visible. When using `render` to replace an element, preserve the ref, event handlers, and attributes the component passes to it.
+
+A disabled control cannot be changed and is generally excluded from keyboard navigation and form submission. A read-only control retains its value and may remain focusable; choose the state that matches the interaction you intend.
+
+## Test the complete interface
+
+Check keyboard navigation, labels, error announcements, focus movement in overlays, and zoom in the context where the component is used. Verify contrast in both palettes and after applying custom token overrides.
+
+Twenty UI's stories contain interaction and automated accessibility checks. Some stories still defer color-contrast checks, so those checks do not establish full accessibility conformance for an application.

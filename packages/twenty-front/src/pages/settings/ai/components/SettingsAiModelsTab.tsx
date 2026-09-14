@@ -1,45 +1,30 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  IconMessage,
-  IconPrompt,
-  IconRefresh,
-  IconRobot,
-} from 'twenty-ui/icon';
+import { IconMessage, IconRobot, IconWand } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import { Card } from 'twenty-ui/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { AiModelTierIndicator } from '@/ai/components/AiModelTierIndicator';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { getAiModelTierLabel } from '@/ai/utils/getAiModelTierLabel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { AiModelPinSelect } from '@/settings/ai/components/AiModelPinSelect';
-import { SettingsCard } from '@/settings/components/SettingsCard';
+import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
+import { NestedSettingsRow } from '@/settings/components/SettingsOptions/NestedSettingsRow';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
+import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
 import { SettingsAiModelTiersPreview } from '~/pages/settings/ai/components/SettingsAiModelTiersPreview';
 import { useSettingsAiModelsActions } from '~/pages/settings/ai/hooks/useSettingsAiModelsActions';
-import { formatNumber } from '~/utils/format/formatNumber';
-
-const StyledPinnedModelsContainer = styled.div`
-  padding-top: ${themeCssVariables.spacing[4]};
-`;
 
 export const SettingsAiModelsTab = () => {
-  const { theme } = useContext(ThemeContext);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const aiModels = useAtomStateValue(aiModelsState);
   const tiers = useAiModelTiers();
@@ -51,17 +36,6 @@ export const SettingsAiModelsTab = () => {
     handlePinnedModelChange,
   } = useSettingsAiModelsActions();
 
-  const { data: previewData } = useQuery(GetAiSystemPromptPreviewDocument);
-
-  const systemPromptTokenCount =
-    previewData?.getAiSystemPromptPreview.estimatedTokenCount;
-  const systemPromptDescription = isDefined(systemPromptTokenCount)
-    ? t`Read the system prompts to understand how the AI works (~${formatNumber(
-        systemPromptTokenCount,
-        { abbreviate: true, decimals: 1 },
-      )} tokens)`
-    : t`Read the system prompts to understand how the AI works`;
-
   const isAutoModelSelectionEnabled =
     currentWorkspace?.isAutoModelSelectionEnabled ?? true;
   const aiModelIdByTier: Partial<Record<AiModelTier, string>> =
@@ -70,6 +44,7 @@ export const SettingsAiModelsTab = () => {
   const tierOptions = AI_MODEL_TIERS.map((tier) => ({
     value: tier,
     label: getAiModelTierLabel(tier),
+    LeftComponent: <AiModelTierIndicator tier={tier} />,
   }));
 
   return (
@@ -77,94 +52,79 @@ export const SettingsAiModelsTab = () => {
       <Section>
         <H2Title
           title={t`Models`}
-          description={t`Which level of model people and agents get by default`}
+          description={t`Choose the default modes for people and agents`}
         />
-        <Card rounded>
-          <SettingsOptionCardContentSelect
-            Icon={IconMessage}
-            title={t`AI chat`}
-            description={t`Model used when you chat with Twenty`}
-            divider
-          >
-            <Select
-              dropdownId="models-tab-chat-tier-select"
-              value={chatTier}
-              onChange={handleChatTierChange}
-              options={tierOptions}
-              selectSizeVariant="small"
-            />
-          </SettingsOptionCardContentSelect>
-          <SettingsOptionCardContentSelect
-            Icon={IconRobot}
-            title={t`Agents`}
-            description={t`Model agents use when they run on their own`}
-            divider
-          >
-            <Select
-              dropdownId="models-tab-agent-tier-select"
-              value={agentTier}
-              onChange={handleAgentTierChange}
-              options={tierOptions}
-              selectSizeVariant="small"
-            />
-          </SettingsOptionCardContentSelect>
+        <Card rounded backgroundColor={themeCssVariables.background.secondary}>
+          <StyledSettingsSelectGroup controlWidth={160}>
+            <SettingsOptionCardContentSelect
+              Icon={IconMessage}
+              title={t`AI chat`}
+              description={t`Model used when you chat with Twenty`}
+              divider
+            >
+              <Select
+                dropdownId="models-tab-chat-tier-select"
+                value={chatTier}
+                onChange={handleChatTierChange}
+                options={tierOptions}
+                selectSizeVariant="small"
+              />
+            </SettingsOptionCardContentSelect>
+            <SettingsOptionCardContentSelect
+              Icon={IconRobot}
+              title={t`Agents`}
+              description={t`Model agents use when they run on their own`}
+              divider
+            >
+              <Select
+                dropdownId="models-tab-agent-tier-select"
+                value={agentTier}
+                onChange={handleAgentTierChange}
+                options={tierOptions}
+                selectSizeVariant="small"
+              />
+            </SettingsOptionCardContentSelect>
+          </StyledSettingsSelectGroup>
           <SettingsOptionCardContentSwitch
-            Icon={IconRefresh}
+            Icon={IconWand}
             title={t`Choose automatically`}
             description={t`Twenty fills each level with the best model that meets your requirements`}
             checked={isAutoModelSelectionEnabled}
             onChange={handleAutoModelSelectionToggle}
           />
-        </Card>
-
-        {!isAutoModelSelectionEnabled && (
-          <StyledPinnedModelsContainer>
-            <Card rounded>
+          {!isAutoModelSelectionEnabled && (
+            <StyledSettingsSelectGroup controlWidth={260}>
               {tiers.map((tier, index) => (
-                <SettingsOptionCardContentSelect
+                <NestedSettingsRow
                   key={tier.tier}
-                  title={tier.label}
-                  description={
-                    tier.isPinned
-                      ? t`Pinned`
-                      : isDefined(tier.model)
-                        ? t`Automatic: ${tier.model.label}`
-                        : t`No model available`
-                  }
-                  divider={index < tiers.length - 1}
+                  isLast={index === tiers.length - 1}
                 >
-                  <AiModelPinSelect
-                    dropdownId={`models-tab-pinned-model-select-${tier.tier}`}
-                    modelId={aiModelIdByTier[tier.tier] ?? null}
-                    onChange={(modelId) =>
-                      handlePinnedModelChange(tier.tier, modelId)
-                    }
-                    aiModels={aiModels}
-                    emptyOptionLabel={t`Automatic`}
-                    selectSizeVariant="small"
-                    dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-                  />
-                </SettingsOptionCardContentSelect>
+                  <SettingsOptionCardContentSelect
+                    LeftComponent={<AiModelTierIndicator tier={tier.tier} />}
+                    title={tier.label}
+                    description={getAiModelModeDescription(tier)}
+                    divider={index < tiers.length - 1}
+                  >
+                    <AiModelPinSelect
+                      dropdownId={`models-tab-pinned-model-select-${tier.tier}`}
+                      modelId={aiModelIdByTier[tier.tier] ?? null}
+                      onChange={(modelId) =>
+                        handlePinnedModelChange(tier.tier, modelId)
+                      }
+                      aiModels={aiModels}
+                      emptyOptionLabel={t`Automatic`}
+                      selectSizeVariant="small"
+                      dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+                    />
+                  </SettingsOptionCardContentSelect>
+                </NestedSettingsRow>
               ))}
-            </Card>
-          </StyledPinnedModelsContainer>
-        )}
+            </StyledSettingsSelectGroup>
+          )}
+        </Card>
       </Section>
 
       <SettingsAiModelTiersPreview />
-
-      <Section>
-        <H2Title
-          title={t`System Prompt`}
-          description={systemPromptDescription}
-        />
-        <UndecoratedLink to={getSettingsPath(SettingsPath.AiPrompts)}>
-          <SettingsCard
-            Icon={<IconPrompt size={theme.icon.size.md} />}
-            title={t`Read system prompts`}
-          />
-        </UndecoratedLink>
-      </Section>
     </>
   );
 };

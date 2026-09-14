@@ -1,5 +1,6 @@
 import { DomainShell } from '@/app/components/DomainShell';
 import { I18nActivationGate } from '@/app/components/I18nActivationGate';
+import { LocaleDirectionProvider } from '@/app/components/LocaleDirectionProvider';
 import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppRootErrorFallback } from '@/error-handler/components/AppRootErrorFallback';
@@ -25,22 +26,24 @@ export const App = () => {
       >
         <I18nActivationGate>
           <I18nProvider i18n={i18n}>
-            <ApolloDevLogEffect />
-            <SnackBarComponentInstanceContext.Provider
-              value={{ instanceId: 'snack-bar-manager' }}
-            >
-              <IconsProvider>
-                <ExceptionHandlerProvider>
-                  <HelmetProvider>
-                    <ClickOutsideListenerContext.Provider
-                      value={{ excludedClickOutsideId: undefined }}
-                    >
-                      <DomainShell />
-                    </ClickOutsideListenerContext.Provider>
-                  </HelmetProvider>
-                </ExceptionHandlerProvider>
-              </IconsProvider>
-            </SnackBarComponentInstanceContext.Provider>
+            <LocaleDirectionProvider>
+              <ApolloDevLogEffect />
+              <SnackBarComponentInstanceContext.Provider
+                value={{ instanceId: 'snack-bar-manager' }}
+              >
+                <IconsProvider>
+                  <ExceptionHandlerProvider>
+                    <HelmetProvider>
+                      <ClickOutsideListenerContext.Provider
+                        value={{ excludedClickOutsideId: undefined }}
+                      >
+                        <DomainShell />
+                      </ClickOutsideListenerContext.Provider>
+                    </HelmetProvider>
+                  </ExceptionHandlerProvider>
+                </IconsProvider>
+              </SnackBarComponentInstanceContext.Provider>
+            </LocaleDirectionProvider>
           </I18nProvider>
         </I18nActivationGate>
       </AppErrorBoundary>

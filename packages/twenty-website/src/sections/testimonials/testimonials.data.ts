@@ -15,7 +15,7 @@ export const TESTIMONIALS: readonly TestimonialRecord[] = [
     },
   },
   {
-    quote: msg`We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind.`,
+    quote: msg`We did not want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind.`,
     author: {
       name: msg`Amrendra Pratap Singh`,
       designation: msg`VP of Engineering at W3villa Technologies`,
