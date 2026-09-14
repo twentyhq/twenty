@@ -4502,6 +4502,7 @@ export type Object = {
   nameSingular: Scalars['String']['output'];
   openRecordIn: ObjectOpenRecordIn;
   readability: MetadataReadability;
+  readabilityParentFieldUniversalIdentifiers?: Maybe<Array<Scalars['UUID']['output']>>;
   searchFieldMetadataList: Array<SearchField>;
   shortcut?: Maybe<Scalars['String']['output']>;
   universalIdentifier: Scalars['String']['output'];

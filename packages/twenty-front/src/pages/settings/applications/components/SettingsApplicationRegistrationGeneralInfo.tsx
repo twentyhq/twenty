@@ -23,13 +23,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
-import {
-  AvatarOrIcon,
-  Chip,
-  ChipSize,
-  ChipVariant,
-  Tag,
-} from 'twenty-ui/data-display';
+import { AvatarOrIcon, Chip, Tag } from 'twenty-ui/data-display';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
 import { SettingsPath } from 'twenty-shared/types';
@@ -114,17 +108,17 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
       label: t`Owner`,
       value: isDefined(ownerWorkspace?.displayName) ? (
         <Chip
-          size={ChipSize.Large}
-          variant={ChipVariant.Highlighted}
-          clickable={false}
-          leftComponent={
+          size="md"
+          variant="soft"
+          startElement={
             <AvatarOrIcon
               shape="circle"
               src={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
             />
           }
-          label={ownerWorkspace.displayName}
-        />
+        >
+          {ownerWorkspace.displayName}
+        </Chip>
       ) : (
         <Tag color="orange">{t`Unclaimed`}</Tag>
       ),
