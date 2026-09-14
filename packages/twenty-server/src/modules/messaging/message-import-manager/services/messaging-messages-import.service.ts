@@ -2,8 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
-import { v4 } from 'uuid';
+import { Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -18,7 +17,6 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
@@ -209,65 +207,6 @@ export class MessagingMessagesImportService {
               connectedAccount,
               workspaceId,
             );
-          }
-
-          const messagesToSaveExternalIds = new Set(
-            messagesToSave.map((message) => message.externalId),
-          );
-
-          const filteredMessages = allMessages.filter(
-            (message) => !messagesToSaveExternalIds.has(message.externalId),
-          );
-
-          if (filteredMessages.length > 0) {
-            const messageChannelMessageAssociationRepository =
-              this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-                'messageChannelMessageAssociation',
-              );
-
-            const seenExternalIds = new Set<string>();
-            const uniqueFilteredMessages = filteredMessages.filter(
-              (message) => {
-                if (seenExternalIds.has(message.externalId)) {
-                  return false;
-                }
-                seenExternalIds.add(message.externalId);
-
-                return true;
-              },
-            );
-
-            const existingAssociations =
-              await messageChannelMessageAssociationRepository.find({
-                where: {
-                  messageChannelId: messageChannel.id,
-                  messageExternalId: In(
-                    uniqueFilteredMessages.map((msg) => msg.externalId),
-                  ),
-                },
-                select: { messageExternalId: true },
-              });
-
-            const existingExternalIds = new Set(
-              existingAssociations.map((assoc) => assoc.messageExternalId),
-            );
-
-            const filteredAssociationsToInsert = uniqueFilteredMessages
-              .filter((message) => !existingExternalIds.has(message.externalId))
-              .map((message) => ({
-                id: v4(),
-                messageChannelId: messageChannel.id,
-                messageExternalId: message.externalId,
-                messageThreadExternalId: null,
-                direction: message.direction,
-                messageId: null,
-              }));
-
-            if (filteredAssociationsToInsert.length > 0) {
-              await messageChannelMessageAssociationRepository.insert(
-                filteredAssociationsToInsert,
-              );
-            }
           }
 
           if (messageIdsToFetch.length < messagesGetBatchSize) {

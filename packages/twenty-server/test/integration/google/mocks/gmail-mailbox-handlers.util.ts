@@ -1,33 +1,10 @@
 import { type gmail_v1 } from 'googleapis';
 import { http, HttpResponse } from 'msw';
 
+import { gmailBatchMultipartResponse } from 'test/integration/google/mocks/gmail-batch-multipart-response.util';
 import { gmailMessageListHandler } from 'test/integration/google/mocks/gmail-message-list-handler.util';
 import { type MswHandler } from 'test/integration/utils/http-mock.util';
 import { type MockEntityStore } from 'test/integration/utils/mock-entity-store.util';
-
-const buildBatchMultipartResponse = (
-  messages: gmail_v1.Schema$Message[],
-): { body: string; contentType: string } => {
-  const boundary = 'batch_boundary';
-  const subResponses = messages
-    .map((message) =>
-      [
-        `--${boundary}`,
-        'Content-Type: application/http',
-        '',
-        'HTTP/1.1 200 OK',
-        'Content-Type: application/json; charset=UTF-8',
-        '',
-        JSON.stringify(message),
-      ].join('\r\n'),
-    )
-    .join('\r\n');
-
-  return {
-    body: `${subResponses}\r\n--${boundary}--`,
-    contentType: `multipart/mixed; boundary=${boundary}`,
-  };
-};
 
 export const gmailMailboxHandlers = (
   inbox: gmail_v1.Schema$Message[],
@@ -67,11 +44,11 @@ export const gmailMailboxHandlers = (
       requestedIds.includes(message.id ?? ''),
     );
 
-    const { body, contentType } =
-      buildBatchMultipartResponse(requestedMessages);
-
-    return new HttpResponse(body, {
-      headers: { 'Content-Type': contentType },
-    });
+    return gmailBatchMultipartResponse(
+      requestedMessages.map((message) => ({
+        statusLine: '200 OK',
+        body: message,
+      })),
+    );
   }),
 ];

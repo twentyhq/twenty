@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Any, In, IsNull, Repository } from 'typeorm';
+import { Any, In, Repository } from 'typeorm';
 
 import {
   MessageChannelPendingGroupEmailsAction,
@@ -22,7 +22,6 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
-import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
@@ -138,16 +137,6 @@ export class MessageChannelSyncStatusService {
             pendingSyncAction: MessageFolderPendingSyncAction.NONE,
           },
         );
-
-        const messageChannelMessageAssociationRepository =
-          this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-            'messageChannelMessageAssociation',
-          );
-
-        await messageChannelMessageAssociationRepository.delete({
-          messageChannelId: In(messageChannelIds),
-          messageId: IsNull(),
-        });
       },
       authContext,
       { lite: true },
