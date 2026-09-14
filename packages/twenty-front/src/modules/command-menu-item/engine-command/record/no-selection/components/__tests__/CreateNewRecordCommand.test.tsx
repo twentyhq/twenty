@@ -72,6 +72,7 @@ it.each([
 
     render(<CreateNewRecordCommand />);
 
+    expect(mockUseCreateNewRecord).toHaveBeenCalledTimes(1);
     expect(mockUseCreateNewRecord).toHaveBeenCalledWith({
       objectMetadataItem: targetObject,
     });
@@ -95,6 +96,7 @@ it('preserves the current view for the existing index command', async () => {
 
   render(<CreateNewRecordCommand />);
 
+  expect(mockUseCreateNewIndexRecord).toHaveBeenCalledTimes(1);
   expect(mockUseCreateNewIndexRecord).toHaveBeenCalledWith({
     objectMetadataItem: mockCompany,
     instanceId: 'company-view',
