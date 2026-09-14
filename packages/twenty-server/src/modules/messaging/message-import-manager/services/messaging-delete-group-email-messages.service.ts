@@ -93,8 +93,10 @@ export class MessagingDeleteGroupEmailMessagesService {
           );
 
           const messageExternalIdsToDelete = associations
-            .filter((association) =>
-              groupEmailMessageIds.has(association.messageId),
+            .filter(
+              (association) =>
+                isNonEmptyString(association.messageId) &&
+                groupEmailMessageIds.has(association.messageId),
             )
             .map((association) => association.messageExternalId)
             .filter(isNonEmptyString);
