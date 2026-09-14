@@ -7098,6 +7098,11 @@ msgstr "Չգտնվեց նույնականացուցիչ՝ որոնման համ�
 msgid "No input provided in form step"
 msgstr "Ձևի քայլում մուտքագրված տվյալներ չկան"
 
+#. js-lingui-id: jNd9S2
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "No mailbox is connected for this action. Connect one in Settings."
+msgstr "Այս գործողության համար որևէ փոստարկղ միացված չէ։ Կարգավորումներում միացրեք մեկը։"
+
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No pattern provided in CUSTOM cron trigger"
@@ -10846,6 +10851,11 @@ msgstr "Այս արշավի էլ․ նամակի բովանդակություն�
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
 msgstr "Այս սյունակը արդեն նշված է որպես եզակի։ Եթե ցանկանում եք կառավարել սահմանափակումը այստեղ, նախ անջատեք դաշտի \"Unique\" կարգավորումը։"
+
+#. js-lingui-id: /abJpu
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "This connected account cannot be used for this action."
+msgstr "Այս միացված հաշիվը չի կարող օգտագործվել այս գործողության համար։"
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts

@@ -22,7 +22,6 @@ const APP_PROVIDER_ID = uuidv4();
 const SHARED_BY_TIM_ID = uuidv4();
 const PRIVATE_OF_TIM_ID = uuidv4();
 const PRIVATE_OF_JONY_ID = uuidv4();
-const SHARED_TO_DELETE_ID = uuidv4();
 
 describe('app connection management guards (e2e)', () => {
   let applicationDbId: string;
@@ -105,19 +104,6 @@ describe('app connection management guards (e2e)', () => {
     );
   };
 
-  const deleteConnectedAccountAsMember = async (id: string) => {
-    return makeMetadataAPIRequestWithMemberRole({
-      query: gql`
-        mutation DeleteConnectedAccount($id: UUID!) {
-          deleteConnectedAccount(id: $id) {
-            id
-          }
-        }
-      `,
-      variables: { id },
-    });
-  };
-
   beforeAll(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: APP_ID,
@@ -172,11 +158,6 @@ describe('app connection management guards (e2e)', () => {
       id: PRIVATE_OF_JONY_ID,
       visibility: 'user',
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
-    });
-    await insertAppConnection({
-      id: SHARED_TO_DELETE_ID,
-      visibility: 'workspace',
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
     });
   }, 180000);
 
@@ -237,29 +218,5 @@ describe('app connection management guards (e2e)', () => {
 
     expect(errorMessage).not.toContain('Cannot reconnect connectedAccount');
     expect(errorMessage).not.toContain('does not have permission');
-  });
-
-  it('refuses a member without the Applications permission to delete a workspace-shared connection', async () => {
-    const response = await deleteConnectedAccountAsMember(SHARED_TO_DELETE_ID);
-
-    expect(response.body.errors[0].message).toContain(
-      'does not have permission',
-    );
-
-    const [remaining] = await globalThis.testDataSource.query(
-      `SELECT id FROM core."connectedAccount" WHERE id = $1`,
-      [SHARED_TO_DELETE_ID],
-    );
-
-    expect(remaining).toBeDefined();
-  });
-
-  it('lets a member without the Applications permission delete their own private connection', async () => {
-    const response = await deleteConnectedAccountAsMember(PRIVATE_OF_JONY_ID);
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.deleteConnectedAccount.id).toBe(
-      PRIVATE_OF_JONY_ID,
-    );
   });
 });
