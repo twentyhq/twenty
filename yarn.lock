@@ -27958,6 +27958,7 @@ __metadata:
     uuid: "npm:^13.0.2"
     vite: "npm:^8.0.0"
     vite-plugin-dts: "npm:^4.5.4"
+    yaml: "npm:^2.9.0"
   bin:
     create-twenty-app: dist/cli.cjs
   languageName: unknown

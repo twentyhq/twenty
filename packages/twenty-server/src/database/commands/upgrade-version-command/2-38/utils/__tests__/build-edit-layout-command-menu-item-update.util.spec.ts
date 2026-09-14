@@ -23,8 +23,12 @@ const LEGACY_COMMAND_MENU_ITEM: FlatCommandMenuItem = Object.freeze({
   label: 'Customize layout',
   isPinned: true,
   position: 42,
-  overrides: { label: 'Customize layout' },
-  universalOverrides: { label: 'Customize layout' },
+  overrides: {
+    '20202020-aaaa-4aaa-8aaa-000000000001': { label: 'Customize layout' },
+  },
+  universalOverrides: {
+    '20202020-aaaa-4aaa-8aaa-000000000001': { label: 'Customize layout' },
+  },
 });
 
 describe('buildEditLayoutCommandMenuItemUpdate', () => {
