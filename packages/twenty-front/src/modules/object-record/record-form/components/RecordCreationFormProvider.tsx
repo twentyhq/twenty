@@ -1,7 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordCreationFormCancellationEffect } from '@/object-record/record-form/components/RecordCreationFormCancellationEffect';
 import {
-  RecordCreationFormContext,
+  RecordCreationFormContextProvider,
   type RecordCreationFormContextValue,
 } from '@/object-record/record-form/contexts/RecordCreationFormContext';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -168,7 +168,7 @@ export const RecordCreationFormProvider = ({
   );
 
   return (
-    <RecordCreationFormContext.Provider value={contextValue}>
+    <RecordCreationFormContextProvider value={contextValue}>
       {children}
       {pendingRecordCreations.map(({ requestId }) => (
         <RecordCreationFormCancellationEffect
@@ -177,6 +177,6 @@ export const RecordCreationFormProvider = ({
           onCancel={cancelPendingRecordCreation}
         />
       ))}
-    </RecordCreationFormContext.Provider>
+    </RecordCreationFormContextProvider>
   );
 };
