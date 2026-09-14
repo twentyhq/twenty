@@ -61,11 +61,11 @@ export const SettingsAvailableApplicationCard = ({
         <Card rounded fullWidth>
           <StyledSettingsCardContent alignItems="flex-start" fullHeight>
             <Avatar
-              avatarUrl={getAbsoluteImageUrl(application.logoUrl || null)}
-              placeholder={application.name}
-              placeholderColorSeed={application.name}
+              src={getAbsoluteImageUrl(application.logoUrl || null)}
+              name={application.name}
+              colorSeed={application.name}
               size="lg"
-              type="squared"
+              shape="square"
             />
             <div>
               <StyledSettingsCardTitle>

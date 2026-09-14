@@ -1,0 +1,73 @@
+---
+title: Tabs
+description: Switch between related panels with accessible tab navigation.
+---
+
+import TabsReference from '/snippets/ui/generated/navigation/tabs.mdx';
+
+`Tabs` connects each tab to a panel using a shared `value`. Keep the values unique within a root.
+
+## Tab panels
+
+```tsx
+import { Tabs } from 'twenty-ui/navigation';
+
+export const RecordTabs = () => (
+  <Tabs.Root defaultValue="overview">
+    <Tabs.List aria-label="Record details">
+      <Tabs.Tab value="overview">Overview</Tabs.Tab>
+      <Tabs.Tab value="activity" badge={3}>
+        Activity
+      </Tabs.Tab>
+    </Tabs.List>
+    <Tabs.Panel value="overview">Company and contact details.</Tabs.Panel>
+    <Tabs.Panel value="activity">Recent calls and emails.</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+`Tabs.Tab` accepts `startIcon`, `badge`, and a `size` of `sm` or `md` (default `sm`). The active indicator is included in `Tabs.List`.
+
+## Controlled state and manual activation
+
+```tsx
+import { useState } from 'react';
+import { Tabs } from 'twenty-ui/navigation';
+
+export const SettingsTabs = () => {
+  const [tab, setTab] = useState<string | number | null>('profile');
+
+  return (
+    <Tabs.Root value={tab} onValueChange={setTab}>
+      <Tabs.List aria-label="Settings" activateOnFocus={false}>
+        <Tabs.Tab value="profile">Profile</Tabs.Tab>
+        <Tabs.Tab value="notifications">Notifications</Tabs.Tab>
+        <Tabs.Tab value="billing" disabled>
+          Billing
+        </Tabs.Tab>
+      </Tabs.List>
+      <Tabs.Panel value="profile">Profile settings.</Tabs.Panel>
+      <Tabs.Panel value="notifications">Notification settings.</Tabs.Panel>
+    </Tabs.Root>
+  );
+};
+```
+
+With `activateOnFocus={false}`, arrow keys move focus and Enter or Space activates the focused tab. `loopFocus` defaults to `true`. Disabled tabs are skipped. Use `orientation="vertical"` on `Root` for vertical navigation.
+
+## Parts
+
+| Part    | Purpose                                                    |
+| ------- | ---------------------------------------------------------- |
+| `Root`  | Owns the active value and orientation.                     |
+| `List`  | Labels and groups the tabs; includes the active indicator. |
+| `Tab`   | Selects its matching panel.                                |
+| `Panel` | Displays content for one value.                            |
+
+Use `keepMounted` on a panel when its contents must remain mounted while inactive. Give the list an accessible name that describes the set of panels.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<TabsReference />

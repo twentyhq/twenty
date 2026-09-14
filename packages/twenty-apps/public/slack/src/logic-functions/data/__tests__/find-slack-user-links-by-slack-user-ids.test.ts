@@ -114,6 +114,7 @@ describe('findSlackUserLinksBySlackUserIds', () => {
         [
           'U04ABC',
           {
+            id: 'link-1',
             slackUserId: 'U04ABC',
             slackTeamId: SLACK_TEAM_ID,
             name: 'alice.m',
@@ -140,6 +141,7 @@ describe('findSlackUserLinksBySlackUserIds', () => {
 
     expect((await find({ [SLACK_TEAM_ID]: ['U04ABC'] })).get('U04ABC')).toEqual(
       {
+        id: 'link-1',
         slackUserId: 'U04ABC',
         slackTeamId: SLACK_TEAM_ID,
         name: undefined,

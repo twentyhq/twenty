@@ -62,6 +62,7 @@ type Assertions = [
       | 'isUICreatable'
       | 'writability'
       | 'readability'
+      | 'readabilityParentFieldUniversalIdentifiers'
     >
   >,
 

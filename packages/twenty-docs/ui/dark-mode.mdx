@@ -1,0 +1,57 @@
+---
+title: Dark mode
+description: Load both Twenty UI palettes and switch the active color scheme.
+---
+
+Load both theme stylesheets when your application can switch schemes. `ThemeProvider` selects a palette by applying the `light` or `dark` class.
+
+```tsx
+import { useState } from 'react';
+import { Switch } from 'twenty-ui/input';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
+
+import 'twenty-ui/style.css';
+import 'twenty-ui/theme-light.css';
+import 'twenty-ui/theme-dark.css';
+
+export const App = () => {
+  const [isDark, setIsDark] = useState(false);
+
+  return (
+    <ThemeProvider colorScheme={isDark ? 'dark' : 'light'}>
+      <label>
+        <Switch checked={isDark} onCheckedChange={setIsDark} />
+        Dark mode
+      </label>
+    </ThemeProvider>
+  );
+};
+```
+
+The provider accepts an explicit scheme. Your application owns preference persistence and any system-preference handling. If you render on the server, use the same initial scheme on the server and client to avoid an initial palette mismatch.
+
+## Mix palettes
+
+Set `applyToRoot={false}` on a nested provider to give a subtree a different palette. Both stylesheets must be loaded:
+
+```tsx
+import { ThemeProvider } from 'twenty-ui/theme-constants';
+
+export const Preview = () => (
+  <ThemeProvider colorScheme="light">
+    <p>The application uses the light palette.</p>
+    <ThemeProvider colorScheme="dark" applyToRoot={false}>
+      <section
+        style={{
+          background: 'var(--t-background-primary)',
+          color: 'var(--t-font-color-primary)',
+        }}
+      >
+        This preview uses the dark palette.
+      </section>
+    </ThemeProvider>
+  </ThemeProvider>
+);
+```
+
+Use `useThemeColorScheme()` from `twenty-ui/theme-constants` to read the provider's active scheme. In a Twenty front component, use `useColorScheme()` from `twenty-sdk/front-component` to read the workspace scheme supplied by the host.
