@@ -395,20 +395,6 @@ export class ViewService {
     );
   }
 
-  private async isHiddenSeededView(
-    flatView: Pick<FlatView, 'universalIdentifier'>,
-    workspaceId: string,
-  ): Promise<boolean> {
-    const hiddenSeededViewUniversalIdentifiers =
-      await this.hiddenSeededViewService.getHiddenSeededViewUniversalIdentifiers(
-        workspaceId,
-      );
-
-    return hiddenSeededViewUniversalIdentifiers.has(
-      flatView.universalIdentifier,
-    );
-  }
-
   private async getFilteredFlatViews({
     workspaceId,
     objectMetadataId,
@@ -501,11 +487,7 @@ export class ViewService {
       flatEntityMaps: flatViewMaps,
     });
 
-    if (
-      !isDefined(flatView) ||
-      flatView.deletedAt !== null ||
-      (await this.isHiddenSeededView(flatView, workspaceId))
-    ) {
+    if (!isDefined(flatView) || flatView.deletedAt !== null) {
       return null;
     }
 
@@ -662,11 +644,7 @@ export class ViewService {
       flatEntityMaps: flatViewMaps,
     });
 
-    if (
-      !isDefined(flatView) ||
-      flatView.deletedAt !== null ||
-      (await this.isHiddenSeededView(flatView, workspaceId))
-    ) {
+    if (!isDefined(flatView) || flatView.deletedAt !== null) {
       return null;
     }
 
