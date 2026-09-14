@@ -111,18 +111,20 @@ const assertResolvedWithIntegrity = (
   packageName: string,
   version: string,
 ) => {
-  const header = `"${packageName}@npm:${version}":`;
-  const headerIndex = lockfile.indexOf(header);
+  // Entry keys merge when several descriptors share one resolution
+  // ("pkg@npm:1.0.0, pkg@npm:^1.0.0":), so match the resolution line instead.
+  const resolution = `resolution: "${packageName}@npm:${version}"`;
+  const resolutionIndex = lockfile.indexOf(resolution);
 
-  if (headerIndex === -1) {
+  if (resolutionIndex === -1) {
     throw new Error(
       `${packageName}@${version} is missing from the generated lockfile. Is it published yet?`,
     );
   }
 
-  const entryEnd = lockfile.indexOf('\n\n', headerIndex);
+  const entryEnd = lockfile.indexOf('\n\n', resolutionIndex);
   const entry = lockfile.slice(
-    headerIndex,
+    resolutionIndex,
     entryEnd === -1 ? undefined : entryEnd,
   );
 

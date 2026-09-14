@@ -148,7 +148,7 @@ jobs:
           fi
 
           for pkg in $LIBRARY_PACKAGES; do
-            if ! grep -q "\"$pkg@npm:$CI_VERSION\":" yarn.lock; then
+            if ! grep -q "resolution: \"$pkg@npm:$CI_VERSION\"" yarn.lock; then
               echo "::error::$pkg@$CI_VERSION is missing from the scaffolded lockfile"
               exit 1
             fi
