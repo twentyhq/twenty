@@ -16,7 +16,13 @@ export const resolveAppMessageDirection = ({
     (participant) => participant.role === MessageParticipantRole.FROM,
   );
 
-  return sender?.handle === channelHandle
+  // Compared case-insensitively, as the email path already normalises its
+  // handles. A provider that spells the same account differently in its
+  // profile API and its message payloads would otherwise mark every message
+  // the channel owner sent as incoming. Two distinct handles differing only
+  // in case would collide here, but one of them would have to be the
+  // channel's own, which is the far smaller risk of the two.
+  return sender?.handle.toLowerCase() === channelHandle.toLowerCase()
     ? MessageDirection.OUTGOING
     : MessageDirection.INCOMING;
 };
