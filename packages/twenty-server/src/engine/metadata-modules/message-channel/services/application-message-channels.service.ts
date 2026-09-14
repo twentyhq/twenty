@@ -1,0 +1,290 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { isNonEmptyString } from '@sniptt/guards';
+import {
+  ConnectedAccountProvider,
+  MessageChannelContactAutoCreationPolicy,
+  MessageChannelPendingGroupEmailsAction,
+  MessageChannelSyncStage,
+  MessageChannelSyncStatus,
+  MessageChannelType,
+  type MessageChannelVisibility,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
+
+import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import {
+  MessageChannelException,
+  MessageChannelExceptionCode,
+} from 'src/engine/metadata-modules/message-channel/message-channel.exception';
+import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+
+type ApplicationScope = {
+  applicationId: string;
+  workspaceId: string;
+};
+
+type CreateArgs = ApplicationScope & {
+  connectedAccountId: string;
+  handle: string;
+  displayName?: string;
+  visibility: MessageChannelVisibility;
+};
+
+type UpdateArgs = ApplicationScope & {
+  id: string;
+  displayName?: string | null;
+  visibility?: MessageChannelVisibility;
+  isSyncEnabled?: boolean;
+};
+
+// The scalar subset an app may change. Narrower than Partial<MessageChannelEntity>,
+// which carries the relations TypeORM's update() cannot take.
+type UpdatableChannelFields = Partial<
+  Pick<MessageChannelEntity, 'displayName' | 'visibility' | 'isSyncEnabled'>
+>;
+
+@Injectable()
+export class ApplicationMessageChannelsService {
+  constructor(
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    @InjectRepository(ConnectedAccountEntity)
+    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+  ) {}
+
+  async list({
+    applicationId,
+    workspaceId,
+    connectedAccountId,
+  }: ApplicationScope & {
+    connectedAccountId?: string;
+  }): Promise<MessageChannelDTO[]> {
+    const ownedAccountIds = await this.findOwnedConnectedAccountIds({
+      applicationId,
+      workspaceId,
+    });
+
+    if (ownedAccountIds.length === 0) {
+      return [];
+    }
+
+    if (isDefined(connectedAccountId)) {
+      if (!ownedAccountIds.includes(connectedAccountId)) {
+        throw this.ownershipViolation(connectedAccountId);
+      }
+
+      return this.messageChannelRepository.find({
+        where: {
+          connectedAccountId,
+          workspaceId,
+          type: MessageChannelType.APP,
+        },
+      });
+    }
+
+    return this.messageChannelRepository.find({
+      where: ownedAccountIds.map((ownedAccountId) => ({
+        connectedAccountId: ownedAccountId,
+        workspaceId,
+        type: MessageChannelType.APP,
+      })),
+    });
+  }
+
+  async create({
+    applicationId,
+    workspaceId,
+    connectedAccountId,
+    handle,
+    displayName,
+    visibility,
+  }: CreateArgs): Promise<MessageChannelDTO> {
+    await this.assertOwnsConnectedAccount({
+      applicationId,
+      workspaceId,
+      connectedAccountId,
+    });
+
+    const existingChannel = await this.messageChannelRepository.findOne({
+      where: { connectedAccountId, handle, workspaceId },
+    });
+
+    if (isDefined(existingChannel)) {
+      throw new MessageChannelException(
+        `A message channel already exists for handle ${handle} on connection ${connectedAccountId}`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    const trimmedDisplayName = displayName?.trim();
+
+    const entity = this.messageChannelRepository.create({
+      workspaceId,
+      connectedAccountId,
+      handle,
+      displayName: isNonEmptyString(trimmedDisplayName)
+        ? trimmedDisplayName
+        : null,
+      type: MessageChannelType.APP,
+      visibility,
+      isSyncEnabled: true,
+      // Inert for an app channel: it is excluded from the polling crons, which
+      // are the only writers of these fields. Mirrors EMAIL_GROUP, the other
+      // push-delivered channel, so the sync-status UI reads it as healthy.
+      syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+      syncStatus: MessageChannelSyncStatus.ACTIVE,
+      isContactAutoCreationEnabled: false,
+      contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy.SENT,
+      excludeGroupEmails: false,
+      excludeNonProfessionalEmails: false,
+      pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
+    });
+
+    return this.messageChannelRepository.save(entity);
+  }
+
+  async update({
+    applicationId,
+    workspaceId,
+    id,
+    displayName,
+    visibility,
+    isSyncEnabled,
+  }: UpdateArgs): Promise<MessageChannelDTO> {
+    const messageChannel = await this.findOwnedOrThrow({
+      applicationId,
+      workspaceId,
+      id,
+    });
+
+    const data: UpdatableChannelFields = {};
+
+    if (displayName !== undefined) {
+      const trimmedDisplayName = displayName?.trim();
+
+      data.displayName = isNonEmptyString(trimmedDisplayName)
+        ? trimmedDisplayName
+        : null;
+    }
+
+    if (isDefined(visibility)) {
+      data.visibility = visibility;
+    }
+
+    if (isDefined(isSyncEnabled)) {
+      data.isSyncEnabled = isSyncEnabled;
+    }
+
+    if (Object.keys(data).length === 0) {
+      return messageChannel;
+    }
+
+    await this.messageChannelRepository.update({ id, workspaceId }, data);
+
+    return this.messageChannelRepository.findOneOrFail({
+      where: { id, workspaceId },
+    });
+  }
+
+  async delete({
+    applicationId,
+    workspaceId,
+    id,
+  }: ApplicationScope & { id: string }): Promise<MessageChannelDTO> {
+    const messageChannel = await this.findOwnedOrThrow({
+      applicationId,
+      workspaceId,
+      id,
+    });
+
+    await this.messageChannelRepository.delete({ id, workspaceId });
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
+      MESSAGE_CHANNEL_DELETED_EVENT,
+      [{ messageChannelId: id }],
+      workspaceId,
+    );
+
+    return messageChannel;
+  }
+
+  // Resolving the channel through the app's own connections is what stops one
+  // app from reading or mutating another app's channels: the connected account
+  // carries the applicationId, the channel does not.
+  private async findOwnedOrThrow({
+    applicationId,
+    workspaceId,
+    id,
+  }: ApplicationScope & { id: string }): Promise<MessageChannelEntity> {
+    const messageChannel = await this.messageChannelRepository.findOne({
+      where: { id, workspaceId, type: MessageChannelType.APP },
+    });
+
+    if (!isDefined(messageChannel)) {
+      throw new MessageChannelException(
+        `Message channel ${id} not found`,
+        MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
+      );
+    }
+
+    await this.assertOwnsConnectedAccount({
+      applicationId,
+      workspaceId,
+      connectedAccountId: messageChannel.connectedAccountId,
+    });
+
+    return messageChannel;
+  }
+
+  private async assertOwnsConnectedAccount({
+    applicationId,
+    workspaceId,
+    connectedAccountId,
+  }: ApplicationScope & { connectedAccountId: string }): Promise<void> {
+    const connectedAccount = await this.connectedAccountRepository.findOne({
+      where: {
+        id: connectedAccountId,
+        applicationId,
+        workspaceId,
+        provider: ConnectedAccountProvider.APP,
+      },
+    });
+
+    if (!isDefined(connectedAccount)) {
+      throw this.ownershipViolation(connectedAccountId);
+    }
+  }
+
+  private async findOwnedConnectedAccountIds({
+    applicationId,
+    workspaceId,
+  }: ApplicationScope): Promise<string[]> {
+    const connectedAccounts = await this.connectedAccountRepository.find({
+      where: {
+        applicationId,
+        workspaceId,
+        provider: ConnectedAccountProvider.APP,
+      },
+      select: { id: true },
+    });
+
+    return connectedAccounts.map((connectedAccount) => connectedAccount.id);
+  }
+
+  // Deliberately indistinguishable from "not found": whether a connection id
+  // exists is not something one app should be able to probe for another.
+  private ownershipViolation(connectedAccountId: string) {
+    return new MessageChannelException(
+      `Connection ${connectedAccountId} not found`,
+      MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION,
+    );
+  }
+}
