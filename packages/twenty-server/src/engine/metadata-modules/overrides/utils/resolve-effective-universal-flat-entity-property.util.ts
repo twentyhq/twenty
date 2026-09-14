@@ -3,7 +3,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/overrides/types/override-author-context.type';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 
-type OverridableUniversalFlatEntity = {
+export type OverridableUniversalFlatEntity = {
   applicationUniversalIdentifier: string;
   universalOverrides?: unknown;
 };
