@@ -51,6 +51,10 @@ The four app-development skills work without any MCP setup. `use-twenty-mcp` is 
 
 Self-hosted instances are first-class targets. The skills never require a `twenty.com` workspace: any Twenty instance URL works, including custom HTTPS domains and localhost HTTP URLs. Workspace URLs and credentials are always supplied by the user and stay user-local.
 
+## Verifying The Self-Hosted Workflow
+
+CI checks that every skill installs complete and self-contained. The workflow the skills describe needs a running Twenty instance, so it is verified by hand: see [`SMOKE-TEST.md`](./SMOKE-TEST.md) for the procedure and the last recorded run.
+
 ## Canonical Source
 
 The content of `skills/` is generated from the canonical skill content in [`packages/twenty-codex-plugin`](../twenty-codex-plugin), which also powers the Codex marketplace plugin. Do not edit `skills/` directly.
