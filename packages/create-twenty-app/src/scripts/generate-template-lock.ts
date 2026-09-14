@@ -156,6 +156,13 @@ const assertNoRegistryPinning = ({
   registry: string;
 }) => {
   if (registry !== PUBLIC_REGISTRY) {
+    // The release workflow always regenerates against the public registry right
+    // before publishing, so a lockfile built here is only ever local scaffolding.
+    // Say so out loud rather than passing silently.
+    console.warn(
+      `Generated against ${registry}, not ${PUBLIC_REGISTRY}: this lockfile is for local testing and must not be published.`,
+    );
+
     return;
   }
 
