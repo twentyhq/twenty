@@ -7098,6 +7098,11 @@ msgstr "Er is geen identificator gevonden om mee te zoeken."
 msgid "No input provided in form step"
 msgstr "Geen invoer geleverd in formulierstap."
 
+#. js-lingui-id: jNd9S2
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "No mailbox is connected for this action. Connect one in Settings."
+msgstr "Er is geen mailbox gekoppeld voor deze actie. Koppel er een in Instellingen."
+
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No pattern provided in CUSTOM cron trigger"
@@ -10846,6 +10851,11 @@ msgstr "De e-mailinhoud van deze campagne is ongeldig."
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
 msgstr "Deze kolom is al als uniek gemarkeerd. Schakel eerst \"Unique\" voor het veld uit als je de beperking hier wilt beheren."
+
+#. js-lingui-id: /abJpu
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "This connected account cannot be used for this action."
+msgstr "Dit gekoppelde account kan niet worden gebruikt voor deze actie."
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
