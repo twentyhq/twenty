@@ -4,10 +4,14 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findPageLayoutTabs } from 'test/integration/metadata/suites/page-layout-tab/utils/find-page-layout-tabs.util';
 import { findPageLayoutWidgets } from 'test/integration/metadata/suites/page-layout-widget/utils/find-page-layout-widgets.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type Manifest } from 'twenty-shared/application';
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
+
+import { MigrateCanvasTabsToVerticalListSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1789139070588-migrate-canvas-tabs-to-vertical-list';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -257,7 +261,8 @@ describe('Manifest update - page layout tabs (standalone)', () => {
     );
   });
 
-  it('should preserve a legacy Canvas tab without replacing its widget on subsequent sync', async () => {
+  it('should preserve a legacy Canvas manifest and position override through migration and sync', async () => {
+    const widgetOverrides = { position: { layoutMode: 'CANVAS' } };
     const buildLegacyCanvasPageLayoutTab = () => ({
       universalIdentifier: TEST_TAB_ID,
       pageLayoutUniversalIdentifier: STANDARD_PERSON_PAGE_LAYOUT_UNIVERSAL_ID,
@@ -319,6 +324,19 @@ describe('Manifest update - page layout tabs (standalone)', () => {
       },
     });
 
+    await globalThis.testDataSource.query(
+      `UPDATE core."pageLayoutWidget" SET "overrides" = $1 WHERE "id" = $2`,
+      [JSON.stringify(widgetOverrides), widgetAfterFirstSync.id],
+    );
+
+    const workspaceCacheService =
+      getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
+    const command = new MigrateCanvasTabsToVerticalListSlowInstanceCommand(
+      workspaceCacheService,
+    );
+
+    await command.runDataMigration(globalThis.testDataSource);
+
     await syncApplication({
       manifest: buildManifest({
         pageLayoutTabs: [buildLegacyCanvasPageLayoutTab()],
@@ -360,6 +378,12 @@ describe('Manifest update - page layout tabs (standalone)', () => {
         },
       }),
     ]);
+    const [widgetAfterMigrationAndSync] = await globalThis.testDataSource.query(
+      `SELECT "overrides" FROM core."pageLayoutWidget" WHERE "id" = $1`,
+      [widgetAfterFirstSync.id],
+    );
+
+    expect(widgetAfterMigrationAndSync.overrides).toEqual(widgetOverrides);
   }, 60000);
 
   it('should delete a standalone tab when removed from manifest on second sync', async () => {

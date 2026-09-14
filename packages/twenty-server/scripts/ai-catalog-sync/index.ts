@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as prettier from 'prettier';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { MODELS_DEV_API_URL } from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.const';
 import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-data.type';
@@ -12,10 +12,12 @@ import { buildCatalog } from './utils/build-catalog.util';
 import { carryOverCommittedFields } from './utils/carry-over-committed-fields.util';
 import { enrichCatalog } from './utils/enrich-catalog.util';
 import { fetchArtificialAnalysisBenchmarks } from './utils/fetch-artificial-analysis-benchmarks.util';
+import { projectCatalog } from './utils/project-catalog.util';
 import { readCommittedBenchmarks } from './utils/read-committed-benchmarks.util';
 import { buildCoverageReport } from './utils/build-coverage-report.util';
 import { renderCoverageReport } from './utils/render-coverage-report.util';
 import { type BenchmarkIndex } from './types/benchmark-index.type';
+import { type CatalogSpec } from './types/catalog-spec.type';
 import { type GeneratedCatalog } from './types/generated-catalog.type';
 
 const AI_MODELS_DIR = path.resolve(
@@ -29,6 +31,8 @@ const AI_MODELS_DIR = path.resolve(
   'ai-models',
 );
 
+const MODELS_PATH = path.join(AI_MODELS_DIR, 'ai-models.json');
+const SELF_HOST_SPEC_PATH = path.join(AI_MODELS_DIR, 'ai-self-host-spec.json');
 const CATALOG_PATH = path.join(AI_MODELS_DIR, 'ai-providers.json');
 const BENCHMARKS_PATH = path.join(AI_MODELS_DIR, 'ai-model-benchmarks.json');
 
@@ -43,12 +47,38 @@ const readArgument = (flag: string): string | undefined => {
   return index === -1 ? undefined : process.argv[index + 1];
 };
 
-const readCommittedCatalog = (filePath: string): GeneratedCatalog =>
+const readCommittedModels = (filePath: string): GeneratedCatalog =>
   fs.existsSync(filePath)
     ? (JSON.parse(fs.readFileSync(filePath, 'utf-8')) as GeneratedCatalog)
     : {};
 
-const fetchModelsDev = async (): Promise<ModelsDevData> => {
+// The vendors the shipped catalog carries are the ones the self-host spec
+// serves; nothing else needs to be fetched, checked or written.
+const readVendors = (spec: CatalogSpec): string[] => {
+  const vendors = [
+    ...new Set(
+      spec.providers.flatMap((provider) =>
+        Array.isArray(provider.models) ? [] : [provider.models.vendor],
+      ),
+    ),
+  ];
+
+  // An empty list would fetch nothing, assert nothing and write an empty
+  // catalog over the real one, and the sync PR automerges.
+  if (!isNonEmptyArray(vendors)) {
+    throw new Error(
+      `${SELF_HOST_SPEC_PATH} names no vendor to carry: every route lists models explicitly`,
+    );
+  }
+
+  return vendors;
+};
+
+const fetchModelsDev = async ({
+  vendors,
+}: {
+  vendors: string[];
+}): Promise<ModelsDevData> => {
   const response = await fetch(MODELS_DEV_API_URL, {
     signal: AbortSignal.timeout(120000),
   });
@@ -59,7 +89,7 @@ const fetchModelsDev = async (): Promise<ModelsDevData> => {
 
   const data: ModelsDevData = await response.json();
 
-  assertPayloadIsUsable(data);
+  assertPayloadIsUsable({ data, vendors });
 
   return data;
 };
@@ -107,9 +137,14 @@ const main = async (): Promise<void> => {
   const reportPath = readArgument('--report');
   const measuredAt = new Date().toISOString().slice(0, 10);
 
+  const selfHostSpec = JSON.parse(
+    fs.readFileSync(SELF_HOST_SPEC_PATH, 'utf-8'),
+  ) as CatalogSpec;
+  const vendors = readVendors(selfHostSpec);
+
   log('Fetching models.dev API...');
 
-  const modelsDevData = await fetchModelsDev();
+  const modelsDevData = await fetchModelsDev({ vendors });
 
   log(`Fetched ${Object.keys(modelsDevData).length} providers from models.dev`);
 
@@ -127,11 +162,11 @@ const main = async (): Promise<void> => {
     );
   }
 
-  const catalog = buildCatalog(modelsDevData);
+  const catalog = buildCatalog({ data: modelsDevData, vendors });
 
   carryOverCommittedFields({
     catalog,
-    committedCatalog: readCommittedCatalog(CATALOG_PATH),
+    committedCatalog: readCommittedModels(MODELS_PATH),
   });
 
   const overlay = enrichCatalog({
@@ -155,7 +190,13 @@ const main = async (): Promise<void> => {
     return;
   }
 
-  await writeJson(CATALOG_PATH, catalog);
+  await writeJson(MODELS_PATH, catalog);
+  // Self-host runs the same projection cloud does, from a spec that names the
+  // five direct routes and lets each serve its whole vendor.
+  await writeJson(
+    CATALOG_PATH,
+    projectCatalog({ canonicalCatalog: catalog, spec: selfHostSpec }),
+  );
   await writeJson(BENCHMARKS_PATH, {
     source: 'artificialanalysis.ai',
     measuredAt,
