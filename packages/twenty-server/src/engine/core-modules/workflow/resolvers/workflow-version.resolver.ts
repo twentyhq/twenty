@@ -61,8 +61,6 @@ export class WorkflowVersionResolver {
     };
   }
 
-  // Runs the exact check activation runs, without activating; a version that
-  // cannot be activated fails with NON_ACTIVABLE_WORKFLOW_VERSION.
   @Mutation(() => Boolean)
   async validateWorkflowVersion(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

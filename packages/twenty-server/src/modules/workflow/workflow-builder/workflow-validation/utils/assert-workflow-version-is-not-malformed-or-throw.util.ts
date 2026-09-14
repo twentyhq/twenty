@@ -28,7 +28,7 @@ type WorkflowVersionMalformedCheckArgs = {
   objectIdByNameSingular: Record<string, string>;
 };
 
-export const getMalformedWorkflowVersionIssues = ({
+const getMalformedWorkflowVersionIssues = ({
   trigger,
   steps,
   flatObjectMetadataMaps,
