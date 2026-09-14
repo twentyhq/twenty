@@ -1,6 +1,7 @@
 import { isBoolean, isString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
+import { isDefined } from 'twenty-sdk/utils';
 
 import {
   SLACK_ACCESS_MODE_GET_ROUTE_PATH,
@@ -95,7 +96,7 @@ export const useSlackAccessMode = (): SlackAccessModeState => {
 
       const record = asRecord(result);
 
-      if (record === undefined || !isBoolean(record.success)) {
+      if (!isDefined(record) || !isBoolean(record.success)) {
         return GENERIC_ERROR_RESULT;
       }
 
