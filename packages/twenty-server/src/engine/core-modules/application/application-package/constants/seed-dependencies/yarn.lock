@@ -2420,7 +2420,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:6.16.0":
+"qs@npm:~6.16.0":
   version: 6.16.0
   resolution: "qs@npm:6.16.0"
   dependencies:
