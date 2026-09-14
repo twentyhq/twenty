@@ -135,6 +135,38 @@ describe('defineObject', () => {
     ]);
   });
 
+  describe.each([
+    { type: FieldMetadataType.SELECT },
+    { type: FieldMetadataType.MULTI_SELECT },
+  ] as const)('$type option colors', (fieldType) => {
+    it.each([
+      { description: 'missing', colorProperties: {} },
+      { description: 'null', colorProperties: { color: null } },
+    ])('accepts $description colors', ({ colorProperties }) => {
+      const config: ObjectManifest = {
+        ...validConfig,
+        fields: [
+          {
+            universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+            ...fieldType,
+            name: 'status',
+            label: 'Status',
+            options: [
+              {
+                value: 'OPEN',
+                label: 'Open',
+                position: 0,
+                ...colorProperties,
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(defineObject(config).success).toBe(true);
+    });
+  });
+
   it('should return error when field is missing label', () => {
     const config = {
       ...validConfig,

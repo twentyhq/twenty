@@ -1,6 +1,5 @@
 import { type FieldManifest } from 'twenty-shared/application';
 import {
-  type FieldMetadataComplexOption,
   type FieldMetadataDefaultActor,
   FieldMetadataType,
   MetadataWritability,
@@ -214,7 +213,7 @@ describe('fromFieldManifestToUniversalFlatFieldMetadata', () => {
           options: [
             { value: 'OPEN', label: 'Open', position: 0 },
             { value: 'CLOSED', label: 'Closed', color: 'red', position: 1 },
-          ] as FieldMetadataComplexOption[],
+          ],
         }),
         applicationUniversalIdentifier: APP_UID,
         now: NOW,

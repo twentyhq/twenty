@@ -78,6 +78,29 @@ describe('defineField', () => {
       { type: FieldMetadataType.SELECT },
       { type: FieldMetadataType.MULTI_SELECT },
     ] as const)('$type option validation', (fieldType) => {
+      it.each([
+        { description: 'missing', colorProperties: {} },
+        { description: 'null', colorProperties: { color: null } },
+      ])('accepts $description colors', ({ colorProperties }) => {
+        const config: FieldManifest = {
+          objectUniversalIdentifier: validConfig.objectUniversalIdentifier,
+          universalIdentifier: validConfig.universalIdentifier,
+          name: validConfig.name,
+          label: validConfig.label,
+          ...fieldType,
+          options: [
+            {
+              value: 'OPEN',
+              label: 'Open',
+              position: 0,
+              ...colorProperties,
+            },
+          ],
+        };
+
+        expect(defineField(config).success).toBe(true);
+      });
+
       it.each(['[null]', '["invalid"]', '[42]', '[false]', '[[]]'])(
         'returns a validation error for malformed option data %s',
         (serializedOptions) => {
@@ -200,21 +223,6 @@ describe('defineField', () => {
       expect(result.errors).toContain(
         'Field "Status" is a SELECT/MULTI_SELECT type and must have options',
       );
-    });
-
-    it('should accept SELECT options without a color', () => {
-      const config = {
-        objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
-        universalIdentifier: '550e8400-e29b-41d4-a716-446655440001',
-        type: FieldMetadataType.SELECT,
-        name: 'status',
-        label: 'Status',
-        options: [{ value: 'OPEN', label: 'Open', position: 0 }],
-      };
-
-      const result = defineField(config as any);
-
-      expect(result.success).toBe(true);
     });
 
     it('should return error when a SELECT option has an unsupported color', () => {

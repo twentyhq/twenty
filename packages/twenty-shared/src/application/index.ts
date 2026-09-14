@@ -128,6 +128,7 @@ export type {
   JobStatusResult,
 } from './enqueueJobType';
 export { SyncableEntity } from './enums/syncable-entities.enum';
+export type { FieldManifestOptions } from './fieldManifestOptionsType';
 export type {
   RegularFieldManifest,
   RelationFieldManifest,
