@@ -22,7 +22,10 @@ const stagingRoot = fs.mkdtempSync(
 try {
   buildPortableSkills({ outputRoot: stagingRoot });
 
-  const differences = diffDirectories(stagingRoot, skillsRoot);
+  const differences = diffDirectories({
+    expectedRoot: stagingRoot,
+    actualRoot: skillsRoot,
+  });
 
   if (differences.length > 0) {
     console.error(

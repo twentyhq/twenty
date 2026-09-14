@@ -203,7 +203,7 @@ describe('diffDirectories', () => {
     writeFixtureFile(actualRoot, 'outdated.md', 'old content');
     writeFixtureFile(actualRoot, 'unexpected.md', 'extra');
 
-    assert.deepEqual(diffDirectories(expectedRoot, actualRoot).sort(), [
+    assert.deepEqual(diffDirectories({ expectedRoot, actualRoot }).sort(), [
       'missing file: missing.md',
       'outdated file: outdated.md',
       'unexpected file: unexpected.md',
@@ -214,7 +214,7 @@ describe('diffDirectories', () => {
     writeFixtureFile(expectedRoot, 'nested/a.md', 'same');
     writeFixtureFile(actualRoot, 'nested/a.md', 'same');
 
-    assert.deepEqual(diffDirectories(expectedRoot, actualRoot), []);
+    assert.deepEqual(diffDirectories({ expectedRoot, actualRoot }), []);
   });
 });
 

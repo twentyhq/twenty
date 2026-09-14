@@ -181,7 +181,7 @@ const buildPortableSkills = ({
   }
 };
 
-const diffDirectories = (expectedRoot, actualRoot) => {
+const diffDirectories = ({ expectedRoot, actualRoot }) => {
   const relativize = (root, files) =>
     files.map((filePath) => path.relative(root, filePath));
   const expectedFiles = fs.existsSync(expectedRoot)
