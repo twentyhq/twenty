@@ -64,6 +64,7 @@ export const DashboardColorSelectionMenu = ({
 
         {BLOCKNOTE_COLORS.map((colorName) => (
           <StyledColorMenuItem
+            data-menu-item
             key={`text-${colorName}`}
             onClick={() => onTextColorSelect(colorName)}
           >
@@ -84,6 +85,7 @@ export const DashboardColorSelectionMenu = ({
         <DropdownMenuSectionLabel label={t`Background Colors`} />
         {BLOCKNOTE_COLORS.map((colorName) => (
           <StyledColorMenuItem
+            data-menu-item
             key={`bg-${colorName}`}
             onClick={() => onBackgroundColorSelect(colorName)}
           >

@@ -28,6 +28,7 @@ import { Button } from 'twenty-ui/input';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { isDefined } from 'twenty-shared/utils';
+import { DashboardColorSelectionMenu } from '@/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu';
 
 const meta: Meta<typeof Dropdown> = {
   title: 'UI/Layout/Dropdown/Dropdown',
@@ -486,7 +487,7 @@ export const SevenItemsWithScrollCue: Story = {
     );
 
     scrollContainer.scrollTop = scrollContainer.scrollHeight;
-    const lastRow = rows[6];
+    const lastRow = rows[rows.length - 1];
     expect(lastRow?.getBoundingClientRect().bottom).toBeLessThanOrEqual(
       scrollContainer.getBoundingClientRect().bottom,
     );
@@ -543,4 +544,62 @@ export const DraggableSevenItemsWithScrollCue: Story = {
     ),
   },
   play: SevenItemsWithScrollCue.play,
+};
+
+export const CustomColorRowsWithScrollCue: Story = {
+  args: {
+    dropdownComponents: (
+      <DashboardColorSelectionMenu
+        currentTextColor="default"
+        currentBackgroundColor="default"
+        onTextColorSelect={() => undefined}
+        onBackgroundColorSelect={() => undefined}
+      />
+    ),
+  },
+  play: SevenItemsWithScrollCue.play,
+};
+
+export const UnmarkedGridWithHeightCap: Story = {
+  args: {
+    dropdownComponents: (
+      <DropdownContent>
+        <DropdownMenuItemsContainer hasMaxHeight>
+          <div
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)' }}
+          >
+            {Array.from({ length: 50 }, (_, index) => (
+              <button key={index} style={{ height: 32 }}>
+                {index + 1}
+              </button>
+            ))}
+          </div>
+        </DropdownMenuItemsContainer>
+      </DropdownContent>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Open Dropdown' }),
+    );
+    const menu = await canvas.findByRole('listbox');
+    const scrollContainer = menu.parentElement;
+
+    if (!isDefined(scrollContainer)) {
+      throw new Error('Missing dropdown scroll container');
+    }
+
+    await waitFor(() => {
+      expect(scrollContainer.clientHeight).toBe(176);
+      expect(scrollContainer.scrollHeight).toBeGreaterThan(
+        scrollContainer.clientHeight,
+      );
+    });
+
+    scrollContainer.scrollTop = scrollContainer.scrollHeight;
+    expect(
+      canvas.getByRole('button', { name: '50' }).getBoundingClientRect().bottom,
+    ).toBeLessThanOrEqual(scrollContainer.getBoundingClientRect().bottom);
+  },
 };

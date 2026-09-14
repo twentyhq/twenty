@@ -1,5 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownMenuItemsContainerMaxHeight';
+
 export const getDropdownMenuItemsContainerMaxHeight = (
   container: HTMLElement,
 ): number | undefined => {
@@ -10,6 +12,11 @@ export const getDropdownMenuItemsContainerMaxHeight = (
       menuItem.closest('[role="listbox"]') === container &&
       menuItem.getBoundingClientRect().height > 0,
   );
+
+  // Grids and custom content without menu rows retain the existing height cap.
+  if (menuItems.length === 0) {
+    return DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT;
+  }
 
   if (menuItems.length <= 6) {
     return undefined;
