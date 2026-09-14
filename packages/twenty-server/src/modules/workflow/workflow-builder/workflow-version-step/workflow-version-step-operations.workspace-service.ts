@@ -672,6 +672,22 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.RUN_WORKFLOW: {
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Run Workflow',
+            type: WorkflowActionType.RUN_WORKFLOW,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                workflowId: '',
+                input: {},
+              },
+            },
+          },
+        };
+      }
       case WorkflowActionType.EMPTY: {
         return {
           builtStep: {
