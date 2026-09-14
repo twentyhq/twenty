@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { In, type QueryDeepPartialEntity, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -101,9 +101,14 @@ export class WorkflowVersionCoreSyncService {
       };
     });
 
-    await this.coreWorkflowVersionRepository.upsert(workspaceId, coreRows, [
-      'id',
-    ]);
+    await this.coreWorkflowVersionRepository.upsert(
+      workspaceId,
+      // The WorkflowAction union has grown too large for TypeScript to
+      // distribute TypeORM's recursive QueryDeepPartialEntity mapped type
+      // over every member without this cast (TS2590/TS2345).
+      coreRows as unknown as QueryDeepPartialEntity<WorkflowVersionEntity>[],
+      ['id'],
+    );
 
     await this.writeBackCoreVersionIds(
       workspaceId,
