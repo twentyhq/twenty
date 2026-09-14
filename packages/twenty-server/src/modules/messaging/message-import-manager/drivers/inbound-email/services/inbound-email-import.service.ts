@@ -151,127 +151,66 @@ export class InboundEmailImportService {
       return undefined;
     }
 
-    const messageRepository =
-      this.workspaceOrmManager.getRepository<MessageWorkspaceEntity>('message');
+    const storedHeaderMessageIdsByReferencedMessageId = new Map(
+      referencedMessageIds.map((referencedMessageId) => {
+        const atIndex = referencedMessageId.indexOf('@');
 
-    const associationRepository =
-      this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-        'messageChannelMessageAssociation',
-      );
-
-    const referencedMessageIdByLocalPart = new Map<string, string>();
-
-    for (const referencedMessageId of referencedMessageIds) {
-      const atIndex = referencedMessageId.indexOf('@');
-
-      if (atIndex > 1) {
-        referencedMessageIdByLocalPart.set(
-          referencedMessageId.slice(1, atIndex),
+        return [
           referencedMessageId,
-        );
-      }
+          atIndex > 1
+            ? [referencedMessageId, referencedMessageId.slice(1, atIndex)]
+            : [referencedMessageId],
+        ];
+      }),
+    );
+
+    const referencedMessages = await this.workspaceOrmManager
+      .getRepository<MessageWorkspaceEntity>('message')
+      .find({
+        where: {
+          headerMessageId: In(
+            [...storedHeaderMessageIdsByReferencedMessageId.values()].flat(),
+          ),
+        },
+        select: { id: true, headerMessageId: true },
+      });
+
+    if (referencedMessages.length === 0) {
+      return undefined;
     }
 
-    const [threadAssociations, referencedMessages, providerAssociations] =
-      await Promise.all([
-        associationRepository.find({
-          where: {
-            messageChannelId,
-            messageThreadExternalId: In(referencedMessageIds),
-          },
-          select: { messageThreadExternalId: true },
-        }),
-        messageRepository.find({
-          where: { headerMessageId: In(referencedMessageIds) },
-          select: { id: true, headerMessageId: true },
-        }),
-        referencedMessageIdByLocalPart.size > 0
-          ? associationRepository.find({
-              where: {
-                messageChannelId,
-                messageExternalId: In([
-                  ...referencedMessageIdByLocalPart.keys(),
-                ]),
-              },
-              select: {
-                messageExternalId: true,
-                messageThreadExternalId: true,
-              },
-            })
-          : [],
-      ]);
-
-    const referencedMessageAssociations =
-      referencedMessages.length > 0
-        ? await associationRepository.find({
-            where: {
-              messageChannelId,
-              messageId: In(
-                referencedMessages.map((referenced) => referenced.id),
-              ),
-            },
-            select: { messageId: true, messageThreadExternalId: true },
-          })
-        : [];
-
-    const threadExternalIdByReferencedMessageId = new Map<string, string>();
-
-    for (const association of threadAssociations) {
-      if (isNonEmptyString(association.messageThreadExternalId)) {
-        threadExternalIdByReferencedMessageId.set(
-          association.messageThreadExternalId,
-          association.messageThreadExternalId,
-        );
-      }
-    }
-
-    for (const referencedMessage of referencedMessages) {
-      const association = referencedMessageAssociations.find(
-        (candidate) => candidate.messageId === referencedMessage.id,
-      );
-
-      if (
-        !isNonEmptyString(referencedMessage.headerMessageId) ||
-        !isNonEmptyString(association?.messageThreadExternalId) ||
-        threadExternalIdByReferencedMessageId.has(
-          referencedMessage.headerMessageId,
-        )
-      ) {
-        continue;
-      }
-
-      threadExternalIdByReferencedMessageId.set(
-        referencedMessage.headerMessageId,
-        association.messageThreadExternalId,
-      );
-    }
-
-    for (const association of providerAssociations) {
-      const referencedMessageId = isNonEmptyString(
-        association.messageExternalId,
+    const channelAssociations = await this.workspaceOrmManager
+      .getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        'messageChannelMessageAssociation',
       )
-        ? referencedMessageIdByLocalPart.get(association.messageExternalId)
-        : undefined;
-
-      if (
-        !isDefined(referencedMessageId) ||
-        !isNonEmptyString(association.messageThreadExternalId) ||
-        threadExternalIdByReferencedMessageId.has(referencedMessageId)
-      ) {
-        continue;
-      }
-
-      threadExternalIdByReferencedMessageId.set(
-        referencedMessageId,
-        association.messageThreadExternalId,
-      );
-    }
+      .find({
+        where: {
+          messageChannelId,
+          messageId: In(
+            referencedMessages.map((referencedMessage) => referencedMessage.id),
+          ),
+        },
+        select: { messageId: true, messageThreadExternalId: true },
+      });
 
     return referencedMessageIds
-      .map((referencedMessageId) =>
-        threadExternalIdByReferencedMessageId.get(referencedMessageId),
-      )
-      .find(isDefined);
+      .map((referencedMessageId) => {
+        const storedHeaderMessageIds =
+          storedHeaderMessageIdsByReferencedMessageId.get(
+            referencedMessageId,
+          ) ?? [];
+
+        const referencedMessage = referencedMessages.find(
+          (candidate) =>
+            isNonEmptyString(candidate.headerMessageId) &&
+            storedHeaderMessageIds.includes(candidate.headerMessageId),
+        );
+
+        return channelAssociations.find(
+          (association) => association.messageId === referencedMessage?.id,
+        )?.messageThreadExternalId;
+      })
+      .find(isNonEmptyString);
   }
 
   private matchInboundRecipient(
