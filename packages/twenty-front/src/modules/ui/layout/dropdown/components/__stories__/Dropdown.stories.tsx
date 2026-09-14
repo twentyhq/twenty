@@ -11,6 +11,9 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 
+import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
+import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -22,7 +25,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -415,32 +418,7 @@ export const WithInput: Story = {
 //   ]);
 // };
 
-export const FiveItemsWithoutScroll: Story = {
-  args: {
-    dropdownComponents: (
-      <DropdownContent>
-        <DropdownMenuItemsContainer hasMaxHeight>
-          {Array.from({ length: 5 }, (_, index) => (
-            <MenuItem key={index} text={`Option ${index + 1}`} />
-          ))}
-        </DropdownMenuItemsContainer>
-      </DropdownContent>
-    ),
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Open Dropdown' }),
-    );
-    const menu = await canvas.findByRole('listbox');
-    const scrollContainer = menu.parentElement;
-
-    expect(scrollContainer).not.toBeNull();
-    expect(scrollContainer?.scrollHeight).toBe(scrollContainer?.clientHeight);
-  },
-};
-
-export const SixItemsWithScrollCue: Story = {
+export const SixItemsWithoutScroll: Story = {
   args: {
     dropdownComponents: (
       <DropdownContent>
@@ -460,30 +438,109 @@ export const SixItemsWithScrollCue: Story = {
     const menu = await canvas.findByRole('listbox');
     const scrollContainer = menu.parentElement;
 
+    expect(scrollContainer).not.toBeNull();
+    expect(scrollContainer?.scrollHeight).toBe(scrollContainer?.clientHeight);
+  },
+};
+
+export const SevenItemsWithScrollCue: Story = {
+  args: {
+    dropdownComponents: (
+      <DropdownContent>
+        <DropdownMenuItemsContainer hasMaxHeight>
+          {Array.from({ length: 7 }, (_, index) => (
+            <MenuItem key={index} text={`Option ${index + 1}`} />
+          ))}
+        </DropdownMenuItemsContainer>
+      </DropdownContent>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Open Dropdown' }),
+    );
+    const menu = await canvas.findByRole('listbox');
+    const scrollContainer = menu.parentElement;
+
     if (!isDefined(scrollContainer)) {
       throw new Error('Missing dropdown scroll container');
     }
 
-    const rows = menu.querySelector('[data-dropdown-menu-items]')?.children;
-    const fifthRow = rows?.[4];
+    const rows = menu.querySelectorAll('[data-menu-item]');
+    const sixthRow = rows[5];
 
-    if (!isDefined(fifthRow)) {
-      throw new Error('Missing fifth dropdown row');
+    if (!isDefined(sixthRow)) {
+      throw new Error('Missing sixth dropdown row');
     }
 
-    const rowBounds = fifthRow.getBoundingClientRect();
-    const visibleHeight =
-      scrollContainer.getBoundingClientRect().bottom - rowBounds.top;
+    await waitFor(() => {
+      const rowBounds = sixthRow.getBoundingClientRect();
+      const visibleHeight =
+        scrollContainer.getBoundingClientRect().bottom - rowBounds.top;
 
-    expect(Math.abs(visibleHeight - rowBounds.height / 2)).toBeLessThan(1);
+      expect(Math.abs(visibleHeight - rowBounds.height / 2)).toBeLessThan(1);
+    });
     expect(scrollContainer.scrollHeight).toBeGreaterThan(
       scrollContainer.clientHeight,
     );
 
     scrollContainer.scrollTop = scrollContainer.scrollHeight;
-    const lastRow = rows?.[5];
+    const lastRow = rows[6];
     expect(lastRow?.getBoundingClientRect().bottom).toBeLessThanOrEqual(
       scrollContainer.getBoundingClientRect().bottom,
     );
   },
+};
+
+export const GroupedSevenItemsWithScrollCue: Story = {
+  args: {
+    dropdownComponents: (
+      <DropdownContent>
+        <DropdownMenuItemsContainer hasMaxHeight>
+          <DropdownMenuSectionLabel label="Visible fields" />
+          {Array.from({ length: 3 }, (_, index) => (
+            <MenuItemSelect
+              key={index}
+              selected={false}
+              text={`Option ${index + 1}`}
+            />
+          ))}
+          <DropdownMenuSeparator />
+          <DropdownMenuSectionLabel label="Hidden fields" />
+          {Array.from({ length: 4 }, (_, index) => (
+            <MenuItemSelect
+              key={index}
+              selected={false}
+              text={`Option ${index + 4}`}
+            />
+          ))}
+        </DropdownMenuItemsContainer>
+      </DropdownContent>
+    ),
+  },
+  play: SevenItemsWithScrollCue.play,
+};
+
+export const DraggableSevenItemsWithScrollCue: Story = {
+  args: {
+    dropdownComponents: (
+      <DropdownContent>
+        <DropdownMenuItemsContainer hasMaxHeight>
+          <DraggableList
+            onDragEnd={() => undefined}
+            draggableItems={Array.from({ length: 7 }, (_, index) => (
+              <DraggableItem
+                key={index}
+                draggableId={`option-${index}`}
+                index={index}
+                itemComponent={<MenuItem text={`Option ${index + 1}`} />}
+              />
+            ))}
+          />
+        </DropdownMenuItemsContainer>
+      </DropdownContent>
+    ),
+  },
+  play: SevenItemsWithScrollCue.play,
 };

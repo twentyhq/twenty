@@ -41,6 +41,7 @@ export const StyledMenuItemBase = forwardRef<
     <div
       ref={ref}
       className={clsx(styles.menuItemBase, className)}
+      data-menu-item
       data-accent={accent}
       data-key-selected={isKeySelected || undefined}
       data-hover-background-disabled={isHoverBackgroundDisabled || undefined}
@@ -132,6 +133,7 @@ export const StyledHoverableMenuItemBase = forwardRef<
     <div
       ref={ref}
       className={clsx(styles.hoverableMenuItemBase, className)}
+      data-menu-item
       data-accent={accent}
       data-key-selected={isKeySelected || undefined}
       data-hover-background-disabled={isHoverBackgroundDisabled || undefined}

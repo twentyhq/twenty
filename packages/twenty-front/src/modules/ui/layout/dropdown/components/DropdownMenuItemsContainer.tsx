@@ -1,4 +1,4 @@
-import { DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownMenuItemsContainerMaxHeight';
+import { useDropdownMenuItemsContainerMaxHeight } from '@/ui/layout/dropdown/hooks/useDropdownMenuItemsContainerMaxHeight';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -26,19 +26,7 @@ const StyledScrollableContainer = styled.div<{ maxHeight?: number }>`
   box-sizing: border-box;
 
   display: flex;
-  &:has(
-    > [role='listbox']
-      > [data-dropdown-menu-items]
-      > :nth-child(
-        6
-          of
-          :not([data-dropdown-menu-section-label]):not(
-            [data-dropdown-menu-separator]
-          )
-      )
-  ) {
-    max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'none')};
-  }
+  max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'none')};
   overflow-y: auto;
 
   scrollbar-color: ${themeCssVariables.border.color.medium} transparent;
@@ -95,17 +83,14 @@ export const DropdownMenuItemsContainer = ({
   scrollable?: boolean;
   className?: string;
 }) => {
+  const { containerRef, maxHeight } = useDropdownMenuItemsContainerMaxHeight(
+    hasMaxHeight === true && scrollable,
+  );
+
   return scrollable === true ? (
-    <StyledScrollableContainer
-      className={className}
-      maxHeight={
-        hasMaxHeight ? DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT : undefined
-      }
-    >
-      <StyledExternalContainer role="listbox">
-        <StyledInternalContainer data-dropdown-menu-items>
-          {children}
-        </StyledInternalContainer>
+    <StyledScrollableContainer className={className} maxHeight={maxHeight}>
+      <StyledExternalContainer role="listbox" ref={containerRef}>
+        <StyledInternalContainer>{children}</StyledInternalContainer>
       </StyledExternalContainer>
     </StyledScrollableContainer>
   ) : (

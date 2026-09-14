@@ -33,6 +33,7 @@ export const StyledMenuItemSelect = forwardRef<
   <div
     ref={ref}
     className={clsx(styles.menuItemSelect, className)}
+    data-menu-item
     data-disabled={disabled || undefined}
     data-focused={focused || undefined}
     data-key-selected={isKeySelected || undefined}

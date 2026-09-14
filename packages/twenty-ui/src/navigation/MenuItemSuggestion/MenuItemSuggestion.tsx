@@ -41,6 +41,7 @@ export const MenuItemSuggestion = ({
   return (
     <li
       className={clsx(styles.suggestionMenuItem, className)}
+      data-menu-item
       data-selected={selected || undefined}
       role={isDefined(onClick) ? 'button' : undefined}
       tabIndex={isDefined(onClick) ? 0 : undefined}
