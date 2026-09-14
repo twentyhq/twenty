@@ -19,7 +19,7 @@ import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Chip, ChipVariant, LinkChip } from 'twenty-ui/data-display';
+import { Chip, LinkChip } from 'twenty-ui/data-display';
 import { TooltipPosition } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -167,7 +167,7 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
               objectNameSingular={objectNameSingular}
               record={recordStore}
               to={linkToRecord}
-              variant={ChipVariant.Transparent}
+              variant="ghost"
               isBold
               onClick={openRecord}
               triggerEvent={'CLICK'}
@@ -188,23 +188,25 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
             <StyledOverflowChipContainer>
               {isNonEmptyString(linkToRecord) ? (
                 <LinkChip
-                  label={overflowChipLabel}
                   to={linkToRecord}
                   onClick={openRecord}
                   triggerEvent="CLICK"
                   tooltipLabel={overflowChipTooltipLabel}
                   tooltipPlace={TooltipPosition.Top}
                   alwaysShowTooltip
-                  variant={ChipVariant.Highlighted}
-                />
+                  variant="soft"
+                >
+                  {overflowChipLabel}
+                </LinkChip>
               ) : (
                 <Chip
-                  label={overflowChipLabel}
                   tooltipLabel={overflowChipTooltipLabel}
                   tooltipPlace={TooltipPosition.Top}
                   alwaysShowTooltip
-                  variant={ChipVariant.Highlighted}
-                />
+                  variant="soft"
+                >
+                  {overflowChipLabel}
+                </Chip>
               )}
             </StyledOverflowChipContainer>
           )}

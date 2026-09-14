@@ -27,6 +27,9 @@ const buildFieldMaps = (
 const signUrl = (fileId: string, fileFolder: FileFolder) =>
   `signed:${fileFolder}:${fileId}`;
 
+const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '20202020-aaaa-4aaa-8aaa-000000000001';
+
 describe('getRecordImageIdentifier', () => {
   it('resolves a LINKS image identifier to a favicon url', async () => {
     const domainNameField = getFlatFieldMetadataMock({
@@ -149,7 +152,11 @@ describe('getRecordImageIdentifier', () => {
       id: 'custom-id',
       nameSingular: 'custom',
       imageIdentifierFieldMetadataId: 'text-id',
-      overrides: { imageIdentifierFieldMetadataId: 'domain-id' },
+      overrides: {
+        [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+          imageIdentifierFieldMetadataId: 'domain-id',
+        },
+      },
     });
 
     const result = await getRecordImageIdentifier({
@@ -178,7 +185,11 @@ describe('getRecordImageIdentifier', () => {
       id: 'custom-id',
       nameSingular: 'custom',
       imageIdentifierFieldMetadataId: 'domain-id',
-      overrides: { imageIdentifierFieldMetadataId: null },
+      overrides: {
+        [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+          imageIdentifierFieldMetadataId: null,
+        },
+      },
     });
 
     const result = await getRecordImageIdentifier({

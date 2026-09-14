@@ -1,0 +1,82 @@
+---
+title: Getting started
+description: Install Twenty UI in a React application and use its components and themes.
+---
+
+Twenty UI is Twenty's React component library. It provides components, icons, and theme tokens with prebuilt CSS, so your application does not need a CSS-in-JS compiler.
+
+<Note>
+  Twenty UI is in alpha. Its version follows the Twenty SDK release cycle, and
+  component APIs can change between releases. In a Twenty app, keep `twenty-ui`,
+  `twenty-sdk`, and `twenty-client-sdk` on the same version.
+</Note>
+
+## Install
+
+For a standalone React application, install the library and its peer dependencies:
+
+```bash
+yarn add twenty-ui monaco-editor react@^19 react-dom@^19
+```
+
+`monaco-editor` powers the code editor components, but install it even if you never render an editor: the `twenty-ui/input`, `twenty-ui/feedback`, and `twenty-ui/navigation` entry points reference it, and bundlers fail to resolve it otherwise.
+
+If you are building a Twenty app, follow [Using Twenty UI components](/developers/extend/apps/layout/front-components#using-twenty-ui-components). The front component renderer supplies the workspace theme and has a different setup from a standalone browser application.
+
+## Load styles and provide a theme
+
+Import the component stylesheet and a theme stylesheet once at your application entry point. `ThemeProvider` applies the active theme class and makes theme values available to components.
+
+```tsx
+import { Field, Input } from 'twenty-ui/input';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
+
+import 'twenty-ui/style.css';
+import 'twenty-ui/theme-light.css';
+
+export const App = () => (
+  <ThemeProvider colorScheme="light">
+    <Field.Root>
+      <Field.Label>Email</Field.Label>
+      <Input name="email" type="email" placeholder="you@example.com" />
+      <Field.Description>Use your work email address.</Field.Description>
+    </Field.Root>
+  </ThemeProvider>
+);
+```
+
+The component stylesheet includes a global reset. Review its effect when adding Twenty UI to an existing application.
+
+## Choose an entry point
+
+Import components from their public subpath to keep imports focused:
+
+| Import                      | Contents                                           |
+| --------------------------- | -------------------------------------------------- |
+| `twenty-ui/input`           | Form controls and buttons                          |
+| `twenty-ui/data-display`    | Avatars, chips, tags, and status indicators        |
+| `twenty-ui/feedback`        | Feedback and notifications                         |
+| `twenty-ui/navigation`      | List rows, tabs, and navigation components         |
+| `twenty-ui/surfaces`        | Menus, popovers, dialogs, and surfaces             |
+| `twenty-ui/typography`      | Text and typography                                |
+| `twenty-ui/icon`            | Icons                                              |
+| `twenty-ui/theme-constants` | Theme provider, hooks, and CSS variable references |
+
+Import individual icons, such as `IconCheck`, from `twenty-ui/icon`. The dynamic icon provider includes the full icon catalog, so reserve it for interfaces that need to look up icons at runtime.
+
+## Continue
+
+- [Theming](/ui/theming): use semantic tokens and scoped overrides.
+- [Dark mode](/ui/dark-mode): switch between light and dark palettes.
+
+## Components
+
+Each page includes usage examples, interaction guidance, and a generated API reference.
+
+| Family     | Components                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Forms      | [Field](/ui/components/input/field), [Input](/ui/components/input/input), [InputGroup](/ui/components/input/input-group), [Textarea](/ui/components/input/textarea), [Checkbox](/ui/components/input/checkbox), [Radio](/ui/components/input/radio), [RadioGroup](/ui/components/input/radio-group), [Select](/ui/components/input/select), [Slider](/ui/components/input/slider), [Switch](/ui/components/input/switch) |
+| Navigation | [ListItem](/ui/components/navigation/list-item), [Tabs](/ui/components/navigation/tabs)                                                                                                                                                                                                                                                                                                                                  |
+| Surfaces   | [AlertDialog](/ui/components/surfaces/alert-dialog), [Menu](/ui/components/surfaces/menu), [Popover](/ui/components/surfaces/popover)                                                                                                                                                                                                                                                                                    |
+| Feedback   | [Toast](/ui/components/feedback/toast)                                                                                                                                                                                                                                                                                                                                                                                   |
+| Typography | [Text](/ui/components/typography/text)                                                                                                                                                                                                                                                                                                                                                                                   |

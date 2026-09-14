@@ -9,7 +9,10 @@ import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-ca
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { createAsyncRecallTranscript } from 'src/logic-functions/recall-api/create-async-recall-transcript.util';
 import { listRecallTranscripts } from 'src/logic-functions/recall-api/list-recall-transcripts.util';
-import { isRetryableRecallApiStatus } from 'src/logic-functions/recall-api/recall-api-retry-policy.util';
+import {
+  isRecallAccountStatus,
+  isRetryableRecallApiStatus,
+} from 'src/logic-functions/recall-api/recall-api-retry-policy.util';
 import { type RecallTranscriptSummary } from 'src/logic-functions/recall-api/recall-transcript-summary.type';
 import { downloadTranscript } from 'src/logic-functions/flows/download-transcript.util';
 import { type ImportCallRecordingTranscriptResult } from 'src/logic-functions/flows/import-call-recording-transcript-result.type';
@@ -84,11 +87,32 @@ export const importCallRecordingTranscript = async ({
         `[call-recorder] failed to request transcript for Recall recording ${externalRecordingId}: ${createResult.errorMessage}`,
       );
 
-      return buildEmptyTranscriptArtifactResult({
-        hasRetryableFailure:
-          !isNull(createResult.status) &&
-          isRetryableRecallApiStatus(createResult.status),
-      });
+      // A lost response may still have created the transcript, and the next
+      // run lists transcripts before requesting a new one.
+      if (isNull(createResult.status)) {
+        return buildEmptyTranscriptArtifactResult();
+      }
+
+      if (isRetryableRecallApiStatus(createResult.status)) {
+        return buildEmptyTranscriptArtifactResult({
+          hasRetryableFailure: true,
+        });
+      }
+
+      if (isRecallAccountStatus(createResult.status)) {
+        return buildEmptyTranscriptArtifactResult();
+      }
+
+      return {
+        updateData: {
+          transcript: buildEmptyTranscriptMarker({
+            recallTranscriptId: null,
+            subCode: `transcript_request_rejected:${createResult.status}`,
+          }),
+        },
+        requestedTranscript: false,
+        hasRetryableFailure: false,
+      };
     }
 
     return {

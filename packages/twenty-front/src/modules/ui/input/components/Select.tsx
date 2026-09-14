@@ -61,6 +61,7 @@ export type SelectProps<Value extends SelectValue> = {
   dropdownOffset?: DropdownOffset;
   hasRightElement?: boolean;
   showContextualTextInControl?: boolean;
+  showIconInControl?: boolean;
   isDropdownInModal?: boolean;
   variant?: FormFieldInputVariant;
 };
@@ -104,6 +105,7 @@ export const Select = <Value extends SelectValue>({
   dropdownOffset,
   hasRightElement,
   showContextualTextInControl = true,
+  showIconInControl = true,
   isDropdownInModal = false,
   variant = 'default',
   renderAsTag = false,
@@ -175,14 +177,18 @@ export const Select = <Value extends SelectValue>({
   const { setSelectedItemId } = useSelectableList(dropdownId);
 
   const controlSelectedOption = useMemo(() => {
-    if (!isDefined(selectedOption) || showContextualTextInControl) {
+    if (!isDefined(selectedOption)) {
       return selectedOption;
     }
 
-    const { contextualText: _, ...rest } = selectedOption;
-
-    return rest;
-  }, [selectedOption, showContextualTextInControl]);
+    return {
+      ...selectedOption,
+      contextualText: showContextualTextInControl
+        ? selectedOption.contextualText
+        : undefined,
+      Icon: showIconInControl ? selectedOption.Icon : undefined,
+    };
+  }, [selectedOption, showContextualTextInControl, showIconInControl]);
 
   const handleDropdownOpen = () => {
     if (
@@ -248,6 +254,7 @@ export const Select = <Value extends SelectValue>({
                 <DropdownMenuItemsContainer scrollable={false}>
                   <MenuItemSelect
                     LeftIcon={pinnedOption.Icon}
+                    LeftComponent={pinnedOption.LeftComponent}
                     leftIconColor={pinnedOption.iconThemeColor}
                     text={pinnedOption.label}
                     contextualText={pinnedOption.contextualText}
@@ -300,6 +307,7 @@ export const Select = <Value extends SelectValue>({
                         ) : (
                           <MenuItemSelect
                             LeftIcon={option.Icon}
+                            LeftComponent={option.LeftComponent}
                             leftIconColor={option.iconThemeColor}
                             text={option.label}
                             contextualText={option.contextualText}

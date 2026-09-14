@@ -1,9 +1,16 @@
 import { faker } from '@faker-js/faker';
 import { type EachTestingContext } from 'twenty-shared/testing';
-import { FieldMetadataType, NumberDataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  NumberDataType,
+  PageLayoutWidgetVerticalListHeightBehavior,
+} from 'twenty-shared/types';
 
 import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
-import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
+import {
+  computeMetadataSchemaComponents,
+  computeSchemaComponents,
+} from 'src/engine/core-modules/open-api/utils/components.utils';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -927,5 +934,34 @@ describe('computeSchemaComponents', () => {
         flatFieldMetadataMaps,
       ),
     ).toMatchSnapshot();
+  });
+});
+
+describe('computeMetadataSchemaComponents', () => {
+  it('includes vertical-list height behavior in page layout widget positions', () => {
+    const components = computeMetadataSchemaComponents([
+      {
+        nameSingular: 'pageLayoutWidget',
+        namePlural: 'pageLayoutWidgets',
+      },
+    ]);
+
+    expect(components.PageLayoutWidgetPosition).toMatchObject({
+      oneOf: [
+        expect.any(Object),
+        {
+          properties: {
+            heightBehavior: {
+              type: 'string',
+              enum: [
+                PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT,
+                PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+              ],
+            },
+          },
+        },
+        expect.any(Object),
+      ],
+    });
   });
 });

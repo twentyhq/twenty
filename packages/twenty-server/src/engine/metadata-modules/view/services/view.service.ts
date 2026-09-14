@@ -14,7 +14,7 @@ import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modul
 import { fromDeleteViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util';
 import { fromDestroyViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util';
 import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util';
-import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
 import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
 import { fromFlatViewFilterGroupToViewFilterGroupDto } from 'src/engine/metadata-modules/view-filter-group/utils/from-flat-view-filter-group-to-view-filter-group-dto.util';
@@ -35,6 +35,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
 
 @Injectable()
 export class ViewService {
@@ -332,6 +333,18 @@ export class ViewService {
     });
 
     const now = new Date().toISOString();
+    const deactivatedFlatView = {
+      ...dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'view',
+        flatEntity: existingFlatView,
+        isActive: false,
+        authorUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      }),
+      updatedAt: now,
+    };
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -342,9 +355,7 @@ export class ViewService {
               flatEntityToDelete: shouldDeactivate
                 ? []
                 : [flatViewFromDestroyInput],
-              flatEntityToUpdate: shouldDeactivate
-                ? [{ ...existingFlatView, isActive: false, updatedAt: now }]
-                : [],
+              flatEntityToUpdate: shouldDeactivate ? [deactivatedFlatView] : [],
             },
           },
           workspaceId,
@@ -362,11 +373,7 @@ export class ViewService {
     }
 
     if (shouldDeactivate) {
-      return fromFlatViewToViewDto({
-        ...existingFlatView,
-        isActive: false,
-        updatedAt: now,
-      });
+      return fromFlatViewToViewDto(deactivatedFlatView);
     }
 
     return fromFlatViewToViewDto({

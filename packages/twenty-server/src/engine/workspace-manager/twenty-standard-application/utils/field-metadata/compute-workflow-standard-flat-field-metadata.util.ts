@@ -31,9 +31,9 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg({ message: `Id`, context: 'fieldMetadata.label' })),
+      label: i18nLabel(msg({ message: `ID`, context: 'fieldMetadata.label' })),
       description: i18nLabel(
-        msg({ message: `Id`, context: 'fieldMetadata.description' }),
+        msg({ message: `ID`, context: 'fieldMetadata.description' }),
       ),
       icon: 'Icon123',
       isSystem: true,
@@ -154,7 +154,7 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.TEXT,
       label: i18nLabel(
         msg({
-          message: `Last published Version Id`,
+          message: `Last published Version ID`,
           context: 'fieldMetadata.label',
         }),
       ),

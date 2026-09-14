@@ -31,22 +31,22 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Avatar',
-    node: <Avatar placeholder="John Doe" size="md" type="rounded" />,
+    node: <Avatar name="John Doe" size="md" shape="circle" />,
   },
   {
     name: 'AvatarGroup',
     node: (
       <AvatarGroup
         avatars={[
-          <Avatar key="a" placeholder="Alice" />,
-          <Avatar key="b" placeholder="Bob" />,
+          <Avatar key="a" name="Alice" />,
+          <Avatar key="b" name="Bob" />,
         ]}
       />
     ),
   },
   {
     name: 'AvatarOrIcon',
-    node: <AvatarOrIcon placeholder="Jane" Icon={IconStar} />,
+    node: <AvatarOrIcon name="Jane" Icon={IconStar} />,
   },
   {
     name: 'Checkmark',
@@ -54,7 +54,7 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Chip',
-    node: <Chip label="Chip label" />,
+    node: <Chip>Chip label</Chip>,
   },
   {
     name: 'ColorSample',
@@ -69,7 +69,7 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   // Router whose navigator bridges to the host navigate API.
   {
     name: 'LinkChip',
-    node: <LinkChip to="/example" label="Link chip" />,
+    node: <LinkChip to="/example">Link chip</LinkChip>,
   },
   {
     name: 'NotificationCounter',
@@ -93,7 +93,7 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Tag',
-    node: <Tag color="blue" text="Tag" />,
+    node: <Tag color="blue">Tag</Tag>,
   },
   {
     name: 'TintedIconTile',

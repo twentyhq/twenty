@@ -9,6 +9,7 @@ export const FIND_MANY_SKILLS_FOR_SUGGESTION = gql`
       description
       icon
       isActive
+      isSystem
     }
   }
 `;

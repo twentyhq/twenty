@@ -9,20 +9,22 @@
 
 export type { AnimatedCheckmarkProps } from './AnimatedCheckmark/AnimatedCheckmark';
 export { AnimatedCheckmark } from './AnimatedCheckmark/AnimatedCheckmark';
-export type { AvatarProps } from './Avatar/Avatar';
 export { Avatar } from './Avatar/Avatar';
 export { AVATAR_PROPERTIES_BY_SIZE } from './Avatar/constants/AvatarPropertiesBySize';
+export type { AvatarProps } from './Avatar/types/AvatarProps';
+export type { AvatarShape } from './Avatar/types/AvatarShape';
 export type { AvatarSize } from './Avatar/types/AvatarSize';
-export type { AvatarType } from './Avatar/types/AvatarType';
 export type { AvatarGroupProps } from './AvatarGroup/AvatarGroup';
 export { AvatarGroup } from './AvatarGroup/AvatarGroup';
-export type { AvatarOrIconProps } from './AvatarOrIcon/AvatarOrIcon';
+export type { AvatarOrIconProps } from './AvatarOrIcon/types/AvatarOrIconProps';
 export { AvatarOrIcon } from './AvatarOrIcon/AvatarOrIcon';
 export type { CheckmarkProps } from './Checkmark/Checkmark';
 export { Checkmark } from './Checkmark/Checkmark';
-export type { ChipProps } from './Chip/Chip';
-export { ChipSize, ChipAccent, ChipVariant, Chip } from './Chip/Chip';
+export { Chip } from './Chip/Chip';
 export { LINK_CHIP_CLICK_OUTSIDE_ID } from './Chip/constants/LinkChipClickOutsideId';
+export type { ChipProps } from './Chip/types/ChipProps';
+export type { ChipSize } from './Chip/types/ChipSize';
+export type { ChipVariant } from './Chip/types/ChipVariant';
 export type {
   ColorSampleVariant,
   ColorSampleProps,
@@ -40,8 +42,9 @@ export { SelectDisplay } from './SelectDisplay/SelectDisplay';
 export { Status } from './Status/Status';
 export type { StatusProps } from './Status/types/StatusProps';
 export { StyledTintedIconTileContainer } from './StyledTintedIconTileContainer/StyledTintedIconTileContainer';
-export type { TagColor } from './Tag/Tag';
 export { Tag } from './Tag/Tag';
+export type { TagColor } from './Tag/types/TagColor';
+export type { TagProps } from './Tag/types/TagProps';
 export { TextDisplay } from './TextDisplay/TextDisplay';
 export type { TintedIconTileProps } from './TintedIconTile/TintedIconTile';
 export { TintedIconTile } from './TintedIconTile/TintedIconTile';

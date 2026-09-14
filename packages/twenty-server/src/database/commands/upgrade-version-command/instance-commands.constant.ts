@@ -186,6 +186,11 @@ import { BackfillIsAuditLoggedOnPositionFieldMetadataSlowInstanceCommand } from 
 import { AddCoreWorkflowIdToWorkflowVersionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788960408161-add-core-workflow-id-to-workflow-version';
 import { AddAiModelTiersToWorkspaceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1789000000000-add-ai-model-tiers-to-workspace';
 import { MigrateWorkspaceModelsToTiersSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1789000000001-migrate-workspace-models-to-tiers';
+import { AddIsSystemToSkillFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1789129759228-add-is-system-to-skill';
+import { MigrateCanvasTabsToVerticalListSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1789139070588-migrate-canvas-tabs-to-vertical-list';
+import { AddWorkspaceWorkflowIdToWorkflowFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789350000001-add-workspace-workflow-id-to-workflow';
+import { AddCoreVersionPointersFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789370101008-add-core-version-pointers';
+import { AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789373200000-add-readability-parent-fields-to-object-metadata';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -374,4 +379,9 @@ export const INSTANCE_COMMANDS = [
   AddCoreWorkflowIdToWorkflowVersionFastInstanceCommand,
   AddAiModelTiersToWorkspaceFastInstanceCommand,
   MigrateWorkspaceModelsToTiersSlowInstanceCommand,
+  AddIsSystemToSkillFastInstanceCommand,
+  MigrateCanvasTabsToVerticalListSlowInstanceCommand,
+  AddWorkspaceWorkflowIdToWorkflowFastInstanceCommand,
+  AddCoreVersionPointersFastInstanceCommand,
+  AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand,
 ];

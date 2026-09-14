@@ -77,21 +77,22 @@ export const SettingsAdminWorkspaceContent = ({
       label: t`Name`,
       value: activeWorkspace?.id ? (
         <LinkChip
-          label={activeWorkspace?.name ?? ''}
           emptyLabel={t`Untitled`}
           to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
             workspaceId: activeWorkspace.id,
           })}
-          leftComponent={
+          startElement={
             <AvatarOrIcon
-              avatarUrl={getAbsoluteImageUrl(
+              src={getAbsoluteImageUrl(
                 isNonEmptyString(activeWorkspace?.logo)
                   ? activeWorkspace?.logo
                   : DEFAULT_WORKSPACE_LOGO,
               )}
             />
           }
-        />
+        >
+          {activeWorkspace?.name ?? ''}
+        </LinkChip>
       ) : (
         (activeWorkspace?.name ?? '')
       ),

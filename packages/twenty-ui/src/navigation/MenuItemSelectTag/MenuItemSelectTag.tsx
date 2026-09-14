@@ -8,6 +8,7 @@ import { type IconComponent } from '@ui/icon';
 import { type ThemeColor } from '@ui/theme';
 import { useTheme } from '@ui/theme-constants';
 import { StyledMenuItemSelect } from '@ui/navigation/MenuItemSelect/MenuItemSelect';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 type MenuItemSelectTagProps = {
   selected?: boolean;
@@ -17,7 +18,7 @@ type MenuItemSelectTagProps = {
   onClick?: () => void;
   color: ThemeColor | 'transparent';
   text: string;
-  variant?: 'solid' | 'outline';
+  variant?: 'soft' | 'outline';
   LeftIcon?: IconComponent | null;
 };
 
@@ -29,7 +30,7 @@ export const MenuItemSelectTag = ({
   className,
   onClick,
   text,
-  variant = 'solid',
+  variant = 'soft',
   LeftIcon,
 }: MenuItemSelectTagProps) => {
   const theme = useTheme();
@@ -43,11 +44,13 @@ export const MenuItemSelectTag = ({
     >
       <StyledMenuItemLeftContent>
         <Tag
+          borderStyle="dashed"
           variant={variant}
           color={color}
-          text={text}
-          Icon={LeftIcon ?? undefined}
-        />
+          startIcon={isDefined(LeftIcon) ? <LeftIcon /> : undefined}
+        >
+          {text}
+        </Tag>
       </StyledMenuItemLeftContent>
       {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>
