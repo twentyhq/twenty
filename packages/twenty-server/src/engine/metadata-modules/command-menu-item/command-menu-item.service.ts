@@ -97,7 +97,7 @@ export class CommandMenuItemService {
   }
 
   async create(
-    input: CreateCommandMenuItemInput,
+    input: CreateCommandMenuItemInput & { coreWorkflowVersionId?: string },
     workspaceId: string,
   ): Promise<CommandMenuItemDTO> {
     const {

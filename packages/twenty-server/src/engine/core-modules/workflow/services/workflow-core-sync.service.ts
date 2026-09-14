@@ -125,9 +125,11 @@ export class WorkflowCoreSyncService {
       });
 
       return new Map(
-        rows
-          .filter((row) => isNonEmptyString(row.coreWorkflowVersionId))
-          .map((row) => [row.id, row.coreWorkflowVersionId as string]),
+        rows.flatMap((row) =>
+          isNonEmptyString(row.coreWorkflowVersionId)
+            ? [[row.id, row.coreWorkflowVersionId] as const]
+            : [],
+        ),
       );
     }, buildSystemAuthContext(workspaceId));
   }

@@ -18,7 +18,9 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   flatFrontComponentMaps,
   flatPageLayoutMaps,
 }: {
-  createCommandMenuItemInput: CreateCommandMenuItemInput;
+  createCommandMenuItemInput: CreateCommandMenuItemInput & {
+    coreWorkflowVersionId?: string;
+  };
   workspaceId: string;
   flatApplication: FlatApplication;
 } & Pick<
