@@ -51,16 +51,16 @@ const EXPECTED_CANONICAL_STATE: Record<string, AccessState> =
     ]),
   );
 
-const EXPECTED_LEGACY_STATE: Record<string, AccessState> = Object.fromEntries(
+const EXPECTED_INITIAL_STATE: Record<string, AccessState> = Object.fromEntries(
   OBJECT_NAMES_SINGULAR.map((nameSingular) => [
     nameSingular,
     { readability: MetadataReadability.OPEN, inheritance: null },
   ]),
 );
 
-// The pre-`inheritance` declaration named one morph variant field, which the
-// command has to lift to the morph group it belongs to
-const LEGACY_ATTACHMENT_INHERITANCE: ObjectAccessInheritance = {
+// A standard child whose stored policy names one morph variant rather than the
+// morph group: the command owns that declaration and restores the canonical one
+const DIVERGENT_ATTACHMENT_INHERITANCE: ObjectAccessInheritance = {
   match: ObjectAccessInheritanceMatch.ANY,
   through: [
     {
@@ -151,7 +151,7 @@ describe('2-41 workspace command 1789343528002 - MigrateStandardChildObjectsToIn
 
     await runCommand({ dryRun: true });
 
-    expect(await findAccessStates()).toEqual(EXPECTED_LEGACY_STATE);
+    expect(await findAccessStates()).toEqual(EXPECTED_INITIAL_STATE);
   });
 
   it('declares the canonical policy and stays a no-op on a second run', async () => {
@@ -165,7 +165,7 @@ describe('2-41 workspace command 1789343528002 - MigrateStandardChildObjectsToIn
     expect(await findAccessStates()).toEqual(EXPECTED_CANONICAL_STATE);
   });
 
-  it('lifts a legacy morph variant reference to its morph group', async () => {
+  it('restores the canonical policy over a divergent one', async () => {
     const attachmentObjectMetadata =
       await objectMetadataRepository().findOneOrFail({
         where: {
@@ -177,7 +177,7 @@ describe('2-41 workspace command 1789343528002 - MigrateStandardChildObjectsToIn
     await writeState(
       {
         readability: MetadataReadability.INHERITED,
-        inheritance: LEGACY_ATTACHMENT_INHERITANCE,
+        inheritance: DIVERGENT_ATTACHMENT_INHERITANCE,
       },
       [attachmentObjectMetadata.id],
     );

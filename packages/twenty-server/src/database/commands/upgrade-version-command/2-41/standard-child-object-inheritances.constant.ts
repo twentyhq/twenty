@@ -9,7 +9,7 @@ import {
   ObjectAccessInheritanceRelationKind,
 } from 'twenty-shared/types';
 
-export const morphRef = (morphId: string): ObjectAccessInheritanceRelationRef => ({
+const morphRef = (morphId: string): ObjectAccessInheritanceRelationRef => ({
   kind: ObjectAccessInheritanceRelationKind.MORPH,
   morphId,
 });

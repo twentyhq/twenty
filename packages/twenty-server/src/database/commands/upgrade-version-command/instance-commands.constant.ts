@@ -189,7 +189,6 @@ import { MigrateWorkspaceModelsToTiersSlowInstanceCommand } from 'src/database/c
 import { AddIsSystemToSkillFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1789129759228-add-is-system-to-skill';
 import { MigrateCanvasTabsToVerticalListSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1789139070588-migrate-canvas-tabs-to-vertical-list';
 import { AddObjectMetadataInheritanceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789343528000-add-object-metadata-inheritance';
-import { MigrateLegacyReadabilityParentFieldsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-slow-1789343528001-migrate-legacy-readability-parent-fields';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -381,5 +380,4 @@ export const INSTANCE_COMMANDS = [
   AddIsSystemToSkillFastInstanceCommand,
   MigrateCanvasTabsToVerticalListSlowInstanceCommand,
   AddObjectMetadataInheritanceFastInstanceCommand,
-  MigrateLegacyReadabilityParentFieldsSlowInstanceCommand,
 ];

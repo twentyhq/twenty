@@ -1,25 +1,16 @@
 import { Command } from 'nest-commander';
 import {
-  FieldMetadataType,
   MetadataReadability,
   type ObjectAccessInheritance,
-  ObjectAccessInheritanceMatch,
-  type ObjectAccessInheritanceRelationRef,
-  ObjectAccessInheritanceRelationKind,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  morphRef,
-  STANDARD_CHILD_OBJECT_INHERITANCES,
-} from 'src/database/commands/upgrade-version-command/2-41/standard-child-object-inheritances.constant';
+import { STANDARD_CHILD_OBJECT_INHERITANCES } from 'src/database/commands/upgrade-version-command/2-41/standard-child-object-inheritances.constant';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -34,66 +25,11 @@ const STANDARD_INHERITANCE_BY_UNIVERSAL_IDENTIFIER = new Map<
   ]),
 );
 
-// A legacy declaration could name one morph variant field; the canonical form
-// names the morph group instead, so the whole group stays one logical branch
-const liftLegacyRefToCanonicalRef = ({
-  ref,
-  flatObjectMetadata,
-  flatFieldMetadataMaps,
-}: {
-  ref: ObjectAccessInheritanceRelationRef;
-  flatObjectMetadata: FlatObjectMetadata;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-}): ObjectAccessInheritanceRelationRef | undefined => {
-  if (ref.kind === ObjectAccessInheritanceRelationKind.MORPH) {
-    return ref;
-  }
-
-  const flatFieldMetadata =
-    flatFieldMetadataMaps.byUniversalIdentifier[ref.fieldUniversalIdentifier];
-
-  if (
-    !isDefined(flatFieldMetadata) ||
-    flatFieldMetadata.objectMetadataId !== flatObjectMetadata.id
-  ) {
-    return undefined;
-  }
-
-  if (flatFieldMetadata.type !== FieldMetadataType.MORPH_RELATION) {
-    return ref;
-  }
-
-  return isDefined(flatFieldMetadata.morphId)
-    ? morphRef(flatFieldMetadata.morphId)
-    : undefined;
-};
-
-const dedupeRefs = (
-  refs: ObjectAccessInheritanceRelationRef[],
-): ObjectAccessInheritanceRelationRef[] => {
-  const seen = new Set<string>();
-
-  return refs.filter((ref) => {
-    const key =
-      ref.kind === ObjectAccessInheritanceRelationKind.MORPH
-        ? `MORPH:${ref.morphId}`
-        : `FIELD:${ref.fieldUniversalIdentifier}`;
-
-    if (seen.has(key)) {
-      return false;
-    }
-
-    seen.add(key);
-
-    return true;
-  });
-};
-
 @RegisteredWorkspaceCommand('2.41.0', 1789343528002)
 @Command({
   name: 'upgrade:2-41:migrate-standard-child-objects-to-inherited-access',
   description:
-    'Declare the canonical inherited access of the attachment, timelineActivity, noteTarget, taskTarget, messageThreadTarget and calendarEventTarget standard objects, and normalize any legacy INHERITED declaration into it',
+    'Declare the canonical inherited access of the attachment, timelineActivity, noteTarget, taskTarget, messageThreadTarget and calendarEventTarget standard objects',
 })
 export class MigrateStandardChildObjectsToInheritedAccessCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -111,10 +47,9 @@ export class MigrateStandardChildObjectsToInheritedAccessCommand extends Provisi
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+    const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
       ]);
 
     const flatObjectMetadatasToUpdate: FlatObjectMetadata[] = [];
@@ -129,7 +64,6 @@ export class MigrateStandardChildObjectsToInheritedAccessCommand extends Provisi
 
       const targetInheritance = this.resolveTargetInheritance({
         flatObjectMetadata,
-        flatFieldMetadataMaps,
       });
 
       if (targetInheritance === 'unresolved') {
@@ -216,10 +150,8 @@ export class MigrateStandardChildObjectsToInheritedAccessCommand extends Provisi
 
   private resolveTargetInheritance({
     flatObjectMetadata,
-    flatFieldMetadataMaps,
   }: {
     flatObjectMetadata: FlatObjectMetadata;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): ObjectAccessInheritance | 'unresolved' | undefined {
     const standardInheritance =
       STANDARD_INHERITANCE_BY_UNIVERSAL_IDENTIFIER.get(
@@ -239,34 +171,11 @@ export class MigrateStandardChildObjectsToInheritedAccessCommand extends Provisi
       return undefined;
     }
 
-    const legacyInheritance = flatObjectMetadata.inheritance;
+    const inheritance = flatObjectMetadata.inheritance;
 
-    if (!isDefined(legacyInheritance) || legacyInheritance.through.length === 0) {
-      return 'unresolved';
-    }
-
-    const liftedRefs = legacyInheritance.through.map((ref) =>
-      liftLegacyRefToCanonicalRef({
-        ref,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
-    );
-
-    if (!liftedRefs.every(isDefined)) {
-      return 'unresolved';
-    }
-
-    const [firstRef, ...otherRefs] = dedupeRefs(liftedRefs);
-
-    const normalizedInheritance: ObjectAccessInheritance = {
-      match: legacyInheritance.match ?? ObjectAccessInheritanceMatch.ANY,
-      through: [firstRef, ...otherRefs],
-    };
-
-    return this.isSameInheritance(legacyInheritance, normalizedInheritance)
+    return isDefined(inheritance) && inheritance.through.length > 0
       ? undefined
-      : normalizedInheritance;
+      : 'unresolved';
   }
 
   private isSameInheritance(
