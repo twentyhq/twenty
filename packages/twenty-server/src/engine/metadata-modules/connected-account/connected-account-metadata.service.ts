@@ -318,7 +318,7 @@ export class ConnectedAccountMetadataService {
     workspaceId: string;
   }): Promise<string[]> {
     const accounts = await this.repository.find({
-      where: { workspaceId, visibility: 'workspace' },
+      where: { workspaceId, visibility: 'workspace', archivedAt: IsNull() },
       select: ['id'],
     });
 

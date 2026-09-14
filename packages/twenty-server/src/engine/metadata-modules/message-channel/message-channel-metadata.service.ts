@@ -172,14 +172,20 @@ export class MessageChannelMetadataService {
         workspaceId,
       });
 
+    if (!isDefined(connectedAccount)) {
+      throw new MessageChannelException(
+        `Connected account ${messageChannel.connectedAccountId} of message channel ${id} not found`,
+        MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
+      );
+    }
+
     const isAdministrableByCaller =
-      isDefined(connectedAccount) &&
-      (await this.connectedAccountMetadataService.isAdministrableByCaller({
+      await this.connectedAccountMetadataService.isAdministrableByCaller({
         connectedAccount,
         userWorkspaceId,
         workspaceId,
         applicationId,
-      }));
+      });
 
     if (!isAdministrableByCaller) {
       throw new MessageChannelException(
