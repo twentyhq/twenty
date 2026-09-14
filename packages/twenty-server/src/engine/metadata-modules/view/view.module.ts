@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { HiddenSeededViewModule } from 'src/engine/metadata-modules/view/hidden-seeded-view.module';
 import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
 import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
@@ -38,7 +37,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ViewSortModule,
     I18nModule,
     ApplicationModule,
-    FeatureFlagModule,
     HiddenSeededViewModule,
     PermissionsModule,
     UserRoleModule,

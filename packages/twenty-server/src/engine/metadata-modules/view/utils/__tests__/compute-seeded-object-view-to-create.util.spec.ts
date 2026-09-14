@@ -1,7 +1,7 @@
 import { getSeededObjectViewUniversalIdentifier } from 'twenty-shared/application';
 import { ViewType } from 'twenty-shared/types';
 
-import { computeSeededObjectViewToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-seeded-object-view-to-create.util';
+import { computeSeededObjectViewToCreate } from 'src/engine/metadata-modules/view/utils/compute-seeded-object-view-to-create.util';
 
 describe('computeSeededObjectViewToCreate', () => {
   const applicationUniversalIdentifier = '20202020-1c25-4d02-bf25-6aeccf7ea419';
