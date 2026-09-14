@@ -231,6 +231,7 @@ export const FormFieldInput = ({
       label={field.label}
       defaultValue={defaultValue as FieldRichTextValue | undefined}
       onChange={onChange}
+      VariablePicker={VariablePicker}
       readonly={readonly}
       placeholder={placeholder}
     />
