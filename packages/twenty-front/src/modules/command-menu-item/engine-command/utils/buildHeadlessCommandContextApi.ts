@@ -26,6 +26,7 @@ export const buildHeadlessCommandContextApi = ({
   engineComponentKey,
   payload,
   navigationTargetObjectMetadataId,
+  creationTargetObjectMetadataId,
   isInSidePanel,
 }: {
   store: Store;
@@ -33,6 +34,7 @@ export const buildHeadlessCommandContextApi = ({
   engineComponentKey: EngineComponentKey;
   payload?: CommandMenuItemPayload | null;
   navigationTargetObjectMetadataId?: string | null;
+  creationTargetObjectMetadataId?: string;
   isInSidePanel?: boolean;
 }): HeadlessEngineCommandContextApi => {
   const objectMetadataItemId = store.get(
@@ -132,6 +134,7 @@ export const buildHeadlessCommandContextApi = ({
     graphqlFilter,
     payload: payload ?? null,
     navigationTargetObjectMetadataId: navigationTargetObjectMetadataId ?? null,
+    creationTargetObjectMetadataId,
     isInSidePanel: isInSidePanel ?? false,
   };
 };

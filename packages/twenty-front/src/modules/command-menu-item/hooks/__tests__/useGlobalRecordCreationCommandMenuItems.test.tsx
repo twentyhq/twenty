@@ -54,13 +54,13 @@ it('offers every creatable object with its label, icon, and creation target', ()
     expect.objectContaining({
       label: 'Create Company',
       icon: 'IconBuildingSkyscraper',
-      navigationTargetObjectMetadataId: 'company',
+      creationTargetObjectMetadataId: 'company',
       isPinned: false,
     }),
     expect.objectContaining({
       label: 'Create Task',
       icon: 'IconCheckbox',
-      navigationTargetObjectMetadataId: 'task',
+      creationTargetObjectMetadataId: 'task',
       isPinned: false,
     }),
   ]);

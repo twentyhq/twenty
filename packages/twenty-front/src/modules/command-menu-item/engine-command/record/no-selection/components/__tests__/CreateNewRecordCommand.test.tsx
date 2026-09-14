@@ -1,8 +1,9 @@
-import { CreateNewIndexRecordNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/CreateNewIndexRecordNoSelectionRecordCommand';
+import { CreateNewRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/CreateNewRecordCommand';
 import { render } from '@testing-library/react';
 
 const mockUseHeadlessCommandContextApi = jest.fn();
 const mockUseCreateNewIndexRecord = jest.fn();
+const mockUseCreateNewRecord = jest.fn();
 const mockCompany = { id: 'company', nameSingular: 'company' };
 const mockTask = { id: 'task', nameSingular: 'task' };
 
@@ -22,6 +23,9 @@ jest.mock('@/object-record/record-table/hooks/useCreateNewIndexRecord', () => ({
   useCreateNewIndexRecord: (props: unknown) =>
     mockUseCreateNewIndexRecord(props),
 }));
+jest.mock('@/object-record/hooks/useCreateNewRecord', () => ({
+  useCreateNewRecord: (props: unknown) => mockUseCreateNewRecord(props),
+}));
 jest.mock('@/object-core/workflows/hooks/useCreateCoreWorkflow', () => ({
   useCreateCoreWorkflow: () => ({ createCoreWorkflow: jest.fn() }),
 }));
@@ -32,6 +36,7 @@ jest.mock(
 
 beforeEach(() => {
   jest.clearAllMocks();
+  mockUseCreateNewRecord.mockReturnValue({ createNewRecord: jest.fn() });
   mockUseCreateNewIndexRecord.mockReturnValue({
     createNewIndexRecord: jest.fn(),
   });
@@ -47,15 +52,15 @@ it.each([
     mockUseHeadlessCommandContextApi.mockReturnValue({
       objectMetadataItem: currentObject,
       recordIndexId: 'current-view',
-      navigationTargetObjectMetadataId: targetObject.id,
+      creationTargetObjectMetadataId: targetObject.id,
     });
 
-    render(<CreateNewIndexRecordNoSelectionRecordCommand />);
+    render(<CreateNewRecordCommand />);
 
-    expect(mockUseCreateNewIndexRecord).toHaveBeenCalledWith({
+    expect(mockUseCreateNewRecord).toHaveBeenCalledWith({
       objectMetadataItem: targetObject,
-      instanceId: `global-record-creation-${targetObject.id}`,
     });
+    expect(mockUseCreateNewIndexRecord).not.toHaveBeenCalled();
   },
 );
 
@@ -63,10 +68,10 @@ it('preserves the current view for the existing index command', () => {
   mockUseHeadlessCommandContextApi.mockReturnValue({
     objectMetadataItem: mockCompany,
     recordIndexId: 'company-view',
-    navigationTargetObjectMetadataId: null,
+    creationTargetObjectMetadataId: null,
   });
 
-  render(<CreateNewIndexRecordNoSelectionRecordCommand />);
+  render(<CreateNewRecordCommand />);
 
   expect(mockUseCreateNewIndexRecord).toHaveBeenCalledWith({
     objectMetadataItem: mockCompany,

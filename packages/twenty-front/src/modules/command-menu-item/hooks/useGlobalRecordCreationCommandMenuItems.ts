@@ -1,3 +1,4 @@
+import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -7,12 +8,11 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
   CommandMenuItemAvailabilityType,
-  type CommandMenuItemFieldsFragment,
   EngineComponentKey,
 } from '~/generated-metadata/graphql';
 
 export const useGlobalRecordCreationCommandMenuItems = (
-  commandMenuItems: CommandMenuItemFieldsFragment[],
+  commandMenuItems: CommandMenuItemDefinition[],
 ) => {
   const { t } = useLingui();
   const isRecordCreationFormEnabled = useIsFeatureEnabled(
@@ -45,7 +45,7 @@ export const useGlobalRecordCreationCommandMenuItems = (
         permissions.canUpdateObjectRecords
       );
     })
-    .map((objectMetadataItem): CommandMenuItemFieldsFragment => {
+    .map((objectMetadataItem): CommandMenuItemDefinition => {
       const objectLabelSingular = capitalize(objectMetadataItem.labelSingular);
 
       return {
@@ -60,7 +60,8 @@ export const useGlobalRecordCreationCommandMenuItems = (
         availabilityObjectMetadataId: null,
         conditionalAvailabilityExpression: null,
         conditionalPinnedExpression: null,
-        navigationTargetObjectMetadataId: objectMetadataItem.id,
+        navigationTargetObjectMetadataId: null,
+        creationTargetObjectMetadataId: objectMetadataItem.id,
       };
     });
 };

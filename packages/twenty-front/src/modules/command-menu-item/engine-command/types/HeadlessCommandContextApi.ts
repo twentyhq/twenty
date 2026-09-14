@@ -23,6 +23,7 @@ export type HeadlessEngineCommandContextApi = {
   graphqlFilter: Nullable<RecordGqlOperationFilter>;
   payload: Nullable<CommandMenuItemPayload>;
   navigationTargetObjectMetadataId: Nullable<string>;
+  creationTargetObjectMetadataId?: string;
   isInSidePanel?: boolean;
 };
 
