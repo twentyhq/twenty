@@ -7758,7 +7758,7 @@ msgstr "Étape de l'opportunité"
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
-msgstr ""
+msgstr "L’option \"{optionLabel}\" a une couleur non prise en charge"
 
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts

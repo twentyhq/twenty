@@ -17,6 +17,7 @@ import {
   statusControlsTest,
   tagControlsTest,
   avatarControlsTest,
+  chipControlsTest,
 } from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
 import {
@@ -394,4 +395,16 @@ export const AvatarControlsPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-avatar-controls',
   runtime: 'preact',
   play: avatarControlsTest,
+});
+
+export const ChipControlsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-chip-controls',
+  runtime: 'react',
+  play: chipControlsTest,
+});
+
+export const ChipControlsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-chip-controls',
+  runtime: 'preact',
+  play: chipControlsTest,
 });
