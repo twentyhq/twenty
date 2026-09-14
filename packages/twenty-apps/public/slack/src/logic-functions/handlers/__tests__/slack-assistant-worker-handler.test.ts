@@ -123,6 +123,14 @@ const REQUEST_RECORD: SlackAssistantRequestRecord = {
   requestText: 'how many open deals does Acme have?',
 };
 
+const REQUESTER_IDENTITY = {
+  slackUserId: 'U123',
+  slackTeamId: 'T0INSTALLED',
+  displayName: 'Ada',
+  email: 'ada@example.com',
+  isRegularUserAccount: true,
+};
+
 const SLACK_CONTEXT = {
   conversationMessages: [],
   requesterName: 'Ada',
@@ -192,7 +200,11 @@ describe('slackAssistantWorkerHandler', () => {
     fetchSlackAssistantContextMock.mockImplementation(async () => {
       callLog.push('context:fetch');
 
-      return { ...SLACK_CONTEXT, slackClient: {} };
+      return {
+        ...SLACK_CONTEXT,
+        slackClient: {},
+        requesterIdentity: REQUESTER_IDENTITY,
+      };
     });
 
     await expect(slackAssistantWorkerHandler(REQUEST_RECORD)).resolves.toEqual({
@@ -224,7 +236,11 @@ describe('slackAssistantWorkerHandler', () => {
     fetchSlackAssistantContextMock.mockImplementation(async () => {
       callLog.push('context:fetch');
 
-      return { ...SLACK_CONTEXT, slackClient: {} };
+      return {
+        ...SLACK_CONTEXT,
+        slackClient: {},
+        requesterIdentity: REQUESTER_IDENTITY,
+      };
     });
     sendSlackMessageMock.mockImplementation(async () => {
       callLog.push('reply:denied');
@@ -245,6 +261,28 @@ describe('slackAssistantWorkerHandler', () => {
     );
   });
 
+  it('should fail rather than deny when the requester identity could not be read', async () => {
+    getSlackAccessModeMock.mockResolvedValue(
+      SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
+    );
+    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
+    fetchSlackAssistantContextMock.mockImplementation(async () => {
+      callLog.push('context:fetch');
+
+      return { ...SLACK_CONTEXT, slackClient: {} };
+    });
+
+    const result = await slackAssistantWorkerHandler(REQUEST_RECORD);
+
+    expect(result).toEqual(expect.objectContaining({ failed: true }));
+    expect(resolveSlackLinkageMock).not.toHaveBeenCalled();
+    expect(sendSlackMessageMock).not.toHaveBeenCalled();
+    expect(updateSlackAssistantRequestMock).not.toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ responseText: SLACK_ACCESS_DENIED_TEXT }),
+    );
+  });
+
   it('should fail rather than deny when the linkage lookup itself fails', async () => {
     getSlackAccessModeMock.mockResolvedValue(
       SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
@@ -254,7 +292,11 @@ describe('slackAssistantWorkerHandler', () => {
     fetchSlackAssistantContextMock.mockImplementation(async () => {
       callLog.push('context:fetch');
 
-      return { ...SLACK_CONTEXT, slackClient: {} };
+      return {
+        ...SLACK_CONTEXT,
+        slackClient: {},
+        requesterIdentity: REQUESTER_IDENTITY,
+      };
     });
 
     const result = await slackAssistantWorkerHandler(REQUEST_RECORD);
@@ -274,6 +316,11 @@ describe('slackAssistantWorkerHandler', () => {
       SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
     );
     resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
+    fetchSlackAssistantContextMock.mockImplementation(async () => {
+      callLog.push('context:fetch');
+
+      return { ...SLACK_CONTEXT, requesterIdentity: REQUESTER_IDENTITY };
+    });
 
     const result = await slackAssistantWorkerHandler(REQUEST_RECORD);
 
@@ -299,7 +346,11 @@ describe('slackAssistantWorkerHandler', () => {
     fetchSlackAssistantContextMock.mockImplementation(async () => {
       callLog.push('context:fetch');
 
-      return { ...SLACK_CONTEXT, slackClient: {} };
+      return {
+        ...SLACK_CONTEXT,
+        slackClient: {},
+        requesterIdentity: REQUESTER_IDENTITY,
+      };
     });
 
     await expect(slackAssistantWorkerHandler(REQUEST_RECORD)).resolves.toEqual({

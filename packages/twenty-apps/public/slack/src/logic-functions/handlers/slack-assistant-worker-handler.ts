@@ -138,11 +138,16 @@ export const slackAssistantWorkerHandler = async (
       accessMode === SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS &&
       !isNonEmptyString(linkedWorkspaceMemberId)
     ) {
-      if (!isDefined(slackClient)) {
+      // Unverifiable is not the same as unlinked: fail the request so it stays
+      // retryable instead of telling a linked member to get linked. A record
+      // that names a Slack user but resolved no identity means the profile
+      // read failed, not that there is nobody to link.
+      if (
+        !isDefined(slackClient) ||
+        (isNonEmptyString(record.slackUserId) && !isDefined(requesterIdentity))
+      ) {
         await stopStatusUpdates();
 
-        // Unverifiable is not the same as unlinked: fail the request so it
-        // stays retryable instead of telling a linked member to get linked.
         return await finishSlackAssistantRequestWithFailure({
           ...failureContext,
           errorMessage: SLACK_ACCESS_UNVERIFIABLE_ERROR,
