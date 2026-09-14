@@ -17686,7 +17686,7 @@ msgstr "Tìm kiếm một thư mục..."
 #. js-lingui-id: owAIq9
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Search a limit"
-msgstr ""
+msgstr "Tìm kiếm một giới hạn."
 
 #. js-lingui-id: 8J0e5B
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -17937,7 +17937,7 @@ msgstr "Đã tìm kiếm {query} trên web"
 #. js-lingui-id: kSEiZD
 #: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
 msgid "searches"
-msgstr ""
+msgstr "lượt tìm kiếm"
 
 #. js-lingui-id: EvDUJy
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
@@ -18120,7 +18120,7 @@ msgstr "Đã khởi tạo"
 #. js-lingui-id: AhNP40
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Seek"
-msgstr ""
+msgstr "Tua"
 
 #. js-lingui-id: 5iyrla
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem.tsx
@@ -18393,7 +18393,7 @@ msgstr "Gửi email mời đến đội của bạn"
 #. js-lingui-id: S147dq
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Send at"
-msgstr ""
+msgstr "Gửi lúc"
 
 #. js-lingui-id: WRLt0i
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
@@ -18430,12 +18430,12 @@ msgstr "Gửi lời mời"
 #. js-lingui-id: RmmhAh
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Send later"
-msgstr ""
+msgstr "Gửi sau"
 
 #. js-lingui-id: NpEm3p
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Send now"
-msgstr ""
+msgstr "Gửi ngay"
 
 #. js-lingui-id: doZzL7
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -18471,7 +18471,7 @@ msgstr "Đang gửi yêu cầu..."
 #. js-lingui-id: YguCRV
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
 msgid "Sending starts {formattedSendTime}. You can cancel before then."
-msgstr ""
+msgstr "Việc gửi bắt đầu vào lúc {formattedSendTime}. Bạn có thể hủy trước thời điểm đó."
 
 #. js-lingui-id: 2l+PSH
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
@@ -18481,7 +18481,7 @@ msgstr "Việc gửi sẽ bắt đầu ngay lập tức và không thể hoàn t
 #. js-lingui-id: w+ywgn
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
 msgid "Sending starts right away, ahead of the time this campaign is holding."
-msgstr ""
+msgstr "Việc gửi bắt đầu ngay lập tức, sớm hơn thời gian đã đặt cho chiến dịch này."
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -18518,7 +18518,7 @@ msgstr "Tiếng Serbia (Chữ Cyrillic)"
 #. js-lingui-id: lWKtaU
 #: src/localization/hooks/useLocaleOptions.ts
 msgid "Serbian (Latin)"
-msgstr ""
+msgstr "Tiếng Serbia (Chữ Latinh)"
 
 #. js-lingui-id: hjUUtd
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -18578,7 +18578,7 @@ msgstr "Đặt các trường sẽ được tạo trong tương lai thành \"hi�
 #. js-lingui-id: u5nAtE
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Set for this agent only"
-msgstr ""
+msgstr "Chỉ đặt cho tác tử này"
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -18721,7 +18721,7 @@ msgstr "Đã sao chép liên kết chia sẻ vào bảng tạm"
 #. js-lingui-id: Xzq3Vx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Sharing this connection with the workspace requires reconnecting it. You will be redirected to authorize it again."
-msgstr ""
+msgstr "Việc chia sẻ kết nối này với không gian làm việc yêu cầu kết nối lại. Bạn sẽ được chuyển hướng để cấp quyền lại."
 
 #. js-lingui-id: RRXpo1
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -18990,7 +18990,7 @@ msgstr "Nhỏ hơn"
 #. js-lingui-id: ZKXQ0a
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Smart"
-msgstr ""
+msgstr "Thông minh"
 
 #. js-lingui-id: w+rJId
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -19173,7 +19173,7 @@ msgstr "Không thể kết nối đến dịch vụ nhận dạng giọng nói. 
 #. js-lingui-id: l9wI00
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Speed"
-msgstr ""
+msgstr "Tốc độ"
 
 #. js-lingui-id: pyfee5
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -19185,17 +19185,17 @@ msgstr "Tăng tốc việc đọc trên các trường mà bạn lọc hoặc s�
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 msgid "Spender"
-msgstr ""
+msgstr "Người chi tiêu"
 
 #. js-lingui-id: ctM+rp
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Spending stays capped by your plan allowance and the other limits."
-msgstr ""
+msgstr "Chi tiêu vẫn bị giới hạn bởi mức cho phép của gói và các giới hạn khác của bạn."
 
 #. js-lingui-id: p7JFjT
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Spending will only be capped by your plan allowance and the other limits."
-msgstr ""
+msgstr "Chi tiêu sẽ chỉ bị giới hạn bởi mức cho phép của gói và các giới hạn khác của bạn."
 
 #. js-lingui-id: gsifzp
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -19717,7 +19717,7 @@ msgstr "Đồng bộ hóa tài khoản email và lịch"
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
 msgid "Sync every message"
-msgstr ""
+msgstr "Đồng bộ mọi tin nhắn"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -19808,7 +19808,7 @@ msgstr "Cài đặt hệ thống"
 #. js-lingui-id: GXNLgO
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 msgid "System skills"
-msgstr ""
+msgstr "Kỹ năng hệ thống"
 
 #. js-lingui-id: HuA3RU
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
@@ -20106,7 +20106,7 @@ msgstr "Biểu tượng trình kích hoạt quy trình công việc sẽ hiển 
 #. js-lingui-id: 4m3QoL
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "The model behind each mode for every workspace. Workspaces can pin their own."
-msgstr ""
+msgstr "Mô hình đằng sau mỗi chế độ cho mọi không gian làm việc. Các không gian làm việc có thể ghim mô hình riêng."
 
 #. js-lingui-id: HiI1Lo
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -20116,7 +20116,7 @@ msgstr "Định danh mô hình được sử dụng bởi API của nhà cung c�
 #. js-lingui-id: 3o2gOg
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "The modes people and agents choose between"
-msgstr ""
+msgstr "Các chế độ mà mọi người và tác tử lựa chọn"
 
 #. js-lingui-id: h8mvCd
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -20208,7 +20208,7 @@ msgstr "Bản chép lời đang được chuẩn bị…"
 #. js-lingui-id: qMTT4Z
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "The usage this limit applies to."
-msgstr ""
+msgstr "Mức sử dụng mà giới hạn này áp dụng."
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -20228,7 +20228,7 @@ msgstr "Toàn bộ chi tiết sự kiện sẽ được chia sẻ với nhóm c�
 #. js-lingui-id: RmDTQ6
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "The whole workspace"
-msgstr ""
+msgstr "Toàn bộ không gian làm việc"
 
 #. js-lingui-id: bEXHAZ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -20274,7 +20274,7 @@ msgstr "Có sự cố về thanh toán. Vui lòng liên hệ quản trị viên 
 #. js-lingui-id: ezuu4B
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "There is a payment issue with your subscription. Your enterprise features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one."
-msgstr ""
+msgstr "Có sự cố thanh toán với gói đăng ký của bạn. Các tính năng doanh nghiệp của bạn đã bị vô hiệu hóa. Hãy thanh toán hóa đơn còn tồn đọng để khôi phục chúng trước khi gói đăng ký bị hủy: gói đăng ký đã hủy không thể được kích hoạt lại và bạn sẽ cần bắt đầu một gói mới."
 
 #. js-lingui-id: WQk7Cf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
@@ -20413,7 +20413,7 @@ msgstr "Đăng ký của ứng dụng này đã được không gian làm việc
 #. js-lingui-id: kciPHv
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This billing period"
-msgstr ""
+msgstr "Chu kỳ thanh toán này"
 
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -20518,7 +20518,7 @@ msgstr "Mô hình này sẽ bị xóa khỏi nhà cung cấp. Bạn có thể th
 #. js-lingui-id: oW3yYY
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This month"
-msgstr ""
+msgstr "Tháng này"
 
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
@@ -21053,7 +21053,7 @@ msgstr "Thời gian dùng thử"
 #. js-lingui-id: mXdcsR
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Trial plan"
-msgstr ""
+msgstr "Gói dùng thử"
 
 #. js-lingui-id: H2Sfhg
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
@@ -21187,7 +21187,7 @@ msgstr "Các trường của Twenty"
 #. js-lingui-id: pNo8xt
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Twenty fills each level with the best model that meets your requirements"
-msgstr ""
+msgstr "Twenty điền vào mỗi cấp mô hình tốt nhất đáp ứng yêu cầu của bạn"
 
 #. js-lingui-id: YIjS4q
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -21546,7 +21546,7 @@ msgstr "Bỏ ghim tab"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Unschedule Campaign"
-msgstr ""
+msgstr "Hủy lịch chiến dịch"
 
 #. js-lingui-id: SMaFdc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -21748,7 +21748,7 @@ msgstr "Cập nhật phương thức thanh toán"
 #. js-lingui-id: Uq5zVf
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Update your payment method before {licenseExpiresAtDate} to avoid losing access."
-msgstr ""
+msgstr "Cập nhật phương thức thanh toán trước {licenseExpiresAtDate} để tránh mất quyền truy cập."
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -22096,7 +22096,7 @@ msgstr "Dùng email này"
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Used"
-msgstr ""
+msgstr "Đã sử dụng"
 
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -22193,7 +22193,7 @@ msgstr "Đang sử dụng giá trị mặc định. Đặt một giá trị tùy
 #. js-lingui-id: b1dG47
 #: src/localization/hooks/useLocaleOptions.ts
 msgid "Uzbek"
-msgstr ""
+msgstr "Tiếng Uzbek"
 
 #. js-lingui-id: Clr4qp
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -22319,7 +22319,7 @@ msgstr ""
 #. js-lingui-id: Psyj/F
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Very High"
-msgstr ""
+msgstr "Rất cao"
 
 #. js-lingui-id: Shfac6
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
@@ -22656,7 +22656,7 @@ msgstr "Hiện tại chúng tôi đang gặp sự cố với ứng dụng này; 
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "We could not load your {0}. Please try again later."
-msgstr ""
+msgstr "Chúng tôi không thể tải {0} của bạn. Vui lòng thử lại sau."
 
 #. js-lingui-id: icGmU/
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -22765,7 +22765,7 @@ msgstr "Cập nhật thành công Webhook {targetUrl}"
 #. js-lingui-id: k1illW
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Webhook Call"
-msgstr ""
+msgstr "Lệnh gọi webhook"
 
 #. js-lingui-id: 2X4ecw
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -22811,7 +22811,7 @@ msgstr "Tuần"
 #. js-lingui-id: 4XSc4l
 #: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 msgid "Weekly"
-msgstr ""
+msgstr "Hàng tuần"
 
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts

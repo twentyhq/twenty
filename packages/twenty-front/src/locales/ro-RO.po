@@ -17686,7 +17686,7 @@ msgstr "Căutați un folder..."
 #. js-lingui-id: owAIq9
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Search a limit"
-msgstr ""
+msgstr "Căutați o limită"
 
 #. js-lingui-id: 8J0e5B
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -17855,7 +17855,7 @@ msgstr "Caută câmpuri"
 #. js-lingui-id: IQAn53
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Search fields..."
-msgstr ""
+msgstr "Căutați câmpuri..."
 
 #. js-lingui-id: rXrG+N
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
@@ -17937,7 +17937,7 @@ msgstr "S-a căutat pe web după {query}"
 #. js-lingui-id: kSEiZD
 #: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
 msgid "searches"
-msgstr ""
+msgstr "căutări"
 
 #. js-lingui-id: EvDUJy
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
@@ -18120,7 +18120,7 @@ msgstr "Inițializat"
 #. js-lingui-id: AhNP40
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Seek"
-msgstr ""
+msgstr "Caută"
 
 #. js-lingui-id: 5iyrla
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem.tsx
@@ -18393,7 +18393,7 @@ msgstr "Trimite un email de invitație echipei tale"
 #. js-lingui-id: S147dq
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Send at"
-msgstr ""
+msgstr "Trimite la"
 
 #. js-lingui-id: WRLt0i
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
@@ -18430,12 +18430,12 @@ msgstr "Trimiteți invitații"
 #. js-lingui-id: RmmhAh
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Send later"
-msgstr ""
+msgstr "Trimite mai târziu"
 
 #. js-lingui-id: NpEm3p
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Send now"
-msgstr ""
+msgstr "Trimite acum"
 
 #. js-lingui-id: doZzL7
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -18471,7 +18471,7 @@ msgstr "Se trimite cererea..."
 #. js-lingui-id: YguCRV
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
 msgid "Sending starts {formattedSendTime}. You can cancel before then."
-msgstr ""
+msgstr "Trimiterea începe la {formattedSendTime}. Puteți anula înainte de atunci."
 
 #. js-lingui-id: 2l+PSH
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
@@ -18481,7 +18481,7 @@ msgstr "Trimiterea începe imediat și nu poate fi anulată."
 #. js-lingui-id: w+ywgn
 #: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
 msgid "Sending starts right away, ahead of the time this campaign is holding."
-msgstr ""
+msgstr "Trimiterea începe imediat, înainte de ora programată a acestei campanii."
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -18518,7 +18518,7 @@ msgstr "Sârbă (Chirilic)"
 #. js-lingui-id: lWKtaU
 #: src/localization/hooks/useLocaleOptions.ts
 msgid "Serbian (Latin)"
-msgstr ""
+msgstr "Sârbă (latină)"
 
 #. js-lingui-id: hjUUtd
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -18578,7 +18578,7 @@ msgstr "Setează câmpurile care vor fi create ca \"vizibile\""
 #. js-lingui-id: u5nAtE
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Set for this agent only"
-msgstr ""
+msgstr "Setați numai pentru acest agent"
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -18721,7 +18721,7 @@ msgstr "Link-ul de partajare a fost copiat în clipboard"
 #. js-lingui-id: Xzq3Vx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Sharing this connection with the workspace requires reconnecting it. You will be redirected to authorize it again."
-msgstr ""
+msgstr "Partajarea acestei conexiuni cu spațiul de lucru necesită reconectarea acesteia. Veți fi redirecționat pentru a o autoriza din nou."
 
 #. js-lingui-id: RRXpo1
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -18990,7 +18990,7 @@ msgstr "Mai mic"
 #. js-lingui-id: ZKXQ0a
 #: src/modules/ai/utils/getAiModelTierLabel.ts
 msgid "Smart"
-msgstr ""
+msgstr "Inteligent"
 
 #. js-lingui-id: w+rJId
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -19173,7 +19173,7 @@ msgstr "Nu s-a putut contacta serviciul de recunoaștere vocală. Verifică-ți 
 #. js-lingui-id: l9wI00
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Speed"
-msgstr ""
+msgstr "Viteză"
 
 #. js-lingui-id: pyfee5
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -19185,17 +19185,17 @@ msgstr "Accelerează citirile pe câmpurile după care filtrezi sau sortezi cel 
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 msgid "Spender"
-msgstr ""
+msgstr "Cheltuitor"
 
 #. js-lingui-id: ctM+rp
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Spending stays capped by your plan allowance and the other limits."
-msgstr ""
+msgstr "Cheltuielile rămân plafonate de alocarea planului dvs. și de celelalte limite."
 
 #. js-lingui-id: p7JFjT
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Spending will only be capped by your plan allowance and the other limits."
-msgstr ""
+msgstr "Cheltuielile vor fi plafonate numai de alocarea planului dvs. și de celelalte limite."
 
 #. js-lingui-id: gsifzp
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -19717,7 +19717,7 @@ msgstr "Sincronizați conturile de email și calendar"
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
 msgid "Sync every message"
-msgstr ""
+msgstr "Sincronizați fiecare mesaj"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -19808,7 +19808,7 @@ msgstr "Setările sistemului"
 #. js-lingui-id: GXNLgO
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 msgid "System skills"
-msgstr ""
+msgstr "Abilități de sistem"
 
 #. js-lingui-id: HuA3RU
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
@@ -20106,7 +20106,7 @@ msgstr "Pictograma pe care declanșatorul fluxului de lucru o va afișa în meni
 #. js-lingui-id: 4m3QoL
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "The model behind each mode for every workspace. Workspaces can pin their own."
-msgstr ""
+msgstr "Modelul din spatele fiecărui mod pentru fiecare spațiu de lucru. Spațiile de lucru își pot fixa propriul model."
 
 #. js-lingui-id: HiI1Lo
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -20116,7 +20116,7 @@ msgstr "Identificatorul modelului utilizat de API-ul furnizorului"
 #. js-lingui-id: 3o2gOg
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "The modes people and agents choose between"
-msgstr ""
+msgstr "Modurile dintre care aleg oamenii și agenții"
 
 #. js-lingui-id: h8mvCd
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -20208,7 +20208,7 @@ msgstr "Transcrierea este în curs de pregătire…"
 #. js-lingui-id: qMTT4Z
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "The usage this limit applies to."
-msgstr ""
+msgstr "Utilizarea căreia i se aplică această limită."
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -20228,7 +20228,7 @@ msgstr "Detaliile întregului eveniment vor fi partajate cu echipa dvs."
 #. js-lingui-id: RmDTQ6
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
 msgid "The whole workspace"
-msgstr ""
+msgstr "Întregul spațiu de lucru"
 
 #. js-lingui-id: bEXHAZ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -20274,7 +20274,7 @@ msgstr "Există o problemă cu facturarea. Vă rugăm să contactați administra
 #. js-lingui-id: ezuu4B
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "There is a payment issue with your subscription. Your enterprise features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one."
-msgstr ""
+msgstr "Există o problemă de plată cu abonamentul dvs. Funcționalitățile enterprise sunt dezactivate. Achitați factura restantă pentru a le restabili, înainte ca abonamentul să fie anulat: un abonament anulat nu poate fi reactivat și ar trebui să începeți unul nou."
 
 #. js-lingui-id: WQk7Cf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
@@ -20413,7 +20413,7 @@ msgstr "Înregistrarea acestei aplicații este revendicată de spațiul dvs. de 
 #. js-lingui-id: kciPHv
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This billing period"
-msgstr ""
+msgstr "Această perioadă de facturare"
 
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -20518,7 +20518,7 @@ msgstr "Acest model va fi eliminat de la acest furnizor. Îl puteți adăuga din
 #. js-lingui-id: oW3yYY
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This month"
-msgstr ""
+msgstr "Luna aceasta"
 
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
@@ -21053,7 +21053,7 @@ msgstr "Perioadă de probă"
 #. js-lingui-id: mXdcsR
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "Trial plan"
-msgstr ""
+msgstr "Plan de încercare"
 
 #. js-lingui-id: H2Sfhg
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
@@ -21187,7 +21187,7 @@ msgstr "Câmpuri Twenty"
 #. js-lingui-id: pNo8xt
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Twenty fills each level with the best model that meets your requirements"
-msgstr ""
+msgstr "Twenty completează fiecare nivel cu cel mai bun model care îndeplinește cerințele dvs."
 
 #. js-lingui-id: YIjS4q
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -21546,7 +21546,7 @@ msgstr "Anulează fixarea filei"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Unschedule Campaign"
-msgstr ""
+msgstr "Anulează programarea campaniei"
 
 #. js-lingui-id: SMaFdc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -21748,7 +21748,7 @@ msgstr "Actualizați metoda de plată"
 #. js-lingui-id: Uq5zVf
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Update your payment method before {licenseExpiresAtDate} to avoid losing access."
-msgstr ""
+msgstr "Actualizați metoda de plată înainte de {licenseExpiresAtDate} pentru a evita pierderea accesului."
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -22096,7 +22096,7 @@ msgstr "Folosește această adresă de e-mail"
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Used"
-msgstr ""
+msgstr "Utilizate"
 
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -22193,7 +22193,7 @@ msgstr "Folosind valoarea implicită. Setați o valoare personalizată pentru a 
 #. js-lingui-id: b1dG47
 #: src/localization/hooks/useLocaleOptions.ts
 msgid "Uzbek"
-msgstr ""
+msgstr "Uzbekă"
 
 #. js-lingui-id: Clr4qp
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -22319,7 +22319,7 @@ msgstr ""
 #. js-lingui-id: Psyj/F
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Very High"
-msgstr ""
+msgstr "Foarte ridicat"
 
 #. js-lingui-id: Shfac6
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
@@ -22656,7 +22656,7 @@ msgstr "În prezent întâmpinăm probleme cu această aplicație, iar funcțion
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "We could not load your {0}. Please try again later."
-msgstr ""
+msgstr "Nu am putut încărca {0}. Vă rugăm să încercați din nou mai târziu."
 
 #. js-lingui-id: icGmU/
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -22765,7 +22765,7 @@ msgstr "Webhook {targetUrl} actualizat cu succes"
 #. js-lingui-id: k1illW
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Webhook Call"
-msgstr ""
+msgstr "Apel webhook"
 
 #. js-lingui-id: 2X4ecw
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -22811,7 +22811,7 @@ msgstr "Săptămână"
 #. js-lingui-id: 4XSc4l
 #: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 msgid "Weekly"
-msgstr ""
+msgstr "Săptămânal"
 
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
