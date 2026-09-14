@@ -8,11 +8,11 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
-@RegisteredWorkspaceCommand('2.40.0', 1789370101009)
+@RegisteredWorkspaceCommand('2.41.0', 1789370101009)
 @Command({
-  name: 'upgrade:2-40:backfill-core-version-pointers',
+  name: 'upgrade:2-41:backfill-core-version-pointers',
   description:
-    'Backfill lastPublishedCoreVersionId on core workflows and coreWorkflowVersionId on core command menu items',
+    'Backfill lastPublishedCoreWorkflowVersionId on core workflows and coreWorkflowVersionId on core command menu items',
 })
 export class BackfillCoreVersionPointersCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -42,6 +42,10 @@ export class BackfillCoreVersionPointersCommand extends ProvisionedWorkspaceComm
 
     try {
       if (!(await this.hasCoreWorkflowVersionIdColumn(queryRunner, schema))) {
+        this.logger.warn(
+          `workflowVersion.coreWorkflowVersionId missing for workspace ${workspaceId}, skipping backfill`,
+        );
+
         return;
       }
 
@@ -74,15 +78,17 @@ export class BackfillCoreVersionPointersCommand extends ProvisionedWorkspaceComm
     workspaceId: string;
     dryRun: boolean;
   }): Promise<void> {
-    const targetRows = `
-      FROM "${schema}"."workflowVersion" wv
+    const versionsTable = `"${schema}"."workflowVersion" wv`;
+    const predicate = `
       WHERE cw."workspaceId" = $1
-        AND cw."lastPublishedCoreVersionId" IS NULL
+        AND cw."lastPublishedCoreWorkflowVersionId" IS NULL
         AND wv.id = cw."lastPublishedVersionId"
         AND wv."coreWorkflowVersionId" IS NOT NULL`;
 
     const [counts] = await queryRunner.query(
-      `SELECT count(*)::int AS total FROM core."workflow" cw, ${targetRows}`,
+      `SELECT count(*)::int AS total
+       FROM core."workflow" cw, ${versionsTable}
+       ${predicate}`,
       [workspaceId],
     );
 
@@ -92,7 +98,7 @@ export class BackfillCoreVersionPointersCommand extends ProvisionedWorkspaceComm
 
     if (dryRun) {
       this.logger.log(
-        `[DRY RUN] Would backfill lastPublishedCoreVersionId on ${counts.total} core workflow row(s) for workspace ${workspaceId}`,
+        `[DRY RUN] Would backfill lastPublishedCoreWorkflowVersionId on ${counts.total} core workflow row(s) for workspace ${workspaceId}`,
       );
 
       return;
@@ -100,13 +106,14 @@ export class BackfillCoreVersionPointersCommand extends ProvisionedWorkspaceComm
 
     await queryRunner.query(
       `UPDATE core."workflow" cw
-       SET "lastPublishedCoreVersionId" = wv."coreWorkflowVersionId"
-       ${targetRows}`,
+       SET "lastPublishedCoreWorkflowVersionId" = wv."coreWorkflowVersionId"
+       FROM ${versionsTable}
+       ${predicate}`,
       [workspaceId],
     );
 
     this.logger.log(
-      `Backfilled lastPublishedCoreVersionId on ${counts.total} core workflow row(s) for workspace ${workspaceId}`,
+      `Backfilled lastPublishedCoreWorkflowVersionId on ${counts.total} core workflow row(s) for workspace ${workspaceId}`,
     );
   }
 
@@ -121,15 +128,17 @@ export class BackfillCoreVersionPointersCommand extends ProvisionedWorkspaceComm
     workspaceId: string;
     dryRun: boolean;
   }): Promise<void> {
-    const targetRows = `
-      FROM "${schema}"."workflowVersion" wv
+    const versionsTable = `"${schema}"."workflowVersion" wv`;
+    const predicate = `
       WHERE cmi."workspaceId" = $1
         AND cmi."coreWorkflowVersionId" IS NULL
         AND wv.id = cmi."workflowVersionId"
         AND wv."coreWorkflowVersionId" IS NOT NULL`;
 
     const [counts] = await queryRunner.query(
-      `SELECT count(*)::int AS total FROM core."commandMenuItem" cmi, ${targetRows}`,
+      `SELECT count(*)::int AS total
+       FROM core."commandMenuItem" cmi, ${versionsTable}
+       ${predicate}`,
       [workspaceId],
     );
 
@@ -148,7 +157,8 @@ export class BackfillCoreVersionPointersCommand extends ProvisionedWorkspaceComm
     await queryRunner.query(
       `UPDATE core."commandMenuItem" cmi
        SET "coreWorkflowVersionId" = wv."coreWorkflowVersionId"
-       ${targetRows}`,
+       FROM ${versionsTable}
+       ${predicate}`,
       [workspaceId],
     );
 

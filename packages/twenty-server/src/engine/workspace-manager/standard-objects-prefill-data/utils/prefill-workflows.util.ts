@@ -239,7 +239,7 @@ export const prefillWorkflows = async (
       'applicationId',
       'name',
       'lastPublishedVersionId',
-      'lastPublishedCoreVersionId',
+      'lastPublishedCoreWorkflowVersionId',
     ])
     .orIgnore()
     .values([
@@ -250,7 +250,7 @@ export const prefillWorkflows = async (
         applicationId,
         name: 'Quick Lead',
         lastPublishedVersionId: quickLeadWorkflowVersionId,
-        lastPublishedCoreVersionId: coreQuickLeadWorkflowVersionId,
+        lastPublishedCoreWorkflowVersionId: coreQuickLeadWorkflowVersionId,
       },
       {
         id: coreCreateCompanyWorkflowId,
@@ -259,7 +259,7 @@ export const prefillWorkflows = async (
         applicationId,
         name: 'Create company when adding a new person',
         lastPublishedVersionId: createCompanyWorkflowVersionId,
-        lastPublishedCoreVersionId: coreCreateCompanyWorkflowVersionId,
+        lastPublishedCoreWorkflowVersionId: coreCreateCompanyWorkflowVersionId,
       },
     ])
     .execute();

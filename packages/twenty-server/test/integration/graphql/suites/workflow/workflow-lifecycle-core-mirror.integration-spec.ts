@@ -120,11 +120,11 @@ describe('workflow lifecycle core mirror with an active version (e2e)', () => {
 
   it('points the core workflow at the core id of the published version', async () => {
     const rows = await global.testDataSource.query(
-      `SELECT cw."lastPublishedCoreVersionId" AS "coreVersionId",
+      `SELECT cw."lastPublishedCoreWorkflowVersionId" AS "coreVersionId",
               published.id IS NOT NULL AS "resolves"
        FROM core."workflow" cw
        LEFT JOIN core."workflowVersion" published
-         ON published.id = cw."lastPublishedCoreVersionId"
+         ON published.id = cw."lastPublishedCoreWorkflowVersionId"
        WHERE cw."workspaceId" = $1
          AND cw.id IN (
            SELECT cv."coreWorkflowId"
@@ -136,7 +136,7 @@ describe('workflow lifecycle core mirror with an active version (e2e)', () => {
       [SEED_APPLE_WORKSPACE_ID, workflowId],
     );
 
-    expect(rows[0]?.coreVersionId).toBeDefined();
+    expect(typeof rows[0]?.coreVersionId).toBe('string');
     expect(rows[0]?.resolves).toBe(true);
   });
 

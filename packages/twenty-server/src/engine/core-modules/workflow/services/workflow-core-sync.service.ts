@@ -80,7 +80,7 @@ export class WorkflowCoreSyncService {
         )
           ? workflow.lastPublishedVersionId
           : null,
-        lastPublishedCoreVersionId: isNonEmptyString(
+        lastPublishedCoreWorkflowVersionId: isNonEmptyString(
           workflow.lastPublishedVersionId,
         )
           ? (coreVersionIdByWorkspaceVersionId.get(

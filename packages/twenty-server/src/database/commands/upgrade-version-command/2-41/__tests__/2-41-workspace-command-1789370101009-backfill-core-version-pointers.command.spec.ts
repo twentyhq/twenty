@@ -1,7 +1,7 @@
 import { type DataSource } from 'typeorm';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { BackfillCoreVersionPointersCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1789370101009-backfill-core-version-pointers.command';
+import { BackfillCoreVersionPointersCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789370101009-backfill-core-version-pointers.command';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 
@@ -67,6 +67,25 @@ const setup = ({
 
 describe('BackfillCoreVersionPointersCommand', () => {
   beforeEach(() => jest.clearAllMocks());
+
+  it('builds single-FROM statements', async () => {
+    const { run, query } = setup({
+      workflowTotal: 2,
+      commandMenuItemTotal: 3,
+    });
+
+    await run();
+
+    const statements = query.mock.calls
+      .map((call) => String(call[0]))
+      .filter((sql) => !sql.includes('information_schema.columns'));
+
+    expect(statements).not.toHaveLength(0);
+
+    for (const sql of statements) {
+      expect(sql.match(/\bFROM\b/g)).toHaveLength(1);
+    }
+  });
 
   it('updates both tables when both have rows left to fill', async () => {
     const { run, query, queryRunner } = setup({
