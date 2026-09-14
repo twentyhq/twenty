@@ -465,13 +465,13 @@ export const SixItemsWithScrollCue: Story = {
     }
 
     const rows = menu.querySelector('[data-dropdown-menu-items]')?.children;
-    const sixthRow = rows?.[5];
+    const fifthRow = rows?.[4];
 
-    if (!isDefined(sixthRow)) {
-      throw new Error('Missing sixth dropdown row');
+    if (!isDefined(fifthRow)) {
+      throw new Error('Missing fifth dropdown row');
     }
 
-    const rowBounds = sixthRow.getBoundingClientRect();
+    const rowBounds = fifthRow.getBoundingClientRect();
     const visibleHeight =
       scrollContainer.getBoundingClientRect().bottom - rowBounds.top;
 
