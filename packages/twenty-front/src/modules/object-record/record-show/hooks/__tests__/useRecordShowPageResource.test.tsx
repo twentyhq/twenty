@@ -20,10 +20,6 @@ jest.mock('@/object-record/hooks/useFindOneRecord', () => ({
   useFindOneRecord: (...args: unknown[]) => mockUseFindOneRecord(...args),
 }));
 
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => false,
-}));
-
 jest.mock(
   '@/object-core/workflows/hooks/useCoreWorkflowShowPageResource',
   () => ({
