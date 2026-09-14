@@ -19,18 +19,6 @@ const baseParams = {
   files: [],
 };
 
-const getFirstWorkspaceConnectedAccountId = async (): Promise<string> => {
-  const [{ id }] = await global.testDataSource.query(
-    `SELECT id FROM core."connectedAccount"
-     WHERE "workspaceId" = $1 AND "archivedAt" IS NULL
-     ORDER BY "createdAt" ASC, id ASC
-     LIMIT 1`,
-    [WORKSPACE_ID],
-  );
-
-  return id;
-};
-
 const setVisibility = async (
   connectedAccountId: string,
   visibility: 'user' | 'workspace',
@@ -38,6 +26,13 @@ const setVisibility = async (
   await global.testDataSource.query(
     `UPDATE core."connectedAccount" SET visibility = $1 WHERE id = $2`,
     [visibility, connectedAccountId],
+  );
+};
+
+const setProvider = async (connectedAccountId: string, provider: string) => {
+  await global.testDataSource.query(
+    `UPDATE core."connectedAccount" SET provider = $1 WHERE id = $2`,
+    [provider, connectedAccountId],
   );
 };
 
@@ -137,20 +132,60 @@ describe('EmailComposerService connected account resolution (integration)', () =
           workspaceId: WORKSPACE_ID,
           userWorkspaceId: UNKNOWN_USER_WORKSPACE_ID,
         }),
-      ).rejects.toThrow('No connected account available for user workspace');
+      ).rejects.toThrow(
+        'No connected account able to send email for user workspace',
+      );
     });
 
-    it('takes the first workspace account when there is no caller (workflow run)', async () => {
-      const firstWorkspaceConnectedAccountId =
-        await getFirstWorkspaceConnectedAccountId();
+    it('throws when the caller is unknown and no account is shared with the whole workspace', async () => {
+      await expect(
+        service.composeEmail(baseParams, { workspaceId: WORKSPACE_ID }),
+      ).rejects.toThrow(
+        'No connected account able to send email for this workspace',
+      );
+    });
 
+    it('skips an account whose provider carries no mailbox', async () => {
+      await setProvider(PHIL_CONNECTED_ACCOUNT_ID, 'app');
+
+      try {
+        await expect(
+          service.composeEmail(baseParams, {
+            workspaceId: WORKSPACE_ID,
+            userWorkspaceId: PHIL_USER_WORKSPACE_ID,
+          }),
+        ).rejects.toThrow('No connected account able to send email');
+      } finally {
+        await setProvider(PHIL_CONNECTED_ACCOUNT_ID, 'google');
+      }
+    });
+
+    it('takes an account shared with the whole workspace when the caller is unknown', async () => {
+      await setVisibility(JONY_CONNECTED_ACCOUNT_ID, 'workspace');
+
+      try {
+        const result = await service.composeEmail(baseParams, {
+          workspaceId: WORKSPACE_ID,
+        });
+
+        expect(result.success).toBe(true);
+        expect(result.success && result.data.connectedAccount.id).toBe(
+          JONY_CONNECTED_ACCOUNT_ID,
+        );
+      } finally {
+        await setVisibility(JONY_CONNECTED_ACCOUNT_ID, 'user');
+      }
+    });
+
+    it('ignores visibility for a system run, which is the workspace acting on itself', async () => {
       const result = await service.composeEmail(baseParams, {
         workspaceId: WORKSPACE_ID,
+        callerType: 'application',
       });
 
       expect(result.success).toBe(true);
       expect(result.success && result.data.connectedAccount.id).toBe(
-        firstWorkspaceConnectedAccountId,
+        JONY_CONNECTED_ACCOUNT_ID,
       );
     });
   });
