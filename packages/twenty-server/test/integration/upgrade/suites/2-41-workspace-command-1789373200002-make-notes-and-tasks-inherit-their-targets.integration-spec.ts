@@ -5,16 +5,42 @@ import { STANDARD_OBJECT_FIELDS } from 'twenty-shared/metadata';
 import { MetadataReadability } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
-import {
-  type MakeNotesAndTasksInheritTheirTargetsCommand,
-  STANDARD_OBJECTS_TO_INHERIT_THROUGH_TARGETS,
-} from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789373200002-make-notes-and-tasks-inherit-their-targets.command';
+import { type MakeNotesAndTasksInheritTheirTargetsCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789373200002-make-notes-and-tasks-inherit-their-targets.command';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const authContext = buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID);
+
+// Listed here rather than imported from the command: a value import would load
+// the command's module graph, which jest cannot resolve in this suite
+const STANDARD_OBJECTS_TO_INHERIT_THROUGH_TARGETS = [
+  {
+    nameSingular: 'note',
+    readabilityParentFieldUniversalIdentifiers: [
+      STANDARD_OBJECT_FIELDS.note.noteTargets.universalIdentifier,
+    ],
+  },
+  {
+    nameSingular: 'noteTarget',
+    readabilityParentFieldUniversalIdentifiers: [
+      STANDARD_OBJECT_FIELDS.noteTarget.targetPerson.universalIdentifier,
+    ],
+  },
+  {
+    nameSingular: 'task',
+    readabilityParentFieldUniversalIdentifiers: [
+      STANDARD_OBJECT_FIELDS.task.taskTargets.universalIdentifier,
+    ],
+  },
+  {
+    nameSingular: 'taskTarget',
+    readabilityParentFieldUniversalIdentifiers: [
+      STANDARD_OBJECT_FIELDS.taskTarget.targetPerson.universalIdentifier,
+    ],
+  },
+];
 
 const OBJECT_NAMES_SINGULAR = STANDARD_OBJECTS_TO_INHERIT_THROUGH_TARGETS.map(
   ({ nameSingular }) => nameSingular,
