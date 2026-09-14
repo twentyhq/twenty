@@ -15,6 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
+import { isConnectionHiddenFromRequestUser } from 'src/engine/core-modules/application/connection-provider/connections/utils/is-connection-hidden-from-request-user.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -28,6 +29,13 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 type ApplicationScope = {
   applicationId: string;
   workspaceId: string;
+  // The user behind the call, when there is one. An APPLICATION_ACCESS token
+  // carries them whenever a person triggered the run, and owning the app is
+  // not the same as being allowed to administer another person's private
+  // connection — so the channel API has to honour the same boundary the
+  // connection API does. Null for cron, webhooks and install hooks, which act
+  // as the application itself.
+  requestUserWorkspaceId: string | null;
 };
 
 type CreateArgs = ApplicationScope & {
@@ -63,13 +71,15 @@ export class ApplicationMessageChannelsService {
   async list({
     applicationId,
     workspaceId,
+    requestUserWorkspaceId,
     connectedAccountId,
   }: ApplicationScope & {
     connectedAccountId?: string;
   }): Promise<MessageChannelDTO[]> {
-    const ownedAccountIds = await this.findOwnedConnectedAccountIds({
+    const ownedAccountIds = await this.findReachableConnectedAccountIds({
       applicationId,
       workspaceId,
+      requestUserWorkspaceId,
     });
 
     if (ownedAccountIds.length === 0) {
@@ -102,6 +112,7 @@ export class ApplicationMessageChannelsService {
   async create({
     applicationId,
     workspaceId,
+    requestUserWorkspaceId,
     connectedAccountId,
     handle,
     displayName,
@@ -110,6 +121,7 @@ export class ApplicationMessageChannelsService {
     await this.assertOwnsConnectedAccount({
       applicationId,
       workspaceId,
+      requestUserWorkspaceId,
       connectedAccountId,
     });
 
@@ -154,6 +166,7 @@ export class ApplicationMessageChannelsService {
   async update({
     applicationId,
     workspaceId,
+    requestUserWorkspaceId,
     id,
     displayName,
     visibility,
@@ -162,6 +175,7 @@ export class ApplicationMessageChannelsService {
     const messageChannel = await this.findOwnedOrThrow({
       applicationId,
       workspaceId,
+      requestUserWorkspaceId,
       id,
     });
 
@@ -197,11 +211,13 @@ export class ApplicationMessageChannelsService {
   async delete({
     applicationId,
     workspaceId,
+    requestUserWorkspaceId,
     id,
   }: ApplicationScope & { id: string }): Promise<MessageChannelDTO> {
     const messageChannel = await this.findOwnedOrThrow({
       applicationId,
       workspaceId,
+      requestUserWorkspaceId,
       id,
     });
 
@@ -222,6 +238,7 @@ export class ApplicationMessageChannelsService {
   private async findOwnedOrThrow({
     applicationId,
     workspaceId,
+    requestUserWorkspaceId,
     id,
   }: ApplicationScope & { id: string }): Promise<MessageChannelEntity> {
     const messageChannel = await this.messageChannelRepository.findOne({
@@ -238,15 +255,22 @@ export class ApplicationMessageChannelsService {
     await this.assertOwnsConnectedAccount({
       applicationId,
       workspaceId,
+      requestUserWorkspaceId,
       connectedAccountId: messageChannel.connectedAccountId,
     });
 
     return messageChannel;
   }
 
+  // Two boundaries, not one: the connection must belong to this application,
+  // AND the caller must be allowed to see it. Checking only the first would
+  // let any user of an app administer another user's private connection —
+  // including flipping its channel to SHARE_EVERYTHING, which publishes that
+  // person's messages to the whole workspace.
   private async assertOwnsConnectedAccount({
     applicationId,
     workspaceId,
+    requestUserWorkspaceId,
     connectedAccountId,
   }: ApplicationScope & { connectedAccountId: string }): Promise<void> {
     const connectedAccount = await this.connectedAccountRepository.findOne({
@@ -258,14 +282,21 @@ export class ApplicationMessageChannelsService {
       },
     });
 
-    if (!isDefined(connectedAccount)) {
+    if (
+      !isDefined(connectedAccount) ||
+      isConnectionHiddenFromRequestUser({
+        account: connectedAccount,
+        requestUserWorkspaceId,
+      })
+    ) {
       throw this.ownershipViolation(connectedAccountId);
     }
   }
 
-  private async findOwnedConnectedAccountIds({
+  private async findReachableConnectedAccountIds({
     applicationId,
     workspaceId,
+    requestUserWorkspaceId,
   }: ApplicationScope): Promise<string[]> {
     const connectedAccounts = await this.connectedAccountRepository.find({
       where: {
@@ -273,10 +304,18 @@ export class ApplicationMessageChannelsService {
         workspaceId,
         provider: ConnectedAccountProvider.APP,
       },
-      select: { id: true },
+      select: { id: true, visibility: true, userWorkspaceId: true },
     });
 
-    return connectedAccounts.map((connectedAccount) => connectedAccount.id);
+    return connectedAccounts
+      .filter(
+        (connectedAccount) =>
+          !isConnectionHiddenFromRequestUser({
+            account: connectedAccount,
+            requestUserWorkspaceId,
+          }),
+      )
+      .map((connectedAccount) => connectedAccount.id);
   }
 
   // Deliberately indistinguishable from "not found": whether a connection id

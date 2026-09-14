@@ -71,8 +71,8 @@ Choose based on how private the provider's messages are, not on what is convenie
 
 ```ts
 import {
-  deleteMessageChannel,
   listMessageChannels,
+  updateMessageChannel,
 } from 'twenty-sdk/logic-function';
 
 // Every channel this app owns, across all its connections
@@ -82,9 +82,17 @@ const channels = await listMessageChannels();
 const forConnection = await listMessageChannels({
   connectedAccountId: connection.id,
 });
+
+// Rename it, re-scope who can read it, or pause ingestion
+await updateMessageChannel({ id: channel.id, displayName: 'Ada (LinkedIn)' });
+await updateMessageChannel({ id: channel.id, isSyncEnabled: false });
 ```
 
+Changing `visibility` through `updateMessageChannel` re-scopes every message already ingested into the channel, not only the ones that follow.
+
 Your app only ever sees channels created against its own connections. Channels belonging to other apps, and Twenty's own email channels, are invisible to it.
+
+A channel is also only reachable by the person whose connection it speaks through, when that connection is private to them. A run triggered by another member of the workspace cannot see it or change it; a run with nobody behind it — a cron, a webhook, an install hook — acts as the application and reaches every channel the app owns.
 
 ## Retiring a channel
 
