@@ -9,6 +9,8 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { sanitizeRawUpdateFieldInput } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-raw-update-field-input';
 
 const FIELD_ID = 'a1b3c5d7-0000-4000-8000-000000000001';
+const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '20202020-aaaa-4aaa-8aaa-000000000001';
 
 const sanitizeOptionsUpdate = ({
   type,
@@ -23,9 +25,13 @@ const sanitizeOptionsUpdate = ({
       type,
       universalIdentifier: 'ab0e6d76-67d8-466f-918a-4b8a8d044131',
       objectMetadataId: '6450cd8f-c202-498f-8be4-65e1b1c93e32',
+      applicationUniversalIdentifier:
+        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     }),
     rawUpdateFieldInput: { id: FIELD_ID, options } as UpdateFieldInput,
     isSystemBuild: false,
+    workspaceCustomApplicationUniversalIdentifier:
+      WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
   }).updatedEditableFieldProperties.options;
 
 describe('sanitizeRawUpdateFieldInput', () => {
