@@ -22,5 +22,9 @@ export class MessagingCleanCacheJob {
     await this.cacheStorage.del(
       `messages-to-import:${data.workspaceId}:${data.messageChannelId}`,
     );
+
+    await this.cacheStorage.del(
+      `messages-import-failure-streak:${data.workspaceId}:${data.messageChannelId}`,
+    );
   }
 }

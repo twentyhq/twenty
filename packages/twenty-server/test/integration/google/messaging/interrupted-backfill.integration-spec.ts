@@ -1,6 +1,7 @@
 import {
   ConnectedAccountProvider,
   MessageChannelSyncStage,
+  MessageChannelSyncStatus,
 } from 'twenty-shared/types';
 
 import { getGmailMessageSubject } from 'test/integration/google/mocks/gmail-message-subject.util';
@@ -13,9 +14,20 @@ import { runMessageChannelSync } from 'test/integration/utils/run-message-channe
 
 const HANDLE = 'messaging-interrupted-backfill@apple.dev';
 
+const UNMAPPED_FAILURE = {
+  status: 400,
+  reason: 'invalidArgument',
+  message: 'Invalid message',
+};
+
 describe('Messaging interrupted backfill (integration)', () => {
   const inbox = [gmailMessage(), gmailMessage()];
   const expectedSubjects = inbox.map(getGmailMessageSubject).sort();
+
+  const onceFailingMessage = gmailMessage();
+  const onceFailingSubject = getGmailMessageSubject(onceFailingMessage);
+  const alwaysFailingMessage = gmailMessage();
+  const alwaysFailingSubject = getGmailMessageSubject(alwaysFailingMessage);
 
   const gmail = setupGoogleMock({ handle: HANDLE, inbox });
 
@@ -54,6 +66,57 @@ describe('Messaging interrupted backfill (integration)', () => {
 
     expect(await findImportedMessageSubjects(expectedSubjects)).toEqual(
       expectedSubjects,
+    );
+  }, 60000);
+
+  it('fails the channel when importing a message breaks', async () => {
+    inbox.push(onceFailingMessage);
+    gmail.serveHistory([onceFailingMessage]);
+    gmail.failMessageFetch(UNMAPPED_FAILURE);
+
+    await runMessageChannelSync(channel.channelId);
+
+    const channelState = await queryMessageChannel(channel);
+
+    expect(channelState.syncStatus).toBe(
+      MessageChannelSyncStatus.FAILED_UNKNOWN,
+    );
+  }, 60000);
+
+  it('imports the message that failed the channel once on the next sync', async () => {
+    await runMessageChannelSync(channel.channelId);
+
+    expect(await findImportedMessageSubjects([onceFailingSubject])).toEqual([
+      onceFailingSubject,
+    ]);
+  }, 60000);
+
+  it('fails the channel twice in a row on a message that cannot be imported', async () => {
+    inbox.push(alwaysFailingMessage);
+    gmail.serveHistory([alwaysFailingMessage]);
+    gmail.failMessageFetch(UNMAPPED_FAILURE);
+
+    await runMessageChannelSync(channel.channelId);
+    await runMessageChannelSync(channel.channelId);
+
+    const channelState = await queryMessageChannel(channel);
+
+    expect(channelState.syncStatus).toBe(
+      MessageChannelSyncStatus.FAILED_UNKNOWN,
+    );
+  }, 60000);
+
+  it('stops retrying the message that failed the channel twice in a row and completes the next sync', async () => {
+    await runMessageChannelSync(channel.channelId);
+
+    const channelState = await queryMessageChannel(channel);
+
+    expect(channelState.syncStage).toBe(
+      MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+    );
+    expect(channelState.syncStatus).toBe(MessageChannelSyncStatus.ACTIVE);
+    expect(await findImportedMessageSubjects([alwaysFailingSubject])).toEqual(
+      [],
     );
   }, 60000);
 });
