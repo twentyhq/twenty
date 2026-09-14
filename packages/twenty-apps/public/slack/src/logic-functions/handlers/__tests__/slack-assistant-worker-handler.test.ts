@@ -215,6 +215,36 @@ describe('slackAssistantWorkerHandler', () => {
     );
   });
 
+  it('should fail the request when the denial message cannot be delivered', async () => {
+    getSlackAccessModeMock.mockResolvedValue(
+      SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
+    );
+    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
+    resolveSlackRunAsWorkspaceMemberIdMock.mockResolvedValue(undefined);
+    fetchSlackAssistantContextMock.mockImplementation(async () => {
+      callLog.push('context:fetch');
+
+      return { ...SLACK_CONTEXT, slackClient: {} };
+    });
+    sendSlackMessageMock.mockImplementation(async () => {
+      callLog.push('reply:denied');
+
+      return { success: false, message: 'channel_not_found' };
+    });
+
+    const result = await slackAssistantWorkerHandler(REQUEST_RECORD);
+
+    expect(result).toEqual(expect.objectContaining({ failed: true }));
+    expect(finishSlackAssistantRequestWithFailureMock).toHaveBeenCalledTimes(1);
+    expect(updateSlackAssistantRequestMock).not.toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        responseText: SLACK_ACCESS_DENIED_TEXT,
+      }),
+    );
+  });
+
   it('should fail rather than deny when Slack is unreachable and linkage cannot be checked', async () => {
     getSlackAccessModeMock.mockResolvedValue(
       SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
@@ -223,9 +253,7 @@ describe('slackAssistantWorkerHandler', () => {
 
     const result = await slackAssistantWorkerHandler(REQUEST_RECORD);
 
-    expect(result).toEqual(
-      expect.objectContaining({ failed: true }),
-    );
+    expect(result).toEqual(expect.objectContaining({ failed: true }));
     expect(finishSlackAssistantRequestWithFailureMock).toHaveBeenCalledTimes(1);
     expect(resolveSlackRunAsWorkspaceMemberIdMock).not.toHaveBeenCalled();
     expect(sendSlackMessageMock).not.toHaveBeenCalled();

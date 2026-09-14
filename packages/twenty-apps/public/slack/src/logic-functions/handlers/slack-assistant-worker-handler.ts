@@ -162,7 +162,7 @@ export const slackAssistantWorkerHandler = async (
     ) {
       await stopStatusUpdates();
 
-      await sendSlackMessage({
+      const denialDelivery = await sendSlackMessage({
         slackChannelId,
         messageText: SLACK_ACCESS_DENIED_TEXT,
         parentMessageTimestamp,
@@ -170,6 +170,13 @@ export const slackAssistantWorkerHandler = async (
         unfurlLinks: false,
         unfurlMedia: false,
       });
+
+      if (!denialDelivery.success) {
+        return await finishSlackAssistantRequestWithFailure({
+          ...failureContext,
+          errorMessage: buildSlackAnswerDeliveryFailureMessage(denialDelivery),
+        });
+      }
 
       await updateSlackAssistantRequest(client, {
         id: record.id,
