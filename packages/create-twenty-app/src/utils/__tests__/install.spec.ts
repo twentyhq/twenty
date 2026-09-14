@@ -1,15 +1,20 @@
-import { exec } from 'child_process';
-
 import { install } from '@/utils/install';
+
+type ExecCallback = (error: Error | null, stdout?: string) => void;
 
 jest.mock('child_process', () => ({ exec: jest.fn() }));
 
-const execMock = exec as unknown as jest.Mock;
+// node's `exec` is overloaded and its widest overload does not accept this
+// callback shape, so take the mock from the module registry under the shape the
+// promisified call actually uses, rather than casting the imported binding.
+const { exec: mockExec } = jest.requireMock<{
+  exec: jest.Mock<void, [string, unknown, ExecCallback]>;
+}>('child_process');
 
 type CommandOutcome = { stdout?: string; stderr?: string; fails?: boolean };
 
 const mockCommands = (outcomes: Record<string, CommandOutcome>) => {
-  execMock.mockImplementation(
+  mockExec.mockImplementation(
     (
       command: string,
       _options: unknown,
@@ -61,7 +66,7 @@ describe('install', () => {
 
     await install(APP_DIRECTORY);
 
-    expect(execMock).toHaveBeenCalledWith(
+    expect(mockExec).toHaveBeenCalledWith(
       'yarn install --no-immutable',
       { cwd: APP_DIRECTORY },
       expect.any(Function),

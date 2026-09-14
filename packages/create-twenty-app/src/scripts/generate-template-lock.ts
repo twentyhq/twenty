@@ -16,6 +16,8 @@ import * as fs from 'fs-extra';
 import { tmpdir } from 'os';
 import { basename, dirname, join, resolve } from 'path';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { TEMPLATE_FIRST_PARTY_PACKAGES } from '@/constants/template-packages';
 import createTwentyAppPackageJson from 'package.json';
 
@@ -61,7 +63,7 @@ const resolveYarnBinary = (templatePackageManager: string) => {
   const yarnrc = fs.readFileSync(join(REPO_ROOT, '.yarnrc.yml'), 'utf8');
   const yarnPath = /^yarnPath:\s*(.+)$/m.exec(yarnrc)?.[1]?.trim();
 
-  if (yarnPath === undefined) {
+  if (!isDefined(yarnPath)) {
     throw new Error('No yarnPath found in the monorepo .yarnrc.yml');
   }
 
@@ -110,11 +112,15 @@ const buildYarnrc = (registry: string) => {
   ].join('\n');
 };
 
-const assertResolvedWithIntegrity = (
-  lockfile: string,
-  packageName: string,
-  version: string,
-) => {
+const assertResolvedWithIntegrity = ({
+  lockfile,
+  packageName,
+  version,
+}: {
+  lockfile: string;
+  packageName: string;
+  version: string;
+}) => {
   // Entry keys merge when several descriptors share one resolution
   // ("pkg@npm:1.0.0, pkg@npm:^1.0.0":), so match the resolution line instead.
   const resolution = `resolution: "${packageName}@npm:${version}"`;
@@ -142,7 +148,13 @@ const assertResolvedWithIntegrity = (
 // A registry serving tarballs from non-conventional URLs makes Yarn pin each
 // entry to that exact host via __archiveUrl, which would not resolve for anyone
 // else. Only the public registry produces a lockfile we can ship.
-const assertNoRegistryPinning = (lockfile: string, registry: string) => {
+const assertNoRegistryPinning = ({
+  lockfile,
+  registry,
+}: {
+  lockfile: string;
+  registry: string;
+}) => {
   if (registry !== PUBLIC_REGISTRY) {
     return;
   }
@@ -192,10 +204,10 @@ const generateTemplateLock = async ({
     );
 
     for (const packageName of TEMPLATE_FIRST_PARTY_PACKAGES) {
-      assertResolvedWithIntegrity(lockfile, packageName, version);
+      assertResolvedWithIntegrity({ lockfile, packageName, version });
     }
 
-    assertNoRegistryPinning(lockfile, registry);
+    assertNoRegistryPinning({ lockfile, registry });
 
     await fs.ensureDir(dirname(outputPath));
     await fs.writeFile(outputPath, lockfile);
