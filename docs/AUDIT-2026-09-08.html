@@ -150,6 +150,7 @@
   <a class="sub" href="#N2">N2 · Query auth gãy</a>
   <a href="#update-2">Cập nhật 11/09 (vòng 3)</a>
   <a href="#update-3">Cập nhật 12/09 (vòng 4)</a>
+  <a href="#update-4">Cập nhật 13/09 (vòng 5)</a>
   <a href="#clean">Điểm đạt</a>
   <a href="#corrections">Điều chỉnh giả định</a>
   <a href="#plan">Kế hoạch hành động</a>
@@ -2247,6 +2248,57 @@ if (!isMultiWorkspaceSubdomainEnabled) { return null; }</code></pre>
   <code>dev → main</code> sync lại để cron 6 giờ và mọi thứ khác cùng trạng thái.
   Bài học ghi vào quy trình review sync: <em>check boot thật (server-setup/integration) là gate
   duy nhất thấy lỗi DI; phải đọc kết quả job thay vì tin badge cũ của check path-gated</em>.
+</p>
+
+<!-- ==================== UPDATE 4 ==================== -->
+
+<h2 id="update-4">Cập nhật 13/09/2026 <span class="badge b-med">vòng 5</span></h2>
+
+<h3>Sync upstream <code>twenty/v2.40.0</code> (kèm <code>v2.39.5</code>) — merge conflict, hai bug CI của upstream, snapshot branding</h3>
+<p>
+  Bot sync chọn đúng tag mới nhất nhưng lần này là <strong>conflict merge</strong> (PR
+  <a href="https://github.com/DOS/Crove-CRM/pull/4">#4</a>): 4 file source
+  (<code>marketplace-vetted-applications.constant.ts</code> — upstream đổi sang
+  <code>TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS</code> và thay Linear bằng People Data Labs;
+  <code>jobs.module.ts</code> — 2 job trigger install/uninstall mới;
+  <code>call-webhook-jobs.job.ts</code> — import type mới;
+  <code>application-install.service.ts</code> — flow <code>persistVersion</code> + post-install
+  hook sync), <code>CLAUDE.md</code>, version constants và toàn bộ locale po. Tất cả resolve về
+  phía upstream, branding patch chạy lại (747 replacement) + catalog lingui compile
+  (<code>9355c0e6c9</code>), <code>tsgo</code> server sạch sau khi install lại deps v2.40.0.
+</p>
+<p>
+  CI vòng 1 chết gần như toàn bộ integration shards <em>trước khi vào test</em>: bundle
+  <code>twenty-client-sdk</code> kéo <code>handlebars</code> qua utils barrel, vite stub hoá
+  <code>util</code> và văng ngay khi load — <strong>bug của chính upstream v2.40.0</strong>,
+  họ đã fix trên main sau khi release. Cherry-pick <code>6fadcee289</code> vào sync branch
+  (<code>fd56aec038</code>) xử lý gốc. Thứ hai: mutation-guard đỏ vì upstream v2.40.0 tự sửa
+  1 upgrade command cũ ở thư mục <code>2-10</code> — false-positive cho sync PR, xử lý bằng
+  cơ chế bypass chính thức của upstream: label
+  <code>ci:allow-previous-version-upgrade-mutation</code> (label phải tồn tại <em>trước</em> khi
+  CI trigger, nên cần 1 commit rỗng retrigger — <code>d5da70cd84</code>).
+</p>
+<p>
+  Còn 7 shards đỏ vì <strong>snapshot test chứa text upstream</strong> ("...this
+  <em>workspace</em>...") trong khi fork render "...this <em>organization</em>..." qua
+  <code>userFriendlyMessage</code> (branding patch của fork; các snapshot này thuộc feature
+  "app install gated by workspace upgrade version" mới trong v2.40.0). Patch 9 file
+  <code>.snap</code> chỉ đổi giá trị <code>userFriendlyMessage</code>
+  (<code>9d452cde85</code>) — snapshot key và <code>message</code> giữ nguyên. Kết quả:
+  <strong>20/20 integration shards xanh</strong>, server-lint-typecheck ✓, server-build ✓,
+  server-test 3/4 ✓, 9/11 app smoke ✓. Đã merge PR #4 (<code>b4b1673078</code>),
+  <code>dev → main</code> (<code>2846663a91</code>), image beta v2.40.0 build xanh
+  (run <code>34763305124</code>, verify 4m36s + build-and-push 9m29s).
+</p>
+<p>
+  <strong>Còn đỏ — nợ cũ, không phải regression của v2.40.0:</strong>
+  (1) <code>server-validation</code> = drift codegen graphql/SDK, mục <a href="#C5">C5</a>,
+  cần server sống để regenerate rồi commit output;
+  (2) <code>server-test (2)</code> = 2 suite fork-red từ trước (đỏ cả ở PR #2/#3 và local);
+  (3) smoke <code>commerce</code> + <code>zalo-oa</code> = <code>YN0028</code> lockfile app lệch
+  <code>package.json</code>, mục M34 — đã trình owner 3 lựa chọn: regenerate bằng job GitHub
+  Actions one-off trên runner sạch (khuyến nghị), regenerate local rồi đối chiếu checksum với
+  registry, hoặc bật <code>checksumBehavior: update</code> (làm yếu integrity — không khuyến nghị).
 </p>
 
 <!-- ==================== CLEAN ==================== -->
