@@ -94,6 +94,10 @@ import { Companion } from '../companion';
 
 const originalPlatform = process.platform;
 const originalArch = process.arch;
+const originalGetSystemVersionDescriptor = Object.getOwnPropertyDescriptor(
+  process,
+  'getSystemVersion',
+);
 let companion: Companion;
 beforeEach(async () => {
   Object.defineProperty(process, 'platform', {
@@ -148,6 +152,15 @@ afterEach(async () => {
   vi.useRealTimers();
   Object.defineProperty(process, 'platform', { value: originalPlatform });
   Object.defineProperty(process, 'arch', { value: originalArch });
+  if (originalGetSystemVersionDescriptor === undefined) {
+    Reflect.deleteProperty(process, 'getSystemVersion');
+  } else {
+    Object.defineProperty(
+      process,
+      'getSystemVersion',
+      originalGetSystemVersionDescriptor,
+    );
+  }
 });
 const allowPermissions = () => {
   mocks.accessibilityTrusted.mockReturnValue(true);
