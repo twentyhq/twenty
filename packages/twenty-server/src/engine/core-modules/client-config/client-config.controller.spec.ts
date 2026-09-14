@@ -34,6 +34,14 @@ describe('ClientConfigController', () => {
     expect(controller).toBeDefined();
   });
 
+  // A CDN or browser that caches this serves a body predating the running
+  // release, and every field it lacks silently reads as absent on the client.
+  it('forbids caching the config', () => {
+    expect(
+      Reflect.getMetadata('__headers__', controller.getClientConfig),
+    ).toContainEqual({ name: 'Cache-Control', value: 'no-store' });
+  });
+
   describe('getClientConfig', () => {
     it('should return client config from service', async () => {
       const mockClientConfig = {
