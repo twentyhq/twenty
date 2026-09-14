@@ -53,12 +53,18 @@
       &[data-variant='soft']:hover {
         background: var(--t-background-transparent-medium);
       }
+      &[data-variant='solid']:hover {
+        background: var(--t-background-transparent-strong);
+      }
     }
     &:active {
       background: var(--t-background-transparent-medium);
     }
     &[data-variant='soft']:active {
       background: var(--t-background-transparent-strong);
+    }
+    &[data-variant='solid']:active {
+      background: var(--t-color-transparent-gray8);
     }
   }
 }
