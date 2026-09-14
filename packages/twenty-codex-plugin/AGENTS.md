@@ -9,7 +9,7 @@ Per-skill SKILL.md files own task-specific guidance. This file owns the cross-sk
 The Twenty Codex plugin helps users build, operate, develop, publish, and query Twenty apps — modular extensions for the Twenty CRM platform. It bundles:
 
 - **5 skills** for the canonical Twenty app workflows.
-- **15 reference docs** under `references/` covering concepts, data model, UI, layouts, CLI, publishing, and MCP.
+- **16 reference docs** under `references/` covering concepts, data model, UI, layouts, CLI, publishing, and MCP.
 - **1 public MCP server** (`twenty-docs`) for searching official Twenty documentation.
 - **1 setup helper** (`scripts/setup-mcp.sh`) for adding user-local workspace MCP endpoints.
 
@@ -31,25 +31,18 @@ If the user's request straddles two skills, do the boundary task in the first sk
 
 ## Durable Operating Rules
 
-These rules apply in every skill. They exist because they have failed before.
+The cross-skill rules live in `references/concepts/operating-rules.md`. That file is the single source of truth: it ships both with this plugin and with the portable Agent Skills collection, so the rules stay identical across distributions. Read it before any non-trivial task, and do not restate or fork it here.
 
-1. **Bounded sync only.** Use `yarn twenty apply` to synchronize app changes. Never `yarn twenty dev` (watch mode). Watch mode leaks file handles and produces ambiguous failure output in agent sandboxes.
+Codex-specific additions on top of those rules:
 
-2. **Do not run broad validation unless it is requested.** After scaffolding (`create-twenty-app`) or after the CLI generates entities, prefer the bounded command that matches the task: `yarn twenty apply` for app sync, the package's unit-test script for unit tests, and `TWENTY_API_URL=http://localhost:2021 yarn test` for the full integration suite. Integration tests must target the isolated test instance on port `2021`, not the dev instance on port `2020`, unless the user explicitly asks otherwise.
-
-3. **Use `yarn twenty dev:add` for new entities.** It generates correct file structure, UUIDs, SDK imports, and boilerplate. Do not hand-craft entity files unless modifying existing ones or the CLI does not support that entity type.
-
-4. **Confirm destructive operations.** Deploys to production, uninstalls, production remote changes, and production syncs require explicit user confirmation before execution. Treat `--remote production` as user-visible.
-
-5. **Never bundle workspace-specific MCP URLs.** Workspace MCP endpoints belong in the user's local `.mcp.json` and Codex MCP config. The plugin only ships the public `twenty-docs` MCP server. Use `scripts/setup-mcp.sh` to configure workspace MCP for a specific user.
-
-6. **Never put credentials in source.** Bearer tokens, API keys, OAuth secrets, and workspace-specific URLs are user-local. `TWENTY_DEPLOY_API_KEY` and similar live in CI secret stores, never committed.
+- Workspace MCP endpoints belong in the user's local `.mcp.json` and Codex MCP config. This plugin only ships the public `twenty-docs` MCP server. Use `scripts/setup-mcp.sh` to configure a workspace MCP endpoint for a specific user.
 
 ## Reference Doc Map
 
 When a skill points at a reference, read only what the task needs:
 
 - `concepts/how-apps-work.md` — foundational. Read at the start of any non-trivial task.
+- `concepts/operating-rules.md` — the durable cross-skill rules. Authoritative; nothing restates them.
 - `develop-app/app-structure.md` — file layout, entity creation, validation checklist.
 - `develop-app/data-model.md` — objects, fields, relations, roles, permissions.
 - `develop-app/front-components.md` — front component source, SDK imports, runtime verification.

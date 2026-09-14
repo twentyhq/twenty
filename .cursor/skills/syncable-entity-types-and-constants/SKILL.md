@@ -1,6 +1,6 @@
 ---
 name: syncable-entity-types-and-constants
-description: Define types, entities, and central constant registrations for syncable entities in Twenty's workspace migration system. Use when creating new syncable entities, defining TypeORM entities, flat entity types, or registering in central constants (ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME, ALL_ONE_TO_MANY_METADATA_RELATIONS, ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY, ALL_MANY_TO_ONE_METADATA_RELATIONS).
+description: Contributing to the Twenty codebase itself (twentyhq/twenty server internals), not for building apps on top of Twenty. Define types, entities, and central constant registrations for syncable entities in Twenty's workspace migration system. Use when creating new syncable entities, defining TypeORM entities, flat entity types, or registering in central constants (ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME, ALL_ONE_TO_MANY_METADATA_RELATIONS, ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY, ALL_MANY_TO_ONE_METADATA_RELATIONS).
 ---
 
 # Syncable Entity: Types & Constants (Step 1/6)

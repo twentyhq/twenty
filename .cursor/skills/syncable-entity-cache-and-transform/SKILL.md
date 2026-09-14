@@ -1,6 +1,6 @@
 ---
 name: syncable-entity-cache-and-transform
-description: Create cache services and transformation utilities for syncable entities in Twenty. Use when implementing entity-to-flat conversions, input DTO transpilation to universal flat entities, or cache recomputation for syncable entities.
+description: Contributing to the Twenty codebase itself (twentyhq/twenty server internals), not for building apps on top of Twenty. Create cache services and transformation utilities for syncable entities in Twenty. Use when implementing entity-to-flat conversions, input DTO transpilation to universal flat entities, or cache recomputation for syncable entities.
 ---
 
 # Syncable Entity: Cache & Transform (Step 2/6)

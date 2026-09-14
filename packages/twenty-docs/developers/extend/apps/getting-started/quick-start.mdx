@@ -150,6 +150,21 @@ Apps are composed of **entities** — each defined as a TypeScript file with a s
 
 Full reference: [Concepts](/developers/extend/apps/getting-started/concepts).
 
+## Build with AI agent skills
+
+Official Twenty [Agent Skills](https://skills.sh/) teach coding agents the full app workflow: scaffolding, entity development, sync and deploy operations, and marketplace publishing. They install into Claude Code, Codex, Cursor, Pi, and any other harness supported by the `skills` CLI, and work against any Twenty instance, including self-hosted custom domains and localhost.
+
+```bash filename="Terminal"
+# List the available skills
+npx skills add twentyhq/twenty/packages/twenty-agent-skills --list
+
+# Install the scaffolding and development skills
+npx skills add twentyhq/twenty/packages/twenty-agent-skills --skill create-app
+npx skills add twentyhq/twenty/packages/twenty-agent-skills --skill develop-app
+```
+
+Each skill installs with its own reference docs, so nothing needs fixing up afterwards.
+
 ## Next steps
 
 <CardGroup cols={2}>

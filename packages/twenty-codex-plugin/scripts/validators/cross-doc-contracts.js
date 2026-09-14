@@ -1,3 +1,4 @@
+const fs = require('node:fs');
 const path = require('node:path');
 
 const { PLUGIN_ROOT, listFiles, readText } = require('./lib');
@@ -324,11 +325,11 @@ const assertTestingGuidance = (fail) => {
   const manageSkillPath = path.join(PLUGIN_ROOT, 'skills/manage-app/SKILL.md');
   const testsPath = path.join(PLUGIN_ROOT, 'references/develop-app/tests.md');
   const cliAndSyncPath = path.join(PLUGIN_ROOT, 'references/manage-app/cli-and-sync.md');
-  const agentsPath = path.join(PLUGIN_ROOT, 'AGENTS.md');
+  const operatingRulesPath = path.join(PLUGIN_ROOT, 'references/concepts/operating-rules.md');
   const manageSkill = readText(manageSkillPath);
   const tests = readText(testsPath);
   const cliAndSync = readText(cliAndSyncPath);
-  const agents = readText(agentsPath);
+  const operatingRules = readText(operatingRulesPath);
 
   const requiredManageFragments = [
     'run tests for my Twenty app',
@@ -370,19 +371,72 @@ const assertTestingGuidance = (fail) => {
     }
   }
 
-  const requiredAgentsFragments = [
+  const requiredOperatingRulesFragments = [
     'TWENTY_API_URL=http://localhost:2021 yarn test',
     'Integration tests must target the isolated test instance on port `2021`',
   ];
 
-  for (const fragment of requiredAgentsFragments) {
-    if (!agents.includes(fragment)) {
-      fail(`AGENTS.md is missing durable test target guidance: ${fragment}`);
+  for (const fragment of requiredOperatingRulesFragments) {
+    if (!operatingRules.includes(fragment)) {
+      fail(`operating-rules.md is missing durable test target guidance: ${fragment}`);
     }
   }
 };
 
+const OPERATING_RULE_HEADLINES = [
+  '**Bounded sync only.**',
+  '**Do not run broad validation unless it is requested.**',
+  '**Use `yarn twenty dev:add` for new entities.**',
+  '**Confirm destructive operations.**',
+  '**Any Twenty instance is a valid target.**',
+  '**Workspace URLs and credentials stay user-local.**',
+];
+
+// The operating rules ship in two distributions (this plugin and the portable
+// Agent Skills collection). Restating them in a second file is how they drift,
+// so every entry point links to the reference instead of copying it.
+const assertOperatingRulesSingleSource = (fail) => {
+  const operatingRulesPath = path.join(PLUGIN_ROOT, 'references/concepts/operating-rules.md');
+
+  if (!fs.existsSync(operatingRulesPath)) {
+    fail('required reference is missing: references/concepts/operating-rules.md');
+    return;
+  }
+
+  const operatingRules = readText(operatingRulesPath);
+
+  for (const headline of OPERATING_RULE_HEADLINES) {
+    if (!operatingRules.includes(headline)) {
+      fail(`operating-rules.md is missing a durable rule: ${headline}`);
+    }
+  }
+
+  const restatingDocumentPaths = [
+    path.join(PLUGIN_ROOT, 'AGENTS.md'),
+    ...listFiles(path.join(PLUGIN_ROOT, 'skills')).filter((filePath) => filePath.endsWith('.md')),
+  ];
+
+  for (const documentPath of restatingDocumentPaths) {
+    const relativePath = path.relative(PLUGIN_ROOT, documentPath);
+    const contents = readText(documentPath);
+
+    for (const headline of OPERATING_RULE_HEADLINES) {
+      if (contents.includes(headline)) {
+        fail(`${relativePath} restates an operating rule instead of linking to operating-rules.md: ${headline}`);
+      }
+    }
+  }
+
+  const agents = readText(path.join(PLUGIN_ROOT, 'AGENTS.md'));
+
+  if (!agents.includes('references/concepts/operating-rules.md')) {
+    fail('AGENTS.md must point at references/concepts/operating-rules.md for the durable operating rules');
+  }
+};
+
 module.exports = {
+  OPERATING_RULE_HEADLINES,
+  assertOperatingRulesSingleSource,
   assertTwentyMcpFormattingContract,
   assertFrontComponentGuidance,
   assertCliGuidanceSplit,

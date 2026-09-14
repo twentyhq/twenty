@@ -20,6 +20,7 @@ skills.assertSkillTriggerPhrases(fail);
 skills.assertNoLegacySkillReferences(fail);
 references.assertReferences(fail);
 references.assertHowAppsWork(fail);
+crossDocContracts.assertOperatingRulesSingleSource(fail);
 crossDocContracts.assertTwentyMcpFormattingContract(fail);
 crossDocContracts.assertFrontComponentGuidance(fail);
 crossDocContracts.assertCliGuidanceSplit(fail);

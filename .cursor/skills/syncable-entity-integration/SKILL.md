@@ -1,6 +1,6 @@
 ---
 name: syncable-entity-integration
-description: Wire syncable entity services into NestJS modules, create service layer and resolvers for Twenty entities. Use when registering builders, validators, and action handlers in modules, creating business services, or exposing entities via GraphQL API with proper exception handling.
+description: Contributing to the Twenty codebase itself (twentyhq/twenty server internals), not for building apps on top of Twenty. Wire syncable entity services into NestJS modules, create service layer and resolvers for Twenty entities. Use when registering builders, validators, and action handlers in modules, creating business services, or exposing entities via GraphQL API with proper exception handling.
 ---
 
 # Syncable Entity: Integration (Step 5/6)

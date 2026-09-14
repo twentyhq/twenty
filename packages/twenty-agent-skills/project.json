@@ -1,0 +1,58 @@
+{
+  "name": "twenty-agent-skills",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-agent-skills",
+  "projectType": "library",
+  "tags": ["scope:agent-skills"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node ./scripts/build.js"
+      }
+    },
+    "validate": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node ./scripts/build.js --check && node ./scripts/validate.js"
+      },
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/scripts/**/*",
+        "{projectRoot}/skills/**/*",
+        "{workspaceRoot}/packages/twenty-codex-plugin/skills/**/*",
+        "{workspaceRoot}/packages/twenty-codex-plugin/references/**/*",
+        "{workspaceRoot}/packages/twenty-codex-plugin/scripts/validators/lib.js"
+      ]
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node --test ./scripts/__tests__/*.spec.js"
+      },
+      "inputs": [
+        "{projectRoot}/scripts/**/*",
+        "{workspaceRoot}/packages/twenty-codex-plugin/scripts/validators/lib.js"
+      ]
+    },
+    "fmt": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "prettier . --check --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
+      },
+      "configurations": {
+        "ci": {},
+        "fix": {
+          "command": "prettier . --write --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
+        }
+      }
+    }
+  }
+}

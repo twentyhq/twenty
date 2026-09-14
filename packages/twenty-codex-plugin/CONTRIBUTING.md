@@ -11,6 +11,14 @@ npx nx run twenty-codex-plugin:test
 
 Both must pass before merge. No new runtime deps in `scripts/` — validators use Node built-ins only.
 
+This package is the canonical source for the portable [`packages/twenty-agent-skills`](../twenty-agent-skills) collection. After changing anything under `skills/` or `references/`, regenerate it and commit the result:
+
+```bash
+npx nx run twenty-agent-skills:build
+```
+
+CI fails when the generated collection is out of sync. Keep skill and reference content harness-neutral; Codex-specific behavior belongs in the wrapper files (`.codex-plugin/`, `.mcp.json`, `agents/openai.yaml`, `scripts/setup-mcp.sh`).
+
 ## Adding a skill
 
 1. Create `skills/<name>/SKILL.md` (frontmatter: `name`, `description` only) and `skills/<name>/agents/openai.yaml` (`display_name`, `short_description` ≤ 64, `default_prompt` mentioning `$<name>`).

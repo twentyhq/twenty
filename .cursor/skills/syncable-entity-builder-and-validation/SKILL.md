@@ -1,6 +1,6 @@
 ---
 name: syncable-entity-builder-and-validation
-description: Create validation logic and migration action builders for syncable entities in Twenty. Use when implementing business rule validation, uniqueness checks, foreign key validation, or building workspace migration actions for syncable entities. Validators never throw and never mutate.
+description: Contributing to the Twenty codebase itself (twentyhq/twenty server internals), not for building apps on top of Twenty. Create validation logic and migration action builders for syncable entities in Twenty. Use when implementing business rule validation, uniqueness checks, foreign key validation, or building workspace migration actions for syncable entities. Validators never throw and never mutate.
 ---
 
 # Syncable Entity: Builder & Validation (Step 3/6)

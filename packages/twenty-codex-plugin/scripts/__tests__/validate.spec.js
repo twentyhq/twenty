@@ -343,3 +343,40 @@ test('assertTestingGuidance catches missing manage-app test target instructions'
     );
   });
 });
+
+test('assertOperatingRulesSingleSource passes on current state', () => {
+  assert.deepStrictEqual(collectFailures(crossDocContracts.assertOperatingRulesSingleSource), []);
+});
+
+test('assertOperatingRulesSingleSource catches AGENTS.md restating a rule', () => {
+  const agentsPath = path.join(PLUGIN_ROOT, 'AGENTS.md');
+  withFileMutation(agentsPath, (original) => `${original}\n1. **Confirm destructive operations.** Restated.\n`, () => {
+    const failures = collectFailures(crossDocContracts.assertOperatingRulesSingleSource);
+    assert.ok(
+      failures.some((f) => f.includes('AGENTS.md') && f.includes('restates an operating rule')),
+      `expected a restated-rule failure, got: ${failures.join('; ')}`,
+    );
+  });
+});
+
+test('assertOperatingRulesSingleSource catches AGENTS.md losing the pointer', () => {
+  const agentsPath = path.join(PLUGIN_ROOT, 'AGENTS.md');
+  withFileMutation(agentsPath, (original) => original.replaceAll('references/concepts/operating-rules.md', 'nowhere.md'), () => {
+    const failures = collectFailures(crossDocContracts.assertOperatingRulesSingleSource);
+    assert.ok(
+      failures.some((f) => f.includes('AGENTS.md must point at')),
+      `expected a missing-pointer failure, got: ${failures.join('; ')}`,
+    );
+  });
+});
+
+test('assertHowAppsWork catches a skill that does not reference operating-rules.md', () => {
+  const skillPath = path.join(PLUGIN_ROOT, 'skills', 'develop-app', 'SKILL.md');
+  withFileMutation(skillPath, (original) => original.replace('../../references/concepts/operating-rules.md', 'nowhere.md'), () => {
+    const failures = collectFailures(references.assertHowAppsWork);
+    assert.ok(
+      failures.some((f) => f.includes('develop-app/SKILL.md') && f.includes('operating-rules.md')),
+      `expected an operating-rules reference failure, got: ${failures.join('; ')}`,
+    );
+  });
+});

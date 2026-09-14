@@ -22,7 +22,7 @@ Do not use this skill to scaffold (use `create-app`), to change app entities or 
 
 # Boundaries
 
-For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `../../references/concepts/how-apps-work.md`.
+For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `../../references/concepts/how-apps-work.md`. Cross-skill operating rules that apply to every Twenty app task are in `../../references/concepts/operating-rules.md`; they are authoritative and not restated per skill.
 
 Do not scaffold a new app here. Use `$create-app` when the app does not exist.
 

@@ -11,6 +11,7 @@ Entries reference the canonical skills (`create-app`, `develop-app`, `manage-app
 The first version of the Twenty Codex plugin.
 
 ### Added
+- `references/concepts/operating-rules.md`: the durable cross-skill rules, harness-neutral and authoritative. `AGENTS.md` and the four app skills link to it instead of restating it, and `assertOperatingRulesSingleSource` fails validation when any of them forks a rule.
 - `AGENTS.md` at the plugin root: durable cross-skill operating rules, skill routing table, and reference-doc map.
 - `CHANGELOG.md` (this file).
 - `CHECKLIST.md`: best-practices compliance matrix mapping each official Codex plugin requirement to an automated check or a manual sign-off.
@@ -27,6 +28,8 @@ The first version of the Twenty Codex plugin.
 - `scripts/validate.js` refactored from a single 760-line file into a thin entry point plus focused modules under `scripts/validators/` (`lib`, `metadata`, `assets`, `skills`, `references`, `cross-doc-contracts`, `setup-helper`).
 - `package.json`: exposed `test` script; added `AGENTS.md`, `CHANGELOG.md`, `CHECKLIST.md`, `CONTRIBUTING.md`, `templates` to `files`.
 - `.codex-plugin/plugin.json`: rewrote `interface.longDescription` into 3 scannable sentences (was a single ~400-char sentence).
+- `references/use-twenty-mcp/setup.md`: rewritten as multi-harness MCP setup (Codex, Claude Code, Cursor, generic clients) with self-hosted and localhost workspaces as first-class targets.
+- `skills/use-twenty-mcp/SKILL.md`, `skills/publish-app/SKILL.md`: harness-neutral wording; the public `twenty-docs` MCP server is an optional enhancement rather than an assumed dependency.
 - `README.md`: restructured into What/Installation/Skills/MCP/Development sections; added skills-overview table; linked `CONTRIBUTING.md`, `CHECKLIST.md`, `CHANGELOG.md`.
 - `scripts/validators/lib.js` `isAllowedDocumentationHost`: added `developers.openai.com`, `keepachangelog.com`, `semver.org` to the placeholder host allowlist so external documentation references in `CHECKLIST.md`, `CONTRIBUTING.md`, and `CHANGELOG.md` pass validation.
 - `references/develop-app/tests.md` and `references/manage-app/cli-and-sync.md`: documented that integration tests must run against the isolated test instance (`yarn twenty docker:start --test`, port `2021`) instead of the dev instance, since the test harness installs and uninstalls the app on its target server.

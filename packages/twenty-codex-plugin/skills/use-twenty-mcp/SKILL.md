@@ -1,6 +1,6 @@
 ---
 name: use-twenty-mcp
-description: Use when the user wants Codex to connect to an existing Twenty workspace through MCP, retrieve or inspect workspace records and metadata, or present Twenty CRM data as readable Markdown with formatted dates, values, record links, and compact tables instead of raw API output.
+description: Use when the user wants the agent to connect to an existing Twenty workspace through MCP, retrieve or inspect workspace records and metadata, or present Twenty CRM data as readable Markdown with formatted dates, values, record links, and compact tables instead of raw API output.
 ---
 
 # When To Use
@@ -10,7 +10,7 @@ Pick this skill when the user wants to read from or inspect a running Twenty wor
 - "list all my companies / people / opportunities in Twenty"
 - "show me the records I created this week"
 - "what's in my Twenty workspace"
-- "connect Codex to my Twenty workspace"
+- "connect my agent to my Twenty workspace"
 - "set up Twenty MCP for `myworkspace.twenty.com`"
 - "query the CRM for X"
 - "summarize my pipeline from Twenty"
@@ -20,11 +20,11 @@ Do not use this skill to scaffold an app (use `create-app`), to add or modify ap
 
 # What It Is
 
-Twenty MCP connects Codex to an existing Twenty workspace so the agent can inspect workspace data and metadata: records, objects, fields, schema, configuration, and related CRM context.
+Twenty MCP connects the agent to an existing Twenty workspace so it can inspect workspace data and metadata: records, objects, fields, schema, configuration, and related CRM context.
 
 This is different from a Twenty app. Use `$create-app` when the user wants to scaffold a new app codebase, and `$develop-app` when the user wants to add app-defined features such as objects, fields, logic, layouts, or components.
 
-Use `$use-twenty-mcp` when the user wants to connect Codex to an already running workspace, retrieve or inspect workspace data, inspect metadata, or troubleshoot MCP access.
+Use `$use-twenty-mcp` when the user wants to connect the agent to an already running workspace, retrieve or inspect workspace data, inspect metadata, or troubleshoot MCP access.
 
 Do not use MCP as the default way to customize a workspace. For example, prefer creating a new object through a Twenty app rather than directly through MCP. Use MCP for workspace customization only when the user explicitly asks to do it through MCP.
 

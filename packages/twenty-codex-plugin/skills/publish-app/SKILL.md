@@ -19,7 +19,7 @@ Do not use this skill to scaffold (use `create-app`), to change app entities (us
 
 # Publishing Checklist
 
-For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `../../references/concepts/how-apps-work.md`.
+For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `../../references/concepts/how-apps-work.md`. Cross-skill operating rules that apply to every Twenty app task are in `../../references/concepts/operating-rules.md`; they are authoritative and not restated per skill.
 
 Use `../../references/publish-app/prepare-for-app-store.md` for detailed README, marketplace copy, logo, screenshot, and public asset guidance.
 
@@ -40,4 +40,4 @@ Use `$develop-app` when the app entities themselves need to change before the li
 
 # Docs
 
-If the needed publishing detail is unclear, search the official Twenty docs through the bundled `twenty-docs` MCP server before guessing.
+If the needed publishing detail is unclear, search the official Twenty docs at `https://docs.twenty.com` before guessing. When a Twenty docs MCP server is configured (`https://docs.twenty.com/mcp`), prefer searching through it. That server is an optional enhancement, not a requirement for this skill.

@@ -1,6 +1,6 @@
 ---
 name: syncable-entity-testing
-description: Create comprehensive integration tests for syncable entities in Twenty. Use when writing integration tests for metadata entities, covering validator exceptions, input transpilation errors, and CRUD operations. Tests are MANDATORY for all syncable entities.
+description: Contributing to the Twenty codebase itself (twentyhq/twenty server internals), not for building apps on top of Twenty. Create comprehensive integration tests for syncable entities in Twenty. Use when writing integration tests for metadata entities, covering validator exceptions, input transpilation errors, and CRUD operations. Tests are MANDATORY for all syncable entities.
 ---
 
 # Syncable Entity: Integration Testing (Step 6/6 - MANDATORY)

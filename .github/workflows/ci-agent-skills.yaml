@@ -1,0 +1,119 @@
+name: CI Agent Skills
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        package.json
+        packages/twenty-agent-skills/**
+        packages/twenty-codex-plugin/**
+        .github/workflows/ci-agent-skills.yaml
+
+  agent-skills-validate:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch local actions
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+
+      - name: Agent Skills / Check sync and validate
+        run: npx nx run twenty-agent-skills:validate
+
+      - name: Agent Skills / Test
+        run: npx nx run twenty-agent-skills:test
+
+      - name: Agent Skills / List with the skills CLI
+        run: |
+          set -euo pipefail
+          LISTING="$(npx -y skills@latest add ./packages/twenty-agent-skills --list)"
+          echo "$LISTING"
+
+          for SKILL in create-app develop-app manage-app publish-app use-twenty-mcp; do
+            grep -q "$SKILL" <<<"$LISTING" || {
+              echo "::error::$SKILL missing from the collection listing"
+              exit 1
+            }
+          done
+
+          # The package path must scope discovery to the app skills; a listing that
+          # also carries repository-wide skills means the source is wrong.
+          if grep -q 'syncable-entity' <<<"$LISTING"; then
+            echo "::error::listing leaked internal contributor skills"
+            exit 1
+          fi
+
+      - name: Agent Skills / Install each skill independently
+        run: |
+          set -euo pipefail
+          for SKILL in create-app develop-app manage-app publish-app use-twenty-mcp; do
+            INSTALL_DIR="$(mktemp -d)"
+            (
+              cd "$INSTALL_DIR"
+              npx -y skills@latest add "$GITHUB_WORKSPACE/packages/twenty-agent-skills" \
+                --skill "$SKILL" --agent claude-code --agent codex --copy -y
+            )
+            node packages/twenty-agent-skills/scripts/verify-install.js "$INSTALL_DIR" "$SKILL"
+            rm -rf "$INSTALL_DIR"
+          done
+
+      - name: Agent Skills / Install the whole collection
+        run: |
+          set -euo pipefail
+          INSTALL_DIR="$(mktemp -d)"
+          (
+            cd "$INSTALL_DIR"
+            npx -y skills@latest add "$GITHUB_WORKSPACE/packages/twenty-agent-skills" \
+              --skill '*' --agent claude-code --agent codex --copy -y
+          )
+          node packages/twenty-agent-skills/scripts/verify-install.js "$INSTALL_DIR"
+          rm -rf "$INSTALL_DIR"
+
+  agent-skills-remote-source:
+    needs: changed-files-check
+    # The documented install command points at main, so it can only be exercised
+    # once the change is there.
+    if: github.event_name == 'push' && needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch local actions
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+
+      - name: Agent Skills / Install from the documented remote source
+        run: |
+          set -euo pipefail
+          for SOURCE in \
+            'twentyhq/twenty/packages/twenty-agent-skills' \
+            'https://github.com/twentyhq/twenty/tree/main/packages/twenty-agent-skills'; do
+            INSTALL_DIR="$(mktemp -d)"
+            (
+              cd "$INSTALL_DIR"
+              npx -y skills@latest add "$SOURCE" --skill '*' --agent claude-code --copy -y
+            )
+            node packages/twenty-agent-skills/scripts/verify-install.js "$INSTALL_DIR"
+            rm -rf "$INSTALL_DIR"
+          done
