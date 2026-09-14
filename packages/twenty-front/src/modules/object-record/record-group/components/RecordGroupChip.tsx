@@ -38,10 +38,12 @@ export const RecordGroupChip = ({
 
   return (
     <Tag
-      variant={isValueGroup ? 'solid' : 'outline'}
+      variant={isValueGroup ? 'soft' : 'outline'}
+      borderStyle="dashed"
       color={isValueGroup ? recordGroupDefinition.color : 'transparent'}
-      text={recordGroupDefinition.title}
       weight={isValueGroup ? valueTagWeight : 'medium'}
-    />
+    >
+      {recordGroupDefinition.title}
+    </Tag>
   );
 };

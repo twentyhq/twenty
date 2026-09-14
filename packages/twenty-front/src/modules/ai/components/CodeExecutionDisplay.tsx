@@ -213,10 +213,11 @@ export const CodeExecutionDisplay = ({
                   ? 'red'
                   : 'gray'
             }
-            text={statusText}
             weight="medium"
             preventShrink
-          />
+          >
+            {statusText}
+          </Tag>
         </StyledHeaderRight>
       </StyledHeader>
 

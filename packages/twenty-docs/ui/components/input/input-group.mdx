@@ -1,0 +1,68 @@
+---
+title: InputGroup
+description: Add prefixes, suffixes, and actions around a text input.
+---
+
+import InputGroupReference from '/snippets/ui/generated/input/input-group.mdx';
+
+`InputGroup` gives an [Input](/ui/components/input/input) a shared border and optional leading or trailing content. Set `size` on the group to size both the container and its input.
+
+## Prefix and suffix
+
+```tsx
+import { Field, Input, InputGroup } from 'twenty-ui/input';
+
+export const WebsiteField = () => (
+  <Field.Root name="website">
+    <Field.Label>Website</Field.Label>
+    <InputGroup startElement={<span aria-hidden>https://</span>}>
+      <Input placeholder="example.com" />
+    </InputGroup>
+    <Field.Description>Enter the domain without https://.</Field.Description>
+  </Field.Root>
+);
+```
+
+`startElement` and `endElement` accept React nodes. Prefixes and suffixes are visual content; the input's submitted value contains only what the user enters.
+
+## Trailing action
+
+```tsx
+import { useState } from 'react';
+import { Field, Input, InputGroup } from 'twenty-ui/input';
+
+export const PasswordField = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <Field.Root name="password">
+      <Field.Label>Password</Field.Label>
+      <InputGroup
+        endElement={
+          <button
+            type="button"
+            aria-label="Show password"
+            aria-pressed={visible}
+            onClick={() => setVisible(!visible)}
+          >
+            Show
+          </button>
+        }
+      >
+        <Input
+          type={visible ? 'text' : 'password'}
+          autoComplete="current-password"
+        />
+      </InputGroup>
+    </Field.Root>
+  );
+};
+```
+
+Put labels, validation, and value handling on the field or input. Give adornment buttons their own accessible names and use `type="button"` when they should not submit the form. The group supports `sm` and `md` sizes and defaults to `md`.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<InputGroupReference />

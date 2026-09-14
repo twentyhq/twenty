@@ -83,6 +83,10 @@ const TWENTY_UI_SUBMODULES = [
 ];
 
 const twentyUiAliases = {
+  'twenty-ui/style.css': path.join(
+    path.dirname(twentyUiIndividualIndex),
+    'twenty-ui.css',
+  ),
   'twenty-ui': twentyUiIndividualIndex,
   ...Object.fromEntries(
     TWENTY_UI_SUBMODULES.map((submodule) => [

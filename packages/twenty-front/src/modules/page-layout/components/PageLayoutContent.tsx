@@ -7,7 +7,7 @@ import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/u
 import { RecordPageAddWidgetSection } from '@/page-layout/widgets/components/RecordPageAddWidgetSection';
 import { RecordPageWidgetInsertionSeparator } from '@/page-layout/widgets/components/RecordPageWidgetInsertionSeparator';
 import { StandaloneWidgetPlaceholder } from '@/page-layout/widgets/components/StandaloneWidgetPlaceholder';
-import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
+import { isViewportFillingWidget } from '@/page-layout/widgets/utils/isViewportFillingWidget';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -58,7 +58,7 @@ export const PageLayoutContent = () => {
       leadingElement={
         isRecordPageLayout &&
         isDefined(firstWidget) &&
-        isViewportFillingWidgetType(firstWidget.type) ? (
+        isViewportFillingWidget(firstWidget) ? (
           <RecordPageAddWidgetSection
             insertionContext={{
               targetWidgetId: firstWidget.id,

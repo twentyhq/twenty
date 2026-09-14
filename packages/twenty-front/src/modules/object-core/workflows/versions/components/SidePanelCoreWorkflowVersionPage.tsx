@@ -45,7 +45,7 @@ export const SidePanelCoreWorkflowVersionPage = () => {
   return (
     <StyledContainer>
       <StyledActions>
-        <Tag color={tagProps.color} text={t(tagProps.label)} />
+        <Tag color={tagProps.color}>{t(tagProps.label)}</Tag>
         <StyledSpacer />
         <CoreWorkflowVersionRestoreButton
           workflowId={coreWorkflowVersion.workspaceWorkflowId}
