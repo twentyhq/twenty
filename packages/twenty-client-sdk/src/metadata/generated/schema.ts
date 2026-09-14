@@ -1402,6 +1402,13 @@ export interface BillingUpdate {
     __typename: 'BillingUpdate'
 }
 
+export interface AiChatUsage {
+    limitValue: Scalars['BigInt']
+    consumedValue?: Scalars['BigInt']
+    periodEnd?: Scalars['DateTime']
+    __typename: 'AiChatUsage'
+}
+
 export interface UsageBreakdownItem {
     key: Scalars['String']
     label?: Scalars['String']
@@ -3171,6 +3178,7 @@ export interface Query {
     enterpriseCheckoutSession?: Scalars['String']
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTO
     getUsageAnalytics: UsageAnalytics
+    aiChatUsage?: AiChatUsage
     usageLimits: UsageLimit[]
     usageQuotasWithConsumption: UsageQuotaWithConsumption[]
     usageQuotaDefinitions: UsageQuotaDefinitions
@@ -4996,6 +5004,14 @@ export interface BillingUpdateGenqlSelection{
     currentBillingSubscription?: BillingSubscriptionGenqlSelection
     /** All billing subscriptions */
     billingSubscriptions?: BillingSubscriptionGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AiChatUsageGenqlSelection{
+    limitValue?: boolean | number
+    consumedValue?: boolean | number
+    periodEnd?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6866,6 +6882,7 @@ export interface QueryGenqlSelection{
     enterpriseCheckoutSession?: { __args: {billingInterval?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
     getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
+    aiChatUsage?: AiChatUsageGenqlSelection
     usageLimits?: UsageLimitGenqlSelection
     usageQuotasWithConsumption?: UsageQuotaWithConsumptionGenqlSelection
     usageQuotaDefinitions?: UsageQuotaDefinitionsGenqlSelection
@@ -8601,6 +8618,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isBillingUpdate = (obj?: { __typename?: any } | null): obj is BillingUpdate => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingUpdate"')
       return BillingUpdate_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AiChatUsage_possibleTypes: string[] = ['AiChatUsage']
+    export const isAiChatUsage = (obj?: { __typename?: any } | null): obj is AiChatUsage => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAiChatUsage"')
+      return AiChatUsage_possibleTypes.includes(obj.__typename)
     }
     
 

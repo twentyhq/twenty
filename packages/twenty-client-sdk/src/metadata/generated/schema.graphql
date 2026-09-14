@@ -1767,6 +1767,17 @@ type BillingUpdate {
   billingSubscriptions: [BillingSubscription!]!
 }
 
+type AiChatUsage {
+  limitValue: BigInt!
+  consumedValue: BigInt
+  periodEnd: DateTime
+}
+
+"""
+The `BigInt` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
 type UsageBreakdownItem {
   key: String!
   label: String
@@ -1848,11 +1859,6 @@ type UsageQuotaWithConsumption {
   periodStart: DateTime
   periodEnd: DateTime
 }
-
-"""
-The `BigInt` scalar type represents non-fractional signed whole numeric values.
-"""
-scalar BigInt
 
 type UsageQuotaScopeConsumption {
   consumedValue: BigInt
@@ -3616,6 +3622,7 @@ type Query {
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
+  aiChatUsage: AiChatUsage
   usageLimits: [UsageLimit!]!
   usageQuotasWithConsumption: [UsageQuotaWithConsumption!]!
   usageQuotaDefinitions: UsageQuotaDefinitions!
