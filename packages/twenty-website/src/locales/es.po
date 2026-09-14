@@ -8,7 +8,7 @@ msgstr ""
 "Language: es\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-08 16:21\n"
+"PO-Revision-Date: 2026-09-13 21:09\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -723,7 +723,7 @@ msgstr "Un nuevo modo de mantenimiento ayuda a los administradores a pausar camb
 #. js-lingui-id: iIggw/
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A new onboarding experience"
-msgstr "Una nueva experiencia de incorporación."
+msgstr "Una nueva experiencia de incorporación"
 
 #. js-lingui-id: P5BDuh
 #: src/case-studies/case-study-stories.ts
@@ -1632,7 +1632,7 @@ msgstr "Crea paneles personalizados a partir de datos de CRM en tiempo real. Agr
 #. js-lingui-id: IQcVFZ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Build dashboards with AI"
-msgstr "Crea paneles con IA."
+msgstr "Crea paneles con IA"
 
 #. js-lingui-id: rdvFK9
 #: src/sections/why-twenty-editorial/editorials.data.ts
@@ -2996,11 +2996,6 @@ msgstr "Elevate Consulting usa Twenty como la espina dorsal de API que conecta l
 msgid "Elevate's CEO was so impressed with Twenty he started recommending it to clients before the internal setup was even complete. The team is exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs."
 msgstr "El CEO de Elevate quedó tan impresionado con Twenty que empezó a recomendarlo a los clientes antes de que la configuración interna estuviera completa. El equipo está explorando llevar Twenty a proyectos de clientes como parte de su práctica de consultoría, incluso como backend para productos hechos a medida según necesidades operativas específicas."
 
-#. js-lingui-id: FNyrb0
-#: src/sections/product-feature/data/feature-tiles.ts
-msgid "Email & Calendar"
-msgstr "Correo y Calendario"
-
 #. js-lingui-id: jTgK6B
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Email and calendar Blocklist"
@@ -3042,6 +3037,7 @@ msgid "Emails"
 msgstr "Correos electrónicos"
 
 #. js-lingui-id: XGd8Wo
+#: src/sections/product-feature/data/feature-tiles.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Emails & Calendar"
 msgstr "Correos y Calendario"
@@ -3401,11 +3397,6 @@ msgstr "Aplicaciones destacadas"
 msgid "Feb"
 msgstr "feb."
 
-#. js-lingui-id: hXRm6J
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Field Level Permission"
-msgstr "Permiso a nivel de campo"
-
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets"
@@ -3424,6 +3415,11 @@ msgstr "Los widgets de campo ahora admiten más tipos de relación, de modo que 
 #. js-lingui-id: e6BgMV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Field-level permissions"
+msgstr "Permisos a nivel de campo"
+
+#. js-lingui-id: kNlm1B
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Field-Level Permissions"
 msgstr "Permisos a nivel de campo"
 
 #. js-lingui-id: RnX5oc
@@ -6820,6 +6816,7 @@ msgstr "Los espacios de trabajo autohospedados ahora pueden seguir el uso de for
 
 #. js-lingui-id: GrBvv/
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
+#: src/sections/pricing-plans/SelfHostToggle.tsx
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 #: src/client-brief/client-brief-copy.ts
@@ -6842,11 +6839,6 @@ msgstr "Incorporación autónoma"
 #: src/sections/compare/compare-data.ts
 msgid "Self-serve, partners optional"
 msgstr "Autoservicio, partners opcionales"
-
-#. js-lingui-id: NaHz2o
-#: src/sections/pricing-plans/SelfHostToggle.tsx
-msgid "Selfhosting"
-msgstr "Autoalojamiento"
 
 #. js-lingui-id: i/TzEU
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
@@ -8156,14 +8148,14 @@ msgstr "Twenty vs SAP Sales Cloud"
 msgid "Twenty vs SAP Sales Cloud Pricing — The Real Cost Compared"
 msgstr "Twenty vs SAP Sales Cloud: precios: comparación del costo real"
 
-#. js-lingui-id: tuvLv1
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Two Factor Authentication"
-msgstr "Autenticación de dos factores"
-
 #. js-lingui-id: EIU345
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Two-factor authentication"
+msgstr "Autenticación de dos factores"
+
+#. js-lingui-id: C4pKXW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Two-Factor Authentication"
 msgstr "Autenticación de dos factores"
 
 #. js-lingui-id: O+vc/1
@@ -8518,13 +8510,9 @@ msgid "We could not submit your brief. Please try again in a moment."
 msgstr "No pudimos enviar tu brief. Inténtalo de nuevo en un momento."
 
 #. js-lingui-id: ofRgSN
+#: src/sections/testimonials/testimonials.data.ts
 #: src/case-studies/case-study-stories.ts
 msgid "We did not want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
-msgstr "No queríamos parchear el problema. Queríamos crear algo en lo que las instituciones pudieran confiar a escala, y eso significaba partir de una base lo suficientemente sólida como para soportar toda la complejidad de lo que teníamos en mente."
-
-#. js-lingui-id: MjWeUE
-#: src/sections/testimonials/testimonials.data.ts
-msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr "No queríamos parchear el problema. Queríamos crear algo en lo que las instituciones pudieran confiar a escala, y eso significaba partir de una base lo suficientemente sólida como para soportar toda la complejidad de lo que teníamos en mente."
 
 #. js-lingui-id: GVxbgf
