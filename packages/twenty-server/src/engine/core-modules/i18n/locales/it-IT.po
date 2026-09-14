@@ -10785,6 +10785,11 @@ msgstr "Questo indirizzo non può essere rimosso dalla lista di soppressione."
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "Questa chiave API è stata revocata e non può essere più utilizzata."
 
+#. js-lingui-id: SbhNwj
+#: src/engine/core-modules/api-key/services/api-key.service.ts
+msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
+msgstr ""
+
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has been revoked."
