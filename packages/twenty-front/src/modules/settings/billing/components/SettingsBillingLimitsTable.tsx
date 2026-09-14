@@ -1,3 +1,4 @@
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext, useState } from 'react';
@@ -31,13 +32,6 @@ const StyledCell = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
-`;
-
-const StyledName = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledNameContainer = styled.div`
@@ -96,7 +90,7 @@ const NameCell = ({ item }: { item: UsageLimitRow }) => {
         />
       </StyledNameIcon>
       <StyledNameContainer>
-        <StyledName>{item.name}</StyledName>
+        <SettingsTableFirstColumn label={item.name} />
         {!item.isEnforced && (
           <>
             <SettingsNameCellSecondaryLabel id={deactivatedAnchorId}>

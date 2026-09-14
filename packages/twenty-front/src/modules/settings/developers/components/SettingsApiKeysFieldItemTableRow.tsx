@@ -1,3 +1,4 @@
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import {
   formatExpiration,
   isExpired,
@@ -45,9 +46,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
         textOverflow="ellipsis"
         clickable
       >
-        <StyledEllipsisLabel>
-          {apiKey.name || t`Unnamed API Key`}
-        </StyledEllipsisLabel>
+        <SettingsTableFirstColumn label={apiKey.name || t`Unnamed API Key`} />
       </TableCell>
 
       <TableCell

@@ -1,3 +1,4 @@
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminRevokeSigningKeyConfirmationModal } from '@/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal';
 import { useRevokeSigningKey } from '@/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey';
@@ -113,10 +114,9 @@ export const SettingsAdminSigningKeysTable = () => {
                 gridTemplateColumns={SIGNING_KEYS_GRID_TEMPLATE_COLUMNS}
               >
                 <TableCell overflow="hidden" gap={themeCssVariables.spacing[1]}>
-                  <OverflowingTextWithTooltip
-                    text={signingKey.id}
+                  <SettingsTableFirstColumn
+                    label={signingKey.id}
                     tooltipContent={t`Created on ${beautifyExactDateTime(signingKey.createdAt)}`}
-                    alwaysShowTooltip
                   />
                   <Button
                     Icon={IconCopy}
