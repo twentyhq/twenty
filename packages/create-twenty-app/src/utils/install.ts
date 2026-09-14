@@ -58,7 +58,9 @@ const buildQuarantineMessage = ({
     "that project's .yarnrc.yml:",
     '',
     '  npmPreapprovedPackages:',
-    ...quarantinedPackages.map((descriptor) => `    - ${descriptor}`),
+    // Quoted because a scoped descriptor starts with "@", which YAML reserves:
+    // an unquoted `- @scope/pkg@^1.2.3` is a parse error, not a value.
+    ...quarantinedPackages.map((descriptor) => `    - "${descriptor}"`),
     '',
     'That leaves the gate in force for every other dependency.',
   ].join('\n');

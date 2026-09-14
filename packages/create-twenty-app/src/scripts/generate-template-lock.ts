@@ -33,6 +33,11 @@ const DEFAULT_OUTPUT_PATH = join(
 );
 const PUBLIC_REGISTRY = 'https://registry.npmjs.org';
 
+// Matches the monorepo's own npmMinimalAgeGate. Stated explicitly because nothing
+// is inherited here: the lockfile is resolved in a temp directory outside the
+// repo, with YARN_* stripped, so the effective gate would otherwise be zero.
+const RELEASE_MINIMAL_AGE_GATE = '3d';
+
 type Options = {
   version: string;
   registry: string;
@@ -90,7 +95,13 @@ const buildTemplateManifest = (version: string) => {
   return manifest;
 };
 
-const buildYarnrc = (registry: string) => {
+const buildYarnrc = ({
+  registry,
+  version,
+}: {
+  registry: string;
+  version: string;
+}) => {
   const { protocol, hostname } = new URL(registry);
 
   return [
@@ -103,11 +114,15 @@ const buildYarnrc = (registry: string) => {
     ...(protocol === 'http:'
       ? ['unsafeHttpWhitelist:', `  - ${hostname}`]
       : []),
-    // The monorepo enforces its own age gate. Waive it for the packages this
-    // release just published rather than turning the gate off, so a genuinely
-    // suspicious third-party version still stops the release.
+    // Scaffolded projects install this lockfile without re-resolving, which is
+    // exactly what lets them satisfy a consumer's age gate -- and equally what
+    // stops that gate from ever inspecting these versions. This resolution is
+    // therefore the only point at which an age gate applies to the tree a
+    // generated project receives, so hold one here, and waive it for nothing
+    // beyond the exact first-party versions this release is publishing.
+    `npmMinimalAgeGate: ${RELEASE_MINIMAL_AGE_GATE}`,
     'npmPreapprovedPackages:',
-    ...TEMPLATE_FIRST_PARTY_PACKAGES.map((name) => `  - ${name}`),
+    ...TEMPLATE_FIRST_PARTY_PACKAGES.map((name) => `  - "${name}@${version}"`),
     '',
   ].join('\n');
 };
@@ -190,7 +205,7 @@ const generateTemplateLock = async ({
     });
     await fs.writeFile(
       join(workingDirectory, '.yarnrc.yml'),
-      buildYarnrc(registry),
+      buildYarnrc({ registry, version }),
     );
 
     // YARN_* variables outrank the .yarnrc.yml written above, so a registry or

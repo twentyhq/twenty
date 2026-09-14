@@ -1,3 +1,5 @@
+import { parse } from 'yaml';
+
 import { install } from '@/utils/install';
 
 type ExecCallback = (error: Error | null, stdout?: string) => void;
@@ -50,6 +52,32 @@ const quarantineOutput = ({
   `➤ YN0016: │ ${descriptor}@npm:${selector}: All versions satisfying "${selector}" are quarantined`;
 
 const APP_DIRECTORY = '/tmp/some-scaffolded-app';
+
+// The remediation is YAML the reader pastes into .yarnrc.yml, so assert it parses
+// rather than that it reads correctly: a scoped descriptor left unquoted looks
+// right in a substring check and is a YAML error in the file.
+const parseSuggestedYarnrc = (message: string) => {
+  const lines = message.split('\n');
+  const blockStart = lines.findIndex(
+    (line) => line.trim() === 'npmPreapprovedPackages:',
+  );
+
+  if (blockStart === -1) {
+    throw new Error(`No npmPreapprovedPackages block in message:\n${message}`);
+  }
+
+  const block: string[] = [];
+
+  for (const line of lines.slice(blockStart)) {
+    if (line.trim().length === 0) {
+      break;
+    }
+
+    block.push(line.slice('  '.length));
+  }
+
+  return parse(block.join('\n')) as { npmPreapprovedPackages: string[] };
+};
 
 const installAndCatch = () =>
   install(APP_DIRECTORY).then(
@@ -115,8 +143,9 @@ describe('install', () => {
 
     expect(message).toContain('minimum');
     expect(message).toContain(APP_DIRECTORY);
-    expect(message).toContain('npmPreapprovedPackages');
-    expect(message).toContain('- twenty-ui@2.41.0');
+    expect(parseSuggestedYarnrc(message)).toEqual({
+      npmPreapprovedPackages: ['twenty-ui@2.41.0'],
+    });
     // Never advise lowering the gate itself.
     expect(message).not.toContain('npmMinimalAgeGate');
   });
@@ -134,7 +163,9 @@ describe('install', () => {
 
     const message = await installAndCatch();
 
-    expect(message).toContain('- @scope/some-tool@^1.2.3');
+    expect(parseSuggestedYarnrc(message)).toEqual({
+      npmPreapprovedPackages: ['@scope/some-tool@^1.2.3'],
+    });
     expect(message).not.toContain('twenty-ui');
     expect(message).not.toContain('twenty-sdk');
   });
@@ -150,7 +181,9 @@ describe('install', () => {
 
     const message = await installAndCatch();
 
-    expect(message).toContain('- twenty-ui\n');
+    expect(parseSuggestedYarnrc(message)).toEqual({
+      npmPreapprovedPackages: ['twenty-ui'],
+    });
     expect(message).not.toContain('twenty-ui@latest');
   });
 
