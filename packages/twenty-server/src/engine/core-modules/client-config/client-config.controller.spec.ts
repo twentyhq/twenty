@@ -1,7 +1,11 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import request from 'supertest';
+
+import { ApiPath } from 'twenty-shared/types';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
+import { type ClientConfig } from 'src/engine/core-modules/client-config/client-config.entity';
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
@@ -12,9 +16,10 @@ import { ClientConfigController } from './client-config.controller';
 describe('ClientConfigController', () => {
   let controller: ClientConfigController;
   let clientConfigService: ClientConfigService;
+  let moduleRef: TestingModule;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    moduleRef = await Test.createTestingModule({
       controllers: [ClientConfigController],
       providers: [
         {
@@ -26,20 +31,29 @@ describe('ClientConfigController', () => {
       ],
     }).compile();
 
-    controller = module.get<ClientConfigController>(ClientConfigController);
-    clientConfigService = module.get<ClientConfigService>(ClientConfigService);
+    controller = moduleRef.get<ClientConfigController>(ClientConfigController);
+    clientConfigService =
+      moduleRef.get<ClientConfigService>(ClientConfigService);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  // A CDN or browser that caches this serves a body predating the running
-  // release, and every field it lacks silently reads as absent on the client.
-  it('forbids caching the config', () => {
-    expect(
-      Reflect.getMetadata('__headers__', controller.getClientConfig),
-    ).toContainEqual({ name: 'Cache-Control', value: 'no-store' });
+  it('forbids caching the config', async () => {
+    jest
+      .spyOn(clientConfigService, 'getClientConfig')
+      .mockResolvedValue({} as ClientConfig);
+
+    const app = moduleRef.createNestApplication();
+
+    await app.init();
+
+    await request(app.getHttpServer())
+      .get(`/${ApiPath.ClientConfig}`)
+      .expect('Cache-Control', 'no-store');
+
+    await app.close();
   });
 
   describe('getClientConfig', () => {
