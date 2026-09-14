@@ -242,21 +242,28 @@ export const SettingsBillingLimitSpenderSelect = ({
       )}
       {otherGroups.length > 0 && (
         <DropdownMenuItemsContainer>
-          {otherGroups.map((group) => (
-            <MenuItemSelect
-              key={group.id}
-              LeftIcon={group.Icon}
-              text={t(group.label)}
-              selected={false}
-              hasSubMenu
-              disabled={!isIntraWorkspaceLimitEntitled}
-              contextualText={
-                isIntraWorkspaceLimitEntitled ? undefined : t`Organization plan`
-              }
-              contextualTextPosition="right"
-              onClick={() => setBrowsedSpenderType(group.spenderType)}
-            />
-          ))}
+          {otherGroups.map((group) =>
+            isIntraWorkspaceLimitEntitled ? (
+              <MenuItemSelect
+                key={group.id}
+                LeftIcon={group.Icon}
+                text={t(group.label)}
+                selected={false}
+                hasSubMenu
+                onClick={() => setBrowsedSpenderType(group.spenderType)}
+              />
+            ) : (
+              <MenuItemSelect
+                key={group.id}
+                LeftIcon={group.Icon}
+                text={t(group.label)}
+                selected={false}
+                disabled
+                contextualText={t`Organization plan`}
+                contextualTextPosition="right"
+              />
+            ),
+          )}
         </DropdownMenuItemsContainer>
       )}
     </DropdownContent>
