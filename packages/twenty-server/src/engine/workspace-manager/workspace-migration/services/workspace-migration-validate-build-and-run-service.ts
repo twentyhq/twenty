@@ -314,10 +314,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
           allFlatEntityOperationRecordByMetadataName,
           sideEffectRelatedFlatEntityMaps: allRelatedFlatEntityMaps,
           context: {
-            buildOptions: {
-              isSystemBuild,
-              applicationUniversalIdentifier,
-            },
+            buildOptions: { isSystemBuild, applicationUniversalIdentifier },
           },
         });
 
