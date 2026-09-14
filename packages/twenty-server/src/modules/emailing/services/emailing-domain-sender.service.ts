@@ -86,12 +86,6 @@ export class EmailingDomainSenderService {
       .sendEmail(emailToSend);
   }
 
-  async buildHeaderMessageId(providerMessageId: string): Promise<string> {
-    return this.emailingDomainDriverFactory
-      .getCurrentDriver()
-      .buildHeaderMessageId(providerMessageId);
-  }
-
   async sendEmailBatch({
     workspaceId,
     emailingDomainId,
@@ -173,6 +167,7 @@ export class EmailingDomainSenderService {
       entries: entries.map((entry) => ({
         recipientIndex: deliverableRecipientIndexes[entry.recipientIndex],
         messageId: entry.messageId,
+        headerMessageId: entry.headerMessageId,
         errorMessage: entry.errorMessage,
       })),
       suppressedRecipientIndexes,

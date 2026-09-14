@@ -396,6 +396,19 @@ export class MessageCampaignBatchDeliveryService {
       outcome: providerOutcome,
     });
 
+    const headerMessageIdByDeliveryId = new Map<string, string>();
+
+    for (const entry of providerOutcome.entries) {
+      const recipient = claimedRecipients[entry.recipientIndex];
+
+      if (isDefined(recipient) && isDefined(entry.headerMessageId)) {
+        headerMessageIdByDeliveryId.set(
+          recipient.messageId,
+          entry.headerMessageId,
+        );
+      }
+    }
+
     try {
       await this.settleDeliveredBatch({
         data,
@@ -403,7 +416,7 @@ export class MessageCampaignBatchDeliveryService {
         settlements,
         template,
         replacementsByDeliveryId,
-        fromAddress,
+        headerMessageIdByDeliveryId,
       });
     } catch (error) {
       await this.settleClaimsAlreadyHandedToProvider({
@@ -422,14 +435,14 @@ export class MessageCampaignBatchDeliveryService {
     settlements,
     template,
     replacementsByDeliveryId,
-    fromAddress,
+    headerMessageIdByDeliveryId,
   }: {
     data: SendCampaignEmailBatchJobData;
     claimToken: string;
     settlements: CampaignDeliverySettlement[];
     template: EmailingDomainEmailTemplate;
     replacementsByDeliveryId: Map<string, Record<string, string>>;
-    fromAddress: string;
+    headerMessageIdByDeliveryId: Map<string, string>;
   }): Promise<void> {
     const { workspaceId, campaignId, userWorkspaceId } = data;
 
@@ -447,12 +460,16 @@ export class MessageCampaignBatchDeliveryService {
     );
 
     for (const settlement of sentSettlements) {
+      const providerMessageId = settlement.providerMessageId ?? '';
+
       await this.recordSentMessage({
         deliveryId: settlement.deliveryId,
-        providerMessageId: settlement.providerMessageId ?? '',
+        providerMessageId,
+        headerMessageId:
+          headerMessageIdByDeliveryId.get(settlement.deliveryId) ??
+          providerMessageId,
         template,
         replacements: replacementsByDeliveryId.get(settlement.deliveryId) ?? {},
-        fromAddress,
       });
     }
 
@@ -478,15 +495,15 @@ export class MessageCampaignBatchDeliveryService {
   private async recordSentMessage({
     deliveryId,
     providerMessageId,
+    headerMessageId,
     template,
     replacements,
-    fromAddress,
   }: {
     deliveryId: string;
     providerMessageId: string;
+    headerMessageId: string;
     template: EmailingDomainEmailTemplate;
     replacements: Record<string, string>;
-    fromAddress: string;
   }): Promise<void> {
     const messageRepository = this.workspaceOrmManager.getRepository(
       MessageWorkspaceEntity,
@@ -495,10 +512,7 @@ export class MessageCampaignBatchDeliveryService {
     );
 
     await messageRepository.update(deliveryId, {
-      headerMessageId:
-        await this.emailingDomainSenderService.buildHeaderMessageId(
-          providerMessageId,
-        ),
+      headerMessageId,
       subject: applyReplacementTags(template.subject, replacements),
       text: applyReplacementTags(template.text, replacements),
     });
@@ -511,13 +525,7 @@ export class MessageCampaignBatchDeliveryService {
 
     await associationRepository.update(
       { messageId: deliveryId },
-      {
-        messageExternalId: providerMessageId,
-        messageThreadExternalId: buildCampaignThreadExternalId({
-          messageId: deliveryId,
-          fromAddress,
-        }),
-      },
+      { messageExternalId: providerMessageId },
     );
   }
 

@@ -30,13 +30,24 @@ export class AwsSesSendEmailService {
     private readonly awsSesHandleErrorService: AwsSesHandleErrorService,
   ) {}
 
-  async buildHeaderMessageId(providerMessageId: string): Promise<string> {
+  // SES replaces any Message-ID we send and the API only returns its local
+  // part; recipients see <id@{region}.amazonses.com>, except us-east-1 which
+  // uses email.amazonses.com.
+  private async resolveMessageIdDomain(): Promise<string> {
     const region = await this.awsSesClientProvider
       .getSESClient()
       .config.region();
-    const messageIdSubdomain = region === 'us-east-1' ? 'email' : region;
 
-    return `<${providerMessageId}@${messageIdSubdomain}.amazonses.com>`;
+    return `${region === 'us-east-1' ? 'email' : region}.amazonses.com`;
+  }
+
+  private toHeaderMessageId(
+    providerMessageId: string,
+    messageIdDomain: string,
+  ): string {
+    return providerMessageId.includes('@')
+      ? `<${providerMessageId}>`
+      : `<${providerMessageId}@${messageIdDomain}>`;
   }
 
   async sendEmail(
@@ -110,6 +121,10 @@ export class AwsSesSendEmailService {
 
       return {
         messageId: response.MessageId,
+        headerMessageId: this.toHeaderMessageId(
+          response.MessageId,
+          await this.resolveMessageIdDomain(),
+        ),
         deliveredRecipients: {
           to: input.to,
           cc: input.cc ?? [],
@@ -183,6 +198,7 @@ export class AwsSesSendEmailService {
       );
 
       const results = response.BulkEmailEntryResults ?? [];
+      const messageIdDomain = await this.resolveMessageIdDomain();
 
       return {
         entries: input.recipients.map((_recipient, index) => {
@@ -192,6 +208,7 @@ export class AwsSesSendEmailService {
             return {
               recipientIndex: index,
               messageId: null,
+              headerMessageId: null,
               errorMessage: 'SES returned no result for this destination',
             };
           }
@@ -200,6 +217,7 @@ export class AwsSesSendEmailService {
             return {
               recipientIndex: index,
               messageId: null,
+              headerMessageId: null,
               errorMessage:
                 result.Error ??
                 `SES rejected the destination (${result.Status})`,
@@ -209,6 +227,10 @@ export class AwsSesSendEmailService {
           return {
             recipientIndex: index,
             messageId: result.MessageId,
+            headerMessageId: this.toHeaderMessageId(
+              result.MessageId,
+              messageIdDomain,
+            ),
             errorMessage: null,
           };
         }),

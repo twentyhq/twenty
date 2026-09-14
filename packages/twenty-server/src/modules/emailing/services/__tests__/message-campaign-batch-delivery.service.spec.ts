@@ -117,10 +117,6 @@ const buildHarness = () => {
   const emailingDomainSenderService = {
     sendEmailBatch: jest.fn(),
     findBlockedRecipientAddresses: jest.fn(async () => new Set<string>()),
-    buildHeaderMessageId: jest.fn(
-      async (providerMessageId: string) =>
-        `<${providerMessageId}@eu-central-1.amazonses.com>`,
-    ),
   };
   const emailBillingService = {
     getEmailCreditContext: jest.fn(async () => ({ hasCredits: true })),
@@ -376,7 +372,12 @@ describe('MessageCampaignBatchDeliveryService', () => {
     harness.claimedIds.push('message-0');
     harness.emailingDomainSenderService.sendEmailBatch.mockResolvedValue({
       entries: [
-        { recipientIndex: 0, messageId: 'provider-0', errorMessage: null },
+        {
+          recipientIndex: 0,
+          messageId: 'provider-0',
+          headerMessageId: '<provider-0@eu-central-1.amazonses.com>',
+          errorMessage: null,
+        },
       ],
       suppressedRecipientIndexes: [],
     });
@@ -398,13 +399,18 @@ describe('MessageCampaignBatchDeliveryService', () => {
     );
   });
 
-  it('threads customer replies by sending each recipient its own References token and storing it as the thread key', async () => {
+  it('sends each recipient its own References token and falls back to the provider id when the header id is unknown', async () => {
     const harness = buildHarness();
 
     harness.claimedIds.push('message-0');
     harness.emailingDomainSenderService.sendEmailBatch.mockResolvedValue({
       entries: [
-        { recipientIndex: 0, messageId: 'provider-0', errorMessage: null },
+        {
+          recipientIndex: 0,
+          messageId: 'provider-0',
+          headerMessageId: null,
+          errorMessage: null,
+        },
       ],
       suppressedRecipientIndexes: [],
     });
@@ -422,11 +428,9 @@ describe('MessageCampaignBatchDeliveryService', () => {
         ],
       }),
     );
-    expect(harness.associationRepository.update).toHaveBeenCalledWith(
-      { messageId: 'message-0' },
-      expect.objectContaining({
-        messageThreadExternalId: '<message-0@example.com>',
-      }),
+    expect(harness.messageRepository.update).toHaveBeenCalledWith(
+      'message-0',
+      expect.objectContaining({ headerMessageId: 'provider-0' }),
     );
   });
 

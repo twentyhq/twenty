@@ -361,10 +361,7 @@ export class MessageCampaignDeliveryService {
     }
 
     await messageRepository.update(messageId, {
-      headerMessageId:
-        await this.emailingDomainSenderService.buildHeaderMessageId(
-          result.messageId,
-        ),
+      headerMessageId: result.headerMessageId ?? result.messageId,
       subject,
       text: plainText,
     });
@@ -383,21 +380,18 @@ export class MessageCampaignDeliveryService {
         );
       });
 
-    await this.linkMessageToProviderThread({
+    await this.linkMessageToProviderMessage({
       messageId,
       providerMessageId: result.messageId,
-      threadExternalId,
     });
   }
 
-  private async linkMessageToProviderThread({
+  private async linkMessageToProviderMessage({
     messageId,
     providerMessageId,
-    threadExternalId,
   }: {
     messageId: string;
     providerMessageId: string;
-    threadExternalId: string;
   }): Promise<void> {
     const associationRepository = this.workspaceOrmManager.getRepository(
       MessageChannelMessageAssociationWorkspaceEntity,
@@ -407,10 +401,7 @@ export class MessageCampaignDeliveryService {
 
     await associationRepository.update(
       { messageId },
-      {
-        messageExternalId: providerMessageId,
-        messageThreadExternalId: threadExternalId,
-      },
+      { messageExternalId: providerMessageId },
     );
   }
 

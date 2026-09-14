@@ -153,10 +153,6 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     await this.awsSesRegisterDomainService.registerDomain(input.domain);
   }
 
-  async buildHeaderMessageId(providerMessageId: string): Promise<string> {
-    return this.awsSesSendEmailService.buildHeaderMessageId(providerMessageId);
-  }
-
   async sendEmail(
     input: EmailingDomainSendEmailRequest,
   ): Promise<EmailingDomainSendEmailResult> {

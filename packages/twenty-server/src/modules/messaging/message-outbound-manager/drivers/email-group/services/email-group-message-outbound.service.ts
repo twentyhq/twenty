@@ -95,10 +95,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
       });
 
     return {
-      headerMessageId:
-        await this.emailingDomainSenderService.buildHeaderMessageId(
-          result.messageId,
-        ),
+      headerMessageId: result.headerMessageId ?? result.messageId,
       messageExternalId: result.messageId,
       threadExternalId,
       deliveredRecipients: result.deliveredRecipients,
