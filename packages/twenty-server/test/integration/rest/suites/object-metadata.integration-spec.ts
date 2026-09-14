@@ -289,6 +289,22 @@ describe.each([
       }
     });
 
+    it('resolves an uppercase id', async () => {
+      const response = await makeRestAPIRequest({
+        method: 'get',
+        path: `/metadata/objects/${testObjectId.toUpperCase()}`,
+        bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      assertRestApiSuccessfulResponse(response);
+      const object = extractMetadataItemPayload<ObjectShape>(
+        response.body,
+        'object',
+      );
+
+      expect(object.id).toBe(testObjectId);
+    });
+
     it('returns 400 on a malformed UUID', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',

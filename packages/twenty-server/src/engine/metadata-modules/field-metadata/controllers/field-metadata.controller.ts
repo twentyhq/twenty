@@ -153,7 +153,9 @@ export class FieldMetadataController {
       );
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: id,
+      // Ids are accepted in any UUID casing, so they are looked up against the
+      // canonical lowercase keys the way a uuid column comparison would.
+      flatEntityId: id.toLowerCase(),
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
