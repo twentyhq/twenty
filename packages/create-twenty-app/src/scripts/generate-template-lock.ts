@@ -10,7 +10,8 @@
 // in force for every dependency they add later.
 //
 // Run this AFTER `nx build create-twenty-app` and AFTER the libraries are live on
-// the registry, then publish. See packages/create-twenty-app/RELEASE.md.
+// the registry, then publish; the publish workflow in twentyhq/twenty-infra runs
+// it in that order.
 import { execFileSync } from 'child_process';
 import * as fs from 'fs-extra';
 import { tmpdir } from 'os';
