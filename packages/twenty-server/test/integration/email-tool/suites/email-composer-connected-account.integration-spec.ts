@@ -54,6 +54,16 @@ const setVisibility = async (
   );
 };
 
+const getWorkspaceSharedConnectedAccountIds = async (): Promise<string[]> => {
+  const rows = await global.testDataSource.query(
+    `SELECT id FROM core."connectedAccount"
+     WHERE "workspaceId" = $1 AND visibility = 'workspace'`,
+    [WORKSPACE_ID],
+  );
+
+  return rows.map((row: { id: string }) => row.id);
+};
+
 const insertConnectedAccount = async ({
   id,
   provider,
@@ -377,16 +387,29 @@ describe('EmailComposerService connected account resolution (integration)', () =
     });
 
     it('throws rather than composing from a colleague account', async () => {
-      await expect(
-        service.composeEmail({
-          parameters: baseParams,
-          context: {
-            workspaceId: WORKSPACE_ID,
-            userWorkspaceId: UNKNOWN_USER_WORKSPACE_ID,
-          },
-          operation: EmailOperation.SEND,
-        }),
-      ).rejects.toThrow('available for user workspace');
+      const sharedConnectedAccountIds =
+        await getWorkspaceSharedConnectedAccountIds();
+
+      for (const connectedAccountId of sharedConnectedAccountIds) {
+        await setVisibility(connectedAccountId, 'user');
+      }
+
+      try {
+        await expect(
+          service.composeEmail({
+            parameters: baseParams,
+            context: {
+              workspaceId: WORKSPACE_ID,
+              userWorkspaceId: UNKNOWN_USER_WORKSPACE_ID,
+            },
+            operation: EmailOperation.SEND,
+          }),
+        ).rejects.toThrow('available for user workspace');
+      } finally {
+        for (const connectedAccountId of sharedConnectedAccountIds) {
+          await setVisibility(connectedAccountId, 'workspace');
+        }
+      }
     });
 
     it('takes the first workspace account when there is no caller (workflow run)', async () => {
