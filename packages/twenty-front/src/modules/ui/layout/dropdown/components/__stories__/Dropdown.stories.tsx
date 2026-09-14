@@ -24,6 +24,7 @@ import { IconChevronLeft } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { isDefined } from 'twenty-shared/utils';
 
 const meta: Meta<typeof Dropdown> = {
   title: 'UI/Layout/Dropdown/Dropdown',
@@ -413,3 +414,76 @@ export const WithInput: Story = {
 //     },
 //   ]);
 // };
+
+export const FiveItemsWithoutScroll: Story = {
+  args: {
+    dropdownComponents: (
+      <DropdownContent>
+        <DropdownMenuItemsContainer hasMaxHeight>
+          {Array.from({ length: 5 }, (_, index) => (
+            <MenuItem key={index} text={`Option ${index + 1}`} />
+          ))}
+        </DropdownMenuItemsContainer>
+      </DropdownContent>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Open Dropdown' }),
+    );
+    const menu = await canvas.findByRole('listbox');
+    const scrollContainer = menu.parentElement;
+
+    expect(scrollContainer).not.toBeNull();
+    expect(scrollContainer?.scrollHeight).toBe(scrollContainer?.clientHeight);
+  },
+};
+
+export const SixItemsWithScrollCue: Story = {
+  args: {
+    dropdownComponents: (
+      <DropdownContent>
+        <DropdownMenuItemsContainer hasMaxHeight>
+          {Array.from({ length: 6 }, (_, index) => (
+            <MenuItem key={index} text={`Option ${index + 1}`} />
+          ))}
+        </DropdownMenuItemsContainer>
+      </DropdownContent>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Open Dropdown' }),
+    );
+    const menu = await canvas.findByRole('listbox');
+    const scrollContainer = menu.parentElement;
+
+    if (!isDefined(scrollContainer)) {
+      throw new Error('Missing dropdown scroll container');
+    }
+
+    const rows = menu.querySelector('[data-dropdown-menu-items]')?.children;
+    const fifthRow = rows?.[4];
+
+    if (!isDefined(fifthRow)) {
+      throw new Error('Missing fifth dropdown row');
+    }
+
+    const rowBounds = fifthRow.getBoundingClientRect();
+    const visibleHeight =
+      scrollContainer.getBoundingClientRect().bottom - rowBounds.top;
+
+    expect(Math.abs(visibleHeight - rowBounds.height / 2)).toBeLessThan(1);
+    expect(scrollContainer.scrollHeight).toBeGreaterThan(
+      scrollContainer.clientHeight,
+    );
+
+    scrollContainer.scrollTop = scrollContainer.scrollHeight;
+    const lastRow = rows?.[5];
+    expect(lastRow?.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      scrollContainer.getBoundingClientRect().bottom,
+    );
+  },
+};

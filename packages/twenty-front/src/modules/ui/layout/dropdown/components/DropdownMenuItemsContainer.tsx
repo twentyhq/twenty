@@ -26,7 +26,19 @@ const StyledScrollableContainer = styled.div<{ maxHeight?: number }>`
   box-sizing: border-box;
 
   display: flex;
-  max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'none')};
+  &:has(
+    > [role='listbox']
+      > [data-dropdown-menu-items]
+      > :nth-child(
+        6
+          of
+          :not([data-dropdown-menu-section-label]):not(
+            [data-dropdown-menu-separator]
+          )
+      )
+  ) {
+    max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'none')};
+  }
   overflow-y: auto;
 
   scrollbar-color: ${themeCssVariables.border.color.medium} transparent;
@@ -91,7 +103,9 @@ export const DropdownMenuItemsContainer = ({
       }
     >
       <StyledExternalContainer role="listbox">
-        <StyledInternalContainer>{children}</StyledInternalContainer>
+        <StyledInternalContainer data-dropdown-menu-items>
+          {children}
+        </StyledInternalContainer>
       </StyledExternalContainer>
     </StyledScrollableContainer>
   ) : (
