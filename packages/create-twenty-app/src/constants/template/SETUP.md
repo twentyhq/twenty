@@ -16,6 +16,9 @@ Follow these steps to get your app running locally.
    yarn install
    ```
 
+   The committed `yarn.lock` pins exact, integrity-checked versions, so this
+   resolves nothing from the registry.
+
 2. Start the local Twenty server:
 
    ```bash
