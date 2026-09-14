@@ -34,7 +34,6 @@ export const SettingsItemTypeTag = ({
           />
         }
         style={{ paddingInlineStart: 0 }}
-        clickable={false}
       >{t`Remote`}</Chip>
     );
   } else {

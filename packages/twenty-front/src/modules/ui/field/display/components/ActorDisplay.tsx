@@ -87,7 +87,6 @@ export const ActorDisplay = ({
 
   return (
     <Chip
-      clickable={false}
       emptyLabel={t`Untitled`}
       variant="ghost"
       startElement={

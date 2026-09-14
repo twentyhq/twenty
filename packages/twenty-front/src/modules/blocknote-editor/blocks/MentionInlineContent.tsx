@@ -56,7 +56,6 @@ const LegacyMentionRenderer = ({
         variant="ghost"
         disabled
         style={{ paddingInlineStart: 0 }}
-        clickable={false}
       >{t`Unknown object`}</Chip>
     );
   }
@@ -67,7 +66,6 @@ const LegacyMentionRenderer = ({
         variant="ghost"
         disabled
         style={{ paddingInlineStart: 0 }}
-        clickable={false}
       >{t`Deleted record`}</Chip>
     );
   }

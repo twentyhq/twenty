@@ -92,7 +92,6 @@ export const AgentChatFilePreview = ({
       <Chip
         emptyLabel={t`Untitled`}
         variant="soft"
-        clickable={false}
         startElement={leftComponent}
         endElement={rightComponent}
         endElementDivider={hasRightDivider}

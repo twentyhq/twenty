@@ -71,7 +71,6 @@ export const OnboardingImportPreviewCompanies = () => {
             size="sm"
             variant="ghost"
             color="primary"
-            clickable={false}
             startElement={
               <Avatar
                 shape="square"

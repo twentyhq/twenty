@@ -83,7 +83,6 @@ const PersonChip = ({ fullName }: { fullName: string | null }) => {
       size="sm"
       variant="ghost"
       color="primary"
-      clickable={false}
       startElement={
         <Avatar shape="circle" name={fullName} colorSeed={fullName} size="md" />
       }
@@ -112,7 +111,6 @@ export const BackgroundMockTableRow = ({
           size="sm"
           variant="ghost"
           color="primary"
-          clickable={false}
           startElement={
             <Avatar
               shape="square"
@@ -133,7 +131,6 @@ export const BackgroundMockTableRow = ({
           variant="ghost"
           color="secondary"
           weight="medium"
-          clickable={false}
           startElement={
             <IconLink
               size={theme.icon.size.sm}

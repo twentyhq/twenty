@@ -29,9 +29,7 @@ const ChipControls = () => {
                 <Chip onClick={handleClick} disabled>
                   Disabled chip
                 </Chip>
-                <Chip clickable={false} shape="round">
-                  Static chip
-                </Chip>
+                <Chip shape="round">Static chip</Chip>
               </>
             ),
           },

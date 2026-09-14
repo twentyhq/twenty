@@ -92,7 +92,6 @@ export const RecordChip = ({
           )
         }
         style={{ paddingInlineStart: 0 }}
-        clickable={false}
       >
         {recordChipData.name}
       </Chip>

@@ -50,7 +50,7 @@ export const LinkChip = ({
         target={target}
         rel={target === '_blank' ? 'noopener noreferrer' : undefined}
       >
-        <Chip {...props} />
+        <Chip clickable {...props} />
       </Link>
     </span>
   );

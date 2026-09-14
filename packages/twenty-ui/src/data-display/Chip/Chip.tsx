@@ -17,7 +17,8 @@ export const Chip = ({
   shape = 'square',
   weight = 'regular',
   disabled = false,
-  clickable = true,
+  onClick,
+  clickable = isDefined(onClick),
   nativeButton = true,
   startElement,
   endElement,
@@ -33,7 +34,6 @@ export const Chip = ({
   style,
   render,
   ref,
-  onClick,
   ...props
 }: ChipProps) => {
   const hasContent =

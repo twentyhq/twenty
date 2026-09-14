@@ -25,7 +25,6 @@ export const MentionRecordChip = ({
         variant="ghost"
         disabled
         style={{ paddingInlineStart: 0 }}
-        clickable={false}
       >{t`Unknown object`}</Chip>
     );
   }
@@ -36,7 +35,6 @@ export const MentionRecordChip = ({
         variant="ghost"
         disabled
         style={{ paddingInlineStart: 0 }}
-        clickable={false}
       >{t`Deleted record`}</Chip>
     );
   }

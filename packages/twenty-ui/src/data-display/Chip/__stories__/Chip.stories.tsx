@@ -29,10 +29,16 @@ export const Default: Story = {
     variant: 'soft',
     color: 'primary',
     disabled: false,
-    clickable: true,
     maxWidth: 200,
   },
   decorators: [ComponentDecorator],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
+    await expect(
+      getComputedStyle(canvas.getByText('Chip test')).cursor,
+    ).not.toBe('pointer');
+  },
 };
 
 export const WithLeftAvatar: Story = {
@@ -174,7 +180,6 @@ export const WithRightComponentDivider: Story = {
   args: {
     children: 'document.pdf',
     variant: 'soft',
-    clickable: false,
     startElement: (
       <Avatar name="D" colorSeed="document" size="sm" shape="square" />
     ),
@@ -197,6 +202,7 @@ export const PointerAndKeyboard: Story = {
     const control = within(canvasElement).getByRole('button', {
       name: 'Open details',
     });
+    await expect(getComputedStyle(control).cursor).toBe('pointer');
     await userEvent.click(control);
     await userEvent.keyboard('{Enter}');
     await userEvent.keyboard(' ');
@@ -225,7 +231,6 @@ export const ContentAndSlots: Story = {
   decorators: [ComponentDecorator],
   args: {
     children: <strong>Rich content</strong>,
-    clickable: false,
     startElement: <IconUser />,
     endElement: (
       <button type="button" onClick={fn()}>

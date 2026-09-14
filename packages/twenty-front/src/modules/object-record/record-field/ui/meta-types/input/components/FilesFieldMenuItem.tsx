@@ -39,7 +39,6 @@ export const FilesFieldMenuItem = ({
             />
           }
           variant="ghost"
-          clickable={false}
         >
           {value}
         </Chip>

@@ -110,7 +110,6 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
         <Chip
           size="md"
           variant="soft"
-          clickable={false}
           startElement={
             <AvatarOrIcon
               avatarShape="circle"

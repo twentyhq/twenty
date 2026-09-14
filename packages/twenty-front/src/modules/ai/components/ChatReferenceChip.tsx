@@ -25,7 +25,6 @@ export const ChatReferenceChip = ({ reference }: ChatReferenceChipProps) => {
         emptyLabel={t`Untitled`}
         variant="soft"
         startElement={target.leftComponent}
-        clickable={false}
       >
         {reference.displayName}
       </Chip>

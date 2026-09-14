@@ -88,7 +88,6 @@ export const SettingsAiModelHoverCard = ({
             size="sm"
             color="primary"
             variant="soft"
-            clickable={false}
             startElement={
               <ModelIcon
                 size={theme.icon.size.sm}

@@ -125,7 +125,6 @@ export const CallRecordingTranscriptEntryListItem = ({
     >
       <StyledEntryHeader>
         <Chip
-          clickable={false}
           variant="ghost"
           startElement={
             <Avatar
