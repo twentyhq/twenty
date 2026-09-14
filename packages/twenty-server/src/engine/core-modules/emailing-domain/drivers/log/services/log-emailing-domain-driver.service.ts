@@ -130,6 +130,10 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
     }
   }
 
+  async buildHeaderMessageId(providerMessageId: string): Promise<string> {
+    return providerMessageId;
+  }
+
   async sendEmail(
     input: EmailingDomainSendEmailRequest,
   ): Promise<EmailingDomainSendEmailResult> {

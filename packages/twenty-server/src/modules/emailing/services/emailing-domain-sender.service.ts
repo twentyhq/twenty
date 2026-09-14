@@ -86,6 +86,12 @@ export class EmailingDomainSenderService {
       .sendEmail(emailToSend);
   }
 
+  async buildHeaderMessageId(providerMessageId: string): Promise<string> {
+    return this.emailingDomainDriverFactory
+      .getCurrentDriver()
+      .buildHeaderMessageId(providerMessageId);
+  }
+
   async sendEmailBatch({
     workspaceId,
     emailingDomainId,

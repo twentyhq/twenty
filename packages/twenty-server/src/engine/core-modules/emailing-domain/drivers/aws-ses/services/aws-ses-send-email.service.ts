@@ -30,6 +30,15 @@ export class AwsSesSendEmailService {
     private readonly awsSesHandleErrorService: AwsSesHandleErrorService,
   ) {}
 
+  async buildHeaderMessageId(providerMessageId: string): Promise<string> {
+    const region = await this.awsSesClientProvider
+      .getSESClient()
+      .config.region();
+    const messageIdSubdomain = region === 'us-east-1' ? 'email' : region;
+
+    return `<${providerMessageId}@${messageIdSubdomain}.amazonses.com>`;
+  }
+
   async sendEmail(
     input: EmailingDomainSendEmailInput,
     context: SendEmailContext,

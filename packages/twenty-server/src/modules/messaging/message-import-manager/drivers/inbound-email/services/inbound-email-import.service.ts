@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MessageChannelType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -14,6 +14,10 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { InboundEmailMessageSourceResolverService } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/sources/inbound-email-message-source-resolver.service';
 import { type InboundEmailImportOutcome } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/types/inbound-email-import-outcome.type';
 import { type InboundEmailMessageReference } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/types/inbound-email-message-reference.type';
+import { extractReferencedMessageIds } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/utils/extract-referenced-message-ids.util';
+import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 
 type ImportInboundMessageParams = {
@@ -108,6 +112,13 @@ export class InboundEmailImportService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
+        const existingThreadExternalId =
+          await this.findExistingThreadExternalId(message, messageChannel.id);
+
+        if (isDefined(existingThreadExternalId)) {
+          message.messageThreadExternalId = existingThreadExternalId;
+        }
+
         await this.messagingSaveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
           [message],
           messageChannel,
@@ -126,6 +137,92 @@ export class InboundEmailImportService {
       workspaceId,
       messageChannelId: messageChannel.id,
     };
+  }
+
+  private async findExistingThreadExternalId(
+    message: MessageWithParticipants,
+    messageChannelId: string,
+  ): Promise<string | undefined> {
+    const referencedMessageIds = extractReferencedMessageIds(
+      message.messageHeaders,
+    );
+
+    if (referencedMessageIds.length === 0) {
+      return undefined;
+    }
+
+    const messageRepository =
+      this.workspaceOrmManager.getRepository<MessageWorkspaceEntity>('message');
+
+    const associationRepository =
+      this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        'messageChannelMessageAssociation',
+      );
+
+    const [threadAssociations, referencedMessages] = await Promise.all([
+      associationRepository.find({
+        where: {
+          messageChannelId,
+          messageThreadExternalId: In(referencedMessageIds),
+        },
+        select: { messageThreadExternalId: true },
+      }),
+      messageRepository.find({
+        where: { headerMessageId: In(referencedMessageIds) },
+        select: { id: true, headerMessageId: true },
+      }),
+    ]);
+
+    const referencedMessageAssociations =
+      referencedMessages.length > 0
+        ? await associationRepository.find({
+            where: {
+              messageChannelId,
+              messageId: In(
+                referencedMessages.map((referenced) => referenced.id),
+              ),
+            },
+            select: { messageId: true, messageThreadExternalId: true },
+          })
+        : [];
+
+    const threadExternalIdByReferencedMessageId = new Map<string, string>();
+
+    for (const association of threadAssociations) {
+      if (isNonEmptyString(association.messageThreadExternalId)) {
+        threadExternalIdByReferencedMessageId.set(
+          association.messageThreadExternalId,
+          association.messageThreadExternalId,
+        );
+      }
+    }
+
+    for (const referencedMessage of referencedMessages) {
+      const association = referencedMessageAssociations.find(
+        (candidate) => candidate.messageId === referencedMessage.id,
+      );
+
+      if (
+        !isNonEmptyString(referencedMessage.headerMessageId) ||
+        !isNonEmptyString(association?.messageThreadExternalId) ||
+        threadExternalIdByReferencedMessageId.has(
+          referencedMessage.headerMessageId,
+        )
+      ) {
+        continue;
+      }
+
+      threadExternalIdByReferencedMessageId.set(
+        referencedMessage.headerMessageId,
+        association.messageThreadExternalId,
+      );
+    }
+
+    return referencedMessageIds
+      .map((referencedMessageId) =>
+        threadExternalIdByReferencedMessageId.get(referencedMessageId),
+      )
+      .find(isDefined);
   }
 
   private matchInboundRecipient(

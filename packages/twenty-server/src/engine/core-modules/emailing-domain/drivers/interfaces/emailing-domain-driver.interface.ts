@@ -32,4 +32,5 @@ export interface EmailingDomainDriverInterface {
   sendEmailBatch(
     input: EmailingDomainSendEmailBatchRequest,
   ): Promise<EmailingDomainSendEmailBatchResult>;
+  buildHeaderMessageId(providerMessageId: string): Promise<string>;
 }
