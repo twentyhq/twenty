@@ -99,7 +99,12 @@ export class AppMessageInput {
   @MaxLength(MAX_APP_MESSAGE_TEXT_LENGTH)
   text: string;
 
+  // GraphQL's DateTime scalar already hands the pipe a Date, so `@IsDate`
+  // passes without this. It is here so the contract does not depend on that:
+  // a timestamp scalar mode, or any non-GraphQL caller, would otherwise fail
+  // validation on a value the field is meant to accept.
   @Field(() => Date)
+  @Type(() => Date)
   @IsDate()
   receivedAt: Date;
 
