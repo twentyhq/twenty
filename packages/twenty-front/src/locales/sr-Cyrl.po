@@ -31,6 +31,11 @@ msgstr " наплаћује се годишње"
 msgid " must be one of {ratingValues} values"
 msgstr " мора бити једна од {ratingValues} вредности"
 
+#. js-lingui-id: b2GdxK
+#: src/modules/ai/components/AiModelTierSlider.tsx
+msgid " Not measured at this effort yet, so this is the base model's reading."
+msgstr " Још није измерено при овом напору, тако да је ово очитавање основног модела."
+
 #. js-lingui-id: nA/hWD
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 msgid " per {intervalLabel}"
@@ -156,7 +161,7 @@ msgstr "(изабрано: {selectedIconKey})"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "[empty string]"
-msgstr "''"
+msgstr ""
 
 #. js-lingui-id: gJXeRg
 #. placeholder {0}: counts.duplicateEmails
@@ -164,31 +169,15 @@ msgstr "''"
 #. placeholder {2}: formatNumber(counts.duplicateEmails)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
-msgstr ""
-
-#. js-lingui-id: Z2fCN4
-#. placeholder {0}: failedResults.length
-#. placeholder {1}: failedResults.length
-#. placeholder {2}: failedResults.length
-#: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
-msgid "{0, plural, one {{1} job could not be deleted} other {{2} jobs could not be deleted}}"
-msgstr "{0, plural, one {{1} посао није могао бити обрисан} few {{0} посла нису могла бити обрисана} other {{2} послова није могло бити обрисано}}"
-
-#. js-lingui-id: VjPlMz
-#. placeholder {0}: failedResults.length
-#. placeholder {1}: failedResults.length
-#. placeholder {2}: failedResults.length
-#: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
-msgid "{0, plural, one {{1} job could not be retried} other {{2} jobs could not be retried}}"
-msgstr "{0, plural, one {{1} посао није могао бити поновно извршен} few {{0} посла нису могла бити поновно извршена} other {{2} послова није могло бити поновно извршено}}"
+msgstr "{0, plural, one {{1} дупликат} few {{2} дупликата} other {{2} дупликата}}"
 
 #. js-lingui-id: 5pucMh
 #. placeholder {0}: audiencePreview.sendable
 #. placeholder {1}: formatNumber(audiencePreview.sendable)
 #. placeholder {2}: formatNumber(audiencePreview.sendable)
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "{0, plural, one {{1} recipient} other {{2} recipients}}"
-msgstr ""
+msgstr "{0, plural, one {{1} прималац} few {{2} примаоца} other {{2} прималаца}}"
 
 #. js-lingui-id: 0LMb5P
 #. placeholder {0}: Math.abs(days)
@@ -201,6 +190,18 @@ msgstr "{0, plural, one {{days} дан} few {{days} дана} other {{days} да
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} year} other {{years} years}}"
 msgstr "{0, plural, one {{years} година} few {{years} године} other {{years} година}}"
+
+#. js-lingui-id: XHO5F1
+#. placeholder {0}: failedResults.length
+#: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
+msgid "{0, plural, one {# job could not be deleted} other {# jobs could not be deleted}}"
+msgstr "{0, plural, one {# посао није могао бити обрисан} few {# посла нису могла бити обрисана} other {# послова није могло бити обрисано}}"
+
+#. js-lingui-id: AHhuJj
+#. placeholder {0}: failedResults.length
+#: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
+msgid "{0, plural, one {# job could not be retried} other {# jobs could not be retried}}"
+msgstr "{0, plural, one {# посао није могао бити поново покренут} few {# посла нису могла бити поново покренута} other {# послова није могло бити поново покренуто}}"
 
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
@@ -221,7 +222,19 @@ msgstr "{0, plural, one {# неуспео или заостао радни пр�
 #. placeholder {2}: canceled.canceledMessageCount
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "{0, plural, one {Campaign canceled, {1} pending email stopped} other {Campaign canceled, {2} pending emails stopped}}"
-msgstr ""
+msgstr "{0, plural, one {Кампања је отказана, {1} е-порука на чекању је заустављена} few {Кампања је отказана, {2} е-поруке на чекању су заустављене} other {Кампања је отказана, {2} е-порука на чекању је заустављено}}"
+
+#. js-lingui-id: xEqptn
+#. placeholder {0}: item.includedCredits
+#: src/modules/settings/admin-panel/utils/formatSubscriptionItemValue.ts
+msgid "{0, plural, one {credit/period} other {credits/period}}"
+msgstr "{0, plural, one {кредит/период} few {кредита/период} other {кредита/период}}"
+
+#. js-lingui-id: AkeiJW
+#. placeholder {0}: item.quantity
+#: src/modules/settings/admin-panel/utils/formatSubscriptionItemValue.ts
+msgid "{0, plural, one {seat} other {seats}}"
+msgstr "{0, plural, one {место} few {места} other {места}}"
 
 #. js-lingui-id: WTc9VY
 #. placeholder {0}: restriction.fieldNames.length
@@ -233,7 +246,7 @@ msgstr "{0, plural, one {Немате дозволу за приступ пољ�
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} bounced or complained"
-msgstr ""
+msgstr "{0} са враћеном поруком или жалбом"
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -262,9 +275,9 @@ msgstr "{0} немају никакву повезаност са {loadBalancePo
 #. js-lingui-id: crgYwP
 #. placeholder {0}: formatNumber(audiencePreview.totalMembers)
 #. placeholder {1}: excludedReasons.join(', ')
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "{0} in the list, skipping {1}"
-msgstr ""
+msgstr "{0} на листи, прескаче се {1}"
 
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
@@ -301,7 +314,7 @@ msgstr "{0} су се одјавили од ове теме"
 #. placeholder {0}: formatNumber(counts.overCap)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} over the recipient limit"
-msgstr ""
+msgstr "{0} преко ограничења броја прималаца"
 
 #. js-lingui-id: 55frRG
 #. placeholder {0}: index + 1
@@ -326,6 +339,38 @@ msgstr "{0} изабрано"
 #: src/modules/side-panel/pages/page-layout/hooks/useRecordTableSettingsDescriptions.ts
 msgid "{0} shown"
 msgstr "{0} приказано"
+
+#. js-lingui-id: k+VWlm
+#. placeholder {0}: formatMetricDelta(costDelta)
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "{0} the cost of Balanced."
+msgstr "{0} трошак Уравнотеженог."
+
+#. js-lingui-id: UWEjMJ
+#. placeholder {0}: formatMetricDelta(intelligenceDelta)
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "{0} the score of Balanced"
+msgstr "{0} резултат Уравнотеженог"
+
+#. js-lingui-id: 0PXtku
+#. placeholder {0}: formatNumber(tier.model.outputTokensPerSecond, { decimals: 0 })
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "{0} tokens/s"
+msgstr "{0} токена/с"
+
+#. js-lingui-id: jSMnoW
+#. placeholder {0}: formatNumber(model?.outputTokensPerSecond ?? 0)
+#. placeholder {1}: formatMetricDelta(resolvedTier.speedDeltaPercent ?? 0)
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "{0} tokens/s, {1} the speed of Balanced Mode."
+msgstr "{0} токена/с, {1} брзина Уравнотеженог режима."
+
+#. js-lingui-id: NLWHJB
+#. placeholder {0}: formatNumber(model?.outputTokensPerSecond ?? 0)
+#. placeholder {1}: formatMetricDelta(resolvedTier.speedDeltaPercent ?? 0)
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "{0} tokens/s, a {1} change in speed compared with Balanced Mode."
+msgstr "{0} токена/с, промена брзине од {1} у поређењу са Уравнотеженим режимом."
 
 #. js-lingui-id: nZUq+6
 #. placeholder {0}: formatNumber(counts.globallyUnsubscribed)
@@ -355,13 +400,44 @@ msgstr "{0} виџета"
 #. placeholder {0}: formatNumber(counts.withoutEmail)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0} without an email address"
-msgstr ""
+msgstr "{0} без имејл адресе"
 
 #. js-lingui-id: 2UKfhY
 #. placeholder {0}: selectedItemNames.length
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput.tsx
 msgid "{0} workspace members"
 msgstr "{0} чланова радног простора"
+
+#. js-lingui-id: kofqAN
+#. placeholder {0}: selectedResolvedTier.label
+#. placeholder {1}: selectedResolvedTier.model.label
+#: src/modules/ai/components/AiModelTierDropdown.tsx
+msgid "{0}: {1}"
+msgstr "{0}: {1}"
+
+#. js-lingui-id: EAdDH3
+#. placeholder {0}: formatNumber(costDelta)
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "{0}% higher cost than Balanced."
+msgstr "Трошак је за {0}% већи него код Уравнотеженог."
+
+#. js-lingui-id: c8VH5D
+#. placeholder {0}: formatNumber(intelligenceDelta)
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "{0}% higher score than Balanced"
+msgstr "Резултат је за {0}% већи него код Уравнотеженог"
+
+#. js-lingui-id: nRAomq
+#. placeholder {0}: formatNumber(Math.abs(costDelta))
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "{0}% lower cost than Balanced."
+msgstr "Трошак је за {0}% мањи него код Уравнотеженог."
+
+#. js-lingui-id: wq2vL5
+#. placeholder {0}: formatNumber(Math.abs(intelligenceDelta))
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "{0}% lower score than Balanced"
+msgstr "Резултат је за {0}% мањи него код Уравнотеженог"
 
 #. js-lingui-id: qdQhzv
 #: src/modules/views/advanced-filter-chip/components/AdvancedFilterChip.tsx
@@ -403,6 +479,11 @@ msgstr "{appDisplayName} жели да:"
 msgid "{appName} would like to:"
 msgstr "{appName} жели да:"
 
+#. js-lingui-id: wXviUj
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobStateBadge.tsx
+msgid "{attemptsMade, plural, one {{attemptsMade} attempt} other {{attemptsMade} attempts}}"
+msgstr "{attemptsMade, plural, one {{attemptsMade} покушај} few {{attemptsMade} покушаја} other {{attemptsMade} покушаја}}"
+
 #. js-lingui-id: y9covz
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
@@ -419,14 +500,10 @@ msgstr "{browser} на {operatingSystem}"
 msgid "{cachedPercent}% cached"
 msgstr "{cachedPercent}% кеширано"
 
-#. js-lingui-id: 8SynPU
-#. placeholder {0}: (type === 'percentage' ? 99 : 1000).toFixed(count)
-#. placeholder {1}: type === 'percentage' ? '%' : ''
-#. placeholder {2}: (type === 'percentage' ? 99 : 1000).toFixed(count)
-#. placeholder {3}: type === 'percentage' ? '%' : ''
+#. js-lingui-id: M9lDqR
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
-msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
-msgstr "{count, plural, one {Пример: {0}{1} за {count} децималу} few {Пример: {2}{3} за {count} децимале} other {Пример: {2}{3} за {count} децимала}}"
+msgid "{count, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
+msgstr "{count, plural, one {нпр. {example} за # децимално место} few {нпр. {example} за # децимална места} other {нпр. {example} за # децималних места}}"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -438,12 +515,10 @@ msgstr "{currentCreditAmountDisplay} кредита "
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} дан} few {{days} дана} other {{days} дана}}"
 
-#. js-lingui-id: 0KwX9P
-#. placeholder {0}: (1000).toFixed(decimals)
-#. placeholder {1}: (1000).toFixed(decimals)
+#. js-lingui-id: 7o03+8
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
-msgid "{decimals, plural, one {E.g. {0} for {decimals} decimal} other {E.g. {1} for {decimals} decimals}}"
-msgstr "{decimals, plural, one {нпр. {0} за {decimals} децимално место} few {нпр. {1} за {decimals} децимална места} other {нпр. {1} за {decimals} децималних места}}"
+msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
+msgstr "{decimals, plural, one {нпр. {example} за # децимално место} few {нпр. {example} за # децимална места} other {нпр. {example} за # децималних места}}"
 
 #. js-lingui-id: MIIEDl
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -542,6 +617,16 @@ msgstr "{jobCount, plural, one {Ово ће трајно уклонити из �
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
 msgstr "{jobCount, plural, one {Ово ће поновити изабрани посао. Поново ће се извршити од почетка.} few {Ово ће поновити изабране послове. Поново ће се извршити од почетка.} other {Ово ће поновити изабране послове. Поново ће се извршити од почетка.}}"
 
+#. js-lingui-id: Xs84Pv
+#: src/modules/settings/ai/utils/getAiModelModeDescription.ts
+msgid "{label} (Auto)"
+msgstr "{label} (Аутоматски)"
+
+#. js-lingui-id: Oq2RUh
+#: src/modules/settings/ai/utils/getAiModelPinOptions.ts
+msgid "{label} (deprecated)"
+msgstr "{label} (застарело)"
+
 #. js-lingui-id: FdY/eP
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 msgid "{label} list"
@@ -556,6 +641,11 @@ msgstr "{memberCount, plural, one {{memberCount} члан} few {{memberCount} ч
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages.tsx
 msgid "{messagesLength} emails"
 msgstr "{messagesLength, plural, one {{messagesLength} имејл} few {{messagesLength} имејла} other {{messagesLength} имејлова}}"
+
+#. js-lingui-id: Pfatg8
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
+msgid "{minutes, plural, one {# minute} other {# minutes}}"
+msgstr "{minutes, plural, one {# минут} few {# минута} other {# минута}}"
 
 #. js-lingui-id: Koe99p
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -593,12 +683,12 @@ msgstr "Запис {positionLabel} има приоритет"
 #. placeholder {1}: formatNumber(queuedCount)
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedCount, plural, one {Campaign queued to {0} recipient} other {Campaign queued to {1} recipients}}"
-msgstr ""
+msgstr "{queuedCount, plural, one {Кампања је стављена у ред за слање за {0} примаоца} few {Кампања је стављена у ред за слање за {1} примаоца} other {Кампања је стављена у ред за слање за {1} прималаца}}"
 
 #. js-lingui-id: cMTWxR
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "{queuedMessage}, skipping {skipReasons}"
-msgstr ""
+msgstr "{queuedMessage}, прескаче се {skipReasons}"
 
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -631,6 +721,11 @@ msgstr "{roleTargetName} ће бити додељен у улогу \"{newRoleNa
 msgid "{scopeCount} scopes"
 msgstr "{scopeCount} опсега"
 
+#. js-lingui-id: iL/HBr
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
+msgid "{seconds, plural, one {# second} other {# seconds}}"
+msgstr "{seconds, plural, one {# секунда} few {# секунде} other {# секунди}}"
+
 #. js-lingui-id: kvVMdH
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "{selectedCount, plural, one {Delete {selectedCount} Job} other {Delete {selectedCount} Jobs}}"
@@ -650,6 +745,11 @@ msgstr "{selectedCount} типова извора"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 msgid "{serviceLabel} service is unreachable"
 msgstr "Сервис {serviceLabel} није доступан"
+
+#. js-lingui-id: CQxE7h
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
+msgid "{spokenMinutes} {spokenSeconds}"
+msgstr "{spokenMinutes} {spokenSeconds}"
 
 #. js-lingui-id: 8vJ+2V
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -780,6 +880,12 @@ msgstr "<0>{0}</0> и све његове поруке биће уклоњене
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 msgid "~ {0} tokens"
 msgstr "~ {0} токена"
+
+#. js-lingui-id: w++m8p
+#. placeholder {0}: formatNumber(tier.model.outputCostPerMillionTokens, { decimals: 2 })
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "${0} / 1M"
+msgstr "${0} / 1M"
 
 #. js-lingui-id: Cx0xl3
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -943,6 +1049,11 @@ msgstr "Нацрт већ постоји за овај ток посла. Да �
 msgid "A payment method is needed to keep your workspace active."
 msgstr "Начин плаћања је потребан да би ваш радни простор остао активан."
 
+#. js-lingui-id: 5WwDyx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "A payment on your subscription failed. Your enterprise features stay active while we retry it."
+msgstr "Плаћање ваше претплате није успело. Ваше Enterprise функције остају активне док поново покушавамо да извршимо плаћање."
+
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
@@ -1007,7 +1118,7 @@ msgstr "Прекид"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -1091,15 +1202,15 @@ msgstr "Налози"
 msgid "Acme GmbH"
 msgstr "Acme GmbH"
 
-#. js-lingui-id: X5unbK
+#. js-lingui-id: qrbojL
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
-msgid "ACS Url"
+msgid "ACS URL"
 msgstr "ACS URL"
 
-#. js-lingui-id: GGcxJO
+#. js-lingui-id: 4FQd0Y
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
-msgid "ACS Url copied to clipboard"
-msgstr "ACS Url копиран у клипборд"
+msgid "ACS URL copied to clipboard"
+msgstr "ACS URL је копиран у клипборд"
 
 #. js-lingui-id: r6Y4GL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -1150,8 +1261,8 @@ msgstr "Акције које корисници могу спровести н�
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 #: src/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Activate"
@@ -1212,6 +1323,12 @@ msgstr "Додајте"
 #: src/modules/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem.tsx
 msgid "Add \"{trimmedName}\" to options"
 msgstr "Додај \"{trimmedName}\" у опције"
+
+#. js-lingui-id: AOKHWb
+#. placeholder {0}: objectMetadataItem.labelSingular
+#: src/pages/object-core/WorkflowCoreIndexPage.tsx
+msgid "Add a {0}"
+msgstr "Додајте {0}"
 
 #. js-lingui-id: 9CHcSG
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
@@ -1306,7 +1423,7 @@ msgstr "Додајте налог"
 #. js-lingui-id: dGjQL8
 #: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "Add an API key to enable AI."
-msgstr ""
+msgstr "Додајте API кључ да бисте омогућили АИ."
 
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
@@ -1403,6 +1520,11 @@ msgstr "Додајте детаље за госте"
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Add email channel"
 msgstr "Додај имејл канал"
+
+#. js-lingui-id: Va3xJe
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
+msgid "Add field"
+msgstr "Додајте поље"
 
 #. js-lingui-id: DpV70M
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -1704,6 +1826,12 @@ msgstr "Додај своју кредитну картицу"
 msgid "Add your credit card below. Once added, your subscription will start automatically."
 msgstr "Додајте своју кредитну картицу испод. Када је додате, ваша претплата ће се аутоматски покренути."
 
+#. js-lingui-id: K2c8dN
+#. placeholder {0}: objectMetadataItem.labelSingular
+#: src/pages/object-core/WorkflowCoreIndexPage.tsx
+msgid "Add your first {0}"
+msgstr "Додајте свој први {0}"
+
 #. js-lingui-id: m2qDV8
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "Add your first {objectLabel}"
@@ -1803,8 +1931,10 @@ msgid "Administrators"
 msgstr "Администратори"
 
 #. js-lingui-id: sxkWRg
+#: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawerContent.tsx
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
+#: src/modules/ui/input/components/AdvancedSettingsSwitch.tsx
 msgid "Advanced"
 msgstr "Напредно"
 
@@ -1828,10 +1958,35 @@ msgstr ""
 msgid "Afrikaans"
 msgstr "Африканс"
 
+#. js-lingui-id: WlItll
+#: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
+msgid "After 180 days"
+msgstr "После 180 дана"
+
+#. js-lingui-id: I6lVwB
+#: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
+msgid "After 30 days"
+msgstr "После 30 дана"
+
+#. js-lingui-id: yPZL9v
+#: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
+msgid "After 60 days"
+msgstr "После 60 дана"
+
+#. js-lingui-id: E5fxqI
+#: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
+msgid "After 90 days"
+msgstr "После 90 дана"
+
 #. js-lingui-id: 5wZlI9
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 msgid "After a set amount of time"
 msgstr "После одређеног временског периода"
+
+#. js-lingui-id: 5uLUiv
+#: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
+msgid "After a year"
+msgstr "После годину дана"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -1841,6 +1996,7 @@ msgid "agent"
 msgstr "агент"
 
 #. js-lingui-id: iEQQyu
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -1882,6 +2038,7 @@ msgstr "агенти"
 
 #. js-lingui-id: 8Uv5e6
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Agents"
 msgstr "Агенти"
@@ -1895,12 +2052,12 @@ msgstr ""
 #. js-lingui-id: jsQZMk
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
+#: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-#: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -1908,8 +2065,8 @@ msgstr ""
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
+#: src/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks.ts
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 msgid "AI"
@@ -1930,6 +2087,11 @@ msgstr "Покретање AI агента"
 msgid "AI agents"
 msgstr "АИ агенти"
 
+#. js-lingui-id: n2fhCy
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "AI chat"
+msgstr "AI ћаскање"
+
 #. js-lingui-id: V+Qj+q
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "AI Chat"
@@ -1949,11 +2111,6 @@ msgstr "Потрошња AI у свим радним просторима."
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI consumption over time."
 msgstr "Потрошња AI током времена."
-
-#. js-lingui-id: kNfr85
-#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
-msgid "AI Model"
-msgstr "AI модел"
 
 #. js-lingui-id: jwOWhc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -2021,12 +2178,12 @@ msgstr "Коришћење AI по радном простору"
 #. js-lingui-id: YfXPCQ
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
-msgstr ""
+msgstr "Достигнуто је ограничење коришћења АИ-ја. Замолите администратора да надогради план."
 
 #. js-lingui-id: wBA/cx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
-msgstr ""
+msgstr "Достигнуто је ограничење коришћења АИ-ја. Обратите се подршци да бисте надоградили план."
 
 #. js-lingui-id: KLyZ6L
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -2061,6 +2218,10 @@ msgstr "Поравнање"
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/ai/constants/AgentChatThreadLastActivityFilterLabels.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
@@ -2079,6 +2240,16 @@ msgstr "Сви ({relationRecordsCount})"
 msgid "All Actions Access"
 msgstr "Приступ свим акцијама"
 
+#. js-lingui-id: iKzPQM
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
+msgid "All agents"
+msgstr "Сви агенти"
+
+#. js-lingui-id: Aapaa8
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
+msgid "All API keys"
+msgstr "Сви API кључеви"
+
 #. js-lingui-id: s1C/cR
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "All App Registrations"
@@ -2088,6 +2259,11 @@ msgstr "Све регистрације апликација"
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "All application registrations across the platform, including orphaned marketplace apps ({totalCount} matching)"
 msgstr "Све регистрације апликација на платформи, укључујући осиротеле апликације са маркетплејса ({totalCount} подударања)"
+
+#. js-lingui-id: G6DTnD
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
+msgid "All applications"
+msgstr "Све апликације"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -2132,10 +2308,20 @@ msgstr "Све групе"
 msgid "All lines"
 msgstr "Све линије"
 
+#. js-lingui-id: FIlQ3z
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
+msgid "All logic functions"
+msgstr "Све логичке функције"
+
 #. js-lingui-id: c3lkKf
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
 msgid "All Members"
 msgstr "Сви чланови"
+
+#. js-lingui-id: dtwyLS
+#: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
+msgid "All messages"
+msgstr "Све поруке"
 
 #. js-lingui-id: ypSiuQ
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
@@ -2160,6 +2346,7 @@ msgid "All objects are already in the sidebar"
 msgstr "Сви објекти су већ у бочној траци"
 
 #. js-lingui-id: /D217u
+#: src/modules/settings/billing/components/SettingsBillingLimitUsageSelect.tsx
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "All operations"
 msgstr "Све операције"
@@ -2203,6 +2390,16 @@ msgstr "Сви стандардни објекти"
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 msgid "All topics"
 msgstr "Све теме"
+
+#. js-lingui-id: UBpkWM
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
+msgid "All users"
+msgstr "Сви корисници"
+
+#. js-lingui-id: qf6r3X
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
+msgid "All workflows"
+msgstr "Сви токови рада"
 
 #. js-lingui-id: XLzFVD
 #: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
@@ -2251,7 +2448,7 @@ msgid "Allow importing data from CSV files"
 msgstr "Дозволи увоз података из CSV датотека"
 
 #. js-lingui-id: irI8Y5
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Allow installation"
 msgstr "Дозволи инсталацију"
 
@@ -2271,7 +2468,7 @@ msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "Дозволи пријаву преко Мајкрософта за кориснике са дозволама за обилажење ССО-а."
 
 #. js-lingui-id: U6bnfj
-#: src/modules/settings/workspace/components/ToggleImpersonate.tsx
+#: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
 msgstr "Дозволите приступ тиму за подршку"
 
@@ -2324,6 +2521,7 @@ msgstr "Ћилибар"
 #. js-lingui-id: hehnjM
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "Amount"
 msgstr "Износ"
 
@@ -2457,6 +2655,7 @@ msgid "Anyone with an email address at these domains is allowed to sign up for t
 msgstr "Свако са имејл адресом на овим доменима може се пријавити за овај радни простор."
 
 #. js-lingui-id: OZtEcz
+#: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/mcp-and-apis/components/PlaygroundSetupForm.tsx
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "API"
@@ -2466,6 +2665,12 @@ msgstr "АПИ"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "API calls"
 msgstr "API позиви"
+
+#. js-lingui-id: iq3W+B
+#: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
+msgid "API key"
+msgstr "API кључ"
 
 #. js-lingui-id: yRnk5W
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -2513,7 +2718,7 @@ msgstr "API Кључеви"
 
 #. js-lingui-id: kAtj+q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "API Name"
 msgstr "Назив АПИ"
 
@@ -2545,6 +2750,7 @@ msgstr "Апостроф и тачка"
 #. js-lingui-id: LMUw1U
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTable.tsx
+#: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "App"
@@ -2589,6 +2795,8 @@ msgid "Applicability"
 msgstr "Апликативност"
 
 #. js-lingui-id: IrC12v
+#: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Application"
@@ -2654,6 +2862,11 @@ msgstr "Апликације - Програмер"
 msgid "Applications below are not vetted. Use at your own risk."
 msgstr "Апликације у наставку нису проверене. Користите их на сопствени ризик."
 
+#. js-lingui-id: p98xmP
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+msgid "Applies to"
+msgstr "Примењује се на"
+
 #. js-lingui-id: DB8zMK
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply"
@@ -2676,6 +2889,7 @@ msgstr "Одобрени домени"
 
 #. js-lingui-id: VDvaN2
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
+#: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Apps"
@@ -2730,7 +2944,7 @@ msgid "Are you sure you want to delete this related {relationObjectLabelSingular
 msgstr "Да ли сте сигурни да желите да обришете овај повезани {relationObjectLabelSingular}?<0/>Ова радња ће прекинути све његове везе са другим објектима."
 
 #. js-lingui-id: 4Li0Pw
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 msgid "Are you sure you want to delete this skill? This action cannot be undone."
 msgstr "Да ли сте сигурни да желите да обришете ову вештину? Ова радња се не може опозвати."
 
@@ -2778,6 +2992,11 @@ msgstr "Да ли сте сигурни да желите да ажурират�
 msgid "Are you sure? Your current information will not be saved."
 msgstr "Да ли сте сигурни? Тренутне информације неће бити сачуване."
 
+#. js-lingui-id: AkeObK
+#: src/localization/hooks/useLocaleOptions.ts
+msgid "Armenian"
+msgstr "Јерменски"
+
 #. js-lingui-id: cybVUo
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "As it will be displayed in the workspace"
@@ -2800,8 +3019,12 @@ msgstr "растуће"
 msgid "Ascending"
 msgstr "Растуће"
 
+#. js-lingui-id: LfkDyR
+#: src/modules/ai/components/AiChatErrorRenderer.tsx
+msgid "Ask a workspace admin to raise the limit."
+msgstr "Затражите од администратора радног простора да повећа ограничење."
+
 #. js-lingui-id: xWEvuo
-#: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
@@ -2809,15 +3032,10 @@ msgstr "Растуће"
 msgid "Ask AI"
 msgstr "Питајте AI"
 
-#. js-lingui-id: HiVVqo
-#: src/modules/ai/components/AiChatEditorSection.tsx
-msgid "Ask your workspace admin to enable an AI model."
-msgstr ""
-
-#. js-lingui-id: mc9nK2
+#. js-lingui-id: cmkudK
 #: src/modules/ai/hooks/useAiChatEditor.ts
-msgid "Ask, search or make anything..."
-msgstr "Питајте, претражујте или урадите било шта..."
+msgid "Ask anything, @ a record or / a skill..."
+msgstr "Питајте било шта, @ запис или / вештину..."
 
 #. js-lingui-id: QVL/hg
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
@@ -3012,6 +3230,11 @@ msgstr "Аутентификација"
 msgid "Auth failed at"
 msgstr "Неуспешна аутентификација у"
 
+#. js-lingui-id: sgXsd0
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Auth failure reason"
+msgstr "Разлог неуспеле аутентификације"
+
 #. js-lingui-id: P8fBlG
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Authentication"
@@ -3082,6 +3305,12 @@ msgstr ""
 msgid "Auto-upgrade"
 msgstr "Аутоматска надоградња"
 
+#. js-lingui-id: Dnn2XG
+#: src/modules/ai/components/AiModelPicker.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "Automatic"
+msgstr "Аутоматски"
+
 #. js-lingui-id: YRT7ZW
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people you've participated in an event with."
@@ -3098,9 +3327,14 @@ msgid "Automatically create People records when receiving or sending emails"
 msgstr "Аутоматски креирај записе о људима приликом примања или слања е-поште"
 
 #. js-lingui-id: rHeTee
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Automatically install this app on every newly created workspace"
 msgstr "Аутоматски инсталирај ову апликацију на сваки новокреирани радни простор"
+
+#. js-lingui-id: MHsVk5
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "Automatically selected by Twenty for this mode."
+msgstr "Twenty аутоматски бира за овај режим."
 
 #. js-lingui-id: XFGV21
 #: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
@@ -3117,11 +3351,6 @@ msgstr "Аутоматизација, AI и приступ који ова ап�
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Availability"
 msgstr "Доступност"
-
-#. js-lingui-id: STA+22
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Available models"
-msgstr "Доступни модели"
 
 #. js-lingui-id: oD38t2
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3186,6 +3415,11 @@ msgstr "Боје позадине"
 msgid "Balance by"
 msgstr "Балансирање по"
 
+#. js-lingui-id: kJygHz
+#: src/modules/ai/utils/getAiModelTierLabel.ts
+msgid "Balanced"
+msgstr "Уравнотежено"
+
 #. js-lingui-id: b2ghLW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Base credits"
@@ -3230,11 +3464,6 @@ msgstr "Пошто овај радни ток не користи ручни о�
 msgid "Behind"
 msgstr "Заостаје"
 
-#. js-lingui-id: KYr9vA
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Best"
-msgstr "Најбољи"
-
 #. js-lingui-id: YBt9YP
 #: src/pages/onboarding/InstallAppsContent.tsx
 msgid "Beta"
@@ -3267,12 +3496,14 @@ msgstr "Наплаћује се месечно"
 
 #. js-lingui-id: R+w/Va
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
 #: src/modules/settings/billing/components/SettingsBillingTabBar.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+#: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 msgid "Billing"
@@ -3285,6 +3516,7 @@ msgstr "Наплата - Подешавања"
 
 #. js-lingui-id: dSjFxR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Billing history"
 msgstr "Историја наплате"
 
@@ -3292,11 +3524,14 @@ msgstr "Историја наплате"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Billing interval"
 msgstr "Интервал наплате"
 
 #. js-lingui-id: 8tzR0k
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
+#: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
+#: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
 msgid "Billing period"
 msgstr "Период наплате"
 
@@ -3675,6 +3910,21 @@ msgstr "Позивни код"
 msgid "Calls"
 msgstr "Позиви"
 
+#. js-lingui-id: YKJ+pg
+#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
+msgid "Campaign moved to {sendTime}"
+msgstr "Кампања је померена на {sendTime}"
+
+#. js-lingui-id: ANWhqH
+#: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
+msgid "Campaign scheduled for {sendTime}"
+msgstr "Кампања је заказана за {sendTime}"
+
+#. js-lingui-id: gL6+M4
+#: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
+msgid "Campaign unscheduled and back in your drafts"
+msgstr "Отказано је заказивање кампање и враћена је у ваше нацрте"
+
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Can't change API names for standard objects"
@@ -3709,7 +3959,7 @@ msgstr "Откажи"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Cancel Campaign"
-msgstr ""
+msgstr "Откажи кампању"
 
 #. js-lingui-id: J8nuSF
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -3811,6 +4061,11 @@ msgstr "Не могу да имитира селектованог корисн�
 #: src/modules/object-record/record-field/ui/meta-types/input/hooks/useOpenFilesFieldInput.tsx
 msgid "Cannot upload more than {maxNumberOfValues} files"
 msgstr "Није могуће отпремити више од {maxNumberOfValues} датотека"
+
+#. js-lingui-id: n1zTaJ
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+msgid "Caps on what your workspace can spend and who they apply to"
+msgstr "Ограничења потрошње радног простора и на кога се примењују"
 
 #. js-lingui-id: Po5MgW
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
@@ -3937,16 +4192,6 @@ msgstr "Промени на Про План?"
 msgid "Change to Yearly?"
 msgstr "Променити на годишње?"
 
-#. js-lingui-id: LhVon3
-#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
-msgid "Change visibility?"
-msgstr "Променити видљивост?"
-
-#. js-lingui-id: rnTfap
-#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
-msgid "Changing visibility requires reconnecting this OAuth connection. You will be redirected to authorize it again."
-msgstr "Промена видљивости захтева поновно повезивање ове OAuth везе. Бићете преусмерени да је поново овластите."
-
 #. js-lingui-id: lfFsZ4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Channels"
@@ -3959,6 +4204,7 @@ msgid "Chart"
 msgstr "Дијаграм"
 
 #. js-lingui-id: rlwve5
+#: src/modules/ai/components/AiChatPageThreadHeader.tsx
 #: src/modules/ai/components/AiChatThreadItemMenu.tsx
 msgid "Chat actions"
 msgstr "Радње ћаскања"
@@ -3969,6 +4215,7 @@ msgid "Chat conversation"
 msgstr "Разговор"
 
 #. js-lingui-id: tDlhkF
+#: src/modules/ai/components/AiChatPageThreadHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 msgid "Chat name"
 msgstr "Назив ћаскања"
@@ -4047,10 +4294,35 @@ msgstr "Кинески — Традиционални"
 msgid "Choose {intervalAdjective} credits"
 msgstr "Изаберите кредите за {intervalAdjective} период"
 
+#. js-lingui-id: n5pcaT
+#: src/modules/ai/components/AiModelTierDropdown.tsx
+msgid "Choose a model mode"
+msgstr "Изаберите режим модела"
+
+#. js-lingui-id: sHa2Dg
+#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
+msgid "Choose a spender"
+msgstr "Изаберите потрошача"
+
+#. js-lingui-id: RGUZK1
+#: src/modules/settings/billing/components/SettingsBillingLimitUsageSelect.tsx
+msgid "Choose a usage"
+msgstr "Изаберите потрошњу"
+
+#. js-lingui-id: qJwqET
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
+msgid "Choose a usage first"
+msgstr "Прво изаберите потрошњу"
+
 #. js-lingui-id: NFfUic
 #: src/pages/auth/SignInUp.tsx
 msgid "Choose a Workspace"
 msgstr "Изаберите радни простор"
+
+#. js-lingui-id: KsP4Tg
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "Choose automatically"
+msgstr "Изаберите аутоматски"
 
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -4062,6 +4334,11 @@ msgstr "Изаберите између OIDC и SAML протокола"
 msgid "Choose between Short and Full"
 msgstr "Изаберите између кратке и пуне"
 
+#. js-lingui-id: NaiAqg
+#: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
+msgid "Choose folders to sync"
+msgstr "Изаберите фасцикле за синхронизацију"
+
 #. js-lingui-id: 5EMoSo
 #: src/modules/settings/billing/components/internal/SettingsBillingPlansWithoutSubscription.tsx
 msgid "Choose plan"
@@ -4071,6 +4348,11 @@ msgstr "Изаберите план"
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "Choose the default currency that will apply"
 msgstr "Изаберите подразумевану валуту која ће се примењивати"
+
+#. js-lingui-id: KoXi44
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "Choose the default modes for people and agents"
+msgstr "Изаберите подразумеване режиме за људе и агенте"
 
 #. js-lingui-id: LHce7q
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -4175,6 +4457,7 @@ msgstr "Очисти филтер"
 
 #. js-lingui-id: u8JHrO
 #: src/modules/ai/components/AiChatThreadFilterDropdownRootMenu.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterMenuContent.tsx
 msgid "Clear filters"
 msgstr "Очисти филтере"
@@ -4371,11 +4654,6 @@ msgstr "Скупи фасциклу"
 #: src/modules/navigation/hooks/useNavigationDrawerTogglePresentation.ts
 msgid "Collapse sidebar"
 msgstr "Скупи бочну траку"
-
-#. js-lingui-id: OQTRMK
-#: src/modules/ai/components/AiChatCollapseButton.tsx
-msgid "Collapse to side panel"
-msgstr "Скупи у бочни панел"
 
 #. js-lingui-id: jZlrte
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -4673,20 +4951,10 @@ msgstr "Подесите како се овај објекат приказуј�
 msgid "Configure IMAP settings to receive and sync your emails."
 msgstr "Конфигуришите ИМАП подешавања за примање и синхронизацију ваших имејлова."
 
-#. js-lingui-id: pE9JCI
-#: src/modules/ai/components/AiChatEditorSection.tsx
-msgid "Configure models"
-msgstr ""
-
 #. js-lingui-id: gk/8eh
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Configure SMTP settings to send emails from your account."
 msgstr "Подесите SMTP подешавања да шаљете имејлове са свог налога."
-
-#. js-lingui-id: TiCmQz
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Configure the default AI models for all workspaces"
-msgstr "Подесите подразумеване AI моделе за све радне просторе"
 
 #. js-lingui-id: CcCy4C
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -5060,6 +5328,11 @@ msgstr "Копирано у клипборд"
 msgid "Copy"
 msgstr "Копирај"
 
+#. js-lingui-id: 6gAr5+
+#: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
+msgid "Copy audio download link"
+msgstr "Копирајте везу за преузимање звука"
+
 #. js-lingui-id: NmPNJJ
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #: src/modules/ai/components/MarkdownCodeBlock.tsx
@@ -5366,10 +5639,15 @@ msgstr "Број истинито"
 msgid "Count unique values"
 msgstr "Број јединствених вредности"
 
+#. js-lingui-id: GV0ZB5
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
+msgid "Counted again when the campaign sends, so this can change."
+msgstr "Поново се рачуна када се кампања пошаље, па се ово може променити."
+
 #. js-lingui-id: tKTq/b
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Counting recipients..."
-msgstr ""
+msgstr "Бројање прималаца..."
 
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -5390,6 +5668,12 @@ msgstr "креирајте"
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 msgid "Create"
 msgstr "Креирајте"
+
+#. js-lingui-id: QMLXwt
+#. placeholder {0}: objectMetadataItem.labelSingular
+#: src/pages/object-core/WorkflowCoreIndexPage.tsx
+msgid "Create a {0} to automate your work."
+msgstr "Креирајте {0} да бисте аутоматизовали свој рад."
 
 #. js-lingui-id: fQFALn
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -5694,16 +5978,18 @@ msgstr "кредити"
 #. js-lingui-id: lDIOek
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/constants/UsageLimitMeterLabels.ts
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 msgid "Credits"
 msgstr "Кредити"
 
-#. js-lingui-id: AaNZqp
+#. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
-msgid "Credits are added on top of the plan allowance and expire at the end of the current billing period. Unused granted credits carry over in full."
-msgstr "Кредити се додају преко квоте плана и истичу на крају текућег обрачунског периода. Неискоришћени додељени кредити преносе се у целости у наредни период."
+msgid "Credits are added on top of the plan allowance and are spent only once it runs out. They carry over in full from one billing period to the next, and stay available until they are used up or, where an expiry is set, until the end of the billing period that expiry falls in."
+msgstr "Кредити се додају преко износа укљученог у план и троше се тек када се тај износ потроши. У потпуности се преносе из једног обрачунског периода у следећи и доступни су док се не потроше или, ако је постављен рок важења, до краја обрачунског периода у ком тај рок истиче."
 
 #. js-lingui-id: 0o2LpE
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -5720,10 +6006,10 @@ msgstr "доступни кредити (укључујући {extraCreditsDispl
 msgid "credits available during the trial period"
 msgstr "кредити доступни током пробног периода"
 
-#. js-lingui-id: MnLFOj
+#. js-lingui-id: nbyiz/
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
-msgid "Credits handed out on top of the plan allowance"
-msgstr "Кредити додељени преко квоте плана"
+msgid "Credits handed out on top of the plan allowance. They stay spendable until used up."
+msgstr "Кредити додељени преко износа укљученог у план. Могу се трошити док се не потроше."
 
 #. js-lingui-id: iSuLEw
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
@@ -5744,11 +6030,6 @@ msgstr "искоришћени кредити"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Credits used"
 msgstr "Искоришћени кредити"
-
-#. js-lingui-id: 5oMPMN
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
-msgid "credits/period"
-msgstr "кредити/период"
 
 #. js-lingui-id: e73uuf
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -5858,7 +6139,7 @@ msgid "custom"
 msgstr "прилагођено"
 
 #. js-lingui-id: 8Tg/JR
-#: src/modules/applications/hooks/useApplicationChipData.ts
+#: src/modules/applications/utils/getApplicationDisplayName.ts
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
@@ -6057,6 +6338,11 @@ msgstr "Цијан"
 msgid "Czech"
 msgstr "Чешки"
 
+#. js-lingui-id: U0sC6H
+#: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
+msgid "Daily"
+msgstr "Дневно"
+
 #. js-lingui-id: ShUrwO
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -6070,6 +6356,7 @@ msgid "Daily Usage"
 msgstr "Дневно коришћење"
 
 #. js-lingui-id: Zz6Cxn
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
@@ -6078,7 +6365,7 @@ msgstr "Дневно коришћење"
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -6250,6 +6537,7 @@ msgstr "Грануларност Датума Y"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+#: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows.tsx
@@ -6286,13 +6574,13 @@ msgstr "дана пробног периода"
 #. js-lingui-id: 5y3O+A
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Deactivate"
 msgstr "Деактивирај"
 
 #. js-lingui-id: 7OGvrU
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Deactivate \"Synchronize Label and API Name\" to set a custom API name"
 msgstr "Деактивирајте \"Синхронизуј назив и API име\" да бисте поставили прилагођено API име"
 
@@ -6308,7 +6596,7 @@ msgid "Deactivate object"
 msgstr "Деактивирај објекат"
 
 #. js-lingui-id: OFJYGS
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 msgid "Deactivate or delete this skill"
 msgstr "Деактивирајте или обришите ову вештину"
 
@@ -6320,6 +6608,7 @@ msgstr "Деактивирај ово поље"
 #. js-lingui-id: yAT3be
 #: src/modules/object-core/workflows/constants/CoreWorkflowStatusFilterOptions.ts
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusTagProps.ts
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectItemTableRow.tsx
@@ -6340,12 +6629,9 @@ msgstr "Информације за отклањање грешака"
 msgid "Decide which Sub-address fields you want to display"
 msgstr "Одлучите која поља под-адресе желите да прикажете"
 
-#. js-lingui-id: Bn9+El
-#: src/modules/ai/hooks/useAiModelOptions.ts
-msgid "default"
-msgstr "подразумевано"
-
 #. js-lingui-id: ovBPCi
+#: src/modules/ai/components/AiModelTierSlider.tsx
+#: src/modules/settings/ai/components/AiModelPinSelect.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -6363,21 +6649,6 @@ msgstr "Подразумевана земља"
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "Default Country Code"
 msgstr "Подразумевани код земље"
-
-#. js-lingui-id: OtTlfU
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Default model"
-msgstr "Подразумевани модел"
-
-#. js-lingui-id: hUWaAk
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Default model for chats and complex reasoning"
-msgstr "Подразумевани модел за ћаскања и сложено резоновање"
-
-#. js-lingui-id: NTzYp2
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Default model for lightweight tasks"
-msgstr "Подразумевани модел за једноставне задатке"
 
 #. js-lingui-id: Zrez13
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -6418,7 +6689,7 @@ msgid "Define the name and description of your object"
 msgstr "Дефинишите име и опис вашег објекта"
 
 #. js-lingui-id: xQXPRn
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Define the name and instructions for this skill"
 msgstr "Дефинишите име и упутства за ову вештину"
 
@@ -6466,6 +6737,7 @@ msgstr "обриши"
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -6485,9 +6757,9 @@ msgstr "обриши"
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+#: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
+#: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 #: src/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -6592,6 +6864,11 @@ msgstr "Обриши фасциклу"
 msgid "Delete group"
 msgstr "Обриши групу"
 
+#. js-lingui-id: dPwNDl
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Delete limit"
+msgstr "Обриши ограничење"
+
 #. js-lingui-id: Wk+A9S
 #: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
 msgid "Delete node"
@@ -6623,7 +6900,7 @@ msgid "Delete Role Permanently"
 msgstr "Трајно избришите улогу"
 
 #. js-lingui-id: rvJGTw
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 msgid "Delete Skill"
 msgstr "Обришите вештину"
 
@@ -6641,6 +6918,11 @@ msgstr "Обрисати овај индекс?"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
 msgstr "Обриши ову интеграцију"
+
+#. js-lingui-id: uvgDyK
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Delete this limit?"
+msgstr "Обришите ово ограничење?"
 
 #. js-lingui-id: c0vHQI
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -6688,6 +6970,16 @@ msgstr "Обриши Вебхук"
 msgid "Delete widget"
 msgstr "Обришите виџет"
 
+#. js-lingui-id: D+Bgvi
+#: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
+msgid "Delete Workflow"
+msgstr "Обриши ток рада"
+
+#. js-lingui-id: Z299hR
+#: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
+msgid "Delete Workflows"
+msgstr "Обриши токове рада"
+
 #. js-lingui-id: kYu0eF
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -6729,6 +7021,11 @@ msgstr "Брисање {objectLabel}"
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "Deleting this method will remove it permanently from your account."
 msgstr "Брисањем овог метода трајно ћете га уклонити са вашег налога."
+
+#. js-lingui-id: si+vZD
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
+msgid "Delivery"
+msgstr "Испорука"
 
 #. js-lingui-id: Ssdrw4
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
@@ -6966,7 +7263,7 @@ msgid "Display text on multiple lines"
 msgstr "Прикажи текст на више линија"
 
 #. js-lingui-id: ljWYXA
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Display this app in the NPM packages list"
 msgstr "Прикажи ову апликацију на листи NPM пакета"
 
@@ -7389,6 +7686,12 @@ msgstr "Измените графикон"
 msgid "Edit iFrame"
 msgstr "Уредите иФрејм"
 
+#. js-lingui-id: 74qJhc
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Edit limit"
+msgstr "Уреди ограничење"
+
 #. js-lingui-id: /PoNoq
 #: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
@@ -7485,6 +7788,7 @@ msgstr "иначе ако"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpEmailField.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
@@ -7635,7 +7939,7 @@ msgstr "Имејлови и календар"
 #. js-lingui-id: VJ5blF
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Emails already handed to the provider cannot be recalled. This stops everything still waiting to be sent."
-msgstr ""
+msgstr "Е-поруке које су већ предате добављачу не могу се повући. Овим се зауставља све што још чека на слање."
 
 #. js-lingui-id: mHrqHa
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
@@ -7791,7 +8095,7 @@ msgid "Ends at"
 msgstr "Завршава се у"
 
 #. js-lingui-id: Vv4JVS
-#: src/modules/settings/security/components/Toggle2FA.tsx
+#: src/modules/settings/security/components/TwoFactorAuthenticationSwitch.tsx
 msgid "Enforce two-step verification for every user login."
 msgstr "Примена двостепене верификације за свако корисничко логовање."
 
@@ -7871,6 +8175,11 @@ msgstr "Унесите низ ставки или варијабилни изр�
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Enter BCC emails, comma-separated"
 msgstr ""
+
+#. js-lingui-id: lcPZCR
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "Enter both keys, or neither to use the instance IAM role"
+msgstr "Унесите оба кључа или ниједан да бисте користили IAM улогу инстанце"
 
 #. js-lingui-id: mPsuKh
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -8280,7 +8589,7 @@ msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Установите крајње тачке Вебхук за обавештења о асинхроним догађајима."
 
 #. js-lingui-id: 4ASb34
-#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentFormContent.tsx
 msgid "Evals"
 msgstr ""
 
@@ -8540,6 +8849,7 @@ msgid "Expired"
 msgstr "Истекло"
 
 #. js-lingui-id: KnN1Tu
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Expires"
@@ -8606,6 +8916,16 @@ msgstr "Израз"
 msgid "Extended"
 msgstr "Продужено"
 
+#. js-lingui-id: 4NR4Ja
+#: src/modules/ai/utils/getAiModelTierLabel.ts
+msgid "Extra Fast"
+msgstr "Изузетно брзо"
+
+#. js-lingui-id: Y64TrM
+#: src/modules/ai/utils/getAiModelTierLabel.ts
+msgid "Extra Smart"
+msgstr "Изузетно паметно"
+
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
@@ -8658,12 +8978,12 @@ msgstr "Није успело додавање провајдера"
 #. js-lingui-id: ScvpVb
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow.tsx
 msgid "Failed to add record"
-msgstr ""
+msgstr "Није успело додавање записа"
 
 #. js-lingui-id: Y9Y+x3
 #: src/modules/activities/emails/hooks/useCancelMessageCampaign.ts
 msgid "Failed to cancel campaign"
-msgstr ""
+msgstr "Није успело отказивање кампање"
 
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -8681,10 +9001,21 @@ msgstr "Неуспешно креирање догађаја у календар
 msgid "Failed to create record"
 msgstr "Није успело креирање записа"
 
+#. js-lingui-id: 7xz1r9
+#: src/pages/settings/billing/SettingsBillingNewLimit.tsx
+msgid "Failed to create the limit."
+msgstr "Креирање ограничења није успело."
+
 #. js-lingui-id: ITWxKI
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 msgid "Failed to create unsubscribe topic."
 msgstr "Није успело креирање теме за одјаву са слања имејлова."
+
+#. js-lingui-id: atCmiF
+#: src/modules/object-core/workflows/hooks/useCreateCoreWorkflow.ts
+#: src/modules/object-core/workflows/hooks/useCreateCoreWorkflow.ts
+msgid "Failed to create workflow"
+msgstr "Креирање тока рада није успело"
 
 #. js-lingui-id: AXveCw
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -8701,6 +9032,11 @@ msgstr "Није успело брисање послова. Покушајте 
 msgid "Failed to delete skill"
 msgstr "Није успело брисање вештине"
 
+#. js-lingui-id: YVct3Q
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Failed to delete the limit."
+msgstr "Брисање ограничења није успело."
+
 #. js-lingui-id: AUprM8
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 msgid "Failed to delete tool"
@@ -8711,6 +9047,11 @@ msgstr "Није успело брисање алата"
 msgid "Failed to delete unsubscribe topic."
 msgstr "Није успело брисање теме за одјаву са слања имејлова."
 
+#. js-lingui-id: UUBrJf
+#: src/modules/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows.ts
+msgid "Failed to delete workflows"
+msgstr "Брисање токова рада није успело"
+
 #. js-lingui-id: NUmmdc
 #: src/modules/dashboards/hooks/useDuplicateDashboard.ts
 msgid "Failed to duplicate dashboard"
@@ -8719,7 +9060,7 @@ msgstr "Није успело дуплирање контролне табле"
 #. js-lingui-id: 6e1GS3
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/hooks/useDuplicateMessageList.ts
 msgid "Failed to duplicate list"
-msgstr ""
+msgstr "Није успело дуплирање листе"
 
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
@@ -8787,7 +9128,7 @@ msgstr "Није успело учитавање администратора с
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to load the application."
-msgstr ""
+msgstr "Учитавање апликације није успело."
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -8867,8 +9208,7 @@ msgid "Failed to save layout customization"
 msgstr "Чување прилагођавања распореда није успело"
 
 #. js-lingui-id: y3HIOa
-#: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/hooks/useSettingsAgentSave.ts
 msgid "Failed to save role permissions: {errorMessage}"
 msgstr ""
 
@@ -8923,33 +9263,16 @@ msgstr "Није успело ажурирање подешавања аутом
 msgid "Failed to update default model"
 msgstr "Није успело ажурирање подразумеваног модела"
 
-#. js-lingui-id: 1R13Ov
-#: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
-msgid "Failed to update model"
-msgstr "Није успело ажурирање модела"
-
 #. js-lingui-id: W7Ff/4
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
-#: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
-#: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
 msgid "Failed to update model availability"
 msgstr "Није успело ажурирање доступности модела"
 
-#. js-lingui-id: A1sMrV
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Failed to update model recommendation"
-msgstr "Није успело ажурирање препоруке модела"
-
-#. js-lingui-id: q1MtjM
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Failed to update model recommendations"
-msgstr "Није успело ажурирање препорука модела"
-
-#. js-lingui-id: rCUG3c
+#. js-lingui-id: mDyyo1
 #: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
-msgid "Failed to update model selection mode"
-msgstr "Није успело ажурирање режима избора модела"
+msgid "Failed to update model settings"
+msgstr "Ажурирање подешавања модела није успело"
 
 #. js-lingui-id: J7vly7
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
@@ -8975,6 +9298,11 @@ msgstr "Није успело ажурирање имена пошиљаоца."
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Failed to update server administrator access."
 msgstr "Није успело ажурирање приступа администраторима сервера."
+
+#. js-lingui-id: hADObV
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Failed to update the limit."
+msgstr "Ажурирање ограничења није успело."
 
 #. js-lingui-id: 6TG/SY
 #: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
@@ -9044,11 +9372,10 @@ msgstr "Резервна опција"
 msgid "False"
 msgstr "Неправда"
 
-#. js-lingui-id: XVIZ7v
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Fast Model"
-msgstr "Брзи модел"
+#. js-lingui-id: KziH2K
+#: src/modules/ai/utils/getAiModelTierLabel.ts
+msgid "Fast"
+msgstr "Брзо"
 
 #. js-lingui-id: X9kySA
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -9070,6 +9397,11 @@ msgstr "Заставице функција"
 #: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Features"
 msgstr "Функционалности"
+
+#. js-lingui-id: WHjLqG
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Features active until"
+msgstr "Функције су активне до"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -9093,6 +9425,11 @@ msgstr "поље"
 msgid "Field"
 msgstr "Поље"
 
+#. js-lingui-id: 0Ractl
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
+msgid "Field added to search"
+msgstr "Поље је додато у претрагу"
+
 #. js-lingui-id: LX8Pu1
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Field deleted"
@@ -9112,6 +9449,11 @@ msgstr "Поље на одредишту"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field permission"
 msgstr "дозвола за поље"
+
+#. js-lingui-id: YZK9mj
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
+msgid "Field removed from search"
+msgstr "Поље је уклоњено из претраге"
 
 #. js-lingui-id: lcNTiF
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
@@ -9285,6 +9627,11 @@ msgstr "Филтрирај ћаскања"
 msgid "Filter group rule options"
 msgstr "Опције правила групе филтера"
 
+#. js-lingui-id: JIOvqZ
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+msgid "Filter limits"
+msgstr "Филтрирај ограничења"
+
 #. js-lingui-id: FG3LyE
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view"
@@ -9328,10 +9675,30 @@ msgstr "Филтери"
 msgid "Finding {objectLabel}"
 msgstr "Проналажење {objectLabel}"
 
+#. js-lingui-id: DWUicC
+#: src/modules/ai/constants/action-tool-status-labels.constant.ts
+msgid "Finding connected accounts"
+msgstr "Проналажење повезаних налога"
+
 #. js-lingui-id: JmZ/+d
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "Finish"
 msgstr "Завршити"
+
+#. js-lingui-id: O9Sink
+#: src/modules/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage.ts
+msgid "Finish editing the layout to expand chat"
+msgstr "Завршите уређивање распореда да бисте проширили ћаскање"
+
+#. js-lingui-id: yJoako
+#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+msgid "Finish editing the layout to open AI"
+msgstr "Завршите уређивање распореда да бисте отворили AI"
+
+#. js-lingui-id: 6cOXRd
+#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+msgid "Finish editing the layout to open Settings"
+msgstr "Завршите уређивање распореда да бисте отворили Подешавања"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -9397,6 +9764,11 @@ msgstr "Име не може бити празно"
 msgid "Fix the payment issue to keep your enterprise features active."
 msgstr "Решите проблем са плаћањем да би ваше Enterprise функције остале активне."
 
+#. js-lingui-id: UNHbhD
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Fix the payment issue to restore your enterprise features."
+msgstr "Решите проблем са плаћањем да бисте вратили своје Enterprise функције."
+
 #. js-lingui-id: Xgkhyj
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 msgid "Flags"
@@ -9436,6 +9808,11 @@ msgstr "Фасцикле"
 #: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Follow us on X"
 msgstr "Запратите нас на X"
+
+#. js-lingui-id: M0vOQ6
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Follows the workspace default for agents"
+msgstr "Прати подразумевано подешавање радног простора за агенте"
 
 #. js-lingui-id: q3il6U
 #: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
@@ -9494,6 +9871,11 @@ msgstr "Адреса за прослеђивање је копирана у кл
 msgid "Found {objectLabel}"
 msgstr "Пронађено {objectLabel}"
 
+#. js-lingui-id: 5Vg0Q7
+#: src/modules/ai/constants/action-tool-status-labels.constant.ts
+msgid "Found connected accounts"
+msgstr "Повезани налози су пронађени"
+
 #. js-lingui-id: 1hxId5
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "fourth"
@@ -9529,7 +9911,7 @@ msgstr "Француски"
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "From"
@@ -9811,7 +10193,7 @@ msgid "Grant access"
 msgstr "Додели приступ"
 
 #. js-lingui-id: 6eo66Q
-#: src/modules/settings/workspace/components/ToggleImpersonate.tsx
+#: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Grant access to your workspace so we can troubleshoot problems."
 msgstr "Омогућите приступ вашој радној површини како бисмо могли да решавамо проблеме."
 
@@ -9830,6 +10212,11 @@ msgstr "Додели кредите"
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Grant full access"
 msgstr "Додели потпун приступ"
+
+#. js-lingui-id: E0rSFg
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+msgid "Granted"
+msgstr "Додељено"
 
 #. js-lingui-id: Tbxf45
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -10125,6 +10512,11 @@ msgstr "Сакриј ознаку"
 msgid "Hide system indexes"
 msgstr "Сакриј системске индексе"
 
+#. js-lingui-id: yx/fMc
+#: src/modules/ai/utils/getAiModelEffortLabel.ts
+msgid "High"
+msgstr "Високо"
+
 #. js-lingui-id: 1ETc0T
 #: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Hire a partner to help you implement and customize Twenty."
@@ -10212,6 +10604,11 @@ msgstr "Сати између окидача"
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "How credits work"
 msgstr "Како кредити функционишу"
+
+#. js-lingui-id: nHmYga
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
+msgid "How much can be spent, and how often it resets."
+msgstr "Колико се може потрошити и колико често се ограничење ресетује."
 
 #. js-lingui-id: WC32k6
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -10681,7 +11078,7 @@ msgstr "Унос (промпт)"
 #. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Input must be in camel case and cannot start with a number"
 msgstr "Унос мора бити у camel case и не може почети са бројем"
 
@@ -10779,7 +11176,7 @@ msgid "Install your first apps"
 msgstr "Инсталирајте своје прве апликације"
 
 #. js-lingui-id: Xry+oU
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Installation"
 msgstr "Инсталација"
 
@@ -10819,12 +11216,12 @@ msgid "Instruction for AI"
 msgstr "Упутство за AI"
 
 #. js-lingui-id: NxHkkp
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Instructions"
 msgstr "Упутства"
 
 #. js-lingui-id: 77QeTr
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Instructions Editor"
 msgstr "Уређивач упутстава"
 
@@ -10832,6 +11229,17 @@ msgstr "Уређивач упутстава"
 #: src/utils/title-utils.ts
 msgid "Integrations - Settings"
 msgstr "Интеграције - Подешавања"
+
+#. js-lingui-id: Gzw2pq
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "Intelligence"
+msgstr "Интелигенција"
+
+#. js-lingui-id: EYz4Ok
+#. placeholder {0}: formatNumber(model?.intelligenceIndex ?? 0)
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "Intelligence score: {0}"
+msgstr "Резултат интелигенције: {0}"
 
 #. js-lingui-id: GfnKOF
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -10883,10 +11291,10 @@ msgstr "Неважећа cron израз"
 msgid "Invalid cron pattern: {errorMessage}"
 msgstr "Неважећи cron образац: {errorMessage}"
 
-#. js-lingui-id: jhbsV/
+#. js-lingui-id: CGivIJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
-msgstr "Неважећа вредност дана '{newDay}'. Треба да буде цео број већи од 1"
+msgid "Invalid day value \"{newDay}\". Should be integer greater than 1"
+msgstr "Неважећа вредност дана \"{newDay}\". Треба да буде цео број већи од 1"
 
 #. js-lingui-id: u3hwhx
 #: src/modules/settings/domains/utils/getDomainValidationSchema.ts
@@ -10925,26 +11333,26 @@ msgstr "Невалидан линк за проверу имејла."
 msgid "Invalid file: {0}"
 msgstr "Неважећа датотека: {0}"
 
-#. js-lingui-id: 04zLGG
+#. js-lingui-id: 1ccYjl
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value '{newHour}'. Should be integer between 0 and 23"
-msgstr "Неважећа вредност сата '{newHour}'. Требало би да буде цео број између 0 и 23"
+msgid "Invalid hour value \"{newHour}\". Should be integer between 0 and 23"
+msgstr "Неважећа вредност сата \"{newHour}\". Треба да буде цео број између 0 и 23"
 
-#. js-lingui-id: fLMLtY
+#. js-lingui-id: e3cT9e
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid hour value '{newHour}'. Should be integer greater than 1"
-msgstr "Неважећа вредност сата '{newHour}'. Требало би да буде цео број већи од 1"
+msgid "Invalid hour value \"{newHour}\". Should be integer greater than 1"
+msgstr "Неважећа вредност сата \"{newHour}\". Треба да буде цео број већи од 1"
 
-#. js-lingui-id: +Yi3bs
+#. js-lingui-id: jw4O7y
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value '{newMinute}'. Should be integer between 0 and 59"
-msgstr "Неважећа вредност минута '{newMinute}'. Требало би да буде цео број између 0 и 59"
+msgid "Invalid minute value \"{newMinute}\". Should be integer between 0 and 59"
+msgstr "Неважећа вредност минута \"{newMinute}\". Треба да буде цео број између 0 и 59"
 
-#. js-lingui-id: 942L1w
+#. js-lingui-id: SfvOlw
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-msgid "Invalid minute value '{newMinute}'. Should be integer greater than 1"
-msgstr "Неважећа вредност минута '{newMinute}'. Требало би да буде цео број већи од 1"
+msgid "Invalid minute value \"{newMinute}\". Should be integer greater than 1"
+msgstr "Неважећа вредност минута \"{newMinute}\". Треба да буде цео број већи од 1"
 
 #. js-lingui-id: WY8amq
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
@@ -11247,7 +11655,6 @@ msgstr "Пређи на тренутно"
 
 #. js-lingui-id: UpNpMK
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 msgid "Just for me"
 msgstr "Само за мене"
@@ -11732,6 +12139,8 @@ msgid "Lime"
 msgstr "Лајм"
 
 #. js-lingui-id: yRkqG9
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit"
@@ -11741,6 +12150,16 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit cannot exceed {maxRecordsFormatted} records."
 msgstr ""
+
+#. js-lingui-id: lvAOAE
+#: src/pages/settings/billing/SettingsBillingNewLimit.tsx
+msgid "Limit created."
+msgstr "Ограничење је креирано."
+
+#. js-lingui-id: 1r7WdP
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Limit deleted."
+msgstr "Ограничење је обрисано."
 
 #. js-lingui-id: g3YJC1
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
@@ -11757,10 +12176,30 @@ msgstr "Ограничите колико вредности може бити �
 msgid "Limit must be greater than 0."
 msgstr ""
 
+#. js-lingui-id: GrFbIR
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Limit updated."
+msgstr "Ограничење је ажурирано."
+
 #. js-lingui-id: 6BDqha
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+#: src/modules/settings/billing/components/SettingsBillingTabBar.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+#: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 msgid "Limits"
 msgstr "Ограничења"
+
+#. js-lingui-id: rtN0nI
+#: src/modules/settings/billing/components/SettingsBillingLimitsContent.tsx
+msgid "Limits could not be loaded."
+msgstr "Ограничења нису могла бити учитана."
+
+#. js-lingui-id: iGG0MA
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+msgid "Limits on members, API keys and apps require the Organization plan."
+msgstr "Ограничења за чланове, API кључеве и апликације захтевају Organization план."
 
 #. js-lingui-id: DXCDta
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -11837,7 +12276,7 @@ msgstr ""
 
 #. js-lingui-id: 2BBAbc
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/views/types/ViewType.ts
 msgid "List"
 msgstr "Листа"
@@ -11845,7 +12284,7 @@ msgstr "Листа"
 #. js-lingui-id: Wfj8PH
 #: src/modules/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand.tsx
 msgid "List duplicated with {memberCount, plural, one {# member} other {# members}}"
-msgstr ""
+msgstr "Листа је дуплирана са {memberCount, plural, one {# чланом} few {# члана} other {# чланова}}"
 
 #. js-lingui-id: 3xTn5L
 #: src/modules/views/types/ViewType.ts
@@ -11984,6 +12423,11 @@ msgstr "Учитавање нити"
 msgid "Loading..."
 msgstr "Учитавање..."
 
+#. js-lingui-id: Pwqkdw
+#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
+msgid "Loading…"
+msgstr "Учитавање…"
+
 #. js-lingui-id: 7VBQ2j
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -12048,6 +12492,11 @@ msgstr "Логика"
 msgid "logic function"
 msgstr "логичка функција"
 
+#. js-lingui-id: U/kVJF
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
+msgid "Logic function"
+msgstr "Логичка функција"
+
 #. js-lingui-id: qqnB9E
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -12055,6 +12504,7 @@ msgid "logic functions"
 msgstr "логичке функције"
 
 #. js-lingui-id: QTVVDd
+#: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
@@ -12075,7 +12525,7 @@ msgstr "Одјава"
 #: src/modules/logic-functions/components/LogicFunctionLogs.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
-#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentFormContent.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 msgid "Logs"
 msgstr "Дневници"
@@ -12100,6 +12550,11 @@ msgstr "Пронађи"
 msgid "loop"
 msgstr "петља"
 
+#. js-lingui-id: nTWWCZ
+#: src/modules/ai/utils/getAiModelEffortLabel.ts
+msgid "Low"
+msgstr "Ниско"
+
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Mail Account"
@@ -12119,11 +12574,6 @@ msgstr "Режим одржавања"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Make HTTP requests to external APIs"
 msgstr ""
-
-#. js-lingui-id: icpEdc
-#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
-msgid "Make private"
-msgstr "Постави као приватно"
 
 #. js-lingui-id: wckWOP
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -12248,13 +12698,18 @@ msgstr "Ручно"
 msgid "Manual configuration"
 msgstr "Ручна конфигурација"
 
+#. js-lingui-id: ospBFm
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "Manually selected for this mode."
+msgstr "Ручно изабрано за овај режим."
+
 #. js-lingui-id: lkcAoj
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Margin"
 msgstr "Маргина"
 
 #. js-lingui-id: fI1Tll
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Mark this app as reviewed and approved"
 msgstr "Означи ову апликацију као прегледану и одобрену"
 
@@ -12280,6 +12735,7 @@ msgid "Match Columns"
 msgstr "Упаривање колона"
 
 #. js-lingui-id: CK1KXz
+#: src/modules/ai/utils/getAiModelEffortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/side-panel/pages/page-layout/constants/settings/RangeMaxSetting.ts
@@ -12387,6 +12843,11 @@ msgstr "Ја"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
 msgid "Me (User ID)"
 msgstr "Ја (Кориснички ИД)"
+
+#. js-lingui-id: agPptk
+#: src/modules/ai/utils/getAiModelEffortLabel.ts
+msgid "Medium"
+msgstr "Средње"
 
 #. js-lingui-id: IAcjOi
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -12498,6 +12959,11 @@ msgstr "Метаподаци"
 msgid "Metadata file generation failed"
 msgstr "Генерисање датотеке метаподатака није успело"
 
+#. js-lingui-id: zsKJ2q
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
+msgid "Meter"
+msgstr "Мерач"
+
 #. js-lingui-id: fiPesM
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Method"
@@ -12525,6 +12991,11 @@ msgstr "Минимум"
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Min range"
 msgstr "Минимални опсег"
+
+#. js-lingui-id: 8GG+Pa
+#: src/modules/ai/utils/getAiModelEffortLabel.ts
+msgid "Minimal"
+msgstr "Минимално"
 
 #. js-lingui-id: 5IrCQY
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -12567,8 +13038,13 @@ msgstr "Мисија завршена!"
 msgid "Mobile"
 msgstr "Мобилни уређај"
 
+#. js-lingui-id: zz/Wd/
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "Mode"
+msgstr "Режим"
+
 #. js-lingui-id: scu3wk
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
+#: src/modules/ai/components/AiModelTierSlider.tsx
 msgid "Model"
 msgstr "Модел"
 
@@ -12584,6 +13060,11 @@ msgstr "Модел \"{0}\" је додат"
 msgid "Model \"{0}\" removed"
 msgstr "Модел \"{0}\" је уклоњен"
 
+#. js-lingui-id: 8jgO3g
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "Model agents use when they run on their own"
+msgstr "Модел који агенти користе када раде самостално"
+
 #. js-lingui-id: IzB3v0
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Model ID"
@@ -12594,16 +13075,17 @@ msgstr "ID модела"
 msgid "Model ID is required"
 msgstr "ID модела је обавезан"
 
+#. js-lingui-id: iaurWj
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "Model used when you chat with Twenty"
+msgstr "Модел који се користи када ћаскате са Twenty"
+
 #. js-lingui-id: //nm2/
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Models"
 msgstr "Модели"
-
-#. js-lingui-id: uG84sm
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Models available in the agent node and chat model pickers"
-msgstr "Модели доступни у чвору агента и у бирачима модела за ћаскање"
 
 #. js-lingui-id: tNFUgB
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -12638,6 +13120,7 @@ msgstr "месец"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+#: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows.tsx
@@ -12658,6 +13141,7 @@ msgstr "месечно"
 #. js-lingui-id: +8Nek/
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
+#: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Monthly"
 msgstr "Месечно"
@@ -12814,7 +13298,7 @@ msgid "My unlisted views"
 msgstr "Моји непостојани прикази"
 
 #. js-lingui-id: JUrq94
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "mySkill"
 msgstr "mySkill"
 
@@ -12952,6 +13436,8 @@ msgid "Network error"
 msgstr "Грешка мреже"
 
 #. js-lingui-id: qqeAJM
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+#: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Never"
 msgstr "Никада"
@@ -12982,6 +13468,7 @@ msgstr "Ново"
 #: src/modules/object-record/record-form/components/RecordCreationFormProvider.tsx
 #: src/modules/object-record/record-form/components/RecordCreationFormProvider.tsx
 #: src/modules/side-panel/hooks/useOpenRecordInSidePanel.ts
+#: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "New {0}"
 msgstr "Нови {0}"
 
@@ -12998,8 +13485,7 @@ msgid "New Account"
 msgstr "Нови налог"
 
 #. js-lingui-id: mJIA0/
-#: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentFormContent.tsx
 msgid "New Agent"
 msgstr "Нови агент"
 
@@ -13026,6 +13512,9 @@ msgid "New calendar event"
 msgstr "Нови догађај у календару"
 
 #. js-lingui-id: hIQkLb
+#: src/modules/ai/components/AiChatPageHeader.tsx
+#: src/modules/ai/components/AiChatPageThreadHeader.tsx
+#: src/modules/ai/components/AiChatPageThreadHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 msgid "New chat"
 msgstr "Нови чет"
@@ -13036,7 +13525,6 @@ msgid "New Company"
 msgstr "Нова компанија"
 
 #. js-lingui-id: +HY5kX
-#: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/side-panel/components/SidePanelTopBarRightCornerIcon.tsx
 msgid "New conversation"
 msgstr "Нови разговор"
@@ -13109,6 +13597,13 @@ msgstr "Нови кључ"
 msgid "New Key"
 msgstr "Нови кључ"
 
+#. js-lingui-id: +7nlzA
+#: src/pages/settings/billing/SettingsBillingLimits.tsx
+#: src/pages/settings/billing/SettingsBillingNewLimit.tsx
+#: src/pages/settings/billing/SettingsBillingNewLimit.tsx
+msgid "New limit"
+msgstr "Ново ограничење"
+
 #. js-lingui-id: K2wBR9
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 #: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
@@ -13144,9 +13639,9 @@ msgid "New rollover limit"
 msgstr "Нови лимит за пренос"
 
 #. js-lingui-id: gWnSyg
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
 msgid "New Skill"
 msgstr "Нова вештина"
 
@@ -13247,6 +13742,18 @@ msgstr "Девети"
 msgid "No"
 msgstr "Не"
 
+#. js-lingui-id: AZa0Mm
+#. placeholder {0}: objectMetadataItem.labelPlural
+#: src/pages/object-core/WorkflowCoreIndexPage.tsx
+msgid "No {0} found"
+msgstr "Није пронађено: {0}"
+
+#. js-lingui-id: uZ8YLp
+#. placeholder {0}: objectMetadataItem.labelPlural
+#: src/pages/object-core/WorkflowCoreIndexPage.tsx
+msgid "No {0} match your filters. Try removing some of them."
+msgstr "Ниједан {0} не одговара вашим филтерима. Покушајте да уклоните неке од њих."
+
 #. js-lingui-id: 7YGRoE
 #: src/modules/ui/input/components/SelectInput.tsx
 #: src/modules/ui/input/components/SelectInput.tsx
@@ -13312,15 +13819,12 @@ msgstr "Ниједан агент не одговара вашој претра�
 msgid "No AI consumption recorded for this user."
 msgstr "За овог корисника није забележена потрошња AI."
 
-#. js-lingui-id: 1GMOHe
-#: src/modules/ai/hooks/useAgentChat.ts
-msgid "No AI models are enabled in this workspace."
-msgstr "Ниједан AI модел није омогућен у овом радном простору."
-
-#. js-lingui-id: zcsNvp
+#. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
-msgid "No AI models are enabled."
-msgstr ""
+#: src/modules/ai/hooks/useAgentChat.ts
+#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
+msgid "No AI provider is configured on this instance."
+msgstr "Ниједан AI добављач није конфигурисан на овој инстанци."
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -13653,9 +14157,14 @@ msgstr "Није пронађена најновија верзија"
 msgid "No limit"
 msgstr "Без ограничења"
 
+#. js-lingui-id: Y9FJQX
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+msgid "No limit matches your search."
+msgstr "Ниједно ограничење не одговара вашој претрази."
+
 #. js-lingui-id: nivaRq
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "No list"
 msgstr "Нема листе"
 
@@ -13709,10 +14218,15 @@ msgstr "Нема доступних података о метрикама"
 msgid "No microphone is available. Connect one and try again."
 msgstr "Ниједан микрофон није доступан. Повежите га и покушајте поново."
 
-#. js-lingui-id: UWZZdQ
-#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
-msgid "No models available. Please configure AI models in your workspace settings."
-msgstr "Нема доступних модела. Молимо вас, конфигуришите AI моделе у подешавањима вашег радног простора."
+#. js-lingui-id: WGQJB3
+#: src/modules/settings/ai/utils/getAiModelModeDescription.ts
+msgid "No model available"
+msgstr "Нема доступног модела"
+
+#. js-lingui-id: xo340M
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "No model is available for this mode."
+msgstr "Ниједан модел није доступан за овај режим."
 
 #. js-lingui-id: 9VrTfZ
 #: src/modules/activities/notes/components/NotesCardContent.tsx
@@ -13775,7 +14289,7 @@ msgstr "Није пронађено уверење о пореклу (provenance
 #. js-lingui-id: m1OG2V
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
 msgid "No recipients to send to ({skipReasons})"
-msgstr ""
+msgstr "Нема прималаца за слање ({skipReasons})"
 
 #. js-lingui-id: V/+aTW
 #: src/modules/object-record/record-field/ui/form-types/components/FormMorphRelationToOneFieldInput.tsx
@@ -13880,14 +14394,14 @@ msgstr "Нема Изабери поља"
 
 #. js-lingui-id: Ylz+jb
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "No sender"
 msgstr "Нема пошиљаоца"
 
-#. js-lingui-id: 5UEIxk
+#. js-lingui-id: dRi20n
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
-msgid "No sending address is available. Connect a verified sending domain in Settings before this campaign can go out."
-msgstr ""
+msgid "No sending address. Connect a verified domain in Settings."
+msgstr "Нема адресе пошиљаоца. Повежите верификовани домен у Подешавањима."
 
 #. js-lingui-id: JkPTT8
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -13896,7 +14410,7 @@ msgstr "Није пронађен ниједан администратор се
 
 #. js-lingui-id: eeoVfm
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "No subject"
 msgstr "Нема теме"
 
@@ -14026,6 +14540,11 @@ msgstr "Још нема покретања радног процеса"
 msgid "No workflow versions yet"
 msgstr "Још нема верзија радног процеса"
 
+#. js-lingui-id: 0R8Pxd
+#: src/modules/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows.ts
+msgid "No workflows were deleted"
+msgstr "Ниједан ток рада није обрисан"
+
 #. js-lingui-id: Q4dFjT
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "No workspace behind"
@@ -14074,6 +14593,7 @@ msgstr "Подешавања чвора"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
+#: src/modules/ai/utils/getAiModelEffortLabel.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -14146,6 +14666,11 @@ msgstr "Није укључено"
 msgid "Not listed"
 msgstr "Није наведено"
 
+#. js-lingui-id: AjdrYY
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "Not measured at this effort yet. Showing the base model's reading."
+msgstr "Још није измерено при овом нивоу напора. Приказује се очитавање основног модела."
+
 #. js-lingui-id: iXlml9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 msgid "Not recorded"
@@ -14195,6 +14720,16 @@ msgstr "Није синхронизовано"
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Note"
 msgstr "Белешка"
+
+#. js-lingui-id: 543eQ7
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
+msgid "Nothing counted against this scope yet"
+msgstr "Још ништа није урачунато у овај опсег"
+
+#. js-lingui-id: yBYKk1
+#: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
+msgid "Nothing has gone out yet. The campaign returns to your drafts and you can edit or schedule it again."
+msgstr "Још ништа није послато. Кампања се враћа у ваше нацрте и можете је поново уредити или заказати."
 
 #. js-lingui-id: VngD1z
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -14500,7 +15035,6 @@ msgid "On which object(s) should this trigger be available"
 msgstr "На којим објектима би овај окидач требало да буде доступан"
 
 #. js-lingui-id: gukxZ5
-#: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTableRow.tsx
 msgid "Onboarding"
 msgstr "Увођење"
@@ -14708,6 +15242,16 @@ msgstr "Операнд"
 msgid "Operational"
 msgstr "Оперативно"
 
+#. js-lingui-id: Wfz6Xv
+#: src/modules/settings/billing/hooks/useUsageLimitFormatter.ts
+msgid "operations"
+msgstr "операције"
+
+#. js-lingui-id: B1MDds
+#: src/modules/settings/billing/constants/UsageLimitMeterLabels.ts
+msgid "Operations"
+msgstr "Операције"
+
 #. js-lingui-id: lVa1Xn
 #: src/modules/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues.ts
 msgid "Option 1"
@@ -14789,6 +15333,7 @@ msgid "organization plan"
 msgstr "план за организацију"
 
 #. js-lingui-id: zi/p7n
+#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Organization plan"
 msgstr "План за организацију"
@@ -14881,6 +15426,11 @@ msgstr "Излазна пошта из овог канала шаље се пр�
 msgid "Output"
 msgstr "Излаз"
 
+#. js-lingui-id: J7aOlM
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "Output cost"
+msgstr "Трошак излаза"
+
 #. js-lingui-id: i1+tKD
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
@@ -14892,6 +15442,11 @@ msgstr "Излазни токени"
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
 msgid "Override Draft"
 msgstr "Замени нацрт"
+
+#. js-lingui-id: RQCK56
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Overrides the mode above until you switch back to automatic"
+msgstr "Замјењује горњи режим док се не вратите на аутоматски"
 
 #. js-lingui-id: 6/dCYd
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -15091,6 +15646,7 @@ msgid "Path"
 msgstr "Стаза"
 
 #. js-lingui-id: IgrLD/
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 msgid "Pause"
 msgstr "Паузирај"
@@ -15182,6 +15738,8 @@ msgid "Perform administrative actions or permanently delete this user"
 msgstr ""
 
 #. js-lingui-id: NtQvjo
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
 msgid "Period"
 msgstr "Период"
@@ -15255,6 +15813,11 @@ msgstr "Број телефона копиран у клипборд"
 msgid "Pick a {0} record"
 msgstr "Изаберите запис за {0}"
 
+#. js-lingui-id: T1yaeQ
+#: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
+msgid "Pick a send time in the future."
+msgstr "Изаберите будуће време слања."
+
 #. js-lingui-id: JqqNlC
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 msgid "Pick a view"
@@ -15299,6 +15862,11 @@ msgstr "Слика"
 msgid "Pie Chart"
 msgstr ""
 
+#. js-lingui-id: 6U8nJN
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Pin a specific model"
+msgstr "Закачите одређени модел"
+
 #. js-lingui-id: 3pU8e+
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
 msgid "Pin tab"
@@ -15320,6 +15888,11 @@ msgstr "Закачено"
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
 msgid "Pinned tab, always shown on the left"
 msgstr "Закачена картица, увек приказана са леве стране"
+
+#. js-lingui-id: Iaw5/y
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Pinned to a specific model"
+msgstr "Закачено за одређени модел"
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
@@ -15360,7 +15933,13 @@ msgstr "Планирано за {formattedStartDate}"
 msgid "Plans"
 msgstr "Планови"
 
+#. js-lingui-id: T91vKp
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
+msgid "Play"
+msgstr "Пусти"
+
 #. js-lingui-id: XdRQm7
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 msgid "Playback failed"
 msgstr "Репродукција није успела"
@@ -15482,7 +16061,7 @@ msgid "Pre-install"
 msgstr "Пре инсталације"
 
 #. js-lingui-id: iVFTRM
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Pre-install on new workspaces"
 msgstr "Прединсталирај на новим радним просторима"
 
@@ -15519,6 +16098,7 @@ msgstr "Спречите доделу исте вредности различи
 #. js-lingui-id: rdUucN
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "Preview"
@@ -15849,18 +16429,18 @@ msgid "Read documentation"
 msgstr "Прочитајте документацију"
 
 #. js-lingui-id: U26cMX
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
 msgstr "Прочитајте системске промптове"
 
 #. js-lingui-id: EKsFda
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read the system prompts to understand how the AI works"
 msgstr "Прочитајте системске промптове да бисте разумели како вештачка интелигенција функционише"
 
 #. js-lingui-id: 0URVx8
 #. placeholder {0}: formatNumber( systemPromptTokenCount, { abbreviate: true, decimals: 1 }, )
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
 msgstr "Прочитајте системске промптове да бисте разумели како вештачка интелигенција функционише (~{0} токена)"
 
@@ -15900,6 +16480,22 @@ msgstr "Разлог"
 msgid "Reasoning"
 msgstr "Расуђивање"
 
+#. js-lingui-id: 49IkcQ
+#: src/modules/ai/components/AiModelTierSlider.tsx
+msgid "Reasoning effort: {reasoningEffort}"
+msgstr "Ниво напора расуђивања: {reasoningEffort}"
+
+#. js-lingui-id: PG5XPp
+#. placeholder {0}: getAiModelEffortLabel(availableEffort)
+#: src/modules/settings/ai/components/AiModelPinSelect.tsx
+msgid "Reasoning: {0}"
+msgstr "Расуђивање: {0}"
+
+#. js-lingui-id: nVOD/+
+#: src/modules/settings/ai/components/AiModelPinSelect.tsx
+msgid "Reasoning: Default"
+msgstr "Расуђивање: Подразумевано"
+
 #. js-lingui-id: W+ApAD
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -15937,9 +16533,9 @@ msgid "Recipient"
 msgstr "Прималац"
 
 #. js-lingui-id: F+BB7w
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Recipient count unavailable"
-msgstr ""
+msgstr "Број прималаца није доступан"
 
 #. js-lingui-id: p8GO5h
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -15947,7 +16543,7 @@ msgid "recipient@example.com"
 msgstr "recipient@example.com"
 
 #. js-lingui-id: yPrbsy
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
 msgstr "Примаоци"
@@ -15963,11 +16559,6 @@ msgstr "Примаоци могу да се одјаве само са свих 
 msgid "Recommended"
 msgstr "Препоручено"
 
-#. js-lingui-id: b2+5uV
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Recommended Models"
-msgstr "Препоручени модели"
-
 #. js-lingui-id: gcoiFh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
@@ -15977,10 +16568,10 @@ msgstr "Препоручени модели"
 msgid "Reconnect"
 msgstr "Поново повежи"
 
-#. js-lingui-id: NSOx3j
+#. js-lingui-id: PrI9jr
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
-msgid "Reconnect and change visibility"
-msgstr "Поново повежи и промени видљивост"
+msgid "Reconnect and share"
+msgstr "Поново повежи и подели"
 
 #. js-lingui-id: XsIxsL
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -16070,12 +16661,6 @@ msgstr "Снимите своје позиве и добијте транскр�
 msgid "Record-level"
 msgstr "Ниво записа"
 
-#. js-lingui-id: X5BjmT
-#: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
-#: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
-msgid "Record(s) selected"
-msgstr "Изабрани записи"
-
 #. js-lingui-id: 3esxl/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Recorder Joining"
@@ -16105,6 +16690,12 @@ msgstr "Снимање је заказано"
 msgid "Records"
 msgstr "Рекорди"
 
+#. js-lingui-id: J+Qyf2
+#: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
+#: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
+msgid "Records selected"
+msgstr "Изабрани записи"
+
 #. js-lingui-id: wRTiSD
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Red"
@@ -16120,10 +16711,10 @@ msgstr "URI-ји за преусмеравање"
 msgid "Redirect URIs updated"
 msgstr "URI-ји за преусмеравање су ажурирани"
 
-#. js-lingui-id: LfH+Ea
+#. js-lingui-id: ix5Jyh
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
-msgid "Redirect Url copied to clipboard"
-msgstr "URL за преусмеравање копиран у клипборд"
+msgid "Redirect URL copied to clipboard"
+msgstr "URL за преусмеравање је копиран у клипборд"
 
 #. js-lingui-id: RZjynQ
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -16486,6 +17077,7 @@ msgstr "Захтев није успео"
 
 #. js-lingui-id: +gFBV8
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Require authentication"
 msgstr "Захтева аутентификацију"
 
@@ -16493,6 +17085,11 @@ msgstr "Захтева аутентификацију"
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 msgid "Required"
 msgstr "Обавезно"
+
+#. js-lingui-id: r38Vo4
+#: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
+msgid "Reschedule campaign"
+msgstr "Поново закажи кампању"
 
 #. js-lingui-id: Vae65A
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -16630,11 +17227,6 @@ msgstr "Врати {objectLabel}"
 msgid "Restore the activity type settings defined by the application"
 msgstr "Вратите поставке типа активности које је дефинисала апликација"
 
-#. js-lingui-id: hO3AfV
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Restrict available models to a curated list"
-msgstr "Ограничите доступне моделе на одабрану листу"
-
 #. js-lingui-id: RD6AE9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
@@ -16655,6 +17247,7 @@ msgstr "Наставите"
 
 #. js-lingui-id: 6gRgw8
 #: src/modules/ai/components/AiChatErrorMessage.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
@@ -16745,8 +17338,8 @@ msgstr "улога"
 #. js-lingui-id: GDvlUT
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
+#: src/pages/settings/ai/components/SettingsAgentFormContent.tsx
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
-#: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -16907,6 +17500,12 @@ msgstr "Извршавање функције"
 msgid "Running..."
 msgstr "Извршава се..."
 
+#. js-lingui-id: cAUlDL
+#: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
+#: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
+msgid "runs"
+msgstr "покретања"
+
 #. js-lingui-id: nji0/X
 #: src/localization/hooks/useLocaleOptions.ts
 msgid "Russian"
@@ -16916,6 +17515,16 @@ msgstr "Руски"
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Sales"
 msgstr "Продаја"
+
+#. js-lingui-id: 342JYO
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "Same cost as Balanced."
+msgstr "Исти трошак као код Уравнотеженог."
+
+#. js-lingui-id: wQnd1t
+#: src/modules/ai/utils/getAiModelTierMetrics.ts
+msgid "Same score as Balanced"
+msgstr "Исти резултат као код Уравнотеженог"
 
 #. js-lingui-id: QeF0zb
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -16969,11 +17578,21 @@ msgstr "Распоред"
 msgid "Schedule a maintenance window and notify all users"
 msgstr "Закажите период одржавања и обавестите све кориснике"
 
+#. js-lingui-id: MGaW9O
+#: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
+msgid "Schedule campaign"
+msgstr "Закажи кампању"
+
 #. js-lingui-id: 4ba0NE
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Scheduled"
 msgstr "Заказано"
+
+#. js-lingui-id: JizhXE
+#: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
+msgid "Scheduled at"
+msgstr "Заказано у"
 
 #. js-lingui-id: 7oCJuI
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
@@ -17001,6 +17620,7 @@ msgid "Schema this app contributes to your workspace"
 msgstr "Шема коју ова апликација додаје вашем радном простору"
 
 #. js-lingui-id: aBgwis
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Scope"
 msgstr "Опсег"
@@ -17063,9 +17683,13 @@ msgstr "Претражите поље..."
 msgid "Search a folder..."
 msgstr "Претражите фасциклу..."
 
+#. js-lingui-id: owAIq9
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+msgid "Search a limit"
+msgstr "Претражите ограничење."
+
 #. js-lingui-id: 8J0e5B
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Search a model..."
 msgstr "Претражите модел..."
 
@@ -17109,11 +17733,6 @@ msgstr "Претражите тип"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 msgid "Search a view..."
 msgstr "Претражите приказ..."
-
-#. js-lingui-id: N7Z3jc
-#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
-msgid "Search across indexed fields..."
-msgstr "Претражите индексирана поља..."
 
 #. js-lingui-id: +7s4fw
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
@@ -17233,6 +17852,11 @@ msgstr "метаподаци поља за претрагу"
 msgid "Search fields"
 msgstr "Претражите поља"
 
+#. js-lingui-id: IQAn53
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
+msgid "Search fields..."
+msgstr "Претражите поља..."
+
 #. js-lingui-id: rXrG+N
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
 msgid "Search folders..."
@@ -17310,6 +17934,11 @@ msgstr "Веб је претражен"
 msgid "Searched the web for {query}"
 msgstr "Веб је претражен за {query}"
 
+#. js-lingui-id: kSEiZD
+#: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
+msgid "searches"
+msgstr "претраге"
+
 #. js-lingui-id: EvDUJy
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
 msgid "Searching {objectLabel}"
@@ -17348,7 +17977,6 @@ msgid "seat / month - billed yearly"
 msgstr "седиште / месец - наплата годишње"
 
 #. js-lingui-id: MpFIca
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "seats"
 msgstr "места"
@@ -17489,6 +18117,11 @@ msgstr "Прикажите структуру ваших података као
 msgid "Seeded"
 msgstr "Иницијализовано"
 
+#. js-lingui-id: AhNP40
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
+msgid "Seek"
+msgstr "Премотај"
+
 #. js-lingui-id: 5iyrla
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem.tsx
 msgid "Seek recording to {formattedStartTimestamp}"
@@ -17498,7 +18131,7 @@ msgstr "Премотај снимак на {formattedStartTimestamp}"
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordFieldChips.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputTrigger.tsx
-#: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
+#: src/modules/spreadsheet-import/components/internal/getSpreadsheetImportSingleSelectColumn.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
 msgid "Select"
 msgstr "Изаберите"
@@ -17601,7 +18234,7 @@ msgstr "Изаберите акцију"
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
 msgid "Select all loaded rows"
-msgstr ""
+msgstr "Изаберите све учитане редове"
 
 #. js-lingui-id: /fhMKz
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn.tsx
@@ -17657,6 +18290,7 @@ msgid "Select Group"
 msgstr "Изаберите групу"
 
 #. js-lingui-id: ljSvAs
+#: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectHeaderTable.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 msgid "Select header row"
 msgstr "Изаберите ред заглавља"
@@ -17721,6 +18355,7 @@ msgstr "Изаберите догађаје које желите да поша�
 
 #. js-lingui-id: +xn1pe
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
+#: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
 msgid "Select the sheet to use"
 msgstr "Изаберите лист да га користите"
 
@@ -17734,15 +18369,15 @@ msgstr "Изаберите тип"
 msgid "Select value"
 msgstr "Изаберите вредност"
 
-#. js-lingui-id: RKE3bT
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Select which models appear as recommended in the workspace model picker"
-msgstr "Изаберите који се модели приказују као препоручени у бирачу модела радног простора"
-
 #. js-lingui-id: 7c7atJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Select your language and adjust the size of the interface"
 msgstr "Изаберите језик и подесите величину интерфејса"
+
+#. js-lingui-id: AM0pWl
+#: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
+msgid "Selected folders"
+msgstr "Изабране фасцикле"
 
 #. js-lingui-id: JlFcis
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -17755,15 +18390,20 @@ msgstr "Пошаљи"
 msgid "Send an invite email to your team"
 msgstr "Пошаљите имејл позивницу вашем тиму"
 
+#. js-lingui-id: S147dq
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
+msgid "Send at"
+msgstr "Пошаљи у"
+
 #. js-lingui-id: WRLt0i
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle.ts
 msgid "Send campaign"
-msgstr ""
+msgstr "Пошаљи кампању"
 
 #. js-lingui-id: b7hiQs
 #: src/modules/side-panel/hooks/useOpenSendCampaignInSidePanel.ts
 msgid "Send Campaign"
-msgstr ""
+msgstr "Пошаљи кампању"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -17786,6 +18426,16 @@ msgstr "Пошаљи имејлове преко повезаних налога
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Send invitations"
 msgstr "Пошаљи позивнице"
+
+#. js-lingui-id: RmmhAh
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
+msgid "Send later"
+msgstr "Пошаљи касније"
+
+#. js-lingui-id: NpEm3p
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
+msgid "Send now"
+msgstr "Пошаљи сада"
 
 #. js-lingui-id: doZzL7
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -17818,10 +18468,20 @@ msgstr "Слање имејла"
 msgid "Sending request..."
 msgstr "Слање захтева..."
 
+#. js-lingui-id: YguCRV
+#: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
+msgid "Sending starts {formattedSendTime}. You can cancel before then."
+msgstr "Слање почиње {formattedSendTime}. Можете отказати пре тога."
+
 #. js-lingui-id: 2l+PSH
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
 msgid "Sending starts right away and cannot be undone."
-msgstr ""
+msgstr "Слање почиње одмах и не може се поништити."
+
+#. js-lingui-id: w+ywgn
+#: src/modules/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint.ts
+msgid "Sending starts right away, ahead of the time this campaign is holding."
+msgstr "Слање почиње одмах, пре заказаног времена ове кампање."
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -17854,6 +18514,11 @@ msgstr "раздвајач"
 #: src/localization/hooks/useLocaleOptions.ts
 msgid "Serbian (Cyrillic)"
 msgstr "Српски (ћирилица)"
+
+#. js-lingui-id: lWKtaU
+#: src/localization/hooks/useLocaleOptions.ts
+msgid "Serbian (Latin)"
+msgstr "Српски (латиница)"
 
 #. js-lingui-id: hjUUtd
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -17906,9 +18571,14 @@ msgid "Set email visibility, manage your blocklist and more."
 msgstr "Подесите видљивост имејла, управљајте вашом листом блокираних и још много тога."
 
 #. js-lingui-id: qFjlHh
-#: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilityToggle.tsx
+#: src/modules/side-panel/pages/page-layout/components/NewFieldDefaultVisibilitySwitch.tsx
 msgid "Set fields created in the future as \"visible\""
 msgstr "Подеси да поља креирана убудуће буду „видљива“"
+
+#. js-lingui-id: u5nAtE
+#: src/modules/ai/components/AiModelPicker.tsx
+msgid "Set for this agent only"
+msgstr "Подеси само за овог агента"
 
 #. js-lingui-id: 6KA8xy
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -17974,7 +18644,7 @@ msgstr "Подешавамо вашу <0>базу података</0>..."
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
-#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentFormContent.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -18028,6 +18698,11 @@ msgstr "Поделите овај линк да бисте позвали кор
 msgid "Share with workspace"
 msgstr "Подели са радним простором"
 
+#. js-lingui-id: lX0SIS
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Share with workspace?"
+msgstr "Подели са радним простором?"
+
 #. js-lingui-id: gaJRur
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Share your app to other workspaces without pushing it on the marketplace"
@@ -18042,6 +18717,11 @@ msgstr "Дељени имејл"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "Sharing link copied to clipboard"
 msgstr "Веза за дељење је копирана у клипборд"
+
+#. js-lingui-id: Xzq3Vx
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Sharing this connection with the workspace requires reconnecting it. You will be redirected to authorize it again."
+msgstr "Дељење ове везе са радним простором захтева њено поновно повезивање. Бићете преусмерени да је поново овластите."
 
 #. js-lingui-id: RRXpo1
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -18065,7 +18745,7 @@ msgid "Should changing an object's label also change the API?"
 msgstr "Да ли промена етикете објекта треба да промени и API?"
 
 #. js-lingui-id: zasxcV
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Should changing the label also change the API name?"
 msgstr "Да ли промена назива треба да промени и API име?"
 
@@ -18103,6 +18783,7 @@ msgid "Show more"
 msgstr "Прикажи још"
 
 #. js-lingui-id: qi+g0a
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Show only rows with errors"
 msgstr "Прикажи само редове са грешкама"
@@ -18231,7 +18912,7 @@ msgid "skill"
 msgstr "вештина"
 
 #. js-lingui-id: OZJeTZ
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 msgid "Skill"
@@ -18248,8 +18929,8 @@ msgid "Skill deleted"
 msgstr "Вештина је обрисана"
 
 #. js-lingui-id: GXEku+
-#: src/pages/settings/ai/SettingsSkillForm.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Skill name"
 msgstr "Назив вештине"
 
@@ -18306,11 +18987,10 @@ msgstr ""
 msgid "Smaller"
 msgstr "Мање"
 
-#. js-lingui-id: 5J8ZFl
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Smart Model"
-msgstr "Паметни модел"
+#. js-lingui-id: ZKXQ0a
+#: src/modules/ai/utils/getAiModelTierLabel.ts
+msgid "Smart"
+msgstr "Паметно"
 
 #. js-lingui-id: w+rJId
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -18372,6 +19052,7 @@ msgstr "Део података лога је одбачен да би се ис
 
 #. js-lingui-id: nwtY4N
 #: src/pages/auth/Authorize.tsx
+#: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Something went wrong"
 msgstr "Нешто је пошло наопако"
 
@@ -18489,10 +19170,32 @@ msgstr "Шпански"
 msgid "Speech recognition could not be reached. Check your connection."
 msgstr "Није могуће приступити препознавању говора. Проверите везу."
 
+#. js-lingui-id: l9wI00
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "Speed"
+msgstr "Брзина"
+
 #. js-lingui-id: pyfee5
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Speed up reads on the fields you filter or sort by most. Each index also slows down writes and uses disk space, so add them with intent."
 msgstr "Убрзајте читање поља по којима најчешће филтрирате или сортирате. Сваки индекс такође успорава уписе и користи простор на диску, зато их додајте промишљено."
+
+#. js-lingui-id: wwdak+
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
+msgid "Spender"
+msgstr "Потрошач"
+
+#. js-lingui-id: ctM+rp
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Spending stays capped by your plan allowance and the other limits."
+msgstr "Потрошња остаје ограничена дозвољеним износом вашег плана и другим ограничењима."
+
+#. js-lingui-id: p7JFjT
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+msgid "Spending will only be capped by your plan allowance and the other limits."
+msgstr "Потрошња ће бити ограничена само дозвољеним износом вашег плана и другим ограничењима."
 
 #. js-lingui-id: gsifzp
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -18540,7 +19243,7 @@ msgid "Stages"
 msgstr "Фазе"
 
 #. js-lingui-id: TJBHlP
-#: src/modules/applications/hooks/useApplicationChipData.ts
+#: src/modules/applications/utils/getApplicationDisplayName.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Standard"
@@ -18671,6 +19374,11 @@ msgstr "Заустави диктирање"
 msgid "Stop impersonating"
 msgstr "Заустави имперсонацију"
 
+#. js-lingui-id: BrrIs8
+#: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
+msgid "Storage"
+msgstr "Складиште"
+
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Store the full URL or just the domain"
@@ -18776,7 +19484,7 @@ msgstr ""
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage.tsx
+#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Subject"
 msgstr "Тема"
@@ -18961,6 +19669,7 @@ msgstr "Подржани типови улаза"
 
 #. js-lingui-id: Gw5WrN
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Supports reasoning"
 msgstr "Подржава резоновање"
 
@@ -19005,6 +19714,11 @@ msgstr "Синхронизуј каталог"
 msgid "Sync email and calendar accounts"
 msgstr "Синхронизујте имејл и календарске налоге"
 
+#. js-lingui-id: phtAw0
+#: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
+msgid "Sync every message"
+msgstr "Синхронизуј сваку поруку"
+
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Sync failed"
@@ -19036,7 +19750,7 @@ msgid "Synchronize Field Label and API Name"
 msgstr "Синхронизуј назив поља и назив API-а"
 
 #. js-lingui-id: PJAeaq
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Synchronize Label and API Name"
 msgstr "Синхронизуј назив и API име"
 
@@ -19073,8 +19787,8 @@ msgstr ""
 
 #. js-lingui-id: FHPe8O
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
+#: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
@@ -19090,6 +19804,11 @@ msgstr "Системски упит"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "System settings"
 msgstr "Подешавања система"
+
+#. js-lingui-id: GXNLgO
+#: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
+msgid "System skills"
+msgstr "Системске вештине"
 
 #. js-lingui-id: HuA3RU
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
@@ -19339,11 +20058,6 @@ msgstr "Снимак позива се обрађује…"
 msgid "The Data Processing Agreement could not be loaded. Please try again."
 msgstr "Споразум о обради података није могао да се учита. Покушајте поново."
 
-#. js-lingui-id: n+CCXl
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "The default AI model used for chats, agents, and workflows"
-msgstr "Подразумевани AI модел који се користи за ћаскања, агенте и токове рада"
-
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
@@ -19389,10 +20103,20 @@ msgstr "Пуни споразум са пољима попуњеним за ва
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "Икона коју ће ваш покретач радног процеса приказати у командном менију"
 
+#. js-lingui-id: 4m3QoL
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "The model behind each mode for every workspace. Workspaces can pin their own."
+msgstr "Модел иза сваког режима за сваки радни простор. Радни простори могу да фиксирају сопствени."
+
 #. js-lingui-id: HiI1Lo
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "The model identifier used by the provider API"
 msgstr "Идентификатор модела који користи API провајдера"
+
+#. js-lingui-id: 3o2gOg
+#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
+msgid "The modes people and agents choose between"
+msgstr "Режими између којих људи и агенти бирају"
 
 #. js-lingui-id: h8mvCd
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -19481,6 +20205,11 @@ msgstr "Транскрипт није могао да се генерише."
 msgid "The transcript is being prepared…"
 msgstr "Транскрипт се припрема…"
 
+#. js-lingui-id: qMTT4Z
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
+msgid "The usage this limit applies to."
+msgstr "Коришћење на које се ово ограничење примењује."
+
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field"
@@ -19495,6 +20224,11 @@ msgstr "Вредности овог поља морају бити јединс�
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "The whole event details will be shared with your team."
 msgstr "Цели детаљи догађаја ће бити подељени са вашим тимом."
+
+#. js-lingui-id: RmDTQ6
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypePoolLabels.ts
+msgid "The whole workspace"
+msgstr "Цео радни простор"
 
 #. js-lingui-id: bEXHAZ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -19537,10 +20271,10 @@ msgstr "Још увек постоје редови који садрже гре
 msgid "There is a billing issue. Please contact your admin."
 msgstr "Постоји проблем са наплатом. Контактирајте свог администратора."
 
-#. js-lingui-id: CA9PTn
+#. js-lingui-id: ezuu4B
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "There is a payment issue with your subscription. Please update your payment method."
-msgstr "Постоји проблем са плаћањем у вашој претплати. Ажурирајте начин плаћања."
+msgid "There is a payment issue with your subscription. Your enterprise features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one."
+msgstr "Постоји проблем са плаћањем ваше претплате. Функције за предузећа су онемогућене. Подмирите неплаћени рачун да бисте их вратили пре него што претплата буде отказана: отказана претплата не може поново да се активира и мораћете да започнете нову."
 
 #. js-lingui-id: WQk7Cf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
@@ -19676,6 +20410,11 @@ msgstr "Власништво над овом апликацијом је већ 
 msgid "This application's registration is claimed by your workspace"
 msgstr "Регистрацију ове апликације преузео је у власништво ваш радни простор"
 
+#. js-lingui-id: kciPHv
+#: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
+msgid "This billing period"
+msgstr "Овај период наплате"
+
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "This call is being recorded…"
@@ -19776,6 +20515,11 @@ msgstr "Овај састанак није снимљен."
 msgid "This model will be removed from the provider. You can re-add it later."
 msgstr "Овај модел ће бити уклоњен из провајдера. Можете га поново додати касније."
 
+#. js-lingui-id: oW3yYY
+#: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
+msgid "This month"
+msgstr "Овај месец"
+
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
 msgid "This page has no content"
@@ -19867,6 +20611,7 @@ msgstr "Овај приказ користи {usageLabel} на објекту \"
 
 #. js-lingui-id: yByRxz
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
+#: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This week"
 msgstr "Ове недеље"
 
@@ -20050,6 +20795,7 @@ msgstr ""
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
+#: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 #: src/utils/date-utils.ts
 msgid "Today"
 msgstr "Данас"
@@ -20304,6 +21050,11 @@ msgstr "Пробни период је истекао. Молимо вас аж�
 msgid "Trial period"
 msgstr "Пробни период"
 
+#. js-lingui-id: mXdcsR
+#: src/pages/onboarding/UpgradeFreeTrial.tsx
+msgid "Trial plan"
+msgstr "Пробни план"
+
 #. js-lingui-id: H2Sfhg
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
@@ -20433,6 +21184,11 @@ msgstr "Тиркиз"
 msgid "Twenty fields"
 msgstr "Twenty поља"
 
+#. js-lingui-id: pNo8xt
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "Twenty fills each level with the best model that meets your requirements"
+msgstr "Twenty попуњава сваки ниво најбољим моделом који испуњава ваше захтеве"
+
 #. js-lingui-id: YIjS4q
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
 msgid "Twitter/X Search"
@@ -20449,7 +21205,7 @@ msgid "Two columns side by side"
 msgstr "Две колоне једна поред друге"
 
 #. js-lingui-id: tuvLv1
-#: src/modules/settings/security/components/Toggle2FA.tsx
+#: src/modules/settings/security/components/TwoFactorAuthenticationSwitch.tsx
 #: src/pages/settings/profile/SettingsProfile.tsx
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Two Factor Authentication"
@@ -20486,7 +21242,6 @@ msgstr "Подешавање двофакторске аутентификаци
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputFieldTypeSelector.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
-#: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -20624,6 +21379,7 @@ msgstr "Деинсталирање..."
 
 #. js-lingui-id: wSXm5S
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 msgid "Unique"
@@ -20785,6 +21541,12 @@ msgstr "Неплаћено"
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
 msgid "Unpin tab"
 msgstr "Откачи картицу"
+
+#. js-lingui-id: 1rXqkB
+#: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
+msgid "Unschedule Campaign"
+msgstr "Откажи заказивање кампање"
 
 #. js-lingui-id: SMaFdc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -20982,6 +21744,11 @@ msgstr "Ажурирајте конфигурацију вашег налога.
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Update your payment method"
 msgstr "Ажурирајте начин плаћања"
+
+#. js-lingui-id: Uq5zVf
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Update your payment method before {licenseExpiresAtDate} to avoid losing access."
+msgstr "Ажурирајте начин плаћања пре {licenseExpiresAtDate} да не бисте изгубили приступ."
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -21215,6 +21982,10 @@ msgstr "us-east-1"
 #. js-lingui-id: 7FaY4u
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitUsageSelect.tsx
 #: src/modules/settings/usage/components/UsageByUserTableSection.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
@@ -21275,11 +22046,6 @@ msgstr "Период коришћења"
 msgid "Use authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator to generate one-time passwords"
 msgstr "Користите апликације за аутентификацију и проширења прегледача као 1Password, Authy, Microsoft Authenticator за генерисање једнократних лозинки"
 
-#. js-lingui-id: hCZsJ0
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Use best models only"
-msgstr "Користите само најбоље моделе"
-
 #. js-lingui-id: 5ZehS/
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 msgid "Use filter to see existing skills or create your own"
@@ -21325,15 +22091,12 @@ msgstr "Користи целу листу"
 msgid "Use this email"
 msgstr "Користи овај имејл"
 
-#. js-lingui-id: 664z2C
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Used for chats, agents, and complex reasoning"
-msgstr "Користи се за ћаскања, агенте и сложено расуђивање"
-
-#. js-lingui-id: C41qgx
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Used for lightweight tasks like title generation"
-msgstr "Користи се за једноставне задатке као што је генерисање наслова"
+#. js-lingui-id: aL1w5Z
+#: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+msgid "Used"
+msgstr "Искоришћено"
 
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -21344,6 +22107,8 @@ msgstr "Корисно за спојне/везне табеле"
 #: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
+#: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -21424,6 +22189,11 @@ msgstr "Користи подразумевану вредност аплика�
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Using default value. Set a custom value to override."
 msgstr "Користећи подразумевану вредност. Поставите прилагођену вредност да би заменили."
+
+#. js-lingui-id: b1dG47
+#: src/localization/hooks/useLocaleOptions.ts
+msgid "Uzbek"
+msgstr "Узбечки"
 
 #. js-lingui-id: Clr4qp
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -21546,8 +22316,13 @@ msgstr "Верзије"
 msgid "Vertical Bar Chart"
 msgstr ""
 
+#. js-lingui-id: Psyj/F
+#: src/modules/ai/utils/getAiModelEffortLabel.ts
+msgid "Very High"
+msgstr "Веома високо"
+
 #. js-lingui-id: Shfac6
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Vetted"
 msgstr "Проверено"
 
@@ -21663,6 +22438,7 @@ msgid "view group"
 msgstr "група приказа"
 
 #. js-lingui-id: B02hom
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "View invoices"
 msgstr "Прегледајте фактуре"
@@ -21876,6 +22652,12 @@ msgstr "Погледајте демо чланова"
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "Тренутно имамо потешкоћа са овом апликацијом, њено понашање може бити нарушено док радимо на решењу."
 
+#. js-lingui-id: Pk5zT3
+#. placeholder {0}: objectMetadataItem.labelPlural
+#: src/pages/object-core/WorkflowCoreIndexPage.tsx
+msgid "We could not load your {0}. Please try again later."
+msgstr "Нисмо могли да учитамо ваше {0}. Покушајте поново касније."
+
 #. js-lingui-id: icGmU/
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "We could not reach the package registry to verify the package provenance. Please try again in a few minutes."
@@ -21980,6 +22762,11 @@ msgstr "Webhook {targetUrl} успешно креиран"
 msgid "Webhook {targetUrl} updated successfully"
 msgstr "Webhook {targetUrl} успешно ажуриран"
 
+#. js-lingui-id: k1illW
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "Webhook Call"
+msgstr "Вебхук позив"
+
 #. js-lingui-id: 2X4ecw
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
 msgid "Webhook deleted successfully"
@@ -21997,6 +22784,7 @@ msgstr "Webhook ID је обавезан за ажурирање"
 
 #. js-lingui-id: v1kQyJ
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "Webhooks"
@@ -22012,6 +22800,7 @@ msgstr "Вебсајт"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+#: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows.tsx
@@ -22019,15 +22808,15 @@ msgstr "Вебсајт"
 msgid "Week"
 msgstr "Недеља"
 
+#. js-lingui-id: 4XSc4l
+#: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
+msgid "Weekly"
+msgstr "Недељно"
+
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "weeks"
 msgstr ""
-
-#. js-lingui-id: WKHqM+
-#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
-msgid "Weight"
-msgstr "Тежина"
 
 #. js-lingui-id: nTuObL
 #: src/pages/auth/SignInUp.tsx
@@ -22192,6 +22981,11 @@ msgstr "без кредитне картице"
 msgid "Worker"
 msgstr "Радник"
 
+#. js-lingui-id: bLt/0J
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
+msgid "Workflow"
+msgstr "Ток рада"
+
 #. js-lingui-id: eQ/LA/
 #: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionWorkflowActionTriggerSection.tsx
@@ -22215,6 +23009,7 @@ msgstr "Верзије тока рада"
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Workflows"
 msgstr "Токови Рада"
@@ -22228,8 +23023,14 @@ msgstr "Токови Рада"
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
+#: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
@@ -22242,15 +23043,14 @@ msgstr "Токови Рада"
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
-#: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
+#: src/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks.ts
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
@@ -22261,6 +23061,7 @@ msgstr "Токови Рада"
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -22354,7 +23155,6 @@ msgstr "Чланови радног простора"
 #. js-lingui-id: PHF7zj
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 msgid "Workspace shared"
 msgstr "Дељено на нивоу радног простора"
 
@@ -22395,7 +23195,7 @@ msgstr "Омотати на страницама записа"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
-#: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 msgid "Write a description"
 msgstr "Напишите опис"
@@ -22621,7 +23421,7 @@ msgstr "Ускоро ћете променити поддомен вашег р�
 #. js-lingui-id: 6x8lJe
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "You’ve reached your AI usage limit."
-msgstr ""
+msgstr "Достигли сте ограничење коришћења AI-ја."
 
 #. js-lingui-id: tOPGvO
 #: src/modules/apollo/services/apollo.factory.ts

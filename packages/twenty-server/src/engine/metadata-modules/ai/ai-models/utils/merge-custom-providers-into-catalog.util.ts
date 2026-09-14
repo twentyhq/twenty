@@ -36,7 +36,7 @@ const routeCandidates = (modelName: string): string[] => {
   return segments.map((_, index) => segments.slice(index).join('.'));
 };
 
-const withCatalogReadings = ({
+const withCatalogModelReadings = ({
   catalogModel,
   customModel,
 }: {
@@ -68,7 +68,7 @@ const mergeModels = ({
     );
 
     return isDefined(catalogModel)
-      ? withCatalogReadings({
+      ? withCatalogModelReadings({
           catalogModel,
           customModel: { ...catalogModel, ...customModel },
         })
@@ -102,46 +102,58 @@ const withReadingsFromAnyProvider = ({
       .find(isDefined);
 
     return isDefined(catalogModel)
-      ? withCatalogReadings({ catalogModel, customModel })
+      ? withCatalogModelReadings({ catalogModel, customModel })
       : customModel;
   });
 };
 
-// A custom entry replaces the catalog provider of the same name, but an entry
-// written before the catalog carried efforts and benchmarks would then strip
-// both from every model it lists, and the tier chains could no longer name
-// an effort on it. A model the catalog knows keeps the catalog fields it does
-// not set itself; the custom entry still decides which models exist.
+// A provider written before the catalog carried efforts and benchmarks would
+// strip both from every model it lists, and the tier chains could no longer
+// name an effort on it. A model the catalog knows keeps the catalog fields the
+// entry does not set itself; the entry still decides which models exist.
+export const inheritCatalogReadings = ({
+  catalog,
+  providers,
+}: {
+  catalog: AiProvidersConfig;
+  providers: AiProvidersConfig;
+}): AiProvidersConfig => {
+  const result: AiProvidersConfig = {};
+
+  for (const [providerName, provider] of Object.entries(providers)) {
+    const catalogProvider: AiProviderConfig | undefined = catalog[providerName];
+
+    if (!isDefined(provider.models)) {
+      result[providerName] = provider;
+      continue;
+    }
+
+    result[providerName] = {
+      ...provider,
+      models: isDefined(catalogProvider)
+        ? mergeModels({
+            catalogModels: catalogProvider.models ?? [],
+            customModels: provider.models,
+          })
+        : withReadingsFromAnyProvider({
+            catalog,
+            customModels: provider.models,
+          }),
+    };
+  }
+
+  return result;
+};
+
+// A custom entry replaces the catalog provider of the same name; providers it
+// does not name stay as the catalog has them.
 export const mergeCustomProvidersIntoCatalog = ({
   catalog,
   custom,
 }: {
   catalog: AiProvidersConfig;
   custom: AiProvidersConfig;
-}): AiProvidersConfig => {
-  const merged: AiProvidersConfig = { ...catalog };
-
-  for (const [providerName, customProvider] of Object.entries(custom)) {
-    const catalogProvider: AiProviderConfig | undefined = catalog[providerName];
-
-    if (!isDefined(customProvider.models)) {
-      merged[providerName] = customProvider;
-      continue;
-    }
-
-    merged[providerName] = {
-      ...customProvider,
-      models: isDefined(catalogProvider)
-        ? mergeModels({
-            catalogModels: catalogProvider.models ?? [],
-            customModels: customProvider.models,
-          })
-        : withReadingsFromAnyProvider({
-            catalog,
-            customModels: customProvider.models,
-          }),
-    };
-  }
-
-  return merged;
-};
+}): AiProvidersConfig => ({
+  ...catalog,
+  ...inheritCatalogReadings({ catalog, providers: custom }),
+});
