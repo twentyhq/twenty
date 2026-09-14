@@ -22,9 +22,6 @@ export type InheritedReadabilityColumnParent = {
   parentFlatObjectMetadata: FlatObjectMetadata;
 };
 
-// A parent reached through the rows of a child object pointing back at the
-// record, the join rows of a many-to-many relation: the record follows every
-// record those rows lead to
 export type InheritedReadabilityChildrenParent = {
   kind: 'children';
   fieldMetadataId: string;

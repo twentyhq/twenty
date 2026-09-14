@@ -968,7 +968,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       this.formatResult<ObjectRecord[]>(formattedRecords),
     );
 
-    await this.validateInheritedParentsAreWritableOrThrow(formattedRecords);
+    await this.validateInheritedParentsAreWritableOrThrow({
+      writtenRecords: formattedRecords,
+      resultingRecords: formattedRecords,
+    });
 
     const sql = buildInsertStatement({
       tableShape: this.options.tableShape,
@@ -1068,9 +1071,19 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       dataByInputIndex = enriched.entities as Partial<ObjectRecord>[];
     }
 
-    await this.validateInheritedParentsAreWritableOrThrow(
-      dataByInputIndex.map((data) => this.formatWriteData(data)),
+    const writtenRecords = dataByInputIndex.map((data) =>
+      this.formatWriteData(data),
     );
+
+    await this.validateInheritedParentsAreWritableOrThrow({
+      writtenRecords,
+      resultingRecords: writtenRecords.flatMap((writtenRecord, index) =>
+        rawBeforeByInputIndex[index].map((rawBefore) => ({
+          ...rawBefore,
+          ...writtenRecord,
+        })),
+      ),
+    });
 
     for (const [index, input] of writableInputs.entries()) {
       const { id: _id, ...setColumns } = this.formatWriteData(
@@ -1262,10 +1275,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   // Re-parenting a child, or creating one under a parent, is a write on that
-  // parent: the destination must grant the caller at least READ_WRITE
-  private async validateInheritedParentsAreWritableOrThrow(
-    records: Record<string, unknown>[],
-  ): Promise<void> {
+  // parent: the destination must grant the caller at least READ_WRITE. The
+  // records inheriting through the row are checked on the row as it will be
+  // after the write, since any change to it changes what they expose
+  private async validateInheritedParentsAreWritableOrThrow({
+    writtenRecords,
+    resultingRecords,
+  }: {
+    writtenRecords: Record<string, unknown>[];
+    resultingRecords: Record<string, unknown>[];
+  }): Promise<void> {
     if (
       this.options.shouldBypassPermissionChecks ||
       !this.isRecordSharingEnabled()
@@ -1273,77 +1292,96 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
-    for (const parent of this.resolveGuardedParentLinks()) {
-      const parentIds = [
-        ...new Set(
-          records
-            .map((record) => record[parent.joinColumnName])
-            .filter(isNonEmptyString),
-        ),
-      ];
-
-      if (parentIds.length === 0) {
-        continue;
-      }
-
-      const parentRepository = this.options.getRepositoryForObjectMetadataId(
-        parent.parentFlatObjectMetadata.id,
-      );
-      const queryBuilder = parentRepository
-        .createQueryBuilder()
-        .where({ id: In(parentIds) })
-        .withDeleted();
-
-      parentRepository.applyWriteRowLevelPermissions(queryBuilder, 'update');
-      queryBuilder.select(['id']);
-
-      const writableParentRows = await queryBuilder.getMany<ObjectRecord>({
-        noFormatting: true,
+    for (const parent of this.resolveOwnParentLinks()) {
+      await this.validateParentRecordsAreWritableOrThrow({
+        parent,
+        records: writtenRecords,
       });
+    }
 
-      if (writableParentRows.length !== parentIds.length) {
-        throw new PermissionsException(
-          `${PermissionsExceptionMessage.PERMISSION_DENIED}: the "${parent.parentFlatObjectMetadata.nameSingular}" record a "${this.options.flatObjectMetadata.nameSingular}" is attached to is not writable`,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
+    for (const parent of this.resolveInheritingRecordLinks()) {
+      await this.validateParentRecordsAreWritableOrThrow({
+        parent,
+        records: resultingRecords,
+      });
     }
   }
 
-  // The records a row of this object grants access through: the parents the
-  // object itself inherits from, and the records of other objects that inherit
-  // through this object's rows
-  private resolveGuardedParentLinks(): InheritedReadabilityParentLink[] {
+  private async validateParentRecordsAreWritableOrThrow({
+    parent,
+    records,
+  }: {
+    parent: InheritedReadabilityParentLink;
+    records: Record<string, unknown>[];
+  }): Promise<void> {
+    const parentIds = [
+      ...new Set(
+        records
+          .map((record) => record[parent.joinColumnName])
+          .filter(isNonEmptyString),
+      ),
+    ];
+
+    if (parentIds.length === 0) {
+      return;
+    }
+
+    const parentRepository = this.options.getRepositoryForObjectMetadataId(
+      parent.parentFlatObjectMetadata.id,
+    );
+    const queryBuilder = parentRepository
+      .createQueryBuilder()
+      .where({ id: In(parentIds) })
+      .withDeleted();
+
+    parentRepository.applyWriteRowLevelPermissions(queryBuilder, 'update');
+    queryBuilder.select(['id']);
+
+    const writableParentRows = await queryBuilder.getMany<ObjectRecord>({
+      noFormatting: true,
+    });
+
+    if (writableParentRows.length !== parentIds.length) {
+      throw new PermissionsException(
+        `${PermissionsExceptionMessage.PERMISSION_DENIED}: the "${parent.parentFlatObjectMetadata.nameSingular}" record a "${this.options.flatObjectMetadata.nameSingular}" is attached to is not writable`,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+  }
+
+  private resolveOwnParentLinks(): InheritedReadabilityParentLink[] {
     const { flatObjectMetadata } = this.options;
-    const ownParentLinks =
-      flatObjectMetadata.readability === MetadataReadability.INHERITED &&
-      !isOwningApplicationAuthContext({
+
+    if (
+      flatObjectMetadata.readability !== MetadataReadability.INHERITED ||
+      isOwningApplicationAuthContext({
         authContext: this.options.authContext,
         owningApplicationId: flatObjectMetadata.applicationId,
       })
-        ? this.resolveInheritedReadabilityParents(flatObjectMetadata).flatMap(
-            (parent) =>
-              parent.kind === 'column'
-                ? [
-                    {
-                      joinColumnName: parent.joinColumnName,
-                      parentFlatObjectMetadata: parent.parentFlatObjectMetadata,
-                    },
-                  ]
-                : [],
-          )
-        : [];
+    ) {
+      return [];
+    }
 
-    return [
-      ...ownParentLinks,
-      ...resolveInheritedReadabilityChildLinks({
-        flatObjectMetadata,
-        flatFieldMetadataMaps:
-          this.options.internalContext.flatFieldMetadataMaps,
-        flatObjectMetadataMaps:
-          this.options.internalContext.flatObjectMetadataMaps,
-      }),
-    ];
+    return this.resolveInheritedReadabilityParents(flatObjectMetadata).flatMap(
+      (parent) =>
+        parent.kind === 'column'
+          ? [
+              {
+                joinColumnName: parent.joinColumnName,
+                parentFlatObjectMetadata: parent.parentFlatObjectMetadata,
+              },
+            ]
+          : [],
+    );
+  }
+
+  private resolveInheritingRecordLinks(): InheritedReadabilityParentLink[] {
+    return resolveInheritedReadabilityChildLinks({
+      flatObjectMetadata: this.options.flatObjectMetadata,
+      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
+      flatObjectMetadataMaps:
+        this.options.internalContext.flatObjectMetadataMaps,
+    });
   }
 
   private isRecordSharingEnabled(): boolean {
@@ -1465,7 +1503,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         'Updated record does not satisfy row-level security constraints of your current role',
       );
 
-      await this.validateInheritedParentsAreWritableOrThrow([setColumns]);
+      await this.validateInheritedParentsAreWritableOrThrow({
+        writtenRecords: [setColumns],
+        resultingRecords: recordsBefore.map((record) => ({
+          ...record,
+          ...setColumns,
+        })),
+      });
     }
 
     const mutationResult = await this.morphAndExecute({
