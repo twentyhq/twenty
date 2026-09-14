@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
+import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
@@ -197,6 +198,51 @@ export class CoreWorkflowMutationWorkspaceService {
           : undefined,
       )
       .filter(isDefined);
+  }
+
+  async discardDraftVersion(
+    workspaceId: string,
+    { workspaceWorkflowVersionId }: { workspaceWorkflowVersionId: string },
+  ): Promise<string | null> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    const draftVersion =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workflowVersionRepository =
+          this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            'workflowVersion',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return workflowVersionRepository.findOne({
+          where: { id: workspaceWorkflowVersionId },
+        });
+      }, authContext);
+
+    if (!isDefined(draftVersion)) {
+      return null;
+    }
+
+    assertWorkflowVersionIsDraft(draftVersion);
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      await workflowVersionRepository.softDelete({
+        id: workspaceWorkflowVersionId,
+      });
+    }, authContext);
+
+    await this.workflowVersionCoreSyncService.deleteCoreVersionsByWorkspaceVersionIds(
+      workspaceId,
+      [workspaceWorkflowVersionId],
+    );
+
+    return draftVersion.workflowId;
   }
 
   private async rollbackCreatedWorkflow(
