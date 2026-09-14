@@ -485,12 +485,40 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
   }
 }
 
+function isSelectMatch(leftValue: unknown, rightValue: unknown): boolean {
+  if (!isDefined(leftValue)) {
+    return false;
+  }
+
+  let targetOptions: unknown[] = [];
+  if (Array.isArray(rightValue)) {
+    targetOptions = rightValue;
+  } else if (isString(rightValue)) {
+    try {
+      const parsed = JSON.parse(rightValue as string);
+      targetOptions = Array.isArray(parsed) ? parsed : [parsed];
+    } catch {
+      targetOptions = [rightValue];
+    }
+  } else {
+    targetOptions = [rightValue];
+  }
+
+  if (Array.isArray(leftValue)) {
+    return leftValue.some((item) =>
+      targetOptions.some((opt) => String(item) === String(opt)),
+    );
+  }
+
+  return targetOptions.some((opt) => String(leftValue) === String(opt));
+}
+
 function evaluateSelectFilter(filter: ResolvedFilter): boolean {
   switch (filter.operand) {
     case ViewFilterOperand.IS:
-      return contains(filter.leftOperand, filter.rightOperand);
+      return isSelectMatch(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_NOT:
-      return !contains(filter.leftOperand, filter.rightOperand);
+      return !isSelectMatch(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(filter.leftOperand);
 

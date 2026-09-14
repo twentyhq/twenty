@@ -513,6 +513,78 @@ describe('evaluateFilterConditions', () => {
         expect(result).toBe(true);
       });
 
+      it('should return false when value contains filter option as a substring for IS', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          'INVALID',
+          '["VALID"]',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when value matches filter option exactly for IS', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          'VALID',
+          '["VALID"]',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return true when value contains filter option as a substring for IS_NOT', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'INVALID',
+          '["VALID"]',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when value matches filter option exactly for IS_NOT', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'VALID',
+          '["VALID"]',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should return false when value contains filter option array element as a substring for IS', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          'INVALID',
+          ['VALID'],
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when value matches filter option array exactly for IS', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          'VALID',
+          ['VALID'],
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
       it('should return true when there are no values (IsEmpty)', () => {
         const filter = createFilter(
           ViewFilterOperand.IS_EMPTY,
