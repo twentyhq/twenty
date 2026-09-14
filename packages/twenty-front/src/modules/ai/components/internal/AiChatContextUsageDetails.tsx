@@ -17,7 +17,7 @@ import { formatNumber } from '~/utils/format/formatNumber';
 const StyledSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledSectionTitle = styled.span`

@@ -73,8 +73,8 @@ const StyledHoverCard = styled.div`
 const StyledRows = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFooter = styled.div`
