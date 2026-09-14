@@ -29,6 +29,7 @@ describe('ApplicationMessageIngestionService', () => {
   const scope = {
     applicationId: APPLICATION_ID,
     workspaceId: WORKSPACE_ID,
+    requestUserWorkspaceId: null,
     messageChannelId: MESSAGE_CHANNEL_ID,
   };
 
@@ -245,5 +246,36 @@ describe('ApplicationMessageIngestionService', () => {
         messageThreadId: 'thread-uuid',
       },
     ]);
+  });
+  it("refuses to ingest into another member's private channel", async () => {
+    channelsService.findOwnedOrThrow.mockRejectedValue(
+      new Error('ownership violation'),
+    );
+
+    await expect(
+      service.ingest({
+        ...scope,
+        requestUserWorkspaceId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+        messages: [aMessage()],
+      }),
+    ).rejects.toThrow('ownership violation');
+
+    expect(
+      saveMessagesService.saveMessagesAndEnqueueContactCreation,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('passes the request user to the ownership gate', async () => {
+    await service.ingest({
+      ...scope,
+      requestUserWorkspaceId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      messages: [aMessage()],
+    });
+
+    expect(channelsService.findOwnedOrThrow).toHaveBeenCalledWith(
+      expect.objectContaining({
+        requestUserWorkspaceId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      }),
+    );
   });
 });

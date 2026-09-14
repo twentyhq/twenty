@@ -22,6 +22,10 @@ import { type MessageWithParticipants } from 'src/modules/messaging/message-impo
 type IngestArgs = {
   applicationId: string;
   workspaceId: string;
+  // Ingestion resolves the channel through the same gate the channel API
+  // uses, so a run triggered by one member cannot write into another
+  // member's private channel.
+  requestUserWorkspaceId: string | null;
   messageChannelId: string;
   messages: AppMessageInput[];
 };
@@ -40,6 +44,7 @@ export class ApplicationMessageIngestionService {
   async ingest({
     applicationId,
     workspaceId,
+    requestUserWorkspaceId,
     messageChannelId,
     messages,
   }: IngestArgs): Promise<IngestAppMessagesOutput> {
@@ -47,6 +52,7 @@ export class ApplicationMessageIngestionService {
       await this.applicationMessageChannelsService.findOwnedOrThrow({
         applicationId,
         workspaceId,
+        requestUserWorkspaceId,
         id: messageChannelId,
       });
 
