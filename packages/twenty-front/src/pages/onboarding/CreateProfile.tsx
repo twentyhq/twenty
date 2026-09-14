@@ -1,3 +1,4 @@
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -30,11 +31,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
 
 const StyledForm = styled.div`
   display: flex;
@@ -290,13 +286,14 @@ export const CreateProfile = () => {
 
       <OnboardingStepAnimatedItem index={3}>
         <StyledButtonContainer>
-          <StyledActionButton
+          <Button
+            className={BUTTON_ACTION_CLASS_NAME}
             onClick={handleSubmit(onSubmit)}
             disabled={!isValid || isSubmitting || isNavigating}
             fullWidth
             elevated
             variant="solid"
-          >{t`Continue`}</StyledActionButton>
+          >{t`Continue`}</Button>
         </StyledButtonContainer>
       </OnboardingStepAnimatedItem>
     </StyledOnboardingStepPage>

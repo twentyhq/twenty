@@ -1,3 +1,4 @@
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { OnboardingAnimatedReveal } from '@/onboarding/components/OnboardingAnimatedReveal';
 import { OnboardingVerifyLayout } from '@/onboarding/components/OnboardingVerifyLayout';
@@ -12,11 +13,6 @@ import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
 
 const SUBSCRIPTION_CONFIRMATION_POLL_INTERVAL_MS = 2000;
 const SUBSCRIPTION_CONFIRMATION_MAX_ATTEMPTS = 30;
@@ -113,12 +109,13 @@ export const PaymentSuccess = () => {
       </AnimatePresence>
       <OnboardingAnimatedReveal isVisible={hasTimedOut}>
         <StyledRetryButtonContainer>
-          <StyledActionButton
+          <Button
+            className={BUTTON_ACTION_CLASS_NAME}
             onClick={handleRetry}
             fullWidth
             elevated
             variant="solid"
-          >{t`Retry`}</StyledActionButton>
+          >{t`Retry`}</Button>
         </StyledRetryButtonContainer>
       </OnboardingAnimatedReveal>
     </OnboardingVerifyLayout>

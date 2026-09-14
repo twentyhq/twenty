@@ -1,3 +1,4 @@
+import { BUTTON_LIGHT_CLASS_NAME } from '@/ui/input/styles/ButtonLightClassName';
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import {
@@ -35,7 +36,6 @@ const StyledFullscreenContainer = styled.div`
 `;
 
 const StyledLightButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.regular};
   left: ${themeCssVariables.spacing[4]};
   position: absolute;
   top: ${themeCssVariables.spacing[4]};
@@ -127,6 +127,7 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
     >
       <StyledFullscreenContainer>
         <StyledLightButton
+          className={BUTTON_LIGHT_CLASS_NAME}
           startIcon={<IconChevronLeft />}
           onClick={handleClose}
           size="sm"

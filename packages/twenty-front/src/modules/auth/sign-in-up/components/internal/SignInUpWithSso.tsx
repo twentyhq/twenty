@@ -1,4 +1,5 @@
-import { styled } from '@linaria/react';
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+
 import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
 import { useSso } from '@/auth/sign-in-up/hooks/useSso';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
@@ -19,12 +20,7 @@ import { Button } from 'twenty-ui/input';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
 import { useContext } from 'react';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SignInUpWithSso = () => {
   const { theme } = useContext(ThemeContext);
@@ -56,13 +52,14 @@ export const SignInUpWithSso = () => {
   return (
     <>
       <StyledSsoButtonContainer>
-        <StyledActionButton
+        <Button
+          className={BUTTON_ACTION_CLASS_NAME}
           startIcon={<IconLock size={theme.icon.size.md} />}
           onClick={signInWithSso}
           fullWidth
           elevated
           variant={signInUpStep === SignInUpStep.Init ? 'solid' : 'outline'}
-        >{t`Single sign-on (SSO)`}</StyledActionButton>
+        >{t`Single sign-on (SSO)`}</Button>
         {isLastUsed && hasMultipleAuthMethods && <LastUsedPill />}
       </StyledSsoButtonContainer>
       <HorizontalSeparator visible={false} />

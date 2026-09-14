@@ -1,3 +1,4 @@
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useState } from 'react';
@@ -12,11 +13,6 @@ import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Button } from 'twenty-ui/input';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -195,18 +191,20 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
             <Trans>Upload .xlsx, .xls or .csv file</Trans>
           </StyledText>
           <StyledButtonsContainer>
-            <StyledActionButton
+            <Button
+              className={BUTTON_ACTION_CLASS_NAME}
               onClick={open}
               fullWidth
               elevated
               variant="solid"
-            >{t`Select file`}</StyledActionButton>
-            <StyledActionButton
+            >{t`Select file`}</Button>
+            <Button
+              className={BUTTON_ACTION_CLASS_NAME}
               onClick={downloadSample}
               fullWidth
               elevated
               variant="outline"
-            >{t`Download sample`}</StyledActionButton>
+            >{t`Download sample`}</Button>
           </StyledButtonsContainer>
           <StyledFooterText>
             {t`Max import capacity: ${formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API.`}

@@ -1,3 +1,4 @@
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
 import { styled } from '@linaria/react';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -14,11 +15,6 @@ import { IconGmail, IconMail, IconMailX, IconMicrosoft } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/layout';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -123,13 +119,15 @@ export const EmailVerificationSent = ({
 
   const mainButtons = isError ? (
     <>
-      <StyledActionButton
+      <Button
+        className={BUTTON_ACTION_CLASS_NAME}
         onClick={handleChangeEmail}
         fullWidth
         elevated
         variant="outline"
-      >{t`Try with another email`}</StyledActionButton>
-      <StyledActionButton
+      >{t`Try with another email`}</Button>
+      <Button
+        className={BUTTON_ACTION_CLASS_NAME}
         onClick={handleResendEmailVerificationToken(email)}
         disabled={isLoading}
         fullWidth
@@ -137,24 +135,26 @@ export const EmailVerificationSent = ({
         variant="solid"
       >
         {isLoading ? t`Sending...` : t`Resend email`}
-      </StyledActionButton>
+      </Button>
     </>
   ) : (
     <>
-      <StyledActionButton
+      <Button
+        className={BUTTON_ACTION_CLASS_NAME}
         onClick={handleOpenGmail}
         startIcon={<IconGmail />}
         fullWidth
         elevated
         variant="outline"
-      >{t`Open Gmail`}</StyledActionButton>
-      <StyledActionButton
+      >{t`Open Gmail`}</Button>
+      <Button
+        className={BUTTON_ACTION_CLASS_NAME}
         onClick={handleOpenOutlook}
         startIcon={<IconMicrosoft />}
         fullWidth
         elevated
         variant="outline"
-      >{t`Open Outlook`}</StyledActionButton>
+      >{t`Open Outlook`}</Button>
     </>
   );
 

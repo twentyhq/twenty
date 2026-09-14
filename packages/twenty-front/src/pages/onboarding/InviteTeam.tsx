@@ -1,3 +1,4 @@
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
@@ -22,11 +23,6 @@ import { IconX } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
 
 const StyledForm = styled.div`
   display: flex;
@@ -132,14 +128,15 @@ export const InviteTeam = () => {
 
       <OnboardingStepAnimatedItem index={4}>
         <StyledFooter>
-          <StyledActionButton
+          <Button
+            className={BUTTON_ACTION_CLASS_NAME}
             startIcon={isSubmitting || isNavigating ? <Loader /> : null}
             disabled={!isValid || isSubmitting || isNavigating}
             onClick={handleSubmit(onSubmit)}
             fullWidth
             elevated
             variant="solid"
-          >{t`Invite`}</StyledActionButton>
+          >{t`Invite`}</Button>
           <OnboardingSkipButton
             onClick={handleSkip}
             disabled={isSubmitting || isNavigating}

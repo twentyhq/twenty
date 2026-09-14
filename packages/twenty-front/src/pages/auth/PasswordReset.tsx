@@ -1,3 +1,4 @@
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
@@ -40,11 +41,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { logError } from '~/utils/logError';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
 
 const passwordLengthMessage = msg`Password must be between 8 and 50 characters`;
 
@@ -301,7 +297,8 @@ export const PasswordReset = () => {
                 </StyledFullWidthContainer>
 
                 <StyledMainButtonContainer>
-                  <StyledActionButton
+                  <Button
+                    className={BUTTON_ACTION_CLASS_NAME}
                     type="submit"
                     fullWidth
                     disabled={isUpdatingPassword}
@@ -309,7 +306,7 @@ export const PasswordReset = () => {
                     variant="outline"
                   >
                     {passwordActionLabel}
-                  </StyledActionButton>
+                  </Button>
                 </StyledMainButtonContainer>
               </StyledForm>
             )}

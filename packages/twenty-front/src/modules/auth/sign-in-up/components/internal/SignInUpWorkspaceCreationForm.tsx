@@ -1,3 +1,4 @@
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { OnboardingAnimatedReveal } from '@/onboarding/components/OnboardingAnimatedReveal';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
@@ -19,11 +20,6 @@ import { Avatar } from 'twenty-ui/data-display';
 import { IconTrash, IconUpload } from 'twenty-ui/icon';
 import { Button, LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
 
 const StyledContentContainer = styled.div`
   display: flex;
@@ -348,13 +344,14 @@ export const SignInUpWorkspaceCreationForm = () => {
         )}
       </StyledFormSection>
       <OnboardingStepAnimatedItem index={isMultiWorkspaceEnabled ? 5 : 4}>
-        <StyledActionButton
+        <Button
+          className={BUTTON_ACTION_CLASS_NAME}
           onClick={handleSubmit}
           disabled={isContinueDisabled}
           fullWidth
           elevated
           variant="solid"
-        >{t`Create workspace`}</StyledActionButton>
+        >{t`Create workspace`}</Button>
       </OnboardingStepAnimatedItem>
     </StyledContentContainer>
   );

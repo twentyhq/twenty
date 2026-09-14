@@ -1,3 +1,4 @@
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
 import { TwoFactorAuthenticationSetupEffect } from '@/auth/components/TwoFactorAuthenticationProvisionEffect';
 import { qrCodeState } from '@/auth/states/qrCode';
 import {
@@ -22,11 +23,6 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { resolveCjsModuleDefaultExport } from '~/utils/resolveCjsModuleDefaultExport';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
 
 const QRCode = resolveCjsModuleDefaultExport(QRCodeModule);
 
@@ -95,12 +91,13 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
             </StyledCopySetupKeyLink>
           )}
         </StyledTwoFactorMainContent>
-        <StyledActionButton
+        <Button
+          className={BUTTON_ACTION_CLASS_NAME}
           onClick={handleClick}
           fullWidth
           elevated
           variant="solid"
-        >{t`Next`}</StyledActionButton>
+        >{t`Next`}</Button>
       </StyledForm>
     </>
   );

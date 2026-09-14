@@ -1,3 +1,4 @@
+import { BUTTON_LIGHT_CLASS_NAME } from '@/ui/input/styles/ButtonLightClassName';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Link, Navigate } from 'react-router-dom';
 
@@ -18,10 +19,6 @@ import { IconChevronLeft } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
-
-const StyledLightButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.regular};
-`;
 
 const StyledPage = styled(StyledOnboardingStepPage)`
   gap: ${themeCssVariables.spacing[5]};
@@ -87,14 +84,15 @@ export const BookCall = () => {
           {isOnboardingStep ? (
             <BookCallOnboardingStepActions />
           ) : (
-            <StyledLightButton
+            <Button
+              className={BUTTON_LIGHT_CLASS_NAME}
               render={<Link to={AppPath.PlanRequired} />}
               nativeButton={false}
               role="link"
               startIcon={<IconChevronLeft />}
               size="sm"
               variant="ghost"
-            >{t`Back`}</StyledLightButton>
+            >{t`Back`}</Button>
           )}
         </StyledFooter>
       </OnboardingStepAnimatedItem>

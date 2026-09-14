@@ -1,3 +1,4 @@
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
 import { styled } from '@linaria/react';
 
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -29,11 +30,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
 
 const StyledForm = styled.form`
   align-items: center;
@@ -268,13 +264,14 @@ export const SignInUpTOTPVerification = () => {
           )}
         />
       </StyledTwoFactorMainContent>
-      <StyledActionButton
+      <Button
+        className={BUTTON_ACTION_CLASS_NAME}
         type="submit"
         fullWidth
         disabled={isLoading}
         elevated
         variant="solid"
-      >{t`Submit`}</StyledActionButton>
+      >{t`Submit`}</Button>
       <StyledActionBackLinkContainer>
         <ClickToActionLink onClick={handleBack}>
           <Trans>Back</Trans>

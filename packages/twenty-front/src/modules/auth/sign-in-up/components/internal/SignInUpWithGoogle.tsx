@@ -1,4 +1,5 @@
-import { styled } from '@linaria/react';
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+
 import { isDefined } from 'twenty-shared/utils';
 import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
@@ -18,12 +19,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const GoogleIcon = memo(() => {
   const { theme } = useContext(ThemeContext);
@@ -55,13 +51,14 @@ export const SignInUpWithGoogle = ({
   return (
     <>
       <StyledSsoButtonContainer>
-        <StyledActionButton
+        <Button
+          className={BUTTON_ACTION_CLASS_NAME}
           startIcon={isDefined(GoogleIcon) ? <GoogleIcon /> : undefined}
           onClick={handleClick}
           fullWidth
           elevated
           variant={signInUpStep === SignInUpStep.Init ? 'solid' : 'outline'}
-        >{t`Continue with Google`}</StyledActionButton>
+        >{t`Continue with Google`}</Button>
         {isLastUsed && (isGlobalScope || hasMultipleAuthMethods) && (
           <LastUsedPill />
         )}

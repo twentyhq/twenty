@@ -1,3 +1,4 @@
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
@@ -17,11 +18,6 @@ import { IconButton, Button } from 'twenty-ui/input';
 import { AnimatedIconCrossfade } from 'twenty-ui/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
 
 const StyledTitleRow = styled.div`
   align-items: center;
@@ -206,7 +202,8 @@ export const InstallAppsContent = ({
         <StyledFooter>
           {hasApps && (
             <StyledInstallButton>
-              <StyledActionButton
+              <Button
+                className={BUTTON_ACTION_CLASS_NAME}
                 onClick={onInstall}
                 disabled={
                   isCompleting || !isNonEmptyArray(selectedUniversalIdentifiers)
@@ -214,7 +211,7 @@ export const InstallAppsContent = ({
                 fullWidth
                 elevated
                 variant="solid"
-              >{t`Install`}</StyledActionButton>
+              >{t`Install`}</Button>
             </StyledInstallButton>
           )}
           <OnboardingSkipButton onClick={onSkip} disabled={isCompleting} />

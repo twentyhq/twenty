@@ -1,5 +1,5 @@
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { styled } from '@linaria/react';
+import { BUTTON_SUBTLE_CLASS_NAME } from '@/ui/input/styles/ButtonSubtleClassName';
+
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { getViewBarFilterDropdownId } from '@/views/utils/getViewBarFilterDropdownId';
 
@@ -8,11 +8,6 @@ import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown'
 import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-
-const StyledSubtleButton = styled(Button)`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-weight: ${themeCssVariables.font.weight.regular};
-`;
 
 export const ViewBarDetailsAddFilterButton = () => {
   const { toggleDropdown } = useToggleDropdown();
@@ -29,11 +24,12 @@ export const ViewBarDetailsAddFilterButton = () => {
   };
 
   return (
-    <StyledSubtleButton
+    <Button
+      className={BUTTON_SUBTLE_CLASS_NAME}
       onClick={handleClick}
       startIcon={<IconPlus />}
       size="sm"
       variant="ghost"
-    >{t`Add filter`}</StyledSubtleButton>
+    >{t`Add filter`}</Button>
   );
 };

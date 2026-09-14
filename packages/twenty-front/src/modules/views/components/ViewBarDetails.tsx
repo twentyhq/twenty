@@ -1,3 +1,4 @@
+import { BUTTON_SUBTLE_CLASS_NAME } from '@/ui/input/styles/ButtonSubtleClassName';
 import { styled } from '@linaria/react';
 import { type ReactNode, useMemo } from 'react';
 
@@ -38,11 +39,6 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledSubtleButton = styled(Button)`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-weight: ${themeCssVariables.font.weight.regular};
-`;
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
@@ -285,12 +281,13 @@ export const ViewBarDetails = ({
       </StyledFilterContainer>
       <StyledActionButtonContainer>
         {canResetView && (
-          <StyledSubtleButton
+          <Button
+            className={BUTTON_SUBTLE_CLASS_NAME}
             data-testid="cancel-button"
             onClick={handleCancelClick}
             size="sm"
             variant="ghost"
-          >{t`Reset`}</StyledSubtleButton>
+          >{t`Reset`}</Button>
         )}
         {rightComponent}
       </StyledActionButtonContainer>

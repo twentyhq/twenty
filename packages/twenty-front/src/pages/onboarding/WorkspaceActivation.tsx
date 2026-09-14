@@ -1,3 +1,4 @@
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
 import { styled } from '@linaria/react';
 import { useCallback, useEffect, useRef } from 'react';
 
@@ -23,11 +24,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -153,7 +149,8 @@ export const WorkspaceActivation = () => {
       </OnboardingStepAnimatedItem>
       <OnboardingStepAnimatedItem index={3}>
         <StyledButtonContainer>
-          <StyledActionButton
+          <Button
+            className={BUTTON_ACTION_CLASS_NAME}
             onClick={() => {
               void activate();
             }}
@@ -161,7 +158,7 @@ export const WorkspaceActivation = () => {
             fullWidth
             elevated
             variant="solid"
-          >{t`Retry`}</StyledActionButton>
+          >{t`Retry`}</Button>
         </StyledButtonContainer>
       </OnboardingStepAnimatedItem>
     </StyledContainer>

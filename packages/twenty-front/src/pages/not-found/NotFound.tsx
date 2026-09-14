@@ -1,3 +1,4 @@
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
 import { Link as ButtonRouterLink } from 'react-router-dom';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { lazy, Suspense } from 'react';
@@ -21,11 +22,6 @@ import {
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTitle,
 } from 'twenty-ui/feedback';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
 
 const StyledBackDrop = styled.div`
   align-items: center;
@@ -67,14 +63,15 @@ export const NotFound = () => {
             </AnimatedPlaceholderErrorSubTitle>
           </AnimatedPlaceholderEmptyTextContainer>
           <StyledButtonContainer>
-            <StyledActionButton
+            <Button
+              className={BUTTON_ACTION_CLASS_NAME}
               render={<ButtonRouterLink to={AppPath.Index} />}
               nativeButton={false}
               role="link"
               fullWidth
               elevated
               variant="solid"
-            >{t`Back to content`}</StyledActionButton>
+            >{t`Back to content`}</Button>
           </StyledButtonContainer>
         </AnimatedPlaceholderErrorContainer>
       </StyledBackDrop>

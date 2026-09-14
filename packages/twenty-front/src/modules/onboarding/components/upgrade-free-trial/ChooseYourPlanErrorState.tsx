@@ -1,3 +1,4 @@
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingContentBlock } from '@/onboarding/components/StyledOnboardingContentBlock';
@@ -10,11 +11,6 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { Button } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
 
 const StyledFooter = styled(StyledOnboardingContentBlock)`
   align-items: center;
@@ -48,12 +44,13 @@ export const ChooseYourPlanErrorState = ({
 
       <OnboardingStepAnimatedItem index={2}>
         <StyledFooter>
-          <StyledActionButton
+          <Button
+            className={BUTTON_ACTION_CLASS_NAME}
             onClick={onRetry}
             fullWidth
             elevated
             variant="solid"
-          >{t`Try again`}</StyledActionButton>
+          >{t`Try again`}</Button>
           <ClickToActionLink onClick={signOut}>
             <Trans>Log out</Trans>
           </ClickToActionLink>

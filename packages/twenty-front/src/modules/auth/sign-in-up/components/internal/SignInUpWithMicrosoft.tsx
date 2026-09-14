@@ -1,4 +1,5 @@
-import { styled } from '@linaria/react';
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+
 import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
@@ -17,12 +18,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SignInUpWithMicrosoft = ({
   action,
@@ -51,13 +47,14 @@ export const SignInUpWithMicrosoft = ({
   return (
     <>
       <StyledSsoButtonContainer>
-        <StyledActionButton
+        <Button
+          className={BUTTON_ACTION_CLASS_NAME}
           startIcon={<IconMicrosoft size={theme.icon.size.md} />}
           onClick={handleClick}
           fullWidth
           elevated
           variant={signInUpStep === SignInUpStep.Init ? 'solid' : 'outline'}
-        >{t`Continue with Microsoft`}</StyledActionButton>
+        >{t`Continue with Microsoft`}</Button>
         {isLastUsed && (isGlobalScope || hasMultipleAuthMethods) && (
           <LastUsedPill />
         )}

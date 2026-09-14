@@ -1,3 +1,4 @@
+import { BUTTON_LIGHT_CLASS_NAME } from '@/ui/input/styles/ButtonLightClassName';
 import { styled } from '@linaria/react';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -45,10 +46,6 @@ import { CardContent, CardFooter } from 'twenty-ui/surfaces';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
-
-const StyledLightButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.regular};
-`;
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
   defaultValue: selectFieldDefaultValueSchema(),
@@ -532,12 +529,13 @@ export const SettingsDataModelFieldSelectForm = ({
               <StyledFooterContainer>
                 <CardFooter>
                   <StyledButtonContainer>
-                    <StyledLightButton
+                    <Button
+                      className={BUTTON_LIGHT_CLASS_NAME}
                       startIcon={<IconPlus />}
                       onClick={handleAddOption}
                       size="sm"
                       variant="ghost"
-                    >{t`Add option`}</StyledLightButton>
+                    >{t`Add option`}</Button>
                   </StyledButtonContainer>
                 </CardFooter>
               </StyledFooterContainer>

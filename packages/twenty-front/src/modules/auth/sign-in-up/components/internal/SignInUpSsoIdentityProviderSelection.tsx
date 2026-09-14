@@ -1,5 +1,5 @@
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { styled } from '@linaria/react';
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+
 /* @license Enterprise */
 
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
@@ -13,11 +13,6 @@ import { HorizontalSeparator } from 'twenty-ui/layout';
 import { Button } from 'twenty-ui/input';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
-
 export const SignInUpSsoIdentityProviderSelection = () => {
   const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
 
@@ -29,7 +24,8 @@ export const SignInUpSsoIdentityProviderSelection = () => {
         {isDefined(workspaceAuthProviders?.sso) &&
           workspaceAuthProviders?.sso.map((idp) => (
             <React.Fragment key={idp.id}>
-              <StyledActionButton
+              <Button
+                className={BUTTON_ACTION_CLASS_NAME}
                 onClick={() => redirectToSsoLoginPage(idp.id)}
                 startIcon={createElement(
                   guessSsoIdentityProviderIconByUrl(idp.issuer),
@@ -39,7 +35,7 @@ export const SignInUpSsoIdentityProviderSelection = () => {
                 variant="solid"
               >
                 {idp.name}
-              </StyledActionButton>
+              </Button>
               <HorizontalSeparator visible={false} />
             </React.Fragment>
           ))}

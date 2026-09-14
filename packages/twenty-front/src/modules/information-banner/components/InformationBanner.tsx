@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { BUTTON_INVERTED_CLASS_NAME } from '@/ui/input/styles/ButtonInvertedClassName';
 import { InformationBannerComponentInstanceContext } from '@/information-banner/states/contexts/InformationBannerComponentInstanceContext';
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -13,12 +14,6 @@ import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { Button, IconButton } from 'twenty-ui/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledActionButton = styled(Button)`
-  &[data-inverted='true'] {
-    color: ${themeCssVariables.font.color.inverted};
-  }
-`;
 
 const StyledText = styled.div`
   min-width: 0;
@@ -84,17 +79,17 @@ export const InformationBanner = ({
               />
             </StyledText>
             {buttonTitle && buttonOnClick && (
-              <StyledActionButton
+              <Button
+                className={isPrimary ? BUTTON_INVERTED_CLASS_NAME : undefined}
                 startIcon={isDefined(ButtonIcon) ? <ButtonIcon /> : undefined}
                 size="sm"
                 onClick={buttonOnClick}
                 disabled={isButtonDisabled}
                 variant="outline"
                 color={buttonAccent === 'blue' ? 'accent' : 'danger'}
-                data-inverted={isPrimary}
               >
                 {buttonTitle}
-              </StyledActionButton>
+              </Button>
             )}
           </StyledContent>
           {onClose &&

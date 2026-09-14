@@ -1,3 +1,4 @@
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
@@ -15,11 +16,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
-
-const StyledActionButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
-`;
 
 const StyledOnboardingStep = styled(StyledOnboardingStepPage)`
   gap: ${themeCssVariables.spacing[8]};
@@ -100,22 +96,24 @@ export const ImportContacts = ({
         <StyledFooter>
           <StyledButtons>
             {isDefined(onContinueWithMicrosoft) && (
-              <StyledActionButton
+              <Button
+                className={BUTTON_ACTION_CLASS_NAME}
                 fullWidth
                 onClick={onContinueWithMicrosoft}
                 startIcon={<IconMicrosoft size={theme.icon.size.md} />}
                 elevated
                 variant="solid"
-              >{t`Continue with Microsoft`}</StyledActionButton>
+              >{t`Continue with Microsoft`}</Button>
             )}
             {isDefined(onContinueWithGoogle) && (
-              <StyledActionButton
+              <Button
+                className={BUTTON_ACTION_CLASS_NAME}
                 fullWidth
                 onClick={onContinueWithGoogle}
                 startIcon={<IconGoogle size={theme.icon.size.md} />}
                 elevated
                 variant="solid"
-              >{t`Continue with Google`}</StyledActionButton>
+              >{t`Continue with Google`}</Button>
             )}
           </StyledButtons>
           {isDefined(onSkip) && <OnboardingSkipButton onClick={onSkip} />}

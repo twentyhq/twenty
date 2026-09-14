@@ -1,3 +1,4 @@
+import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionBenefit';
@@ -15,8 +16,6 @@ import { ModalContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCheckoutButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-inline: ${themeCssVariables.spacing[3]};
   width: 200px;
 `;
 
@@ -190,6 +189,7 @@ export const EnterprisePlanModal = () => {
         </RadioGroup>
 
         <StyledCheckoutButton
+          className={BUTTON_ACTION_CLASS_NAME}
           onClick={handleContinue}
           startIcon={isLoading && <Loader />}
           disabled={isLoading}

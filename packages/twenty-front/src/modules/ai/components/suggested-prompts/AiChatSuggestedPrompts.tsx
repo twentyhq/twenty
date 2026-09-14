@@ -1,3 +1,4 @@
+import { BUTTON_LIGHT_CLASS_NAME } from '@/ui/input/styles/ButtonLightClassName';
 import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -12,10 +13,6 @@ import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByTh
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type SuggestedPrompt } from '@/ai/types/SuggestedPrompt';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-
-const StyledLightButton = styled(Button)`
-  font-weight: ${themeCssVariables.font.weight.regular};
-`;
 
 const StyledContainer = styled.div<{ isCentered: boolean }>`
   align-items: ${({ isCentered }) => (isCentered ? 'center' : 'stretch')};
@@ -101,7 +98,8 @@ export const AiChatSuggestedPrompts = ({
               {resolveMessage(suggestedPrompt.label)}
             </Button>
           ) : (
-            <StyledLightButton
+            <Button
+              className={BUTTON_LIGHT_CLASS_NAME}
               key={suggestedPrompt.id}
               startIcon={
                 isDefined(suggestedPrompt.Icon) ? (
@@ -113,7 +111,7 @@ export const AiChatSuggestedPrompts = ({
               variant="ghost"
             >
               {resolveMessage(suggestedPrompt.label)}
-            </StyledLightButton>
+            </Button>
           ),
         )}
       </StyledPromptList>

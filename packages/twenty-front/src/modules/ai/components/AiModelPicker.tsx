@@ -1,3 +1,4 @@
+import { BUTTON_SUBTLE_CLASS_NAME } from '@/ui/input/styles/ButtonSubtleClassName';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -18,11 +19,6 @@ import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { AiModelPinSelect } from '@/settings/ai/components/AiModelPinSelect';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-
-const StyledSubtleButton = styled(Button)`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-weight: ${themeCssVariables.font.weight.regular};
-`;
 
 const StyledContainer = styled.div`
   display: flex;
@@ -98,11 +94,12 @@ export const AiModelPicker = ({
               : t`Set for this agent only`}
         </StyledHint>
         {!isAdvancedOpen && !disabled && (
-          <StyledSubtleButton
+          <Button
+            className={BUTTON_SUBTLE_CLASS_NAME}
             onClick={() => setIsAdvancedOpen(true)}
             size="sm"
             variant="ghost"
-          >{t`Advanced`}</StyledSubtleButton>
+          >{t`Advanced`}</Button>
         )}
       </StyledFooter>
       {isAdvancedOpen && (
