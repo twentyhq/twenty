@@ -42,6 +42,21 @@ export type CreateStandardObjectArgs<
   context: CreateStandardObjectContext<O>;
 };
 
+const getStandardFieldUniversalIdentifier = <O extends AllStandardObjectName>({
+  objectName,
+  fieldName,
+}: {
+  objectName: O;
+  fieldName: AllStandardObjectFieldName<O>;
+}): string => {
+  const standardObjectFields: Record<
+    PropertyKey,
+    { universalIdentifier: string }
+  > = STANDARD_OBJECTS[objectName].fields;
+
+  return standardObjectFields[fieldName].universalIdentifier;
+};
+
 export const createStandardObjectFlatMetadata = <
   O extends AllStandardObjectName,
 >({
@@ -73,17 +88,17 @@ export const createStandardObjectFlatMetadata = <
   now,
 }: CreateStandardObjectArgs<O>): FlatObjectMetadata => {
   const labelIdentifierFieldMetadataUniversalIdentifier =
-    // @ts-expect-error ignore
-    STANDARD_OBJECTS[nameSingular as keyof typeof STANDARD_OBJECTS].fields[
-      labelIdentifierFieldMetadataName
-    ].universalIdentifier;
+    getStandardFieldUniversalIdentifier({
+      objectName: nameSingular,
+      fieldName: labelIdentifierFieldMetadataName,
+    });
 
   const imageIdentifierFieldMetadataUniversalIdentifier =
     imageIdentifierFieldMetadataName
-      ? // @ts-expect-error ignore
-        STANDARD_OBJECTS[nameSingular as keyof typeof STANDARD_OBJECTS].fields[
-          imageIdentifierFieldMetadataName
-        ].universalIdentifier
+      ? getStandardFieldUniversalIdentifier({
+          objectName: nameSingular,
+          fieldName: imageIdentifierFieldMetadataName,
+        })
       : null;
 
   const readabilityParentFieldUniversalIdentifiers = isDefined(
@@ -91,9 +106,10 @@ export const createStandardObjectFlatMetadata = <
   )
     ? readabilityParentFieldMetadataNames.map(
         (readabilityParentFieldMetadataName) =>
-          // @ts-expect-error ignore
-          STANDARD_OBJECTS[nameSingular as keyof typeof STANDARD_OBJECTS]
-            .fields[readabilityParentFieldMetadataName].universalIdentifier,
+          getStandardFieldUniversalIdentifier({
+            objectName: nameSingular,
+            fieldName: readabilityParentFieldMetadataName,
+          }),
       )
     : null;
 
