@@ -39,10 +39,13 @@ const parseQuarantinedPackages = (output: string) => {
   ];
 };
 
-const buildQuarantineMessage = (
-  appDirectory: string,
-  quarantinedPackages: string[],
-) =>
+const buildQuarantineMessage = ({
+  appDirectory,
+  quarantinedPackages,
+}: {
+  appDirectory: string;
+  quarantinedPackages: string[];
+}) =>
   [
     'Dependency installation failed: your package manager enforces a minimum',
     'release age, and these packages were published too recently to satisfy it:',
@@ -87,7 +90,10 @@ export const install = async (
     // that has no node_modules, so surface the failure instead.
     throw new Error(
       quarantinedPackages.length > 0
-        ? buildQuarantineMessage(root, quarantinedPackages)
+        ? buildQuarantineMessage({
+            appDirectory: root,
+            quarantinedPackages,
+          })
         : [
             `Dependency installation failed in ${root}:`,
             '',

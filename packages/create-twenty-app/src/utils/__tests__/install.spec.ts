@@ -40,7 +40,13 @@ const mockCommands = (outcomes: Record<string, CommandOutcome>) => {
   );
 };
 
-const quarantineOutput = (descriptor: string, selector: string) =>
+const quarantineOutput = ({
+  descriptor,
+  selector,
+}: {
+  descriptor: string;
+  selector: string;
+}) =>
   `➤ YN0016: │ ${descriptor}@npm:${selector}: All versions satisfying "${selector}" are quarantined`;
 
 const APP_DIRECTORY = '/tmp/some-scaffolded-app';
@@ -98,7 +104,10 @@ describe('install', () => {
     mockCommands({
       'yarn install': {
         fails: true,
-        stdout: quarantineOutput('twenty-ui', '2.41.0'),
+        stdout: quarantineOutput({
+          descriptor: 'twenty-ui',
+          selector: '2.41.0',
+        }),
       },
     });
 
@@ -116,7 +125,10 @@ describe('install', () => {
     mockCommands({
       'yarn install': {
         fails: true,
-        stdout: quarantineOutput('@scope/some-tool', '^1.2.3'),
+        stdout: quarantineOutput({
+          descriptor: '@scope/some-tool',
+          selector: '^1.2.3',
+        }),
       },
     });
 
