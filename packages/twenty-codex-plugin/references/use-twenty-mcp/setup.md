@@ -33,6 +33,7 @@ Normalize workspace input as follows:
 - If the input already starts with `http://` or `https://`, preserve that scheme.
 - If the input has no scheme and is `localhost`, `127.x.x.x`, `[::1]`, `*.localhost`, or `*.localhost:<port>`, use `http://`.
 - If the input has no scheme and is any other host, use `https://`.
+- Strip any trailing `/` before looking at the path, so `https://acme.example.com/` and `https://acme.example.com/mcp/` normalize the same as their unslashed forms.
 - If the final URL does not end with `/mcp`, append `/mcp`.
 
 Examples:
@@ -42,7 +43,11 @@ myworkspace.twenty.com       -> https://myworkspace.twenty.com/mcp       name: t
 acme.example.com             -> https://acme.example.com/mcp             name: twenty-acme-example
 myworkspace.customdomain.com -> https://myworkspace.customdomain.com/mcp name: twenty-myworkspace-customdomain
 myworkspace.localhost:3001   -> http://myworkspace.localhost:3001/mcp   name: twenty-myworkspace-localhost-3001
+https://acme.example.com/    -> https://acme.example.com/mcp             name: twenty-acme-example
+https://acme.example.com/mcp/ -> https://acme.example.com/mcp            name: twenty-acme-example
 ```
+
+A trailing slash that survives normalization produces `//mcp` or `/mcp//mcp`, neither of which is the registered endpoint.
 
 ## Setup Per Agent
 

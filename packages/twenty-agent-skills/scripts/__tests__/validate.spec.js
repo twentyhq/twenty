@@ -340,3 +340,31 @@ describe('assertNoDanglingDocMentions', () => {
     assert.deepEqual(failures, []);
   });
 });
+
+describe('verify-install argument handling', () => {
+  let installRoot;
+
+  beforeEach(() => {
+    installRoot = fs.mkdtempSync(
+      path.join(os.tmpdir(), 'agent-skills-install-'),
+    );
+  });
+
+  afterEach(() => {
+    fs.rmSync(installRoot, { recursive: true, force: true });
+  });
+
+  it('should not report escaping references when given a relative install root', () => {
+    const failures = [];
+    const fail = (message) => failures.push(message);
+
+    writeValidSkill(installRoot, 'create-app');
+    assertSelfContainedReferences(
+      path.resolve(installRoot),
+      'create-app',
+      fail,
+    );
+
+    assert.deepEqual(failures, []);
+  });
+});

@@ -380,3 +380,15 @@ test('assertHowAppsWork catches a skill that does not reference operating-rules.
     );
   });
 });
+
+test('assertOperatingRulesSingleSource catches prose copied from the rules file', () => {
+  const agentsPath = path.join(PLUGIN_ROOT, 'AGENTS.md');
+  const copiedSentence = 'Watch mode leaks file handles and produces ambiguous failure output in agent sandboxes.';
+  withFileMutation(agentsPath, (original) => `${original}\n${copiedSentence}\n`, () => {
+    const failures = collectFailures(crossDocContracts.assertOperatingRulesSingleSource);
+    assert.ok(
+      failures.some((f) => f.includes('AGENTS.md') && f.includes('copies a sentence')),
+      `expected a copied-prose failure, got: ${failures.join('; ')}`,
+    );
+  });
+});

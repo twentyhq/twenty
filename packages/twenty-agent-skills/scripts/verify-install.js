@@ -22,6 +22,10 @@ if (!installRoot) {
 const skillNames =
   requestedSkills.length > 0 ? requestedSkills : PORTABLE_SKILLS;
 
+// assertSelfContainedReferences resolves references to absolute paths, so the
+// roots it compares them against must be absolute too.
+const absoluteInstallRoot = path.resolve(installRoot);
+
 // `skills add` writes to an agent-specific directory (.agents/skills, .claude/skills,
 // .codex/skills, ...) and may symlink between them, so the installed copies are
 // discovered rather than assumed.
@@ -65,17 +69,22 @@ const fail = (message) => failures.push(message);
 
 for (const skillName of skillNames) {
   const sourceRoot = path.join(PACKAGE_ROOT, 'skills', skillName);
-  const installedRoots = findInstalledSkillRoots(installRoot, skillName);
+  const installedRoots = findInstalledSkillRoots(
+    absoluteInstallRoot,
+    skillName,
+  );
 
   if (installedRoots.length === 0) {
-    fail(`${skillName} was not installed anywhere under ${installRoot}`);
+    fail(
+      `${skillName} was not installed anywhere under ${absoluteInstallRoot}`,
+    );
     continue;
   }
 
   const expectedFiles = relativeFiles(sourceRoot);
 
   for (const installedRoot of installedRoots) {
-    const location = path.relative(installRoot, installedRoot);
+    const location = path.relative(absoluteInstallRoot, installedRoot);
     const installedFiles = relativeFiles(installedRoot);
 
     for (const relativePath of expectedFiles) {
@@ -89,6 +98,12 @@ for (const skillName of skillNames) {
         readText(path.join(installedRoot, relativePath))
       ) {
         fail(`${location} installed a modified ${relativePath}`);
+      }
+    }
+
+    for (const relativePath of installedFiles) {
+      if (!expectedFiles.includes(relativePath)) {
+        fail(`${location} has an unexpected ${relativePath}`);
       }
     }
 

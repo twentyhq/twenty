@@ -432,6 +432,28 @@ const assertOperatingRulesSingleSource = (fail) => {
   if (!agents.includes('references/concepts/operating-rules.md')) {
     fail('AGENTS.md must point at references/concepts/operating-rules.md for the durable operating rules');
   }
+
+  // Headlines catch a copied rule list. Copied prose is the other way a second
+  // version of a rule appears and then drifts, so sentences from the rule
+  // bodies must not be pasted into an entry point either. A skill applying a
+  // rule in its own words at the point of use is expected and not flagged.
+  const ruleBodySentences = operatingRules
+    .split('\n')
+    .filter((line) => /^\d+\.\s+\*\*/.test(line))
+    .flatMap((line) => line.replace(/^\d+\.\s+\*\*[^*]+\*\*\s*/, '').split('. '))
+    .map((sentence) => sentence.trim())
+    .filter((sentence) => sentence.length >= 60);
+
+  for (const documentPath of restatingDocumentPaths) {
+    const relativePath = path.relative(PLUGIN_ROOT, documentPath);
+    const contents = readText(documentPath);
+
+    for (const sentence of ruleBodySentences) {
+      if (contents.includes(sentence)) {
+        fail(`${relativePath} copies a sentence from operating-rules.md instead of linking to it: "${sentence.slice(0, 60)}..."`);
+      }
+    }
+  }
 };
 
 module.exports = {
