@@ -7651,7 +7651,7 @@ export interface RunAgentInput {agentUniversalIdentifier: Scalars['String'],prom
 
 export interface RunAgentMessageInput {role: RunAgentMessageRole,content: Scalars['String'],attachments?: (RunAgentMessageAttachmentInput[] | null)}
 
-export interface RunAgentMessageAttachmentInput {fileId: Scalars['String'],filename?: (Scalars['String'] | null)}
+export interface RunAgentMessageAttachmentInput {fileId: Scalars['UUID'],filename?: (Scalars['String'] | null)}
 
 export interface CreateWebhookInput {id?: (Scalars['UUID'] | null),targetUrl: Scalars['String'],operations: Scalars['String'][],description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
 

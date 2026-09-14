@@ -5687,7 +5687,7 @@ export type RunAgentInput = {
 };
 
 export type RunAgentMessageAttachmentInput = {
-  fileId: Scalars['String']['input'];
+  fileId: Scalars['UUID']['input'];
   filename?: InputMaybe<Scalars['String']['input']>;
 };
 

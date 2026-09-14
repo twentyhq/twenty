@@ -5198,7 +5198,7 @@ enum RunAgentMessageRole {
 }
 
 input RunAgentMessageAttachmentInput {
-  fileId: String!
+  fileId: UUID!
   filename: String
 }
 
