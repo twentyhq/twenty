@@ -182,7 +182,7 @@ export const SettingsMessageFoldersTreeItem = ({
           <StyledRightSection>
             {folder.pendingSyncAction ===
               MessageFolderPendingSyncAction.FOLDER_IMPORT && (
-              <Status color="turquoise" text={t`Importing`} isLoaderVisible />
+              <Status color="turquoise" loading>{t`Importing`}</Status>
             )}
 
             {hasChildren && (

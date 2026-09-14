@@ -95,6 +95,7 @@
       "executor": "nx:run-commands",
       "options": { "command": "rimraf {projectRoot}/dist" }
     },
+    "set-local-version": {},
     "lint": {},
     "fmt": { "options": { "files": "src" }, "configurations": { "fix": {} } },
     "test": {

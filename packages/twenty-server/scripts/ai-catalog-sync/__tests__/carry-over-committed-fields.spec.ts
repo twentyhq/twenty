@@ -3,12 +3,7 @@ import { type GeneratedModel } from '../types/generated-model.type';
 import { carryOverCommittedFields } from '../utils/carry-over-committed-fields.util';
 
 const openai = (models: GeneratedModel[]): GeneratedCatalog => ({
-  openai: {
-    npm: '@ai-sdk/openai',
-    label: 'OpenAI',
-    apiKey: '{{OPENAI_API_KEY}}',
-    models,
-  },
+  openai: { models },
 });
 
 describe('carryOverCommittedFields', () => {

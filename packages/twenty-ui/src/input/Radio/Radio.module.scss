@@ -1,91 +1,89 @@
-.container {
+.root {
   align-items: center;
+  color: var(--t-font-color-primary);
+  cursor: pointer;
   display: inline-flex;
-  flex-direction: row;
+  font-family: inherit;
+  font-size: var(--t-font-size-sm);
+  font-weight: var(--t-font-weight-regular);
+  gap: var(--t-spacing-2);
+  vertical-align: middle;
+  width: fit-content;
+
+  @include focus-ring;
 }
 
-.containerLabelLeft {
-  flex-direction: row-reverse;
-}
-
-.radio {
+.control {
+  align-items: center;
   background-color: transparent;
   border: 1px solid var(--t-font-color-secondary);
   border-radius: var(--t-border-radius-rounded);
-  corner-shape: round;
-  // The border sits outside the declared size, matching the legacy input rendering.
   box-sizing: content-box;
-  display: block;
-  margin: 0 0 0 3px;
-  position: relative;
-  // Replaces the legacy framer-motion spring scale micro-animation.
+  corner-shape: round;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  margin-inline-start: 3px;
   transform: scale(0.95);
   transition: transform duration(normal) ease;
 }
 
-.small {
-  height: 16px;
-  width: 16px;
+.sm .control {
+  block-size: 16px;
+  inline-size: 16px;
 }
 
-.large {
-  height: 18px;
-  width: 18px;
+.md .control {
+  block-size: 18px;
+  inline-size: 18px;
 }
 
-.radio:hover {
-  background-color: var(--t-background-tertiary);
-  outline: 4px solid var(--t-background-tertiary);
-}
-
-.radio[data-checked] {
+.root[data-checked] .control {
   background-color: var(--t-color-blue);
   border: none;
   transform: scale(1.05);
 }
 
-.radio[data-checked]:hover {
-  outline-color: var(--t-color-transparent-blue2);
-}
-
-.radio[data-checked]::after {
+.indicator {
   background-color: var(--t-gray-scale-gray1);
+  block-size: 6px;
   border-radius: 50%;
   corner-shape: round;
-  content: '';
-  height: 6px;
-  left: 50%;
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 6px;
+  inline-size: 6px;
 }
 
-.large[data-checked]::after {
-  height: 8px;
-  width: 8px;
+.md .indicator {
+  block-size: 8px;
+  inline-size: 8px;
 }
 
-.radio[data-disabled] {
+@include hover-capable {
+  .root:not([data-disabled]):not([data-readonly]):hover .control {
+    background-color: var(--t-background-tertiary);
+    outline: 4px solid var(--t-background-tertiary);
+  }
+
+  .root[data-checked]:not([data-disabled]):not([data-readonly]):hover .control {
+    background-color: var(--t-color-blue);
+    outline-color: var(--t-color-transparent-blue2);
+  }
+}
+
+.root[data-disabled] {
   cursor: not-allowed;
-  opacity: 0.12;
-}
-
-.label {
-  color: var(--t-font-color-primary);
-  cursor: pointer;
-  font-size: var(--t-font-size-sm);
-  font-weight: var(--t-font-weight-regular);
-}
-
-.labelRight {
-  margin-left: var(--t-spacing-2);
-}
-
-.labelLeft {
-  margin-right: var(--t-spacing-2);
-}
-
-.label[data-disabled] {
   opacity: 0.32;
+}
+
+.root[data-disabled] .control {
+  opacity: 0.375;
+}
+
+.root[data-readonly] {
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .control {
+    transition: none;
+  }
 }

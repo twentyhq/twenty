@@ -1,0 +1,49 @@
+{
+  "providers": [
+    {
+      "name": "openai",
+      "npm": "@ai-sdk/openai",
+      "label": "OpenAI",
+      "apiKey": "{{OPENAI_API_KEY}}",
+      "models": {
+        "vendor": "openai"
+      }
+    },
+    {
+      "name": "anthropic",
+      "npm": "@ai-sdk/anthropic",
+      "label": "Anthropic",
+      "apiKey": "{{ANTHROPIC_API_KEY}}",
+      "models": {
+        "vendor": "anthropic"
+      }
+    },
+    {
+      "name": "google",
+      "npm": "@ai-sdk/google",
+      "label": "Google",
+      "apiKey": "{{GOOGLE_API_KEY}}",
+      "models": {
+        "vendor": "google"
+      }
+    },
+    {
+      "name": "mistral",
+      "npm": "@ai-sdk/mistral",
+      "label": "Mistral",
+      "apiKey": "{{MISTRAL_API_KEY}}",
+      "models": {
+        "vendor": "mistral"
+      }
+    },
+    {
+      "name": "xai",
+      "npm": "@ai-sdk/xai",
+      "label": "xAI",
+      "apiKey": "{{XAI_API_KEY}}",
+      "models": {
+        "vendor": "xai"
+      }
+    }
+  ]
+}
