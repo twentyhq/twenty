@@ -1,5 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { t } from '@lingui/core/macro';
-import { Link as ButtonRouterLink } from 'react-router-dom';
 import { SettingsDataModelOverviewEffect } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewEffect';
 import { SettingsDataModelOverviewObject } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewObject';
 import { SettingsDataModelOverviewRelationMarkers } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewRelationMarkers';
@@ -32,7 +32,7 @@ import {
   IconPlus,
   IconX,
 } from 'twenty-ui/icon';
-import { Button, IconButtonGroup } from 'twenty-ui/input';
+import { IconButtonGroup } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const nodeTypes: NodeTypes = {
@@ -188,15 +188,11 @@ export const SettingsDataModelOverview = () => {
   return (
     <StyledContainer>
       <StyledCloseButton>
-        <Button
+        <NavigationButton
           startIcon={<IconX />}
           aria-label={t`Close overview`}
-          render={
-            <ButtonRouterLink to={getSettingsPath(SettingsPath.Objects)} />
-          }
-          role="link"
-          nativeButton={false}
-        ></Button>
+          to={getSettingsPath(SettingsPath.Objects)}
+        ></NavigationButton>
       </StyledCloseButton>
       <SettingsDataModelOverviewEffect
         setEdges={setEdges}

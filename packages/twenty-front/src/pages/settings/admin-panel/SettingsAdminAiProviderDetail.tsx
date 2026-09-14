@@ -1,9 +1,6 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useMemo, useState } from 'react';
-import {
-  Link as ButtonRouterLink,
-  useNavigate,
-  useParams,
-} from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -26,7 +23,7 @@ import {
 import { H2Title } from 'twenty-ui/typography';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { RoundedLink, UndecoratedLink } from 'twenty-ui/navigation';
+import { RoundedLink } from 'twenty-ui/navigation';
 
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
@@ -399,13 +396,11 @@ export const SettingsAdminAiProviderDetail = () => {
           )}
 
           {isCustomProvider && newModelPath && (
-            <Button
-              render={<ButtonRouterLink to={newModelPath} />}
-              nativeButton={false}
-              role="link"
+            <NavigationButton
+              to={newModelPath}
               startIcon={<IconPlus />}
               variant="outline"
-            >{t`Add Model`}</Button>
+            >{t`Add Model`}</NavigationButton>
           )}
         </Section>
 

@@ -1,3 +1,4 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { mapRLSOperandToRecordFilterOperand } from '@/object-record/record-filter/utils/mapRLSOperandToRecordFilterOperand';
@@ -10,11 +11,7 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWizardStepBar';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { t } from '@lingui/core/macro';
-import {
-  Link as ButtonRouterLink,
-  useNavigate,
-  useSearchParams,
-} from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import {
@@ -22,7 +19,6 @@ import {
   isDefined,
   isRecordFilterValueValid,
 } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
 import {
@@ -161,15 +157,13 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           label={t`2. Set ${objectLabelPlural} permissions`}
           onBack={() => navigate(previousStepPath)}
           trailing={
-            <Button
+            <NavigationButton
               size="sm"
-              render={<ButtonRouterLink to={finishButtonPath} />}
-              role="link"
-              nativeButton={false}
+              to={finishButtonPath}
               disabled={isFinishDisabled}
               variant="solid"
               color="accent"
-            >{t`Finish`}</Button>
+            >{t`Finish`}</NavigationButton>
           }
         />
       }

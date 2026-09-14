@@ -1,5 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { isNonEmptyString } from '@sniptt/guards';
-import { Link as ButtonRouterLink } from 'react-router-dom';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
@@ -95,20 +95,14 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
           variant="outline"
         >{t`Copy sharing link`}</Button>
       )}
-      <Button
+      <NavigationButton
         startIcon={isNpmSource ? <IconArrowUpRight /> : <IconInfoCircle />}
         disabled={!shareLink}
-        render={
-          isNonEmptyString(shareLink) ? (
-            <ButtonRouterLink to={shareLink} />
-          ) : undefined
-        }
-        role={isNonEmptyString(shareLink) ? 'link' : undefined}
-        nativeButton={!isNonEmptyString(shareLink)}
+        to={isNonEmptyString(shareLink) ? shareLink : undefined}
         variant="outline"
       >
         {isNpmSource ? t`See on marketplace` : t`See app page`}
-      </Button>
+      </NavigationButton>
     </StyledButtonGroup>
   );
 };

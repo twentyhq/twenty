@@ -1,4 +1,5 @@
-import { Link as ButtonRouterLink } from 'react-router-dom';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -47,17 +48,13 @@ export const SettingsObjects = () => {
             color="accent"
           >{t`Add object`}</Button>
         ) : (
-          <Button
-            render={
-              <ButtonRouterLink to={getSettingsPath(SettingsPath.NewObject)} />
-            }
-            nativeButton={false}
-            role="link"
+          <NavigationButton
+            to={getSettingsPath(SettingsPath.NewObject)}
             startIcon={<IconPlus />}
             size="sm"
             variant="solid"
             color="accent"
-          >{t`Add object`}</Button>
+          >{t`Add object`}</NavigationButton>
         )
       }
       links={[
@@ -90,18 +87,12 @@ export const SettingsObjects = () => {
             title={t`Visualize data model`}
             description={t`See your data structure as an interactive diagram`}
           />
-          <Button
-            render={
-              <ButtonRouterLink
-                to={getSettingsPath(SettingsPath.ObjectOverview)}
-              />
-            }
-            nativeButton={false}
-            role="link"
+          <NavigationButton
+            to={getSettingsPath(SettingsPath.ObjectOverview)}
             size="md"
             startIcon={<IconEye />}
             variant="outline"
-          >{t`Visualize`}</Button>
+          >{t`Visualize`}</NavigationButton>
         </Section>
       </SettingsPageContainer>
     </SettingsPageLayout>

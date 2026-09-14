@@ -1,4 +1,5 @@
-import { Link as ButtonRouterLink } from 'react-router-dom';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -86,17 +87,13 @@ export const SettingsAI = () => {
       }
       actionButton={
         isSkillsTab ? (
-          <Button
-            render={
-              <ButtonRouterLink to={getSettingsPath(SettingsPath.AiNewSkill)} />
-            }
-            nativeButton={false}
-            role="link"
+          <NavigationButton
+            to={getSettingsPath(SettingsPath.AiNewSkill)}
             startIcon={<IconPlus />}
             size="sm"
             variant="solid"
             color="accent"
-          >{t`New Skill`}</Button>
+          >{t`New Skill`}</NavigationButton>
         ) : isToolsTab ? (
           <Button
             startIcon={<IconPlus />}

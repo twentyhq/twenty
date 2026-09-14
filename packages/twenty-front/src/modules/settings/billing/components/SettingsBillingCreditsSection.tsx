@@ -1,4 +1,5 @@
-import { Link as ButtonRouterLink } from 'react-router-dom';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ResourceCreditPriceSelector } from '@/settings/billing/components/internal/ResourceCreditPriceSelector';
@@ -304,14 +305,12 @@ export const SettingsBillingCreditsSection = ({
         </StyledCreditsCardBody>
       </StyledSettingsBillingCard>
       <StyledCreditUsageFooterActions>
-        <Button
-          render={<ButtonRouterLink to={getSettingsPath(SettingsPath.Usage)} />}
-          nativeButton={false}
-          role="link"
+        <NavigationButton
+          to={getSettingsPath(SettingsPath.Usage)}
           startIcon={<IconChartBar />}
           size="sm"
           variant="outline"
-        >{t`View usage`}</Button>
+        >{t`View usage`}</NavigationButton>
         <Button
           startIcon={<IconExternalLink />}
           size="sm"

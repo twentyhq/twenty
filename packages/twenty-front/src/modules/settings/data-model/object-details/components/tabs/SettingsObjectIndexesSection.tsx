@@ -1,4 +1,5 @@
-import { Link as ButtonRouterLink } from 'react-router-dom';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { useDeleteOneIndexMetadataItem } from '@/object-metadata/hooks/useDeleteOneIndexMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -20,7 +21,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconEyeOff, IconPlus } from 'twenty-ui/icon';
 import { Button, SearchInput } from 'twenty-ui/input';
-import { MenuItemSwitch, UndecoratedLink } from 'twenty-ui/navigation';
+import { MenuItemSwitch } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
@@ -197,20 +198,14 @@ export const SettingsObjectIndexesSection = ({
       {!isReadOnly && (
         <StyledButtonContainer>
           {canCreate ? (
-            <Button
-              render={
-                <ButtonRouterLink
-                  to={getSettingsPath(SettingsPath.ObjectNewIndex, {
-                    objectNamePlural: objectMetadataItem.namePlural,
-                  })}
-                />
-              }
-              nativeButton={false}
-              role="link"
+            <NavigationButton
+              to={getSettingsPath(SettingsPath.ObjectNewIndex, {
+                objectNamePlural: objectMetadataItem.namePlural,
+              })}
               startIcon={<IconPlus />}
               size="sm"
               variant="outline"
-            >{t`Add Index`}</Button>
+            >{t`Add Index`}</NavigationButton>
           ) : (
             <Button
               startIcon={<IconPlus />}

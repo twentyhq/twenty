@@ -1,3 +1,4 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
 import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
@@ -8,12 +9,10 @@ import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSk
 import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
-import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSparkles } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { SETTINGS_AI_TABS } from '~/pages/settings/ai/constants/SettingsAiTabs';
 
@@ -97,17 +96,11 @@ export const SettingsUsageAnalyticsSection = () => {
         showAvatar
       />
       <Section>
-        <Button
-          render={
-            <Link
-              to={`${getSettingsPath(SettingsPath.AI)}#${SETTINGS_AI_TABS.TABS_IDS.USAGE}`}
-            />
-          }
-          nativeButton={false}
-          role="link"
+        <NavigationButton
+          to={`${getSettingsPath(SettingsPath.AI)}#${SETTINGS_AI_TABS.TABS_IDS.USAGE}`}
           startIcon={<IconSparkles />}
           variant="outline"
-        >{t`View AI usage breakdown`}</Button>
+        >{t`View AI usage breakdown`}</NavigationButton>
       </Section>
     </>
   );

@@ -1,11 +1,12 @@
-import { Link as ButtonRouterLink } from 'react-router-dom';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { styled } from '@linaria/react';
 import { type MouseEvent } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
-import { Button, IconButton } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledWrapper = styled.div`
@@ -46,12 +47,10 @@ export const CommandMenuButton = ({
   return (
     <>
       {resolvedShortLabel !== undefined ? (
-        <Button
+        <NavigationButton
           startIcon={isDefined(command.Icon) ? <command.Icon /> : undefined}
           size="sm"
-          render={isDefined(to) ? <ButtonRouterLink to={to} /> : undefined}
-          role={isDefined(to) ? 'link' : undefined}
-          nativeButton={!isDefined(to)}
+          to={to}
           onClick={onClick}
           disabled={disabled}
           aria-label={command.label}
@@ -59,7 +58,7 @@ export const CommandMenuButton = ({
           color={buttonAccent === 'blue' ? 'accent' : 'neutral'}
         >
           {resolvedShortLabel}
-        </Button>
+        </NavigationButton>
       ) : (
         <div id={`command-menu-item-entry-${command.key}`} key={command.key}>
           <IconButton

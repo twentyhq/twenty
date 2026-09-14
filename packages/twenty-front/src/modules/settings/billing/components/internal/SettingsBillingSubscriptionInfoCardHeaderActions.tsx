@@ -1,4 +1,5 @@
-import { Link as ButtonRouterLink } from 'react-router-dom';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -87,17 +88,13 @@ export const SettingsBillingSubscriptionInfoCardHeaderActions = ({
         >{t`Cancel interval switching`}</Button>
       )}
       {canComparePlans && (
-        <Button
+        <NavigationButton
           startIcon={<IconColorSwatch />}
           size="sm"
-          render={
-            <ButtonRouterLink to={getSettingsPath(SettingsPath.BillingPlans)} />
-          }
-          role="link"
-          nativeButton={false}
+          to={getSettingsPath(SettingsPath.BillingPlans)}
           variant={isComparePlansActionPrimary ? 'solid' : 'outline'}
           color={isComparePlansActionPrimary ? 'accent' : 'neutral'}
-        >{t`Compare plans`}</Button>
+        >{t`Compare plans`}</NavigationButton>
       )}
       {canStartSubscription && (
         <Button

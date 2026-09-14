@@ -1,4 +1,5 @@
-import { Link as ButtonRouterLink } from 'react-router-dom';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { WORKER_QUEUE_METRICS_SELECT_OPTIONS } from '@/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions';
 import { Select } from '@/ui/input/components/Select';
@@ -9,7 +10,6 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconList } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -56,20 +56,14 @@ export const SettingsAdminWorkerQueueMetricsSection = ({
         <StyledControlsContainer>
           <H2Title title={queue.queueName} description={t`Queue performance`} />
           <StyledRightControls>
-            <Button
-              role="link"
+            <NavigationButton
               startIcon={<IconList />}
               size="sm"
-              render={
-                <ButtonRouterLink
-                  to={getSettingsPath(SettingsPath.AdminPanelQueueDetail, {
-                    queueName: queue.queueName,
-                  })}
-                />
-              }
-              nativeButton={false}
+              to={getSettingsPath(SettingsPath.AdminPanelQueueDetail, {
+                queueName: queue.queueName,
+              })}
               variant="outline"
-            >{t`View Jobs`}</Button>
+            >{t`View Jobs`}</NavigationButton>
             <Select
               dropdownId={`timerange-${queue.queueName}`}
               value={timeRange}

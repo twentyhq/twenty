@@ -1,6 +1,6 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { BUTTON_LIGHT_CLASS_NAME } from '@/ui/input/styles/ButtonLightClassName';
 
-import { Link as ButtonRouterLink } from 'react-router-dom';
 import { sanitizeMessageToRenderInSnackbar } from '@/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
@@ -70,16 +70,14 @@ export const SnackBar = ({
   const hasAction =
     isDefined(buttonLabel) && (isDefined(buttonOnClick) || isDefined(buttonTo));
   const action = isDefined(buttonTo) ? (
-    <Button
+    <NavigationButton
       className={BUTTON_LIGHT_CLASS_NAME}
-      render={<ButtonRouterLink to={buttonTo} />}
-      nativeButton={false}
-      role="link"
+      to={buttonTo}
       size="sm"
       variant="ghost"
     >
       {buttonLabel}
-    </Button>
+    </NavigationButton>
   ) : (
     <Button
       className={BUTTON_LIGHT_CLASS_NAME}

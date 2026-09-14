@@ -1,5 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
-import { Link as ButtonRouterLink } from 'react-router-dom';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { lazy, Suspense } from 'react';
 
@@ -13,7 +13,6 @@ import { AppPath } from 'twenty-shared/types';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { styled } from '@linaria/react';
-import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AnimatedPlaceholder,
@@ -63,15 +62,13 @@ export const NotFound = () => {
             </AnimatedPlaceholderErrorSubTitle>
           </AnimatedPlaceholderEmptyTextContainer>
           <StyledButtonContainer>
-            <Button
+            <NavigationButton
               className={BUTTON_ACTION_CLASS_NAME}
-              render={<ButtonRouterLink to={AppPath.Index} />}
-              nativeButton={false}
-              role="link"
+              to={AppPath.Index}
               fullWidth
               elevated
               variant="solid"
-            >{t`Back to content`}</Button>
+            >{t`Back to content`}</NavigationButton>
           </StyledButtonContainer>
         </AnimatedPlaceholderErrorContainer>
       </StyledBackDrop>

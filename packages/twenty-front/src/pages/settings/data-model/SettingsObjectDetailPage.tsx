@@ -1,5 +1,6 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useEffect, useState } from 'react';
-import { Link as ButtonRouterLink, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
@@ -34,7 +35,6 @@ import {
   IconPlus,
   IconSettings,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
@@ -166,31 +166,23 @@ export const SettingsObjectDetailPage = () => {
       ]}
       actionButton={
         <>
-          <Button
-            role="link"
+          <NavigationButton
             startIcon={<IconArrowUpRight />}
             size="sm"
-            render={
-              <ButtonRouterLink
-                to={getAppPath(AppPath.RecordIndexPage, {
-                  objectNamePlural: objectMetadataItem.namePlural,
-                })}
-              />
-            }
-            nativeButton={false}
+            to={getAppPath(AppPath.RecordIndexPage, {
+              objectNamePlural: objectMetadataItem.namePlural,
+            })}
             variant="ghost"
-          >{t`See records`}</Button>
+          >{t`See records`}</NavigationButton>
           {!readonly &&
             activeTabId === SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
-              <Button
-                render={<ButtonRouterLink to="./new-field/select" />}
-                nativeButton={false}
-                role="link"
+              <NavigationButton
+                to="./new-field/select"
                 size="sm"
                 startIcon={<IconPlus />}
                 variant="solid"
                 color="accent"
-              >{t`New Field`}</Button>
+              >{t`New Field`}</NavigationButton>
             )}
         </>
       }

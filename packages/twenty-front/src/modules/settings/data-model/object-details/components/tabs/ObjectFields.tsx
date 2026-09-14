@@ -1,4 +1,5 @@
-import { Link as ButtonRouterLink } from 'react-router-dom';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
@@ -11,7 +12,6 @@ import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsObjectFieldTable';
@@ -63,22 +63,16 @@ export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
           />
           <StyledButtonContainer>
             {!readonly && (
-              <Button
-                render={
-                  <ButtonRouterLink
-                    to={getSettingsPath(
-                      SettingsPath.ObjectNewFieldConfigure,
-                      { objectNamePlural: objectMetadataItem.namePlural },
-                      { fieldType: FieldMetadataType.MORPH_RELATION },
-                    )}
-                  />
-                }
-                nativeButton={false}
-                role="link"
+              <NavigationButton
+                to={getSettingsPath(
+                  SettingsPath.ObjectNewFieldConfigure,
+                  { objectNamePlural: objectMetadataItem.namePlural },
+                  { fieldType: FieldMetadataType.MORPH_RELATION },
+                )}
                 startIcon={<IconPlus />}
                 size="sm"
                 variant="outline"
-              >{t`Add relation`}</Button>
+              >{t`Add relation`}</NavigationButton>
             )}
           </StyledButtonContainer>
         </Section>
@@ -95,20 +89,14 @@ export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
         />
         <StyledButtonContainer>
           {!readonly && (
-            <Button
-              render={
-                <ButtonRouterLink
-                  to={getSettingsPath(SettingsPath.ObjectNewFieldSelect, {
-                    objectNamePlural: objectMetadataItem.namePlural,
-                  })}
-                />
-              }
-              nativeButton={false}
-              role="link"
+            <NavigationButton
+              to={getSettingsPath(SettingsPath.ObjectNewFieldSelect, {
+                objectNamePlural: objectMetadataItem.namePlural,
+              })}
               startIcon={<IconPlus />}
               size="sm"
               variant="outline"
-            >{t`Add Field`}</Button>
+            >{t`Add Field`}</NavigationButton>
           )}
         </StyledButtonContainer>
       </Section>

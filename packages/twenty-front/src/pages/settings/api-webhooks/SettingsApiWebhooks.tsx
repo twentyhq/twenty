@@ -1,4 +1,5 @@
-import { Link as ButtonRouterLink } from 'react-router-dom';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
@@ -24,7 +25,6 @@ import {
   IconSparkles,
   IconWebhook,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
@@ -142,18 +142,12 @@ export const SettingsApiWebhooks = () => {
               <StyledTableContainer isMobile={isMobile}>
                 <SettingsApiKeysTable />
                 <StyledButtonContainer>
-                  <Button
-                    role="link"
+                  <NavigationButton
                     startIcon={<IconPlus />}
                     size="sm"
-                    render={
-                      <ButtonRouterLink
-                        to={getSettingsPath(SettingsPath.NewApiKey)}
-                      />
-                    }
-                    nativeButton={false}
+                    to={getSettingsPath(SettingsPath.NewApiKey)}
                     variant="outline"
-                  >{t`Create API key`}</Button>
+                  >{t`Create API key`}</NavigationButton>
                 </StyledButtonContainer>
               </StyledTableContainer>
             </Section>
@@ -176,18 +170,12 @@ export const SettingsApiWebhooks = () => {
               <StyledTableContainer isMobile={isMobile}>
                 <SettingsWebhooksTable />
                 <StyledButtonContainer>
-                  <Button
-                    role="link"
+                  <NavigationButton
                     startIcon={<IconPlus />}
                     size="sm"
-                    render={
-                      <ButtonRouterLink
-                        to={getSettingsPath(SettingsPath.NewWebhook)}
-                      />
-                    }
-                    nativeButton={false}
+                    to={getSettingsPath(SettingsPath.NewWebhook)}
                     variant="outline"
-                  >{t`Create webhook`}</Button>
+                  >{t`Create webhook`}</NavigationButton>
                 </StyledButtonContainer>
               </StyledTableContainer>
             </Section>
