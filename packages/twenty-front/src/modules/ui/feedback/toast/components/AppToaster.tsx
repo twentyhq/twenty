@@ -12,7 +12,7 @@ export const AppToaster = ({ container }: AppToasterProps) => {
     <Toaster
       container={container}
       aria-label={t`Notifications`}
-      getToastProps={(toast) => getLocalizedToastProps(toast, i18n)}
+      getToastProps={(toast) => getLocalizedToastProps({ toast, i18n })}
       style={{ zIndex: RootStackingContextZIndices.Toaster }}
       data-globally-prevent-click-outside
     />

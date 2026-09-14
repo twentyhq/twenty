@@ -13,7 +13,13 @@ const DEFAULT_ARIA_LABEL_BY_VARIANT: Record<
   warning: msg`Warning`,
 };
 
-export const getLocalizedToastProps = (toast: ToastProps, i18n: I18n) => {
+export const getLocalizedToastProps = ({
+  toast,
+  i18n,
+}: {
+  toast: ToastProps;
+  i18n: I18n;
+}) => {
   const iconLabel =
     toast.iconLabel ??
     i18n._(DEFAULT_ARIA_LABEL_BY_VARIANT[toast.variant ?? 'default']);
