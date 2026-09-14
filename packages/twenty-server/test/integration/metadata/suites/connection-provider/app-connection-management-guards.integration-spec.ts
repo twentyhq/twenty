@@ -210,6 +210,16 @@ describe('app connection management guards (e2e)', () => {
     expect(errorMessage).toContain('does not have permission');
   });
 
+  it('refuses a member without the Applications permission to share their own private connection', async () => {
+    const errorMessage = await startAuthorizeAndGetErrorMessage({
+      reconnectingConnectedAccountId: PRIVATE_OF_JONY_ID,
+      visibility: 'workspace',
+      asMember: true,
+    });
+
+    expect(errorMessage).toContain('does not have permission');
+  });
+
   it('lets a member without the Applications permission reconnect their own private connection', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
       reconnectingConnectedAccountId: PRIVATE_OF_JONY_ID,
