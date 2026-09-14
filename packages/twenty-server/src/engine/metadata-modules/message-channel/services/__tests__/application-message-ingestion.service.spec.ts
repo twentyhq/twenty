@@ -57,12 +57,19 @@ describe('ApplicationMessageIngestionService', () => {
 
     channelsService = {
       findOwnedOrThrow: jest.fn().mockResolvedValue({
-        id: MESSAGE_CHANNEL_ID,
-        connectedAccountId: CONNECTED_ACCOUNT_ID,
-        handle: CHANNEL_HANDLE,
-        type: MessageChannelType.APP,
-        isSyncEnabled: true,
-      } as MessageChannelEntity),
+        messageChannel: {
+          id: MESSAGE_CHANNEL_ID,
+          connectedAccountId: CONNECTED_ACCOUNT_ID,
+          handle: CHANNEL_HANDLE,
+          type: MessageChannelType.APP,
+          isSyncEnabled: true,
+        } as MessageChannelEntity,
+        connectedAccount: {
+          id: CONNECTED_ACCOUNT_ID,
+          handle: CHANNEL_HANDLE,
+          handleAliases: [],
+        } as unknown as ConnectedAccountEntity,
+      }),
     } as unknown as jest.Mocked<ApplicationMessageChannelsService>;
 
     saveMessagesService = {
@@ -78,16 +85,6 @@ describe('ApplicationMessageIngestionService', () => {
       providers: [
         ApplicationMessageIngestionService,
         { provide: CacheLockService, useValue: cacheLockService },
-        {
-          provide: getRepositoryToken(ConnectedAccountEntity),
-          useValue: {
-            findOneOrFail: jest.fn().mockResolvedValue({
-              id: CONNECTED_ACCOUNT_ID,
-              handle: CHANNEL_HANDLE,
-              handleAliases: [],
-            } as unknown as ConnectedAccountEntity),
-          },
-        },
         {
           provide: ApplicationMessageChannelsService,
           useValue: channelsService,
@@ -211,12 +208,19 @@ describe('ApplicationMessageIngestionService', () => {
 
   it('refuses to ingest into a paused channel', async () => {
     channelsService.findOwnedOrThrow.mockResolvedValue({
-      id: MESSAGE_CHANNEL_ID,
-      connectedAccountId: CONNECTED_ACCOUNT_ID,
-      handle: CHANNEL_HANDLE,
-      type: MessageChannelType.APP,
-      isSyncEnabled: false,
-    } as MessageChannelEntity);
+      messageChannel: {
+        id: MESSAGE_CHANNEL_ID,
+        connectedAccountId: CONNECTED_ACCOUNT_ID,
+        handle: CHANNEL_HANDLE,
+        type: MessageChannelType.APP,
+        isSyncEnabled: false,
+      } as MessageChannelEntity,
+      connectedAccount: {
+        id: CONNECTED_ACCOUNT_ID,
+        handle: CHANNEL_HANDLE,
+        handleAliases: [],
+      } as unknown as ConnectedAccountEntity,
+    });
 
     await expect(
       service.ingest({ ...scope, messages: [aMessage()] }),

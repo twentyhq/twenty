@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type AppMessageInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 import { type IngestAppMessagesOutput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.output';
 import {
@@ -46,8 +43,6 @@ type IngestArgs = {
 @Injectable()
 export class ApplicationMessageIngestionService {
   constructor(
-    @InjectRepository(ConnectedAccountEntity)
-    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly applicationMessageChannelsService: ApplicationMessageChannelsService,
     private readonly saveMessagesService: MessagingSaveMessagesAndEnqueueContactCreationService,
     private readonly cacheLockService: CacheLockService,
@@ -60,7 +55,7 @@ export class ApplicationMessageIngestionService {
     messageChannelId,
     messages,
   }: IngestArgs): Promise<IngestAppMessagesOutput> {
-    const messageChannel =
+    const { messageChannel, connectedAccount } =
       await this.applicationMessageChannelsService.findOwnedOrThrow({
         applicationId,
         workspaceId,
@@ -77,11 +72,6 @@ export class ApplicationMessageIngestionService {
 
     this.assertEachMessageHasOneSender(messages);
     this.assertExternalIdsAreUnique(messages);
-
-    const connectedAccount =
-      await this.connectedAccountRepository.findOneOrFail({
-        where: { id: messageChannel.connectedAccountId, workspaceId },
-      });
 
     const messagesToSave = messages.map((message) =>
       this.toMessageWithParticipants({
