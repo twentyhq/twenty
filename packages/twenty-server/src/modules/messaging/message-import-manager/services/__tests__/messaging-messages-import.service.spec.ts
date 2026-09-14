@@ -161,6 +161,7 @@ describe('MessagingMessagesImportService', () => {
       expect.objectContaining({
         messageChannelId: mockMessageChannel.id,
         messageExternalId: 'AA-work-emails-internal',
+        messageThreadExternalId: null,
         messageId: null,
         direction: MessageDirection.OUTGOING,
       }),
@@ -211,6 +212,7 @@ describe('MessagingMessagesImportService', () => {
       expect.objectContaining({
         messageChannelId: mockMessageChannel.id,
         messageExternalId: 'AA-work-emails-internal',
+        messageThreadExternalId: null,
         messageId: null,
       }),
     ]);

@@ -258,7 +258,7 @@ export class MessagingMessagesImportService {
                 id: v4(),
                 messageChannelId: messageChannel.id,
                 messageExternalId: message.externalId,
-                messageThreadExternalId: message.messageThreadExternalId,
+                messageThreadExternalId: null,
                 direction: message.direction,
                 messageId: null,
               }));
