@@ -59,7 +59,7 @@ export const SettingsApplicationTableRow = ({
       <TableCell gap={themeCssVariables.spacing[2]} minWidth="0">
         <OverflowingTextWithTooltip text={descriptionSummary} />
         {hasUpdate === true && (
-          <Tag color="blue" text={t`Update`} weight="medium" />
+          <Tag color="blue" weight="medium">{t`Update`}</Tag>
         )}
       </TableCell>
       <TableCell

@@ -6,6 +6,7 @@ import {
   StyledMenuItemBase,
   StyledMenuItemLeftContent,
 } from '@ui/navigation/MenuItem/parts/StyledMenuItemBase';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 type MenuItemMultiSelectTagProps = {
   selected: boolean;
@@ -38,7 +39,9 @@ export const MenuItemMultiSelectTag = ({
           onSelectChange={() => onClick?.()}
           ariaLabel={text}
         />
-        <Tag color={color} text={text} Icon={Icon} />
+        <Tag color={color} startIcon={isDefined(Icon) ? <Icon /> : undefined}>
+          {text}
+        </Tag>
       </StyledMenuItemLeftContent>
     </StyledMenuItemBase>
   );

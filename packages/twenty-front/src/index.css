@@ -1,3 +1,5 @@
+@import './viewport-zoom.css';
+
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
@@ -47,16 +49,6 @@ form {
   /* dnd-kit can reuse the source node as its moving feedback. In that case,
      feedback opacity must win over the source fade applied by the component. */
   opacity: var(--dnd-drag-feedback-opacity) !important;
-  /* dnd-kit positions and sizes the feedback from visual-viewport pixel
-     measurements, so inside the zoomed root those inline values would be
-     multiplied a second time. The inverse zoom makes them render one to one,
-     and the child rule restores the interface scale for the dragged content
-     so it keeps matching the rest of the page. */
-  zoom: calc(1 / var(--t-zoom, 1));
-}
-
-[data-dnd-dragging='true'] > * {
-  zoom: var(--t-zoom, 1);
 }
 
 /* https://stackoverflow.com/questions/44543157/how-to-hide-the-google-invisible-recaptcha-badge */

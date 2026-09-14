@@ -36,11 +36,9 @@ export const RecordGroupAggregateDropdownButton = ({
       <StyledHeaderDropdownButton id={dropdownId} isUnfolded={isDropdownOpen}>
         <>
           <StyledTagContainer>
-            <Tag
-              text={isDefined(value) ? value.toString() : '-'}
-              color="transparent"
-              weight="regular"
-            />
+            <Tag color="transparent" weight="regular">
+              {isDefined(value) ? value.toString() : '-'}
+            </Tag>
           </StyledTagContainer>
           {!isDropdownOpen && (
             <AppTooltip

@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Loader } from 'twenty-ui/feedback';
-import { CardPicker, MainButton } from 'twenty-ui/input';
+import { CardPicker, MainButton, RadioGroup } from 'twenty-ui/input';
 import { ModalContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -163,26 +163,25 @@ export const EnterprisePlanModal = () => {
           </StyledBenefitsContainer>
         </StyledSubscriptionContainer>
 
-        <StyledIntervalContainer>
-          <CardPicker
-            checked={selectedInterval === 'monthly'}
-            handleChange={() => setSelectedInterval('monthly')}
-          >
+        <RadioGroup
+          render={<StyledIntervalContainer />}
+          aria-label={t`Billing interval`}
+          value={selectedInterval}
+          onValueChange={setSelectedInterval}
+        >
+          <CardPicker value="monthly">
             <StyledIntervalCardContent>
               <StyledIntervalTitle>{t`Monthly`}</StyledIntervalTitle>
               <StyledIntervalSubtitle>{`$${MONTHLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
             </StyledIntervalCardContent>
           </CardPicker>
-          <CardPicker
-            checked={selectedInterval === 'yearly'}
-            handleChange={() => setSelectedInterval('yearly')}
-          >
+          <CardPicker value="yearly">
             <StyledIntervalCardContent>
               <StyledIntervalTitle>{t`Yearly`}</StyledIntervalTitle>
               <StyledIntervalSubtitle>{`$${YEARLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
             </StyledIntervalCardContent>
           </CardPicker>
-        </StyledIntervalContainer>
+        </RadioGroup>
 
         <MainButton
           title={t`Continue`}

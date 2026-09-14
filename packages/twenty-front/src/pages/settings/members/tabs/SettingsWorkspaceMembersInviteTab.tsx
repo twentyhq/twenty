@@ -199,10 +199,9 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                       </StyledTextContainerWithEllipsis>
                     </TableCell>
                     <TableCell align="center">
-                      <Status
-                        color="gray"
-                        text={getExpiresAtText(workspaceInvitation.expiresAt)}
-                      />
+                      <Status color="gray">
+                        {getExpiresAtText(workspaceInvitation.expiresAt)}
+                      </Status>
                     </TableCell>
                     <TableCell align="right">
                       <StyledButtonContainer>

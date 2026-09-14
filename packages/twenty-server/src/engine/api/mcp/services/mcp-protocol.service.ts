@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { type ToolSet, zodSchema } from 'ai';
-import { isDefined } from 'twenty-shared/utils';
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
 import { MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-closed-world-read-only-tool-annotations.const';
@@ -55,8 +55,8 @@ import {
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type McpAnnotatedTool = ToolSet[string] & {
   annotations: McpToolAnnotations;
@@ -98,9 +98,15 @@ export class McpProtocolService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async handleInitialize(requestId: string | number, workspaceId: string) {
+  async handleInitialize(
+    requestId: string | number,
+    { workspaceId, roleId }: { workspaceId: string; roleId: string },
+  ) {
     const instructions =
-      await this.mcpInstructionBuilderService.buildInstructions(workspaceId);
+      await this.mcpInstructionBuilderService.buildInstructions({
+        workspaceId,
+        roleId,
+      });
 
     return wrapJsonRpcResponse(requestId, {
       result: {
@@ -300,7 +306,10 @@ export class McpProtocolService {
       }
 
       if (method === 'initialize') {
-        return this.handleInitialize(id, workspace.id);
+        return this.handleInitialize(id, {
+          workspaceId: workspace.id,
+          roleId: await this.getRoleId(workspace.id, userWorkspaceId, apiKey),
+        });
       }
 
       if (method === 'ping') {

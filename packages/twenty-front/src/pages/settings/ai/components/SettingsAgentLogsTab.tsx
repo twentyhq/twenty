@@ -212,11 +212,10 @@ export const SettingsAgentLogsTab = ({
                 {latestEvaluation ? (
                   <Status
                     color={getScoreColor(latestEvaluation.score)}
-                    text={`${latestEvaluation.score}`}
-                  />
+                  >{`${latestEvaluation.score}`}</Status>
                 ) : evaluatingTurnIds.has(turn.id) ||
                   backgroundEvaluatingTurnIds.has(turn.id) ? (
-                  <Status color="blue" text={t`Evaluating`} isLoaderVisible />
+                  <Status color="blue" loading>{t`Evaluating`}</Status>
                 ) : (
                   <Button
                     size="small"

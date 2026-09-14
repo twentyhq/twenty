@@ -64,10 +64,12 @@ const resolveObject = (
   );
 };
 
+// Returns the resolved value itself when the whole string is one variable, so
+// `{{step.amount}}` keeps its type instead of being stringified
 const resolveString = (
   input: string,
   context: Record<string, unknown>,
-): string => {
+): unknown => {
   const matchedTokens = input.match(VARIABLE_PATTERN);
 
   if (!matchedTokens || matchedTokens.length === 0) {
@@ -85,6 +87,6 @@ const resolveString = (
       return JSON.stringify(processedToken);
     }
 
-    return processedToken;
+    return String(processedToken);
   });
 };

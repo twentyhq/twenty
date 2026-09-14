@@ -70,7 +70,7 @@ export const CoreWorkflowVersionsListItem = ({
             day: 'numeric',
           })}
         </StyledDate>
-        <Tag color={tagProps.color} text={t(tagProps.label)} />
+        <Tag color={tagProps.color}>{t(tagProps.label)}</Tag>
       </StyledRow>
     </SelectableListItem>
   );

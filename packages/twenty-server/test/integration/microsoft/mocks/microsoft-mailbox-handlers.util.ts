@@ -8,6 +8,7 @@ import { type MockEntityStore } from 'test/integration/utils/mock-entity-store.u
 export const microsoftMailboxHandlers = (
   folderStore: MockEntityStore<MailFolder>,
   messages: Array<Record<string, unknown>> = [],
+  removedMessageIdsByFolderId: Record<string, string[]> = {},
 ): MswHandler[] => [
   http.get('*/me/mailFolders', () =>
     HttpResponse.json<{ value: MailFolder[] }>({ value: folderStore.list() }),
@@ -33,9 +34,17 @@ export const microsoftMailboxHandlers = (
             id,
             status: 200,
             body: {
-              value: messages
-                .filter((message) => message.parentFolderId === folderId)
-                .map((message) => ({ id: message.id })),
+              value: [
+                ...messages
+                  .filter((message) => message.parentFolderId === folderId)
+                  .map((message) => ({ id: message.id })),
+                ...(removedMessageIdsByFolderId[folderId ?? ''] ?? []).map(
+                  (removedMessageId) => ({
+                    id: removedMessageId,
+                    '@removed': { reason: 'deleted' },
+                  }),
+                ),
+              ],
               '@odata.deltaLink': `https://graph.microsoft.com/beta${url}`,
             },
           };
