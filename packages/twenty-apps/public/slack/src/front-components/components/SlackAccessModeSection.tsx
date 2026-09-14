@@ -62,8 +62,6 @@ const StyledDescription = styled.div`
   overflow: hidden;
 `;
 
-// Makes the whole row act as the switch's label without nesting the button
-// inside it, which would swallow its own click.
 const StyledCover = styled.span`
   cursor: pointer;
   inset: 0;

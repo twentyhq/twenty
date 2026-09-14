@@ -26,15 +26,10 @@ export const resolveSlackAccessDecision = async ({
     return { status: 'ALLOWED' };
   }
 
-  // Run-as already proves a linked member when it is set; it is only empty for
-  // requests not eligible for impersonation, so access falls back to the
-  // narrower question of whether this Slack account is linked at all.
   if (isNonEmptyString(runAsWorkspaceMemberId)) {
     return { status: 'ALLOWED' };
   }
 
-  // Nothing can establish that an account is unlinked when there is no account
-  // to look up, so this reports unverifiable rather than denying.
   if (!isDefined(slackClient) || !isDefined(identity)) {
     return { status: 'UNVERIFIABLE' };
   }

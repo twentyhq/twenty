@@ -8,8 +8,6 @@ export const slackAccessModeGetHandler = async (): Promise<{
 }> => {
   const result = await readSlackAccessMode();
 
-  // The settings tab must be able to tell a stored setting from the fallback
-  // enforcement uses, so the read outcome travels with the value.
   return result.status === 'READ'
     ? { accessMode: result.accessMode, isAccessModeReadable: true }
     : {

@@ -134,9 +134,6 @@ export const slackAssistantWorkerHandler = async (
       runAsWorkspaceMemberId,
     });
 
-    // Unverifiable is not the same as unlinked: fail the request so the user is
-    // told the check could not be made, rather than told to link an account
-    // that may already be linked.
     if (accessDecision.status === 'UNVERIFIABLE') {
       await stopStatusUpdates();
 

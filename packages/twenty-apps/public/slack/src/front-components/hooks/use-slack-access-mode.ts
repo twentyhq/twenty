@@ -53,8 +53,6 @@ export const useSlackAccessMode = (): SlackAccessModeState => {
         if (!cancelled) {
           const record = asRecord(result);
 
-          // The route answers with the enforced fallback when its own read
-          // failed, so a 200 is not by itself proof of a stored setting.
           const readAccessMode = record?.accessMode;
 
           if (isSlackAccessMode(readAccessMode)) {
@@ -67,8 +65,6 @@ export const useSlackAccessMode = (): SlackAccessModeState => {
           );
         }
       } catch {
-        // Neither position is honest when the stored mode could not be read,
-        // so the caller is told to stop presenting the toggle as current.
         if (!cancelled) {
           setHasAccessModeError(true);
         }
