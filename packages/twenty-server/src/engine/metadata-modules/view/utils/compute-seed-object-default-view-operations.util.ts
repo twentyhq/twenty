@@ -112,6 +112,13 @@ export const computeSeedObjectDefaultViewOperations = ({
     const existingSeededFlatView =
       flatViewMaps.byUniversalIdentifier[seededViewUniversalIdentifier];
 
+    if (
+      isDefined(existingSeededFlatView) &&
+      isDefined(existingSeededFlatView.deletedAt)
+    ) {
+      continue;
+    }
+
     const existingSeededViewFieldUniversalIdentifiers = new Set(
       existingSeededFlatView?.viewFieldUniversalIdentifiers ?? [],
     );

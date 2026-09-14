@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { ViewType, ViewVisibility } from 'twenty-shared/types';
+import { FeatureFlagKey, ViewType, ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { HiddenSeededViewService } from 'src/engine/metadata-modules/view/services/hidden-seeded-view.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { isSeededObjectView } from 'src/engine/metadata-modules/view/utils/is-seeded-object-view.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -45,7 +46,7 @@ export class ViewService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly hiddenSeededViewService: HiddenSeededViewService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async createOne({
@@ -414,8 +415,9 @@ export class ViewService {
         },
       );
 
-    const hiddenSeededViewUniversalIdentifiers =
-      await this.hiddenSeededViewService.getHiddenSeededViewUniversalIdentifiers(
+    const isSeededDefaultViewEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
         workspaceId,
       );
 
@@ -423,9 +425,7 @@ export class ViewService {
       .filter(isDefined)
       .filter(
         (flatView) =>
-          !hiddenSeededViewUniversalIdentifiers.has(
-            flatView.universalIdentifier,
-          ),
+          isSeededDefaultViewEnabled || !isSeededObjectView(flatView),
       )
       .filter((flatView) => flatView.workspaceId === workspaceId)
       .filter(

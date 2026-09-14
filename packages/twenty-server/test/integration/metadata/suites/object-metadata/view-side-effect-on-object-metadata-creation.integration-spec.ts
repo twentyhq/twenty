@@ -115,6 +115,7 @@ describe('View side effect on object creation', () => {
       type: ViewType.TABLE,
     });
 
+    expect(createdViews.length).toBe(2);
     expect(findSeededViews(createdViews)).toHaveLength(0);
 
     const {

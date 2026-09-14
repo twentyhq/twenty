@@ -456,7 +456,6 @@ export class ObjectMetadataService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             resolvedOwnerFlatApplication.universalIdentifier,
-          isWorkspaceCustomApplicationBuild,
         },
       );
 
