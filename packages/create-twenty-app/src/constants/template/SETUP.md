@@ -16,18 +16,8 @@ Follow these steps to get your app running locally.
    yarn install
    ```
 
-   This project ships a `yarn.lock` pinning every dependency to an exact,
-   integrity-checked version, so nothing is resolved from the registry on this
-   first install.
-
-   If you enforce a minimum release age and would rather your own policy chose
-   the versions, delete `yarn.lock` first — but expect to wait. Deleting it
-   resolves the whole tree from scratch, and the `twenty-sdk`, `twenty-client-sdk`
-   and `twenty-ui` pins above are the exact versions released alongside this
-   scaffolder, so until each is older than your configured gate the install stops
-   with `YN0016: All versions satisfying "…" are quarantined`. Either wait for
-   them to age past it, or waive the gate for just those three in `.yarnrc.yml`
-   via `npmPreapprovedPackages`.
+   The committed `yarn.lock` pins exact, integrity-checked versions, so this
+   resolves nothing from the registry.
 
 2. Start the local Twenty server:
 
