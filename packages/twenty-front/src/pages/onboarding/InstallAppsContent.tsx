@@ -160,11 +160,11 @@ export const InstallAppsContent = ({
               return (
                 <StyledAppRow key={app.universalIdentifier}>
                   <Avatar
-                    avatarUrl={getAbsoluteImageUrl(app.logoUrl)}
-                    placeholder={labelText}
-                    placeholderColorSeed={app.universalIdentifier}
+                    src={getAbsoluteImageUrl(app.logoUrl)}
+                    name={labelText}
+                    colorSeed={app.universalIdentifier}
                     size="lg"
-                    type="squared"
+                    shape="square"
                   />
                   <StyledAppText>
                     <StyledAppLabel>{labelText}</StyledAppLabel>

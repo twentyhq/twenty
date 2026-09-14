@@ -2,6 +2,9 @@ import { buildObjectMetadataLabelPlaceholderValues } from 'twenty-shared/i18n';
 
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 
+const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '20202020-aaaa-4aaa-8aaa-000000000001';
+
 const mockI18n = {
   _: (id: string) => (id === 'known-id' ? 'Toutes les entreprises' : id),
 };
@@ -17,6 +20,9 @@ const buildContext = ({
   i18nInstance: mockI18n,
   isStandardApp,
   applicationCatalog,
+  workspaceCustomApplicationUniversalIdentifier:
+    WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+  ownerApplicationUniversalIdentifier: undefined,
 });
 
 describe('resolveViewName', () => {
@@ -79,7 +85,14 @@ describe('resolveViewName', () => {
   it('prefers a workspace override over the catalog', () => {
     expect(
       resolveViewName({
-        view: { name: 'Renamed', overrides: { name: 'Renamed' } },
+        view: {
+          name: 'Renamed',
+          overrides: {
+            [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+              name: 'Renamed',
+            },
+          },
+        },
         i18nContext: buildContext(),
       }),
     ).toBe('Renamed');

@@ -15,6 +15,7 @@ import {
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
+import { resolveEffectiveUniversalFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity-property.util';
 
 @Injectable()
 export class ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -94,7 +95,11 @@ export class ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService exte
       .filter(isDefined)
       .filter(
         (flatViewField) =>
-          flatViewField.isActive && !isDefined(flatViewField.deletedAt),
+          resolveEffectiveUniversalFlatEntityProperty({
+            metadataName: 'viewField',
+            universalFlatEntity: flatViewField,
+            property: 'isActive',
+          }) && !isDefined(flatViewField.deletedAt),
       ) as UniversalFlatViewField[];
 
     const labelIdentifierFlatViewField = indexFlatViewFields.find(

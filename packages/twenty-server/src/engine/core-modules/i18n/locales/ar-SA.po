@@ -7098,6 +7098,11 @@ msgstr "لم يتم العثور على معرّف للبحث به."
 msgid "No input provided in form step"
 msgstr "لم يتم تقديم إدخال في خطوة النموذج"
 
+#. js-lingui-id: jNd9S2
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "No mailbox is connected for this action. Connect one in Settings."
+msgstr "لا توجد علبة بريد متصلة لهذا الإجراء. صِل واحدة في الإعدادات."
+
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No pattern provided in CUSTOM cron trigger"
@@ -7749,6 +7754,11 @@ msgstr "موقع سجل الفرصة"
 msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
 msgstr "مرحلة الفرصة"
+
+#. js-lingui-id: znHKeT
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
+msgid "Option \"{optionLabel}\" has an unsupported color"
+msgstr "يحتوي الخيار \"{optionLabel}\" على لون غير مدعوم"
 
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -10775,6 +10785,11 @@ msgstr "لا يمكن إزالة هذا العنوان من قائمة الحظ�
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "تم إلغاء صلاحية مفتاح API هذا ولم يعد قابلًا للاستخدام."
 
+#. js-lingui-id: SbhNwj
+#: src/engine/core-modules/api-key/services/api-key.service.ts
+msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
+msgstr "تم إلغاء مفتاح API هذا ولا يمكن إعادة تفعيله. يُرجى إنشاء مفتاح API جديد."
+
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has been revoked."
@@ -10846,6 +10861,11 @@ msgstr "محتوى البريد الإلكتروني لهذه الحملة غي�
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
 msgstr "هذا العمود معلَّم بالفعل كفريد. عطِّل خيار \"Unique\" للحقل أولاً إذا كنت تريد إدارة القيد هنا."
+
+#. js-lingui-id: /abJpu
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "This connected account cannot be used for this action."
+msgstr "لا يمكن استخدام هذا الحساب المتصل لهذا الإجراء."
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts

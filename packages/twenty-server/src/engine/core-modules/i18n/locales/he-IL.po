@@ -7098,6 +7098,11 @@ msgstr "לא נמצא מזהה לחיפוש."
 msgid "No input provided in form step"
 msgstr "לא סופק קלט בשלב הטופס."
 
+#. js-lingui-id: jNd9S2
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "No mailbox is connected for this action. Connect one in Settings."
+msgstr "לא מחוברת תיבת דואר עבור פעולה זו. חבר אחת בהגדרות."
+
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No pattern provided in CUSTOM cron trigger"
@@ -7749,6 +7754,11 @@ msgstr "מיקום רישום ההזדמנות"
 msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
 msgstr "שלב ההזדמנות"
+
+#. js-lingui-id: znHKeT
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
+msgid "Option \"{optionLabel}\" has an unsupported color"
+msgstr "לאפשרות \"{optionLabel}\" יש צבע שאינו נתמך"
 
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -10775,6 +10785,11 @@ msgstr "לא ניתן להסיר כתובת זו מרשימת הדיכוי."
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "מפתח ה-API הזה בוטל ולא ניתן להשתמש בו עוד."
 
+#. js-lingui-id: SbhNwj
+#: src/engine/core-modules/api-key/services/api-key.service.ts
+msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
+msgstr "מפתח API זה בוטל ולא ניתן להפעילו מחדש. נא ליצור מפתח API חדש."
+
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has been revoked."
@@ -10846,6 +10861,11 @@ msgstr "תוכן האימייל של הקמפיין הזה אינו תקין."
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
 msgstr "עמודה זו כבר מסומנת כייחודית. כבה קודם את אפשרות \"Unique\" של השדה אם ברצונך לנהל את האילוץ כאן."
+
+#. js-lingui-id: /abJpu
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "This connected account cannot be used for this action."
+msgstr "לא ניתן להשתמש בחשבון המחובר הזה עבור פעולה זו."
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts

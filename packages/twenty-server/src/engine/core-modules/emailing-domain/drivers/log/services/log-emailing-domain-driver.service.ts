@@ -161,6 +161,7 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
 
     return {
       messageId,
+      headerMessageId: null,
       deliveredRecipients: {
         to: emailToSend.to,
         cc: emailToSend.cc ?? [],
@@ -205,7 +206,12 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
             }`,
         );
 
-        return { recipientIndex: index, messageId, errorMessage: null };
+        return {
+          recipientIndex: index,
+          messageId,
+          headerMessageId: null,
+          errorMessage: null,
+        };
       }),
     };
   }
