@@ -15,9 +15,5 @@ export const getSafeScaleForCurrencyInput = ({
 }: GetSafeScaleForCurrencyInputParams): number => {
   const decimalPart = UNMASKED_VALUE_PATTERN.exec(value)?.[1];
 
-  return Math.max(
-    CURRENCY_INPUT_MAX_SCALE,
-    decimals,
-    decimalPart?.length ?? 0,
-  );
+  return Math.max(CURRENCY_INPUT_MAX_SCALE, decimals, decimalPart?.length ?? 0);
 };
