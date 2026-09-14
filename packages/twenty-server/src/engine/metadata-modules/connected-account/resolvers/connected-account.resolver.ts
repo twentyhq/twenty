@@ -15,6 +15,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { ApplicationConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/application-connected-account.dto';
 import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
 import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
 import { ConnectedAccountGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/connected-account/interceptors/connected-account-graphql-api-exception.interceptor';
@@ -43,14 +44,14 @@ export class ConnectedAccountResolver {
     return accounts.map((account) => buildPublicConnectedAccount(account));
   }
 
-  @Query(() => [ConnectedAccountPublicDTO])
+  @Query(() => [ApplicationConnectedAccountDTO])
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async applicationConnectedAccounts(
     @Args('applicationId', { type: () => UUIDScalarType })
     applicationId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-  ): Promise<ConnectedAccountPublicDTO[]> {
+  ): Promise<ApplicationConnectedAccountDTO[]> {
     const accounts =
       await this.connectedAccountMetadataService.findApplicationConnectedAccountsUsableByCaller(
         {
@@ -60,7 +61,10 @@ export class ConnectedAccountResolver {
         },
       );
 
-    return accounts.map((account) => buildPublicConnectedAccount(account));
+    return accounts.map((account) => ({
+      ...buildPublicConnectedAccount(account),
+      isOwnedByCurrentUser: account.userWorkspaceId === userWorkspaceId,
+    }));
   }
 
   @Mutation(() => ConnectedAccountPublicDTO)

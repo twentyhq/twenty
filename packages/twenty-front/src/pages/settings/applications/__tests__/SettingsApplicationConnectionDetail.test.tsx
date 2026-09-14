@@ -138,7 +138,7 @@ describe('SettingsApplicationConnectionDetail', () => {
     mockedUseApplicationConnectedAccounts.mockReturnValue({
       accounts: [
         {
-          __typename: 'ConnectedAccountPublicDTO',
+          __typename: 'ApplicationConnectedAccountDTO',
           id: 'account-1',
           handle: 'workspace@example.com',
           authFailedAt: null,
@@ -189,7 +189,7 @@ describe('SettingsApplicationConnectionDetail', () => {
     mockedUseApplicationConnectedAccounts.mockReturnValue({
       accounts: [
         {
-          __typename: 'ConnectedAccountPublicDTO',
+          __typename: 'ApplicationConnectedAccountDTO',
           id: 'account-1',
           handle: 'workspace@example.com',
           authFailedAt: '2026-05-01T00:00:00.000Z',
