@@ -7101,7 +7101,7 @@ msgstr "Aucune entrée fournie dans l'étape de formulaire"
 #. js-lingui-id: jNd9S2
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "No mailbox is connected for this action. Connect one in Settings."
-msgstr ""
+msgstr "Aucune boîte mail n’est connectée pour cette action. Connectez-en une dans les paramètres."
 
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -10855,7 +10855,7 @@ msgstr "Cette colonne est déjà marquée comme unique. Désactivez d'abord l'op
 #. js-lingui-id: /abJpu
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "This connected account cannot be used for this action."
-msgstr ""
+msgstr "Ce compte connecté ne peut pas être utilisé pour cette action."
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts

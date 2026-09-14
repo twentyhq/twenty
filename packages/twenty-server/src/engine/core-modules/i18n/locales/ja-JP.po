@@ -7101,7 +7101,7 @@ msgstr "フォームステップに入力が提供されていません"
 #. js-lingui-id: jNd9S2
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "No mailbox is connected for this action. Connect one in Settings."
-msgstr ""
+msgstr "このアクションに接続されているメールボックスはありません。設定でメールボックスを接続してください。"
 
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -10855,7 +10855,7 @@ msgstr "このカラムはすでに一意としてマークされています。
 #. js-lingui-id: /abJpu
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "This connected account cannot be used for this action."
-msgstr ""
+msgstr "この接続済みアカウントは、このアクションには使用できません。"
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts

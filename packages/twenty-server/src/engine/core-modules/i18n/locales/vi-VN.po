@@ -7101,7 +7101,7 @@ msgstr "Không có đầu vào nào được cung cấp trong bước biểu m�
 #. js-lingui-id: jNd9S2
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "No mailbox is connected for this action. Connect one in Settings."
-msgstr ""
+msgstr "Không có hộp thư nào được kết nối cho thao tác này. Hãy kết nối một hộp thư trong Cài đặt."
 
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -10855,7 +10855,7 @@ msgstr "Cột này đã được đánh dấu là duy nhất. Hãy tắt \"Uniqu
 #. js-lingui-id: /abJpu
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "This connected account cannot be used for this action."
-msgstr ""
+msgstr "Tài khoản đã kết nối này không thể được sử dụng cho thao tác này."
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts

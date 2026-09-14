@@ -7101,7 +7101,7 @@ msgstr "Није унет унос у корак формулара"
 #. js-lingui-id: jNd9S2
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "No mailbox is connected for this action. Connect one in Settings."
-msgstr ""
+msgstr "Ниједно поштанско сандуче није повезано за ову радњу. Повежите га у Подешавањима."
 
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -10855,7 +10855,7 @@ msgstr "Ова колона је већ означена као јединств
 #. js-lingui-id: /abJpu
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "This connected account cannot be used for this action."
-msgstr ""
+msgstr "Овај повезани налог се не може користити за ову радњу."
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts

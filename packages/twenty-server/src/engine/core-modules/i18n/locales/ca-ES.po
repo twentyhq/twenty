@@ -7101,7 +7101,7 @@ msgstr "No s'ha proporcionat cap entrada en el pas del formulari"
 #. js-lingui-id: jNd9S2
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "No mailbox is connected for this action. Connect one in Settings."
-msgstr ""
+msgstr "No hi ha cap bústia de correu connectada per a aquesta acció. Connecteu-ne una a Configuració."
 
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -10855,7 +10855,7 @@ msgstr "Aquesta columna ja està marcada com a única. Desactiva primer el \"Uni
 #. js-lingui-id: /abJpu
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "This connected account cannot be used for this action."
-msgstr ""
+msgstr "Aquest compte connectat no es pot utilitzar per a aquesta acció."
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
