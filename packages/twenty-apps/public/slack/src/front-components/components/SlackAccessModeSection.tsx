@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
-import { Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
+import { Toggle } from 'src/front-components/components/Toggle';
 import { useSlackAccessMode } from 'src/front-components/hooks/use-slack-access-mode';
 import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
 
@@ -79,7 +79,7 @@ export const SlackAccessModeSection = ({
           </StyledDescription>
         </StyledLabel>
         <Toggle
-          value={isRestricted}
+          checked={isRestricted}
           onChange={handleToggle}
           disabled={
             !canManage ||
@@ -87,7 +87,7 @@ export const SlackAccessModeSection = ({
             isAccessModeLoading ||
             isSavingAccessMode
           }
-          aria-label="Restrict the assistant to linked members"
+          ariaLabel="Restrict the assistant to linked members"
         />
       </StyledRow>
     </Section>
