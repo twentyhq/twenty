@@ -63,12 +63,12 @@ describe('computeSchemaComponents', () => {
     };
 
     expect(
-  computeSchemaComponents(
-    [flatObjectMetadata],
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps
-  )
-).toMatchInlineSnapshot(`
+      computeSchemaComponents(
+        [flatObjectMetadata],
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      ),
+    ).toMatchInlineSnapshot(`
 {
   "ObjectName": {
     "description": "Object description",
