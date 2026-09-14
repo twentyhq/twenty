@@ -20,9 +20,12 @@ type SaveAccessModeResult = {
 
 type SlackAccessModeState = {
   accessMode: SlackAccessMode;
+  hasAccessModeError: boolean;
   isAccessModeLoading: boolean;
   isSavingAccessMode: boolean;
-  saveAccessMode: (accessMode: SlackAccessMode) => Promise<SaveAccessModeResult>;
+  saveAccessMode: (
+    accessMode: SlackAccessMode,
+  ) => Promise<SaveAccessModeResult>;
 };
 
 const GENERIC_ERROR_RESULT: SaveAccessModeResult = {
@@ -40,6 +43,7 @@ export const useSlackAccessMode = (): SlackAccessModeState => {
   const [accessMode, setAccessMode] = useState<SlackAccessMode>(
     SLACK_ACCESS_MODE.ANYONE,
   );
+  const [hasAccessModeError, setHasAccessModeError] = useState(false);
   const [isAccessModeLoading, setIsAccessModeLoading] = useState(true);
   const [isSavingAccessMode, setIsSavingAccessMode] = useState(false);
 
@@ -54,9 +58,14 @@ export const useSlackAccessMode = (): SlackAccessModeState => {
 
         if (!cancelled) {
           setAccessMode(toAccessMode(asRecord(result)?.accessMode));
+          setHasAccessModeError(false);
         }
       } catch {
-        // Leave the default ANYONE when the read fails.
+        // Neither position is honest when the stored mode could not be read,
+        // so the caller is told to stop presenting the toggle as current.
+        if (!cancelled) {
+          setHasAccessModeError(true);
+        }
       } finally {
         if (!cancelled) {
           setIsAccessModeLoading(false);
@@ -90,6 +99,7 @@ export const useSlackAccessMode = (): SlackAccessModeState => {
 
       if (record.success) {
         setAccessMode(nextAccessMode);
+        setHasAccessModeError(false);
       }
 
       return {
@@ -106,6 +116,7 @@ export const useSlackAccessMode = (): SlackAccessModeState => {
 
   return {
     accessMode,
+    hasAccessModeError,
     isAccessModeLoading,
     isSavingAccessMode,
     saveAccessMode,

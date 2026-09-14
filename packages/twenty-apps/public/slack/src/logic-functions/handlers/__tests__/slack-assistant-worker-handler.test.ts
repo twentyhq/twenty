@@ -283,6 +283,31 @@ describe('slackAssistantWorkerHandler', () => {
     );
   });
 
+  it('should fail rather than deny when the record names no Slack user', async () => {
+    getSlackAccessModeMock.mockResolvedValue(
+      SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
+    );
+    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
+    fetchSlackAssistantContextMock.mockImplementation(async () => {
+      callLog.push('context:fetch');
+
+      return { ...SLACK_CONTEXT, slackClient: {} };
+    });
+
+    const result = await slackAssistantWorkerHandler({
+      ...REQUEST_RECORD,
+      slackUserId: '',
+    });
+
+    expect(result).toEqual(expect.objectContaining({ failed: true }));
+    expect(resolveSlackLinkageMock).not.toHaveBeenCalled();
+    expect(sendSlackMessageMock).not.toHaveBeenCalled();
+    expect(updateSlackAssistantRequestMock).not.toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ responseText: SLACK_ACCESS_DENIED_TEXT }),
+    );
+  });
+
   it('should fail rather than deny when the linkage lookup itself fails', async () => {
     getSlackAccessModeMock.mockResolvedValue(
       SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,

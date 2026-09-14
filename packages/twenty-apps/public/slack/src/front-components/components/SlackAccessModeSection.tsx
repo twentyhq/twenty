@@ -44,6 +44,7 @@ export const SlackAccessModeSection = ({
 }: SlackAccessModeSectionProps) => {
   const {
     accessMode,
+    hasAccessModeError,
     isAccessModeLoading,
     isSavingAccessMode,
     saveAccessMode,
@@ -53,9 +54,7 @@ export const SlackAccessModeSection = ({
 
   const handleToggle = async (value: boolean) => {
     const result = await saveAccessMode(
-      value
-        ? SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS
-        : SLACK_ACCESS_MODE.ANYONE,
+      value ? SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS : SLACK_ACCESS_MODE.ANYONE,
     );
 
     enqueueSnackbar({
@@ -74,14 +73,20 @@ export const SlackAccessModeSection = ({
         <StyledLabel>
           <StyledTitle>Restrict to linked members</StyledTitle>
           <StyledDescription>
-            When on, only Slack accounts linked to a workspace member can use
-            the assistant. Anyone else is asked to have an admin link them.
+            {hasAccessModeError
+              ? 'The current setting could not be loaded, so this toggle is not showing it. Reload to try again.'
+              : 'When on, only Slack accounts linked to a workspace member can use the assistant. Anyone else is asked to have an admin link them.'}
           </StyledDescription>
         </StyledLabel>
         <Toggle
           value={isRestricted}
           onChange={handleToggle}
-          disabled={!canManage || isAccessModeLoading || isSavingAccessMode}
+          disabled={
+            !canManage ||
+            hasAccessModeError ||
+            isAccessModeLoading ||
+            isSavingAccessMode
+          }
           aria-label="Restrict the assistant to linked members"
         />
       </StyledRow>
