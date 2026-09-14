@@ -10785,6 +10785,11 @@ msgstr "Ez a cím nem távolítható el a tiltólistáról."
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "Ez az API kulcs visszavonásra került és már nem használható."
 
+#. js-lingui-id: SbhNwj
+#: src/engine/core-modules/api-key/services/api-key.service.ts
+msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
+msgstr "Ez az API-kulcs vissza lett vonva, és nem aktiválható újra. Hozzon létre egy új API-kulcsot."
+
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has been revoked."
