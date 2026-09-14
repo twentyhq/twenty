@@ -83,6 +83,17 @@ describe('install', () => {
     );
   });
 
+  it('says how to recover, since the scaffolded project itself is intact', async () => {
+    mockCommands({
+      'yarn install': { fails: true, stdout: 'YN0001: Something exploded' },
+    });
+
+    const message = await installAndCatch();
+
+    expect(message).toContain('YN0001: Something exploded');
+    expect(message).toContain('run `yarn install` there');
+  });
+
   it('names the packages the gate actually quarantined', async () => {
     mockCommands({
       'yarn install': {

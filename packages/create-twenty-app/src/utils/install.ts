@@ -88,7 +88,15 @@ export const install = async (
     throw new Error(
       quarantinedPackages.length > 0
         ? buildQuarantineMessage(root, quarantinedPackages)
-        : `Dependency installation failed in ${root}:\n\n${tail(output)}`,
+        : [
+            `Dependency installation failed in ${root}:`,
+            '',
+            tail(output),
+            '',
+            // The project itself is intact: package.json carries its real name and
+            // the lockfile is the shipped one, which a plain install reconciles.
+            'The project was created. Fix the problem above and run `yarn install` there.',
+          ].join('\n'),
     );
   }
 };
