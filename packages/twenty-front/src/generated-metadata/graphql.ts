@@ -1225,6 +1225,13 @@ export type CreateApiKeyInput = {
   roleId: Scalars['UUID']['input'];
 };
 
+export type CreateAppMessageChannelInput = {
+  connectedAccountId: Scalars['UUID']['input'];
+  displayName?: InputMaybe<Scalars['String']['input']>;
+  handle: Scalars['String']['input'];
+  visibility: MessageChannelVisibility;
+};
+
 export type CreateApplicationFileUploadsResult = {
   __typename?: 'CreateApplicationFileUploadsResult';
   errors: Array<ApplicationFileUploadError>;
@@ -2497,6 +2504,10 @@ export type ListAppConnectionsInput = {
   visibility?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type ListAppMessageChannelsInput = {
+  connectedAccountId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
 export type Location = {
   __typename?: 'Location';
   lat?: Maybe<Scalars['Float']['output']>;
@@ -2719,6 +2730,7 @@ export enum MessageChannelSyncStatus {
 }
 
 export enum MessageChannelType {
+  APP = 'APP',
   EMAIL = 'EMAIL',
   EMAIL_GROUP = 'EMAIL_GROUP',
   SMS = 'SMS'
@@ -2903,6 +2915,7 @@ export type Mutation = {
   completeBookCallOnboardingStep: OnboardingStepSuccess;
   completeFileUpload: FileWithSignedUrl;
   createApiKey: ApiKey;
+  createAppMessageChannel: MessageChannel;
   createApplicationFileUploads: CreateApplicationFileUploadsResult;
   createApplicationRegistration: CreateApplicationRegistration;
   createApplicationRegistrationVariable: ApplicationRegistrationVariable;
@@ -2949,6 +2962,7 @@ export type Mutation = {
   createWebhook: Webhook;
   deactivateSkill: Skill;
   deleteAppKeyValue: Scalars['Boolean']['output'];
+  deleteAppMessageChannel: MessageChannel;
   deleteApplicationRegistration: Scalars['Boolean']['output'];
   deleteApplicationRegistrationVariable: Scalars['Boolean']['output'];
   deleteApprovedAccessDomain: Scalars['Boolean']['output'];
@@ -3078,6 +3092,7 @@ export type Mutation = {
   unarchiveChatThread: AgentChatThread;
   uninstallApplication: Scalars['Boolean']['output'];
   updateApiKey?: Maybe<ApiKey>;
+  updateAppMessageChannel: MessageChannel;
   updateApplication: Application;
   updateApplicationRegistration: ApplicationRegistration;
   updateApplicationRegistrationVariable: ApplicationRegistrationVariable;
@@ -3233,6 +3248,11 @@ export type MutationCompleteFileUploadArgs = {
 
 export type MutationCreateApiKeyArgs = {
   input: CreateApiKeyInput;
+};
+
+
+export type MutationCreateAppMessageChannelArgs = {
+  input: CreateAppMessageChannelInput;
 };
 
 
@@ -3468,6 +3488,11 @@ export type MutationDeactivateSkillArgs = {
 export type MutationDeleteAppKeyValueArgs = {
   key: Scalars['String']['input'];
   scope?: InputMaybe<AppKeyValueScope>;
+};
+
+
+export type MutationDeleteAppMessageChannelArgs = {
+  id: Scalars['UUID']['input'];
 };
 
 
@@ -4079,6 +4104,11 @@ export type MutationUninstallApplicationArgs = {
 
 export type MutationUpdateApiKeyArgs = {
   input: UpdateApiKeyInput;
+};
+
+
+export type MutationUpdateAppMessageChannelArgs = {
+  input: UpdateAppMessageChannelInput;
 };
 
 
@@ -4923,6 +4953,7 @@ export type Query = {
   appConnection: AppConnection;
   appConnections: Array<AppConnection>;
   appKeyValue?: Maybe<AppKeyValue>;
+  appMessageChannels: Array<MessageChannel>;
   applicationConnectedAccounts: Array<ApplicationConnectedAccountDto>;
   applicationConnectionProviders: Array<ApplicationConnectionProvider>;
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
@@ -5071,6 +5102,11 @@ export type QueryAppConnectionsArgs = {
 export type QueryAppKeyValueArgs = {
   key: Scalars['String']['input'];
   scope?: InputMaybe<AppKeyValueScope>;
+};
+
+
+export type QueryAppMessageChannelsArgs = {
+  filter?: InputMaybe<ListAppMessageChannelsInput>;
 };
 
 
@@ -6108,6 +6144,13 @@ export type UpdateApiKeyInput = {
   id: Scalars['UUID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   revokedAt?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateAppMessageChannelInput = {
+  displayName?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['UUID']['input'];
+  isSyncEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  visibility?: InputMaybe<MessageChannelVisibility>;
 };
 
 export type UpdateApplicationInput = {
