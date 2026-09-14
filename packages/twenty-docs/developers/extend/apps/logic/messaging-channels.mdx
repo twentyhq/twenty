@@ -9,6 +9,8 @@ A **messaging channel** lets your app put conversations from an external provide
 Twenty's message model is deliberately channel-neutral: a message has participants, text, a timestamp and a thread; a participant has a `handle` and an optional link to a Person. Nothing in it is email-specific. A channel is what binds a stream of those messages to one account on one provider.
 
 <Note>
+**Beta — and possibly not live on your instance yet.** App-owned message channels are new; the API described here may change, and it may not be available on the version of Twenty you are running. Check that `createMessageChannel` exists in your SDK before building on it.
+
 This page covers **declaring and owning a channel**. Writing messages into it is covered in [Ingesting messages](/developers/extend/apps/logic/messaging-ingestion).
 </Note>
 
