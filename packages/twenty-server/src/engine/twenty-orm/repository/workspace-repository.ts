@@ -32,15 +32,18 @@ import {
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
-import { type InheritedReadabilityChildrenParent } from 'src/engine/twenty-orm/types/inherited-readability-children-parent.type';
 import { type InheritedReadabilityParent } from 'src/engine/twenty-orm/types/inherited-readability-parent.type';
 import { type InheritedReadabilityParentLink } from 'src/engine/twenty-orm/types/inherited-readability-parent-link.type';
 import {
+  combineSqlConditions,
+  type RowAccessPolicy,
+  type SqlCondition,
+} from 'src/engine/twenty-orm/types/row-access-policy.type';
+import {
   buildInheritedReadabilityCondition,
-  type InheritedReadabilityChildGate,
   type InheritedReadabilityParentCondition,
-  type InheritedReadabilityParentGate,
 } from 'src/engine/twenty-orm/utils/build-inherited-readability-condition.util';
+import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { buildRecordShareCondition } from 'src/engine/twenty-orm/utils/build-record-share-condition.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -1782,28 +1785,111 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
-    this.applyRolePredicateForAlias({
-      queryBuilder,
-      alias,
-      flatObjectMetadata,
-    });
-    this.applyRecordShareGateForAlias({
-      queryBuilder,
-      alias,
+    // The object the query is about is reported with the error the API
+    // documents for a missing object permission, not filtered out silently
+    if (
+      alias === queryBuilder.alias &&
+      !this.isObjectOperationPermitted({ flatObjectMetadata, operationType })
+    ) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    const policy = this.buildRowAccessPolicyForAlias({
+      tableAlias: alias,
       flatObjectMetadata,
       operationType,
+      depth: 0,
+      joinParentRelationShape: queryBuilder.getJoinParentRelationShape(alias),
+    });
+
+    switch (policy.kind) {
+      case 'open':
+        return;
+      case 'denied':
+        this.denyAccessForAlias({ queryBuilder, alias, flatObjectMetadata });
+
+        return;
+      case 'gated':
+        this.addConditionForAlias({ queryBuilder, alias, ...policy.condition });
+
+        return;
+      default:
+        assertUnreachable(policy);
+    }
+  }
+
+  private isObjectOperationPermitted({
+    flatObjectMetadata,
+    operationType,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+    operationType: OperationType;
+  }): boolean {
+    return isObjectOperationPermitted({
+      objectMetadata: flatObjectMetadata,
+      operationType,
+      objectsPermissions: this.options.objectRecordsPermissions,
     });
   }
 
-  private applyRolePredicateForAlias({
-    queryBuilder,
-    alias,
+  // The complete policy a row of an object is read or written under: the
+  // role's permission on the object, its row-level predicate and the record
+  // share gate. Direct queries and the records reached through inheritance
+  // both go through it, so a parent grants nothing on a row the caller could
+  // not reach by querying the parent itself
+  private buildRowAccessPolicyForAlias({
+    tableAlias,
+    flatObjectMetadata,
+    operationType,
+    depth,
+    joinParentRelationShape,
+  }: {
+    tableAlias: string;
+    flatObjectMetadata: FlatObjectMetadata;
+    operationType: OperationType;
+    depth: number;
+    joinParentRelationShape?: WorkspaceRelationShape;
+  }): RowAccessPolicy {
+    if (
+      !this.isObjectOperationPermitted({ flatObjectMetadata, operationType })
+    ) {
+      return { kind: 'denied' };
+    }
+
+    const recordShareGate = this.buildRecordShareGateForAlias({
+      tableAlias,
+      flatObjectMetadata,
+      operationType,
+      depth,
+      joinParentRelationShape,
+    });
+
+    if (recordShareGate.kind === 'denied') {
+      return { kind: 'denied' };
+    }
+
+    const conditions = [
+      this.buildRolePredicateForAlias({ tableAlias, flatObjectMetadata }),
+      recordShareGate.kind === 'gated' ? recordShareGate.condition : undefined,
+    ].filter(isDefined);
+
+    if (conditions.length === 0) {
+      return { kind: 'open' };
+    }
+
+    return { kind: 'gated', condition: combineSqlConditions(conditions) };
+  }
+
+  private buildRolePredicateForAlias({
+    tableAlias,
     flatObjectMetadata,
   }: {
-    queryBuilder: WorkspaceSelectQueryBuilder;
-    alias: string;
+    tableAlias: string;
     flatObjectMetadata: FlatObjectMetadata;
-  }): void {
+  }): SqlCondition | undefined {
     const recordFilter = resolveRowLevelPermissionRecordFilter({
       internalContext: this.options.internalContext,
       authContext: this.options.authContext,
@@ -1811,39 +1897,33 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     if (!isDefined(recordFilter)) {
-      return;
+      return undefined;
     }
 
-    const renderedCondition = renderRowLevelPermissionFilterToSql({
-      recordFilter,
-      tableAlias: alias,
-      objectMetadata: flatObjectMetadata,
-      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
-    });
-
-    if (!isDefined(renderedCondition)) {
-      return;
-    }
-
-    this.addConditionForAlias({
-      queryBuilder,
-      alias,
-      sql: renderedCondition.sql,
-      parameters: renderedCondition.parameters,
-    });
+    return (
+      renderRowLevelPermissionFilterToSql({
+        recordFilter,
+        tableAlias,
+        objectMetadata: flatObjectMetadata,
+        flatFieldMetadataMaps:
+          this.options.internalContext.flatFieldMetadataMaps,
+      }) ?? undefined
+    );
   }
 
-  private applyRecordShareGateForAlias({
-    queryBuilder,
-    alias,
+  private buildRecordShareGateForAlias({
+    tableAlias,
     flatObjectMetadata,
     operationType,
+    depth,
+    joinParentRelationShape,
   }: {
-    queryBuilder: WorkspaceSelectQueryBuilder;
-    alias: string;
+    tableAlias: string;
     flatObjectMetadata: FlatObjectMetadata;
     operationType: OperationType;
-  }): void {
+    depth: number;
+    joinParentRelationShape?: WorkspaceRelationShape;
+  }): RowAccessPolicy {
     const isRecordSharingEnabled = this.isRecordSharingEnabled();
     const isOwningApplication = isOwningApplicationAuthContext({
       authContext: this.options.authContext,
@@ -1852,63 +1932,49 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     switch (flatObjectMetadata.readability) {
       case MetadataReadability.OPEN:
-        return;
+        return { kind: 'open' };
       case MetadataReadability.INHERITED:
         if (!isRecordSharingEnabled || isOwningApplication) {
-          return;
+          return { kind: 'open' };
         }
 
-        this.applyInheritedReadabilityConditionForAlias({
-          queryBuilder,
-          alias,
+        return this.buildInheritedReadabilityGateForAlias({
+          tableAlias,
           flatObjectMetadata,
           operationType,
+          depth,
+          joinParentRelationShape,
         });
-
-        return;
       case MetadataReadability.SYSTEM:
         // recordShare rows are SYSTEM and hold the whole ACL, so they stay
         // unreadable whether or not the workspace has enabled record sharing
-        this.denyAccessForAlias({ queryBuilder, alias, flatObjectMetadata });
-
-        return;
+        return { kind: 'denied' };
       case MetadataReadability.APPLICATION:
-        if (isRecordSharingEnabled && !isOwningApplication) {
-          this.denyAccessForAlias({ queryBuilder, alias, flatObjectMetadata });
-        }
-
-        return;
+        return isRecordSharingEnabled && !isOwningApplication
+          ? { kind: 'denied' }
+          : { kind: 'open' };
       case MetadataReadability.PRIVATE:
         // the owning application syncs and backfills every record of its
         // object, so it reads them all instead of holding share rows
         if (!isRecordSharingEnabled || isOwningApplication) {
-          return;
+          return { kind: 'open' };
         }
 
-        this.applyRecordShareConditionForAlias({
-          queryBuilder,
-          alias,
+        return this.buildOwnRecordShareGateForAlias({
+          tableAlias,
           flatObjectMetadata,
           operationType,
         });
-
-        return;
       default:
         assertUnreachable(flatObjectMetadata.readability);
     }
   }
 
-  private applyRecordShareConditionForAlias({
-    queryBuilder,
-    alias,
-    flatObjectMetadata,
-    operationType,
-  }: {
-    queryBuilder: WorkspaceSelectQueryBuilder;
-    alias: string;
-    flatObjectMetadata: FlatObjectMetadata;
-    operationType: OperationType;
-  }): void {
+  private resolveRecordSharePrincipals(
+    operationType: OperationType,
+  ):
+    | { principalIds: string[]; accessLevels: RecordShareAccessLevel[] }
+    | undefined {
     const principalIds = resolvePrincipalIdsFromAuthContext({
       authContext: this.options.authContext,
       userWorkspaceRoleMap: this.options.internalContext.userWorkspaceRoleMap,
@@ -1916,55 +1982,61 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     if (!isDefined(principalIds)) {
-      return;
+      return undefined;
     }
 
     const accessLevels = resolveRequiredRecordShareAccessLevels(operationType);
 
     if (accessLevels.length === 0) {
-      return;
+      return undefined;
     }
 
-    const condition = buildRecordShareCondition({
-      tableAlias: alias,
-      recordShareTableExpression: this.getRecordShareTableExpression(),
-      objectMetadataId: flatObjectMetadata.id,
-      principalIds,
-      accessLevels,
-    });
-
-    this.addConditionForAlias({ queryBuilder, alias, ...condition });
+    return { principalIds, accessLevels };
   }
 
-  private applyInheritedReadabilityConditionForAlias({
-    queryBuilder,
-    alias,
+  private buildOwnRecordShareGateForAlias({
+    tableAlias,
     flatObjectMetadata,
     operationType,
   }: {
-    queryBuilder: WorkspaceSelectQueryBuilder;
-    alias: string;
+    tableAlias: string;
     flatObjectMetadata: FlatObjectMetadata;
     operationType: OperationType;
-  }): void {
-    const principalIds = resolvePrincipalIdsFromAuthContext({
-      authContext: this.options.authContext,
-      userWorkspaceRoleMap: this.options.internalContext.userWorkspaceRoleMap,
-      apiKeyRoleMap: this.options.internalContext.apiKeyRoleMap,
-    });
+  }): RowAccessPolicy {
+    const principals = this.resolveRecordSharePrincipals(operationType);
 
-    if (!isDefined(principalIds)) {
-      return;
+    if (!isDefined(principals)) {
+      return { kind: 'open' };
     }
 
-    const accessLevels = resolveRequiredRecordShareAccessLevels(operationType);
+    return {
+      kind: 'gated',
+      condition: buildRecordShareCondition({
+        tableAlias,
+        recordShareTableExpression: this.getRecordShareTableExpression(),
+        objectMetadataId: flatObjectMetadata.id,
+        ...principals,
+      }),
+    };
+  }
 
-    if (accessLevels.length === 0) {
-      return;
+  private buildInheritedReadabilityGateForAlias({
+    tableAlias,
+    flatObjectMetadata,
+    operationType,
+    depth,
+    joinParentRelationShape,
+  }: {
+    tableAlias: string;
+    flatObjectMetadata: FlatObjectMetadata;
+    operationType: OperationType;
+    depth: number;
+    joinParentRelationShape?: WorkspaceRelationShape;
+  }): RowAccessPolicy {
+    if (depth > MAX_INHERITED_READABILITY_DEPTH) {
+      return { kind: 'denied' };
     }
 
-    const joinParentRelationShape =
-      queryBuilder.getJoinParentRelationShape(alias);
     const parents = this.resolveInheritedReadabilityParents(flatObjectMetadata);
 
     // A join through a parent field is the canonical foreign key equality and its parent alias is already gated
@@ -1977,35 +2049,89 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             joinParentRelationShape.targetFieldMetadataId,
       )
     ) {
-      return;
+      return { kind: 'open' };
     }
 
     // An object whose parent cannot be inferred is gated like a PRIVATE one
     if (parents.length === 0) {
-      this.applyRecordShareConditionForAlias({
-        queryBuilder,
-        alias,
+      return this.buildOwnRecordShareGateForAlias({
+        tableAlias,
         flatObjectMetadata,
         operationType,
       });
-
-      return;
     }
 
-    const condition = this.buildInheritedReadabilityConditionForAlias({
-      tableAlias: alias,
-      objectMetadataId: flatObjectMetadata.id,
-      parents,
-      principalIds,
-      accessLevels,
-      depth: 0,
-    });
+    const principals = this.resolveRecordSharePrincipals(operationType);
 
-    if (!isDefined(condition)) {
-      return;
+    if (!isDefined(principals)) {
+      return { kind: 'open' };
     }
 
-    this.addConditionForAlias({ queryBuilder, alias, ...condition });
+    return {
+      kind: 'gated',
+      condition: buildInheritedReadabilityCondition({
+        tableAlias,
+        objectMetadataId: flatObjectMetadata.id,
+        parents: parents.map((parent) =>
+          this.buildInheritedReadabilityParentCondition({
+            tableAlias,
+            parent,
+            operationType,
+            depth,
+          }),
+        ),
+        recordShareTableExpression: this.getRecordShareTableExpression(),
+        ...principals,
+      }),
+    };
+  }
+
+  private buildInheritedReadabilityParentCondition({
+    tableAlias,
+    parent,
+    operationType,
+    depth,
+  }: {
+    tableAlias: string;
+    parent: InheritedReadabilityParent;
+    operationType: OperationType;
+    depth: number;
+  }): InheritedReadabilityParentCondition {
+    if (parent.kind === 'column') {
+      const parentTableAlias = `${tableAlias}_${parent.joinColumnName}`;
+
+      return {
+        kind: 'column',
+        joinColumnName: parent.joinColumnName,
+        parentTableAlias,
+        parentTableExpression: this.getTableExpression(
+          parent.parentFlatObjectMetadata.id,
+        ),
+        policy: this.buildRowAccessPolicyForAlias({
+          tableAlias: parentTableAlias,
+          flatObjectMetadata: parent.parentFlatObjectMetadata,
+          operationType,
+          depth: depth + 1,
+        }),
+      };
+    }
+
+    const childTableAlias = `${tableAlias}_${parent.childFlatObjectMetadata.nameSingular}`;
+
+    return {
+      kind: 'children',
+      childTableAlias,
+      childTableExpression: this.getTableExpression(
+        parent.childFlatObjectMetadata.id,
+      ),
+      childJoinColumnName: parent.childJoinColumnName,
+      policy: this.buildRowAccessPolicyForAlias({
+        tableAlias: childTableAlias,
+        flatObjectMetadata: parent.childFlatObjectMetadata,
+        operationType,
+        depth: depth + 1,
+      }),
+    };
   }
 
   private resolveInheritedReadabilityParents(
@@ -2019,244 +2145,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
   }
 
-  private buildInheritedReadabilityConditionForAlias({
-    tableAlias,
-    objectMetadataId,
-    parents,
-    principalIds,
-    accessLevels,
-    depth,
-  }: {
-    tableAlias: string;
-    objectMetadataId: string;
-    parents: InheritedReadabilityParent[];
-    principalIds: string[];
-    accessLevels: RecordShareAccessLevel[];
-    depth: number;
-  }): { sql: string; parameters: ObjectLiteral } | undefined {
-    return buildInheritedReadabilityCondition({
-      tableAlias,
-      objectMetadataId,
-      recordShareTableExpression: this.getRecordShareTableExpression(),
-      principalIds,
-      accessLevels,
-      parents: parents.map((parent) =>
-        parent.kind === 'column'
-          ? {
-              kind: 'column',
-              joinColumnName: parent.joinColumnName,
-              gate: this.resolveInheritedReadabilityParentGate({
-                tableAlias,
-                joinColumnName: parent.joinColumnName,
-                parentFlatObjectMetadata: parent.parentFlatObjectMetadata,
-                principalIds,
-                accessLevels,
-                depth,
-              }),
-            }
-          : this.buildInheritedReadabilityChildrenCondition({
-              tableAlias,
-              parent,
-              principalIds,
-              accessLevels,
-              depth,
-            }),
-      ),
-    });
-  }
+  private getTableExpression(objectMetadataId: string): string {
+    const tableShape =
+      this.options.tableShapeByObjectMetadataId(objectMetadataId);
 
-  private buildInheritedReadabilityChildrenCondition({
-    tableAlias,
-    parent,
-    principalIds,
-    accessLevels,
-    depth,
-  }: {
-    tableAlias: string;
-    parent: InheritedReadabilityChildrenParent;
-    principalIds: string[];
-    accessLevels: RecordShareAccessLevel[];
-    depth: number;
-  }): InheritedReadabilityParentCondition {
-    const { childFlatObjectMetadata, childJoinColumnName } = parent;
-    const childTableAlias = `${tableAlias}_${childFlatObjectMetadata.nameSingular}`;
-    const childTableShape = this.options.tableShapeByObjectMetadataId(
-      childFlatObjectMetadata.id,
-    );
-
-    return {
-      kind: 'children',
-      childTableAlias,
-      childTableExpression: `${escapeIdentifier(
-        childTableShape.schemaName,
-      )}.${escapeIdentifier(childTableShape.tableName)}`,
-      childJoinColumnName,
-      gate: this.resolveInheritedReadabilityChildGate({
-        childTableAlias,
-        childFlatObjectMetadata,
-        principalIds,
-        accessLevels,
-        depth,
-      }),
-    };
-  }
-
-  // A child row grants access when the child object's own gate lets the caller
-  // read it: OPEN needs the row alone, PRIVATE a share row on it, INHERITED its
-  // own parents evaluated one level deeper, or a share row on it when it has
-  // no usable parent, as a root INHERITED record without one
-  private resolveInheritedReadabilityChildGate({
-    childTableAlias,
-    childFlatObjectMetadata,
-    principalIds,
-    accessLevels,
-    depth,
-  }: {
-    childTableAlias: string;
-    childFlatObjectMetadata: FlatObjectMetadata;
-    principalIds: string[];
-    accessLevels: RecordShareAccessLevel[];
-    depth: number;
-  }): InheritedReadabilityChildGate {
-    if (
-      isOwningApplicationAuthContext({
-        authContext: this.options.authContext,
-        owningApplicationId: childFlatObjectMetadata.applicationId,
-      })
-    ) {
-      return { kind: 'open' };
-    }
-
-    const ownRecordShareGate: InheritedReadabilityChildGate = {
-      kind: 'gated',
-      condition: buildRecordShareCondition({
-        tableAlias: childTableAlias,
-        recordShareTableExpression: this.getRecordShareTableExpression(),
-        objectMetadataId: childFlatObjectMetadata.id,
-        principalIds,
-        accessLevels,
-      }),
-    };
-
-    switch (childFlatObjectMetadata.readability) {
-      case MetadataReadability.OPEN:
-        return { kind: 'open' };
-      case MetadataReadability.SYSTEM:
-      case MetadataReadability.APPLICATION:
-        return { kind: 'denied' };
-      case MetadataReadability.PRIVATE:
-        return ownRecordShareGate;
-      case MetadataReadability.INHERITED: {
-        if (depth >= MAX_INHERITED_READABILITY_DEPTH) {
-          return { kind: 'denied' };
-        }
-
-        const childParents = this.resolveInheritedReadabilityParents(
-          childFlatObjectMetadata,
-        );
-
-        if (childParents.length === 0) {
-          return ownRecordShareGate;
-        }
-
-        const condition = this.buildInheritedReadabilityConditionForAlias({
-          tableAlias: childTableAlias,
-          objectMetadataId: childFlatObjectMetadata.id,
-          parents: childParents,
-          principalIds,
-          accessLevels,
-          depth: depth + 1,
-        });
-
-        return isDefined(condition)
-          ? { kind: 'gated', condition }
-          : { kind: 'open' };
-      }
-      default:
-        assertUnreachable(childFlatObjectMetadata.readability);
-    }
-  }
-
-  private resolveInheritedReadabilityParentGate({
-    tableAlias,
-    joinColumnName,
-    parentFlatObjectMetadata,
-    principalIds,
-    accessLevels,
-    depth,
-  }: {
-    tableAlias: string;
-    joinColumnName: string;
-    parentFlatObjectMetadata: FlatObjectMetadata;
-    principalIds: string[];
-    accessLevels: RecordShareAccessLevel[];
-    depth: number;
-  }): InheritedReadabilityParentGate {
-    if (
-      isOwningApplicationAuthContext({
-        authContext: this.options.authContext,
-        owningApplicationId: parentFlatObjectMetadata.applicationId,
-      })
-    ) {
-      return { kind: 'open' };
-    }
-
-    switch (parentFlatObjectMetadata.readability) {
-      case MetadataReadability.OPEN:
-        return { kind: 'open' };
-      case MetadataReadability.SYSTEM:
-      case MetadataReadability.APPLICATION:
-        return { kind: 'denied' };
-      case MetadataReadability.PRIVATE:
-        return {
-          kind: 'private',
-          objectMetadataId: parentFlatObjectMetadata.id,
-        };
-      case MetadataReadability.INHERITED: {
-        if (depth >= MAX_INHERITED_READABILITY_DEPTH) {
-          return { kind: 'denied' };
-        }
-
-        const parentParents = this.resolveInheritedReadabilityParents(
-          parentFlatObjectMetadata,
-        );
-
-        if (parentParents.length === 0) {
-          return { kind: 'denied' };
-        }
-
-        const parentTableAlias = `${tableAlias}_${joinColumnName}`;
-        const parentCondition = this.buildInheritedReadabilityConditionForAlias(
-          {
-            tableAlias: parentTableAlias,
-            objectMetadataId: parentFlatObjectMetadata.id,
-            parents: parentParents,
-            principalIds,
-            accessLevels,
-            depth: depth + 1,
-          },
-        );
-
-        if (!isDefined(parentCondition)) {
-          return { kind: 'open' };
-        }
-
-        const parentTableShape = this.options.tableShapeByObjectMetadataId(
-          parentFlatObjectMetadata.id,
-        );
-
-        return {
-          kind: 'inherited',
-          parentTableAlias,
-          parentTableExpression: `${escapeIdentifier(
-            parentTableShape.schemaName,
-          )}.${escapeIdentifier(parentTableShape.tableName)}`,
-          parentCondition,
-        };
-      }
-      default:
-        assertUnreachable(parentFlatObjectMetadata.readability);
-    }
+    return `${escapeIdentifier(tableShape.schemaName)}.${escapeIdentifier(
+      tableShape.tableName,
+    )}`;
   }
 
   private getRecordShareTableExpression(): string {

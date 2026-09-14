@@ -9,6 +9,7 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
+import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -442,6 +443,49 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       expect(
         collectIds(attachmentsResponse.body.data.attachments.edges),
       ).toEqual(ATTACHMENT_IDS.sort());
+    });
+
+    it('should hide what is reached through the person from a role that cannot read people', async () => {
+      const memberRole = await findOneRoleByLabel({ label: 'Member' });
+      const setMemberCanReadPeople = (canReadObjectRecords: boolean) =>
+        upsertObjectPermissions({
+          expectToFail: false,
+          input: {
+            roleId: memberRole.id,
+            objectPermissions: [
+              {
+                objectMetadataId: personObjectMetadataId,
+                canReadObjectRecords,
+              },
+            ],
+          },
+        });
+
+      await setMemberCanReadPeople(false);
+
+      const notesResponse =
+        await makeGraphqlAPIRequestWithMemberRole(findNotesOperation);
+      const noteTargetsResponse = await makeGraphqlAPIRequestWithMemberRole(
+        findNoteTargetsOperation,
+      );
+      const attachmentsResponse = await makeGraphqlAPIRequestWithMemberRole(
+        findAttachmentsOperation,
+      );
+
+      await setMemberCanReadPeople(true);
+
+      expect(notesResponse.body.errors).toBeUndefined();
+      expect(collectIds(notesResponse.body.data.notes.edges)).toEqual(
+        [NOTE_ON_COMPANY_ID, NOTE_ON_BOTH_ID].sort(),
+      );
+      expect(noteTargetsResponse.body.errors).toBeUndefined();
+      expect(
+        collectIds(noteTargetsResponse.body.data.noteTargets.edges),
+      ).toEqual([COMPANY_NOTE_TARGET_ID, BOTH_COMPANY_NOTE_TARGET_ID].sort());
+      expect(attachmentsResponse.body.errors).toBeUndefined();
+      expect(
+        collectIds(attachmentsResponse.body.data.attachments.edges),
+      ).toEqual([COMPANY_NOTE_ATTACHMENT_ID]);
     });
 
     it('should still refuse to rename the note on the private person or attach it elsewhere', async () => {

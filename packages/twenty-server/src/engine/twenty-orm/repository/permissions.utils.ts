@@ -19,6 +19,7 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { validateWritabilityOrThrow } from 'src/engine/twenty-orm/repository/validate-writability-or-throw.util';
+import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
 const WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER =
@@ -104,15 +105,22 @@ export const validateOperationIsPermittedOrThrow = ({
 
   const permissionsForEntity = objectsPermissions[objectMetadataIdForEntity];
 
+  if (
+    !isDefined(permissionsForEntity) ||
+    !isObjectOperationPermitted({
+      objectMetadata,
+      operationType,
+      objectsPermissions,
+    })
+  ) {
+    throw new PermissionsException(
+      PermissionsExceptionMessage.PERMISSION_DENIED,
+      PermissionsExceptionCode.PERMISSION_DENIED,
+    );
+  }
+
   switch (operationType) {
     case 'select':
-      if (!permissionsForEntity?.canReadObjectRecords) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
-
       validateReadFieldPermissionOrThrow({
         restrictedFields: permissionsForEntity.restrictedFields,
         selectedColumns,
@@ -123,13 +131,6 @@ export const validateOperationIsPermittedOrThrow = ({
       });
       break;
     case 'insert':
-      if (!permissionsForEntity?.canUpdateObjectRecords) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
-
       validateReadFieldPermissionOrThrow({
         restrictedFields: permissionsForEntity.restrictedFields,
         selectedColumns,
@@ -162,13 +163,6 @@ export const validateOperationIsPermittedOrThrow = ({
       }
       break;
     case 'update':
-      if (!permissionsForEntity?.canUpdateObjectRecords) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
-
       validateReadFieldPermissionOrThrow({
         restrictedFields: permissionsForEntity.restrictedFields,
         selectedColumns,
@@ -188,13 +182,6 @@ export const validateOperationIsPermittedOrThrow = ({
       }
       break;
     case 'delete':
-      if (!permissionsForEntity?.canDestroyObjectRecords) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
-
       validateReadFieldPermissionOrThrow({
         restrictedFields: permissionsForEntity.restrictedFields,
         selectedColumns,
@@ -205,13 +192,6 @@ export const validateOperationIsPermittedOrThrow = ({
       break;
     case 'restore':
     case 'soft-delete':
-      if (!permissionsForEntity?.canSoftDeleteObjectRecords) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
-
       validateReadFieldPermissionOrThrow({
         restrictedFields: permissionsForEntity.restrictedFields,
         selectedColumns,
