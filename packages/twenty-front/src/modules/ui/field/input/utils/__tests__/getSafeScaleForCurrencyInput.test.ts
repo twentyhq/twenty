@@ -76,7 +76,7 @@ describe('currency mask round trip with the safe scale', () => {
   );
 });
 
-describe('currency mask typing with 0-decimal default field (#25870)', () => {
+describe('currency mask typing with 0-decimal default field (issue 25870)', () => {
   it('should accept typing decimals into a 0-decimal currency field without dropping the separator or multiplying the amount', () => {
     const { thousandsSeparator, radix } = getSeparatorsForNumberFormat(
       NumberFormat.COMMAS_AND_DOT,
