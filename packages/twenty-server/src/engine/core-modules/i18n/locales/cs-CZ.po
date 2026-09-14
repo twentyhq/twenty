@@ -10788,7 +10788,7 @@ msgstr "Tento klíč API byl odvolán a nelze jej dále použít."
 #. js-lingui-id: SbhNwj
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
-msgstr ""
+msgstr "Tento klíč API byl odvolán a nelze jej znovu aktivovat. Vytvořte nový klíč API."
 
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts

@@ -10788,7 +10788,7 @@ msgstr "Hierdie API-sleutel is herroep en kan nie meer gebruik word nie."
 #. js-lingui-id: SbhNwj
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
-msgstr ""
+msgstr "Hierdie API-sleutel is herroep en kan nie heraktiveer word nie. Skep asseblief 'n nuwe API-sleutel."
 
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts

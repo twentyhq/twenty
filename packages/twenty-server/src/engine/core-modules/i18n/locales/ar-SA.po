@@ -10788,7 +10788,7 @@ msgstr "تم إلغاء صلاحية مفتاح API هذا ولم يعد قاب�
 #. js-lingui-id: SbhNwj
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
-msgstr ""
+msgstr "تم إلغاء مفتاح API هذا ولا يمكن إعادة تفعيله. يُرجى إنشاء مفتاح API جديد."
 
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts

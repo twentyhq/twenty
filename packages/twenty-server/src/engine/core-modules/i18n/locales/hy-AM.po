@@ -10788,7 +10788,7 @@ msgstr "Այս API Key-ը չեղարկվել է և այլևս չի կարող օ
 #. js-lingui-id: SbhNwj
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
-msgstr ""
+msgstr "Այս API key-ը չեղարկվել է և չի կարող վերաակտիվացվել։ Խնդրում ենք ստեղծել նոր API key։"
 
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts

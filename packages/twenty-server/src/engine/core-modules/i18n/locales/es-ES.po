@@ -10788,7 +10788,7 @@ msgstr "Esta clave API ha sido revocada y ya no puede ser usada."
 #. js-lingui-id: SbhNwj
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
-msgstr ""
+msgstr "Esta clave de API ha sido revocada y no se puede reactivar. Cree una nueva clave de API."
 
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts

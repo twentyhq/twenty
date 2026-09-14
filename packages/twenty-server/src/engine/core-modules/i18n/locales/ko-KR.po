@@ -10788,7 +10788,7 @@ msgstr "이 API 키는 철회되어 더 이상 사용할 수 없습니다."
 #. js-lingui-id: SbhNwj
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
-msgstr ""
+msgstr "이 API 키는 해지되었으며 다시 활성화할 수 없습니다. 새 API 키를 생성하세요."
 
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
