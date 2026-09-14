@@ -806,6 +806,10 @@ export class BillingSubscriptionUpdateService {
 
     assertIsDefinedOrThrow(currentBillingProduct);
 
+    const currentPlanKey = currentBillingProduct.metadata.planKey;
+
+    assertIsDefinedOrThrow(currentPlanKey);
+
     if (currentInterval === newInterval) {
       return currentPrices;
     }
@@ -827,15 +831,17 @@ export class BillingSubscriptionUpdateService {
       currentResourceCreditPrice,
     );
 
-    const currentResourceCreditProduct =
-      currentResourceCreditPrice.billingProduct;
-
-    assertIsDefinedOrThrow(currentResourceCreditProduct);
-
-    const targetResourceCreditPrice = findProductPriceForIntervalOrThrow(
-      currentResourceCreditProduct,
-      newInterval,
-    );
+    // A resource-credit product carries one price per credit package, so there
+    // is no single billable price at an interval to find. The equivalent is the
+    // package that matches the current one, scaled across the interval change.
+    const targetResourceCreditPrice =
+      await this.billingPriceService.findEquivalentResourceCreditPrice({
+        referencePrice: currentResourceCreditPrice,
+        targetInterval: newInterval,
+        targetPlanKey: currentPlanKey,
+        hasSameInterval: false,
+        hasSamePlanKey: true,
+      });
 
     return {
       ...currentPrices,
