@@ -427,4 +427,20 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
       await resolveSlackLinkage({ client, slackClient, identity: IDENTITY }),
     ).toEqual({ status: 'UNLINKED' });
   });
+
+  it('should report unverifiable when the identity carries no team id', async () => {
+    expect(
+      await resolveSlackLinkage({
+        client,
+        slackClient,
+        identity: { ...IDENTITY, slackTeamId: undefined },
+      }),
+    ).toEqual({ status: 'UNVERIFIABLE' });
+  });
+
+  it('should report unlinked when there is no identity at all', async () => {
+    expect(
+      await resolveSlackLinkage({ client, slackClient, identity: undefined }),
+    ).toEqual({ status: 'UNLINKED' });
+  });
 });

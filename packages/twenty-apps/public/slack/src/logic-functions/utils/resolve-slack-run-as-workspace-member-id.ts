@@ -50,8 +50,14 @@ export const resolveSlackLinkage = async ({
   slackClient: WebClient;
   identity: SlackUserIdentity | undefined;
 }): Promise<SlackLinkageResolution> => {
-  if (!isDefined(identity) || !isNonEmptyString(identity.slackTeamId)) {
+  if (!isDefined(identity)) {
     return { status: 'UNLINKED' };
+  }
+
+  // The user-link lookup is keyed on team plus user, so without a team id no
+  // query can answer whether this account is linked.
+  if (!isNonEmptyString(identity.slackTeamId)) {
+    return { status: 'UNVERIFIABLE' };
   }
 
   const { slackUserId, slackTeamId } = identity;
