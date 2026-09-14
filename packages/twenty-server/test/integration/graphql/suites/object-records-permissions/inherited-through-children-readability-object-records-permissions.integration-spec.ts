@@ -1,10 +1,12 @@
 import { randomUUID } from 'node:crypto';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
@@ -104,6 +106,20 @@ const attachNoteToCompanyOperation = createOneOperationFactory({
     noteId: NOTE_ON_PERSON_ID,
     targetCompanyId: COMPANY_ID,
   },
+});
+
+const detachNoteOnBothFromCompanyOperation = deleteManyOperationFactory({
+  objectMetadataSingularName: 'noteTarget',
+  objectMetadataPluralName: 'noteTargets',
+  gqlFields: 'id',
+  filter: { id: { eq: BOTH_COMPANY_NOTE_TARGET_ID } },
+});
+
+const reattachNoteOnBothToCompanyOperation = restoreManyOperationFactory({
+  objectMetadataSingularName: 'noteTarget',
+  objectMetadataPluralName: 'noteTargets',
+  gqlFields: 'id',
+  filter: { id: { eq: BOTH_COMPANY_NOTE_TARGET_ID } },
 });
 
 const setRecordSharingEnabled = (value: boolean) =>
@@ -350,6 +366,32 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       expect(response.body.data?.createNoteTarget ?? null).toBeNull();
       expect(response.body.errors).toBeDefined();
       expect(response.body.errors[0].message).toContain('not writable');
+    });
+
+    it('should refuse to restore a detached target of a note the member cannot write', async () => {
+      const detachResponse = await makeGraphqlAPIRequest(
+        detachNoteOnBothFromCompanyOperation,
+      );
+
+      expect(detachResponse.body.errors).toBeUndefined();
+
+      const restoreResponse = await makeGraphqlAPIRequestWithMemberRole(
+        reattachNoteOnBothToCompanyOperation,
+      );
+
+      expect(restoreResponse.body.data?.restoreNoteTargets ?? null).toBeNull();
+      expect(restoreResponse.body.errors).toBeDefined();
+      expect(restoreResponse.body.errors[0].message).toContain('not writable');
+
+      await setRecordSharingEnabled(false);
+
+      const reattachResponse = await makeGraphqlAPIRequest(
+        reattachNoteOnBothToCompanyOperation,
+      );
+
+      expect(reattachResponse.body.errors).toBeUndefined();
+
+      await setRecordSharingEnabled(true);
     });
   });
 

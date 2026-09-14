@@ -970,7 +970,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     await this.validateInheritedParentsAreWritableOrThrow({
       writtenRecords: formattedRecords,
-      resultingRecords: formattedRecords,
+      affectedRecords: formattedRecords,
     });
 
     const sql = buildInsertStatement({
@@ -1077,11 +1077,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     await this.validateInheritedParentsAreWritableOrThrow({
       writtenRecords,
-      resultingRecords: writtenRecords.flatMap((writtenRecord, index) =>
-        rawBeforeByInputIndex[index].map((rawBefore) => ({
-          ...rawBefore,
-          ...writtenRecord,
-        })),
+      affectedRecords: writtenRecords.flatMap((writtenRecord, index) =>
+        rawBeforeByInputIndex[index].flatMap((rawBefore) => [
+          rawBefore,
+          { ...rawBefore, ...writtenRecord },
+        ]),
       ),
     });
 
@@ -1276,19 +1276,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   // Re-parenting a child, or creating one under a parent, is a write on that
   // parent: the destination must grant the caller at least READ_WRITE. The
-  // records inheriting through the row are checked on the row as it will be
-  // after the write, since any change to it changes what they expose
+  // records inheriting through a row are checked on the row before and after
+  // the write, whatever the write is, since creating, changing, deleting or
+  // restoring the row changes what they expose
   private async validateInheritedParentsAreWritableOrThrow({
     writtenRecords,
-    resultingRecords,
+    affectedRecords,
   }: {
     writtenRecords: Record<string, unknown>[];
-    resultingRecords: Record<string, unknown>[];
+    affectedRecords: Record<string, unknown>[];
   }): Promise<void> {
-    if (
-      this.options.shouldBypassPermissionChecks ||
-      !this.isRecordSharingEnabled()
-    ) {
+    if (!this.shouldValidateInheritedParents()) {
       return;
     }
 
@@ -1302,9 +1300,23 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     for (const parent of this.resolveInheritingRecordLinks()) {
       await this.validateParentRecordsAreWritableOrThrow({
         parent,
-        records: resultingRecords,
+        records: affectedRecords,
       });
     }
+  }
+
+  private shouldValidateInheritedParents(): boolean {
+    return (
+      !this.options.shouldBypassPermissionChecks &&
+      this.isRecordSharingEnabled()
+    );
+  }
+
+  private hasInheritingRecordLinks(): boolean {
+    return (
+      this.shouldValidateInheritedParents() &&
+      this.resolveInheritingRecordLinks().length > 0
+    );
   }
 
   private async validateParentRecordsAreWritableOrThrow({
@@ -1502,15 +1514,26 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         ),
         'Updated record does not satisfy row-level security constraints of your current role',
       );
-
-      await this.validateInheritedParentsAreWritableOrThrow({
-        writtenRecords: [setColumns],
-        resultingRecords: recordsBefore.map((record) => ({
-          ...record,
-          ...setColumns,
-        })),
-      });
     }
+
+    // The delete snapshot keeps a single row for the event while every deleted
+    // row may be one some record inherits through
+    const recordsBeforeInheritanceCheck =
+      kind === 'delete' && this.hasInheritingRecordLinks()
+        ? await eventSelectQueryBuilder.getMany<ObjectRecord>({
+            noFormatting: true,
+          })
+        : recordsBefore;
+
+    await this.validateInheritedParentsAreWritableOrThrow({
+      writtenRecords: isDefined(setColumns) ? [setColumns] : [],
+      affectedRecords: isDefined(setColumns)
+        ? recordsBeforeInheritanceCheck.flatMap((record) => [
+            record,
+            { ...record, ...setColumns },
+          ])
+        : recordsBeforeInheritanceCheck,
+    });
 
     const mutationResult = await this.morphAndExecute({
       selectQueryBuilder,
@@ -2082,7 +2105,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   // A child row grants access when the child object's own gate lets the caller
   // read it: OPEN needs the row alone, PRIVATE a share row on it, INHERITED its
-  // own parents, evaluated one level deeper
+  // own parents evaluated one level deeper, or a share row on it when it has
+  // no usable parent, as a root INHERITED record without one
   private resolveInheritedReadabilityChildGate({
     childTableAlias,
     childFlatObjectMetadata,
@@ -2105,6 +2129,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return { kind: 'open' };
     }
 
+    const ownRecordShareGate: InheritedReadabilityChildGate = {
+      kind: 'gated',
+      condition: buildRecordShareCondition({
+        tableAlias: childTableAlias,
+        recordShareTableExpression: this.getRecordShareTableExpression(),
+        objectMetadataId: childFlatObjectMetadata.id,
+        principalIds,
+        accessLevels,
+      }),
+    };
+
     switch (childFlatObjectMetadata.readability) {
       case MetadataReadability.OPEN:
         return { kind: 'open' };
@@ -2112,16 +2147,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       case MetadataReadability.APPLICATION:
         return { kind: 'denied' };
       case MetadataReadability.PRIVATE:
-        return {
-          kind: 'gated',
-          condition: buildRecordShareCondition({
-            tableAlias: childTableAlias,
-            recordShareTableExpression: this.getRecordShareTableExpression(),
-            objectMetadataId: childFlatObjectMetadata.id,
-            principalIds,
-            accessLevels,
-          }),
-        };
+        return ownRecordShareGate;
       case MetadataReadability.INHERITED: {
         if (depth >= MAX_INHERITED_READABILITY_DEPTH) {
           return { kind: 'denied' };
@@ -2132,7 +2158,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         );
 
         if (childParents.length === 0) {
-          return { kind: 'denied' };
+          return ownRecordShareGate;
         }
 
         const condition = this.buildInheritedReadabilityConditionForAlias({
