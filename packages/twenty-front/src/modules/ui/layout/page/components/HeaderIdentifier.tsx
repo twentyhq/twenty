@@ -52,7 +52,7 @@ const StyledTitle = styled.h3<{ fontSize: 'md' | 'lg' }>`
 type HeaderIdentifierProps = {
   avatar?: Pick<
     AvatarProps,
-    'avatarUrl' | 'onClick' | 'placeholder' | 'placeholderColorSeed' | 'type'
+    'src' | 'onClick' | 'name' | 'colorSeed' | 'shape' | 'variant'
   >;
   icon?: ReactNode;
   iconColor?: string;
@@ -71,11 +71,12 @@ export const HeaderIdentifier = ({
 }: HeaderIdentifierProps) => {
   const identifierIcon = isDefined(avatar) ? (
     <Avatar
-      avatarUrl={avatar.avatarUrl}
+      src={avatar.src}
       onClick={avatar.onClick}
-      placeholder={avatar.placeholder}
-      placeholderColorSeed={avatar.placeholderColorSeed}
-      type={avatar.type}
+      name={avatar.name}
+      colorSeed={avatar.colorSeed}
+      shape={avatar.shape}
+      variant={avatar.variant}
       size={fontSize}
     />
   ) : (

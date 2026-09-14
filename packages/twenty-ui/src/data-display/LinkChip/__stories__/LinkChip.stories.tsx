@@ -44,12 +44,7 @@ export const WithAvatar: Story = {
     to: '/users/john-doe',
     variant: ChipVariant.Regular,
     leftComponent: (
-      <Avatar
-        placeholder="JD"
-        placeholderColorSeed="John Doe"
-        size="sm"
-        type="rounded"
-      />
+      <Avatar name="JD" colorSeed="John Doe" size="sm" shape="circle" />
     ),
   },
   decorators: [ComponentDecorator],
@@ -119,12 +114,7 @@ export const WithAvatarCatalog: CatalogStory<Story, typeof LinkChip> = {
     label: 'John Doe',
     to: '/users/john-doe',
     leftComponent: (
-      <Avatar
-        placeholder="JD"
-        placeholderColorSeed="John Doe"
-        size="sm"
-        type="rounded"
-      />
+      <Avatar name="JD" colorSeed="John Doe" size="sm" shape="circle" />
     ),
   },
   argTypes: {
@@ -175,12 +165,7 @@ export const WithRightComponentDivider: Story = {
     to: '/files/document.pdf',
     variant: ChipVariant.Static,
     leftComponent: (
-      <Avatar
-        placeholder="D"
-        placeholderColorSeed="document"
-        size="sm"
-        type="squared"
-      />
+      <Avatar name="D" colorSeed="document" size="sm" shape="square" />
     ),
     rightComponent: <IconX size={14} />,
     rightComponentDivider: true,

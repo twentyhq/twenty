@@ -10,11 +10,7 @@ export const TabAvatar = ({ tab }: { tab: SingleTabProps }) => {
 
   if (isDefined(tab.logo)) {
     return (
-      <Avatar
-        avatarUrl={getAbsoluteImageUrl(tab.logo)}
-        size="md"
-        placeholder={tab.title}
-      />
+      <Avatar src={getAbsoluteImageUrl(tab.logo)} size="md" name={tab.title} />
     );
   }
   return (

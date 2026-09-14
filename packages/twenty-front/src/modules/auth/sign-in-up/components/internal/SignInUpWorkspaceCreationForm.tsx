@@ -251,12 +251,10 @@ export const SignInUpWorkspaceCreationForm = () => {
         <OnboardingStepAnimatedItem index={2}>
           <StyledLogoRow>
             <StyledLogoAvatar
-              avatarUrl={logoPreviewUrl}
-              placeholder={
-                isNonEmptyString(workspaceName) ? workspaceName : '?'
-              }
-              placeholderColorSeed={workspaceName}
-              type="squared"
+              src={logoPreviewUrl}
+              name={isNonEmptyString(workspaceName) ? workspaceName : '?'}
+              colorSeed={workspaceName}
+              shape="square"
               size="xl"
               onClick={openFilePicker}
             />

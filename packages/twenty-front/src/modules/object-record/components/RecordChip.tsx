@@ -86,10 +86,10 @@ export const RecordChip = ({
         leftComponent={
           isIconHidden ? null : (
             <AvatarOrIcon
-              placeholder={recordChipData.name}
-              placeholderColorSeed={record.id}
-              avatarType={recordChipData.avatarType}
-              avatarUrl={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
+              name={recordChipData.name}
+              colorSeed={record.id}
+              shape={recordChipData.avatarShape}
+              src={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
             />
           )
         }
@@ -108,10 +108,10 @@ export const RecordChip = ({
       leftComponent={
         isIconHidden ? null : (
           <AvatarOrIcon
-            placeholder={recordChipData.name}
-            placeholderColorSeed={record.id}
-            avatarType={recordChipData.avatarType}
-            avatarUrl={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
+            name={recordChipData.name}
+            colorSeed={record.id}
+            shape={recordChipData.avatarShape}
+            src={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
           />
         )
       }

@@ -117,10 +117,10 @@ export const UsageByUserTableSection = ({
             >
               {showAvatar && (
                 <Avatar
-                  type="rounded"
+                  shape="circle"
                   size="md"
-                  placeholder={item.label ?? item.key}
-                  placeholderColorSeed={item.key}
+                  name={item.label ?? item.key}
+                  colorSeed={item.key}
                 />
               )}
               {item.label ?? item.key}
