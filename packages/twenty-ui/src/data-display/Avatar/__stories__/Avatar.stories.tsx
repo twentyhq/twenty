@@ -245,6 +245,9 @@ export const Disabled: Story = {
   play: async ({ canvasElement, args }) => {
     const avatar = within(canvasElement).getByRole('button', { name: 'Jane' });
     await expect(avatar).toBeDisabled();
+    await userEvent.hover(avatar);
+    await expect(getComputedStyle(avatar).cursor).not.toBe('pointer');
+    await expect(getComputedStyle(avatar).boxShadow).toBe('none');
     await userEvent.click(avatar);
     await expect(args.onClick).not.toHaveBeenCalled();
   },

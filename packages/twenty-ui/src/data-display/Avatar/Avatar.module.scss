@@ -24,12 +24,12 @@
     corner-shape: round;
   }
 
-  &[data-clickable] {
+  &[data-clickable]:not([data-disabled]) {
     cursor: pointer;
   }
 
   @include hover-capable {
-    &[data-clickable]:hover {
+    &[data-clickable]:not([data-disabled]):hover {
       box-shadow: 0 0 0 4px var(--t-background-transparent-light);
     }
   }
