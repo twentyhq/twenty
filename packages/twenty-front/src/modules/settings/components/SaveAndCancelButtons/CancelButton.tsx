@@ -1,5 +1,16 @@
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Button } from 'twenty-ui/input';
+
+const StyledInvertedButton = styled(Button)`
+  color: ${themeCssVariables.font.color.inverted};
+`;
+
+const StyledSubtleButton = styled(Button)`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-weight: ${themeCssVariables.font.weight.regular};
+`;
 
 type CancelButtonProps = {
   onCancel?: () => void;
@@ -16,26 +27,21 @@ export const CancelButton = ({
 
   if (inverted) {
     return (
-      <Button
+      <StyledInvertedButton
         size="sm"
         onClick={onCancel}
         disabled={disabled}
         variant="ghost"
-        style={{ color: 'var(--t-font-color-inverted)' }}
-      >{t`Cancel`}</Button>
+      >{t`Cancel`}</StyledInvertedButton>
     );
   }
 
   return (
-    <Button
+    <StyledSubtleButton
       onClick={onCancel}
       disabled={disabled}
       size="sm"
       variant="ghost"
-      style={{
-        fontWeight: 'var(--t-font-weight-regular)',
-        color: 'var(--t-font-color-tertiary)',
-      }}
-    >{t`Cancel`}</Button>
+    >{t`Cancel`}</StyledSubtleButton>
   );
 };

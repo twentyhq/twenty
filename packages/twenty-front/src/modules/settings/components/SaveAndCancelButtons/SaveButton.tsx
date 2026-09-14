@@ -1,6 +1,14 @@
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type IconComponent, IconDeviceFloppy } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
+
+const StyledSaveButton = styled(Button)`
+  &[data-inverted='true'] {
+    color: ${themeCssVariables.font.color.inverted};
+  }
+`;
 
 type SaveButtonProps = {
   onSave?: () => void;
@@ -18,7 +26,7 @@ export const SaveButton = ({
   saveIcon: SaveIcon = IconDeviceFloppy,
 }: SaveButtonProps) => {
   return (
-    <Button
+    <StyledSaveButton
       size="sm"
       disabled={disabled}
       onClick={onSave}
@@ -27,7 +35,7 @@ export const SaveButton = ({
       loading={isLoading}
       variant={inverted ? 'outline' : 'solid'}
       color={inverted ? 'neutral' : 'accent'}
-      style={{ color: inverted ? 'var(--t-font-color-inverted)' : undefined }}
-    >{t`Save`}</Button>
+      data-inverted={inverted}
+    >{t`Save`}</StyledSaveButton>
   );
 };

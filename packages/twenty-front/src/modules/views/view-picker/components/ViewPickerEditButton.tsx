@@ -49,7 +49,6 @@ export const ViewPickerEditButton = () => {
         disabled={viewPickerIsPersisting || isLastView}
         variant="outline"
         color="danger"
-        style={{ justifyContent: 'center' }}
       >{t`Delete`}</Button>
     );
   }
@@ -65,7 +64,6 @@ export const ViewPickerEditButton = () => {
         fullWidth
         variant="solid"
         color="accent"
-        style={{ justifyContent: 'center' }}
       >{t`Go to Settings`}</Button>
     );
   }
@@ -86,7 +84,6 @@ export const ViewPickerEditButton = () => {
         }
         variant="solid"
         color="accent"
-        style={{ justifyContent: 'center' }}
       >{t`Create`}</Button>
     );
   }

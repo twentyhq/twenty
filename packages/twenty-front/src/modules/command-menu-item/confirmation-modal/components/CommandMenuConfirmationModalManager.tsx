@@ -78,7 +78,6 @@ export const CommandMenuConfirmationModalManager = () => {
             onClick={() => emitConfirmationResult('cancel')}
             fullWidth
             variant="outline"
-            style={{ justifyContent: 'center' }}
           >
             {linkButton.title}
           </StyledCenteredButton>

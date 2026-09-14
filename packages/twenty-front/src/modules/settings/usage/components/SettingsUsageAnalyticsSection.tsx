@@ -101,7 +101,6 @@ export const SettingsUsageAnalyticsSection = () => {
           render={
             <Link
               to={`${getSettingsPath(SettingsPath.AI)}#${SETTINGS_AI_TABS.TABS_IDS.USAGE}`}
-              style={{ textDecoration: 'none' }}
             />
           }
           nativeButton={false}

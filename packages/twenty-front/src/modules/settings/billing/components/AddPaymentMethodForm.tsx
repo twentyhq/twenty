@@ -150,7 +150,6 @@ const AddPaymentMethodFormContent = ({
         disabled={!isStripeReady || isSubmitting}
         variant="outline"
         color="accent"
-        style={{ justifyContent: 'center' }}
       >{t`Add credit card`}</Button>
     </StyledFormContainer>
   );

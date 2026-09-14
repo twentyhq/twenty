@@ -37,6 +37,11 @@ import {
   type SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 
+const StyledActionButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
+`;
+
 const StyledPage = styled(StyledOnboardingStepPage)`
   gap: ${themeCssVariables.spacing[5]};
   padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]};
@@ -101,18 +106,14 @@ const UpgradeFreeTrialSubmitButton = ({
   };
 
   return (
-    <Button
+    <StyledActionButton
       onClick={handleSubmit}
       fullWidth
       startIcon={isSubmitting ? <Loader /> : null}
       disabled={!isStripeReady || isSubmitting}
       elevated
       variant="solid"
-      style={{
-        fontWeight: 'var(--t-font-weight-semi-bold)',
-        paddingInline: 'var(--t-spacing-3)',
-      }}
-    >{t`Continue`}</Button>
+    >{t`Continue`}</StyledActionButton>
   );
 };
 
@@ -236,30 +237,22 @@ const UpgradeFreeTrialContent = ({
                 recurringInterval={billingCheckoutSession.interval}
               />
             ) : (
-              <Button
+              <StyledActionButton
                 fullWidth
                 disabled
                 elevated
                 variant="solid"
-                style={{
-                  fontWeight: 'var(--t-font-weight-semi-bold)',
-                  paddingInline: 'var(--t-spacing-3)',
-                }}
-              >{t`Continue`}</Button>
+              >{t`Continue`}</StyledActionButton>
             )
           ) : (
-            <Button
+            <StyledActionButton
               onClick={handleCheckoutSessionClick}
               fullWidth
               startIcon={isCheckoutSubmitting ? <Loader /> : null}
               disabled={isCheckoutSubmitting}
               elevated
               variant="solid"
-              style={{
-                fontWeight: 'var(--t-font-weight-semi-bold)',
-                paddingInline: 'var(--t-spacing-3)',
-              }}
-            >{t`Continue`}</Button>
+            >{t`Continue`}</StyledActionButton>
           )}
           <StyledLinkGroup>
             <ClickToActionLink onClick={signOut}>

@@ -411,7 +411,6 @@ export const ResourceCreditPackagePickerModal = ({
           onClick={onCancel}
           fullWidth
           variant="outline"
-          style={{ justifyContent: 'center' }}
         >{t`Cancel`}</Button>
         <Button
           onClick={onConfirm}
@@ -419,7 +418,6 @@ export const ResourceCreditPackagePickerModal = ({
           disabled={isConfirmDisabled}
           variant="solid"
           color="accent"
-          style={{ justifyContent: 'center' }}
         >{t`Confirm`}</Button>
       </StyledModalActions>
     </ModalStatefulWrapper>

@@ -11,6 +11,11 @@ import { Button } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+const StyledActionButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
+`;
+
 const StyledFooter = styled(StyledOnboardingContentBlock)`
   align-items: center;
   gap: ${themeCssVariables.spacing[4]};
@@ -43,16 +48,12 @@ export const ChooseYourPlanErrorState = ({
 
       <OnboardingStepAnimatedItem index={2}>
         <StyledFooter>
-          <Button
+          <StyledActionButton
             onClick={onRetry}
             fullWidth
             elevated
             variant="solid"
-            style={{
-              fontWeight: 'var(--t-font-weight-semi-bold)',
-              paddingInline: 'var(--t-spacing-3)',
-            }}
-          >{t`Try again`}</Button>
+          >{t`Try again`}</StyledActionButton>
           <ClickToActionLink onClick={signOut}>
             <Trans>Log out</Trans>
           </ClickToActionLink>

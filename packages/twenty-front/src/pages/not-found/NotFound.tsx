@@ -22,6 +22,11 @@ import {
   AnimatedPlaceholderErrorTitle,
 } from 'twenty-ui/feedback';
 
+const StyledActionButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
+`;
+
 const StyledBackDrop = styled.div`
   align-items: center;
   backdrop-filter: ${themeCssVariables.blur.light};
@@ -62,18 +67,14 @@ export const NotFound = () => {
             </AnimatedPlaceholderErrorSubTitle>
           </AnimatedPlaceholderEmptyTextContainer>
           <StyledButtonContainer>
-            <Button
+            <StyledActionButton
               render={<ButtonRouterLink to={AppPath.Index} />}
               nativeButton={false}
               role="link"
               fullWidth
               elevated
               variant="solid"
-              style={{
-                fontWeight: 'var(--t-font-weight-semi-bold)',
-                paddingInline: 'var(--t-spacing-3)',
-              }}
-            >{t`Back to content`}</Button>
+            >{t`Back to content`}</StyledActionButton>
           </StyledButtonContainer>
         </AnimatedPlaceholderErrorContainer>
       </StyledBackDrop>

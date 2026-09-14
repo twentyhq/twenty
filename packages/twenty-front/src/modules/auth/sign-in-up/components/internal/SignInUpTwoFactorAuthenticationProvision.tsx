@@ -23,6 +23,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { resolveCjsModuleDefaultExport } from '~/utils/resolveCjsModuleDefaultExport';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
+const StyledActionButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
+`;
+
 const QRCode = resolveCjsModuleDefaultExport(QRCodeModule);
 
 const StyledForm = styled.div`
@@ -90,16 +95,12 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
             </StyledCopySetupKeyLink>
           )}
         </StyledTwoFactorMainContent>
-        <Button
+        <StyledActionButton
           onClick={handleClick}
           fullWidth
           elevated
           variant="solid"
-          style={{
-            fontWeight: 'var(--t-font-weight-semi-bold)',
-            paddingInline: 'var(--t-spacing-3)',
-          }}
-        >{t`Next`}</Button>
+        >{t`Next`}</StyledActionButton>
       </StyledForm>
     </>
   );

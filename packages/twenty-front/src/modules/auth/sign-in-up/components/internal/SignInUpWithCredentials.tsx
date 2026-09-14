@@ -1,3 +1,4 @@
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
@@ -25,6 +26,11 @@ import { Loader } from 'twenty-ui/feedback';
 import { InputHint, Button } from 'twenty-ui/input';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
+const StyledActionButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
+`;
 
 const StyledForm = styled.form`
   align-items: center;
@@ -161,20 +167,16 @@ export const SignInUpWithCredentials = ({
             />
           )}
           <StyledSsoButtonContainer>
-            <Button
+            <StyledActionButton
               type="submit"
               startIcon={form.formState.isSubmitting ? <Loader /> : null}
               disabled={isSubmitButtonDisabled}
               fullWidth
               elevated
               variant={signInUpStep === SignInUpStep.Init ? 'outline' : 'solid'}
-              style={{
-                fontWeight: 'var(--t-font-weight-semi-bold)',
-                paddingInline: 'var(--t-spacing-3)',
-              }}
             >
               {buttonTitle}
-            </Button>
+            </StyledActionButton>
             {isLastUsed && <LastUsedPill />}
             {isSignUpBlockedByDDLLock && (
               <InputHint>{t`Sign-up is temporarily unavailable during maintenance.`}</InputHint>

@@ -41,6 +41,11 @@ import {
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { logError } from '~/utils/logError';
 
+const StyledActionButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
+`;
+
 const passwordLengthMessage = msg`Password must be between 8 and 50 characters`;
 
 const validationSchema = z
@@ -296,19 +301,15 @@ export const PasswordReset = () => {
                 </StyledFullWidthContainer>
 
                 <StyledMainButtonContainer>
-                  <Button
+                  <StyledActionButton
                     type="submit"
                     fullWidth
                     disabled={isUpdatingPassword}
                     elevated
                     variant="outline"
-                    style={{
-                      fontWeight: 'var(--t-font-weight-semi-bold)',
-                      paddingInline: 'var(--t-spacing-3)',
-                    }}
                   >
                     {passwordActionLabel}
-                  </Button>
+                  </StyledActionButton>
                 </StyledMainButtonContainer>
               </StyledForm>
             )}

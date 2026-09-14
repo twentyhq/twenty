@@ -120,7 +120,6 @@ export const ConfirmationModal = ({
           fullWidth
           data-testid="confirmation-modal-cancel-button"
           variant="outline"
-          style={{ justifyContent: 'center' }}
         >{t`Cancel`}</StyledCenteredButton>
       )}
 
@@ -133,7 +132,6 @@ export const ConfirmationModal = ({
         data-testid="confirmation-modal-confirm-button"
         variant={confirmButtonColor === 'neutral' ? 'outline' : 'solid'}
         color={confirmButtonColor}
-        style={{ justifyContent: 'center' }}
       >
         {translatedConfirmButtonText}
       </StyledCenteredButton>

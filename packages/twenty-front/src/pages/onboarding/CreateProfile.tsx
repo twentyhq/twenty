@@ -31,6 +31,11 @@ import { Button } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
 
+const StyledActionButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
+`;
+
 const StyledForm = styled.div`
   display: flex;
   flex-direction: column;
@@ -285,17 +290,13 @@ export const CreateProfile = () => {
 
       <OnboardingStepAnimatedItem index={3}>
         <StyledButtonContainer>
-          <Button
+          <StyledActionButton
             onClick={handleSubmit(onSubmit)}
             disabled={!isValid || isSubmitting || isNavigating}
             fullWidth
             elevated
             variant="solid"
-            style={{
-              fontWeight: 'var(--t-font-weight-semi-bold)',
-              paddingInline: 'var(--t-spacing-3)',
-            }}
-          >{t`Continue`}</Button>
+          >{t`Continue`}</StyledActionButton>
         </StyledButtonContainer>
       </OnboardingStepAnimatedItem>
     </StyledOnboardingStepPage>

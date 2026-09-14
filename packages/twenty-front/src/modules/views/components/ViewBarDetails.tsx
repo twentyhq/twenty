@@ -39,6 +39,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+const StyledSubtleButton = styled(Button)`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-weight: ${themeCssVariables.font.weight.regular};
+`;
+
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
   rightComponent?: ReactNode;
@@ -280,16 +285,12 @@ export const ViewBarDetails = ({
       </StyledFilterContainer>
       <StyledActionButtonContainer>
         {canResetView && (
-          <Button
+          <StyledSubtleButton
             data-testid="cancel-button"
             onClick={handleCancelClick}
             size="sm"
             variant="ghost"
-            style={{
-              fontWeight: 'var(--t-font-weight-regular)',
-              color: 'var(--t-font-color-tertiary)',
-            }}
-          >{t`Reset`}</Button>
+          >{t`Reset`}</StyledSubtleButton>
         )}
         {rightComponent}
       </StyledActionButtonContainer>

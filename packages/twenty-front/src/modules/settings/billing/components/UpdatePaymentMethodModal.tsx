@@ -92,7 +92,6 @@ export const UpdatePaymentMethodModal = ({
           onClick={() => closeModal(modalInstanceId)}
           fullWidth
           variant="outline"
-          style={{ justifyContent: 'center' }}
         >{t`Cancel`}</Button>
       </StyledCancelButtonContainer>
     </ModalStatefulWrapper>

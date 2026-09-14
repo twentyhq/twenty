@@ -15,6 +15,11 @@ import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/layout';
 
+const StyledActionButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
+`;
+
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
@@ -118,54 +123,38 @@ export const EmailVerificationSent = ({
 
   const mainButtons = isError ? (
     <>
-      <Button
+      <StyledActionButton
         onClick={handleChangeEmail}
         fullWidth
         elevated
         variant="outline"
-        style={{
-          fontWeight: 'var(--t-font-weight-semi-bold)',
-          paddingInline: 'var(--t-spacing-3)',
-        }}
-      >{t`Try with another email`}</Button>
-      <Button
+      >{t`Try with another email`}</StyledActionButton>
+      <StyledActionButton
         onClick={handleResendEmailVerificationToken(email)}
         disabled={isLoading}
         fullWidth
         elevated
         variant="solid"
-        style={{
-          fontWeight: 'var(--t-font-weight-semi-bold)',
-          paddingInline: 'var(--t-spacing-3)',
-        }}
       >
         {isLoading ? t`Sending...` : t`Resend email`}
-      </Button>
+      </StyledActionButton>
     </>
   ) : (
     <>
-      <Button
+      <StyledActionButton
         onClick={handleOpenGmail}
         startIcon={<IconGmail />}
         fullWidth
         elevated
         variant="outline"
-        style={{
-          fontWeight: 'var(--t-font-weight-semi-bold)',
-          paddingInline: 'var(--t-spacing-3)',
-        }}
-      >{t`Open Gmail`}</Button>
-      <Button
+      >{t`Open Gmail`}</StyledActionButton>
+      <StyledActionButton
         onClick={handleOpenOutlook}
         startIcon={<IconMicrosoft />}
         fullWidth
         elevated
         variant="outline"
-        style={{
-          fontWeight: 'var(--t-font-weight-semi-bold)',
-          paddingInline: 'var(--t-spacing-3)',
-        }}
-      >{t`Open Outlook`}</Button>
+      >{t`Open Outlook`}</StyledActionButton>
     </>
   );
 

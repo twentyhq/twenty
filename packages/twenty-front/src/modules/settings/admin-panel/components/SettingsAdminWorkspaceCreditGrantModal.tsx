@@ -226,7 +226,6 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
           onClick={handleClose}
           fullWidth
           variant="outline"
-          style={{ justifyContent: 'center' }}
         >{t`Cancel`}</Button>
         <Button
           onClick={handleSubmit}
@@ -234,7 +233,6 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
           fullWidth
           variant="solid"
           color="accent"
-          style={{ justifyContent: 'center' }}
         >{t`Grant`}</Button>
       </StyledModalActions>
     </ModalStatefulWrapper>

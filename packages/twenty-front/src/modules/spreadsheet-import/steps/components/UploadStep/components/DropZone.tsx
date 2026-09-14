@@ -13,6 +13,11 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Button } from 'twenty-ui/input';
 
+const StyledActionButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
+`;
+
 const StyledContainer = styled.div`
   align-items: center;
   background:
@@ -190,26 +195,18 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
             <Trans>Upload .xlsx, .xls or .csv file</Trans>
           </StyledText>
           <StyledButtonsContainer>
-            <Button
+            <StyledActionButton
               onClick={open}
               fullWidth
               elevated
               variant="solid"
-              style={{
-                fontWeight: 'var(--t-font-weight-semi-bold)',
-                paddingInline: 'var(--t-spacing-3)',
-              }}
-            >{t`Select file`}</Button>
-            <Button
+            >{t`Select file`}</StyledActionButton>
+            <StyledActionButton
               onClick={downloadSample}
               fullWidth
               elevated
               variant="outline"
-              style={{
-                fontWeight: 'var(--t-font-weight-semi-bold)',
-                paddingInline: 'var(--t-spacing-3)',
-              }}
-            >{t`Download sample`}</Button>
+            >{t`Download sample`}</StyledActionButton>
           </StyledButtonsContainer>
           <StyledFooterText>
             {t`Max import capacity: ${formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API.`}

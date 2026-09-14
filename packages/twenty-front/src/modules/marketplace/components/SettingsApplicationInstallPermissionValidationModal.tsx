@@ -35,6 +35,7 @@ const StyledFullscreenContainer = styled.div`
 `;
 
 const StyledLightButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.regular};
   left: ${themeCssVariables.spacing[4]};
   position: absolute;
   top: ${themeCssVariables.spacing[4]};
@@ -130,7 +131,6 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
           onClick={handleClose}
           size="sm"
           variant="ghost"
-          style={{ fontWeight: 'var(--t-font-weight-regular)' }}
         >{t`Back to settings`}</StyledLightButton>
 
         <StyledContent>

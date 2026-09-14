@@ -18,6 +18,11 @@ import { AnimatedIconCrossfade } from 'twenty-ui/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
+const StyledActionButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
+`;
+
 const StyledTitleRow = styled.div`
   align-items: center;
   display: flex;
@@ -201,7 +206,7 @@ export const InstallAppsContent = ({
         <StyledFooter>
           {hasApps && (
             <StyledInstallButton>
-              <Button
+              <StyledActionButton
                 onClick={onInstall}
                 disabled={
                   isCompleting || !isNonEmptyArray(selectedUniversalIdentifiers)
@@ -209,11 +214,7 @@ export const InstallAppsContent = ({
                 fullWidth
                 elevated
                 variant="solid"
-                style={{
-                  fontWeight: 'var(--t-font-weight-semi-bold)',
-                  paddingInline: 'var(--t-spacing-3)',
-                }}
-              >{t`Install`}</Button>
+              >{t`Install`}</StyledActionButton>
             </StyledInstallButton>
           )}
           <OnboardingSkipButton onClick={onSkip} disabled={isCompleting} />

@@ -30,6 +30,11 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
+const StyledActionButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
+`;
+
 const StyledForm = styled.form`
   align-items: center;
   display: flex;
@@ -263,17 +268,13 @@ export const SignInUpTOTPVerification = () => {
           )}
         />
       </StyledTwoFactorMainContent>
-      <Button
+      <StyledActionButton
         type="submit"
         fullWidth
         disabled={isLoading}
         elevated
         variant="solid"
-        style={{
-          fontWeight: 'var(--t-font-weight-semi-bold)',
-          paddingInline: 'var(--t-spacing-3)',
-        }}
-      >{t`Submit`}</Button>
+      >{t`Submit`}</StyledActionButton>
       <StyledActionBackLinkContainer>
         <ClickToActionLink onClick={handleBack}>
           <Trans>Back</Trans>

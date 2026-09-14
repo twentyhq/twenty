@@ -95,7 +95,6 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
             fullWidth
             onClick={handleRenameForAllLanguages}
             variant="outline"
-            style={{ justifyContent: 'center' }}
           >{t`Rename for all languages`}</StyledCenteredButton>
         }
       />

@@ -19,6 +19,10 @@ import { Button } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 
+const StyledLightButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.regular};
+`;
+
 const StyledPage = styled(StyledOnboardingStepPage)`
   gap: ${themeCssVariables.spacing[5]};
   padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]};
@@ -83,15 +87,14 @@ export const BookCall = () => {
           {isOnboardingStep ? (
             <BookCallOnboardingStepActions />
           ) : (
-            <Button
+            <StyledLightButton
               render={<Link to={AppPath.PlanRequired} />}
               nativeButton={false}
               role="link"
               startIcon={<IconChevronLeft />}
               size="sm"
               variant="ghost"
-              style={{ fontWeight: 'var(--t-font-weight-regular)' }}
-            >{t`Back`}</Button>
+            >{t`Back`}</StyledLightButton>
           )}
         </StyledFooter>
       </OnboardingStepAnimatedItem>

@@ -46,6 +46,10 @@ import { MenuItem } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
+const StyledLightButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.regular};
+`;
+
 export const settingsDataModelFieldSelectFormSchema = z.object({
   defaultValue: selectFieldDefaultValueSchema(),
   options: selectOptionsSchema,
@@ -528,13 +532,12 @@ export const SettingsDataModelFieldSelectForm = ({
               <StyledFooterContainer>
                 <CardFooter>
                   <StyledButtonContainer>
-                    <Button
+                    <StyledLightButton
                       startIcon={<IconPlus />}
                       onClick={handleAddOption}
                       size="sm"
                       variant="ghost"
-                      style={{ fontWeight: 'var(--t-font-weight-regular)' }}
-                    >{t`Add option`}</Button>
+                    >{t`Add option`}</StyledLightButton>
                   </StyledButtonContainer>
                 </CardFooter>
               </StyledFooterContainer>

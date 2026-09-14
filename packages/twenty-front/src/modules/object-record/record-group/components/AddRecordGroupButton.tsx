@@ -1,3 +1,5 @@
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useAddRecordGroup } from '@/object-record/record-group/hooks/useAddRecordGroup';
 import { canAddRecordGroupForFieldMetadataItem } from '@/object-record/record-group/utils/canAddRecordGroupForFieldMetadataItem';
@@ -12,6 +14,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
+
+const StyledSubtleButton = styled(Button)`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-weight: ${themeCssVariables.font.weight.regular};
+`;
 
 type AddRecordGroupButtonProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -58,15 +65,11 @@ export const AddRecordGroupButton = ({
       dropdownPlacement="bottom-start"
       dropdownOffset={dropdownOffset}
       clickableComponent={
-        <Button
+        <StyledSubtleButton
           startIcon={<IconPlus />}
           size="sm"
           variant="ghost"
-          style={{
-            fontWeight: 'var(--t-font-weight-regular)',
-            color: 'var(--t-font-color-tertiary)',
-          }}
-        >{t`New group`}</Button>
+        >{t`New group`}</StyledSubtleButton>
       }
       dropdownComponents={
         <SingleRecordPicker

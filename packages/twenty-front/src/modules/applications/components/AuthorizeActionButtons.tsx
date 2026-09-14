@@ -22,10 +22,14 @@ const StyledButtonContainer = styled.div`
 
 const StyledAuthorizeButton = styled(Button)`
   box-shadow: none;
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledCancelButton = styled(Button)`
   box-shadow: none;
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
 `;
 
 export const AuthorizeActionButtons = ({
@@ -43,10 +47,6 @@ export const AuthorizeActionButtons = ({
         disabled={isLoading}
         elevated
         variant="outline"
-        style={{
-          fontWeight: 'var(--t-font-weight-semi-bold)',
-          paddingInline: 'var(--t-spacing-3)',
-        }}
       >{t`Cancel`}</StyledCancelButton>
       <StyledAuthorizeButton
         onClick={onAuthorize}
@@ -54,10 +54,6 @@ export const AuthorizeActionButtons = ({
         fullWidth
         elevated
         variant="solid"
-        style={{
-          fontWeight: 'var(--t-font-weight-semi-bold)',
-          paddingInline: 'var(--t-spacing-3)',
-        }}
       >
         {isLoading ? t`Authorizing...` : t`Authorize`}
       </StyledAuthorizeButton>

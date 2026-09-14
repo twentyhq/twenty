@@ -23,6 +23,11 @@ import { Loader } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+const StyledActionButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
+`;
+
 const StyledForm = styled.div`
   display: flex;
   flex-direction: column;
@@ -127,18 +132,14 @@ export const InviteTeam = () => {
 
       <OnboardingStepAnimatedItem index={4}>
         <StyledFooter>
-          <Button
+          <StyledActionButton
             startIcon={isSubmitting || isNavigating ? <Loader /> : null}
             disabled={!isValid || isSubmitting || isNavigating}
             onClick={handleSubmit(onSubmit)}
             fullWidth
             elevated
             variant="solid"
-            style={{
-              fontWeight: 'var(--t-font-weight-semi-bold)',
-              paddingInline: 'var(--t-spacing-3)',
-            }}
-          >{t`Invite`}</Button>
+          >{t`Invite`}</StyledActionButton>
           <OnboardingSkipButton
             onClick={handleSkip}
             disabled={isSubmitting || isNavigating}

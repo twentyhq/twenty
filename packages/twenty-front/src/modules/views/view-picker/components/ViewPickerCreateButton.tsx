@@ -49,7 +49,6 @@ export const ViewPickerCreateButton = () => {
         disabled={viewPickerIsPersisting}
         variant="outline"
         color="danger"
-        style={{ justifyContent: 'center' }}
       >{t`Delete`}</Button>
     );
   }
@@ -65,7 +64,6 @@ export const ViewPickerCreateButton = () => {
         fullWidth
         variant="solid"
         color="accent"
-        style={{ justifyContent: 'center' }}
       >{t`Go to Settings`}</Button>
     );
   }
@@ -81,7 +79,6 @@ export const ViewPickerCreateButton = () => {
         fullWidth
         variant="solid"
         color="accent"
-        style={{ justifyContent: 'center' }}
       >{t`Go to Settings`}</Button>
     );
   }
@@ -105,7 +102,6 @@ export const ViewPickerCreateButton = () => {
         }
         variant="solid"
         color="accent"
-        style={{ justifyContent: 'center' }}
       >{t`Create`}</Button>
     );
   }

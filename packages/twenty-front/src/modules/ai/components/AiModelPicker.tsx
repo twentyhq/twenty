@@ -19,6 +19,11 @@ import { AiModelPinSelect } from '@/settings/ai/components/AiModelPinSelect';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
+const StyledSubtleButton = styled(Button)`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-weight: ${themeCssVariables.font.weight.regular};
+`;
+
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -93,15 +98,11 @@ export const AiModelPicker = ({
               : t`Set for this agent only`}
         </StyledHint>
         {!isAdvancedOpen && !disabled && (
-          <Button
+          <StyledSubtleButton
             onClick={() => setIsAdvancedOpen(true)}
             size="sm"
             variant="ghost"
-            style={{
-              fontWeight: 'var(--t-font-weight-regular)',
-              color: 'var(--t-font-color-tertiary)',
-            }}
-          >{t`Advanced`}</Button>
+          >{t`Advanced`}</StyledSubtleButton>
         )}
       </StyledFooter>
       {isAdvancedOpen && (

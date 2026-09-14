@@ -16,6 +16,11 @@ import { IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
+const StyledActionButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
+`;
+
 const StyledOnboardingStep = styled(StyledOnboardingStepPage)`
   gap: ${themeCssVariables.spacing[8]};
 `;
@@ -95,30 +100,22 @@ export const ImportContacts = ({
         <StyledFooter>
           <StyledButtons>
             {isDefined(onContinueWithMicrosoft) && (
-              <Button
+              <StyledActionButton
                 fullWidth
                 onClick={onContinueWithMicrosoft}
                 startIcon={<IconMicrosoft size={theme.icon.size.md} />}
                 elevated
                 variant="solid"
-                style={{
-                  fontWeight: 'var(--t-font-weight-semi-bold)',
-                  paddingInline: 'var(--t-spacing-3)',
-                }}
-              >{t`Continue with Microsoft`}</Button>
+              >{t`Continue with Microsoft`}</StyledActionButton>
             )}
             {isDefined(onContinueWithGoogle) && (
-              <Button
+              <StyledActionButton
                 fullWidth
                 onClick={onContinueWithGoogle}
                 startIcon={<IconGoogle size={theme.icon.size.md} />}
                 elevated
                 variant="solid"
-                style={{
-                  fontWeight: 'var(--t-font-weight-semi-bold)',
-                  paddingInline: 'var(--t-spacing-3)',
-                }}
-              >{t`Continue with Google`}</Button>
+              >{t`Continue with Google`}</StyledActionButton>
             )}
           </StyledButtons>
           {isDefined(onSkip) && <OnboardingSkipButton onClick={onSkip} />}

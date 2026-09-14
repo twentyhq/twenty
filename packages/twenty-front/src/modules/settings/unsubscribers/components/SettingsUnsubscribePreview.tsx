@@ -103,13 +103,11 @@ export const SettingsUnsubscribePreview = () => {
                   fullWidth
                   variant="solid"
                   color="accent"
-                  style={{ justifyContent: 'center' }}
                 >{t`Update`}</Button>
                 <HorizontalSeparator text={t`Or`} noMargin />
                 <Button
                   fullWidth
                   variant="outline"
-                  style={{ justifyContent: 'center' }}
                 >{t`Unsubscribe all`}</Button>
               </>
             ) : (
@@ -117,7 +115,6 @@ export const SettingsUnsubscribePreview = () => {
                 fullWidth
                 variant="solid"
                 color="accent"
-                style={{ justifyContent: 'center' }}
               >{t`Unsubscribe`}</Button>
             )}
           </StyledCard>

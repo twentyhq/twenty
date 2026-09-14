@@ -24,6 +24,11 @@ import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
 
+const StyledActionButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
+`;
+
 const StyledContainer = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.secondary};
@@ -148,7 +153,7 @@ export const WorkspaceActivation = () => {
       </OnboardingStepAnimatedItem>
       <OnboardingStepAnimatedItem index={3}>
         <StyledButtonContainer>
-          <Button
+          <StyledActionButton
             onClick={() => {
               void activate();
             }}
@@ -156,11 +161,7 @@ export const WorkspaceActivation = () => {
             fullWidth
             elevated
             variant="solid"
-            style={{
-              fontWeight: 'var(--t-font-weight-semi-bold)',
-              paddingInline: 'var(--t-spacing-3)',
-            }}
-          >{t`Retry`}</Button>
+          >{t`Retry`}</StyledActionButton>
         </StyledButtonContainer>
       </OnboardingStepAnimatedItem>
     </StyledContainer>

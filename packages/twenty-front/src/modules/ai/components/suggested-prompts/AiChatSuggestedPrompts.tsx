@@ -13,6 +13,10 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type SuggestedPrompt } from '@/ai/types/SuggestedPrompt';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
+const StyledLightButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.regular};
+`;
+
 const StyledContainer = styled.div<{ isCentered: boolean }>`
   align-items: ${({ isCentered }) => (isCentered ? 'center' : 'stretch')};
   display: flex;
@@ -97,7 +101,7 @@ export const AiChatSuggestedPrompts = ({
               {resolveMessage(suggestedPrompt.label)}
             </Button>
           ) : (
-            <Button
+            <StyledLightButton
               key={suggestedPrompt.id}
               startIcon={
                 isDefined(suggestedPrompt.Icon) ? (
@@ -107,10 +111,9 @@ export const AiChatSuggestedPrompts = ({
               onClick={() => handleClick(suggestedPrompt)}
               size="sm"
               variant="ghost"
-              style={{ fontWeight: 'var(--t-font-weight-regular)' }}
             >
               {resolveMessage(suggestedPrompt.label)}
-            </Button>
+            </StyledLightButton>
           ),
         )}
       </StyledPromptList>

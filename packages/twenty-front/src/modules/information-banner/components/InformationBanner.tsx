@@ -14,6 +14,12 @@ import { Button, IconButton } from 'twenty-ui/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+const StyledActionButton = styled(Button)`
+  &[data-inverted='true'] {
+    color: ${themeCssVariables.font.color.inverted};
+  }
+`;
+
 const StyledText = styled.div`
   min-width: 0;
 `;
@@ -78,19 +84,17 @@ export const InformationBanner = ({
               />
             </StyledText>
             {buttonTitle && buttonOnClick && (
-              <Button
+              <StyledActionButton
                 startIcon={isDefined(ButtonIcon) ? <ButtonIcon /> : undefined}
                 size="sm"
                 onClick={buttonOnClick}
                 disabled={isButtonDisabled}
                 variant="outline"
                 color={buttonAccent === 'blue' ? 'accent' : 'danger'}
-                style={{
-                  color: isPrimary ? 'var(--t-font-color-inverted)' : undefined,
-                }}
+                data-inverted={isPrimary}
               >
                 {buttonTitle}
-              </Button>
+              </StyledActionButton>
             )}
           </StyledContent>
           {onClose &&

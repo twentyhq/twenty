@@ -14,6 +14,12 @@ import { CardPicker, RadioGroup, Button } from 'twenty-ui/input';
 import { ModalContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+const StyledCheckoutButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
+  width: 200px;
+`;
+
 export const ENTERPRISE_PLAN_MODAL_ID = 'enterprise-plan-modal';
 
 type BillingInterval = 'monthly' | 'yearly';
@@ -183,18 +189,13 @@ export const EnterprisePlanModal = () => {
           </CardPicker>
         </RadioGroup>
 
-        <Button
+        <StyledCheckoutButton
           onClick={handleContinue}
           startIcon={isLoading && <Loader />}
           disabled={isLoading}
           elevated
           variant="solid"
-          style={{
-            width: 200,
-            fontWeight: 'var(--t-font-weight-semi-bold)',
-            paddingInline: 'var(--t-spacing-3)',
-          }}
-        >{t`Continue`}</Button>
+        >{t`Continue`}</StyledCheckoutButton>
       </ModalContent>
     </ModalStatefulWrapper>
   );

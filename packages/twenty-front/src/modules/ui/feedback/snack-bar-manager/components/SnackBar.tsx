@@ -1,3 +1,5 @@
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
 import { Link as ButtonRouterLink } from 'react-router-dom';
 import { sanitizeMessageToRenderInSnackbar } from '@/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar';
 import { msg } from '@lingui/core/macro';
@@ -6,6 +8,10 @@ import { type ComponentPropsWithoutRef, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Toast } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
+
+const StyledLightButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.regular};
+`;
 
 export enum SnackBarVariant {
   Default = 'default',
@@ -68,25 +74,19 @@ export const SnackBar = ({
   const hasAction =
     isDefined(buttonLabel) && (isDefined(buttonOnClick) || isDefined(buttonTo));
   const action = isDefined(buttonTo) ? (
-    <Button
+    <StyledLightButton
       render={<ButtonRouterLink to={buttonTo} />}
       nativeButton={false}
       role="link"
       size="sm"
       variant="ghost"
-      style={{ fontWeight: 'var(--t-font-weight-regular)' }}
     >
       {buttonLabel}
-    </Button>
+    </StyledLightButton>
   ) : (
-    <Button
-      onClick={buttonOnClick}
-      size="sm"
-      variant="ghost"
-      style={{ fontWeight: 'var(--t-font-weight-regular)' }}
-    >
+    <StyledLightButton onClick={buttonOnClick} size="sm" variant="ghost">
       {buttonLabel}
-    </Button>
+    </StyledLightButton>
   );
 
   return (

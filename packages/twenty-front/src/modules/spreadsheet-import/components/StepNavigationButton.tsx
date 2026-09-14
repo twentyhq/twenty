@@ -7,6 +7,11 @@ import { Button } from 'twenty-ui/input';
 import { ModalFooter } from 'twenty-ui/surfaces';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
+const StyledActionButton = styled(Button)`
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  padding-inline: ${themeCssVariables.spacing[3]};
+`;
+
 const StyledFooterContainer = styled.div`
   > div {
     border-top: 1px solid ${themeCssVariables.border.color.medium};
@@ -36,33 +41,25 @@ export const StepNavigationButton = ({
     <StyledFooterContainer>
       <ModalFooter autoHeight>
         {!isUndefinedOrNull(onBack) && (
-          <Button
+          <StyledActionButton
             startIcon={isLoading ? <CircularProgressBar /> : undefined}
             onClick={!isLoading ? onBack : undefined}
             elevated
             variant="outline"
-            style={{
-              fontWeight: 'var(--t-font-weight-semi-bold)',
-              paddingInline: 'var(--t-spacing-3)',
-            }}
           >
             {backTitle}
-          </Button>
+          </StyledActionButton>
         )}
         {!isUndefinedOrNull(onContinue) && (
-          <Button
+          <StyledActionButton
             startIcon={isLoading ? <CircularProgressBar /> : undefined}
             onClick={!isLoading ? onContinue : undefined}
             disabled={isContinueDisabled}
             elevated
             variant="solid"
-            style={{
-              fontWeight: 'var(--t-font-weight-semi-bold)',
-              paddingInline: 'var(--t-spacing-3)',
-            }}
           >
             {continueTitle}
-          </Button>
+          </StyledActionButton>
         )}
       </ModalFooter>
     </StyledFooterContainer>
