@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
-import { type ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { type CompanionState } from '../shared/types';
 import { Field } from '@ui/input/Field/Field';
 import { MainButton } from '@ui/input/MainButton/MainButton';
@@ -65,17 +65,14 @@ const getOnboardingStep = (state: CompanionState) => {
   return 'permissions';
 };
 
-export const Onboarding = ({ state, isPending, command }: ActionProps) => {
-  const step = getOnboardingStep(state);
-  let content: ReactNode;
-  switch (step) {
+const OnboardingContent = ({ state, isPending, command }: ActionProps) => {
+  switch (getOnboardingStep(state)) {
     case 'welcome':
-      content = (
+      return (
         <Welcome state={state} command={command} isPending={isPending} />
       );
-      break;
     case 'loading':
-      content = (
+      return (
         <Empty
           icon={
             <IconRefresh
@@ -105,9 +102,8 @@ export const Onboarding = ({ state, isPending, command }: ActionProps) => {
           </p>
         </Empty>
       );
-      break;
     case 'permissions':
-      content = (
+      return (
         <Permissions
           state={state}
           command={command}
@@ -125,12 +121,16 @@ export const Onboarding = ({ state, isPending, command }: ActionProps) => {
           }}
         />
       );
-      break;
   }
+};
+
+export const Onboarding = (props: ActionProps) => {
   return (
     <div className="setup-frame">
       <span className="setup-logo" role="img" aria-label="Twenty" />
-      <div className="setup-container">{content}</div>
+      <div className="setup-container">
+        <OnboardingContent {...props} />
+      </div>
     </div>
   );
 };

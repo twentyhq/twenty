@@ -34,11 +34,20 @@ export type Meeting = {
   usesCalendarBot: boolean;
 };
 
+export type RecordingStatus =
+  | 'SCHEDULED'
+  | 'JOINING'
+  | 'RECORDING'
+  | 'PROCESSING'
+  | 'FAILED'
+  | 'NOT_RECORDED'
+  | 'COMPLETED';
+
 export type Recording = {
   participants?: { id: string; name: string; avatarUrl?: string | null }[];
   id: string;
   title: string;
-  status: string;
+  status: RecordingStatus;
   startedAt?: string | null;
   endedAt?: string | null;
   calendarEventId?: string | null;
