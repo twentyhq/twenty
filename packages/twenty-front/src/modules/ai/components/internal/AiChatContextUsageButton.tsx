@@ -222,16 +222,19 @@ export const AiChatContextUsageButton = () => {
                 />
               )}
               {showDetails && <AiChatContextUsageDetails />}
-              <HorizontalSeparator noMargin />
-              <StyledFooter>
-                <Button
-                  title={showDetails ? t`Less` : t`More`}
-                  disabled={!isDefined(agentChatUsage)}
-                  size="small"
-                  variant="secondary"
-                  onClick={() => setShowDetails(!showDetails)}
-                />
-              </StyledFooter>
+              {isDefined(agentChatUsage) && (
+                <>
+                  <HorizontalSeparator noMargin />
+                  <StyledFooter>
+                    <Button
+                      title={showDetails ? t`Less` : t`More`}
+                      size="small"
+                      variant="secondary"
+                      onClick={() => setShowDetails(!showDetails)}
+                    />
+                  </StyledFooter>
+                </>
+              )}
             </StyledRows>
           </StyledHoverCard>
         </FloatingPortal>
