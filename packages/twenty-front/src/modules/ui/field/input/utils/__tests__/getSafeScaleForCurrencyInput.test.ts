@@ -3,36 +3,37 @@ import { IMask } from 'react-imask';
 import { NumberFormat } from '@/localization/constants/NumberFormat';
 import {
   CURRENCY_INPUT_MAX_SCALE,
+  CURRENCY_INPUT_MIN_SCALE,
   getSafeScaleForCurrencyInput,
 } from '@/ui/field/input/utils/getSafeScaleForCurrencyInput';
 import { getSeparatorsForNumberFormat } from '~/utils/format/getSeparatorsForNumberFormat';
 
 describe('getSafeScaleForCurrencyInput', () => {
-  it('should guarantee a minimum scale of CURRENCY_INPUT_MAX_SCALE to support stored precision without dropping decimals', () => {
+  it('should guarantee a minimum scale of CURRENCY_INPUT_MIN_SCALE to support stored precision without dropping decimals', () => {
     expect(getSafeScaleForCurrencyInput({ value: '458', decimals: 0 })).toBe(
-      CURRENCY_INPUT_MAX_SCALE,
+      CURRENCY_INPUT_MIN_SCALE,
     );
     expect(getSafeScaleForCurrencyInput({ value: '458', decimals: 2 })).toBe(
-      CURRENCY_INPUT_MAX_SCALE,
+      CURRENCY_INPUT_MIN_SCALE,
     );
     expect(getSafeScaleForCurrencyInput({ value: '' })).toBe(
-      CURRENCY_INPUT_MAX_SCALE,
+      CURRENCY_INPUT_MIN_SCALE,
     );
   });
 
-  it('should keep the scale at CURRENCY_INPUT_MAX_SCALE when the value fits in it', () => {
+  it('should keep the scale at CURRENCY_INPUT_MIN_SCALE when the value fits in it', () => {
     expect(getSafeScaleForCurrencyInput({ value: '458.6', decimals: 2 })).toBe(
-      CURRENCY_INPUT_MAX_SCALE,
+      CURRENCY_INPUT_MIN_SCALE,
     );
   });
 
-  it('should widen the scale when the value has more decimals than CURRENCY_INPUT_MAX_SCALE', () => {
+  it('should widen the scale when the value has more decimals than CURRENCY_INPUT_MIN_SCALE', () => {
     expect(
       getSafeScaleForCurrencyInput({ value: '458.1234567', decimals: 0 }),
     ).toBe(7);
   });
 
-  it('should widen the scale when field decimals exceeds CURRENCY_INPUT_MAX_SCALE', () => {
+  it('should widen the scale when field decimals exceeds CURRENCY_INPUT_MIN_SCALE', () => {
     expect(getSafeScaleForCurrencyInput({ value: '458', decimals: 8 })).toBe(8);
   });
 
@@ -42,10 +43,14 @@ describe('getSafeScaleForCurrencyInput', () => {
     ).toBe(8);
   });
 
-  it('should fallback to CURRENCY_INPUT_MAX_SCALE when value is not a plain unmasked number', () => {
+  it('should fallback to CURRENCY_INPUT_MIN_SCALE when value is not a plain unmasked number', () => {
     expect(
       getSafeScaleForCurrencyInput({ value: '1.234,56', decimals: 1 }),
-    ).toBe(CURRENCY_INPUT_MAX_SCALE);
+    ).toBe(CURRENCY_INPUT_MIN_SCALE);
+  });
+
+  it('should export CURRENCY_INPUT_MAX_SCALE as alias for backwards compatibility', () => {
+    expect(CURRENCY_INPUT_MAX_SCALE).toBe(CURRENCY_INPUT_MIN_SCALE);
   });
 });
 
