@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import {
   FieldActorSource,
   MessageChannelContactAutoCreationPolicy,
+  MessageChannelType,
   MessageParticipantRole,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -197,15 +198,35 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
       return undefined;
     }
 
+    const messageIds = [
+      ...new Set(
+        savedMessagesResult.participantsWithMessageId.map(
+          ({ messageId }) => messageId,
+        ),
+      ),
+    ];
+
+    // The matcher resolves a participant by looking its handle up as an email
+    // address. On a channel whose handles are not email addresses that finds
+    // nothing and writes personId back to null, discarding the identities the
+    // caller supplied at save time, so those channels only reconcile targets.
+    if (messageChannel.type === MessageChannelType.APP) {
+      await this.messageParticipantService.reconcileMessageParticipantTargets({
+        messageIds,
+        workspaceId,
+      });
+
+      return {
+        messageExternalIdsAndIdsMap:
+          savedMessagesResult.messageExternalIdsAndIdsMap,
+        messageExternalIdToMessageThreadIdMap:
+          savedMessagesResult.messageExternalIdToMessageThreadIdMap,
+      };
+    }
+
     await this.messageParticipantService.matchMessageParticipants({
       participants: savedMessagesResult.savedMessageParticipants,
-      messageIds: [
-        ...new Set(
-          savedMessagesResult.participantsWithMessageId.map(
-            ({ messageId }) => messageId,
-          ),
-        ),
-      ],
+      messageIds,
       workspaceId,
     });
 

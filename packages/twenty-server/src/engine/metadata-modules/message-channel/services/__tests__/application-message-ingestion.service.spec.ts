@@ -14,6 +14,7 @@ import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/m
 import { ApplicationMessageIngestionService } from 'src/engine/metadata-modules/message-channel/services/application-message-ingestion.service';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 const APPLICATION_ID = '11111111-1111-4111-8111-111111111111';
 const WORKSPACE_ID = '33333333-3333-4333-8333-333333333333';
@@ -25,6 +26,7 @@ describe('ApplicationMessageIngestionService', () => {
   let service: ApplicationMessageIngestionService;
   let channelsService: jest.Mocked<ApplicationMessageChannelsService>;
   let saveMessagesService: jest.Mocked<MessagingSaveMessagesAndEnqueueContactCreationService>;
+  let existingRecordIds: string[];
 
   const scope = {
     applicationId: APPLICATION_ID,
@@ -50,6 +52,8 @@ describe('ApplicationMessageIngestionService', () => {
     }) as AppMessageInput;
 
   beforeEach(async () => {
+    existingRecordIds = [];
+
     channelsService = {
       findOwnedOrThrow: jest.fn().mockResolvedValue({
         id: MESSAGE_CHANNEL_ID,
@@ -93,6 +97,19 @@ describe('ApplicationMessageIngestionService', () => {
         {
           provide: MessagingSaveMessagesAndEnqueueContactCreationService,
           useValue: saveMessagesService,
+        },
+        {
+          provide: WorkspaceOrmManager,
+          useValue: {
+            executeInWorkspaceContext: (callback: () => unknown) => callback(),
+            getRepository: () => ({
+              find: jest
+                .fn()
+                .mockImplementation(async () =>
+                  existingRecordIds.map((id) => ({ id })),
+                ),
+            }),
+          },
         },
       ],
     }).compile();
@@ -245,5 +262,75 @@ describe('ApplicationMessageIngestionService', () => {
         messageThreadId: 'thread-uuid',
       },
     ]);
+  });
+  describe('explicit identity', () => {
+    const PERSON_ID = '66666666-6666-4666-8666-666666666666';
+
+    it('passes a supplied personId through to the saved participant', async () => {
+      existingRecordIds = [PERSON_ID];
+
+      await service.ingest({
+        ...scope,
+        messages: [
+          aMessage({
+            participants: [
+              {
+                role: MessageParticipantRole.FROM,
+                handle: 'urn:li:person:ada',
+                personId: PERSON_ID,
+              },
+              { role: MessageParticipantRole.TO, handle: CHANNEL_HANDLE },
+            ],
+          }),
+        ],
+      });
+
+      expect(savedMessages()[0].participants[0]).toEqual(
+        expect.objectContaining({ personId: PERSON_ID }),
+      );
+    });
+
+    it('defaults an omitted identity to null rather than undefined', async () => {
+      await service.ingest({ ...scope, messages: [aMessage()] });
+
+      expect(savedMessages()[0].participants[0]).toEqual(
+        expect.objectContaining({ personId: null, workspaceMemberId: null }),
+      );
+    });
+
+    it('rejects a personId that does not exist in the workspace', async () => {
+      existingRecordIds = [];
+
+      await expect(
+        service.ingest({
+          ...scope,
+          messages: [
+            aMessage({
+              participants: [
+                {
+                  role: MessageParticipantRole.FROM,
+                  handle: 'urn:li:person:ada',
+                  personId: PERSON_ID,
+                },
+              ],
+            }),
+          ],
+        }),
+      ).rejects.toMatchObject({
+        code: MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      });
+
+      expect(
+        saveMessagesService.saveMessagesAndEnqueueContactCreation,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('does not query for records when no identity is supplied', async () => {
+      await service.ingest({ ...scope, messages: [aMessage()] });
+
+      expect(
+        saveMessagesService.saveMessagesAndEnqueueContactCreation,
+      ).toHaveBeenCalled();
+    });
   });
 });

@@ -113,4 +113,4 @@ Deleting a channel deletes the messages ingested through it, and any thread left
 
 - **It is not polled.** Twenty's import pipeline polls mailbox providers on a cron. App channels are push-only: nothing fetches on your behalf, so your app is responsible for getting messages in, via a webhook route or a cron logic function.
 - **It does not send.** Outbound delivery is not yet routed to apps; a reply composed in Twenty cannot reach your provider. Until it is, link out to the provider's own UI for replies.
-- **It does not resolve contacts.** Twenty matches email participants to People by email address, which will not match a LinkedIn URN. Link participants to People explicitly when you ingest them.
+- **It does not resolve contacts.** Twenty matches email participants to People by email address, which cannot match a LinkedIn URN, so app channels link participants explicitly at [ingestion](/developers/extend/apps/logic/messaging-ingestion#linking-participants-to-people) instead.

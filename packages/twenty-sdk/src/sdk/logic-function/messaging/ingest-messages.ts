@@ -22,6 +22,17 @@ export type IngestMessageParticipant = {
   // channel's own handle.
   handle: string;
   displayName?: string;
+  // Twenty resolves email participants to People by email address, which
+  // cannot match a provider handle. Supply the record yourself when you know
+  // it — look the handle up against `Person.linkedinLink` or an identity
+  // field your app added. Without it the participant stays unlinked and the
+  // thread never appears on anyone's record page.
+  //
+  // Ingesting the same message again with an identity you have since
+  // resolved links the existing participant, so a late match is not lost.
+  personId?: string;
+  // For a participant who is a member of this workspace rather than a contact.
+  workspaceMemberId?: string;
 };
 
 export type IngestMessage = {

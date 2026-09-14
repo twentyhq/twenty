@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type AppMessageInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
@@ -16,6 +16,8 @@ import {
 import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
 import { buildAppMessageHeaderMessageId } from 'src/engine/metadata-modules/message-channel/utils/build-app-message-header-message-id.util';
 import { resolveAppMessageDirection } from 'src/engine/metadata-modules/message-channel/utils/resolve-app-message-direction.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
@@ -35,6 +37,7 @@ export class ApplicationMessageIngestionService {
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly applicationMessageChannelsService: ApplicationMessageChannelsService,
     private readonly saveMessagesService: MessagingSaveMessagesAndEnqueueContactCreationService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async ingest({
@@ -59,6 +62,7 @@ export class ApplicationMessageIngestionService {
 
     this.assertEachMessageHasOneSender(messages);
     this.assertExternalIdsAreUnique(messages);
+    await this.assertReferencedIdentitiesExist({ messages, workspaceId });
 
     const connectedAccount =
       await this.connectedAccountRepository.findOneOrFail({
@@ -148,8 +152,88 @@ export class ApplicationMessageIngestionService {
         role: participant.role,
         handle: participant.handle,
         displayName: participant.displayName ?? '',
+        personId: participant.personId ?? null,
+        workspaceMemberId: participant.workspaceMemberId ?? null,
       })),
     };
+  }
+
+  // A participant pointing at a record that is not there, or belongs to
+  // another workspace, would insert a dangling link that quietly never
+  // renders. Checked up front so the app gets told, rather than at the FK.
+  private async assertReferencedIdentitiesExist({
+    messages,
+    workspaceId,
+  }: {
+    messages: AppMessageInput[];
+    workspaceId: string;
+  }): Promise<void> {
+    const personIds = new Set<string>();
+    const workspaceMemberIds = new Set<string>();
+
+    for (const message of messages) {
+      for (const participant of message.participants) {
+        if (isDefined(participant.personId)) {
+          personIds.add(participant.personId);
+        }
+
+        if (isDefined(participant.workspaceMemberId)) {
+          workspaceMemberIds.add(participant.workspaceMemberId);
+        }
+      }
+    }
+
+    if (personIds.size === 0 && workspaceMemberIds.size === 0) {
+      return;
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        await this.assertRecordsExist({
+          objectMetadataName: 'person',
+          ids: personIds,
+        });
+        await this.assertRecordsExist({
+          objectMetadataName: 'workspaceMember',
+          ids: workspaceMemberIds,
+        });
+      },
+      authContext,
+      { lite: true },
+    );
+  }
+
+  private async assertRecordsExist({
+    objectMetadataName,
+    ids,
+  }: {
+    objectMetadataName: 'person' | 'workspaceMember';
+    ids: Set<string>;
+  }): Promise<void> {
+    if (ids.size === 0) {
+      return;
+    }
+
+    const repository = this.workspaceOrmManager.getRepository(
+      objectMetadataName,
+      { shouldBypassPermissionChecks: true },
+    );
+
+    const found = await repository.find({
+      where: { id: In([...ids]) },
+      select: { id: true },
+    });
+    const foundIds = new Set(found.map((record) => record.id));
+    const missingIds = [...ids].filter((id) => !foundIds.has(id));
+
+    if (missingIds.length > 0) {
+      throw new MessageChannelException(
+        `Unknown ${objectMetadataName} id(s) on ingested participants: ${missingIds.join(', ')}`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
   }
 
   // Direction, the thread's sender column and the timeline preview all read

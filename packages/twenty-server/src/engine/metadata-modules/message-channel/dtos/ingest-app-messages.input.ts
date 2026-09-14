@@ -44,6 +44,19 @@ export class AppMessageParticipantInput {
   @IsString()
   @MaxLength(255)
   displayName?: string;
+
+  // Nothing can derive a Person from a handle that is not an email address,
+  // so a caller that already knows who this is says so here. Without it the
+  // participant stays unlinked and the thread never reaches a record page.
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsOptional()
+  @IsUUID()
+  personId?: string;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsOptional()
+  @IsUUID()
+  workspaceMemberId?: string;
 }
 
 @InputType('AppMessageInput')
