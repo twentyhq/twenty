@@ -10788,7 +10788,7 @@ msgstr "Αυτό το κλειδί API έχει ανακληθεί και δεν
 #. js-lingui-id: SbhNwj
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
-msgstr ""
+msgstr "Αυτό το κλειδί API έχει ανακληθεί και δεν μπορεί να επανενεργοποιηθεί. Δημιουργήστε ένα νέο κλειδί API."
 
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts

@@ -10788,7 +10788,7 @@ msgstr "Ushbu API kaliti bekor qilingan va endi ishlatilmaydi."
 #. js-lingui-id: SbhNwj
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
-msgstr ""
+msgstr "Bu API kaliti bekor qilingan va qayta faollashtirib bo‘lmaydi. Iltimos, yangi API kalitini yarating."
 
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts

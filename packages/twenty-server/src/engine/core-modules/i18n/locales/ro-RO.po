@@ -10788,7 +10788,7 @@ msgstr "Această cheie API a fost revocată și nu mai poate fi utilizată."
 #. js-lingui-id: SbhNwj
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
-msgstr ""
+msgstr "Această cheie API a fost revocată și nu poate fi reactivată. Vă rugăm să creați o cheie API nouă."
 
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts

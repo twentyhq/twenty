@@ -10788,7 +10788,7 @@ msgstr "このAPIキーは取り消され、もう使用できません。"
 #. js-lingui-id: SbhNwj
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
-msgstr ""
+msgstr "この API キーは取り消されており、再有効化できません。新しい API キーを作成してください。"
 
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
