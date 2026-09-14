@@ -3,7 +3,10 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
-import { resolveSlackRunAsWorkspaceMemberId } from 'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id';
+import {
+  resolveSlackLinkage,
+  resolveSlackRunAsWorkspaceMemberId,
+} from 'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id';
 
 const {
   findSlackUserLinkMock,
@@ -389,5 +392,39 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
         identity: IDENTITY,
       }),
     ).toBeUndefined();
+  });
+
+  it('should report unverifiable when the user link lookup fails', async () => {
+    findSlackUserLinkMock.mockRejectedValue(new Error('graphql unavailable'));
+
+    expect(
+      await resolveSlackLinkage({ client, slackClient, identity: IDENTITY }),
+    ).toEqual({ status: 'UNVERIFIABLE' });
+  });
+
+  it('should report unverifiable when the email lookup fails', async () => {
+    findWorkspaceMemberIdByEmailMock.mockRejectedValue(
+      new Error('graphql unavailable'),
+    );
+
+    expect(
+      await resolveSlackLinkage({ client, slackClient, identity: IDENTITY }),
+    ).toEqual({ status: 'UNVERIFIABLE' });
+  });
+
+  it('should report unverifiable when the installing team cannot be read', async () => {
+    authTestMock.mockRejectedValue(new Error('invalid_auth'));
+
+    expect(
+      await resolveSlackLinkage({ client, slackClient, identity: IDENTITY }),
+    ).toEqual({ status: 'UNVERIFIABLE' });
+  });
+
+  it('should report unlinked when no member matches the email', async () => {
+    findWorkspaceMemberIdByEmailMock.mockResolvedValue(undefined);
+
+    expect(
+      await resolveSlackLinkage({ client, slackClient, identity: IDENTITY }),
+    ).toEqual({ status: 'UNLINKED' });
   });
 });

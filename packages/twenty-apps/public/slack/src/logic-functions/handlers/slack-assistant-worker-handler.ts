@@ -27,7 +27,7 @@ import { getSlackAccessMode } from 'src/logic-functions/utils/get-slack-access-m
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { resolveSlackAssistantMentions } from 'src/logic-functions/utils/resolve-slack-assistant-mentions';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
-import { resolveSlackRunAsWorkspaceMemberId } from 'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id';
+import { resolveSlackLinkage } from 'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id';
 import { runSlackAssistantAgentWithDeadline } from 'src/logic-functions/utils/run-slack-assistant-agent-with-deadline';
 import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
@@ -149,11 +149,23 @@ export const slackAssistantWorkerHandler = async (
         });
       }
 
-      linkedWorkspaceMemberId = await resolveSlackRunAsWorkspaceMemberId({
+      const linkage = await resolveSlackLinkage({
         client,
         slackClient,
         identity: requesterIdentity,
       });
+
+      if (linkage.status === 'UNVERIFIABLE') {
+        await stopStatusUpdates();
+
+        return await finishSlackAssistantRequestWithFailure({
+          ...failureContext,
+          errorMessage: SLACK_ACCESS_UNVERIFIABLE_ERROR,
+        });
+      }
+
+      linkedWorkspaceMemberId =
+        linkage.status === 'LINKED' ? linkage.workspaceMemberId : undefined;
     }
 
     if (

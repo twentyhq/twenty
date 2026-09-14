@@ -9,6 +9,7 @@ import { createSlackUserLink } from 'src/logic-functions/data/create-slack-user-
 import { findSlackUserLink } from 'src/logic-functions/data/find-slack-user-link';
 import { findWorkspaceMemberIdByEmail } from 'src/logic-functions/data/find-workspace-member-id-by-email';
 import { updateSlackUserLink } from 'src/logic-functions/data/update-slack-user-link';
+import { type SlackLinkageResolution } from 'src/logic-functions/types/slack-linkage-resolution.type';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
 import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
@@ -21,15 +22,26 @@ const resolveLinkableEmail = async ({
 }: {
   slackClient: WebClient;
   identity: SlackUserIdentity;
-}): Promise<string | undefined> => {
+}): Promise<
+  { status: 'RESOLVED'; email: string | undefined } | { status: 'UNVERIFIABLE' }
+> => {
   const installedSlackTeamId = await getInstalledSlackTeamId(slackClient);
 
-  return isLinkableSlackIdentity({ identity, installedSlackTeamId })
-    ? identity.email
-    : undefined;
+  // An unreadable installing team is not a mismatched one: without it a guest
+  // cannot be told apart from a member, so this must not read as "not linked".
+  if (!isNonEmptyString(installedSlackTeamId)) {
+    return { status: 'UNVERIFIABLE' };
+  }
+
+  return {
+    status: 'RESOLVED',
+    email: isLinkableSlackIdentity({ identity, installedSlackTeamId })
+      ? identity.email
+      : undefined,
+  };
 };
 
-export const resolveSlackRunAsWorkspaceMemberId = async ({
+export const resolveSlackLinkage = async ({
   client,
   slackClient,
   identity,
@@ -37,9 +49,9 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
   client: CoreApiClient;
   slackClient: WebClient;
   identity: SlackUserIdentity | undefined;
-}): Promise<string | undefined> => {
+}): Promise<SlackLinkageResolution> => {
   if (!isDefined(identity) || !isNonEmptyString(identity.slackTeamId)) {
-    return undefined;
+    return { status: 'UNLINKED' };
   }
 
   const { slackUserId, slackTeamId } = identity;
@@ -52,7 +64,7 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
       slackUserId,
     });
   } catch {
-    return undefined;
+    return { status: 'UNVERIFIABLE' };
   }
 
   const isManualLink = existingLink?.source === SLACK_USER_LINK_SOURCE.MANUAL;
@@ -65,27 +77,39 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
     })
   ) {
     return isNonEmptyString(existingLink.workspaceMemberId)
-      ? existingLink.workspaceMemberId
-      : undefined;
+      ? { status: 'LINKED', workspaceMemberId: existingLink.workspaceMemberId }
+      : { status: 'UNLINKED' };
   }
 
-  const linkableEmail = await resolveLinkableEmail({ slackClient, identity });
+  const linkable = await resolveLinkableEmail({ slackClient, identity });
+
+  if (linkable.status === 'UNVERIFIABLE') {
+    return { status: 'UNVERIFIABLE' };
+  }
+
+  const linkableEmail = linkable.email;
 
   if (!isNonEmptyString(linkableEmail)) {
-    return undefined;
+    return { status: 'UNLINKED' };
   }
 
-  const workspaceMemberId = await findWorkspaceMemberIdByEmail(
-    client,
-    linkableEmail,
-  ).catch(() => undefined);
+  let workspaceMemberId: string | undefined;
+
+  try {
+    workspaceMemberId = await findWorkspaceMemberIdByEmail(
+      client,
+      linkableEmail,
+    );
+  } catch {
+    return { status: 'UNVERIFIABLE' };
+  }
 
   if (!isNonEmptyString(workspaceMemberId)) {
-    return undefined;
+    return { status: 'UNLINKED' };
   }
 
   if (isManualLink) {
-    return workspaceMemberId;
+    return { status: 'LINKED', workspaceMemberId };
   }
 
   const applicationClient = new CoreApiClient({ runAs: 'application' });
@@ -100,7 +124,7 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
       consentState: SLACK_USER_LINK_CONSENT_STATE.ACTIVE,
     }).catch(() => undefined);
 
-    return workspaceMemberId;
+    return { status: 'LINKED', workspaceMemberId };
   }
 
   if (existingLink.workspaceMemberId !== workspaceMemberId) {
@@ -110,5 +134,17 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
     }).catch(() => undefined);
   }
 
-  return workspaceMemberId;
+  return { status: 'LINKED', workspaceMemberId };
+};
+
+export const resolveSlackRunAsWorkspaceMemberId = async (parameters: {
+  client: CoreApiClient;
+  slackClient: WebClient;
+  identity: SlackUserIdentity | undefined;
+}): Promise<string | undefined> => {
+  const resolution = await resolveSlackLinkage(parameters);
+
+  return resolution.status === 'LINKED'
+    ? resolution.workspaceMemberId
+    : undefined;
 };
