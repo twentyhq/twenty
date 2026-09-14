@@ -72,7 +72,7 @@ describe('isMatchingArrayFilter', () => {
     it('should return true when array contains item matching case-insensitive search', () => {
       expect(
         isMatchingArrayFilter({
-          arrayFilter: { containsIlike: 'TEST' },
+          arrayFilter: { containsIlike: '%TEST%' },
           value: ['test item'],
         }),
       ).toBe(true);
@@ -81,7 +81,7 @@ describe('isMatchingArrayFilter', () => {
     it('should return false when array does not contain item matching search', () => {
       expect(
         isMatchingArrayFilter({
-          arrayFilter: { containsIlike: 'missing' },
+          arrayFilter: { containsIlike: '%missing%' },
           value: ['test item'],
         }),
       ).toBe(false);
@@ -90,7 +90,7 @@ describe('isMatchingArrayFilter', () => {
     it('should return false when value is null and using containsIlike', () => {
       expect(
         isMatchingArrayFilter({
-          arrayFilter: { containsIlike: 'test' },
+          arrayFilter: { containsIlike: '%test%' },
           value: null,
         }),
       ).toBe(false);
@@ -99,10 +99,42 @@ describe('isMatchingArrayFilter', () => {
     it('should match partial strings case-insensitively', () => {
       expect(
         isMatchingArrayFilter({
-          arrayFilter: { containsIlike: 'TE' },
+          arrayFilter: { containsIlike: '%TE%' },
           value: ['Test Item', 'Another Item'],
         }),
       ).toBe(true);
+    });
+
+    it('should treat percent signs as SQL ILIKE wildcards', () => {
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: '%user-1%' },
+          value: ['user-1'],
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: '%user-1%' },
+          value: ['user-2'],
+        }),
+      ).toBe(false);
+    });
+
+    it('should treat a pattern without percent signs as a whole-string ILIKE match', () => {
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: 'test' },
+          value: ['TEST'],
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingArrayFilter({
+          arrayFilter: { containsIlike: 'test' },
+          value: ['test item'],
+        }),
+      ).toBe(false);
     });
   });
 
