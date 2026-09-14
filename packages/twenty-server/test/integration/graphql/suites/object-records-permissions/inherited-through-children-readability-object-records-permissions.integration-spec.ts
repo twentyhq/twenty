@@ -494,6 +494,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
 
     it('should hide what is reached through the person from a role that cannot read people', async () => {
       const memberRole = await findOneRoleByLabel({ label: 'Member' });
+      // The metadata API refuses a role that may write an object it cannot read
       const setMemberCanReadPeople = (canReadObjectRecords: boolean) =>
         upsertObjectPermissions({
           expectToFail: false,
@@ -503,6 +504,9 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
               {
                 objectMetadataId: personObjectMetadataId,
                 canReadObjectRecords,
+                canUpdateObjectRecords: canReadObjectRecords,
+                canSoftDeleteObjectRecords: canReadObjectRecords,
+                canDestroyObjectRecords: canReadObjectRecords,
               },
             ],
           },
