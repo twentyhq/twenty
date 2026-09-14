@@ -186,7 +186,11 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       },
       {
         objectMetadataSingularName: 'noteTarget',
-        data: { id: NOTE_TARGET_ID, noteId: NOTE_ID },
+        data: {
+          id: NOTE_TARGET_ID,
+          noteId: NOTE_ID,
+          targetPersonId: PERSON_ID,
+        },
       },
     ];
 
@@ -220,7 +224,10 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       objectMetadataId: attachmentObjectMetadataId,
       recordIds: ATTACHMENT_IDS,
     });
-    await setObjectReadability(noteObjectMetadataId, MetadataReadability.OPEN);
+    await setObjectReadability(
+      noteObjectMetadataId,
+      MetadataReadability.INHERITED,
+    );
     await destroyRecords({
       objectMetadataSingularName: 'attachment',
       objectMetadataPluralName: 'attachments',
@@ -274,7 +281,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
   });
 
   describe('without a share row on the note', () => {
-    it('should hide the attachment and the note target hanging off the note', async () => {
+    it('should hide the attachment hanging off the note and keep the note target that points at the open person', async () => {
       const attachmentsResponse = await makeGraphqlAPIRequestWithMemberRole(
         findAttachmentsOperation,
       );
@@ -287,7 +294,9 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
         collectIds(attachmentsResponse.body.data.attachments.edges),
       ).toEqual([PERSON_ATTACHMENT_ID]);
       expect(noteTargetsResponse.body.errors).toBeUndefined();
-      expect(noteTargetsResponse.body.data.noteTargets.edges).toHaveLength(0);
+      expect(
+        collectIds(noteTargetsResponse.body.data.noteTargets.edges),
+      ).toEqual([NOTE_TARGET_ID]);
     });
 
     it('should keep the attachment hidden when ordering through its note', async () => {
