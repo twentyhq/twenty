@@ -6,8 +6,10 @@ import { In } from 'typeorm';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { MatchParticipantService } from 'src/modules/match-participant/match-participant.service';
-import { ParticipantTargetReconciliationService } from 'src/modules/match-participant/participant-target-reconciliation.service';
+import {
+  type MatchParticipantsArgs,
+  MatchParticipantService,
+} from 'src/modules/match-participant/match-participant.service';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type ParticipantWithMessageId } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
 
@@ -16,7 +18,6 @@ export class MessagingMessageParticipantService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly matchParticipantService: MatchParticipantService<MessageParticipantWorkspaceEntity>,
-    private readonly participantTargetReconciliationService: ParticipantTargetReconciliationService,
   ) {}
 
   public async saveMessageParticipants(
@@ -65,6 +66,13 @@ export class MessagingMessageParticipantService {
                 existingParticipant.displayName === participant.displayName),
           );
 
+        // Paired once: the lookup is a scan of every existing row, and both
+        // the insert list and the update list below need the same answer.
+        const participantsWithExisting = participants.map((participant) => ({
+          participant,
+          existingParticipant: findExisting(participant),
+        }));
+
         const participantsToCreate: Pick<
           MessageParticipantWorkspaceEntity,
           | 'messageId'
@@ -73,9 +81,9 @@ export class MessagingMessageParticipantService {
           | 'role'
           | 'personId'
           | 'workspaceMemberId'
-        >[] = participants
-          .filter((participant) => !isDefined(findExisting(participant)))
-          .map((participant) => {
+        >[] = participantsWithExisting
+          .filter(({ existingParticipant }) => !isDefined(existingParticipant))
+          .map(({ participant }) => {
             return {
               messageId: participant.messageId,
               handle: participant.handle,
@@ -91,40 +99,40 @@ export class MessagingMessageParticipantService {
         // Only callers that supply an identity can trigger this, so the email
         // path — which leaves both undefined and relies on the matcher — is
         // untouched.
-        const identityUpdates = participants.flatMap((participant) => {
-          const existingParticipant = findExisting(participant);
+        const identityUpdates = participantsWithExisting.flatMap(
+          ({ participant, existingParticipant }) => {
+            if (
+              !isDefined(existingParticipant) ||
+              !suppliesIdentity(participant)
+            ) {
+              return [];
+            }
 
-          if (
-            !isDefined(existingParticipant) ||
-            (!isDefined(participant.personId) &&
-              !isDefined(participant.workspaceMemberId))
-          ) {
-            return [];
-          }
+            const personId =
+              participant.personId ?? existingParticipant.personId;
+            const workspaceMemberId =
+              participant.workspaceMemberId ??
+              existingParticipant.workspaceMemberId;
+            // Carried along because the row is no longer matched on it: without
+            // this a rename would be silently dropped on every later delivery.
+            const displayName = participant.displayName;
 
-          const personId = participant.personId ?? existingParticipant.personId;
-          const workspaceMemberId =
-            participant.workspaceMemberId ??
-            existingParticipant.workspaceMemberId;
-          // Carried along because the row is no longer matched on it: without
-          // this a rename would be silently dropped on every later delivery.
-          const displayName = participant.displayName;
+            if (
+              personId === existingParticipant.personId &&
+              workspaceMemberId === existingParticipant.workspaceMemberId &&
+              displayName === existingParticipant.displayName
+            ) {
+              return [];
+            }
 
-          if (
-            personId === existingParticipant.personId &&
-            workspaceMemberId === existingParticipant.workspaceMemberId &&
-            displayName === existingParticipant.displayName
-          ) {
-            return [];
-          }
-
-          return [
-            {
-              criteria: existingParticipant.id,
-              partialEntity: { personId, workspaceMemberId, displayName },
-            },
-          ];
-        });
+            return [
+              {
+                criteria: existingParticipant.id,
+                partialEntity: { personId, workspaceMemberId, displayName },
+              },
+            ];
+          },
+        );
 
         if (identityUpdates.length > 0) {
           await messageParticipantRepository.updateMany(identityUpdates);
@@ -147,42 +155,16 @@ export class MessagingMessageParticipantService {
     );
   }
 
-  // For a source whose handles are not email addresses, the matcher would
-  // look every handle up as an email, find nothing, and write personId back
-  // to null — erasing the identities the caller just supplied. Reconciling
-  // directly keeps those links and still builds the thread targets that put
-  // the conversation on a Person, Company or Opportunity record.
-  public async reconcileMessageParticipantTargets({
-    messageIds,
-    workspaceId,
-  }: {
-    messageIds: string[];
-    workspaceId: string;
-  }): Promise<void> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    await this.workspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        await this.participantTargetReconciliationService.reconcileParticipantTargets(
-          {
-            sourceRecordIds: messageIds,
-            objectMetadataName: 'messageParticipant',
-          },
-        );
-      },
-      authContext,
-      { lite: true },
-    );
-  }
-
   public async matchMessageParticipants({
     participants,
     messageIds,
     workspaceId,
+    matchWith = 'workspaceMemberAndPerson',
   }: {
     participants: MessageParticipantWorkspaceEntity[];
     messageIds: string[];
     workspaceId: string;
+    matchWith?: MatchParticipantsArgs<MessageParticipantWorkspaceEntity>['matchWith'];
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -192,7 +174,7 @@ export class MessagingMessageParticipantService {
           participants,
           sourceRecordIds: messageIds,
           objectMetadataName: 'messageParticipant',
-          matchWith: 'workspaceMemberAndPerson',
+          matchWith,
         });
       },
       authContext,

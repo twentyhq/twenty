@@ -22,6 +22,7 @@ describe('MessagingMessageParticipantService', () => {
     updateMany: jest.Mock;
   };
   let transactionScope: WorkspaceTransactionScope;
+  let matchParticipantService: { matchParticipants: jest.Mock };
 
   const anEmailParticipant = (): ParticipantWithMessageId => ({
     messageId: MESSAGE_ID,
@@ -31,6 +32,7 @@ describe('MessagingMessageParticipantService', () => {
   });
 
   beforeEach(async () => {
+    matchParticipantService = { matchParticipants: jest.fn() };
     participantRepository = {
       find: jest.fn().mockResolvedValue([]),
       insert: jest.fn().mockResolvedValue({ identifiers: [] }),
@@ -52,7 +54,7 @@ describe('MessagingMessageParticipantService', () => {
         },
         {
           provide: MatchParticipantService,
-          useValue: { matchParticipants: jest.fn() },
+          useValue: matchParticipantService,
         },
         {
           provide: ParticipantTargetReconciliationService,
@@ -212,5 +214,36 @@ describe('MessagingMessageParticipantService', () => {
       expect.objectContaining({ displayName: 'Ada L.', personId: null }),
     ]);
     expect(participantRepository.updateMany).not.toHaveBeenCalled();
+  });
+
+  it('matches with people and workspace members by default', async () => {
+    await service.matchMessageParticipants({
+      participants: [],
+      messageIds: [MESSAGE_ID],
+      workspaceId: WORKSPACE_ID,
+    });
+
+    expect(matchParticipantService.matchParticipants).toHaveBeenCalledWith(
+      expect.objectContaining({ matchWith: 'workspaceMemberAndPerson' }),
+    );
+  });
+
+  // An app channel's handles are not email addresses, so running the matcher
+  // would null out the identities the caller supplied at save time.
+  it('forwards targetsOnly so a non-email channel never runs the email matcher', async () => {
+    await service.matchMessageParticipants({
+      participants: [],
+      messageIds: [MESSAGE_ID],
+      workspaceId: WORKSPACE_ID,
+      matchWith: 'targetsOnly',
+    });
+
+    expect(matchParticipantService.matchParticipants).toHaveBeenCalledWith(
+      expect.objectContaining({
+        matchWith: 'targetsOnly',
+        sourceRecordIds: [MESSAGE_ID],
+        objectMetadataName: 'messageParticipant',
+      }),
+    );
   });
 });

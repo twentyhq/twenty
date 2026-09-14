@@ -210,24 +210,14 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     // address. On a channel whose handles are not email addresses that finds
     // nothing and writes personId back to null, discarding the identities the
     // caller supplied at save time, so those channels only reconcile targets.
-    if (messageChannel.type === MessageChannelType.APP) {
-      await this.messageParticipantService.reconcileMessageParticipantTargets({
-        messageIds,
-        workspaceId,
-      });
-
-      return {
-        messageExternalIdsAndIdsMap:
-          savedMessagesResult.messageExternalIdsAndIdsMap,
-        messageExternalIdToMessageThreadIdMap:
-          savedMessagesResult.messageExternalIdToMessageThreadIdMap,
-      };
-    }
-
     await this.messageParticipantService.matchMessageParticipants({
       participants: savedMessagesResult.savedMessageParticipants,
       messageIds,
       workspaceId,
+      matchWith:
+        messageChannel.type === MessageChannelType.APP
+          ? 'targetsOnly'
+          : 'workspaceMemberAndPerson',
     });
 
     return {

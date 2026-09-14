@@ -12,7 +12,7 @@ import {
   type MessageChannelVisibility,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { isConnectionHiddenFromRequestUser } from 'src/engine/core-modules/application/connection-provider/connections/utils/is-connection-hidden-from-request-user.util';
@@ -58,6 +58,19 @@ type UpdatableChannelFields = Partial<
   Pick<MessageChannelEntity, 'displayName' | 'visibility' | 'isSyncEnabled'>
 >;
 
+export type OwnedMessageChannel = {
+  messageChannel: MessageChannelEntity;
+  connectedAccount: ConnectedAccountEntity;
+};
+
+// A name that is only whitespace is no name: stored as null so the UI falls
+// back to the handle, rather than rendering a blank row.
+const normalizeDisplayName = (displayName?: string | null): string | null => {
+  const trimmedDisplayName = displayName?.trim();
+
+  return isNonEmptyString(trimmedDisplayName) ? trimmedDisplayName : null;
+};
+
 @Injectable()
 export class ApplicationMessageChannelsService {
   constructor(
@@ -86,26 +99,21 @@ export class ApplicationMessageChannelsService {
       return [];
     }
 
-    if (isDefined(connectedAccountId)) {
-      if (!ownedAccountIds.includes(connectedAccountId)) {
-        throw this.ownershipViolation(connectedAccountId);
-      }
-
-      return this.messageChannelRepository.find({
-        where: {
-          connectedAccountId,
-          workspaceId,
-          type: MessageChannelType.APP,
-        },
-      });
+    if (
+      isDefined(connectedAccountId) &&
+      !ownedAccountIds.includes(connectedAccountId)
+    ) {
+      throw this.ownershipViolation(connectedAccountId);
     }
 
     return this.messageChannelRepository.find({
-      where: ownedAccountIds.map((ownedAccountId) => ({
-        connectedAccountId: ownedAccountId,
+      where: {
+        connectedAccountId: isDefined(connectedAccountId)
+          ? connectedAccountId
+          : In(ownedAccountIds),
         workspaceId,
         type: MessageChannelType.APP,
-      })),
+      },
     });
   }
 
@@ -136,15 +144,11 @@ export class ApplicationMessageChannelsService {
       );
     }
 
-    const trimmedDisplayName = displayName?.trim();
-
     const entity = this.messageChannelRepository.create({
       workspaceId,
       connectedAccountId,
       handle,
-      displayName: isNonEmptyString(trimmedDisplayName)
-        ? trimmedDisplayName
-        : null,
+      displayName: normalizeDisplayName(displayName),
       type: MessageChannelType.APP,
       visibility,
       isSyncEnabled: true,
@@ -172,7 +176,7 @@ export class ApplicationMessageChannelsService {
     visibility,
     isSyncEnabled,
   }: UpdateArgs): Promise<MessageChannelDTO> {
-    const messageChannel = await this.findOwnedOrThrow({
+    const { messageChannel } = await this.findOwnedOrThrow({
       applicationId,
       workspaceId,
       requestUserWorkspaceId,
@@ -182,11 +186,7 @@ export class ApplicationMessageChannelsService {
     const data: UpdatableChannelFields = {};
 
     if (displayName !== undefined) {
-      const trimmedDisplayName = displayName?.trim();
-
-      data.displayName = isNonEmptyString(trimmedDisplayName)
-        ? trimmedDisplayName
-        : null;
+      data.displayName = normalizeDisplayName(displayName);
     }
 
     if (isDefined(visibility)) {
@@ -214,7 +214,7 @@ export class ApplicationMessageChannelsService {
     requestUserWorkspaceId,
     id,
   }: ApplicationScope & { id: string }): Promise<MessageChannelDTO> {
-    const messageChannel = await this.findOwnedOrThrow({
+    const { messageChannel } = await this.findOwnedOrThrow({
       applicationId,
       workspaceId,
       requestUserWorkspaceId,
@@ -241,31 +241,35 @@ export class ApplicationMessageChannelsService {
     workspaceId,
     requestUserWorkspaceId,
     id,
-  }: ApplicationScope & { id: string }): Promise<MessageChannelEntity> {
+  }: ApplicationScope & { id: string }): Promise<OwnedMessageChannel> {
     const messageChannel = await this.messageChannelRepository.findOne({
       where: { id, workspaceId, type: MessageChannelType.APP },
     });
+
+    const connectedAccount = isDefined(messageChannel)
+      ? await this.findReachableConnectedAccount({
+          applicationId,
+          workspaceId,
+          requestUserWorkspaceId,
+          connectedAccountId: messageChannel.connectedAccountId,
+        })
+      : null;
 
     // Missing and not-reachable answer identically, and neither names the
     // connection. Letting the two differ would tell a caller holding a channel
     // id that the channel exists and whose connection backs it — the same
     // probe ownershipViolation() exists to prevent one step earlier.
-    if (
-      !isDefined(messageChannel) ||
-      !(await this.canReachConnectedAccount({
-        applicationId,
-        workspaceId,
-        requestUserWorkspaceId,
-        connectedAccountId: messageChannel.connectedAccountId,
-      }))
-    ) {
+    if (!isDefined(messageChannel) || !isDefined(connectedAccount)) {
       throw new MessageChannelException(
         `Message channel ${id} not found`,
         MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
       );
     }
 
-    return messageChannel;
+    // The account comes back with the channel because the gate has already
+    // loaded it: ingestion needs the same row, and re-reading it would be a
+    // second round trip for a value we are holding.
+    return { messageChannel, connectedAccount };
   }
 
   // Two boundaries, not one: the connection must belong to this application,
@@ -276,17 +280,19 @@ export class ApplicationMessageChannelsService {
   private async assertOwnsConnectedAccount(
     args: ApplicationScope & { connectedAccountId: string },
   ): Promise<void> {
-    if (!(await this.canReachConnectedAccount(args))) {
+    if (!isDefined(await this.findReachableConnectedAccount(args))) {
       throw this.ownershipViolation(args.connectedAccountId);
     }
   }
 
-  private async canReachConnectedAccount({
+  private async findReachableConnectedAccount({
     applicationId,
     workspaceId,
     requestUserWorkspaceId,
     connectedAccountId,
-  }: ApplicationScope & { connectedAccountId: string }): Promise<boolean> {
+  }: ApplicationScope & {
+    connectedAccountId: string;
+  }): Promise<ConnectedAccountEntity | null> {
     const connectedAccount = await this.connectedAccountRepository.findOne({
       where: {
         id: connectedAccountId,
@@ -296,13 +302,17 @@ export class ApplicationMessageChannelsService {
       },
     });
 
-    return (
-      isDefined(connectedAccount) &&
-      !isConnectionHiddenFromRequestUser({
+    if (
+      !isDefined(connectedAccount) ||
+      isConnectionHiddenFromRequestUser({
         account: connectedAccount,
         requestUserWorkspaceId,
       })
-    );
+    ) {
+      return null;
+    }
+
+    return connectedAccount;
   }
 
   private async findReachableConnectedAccountIds({
