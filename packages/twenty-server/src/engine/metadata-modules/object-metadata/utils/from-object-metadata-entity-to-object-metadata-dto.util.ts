@@ -1,5 +1,20 @@
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
+
+const resolveEffectiveEntityIsActive = (entity: {
+  isActive: boolean;
+  overrides: unknown;
+}): boolean => {
+  const overrideValue = readAuthoredOverrideProperty({
+    metadataName: 'objectMetadata',
+    overrides: entity.overrides,
+    path: ['isActive'],
+    authorContext: { ownerApplicationUniversalIdentifier: undefined },
+  });
+
+  return typeof overrideValue === 'boolean' ? overrideValue : entity.isActive;
+};
 
 export const fromObjectMetadataEntityToObjectMetadataDto = (
   entity: ObjectMetadataEntity,
@@ -17,7 +32,7 @@ export const fromObjectMetadataEntityToObjectMetadataDto = (
   shortcut: entity.shortcut ?? undefined,
   overrides: entity.overrides ?? undefined,
   isRemote: entity.isRemote,
-  isActive: entity.isActive,
+  isActive: resolveEffectiveEntityIsActive(entity),
   isSystem: entity.isSystem,
   isUIEditable: entity.isUIEditable,
   isUICreatable: entity.isUICreatable,

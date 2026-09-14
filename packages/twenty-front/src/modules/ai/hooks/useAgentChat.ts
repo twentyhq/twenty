@@ -19,10 +19,10 @@ import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventNam
 import { SEND_CHAT_MESSAGE } from '@/ai/graphql/mutations/sendChatMessage';
 import { STOP_AGENT_CHAT_STREAM } from '@/ai/graphql/mutations/stopAgentChatStream';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import { useOptimisticallyUnarchiveOnSend } from '@/ai/hooks/useOptimisticallyUnarchiveOnSend';
-import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -41,6 +41,7 @@ import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowse
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   markWorkspaceCreditsAvailable,
@@ -51,7 +52,7 @@ export const useAgentChat = (
   ensureThreadIdForSend: () => Promise<string | null>,
 ) => {
   const { modelIdForRequest } = useAgentChatModelId();
-  const { enabledModels } = useWorkspaceAiModelAvailability();
+  const aiModels = useAtomStateValue(aiModelsState);
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticUnarchive } = useOptimisticallyUnarchiveOnSend();
   const apolloClient = useApolloClient();
@@ -83,9 +84,9 @@ export const useAgentChat = (
       return;
     }
 
-    if (enabledModels.length === 0) {
+    if (aiModels.length === 0) {
       enqueueErrorSnackBar({
-        message: t`No AI models are enabled in this workspace.`,
+        message: t`No AI provider is configured on this instance.`,
       });
 
       return;
@@ -270,7 +271,7 @@ export const useAgentChat = (
     setAgentChatUploadedFiles,
     setAgentChatDraftsByThreadId,
     modelIdForRequest,
-    enabledModels,
+    aiModels,
     enqueueErrorSnackBar,
     setCurrentAiChatThread,
     apolloClient,

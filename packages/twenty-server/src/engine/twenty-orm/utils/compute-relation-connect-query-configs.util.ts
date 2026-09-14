@@ -258,7 +258,7 @@ const checkUniqueConstraintFullyPopulated = (
       `Missing required fields: at least one unique constraint have to be fully populated for '${connectFieldName}'.`,
       TwentyOrmExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
       {
-        userFriendlyMessage: msg`Missing required fields: at least one unique constraint have to be fully populated for '${connectFieldName}'.`,
+        userFriendlyMessage: msg`Missing required fields: at least one unique constraint have to be fully populated for "${connectFieldName}".`,
       },
     );
   }

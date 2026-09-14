@@ -1,5 +1,4 @@
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -11,7 +10,6 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { Pill } from 'twenty-ui/data-display';
 import {
@@ -27,7 +25,7 @@ import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 const RECORD_CALENDAR_TIMELINE_VIEW_ID = 'record-calendar-timeline-view';
 
 export const ObjectOptionsDropdownCalendarViewContent = () => {
-  const { resetContent } = useObjectOptionsDropdown();
+  const { resetContent, dropdownId } = useObjectOptionsDropdown();
   const recordIndexCalendarLayout = useAtomComponentStateValue(
     recordIndexCalendarLayoutComponentState,
   );
@@ -36,12 +34,9 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
   );
   const { updateCurrentView } = useUpdateCurrentView();
 
-  const scopedObjectOptionsDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(OBJECT_OPTIONS_DROPDOWN_ID);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedObjectOptionsDropdownId,
+    dropdownId,
   );
 
   const { closeDropdown } = useObjectOptionsDropdown();
@@ -80,8 +75,8 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <SelectableList
-          selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-          focusId={OBJECT_OPTIONS_DROPDOWN_ID}
+          selectableListInstanceId={dropdownId}
+          focusId={dropdownId}
           selectableItemIdArray={selectableItemIdArray}
         >
           <SelectableListItem

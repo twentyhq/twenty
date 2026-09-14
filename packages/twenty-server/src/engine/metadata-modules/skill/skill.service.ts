@@ -266,6 +266,27 @@ export class SkillService {
       );
   }
 
+  async findFlatSkillsByIds(
+    ids: string[],
+    workspaceId: string,
+  ): Promise<FlatSkill[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const { flatSkillMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatSkillMaps'],
+        },
+      );
+
+    return Object.values(flatSkillMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter((flatSkill) => ids.includes(flatSkill.id) && flatSkill.isActive);
+  }
+
   async activate(id: string, workspaceId: string): Promise<SkillDTO> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(

@@ -16,5 +16,6 @@ export const buildSlackAppConnection = (
   accessToken,
   scopes: ['chat:write', 'channels:read'],
   authFailedAt: null,
+  authFailedReason: null,
   ...overrides,
 });

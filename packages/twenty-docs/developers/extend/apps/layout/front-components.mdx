@@ -690,14 +690,18 @@ Front components support multiple styling approaches. You can use:
 
 ## Using Twenty UI components
 
-Twenty ships its component library as the [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1) package. Front components can use it for buttons, tags, status pills, chips, avatars, icons, typography, and theme tokens that automatically match the workspace's light and dark theme.
+Twenty ships its component library as the [`twenty-ui`](https://www.npmjs.com/package/twenty-ui) package. Front components can use it for buttons, tags, status pills, chips, avatars, icons, typography, and theme tokens that automatically match the workspace's light and dark theme.
+
+<Warning>
+`twenty-ui` is still in alpha. Its version number follows the Twenty SDK release cycle. APIs and component behavior may change between releases.
+</Warning>
 
 ### Installation
 
-Add the package to your app, pinned to the version your Twenty instance ships:
+`twenty-ui` is published alongside the SDK packages with the same version. Add it to your app, pinned to the version of `twenty-sdk` and `twenty-client-sdk` you use:
 
 ```bash
-yarn add twenty-ui@1.0.0-alpha.1
+yarn add -D twenty-ui@2.40.0
 ```
 
 `twenty-ui` is bundled into your front component at build time, so it only needs to be a dependency of your app — there is nothing to configure at runtime.

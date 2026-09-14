@@ -1,3 +1,4 @@
+import { aiModelTiersState } from '@/client-config/states/aiModelTiersState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
@@ -53,6 +54,7 @@ export const useClientConfig = (): UseClientConfigResult => {
   const setDomainConfiguration = useSetAtomState(domainConfigurationState);
   const setAuthProviders = useSetAtomState(authProvidersState);
   const setAiModels = useSetAtomState(aiModelsState);
+  const setAiModelTiers = useSetAtomState(aiModelTiersState);
 
   const setIsDeveloperDefaultSignInPrefilled = useSetAtomState(
     isDeveloperDefaultSignInPrefilledState,
@@ -179,6 +181,7 @@ export const useClientConfig = (): UseClientConfigResult => {
         sso: clientConfig.authProviders.sso,
       });
       setAiModels(clientConfig.aiModels ?? []);
+      setAiModelTiers(clientConfig.aiModelTiers ?? []);
       setIsAnalyticsEnabled(clientConfig.analyticsEnabled);
       setIsDeveloperDefaultSignInPrefilled(clientConfig.signInPrefilled);
       setIsMultiWorkspaceEnabled(clientConfig.isMultiWorkspaceEnabled);
@@ -258,6 +261,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     }
   }, [
     setAiModels,
+    setAiModelTiers,
     setApiConfig,
     setOnboardingConfig,
     setAppVersion,

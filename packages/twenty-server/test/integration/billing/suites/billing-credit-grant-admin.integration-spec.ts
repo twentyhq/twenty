@@ -1,3 +1,4 @@
+import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 import { randomUUID } from 'node:crypto';
 
 import { addDays, addMonths, startOfMonth } from 'date-fns';
@@ -18,7 +19,6 @@ import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/bi
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { alignGrantExpiryToPeriodEnd } from 'src/engine/core-modules/billing/utils/align-grant-expiry-to-period-end.util';
-import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 

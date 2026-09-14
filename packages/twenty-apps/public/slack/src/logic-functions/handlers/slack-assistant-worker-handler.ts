@@ -83,6 +83,7 @@ export const slackAssistantWorkerHandler = async (
     const [
       {
         conversationMessages,
+        sharedFileNames,
         requesterName,
         requesterIdentity,
         requestMessage,
@@ -145,6 +146,7 @@ export const slackAssistantWorkerHandler = async (
         timeoutSeconds: agentBudgetRemainingSeconds,
         workspaceBaseUrl: workspaceBaseUrls[0],
         hasMentionedUsers: resolvedMentions.hasMentionedUsers,
+        sharedFileNames,
       }),
       deadlineAtMs: agentDeadlineAtMs,
     }).finally(() => stopStatusUpdates());

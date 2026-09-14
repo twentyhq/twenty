@@ -3,10 +3,17 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { MOSTLY_EMPTY_FRACTION_THRESHOLD } from 'src/engine/metadata-modules/object-metadata/constants/mostly-empty-fraction-threshold.constant';
 import { getEmptinessColumnNamesForField } from 'src/engine/metadata-modules/object-metadata/utils/get-emptiness-column-names-for-field.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 export type FieldMetadataForEmptinessCheck = Pick<
   FlatFieldMetadata,
-  'id' | 'name' | 'type' | 'isActive' | 'isSystem'
+  | 'id'
+  | 'name'
+  | 'type'
+  | 'isActive'
+  | 'isSystem'
+  | 'applicationUniversalIdentifier'
+  | 'overrides'
 >;
 
 export const computeMostlyEmptyFieldMetadataIds = ({
@@ -20,7 +27,14 @@ export const computeMostlyEmptyFieldMetadataIds = ({
 }): string[] => {
   return fieldMetadatas
     .filter((fieldMetadata) => {
-      if (!fieldMetadata.isActive || fieldMetadata.isSystem) {
+      if (
+        !resolveEffectiveFlatEntityProperty({
+          metadataName: 'fieldMetadata',
+          flatEntity: fieldMetadata,
+          property: 'isActive',
+        }) ||
+        fieldMetadata.isSystem
+      ) {
         return false;
       }
 

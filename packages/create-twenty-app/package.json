@@ -1,6 +1,6 @@
 {
   "name": "create-twenty-app",
-  "version": "2.40.0",
+  "version": "2.41.0",
   "description": "Command-line interface to create Twenty application",
   "main": "dist/cli.cjs",
   "bin": "dist/cli.cjs",
@@ -51,7 +51,8 @@
     "twenty-shared": "workspace:*",
     "typescript": "^5.9.3",
     "vite": "^8.0.0",
-    "vite-plugin-dts": "^4.5.4"
+    "vite-plugin-dts": "^4.5.4",
+    "yaml": "^2.9.0"
   },
   "engines": {
     "node": "^24.5.0",

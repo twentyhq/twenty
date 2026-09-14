@@ -31,6 +31,7 @@ export const renderCoverageReport = (report: CoverageReport): string => {
   const {
     generalPurposeModelCount: total,
     scoredGeneralPurposeModelCount: scored,
+    costedGeneralPurposeModelCount: costed,
     declaredEffortVariantCount: declaredVariants,
     scoredEffortVariantCount: scoredVariants,
   } = report;
@@ -40,6 +41,7 @@ export const renderCoverageReport = (report: CoverageReport): string => {
     '',
     `- General-purpose models with an intelligence index: **${scored}/${total}** (${asPercentage({ numerator: scored, denominator: total })})`,
     `- Declared effort variants with an index measured at their own effort: **${scoredVariants}/${declaredVariants}** (${asPercentage({ numerator: scoredVariants, denominator: declaredVariants })})`,
+    `- General-purpose models with a cost per task: **${costed}/${total}** (${asPercentage({ numerator: costed, denominator: total })})`,
     `- Specialized models excluded from the denominator: ${report.specializedModelCount}`,
     ...renderGapList({
       summary: 'General-purpose models with no matched intelligence index',

@@ -1,6 +1,6 @@
 import { type AgentManifest } from 'twenty-shared/application';
 
-import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
+import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent.type';
 
@@ -21,7 +21,9 @@ export const fromAgentManifestToUniversalFlatAgent = ({
     icon: agentManifest.icon ?? null,
     description: agentManifest.description ?? null,
     prompt: agentManifest.prompt,
-    modelId: (agentManifest.modelId as ModelId) ?? AUTO_SELECT_SMART_MODEL_ID,
+    modelId:
+      (agentManifest.modelId as ModelId) ??
+      AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
     responseFormat: agentManifest.responseFormat ?? { type: 'text' },
     modelConfiguration: null,
     evaluationInputs: [],
