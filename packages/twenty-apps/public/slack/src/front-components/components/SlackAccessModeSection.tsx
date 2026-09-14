@@ -1,7 +1,10 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useId } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import { IconLock } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
+import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
@@ -9,31 +12,78 @@ import { Toggle } from 'src/front-components/components/Toggle';
 import { useSlackAccessMode } from 'src/front-components/hooks/use-slack-access-mode';
 import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
 
-const StyledRow = styled.div`
+const StyledCardContent = styled.div<{ $disabled: boolean }>`
   align-items: center;
+  background-color: ${() => themeCssVariables.background.secondary};
+  cursor: ${({ $disabled }) => ($disabled ? 'default' : 'pointer')};
   display: flex;
-  gap: ${() => themeCssVariables.spacing[4]};
-  justify-content: space-between;
+  gap: ${() => themeCssVariables.spacing[3]};
+  padding: ${() => themeCssVariables.spacing[4]};
+  pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
+  position: relative;
+
+  &:hover {
+    background: ${() => themeCssVariables.background.transparent.lighter};
+  }
 `;
 
-const StyledLabel = styled.div`
+const StyledIcon = styled.div`
+  align-items: center;
+  background-color: ${() => themeCssVariables.background.primary};
+  border: 2px solid ${() => themeCssVariables.border.color.light};
+  border-radius: ${() => themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
+  color: ${() => themeCssVariables.font.color.secondary};
   display: flex;
-  flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[1]};
+  height: ${() => themeCssVariables.spacing[8]};
+  justify-content: center;
+  min-width: ${() => themeCssVariables.spacing[8]};
+  width: ${() => themeCssVariables.spacing[8]};
 `;
 
-const StyledTitle = styled.span`
+const StyledTextContainer = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+const StyledTitle = styled.div`
   color: ${() => themeCssVariables.font.color.primary};
   font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.sm};
   font-weight: ${() => themeCssVariables.font.weight.medium};
+  margin-bottom: ${() => themeCssVariables.spacing[1]};
 `;
 
-const StyledDescription = styled.span`
-  color: ${() => themeCssVariables.font.color.tertiary};
+const StyledDescription = styled.div`
+  color: ${() => themeCssVariables.font.color.secondary};
   font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.xs};
+  font-size: ${() => themeCssVariables.font.size.sm};
+  line-height: ${() => themeCssVariables.text.lineHeight.lg};
+  overflow: hidden;
 `;
+
+// Makes the whole row act as the switch's label without nesting the button
+// inside it, which would swallow its own click.
+const StyledCover = styled.span`
+  cursor: pointer;
+  inset: 0;
+  position: absolute;
+`;
+
+const StyledToggleContainer = styled.span`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  margin-left: auto;
+`;
+
+const RESTRICTED_DESCRIPTION =
+  'Only Slack accounts linked to a workspace member can use the assistant. Anyone else is asked to have an admin link them.';
+
+const OPEN_DESCRIPTION =
+  'Anyone who can mention the assistant in Slack can use it, whether or not they are linked to a workspace member.';
+
+const UNREADABLE_DESCRIPTION =
+  'The current setting could not be loaded, so this is not showing it. Reload to try again.';
 
 type SlackAccessModeSectionProps = {
   canManage: boolean;
@@ -42,6 +92,7 @@ type SlackAccessModeSectionProps = {
 export const SlackAccessModeSection = ({
   canManage,
 }: SlackAccessModeSectionProps) => {
+  const toggleId = useId();
   const {
     accessMode,
     hasAccessModeError,
@@ -51,6 +102,12 @@ export const SlackAccessModeSection = ({
   } = useSlackAccessMode();
 
   const isRestricted = accessMode === SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS;
+
+  const isDisabled =
+    !canManage ||
+    hasAccessModeError ||
+    isAccessModeLoading ||
+    isSavingAccessMode;
 
   const handleToggle = async (value: boolean) => {
     const result = await saveAccessMode(
@@ -63,33 +120,45 @@ export const SlackAccessModeSection = ({
     });
   };
 
+  const description = hasAccessModeError
+    ? UNREADABLE_DESCRIPTION
+    : isRestricted
+      ? RESTRICTED_DESCRIPTION
+      : OPEN_DESCRIPTION;
+
   return (
     <Section>
       <H2Title
         title="Access"
         description="Choose who the assistant answers in Slack."
       />
-      <StyledRow>
-        <StyledLabel>
-          <StyledTitle>Restrict to linked members</StyledTitle>
-          <StyledDescription>
-            {hasAccessModeError
-              ? 'The current setting could not be loaded, so this toggle is not showing it. Reload to try again.'
-              : 'When on, only Slack accounts linked to a workspace member can use the assistant. Anyone else is asked to have an admin link them.'}
-          </StyledDescription>
-        </StyledLabel>
-        <Toggle
-          checked={isRestricted}
-          onChange={handleToggle}
-          disabled={
-            !canManage ||
-            hasAccessModeError ||
-            isAccessModeLoading ||
-            isSavingAccessMode
-          }
-          ariaLabel="Restrict the assistant to linked members"
-        />
-      </StyledRow>
+      <Card rounded>
+        <StyledCardContent $disabled={isDisabled}>
+          <StyledIcon>
+            <IconLock size={16} />
+          </StyledIcon>
+          <StyledTextContainer>
+            <StyledTitle>
+              <label htmlFor={toggleId}>
+                Restrict to linked members
+                <StyledCover />
+              </label>
+            </StyledTitle>
+            <StyledDescription>
+              <OverflowingTextWithTooltip text={description} />
+            </StyledDescription>
+          </StyledTextContainer>
+          <StyledToggleContainer>
+            <Toggle
+              id={toggleId}
+              checked={isRestricted}
+              onChange={handleToggle}
+              disabled={isDisabled}
+              ariaLabel="Restrict the assistant to linked members"
+            />
+          </StyledToggleContainer>
+        </StyledCardContent>
+      </Card>
     </Section>
   );
 };

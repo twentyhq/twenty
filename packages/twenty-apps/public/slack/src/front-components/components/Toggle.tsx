@@ -60,6 +60,7 @@ const StyledThumb = styled.span`
 `;
 
 type ToggleProps = {
+  id?: string;
   checked: boolean;
   disabled?: boolean;
   ariaLabel: string;
@@ -67,6 +68,7 @@ type ToggleProps = {
 };
 
 export const Toggle = ({
+  id,
   checked,
   disabled = false,
   ariaLabel,
@@ -75,6 +77,7 @@ export const Toggle = ({
   <StyledToggle
     type="button"
     role="switch"
+    id={id}
     aria-checked={checked ? 'true' : 'false'}
     aria-label={ariaLabel}
     data-checked={checked ? 'true' : 'false'}
