@@ -1,4 +1,6 @@
 import 'twenty-ui/style.css';
+import 'twenty-ui/theme-dark.css';
+import 'twenty-ui/theme-light.css';
 
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -8,8 +10,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { Callout } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { THEME_DARK, THEME_LIGHT } from 'twenty-ui/theme';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
 import { SlackAccessModeSection } from 'src/front-components/components/SlackAccessModeSection';
@@ -291,21 +292,16 @@ const SlackUserLinksSettingsContent = () => {
   );
 };
 
-// twenty-ui components and this app's styled rules read the theme off
-// ThemeContext, whose default resolves every token to a var() string. The
-// sandbox document never defines those variables, so without a real theme
-// here everything renders unstyled.
+// twenty-ui components and this app's styled rules read every token off
+// ThemeContext as a var() reference. The sandbox document does not inherit the
+// host stylesheet, so the theme variable sheets are imported here for the
+// provider to resolve them against.
 export const SlackUserLinksSettings = () => {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeContext.Provider
-      value={{
-        theme: colorScheme === 'dark' ? THEME_DARK : THEME_LIGHT,
-        colorScheme,
-      }}
-    >
+    <ThemeProvider colorScheme={colorScheme}>
       <SlackUserLinksSettingsContent />
-    </ThemeContext.Provider>
+    </ThemeProvider>
   );
 };
