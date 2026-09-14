@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { getSlackAccessMode } from 'src/logic-functions/utils/get-slack-access-mode';
+import {
+  getSlackAccessMode,
+  readSlackAccessMode,
+} from 'src/logic-functions/utils/get-slack-access-mode';
 
 const { kvGetMock } = vi.hoisted(() => ({
   kvGetMock: vi.fn(),
@@ -37,5 +40,20 @@ describe('getSlackAccessMode', () => {
     kvGetMock.mockRejectedValue(new Error('kv unavailable'));
 
     expect(await getSlackAccessMode()).toBe('ONLY_LINKED_MEMBERS');
+  });
+
+  it('should report the read outcome alongside a stored value', async () => {
+    kvGetMock.mockResolvedValue('ONLY_LINKED_MEMBERS');
+
+    expect(await readSlackAccessMode()).toEqual({
+      status: 'READ',
+      accessMode: 'ONLY_LINKED_MEMBERS',
+    });
+  });
+
+  it('should report an unreadable store distinctly from a stored value', async () => {
+    kvGetMock.mockRejectedValue(new Error('kv unavailable'));
+
+    expect(await readSlackAccessMode()).toEqual({ status: 'UNREADABLE' });
   });
 });
