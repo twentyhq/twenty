@@ -197,7 +197,9 @@ export const AiChatContextUsageButton = () => {
                 <UsageProgressRow
                   Icon={IconGauge}
                   label={t`Usage`}
-                  value={loading || isDefined(error) ? null : creditPercentage}
+                  value={
+                    loading || isDefined(error) ? 0 : (creditPercentage ?? 0)
+                  }
                   valueLabel={
                     loading
                       ? t`Loading…`
@@ -208,7 +210,9 @@ export const AiChatContextUsageButton = () => {
                           : isDefined(daysUntilReset) &&
                               isDefined(creditPercentage)
                             ? t`Reset in ${daysUntilReset} days (${formatNumber(creditPercentage, { decimals: 1 })}%)`
-                            : undefined
+                            : !isDefined(creditPercentage)
+                              ? '—'
+                              : undefined
                   }
                   barColor={getUsageLimitRingColor({
                     consumedPercentage: creditPercentage ?? 0,
@@ -217,19 +221,16 @@ export const AiChatContextUsageButton = () => {
                 />
               )}
               {showDetails && <AiChatContextUsageDetails />}
-              {isDefined(agentChatUsage) && (
-                <>
-                  <HorizontalSeparator noMargin />
-                  <StyledFooter>
-                    <Button
-                      title={showDetails ? t`Less` : t`More`}
-                      size="small"
-                      variant="secondary"
-                      onClick={() => setShowDetails(!showDetails)}
-                    />
-                  </StyledFooter>
-                </>
-              )}
+              <HorizontalSeparator noMargin />
+              <StyledFooter>
+                <Button
+                  title={showDetails ? t`Less` : t`More`}
+                  disabled={!isDefined(agentChatUsage)}
+                  size="small"
+                  variant="secondary"
+                  onClick={() => setShowDetails(!showDetails)}
+                />
+              </StyledFooter>
             </StyledRows>
           </StyledHoverCard>
         </FloatingPortal>

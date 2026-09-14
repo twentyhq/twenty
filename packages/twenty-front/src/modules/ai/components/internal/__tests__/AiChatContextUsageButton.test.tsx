@@ -60,6 +60,7 @@ describe('AiChatContextUsageButton', () => {
     ).toBeVisible();
     expect(screen.getByText('(0/1M) 0%')).toBeVisible();
     expect(screen.getByText('80%')).toBeVisible();
+    expect(screen.getByRole('button', { name: /^More/ })).toBeDisabled();
     await user.keyboard('{Escape}');
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
@@ -146,6 +147,23 @@ describe('AiChatContextUsageButton', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Context and usage' }));
     expect(screen.getByText('—')).toBeVisible();
+    expect(screen.queryByText('0%')).not.toBeInTheDocument();
+  });
+
+  it('keeps More disabled when a chat has no usage data and no credit limit', async () => {
+    mockUseQuery.mockReturnValue({ data: { aiChatUsage: null } });
+    const user = userEvent.setup();
+    render(
+      <I18nProvider i18n={i18n}>
+        <AiChatContextUsageButton />
+      </I18nProvider>,
+    );
+    await user.click(screen.getByRole('button', { name: 'Context and usage' }));
+    expect(screen.getByText('No limit')).toBeVisible();
+    const moreButton = screen.getByRole('button', { name: /^More/ });
+    expect(moreButton).toBeDisabled();
+    await user.click(moreButton);
+    expect(screen.queryByText('Conversation')).not.toBeInTheDocument();
     expect(screen.queryByText('0%')).not.toBeInTheDocument();
   });
 
