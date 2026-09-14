@@ -41,13 +41,13 @@ export const linkedinInboundHandler = async (payload: LinkedinWebhookPayload) =>
 
 ## What the server does for you
 
-**De-duplication.** `externalId` is the key. Ingesting the same one twice creates nothing and changes nothing, so a redelivered webhook is safe to replay and a backfill may overlap a live stream. The returned `messageId` is stable across replays.
+**De-duplication.** `externalId` is the key. Ingesting the same one twice creates nothing and changes nothing, so a redelivered webhook is safe to replay and a backfill may overlap a live stream. The returned `messageId` is stable across replays. Calls against one channel are serialised, so a redelivery arriving while its original is still being written waits rather than racing it.
 
 **Threading.** Messages sharing a `threadExternalId` land in one Message Thread, which then appears on the Person, Company and Opportunity records of its participants.
 
 **Direction.** Derived, not declared: the message is outgoing when the `FROM` participant's handle equals the channel's handle, incoming otherwise. Exactly one participant must carry `FROM` — direction, the thread's sender column and the timeline preview all read it, so a message without one is rejected rather than rendering as an empty conversation.
 
-**Convergence across members.** Two members of the same workspace in the same conversation, each with their own channel, converge on one Message with one association per channel — the same way one email to two synced mailboxes does. Different apps never collide, whatever external ids they use.
+**De-duplication is scoped to the channel.** `externalId` only has to be unique within one channel, which is what most providers actually guarantee — plenty number messages per conversation or per account. The consequence is that two members in the same provider conversation each get their own Message rather than a shared one. That is deliberate: merging them would require every app to guarantee a global namespace it does not control, and getting it wrong would attach one member's body to another member's channel.
 
 **Privacy.** Each message inherits its channel's `visibility`. Nothing you ingest is more visible than the channel you ingest it into.
 
@@ -61,13 +61,13 @@ for (const page of chunk(allHistoricalMessages, 100)) {
 }
 ```
 
-A batch is all-or-nothing, and repeating one `externalId` inside a single batch is rejected — de-duplicate before you send.
+A batch is all-or-nothing, and repeating one `externalId` inside a single batch is rejected — de-duplicate before you send. A message body is capped at 256KB.
 
 ## Linking participants to People
 
 Twenty matches email participants to People by email address. That cannot match a LinkedIn URN or a phone number, so **an app must say who a participant is** — an unlinked thread does not appear on anyone's record page.
 
-Pass `personId` (a contact) or `workspaceMemberId` (someone in this workspace) alongside the handle:
+Pass `personId` alongside the handle:
 
 ```ts
 participants: [
@@ -84,8 +84,12 @@ Resolve the id however your provider's identity is stored — against `Person.li
 
 Once a participant is linked, Twenty builds the thread's targets, and the conversation appears on that Person's record page and on their company's, exactly as an email thread does.
 
+`workspaceMemberId` is also accepted, for a participant who is a member of this workspace rather than a contact. It is **attribution only**: thread targets are built from `personId` alone — the same as for email — so a participant linked only to a workspace member shows in the thread but pulls the conversation onto no record page. Pass `personId` when you want the thread to land somewhere.
+
 <Note>
-A late match is not lost. Re-ingesting a message with an identity you have since resolved links the participant that is already there, so you can ingest first and enrich afterwards.
+A late match is not lost. Re-ingesting a message with an identity you have since resolved links the participant that is already there — matched on the message, handle and role, so a display name that changed or was omitted in the meantime does not split it in two. Sending a different `personId` corrects an earlier link rather than adding a second one.
+
+There is no way to *clear* an identity yet: a null is treated as "leave it alone", not "unlink". Correcting a wrong link means supplying the right one.
 </Note>
 
 Participants you leave unlinked are still stored and still render in the thread — they simply do not pull the conversation onto a record.

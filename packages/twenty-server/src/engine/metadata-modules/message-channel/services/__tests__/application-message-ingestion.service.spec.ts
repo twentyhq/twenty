@@ -6,6 +6,7 @@ import {
   MessageParticipantRole,
 } from 'twenty-shared/types';
 
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type AppMessageInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -27,6 +28,7 @@ describe('ApplicationMessageIngestionService', () => {
   let channelsService: jest.Mocked<ApplicationMessageChannelsService>;
   let saveMessagesService: jest.Mocked<MessagingSaveMessagesAndEnqueueContactCreationService>;
   let existingRecordIds: string[];
+  let cacheLockService: { withLock: jest.Mock };
 
   const scope = {
     applicationId: APPLICATION_ID,
@@ -54,6 +56,7 @@ describe('ApplicationMessageIngestionService', () => {
 
   beforeEach(async () => {
     existingRecordIds = [];
+    cacheLockService = { withLock: jest.fn((fn: () => unknown) => fn()) };
 
     channelsService = {
       findOwnedOrThrow: jest.fn().mockResolvedValue({
@@ -77,10 +80,7 @@ describe('ApplicationMessageIngestionService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApplicationMessageIngestionService,
-        {
-          provide: getRepositoryToken(MessageChannelEntity),
-          useValue: { findOne: jest.fn() },
-        },
+        { provide: CacheLockService, useValue: cacheLockService },
         {
           provide: getRepositoryToken(ConnectedAccountEntity),
           useValue: {
@@ -137,11 +137,11 @@ describe('ApplicationMessageIngestionService', () => {
     );
   });
 
-  it('namespaces the dedup key by application so apps cannot collide', async () => {
+  it('namespaces the dedup key by application and channel', async () => {
     await service.ingest({ ...scope, messages: [aMessage()] });
 
     expect(savedMessages()[0].headerMessageId).toBe(
-      `app:${APPLICATION_ID}:msg-1`,
+      `app:${APPLICATION_ID}:${MESSAGE_CHANNEL_ID}:msg-1`,
     );
   });
 
@@ -299,6 +299,33 @@ describe('ApplicationMessageIngestionService', () => {
       );
     });
 
+    it('rejects a workspaceMemberId that does not exist in the workspace', async () => {
+      existingRecordIds = [];
+
+      await expect(
+        service.ingest({
+          ...scope,
+          messages: [
+            aMessage({
+              participants: [
+                {
+                  role: MessageParticipantRole.FROM,
+                  handle: 'urn:li:person:ada',
+                  workspaceMemberId: PERSON_ID,
+                },
+              ],
+            }),
+          ],
+        }),
+      ).rejects.toMatchObject({
+        code: MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      });
+
+      expect(
+        saveMessagesService.saveMessagesAndEnqueueContactCreation,
+      ).not.toHaveBeenCalled();
+    });
+
     it('rejects a personId that does not exist in the workspace', async () => {
       existingRecordIds = [];
 
@@ -365,5 +392,58 @@ describe('ApplicationMessageIngestionService', () => {
         requestUserWorkspaceId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
       }),
     );
+  });
+  it('serialises the save per channel so a redelivery cannot race its original', async () => {
+    await service.ingest({ ...scope, messages: [aMessage()] });
+
+    expect(cacheLockService.withLock).toHaveBeenCalledWith(
+      expect.any(Function),
+      `app-message-ingestion:${WORKSPACE_ID}:${MESSAGE_CHANNEL_ID}`,
+      expect.objectContaining({ ttl: expect.any(Number) }),
+    );
+  });
+
+  it('holds the lock around the save rather than after it', async () => {
+    const order: string[] = [];
+
+    cacheLockService.withLock.mockImplementation(async (fn: () => unknown) => {
+      order.push('lock-acquired');
+      const result = await fn();
+
+      order.push('lock-released');
+
+      return result;
+    });
+    saveMessagesService.saveMessagesAndEnqueueContactCreation.mockImplementation(
+      async () => {
+        order.push('saved');
+
+        return {
+          messageExternalIdsAndIdsMap: new Map([['msg-1', 'message-uuid']]),
+          messageExternalIdToMessageThreadIdMap: new Map([
+            ['msg-1', 'thread-uuid'],
+          ]),
+        };
+      },
+    );
+
+    await service.ingest({ ...scope, messages: [aMessage()] });
+
+    expect(order).toEqual(['lock-acquired', 'saved', 'lock-released']);
+  });
+
+  it('fails loudly rather than returning fewer messages than were sent', async () => {
+    saveMessagesService.saveMessagesAndEnqueueContactCreation.mockResolvedValue(
+      {
+        messageExternalIdsAndIdsMap: new Map(),
+        messageExternalIdToMessageThreadIdMap: new Map(),
+      } as never,
+    );
+
+    await expect(
+      service.ingest({ ...scope, messages: [aMessage()] }),
+    ).rejects.toMatchObject({
+      code: MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+    });
   });
 });

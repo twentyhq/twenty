@@ -107,7 +107,11 @@ describe('MessagingMessageParticipantService', () => {
     expect(participantRepository.updateMany).toHaveBeenCalledWith([
       {
         criteria: PARTICIPANT_ID,
-        partialEntity: { personId: PERSON_ID, workspaceMemberId: null },
+        partialEntity: {
+          personId: PERSON_ID,
+          workspaceMemberId: null,
+          displayName: 'Ada',
+        },
       },
     ]);
   });
@@ -134,6 +138,79 @@ describe('MessagingMessageParticipantService', () => {
       transactionScope,
     );
 
+    expect(participantRepository.updateMany).not.toHaveBeenCalled();
+  });
+  // The enrichment promise: ingest first, resolve the contact later. A
+  // provider that renames someone between deliveries, or omits the name,
+  // must not split the participant in two.
+  it('links the existing participant when the display name changed too', async () => {
+    givenAnExistingParticipant(null);
+
+    await service.saveMessageParticipants(
+      [{ ...anEmailParticipant(), displayName: 'Ada L.', personId: PERSON_ID }],
+      WORKSPACE_ID,
+      transactionScope,
+    );
+
+    expect(participantRepository.insert).toHaveBeenCalledWith([]);
+    expect(participantRepository.updateMany).toHaveBeenCalledWith([
+      {
+        criteria: PARTICIPANT_ID,
+        partialEntity: {
+          personId: PERSON_ID,
+          workspaceMemberId: null,
+          displayName: 'Ada L.',
+        },
+      },
+    ]);
+  });
+
+  it('links the existing participant when the display name is omitted', async () => {
+    givenAnExistingParticipant(null);
+
+    await service.saveMessageParticipants(
+      [{ ...anEmailParticipant(), displayName: '', personId: PERSON_ID }],
+      WORKSPACE_ID,
+      transactionScope,
+    );
+
+    expect(participantRepository.insert).toHaveBeenCalledWith([]);
+    expect(participantRepository.updateMany).toHaveBeenCalledTimes(1);
+  });
+
+  it('corrects a wrong person link without leaving the old one behind', async () => {
+    const OTHER_PERSON_ID = '55555555-5555-4555-8555-555555555555';
+
+    givenAnExistingParticipant(OTHER_PERSON_ID);
+
+    await service.saveMessageParticipants(
+      [{ ...anEmailParticipant(), displayName: 'Ada L.', personId: PERSON_ID }],
+      WORKSPACE_ID,
+      transactionScope,
+    );
+
+    expect(participantRepository.insert).toHaveBeenCalledWith([]);
+    expect(participantRepository.updateMany).toHaveBeenCalledWith([
+      expect.objectContaining({
+        partialEntity: expect.objectContaining({ personId: PERSON_ID }),
+      }),
+    ]);
+  });
+
+  // Email relies on the exact match: the matcher, not the caller, sets the
+  // identity, so a renamed sender is a different participant row as before.
+  it('still inserts a new row when a caller with no identity renames a sender', async () => {
+    givenAnExistingParticipant(null);
+
+    await service.saveMessageParticipants(
+      [{ ...anEmailParticipant(), displayName: 'Ada L.' }],
+      WORKSPACE_ID,
+      transactionScope,
+    );
+
+    expect(participantRepository.insert).toHaveBeenCalledWith([
+      expect.objectContaining({ displayName: 'Ada L.', personId: null }),
+    ]);
     expect(participantRepository.updateMany).not.toHaveBeenCalled();
   });
 });

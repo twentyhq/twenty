@@ -32,6 +32,9 @@ export type IngestMessageParticipant = {
   // resolved links the existing participant, so a late match is not lost.
   personId?: string;
   // For a participant who is a member of this workspace rather than a contact.
+  // Attribution only: record-page placement is built from `personId` alone, so
+  // a participant linked only to a workspace member shows in the thread but
+  // pulls the conversation onto no record.
   workspaceMemberId?: string;
 };
 

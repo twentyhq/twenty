@@ -42,13 +42,27 @@ export class MessagingMessageParticipantService {
             },
           });
 
+        const suppliesIdentity = (participant: ParticipantWithMessageId) =>
+          isDefined(participant.personId) ||
+          isDefined(participant.workspaceMemberId);
+
+        // A caller that states who a participant is owns that row, so it is
+        // matched on what cannot drift between deliveries: the message, the
+        // handle and the role. Keying on displayName as well would make a
+        // provider that renames someone — or simply omits the name on a later
+        // delivery — insert a rival row instead, leaving the original behind
+        // with its stale person link and the thread attached to both records.
+        //
+        // Callers that supply no identity keep the exact match, so the email
+        // path, where the matcher fills these in afterwards, is unchanged.
         const findExisting = (participant: ParticipantWithMessageId) =>
           existingParticipantsBasedOnMessageIds.find(
             (existingParticipant) =>
               existingParticipant.messageId === participant.messageId &&
               existingParticipant.handle === participant.handle &&
-              existingParticipant.displayName === participant.displayName &&
-              existingParticipant.role === participant.role,
+              existingParticipant.role === participant.role &&
+              (suppliesIdentity(participant) ||
+                existingParticipant.displayName === participant.displayName),
           );
 
         const participantsToCreate: Pick<
@@ -92,10 +106,14 @@ export class MessagingMessageParticipantService {
           const workspaceMemberId =
             participant.workspaceMemberId ??
             existingParticipant.workspaceMemberId;
+          // Carried along because the row is no longer matched on it: without
+          // this a rename would be silently dropped on every later delivery.
+          const displayName = participant.displayName;
 
           if (
             personId === existingParticipant.personId &&
-            workspaceMemberId === existingParticipant.workspaceMemberId
+            workspaceMemberId === existingParticipant.workspaceMemberId &&
+            displayName === existingParticipant.displayName
           ) {
             return [];
           }
@@ -103,7 +121,7 @@ export class MessagingMessageParticipantService {
           return [
             {
               criteria: existingParticipant.id,
-              partialEntity: { personId, workspaceMemberId },
+              partialEntity: { personId, workspaceMemberId, displayName },
             },
           ];
         });
