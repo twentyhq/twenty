@@ -11,6 +11,7 @@ import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
+import { mergeGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/utils/mergeGlobalRecordCreationCommandMenuItems';
 import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import {
   currentPageLayoutIdState,
@@ -65,11 +66,6 @@ export const CommandMenuContextProviderContent = ({
     const contextCommandMenuItems = commandMenuItemsToDisplay
       .filter(
         (item) =>
-          !shouldDisplayGlobalRecordCreationCommands ||
-          item.engineComponentKey !== EngineComponentKey.CREATE_NEW_RECORD,
-      )
-      .filter(
-        (item) =>
           item.engineComponentKey !==
             EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT ||
           isLayoutCustomizationAllowedOnCurrentPage,
@@ -86,24 +82,15 @@ export const CommandMenuContextProviderContent = ({
           commandMenuContextApi,
         ),
       )
-      .map((item) => resolveCommandMenuItemPinning(item, commandMenuContextApi))
-      .sort(
-        (firstItem, secondItem) => firstItem.position - secondItem.position,
+      .map((item) =>
+        resolveCommandMenuItemPinning(item, commandMenuContextApi),
       );
 
-    if (!shouldDisplayGlobalRecordCreationCommands) {
-      return contextCommandMenuItems;
-    }
-
-    return [
-      ...contextCommandMenuItems.filter(
-        (item) => item.engineComponentKey !== EngineComponentKey.NAVIGATION,
-      ),
-      ...globalRecordCreationCommandMenuItems,
-      ...contextCommandMenuItems.filter(
-        (item) => item.engineComponentKey === EngineComponentKey.NAVIGATION,
-      ),
-    ];
+    return mergeGlobalRecordCreationCommandMenuItems({
+      commandMenuItems: contextCommandMenuItems,
+      globalRecordCreationCommandMenuItems,
+      shouldDisplayGlobalRecordCreationCommands,
+    });
   }, [
     commandMenuContextApi,
     globalRecordCreationCommandMenuItems,

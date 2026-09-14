@@ -6,14 +6,12 @@ import { useRecordFormFieldMetadataItems } from '@/object-record/record-form/hoo
 import { computeRecordFormCreateRecordInput } from '@/object-record/record-form/utils/computeRecordFormCreateRecordInput';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { recordCreationFormDraftComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormDraftComponentState';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useCallback, useState } from 'react';
+import { type KeyboardEvent, useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
@@ -100,7 +98,7 @@ const SidePanelRecordCreationForm = ({
     }));
   };
 
-  const handleCreateClick = useCallback(() => {
+  const handleCreateClick = () => {
     if (isSubmitting) {
       return;
     }
@@ -115,25 +113,26 @@ const SidePanelRecordCreationForm = ({
       }),
     });
     goBackFromSidePanel();
-  }, [
-    draftRecord,
-    goBackFromSidePanel,
-    isSubmitting,
-    objectMetadataItems,
-    recordFormFieldMetadataItems,
-    requestId,
-    settleRecordCreationDraft,
-  ]);
+  };
 
-  useHotkeysOnFocusedElement({
-    keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
-    callback: handleCreateClick,
-    focusId: SIDE_PANEL_FOCUS_ID,
-    dependencies: [handleCreateClick],
-  });
+  const handleKeyDownCapture = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (
+      event.key !== Key.Enter ||
+      !(event.metaKey || event.ctrlKey) ||
+      event.shiftKey ||
+      event.altKey ||
+      event.nativeEvent.isComposing
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    handleCreateClick();
+  };
 
   return (
-    <StyledContainer>
+    <StyledContainer onKeyDownCapture={handleKeyDownCapture}>
       <StyledContent>
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
