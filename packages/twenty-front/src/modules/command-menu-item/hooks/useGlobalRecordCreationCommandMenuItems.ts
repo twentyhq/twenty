@@ -4,6 +4,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
@@ -23,20 +24,29 @@ export const useGlobalRecordCreationCommandMenuItems = (
       !isDefined(item.availabilityObjectMetadataId),
   );
 
-  if (!isRecordCreationFormEnabled || !isDefined(createRecordCommand)) {
-    return {
-      isRecordCreationFormEnabled,
-      globalRecordCreationCommandMenuItems: [],
-    };
-  }
+  const hasGlobalRecordCreationCommandTemplate = isDefined(createRecordCommand);
+  const globalRecordCreationCommandMenuItems = useMemo(() => {
+    if (!isRecordCreationFormEnabled || !isDefined(createRecordCommand)) {
+      return [];
+    }
 
-  const globalRecordCreationCommandMenuItems =
-    buildGlobalRecordCreationCommandMenuItems({
+    return buildGlobalRecordCreationCommandMenuItems({
       activeObjectMetadataItems,
       objectPermissionsByObjectMetadataId,
       createRecordCommand,
       getLabel: (objectLabelSingular) => t`Create ${objectLabelSingular}`,
     });
+  }, [
+    isRecordCreationFormEnabled,
+    createRecordCommand,
+    activeObjectMetadataItems,
+    objectPermissionsByObjectMetadataId,
+    t,
+  ]);
 
-  return { isRecordCreationFormEnabled, globalRecordCreationCommandMenuItems };
+  return {
+    isRecordCreationFormEnabled,
+    hasGlobalRecordCreationCommandTemplate,
+    globalRecordCreationCommandMenuItems,
+  };
 };

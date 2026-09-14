@@ -52,3 +52,34 @@ it.each([
 ])('dispatches record creation to $expected: %j', ({ expected, ...params }) => {
   expect(getRecordCreationCommandType(params)).toBe(expected);
 });
+
+it.each([
+  {
+    contextObjectMetadataId: 'company-id',
+    recordIndexId: 'company-index',
+    expected: 'index',
+  },
+  {
+    contextObjectMetadataId: 'task-id',
+    recordIndexId: 'task-index',
+    expected: 'global',
+  },
+  {
+    contextObjectMetadataId: 'company-id',
+    recordIndexId: null,
+    expected: 'global',
+  },
+  { contextObjectMetadataId: null, recordIndexId: null, expected: 'global' },
+])(
+  'uses $expected creation for the available index context: %j',
+  ({ expected, ...context }) => {
+    expect(
+      getRecordCreationCommandType({
+        objectNameSingular: 'company',
+        creationTargetObjectMetadataId: 'company-id',
+        isWorkflowCoreIndexPageEnabled: false,
+        ...context,
+      }),
+    ).toBe(expected);
+  },
+);

@@ -13,6 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const CreateNewRecordCommand = () => {
   const {
     objectMetadataItem: contextObjectMetadataItem,
+    recordIndexId,
     creationTargetObjectMetadataId,
   } = useHeadlessCommandContextApi();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
@@ -32,6 +33,8 @@ export const CreateNewRecordCommand = () => {
 
   const commandType = getRecordCreationCommandType({
     objectNameSingular: objectMetadataItem.nameSingular,
+    contextObjectMetadataId: contextObjectMetadataItem?.id,
+    recordIndexId,
     creationTargetObjectMetadataId,
     isWorkflowCoreIndexPageEnabled,
   });

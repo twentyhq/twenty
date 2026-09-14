@@ -65,3 +65,18 @@ it('hides legacy creation even when no objects are eligible for global creation'
     }),
   ).toEqual([pageCommand, navigationCommand]);
 });
+
+it('preserves object-scoped creation when a missing template disables replacement', () => {
+  const objectScopedCreationCommand = {
+    ...legacyCreationCommand,
+    availabilityObjectMetadataId: 'company-id',
+  };
+
+  expect(
+    mergeGlobalRecordCreationCommandMenuItems({
+      commandMenuItems: [pageCommand, objectScopedCreationCommand],
+      globalRecordCreationCommandMenuItems: [],
+      shouldDisplayGlobalRecordCreationCommands: false,
+    }),
+  ).toEqual([objectScopedCreationCommand, pageCommand]);
+});

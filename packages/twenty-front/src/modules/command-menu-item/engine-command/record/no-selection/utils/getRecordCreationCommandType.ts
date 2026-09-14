@@ -5,8 +5,12 @@ export const getRecordCreationCommandType = ({
   objectNameSingular,
   creationTargetObjectMetadataId,
   isWorkflowCoreIndexPageEnabled,
+  contextObjectMetadataId,
+  recordIndexId,
 }: {
   objectNameSingular: string;
+  contextObjectMetadataId?: string | null;
+  recordIndexId?: string | null;
   creationTargetObjectMetadataId?: string | null;
   isWorkflowCoreIndexPageEnabled: boolean;
 }): 'workflow' | 'global' | 'index' => {
@@ -17,5 +21,12 @@ export const getRecordCreationCommandType = ({
     return 'workflow';
   }
 
-  return isDefined(creationTargetObjectMetadataId) ? 'global' : 'index';
+  if (!isDefined(creationTargetObjectMetadataId)) {
+    return 'index';
+  }
+
+  return creationTargetObjectMetadataId === contextObjectMetadataId &&
+    isDefined(recordIndexId)
+    ? 'index'
+    : 'global';
 };
