@@ -1,4 +1,4 @@
-import { findInvalidTranslationOverrideProperties } from 'src/engine/metadata-modules/utils/find-invalid-translation-override-properties.util';
+import { findInvalidTranslationOverrideProperties } from 'src/engine/metadata-modules/overrides/utils/find-invalid-translation-override-properties.util';
 
 describe('findInvalidTranslationOverrideProperties', () => {
   it('returns nothing when every property is translatable', () => {

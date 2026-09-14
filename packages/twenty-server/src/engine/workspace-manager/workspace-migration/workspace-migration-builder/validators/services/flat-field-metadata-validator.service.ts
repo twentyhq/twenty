@@ -21,6 +21,8 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
+import { readAuthoredOverrideEntry } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-entry.util';
 
 @Injectable()
 export class FlatFieldMetadataValidatorService {
@@ -86,12 +88,35 @@ export class FlatFieldMetadataValidatorService {
       !buildOptions.isSystemBuild &&
       existingFlatFieldMetadataToUpdate.isSystem
     ) {
-      const disallowedProperties = Object.keys(flatEntityUpdate).filter(
+      const { overrides: updatedOverrides, ...columnUpdate } = flatEntityUpdate;
+
+      const disallowedColumnProperties = Object.keys(columnUpdate).filter(
         (property) =>
           !SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES.includes(
             property as (typeof SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES)[number],
           ),
       );
+
+      const callerEntry = isDefined(updatedOverrides)
+        ? readAuthoredOverrideEntry<Record<string, unknown>>({
+            metadataName: 'fieldMetadata',
+            overrides: updatedOverrides,
+            authorUniversalIdentifier:
+              buildOptions.applicationUniversalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier:
+              buildOptions.applicationUniversalIdentifier,
+          })
+        : undefined;
+      const disallowedOverriddenProperties = Object.keys(
+        callerEntry ?? {},
+      ).filter((property) => property !== 'isActive');
+
+      const disallowedProperties = [
+        ...new Set([
+          ...disallowedColumnProperties,
+          ...disallowedOverriddenProperties,
+        ]),
+      ];
 
       if (disallowedProperties.length > 0) {
         validationResult.errors.push({
@@ -131,8 +156,13 @@ export class FlatFieldMetadataValidatorService {
     } else if (
       flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
         flatFieldMetadataToValidate.universalIdentifier &&
-      isDefined(flatEntityUpdate.isActive) &&
-      flatFieldMetadataToValidate.isActive === false
+      (isDefined(flatEntityUpdate.isActive) ||
+        isDefined(flatEntityUpdate.overrides)) &&
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'fieldMetadata',
+        flatEntity: flatFieldMetadataToValidate,
+        property: 'isActive',
+      }) === false
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,

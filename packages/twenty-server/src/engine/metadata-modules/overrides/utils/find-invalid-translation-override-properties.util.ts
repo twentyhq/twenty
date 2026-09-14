@@ -1,5 +1,5 @@
 import { ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-translatable-properties-by-metadata-name.constant';
-import { type TranslationOverrideEntry } from 'src/engine/metadata-modules/utils/translation-override-entry.type';
+import { type TranslationOverrideEntry } from 'src/engine/metadata-modules/overrides/types/translation-override-entry.type';
 
 export const findInvalidTranslationOverrideProperties = (
   translationEntries: TranslationOverrideEntry[],

@@ -9,11 +9,17 @@ export const isCallerOverridingEntity = ({
   workspaceCustomApplicationUniversalIdentifier: string;
   isSystemSideEffect: boolean;
 }): boolean => {
-  return (
+  const isCallerWorkspaceCustomApplication =
     callerApplicationUniversalIdentifier ===
-      workspaceCustomApplicationUniversalIdentifier &&
-    (entityApplicationUniversalIdentifier !==
-      workspaceCustomApplicationUniversalIdentifier ||
-      isSystemSideEffect)
-  );
+    workspaceCustomApplicationUniversalIdentifier;
+  const isEntityOwnedByWorkspaceCustomApplication =
+    entityApplicationUniversalIdentifier ===
+    workspaceCustomApplicationUniversalIdentifier;
+  const isEntityEngineManaged = isSystemSideEffect;
+
+  if (!isCallerWorkspaceCustomApplication) {
+    return false;
+  }
+
+  return !isEntityOwnedByWorkspaceCustomApplication || isEntityEngineManaged;
 };

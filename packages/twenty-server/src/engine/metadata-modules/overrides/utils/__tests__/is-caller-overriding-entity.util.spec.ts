@@ -1,4 +1,4 @@
-import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 
 const CUSTOM_APP_ID = 'custom-app-universal-id';
 const STANDARD_APP_ID = 'standard-app-universal-id';
@@ -36,5 +36,16 @@ describe('isCallerOverridingEntity', () => {
         isSystemSideEffect: false,
       }),
     ).toBe(false);
+  });
+
+  it('should return true when custom app updates an engine-managed entity it owns', () => {
+    expect(
+      isCallerOverridingEntity({
+        callerApplicationUniversalIdentifier: CUSTOM_APP_ID,
+        entityApplicationUniversalIdentifier: CUSTOM_APP_ID,
+        workspaceCustomApplicationUniversalIdentifier: CUSTOM_APP_ID,
+        isSystemSideEffect: true,
+      }),
+    ).toBe(true);
   });
 });
