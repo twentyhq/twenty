@@ -159,19 +159,47 @@ export class InboundEmailImportService {
         'messageChannelMessageAssociation',
       );
 
-    const [threadAssociations, referencedMessages] = await Promise.all([
-      associationRepository.find({
-        where: {
-          messageChannelId,
-          messageThreadExternalId: In(referencedMessageIds),
-        },
-        select: { messageThreadExternalId: true },
-      }),
-      messageRepository.find({
-        where: { headerMessageId: In(referencedMessageIds) },
-        select: { id: true, headerMessageId: true },
-      }),
-    ]);
+    const referencedMessageIdByLocalPart = new Map<string, string>();
+
+    for (const referencedMessageId of referencedMessageIds) {
+      const atIndex = referencedMessageId.indexOf('@');
+
+      if (atIndex > 1) {
+        referencedMessageIdByLocalPart.set(
+          referencedMessageId.slice(1, atIndex),
+          referencedMessageId,
+        );
+      }
+    }
+
+    const [threadAssociations, referencedMessages, providerAssociations] =
+      await Promise.all([
+        associationRepository.find({
+          where: {
+            messageChannelId,
+            messageThreadExternalId: In(referencedMessageIds),
+          },
+          select: { messageThreadExternalId: true },
+        }),
+        messageRepository.find({
+          where: { headerMessageId: In(referencedMessageIds) },
+          select: { id: true, headerMessageId: true },
+        }),
+        referencedMessageIdByLocalPart.size > 0
+          ? associationRepository.find({
+              where: {
+                messageChannelId,
+                messageExternalId: In([
+                  ...referencedMessageIdByLocalPart.keys(),
+                ]),
+              },
+              select: {
+                messageExternalId: true,
+                messageThreadExternalId: true,
+              },
+            })
+          : [],
+      ]);
 
     const referencedMessageAssociations =
       referencedMessages.length > 0
@@ -214,6 +242,27 @@ export class InboundEmailImportService {
 
       threadExternalIdByReferencedMessageId.set(
         referencedMessage.headerMessageId,
+        association.messageThreadExternalId,
+      );
+    }
+
+    for (const association of providerAssociations) {
+      const referencedMessageId = isNonEmptyString(
+        association.messageExternalId,
+      )
+        ? referencedMessageIdByLocalPart.get(association.messageExternalId)
+        : undefined;
+
+      if (
+        !isDefined(referencedMessageId) ||
+        !isNonEmptyString(association.messageThreadExternalId) ||
+        threadExternalIdByReferencedMessageId.has(referencedMessageId)
+      ) {
+        continue;
+      }
+
+      threadExternalIdByReferencedMessageId.set(
+        referencedMessageId,
         association.messageThreadExternalId,
       );
     }

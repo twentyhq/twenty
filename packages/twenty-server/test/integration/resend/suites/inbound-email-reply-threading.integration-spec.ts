@@ -78,13 +78,16 @@ describe('Inbound email reply threading (integration)', () => {
     );
   };
 
+  const buildSesProviderMessageId = () =>
+    `010701a0${randomUUID().replace(/-/g, '').slice(0, 8)}-${randomUUID()}-000000`;
+
   const seedSentMessage = ({
     messageChannelId,
-    headerMessageId,
+    providerMessageId,
     threadExternalId,
   }: {
     messageChannelId: string;
-    headerMessageId: string;
+    providerMessageId: string;
     threadExternalId: string;
   }) =>
     inWorkspace(async (workspaceOrmManager) => {
@@ -99,7 +102,7 @@ describe('Inbound email reply threading (integration)', () => {
         .getRepository<MessageWorkspaceEntity>('message')
         .insert({
           id: messageId,
-          headerMessageId,
+          headerMessageId: providerMessageId,
           subject: 'Spring offer',
           text: 'Our spring offer',
           messageThreadId,
@@ -113,7 +116,7 @@ describe('Inbound email reply threading (integration)', () => {
           id: randomUUID(),
           messageId,
           messageChannelId,
-          messageExternalId: headerMessageId,
+          messageExternalId: providerMessageId,
           messageThreadExternalId: threadExternalId,
           direction: MessageDirection.OUTGOING,
         });
@@ -194,12 +197,13 @@ describe('Inbound email reply threading (integration)', () => {
 
   it('joins the sent thread when the reply carries the Twenty token in References', async () => {
     const threadToken = `<${randomUUID()}@acme.com>`;
-    const sentHeaderMessageId = `<${randomUUID()}@eu-central-1.amazonses.com>`;
+    const providerMessageId = buildSesProviderMessageId();
+    const sentHeaderMessageId = `<${providerMessageId}@eu-central-1.amazonses.com>`;
     const replyHeaderMessageId = `<${randomUUID()}@outlook.test>`;
 
     const sentThreadId = await seedSentMessage({
       messageChannelId: groupChannelId,
-      headerMessageId: sentHeaderMessageId,
+      providerMessageId,
       threadExternalId: threadToken,
     });
 
@@ -217,13 +221,13 @@ describe('Inbound email reply threading (integration)', () => {
     );
   }, 60000);
 
-  it('joins the sent thread when the mail app dropped References and only kept In-Reply-To', async () => {
-    const sentHeaderMessageId = `<${randomUUID()}@eu-central-1.amazonses.com>`;
+  it('joins the sent thread when the mail app dropped References and only kept an In-Reply-To whose part before @ is the provider id', async () => {
+    const providerMessageId = buildSesProviderMessageId();
     const replyHeaderMessageId = `<${randomUUID()}@icloud.test>`;
 
     const sentThreadId = await seedSentMessage({
       messageChannelId: groupChannelId,
-      headerMessageId: sentHeaderMessageId,
+      providerMessageId,
       threadExternalId: `<${randomUUID()}@acme.com>`,
     });
 
@@ -231,7 +235,7 @@ describe('Inbound email reply threading (integration)', () => {
       buildRawReply({
         groupHandle,
         headerMessageId: replyHeaderMessageId,
-        inReplyTo: sentHeaderMessageId,
+        inReplyTo: `<${providerMessageId}@email.amazonses.com>`,
       }),
     );
 
@@ -246,7 +250,7 @@ describe('Inbound email reply threading (integration)', () => {
 
     const otherChannelThreadId = await seedSentMessage({
       messageChannelId: MESSAGE_CHANNEL_DATA_SEED_IDS.SUPPORT_GROUP,
-      headerMessageId: `<${randomUUID()}@eu-central-1.amazonses.com>`,
+      providerMessageId: buildSesProviderMessageId(),
       threadExternalId: threadToken,
     });
 

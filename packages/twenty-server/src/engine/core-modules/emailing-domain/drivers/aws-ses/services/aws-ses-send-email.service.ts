@@ -30,26 +30,6 @@ export class AwsSesSendEmailService {
     private readonly awsSesHandleErrorService: AwsSesHandleErrorService,
   ) {}
 
-  // SES replaces any Message-ID we send and the API only returns its local
-  // part; recipients see <id@{region}.amazonses.com>, except us-east-1 which
-  // uses email.amazonses.com.
-  private async resolveMessageIdDomain(): Promise<string> {
-    const region = await this.awsSesClientProvider
-      .getSESClient()
-      .config.region();
-
-    return `${region === 'us-east-1' ? 'email' : region}.amazonses.com`;
-  }
-
-  private toHeaderMessageId(
-    providerMessageId: string,
-    messageIdDomain: string,
-  ): string {
-    return providerMessageId.includes('@')
-      ? `<${providerMessageId}>`
-      : `<${providerMessageId}@${messageIdDomain}>`;
-  }
-
   async sendEmail(
     input: EmailingDomainSendEmailInput,
     context: SendEmailContext,
@@ -121,10 +101,7 @@ export class AwsSesSendEmailService {
 
       return {
         messageId: response.MessageId,
-        headerMessageId: this.toHeaderMessageId(
-          response.MessageId,
-          await this.resolveMessageIdDomain(),
-        ),
+        headerMessageId: null,
         deliveredRecipients: {
           to: input.to,
           cc: input.cc ?? [],
@@ -198,7 +175,6 @@ export class AwsSesSendEmailService {
       );
 
       const results = response.BulkEmailEntryResults ?? [];
-      const messageIdDomain = await this.resolveMessageIdDomain();
 
       return {
         entries: input.recipients.map((_recipient, index) => {
@@ -227,10 +203,7 @@ export class AwsSesSendEmailService {
           return {
             recipientIndex: index,
             messageId: result.MessageId,
-            headerMessageId: this.toHeaderMessageId(
-              result.MessageId,
-              messageIdDomain,
-            ),
+            headerMessageId: null,
             errorMessage: null,
           };
         }),
