@@ -25,6 +25,7 @@ import { ObjectSystemFieldsOnCreateSideEffectHandlerService } from 'src/engine/m
 import { ObjectSystemRelationsOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service';
 import { ObjectSystemRelationsOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-update-side-effect-handler.service';
 import { ObjectSystemSideEffectsOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-side-effects-on-delete-side-effect-handler.service';
+import { RoleTargetRebindOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/role/services/role-target-rebind-on-delete-side-effect-handler.service';
 
 @Module({
   providers: [
@@ -53,6 +54,7 @@ import { ObjectSystemSideEffectsOnDeleteSideEffectHandlerService } from 'src/eng
     ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService,
     ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService,
     ObjectSystemSideEffectsOnDeleteSideEffectHandlerService,
+    RoleTargetRebindOnDeleteSideEffectHandlerService,
   ],
 })
 export class MetadataSideEffectHandlersModule {}

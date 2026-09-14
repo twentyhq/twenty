@@ -4,12 +4,36 @@ exports[`Role deletion should fail when deleting a non-editable system role (Adm
 [
   {
     "extensions": {
-      "code": "FORBIDDEN",
-      "subCode": "CANNOT_UNASSIGN_LAST_ADMIN",
-      "userFriendlyMessage": "You cannot remove the admin role from the last administrator. Please assign another administrator first.",
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "role": [
+          {
+            "errors": [
+              {
+                "code": "ROLE_NOT_EDITABLE",
+                "message": "Role is not editable",
+                "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "label": "Admin",
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "role",
+            "status": "fail",
+            "type": "delete",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 role",
+      "summary": {
+        "role": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
     },
-    "message": "Cannot unassign admin role from last admin of the workspace",
-    "name": "ForbiddenError",
+    "message": "Multiple validation errors occurred while deleting role",
+    "name": "GraphQLError",
   },
 ]
 `;

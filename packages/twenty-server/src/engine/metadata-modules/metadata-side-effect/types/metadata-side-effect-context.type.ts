@@ -2,4 +2,6 @@ import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-mana
 
 export type MetadataSideEffectContext = {
   buildOptions: WorkspaceMigrationBuilderOptions;
+  workspaceDefaultRoleId: string | null;
+  activeApiKeyIds: string[];
 };

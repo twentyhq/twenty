@@ -1,9 +1,19 @@
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+import { partitionRoleActionsAroundRoleDeletes } from 'src/engine/workspace-manager/workspace-migration/utils/partition-role-actions-around-role-deletes.util';
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 
 export const computeOrderedMigrationActions = (
   aggregatedOrchestratorActionsReport: OrchestratorActionsReport,
 ): AllUniversalWorkspaceMigrationAction[] => {
+  const {
+    roleCreateActionsBeforeRoleDelete,
+    roleCreateActionsAfterRoleDelete,
+    roleTargetUpdateActionsBeforeRoleDelete,
+    roleTargetUpdateActionsAfterRoleTargetCreate,
+  } = partitionRoleActionsAroundRoleDeletes(
+    aggregatedOrchestratorActionsReport,
+  );
+
   return [
     ...aggregatedOrchestratorActionsReport.searchFieldMetadata.delete,
     ...aggregatedOrchestratorActionsReport.searchFieldMetadata.create,
@@ -45,8 +55,10 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.logicFunction.create,
     ...aggregatedOrchestratorActionsReport.logicFunction.update,
 
+    ...roleCreateActionsBeforeRoleDelete,
+    ...roleTargetUpdateActionsBeforeRoleDelete,
     ...aggregatedOrchestratorActionsReport.role.delete,
-    ...aggregatedOrchestratorActionsReport.role.create,
+    ...roleCreateActionsAfterRoleDelete,
     ...aggregatedOrchestratorActionsReport.role.update,
 
     // Role targets delete before agents (roleTarget may FK to agent)
@@ -57,7 +69,7 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.agent.update,
 
     ...aggregatedOrchestratorActionsReport.roleTarget.create,
-    ...aggregatedOrchestratorActionsReport.roleTarget.update,
+    ...roleTargetUpdateActionsAfterRoleTargetCreate,
 
     ...aggregatedOrchestratorActionsReport.objectPermission.delete,
     ...aggregatedOrchestratorActionsReport.objectPermission.create,
