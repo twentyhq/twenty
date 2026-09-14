@@ -23,10 +23,19 @@ import { type MessageWithParticipants } from 'src/modules/messaging/message-impo
 // in and reintroduce exactly the duplicate this prevents. Waiting up to the
 // same order of time is better than failing a webhook that would have
 // succeeded a second later.
+//
+// The wait deliberately outlasts the lease. `withLock` does not renew, so a
+// holder that dies leaves the key behind until Redis expires it; a window
+// shorter than the lease would make every waiter give up just before the
+// lock became free, turning one crash into a batch of avoidable failures.
+const INGESTION_LOCK_TTL_MS = 60_000;
+const INGESTION_LOCK_RETRY_INTERVAL_MS = 500;
+
 const INGESTION_LOCK_OPTIONS = {
-  ttl: 60_000,
-  maxRetries: 120,
-  ms: 500,
+  ttl: INGESTION_LOCK_TTL_MS,
+  ms: INGESTION_LOCK_RETRY_INTERVAL_MS,
+  maxRetries:
+    Math.ceil(INGESTION_LOCK_TTL_MS / INGESTION_LOCK_RETRY_INTERVAL_MS) + 10,
 };
 
 type IngestArgs = {
