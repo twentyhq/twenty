@@ -1292,6 +1292,7 @@ export type CreateCommandMenuItemInput = {
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
   conditionalPinnedExpression?: InputMaybe<Scalars['String']['input']>;
+  coreWorkflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
   engineComponentKey: EngineComponentKey;
   frontComponentId?: InputMaybe<Scalars['UUID']['input']>;
   hotKeys?: InputMaybe<Array<Scalars['String']['input']>>;

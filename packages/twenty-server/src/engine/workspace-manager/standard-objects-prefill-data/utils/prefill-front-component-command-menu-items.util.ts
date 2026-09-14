@@ -74,6 +74,7 @@ export const prefillFrontComponentCommandMenuItems = async ({
           frontComponent.applicationUniversalIdentifier,
         workspaceId,
         workflowVersionId: null,
+        coreWorkflowVersionId: null,
         frontComponentId: definition.frontComponentId,
         frontComponentUniversalIdentifier:
           definitionFrontComponent?.universalIdentifier ?? null,

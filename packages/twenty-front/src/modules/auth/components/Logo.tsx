@@ -97,9 +97,9 @@ export const Logo = ({
           <StyledSecondaryLogoContainer>
             <Avatar
               size="lg"
-              placeholder={placeholder}
-              type="squared"
-              placeholderColorSeed={placeholder}
+              name={placeholder}
+              shape="square"
+              colorSeed={placeholder}
             />
           </StyledSecondaryLogoContainer>
         )
