@@ -10785,6 +10785,11 @@ msgstr "無法將此地址從抑制清單中移除。"
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "此API金鑰已被撤銷，不能再使用。"
 
+#. js-lingui-id: SbhNwj
+#: src/engine/core-modules/api-key/services/api-key.service.ts
+msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
+msgstr "此 API 金鑰已被撤銷，且無法重新啟用。請建立新的 API 金鑰。"
+
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has been revoked."

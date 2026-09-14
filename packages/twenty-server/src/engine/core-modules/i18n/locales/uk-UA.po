@@ -10785,6 +10785,11 @@ msgstr "Цю адресу не можна вилучити зі списку б�
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "Цей ключ API скасовано і більше не може бути використаний."
 
+#. js-lingui-id: SbhNwj
+#: src/engine/core-modules/api-key/services/api-key.service.ts
+msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
+msgstr "Цей ключ API відкликано, і його неможливо повторно активувати. Створіть новий ключ API."
+
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has been revoked."
