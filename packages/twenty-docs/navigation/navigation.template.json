@@ -201,6 +201,29 @@
           "label": "Contribute"
         }
       }
+    },
+    "uiLibrary": {
+      "label": "UI Library",
+      "groups": {
+        "uiGuides": {
+          "label": "Guides"
+        },
+        "uiForms": {
+          "label": "Forms"
+        },
+        "uiNavigation": {
+          "label": "Navigation"
+        },
+        "uiSurfaces": {
+          "label": "Surfaces"
+        },
+        "uiFeedback": {
+          "label": "Feedback"
+        },
+        "uiTypography": {
+          "label": "Typography"
+        }
+      }
     }
   }
 }
