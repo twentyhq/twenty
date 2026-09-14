@@ -13,7 +13,10 @@ import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeat
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceBillingContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent';
+import { SETTINGS_ADMIN_FEATURE_FLAG_METADATA } from '@/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
+import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { GET_ADMIN_WORKSPACE_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminWorkspaceChatThreads';
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
@@ -328,52 +331,72 @@ export const SettingsAdminWorkspaceDetail = () => {
 
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.FEATURE_FLAGS &&
           workspace && (
-            <Section>
-              <H2Title
-                title={t`Feature Flags`}
-                description={t`Manage feature flags for this workspace`}
-              />
-              <Table>
-                <TableBody>
-                  <TableRow
-                    gridAutoColumns="1fr 100px"
-                    mobileGridAutoColumns="1fr 80px"
-                  >
-                    <TableHeader>{t`Feature Flag`}</TableHeader>
-                    <TableHeader align="right">{t`Status`}</TableHeader>
-                  </TableRow>
-                  {workspace.featureFlags?.map((flag) => {
-                    const currentWorkspaceValue =
-                      currentWorkspace?.id === workspaceId
-                        ? currentWorkspace?.featureFlags?.find(
-                            (f) => f.key === flag.key,
-                          )?.value
-                        : undefined;
-                    const displayedValue = currentWorkspaceValue ?? flag.value;
-                    return (
-                      <TableRow
-                        gridAutoColumns="1fr 100px"
-                        mobileGridAutoColumns="1fr 80px"
-                        key={flag.key}
-                      >
-                        <TableCell>{flag.key}</TableCell>
-                        <TableCell align="right">
-                          {isDefined(flag.key) && (
-                            <Switch
-                              aria-label={flag.key}
-                              checked={displayedValue}
-                              onCheckedChange={(newValue) =>
-                                handleFeatureFlagUpdate(flag.key!, newValue)
-                              }
-                            />
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </Section>
+            <SettingsTableListSection
+              title={t`Feature Flags`}
+              description={t`Manage feature flags for this workspace`}
+              gridAutoColumns="minmax(0, 240px) minmax(0, 1fr) 56px"
+              items={(workspace.featureFlags ?? []).flatMap((flag) => {
+                if (!isDefined(flag.key)) {
+                  return [];
+                }
+
+                const metadata = SETTINGS_ADMIN_FEATURE_FLAG_METADATA[flag.key];
+                const currentWorkspaceValue =
+                  currentWorkspace?.id === workspaceId
+                    ? currentWorkspace?.featureFlags?.find(
+                        (featureFlag) => featureFlag.key === flag.key,
+                      )?.value
+                    : undefined;
+
+                return [
+                  {
+                    id: flag.key,
+                    label: isDefined(metadata) ? t(metadata.label) : flag.key,
+                    description: isDefined(metadata)
+                      ? t(metadata.description)
+                      : '',
+                    value: currentWorkspaceValue ?? flag.value,
+                  },
+                ];
+              })}
+              columns={[
+                {
+                  label: t`Name`,
+                  overflow: 'hidden',
+                  Cell: ({ item }) => (
+                    <SettingsTableFirstColumn
+                      label={item.label}
+                      tooltipContent={item.id}
+                    />
+                  ),
+                },
+                {
+                  label: t`Description`,
+                  overflow: 'hidden',
+                  Cell: ({ item }) => (
+                    <OverflowingTextWithTooltip
+                      text={item.description}
+                      isTooltipMultiline
+                      isFocusable
+                    />
+                  ),
+                },
+                {
+                  label: t`Status`,
+                  align: 'right',
+                  Cell: ({ item }) => (
+                    <Switch
+                      aria-label={item.label}
+                      aria-description={item.description}
+                      checked={item.value}
+                      onCheckedChange={(newValue) =>
+                        handleFeatureFlagUpdate(item.id, newValue)
+                      }
+                    />
+                  ),
+                },
+              ]}
+            />
           )}
 
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.CHATS && (
