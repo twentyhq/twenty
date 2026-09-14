@@ -1,8 +1,11 @@
-import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
-import { RECORD_RICH_TEXT_EDITOR_PROFILE } from '@/object-record/record-field/ui/form-types/constants/RecordRichTextEditorProfile';
-import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
+import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { BlockEditor } from '@/blocknote-editor/components/BlockEditor';
+import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { convertTipTapDocumentToBlockNote } from '@/object-record/record-field/ui/form-types/utils/convertTipTapDocumentToBlockNote';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { useLingui } from '@lingui/react/macro';
+import { useCreateBlockNote } from '@blocknote/react';
+import { Field } from 'twenty-ui/input';
 
 type FormRichTextFieldInputProps = {
   label?: string;
@@ -10,10 +13,8 @@ type FormRichTextFieldInputProps = {
   hint?: string;
   defaultValue: FieldRichTextValue | undefined;
   onChange: (value: FieldRichTextValue) => void;
-  onBlur?: () => void;
   readonly?: boolean;
   placeholder?: string;
-  VariablePicker?: VariablePickerComponent;
 };
 
 export const FormRichTextFieldInput = ({
@@ -24,28 +25,35 @@ export const FormRichTextFieldInput = ({
   placeholder,
   onChange,
   readonly,
-  VariablePicker,
 }: FormRichTextFieldInputProps) => {
-  const handleChange = (value: string) => {
+  const { t } = useLingui();
+
+  const editor = useCreateBlockNote({
+    initialContent: parseInitialBlocknote(defaultValue?.blocknote),
+    domAttributes: { editor: { class: 'editor' } },
+    schema: BLOCK_SCHEMA,
+    placeholders: {
+      default: placeholder ?? t`Type '/' for commands`,
+    },
+  });
+
+  const handleChange = () => {
     onChange({
-      // RICH_TEXT still exposes the legacy BlockNote array contract. Keep the
-      // compatibility projection here until that field is migrated to TipTap.
-      blocknote: convertTipTapDocumentToBlockNote(value),
+      blocknote: JSON.stringify(editor.document),
       markdown: null,
     });
   };
 
   return (
-    <FormAdvancedTextFieldInput
-      label={label}
-      error={error}
-      hint={hint}
-      defaultValue={defaultValue?.blocknote ?? defaultValue?.markdown}
-      placeholder={placeholder}
-      onChange={handleChange}
-      readonly={readonly}
-      VariablePicker={VariablePicker}
-      profile={RECORD_RICH_TEXT_EDITOR_PROFILE}
-    />
+    <FormFieldInputContainer>
+      {label ? <Field.Label>{label}</Field.Label> : null}
+      <BlockEditor
+        editor={editor}
+        onChange={handleChange}
+        readonly={readonly}
+      />
+      {hint && <Field.Description>{hint}</Field.Description>}
+      {error && <Field.Error match>{error}</Field.Error>}
+    </FormFieldInputContainer>
   );
 };
