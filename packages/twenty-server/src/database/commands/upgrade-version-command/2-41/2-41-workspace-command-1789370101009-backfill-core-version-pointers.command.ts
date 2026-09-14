@@ -7,6 +7,7 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @RegisteredWorkspaceCommand('2.41.0', 1789370101009)
 @Command({
@@ -17,6 +18,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 export class BackfillCoreVersionPointersCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     super(workspaceIteratorService);
   }
@@ -62,6 +64,12 @@ export class BackfillCoreVersionPointersCommand extends ProvisionedWorkspaceComm
         workspaceId,
         dryRun: options.dryRun ?? false,
       });
+
+      if (!options.dryRun) {
+        await this.workspaceCacheService.flush(workspaceId, [
+          'flatCommandMenuItemMaps',
+        ]);
+      }
     } finally {
       await queryRunner.release();
     }

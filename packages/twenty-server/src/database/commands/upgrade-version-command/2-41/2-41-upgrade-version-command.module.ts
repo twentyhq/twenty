@@ -7,11 +7,13 @@ import { BackfillCoreVersionPointersCommand } from 'src/database/commands/upgrad
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([FieldMetadataEntity]),
     ApplicationModule,
+    WorkspaceCacheModule,
     WorkspaceIteratorModule,
     WorkspaceMigrationRunnerModule,
   ],

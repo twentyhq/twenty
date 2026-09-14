@@ -1,6 +1,7 @@
 import { type DataSource } from 'typeorm';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { BackfillCoreVersionPointersCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789370101009-backfill-core-version-pointers.command';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
@@ -49,8 +50,11 @@ const setup = ({
     createQueryRunner: () => queryRunner,
   } as unknown as DataSource;
 
+  const flush = jest.fn();
+
   const command = new BackfillCoreVersionPointersCommand(
     {} as WorkspaceIteratorService,
+    { flush } as unknown as WorkspaceCacheService,
   );
 
   const run = (dryRun = false) =>
@@ -62,7 +66,7 @@ const setup = ({
       total: 1,
     });
 
-  return { run, query, queryRunner };
+  return { run, query, queryRunner, flush };
 };
 
 describe('BackfillCoreVersionPointersCommand', () => {
@@ -88,7 +92,7 @@ describe('BackfillCoreVersionPointersCommand', () => {
   });
 
   it('updates both tables when both have rows left to fill', async () => {
-    const { run, query, queryRunner } = setup({
+    const { run, query, queryRunner, flush } = setup({
       workflowTotal: 2,
       commandMenuItemTotal: 3,
     });
@@ -101,6 +105,10 @@ describe('BackfillCoreVersionPointersCommand', () => {
 
     expect(updated).toEqual(['workflow', 'commandMenuItem']);
     expect(queryRunner.release).toHaveBeenCalledTimes(1);
+    expect(flush).toHaveBeenCalledTimes(1);
+    expect(flush).toHaveBeenCalledWith(WORKSPACE_ID, [
+      'flatCommandMenuItemMaps',
+    ]);
   });
 
   it('updates only the table that has rows left to fill', async () => {
@@ -132,7 +140,7 @@ describe('BackfillCoreVersionPointersCommand', () => {
   });
 
   it('does not update on a dry run', async () => {
-    const { run, query } = setup({
+    const { run, query, flush } = setup({
       workflowTotal: 2,
       commandMenuItemTotal: 3,
     });
@@ -140,6 +148,7 @@ describe('BackfillCoreVersionPointersCommand', () => {
     await run(true);
 
     expect(query.mock.calls.some((call) => isUpdate(call[0]))).toBe(false);
+    expect(flush).not.toHaveBeenCalled();
   });
 
   it('is a no-op when nothing is left to fill', async () => {
