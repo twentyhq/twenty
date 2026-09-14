@@ -80,6 +80,7 @@ const StyledRows = styled.div`
 const StyledFooter = styled.div`
   display: flex;
   justify-content: flex-end;
+  padding-top: ${themeCssVariables.spacing[1]};
 `;
 
 export const AiChatContextUsageButton = () => {
