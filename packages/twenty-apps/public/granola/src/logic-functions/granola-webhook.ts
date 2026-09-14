@@ -15,6 +15,7 @@ import { GRANOLA_WEBHOOK_PAYLOAD_SCHEMA } from 'src/logic-functions/types/granol
 import { GranolaInvalidResponseError } from 'src/logic-functions/types/granola-invalid-response-error';
 import { GranolaTranscriptLimitError } from 'src/logic-functions/types/granola-transcript-limit-error';
 import { type GranolaWebhookRegistration } from 'src/logic-functions/types/granola-webhook-registration.type';
+import { assertGranolaFolderSelectionReadyOrThrow } from 'src/logic-functions/utils/assert-granola-folder-selection-ready-or-throw.util';
 import { buildRetryableGranolaError } from 'src/logic-functions/utils/build-retryable-granola-error.util';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { getGranolaApiKeyFingerprint } from 'src/logic-functions/utils/get-granola-api-key-fingerprint.util';
@@ -79,6 +80,7 @@ export const granolaWebhookHandler = async ({
   if (!parsed.success || parsed.data.event_id !== webhookId) {
     return { success: false, error: 'Invalid Granola webhook event' };
   }
+  await assertGranolaFolderSelectionReadyOrThrow();
   const result = await syncGranolaNoteToCallRecordingOrThrow({
     coreApiClient: new CoreApiClient({ runAs: 'application' }),
     client: createGranolaClientOrThrow(),
