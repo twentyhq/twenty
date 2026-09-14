@@ -46,11 +46,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install Claude Code
+        id: install-claude
+        run: |
+          npm install --prefix "$RUNNER_TEMP/claude-code" --no-audit --no-fund @anthropic-ai/claude-code@2.1.247
+          echo "executable=$RUNNER_TEMP/claude-code/node_modules/.bin/claude" >> "$GITHUB_OUTPUT"
+
       - name: Run docs drift agent
         id: drift-agent
         uses: anthropics/claude-code-action@ac7e24bf2938964b8ab203e417a2773802392ddd # v1.0.146
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          path_to_claude_code_executable: ${{ steps.install-claude.outputs.executable }}
           claude_args: |
             --max-turns 60 --json-schema '{"type":"object","properties":{"hasDrift":{"type":"boolean"},"summary":{"type":"string"}},"required":["hasDrift","summary"]}' --allowedTools "Bash(git diff *),Bash(git log *),Bash(git show *),Bash(grep *),Bash(cat *),Bash(ls *),Bash(find *),Bash(head *),Bash(tail *),Bash(gh pr comment *)"
           prompt: |
@@ -144,6 +151,27 @@ jobs:
                 "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
               }
             }
+
+      - name: Report docs agent errors
+        if: failure() && steps.drift-agent.outcome == 'failure'
+        env:
+          EXECUTION_FILE: ${{ runner.temp }}/claude-execution-output.json
+        run: |
+          if [ ! -f "$EXECUTION_FILE" ]; then
+            exit 0
+          fi
+          jq -r '
+            .[] |
+            if .type == "assistant" then
+              .error // empty |
+              select(IN("authentication_failed", "billing_error", "rate_limit", "invalid_request", "server_error", "unknown"))
+            elif .type == "result" and .is_error == true then
+              .result // "" |
+              capture("API Error: (?<status>[0-9]{3})")? |
+              "HTTP \(.status)"
+            else empty end |
+            "::error::Docs drift agent error: \(.)"
+          ' "$EXECUTION_FILE"
 
       - name: Gate on drift verdict
         if: always()
