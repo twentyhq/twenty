@@ -2,12 +2,7 @@ import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  AvatarOrIcon,
-  Chip,
-  ChipVariant,
-  LinkChip,
-} from 'twenty-ui/data-display';
+import { AvatarOrIcon, Chip, LinkChip } from 'twenty-ui/data-display';
 
 type MentionRecordChipProps = {
   recordId: string;
@@ -27,20 +22,20 @@ export const MentionRecordChip = ({
   if (!isNonEmptyString(objectNameSingular)) {
     return (
       <Chip
-        label={t`Unknown object`}
-        variant={ChipVariant.Transparent}
+        variant="ghost"
         disabled
-      />
+        style={{ paddingInlineStart: 0 }}
+      >{t`Unknown object`}</Chip>
     );
   }
 
   if (!isNonEmptyString(recordId)) {
     return (
       <Chip
-        label={t`Deleted record`}
-        variant={ChipVariant.Transparent}
+        variant="ghost"
         disabled
-      />
+        style={{ paddingInlineStart: 0 }}
+      >{t`Deleted record`}</Chip>
     );
   }
 
@@ -50,12 +45,11 @@ export const MentionRecordChip = ({
 
   return (
     <LinkChip
-      label={label}
       emptyLabel={t`Untitled`}
       to={linkToShowPage}
-      variant={ChipVariant.Highlighted}
+      variant="soft"
       className={className}
-      leftComponent={
+      startElement={
         <AvatarOrIcon
           name={label}
           colorSeed={recordId}
@@ -63,6 +57,8 @@ export const MentionRecordChip = ({
           src={getAbsoluteImageUrl(imageUrl)}
         />
       }
-    />
+    >
+      {label}
+    </LinkChip>
   );
 };
