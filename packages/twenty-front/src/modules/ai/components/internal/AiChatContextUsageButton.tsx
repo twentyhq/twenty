@@ -196,11 +196,7 @@ export const AiChatContextUsageButton = () => {
               {!isWorkspaceSetupChat && (
                 <UsageProgressRow
                   Icon={IconGauge}
-                  label={
-                    isDefined(daysUntilReset)
-                      ? t`Usage (Reset in ${daysUntilReset} days)`
-                      : t`Usage`
-                  }
+                  label={t`Usage`}
                   value={loading || isDefined(error) ? null : creditPercentage}
                   valueLabel={
                     loading
@@ -209,7 +205,10 @@ export const AiChatContextUsageButton = () => {
                         ? t`Not available`
                         : !isDefined(creditUsage)
                           ? t`No limit`
-                          : undefined
+                          : isDefined(daysUntilReset) &&
+                              isDefined(creditPercentage)
+                            ? t`Reset in ${daysUntilReset} days (${formatNumber(creditPercentage, { decimals: 1 })}%)`
+                            : undefined
                   }
                   barColor={getUsageLimitRingColor({
                     consumedPercentage: creditPercentage ?? 0,
@@ -217,6 +216,7 @@ export const AiChatContextUsageButton = () => {
                   })}
                 />
               )}
+              {showDetails && <AiChatContextUsageDetails />}
               {isDefined(agentChatUsage) && (
                 <>
                   <HorizontalSeparator noMargin />
@@ -231,12 +231,6 @@ export const AiChatContextUsageButton = () => {
                 </>
               )}
             </StyledRows>
-            {showDetails && (
-              <>
-                <HorizontalSeparator noMargin />
-                <AiChatContextUsageDetails />
-              </>
-            )}
           </StyledHoverCard>
         </FloatingPortal>
       )}

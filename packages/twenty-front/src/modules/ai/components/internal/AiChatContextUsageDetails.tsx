@@ -1,18 +1,14 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator } from 'twenty-ui/layout';
-import { ProgressBar } from 'twenty-ui/feedback';
+import { IconArrowUp, IconArrowDown, IconCurrencyDollar } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import {
-  agentChatUsageComponentFamilyState,
-  type AgentChatLastMessageUsage,
-} from '@/ai/states/agentChatUsageComponentFamilyState';
+import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { billingState } from '@/client-config/states/billingState';
-import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
+import { UsageProgressRow } from '@/ui/feedback/progress-ring/components/UsageProgressRow';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -22,39 +18,16 @@ const StyledSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[3]};
-`;
-
-const StyledRow = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-`;
-
-const StyledContextWindowValue = styled.span`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledSectionTitle = styled.span`
-  color: ${themeCssVariables.font.color.primary};
+  align-items: center;
+  color: ${themeCssVariables.font.color.secondary};
+  display: flex;
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-bottom: ${themeCssVariables.spacing[2]};
+  height: 20px;
 `;
-
-const getCachedLabel = (lastMessage: AgentChatLastMessageUsage): string => {
-  if (lastMessage.cachedInputTokens <= 0 || lastMessage.inputTokens <= 0) {
-    return '';
-  }
-
-  const cachedPercent = Math.round(
-    (lastMessage.cachedInputTokens / lastMessage.inputTokens) * 100,
-  );
-
-  return ` (${t`${cachedPercent}% cached`})`;
-};
 
 export const AiChatContextUsageDetails = () => {
   const { t } = useLingui();
@@ -79,109 +52,77 @@ export const AiChatContextUsageDetails = () => {
 
   if (!agentChatUsage) return null;
 
-  const percentage =
-    agentChatUsage.contextWindowTokens > 0
-      ? Math.min(
-          (agentChatUsage.conversationSize /
-            agentChatUsage.contextWindowTokens) *
-            100,
-          100,
-        )
-      : 0;
-  const formattedPercentage = percentage.toFixed(1);
-  const totalCredits =
-    agentChatUsage.inputCredits + agentChatUsage.outputCredits;
+  const formatTokens = (tokens: number) => {
+    const amount = formatNumber(tokens, { abbreviate: true, decimals: 1 });
+    if (agentChatUsage.contextWindowTokens <= 0) return amount;
+    const percentage = formatNumber(
+      (tokens / agentChatUsage.contextWindowTokens) * 100,
+      { decimals: 1 },
+    );
+    return `${amount} (${percentage}%)`;
+  };
   const lastMessage = agentChatUsage.lastMessage;
+  const cachedLabel =
+    isDefined(lastMessage) && lastMessage.inputTokens > 0
+      ? t`${Math.round((lastMessage.cachedInputTokens / lastMessage.inputTokens) * 100)}% cached`
+      : undefined;
+
   return (
     <>
-      <StyledSection>
-        <StyledSectionTitle>{t`Context window`}</StyledSectionTitle>
-        <StyledRow>
-          <StyledContextWindowValue>
-            {formattedPercentage}%
-          </StyledContextWindowValue>
-          <StyledContextWindowValue>
-            {formatNumber(agentChatUsage.conversationSize, {
-              abbreviate: true,
-              decimals: 1,
-            })}{' '}
-            /{' '}
-            {formatNumber(agentChatUsage.contextWindowTokens, {
-              abbreviate: true,
-              decimals: 1,
-            })}{' '}
-            {t`tokens`}
-          </StyledContextWindowValue>
-        </StyledRow>
-        <ProgressBar
-          value={percentage}
-          barColor={
-            percentage > 80
-              ? themeCssVariables.color.red
-              : percentage > 60
-                ? themeCssVariables.color.orange
-                : themeCssVariables.color.blue
-          }
-          backgroundColor={themeCssVariables.background.tertiary}
-          withBorderRadius
-        />
-      </StyledSection>
-
       {isDefined(lastMessage) && (
         <>
-          <HorizontalSeparator
-            noMargin
-            color={themeCssVariables.background.tertiary}
-          />
+          <HorizontalSeparator noMargin />
           <StyledSection>
             <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
-            <SettingsBillingLabelValueItem
+            <UsageProgressRow
+              Icon={IconArrowUp}
               label={t`Input tokens`}
-              value={`${formatNumber(lastMessage.inputTokens, {
-                abbreviate: true,
-                decimals: 1,
-              })}${getCachedLabel(lastMessage)}`}
+              value={null}
+              valueLabel={
+                <span title={cachedLabel}>
+                  {formatTokens(lastMessage.inputTokens)}
+                </span>
+              }
             />
-            <SettingsBillingLabelValueItem
+            <UsageProgressRow
+              Icon={IconArrowDown}
               label={t`Output tokens`}
-              value={formatNumber(lastMessage.outputTokens, {
-                abbreviate: true,
-                decimals: 1,
-              })}
+              value={null}
+              valueLabel={formatTokens(lastMessage.outputTokens)}
             />
-            <SettingsBillingLabelValueItem
-              label={t`Cost`}
-              value={formatChatCost(
+            <UsageProgressRow
+              Icon={IconCurrencyDollar}
+              label={t`Cost index`}
+              value={null}
+              valueLabel={formatChatCost(
                 lastMessage.inputCredits + lastMessage.outputCredits,
               )}
             />
           </StyledSection>
         </>
       )}
-
-      <HorizontalSeparator
-        noMargin
-        color={themeCssVariables.background.tertiary}
-      />
+      <HorizontalSeparator noMargin />
       <StyledSection>
         <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
-        <SettingsBillingLabelValueItem
+        <UsageProgressRow
+          Icon={IconArrowUp}
           label={t`Input tokens`}
-          value={formatNumber(agentChatUsage.inputTokens, {
-            abbreviate: true,
-            decimals: 1,
-          })}
+          value={null}
+          valueLabel={formatTokens(agentChatUsage.inputTokens)}
         />
-        <SettingsBillingLabelValueItem
+        <UsageProgressRow
+          Icon={IconArrowDown}
           label={t`Output tokens`}
-          value={formatNumber(agentChatUsage.outputTokens, {
-            abbreviate: true,
-            decimals: 1,
-          })}
+          value={null}
+          valueLabel={formatTokens(agentChatUsage.outputTokens)}
         />
-        <SettingsBillingLabelValueItem
-          label={t`Total cost`}
-          value={formatChatCost(totalCredits)}
+        <UsageProgressRow
+          Icon={IconCurrencyDollar}
+          label={t`Cost index`}
+          value={null}
+          valueLabel={formatChatCost(
+            agentChatUsage.inputCredits + agentChatUsage.outputCredits,
+          )}
         />
       </StyledSection>
     </>

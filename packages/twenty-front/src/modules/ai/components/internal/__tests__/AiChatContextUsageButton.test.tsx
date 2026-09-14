@@ -30,8 +30,10 @@ jest.mock('@/ai/hooks/useWorkspaceAiModelTiers', () => ({
 jest.mock('@/ai/hooks/useIsWorkspaceSetupChat', () => ({
   useIsWorkspaceSetupChat: () => false,
 }));
-jest.mock('@/ai/components/internal/AiChatContextUsageDetails', () => ({
-  AiChatContextUsageDetails: () => <div>Conversation details</div>,
+jest.mock('@/settings/usage/hooks/useUsageValueFormatter', () => ({
+  useUsageValueFormatter: () => ({
+    formatUsageValue: (value: number) => `${value} credits`,
+  }),
 }));
 
 describe('AiChatContextUsageButton', () => {
@@ -66,11 +68,17 @@ describe('AiChatContextUsageButton', () => {
     mockUsage = {
       conversationSize: 200000,
       contextWindowTokens: 1000000,
-      inputTokens: 0,
-      outputTokens: 0,
-      inputCredits: 0,
-      outputCredits: 0,
-      lastMessage: null,
+      inputTokens: 200000,
+      outputTokens: 40000,
+      inputCredits: 80,
+      outputCredits: 20,
+      lastMessage: {
+        inputTokens: 100000,
+        outputTokens: 20000,
+        cachedInputTokens: 50000,
+        inputCredits: 40,
+        outputCredits: 10,
+      },
     };
     const user = userEvent.setup();
     render(
@@ -81,7 +89,47 @@ describe('AiChatContextUsageButton', () => {
     await user.tab();
     expect(screen.getByText('(200k/1M) 20%')).toBeVisible();
     await user.click(screen.getByRole('button', { name: /^More/ }));
-    expect(screen.getByText('Conversation details')).toBeVisible();
+    expect(screen.getByText('Last message')).toBeVisible();
+    expect(screen.getByText('Conversation')).toBeVisible();
+    expect(screen.getByText('100k (10%)')).toBeVisible();
+    expect(screen.getByText('20k (2%)')).toBeVisible();
+    expect(screen.getByText('200k (20%)')).toBeVisible();
+    expect(screen.getByText('40k (4%)')).toBeVisible();
+    expect(screen.getByText('$0.1')).toBeVisible();
+    expect(screen.getByTitle('50% cached')).toBeVisible();
+    expect(screen.getAllByText('Context window')).toHaveLength(1);
+    const lessButton = screen.getByRole('button', { name: /^Less/ });
+    expect(
+      screen.getByText('$0.1').compareDocumentPosition(lessButton) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    await user.click(lessButton);
+    expect(screen.queryByText('Conversation')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^More/ })).toBeVisible();
+  });
+
+  it('omits percentages without a context capacity and hides an absent last message', async () => {
+    mockUsage = {
+      conversationSize: 0,
+      contextWindowTokens: 0,
+      inputTokens: 1200,
+      outputTokens: 300,
+      inputCredits: 0,
+      outputCredits: 0,
+      lastMessage: null,
+    };
+    const user = userEvent.setup();
+    render(
+      <I18nProvider i18n={i18n}>
+        <AiChatContextUsageButton />
+      </I18nProvider>,
+    );
+    await user.click(screen.getByRole('button', { name: 'Context and usage' }));
+    await user.click(screen.getByRole('button', { name: /^More/ }));
+    expect(screen.getByText('1.2k')).toBeVisible();
+    expect(screen.getByText('300')).toBeVisible();
+    expect(screen.queryByText('Last message')).not.toBeInTheDocument();
+    expect(screen.getByText('Conversation')).toBeVisible();
   });
 
   it('distinguishes missing usage from an empty balance', async () => {
