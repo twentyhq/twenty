@@ -36,7 +36,6 @@ export const createValidateWorkflowTool = (
       await deps.workflowVersionValidationWorkspaceService.assertWorkflowVersionIsActivableOrThrow(
         {
           workspaceId: context.workspaceId,
-          workflowVersionId: parameters.workflowVersionId,
           trigger: workflowVersion.trigger,
           steps: workflowVersion.steps,
         },
